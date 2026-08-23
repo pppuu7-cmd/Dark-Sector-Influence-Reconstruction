@@ -1,0 +1,128 @@
+name: GDM zero-limit clean-room regression
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/gdm-zero-limit.yml'
+      - 'ci/compare_class_outputs.py'
+      - 'src/dsir/gdm_source_control.py'
+      - 'experiments/014_gdm_zero_limit_source_regression.py'
+
+jobs:
+  gdm-zero-limit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout DSIR
+        uses: actions/checkout@v4
+
+      - name: Install build/runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Clone pinned GDM_CLASS
+        run: |
+          git clone https://github.com/s-ilic/gdm_class_public.git external_gdm
+          cd external_gdm
+          git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          git rev-parse HEAD | tee ../gdm_upstream_sha.txt
+
+      - name: Build pinned GDM_CLASS
+        working-directory: external_gdm
+        run: make -j2 class
+
+      - name: Write matched baseline and zero-GDM configurations
+        run: |
+          mkdir -p external_gdm/dsir_outputs
+          cat > external_gdm/dsir_baseline.ini <<'EOF'
+          h = 0.67
+          omega_b = 0.0224
+          omega_cdm = 0.1200
+          omega_gdm = 0.0
+          Omega_Lambda = 0.684
+          A_s = 2.10e-9
+          n_s = 0.965
+          tau_reio = 0.054
+          gauge = newtonian
+          output = tCl,pCl,lCl,mPk
+          lensing = yes
+          l_max_scalars = 800
+          P_k_max_h/Mpc = 2.0
+          z_pk = 0,1
+          start_small_k_at_tau_c_over_tau_h = 1e-6
+          write background = yes
+          root = dsir_outputs/baseline_
+          EOF
+
+          cat > external_gdm/dsir_gdm0.ini <<'EOF'
+          h = 0.67
+          omega_b = 0.0224
+          omega_cdm = 0.0
+          omega_gdm = 0.1200
+          Omega_Lambda = 0.684
+          A_s = 2.10e-9
+          n_s = 0.965
+          tau_reio = 0.054
+          gauge = newtonian
+          type_gdm = time_only_bins
+          smooth_bins_gdm = yes
+          time_transition_width_gdm = 8.
+          time_values_gdm = 0.00001, 0.0001, 0.001, 0.01, 0.1
+          w_values_gdm = 0., 0., 0., 0., 0., 0.
+          cs2_values_gdm = 0., 0., 0., 0., 0., 0.
+          cv2_values_gdm = 0., 0., 0., 0., 0., 0.
+          dynamic_shear_gdm = yes
+          A_s = 2.10e-9
+          n_s = 0.965
+          tau_reio = 0.054
+          output = tCl,pCl,lCl,mPk
+          lensing = yes
+          l_max_scalars = 800
+          P_k_max_h/Mpc = 2.0
+          z_pk = 0,1
+          start_small_k_at_tau_c_over_tau_h = 1e-6
+          write background = yes
+          root = dsir_outputs/gdm0_
+          EOF
+
+      - name: Run matched CLASS-family calculations
+        working-directory: external_gdm
+        run: |
+          ./class dsir_baseline.ini 2>&1 | tee dsir_outputs/baseline.log
+          ./class dsir_gdm0.ini 2>&1 | tee dsir_outputs/gdm0.log
+          ls -lah dsir_outputs
+
+      - name: Compare output products (calibration run, no arbitrary physics tolerance yet)
+        run: |
+          python3 ci/compare_class_outputs.py \
+            --directory external_gdm/dsir_outputs \
+            --root-a baseline_ \
+            --root-b gdm0_ \
+            --json external_gdm/dsir_outputs/comparison.json
+
+      - name: Record clean-room metadata
+        run: |
+          {
+            echo "DSIR GDM zero-limit clean-room regression"
+            echo "DSIR commit: $GITHUB_SHA"
+            echo -n "GDM upstream: "
+            cat gdm_upstream_sha.txt
+            uname -a
+            python3 --version
+            gcc --version | head -1
+          } > external_gdm/dsir_outputs/environment.txt
+
+      - name: Upload regression outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: gdm-zero-limit-${{ github.sha }}
+          path: |
+            external_gdm/dsir_outputs/
+            external_gdm/dsir_baseline.ini
+            external_gdm/dsir_gdm0.ini
+            gdm_upstream_sha.txt
+          if-no-files-found: error
