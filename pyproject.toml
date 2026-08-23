@@ -1,0 +1,10 @@
+[project]
+name = "dsir"
+version = "0.0.1"
+description = "Dark-Sector Influence Reconstruction research scaffold"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24", "scipy>=1.10"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
