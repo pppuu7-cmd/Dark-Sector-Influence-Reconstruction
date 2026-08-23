@@ -18,6 +18,7 @@ Ingested the corrected ShapeFit-only response vectors `[DV/rd, DH/DM, f sigma_s8
 
 BGS AP is excluded from the correlation/control summary because DESI states that its low-z AP result is strongly prior affected. For LRG1, LRG2, LRG3, ELG2, and QSO the AP-growth correlation is consistently negative: `[-0.5511,-0.5425,-0.5268,-0.5540,-0.6274]`, mean `-0.5603`, sample scatter `0.0389`.
 
-This is classified as an *observational identifiability direction*, not a dark-sector law. A fiducial `[DH/DM, f sigma_s8, m+n]` response control gives chi2 `10.4445` for 15 dof (`p=0.7909`) under the per-bin Gaussian approximation and independent-bin control sum. No anomaly is claimed.
+This is classified as an observational identifiability direction, not a dark-sector law. A fiducial `[DH/DM, f sigma_s8, m+n]` response control gives chi2 `10.4445` for 15 dof (`p=0.7909`) under the per-bin Gaussian approximation and independent-bin control sum. No anomaly is claimed. G6B is marked PASS.
 
-G6B is marked PASS. G7 remains OPEN: the next law search must condition/project out both known physical identities and this observational AP-growth covariance structure.
+## 2026-08-24 — Experiment 010 / covariance quotient
+Introduced Gaussian conditional innovations to prevent the stable AP-growth measurement covariance from masquerading as a law. Growth is conditioned on AP and shape; AP is separately conditioned on growth and shape. Across the five informative bins the conditional growth innovations give chi2 `5.5304/5` (`p=0.3546`), and AP innovations give `4.8921/5` (`p=0.4292`). No significant aggregate innovation is present under this control. G7 remains OPEN.

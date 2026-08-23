@@ -1,0 +1,7 @@
+Experiment 010 — conditional innovations after covariance quotient
+growth innovation chi2=5.530353 for 5 dof; p=0.354629
+AP innovation chi2=4.892061 for 5 dof; p=0.429195
+growth z = 0.357167,0.673090,0.060398,-1.496487,1.645178
+AP z = -0.170322,0.843467,0.596004,-1.460177,1.290068
+INTERPRETATION: no significant aggregate innovation against the fiducial response under this Gaussian control.
+STATUS: G7 preparation PASS; G7 physical-law discovery remains OPEN.
