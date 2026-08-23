@@ -1,0 +1,10 @@
+Experiment 013 — interacting-vacuum source regression
+zero-coupling max relative matter error = 3.135092e-16
+zero-coupling max vacuum absolute error = 2.220446e-16
+max analytic-vs-ODE normalized error = 5.925298e-12
+max eigen-exponent error = 4.440892e-16
+PASS: source-level alpha/beta convention frozen.
+NOTE: full CLASS solver regression is still required for G3B closure.
+
+Independent execution environment: Python/NumPy/SciPy in research session 2026-08-24.
+Pinned upstream formula source: kaeonikc/class_iv @ ac627d54e9ce196a08878d1ba33999819925d19c.
