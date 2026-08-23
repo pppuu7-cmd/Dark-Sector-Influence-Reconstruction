@@ -1,0 +1,12 @@
+Experiment 014 — GDM zero-limit source regression
+background max relative error = 0.000000e+00
+zero-closure perturbation RHS max error = 0.000000e+00
+zero-cv2 zero-shear RHS max error = 0.000000e+00
+leading adiabatic IC max error = 2.067952e-25
+finite-start O(omega*tau) scaling max error = 1.131341e-16
+PASS: pinned GDM source has the CDM zero-closure limit at background, evolution-equation, and leading-IC level.
+CAVEAT: full GDM_CLASS-vs-CLASS spectra must be convergence-tested versus earlier start time because GDM initial conditions omit finite-start O(omega*tau) terms.
+STATUS: source-level regression only; full Boltzmann G3B regression remains open.
+
+Independent execution environment: Python/NumPy in research session 2026-08-24.
+Pinned upstream: s-ilic/gdm_class_public @ 4c87916aab5ca124a68f1dd16f31846fc13d1829.
