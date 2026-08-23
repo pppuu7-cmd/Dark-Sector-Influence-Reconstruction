@@ -1,0 +1,7 @@
+Experiment 011 — G5 covariance-whitening rank robustness
+injected_rank=3; cases=30; correctly_recovered_after_whitening=30/30
+max_relative_singular_spectrum_error_after_whitening=1.564e-15
+naive_unwhitened_rank_min=20; max=35; counts={20: 1, 22: 4, 23: 3, 24: 7, 25: 5, 26: 1, 27: 2, 29: 2, 31: 2, 33: 2, 35: 1}
+INTERPRETATION: latent-rank claims are coordinate/unit robust only after covariance whitening.
+NEGATIVE CONTROL: iid-noise calibration on unwhitened heterogeneous features creates many false spikes.
+STATUS: G5 scaling/covariance-coordinate robustness PASS on this synthetic suite; broader model-family sampling robustness remains open.
