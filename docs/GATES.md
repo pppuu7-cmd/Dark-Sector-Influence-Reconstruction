@@ -10,8 +10,8 @@
 | G4 | Synthetic low-rank recovery test passes | PASS — corrected global noise-edge criterion recovers injected rank 3 |
 | G5 | Rank robust to noise null, feature scaling, and model sampling | OPEN |
 | G6A | First real-data response reconstruction | PASS — DESI DR2 AP calibration quotient and relative expansion reconstruction |
-| G6B | First real multi-channel response reconstruction | OPEN — growth/lensing covariance not yet integrated |
-| G7 | First nontrivial residual cross-channel relation found after quotienting known identities | OPEN |
+| G6B | First real multi-channel response reconstruction | PASS — corrected DESI DR1 ShapeFit vectors jointly provide geometry, growth, and shape with covariance; Experiment 009 |
+| G7 | First nontrivial residual cross-channel relation found after quotienting known identities and observational degeneracy directions | OPEN |
 | G8 | Relation survives at least H2 withheld prediction; strong claim targets H3/H4 | OPEN |
 | G9 | Candidate underlying dynamics/action reconstructed or ruled out | OPEN |
 

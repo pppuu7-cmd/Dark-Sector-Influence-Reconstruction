@@ -1,0 +1,9 @@
+Experiment 009 — corrected DESI DR1 ShapeFit multi-channel identifiability
+informative bins = LRG1,LRG2,LRG3,ELG2,QSO
+rho(AP,growth) = -0.551086,-0.542451,-0.526784,-0.553970,-0.627367
+mean rho(AP,growth) = -0.560332
+sample std rho(AP,growth) = 0.038939
+fiducial 3-channel chi2 = 10.444549 for 15 dof; p=0.790885
+BGS excluded from rho-constancy/control sum because AP is strongly prior-dominated.
+INTERPRETATION: stable negative AP-growth covariance is an observational identifiability direction, not a dark-sector law.
+STATUS: G6B real multi-channel response ingest PASS; physical-law gate G7 remains OPEN.
