@@ -1,0 +1,2 @@
+This file intentionally triggers the clean-room GDM zero-limit regression when changed in a calibration PR.
+Do not encode scientific results here.
