@@ -7,6 +7,15 @@ on:
     paths:
       - '.github/workflows/gdm-zero-limit.yml'
       - 'ci/compare_class_outputs.py'
+      - 'ci/gdm_calibration_trigger.txt'
+      - 'src/dsir/gdm_source_control.py'
+      - 'experiments/014_gdm_zero_limit_source_regression.py'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/gdm-zero-limit.yml'
+      - 'ci/compare_class_outputs.py'
+      - 'ci/gdm_calibration_trigger.txt'
       - 'src/dsir/gdm_source_control.py'
       - 'experiments/014_gdm_zero_limit_source_regression.py'
 
@@ -76,9 +85,6 @@ jobs:
           cs2_values_gdm = 0., 0., 0., 0., 0., 0.
           cv2_values_gdm = 0., 0., 0., 0., 0., 0.
           dynamic_shear_gdm = yes
-          A_s = 2.10e-9
-          n_s = 0.965
-          tau_reio = 0.054
           output = tCl,pCl,lCl,mPk
           lensing = yes
           l_max_scalars = 800
