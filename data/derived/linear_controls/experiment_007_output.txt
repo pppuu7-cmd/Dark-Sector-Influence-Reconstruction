@@ -1,0 +1,8 @@
+Experiment 007 — linear-response controls
+max|Sigma_fR-1| = 2.220e-16
+WDM P ratio k=0.01: 0.99999998
+WDM P ratio k=10: 0.88971073
+fR mu(z=0,k=0.01) = 1.00330033
+fR mu(z=0,k=10) = 1.33330000
+fR P ratio(z=0,k=10) = 1.89260564
+STATUS: theory-control only; no observational covariance applied.
