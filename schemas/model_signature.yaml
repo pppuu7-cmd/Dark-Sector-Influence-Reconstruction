@@ -1,0 +1,41 @@
+schema_version: 0.1
+model:
+  id: required
+  family: required
+  references: []
+  assumptions: []
+  domain:
+    background: true
+    linear_scalar: false
+    tensor: false
+    nonlinear: false
+    nongravitational: false
+response:
+  background:
+    E_z: null
+    distances: null
+  scalar:
+    growth: null
+    weyl: null
+    slip: null
+    scale_dependence: null
+  lensing:
+    sigma_response: null
+  tensor:
+    gw_distance_ratio: null
+    gw_speed: null
+    gw_mass_or_mixing: null
+  couplings:
+    energy_exchange: null
+    momentum_exchange: null
+    fifth_force_or_ep: null
+  nonlinear:
+    halo_response: null
+    screening: null
+bookkeeping:
+  residual_Xmunu: null
+  representation: null
+validity:
+  stability_conditions: []
+  excluded_domains: []
+  observational_constraints: []

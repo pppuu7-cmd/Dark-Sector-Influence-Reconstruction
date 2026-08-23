@@ -1,0 +1,7 @@
+control,chi2_F_AP,n_fit_parameters,best_parameters,background_response_class
+C0_LambdaCDM,5.858635026157722,1,Omega_m=0.29852590,B0
+C1_wCDM_quintessence_closure,5.245066208457684,2,Omega_m=0.29332287;w=-0.89025500,B1
+C2_interacting_vacuum,5.245066208428033,2,Omega_c=0.32087741;xi=0.32923622,B1
+C3_generalized_Chaplygin,5.432149459089099,2,A_s=0.69155751;alpha=-0.14438888,B2
+C4_WDM_plus_Lambda_background,5.858635026157722,1,Omega_m=0.29852590;WDM_microphysics_hidden,B0
+C5_designer_fR_background,5.858635026157722,1,Omega_m=0.29852590;MG_parameter_hidden,B0

@@ -1,0 +1,7 @@
+model_class,background_dynamics,internal_exchange,imperfect_stress,scale_dependent_growth,metric_slip,small_scale_dm_signature,screening,modified_gw_possible
+LambdaCDM,baseline,no,no,no,no,baseline,no,no
+canonical_quintessence,yes,no,minimal_no,weak_generic_no,no,no,no,minimal_no
+interacting_dark_sector,yes,yes,depends,yes_possible,depends,possible,no,depends
+unified_GDM,yes,internal_unified,yes,yes_possible,yes_possible,yes_possible,no,model_dependent
+noncold_DM_plus_Lambda,near_baseline,no,DM_microphysics,yes,no,yes,no,no
+fR_modified_gravity,yes_possible,no,effective_yes,yes,yes,indirect,yes,tensor_sector_model_dependent

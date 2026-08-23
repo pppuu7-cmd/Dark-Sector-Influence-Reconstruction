@@ -1,0 +1,29 @@
+schema_version: 0.1
+channel:
+  id: required
+  name: required
+  domain: required
+  raw_observable: required
+  redshift_range: null
+  scale_range: null
+  covariance_group: required
+  shared_calibrations: []
+  nuisance_parameters: []
+  reconstruction:
+    response_quantity: null
+    method: null
+    assumptions: []
+    priors: []
+  dependency_ledger:
+    FLRW: null
+    GR: null
+    geodesic_motion: null
+    standard_early_universe: null
+    sound_horizon_calibration: null
+    primordial_spectrum: null
+    neutrino_model: null
+    galaxy_bias: null
+    selection_function: null
+  holdout_eligibility:
+    independent_enough_for_validation: false
+    notes: null

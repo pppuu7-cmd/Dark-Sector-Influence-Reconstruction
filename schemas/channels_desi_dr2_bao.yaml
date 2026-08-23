@@ -1,0 +1,30 @@
+schema_version: 0.1
+channels:
+  - id: desi_dr2_bao_compressed
+    name: DESI DR2 compressed BAO distance ratios
+    domain: background
+    raw_observable: [DV_over_rd, DM_over_rd, DH_over_rd]
+    redshift_range: [0.295, 2.33]
+    covariance_group: desi_dr2_bao_all_gccomb
+    shared_calibrations: [drag_sound_horizon_rd]
+    reconstruction:
+      response_quantity: distance_ratio_response
+      method: direct_compressed_likelihood
+      assumptions: [BAO likelihood compression supplied by DESI analysis, FLRW distance interpretation for DM DH DV]
+    holdout_eligibility:
+      independent_enough_for_validation: false
+      notes: Same compressed likelihood cannot validate a law trained on any of its correlated components.
+  - id: desi_dr2_f_ap
+    name: DESI DR2 Alcock-Paczynski ratio from anisotropic BAO
+    domain: background
+    raw_observable: ratio_of_compressed_DM_and_DH
+    redshift_range: [0.51, 2.33]
+    covariance_group: desi_dr2_bao_all_gccomb
+    shared_calibrations: []
+    reconstruction:
+      response_quantity: F_AP_equals_DM_over_DH
+      method: calibration_quotient
+      assumptions: [inherited DESI BAO compression assumptions, FLRW distance interpretation for DM and DH]
+    holdout_eligibility:
+      independent_enough_for_validation: false
+      notes: Derived from the same DM,DH measurements and covariance; not an independent holdout.
