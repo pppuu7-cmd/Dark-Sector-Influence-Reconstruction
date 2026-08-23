@@ -1,0 +1,8 @@
+Experiment 012 — model-catalog prior sensitivity
+family_counts=[900, 90, 10]
+catalog_multiplicity_rank=2; edge=39.874219; top4=151.638907,59.731497,39.261025,38.700359
+equal_family_prior_rank=3; edge=70.264828; top4=112.413394,103.280936,95.869577,60.933755
+sv3/sv1 raw=0.258911; equal_family=0.852831
+INTERPRETATION: catalog multiplicity is an implicit theory prior and can hide a rare independent response mode.
+RULE: DSIR must publish R_model prior-sensitivity/stratified-bootstrap results, not a single catalog-frequency rank.
+STATUS: G5 model-catalog-prior failure mode demonstrated and controlled in a synthetic example; real theory-manifold robustness remains open.

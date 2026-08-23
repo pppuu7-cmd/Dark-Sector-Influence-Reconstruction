@@ -1,39 +1,24 @@
 # DSIR method v0.1 (working specification)
 
 ## Scientific objective
-Reconstruct the minimum observable influence structure of the cosmic dark sector without fixing its ontology in advance. Dark matter, dark energy, interactions, and modified gravity are candidate interpretations at the theory layer, not labels imposed on the response layer.
+Reconstruct the minimum observable influence structure of the cosmic dark sector without fixing its ontology in advance. DM, DE, interactions, and modified gravity are theory-layer interpretations, not response-layer labels.
 
 ## Layers
-1. **Data** — likelihood products, compressed measurements, covariances, systematics and calibration variables.
-2. **Response** — observable/gauge-robust expansion, AP geometry, growth, lensing/Weyl response, gravitational slip, GW propagation, coupling and nonlinear signatures.
+1. **Data** — likelihood products, covariances, systematics and calibrations.
+2. **Response** — expansion/AP, growth, lensing/Weyl, slip, GW propagation, couplings and nonlinear signatures.
 3. **Theory** — model families and effective descriptions such as residual stress tensors, GDM, PPF/EFT, interacting sectors and microphysical actions.
 
 ## Two ranks
-`R_obs` measures the dimension that the observational response operator can actually distinguish after covariance whitening. `R_model` measures the dimension occupied by viable theory manifolds after projection into the identifiable space. Low `R_obs` is a data degeneracy; low `R_model` inside a larger identifiable space is the interesting case for common-law discovery.
+`R_obs` is the dimension the observational response operator can distinguish after covariance whitening. `R_model` is the dimension occupied by viable theory manifolds after projection into identifiable space. Low `R_obs` is data blindness; low `R_model` inside a larger identifiable space is the interesting unification case.
+
+## Mandatory whitening and theory-prior sensitivity
+Noise-edge rank claims are made only in covariance-whitened coordinates. Arbitrary units or correlated feature transformations must not change the result if their covariance is transformed consistently.
+
+A finite theory catalog also defines an implicit prior through sample multiplicity. Therefore DSIR treats model rank as `R_model(pi)`, a sensitivity profile over defensible theory-family priors/stratifications, not as one catalog-frequency scalar. Any weighting is propagated into the null simulations used for rank calibration.
 
 ## Quotients before law discovery
-Candidate relations are searched only after removing/conditioning on:
-- exact definitions and algebraic identities;
-- Bianchi/conservation relations already assumed by the framework;
-- shared calibrations such as an overall ruler when a calibration-free quotient exists;
-- gauge/frame artifacts;
-- measurement-induced covariance directions.
-
-For a Gaussian response residual `r` with covariance `C`, the conditional innovation of target channel `t` after conditioning on channels `N` is
-
-`r_t_perp = r_t - C_tN C_NN^{-1} r_N`
-
-with conditional variance
-
-`V_t_perp = C_tt - C_tN C_NN^{-1} C_Nt`.
-
-This is a statistical innovation, not automatically a causal residual.
+Candidate relations are searched only after removing/conditioning on exact definitions, Bianchi/conservation identities, shared calibrations, gauge/frame artifacts, and measurement-induced covariance directions.
+For a Gaussian residual r: `r_t_perp = r_t - C_tN C_NN^{-1} r_N`, with conditional variance `C_tt-C_tN C_NN^{-1} C_Nt`. This is statistical innovation, not automatically causal.
 
 ## Claim hierarchy
-- control identity: expected and already known;
-- observational identifiability pattern: property of measurement/covariance geometry;
-- empirical residual relation: survives identity/covariance quotient;
-- predictive law candidate: survives independent/withheld data without refitting;
-- physical model candidate: admits consistent dynamics/action and additional predictions.
-
-No discovery claim is permitted before G8.
+control identity -> observational identifiability pattern -> empirical residual relation -> predictive law candidate -> physical model candidate. No discovery claim before G8.
