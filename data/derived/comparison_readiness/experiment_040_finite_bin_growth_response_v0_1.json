@@ -1,0 +1,57 @@
+{
+  "schema": "dsir.theory_response.finite_bin_growth.v0.1",
+  "status": "PASS_FINITE_BIN_GROWTH_RESPONSE_V0_1",
+  "failures": [],
+  "scope": "finite-bin temporal derivative of the frozen low-k r_Delta response atlas",
+  "definition": "Delta fbar_P = [r_Delta(late)-r_Delta(early)]/[2 Delta ln a]",
+  "not_a_claim": [
+    "not tracer RSD",
+    "not ShapeFit f_sigma_s8",
+    "not observational whitening or distinguishability",
+    "not an intrinsic-rank or discovery claim"
+  ],
+  "source_atlas_schema": "dsir.comparison_readiness.local_structure.v0.1",
+  "z_nodes": [0.295, 0.51, 0.706, 0.934, 1.317, 1.491, 2.33],
+  "k_h_mpc": [0.001, 0.003, 0.01, 0.03, 0.1],
+  "thresholds_frozen_before_pairwise_interpretation": {
+    "endpoint_reconstruction_max_abs": 1e-12,
+    "constant_mode_annihilation_max_abs": 1e-14,
+    "linearity_max_abs": 1e-12,
+    "all_growth_direction_norms_nonzero": true,
+    "no_pairwise_angle_threshold": true
+  },
+  "operator_controls": {
+    "max_endpoint_reconstruction_abs": 1.1102230246251565e-16,
+    "constant_mode_max_abs": 0.0,
+    "linearity_max_abs": 9.769962616701378e-15
+  },
+  "pairwise_angles": [
+    {"a":"C1_smooth_w_nonphantom","b":"C2_IDE_alpha_negative","raw_structure_acute_deg":52.194293392100775,"finite_bin_growth_oriented_deg":10.310584719508785,"finite_bin_growth_acute_deg":10.310584719508785},
+    {"a":"C1_smooth_w_nonphantom","b":"C2_IDE_beta","raw_structure_acute_deg":80.52086652065735,"finite_bin_growth_oriented_deg":153.1708000324129,"finite_bin_growth_acute_deg":26.8291999675871},
+    {"a":"C1_smooth_w_nonphantom","b":"C3_GDM_cs2","raw_structure_acute_deg":59.804160697145115,"finite_bin_growth_oriented_deg":59.071604114558795,"finite_bin_growth_acute_deg":59.071604114558795},
+    {"a":"C1_smooth_w_nonphantom","b":"C3_GDM_cv2","raw_structure_acute_deg":59.81546669973374,"finite_bin_growth_oriented_deg":59.012955171242936,"finite_bin_growth_acute_deg":59.012955171242936},
+    {"a":"C1_smooth_w_nonphantom","b":"C5_designer_fR_B0","raw_structure_acute_deg":60.942973908438574,"finite_bin_growth_oriented_deg":119.0607299989227,"finite_bin_growth_acute_deg":60.939270001077304},
+    {"a":"C2_IDE_alpha_negative","b":"C2_IDE_beta","raw_structure_acute_deg":58.93379766070734,"finite_bin_growth_oriented_deg":150.60217638629229,"finite_bin_growth_acute_deg":29.397823613707715},
+    {"a":"C2_IDE_alpha_negative","b":"C3_GDM_cs2","raw_structure_acute_deg":24.93454727387643,"finite_bin_growth_oriented_deg":60.9725701058063,"finite_bin_growth_acute_deg":60.9725701058063},
+    {"a":"C2_IDE_alpha_negative","b":"C3_GDM_cv2","raw_structure_acute_deg":24.786398074293924,"finite_bin_growth_oriented_deg":60.859706820385036,"finite_bin_growth_acute_deg":60.859706820385036},
+    {"a":"C2_IDE_alpha_negative","b":"C5_designer_fR_B0","raw_structure_acute_deg":42.45027269296787,"finite_bin_growth_oriented_deg":116.54630438672392,"finite_bin_growth_acute_deg":63.45369561327608},
+    {"a":"C2_IDE_beta","b":"C3_GDM_cs2","raw_structure_acute_deg":56.285084149548936,"finite_bin_growth_oriented_deg":117.32785527528334,"finite_bin_growth_acute_deg":62.67214472471666},
+    {"a":"C2_IDE_beta","b":"C3_GDM_cv2","raw_structure_acute_deg":56.29338497032958,"finite_bin_growth_oriented_deg":117.07038982927499,"finite_bin_growth_acute_deg":62.92961017072501},
+    {"a":"C2_IDE_beta","b":"C5_designer_fR_B0","raw_structure_acute_deg":59.40410068973369,"finite_bin_growth_oriented_deg":60.93856624513143,"finite_bin_growth_acute_deg":60.93856624513143},
+    {"a":"C3_GDM_cs2","b":"C3_GDM_cv2","raw_structure_acute_deg":0.3226163698784104,"finite_bin_growth_oriented_deg":1.3340128035605052,"finite_bin_growth_acute_deg":1.3340128035605052},
+    {"a":"C3_GDM_cs2","b":"C5_designer_fR_B0","raw_structure_acute_deg":25.181845117804528,"finite_bin_growth_oriented_deg":163.94778849608713,"finite_bin_growth_acute_deg":16.052211503912872},
+    {"a":"C3_GDM_cv2","b":"C5_designer_fR_B0","raw_structure_acute_deg":25.488142980615834,"finite_bin_growth_oriented_deg":162.71572268468572,"finite_bin_growth_acute_deg":17.284277315314284}
+  ],
+  "hard_provenance": {
+    "run_id": 32785987735,
+    "artifact_id": 9541462864,
+    "artifact_sha256": "0457823510fead4ff56e8e29843e39de47805f8fbfda86f4d9d33585be556ac9",
+    "head_sha": "dcb91f61edb6d621e02913743a680d1a28c6747d"
+  },
+  "key_interpretations": [
+    "GDM cs2/cv2 remain nearly degenerate under finite-bin temporal response (1.334 deg acute), so time evolution alone does not resolve their microphysics.",
+    "IDE alpha/beta separation is intermediate across channels: AP 9.038 deg acute, finite-bin growth 29.398 deg, full frozen structure 58.934 deg.",
+    "Smooth-w and IDE alpha become much more degenerate in finite-bin growth (10.311 deg acute) than in AP (72.803 deg), demonstrating another channel-dependent reversal.",
+    "GDM versus designer f(R) finite-bin growth differs by 16.05-17.28 deg acute even though their leading scale-only modes were about 0.08-0.10 deg; temporal information is essential, while the full raw k,z structure already separates them by about 25 deg."
+  ]
+}
