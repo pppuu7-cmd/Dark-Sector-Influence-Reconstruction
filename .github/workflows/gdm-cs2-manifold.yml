@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/gdm-cs2-manifold.yml'
       - 'ci/gdm_cs2_scan.py'
+      - 'ci/gdm_manifold_geometry.py'
       - 'experiments/025_gdm_cs2_manifold.md'
 
 jobs:
@@ -112,12 +113,19 @@ jobs:
               1e-5:gdmcs2_1em5_ \
               1e-4:gdmcs2_1em4_ \
             --json gdm_cs2_manifold.json
+      - name: Audit tangent geometry and curvature
+        run: |
+          python3 ci/gdm_manifold_geometry.py \
+            --input gdm_cs2_manifold.json \
+            --local-max-cs2 1e-6 \
+            --json gdm_cs2_geometry.json
       - name: Upload calibration artifact
         uses: actions/upload-artifact@v4
         with:
           name: gdm-cs2-manifold-${{ github.sha }}
           path: |
             gdm_cs2_manifold.json
+            gdm_cs2_geometry.json
             gdm_cs2_upstream_sha.txt
             external_gdm/dsir_p8.pre
             external_gdm/gdm*.ini
