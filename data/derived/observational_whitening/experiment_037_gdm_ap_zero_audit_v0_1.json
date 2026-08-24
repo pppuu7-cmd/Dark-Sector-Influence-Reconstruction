@@ -1,0 +1,54 @@
+{
+  "schema": "dsir.observational_whitening.gdm_ap_zero_audit.v0.1",
+  "status": "PASS_GDM_AP_ZERO_AUDIT_V0_1",
+  "failures": [],
+  "scope": "numeric background/AP audit of the frozen C3 GDM cs2/cv2 perturbation directions with w_gdm=0",
+  "not_a_claim": [
+    "not a theorem for arbitrary GDM histories",
+    "not a test of perturbation observables",
+    "not a full C0-C5 AP geometry completion by itself",
+    "does not close G5 or advance G7"
+  ],
+  "source_artifact": {
+    "run_id": 32759738560,
+    "artifact_id": 9532247349,
+    "artifact_name": "gdm-cv2-manifold-15c7128d4220b954783a8ba7cce7c06744f7f0ac",
+    "digest": "sha256:126c839ce948b5b25ec46b687af70e230c31d87071e6526727d1551a3c0f136d",
+    "upstream": "s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829"
+  },
+  "target_z": [0.51, 0.71, 0.92, 1.32, 1.49],
+  "thresholds_frozen_before_ci_hard_run": {
+    "z_grid_max_abs": 1e-12,
+    "max_relative_H": 1e-12,
+    "max_abs_log_DH_over_DM": 1e-12,
+    "config_contract_required": true
+  },
+  "reference_config_contract": {
+    "w_zero": true,
+    "cs2_zero": true,
+    "cv2_zero": true
+  },
+  "variants": [
+    {"kind":"cs2","value":1e-08,"background_file":"gdmcs2_1em8_background.dat","ini_file":"gdmcs2_1em8.ini","config_contract_ok":true,"z_grid_max_abs":0.0,"max_abs_H_1_per_Mpc":0.0,"max_relative_H":0.0,"all_numeric_background_columns_exact":true,"log_DH_over_DM_at_target_z":[0.0,0.0,0.0,0.0,0.0],"max_abs_log_DH_over_DM":0.0},
+    {"kind":"cs2","value":1e-07,"background_file":"gdmcs2_1em7_background.dat","ini_file":"gdmcs2_1em7.ini","config_contract_ok":true,"z_grid_max_abs":0.0,"max_abs_H_1_per_Mpc":0.0,"max_relative_H":0.0,"all_numeric_background_columns_exact":true,"log_DH_over_DM_at_target_z":[0.0,0.0,0.0,0.0,0.0],"max_abs_log_DH_over_DM":0.0},
+    {"kind":"cs2","value":1e-06,"background_file":"gdmcs2_1em6_background.dat","ini_file":"gdmcs2_1em6.ini","config_contract_ok":true,"z_grid_max_abs":0.0,"max_abs_H_1_per_Mpc":0.0,"max_relative_H":0.0,"all_numeric_background_columns_exact":true,"log_DH_over_DM_at_target_z":[0.0,0.0,0.0,0.0,0.0],"max_abs_log_DH_over_DM":0.0},
+    {"kind":"cv2","value":1e-08,"background_file":"gdmcv2_1em8_background.dat","ini_file":"gdmcv2_1em8.ini","config_contract_ok":true,"z_grid_max_abs":0.0,"max_abs_H_1_per_Mpc":0.0,"max_relative_H":0.0,"all_numeric_background_columns_exact":true,"log_DH_over_DM_at_target_z":[0.0,0.0,0.0,0.0,0.0],"max_abs_log_DH_over_DM":0.0},
+    {"kind":"cv2","value":1e-07,"background_file":"gdmcv2_1em7_background.dat","ini_file":"gdmcv2_1em7.ini","config_contract_ok":true,"z_grid_max_abs":0.0,"max_abs_H_1_per_Mpc":0.0,"max_relative_H":0.0,"all_numeric_background_columns_exact":true,"log_DH_over_DM_at_target_z":[0.0,0.0,0.0,0.0,0.0],"max_abs_log_DH_over_DM":0.0},
+    {"kind":"cv2","value":1e-06,"background_file":"gdmcv2_1em6_background.dat","ini_file":"gdmcv2_1em6.ini","config_contract_ok":true,"z_grid_max_abs":0.0,"max_abs_H_1_per_Mpc":0.0,"max_relative_H":0.0,"all_numeric_background_columns_exact":true,"log_DH_over_DM_at_target_z":[0.0,0.0,0.0,0.0,0.0],"max_abs_log_DH_over_DM":0.0},
+    {"kind":"cv2","value":1e-05,"background_file":"gdmcv2_1em5_background.dat","ini_file":"gdmcv2_1em5.ini","config_contract_ok":true,"z_grid_max_abs":0.0,"max_abs_H_1_per_Mpc":0.0,"max_relative_H":0.0,"all_numeric_background_columns_exact":true,"log_DH_over_DM_at_target_z":[0.0,0.0,0.0,0.0,0.0],"max_abs_log_DH_over_DM":0.0},
+    {"kind":"cv2","value":0.0001,"background_file":"gdmcv2_1em4_background.dat","ini_file":"gdmcv2_1em4.ini","config_contract_ok":true,"z_grid_max_abs":0.0,"max_abs_H_1_per_Mpc":0.0,"max_relative_H":0.0,"all_numeric_background_columns_exact":true,"log_DH_over_DM_at_target_z":[0.0,0.0,0.0,0.0,0.0],"max_abs_log_DH_over_DM":0.0}
+  ],
+  "aggregate": {
+    "max_z_grid_abs": 0.0,
+    "max_relative_H": 0.0,
+    "max_abs_log_DH_over_DM": 0.0,
+    "all_config_contracts_ok": true,
+    "all_numeric_background_tables_exact": true
+  },
+  "hard_run": {
+    "run_id": 32783243120,
+    "artifact_id": 9540510596,
+    "artifact_digest": "sha256:ba1fa93e348f9685d84a675311c79f9c746574463086710b4a46911d125f4edf"
+  },
+  "key_result": "Within the frozen w_gdm=0 C3 manifold, nonzero cs2/cv2 change perturbations while leaving the solver background and AP geometry zero within the hard tolerance."
+}

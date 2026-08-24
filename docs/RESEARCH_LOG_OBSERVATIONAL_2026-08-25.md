@@ -116,11 +116,89 @@ Experiment 036 is:
 
 Therefore G5 remains **PARTIAL**, G7 remains **OPEN**, and G8 remains **OPEN**.
 
-## Immediate continuation after Experiment 036
+## Experiment 037 — hard GDM AP-zero audit v0.1
 
-1. Audit the expected exact/near-zero AP response for C3 GDM `cs2/cv2` numerically from the pinned solver lineage; do not equate an unavailable response with zero.
-2. Audit C5 designer f(R) Lambda-like background numerically from the pinned H-EFTCAMB lineage, creating a dedicated background-output workflow if the existing artifact is insufficient.
-3. Only then form the family-complete AP geometry cell.
-4. Build the family-complete gauge-safe corrected-ShapeFit growth operator.
-5. Replace/calibrate the finite-node `m+n` proxy with a survey/window-aware shape operator or explicit compression-model error.
-6. Continue updating `SCIENTIFIC_FINDINGS_REGISTER.md`, `STATUS.md`, and `RECOVERY_LATEST.md` on every substantive iteration; preserve any future contradiction as `SUPERSEDED/RETRACTED` rather than deleting it.
+### Goal
+
+Convert the expected C3 `cs2/cv2` zero-background geometry cell from a theory expectation into an explicit solver-level fact before inserting it into the AP response block.
+
+The exact frozen GDM_CLASS artifact from run `32759738560` was reused. Source artifact ID `9532247349`, digest `sha256:126c839ce948b5b25ec46b687af70e230c31d87071e6526727d1551a3c0f136d`, upstream `s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
+
+### Audited parameter contract
+
+Reference INI: `w_gdm=cs2=cv2=0`.
+
+Audited nonzero closure directions:
+
+- `cs2={1e-8,1e-7,1e-6}`, with `w=0`, `cv2=0`;
+- `cv2={1e-8,1e-7,1e-6,1e-5,1e-4}`, with `w=0`, `cs2=0`.
+
+The hard script parsed and checked each INI rather than trusting the filenames.
+
+### Pre-frozen hard thresholds
+
+Before CI execution:
+
+- maximum background redshift-grid mismatch `<=1e-12`;
+- maximum relative `H(z)` mismatch `<=1e-12`;
+- maximum absolute `Delta ln(DH/DM)` at `z=(0.51,0.71,0.92,1.32,1.49)` `<=1e-12`;
+- configuration contract required.
+
+Bitwise equality of the full saved numeric background table was recorded only as a diagnostic, not required for PASS.
+
+The protocol disclosed that an exploratory inspection had already found printed-precision equality. The threshold itself was not chosen from an angle/rank result and remained a tolerance-based hard zero test.
+
+### Hard result
+
+GitHub Actions run `32783243120` passed with status
+
+`PASS_GDM_AP_ZERO_AUDIT_V0_1`.
+
+Result artifact:
+
+- artifact ID `9540510596`;
+- SHA256 `ba1fa93e348f9685d84a675311c79f9c746574463086710b4a46911d125f4edf`;
+- the locally downloaded ZIP reproduced that SHA256 exactly;
+- frozen repository result: `data/derived/observational_whitening/experiment_037_gdm_ap_zero_audit_v0_1.json`.
+
+For **every** audited nonzero `cs2/cv2` variant:
+
+- `z_grid_max_abs = 0`;
+- `max_abs_H = 0` in saved solver units;
+- `max_relative_H = 0`;
+- all saved numerical background columns were exactly equal to the reference table;
+- `Delta ln(DH/DM)=(0,0,0,0,0)` at the five DESI target redshifts.
+
+### Scientific interpretation
+
+Within the frozen C3 manifold with `w_gdm=0`, the `cs2/cv2` directions are **background/AP-null but perturbation-active**. The same parameters have established nonzero matter-power/metric responses, so the zero geometry coordinate does not mean proximity to the common response origin in the full multi-channel space.
+
+This provides a particularly clean hard example of **channel nullity / block-sparse influence**:
+
+\[
+K_{AP}t_{cs2}=K_{AP}t_{cv2}=0,
+\]
+
+while perturbation operators satisfy
+
+\[
+K_{structure}t_{cs2}\neq0,\qquad K_{structure}t_{cv2}\neq0.
+\]
+
+It strengthens, but does not prove universally, the DSIR meta-hypothesis that model identity is a multi-channel influence trajectory rather than a single observable response.
+
+The C3 AP geometry cell may now be encoded as a validated zero rather than as missing data. This is qualitatively different from zero-imputation.
+
+### Claim boundary / gates
+
+The result applies only to the sampled frozen `w_gdm=0` C3 manifold. It does not cover arbitrary nonzero/time-dependent `w_gdm`, and it does not imply that GDM is observationally null.
+
+G5 remains **PARTIAL** because C5 AP geometry and the family-complete growth/shape observation operators are still missing. G7 and G8 remain **OPEN**.
+
+## Immediate continuation after Experiment 037
+
+1. Numerically audit the C5 designer-f(R) background/AP contract. The frozen H-EFTCAMB artifact preserves `EFTwDE=0` configs and indicates background writing was enabled, but no immediately usable full background table was found in the preserved artifact; use the same pinned H-EFTCAMB setup in a dedicated background-output hard workflow if needed.
+2. After C5, form the family-complete AP geometry cell (C0 origin, C1/C2 measured tangents, C3 hard zero, C5 audited result; C4 remains a separate small-scale block unless a validated AP mapping is defined).
+3. Build the family-complete gauge-safe corrected-ShapeFit growth operator.
+4. Replace/calibrate the finite-node `m+n` proxy with a survey/window-aware shape operator or propagate explicit compression-model error.
+5. Continue updating `SCIENTIFIC_FINDINGS_REGISTER.md`, `STATUS.md`, and `RECOVERY_LATEST.md` on every substantive iteration; preserve future contradictions as `SUPERSEDED/RETRACTED` rather than deleting them.

@@ -1,0 +1,61 @@
+name: DSIR GDM AP-zero audit v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/gdm-ap-zero-audit-v0-1.yml'
+      - 'ci/gdm_ap_zero_audit_v0_1.py'
+      - 'src/dsir/ap_operator.py'
+      - 'experiments/037_gdm_ap_zero_audit_v0_1.md'
+      - 'data/derived/observational_whitening/experiment_037_gdm_ap_zero_audit_v0_1.json'
+      - 'docs/STATUS.md'
+      - 'docs/RECOVERY_LATEST.md'
+      - 'docs/SCIENTIFIC_FINDINGS_REGISTER.md'
+      - 'docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-25.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  gdm-ap-zero-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install DSIR
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+      - name: Download exact frozen C3 artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 32759738560
+          name: gdm-cv2-manifold-15c7128d4220b954783a8ba7cce7c06744f7f0ac
+          path: inputs/gdm
+      - name: Audit expected background inputs
+        run: |
+          test -f inputs/gdm/external_gdm/cv2_outputs/gdm0_background.dat
+          test -f inputs/gdm/external_gdm/cv2_outputs/gdmcs2_1em6_background.dat
+          test -f inputs/gdm/external_gdm/cv2_outputs/gdmcv2_1em4_background.dat
+          test -f inputs/gdm/external_gdm/gdm0.ini
+          test -f inputs/gdm/external_gdm/gdmcs2_1em6.ini
+          test -f inputs/gdm/external_gdm/gdmcv2_1em4.ini
+      - name: Run Experiment 037 hard gate
+        run: |
+          python ci/gdm_ap_zero_audit_v0_1.py \
+            --gdm-root inputs/gdm \
+            --json gdm_ap_zero_audit_v0_1.json
+      - name: Upload Experiment 037 result
+        uses: actions/upload-artifact@v4
+        with:
+          name: gdm-ap-zero-audit-v0-1-${{ github.sha }}
+          path: gdm_ap_zero_audit_v0_1.json
+          if-no-files-found: error
