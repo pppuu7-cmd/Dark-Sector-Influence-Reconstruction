@@ -1,4 +1,4 @@
-name: GDM zero-limit linear-core precision sweep
+name: GDM zero-limit linear-core precision tail
 
 on:
   workflow_dispatch:
@@ -10,13 +10,13 @@ on:
       - 'ci/gdm_calibration_trigger.txt'
 
 jobs:
-  gdm-linear-core-precision:
+  gdm-linear-core-precision-tail:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        level: [p1, p2, p3, p4]
+        level: [p5, p6]
 
     steps:
       - name: Checkout DSIR
@@ -41,10 +41,8 @@ jobs:
           LEVEL: ${{ matrix.level }}
         run: |
           case "$LEVEL" in
-            p1) KSUB=0.015; KSUPER=0.0001;  TOL=1e-6; SAMPLE=0.01  ;;
-            p2) KSUB=0.008; KSUPER=0.00005; TOL=3e-7; SAMPLE=0.005 ;;
-            p3) KSUB=0.005; KSUPER=0.00003; TOL=1e-7; SAMPLE=0.003 ;;
-            p4) KSUB=0.003; KSUPER=0.00002; TOL=3e-8; SAMPLE=0.002 ;;
+            p5) KSUB=0.0020; KSUPER=0.000010; TOL=1e-8; SAMPLE=0.0010 ;;
+            p6) KSUB=0.0015; KSUPER=0.000007; TOL=3e-9; SAMPLE=0.0007 ;;
           esac
           cat > external_gdm/dsir_precision.pre <<EOF
           k_step_sub = $KSUB
@@ -115,7 +113,7 @@ jobs:
           ./class dsir_baseline.ini dsir_precision.pre 2>&1 | tee dsir_precision_outputs/baseline.log
           ./class dsir_gdm0.ini dsir_precision.pre 2>&1 | tee dsir_precision_outputs/gdm0.log
 
-      - name: Compute scale-aware P(k) metrics
+      - name: Compute scale-aware and frozen-node P(k) metrics
         run: |
           python3 ci/physics_window_metrics.py \
             --directory external_gdm/dsir_precision_outputs \
@@ -128,9 +126,10 @@ jobs:
           LEVEL: ${{ matrix.level }}
         run: |
           {
-            echo "DSIR GDM zero-limit linear-core precision sweep"
+            echo "DSIR GDM zero-limit linear-core precision tail"
             echo "precision level: $LEVEL"
             echo "scope: background + linear P(k), k_max=0.25 h/Mpc; CMB calibrated separately"
+            echo "frozen core nodes: 0.001,0.003,0.01,0.03,0.1 h/Mpc"
             echo "DSIR commit: $GITHUB_SHA"
             echo -n "GDM upstream: "
             cat gdm_upstream_sha.txt
