@@ -28,14 +28,44 @@ Pinned official source:
 
 from branch `eftcamb`.
 
+Pinned recursive submodules in the clean-room run:
+
+- `fortran/eftcamb_test/eftcamb_legacy@86a425b32d80ae6481692ed12cc08fe1cda2ba68`
+- `forutils@841f06d5356877e90437f94b2d976dd98f7f923c`
+
 Upstream author controls establish:
 
 - GR: `EFTflag=0` (`fortran/eftcamb_test/parameters/1_EFT_GR.ini`);
-- designer f(R): `EFTflag=3`, `DesignerEFTmodel=1`, `EFTwDE=0`;
+- designer f(R): `EFTflag=3`, designer/mapping f(R) model 1, `EFTwDE=0`;
 - `EFTB0` is the designer-f(R) amplitude;
 - upstream examples include `EFTB0=1` and `EFTB0=1e-4`.
 
 `EFTwDE=0` keeps the designed background on the LambdaCDM expansion history, so the intended discriminator is perturbative/structure response rather than a background H(z) shift.
+
+### Physical meaning of B0
+
+For designer f(R), the standard dimensionless Compton-wavelength parameter is
+
+\[
+B(a)=\frac{f_{RR}}{1+f_R}\,\frac{R' H}{H'}
+     =\frac{f_R'}{1+f_R}\,\frac{H}{H'},
+\]
+
+where the prime may consistently denote differentiation with respect to the same scale-factor variable in numerator and denominator. `EFTB0` is the present value
+
+\[
+B_0=B(a=1).
+\]
+
+Thus B0 controls the present scalaron Compton scale, rather than being an arbitrary phenomenological power-spectrum amplitude. This is also why the old BZ-like control is only a diagnostic approximation: BZ adds quasi-static and prescribed-time-dependence assumptions, whereas H-EFTCAMB evolves the full linear dynamics.
+
+## Build audit / retained negative result
+
+The first clean-room attempt used `make -j2 camb` and failed before any cosmology was evaluated because `inidriver.f90` was compiled before `camb.mod` existed. This is a Makefile dependency race on the current runner, not a physical/model failure.
+
+The upstream `test_spectra.sh` itself uses serial `make camb`. DSIR changed only the build scheduling to the upstream serial path. The second clean-room build succeeded, after which both upstream GR and designer-f(R) (`B0=1e-4`) smoke controls completed successfully.
+
+No source equation or model parameter was patched.
 
 ## Calibration sweep
 
