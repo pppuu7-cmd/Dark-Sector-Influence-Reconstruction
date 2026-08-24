@@ -8,45 +8,47 @@ Hard boundary: **DSIR is separate from RTK. Do not modify, use, or overwrite the
 
 ---
 
-## 1. Current gate state
+## 1. Scientific status
 
-- **G1 PASS for v0.1.1 scope:** conservation/Bianchi bookkeeping and a gauge-safe common total-matter construction are validated. Newtonian/synchronous comoving hard gate passed.
-- **G2 PASS v0.1.1:** response basis upgraded from ambiguous raw `P_m` to explicit comoving total-matter `P_Delta` with same-solver reference quotients. Cross-solver hard bridge passed.
+DSIR is still a reconstruction/meta-inference framework, **not yet a fundamental theory**. No new dark-sector law is claimed.
+
+Current hard gates:
+
+- **G1 PASS for v0.1.1 scope:** conservation/Bianchi bookkeeping and the common gauge-safe matter construction are validated.
+- **G2 PASS v0.1.1:** production perturbation response is the same-solver comoving total-matter power response `r_Delta`; cross-solver hard bridge passed.
 - **GDM-S0/S1 PASS.**
 - **IDE-S0/S1 PASS.**
-- **G3B PARTIAL:** common perturbation coordinate is ready, but the historical BZ-like f(R) control is only QS-safe on part of the k grid. A full designer-f(R) solver is now the main blocker to the first complete six-family matrix.
-- **G7 OPEN:** no new residual dark-sector law is claimed.
-- **G8 OPEN:** no discovery claim before a withheld-observable prediction.
+- **MG-S0 PASS:** exact designer-f(R) GR limit validated in pinned H-EFTCAMB with pre-frozen hard thresholds.
+- **G3B PARTIAL but advanced:** all six control families now have a validated response path, but nonzero family-manifold sampling is incomplete.
+- **G7 OPEN:** do not search/claim a new residual law until the family-balanced six-family response atlas and rank stability checks are complete.
+- **G8 OPEN:** no discovery claim before a withheld observable/channel prediction.
+
+Method guards already in `main`:
+
+- validity masks/common-subspace rule — undefined cells are never zero/mean-imputed;
+- family-balanced theory-atlas sampling — model multiplicity is treated as an explicit prior;
+- WDM small-scale transfer block — low-k invisibility is not interpreted as absence of WDM physics.
 
 ---
 
 ## 2. Production response basis v0.1.1
 
-Files on the response-basis development line:
+Frozen redshift nodes:
 
-- `config/response_basis_v0_1_1.json`
-- `docs/RESPONSE_BASIS_V0_1_1.md`
-- `experiments/018_solver_comoving_matter_source_audit.md`
-- `experiments/020_cross_solver_response_bridge.md`
-- `src/dsir/response_basis.py`
-- `tests/test_response_basis_v011.py`
+`z = {0.295, 0.51, 0.706, 0.934, 1.317, 1.491, 2.33}`.
 
-### Background coordinate
+Frozen linear-core k nodes:
 
-Retain the v0.1 anchored expansion response
+`k = {0.001, 0.003, 0.01, 0.03, 0.1} h/Mpc`.
+
+Background coordinate:
 
 \[
 r_E(z;z_*)=\ln\left[\frac{H(z)/H(z_*)}{H_{\rm ref}(z)/H_{\rm ref}(z_*)}\right],
 \qquad z_*=0.51.
 \]
 
-Frozen z nodes:
-
-`{0.295,0.51,0.706,0.934,1.317,1.491,2.33}`.
-
 A common multiplicative H calibration cancels.
-
-### Gauge-safe matter variable
 
 For the documented total-matter component set,
 
@@ -58,72 +60,38 @@ For the documented total-matter component set,
 w_m=\frac{p_m}{\rho_m}.
 \]
 
-Use the comoving total-matter density contrast
+Production comoving matter contrast:
 
 \[
 \boxed{\Delta_m=\delta_m+3(1+w_m){\cal H}\frac{\theta_m}{k^2}},
 \qquad {\cal H}=aH.
 \]
 
-For stable pressureless matter:
+Pressureless limit:
 
 \[
 \Delta_m=\delta_m+3{\cal H}\theta_m/k^2.
 \]
 
-The production perturbation response is
+Production perturbation response:
 
 \[
-\boxed{r_\Delta(k,z)=\ln\frac{P_\Delta^{\rm model,S}(k,z)}{P_\Delta^{\rm ref,S}(k,z)}}
+\boxed{r_\Delta(k,z)=\ln\frac{P_\Delta^{\rm model,S}(k,z)}{P_\Delta^{\rm ref,S}(k,z)}}.
 \]
 
-with
+`S` means the same solver lineage and matched numerical settings for model and reference whenever possible. Absolute spectra from different solver vintages are not interpreted as a dark-sector response.
+
+Cross-solver bridge: smooth `w0=-0.9`, `wa=0`, `cs2=1` calculated with matched p8 precision in pinned GDM_CLASS and repaired pinned class_iv gave
 
 \[
-P_\Delta=P[\Delta_m].
+\max|r_{GDM\_CLASS}-r_{class\_iv}|=2.3747404043\times10^{-10}.
 \]
 
-`S` means the **same solver lineage and matched numerical settings** for model and reference whenever possible. Do not compare absolute spectra from different solver vintages as a dark-sector response.
-
-Frozen linear k nodes:
-
-`{0.001,0.003,0.01,0.03,0.1} h/Mpc`.
-
-`k<0.001 h/Mpc` remains a separate GDM finite-start/IC diagnostic sector.
+Hard threshold `1e-9` was frozen before the final rerun and passed.
 
 ---
 
-## 3. Why v0.1 was reopened and how the issue was resolved
-
-An identical CDM cosmology was run in pinned GDM_CLASS with only the gauge changed.
-
-At default precision, raw `mPk` differed by up to
-
-`9.8434e-5`
-
-inside the frozen linear core. This was too large relative to the solver zero-limit floors, so G2 was correctly reopened instead of treating the difference as physics.
-
-At p8 precision raw `mPk` gauge mismatch fell to roughly `5.1e-6`.
-
-An explicit reconstruction of
-
-`Delta_m=delta_m+3 Hconf theta_m/k^2`
-
-for pressureless matter reduced the p8 Newtonian/synchronous mismatch to
-
-`2.5514e-6`.
-
-A hard tolerance
-
-`max gauge mismatch <= 5e-6`
-
-was frozen before the final rerun and passed.
-
-Interpretation: the original `~1e-4` mismatch was a mixture of gauge-sensitive transfer quantities and numerical precision. Production DSIR therefore names and audits the comoving source explicitly rather than relying on ambiguous `P_m` labels.
-
----
-
-## 4. Source-level compatibility of the two CLASS-family solvers
+## 3. Solver pins and validated zero limits
 
 ### GDM_CLASS
 
@@ -131,201 +99,213 @@ Pinned:
 
 `s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
 
-Its total-matter source explicitly uses the generalized comoving correction
+Source uses the generalized comoving correction
 
 `delta_m += 3*(1+P_m/rho_m)*a*H*theta_m/k^2`.
 
-Thus nonzero GDM matter pressure is handled with the required `(1+w_m)` factor. At zero closure it reduces to the pressureless formula.
+GDM-S1 hard gate:
 
-### class_iv
+`max core zero-GDM/CDM residual <= 5e-6`.
+
+Actual p8 hard result:
+
+`1.471014806e-6`.
+
+Keep `start_small_k_at_tau_c_over_tau_h=1e-6`; pushing only this parameter earlier was non-monotonic and is retained as a negative result. `k<1e-3 h/Mpc` remains a separate finite-start/IC-sensitive diagnostic sector.
+
+Validated p8 preset used for nonzero GDM manifold and cross-solver bridge:
+
+- `k_step_sub = 0.0010`
+- `k_step_super = 0.000003`
+- `k_step_super_reduction = 0.1`
+- `start_small_k_at_tau_c_over_tau_h = 1e-6`
+- `start_large_k_at_tau_h_over_tau_k = 0.05`
+- `tight_coupling_trigger_tau_c_over_tau_h = 0.005`
+- `tight_coupling_trigger_tau_c_over_tau_k = 0.008`
+- `start_sources_at_tau_c_over_tau_h = 0.006`
+- `tol_perturb_integration = 3e-10`
+- `perturb_sampling_stepsize = 0.00035`
+- `radiation_streaming_approximation = 2`
+- `radiation_streaming_trigger_tau_over_tau_k = 240.`
+- `radiation_streaming_trigger_tau_c_over_tau = 100.`
+- `ur_fluid_approximation = 2`
+- `ur_fluid_trigger_tau_over_tau_k = 50.`
+
+Current new branch/PR: `research/gdm-cs2-manifold`, PR #9. First calibration fixes `w=0`, `cv2=0` and varies constant
+
+`cs2 = {1e-8,1e-7,1e-6,1e-5,1e-4}`
+
+relative to the same-solver zero-closure GDM reference. No hard threshold or rank claim is allowed from the first scan.
+
+### interacting vacuum / class_iv
 
 Pinned:
 
 `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`.
 
-The explicit interacting matter component enters total matter as
+The fork requires an assertion-checked compile-only removal of one premature brace, plus legacy `-fcommon` and `--no-as-needed` link semantics. These are implementation/toolchain repairs only; no cosmological equation is altered.
 
-`delta_rho_m += rho_idm_iv * delta_idm_iv`
-
-and, when its velocity degree of freedom exists,
-
-`rho_plus_p_theta_m += rho_idm_iv * theta_idm_iv`.
-
-The code then forms `theta_m` and applies
-
-`delta_m += 3*a*H*theta_m/k^2`.
-
-At zero coupling in synchronous gauge the IDM_IV velocity is the comoving pressureless value zero.
-
-### class_iv synchronous vTk header defect
-
-The pinned fork has an output-label bug: in synchronous gauge no active `theta_idm_iv` source column is written, but `perturb_output_titles()` still inserts a velocity-block label named `d_idm_iv`. Subsequent velocity titles are therefore shifted by one column.
-
-This does **not** affect the internal total-matter `mPk` source or IDE-S1. Species-level synchronous `vTk` from this fork is diagnostic only unless index order is recovered from source or the header is repaired and regression-tested.
-
----
-
-## 5. Cross-solver response bridge — Experiment 020
-
-Purpose: test whether same-solver response quotients remove code-lineage differences for a real nonzero deformation.
-
-For each solver `S`:
-
-\[
-r_S=\ln(P_{w\mathrm{CDM}}^S/P_{\Lambda\mathrm{CDM}}^S)
-\]
-
-with common physical deformation
-
-`w0=-0.9`, `wa=0`, `cs2=1`, matched cosmological parameters and frozen z/k nodes.
-
-Then compare
-
-\[
-\Delta r_{\rm bridge}=r_{GDM\_CLASS}-r_{class\_iv}.
-\]
-
-### Calibration A: asymmetric precision
-
-GDM_CLASS p8 versus class_iv default precision:
-
-`max |Delta r_bridge| = 1.0474971491e-5`.
-
-Largest discrepancies were concentrated at high k.
-
-### Calibration B: identical p8 precision
-
-Applying the same p8 precision preset to both lineages collapsed the residual to
-
-\[
-\boxed{\max|\Delta r_{\rm bridge}|=2.3747404043\times10^{-10}}.
-\]
-
-The physical response itself reaches about `5.0204e-2`, so the bridge residual is roughly `4.7e-9` of the signal amplitude.
-
-### Hard gate
-
-Before the final rerun DSIR froze
-
-\[
-\boxed{\max|\Delta r_{\rm bridge}|\le10^{-9}}.
-\]
-
-The clean hard regression passed.
-
-Scope: this validates the response-quotient architecture for this overlapping smooth-wCDM deformation. It does not assert that all solvers/theories agree universally to `1e-9`.
-
----
-
-## 6. Solver-specific zero limits already closed
-
-### GDM-S1 PASS
-
-Fixed start `start_small_k_at_tau_c_over_tau_h=1e-6`. Earlier-start-only sweep was non-monotonic and rejected as a tolerance-tuning method.
-
-Precision p1->p8 reduced the full linear-core zero-GDM/CDM residual. A hard threshold
-
-`max |Delta P/P| <= 5e-6`
-
-was frozen before final p8 rerun; actual hard maximum was
-
-`1.471014806e-6`.
-
-### IDE-S1 PASS
-
-Pinned class_iv needs a provenance-tracked compile-only repair removing exactly one premature brace plus legacy `-fcommon` and `--no-as-needed` linker semantics. No cosmological equation is changed.
-
-Hard tolerances frozen before rerun:
+IDE-S1 hard thresholds:
 
 - linear-core power `<=2e-8`;
 - semantic background `<=2e-12`.
 
 Both passed.
 
+The synchronous `vTk` header has an upstream title/index defect. Species-level `vTk` columns are diagnostic only. Internal total-matter `mPk` source is the production path.
+
 ---
 
-## 7. Modified-gravity control: current blocker
+## 4. H-EFTCAMB designer-f(R): MG-S0 closed
 
-Historical `src/dsir/linear_controls.py` includes a BZ-like quasi-static f(R) toy. Experiment 019 audits its domain with
+Pinned official H-EFTCAMB:
 
-\[
-\frac{k}{aH/c}.
-\]
+`EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`, branch `eftcamb`.
 
-Minimum over the frozen redshift grid is approximately:
-
-| k [h/Mpc] | min k/(aH/c) |
-|---:|---:|
-| 0.001 | 2.9 |
-| 0.003 | 8.7 |
-| 0.01 | 29 |
-| 0.03 | 87 |
-| 0.1 | 291 |
-
-Therefore the BZ-like QS toy is **not** a production control at `k=0.001,0.003`. Provisional QS comparison is restricted to `{0.01,0.03,0.1}`.
-
-The next full-MG candidate is official **H-EFTCAMB**, branch `eftcamb`, pinned initially at
-
-`EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`.
-
-The upstream designer-f(R) test uses
+Production designer configuration:
 
 - `EFTflag=3`
 - `DesignerEFTmodel=1`
-- `EFTwDE=0` (LambdaCDM background)
-- `EFTB0` as the designer-f(R) amplitude.
+- `EFTwDE=0` — LambdaCDM background
+- `EFTB0=B0`
 
-Do not use it in the production matrix until DSIR establishes its GR/small-`B0` control limit and response extraction.
+Physical parameter:
+
+\[
+B(a)=\frac{f_{RR}}{1+f_R}\frac{R'H}{H'},
+\qquad B_0=B(a=1).
+\]
+
+First parallel build `make -j2 camb` failed because of an upstream Makefile dependency race (`camb.mod` not ready before `inidriver.f90`). Serial upstream-style `make camb` succeeds. Retain this negative result; it is not a physics failure.
+
+Calibration sweep at z=0 showed maximum core responses approximately:
+
+| B0 | max |r_Delta| |
+|---:|---:|
+| 1e-2 | 3.7805e-1 |
+| 1e-3 | 2.0148e-1 |
+| 1e-4 | 6.8778e-2 |
+| 1e-5 | 1.1959e-2 |
+| 1e-6 | 1.5963e-3 |
+| 1e-7 | 2.0803e-4 |
+| 1e-8 | ~1.1e-6 stock-export floor |
+
+Exact `B0=0` is supported. The root finder reports approximately
+
+\[
+B_0^{found}=-2.22\times10^{-17}.
+\]
+
+Pinned H-EFTCAMB uses
+
+`EFTCAMB_GR_threshold = 1e-8`.
+
+For `B0=1e-8`, `Return to GR time = 1.1`; this point follows the GR branch through today and must not be treated as an independent nonzero atlas member. For `B0=1e-7`, return-to-GR time is about `a=0.7832`, and a nonzero response appears.
+
+Stock interpolated matter power passes through `Transfer_GetMatterPowerS`, which casts the output array to ordinary `real`; the production hard tolerance therefore includes the documented export floor.
+
+After calibration and **before** a new hard run, DSIR froze
+
+\[
+\boxed{\max_{k\in K_{core}}|r_\Delta(B_0=0)|\le2\times10^{-6}}
+\]
+
+and
+
+\[
+\boxed{|B_0^{found}|\le10^{-12}}
+\]
+
+plus mandatory theory-stability PASS.
+
+Fresh hard Actions run `32738835354` passed:
+
+\[
+\max|r_\Delta(B_0=0)|=1.0926960404\times10^{-6}
+\]
+
+with node vector `(0,0,0,1.0926960404e-6,0)`, and
+
+\[
+B_0^{found}=-2.221\times10^{-17}.
+\]
+
+**MG-S0 PASS.** See `experiments/021_eftcamb_designer_fr_gr_limit.md`.
+
+Next MG step is **MG-S1**: calculate nonzero stable B0 values safely above `1e-8` on all frozen z x k nodes, with same-solver GR reference. Compare to the old BZ toy only on its QS-safe `k={0.01,0.03,0.1}` subset.
 
 ---
 
-## 8. Rank/law-discovery rules that remain mandatory
+## 5. WDM and scale-block rule
 
-Before any rank claim:
+Thermal-WDM transfer control:
+
+\[
+T_{WDM}(k)=\left[1+(\alpha k)^{2\nu}\right]^{-5/\nu},
+\qquad \nu\approx1.12.
+\]
+
+Power/transfer log response:
+
+\[
+r_T(k)=\ln(P_{WDM}/P_{CDM})=2\ln T(k).
+\]
+
+For 3 keV WDM the low-k core is nearly blind (`r_T(0.1)~ -3.9e-6`), while `r_T(10)~ -0.117` and `r_T(20)~ -0.539`. Therefore low-k and small-scale blocks must be reported separately. The small-scale transfer fingerprint is not relabeled as nonlinear z=0 P(k) and is not itself a Ly-alpha likelihood.
+
+No global `R_model` number may be quoted without specifying the response/scale block.
+
+---
+
+## 6. Rank/manifold rules
+
+Before rank:
 
 \[
 Z=C^{-1/2}\Delta O,
 \qquad Z=U\Sigma V^T.
 \]
 
-No unwhitened rank claim is allowed. Experiment 011 recovered injected rank 3 in 30/30 whitened cases while naive raw-space calibration produced false ranks 20–35.
+No unwhitened rank claim is allowed. Exp.011 recovered rank 3 in 30/30 whitened tests while naive raw-space calibration produced false ranks 20–35.
 
-Theory-catalog sampling is an implicit prior, so report
-
-\[
-R_{model}(\pi)
-\]
-
-rather than one prior-free-looking number. Experiment 012 showed a 900/90/10 family multiplicity can hide a real third mode.
-
-Exact identities/Bianchi relations, calibration modes and measurement-induced degeneracy directions are quotiented before law discovery.
-
-For observational conditional innovation use
+Theory sampling is an explicit prior:
 
 \[
-r_t^\perp=r_t-C_{tN}C_{NN}^{-1}r_N.
+\pi(i)=\pi(f)\pi(i|f),
+\qquad R_{model}=R_{model}(\pi).
 \]
 
-Current DESI DR1 corrected ShapeFit aggregate remains null-consistent:
+Equal-total-family weighting is implemented as one defensible reference prior, not assumed uniquely correct. Report sensitivity to within-family sampling and stratified bootstrap.
 
-`chi2~5.53/5`, `p~0.355`.
+Missing channels:
 
-Therefore **G7 is OPEN**.
+- undefined response = masked/NaN;
+- never fill with zero/mean;
+- ordinary SVD only on an exact common valid subspace unless a separately validated missing-data method is used.
+
+Before law discovery project/quotient:
+
+- exact definitions;
+- Bianchi/conservation identities;
+- calibration/nuisance directions;
+- measurement-induced degeneracies;
+- derived coordinates already determined by parent coordinates.
+
+Current corrected DESI DR1 ShapeFit conditional-innovation aggregate remains null-consistent (`chi2~5.53/5`, `p~0.355`). **G7 stays OPEN.**
 
 ---
 
-## 9. Exact continuation sequence
+## 7. Exact continuation sequence
 
-1. Review and merge the v0.1.1 response-basis PR only after its unit tests and hard bridge are green.
-2. Create a separate MG research branch from the updated `main`.
-3. Clean-build pinned H-EFTCAMB `eftcamb@16d9c4e9...` with recursive submodules.
-4. Run an author-provided designer-f(R) smoke test.
-5. Establish **MG-S0** by comparing GR with a sequence of designer `EFTB0 -> 0` values; do not choose the tolerance after seeing the desired production point.
-6. Choose a nonzero, stable designer-f(R) control and compute its same-solver `r_Delta(k,z)` on all frozen nodes.
-7. Compare H-EFTCAMB full response with the old BZ-like toy only on the QS-safe `{0.01,0.03,0.1}` sub-block; disagreement at lower k is not a toy failure because the toy is out of domain there.
-8. Assemble the first genuinely common six-family response matrix: LambdaCDM, smooth wCDM/quintessence-like, thermal WDM, full designer-f(R), GDM, interacting vacuum.
-9. Project identities/nuisance modes, transform covariance consistently, whiten, and estimate `R_model(pi)` over defensible theory-family priors.
-10. Resume G7 nonlinear/invariant/symbolic-law search only after matrix stability checks.
-11. A candidate law must predict a withheld channel before G8 can pass.
+1. Merge the MG-S0 branch only after its final diff/CI review; the scientific hard gate is already PASS.
+2. Create MG-S1 from updated `main` and run a family of nonzero stable `B0 > 1e-8` values on the complete frozen z x k grid.
+3. Inspect PR #9 GDM `cs2` calibration; determine monotonicity, scale/redshift localization, solver stability, and whether sampling needs an expanded axis before freezing any production grid.
+4. Build an IDE nonzero interaction manifold using the already validated repaired pinned `class_iv`; do not infer the perturbation manifold from the background equivalence map alone.
+5. Populate model-instance records for all six families with solver SHA, parameters, basis id, validity mask and reference model.
+6. Assemble low-k common response blocks first; keep WDM small-scale transfer as a separate block until an overlap-connected observable construction is validated.
+7. Quotient identities/nuisance directions, whiten with the relevant covariance/precision model, and estimate `R_model(pi)` under multiple defensible theory priors.
+8. Stress-test rank against family sampling density, solver precision, removal of individual families, and scale/redshift sub-blocks.
+9. Only then reopen G7 residual-law search.
+10. Any candidate relation must predict a withheld physical channel before G8 can pass.
 
 **Never claim discovery before G8.**
