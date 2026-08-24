@@ -3,82 +3,92 @@
 **Date:** 2026-08-24  
 **Read after:** `docs/RECOVERY_MANUAL.md`
 
-This file is the live delta to the long recovery manual. A new chat/researcher should read the manual first, then this file, then `docs/GATES.md`, `docs/STATUS.md`, `docs/RESEARCH_LOG.md`, and `docs/PROVENANCE.md`.
-
-## 1. Current gate state
-
-- **G2 PASS:** response basis v0.1 is frozen.
-- **G3B PARTIAL:** LambdaCDM, smooth-wCDM, thermal-WDM and designer-f(R) controls exist; GDM and interacting-vacuum source-level zero limits pass; their full-solver numerical gates are still being finalized.
-- **G7 OPEN:** no new residual dark-sector law is claimed.
-- **G8 OPEN:** no discovery claim is allowed before withheld prediction.
+This is the authoritative live delta to the long recovery manual. Then read `docs/GATES.md`, `docs/STATUS.md`, `docs/CONSERVATION_GAUGE_V0_1.md`, `docs/RESPONSE_BASIS_V0_1_GAUGE_ERRATUM.md`, `docs/RESEARCH_LOG.md` and `docs/PROVENANCE.md`.
 
 Hard boundary: **do not modify/use RTK as a DSIR prior.**
 
 ---
 
-## 2. Frozen response basis v0.1 (Experiment 017)
+## 1. Current gate state
 
-Machine schema: `config/response_basis_v0_1.json`  
-Human specification: `docs/RESPONSE_BASIS_V0_1.md`  
-Implementation: `src/dsir/response_basis.py`
-
-### Core background coordinate
-
-Use anchored relative expansion
-
-`r_E(z;z*) = ln[(H(z)/H(z*))/(H_ref(z)/H_ref(z*))]`,
-
-with `z*=0.51` and frozen nodes
-
-`z={0.295,0.51,0.706,0.934,1.317,1.491,2.33}`.
-
-A common calibration `H->lambda H` cancels exactly. The anchor coordinate is identically zero and is not counted as a dimension.
-
-### Core perturbation coordinate
-
-Use fixed-primordial matter-power response
-
-`r_P(k,z)=ln[P_m(k,z)/P_m_ref(k,z)]`.
-
-Do **not** independently normalize each model to `D(1)=1` when amplitude is part of the response. Hold primordial normalization (`A_s`, `n_s`, etc.) fixed unless an explicit nuisance quotient is documented.
-
-Linear k core:
-
-`k/(h Mpc^-1)={0.001,0.003,0.01,0.03,0.1}`.
-
-Diagnostic extension:
-
-`{0.2,0.5,1.0}`.
-
-For the pinned GDM implementation, `k<0.001 h/Mpc` remains a separate ultra-large-scale diagnostic sector because its zero-limit branch has strong finite-start IC sensitivity. This sector is retained, not discarded, but is not mixed into the first common six-family rank block.
-
-### Exact identities / quotient rule
-
-For flat FLRW
-
-`F_AP=D_M H/c`, hence
-
-`r_FAP=r_DM+r_H`.
-
-Never count a derived coordinate and its parent coordinates as independent response dimensions.
-
-For removal of a constant log-power amplitude mode with precision `W=C^-1`, use
-
-`a=(1^T W r)/(1^T W 1)`,
-
-`r_perp=r-a 1`,
-
-so exactly
-
-`1^T W r_perp=0`.
-
-Covariance whitening remains mandatory before rank claims.
-
-Experiment 017 regression verifies calibration invariance, AP identity, fixed-primordial amplitude preservation, and W-orthogonality at floating-point precision.
+- **G1 PARTIAL:** conservation/Bianchi bookkeeping contract is frozen, but a gauge-safe common perturbation coordinate is not yet fully validated across solver families.
+- **G2 REOPENED:** Experiment 017 background/identity conventions remain valid; raw solver `mPk` is rejected as a common cross-gauge perturbation coordinate. Successor basis v0.1.1 is under construction.
+- **GDM-S0 PASS; GDM-S1 PASS.**
+- **IDE-S0 PASS; IDE-S1 PASS.**
+- **G3B PARTIAL:** solver-specific embeddings are ready, but the common six-family perturbation matrix is blocked by G1/G2.
+- **G7 OPEN:** no residual dark-sector law claimed; law search is blocked until the perturbation coordinate is repaired.
+- **G8 OPEN:** no discovery claim is permitted before withheld prediction.
 
 ---
 
-## 3. Interacting vacuum — source convention and zero limit
+## 2. Response basis v0.1: what survives and what is blocked
+
+Historical machine schema: `config/response_basis_v0_1.json`  
+Historical human spec: `docs/RESPONSE_BASIS_V0_1.md`  
+Gauge erratum: `docs/RESPONSE_BASIS_V0_1_GAUGE_ERRATUM.md`
+
+Still valid:
+
+- anchored relative expansion
+  `r_E(z;z*)=ln[(H(z)/H(z*))/(H_ref(z)/H_ref(z*))]`, `z*=0.51`;
+- frozen z nodes `{0.295,0.51,0.706,0.934,1.317,1.491,2.33}`;
+- fixed primordial normalization rule;
+- AP identity bookkeeping `r_FAP=r_DM+r_H`;
+- covariance-metric amplitude quotient;
+- frozen linear domain `k={0.001,0.003,0.01,0.03,0.1} h/Mpc` as working support.
+
+Blocked implementation:
+
+`r_P=ln[P_m/P_m,ref]` **must not be populated with raw solver `mPk` across families that use different gauges.**
+
+Reason: identical LambdaCDM cosmology in the same pinned GDM_CLASS code, changing only Newtonian versus synchronous gauge, differs by up to `9.8434e-5` in raw `mPk` over `1e-3<=k<=1e-1 h/Mpc`. This is much larger than solver zero-limit tolerances.
+
+G2 was therefore correctly reopened rather than hiding the mismatch.
+
+---
+
+## 3. GDM zero-limit status — S1 PASS
+
+Pinned upstream:
+
+`s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
+
+Source zero closure remains:
+
+`w=ca2=cs2=cv2=0`, `rho_gdm~a^-3`, `Pi_nad=0`, pressureless CDM continuity/Euler limit, zero dynamic shear preserved, leading adiabatic IC match CDM.
+
+Finite-start negative control:
+
+`start_small_k_at_tau_c_over_tau_h={1e-6,3e-7,1e-7,3e-8}` showed that making this single start parameter smaller does **not** monotonically improve the full calculation. Do not tune tolerance with it. Working start remains `1e-6`.
+
+Linear-core precision calibration p1->p8 at fixed start was then performed. Full-core maxima on `1e-3<=k<=1e-1 h/Mpc` include approximately:
+
+- p1 `5.93e-4`
+- p2 `1.79e-4`
+- p3 `8.43e-5`
+- p4 `3.66e-5`
+- p5 `1.63e-5`
+- p6 `4.70e-6`
+- p7 `2.96e-6`
+- p8 `1.47e-6`
+
+The location of the maximum moves with precision, supporting a numerical-floor interpretation rather than a stable physical residual.
+
+A conservative hard tolerance was frozen **before** the final hard rerun:
+
+`max |Delta P/P| <= 5e-6` for `1e-3<=k<=1e-1 h/Mpc`.
+
+The p8 hard run passed with actual
+
+`global_linear_core_max_abs_relative = 1.471014806e-6`.
+
+**GDM-S1 PASS.**
+
+`k<1e-3 h/Mpc` remains a separate finite-start/IC-sensitive diagnostic sector and is not discarded.
+
+---
+
+## 4. Interacting-vacuum zero-limit status — S1 PASS
 
 Pinned upstream:
 
@@ -86,157 +96,125 @@ Pinned upstream:
 
 Source convention:
 
-`Q = H (alpha rho_m + beta rho_v)`.
+`Q/H = alpha rho_m + beta rho_v`,
 
-Therefore
-
-`d rho_m/d ln a = -(3+alpha) rho_m - beta rho_v`,
+`d rho_m/d ln a = -(3+alpha)rho_m - beta rho_v`,
 
 `d rho_v/d ln a = alpha rho_m + beta rho_v`.
 
-Matrix form:
+Internal transfer cancels exactly on addition:
 
-`y'=M y`,
+`d(rho_m+rho_v)/d ln a = -3 rho_m`.
 
-`M=[[-(3+alpha),-beta],[alpha,beta]]`.
+At `alpha=beta=0`, matter is pressureless and vacuum constant. The explicit perturbation path is supported only in synchronous gauge in this pinned fork.
 
-Eigen-exponents:
+### Pinned-source compatibility caveats
 
-`lambda_+- = [-(alpha-beta+3) +- S]/2`,
+The exact upstream pin contains one premature closing brace before `case IDM_IV`; it also assumes legacy compiler/linker behavior. DSIR uses:
 
-`S=sqrt[(alpha+beta+3)^2-4 alpha beta]`.
+- assertion-checked removal of exactly that one brace;
+- `-fcommon` for old tentative-global semantics;
+- `-Wl,--no-as-needed` with GSL libraries.
 
-At `alpha=beta=0`:
+These are provenance-tracked source/toolchain compatibility adaptations; no cosmological equation/coefficient is changed.
 
-`rho_m=rho_m0 a^-3`, `rho_v=rho_v0`.
+Two clean-room calibrations established the numerical floor. Before the final hard run the following tolerances were frozen:
 
-Experiment 013 compared the transcribed analytic solution with direct ODE integration; maximum normalized discrepancy is about `5.9e-12` over tested controls.
+- linear-core `max |Delta P/P| <= 2e-8` on `1e-3<=k<=1e-1 h/Mpc`;
+- semantic-background peak-normalized mismatch `<=2e-12`.
 
-### Perturbations / gauge restriction (Experiment 016)
+The hard run passed both gates on
 
-The explicit IDM_IV perturbation path in this pinned fork is **not supported in Newtonian gauge**. Use synchronous gauge for the control.
+`z={0,0.295,0.51,0.706,0.934,1,1.317,1.491,2.33}`.
 
-There the zero-coupling density equation reduces exactly to pressureless CDM, and upstream adiabatic IC assign the same `delta=3/4 delta_gamma`.
+Semantic background includes
 
-The authoritative intended zero-coupling configuration is upstream `test_idm_iv_lcdm.ini`:
+`rho_cdm^(LCDM)=rho_cdm^(IDE)+rho_idm_iv^(IDE)`
 
-- `alpha_idm_iv=0`
-- `beta_idm_iv=0`
-- `f_idm_iv=1`
-- `f_iv=1`
-- synchronous gauge
-- `fluid_equation_of_state=IDM_IV` intentionally commented out (explicit separate-component path).
+at about `8.1e-13` worst relative active discrepancy and `rho_Lambda=rho_iv` at output precision.
 
-### Upstream compile caveat discovered during IDE-S1
-
-The exact pinned commit does not compile unmodified on the clean runner. In `background_w_fld()` a premature closing brace immediately after the EDE branch leaves the subsequent `case IDM_IV` outside its switch, causing `case label not within a switch statement`.
-
-This is an upstream syntax defect, **not** a physical result.
-
-Calibration PR #2 (`calibration/ide-zero-limit-001`) therefore uses
-
-`patches/apply_class_iv_ac627d54_compile_fix.py`
-
-which:
-
-1. requires the exact pinned source context to occur once;
-2. removes exactly the single premature brace;
-3. checks that the number of `case IDM_IV` labels is unchanged;
-4. checks the edit size;
-5. records the resulting `git diff` and repair-script SHA256;
-6. changes no cosmological equation or coefficient.
-
-**IDE-S1 remains OPEN until this repaired pinned source builds and the full zero-coupling spectra/background comparison is evaluated.**
+**IDE-S1 PASS.**
 
 ---
 
-## 4. GDM zero closure — source result
+## 5. G1 conservation/gauge contract
 
-Pinned upstream:
+Controlling document: `docs/CONSERVATION_GAUGE_V0_1.md`.
 
-`s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
+For internal interactions:
 
-At all-zero closure:
+`nabla_mu T_i^{mu nu}=Q_i^nu`,
 
-`w=ca2=cs2=cv2=0`,
+`sum_i Q_i^nu=0`,
 
-`rho_gdm(a)=rho_gdm0 a^-3`.
+therefore
 
-The non-adiabatic pressure term is
+`nabla_mu T_tot^{mu nu}=0`.
 
-`Pi_nad=(cs2-ca2)[delta+3 Hconformal(1+w) theta/k^2]`,
+Exact Bianchi/conservation identities are projected before rank estimation, not rediscovered as laws.
 
-hence `Pi_nad=0`.
+At first order the convention-independent gauge rule is
 
-The GDM continuity/Euler equations reduce to pressureless CDM when shear is zero. Dynamic shear obeys
+`delta T -> delta T - L_xi Tbar`.
 
-`shear'=-3 Hconformal shear + (8/3) cv2/(1+w)(theta+M_shear)`,
-
-so `cv2=0` preserves zero shear. Leading adiabatic IC reduce to CDM.
-
-**GDM-S0 PASS.**
+Therefore raw gauge-specific density, velocity and metric perturbations are forbidden as common cross-family coordinates without an explicit invariant mapping.
 
 ---
 
-## 5. GDM finite-start failure mode
+## 6. Raw matter-power gauge audit — negative result
 
-When GDM is enabled, the pinned solver uses an IC branch that omits several standard matter-radiation corrections proportional to `omega*tau`.
+Same pinned GDM_CLASS code, identical LambdaCDM parameters, identical output settings; only gauge changed:
 
-For the isolated photon-density example:
+`newtonian` versus `synchronous`.
 
-`delta_gamma_CLASS = -(k tau)^2/3 (1-omega tau/5) R`,
+Result on `1e-3<=k<=1e-1 h/Mpc`:
 
-`delta_gamma_GDMbranch = -(k tau)^2/3 R`.
+`max raw-mPk gauge difference = 9.843415778e-5`.
 
-The local asymptotic discrepancy in that term is therefore `omega tau/5`.
+This is about twenty times the frozen GDM-S1 tolerance and orders of magnitude above the IDE-S1 floor.
 
-However, a full-solver sweep of
+**Conclusion:** raw solver `mPk` is rejected as the common six-family perturbation coordinate.
 
-`start_small_k_at_tau_c_over_tau_h={1e-6,3e-7,1e-7,3e-8}`
-
-showed that decreasing this single parameter below `1e-6` **does not monotonically improve** the complete calculation and eventually worsens it. Therefore do not interpret this precision parameter as an independent `earlier = better` knob and do not tune a regression tolerance with it.
-
-Working start remains `1e-6`.
+This is an anti-artifact success of G1, not a failure of either physical model.
 
 ---
 
-## 6. GDM high-precision clean-room result
+## 7. Candidate gauge-invariant/comoving matter response — current active work
 
-At fixed start `1e-6`, stronger pinned-solver precision settings substantially reduce the zero-GDM/CDM residual on working scales.
+The transfer-level audit outputs `d_i=delta rho_i/rho_i` and `t_i=theta_i` in both gauges. In synchronous CDM-comoving gauge `t_cdm` is absent, i.e. CDM velocity is zero by gauge choice.
 
-Scale-aware p1 artifact gives approximately (tested z output):
+From the actual Newtonian/synchronous transfer outputs, the empirical transformation coefficient
 
-| k cut [h/Mpc] | max |Delta P/P| |
-|---:|---:|
-| >= 1e-4 | 1.10e-2 |
-| >= 1e-3 | 8.28e-4 |
-| >= 1e-2 | 5.55e-4 |
-| >= 0.03 | 1.44e-4 |
-| >= 0.05 | 3.89e-5 |
-| >= 0.1 | 2.82e-5 |
-| >= 0.5 | 1.67e-5 |
+`[(delta_m^syn-delta_m^Newt) k^2] / [Hconf (theta_m^Newt-theta_m^syn)]`
 
-The median residual is much smaller than the maximum in most working-scale windows. Background quantities agree to numerical/interpolation accuracy.
+approaches `3` on the well-conditioned low-k core points. This independently fixes the candidate sign/coefficient in the pinned convention:
 
-The global fractional P(k) maximum is **not** a useful calibration statistic because it is dominated by very small `k~1e-5 h/Mpc`, where the pinned zero-closure IC branch is known to be finite-start sensitive and P is tiny. Track that sector separately.
+`Delta_m = delta_m + 3 Hconf theta_m/k^2`,
 
-Main CMB auto/lensing spectra are also close in peak-normalized metrics; local ratios near sign/zero crossings of cross spectra are not used as standalone tolerance metrics.
+with `Hconf=aH` and `k` converted from `h/Mpc` to `1/Mpc`.
 
-**GDM-S1 still OPEN:** a precision-convergence plateau must be demonstrated before freezing a hard tolerance.
+At default solver precision this reduces the huge raw density-gauge difference but leaves a residual around `5e-5`, consistent with needing a precision-controlled audit rather than immediately promoting the formula.
 
-A matrix workflow `gdm-precision-sweep.yml` was launched. Its first p2/p3/p4 jobs were terminated by GitHub runner shutdown (`exit 143`), not by solver/scientific failure. They must be rerun unchanged; do not classify those interrupted jobs as failed physics.
+Active branch workflow:
+
+`.github/workflows/gauge-transfer-audit.yml`
+
+now runs the same candidate at the p8 precision used by the GDM-S1 hard gate. Script:
+
+`ci/gauge_invariant_matter_audit.py`.
+
+No gauge tolerance has yet been frozen. First measure the p8 invariant floor, then freeze a tolerance, then rerun as a hard gauge gate.
 
 ---
 
-## 7. Exact continuation sequence
+## 8. Exact continuation sequence
 
-1. Finish unchanged GDM precision p2, p3, p4 reruns and collect `physics_windows.json` artifacts.
-2. Compare p1->p4 in the frozen linear k core and primary CMB auto/lensing metrics. Determine whether a numerical plateau exists.
-3. Freeze GDM-S1 tolerance **from convergence behavior**, not from desired PASS outcome; record tolerance/version in provenance.
-4. Finish IDE PR #2 build with the assertion-checked compile-only source repair; inspect full zero-coupling background, P(k), CMB/lensing outputs.
-5. If IDE numerical zero limit is stable, freeze IDE-S1 tolerance and provenance.
-6. Build the first complete six-family response matrix in `dsir-response-v0.1` coordinates: LambdaCDM, smooth wCDM/quintessence-like, thermal WDM, designer-f(R), GDM, interacting vacuum.
-7. Project exact identities/nuisance directions, transform covariance consistently, whiten, then estimate `R_model(pi)` across defensible family priors.
-8. Only after the common matrix and observational projection are stable should G7 residual-law search resume.
-
-**Never claim discovery before G8 withheld prediction.**
+1. Read the p8 `comoving_gauge_audit.json` artifact from the transfer-level Newtonian/synchronous run.
+2. If `Delta_m` gauge residual collapses substantially below raw `mPk`, repeat/calibrate as needed and freeze a gauge tolerance **before** the final hard rerun.
+3. If the hard gauge gate passes, create response-basis **v0.1.1** without rewriting historical v0.1; use a response derived from the validated comoving matter quantity.
+4. Build the same transfer/invariant extractor for repaired pinned `class_iv` and verify its zero-coupling response against the common LambdaCDM invariant definition.
+5. Only after cross-solver compatibility passes, re-close G2 and G1-GAUGE.
+6. Build the first genuinely common six-family response matrix: LambdaCDM, smooth wCDM/quintessence-like, thermal WDM, designer-f(R), GDM, interacting vacuum.
+7. Project exact identities/nuisance directions, transform covariance consistently, whiten, and estimate `R_model(pi)` across defensible family priors.
+8. Resume G7 residual-law search only after that matrix is stable.
+9. Never claim discovery before G8 withheld prediction.
