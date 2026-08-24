@@ -1,0 +1,125 @@
+name: GDM nonzero cs2 manifold calibration
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/gdm-cs2-manifold.yml'
+      - 'ci/gdm_cs2_scan.py'
+      - 'experiments/025_gdm_cs2_manifold.md'
+
+jobs:
+  gdm-cs2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build/runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+      - name: Clone and build pinned GDM_CLASS
+        run: |
+          git clone https://github.com/s-ilic/gdm_class_public.git external_gdm
+          cd external_gdm
+          git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          git rev-parse HEAD | tee ../gdm_cs2_upstream_sha.txt
+          make -j2 class
+      - name: Freeze validated p8 precision preset
+        run: |
+          cat > external_gdm/dsir_p8.pre <<'EOF'
+          k_step_sub = 0.0010
+          k_step_super = 0.000003
+          k_step_super_reduction = 0.1
+          start_small_k_at_tau_c_over_tau_h = 1e-6
+          start_large_k_at_tau_h_over_tau_k = 0.05
+          tight_coupling_trigger_tau_c_over_tau_h = 0.005
+          tight_coupling_trigger_tau_c_over_tau_k = 0.008
+          start_sources_at_tau_c_over_tau_h = 0.006
+          tol_perturb_integration = 3e-10
+          perturb_sampling_stepsize = 0.00035
+          radiation_streaming_approximation = 2
+          radiation_streaming_trigger_tau_over_tau_k = 240.
+          radiation_streaming_trigger_tau_c_over_tau = 100.
+          ur_fluid_approximation = 2
+          ur_fluid_trigger_tau_over_tau_k = 50.
+          EOF
+      - name: Write zero-closure reference and constant-cs2 models
+        run: |
+          mkdir -p external_gdm/cs2_outputs
+          cat > external_gdm/gdm0.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          omega_cdm = 0.0
+          omega_gdm = 0.1200
+          Omega_Lambda = 0.684
+          N_ur = 3.046
+          N_ncdm = 0
+          Omega_k = 0.
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          type_gdm = time_only_bins
+          smooth_bins_gdm = yes
+          time_transition_width_gdm = 8.
+          time_values_gdm = 0.00001, 0.0001, 0.001, 0.01, 0.1
+          w_values_gdm = 0., 0., 0., 0., 0., 0.
+          cs2_values_gdm = 0., 0., 0., 0., 0., 0.
+          cv2_values_gdm = 0., 0., 0., 0., 0., 0.
+          dynamic_shear_gdm = yes
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          write background = yes
+          root = cs2_outputs/gdm0_
+          EOF
+          for pair in '1e-8 1em8' '1e-7 1em7' '1e-6 1em6' '1e-5 1em5' '1e-4 1em4'; do
+            set -- $pair; CS=$1; TOK=$2
+            sed \
+              -e "s/cs2_values_gdm = 0., 0., 0., 0., 0., 0./cs2_values_gdm = ${CS}, ${CS}, ${CS}, ${CS}, ${CS}, ${CS}/" \
+              -e "s/root = cs2_outputs\/gdm0_/root = cs2_outputs\/gdmcs2_${TOK}_/" \
+              external_gdm/gdm0.ini > external_gdm/gdmcs2_${TOK}.ini
+          done
+      - name: Run p8 reference and nonzero cs2 scan
+        working-directory: external_gdm
+        run: |
+          ./class gdm0.ini dsir_p8.pre 2>&1 | tee cs2_outputs/gdm0.log
+          for f in gdmcs2_*.ini; do
+            tok=$(basename "$f" .ini)
+            ./class "$f" dsir_p8.pre 2>&1 | tee "cs2_outputs/${tok}.log"
+          done
+      - name: Extract same-solver response manifold
+        run: |
+          python3 ci/gdm_cs2_scan.py \
+            --directory external_gdm/cs2_outputs \
+            --reference-prefix gdm0_ \
+            --models \
+              1e-8:gdmcs2_1em8_ \
+              1e-7:gdmcs2_1em7_ \
+              1e-6:gdmcs2_1em6_ \
+              1e-5:gdmcs2_1em5_ \
+              1e-4:gdmcs2_1em4_ \
+            --json gdm_cs2_manifold.json
+      - name: Upload calibration artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gdm-cs2-manifold-${{ github.sha }}
+          path: |
+            gdm_cs2_manifold.json
+            gdm_cs2_upstream_sha.txt
+            external_gdm/dsir_p8.pre
+            external_gdm/gdm*.ini
+            external_gdm/cs2_outputs/
+          if-no-files-found: error
