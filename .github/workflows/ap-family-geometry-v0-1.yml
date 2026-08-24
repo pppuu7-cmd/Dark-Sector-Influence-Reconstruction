@@ -1,0 +1,67 @@
+name: DSIR pinned-artifact AP family geometry v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/ap-family-geometry-v0-1.yml'
+      - 'ci/ap_family_geometry_v0_1.py'
+      - 'src/dsir/ap_operator.py'
+      - 'experiments/036_ap_family_geometry_v0_1.md'
+      - 'data/observations/desi_dr1_shapefit_erratum_2026.json'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  ap-family-geometry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install DSIR
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+      - name: Download exact frozen C1 artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          artifact-ids: 9536242626
+          path: inputs/wde
+          merge-multiple: true
+      - name: Download exact frozen C2 artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          artifact-ids: 9532491954
+          path: inputs/ide
+          merge-multiple: true
+      - name: Audit expected full-background inputs
+        run: |
+          test -f inputs/wde/solver/out/lcdm_background.dat
+          test -f inputs/wde/solver/out/w1em4_background.dat
+          test -f inputs/ide/external_iv/ide_outputs/ide0_background.dat
+          test -f inputs/ide/external_iv/ide_outputs/a_m1em4_background.dat
+          test -f inputs/ide/external_iv/ide_outputs/b_p1em4_background.dat
+          test -f inputs/ide/external_iv/ide_outputs/b_m1em4_background.dat
+      - name: Run Experiment 036 hard gate
+        run: |
+          python ci/ap_family_geometry_v0_1.py \
+            --wde-root inputs/wde \
+            --ide-root inputs/ide \
+            --shapefit data/observations/desi_dr1_shapefit_erratum_2026.json \
+            --json ap_family_geometry_v0_1.json
+      - name: Upload Experiment 036 result
+        uses: actions/upload-artifact@v4
+        with:
+          name: ap-family-geometry-v0-1-${{ github.sha }}
+          path: ap_family_geometry_v0_1.json
+          if-no-files-found: error
