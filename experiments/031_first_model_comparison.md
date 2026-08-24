@@ -1,8 +1,8 @@
 # Experiment 031 — first block-aware cross-family model comparison
 
 Date: 2026-08-24
-Status: COMPARISON DEFINED; CI RUN PENDING
-Prerequisite: corrected Experiment 030 comparison-readiness PASS
+Status: **COMPLETE — NO DISCOVERY CLAIM**
+Prerequisite: Experiment 030 comparison-readiness PASS.
 
 ## Scope
 
@@ -19,61 +19,107 @@ It is **not** yet an observational likelihood ranking. It does not apply survey 
 
 C0 LambdaCDM is the common response origin. C4 thermal WDM remains in the separately validated small-scale transfer block and is not imputed into the low-k matrix.
 
-## Three different comparison questions
+## Comparison decomposition
 
-For each pair DSIR distinguishes:
-
-1. **full response direction** in the complete 35-dimensional `(z,k)` block;
-2. **scale-mode shape** from the leading right singular vector of the 7x5 response surface;
-3. **time-mode shape** from the corresponding leading left singular vector.
-
-For each individual response matrix `R(z,k)`, compute
+For each response surface `R(z,k)` compute
 
 \[
-R = U\,\Sigma\,V^T.
+R=U\Sigma V^T.
 \]
 
 The leading separable approximation is
 
 \[
-R(z,k)\simeq \sigma_1 A_1(z)S_1(k).
+R(z,k)\simeq\sigma_1A_1(z)S_1(k),
 \]
 
-The reported rank-1 variance fraction is
+with rank-1 variance fraction
 
 \[
-f_1=\frac{\sigma_1^2}{\sum_i\sigma_i^2},
+f_1=\frac{\sigma_1^2}{\sum_i\sigma_i^2}
 \]
 
-with relative L2 residual
+and relative residual
 
 \[
-\epsilon_{\rm sep}=\sqrt{1-f_1}.
+\epsilon_{sep}=\sqrt{1-f_1}.
 \]
 
-This is a shape diagnostic. It is not a statement that the microscopic theory has one degree of freedom.
+This is a response-shape diagnostic, not a microscopic degree-of-freedom count.
 
-## Expected positive controls from source artifacts
+## Hard computation result
 
-Before this comparison:
+GitHub Actions run `32772758097` completed successfully at commit `5a0893abef9f492677df01399a6339c10257c158`.
 
-- GDM `cs2` and `cv2` were found nearly collinear in the full low-k matter-power response, with angle about `0.3226 deg`;
-- IDE alpha and beta were strongly better separated by structure than by background;
-- WDM was shown to be almost invisible on the low-k block but large in the high-k transfer block.
+Machine status:
 
-The first comparison should reproduce those qualitative facts from the frozen aggregate snapshot.
+`FIRST_BLOCK_AWARE_MODEL_COMPARISON_COMPLETE_NO_DISCOVERY_CLAIM`.
 
-## Initial comparison questions
+### Individual separability
 
-1. Which mechanisms have similar complete `(k,z)` responses?
-2. Which only share a similar scale dependence but differ in time/sign?
-3. Which responses are poorly represented by a separable `A(z)S(k)` form?
-4. Which near-degenerate pairs need an additional physical channel before they can be distinguished?
+- C1 smooth wDE: `f1=0.999861`, residual `0.01180`;
+- C2 IDE alpha: `f1=0.998156`, residual `0.04294`;
+- C2 IDE beta: `f1=0.922353`, residual `0.27865`;
+- C3 GDM cs2: `f1=0.9999999984`, residual `4.03e-5`;
+- C3 GDM cv2: `f1=0.9999999980`, residual `4.43e-5`;
+- C5 designer f(R): `f1=0.999999879`, residual `3.48e-4`.
+
+IDE-beta is therefore the least separable `A(z)S(k)` response among the sampled directions.
+
+### Full 35-cell response geometry
+
+Important orientation-aware angles include:
+
+- GDM cs2 vs cv2: `0.3226 deg` — strong internal degeneracy;
+- IDE negative-alpha vs GDM cs2: `24.9345 deg`;
+- IDE negative-alpha vs GDM cv2: `24.7864 deg`;
+- smooth wDE vs GDM cs2: `59.8042 deg`;
+- smooth wDE vs IDE beta: `80.5209 deg`;
+- GDM cs2 vs designer f(R): oriented ray angle `154.8182 deg`;
+- GDM cv2 vs designer f(R): oriented ray angle `154.5119 deg`.
+
+The large oriented GDM/f(R) angle mainly reflects opposite physical sign: GDM pressure/viscosity suppresses clustering whereas designer f(R) enhances it in this control direction.
+
+### Scale/time-mode decomposition
+
+The most striking result is the leading scale-shape cluster:
+
+\[
+\theta_S(c_s^2,c_v^2)=0.02436^\circ,
+\]
+
+\[
+\theta_S(c_s^2,f(R))=0.07813^\circ,
+\]
+
+\[
+\theta_S(c_v^2,f(R))=0.10169^\circ.
+\]
+
+Thus GDM pressure, GDM viscosity and designer f(R) have nearly the same leading **scale mode** over the current five low-k nodes.
+
+They differ much more in time/sign. For GDM cs2 vs f(R), the unoriented leading time-mode angle is `25.1817 deg`; for GDM cv2 vs f(R), `25.4879 deg`.
+
+Smooth wDE is much flatter in scale:
+
+\[
+\theta_S(wDE,GDM\ cs2)=59.4167^\circ.
+\]
+
+## Main findings
+
+1. **GDM internal degeneracy:** `cs2` and `cv2` are almost the same low-k matter-power direction and need another channel.
+2. **Shared scale-shape cluster:** GDM cs2, GDM cv2 and designer f(R) have nearly identical leading scale shapes despite different dynamics and signs.
+3. **Time leverage matters:** the GDM/f(R) similarity is largely broken by temporal evolution/sign rather than scale shape alone.
+4. **Smooth wDE differs mainly by scale-shape:** it is much flatter in k.
+5. **IDE beta is intrinsically less separable:** a single `A(z)S(k)` product is a poor approximation compared with the other controls.
 
 ## Interpretation rule
 
-A small theory-space angle is **not** by itself observational degeneracy. Data-space distinguishability must later be evaluated after applying the relevant response kernels and covariance whitening.
+A small theory-space angle is **not** by itself observational degeneracy. Data-space distinguishability must later be evaluated after applying response kernels and covariance whitening.
 
-Conversely, a large raw-theory angle is not yet a Bayes factor or exclusion significance.
+Conversely, a large raw-theory angle is not a Bayes factor or exclusion significance.
 
-The output of Experiment 031 is therefore the input to the discriminant graph and later data-whitened comparison, not a final ranking of cosmological models.
+Artifact digest: `sha256:aa8e7cf99e922107a42e4ab09be014a7fed57d95baf96a5b3f99652fc51b3a0c`.
+
+The output of Experiment 031 feeds the discriminant graph and later data-whitened comparison; it is not a final ranking of cosmological models.
