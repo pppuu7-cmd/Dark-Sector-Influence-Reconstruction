@@ -1,0 +1,62 @@
+{
+  "schema": "dsir.observational_whitening.eftcamb_fr_ap_zero_audit.v0.1",
+  "status": "PASS_EFTCAMB_FR_AP_ZERO_AUDIT_V0_1",
+  "failures": [],
+  "scope": "source-contract plus same-designer-branch numerical background/AP audit of the frozen high-precision C5 B0 manifold with EFTwDE=0",
+  "not_a_claim": [
+    "not a theorem for arbitrary modified-gravity backgrounds",
+    "not a test that f(R) perturbation responses vanish",
+    "not a parameter constraint or discovery",
+    "does not close G5 or advance G7 by itself"
+  ],
+  "pinned_upstream": "EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904",
+  "source_config_artifact": {
+    "run_id": 32759477319,
+    "artifact_id": 9532245261,
+    "artifact_name": "eftcamb-mgs1-hard-92350bb5087d17c874626c75b96779ae264dd1f6",
+    "digest": "sha256:9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635",
+    "config_lineage": "dsir_mgs1_hp_*"
+  },
+  "source_background_contract": {
+    "EFTwDE_0_selects": "wDE_LCDM_parametrization_1D",
+    "wDE_LCDM_value": -1.0,
+    "verified_by_workflow_grep_on_pinned_source": true
+  },
+  "output_naming_contract": {
+    "frozen_output_root_ends_with_underscore": true,
+    "CAMB_appends_underscore": true,
+    "background_suffix": "_background.dat",
+    "effective_separator_before_background": "__"
+  },
+  "numerical_reference": {
+    "file": "dsir_mgs1_hp_b0__background.dat",
+    "meaning": "designer B0=0 on the same frozen EFTwDE=0 LCDM-background branch"
+  },
+  "target_z": [0.51, 0.71, 0.92, 1.32, 1.49],
+  "thresholds_frozen_before_ci_hard_run": {
+    "z_grid_max_abs": 1e-10,
+    "max_relative_H": 1e-8,
+    "max_relative_DM_nonzero_rows": 1e-8,
+    "max_abs_log_DH_over_DM": 1e-8,
+    "config_contract_required": true,
+    "source_LCDM_background_contract_required": true
+  },
+  "gr_config_contract_ok": true,
+  "aggregate": {
+    "max_z_grid_abs": 0.0,
+    "max_relative_H": 0.0,
+    "max_relative_DM_nonzero_rows": 0.0,
+    "max_abs_log_DH_over_DM": 0.0,
+    "all_config_contracts_ok": true,
+    "all_numeric_background_tables_exact": true
+  },
+  "production_B0_grid": [0.0, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3],
+  "per_model_zero_contract": "Every audited production B0 point has z_grid_max_abs=0, max_relative_H=0, max_relative_DM_nonzero_rows=0, max_abs_log_DH_over_DM=0, and exact saved numeric background-table equality to designer B0=0.",
+  "hard_provenance": {
+    "run_id": 32785800977,
+    "artifact_id": 9541598468,
+    "artifact_sha256": "24b7fa5951c06d4cea72e6c0bf6baad2d2174f2d86794ec0818cf57c309b81c8",
+    "head_sha": "e8e8b266e1f36bf6086100b156bd40d71ed4d8c2"
+  },
+  "key_result": "The frozen high-precision designer-f(R) B0 direction is exactly background/AP-null on the source-proven EFTwDE=0 LCDM expansion branch over the production B0 grid at saved solver precision, while its previously validated structure response is nonzero."
+}

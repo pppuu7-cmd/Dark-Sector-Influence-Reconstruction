@@ -1,204 +1,289 @@
 # DSIR observational-whitening research log — 2026-08-25
 
-This log continues `docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-24.md`. Scientific claim status remains controlled by `docs/GATES.md`; interpretation status is mirrored in `docs/SCIENTIFIC_FINDINGS_REGISTER.md`.
+This log continues `docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-24.md`. Scientific claim status is controlled by `docs/GATES.md`; evolving interpretation status is mirrored in `docs/SCIENTIFIC_FINDINGS_REGISTER.md`.
 
 ## Experiment 036 — pinned-artifact AP family geometry v0.1
 
 ### Goal
 
-Use the exact frozen full-background solver artifacts already responsible for the C1 smooth-w and C2 interacting-vacuum local response atlas, map their dense `H(z)` histories through the hard-validated Experiment 035 AP operator, and quantify the corrected DESI DR1 ShapeFit `DH/DM` geometry directions without extrapolating the seven-node structure atlas below `z=0.295`.
-
-The tested nonzero background directions are:
-
-- C1 smooth non-phantom `epsilon_w=1+w -> 0+`;
-- C2 physical IDE coordinate `u=-alpha>=0` on the negative-alpha ray;
-- C2 beta central line.
-
-C0 is the origin by definition. C3 GDM and C5 designer f(R) expected zero-geometry contracts are **not** zero-imputed here; their numeric audits are deferred. C4 WDM remains in its separate small-scale block.
+Map the exact frozen C1 smooth-w and C2 interacting-vacuum full `H(z)` histories through the validated Experiment 035 AP operator and corrected DESI DR1 `D_H/D_M` marginal geometry block. Do not extrapolate the seven-node structure atlas below `z=0.295`.
 
 ### Frozen inputs
 
-C1 source:
+C1:
 
-- workflow run `32771133024`;
-- artifact ID `9536242626`;
-- digest `sha256:ece064524a3efe0bc83d19dc98cc674a9a88f405aa56e9886cdf4ebd30d8134b`;
-- upstream `s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
+- run `32771133024`;
+- artifact `9536242626`;
+- digest `sha256:ece064524a3efe0bc83d19dc98cc674a9a88f405aa56e9886cdf4ebd30d8134b`.
 
-C2 source:
+C2:
 
-- workflow run `32760042765`;
-- artifact ID `9532491954`;
-- digest `sha256:408322a2ee79907dd98cdd0e532daaed1e1aeeb1b633f42ab5321cb32149ab6d`;
-- upstream `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`.
+- run `32760042765`;
+- artifact `9532491954`;
+- digest `sha256:408322a2ee79907dd98cdd0e532daaed1e1aeeb1b633f42ab5321cb32149ab6d`.
 
-Corrected DESI DR1 ShapeFit geometry order is inherited from the frozen erratum product. The five geometry bins are `LRG1, LRG2, LRG3, ELG2, QSO` at `z_eff=(0.51,0.71,0.92,1.32,1.49)`.
+### Hard control
 
-### Hard thresholds
+Finite-difference relative-L2 convergence ceiling `0.005` was frozen before target pair angles were used. No pair-angle or rank threshold was defined.
 
-Before the CI hard execution the finite-difference convergence ceiling was frozen at relative L2 `<0.005` for the `1e-3` versus production `1e-4` tangent comparison in all three directions. This is the same 0.5% readiness scale used previously. Pairwise model angles were descriptive outputs only: **no angular pass/fail threshold and no rank threshold were defined**.
+Successful hard run `32782545098`, artifact `9540273287`, SHA256 `553faa2ef7ddbc44e25ddd6faca237d0be7fc265b9c23cfafb2a32570534d126`.
 
-### Infrastructure-only first attempt
+Convergence (`1e-3` vs `1e-4`):
 
-PR #17 triggered run `32782445280`. It stopped before the scientific script because the workflow incorrectly supplied an unsupported `artifact-ids` input to `actions/download-artifact@v4`. No hard calculation ran and no scientific threshold was changed.
+- smooth-w `0.0015563369`;
+- IDE negative-alpha `0.00013881894`;
+- IDE beta `2.25987e-7`.
 
-The workflow was corrected to pin the exact prior workflow `run-id` values while keeping `actions:read` permission and the same expected full-background file audit. This was an infrastructure repair only.
+Corrected-DESI marginal-whitened acute angles:
 
-### Successful hard run
+- smooth-w / IDE negative-alpha `72.803493 deg`;
+- smooth-w / IDE beta `64.151094 deg`;
+- IDE negative-alpha / beta `9.0379006 deg`, oriented `170.962099 deg`.
 
-Run `32782545098` completed successfully with status
+The same IDE alpha/beta directions are `58.9338 deg` apart in the frozen structure block.
 
-`PASS_AP_FAMILY_GEOMETRY_V0_1`.
+**Interpretation:** AP geometry alone cannot identify these two IDE interaction directions; structure/growth information is complementary.
 
-Result artifact:
+---
 
-- artifact ID `9540273287`;
-- artifact SHA256 `553faa2ef7ddbc44e25ddd6faca237d0be7fc265b9c23cfafb2a32570534d126`;
-- frozen repository result: `data/derived/observational_whitening/experiment_036_ap_family_geometry_v0_1.json`.
-
-The locally re-downloaded ZIP reproduced the same SHA256 exactly.
-
-### Tangent convergence
-
-Relative L2 difference between `1e-3` and production `1e-4` tangents:
-
-- C1 smooth-w: `0.0015563369067206232`;
-- C2 negative-alpha physical ray: `0.00013881893807444795`;
-- C2 beta: `2.2598694354308047e-07`.
-
-All are below the frozen `0.005` ceiling. Corresponding angular changes are `0.0760677 deg`, `0.000427325 deg`, and `4.75e-06 deg`.
-
-### Corrected DESI DH/DM marginal whitening
-
-Marginal geometry errors used:
-
-`(0.0986153, 0.0602861, 0.0403126, 0.0321081, 0.0241781)`.
-
-The production marginal-whitened local directions are:
-
-- C1 smooth-w: `(-1.41304,-1.31463,-0.894084,+0.0738609,+0.390460)`;
-- C2 negative-alpha: `(+0.508495,+1.03058,+1.65433,+1.86211,+2.57806)`;
-- C2 beta: `(-0.820339,-1.45008,-2.05131,-1.88235,-2.41677)`.
-
-Their norms are reported only per heterogeneous local parameter unit and **must not** be interpreted as detection significance or parameter constraints.
-
-### Pairwise geometry
-
-Marginally whitened angles:
-
-- smooth-w vs IDE negative-alpha: oriented `107.196507 deg`, acute `72.803493 deg`;
-- smooth-w vs IDE beta: oriented/acute `64.151094 deg`;
-- IDE negative-alpha vs IDE beta: oriented `170.962099 deg`, acute `9.037901 deg`.
-
-The key new hard result is therefore
-
-\[
-\boxed{\theta_{AP}^{acute}(\alpha_-,\beta)=9.0379006^\circ}
-\]
-
-while the already frozen IDE structure-block angle is about `58.9338 deg`.
-
-### Scientific interpretation
-
-This hard-confirms a new independent example of channel-dependent degeneracy: two IDE mechanism directions that are substantially separated in structure become nearly antiparallel in AP background geometry. AP therefore cannot replace growth/structure for distinguishing these C2 interaction directions.
-
-This strengthens the DSIR working meta-hypothesis that model identity is encoded by a **multi-channel influence trajectory**, not by one observable response shape. It remains a supported hypothesis, not a law, because family-complete joint observational whitening and holdout prediction gates are still absent.
-
-### Claim boundary / gate consequences
-
-Experiment 036 is:
-
-- not a full four-coordinate ShapeFit likelihood;
-- not a parameter constraint or detection significance;
-- not yet a family-complete C0-C5 AP geometry claim;
-- not an intrinsic-rank result;
-- not a residual law.
-
-Therefore G5 remains **PARTIAL**, G7 remains **OPEN**, and G8 remains **OPEN**.
-
-## Experiment 037 — hard GDM AP-zero audit v0.1
+## Experiment 037 — GDM background/AP-zero audit v0.1
 
 ### Goal
 
-Convert the expected C3 `cs2/cv2` zero-background geometry cell from a theory expectation into an explicit solver-level fact before inserting it into the AP response block.
+Test the expected C3 geometry null numerically instead of zero-imputing it from the statement that `cs2/cv2` are perturbation closure parameters with `w_gdm=0`.
 
-The exact frozen GDM_CLASS artifact from run `32759738560` was reused. Source artifact ID `9532247349`, digest `sha256:126c839ce948b5b25ec46b687af70e230c31d87071e6526727d1551a3c0f136d`, upstream `s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
+### Frozen provenance
 
-### Audited parameter contract
+- source run `32759738560`;
+- artifact `9532247349`;
+- digest `sha256:126c839ce948b5b25ec46b687af70e230c31d87071e6526727d1551a3c0f136d`;
+- upstream `s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
 
-Reference INI: `w_gdm=cs2=cv2=0`.
+Audited:
 
-Audited nonzero closure directions:
+- `cs2={1e-8,1e-7,1e-6}`, `w=0`, `cv2=0`;
+- `cv2={1e-8,1e-7,1e-6,1e-5,1e-4}`, `w=0`, `cs2=0`.
 
-- `cs2={1e-8,1e-7,1e-6}`, with `w=0`, `cv2=0`;
-- `cv2={1e-8,1e-7,1e-6,1e-5,1e-4}`, with `w=0`, `cs2=0`.
-
-The hard script parsed and checked each INI rather than trusting the filenames.
-
-### Pre-frozen hard thresholds
-
-Before CI execution:
-
-- maximum background redshift-grid mismatch `<=1e-12`;
-- maximum relative `H(z)` mismatch `<=1e-12`;
-- maximum absolute `Delta ln(DH/DM)` at `z=(0.51,0.71,0.92,1.32,1.49)` `<=1e-12`;
-- configuration contract required.
-
-Bitwise equality of the full saved numeric background table was recorded only as a diagnostic, not required for PASS.
-
-The protocol disclosed that an exploratory inspection had already found printed-precision equality. The threshold itself was not chosen from an angle/rank result and remained a tolerance-based hard zero test.
+Pre-frozen hard tolerances: `1e-12` on redshift grid, relative `H`, and absolute AP log response; INI contracts required.
 
 ### Hard result
 
-GitHub Actions run `32783243120` passed with status
+Run `32783243120`: `PASS_GDM_AP_ZERO_AUDIT_V0_1`.
 
-`PASS_GDM_AP_ZERO_AUDIT_V0_1`.
+For every nonzero audited point:
+
+- redshift grid exact;
+- all saved numerical background columns exactly equal to reference;
+- `max_relative_H=0`;
+- `Delta ln(D_H/D_M)=(0,0,0,0,0)` at the five DESI target redshifts.
+
+Result artifact `9540510596`, SHA256 `ba1fa93e348f9685d84a675311c79f9c746574463086710b4a46911d125f4edf`.
+
+**Hard scientific consequence:** frozen GDM `cs2/cv2` directions are background/AP-null but perturbation-active. C3 geometry may now be encoded as validated zero, not missing data.
+
+---
+
+## Experiment 038 — designer-f(R) background/AP-zero audit v0.1
+
+### Goal
+
+Test whether the frozen C5 designer-f(R) `B0` direction is genuinely background/AP-null, rather than inserting zero from the expectation `EFTwDE=0`.
+
+### Immutable provenance
+
+Pinned upstream:
+
+`EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`.
+
+Frozen hard-production configuration artifact:
+
+- source run `32759477319`;
+- artifact `9532245261`;
+- artifact name `eftcamb-mgs1-hard-92350bb5087d17c874626c75b96779ae264dd1f6`;
+- SHA256 `9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635`;
+- hard config lineage `dsir_mgs1_hp_*`.
+
+The pinned source maps `EFTwDE=0` to `wDE_LCDM_parametrization_1D`, whose value is exactly `w=-1` with zero derivatives.
+
+### Infrastructure chronology before scientific execution
+
+Several path/provenance assumptions failed before the scientific hard script was reached:
+
+1. older `dsir_mgs1_*` names were initially used, while the immutable hard artifact uses `dsir_mgs1_hp_*`;
+2. the standard `EFTflag=0` branch did not emit the EFT-specific background file through this path, so the exact designer `B0=0` point was adopted as the same-branch numerical reference while the pinned source supplies the LCDM background contract;
+3. CAMB appends `_` to nonempty `output_root`, while frozen roots already end in `_`, so actual output names contain `__background.dat`.
+
+These were infrastructure fixes only. The scientific tolerances were not changed.
+
+### Frozen hard thresholds
+
+Before any scientific target output:
+
+- redshift-grid mismatch `<=1e-10`;
+- relative `H` mismatch `<=1e-8`;
+- relative nonzero-row `D_M` mismatch `<=1e-8`;
+- absolute `Delta ln(D_H/D_M)` `<=1e-8`;
+- source/config contracts required.
+
+No angle/rank/significance threshold.
+
+### Hard result
+
+Run `32785800977`: `PASS_EFTCAMB_FR_AP_ZERO_AUDIT_V0_1`.
 
 Result artifact:
 
-- artifact ID `9540510596`;
-- SHA256 `ba1fa93e348f9685d84a675311c79f9c746574463086710b4a46911d125f4edf`;
-- the locally downloaded ZIP reproduced that SHA256 exactly;
-- frozen repository result: `data/derived/observational_whitening/experiment_037_gdm_ap_zero_audit_v0_1.json`.
+- ID `9541598468`;
+- SHA256 `24b7fa5951c06d4cea72e6c0bf6baad2d2174f2d86794ec0818cf57c309b81c8`.
 
-For **every** audited nonzero `cs2/cv2` variant:
+For every
 
-- `z_grid_max_abs = 0`;
-- `max_abs_H = 0` in saved solver units;
-- `max_relative_H = 0`;
-- all saved numerical background columns were exactly equal to the reference table;
-- `Delta ln(DH/DM)=(0,0,0,0,0)` at the five DESI target redshifts.
+`B0={0,1e-7,1e-6,1e-5,1e-4,1e-3}`:
 
-### Scientific interpretation
+- redshift-grid mismatch `0`;
+- `max_relative_H=0`;
+- `max_relative_DM_nonzero_rows=0`;
+- `max_abs Delta ln(D_H/D_M)=0`;
+- all saved numerical background columns exactly equal to designer `B0=0` at saved solver precision.
 
-Within the frozen C3 manifold with `w_gdm=0`, the `cs2/cv2` directions are **background/AP-null but perturbation-active**. The same parameters have established nonzero matter-power/metric responses, so the zero geometry coordinate does not mean proximity to the common response origin in the full multi-channel space.
+The result is therefore an exact saved-solver zero, stronger than merely passing the `1e-8` tolerance.
 
-This provides a particularly clean hard example of **channel nullity / block-sparse influence**:
+**Hard scientific consequence:** the frozen designer-f(R) B0 direction is background/AP-null on its source-proven LCDM expansion branch while its structure response is nonzero.
 
-\[
-K_{AP}t_{cs2}=K_{AP}t_{cv2}=0,
-\]
+### Cross-family implication
 
-while perturbation operators satisfy
+Experiments 037 and 038 hard-reproduce the same response-space topology in two qualitatively different classes:
 
 \[
-K_{structure}t_{cs2}\neq0,\qquad K_{structure}t_{cv2}\neq0.
+K_{AP}t=0,\qquad K_{perturbation}t\neq0,
 \]
 
-It strengthens, but does not prove universally, the DSIR meta-hypothesis that model identity is a multi-channel influence trajectory rather than a single observable response.
+for GDM closure physics and designer modified gravity respectively.
 
-The C3 AP geometry cell may now be encoded as a validated zero rather than as missing data. This is qualitatively different from zero-imputation.
+This supports **block-sparse influence trajectories**, but not a universal law: both frozen families deliberately hold their background sectors fixed.
 
-### Claim boundary / gates
+---
 
-The result applies only to the sampled frozen `w_gdm=0` C3 manifold. It does not cover arbitrary nonzero/time-dependent `w_gdm`, and it does not imply that GDM is observationally null.
+## Experiment 039 — ShapeFit growth/RSD operator contract
 
-G5 remains **PARTIAL** because C5 AP geometry and the family-complete growth/shape observation operators are still missing. G7 and G8 remain **OPEN**.
+### Correct quantity
 
-## Immediate continuation after Experiment 037
+The corrected ShapeFit growth coordinate is `f_sigma_s8`, with
 
-1. Numerically audit the C5 designer-f(R) background/AP contract. The frozen H-EFTCAMB artifact preserves `EFTwDE=0` configs and indicates background writing was enabled, but no immediately usable full background table was found in the preserved artifact; use the same pinned H-EFTCAMB setup in a dedicated background-output hard workflow if needed.
-2. After C5, form the family-complete AP geometry cell (C0 origin, C1/C2 measured tangents, C3 hard zero, C5 audited result; C4 remains a separate small-scale block unless a validated AP mapping is defined).
-3. Build the family-complete gauge-safe corrected-ShapeFit growth operator.
-4. Replace/calibrate the finite-node `m+n` proxy with a survey/window-aware shape operator or propagate explicit compression-model error.
-5. Continue updating `SCIENTIFIC_FINDINGS_REGISTER.md`, `STATUS.md`, and `RECOVERY_LATEST.md` on every substantive iteration; preserve future contradictions as `SUPERSEDED/RETRACTED` rather than deleting them.
+\[
+s=r_d/r_d^{ref},\qquad R=s\,8h^{-1}{\rm Mpc}.
+\]
+
+A fixed-radius textbook `f sigma8` cannot be substituted without a bridge.
+
+### Scale-dependent-growth representability
+
+Define density/velocity moments at the ShapeFit smoothing scale and
+
+\[
+{\cal D}_{RSD}=1-
+\frac{S_{\delta\Theta}^2}{S_{\delta\delta}S_{\Theta\Theta}}.
+\]
+
+A scalar growth amplitude is justified only if the tracer-relevant density/velocity fields are sufficiently close to the single-amplitude limit under a pre-frozen tolerance. Otherwise retain a multi-k/window-aware RSD operator.
+
+### Negative output-quality finding
+
+The frozen C5 H-EFTCAMB logs print `sigma8` and `sigma8^2_vd/sigma8` only to roughly four decimal places. At `B0=1e-7` this quantizes away most of the small response and creates an artificial sparse/unstable finite-difference tangent.
+
+**Decision:** printed summary logs are rejected for small-B0 growth-tangent calibration. Use machine-readable high-precision density/velocity transfer or cross-power products.
+
+Pinned CAMB exposes `delta_tot`, `v_newtonian_cdm`, and `v_newtonian_baryon` transfer variables, so the required bridge is feasible.
+
+---
+
+## Experiment 040 — finite-bin structure-growth response v0.1
+
+### Goal
+
+Before building tracer RSD, isolate how much model separation is carried specifically by temporal evolution of the already validated total-matter structure response.
+
+Define for adjacent frozen early->late nodes
+
+\[
+\Delta\bar f_P(k)=
+\frac{r_\Delta(k,z_{late})-r_\Delta(k,z_{early})}
+{2[\ln a_{late}-\ln a_{early}]}.
+\]
+
+This is a **theory-space temporal response**, not `f_sigma_s8`.
+
+### Hard controls
+
+Frozen before pairwise interpretation:
+
+- endpoint reconstruction `<=1e-12`;
+- constant-mode annihilation `<=1e-14`;
+- linearity `<=1e-12`;
+- finite/nonzero direction outputs;
+- no pairwise angle threshold.
+
+Hard run `32785987735`: `PASS_FINITE_BIN_GROWTH_RESPONSE_V0_1`.
+
+- endpoint error `1.1102230246251565e-16`;
+- constant residual `0`;
+- linearity residual `9.769962616701378e-15`.
+
+Artifact `9541462864`, SHA256 `0457823510fead4ff56e8e29843e39de47805f8fbfda86f4d9d33585be556ac9`.
+
+### Key pairwise comparisons
+
+#### IDE alpha/beta ladder
+
+- AP `9.0379006 deg` acute;
+- finite-bin growth `29.3978236 deg`;
+- full frozen structure `58.9337977 deg`.
+
+Temporal information restores part of the mechanism distinction lost by AP, but the complete structure history contains more.
+
+#### Smooth-w / IDE-alpha reversal
+
+- AP `72.803493 deg`;
+- full structure `52.194293 deg`;
+- temporal growth `10.310585 deg`.
+
+The temporal operator makes this pair nearly degenerate even though AP separates it strongly.
+
+#### IDE-alpha / GDM enhancement
+
+Full structure about `24.8-24.9 deg` -> temporal growth about `60.9 deg`.
+
+#### GDM cs2/cv2 persists
+
+`0.322616 deg` full low-k structure -> `1.334013 deg` temporal growth. Time helps weakly but does not replace metric slip.
+
+#### GDM / designer-f(R)
+
+- leading scale-only modes `0.078-0.102 deg`;
+- finite-bin growth `16.05-17.28 deg`;
+- full structure `25.18-25.49 deg`.
+
+Time is a genuine separator relative to scale-only shape, but full `(k,z)` structure is more informative than growth-only compression.
+
+### New hard interpretation
+
+**Pairwise degeneracies migrate between response operators.** Adding a new channel can separate one model pair while collapsing another; distinguishability is not monotonically improved by choosing one supposedly optimal scalar observable. Joint multi-channel geometry is the relevant object.
+
+---
+
+## Gate consequences and continuation
+
+Experiments 038/040 do **not** close G5. Geometry is now substantially controlled across C0/C1/C2/C3/C5, but observation-space growth and survey/window-aware shape remain incomplete. C4 WDM remains a deliberately separate small-scale block.
+
+G7 and G8 remain OPEN.
+
+Immediate continuation:
+
+1. preserve high-precision C5 transfer outputs from pinned H-EFTCAMB hard configs;
+2. define the total-matter/tracer velocity convention and build numerical `S_dd`, `S_dTheta`, `S_ThetaTheta`;
+3. create matched transfer-output runs for C3 GDM and C2 IDE under consistent gauge semantics;
+4. freeze and run the numerical `D_RSD` representability gate;
+5. replace/calibrate the finite-node `m+n` proxy with survey/window-aware shape forward modelling;
+6. only then form the full corrected ShapeFit whitening block and perform rank/prior/channel-removal stress tests;
+7. continue slip/lensing and WDM high-k observational blocks in parallel;
+8. no residual-law claim before stable observation-space geometry; no discovery before G8.
