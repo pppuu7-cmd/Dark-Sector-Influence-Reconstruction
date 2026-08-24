@@ -1,3 +1,4 @@
 This file intentionally triggers the clean-room GDM zero-limit regression when changed in a calibration PR.
 Do not encode scientific results here.
-Calibration run: GDM-ZL-001, 2026-08-24.
+Calibration run: GDM-ZL-linear-core-002, 2026-08-24.
+Scope: background + mPk through 0.25 h/Mpc; precision levels p1-p4.
