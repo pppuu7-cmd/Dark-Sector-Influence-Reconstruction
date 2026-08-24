@@ -1,0 +1,156 @@
+name: H-EFTCAMB designer-fR GR-limit calibration
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/eftcamb-fr-gr-limit.yml'
+      - 'ci/eftcamb_fr_gr_limit.py'
+      - 'experiments/021_eftcamb_designer_fr_gr_limit.md'
+
+jobs:
+  mg-s0-calibration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout DSIR
+        uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git gfortran gcc make liblapack-dev libblas-dev python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Clone pinned H-EFTCAMB with submodules
+        run: |
+          git clone --recursive https://github.com/EFTCAMB/EFTCAMB.git eftcamb
+          cd eftcamb
+          git checkout 16d9c4e9f85751e30efd0a53b177941713078904
+          git submodule update --init --recursive
+          git rev-parse HEAD | tee ../eftcamb_upstream_sha.txt
+          git submodule status --recursive | tee ../eftcamb_submodules.txt
+
+      - name: Build H-EFTCAMB executable
+        working-directory: eftcamb/fortran
+        run: |
+          make clean || true
+          make -j2 camb 2>&1 | tee ../../eftcamb_build.log
+          test -x ./camb
+
+      - name: Run upstream GR and designer-fR smoke controls
+        working-directory: eftcamb/fortran
+        run: |
+          mkdir -p eftcamb_test/results/spectra_results
+          ./camb eftcamb_test/parameters/1_EFT_GR.ini 2>&1 | tee ../../upstream_gr.log
+          ./camb eftcamb_test/parameters/4_Des_F_R_LCDM_2.ini 2>&1 | tee ../../upstream_fr_b1em4.log
+
+      - name: Prepare lean DSIR matter-power base
+        working-directory: eftcamb/fortran/eftcamb_test/parameters
+        run: |
+          cp base_params.ini dsir_base_params.ini
+          sed -i 's/^get_scalar_cls[[:space:]]*=.*/get_scalar_cls = F/' dsir_base_params.ini
+          sed -i 's/^get_tensor_cls[[:space:]]*=.*/get_tensor_cls = F/' dsir_base_params.ini
+          sed -i 's/^do_lensing[[:space:]]*=.*/do_lensing = F/' dsir_base_params.ini
+          sed -i 's/^DoRedshiftLensing[[:space:]]*=.*/DoRedshiftLensing = F/' dsir_base_params.ini
+          sed -i 's/^transfer_kmax[[:space:]]*=.*/transfer_kmax = 0.25/' dsir_base_params.ini
+          sed -i 's/^transfer_k_per_logint[[:space:]]*=.*/transfer_k_per_logint = 80/' dsir_base_params.ini
+          sed -i 's/^transfer_num_redshifts[[:space:]]*=.*/transfer_num_redshifts = 1/' dsir_base_params.ini
+          sed -i 's/^transfer_redshift(1)[[:space:]]*=.*/transfer_redshift(1) = 0/' dsir_base_params.ini
+          sed -i 's/^number_of_threads[[:space:]]*=.*/number_of_threads = 2/' dsir_base_params.ini
+          sed -i 's/^accuracy_boost[[:space:]]*=.*/accuracy_boost = 2/' dsir_base_params.ini
+          sed -i 's/^l_accuracy_boost[[:space:]]*=.*/l_accuracy_boost = 2/' dsir_base_params.ini
+
+      - name: Write DSIR GR and B0 sweep configs
+        working-directory: eftcamb/fortran/eftcamb_test/parameters
+        run: |
+          cat > dsir_gr.ini <<'EOF'
+          EFTflag = 0
+          output_root = eftcamb_test/results/spectra_results/dsir_gr
+          DEFAULT(dsir_base_params.ini)
+          EOF
+          for pair in \
+            '1e-2 dsir_fr_b1em2' \
+            '1e-3 dsir_fr_b1em3' \
+            '1e-4 dsir_fr_b1em4' \
+            '1e-5 dsir_fr_b1em5' \
+            '1e-6 dsir_fr_b1em6' \
+            '1e-7 dsir_fr_b1em7' \
+            '1e-8 dsir_fr_b1em8'; do
+            set -- $pair
+            B0=$1
+            TOKEN=$2
+            cat > ${TOKEN}.ini <<EOF
+          EFTflag = 3
+          DesignerEFTmodel = 1
+          EFTwDE = 0
+          EFTB0 = ${B0}
+          EFT_ghost_math_stability = F
+          EFT_mass_math_stability = F
+          EFT_ghost_stability = T
+          EFT_gradient_stability = T
+          EFT_mass_stability = F
+          EFT_mass_stability_rate = 10.0
+          EFT_additional_priors = T
+          EFTCAMB_turn_on_time = 0.01
+          EFTCAMB_stability_time = 1.e-10
+          EFTCAMB_stability_threshold = 0.0
+          output_root = eftcamb_test/results/spectra_results/${TOKEN}
+          DEFAULT(dsir_base_params.ini)
+          EOF
+          done
+
+      - name: Run DSIR GR and B0 sweep
+        working-directory: eftcamb/fortran
+        run: |
+          ./camb eftcamb_test/parameters/dsir_gr.ini 2>&1 | tee ../../dsir_gr.log
+          for f in eftcamb_test/parameters/dsir_fr_b*.ini; do
+            token=$(basename "$f" .ini)
+            ./camb "$f" 2>&1 | tee "../../${token}.log"
+          done
+
+      - name: Compare designer-fR responses to GR
+        run: |
+          python3 ci/eftcamb_fr_gr_limit.py \
+            --root eftcamb/fortran \
+            --gr-token dsir_gr \
+            --models \
+              1e-2:dsir_fr_b1em2 \
+              1e-3:dsir_fr_b1em3 \
+              1e-4:dsir_fr_b1em4 \
+              1e-5:dsir_fr_b1em5 \
+              1e-6:dsir_fr_b1em6 \
+              1e-7:dsir_fr_b1em7 \
+              1e-8:dsir_fr_b1em8 \
+            --json eftcamb_fr_gr_limit.json
+
+      - name: Record provenance
+        run: |
+          {
+            echo 'DSIR MG-S0 H-EFTCAMB designer-f(R) GR-limit calibration'
+            echo 'No hard scientific tolerance: calibration only.'
+            echo 'Upstream author controls: 1_EFT_GR.ini and 4_Des_F_R_LCDM_2.ini'
+            echo 'Designer setup: EFTflag=3, DesignerEFTmodel=1, EFTwDE=0, EFTB0 sweep.'
+            echo 'DSIR core k nodes: 0.001,0.003,0.01,0.03,0.1 h/Mpc; z=0 calibration.'
+            echo "DSIR commit: $GITHUB_SHA"
+            echo -n 'H-EFTCAMB upstream: '; cat eftcamb_upstream_sha.txt
+          } > eftcamb_environment.txt
+
+      - name: Upload MG-S0 calibration artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eftcamb-fr-gr-limit-${{ github.sha }}
+          path: |
+            eftcamb_fr_gr_limit.json
+            eftcamb_environment.txt
+            eftcamb_upstream_sha.txt
+            eftcamb_submodules.txt
+            eftcamb_build.log
+            upstream_gr.log
+            upstream_fr_b1em4.log
+            dsir_gr.log
+            dsir_fr_b*.log
+            eftcamb/fortran/eftcamb_test/parameters/dsir_*.ini
+            eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_*matterpower*.dat
+          if-no-files-found: error
