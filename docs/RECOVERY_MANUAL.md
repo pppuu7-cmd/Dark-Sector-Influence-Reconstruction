@@ -2,620 +2,742 @@
 
 **Project:** Dark-Sector Influence Reconstruction (DSIR)  
 **Repository:** `pppuu7-cmd/Dark-Sector-Influence-Reconstruction`  
-**Snapshot date:** 2026-08-24  
-**Purpose:** allow a new researcher or a new ChatGPT conversation to recover the project, its mathematics, assumptions, negative results, gates, and the exact next research steps without access to the original chat.
+**Manual snapshot:** 2026-08-25  
+**Live overlay:** `docs/RECOVERY_LATEST.md`  
+**Scientific interpretation register:** `docs/SCIENTIFIC_FINDINGS_REGISTER.md`
 
-> READ THIS FILE FIRST AFTER ANY CHAT/SESSION LOSS. Then read `docs/GATES.md`, `docs/STATUS.md`, `docs/RESEARCH_LOG.md`, `docs/PROVENANCE.md`, and the numbered scripts in `experiments/`.
+This file is the stable recovery/methodology manual. It must be updated whenever an iteration changes the mathematics, hard provenance, scientific interpretation, gate state, or exact continuation sequence. `RECOVERY_LATEST.md` is updated every substantive iteration even when the stable derivations below do not change.
 
----
+After any chat/session loss read, in order:
 
-## 0. Hard project boundary
-
-DSIR is an independent project. **Do not edit, import, overwrite, or use the RTK repository as a prior.** A mature external model (including RTK, if/when mature) may later be embedded into DSIR only as an ordinary candidate theory subject to the same gates as every other model.
-
-DSIR is currently a **reconstruction/meta-inference framework**, not a fundamental theory. No discovery claim is allowed before gate G8 (withheld/external prediction).
-
----
-
-## 1. Core scientific question
-
-The starting question is not “what is dark matter?” or “what is dark energy?”. It is:
-
-> **What is the minimal observable influence structure that must exist to reproduce all empirically required dark-sector effects, and are there robust mathematical relations between those effects?**
-
-The intended direction is inverse:
-
-`data -> response functions -> cross-channel relations -> candidate dynamics -> candidate action/theory`
-
-rather than the usual:
-
-`assumed theory -> parameters -> predictions -> data`.
-
-The key philosophical rule is that **DM, DE, modified gravity, interacting sectors, unified fluids, etc. are theory-layer labels**, not primary objects of the reconstruction.
+1. `docs/RECOVERY_MANUAL.md`;
+2. `docs/RECOVERY_LATEST.md`;
+3. `docs/SCIENTIFIC_FINDINGS_REGISTER.md`;
+4. `docs/GATES.md` and `docs/STATUS.md`;
+5. the latest dated research log;
+6. the most recent numbered experiment protocol and frozen result JSON.
 
 ---
 
-## 2. Three-layer architecture
+## 0. Hard project boundary and claim discipline
 
-### Layer A — Data
-Likelihood-level observables, covariances, calibrations, nuisance parameters, window functions, selection effects, and systematics.
+DSIR is independent of RTK. **Never edit, import, overwrite, merge, or silently use the RTK project as a prior.** A mature external theory may later be embedded only as another candidate family subject to exactly the same DSIR gates.
 
-Examples:
+DSIR is a **reconstruction/meta-inference framework**, not a fundamental theory. No discovery or new law of nature is claimed. In particular:
 
-- BAO: `D_M/r_d`, `D_H/r_d`, `D_V/r_d`;
-- RSD/ShapeFit: geometry + growth + shape compressed vectors;
-- CMB spectra and lensing;
-- weak lensing;
-- cluster/halo/galaxy observables;
-- GW propagation/standard sirens;
-- local/fifth-force/equivalence-principle constraints.
+- a small singular value is not a law;
+- an observational degeneracy is not a physical identity;
+- a compressed-data correlation is not causality;
+- a known conservation/definition identity is not a discovery;
+- no residual-law claim is permitted before G7;
+- no discovery claim is permitted before a withheld prediction passes G8.
 
-### Layer B — Response (primary law-discovery layer)
-Gauge-/frame-robust quantities that express **what the invisible sector does**:
-
-- background expansion `E(z)=H(z)/H0`;
-- Alcock–Paczynski response;
-- growth `D(a)`, `f=d ln D/d ln a`, `f sigma8`;
-- matter power response `P(k,z)`;
-- gravitational responses `mu(k,a)`, `eta(k,a)`, `Sigma(k,a)`;
-- Weyl/lensing potential;
-- tensor propagation response;
-- nonlinear/halo/screening response;
-- possible nongravitational couplings.
-
-### Layer C — Theory
-Interpretations/embeddings: LambdaCDM, wCDM/quintessence, interacting DM-DE/vacuum, generalized dark matter (GDM), unified fluids, WDM, modified gravity, EFT/PPF, microphysical actions, etc.
-
-**Law discovery is performed primarily in Layer B.** Layer C is used to map theory manifolds into common response space and to identify intersections/degeneracies.
+Negative results, failed approximations, failed CI attempts, and superseded interpretations are preserved rather than erased.
 
 ---
 
-## 3. Effective residual source X_{mu nu}
+## 1. Scientific question and inverse architecture
 
-A useful theory-layer bookkeeping object is
+The central question is:
 
-`X_{mu nu} = M0^2 G_{mu nu} - T^{known}_{mu nu}`.
+> What is the minimal **observable influence structure** required to reproduce empirically allowed dark-sector effects, and which relations between influence channels survive model labels, gauge conventions, observational compression, covariance whitening, and theory-family priors?
 
-It collects whatever is required beyond explicitly modeled known matter/radiation. It can represent DM+DE stress-energy, effective modified-gravity terms, or a mixture.
+The intended direction is
 
-Important caveat: `X_{mu nu}` is **not** the unique fundamental observable because its form depends on what is assigned to `T_known`, on the normalization `M0`, and at perturbation level on gauge/frame choices. Therefore the project architecture is
+`data -> observable response operators -> response geometry/manifolds -> cross-channel relations -> candidate effective dynamics -> candidate fundamental theory`,
 
-`data -> gauge/frame robust response space -> X_{mu nu}/EFT/GDM/theory interpretation`,
+not
 
-not the reverse.
+`assumed model name -> fit parameters -> declare ontology`.
 
-For a homogeneous FLRW background, after choosing the bookkeeping split,
+Three layers are kept distinct:
 
-`rho_X = 3 M0^2 (H^2 + K/a^2) - rho_known`,
+### Layer A — data/measurement
+Likelihood vectors, covariances, window functions, nuisance parameters, selection effects, survey compression and calibration.
 
-`p_X = -M0^2 (2 Hdot + 3 H^2 + K/a^2) - p_known`,
+### Layer B — response/influence
+Background expansion, AP geometry, growth, density power, metric potentials/slip/lensing, small-scale transfer, tensor propagation and other observable effects.
 
-and, where meaningful,
+### Layer C — theory
+LambdaCDM, smooth dark energy, interacting sectors, GDM, WDM, modified gravity, EFT/PPF, etc.
 
-`w_X = p_X/rho_X`.
-
-At scalar perturbation level one may write the residual stress response schematically as
-
-`delta X -> {delta rho_X, q_X, delta p_X, pi_X}`,
-
-but law-search variables must first be converted to a gauge/frame-robust response basis.
+Law search is performed primarily in Layer B after quotienting known identities and measurement degeneracies.
 
 ---
 
-## 4. Main observable response quantities
+## 2. Residual source bookkeeping
 
-### 4.1 Background
+A useful common theory-layer object is
 
-For spatially flat constant-w cosmology used as a control:
+\[
+\boxed{X_{\mu\nu}=M_0^2G_{\mu\nu}-T^{known}_{\mu\nu}}.
+\]
 
-`E^2(a) = Omega_m a^(-3) + (1-Omega_m) a^[-3(1+w)]`.
+It is a bookkeeping residual that can represent missing stress-energy, modified-gravity contributions, or mixtures. It is not itself a unique observable because it depends on the split defining `T_known`, the normalization `M0`, and perturbative gauge/frame choices.
 
-LambdaCDM is the special case `w=-1`:
+For homogeneous FLRW after a chosen bookkeeping split,
 
-`E^2(a) = Omega_m a^(-3) + 1-Omega_m`.
+\[
+\rho_X=3M_0^2\left(H^2+K/a^2\right)-\rho_{known},
+\]
 
-These formulas are controls, not assumptions imposed on the final DSIR reconstruction.
+\[
+p_X=-M_0^2\left(2\dot H+3H^2+K/a^2\right)-p_{known}.
+\]
 
-### 4.2 Linear growth
-
-For subhorizon matter growth in a simple quasi-static control,
-
-`D'' + [2 + d ln H/d ln a] D' - (3/2) Omega_m(a) mu(a,k) D = 0`,
-
-where primes here mean derivatives with respect to `ln a`.
-
-`mu=1` gives the GR control. The logarithmic growth rate is
-
-`f = d ln D / d ln a`.
-
-**Normalization warning discovered in Experiment 007:** do not normalize `D(a=1)=1` independently in every model when comparing power amplitudes at fixed primordial amplitude `A_s`. Doing so erases real late-time growth differences. Use common initial conditions and compare the unnormalized growth histories; only use independently normalized `D` for shape-only diagnostics where explicitly intended.
-
-### 4.3 Modified-gravity response basis
-
-The quasi-static control uses
-
-`k^2 Psi = -4 pi G a^2 mu(k,a) rho Delta`,
-
-`eta(k,a) = Phi/Psi`,
-
-and the lensing/Weyl combination
-
-`Sigma(k,a) = mu(k,a) [1+eta(k,a)]/2`.
-
-The frozen BZ-like f(R) control in the repository is designed so that its GR limit is recovered at small `q`, while at large `q` it tends toward a scalar-tensor-like `mu -> 4/3`, `eta -> 1/2`. In this particular control `Sigma=1` identically. **This identity is a known construction identity and must be quotiented out; it is not a discovery.**
-
-### 4.4 Thermal WDM control
-
-Thermal WDM is used as a scale-dependent suppression control. Its key DSIR role is that, to first control accuracy, it can be background-degenerate with CDM+Lambda while producing a negative scale-dependent suppression of `P(k)` on small scales.
-
-### 4.5 Generalized Dark Matter (GDM)
-
-The selected external implementation is `s-ilic/gdm_class_public`. Its closure language exposes three independent time-dependent functions:
-
-`w_gdm(a)`, `c_s^2(a)`, `c_vis^2(a)`.
-
-The strict CDM regression limit is
-
-`w_gdm = 0`, `c_s^2 = 0`, `c_vis^2 = 0`.
-
-This limit must reproduce the CDM reference within solver numerical tolerance before any nonzero GDM parameter is admitted to DSIR G3B.
-
-### 4.6 Interacting-vacuum control
-
-Use a clearly specified interaction four-vector; never use an undefined scalar `Q` alone at perturbation level. The current planned clean control is a geodesic interacting-vacuum realization with
-
-`Q_c^mu = Q u_c^mu`,
-
-so there is no momentum transfer in the CDM rest frame. The no-interaction regression limit is
-
-`Q -> 0` (or the implementation coupling parameter `xi -> 0`) -> LambdaCDM.
-
-The exact code-level sign convention must be read from the pinned external solver before comparing positive/negative `xi`.
+At scalar level one can decompose the residual response into density, momentum, pressure and anisotropic stress, but DSIR first maps theory output into gauge/frame-robust observable response quantities.
 
 ---
 
-## 5. Background degeneracies already established
+## 3. Frozen conservation/gauge contract — G1 PASS v0.1.1
 
-### 5.1 Interacting vacuum versus wCDM background
+Total known+dark bookkeeping must respect the Bianchi identity. Interacting-component source terms must sum to zero in the full stress-energy balance; a scalar `Q` without its four-vector/momentum-transfer convention is insufficient at perturbation level.
 
-For the control convention
+For the production matter response define
 
-`d rho_c/d ln a + 3 rho_c = xi rho_de`,
+\[
+\delta_m=\frac{\sum_i\rho_i\delta_i}{\rho_m},
+\]
 
-`d rho_de/d ln a = -xi rho_de`,
+\[
+\theta_m=\frac{\sum_i(\rho_i+p_i)\theta_i}{\rho_m+p_m},
+\]
 
-we get
+and the comoving total-matter contrast
 
-`rho_de(a) = rho_de0 a^(-xi)`.
+\[
+\boxed{\Delta_m=\delta_m+3(1+w_m){\cal H}\frac{\theta_m}{k^2}}.
+\]
 
-Integrating the CDM equation gives a background of the form
+This was hard-regressed between Newtonian and synchronous gauge implementations. Production matter-power comparisons use the comoving total-matter quantity rather than a gauge-specific raw density contrast.
 
-`E^2(a) = A a^(-3) + (1-A) a^(-xi)`
-
-for an effective coefficient `A` fixed by present densities/coupling convention. This is exactly the same functional form as constant-w CDM with
-
-`-3(1+w_eff) = -xi`,
-
-therefore
-
-`w_eff = -1 + xi/3`.
-
-Hence a physically interacting model and a noninteracting wCDM interpretation can be **exactly background-degenerate**. DSIR must distinguish them using perturbations/velocity/momentum-transfer channels, not by `H(z)` alone.
-
-### 5.2 Generalized Chaplygin gas intersection
-
-The generalized Chaplygin gas has an exact parameter subspace (`alpha=0`) whose background reduces to a matter + constant-vacuum form. Numerically the repository found machine-level agreement with the corresponding Lambda+matter background. This is another example that model families form **intersecting response manifolds**, not disjoint boxes.
-
-### 5.3 Consequence
-
-The correct object is not
-
-`model name -> one class`,
-
-but
-
-`theory family -> manifold M_i in response space`.
-
-Different manifolds may intersect:
-
-`M_i ∩ M_j != empty`.
-
-DSIR therefore constructs a **discriminant graph**: for each unresolved intersection, identify the minimal additional observable channel required to separate the physical interpretations.
+Important later RSD caveat: a gauge-safe total-matter density variable does **not** automatically identify the tracer velocity entering a galaxy RSD compression. Experiment 039 makes that distinction explicit.
 
 ---
 
-## 6. DESI DR2 BAO / AP reconstruction (G6A)
+## 4. Frozen response basis — G2 PASS v0.1.1
 
-The stored DESI DR2 compressed BAO product contains 13 entries of `D_V/r_d`, `D_M/r_d`, and `D_H/r_d` with a 13x13 covariance.
+### 4.1 Structure grid
 
-For bins where both transverse and radial distances are available define the sound-horizon-free Alcock–Paczynski response
+Redshift nodes:
 
-`F_AP(z) = (D_M/r_d)/(D_H/r_d) = D_M/D_H`.
+`z={0.295,0.51,0.706,0.934,1.317,1.491,2.33}`.
 
-In a flat FLRW geometry,
+Low-k nodes:
 
-`D_M(z) = (c/H0) integral_0^z du/E(u)`,
+`k={0.001,0.003,0.01,0.03,0.1} h/Mpc`.
 
-`D_H(z) = c/[H0 E(z)]`.
+### 4.2 Anchored background response
+
+\[
+\boxed{r_E(z;z_*)=\ln\left[\frac{H(z)/H(z_*)}{H_{ref}(z)/H_{ref}(z_*)}\right]},
+\qquad z_*=0.51.
+\]
+
+The anchor removes an arbitrary multiplicative expansion normalization but, as Experiment 035 proves, loses no AP information.
+
+### 4.3 Production structure response
+
+\[
+\boxed{r_\Delta(k,z)=\ln\frac{P^S_{\Delta,model}(k,z)}{P^S_{\Delta,ref}(k,z)}}.
+\]
+
+`S` denotes the same solver lineage/numerical setup whenever possible. Cross-solver comparisons require an explicit bridge/regression, not direct absolute-spectrum subtraction.
+
+The smooth-w cross-solver bridge passed the frozen tolerance. Missing response cells remain missing unless an analytic or numerical contract proves an exact zero.
+
+---
+
+## 5. AP observation operator — Experiments 035–038
+
+For flat FLRW,
+
+\[
+D_H=\frac{c}{H_0E(z)},
+\qquad
+D_M=\frac{c}{H_0}\int_0^z\frac{dz'}{E(z')}.
+\]
 
 Therefore
 
-`F_AP(z) = E(z) integral_0^z du/E(u)`.
+\[
+\boxed{F_{AP}(z)=\frac{D_M}{D_H}=E(z)\int_0^z\frac{dz'}{E(z')}}.
+\]
 
-Let
+If the model/reference expansion ratio is represented by
 
-`I(z) = integral_0^z du/E(u)`.
+\[
+E_{model}(z)=A\,E_{ref}(z)e^{r_E(z)},
+\]
 
-Then `F=E I` and `I'=1/E`. Because `E=F/I`,
+then
 
-`I'/I = 1/F`.
+\[
+\frac{F_{AP,model}}{F_{AP,ref}}=
+ e^{r_E(z)}
+\frac{\int_0^z e^{-r_E(z')}dz'/E_{ref}(z')}
+{\int_0^z dz'/E_{ref}(z')}.
+\]
 
-Integrating between `z1` and `z2` gives
+The constant `A` cancels exactly. Thus anchoring `r_E` does not remove AP information.
 
-`ln[I(z2)/I(z1)] = integral_z1^z2 dz/F(z)`.
+The corrected ShapeFit geometry coordinate is `D_H/D_M`, so
 
-Using `E=F/I`,
+\[
+\boxed{\Delta\ln(D_H/D_M)=-\Delta\ln F_{AP}}.
+\]
 
-`E(z2)/E(z1) = [F(z2)/F(z1)] exp[- integral_z1^z2 dz/F(z)]`.
+Linearizing,
 
-Thus **both `H0` and `r_d` cancel**. This is a calibration-independent relative expansion reconstruction under the assumptions of flat FLRW and the chosen interpolation of `F_AP(z)`.
+\[
+\Delta\ln F_{AP}(z)=r_E(z)-
+\frac{\int_0^z r_E(z')dz'/E_{ref}(z')}
+{\int_0^z dz'/E_{ref}(z')}+O(r_E^2).
+\]
 
-Repository validation: piecewise-linear interpolation was tested on several smooth wCDM controls; maximum node-level reconstruction error was about `0.795%`, below the statistical uncertainty of the first DESI test. This is a geometric identity/control, not a new law.
+Experiment 035 hard validation:
 
-Representative reconstructed results already obtained include approximately
+- run `32778635058`;
+- status `PASS_CALIBRATION_FREE_AP_OPERATOR_V0_1`;
+- direct wCDM bridge error `1.00475e-14`;
+- additive calibration-mode residual `7.82967e-15`;
+- `D_H/D_M` sign identity error `0`;
+- quadratic remainder halving ratio `0.2499966`;
+- artifact `9538896209`, SHA256 `f4a70ff9c67bdf45b520f7a2babaf63280fde6b841c45539a9c6fc22e3479d9f`.
 
-`E(0.934)/E(0.510) = 1.219 (+0.037,-0.036)`,
+### Critical production rule
 
-`E(2.33)/E(0.510) = 2.525 (+0.093,-0.089)`.
-
----
-
-## 7. Real multi-channel DESI DR1 response (G6B)
-
-The first real geometry+growth+shape response uses the **corrected 2026 erratum** values for DESI DR1 ShapeFit. The originally published Appendix-A `f sigma_s8` values/covariances contained a numerical error. Old values are forbidden by provenance/regression checks.
-
-Across five informative redshift bins, the measured correlation between AP geometry and the growth response is approximately
-
-`rho(AP,g) = (-0.551, -0.542, -0.527, -0.554, -0.627)`
-
-with simple mean about `-0.560` and bin-to-bin scatter about `0.039`.
-
-**Interpretation:** this is classified as an observational identifiability/measurement-degeneracy direction of the joint AP/RSD fit, not a dark-sector law.
-
----
-
-## 8. Conditional innovation: removing measurement-induced correlation
-
-Before looking for a new relation involving a target response `t` (e.g. growth), condition out nuisance/known measurement directions `N` (e.g. AP and shape). For a Gaussian residual vector `r` with block covariance,
-
-`r_t_perp = r_t - C_tN C_NN^(-1) r_N`.
-
-The conditional covariance is
-
-`C_t|N = C_tt - C_tN C_NN^(-1) C_Nt`.
-
-This is the Schur-complement conditional innovation. It removes the component of the target residual statistically predictable from the nuisance response because of their covariance.
-
-It is **not automatically causal**.
-
-Current aggregate innovation test gave approximately
-
-`chi2 = 5.53 for 5 dof`, `p = 0.355`.
-
-Therefore there is no significant residual anomaly in this first real multi-channel test; G7 remains OPEN.
+AP integrates from `z=0`. The seven-node structure atlas begins at `z=0.295` and **must not be extrapolated to zero**. Production AP calculations use full solver background histories.
 
 ---
 
-## 9. Whitening and latent-rank methodology
+## 6. Corrected DESI DR1 ShapeFit layer
 
-Let a response vector be `x` with observational/noise covariance `C`. Define whitened coordinates
+The corrected 2026 erratum product is mandatory. Superseded DR1 Appendix-A values are forbidden.
 
-`z = C^(-1/2) (x - x_ref)`.
+Frozen coordinate order:
 
-The theory catalog produces a matrix `Z` whose rows are whitened model-response vectors. Apply
+`[D_V/r_d, D_H/D_M, f_sigma_s8, m+n]`.
 
-`Z = U S V^T`.
+Informative bins used by the current AP/shape projection:
 
-The singular spectrum measures occupied response directions **only after whitening**.
+`LRG1, LRG2, LRG3, ELG2, QSO`
 
-### Failure discovered
-An early criterion compared each ordered singular value to the same ordered singular value from noise. Strong low-rank spikes deform the remaining spectrum, causing a false rank of about 22 when the injected rank was 3.
+at
 
-### Corrected criterion
-Calibrate against a **global upper noise spectral edge** (from null simulations in the same weighted/whitened geometry) and count only singular values that emerge above that bulk edge. Experiment 001 then correctly recovers injected rank 3.
+`z_eff=(0.51,0.71,0.92,1.32,1.49)`.
 
-### Coordinate robustness (Experiment 011)
-30/30 synthetic cases with true rank 3, sample sizes 90/180/360, strong anisotropic feature rescalings and correlated linear transformations recovered rank 3 **after transforming the covariance consistently and whitening**.
+### 6.1 Shape proxy
 
-Maximum singular-spectrum mismatch after whitening was about `1.6e-15` (machine precision).
+The ShapeFit deformation is represented as
 
-Invalid unwhitened analysis returned false ranks `20–35`.
+\[
+\ln(P'/P_{ref})=A+\frac{m}{a}\tanh\left[a\ln(k/k_p)\right]+n\ln(k/k_p),
+\]
 
-Therefore **no DSIR rank claim is valid without covariance whitening**.
+with
+
+`a=0.6`, `k_p=0.03 h/Mpc`.
+
+At the pivot the local logarithmic slope is `m+n`.
+
+Experiment 034 used only the marginal `m+n` variance because every family did not yet predict all four ShapeFit coordinates; a full `4x4` covariance inverse with fake zeros is forbidden.
+
+Hard result run `32777716140`:
+
+- GDM `cs2/cv2` whitened shape-history acute angle `0.189582 deg`;
+- GDM/f(R) proxy separation about `23 deg`;
+- but finite-node ShapeFit representation leaves roughly `36%` relative residual for GDM `cs2`, GDM `cv2` and designer f(R).
+
+Hence the `~23 deg` result is **not** a DESI distinguishability claim. A survey/window-aware shape operator or explicit compression-model error is required.
+
+### 6.2 Exact ShapeFit growth convention — Experiment 039 contract
+
+ShapeFit does not fundamentally measure textbook `f sigma_8` at a fixed absolute radius. Define
+
+\[
+s=\frac{r_d}{r_d^{ref}},
+\]
+
+\[
+\boxed{\sigma_{s8}=\sigma(R=s\,8h^{-1}{\rm Mpc})}.
+\]
+
+The ShapeFit interpretation also uses a rescaled no-wiggle pivot amplitude
+
+\[
+A_{sp}=s^{-3}P^{lin}_{nw}(k_p/s),
+\]
+
+with the reported growth amplitude related to `f A_sp^{1/2}` by a reference-template normalization. Primary source: Brieden, Gil-Marin & Verde, arXiv:2106.07641, Eqs. (3.5)–(3.6), (3.11)–(3.12).
+
+Therefore DSIR must track `r_d`, the smoothing rescaling, and the ShapeFit amplitude convention.
+
+For scale-dependent growth a single scalar `f(z)` can fail. Before admitting a model into scalar `f sigma_s8` compression, define tracer-relevant density/velocity moments at `R=s*8 h^-1 Mpc`:
+
+\[
+S_{\delta\delta}=\int d\ln k\,\Delta^2_{\delta\delta}W_{TH}^2,
+\]
+
+\[
+S_{\delta\Theta}=\int d\ln k\,\Delta^2_{\delta\Theta}W_{TH}^2,
+\]
+
+\[
+S_{\Theta\Theta}=\int d\ln k\,\Delta^2_{\Theta\Theta}W_{TH}^2.
+\]
+
+If `Theta=f delta` with a scale-independent `f`, then
+
+\[
+\frac{S_{\delta\Theta}}{\sqrt{S_{\delta\delta}}}
+=\sqrt{S_{\Theta\Theta}}
+=f\sigma_{s8}.
+\]
+
+Define the representability defect
+
+\[
+\boxed{{\cal D}_{RSD}=1-
+\frac{S_{\delta\Theta}^2}{S_{\delta\delta}S_{\Theta\Theta}}}.
+\]
+
+By Cauchy-Schwarz, `0 <= D_RSD <= 1` for a positive covariance measure. `D_RSD=0` is the single-amplitude representable limit. A nonzero value means a forced scalar `f sigma_s8` can lose physical information; then DSIR must move to a survey/window-aware anisotropic RSD forward operator.
+
+The exact tracer velocity/gauge/sign convention must be fixed per family before numerical use. This is a compression-validity gate, not a new dark-sector law.
 
 ---
 
-## 10. R_obs versus R_model
+## 7. Frozen six-family atlas — G3A/G3B PASS
 
-Two different dimensions must never be conflated:
+### C0 — LambdaCDM/GR
+Common response origin.
 
-`R_obs` = number of independent response directions the data/response operator can actually distinguish after covariance and null-space treatment.
+### C1 — smooth non-phantom dark energy
+One-sided physical coordinate
 
-`R_model` = number of independent directions occupied by the viable theory manifold after projection into identifiable space.
+\[
+\epsilon_w=1+w\rightarrow0^+.
+\]
 
-Interpretation:
+Production tangent step `1e-4`.
 
-- low `R_obs` + large underlying theory complexity -> observational blindness/non-identifiability;
-- `R_model << R_obs` robustly -> potentially interesting low-dimensional physical structure/unification;
-- `R_model ~ R_obs` -> theories fill the available observable space;
-- neither number is automatically the number of fundamental fields/particles.
+Pinned solver lineage used for the current tangent artifact:
+
+`s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
+
+### C2 — interacting vacuum
+Current implementation:
+
+\[
+Q=H(\alpha\rho_{idm}+\beta\rho_{iv}).
+\]
+
+The frozen full-history positivity condition excludes the positive-alpha side in the current realization. Use the physical coordinate
+
+\[
+u=-\alpha\ge0
+\]
+
+plus a two-sided beta line.
+
+Pinned upstream:
+
+`kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`.
+
+Never compare coupling signs without preserving the implementation convention.
+
+### C3 — generalized dark matter
+Pinned GDM_CLASS lineage:
+
+`s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
+
+Frozen closure patch varies `cs2/cv2` with
+
+`w_gdm=0`.
+
+Experiment 037 now hard-proves that these sampled closure directions are background/AP-null while perturbation-active.
+
+### C4 — thermal WDM
+Kept in a separate small-scale transfer block. It is almost blind on the frozen low-k structure range and becomes strongly visible at high k. Do not force it into an unrelated low-k/AP block merely to make a rectangular matrix.
+
+### C5 — designer f(R)
+Pinned H-EFTCAMB upstream:
+
+`EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`.
+
+Frozen hard-production config artifact:
+
+- run `32759477319`;
+- artifact `9532245261`;
+- digest `sha256:9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635`;
+- hard config lineage `dsir_mgs1_hp_*`;
+- `DesignerEFTmodel=1`, `EFTwDE=0`;
+- production `B0={1e-6,1e-5,1e-4,1e-3}`, with `0` and `1e-7` controls.
+
+Experiment 038 is the dedicated numerical background/AP audit. Until its hard result is frozen, the C5 AP cell stays masked.
 
 ---
 
-## 11. Theory-catalog prior sensitivity (Experiment 012)
+## 8. Cross-family response geometry: hard findings
 
-A finite catalog has an implicit prior: densely sampled/popular model families carry more weight in naive SVD.
+### 8.1 GDM pressure versus viscosity
 
-Synthetic test: three independent true response modes were sampled with family multiplicities `900/90/10`.
+Matter-power directions are almost collinear:
 
-Naive catalog-frequency weighting detected only
+`angle_P = 0.322616 deg`.
 
-`R_model = 2`.
+After DESI `m+n` marginal covariance weighting:
 
-Equal-family weighting, **with the same weights propagated into the noise-null calibration**, recovered
+`angle_shape = 0.189582 deg`.
 
-`R_model = 3`.
+Metric slip strongly separates them:
 
-The third/first singular-value ratio moved approximately
+`137.943212 deg` oriented,
 
-`0.259 -> 0.853`.
+with equalized two-block angle `56.963212 deg`.
 
-Therefore DSIR does not report a single scalar `R_model`; it must report a sensitivity profile
+Interpretation: density suppression can erase the pressure/viscosity distinction while metric-potential relations retain it.
 
-`R_model(pi)`
+### 8.2 GDM versus designer f(R)
 
-over defensible theory-family priors/stratifications/bootstrap schemes.
+Leading scale-mode angles are only
 
-Equal-family weighting is a diagnostic, not uniquely correct physics.
+`0.07813/0.10169 deg`,
+
+but time modes differ by about
+
+`25.18/25.49 deg`,
+
+and full physical rays are oppositely oriented around
+
+`154.82/154.51 deg`.
+
+Interpretation: scale shape alone is insufficient; time/sign evolution carries mechanism information.
+
+### 8.3 WDM scale blindness
+
+For the 3 keV control,
+
+`r_T(k=0.1)=-3.46e-6`,
+
+but
+
+`r_T(k=10)=-0.10375`.
+
+A model can therefore lie nearly in the null space of one scale block while being strongly visible in another.
+
+### 8.4 IDE AP versus structure
+
+Experiment 036 hard run `32782545098` maps exact frozen C1/C2 full-background artifacts through the validated AP operator and corrected DESI `D_H/D_M` marginal errors.
+
+Production tangent convergence (`1e-3` vs `1e-4`, frozen relative-L2 ceiling `0.005`):
+
+- smooth-w `0.0015563369`;
+- IDE negative-alpha `0.00013881894`;
+- IDE beta `2.25987e-7`.
+
+Whitened acute AP angles:
+
+- smooth-w vs IDE negative-alpha `72.803493 deg`;
+- smooth-w vs IDE beta `64.151094 deg`;
+- IDE negative-alpha vs beta
+
+\[
+\boxed{9.0379006^\circ}.
+\]
+
+Their frozen structure-block angle is about `58.9338 deg`.
+
+Thus two IDE mechanisms that are substantially separated in structure become nearly antiparallel in AP geometry. AP alone cannot identify the interaction mechanism.
+
+### 8.5 Exact GDM AP null — Experiment 037
+
+Hard run `32783243120`, artifact `9540510596`, SHA256 `ba1fa93e348f9685d84a675311c79f9c746574463086710b4a46911d125f4edf`.
+
+Audited:
+
+- `cs2={1e-8,1e-7,1e-6}` with `w=0,cv2=0`;
+- `cv2={1e-8,1e-7,1e-6,1e-5,1e-4}` with `w=0,cs2=0`.
+
+For every point:
+
+- redshift-grid mismatch `0`;
+- `max_relative_H=0`;
+- all saved numerical background columns exactly equal to reference;
+- `Delta ln(D_H/D_M)=0` at all five DESI target redshifts.
+
+Therefore, within this frozen C3 manifold,
+
+\[
+K_{AP}t_{cs2}=K_{AP}t_{cv2}=0
+\]
+
+while structure/metric responses are nonzero. This is a hard example of **channel nullity / block-sparse influence**.
 
 ---
 
-## 12. Response-orientation diagnostic (Experiments 007–008)
+## 9. Discriminant graph
 
-Define the matter-power response ratio
+Experiment 033 hard run `32775055341` constructs the current evidence graph of unresolved theory-family degeneracies and available separators.
 
-`R_P(k,a)=P_model(k,a)/P_LCDM(k,a)`.
+The unique minimum hitting set for the **current frozen graph** is
 
-A coarse scale orientation can be measured by a logarithmic slope
+\[
+\boxed{\{\text{metric slip},\;\text{small-scale transfer},\;\text{time/sign evolution}\}}.
+\]
 
-`S_k = Delta ln R_P / Delta ln k`,
-
-and a time orientation by
-
-`S_a = Delta ln R_P / Delta ln a`.
-
-The frozen controls produced approximately
-
-- smooth wCDM (`w=-0.9`): `(S_k,S_a) ~ (0,-3.80e-2)`;
-- thermal WDM 3 keV: `(S_k,S_a) ~ (-1.69e-2,0)` in the simple frozen control;
-- designer/BZ-like f(R): `(S_k,S_a) ~ (+9.23e-2,+2.87e-1)`.
-
-This is not a new law. It demonstrates a useful discriminator: two models can both be scale dependent yet have opposite scale orientation and different time evolution.
+This does not prove a universal optimal survey strategy. It must be recomputed when families/operators are added.
 
 ---
 
-## 13. Quotient known identities BEFORE symbolic/law search
+## 10. Emerging scientific meta-hypothesis
 
-Symbolic regression will rediscover definitions and conservation laws unless they are removed first.
+Repeated hard examples support the working hypothesis:
 
-Examples of relations that must not be claimed:
+> Model identity is encoded by a **multi-channel influence trajectory**, not by a single response shape.
+
+Schematic map:
+
+\[
+\theta_{micro}\rightarrow X_{\mu\nu}
+\rightarrow\{K_1X,K_2X,\ldots\}.
+\]
+
+Different theory directions may satisfy
+
+\[
+K_i t_A\simeq K_i t_B
+\]
+
+while
+
+\[
+K_j t_A\not\simeq K_j t_B,
+\]
+
+or even
+
+\[
+K_i t_A=0,
+\qquad K_j t_A\neq0.
+\]
+
+This is **not a law**. It is promoted only as a supported meta-hypothesis because independent examples now exist for GDM, GDM/f(R), WDM and IDE.
+
+Falsification/stress tests include:
+
+- family-complete geometry+growth+shape projection fails to restore distinctions;
+- channel separators disappear under modest solver/covariance perturbations;
+- new families remain degenerate across all proposed channels;
+- inferred dimensionality is dominated by family sampling/prior choices;
+- survey/window-aware forward modelling reverses the compressed-space conclusions.
+
+All interpretation statuses live in `docs/SCIENTIFIC_FINDINGS_REGISTER.md`. Contradicted findings are marked `SUPERSEDED/RETRACTED`, never silently deleted.
+
+---
+
+## 11. Whitening, latent rank and prior sensitivity
+
+For observation vector `x` with covariance `C`, whiten
+
+\[
+z=C^{-1/2}(x-x_{ref}).
+\]
+
+For theory-response matrix `Z`, compute
+
+\[
+Z=USV^T.
+\]
+
+A singular spectrum is interpretable only after covariance/operator treatment.
+
+### Correct noise-edge rule
+
+An early ordered-singular-value null comparison overestimated synthetic rank because strong signal spikes deform the remaining spectrum. The corrected procedure calibrates a **global upper noise spectral edge** under the same weighted/whitened geometry.
+
+Experiment 001 then recovered injected rank 3.
+
+Experiment 011: 30/30 synthetic coordinate/rescaling/correlation cases recovered rank 3 after covariance was transformed consistently and whitened; unwhitened analyses returned false ranks around 20–35.
+
+### Theory-catalog prior sensitivity
+
+A finite theory catalog contains an implicit sampling prior. In Experiment 012, family multiplicities `900/90/10` caused naive catalog-frequency weighting to detect only two of three true directions; equal-family weighting with the same weights propagated into null calibration recovered three.
+
+Therefore report a sensitivity profile
+
+\[
+R_{model}(\pi),
+\]
+
+not a single prior-free dimension.
+
+Current raw six-direction normalized singular ratios
+
+`(1,0.52046,0.26140,0.20087,0.08299,5.9178e-4)`
+
+are descriptive only. **Do not call this `R_model=5`.** No intrinsic-rank threshold has been frozen for the real family-complete observational problem.
+
+---
+
+## 12. Known-identity and measurement-degeneracy quotient
+
+Before symbolic/law search remove:
 
 - Bianchi/conservation identities;
-- definitions of `f`, `Sigma`, AP variables, etc.;
-- exact identities deliberately built into a control parameterization;
-- shared-calibration relations;
+- definitions such as `f`, `Sigma`, AP transformations;
+- exact identities built into a control parameterization;
+- shared calibration modes;
 - gauge/frame artifacts;
-- covariance-induced AP/RSD correlations.
+- survey-covariance degeneracy directions;
+- compression assumptions that fail representability tests.
 
-The law-search space is therefore a quotient space:
+The law-search object is schematically
 
-`candidate response space / known-identity subspace / measurement-degeneracy subspace`.
+\[
+\frac{\text{candidate response space}}
+{\text{known identities}+\text{measurement degeneracies}+\text{invalid compression directions}}.
+\]
 
-Only residual relations in this quotient can advance toward G7/G8.
+Only residual relations in this quotient can advance toward G7.
 
----
-
-## 14. Claim hierarchy
-
-Always label a result with one of these levels:
-
-1. **control identity** — algebraic or code-regression truth;
-2. **observational identifiability pattern** — caused by covariance/operator geometry;
-3. **empirical residual relation** — survives known identity and measurement quotients;
-4. **predictive law candidate** — stable and predicts a withheld response;
-5. **physical model candidate** — a consistent dynamics/action explains the relation and makes new predictions.
-
-**No discovery claim before level 4 / G8.**
+The current corrected DESI conditional-growth innovation is null-consistent (`chi2~5.53` for 5 dof, `p~0.355`); this negative result is retained.
 
 ---
 
-## 15. Current gates at this recovery snapshot
+## 13. Hard workflow discipline
 
-- **G0 PARTIAL:** LambdaCDM background/growth controls work; full common Boltzmann reference still pending.
-- **G1 OPEN:** full conservation/Bianchi + gauge-invariant bookkeeping audit pending.
-- **G2 IN PROGRESS:** response basis not yet completely frozen.
-- **G3A PASS/PARTIAL:** six broad classes represented at background/equivalence level.
-- **G3B PARTIAL:** LambdaCDM, smooth wCDM, thermal WDM, designer f(R) linear controls exist; GDM and interacting-vacuum solver regression is next.
-- **G4 PASS:** corrected synthetic low-rank recovery.
-- **G5 PARTIAL:** whitening robustness and theory-prior failure mode passed/identified; broader non-Gaussian/model-family stress tests remain.
-- **G6A PASS:** real DESI DR2 AP/relative expansion.
-- **G6B PASS:** corrected DESI DR1 geometry+growth+shape covariance integrated.
-- **G7 OPEN:** no nontrivial residual law yet.
-- **G8 OPEN:** no withheld prediction yet.
-- **G9 OPEN:** no reconstructed fundamental dynamics/action.
+Every scientific hard gate should follow this order:
 
-Use `docs/GATES.md` as the authoritative live table; this section is a recovery snapshot.
+1. state physical question and allowed claim;
+2. pin upstream solver/data/config artifacts;
+3. freeze numerical/statistical thresholds before examining the target hard output;
+4. run CI/Actions;
+5. distinguish infrastructure failures from scientific failures;
+6. freeze result JSON + run/artifact/digest provenance;
+7. update `STATUS`, `RECOVERY_LATEST`, this manual when methodology/state changes, dated log and scientific findings register;
+8. rerun the final head after documentation/result binding;
+9. merge only after final regression success.
 
----
+Do not loosen scientific thresholds to make a result pass. Infrastructure/path/tolerance-roundoff bugs may be repaired only with explicit chronology and without changing the scientific question after seeing the target result.
 
-## 16. Numbered experiment map
-
-The repository intentionally uses numbered scripts as a chronological spine:
-
-- `experiments/001_synthetic_rank.py` — injected low-rank recovery and corrected noise-edge logic.
-- `experiments/002_identifiability.py` — separates observable rank from model rank/null directions.
-- `experiments/003_identity_quotient.py` — known-identity removal control.
-- `experiments/004_desi_dr2_bao_ingest.py` — DESI DR2 compressed BAO + covariance and AP construction.
-- `experiments/005_ap_relative_expansion.py` — calibration-free relative `E(z)` reconstruction.
-- `experiments/006_control_background_equivalence.py` — exact/controlled background intersections between theory families.
-- `experiments/007_linear_response_controls.py` — first beyond-background controls.
-- `experiments/008_response_orientation.py` — time/scale orientation diagnostic.
-- `experiments/009_desi_dr1_multichannel_identifiability.py` — corrected DESI DR1 geometry+growth+shape covariance.
-- `experiments/010_conditional_innovations.py` — covariance-conditioned growth innovation.
-- `experiments/011_rank_whitening_robustness.py` — coordinate/covariance robustness suite.
-- `experiments/012_model_catalog_prior_sensitivity.py` — implicit theory-catalog prior failure mode.
-
-When adding new experiments, **never renumber old ones**. Add `013_...`, `014_...`, etc., and append the result to `docs/RESEARCH_LOG.md` and gate status to `docs/GATES.md`/`docs/STATUS.md`.
+Undefined response cells are masked. A zero can enter the matrix only after a hard theory/solver contract such as Experiment 037.
 
 ---
 
-## 17. Provenance / external solver pins
+## 14. Current gate state
 
-### GDM
-External repository: `s-ilic/gdm_class_public`.
+Authoritative live gate table is `docs/GATES.md`; current recovery state is:
 
-Current recovery anchor identified during research: commit `4c87916aab5ca124a68f1dd16f31846fc13d1829` (verify whether this remains the desired frozen pin before a precision run; do not silently upgrade).
+- **G1 PASS v0.1.1** — conservation/gauge contract.
+- **G2 PASS v0.1.1** — frozen response basis and solver bridge.
+- **G3A PASS v0.1** — six-family background atlas.
+- **G3B PASS v0.1 block-aware** — six-family beyond-background atlas.
+- **G4 PASS** — synthetic low-rank recovery.
+- **G5 PARTIAL** — synthetic robustness plus partial real-covariance shape/AP projection; family-complete observational kernels and rank stability still missing.
+- **G6A PASS** — calibration-free DESI DR2 AP layer.
+- **G6B PASS** — corrected DESI DR1 ShapeFit covariance layer.
+- **G7 OPEN** — no new residual law.
+- **G8 OPEN** — no withheld prediction.
 
-Regression requirement:
-
-`w=cs2=cvis2=0 -> CDM`.
-
-Then vary one closure direction at a time before allowing combined variation.
-
-### Interacting vacuum
-External implementation under evaluation: `kaeonikc/class_iv`.
-
-Current recovery anchor identified during research: commit `ac627d54e9ce196a08878d1ba33999819925d19c` (verify implementation/sign conventions before precision use).
-
-Regression requirement:
-
-`coupling -> 0 -> LambdaCDM`.
-
-A code-history entry explicitly fixed growth `D` and `f` to include baryons; provenance must therefore pin a post-fix commit.
-
-### DESI
-Never use superseded DESI DR1 ShapeFit Appendix-A growth vectors. Use the corrected erratum product preserved in the repository provenance/data layer.
+Do not promote G7/G8 because of a visually small angle or descriptive SVD spectrum.
 
 ---
 
-## 18. Exact next research sequence after recovery
+## 15. Exact continuation sequence from this snapshot
 
-If resuming from this snapshot, do **not** start symbolic regression yet. Execute in this order:
+### Step A — finish Experiment 038 C5 AP audit
 
-### Step 1 — GDM solver regression
-1. Freeze the exact GDM_CLASS commit and build/runtime environment.
-2. Run matched baseline cosmology in standard CLASS and GDM_CLASS.
-3. Set `w_gdm=0`, `cs2_gdm=0`, `cv2_gdm=0`.
-4. Compare at minimum: `H(z)`, CMB spectra, linear `P(k,z)`, growth outputs available from the solver.
-5. Define numerical tolerances before looking at nonzero GDM results.
-6. Only after baseline pass, activate separately:
-   - `w != 0`,
-   - `cs2 != 0`,
-   - `cv2 != 0`.
-7. Map each change into the common response vector.
+Use the frozen high-precision `dsir_mgs1_hp_*` configs from artifact `9532245261`, rebuild the exact pinned H-EFTCAMB upstream, preserve `<output_root>background.dat`, and compare GR with designer `B0={0,1e-7,1e-6,1e-5,1e-4,1e-3}`.
 
-### Step 2 — Interacting-vacuum regression
-1. Freeze exact `class_iv` commit and read its parameter/sign convention in source/config.
-2. Run `coupling=0` against matched LambdaCDM.
-3. Confirm background **and perturbation** equality within numerical tolerance.
-4. Activate a small positive and negative coupling inside the implementation's stable domain.
-5. Record `Delta E`, `Delta f sigma8`, `Delta P(k,z)`, potential/lensing response if available.
-6. Do not compare opposite signs until the code convention is explicitly documented.
+Pre-frozen hard thresholds:
 
-### Step 3 — G3B unified response matrix
-Combine six control families in a common feature grid, with missing/unavailable channels represented as missing (not guessed). Do not fill unknown model responses with zero.
+- redshift-grid mismatch `<=1e-10`;
+- relative `H` mismatch `<=1e-8`;
+- relative nonzero-row `D_M` mismatch `<=1e-8`;
+- absolute AP log response `<=1e-8`.
 
-Suggested first frozen feature set:
+If PASS, C5 becomes a validated AP-zero direction. If FAIL, propagate the measured nonzero geometry rather than changing the threshold.
 
-`{E(z), F_AP(z), f sigma8(z), ln P(k,z)/P_ref(k,z), mu(k,z), eta(k,z), Sigma(k,z)}`
+### Step B — form the block-aware family-complete AP geometry cell
 
-plus provenance flags specifying whether a quantity is directly computed, derived, or undefined for a family.
+- C0: origin;
+- C1: validated nonzero smooth-w tangent;
+- C2: validated alpha/beta tangents;
+- C3: Experiment 037 hard zero;
+- C5: Experiment 038 result;
+- C4: retain in the separate small-scale block unless a physically validated geometry operator is explicitly introduced.
 
-### Step 4 — observational projection
-Project the theoretical response matrix through an observational covariance/operator appropriate to each channel. Whiten consistently.
+### Step C — Experiment 039 numerical growth representability
 
-### Step 5 — rank profile
-Compute `R_obs` and `R_model(pi)` with null simulations and multiple defensible family priors. Record stability/instability; do not compress into one number if prior-sensitive.
+For each family establish the tracer-relevant density/velocity convention, compute `r_d`, `s`, the `sigma_s8` smoothing scale, and the RSD representability defect `D_RSD` under a pre-frozen tolerance.
 
-### Step 6 — G7 search
-Only then search for residual relations using conditional innovations/known-identity quotient. Candidate methods may include PCA/SVD, canonical correlations, mutual information, sparse/symbolic regression, but every candidate must pass invariance and holdout gates.
+Do not force a scalar `f sigma_s8` for scale-dependent/nonstandard velocity models that fail representability.
 
----
+### Step D — survey/window-aware shape mapping
 
-## 19. Withheld prediction policy (future G8)
+Replace or calibrate the finite-node `m+n` proxy for GDM/f(R), or explicitly propagate its compression-model error.
 
-A candidate relation found using channels A/B/C must predict at least one deliberately withheld channel D without refitting the law to D.
+### Step E — full corrected ShapeFit block
 
-Potential holdouts:
+Only when geometry, growth and shape coordinates are valid for a family form
 
-- weak lensing/Weyl response withheld from expansion+growth fit;
-- CMB lensing withheld from low-z reconstruction;
-- GW luminosity-distance response withheld from scalar-sector fit;
-- nonlinear/halo statistic withheld from linear-response discovery.
+\[
+\boxed{Z=C^{-1/2}\Delta O}.
+\]
 
-A relation that only interpolates the same data used to discover it is **not** a DSIR law candidate.
+Use validity masks/common observable subspaces; never fake rectangular completeness with zeros.
 
----
+### Step F — rank/manifold robustness
 
-## 20. Safety rules against false discovery
+Freeze null/rank thresholds before inspecting the resulting real spectrum. Stress-test:
 
-1. Never infer physics from raw feature units; whiten first.
-2. Never treat catalog multiplicity as a physical prior without sensitivity tests.
-3. Never claim Bianchi/conservation/definition identities.
-4. Never claim a covariance degeneracy as a dark-sector law.
-5. Never normalize away amplitude differences before power comparisons.
-6. Never invent missing response values.
-7. Never mix statistically overlapping datasets as independent without joint covariance or an explicit approximation warning.
-8. Never use superseded data products when an erratum exists.
-9. Never change an upstream solver version silently.
-10. Never declare DSIR a fundamental theory unless an effective dynamics/action with new predictions is actually reconstructed.
+- family prior `pi`;
+- within-family sampling density;
+- solver precision;
+- covariance perturbations;
+- channel removal;
+- compression-model uncertainty.
+
+### Step G — additional independent separators
+
+Prioritize observational versions of metric slip/lensing and WDM small-scale transfer because the current discriminant graph identifies them as high-value independent channels.
+
+### Step H — G7/G8
+
+Only after stable family-complete observational response geometry search for residual laws. Any candidate must predict at least one deliberately withheld channel without refitting before G8 can PASS.
 
 ---
 
-## 21. Minimum commands/checks for a new session
+## 16. Minimal recovery checklist for a new session
 
-A new session should first inspect:
+1. Inspect latest `main` commit and open PRs/workflows.
+2. Read this file, `RECOVERY_LATEST`, findings register, status and gates.
+3. Reproduce/fetch the latest frozen result artifact and verify its digest.
+4. Confirm upstream solver pins before any rerun.
+5. Classify failures as environment, provenance/path, numerical implementation, or scientific gate failure before modifying code.
+6. Never change physics merely to make CI green.
+7. Continue the exact sequence in Section 15 unless a newly discovered contradiction requires an earlier gate to reopen.
 
-`git log --oneline --decorate -20`
+### Current critical provenance anchors
 
-`cat docs/RECOVERY_MANUAL.md`
-
-`cat docs/GATES.md`
-
-`cat docs/STATUS.md`
-
-`cat docs/RESEARCH_LOG.md`
-
-Then run the repository test suite according to `pyproject.toml` and reproduce the latest numbered experiment(s) before modifying methodology.
-
-If a test fails after environment recreation, classify the failure first as one of:
-
-- environment/dependency;
-- data/provenance;
-- numerical tolerance;
-- implementation bug;
-- actual scientific gate failure.
-
-Do not change physics to make a test pass until these categories have been ruled out.
+- GDM/smooth-w: `s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
+- IDE: `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`.
+- designer f(R): `EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`.
+- C5 hard config artifact: run `32759477319`, artifact `9532245261`, SHA256 `9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635`.
+- C3 AP-zero result: run `32783243120`, artifact `9540510596`, SHA256 `ba1fa93e348f9685d84a675311c79f9c746574463086710b4a46911d125f4edf`.
+- C1/C2 AP geometry result: run `32782545098`, artifact `9540273287`, SHA256 `553faa2ef7ddbc44e25ddd6faca237d0be7fc265b9c23cfafb2a32570534d126`.
 
 ---
 
-## 22. Short recovery summary for another ChatGPT
+## 17. Short recovery summary
 
-**Mission:** infer the minimal common observable influence structure of the dark sector and search for cross-channel laws without assuming DM/DE ontology.  
-**Current scientific state:** reconstruction framework, not a theory; no discovery.  
-**Strongest completed controls:** DESI DR2 calibration-free AP reconstruction; corrected DESI DR1 geometry+growth+shape covariance; synthetic rank recovery; whitening invariance; theory-catalog-prior failure mode.  
-**Important negative result:** first conditional real-data growth innovation is not significant (`chi2~5.53/5`, `p~0.355`).  
-**Main open task:** finish G3B by validated GDM and interacting-vacuum Boltzmann-solver embeddings.  
-**Then:** construct common multi-channel response matrix -> observational projection/whitening -> `R_obs`, `R_model(pi)` -> quotient known/measurement relations -> G7 residual-law search -> G8 withheld prediction -> only then attempt G9 dynamics/action reconstruction.  
-**Never touch RTK from this project.**
+**Mission:** infer the minimal common observable influence structure of the dark sector without assuming a DM/DE/MG ontology.  
+**Current state:** six-family block-aware atlas and several hard cross-family degeneracy/separator results exist; observational projection is being built channel by channel.  
+**Strongest emerging pattern:** degeneracy/nullity is observation-channel dependent; a model direction may be nearly identical to another in one channel or exactly null there while remaining strongly distinct elsewhere.  
+**Hard examples:** GDM pressure/viscosity power degeneracy vs slip separation; GDM/f(R) scale degeneracy vs time/sign separation; WDM low-k blindness vs high-k transfer; IDE AP degeneracy vs structure separation; GDM exact AP null with nonzero perturbations.  
+**Important compression limit:** finite-node ShapeFit `m+n` fails at ~36% residual for GDM/f(R); scalar ShapeFit growth also requires a representability test before use in scale-dependent theories.  
+**Immediate task:** finish C5 H-EFTCAMB background/AP audit, then build valid family-complete AP and growth operators.  
+**No law/discovery:** G7/G8 remain open.  
+**Never mix DSIR with RTK.**
