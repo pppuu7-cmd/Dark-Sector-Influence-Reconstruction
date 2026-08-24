@@ -56,10 +56,26 @@ def thermal_wdm_alpha(m_keV, omega_wdm=0.25, h=0.7):
 
 
 def thermal_wdm_transfer(k_hmpc, m_keV=3.0, omega_wdm=0.25, h=0.7, nu=1.12):
-    """Thermal-WDM transfer amplitude T=sqrt(P_WDM/P_CDM)."""
+    """Thermal-WDM linear transfer amplitude T=sqrt(P_WDM/P_CDM)."""
     alpha = thermal_wdm_alpha(m_keV, omega_wdm=omega_wdm, h=h)
     k = np.asarray(k_hmpc, dtype=float)
     return (1.0 + (alpha * k) ** (2.0 * nu)) ** (-5.0 / nu)
+
+
+def thermal_wdm_log_power_response(k_hmpc, m_keV=3.0, omega_wdm=0.25, h=0.7, nu=1.12):
+    """Linear-transfer fingerprint r_T=ln(P_WDM/P_CDM)=2 ln T.
+
+    This is a transfer-function response, not a claim about nonlinear z=0 power.
+    """
+    t = thermal_wdm_transfer(k_hmpc, m_keV=m_keV, omega_wdm=omega_wdm, h=h, nu=nu)
+    return 2.0 * np.log(t)
+
+
+def thermal_wdm_half_mode_k(m_keV=3.0, omega_wdm=0.25, h=0.7, nu=1.12):
+    """Half-mode k [h/Mpc] defined by P_WDM/P_CDM = T^2 = 1/2."""
+    alpha = thermal_wdm_alpha(m_keV, omega_wdm=omega_wdm, h=h)
+    factor = (2.0 ** (nu / 10.0) - 1.0) ** (1.0 / (2.0 * nu))
+    return factor / alpha
 
 
 def solve_growth(
