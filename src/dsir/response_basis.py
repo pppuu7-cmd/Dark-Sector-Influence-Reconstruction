@@ -1,7 +1,9 @@
-"""Frozen DSIR response-basis helpers (v0.1).
+"""DSIR response-basis helpers.
 
-These functions implement coordinate definitions only. They do not perform
-likelihood analysis or decide scientific significance.
+The background conventions originated in v0.1.  Basis v0.1.1 adds an explicit
+comoving/gauge-invariant total-matter coordinate for cross-family perturbation
+work.  These functions define coordinates only; they do not decide scientific
+significance.
 """
 from __future__ import annotations
 
@@ -47,9 +49,75 @@ def ap_log_response(D_M, H, D_M_ref, H_ref):
     return log_response(D_M, D_M_ref) + log_response(H, H_ref)
 
 
+def comoving_matter_density(delta_m, theta_m, H_conf, k, w_m=0.0):
+    """Return the comoving total-matter density contrast Delta_m.
+
+    DSIR v0.1.1 convention:
+
+        Delta_m = delta_m + 3 (1+w_m) H_conf theta_m / k^2,
+
+    where H_conf=aH and H_conf and k must be expressed in compatible inverse-
+    length units.  `delta_m`, `theta_m`, `H_conf`, `k`, and `w_m` follow NumPy
+    broadcasting rules.
+
+    This is the common source-level construction audited in the pinned
+    CLASS-family GDM and interacting-vacuum lineages.  It is valid for the
+    documented total-matter component set; callers must not silently change
+    that set between a model and its reference cosmology.
+    """
+    delta_m = np.asarray(delta_m, dtype=float)
+    theta_m = np.asarray(theta_m, dtype=float)
+    H_conf = np.asarray(H_conf, dtype=float)
+    k = np.asarray(k, dtype=float)
+    w_m = np.asarray(w_m, dtype=float)
+    for name, arr in (
+        ("delta_m", delta_m),
+        ("theta_m", theta_m),
+        ("H_conf", H_conf),
+        ("k", k),
+        ("w_m", w_m),
+    ):
+        if np.any(~np.isfinite(arr)):
+            raise ValueError(f"{name} must be finite")
+    if np.any(k == 0.0):
+        raise ValueError("k must be nonzero")
+    return delta_m + 3.0 * (1.0 + w_m) * H_conf * theta_m / (k * k)
+
+
+def comoving_matter_power_response(P_delta, P_delta_ref):
+    """v0.1.1 production perturbation response ln(P_Delta/P_Delta_ref).
+
+    Model and reference should be generated in the same solver lineage and with
+    matched numerical settings whenever possible.  Cross-solver absolute
+    spectra are not a DSIR response coordinate without a separate bridge gate.
+    """
+    return log_response(P_delta, P_delta_ref)
+
+
 def matter_power_response(P_m, P_m_ref):
-    """Raw fixed-primordial response ln(P_m/P_m_ref)."""
+    """Historical v0.1 alias for a positive matter-power log response.
+
+    For production cross-family work use `comoving_matter_power_response` and
+    document that P_m is actually the power spectrum of the audited comoving
+    total-matter contrast Delta_m.  This function is retained for historical
+    experiments and backward compatibility.
+    """
     return log_response(P_m, P_m_ref)
+
+
+def response_bridge_difference(P_model_a, P_ref_a, P_model_b, P_ref_b):
+    """Difference between same-solver logarithmic responses from two lineages.
+
+    Returns
+        ln(P_model_a/P_ref_a) - ln(P_model_b/P_ref_b).
+
+    This deliberately compares *responses*, never the absolute spectra from
+    different solver lineages.
+    """
+    return (
+        comoving_matter_power_response(P_model_a, P_ref_a)
+        - comoving_matter_power_response(P_model_b, P_ref_b)
+    )
 
 
 def project_constant_log_amplitude(r_logP, precision=None, axis=-1):
