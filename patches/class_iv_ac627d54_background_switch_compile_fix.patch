@@ -1,0 +1,6 @@
+--- a/source/background.c
++++ b/source/background.c
+@@ -608,3 +608,2 @@
+-  }
+ 
+   case IDM_IV:
