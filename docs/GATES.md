@@ -3,15 +3,15 @@
 | Gate | Requirement | Status |
 |---|---|---|
 | G0 | LambdaCDM embedding reproduces reference observables | PARTIAL — multiple solver-specific LambdaCDM/control limits pass; a broader solver-independent reference suite remains desirable |
-| G1 | Bianchi/conservation and gauge-invariant bookkeeping verified | **PASS for v0.1.1 scope** — covariant conservation contract frozen; comoving total-matter construction source-audited; Newtonian/synchronous hard gauge regression passes at `5e-6`; cross-solver response bridge passes at `1e-9` |
-| G2 | Response basis and conventions frozen | **PASS v0.1.1** — perturbation coordinate is the same-solver comoving total-matter response `r_Delta`; Experiments 018/020 |
-| G3A | Six control classes embedded at background/AP level | PASS/PARTIAL — representatives and exact intersections documented |
-| G3B | Control classes embedded beyond background | **PARTIAL, advanced** — LambdaCDM, smooth wCDM, WDM, GDM, IDE and full H-EFTCAMB designer-f(R) now have validated solver/control paths; MG-S0 hard GR limit passes. Remaining work is nonzero multi-z manifold sampling and common atlas assembly |
+| G1 | Bianchi/conservation and gauge-invariant bookkeeping verified | **PASS for v0.1.1 scope** — covariant conservation contract frozen; comoving total-matter source audited; Newtonian/synchronous hard gauge regression passes at `5e-6`; cross-solver response bridge passes at `1e-9` |
+| G2 | Response basis and conventions frozen | **PASS v0.1.1** — production perturbation coordinate is same-solver comoving total-matter response `r_Delta`; Experiments 018/020 |
+| G3A | Six control classes embedded at background/AP level | **PASS v0.1 scope** — representatives, exact intersections and background equivalence maps documented |
+| G3B | Six control classes embedded beyond background and comparison-ready | **PASS v0.1 block-aware scope** — C0 reference; C1 smooth-w local ray; C2 IDE positivity-masked tangent cone; C3 GDM `cs2/cv2` local rays; C4 WDM small-scale transfer block; C5 full H-EFTCAMB designer-f(R) production manifold. Experiment 030 hard readiness PASS |
 | G4 | Synthetic low-rank recovery test passes | PASS — corrected global noise-edge criterion recovers injected rank 3 |
-| G5 | Rank robust to noise null, feature scaling, covariance coordinates, missing channels, and model sampling | PARTIAL — whitening robustness passes; catalog-prior failure mode is controlled via `R_model(pi)`; validity masks/common-subspace and family-balanced sampling are implemented; broader stress tests remain |
+| G5 | Rank robust to noise null, feature scaling, covariance coordinates, missing channels, and model sampling | PARTIAL — whitening robustness passes; catalog-prior failure mode controlled via `R_model(pi)`; validity masks/common-subspace and family-balanced sampling implemented; data-whitened cross-family rank stress tests remain |
 | G6A | First real-data response reconstruction | PASS — DESI DR2 AP calibration quotient and relative expansion reconstruction |
-| G6B | First real multi-channel response reconstruction | PASS — corrected DESI DR1 ShapeFit vectors jointly provide geometry, growth, and shape with covariance; Experiment 009 |
-| G7 | First nontrivial residual cross-channel relation after quotienting known identities/measurement degeneracies | OPEN — current conditional-innovation aggregate is null-consistent; law search resumes only after production six-family manifold/rank stability |
+| G6B | First real multi-channel response reconstruction | PASS — corrected DESI DR1 ShapeFit geometry/growth/shape covariance; Experiment 009 |
+| G7 | First nontrivial residual cross-channel relation after quotienting known identities/measurement degeneracies | **OPEN, raw-theory comparison now unblocked** — Experiment 031 completed first model comparison; next prerequisite is observational kernel/covariance whitening before any law claim |
 | G8 | Relation survives withheld prediction | OPEN |
 | G9 | Candidate underlying dynamics/action reconstructed or ruled out | OPEN |
 
@@ -23,57 +23,76 @@ For internal interactions,
 
 Exact Bianchi/conservation identities are quotient directions, not candidate discoveries. At first order, gauge changes act at tensor level as `delta T -> delta T - L_xi Tbar`; raw gauge-specific `delta`, `theta` and metric variables are not common DSIR coordinates without an invariant mapping.
 
-The production matter variable is
+Production matter variable:
 
 `Delta_m = delta_m + 3 (1+w_m) Hconf theta_m/k^2`, with `w_m=p_m/rho_m` and `Hconf=aH`.
 
-For pressureless matter this becomes `Delta_m=delta_m+3 Hconf theta_m/k^2`.
-
-Pinned GDM_CLASS and class_iv source audits confirm the same total-matter concept. GDM_CLASS explicitly retains the `(1+p_m/rho_m)` factor when GDM has pressure.
+Pinned GDM_CLASS and class_iv source audits confirm the same total-matter concept. GDM_CLASS retains the `(1+p_m/rho_m)` factor when GDM has pressure.
 
 ### Gauge hard regression
 
-Identical CDM cosmology was run in Newtonian and synchronous gauges in pinned GDM_CLASS. At default precision raw `mPk` differed by `~9.84e-5` in the linear core. At p8 precision the raw mismatch fell to `~5.1e-6`; explicit comoving `Delta_m` reconstruction gave `2.5514e-6`.
-
-A threshold `5e-6` was frozen before the final comoving hard rerun; the hard run passed. Production DSIR therefore uses the audited comoving source rather than relying on ambiguous raw transfer variables.
+Identical CDM cosmology was run in Newtonian and synchronous gauges in pinned GDM_CLASS. At p8 precision explicit comoving `Delta_m` reconstruction gave a maximum mismatch `2.5514e-6`. A threshold `5e-6` was frozen before the final hard rerun and passed.
 
 ## G2 response basis v0.1.1
 
-Frozen background coordinate:
+Background:
 
 `r_E(z;z*) = ln[(H(z)/H(z*))/(H_ref(z)/H_ref(z*))]`, `z*=0.51`.
 
-Frozen perturbation coordinate:
+Perturbation:
 
 `r_Delta(k,z) = ln[P_Delta_model^S(k,z)/P_Delta_ref^S(k,z)]`,
 
-where `P_Delta=P[Delta_m]` and model/reference are generated in the same solver lineage `S` with matched numerical settings whenever possible.
+where model/reference use the same solver lineage `S` and matched numerical settings whenever possible.
 
-Frozen nodes:
+Frozen low-k nodes:
 
 - `z={0.295,0.51,0.706,0.934,1.317,1.491,2.33}`;
 - `k={0.001,0.003,0.01,0.03,0.1} h/Mpc`.
 
-### Cross-solver bridge — Experiment 020
+Cross-solver smooth-w bridge hard threshold `1e-9` passed; calibration mismatch at matched p8 was `2.3747404043e-10`.
 
-A nontrivial smooth-wCDM deformation (`w0=-0.9`, `wa=0`, `cs2=1`) was computed relative to each solver's own LambdaCDM reference in pinned GDM_CLASS and repaired pinned class_iv. With the same p8 precision preset, calibration gave
+## G3B numerical sub-gates and manifold patches
 
-`max |Delta r_bridge|=2.3747404043e-10`,
+- **C0 LambdaCDM:** reference origin, with multiple solver-specific zero limits.
+- **C1 smooth non-phantom DE:** one-sided `epsilon_w=1+w -> 0+` local ray at p8. Smallest-step `epsilon_w=1e-4`; finite-difference change at `1e-3` is `0.12%` L2 and `0.014 deg`.
+- **C2 IDE:** pinned `kaeonikc/class_iv@ac627d54...`; zero limit and hard regression pass. Physical local geometry is a **tangent cone**: `alpha>0` violates full-history `rho_iv>=0`; use left-sided alpha ray and two-sided beta tangent. Structure angle alpha/beta = `58.9338 deg`; background-H angle = `10.8306 deg`.
+- **C3 GDM:** pinned `s-ilic/gdm_class_public@4c87916...`; zero limit and hard regression pass. Local `cs2` and `cv2` rays are nearly collinear in low-k `P_Delta`: angle `0.322616 deg`, two-axis `sigma2/sigma1=2.572e-3`.
+- **C4 WDM:** low-k is intentionally treated as an identifiability blind block. For 3 keV, `r_T(0.1)=-3.46e-6`, while `r_T(10)=-0.10375`; small-scale transfer is a separate valid block.
+- **C5 designer f(R):** official H-EFTCAMB `EFTCAMB/EFTCAMB@16d9c4e9...`. MG-S0 exact-GR hard gate PASS. MG-S1 common-baseline multi-z hard gate PASS; production points `B0={1e-6,1e-5,1e-4,1e-3}`, while `1e-7` remains transition control near the solver GR threshold.
 
-while the physical response was about `5.02e-2`. A hard threshold `1e-9` was frozen before the clean rerun and passed.
+Undefined theory/channel cells remain masked, never zero-imputed. Tangent/Jacobian rank and global linear-span rank are reported separately because a curved one-parameter manifold can generate several linear SVD modes.
 
-## Current G3B numerical sub-gates
+## Comparison-readiness hard gate — Experiment 030
 
-- **IDE-S0 PASS:** pinned `kaeonikc/class_iv@ac627d54...`; zero coupling gives CDM + constant vacuum and the synchronous perturbation limit reduces to CDM.
-- **IDE-S1 PASS:** hard linear-core tolerance `2e-8` and semantic-background tolerance `2e-12` both passed. The pinned source needs a provenance-tracked compile-only one-brace repair plus legacy compiler/linker semantics; no physics equation is changed.
-- **GDM-S0 PASS:** pinned `s-ilic/gdm_class_public@4c87916...`; zero closure gives `rho~a^-3`, pressureless perturbation equations, zero shear and leading CDM IC.
-- **GDM-S1 PASS:** p8 hard core regression passed the pre-frozen `5e-6` threshold with actual `1.471014806e-6`; `k<1e-3` remains a separate finite-start diagnostic sector.
-- **GDM nonzero manifold CALIBRATION:** first one-axis scan fixes `w=cv2=0` and varies constant `cs2={1e-8,1e-7,1e-6,1e-5,1e-4}` at the validated p8 precision. No manifold/rank claim is made until the scan is inspected.
-- **f(R) toy scope restricted (Exp. 019):** historical BZ-like QS control remains diagnostic and is restricted to `{0.01,0.03,0.1} h/Mpc`.
-- **MG-S0 PASS (Exp. 021):** official H-EFTCAMB `EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`, designer `EFTflag=3`, `DesignerEFTmodel=1`, LambdaCDM background `EFTwDE=0`. Calibration established exact `B0=0` support and the pinned `EFTCAMB_GR_threshold=1e-8`. Before the hard rerun DSIR froze `max_core |r_Delta(B0=0)| <= 2e-6` plus `|B0_found| <= 1e-12` and required stability PASS. The fresh stock-export hard run returned `1.0926960404e-6`, `|B0_found|=2.221e-17`, stability PASS. **MG-S0 is closed.**
-- **H-EFTCAMB small-B0 validity rule:** `B0<=1e-8` is not treated as an independent nonzero f(R) atlas point in this pinned implementation because it lies on/inside the solver GR-return threshold. MG-S1 must use explicitly nonzero stable points above that boundary.
-- **Missingness/scale rule:** undefined theory/channel cells remain masked, never zero-imputed. Low-k cosmological and WDM small-scale transfer blocks are reported separately unless an overlap-connected analysis is explicitly constructed.
+Run `32772758188` returned `PASS_READY_FOR_BLOCK_AWARE_MODEL_COMPARISON`, `failures=[]`.
+
+Frozen positive controls reproduced:
+
+- GDM `cs2/cv2` low-k angle `0.322616 deg <= 1 deg`;
+- IDE alpha/beta structure angle `58.9338 deg >= 30 deg`;
+- WDM 3 keV low-k/high-k blindness-break conditions pass.
+
+The normalized six-direction raw-theory singular ratios were `(1,0.52046,0.26140,0.20087,0.08299,5.92e-4)`. **No intrinsic-rank threshold was frozen; this must not be called `R_model=5`.**
+
+## First comparison and hard conditional discriminants — Experiments 031/032
+
+Experiment 031 hard rerun `32774501126` PASS:
+
+- GDM cs2 vs cv2 full low-k angle `0.3226 deg`;
+- GDM cs2 vs f(R) leading scale-mode angle `0.07813 deg`, time-mode unoriented angle `25.18 deg`, full oriented ray angle `154.82 deg`;
+- GDM cv2 vs f(R) leading scale-mode angle `0.10169 deg`, time-mode angle `25.49 deg`, full oriented angle `154.51 deg`.
+
+Thus scale-only GDM/f(R) similarity is broken by time evolution / physical response sign.
+
+Experiment 032 slip hard rerun `32774501069` PASS:
+
+- GDM cs2/cv2 Weyl-amplitude angle `0.3007 deg` at `1e-7`;
+- metric-slip angle `137.9432 deg`;
+- equalized Weyl+slip angle `56.9632 deg`.
+
+Thus the GDM `cs2/cv2` matter-power degeneracy has a reproducible metric-slip separator in the frozen theory setup.
 
 ## Hard scientific rule
 
-No discovery claim is permitted before G8 withheld prediction.
+No discovery claim is permitted before G8 withheld prediction. A raw theory-space separator is not observational distinguishability until survey response kernels and covariance whitening are applied.
