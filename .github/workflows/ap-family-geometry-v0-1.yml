@@ -28,20 +28,20 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e .
-      - name: Download exact frozen C1 artifact
+      - name: Download exact frozen C1 run artifacts
         uses: actions/download-artifact@v4
         with:
           repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          artifact-ids: 9536242626
+          run-id: 32771133024
           path: inputs/wde
           merge-multiple: true
-      - name: Download exact frozen C2 artifact
+      - name: Download exact frozen C2 run artifacts
         uses: actions/download-artifact@v4
         with:
           repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          artifact-ids: 9532491954
+          run-id: 32760042765
           path: inputs/ide
           merge-multiple: true
       - name: Audit expected full-background inputs
