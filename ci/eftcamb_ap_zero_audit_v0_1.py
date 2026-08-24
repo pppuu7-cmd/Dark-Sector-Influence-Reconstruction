@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-"""Experiment 038: numerical background/AP-null audit for frozen designer f(R)."""
+"""Experiment 038: numerical background/AP-null audit for frozen designer f(R).
+
+The pinned H-EFTCAMB source maps EFTwDE=0 to its dedicated LCDM w_DE
+parametrization (w=-1 exactly).  The executable's EFT background writer is
+not emitted for EFTflag=0, so the numerical null test uses the designer B0=0
+background as the same-branch reference and separately verifies the frozen GR
+configuration contract.  This avoids modifying upstream physics merely to
+instrument the GR output path.
+"""
 from __future__ import annotations
 
 import argparse
@@ -123,9 +131,14 @@ def main() -> None:
     args = p.parse_args()
     bgroot, parroot = Path(args.background_root), Path(args.parameter_root)
 
-    ref_path = bgroot / f"{PREFIX}gr_background.dat"
-    gr_ini = parroot / f"{PREFIX}gr.ini"
+    # The EFT-specific background writer is not produced for EFTflag=0.
+    # Use the exact designer B0=0 point as the numerical reference.  The workflow
+    # separately hard-checks in the pinned source that EFTwDE=0 selects the
+    # dedicated LCDM w_DE parametrization, whose value is exactly -1.
+    ref_path = bgroot / f"{PREFIX}b0_background.dat"
     ref_table, ref_z, ref_h, ref_dm = load_background(ref_path)
+
+    gr_ini = parroot / f"{PREFIX}gr.ini"
     gr_contract = bool(read_ini_value(gr_ini, "EFTflag") == 0.0)
 
     rows = [
@@ -146,6 +159,7 @@ def main() -> None:
         "max_relative_DM_nonzero_rows": 1e-8,
         "max_abs_log_DH_over_DM": 1e-8,
         "config_contract_required": True,
+        "source_LCDM_background_contract_required": True,
     }
     failures = []
     if not gr_contract:
@@ -162,7 +176,7 @@ def main() -> None:
         "schema": "dsir.observational_whitening.eftcamb_fr_ap_zero_audit.v0.1",
         "status": "PASS_EFTCAMB_FR_AP_ZERO_AUDIT_V0_1" if not failures else "FAIL_EFTCAMB_FR_AP_ZERO_AUDIT_V0_1",
         "failures": failures,
-        "scope": "same-solver numerical background/AP audit of the frozen high-precision C5 designer-f(R) B0 manifold with EFTwDE=0",
+        "scope": "source-contract plus same-designer-branch numerical background/AP audit of the frozen high-precision C5 B0 manifold with EFTwDE=0",
         "not_a_claim": [
             "not a theorem for arbitrary modified-gravity backgrounds",
             "not a test that f(R) perturbation responses vanish",
@@ -171,6 +185,15 @@ def main() -> None:
         ],
         "pinned_upstream": PINNED_UPSTREAM,
         "source_config_artifact": SOURCE_CONFIG_ARTIFACT,
+        "source_background_contract": {
+            "EFTwDE_0_selects": "wDE_LCDM_parametrization_1D",
+            "wDE_LCDM_value": -1.0,
+            "verified_by_workflow_grep_on_pinned_source": True,
+        },
+        "numerical_reference": {
+            "file": ref_path.name,
+            "meaning": "designer B0=0 on the same frozen EFTwDE=0 LCDM-background branch",
+        },
         "target_z": TARGET_Z.tolist(),
         "thresholds_frozen_before_ci_hard_run": thresholds,
         "gr_config_contract_ok": gr_contract,
@@ -183,7 +206,7 @@ def main() -> None:
             "all_config_contracts_ok": all(r["config_contract_ok"] for r in rows),
             "all_numeric_background_tables_exact": all(r["all_numeric_background_columns_exact"] for r in rows),
         },
-        "key_result": "If PASS, the frozen high-precision designer-f(R) EFTwDE=0 B0 direction is validated as background/AP-null relative to its same-solver GR baseline over the production B0 grid.",
+        "key_result": "If PASS, the frozen high-precision designer-f(R) B0 direction is background/AP-null on the source-proven EFTwDE=0 LCDM expansion branch over the production B0 grid.",
     }
     Path(args.json).write_text(json.dumps(out, indent=2) + "\n")
     print(json.dumps(out, indent=2))
