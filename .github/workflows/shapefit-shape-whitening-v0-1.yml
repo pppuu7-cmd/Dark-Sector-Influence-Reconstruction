@@ -1,0 +1,48 @@
+name: DSIR ShapeFit shape-block observational whitening v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/shapefit-shape-whitening-v0-1.yml'
+      - 'ci/shapefit_shape_whitening_v0_1.py'
+      - 'src/dsir/observational_whitening.py'
+      - 'src/dsir/shapefit_response.py'
+      - 'tests/test_observational_whitening.py'
+      - 'data/derived/comparison_readiness/local_response_tangents_v0_1.json'
+      - 'data/derived/observational_whitening/experiment_034_shapefit_shape_whitening_v0_1.json'
+      - 'data/observations/desi_dr1_shapefit_erratum_2026.json'
+      - 'experiments/034_shapefit_shape_whitening_v0_1.md'
+      - 'docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-24.md'
+      - 'docs/STATUS.md'
+      - 'docs/RECOVERY_LATEST.md'
+
+jobs:
+  shapefit-shape-whitening:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install DSIR and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . pytest
+      - name: Unit tests for observation operator
+        run: pytest -q tests/test_observational_whitening.py
+      - name: Run Experiment 034 hard method gate
+        run: |
+          python ci/shapefit_shape_whitening_v0_1.py \
+            --json shapefit_shape_whitening_v0_1.json \
+            --md shapefit_shape_whitening_v0_1.md
+      - name: Upload Experiment 034 artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: shapefit-shape-whitening-v0-1-${{ github.sha }}
+          path: |
+            shapefit_shape_whitening_v0_1.json
+            shapefit_shape_whitening_v0_1.md
+          if-no-files-found: error

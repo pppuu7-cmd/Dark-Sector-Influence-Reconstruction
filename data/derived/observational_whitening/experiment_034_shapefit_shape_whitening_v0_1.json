@@ -1,0 +1,35 @@
+{
+  "schema": "dsir.observational_whitening.shapefit_shape.result.v0.1",
+  "status": "PASS_PROXY_OBSERVATIONAL_WHITENING_SHAPE_BLOCK",
+  "run_id": 32777716140,
+  "artifact_id": 9538572755,
+  "artifact_sha256": "b1c6dc98d933e564d1c74ee549917621e5b4e2fbdc4e37d760bf80c2b13c4a38",
+  "method_control_abs_error": 8.326672684688674e-17,
+  "scope": "DESI DR1 ShapeFit m+n marginally-whitened finite-node proxy; not full survey likelihood and not G5 closure",
+  "bins": ["LRG1", "LRG2", "LRG3", "ELG2", "QSO"],
+  "z_eff": [0.51, 0.71, 0.92, 1.32, 1.49],
+  "sigma_marginal_m_plus_n": [0.06994205458806597, 0.06901052093702814, 0.05906201825200355, 0.06601190044226875, 0.05125061950845082],
+  "sigma_conditional_m_plus_n_diagnostic_only": [0.06382834370010139, 0.06304657162099804, 0.05594170226166519, 0.057391074694191614, 0.045644104344361724],
+  "conditional_over_marginal": [0.9125889148671399, 0.9135791291668095, 0.9471688221519164, 0.8694049756131995, 0.8906059045166347],
+  "directions": {
+    "C1_smooth_w_nonphantom": {"shape_proxy": [0.009984147085698787, 0.007659635681185277, 0.005968770906927045, 0.003962640246339049, 0.0034232984411451863], "whitened_norm_per_source_parameter": 0.22577561103855065, "projection_residual_median": 0.006067754651539875, "projection_residual_max": 0.013332028011650057},
+    "C2_IDE_alpha_negative": {"shape_proxy": [-0.000818125925782077, -0.0008181261433120304, -0.0008181264212325536, -0.0008181272772269977, -0.0008181278427780532], "whitened_norm_per_source_parameter": 0.029625556226690105, "projection_residual_median": 0.05523449070018873, "projection_residual_max": 0.05871621041666392},
+    "C2_IDE_beta": {"shape_proxy": [0.8440976909033159, 0.844097647826166, 0.8440974542893138, 0.8440975970724192, 0.8440981593688157], "whitened_norm_per_source_parameter": 30.565999687030384, "projection_residual_median": 0.03416004417777918, "projection_residual_max": 0.03719366203647948},
+    "C3_GDM_cs2": {"shape_proxy": [-40889.72686779446, -36907.11103957147, -33397.437216848484, -28118.518166317186, -26323.45276517628], "whitened_norm_per_source_parameter": 1180169.285011842, "projection_residual_median": 0.3608041625139654, "projection_residual_max": 0.36089288547026355},
+    "C3_GDM_cv2": {"shape_proxy": [-26495.344299865043, -24003.00796341347, -21772.716160903463, -18373.513823948524, -17207.27024284229], "whitened_norm_per_source_parameter": 768488.1663091247, "projection_residual_median": 0.36046839761580984, "projection_residual_max": 0.3605352201561143},
+    "C5_designer_fR_B0": {"shape_proxy": [0.00029841158563670574, 0.00021852204986084925, 0.0001594295427244757, 7.654811756469291e-05, 4.576982014930597e-05], "whitened_norm_per_source_parameter": 0.0061366943094760245, "projection_residual_median": 0.36197356898612104, "projection_residual_max": 0.36281067307976844}
+  },
+  "key_pairs": {
+    "C3_GDM_cs2__vs__C3_GDM_cv2": {"raw_unoriented_deg": 0.19025678231128368, "whitened_unoriented_deg": 0.1895823159299364, "whitened_oriented_deg": 0.1895823159299364},
+    "C3_GDM_cs2__vs__C5_designer_fR_B0": {"raw_unoriented_deg": 20.771942108775534, "whitened_unoriented_deg": 22.995730297400087, "whitened_oriented_deg": 157.0042697025999},
+    "C3_GDM_cv2__vs__C5_designer_fR_B0": {"raw_unoriented_deg": 20.956123880739938, "whitened_unoriented_deg": 23.17867369988457, "whitened_oriented_deg": 156.82132630011543},
+    "C1_smooth_w_nonphantom__vs__C3_GDM_cs2": {"raw_unoriented_deg": 12.132481818581113, "whitened_unoriented_deg": 12.795598093896416, "whitened_oriented_deg": 167.20440190610358}
+  },
+  "unit_direction_singular_ratios_descriptive_only": [1.0, 0.20558551394843616, 0.010652265712055582, 0.0019484282366170932, 1.37046296141655e-06],
+  "interpretation": {
+    "gdm_cs2_cv2": "shape-history degeneracy survives marginal observational whitening",
+    "gdm_fr": "proxy shape histories rotate to about 23 deg acute angle after whitening, but approximately 36 percent ShapeFit-basis residual forbids treating this as full DESI distinguishability",
+    "rank": "descriptive spectrum only; no threshold and no R_model claim"
+  },
+  "next_hard_requirement": "family-complete AP/DH_over_DM and f_sigma_s8 observation operators plus survey/window-aware shape mapping before full ShapeFit covariance whitening"
+}
