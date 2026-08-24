@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Compare matched CLASS-family numeric output files with different root prefixes.
 
-Designed for DSIR solver-regression workflows. It emits JSON metrics but does
-not decide a physics tolerance unless --max-rel is supplied. For P(k) files it
-also reports the frozen dsir-response-v0.1 k nodes.
+Designed for DSIR solver-regression workflows. For P(k) files it reports the
+frozen dsir-response-v0.1 k nodes and can enforce a pre-frozen linear-core
+threshold independently of extension-scale differences.
 """
 from __future__ import annotations
 
@@ -57,7 +57,7 @@ def frozen_pk_nodes(a: np.ndarray, b: np.ndarray):
 
 def compare(a: np.ndarray, b: np.ndarray, is_pk: bool = False):
     if a.shape != b.shape:
-        return {"shape_match": False, "shape_a": a.shape, "shape_b": b.shape}
+        return {"shape_match": False, "shape_a": list(a.shape), "shape_b": list(b.shape)}
     xscale = max(float(np.max(np.abs(a[:, 0]))), 1.0)
     x_abs = float(np.max(np.abs(a[:, 0] - b[:, 0])))
     vals_a, vals_b = a[:, 1:], b[:, 1:]
@@ -88,6 +88,8 @@ def main():
     ap.add_argument("--root-b", default="gdm0_")
     ap.add_argument("--json", required=True)
     ap.add_argument("--max-rel", type=float, default=None)
+    ap.add_argument("--max-core-rel", type=float, default=None,
+                    help="Hard threshold for max |Delta P/P| on 1e-3<=k<=1e-1 h/Mpc across all matched P(k) files")
     args = ap.parse_args()
 
     d = Path(args.directory)
@@ -100,24 +102,39 @@ def main():
         "files": {},
     }
     global_max = 0.0
+    global_core_max = 0.0
     compared = 0
+    pk_compared = 0
     for suffix in common:
         aa, bb = load_numeric(files_a[suffix]), load_numeric(files_b[suffix])
         if aa is None or bb is None:
             continue
-        m = compare(aa, bb, is_pk=suffix.endswith("_pk.dat"))
+        is_pk = suffix.endswith("_pk.dat")
+        m = compare(aa, bb, is_pk=is_pk)
         metrics["files"][suffix] = m
         if m.get("shape_match"):
             compared += 1
             global_max = max(global_max, m["max_abs_over_peak_across_nonzero_columns"])
+            if is_pk and "frozen_core_nodes" in m:
+                pk_compared += 1
+                s = m["frozen_core_nodes"].get("core_grid_summary")
+                if s is not None:
+                    global_core_max = max(global_core_max, s["max_abs_relative"])
     metrics["compared_files"] = compared
+    metrics["pk_compared_files"] = pk_compared
     metrics["global_max_abs_over_peak"] = global_max
+    metrics["global_linear_core_max_abs_relative"] = global_core_max
     Path(args.json).write_text(json.dumps(metrics, indent=2, sort_keys=True))
     print(json.dumps(metrics, indent=2, sort_keys=True))
     if compared == 0:
         raise SystemExit("No matched numeric CLASS output files were compared")
     if args.max_rel is not None and global_max > args.max_rel:
         raise SystemExit(f"global relative metric {global_max:.6e} exceeds {args.max_rel:.6e}")
+    if args.max_core_rel is not None:
+        if pk_compared == 0:
+            raise SystemExit("No matched P(k) files available for linear-core threshold")
+        if global_core_max > args.max_core_rel:
+            raise SystemExit(f"linear-core max |Delta P/P| {global_core_max:.6e} exceeds {args.max_core_rel:.6e}")
 
 
 if __name__ == "__main__":
