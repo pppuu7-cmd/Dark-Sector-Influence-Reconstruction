@@ -1,0 +1,112 @@
+name: H-EFTCAMB designer-fR exact-GR hard gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/eftcamb-fr-gr-hard.yml'
+      - 'ci/eftcamb_fr_gr_limit.py'
+      - 'experiments/021_eftcamb_designer_fr_gr_limit.md'
+
+jobs:
+  mg-s0-hard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git gfortran gcc make liblapack-dev libblas-dev python3 python3-pip
+          python3 -m pip install --user numpy
+      - name: Clone and serial-build pinned H-EFTCAMB
+        run: |
+          git clone --recursive https://github.com/EFTCAMB/EFTCAMB.git eftcamb
+          cd eftcamb
+          git checkout 16d9c4e9f85751e30efd0a53b177941713078904
+          git submodule update --init --recursive
+          git rev-parse HEAD | tee ../eftcamb_hard_upstream_sha.txt
+          cd fortran
+          make camb
+      - name: Write matched stock-export GR and exact-zero designer configs
+        working-directory: eftcamb/fortran/eftcamb_test/parameters
+        run: |
+          cp base_params.ini dsir_hard_base.ini
+          sed -i 's/^get_scalar_cls[[:space:]]*=.*/get_scalar_cls = F/' dsir_hard_base.ini
+          sed -i 's/^get_tensor_cls[[:space:]]*=.*/get_tensor_cls = F/' dsir_hard_base.ini
+          sed -i 's/^do_lensing[[:space:]]*=.*/do_lensing = F/' dsir_hard_base.ini
+          sed -i 's/^transfer_kmax[[:space:]]*=.*/transfer_kmax = 0.25/' dsir_hard_base.ini
+          sed -i 's/^transfer_k_per_logint[[:space:]]*=.*/transfer_k_per_logint = 80/' dsir_hard_base.ini
+          sed -i 's/^transfer_num_redshifts[[:space:]]*=.*/transfer_num_redshifts = 1/' dsir_hard_base.ini
+          sed -i 's/^transfer_redshift(1)[[:space:]]*=.*/transfer_redshift(1) = 0/' dsir_hard_base.ini
+          sed -i 's/^number_of_threads[[:space:]]*=.*/number_of_threads = 2/' dsir_hard_base.ini
+          cat > dsir_hard_gr.ini <<'EOF'
+          EFTflag = 0
+          output_root = eftcamb_test/results/spectra_results/dsir_hard_gr
+          DEFAULT(dsir_hard_base.ini)
+          EOF
+          cat > dsir_hard_b0.ini <<'EOF'
+          EFTflag = 3
+          DesignerEFTmodel = 1
+          EFTwDE = 0
+          EFTB0 = 0
+          EFT_ghost_math_stability = F
+          EFT_mass_math_stability = F
+          EFT_ghost_stability = T
+          EFT_gradient_stability = T
+          EFT_mass_stability = F
+          EFT_mass_stability_rate = 10.0
+          EFT_additional_priors = T
+          EFTCAMB_turn_on_time = 0.01
+          EFTCAMB_stability_time = 1.e-10
+          EFTCAMB_stability_threshold = 0.0
+          output_root = eftcamb_test/results/spectra_results/dsir_hard_b0
+          DEFAULT(dsir_hard_base.ini)
+          EOF
+      - name: Run frozen hard models
+        working-directory: eftcamb/fortran
+        run: |
+          mkdir -p eftcamb_test/results/spectra_results
+          ./camb eftcamb_test/parameters/dsir_hard_gr.ini 2>&1 | tee ../../hard_gr.log
+          ./camb eftcamb_test/parameters/dsir_hard_b0.ini 2>&1 | tee ../../hard_b0.log
+      - name: Hard response threshold frozen before this run
+        run: |
+          python3 ci/eftcamb_fr_gr_limit.py \
+            --root eftcamb/fortran \
+            --gr-token dsir_hard_gr \
+            --models 0:dsir_hard_b0 \
+            --threshold 2e-6 \
+            --json eftcamb_mg_s0_hard.json
+      - name: Semantic exact-zero root check frozen before this run
+        run: |
+          python3 - <<'PY'
+          import json,re
+          from pathlib import Path
+          text=Path('hard_b0.log').read_text()
+          m=re.search(r'B0 found\s*=\s*([+\-0-9.Ee]+)',text)
+          if not m:
+              raise SystemExit('B0 found line missing')
+          found=float(m.group(1))
+          limit=1e-12
+          out={'B0_found':found,'abs_limit':limit,'status':'PASS' if abs(found)<=limit else 'FAIL'}
+          Path('eftcamb_mg_s0_semantic.json').write_text(json.dumps(out,indent=2)+'\n')
+          print(json.dumps(out,indent=2))
+          if abs(found)>limit:
+              raise SystemExit(2)
+          if 'EFTCAMB: theory stable' not in text:
+              raise SystemExit('theory stability PASS marker missing')
+          PY
+      - name: Upload MG-S0 hard artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eftcamb-mg-s0-hard-${{ github.sha }}
+          path: |
+            eftcamb_mg_s0_hard.json
+            eftcamb_mg_s0_semantic.json
+            hard_gr.log
+            hard_b0.log
+            eftcamb_hard_upstream_sha.txt
+            eftcamb/fortran/eftcamb_test/parameters/dsir_hard_*.ini
+            eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_hard_*matterpower*.dat
+          if-no-files-found: error

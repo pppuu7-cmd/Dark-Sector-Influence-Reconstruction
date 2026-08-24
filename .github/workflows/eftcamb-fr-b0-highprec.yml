@@ -1,0 +1,113 @@
+name: H-EFTCAMB high-precision B0 floor audit
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/eftcamb-fr-b0-highprec.yml'
+      - 'ci/eftcamb_fr_gr_limit.py'
+
+jobs:
+  highprec-floor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git gfortran gcc make liblapack-dev libblas-dev python3 python3-pip
+          python3 -m pip install --user numpy
+      - name: Clone pinned H-EFTCAMB and patch output precision only
+        run: |
+          git clone --recursive https://github.com/EFTCAMB/EFTCAMB.git eftcamb
+          cd eftcamb
+          git checkout 16d9c4e9f85751e30efd0a53b177941713078904
+          git submodule update --init --recursive
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('fortran/results.f90')
+          s=p.read_text()
+          targets={
+              "write (unit, '(*(E15.6))') MTrans%TransferData(Transfer_kh,i,1),outpower(i,:)":
+              "write (unit, '(*(E25.16))') MTrans%TransferData(Transfer_kh,i,1),outpower(i,:)",
+              "write (unit, '(*(E15.6))') minkh*exp((i-1)*dlnkh),outpower(i,1)":
+              "write (unit, '(*(E25.16))') minkh*exp((i-1)*dlnkh),outpower(i,1)",
+          }
+          for old,new in targets.items():
+              n=s.count(old)
+              if n != 1:
+                  raise SystemExit(f'expected exactly one target {old!r}, found {n}')
+              s=s.replace(old,new)
+              print('output-only patch:', old, '->', new)
+          p.write_text(s)
+          PY
+          cd fortran
+          make camb
+      - name: Write matched GR, B0=0, 1e-8 and 1e-7 configs
+        working-directory: eftcamb/fortran/eftcamb_test/parameters
+        run: |
+          cp base_params.ini dsir_hp_base.ini
+          sed -i 's/^get_scalar_cls[[:space:]]*=.*/get_scalar_cls = F/' dsir_hp_base.ini
+          sed -i 's/^get_tensor_cls[[:space:]]*=.*/get_tensor_cls = F/' dsir_hp_base.ini
+          sed -i 's/^do_lensing[[:space:]]*=.*/do_lensing = F/' dsir_hp_base.ini
+          sed -i 's/^transfer_kmax[[:space:]]*=.*/transfer_kmax = 0.25/' dsir_hp_base.ini
+          sed -i 's/^transfer_k_per_logint[[:space:]]*=.*/transfer_k_per_logint = 80/' dsir_hp_base.ini
+          sed -i 's/^transfer_num_redshifts[[:space:]]*=.*/transfer_num_redshifts = 1/' dsir_hp_base.ini
+          sed -i 's/^transfer_redshift(1)[[:space:]]*=.*/transfer_redshift(1) = 0/' dsir_hp_base.ini
+          sed -i 's/^number_of_threads[[:space:]]*=.*/number_of_threads = 2/' dsir_hp_base.ini
+          cat > dsir_hp_gr.ini <<'EOF'
+          EFTflag = 0
+          output_root = eftcamb_test/results/spectra_results/dsir_hp_gr
+          DEFAULT(dsir_hp_base.ini)
+          EOF
+          for pair in '0 dsir_hp_b0' '1e-8 dsir_hp_b1em8' '1e-7 dsir_hp_b1em7'; do
+            set -- $pair
+            B0=$1; TOKEN=$2
+            cat > ${TOKEN}.ini <<EOF
+          EFTflag = 3
+          DesignerEFTmodel = 1
+          EFTwDE = 0
+          EFTB0 = ${B0}
+          EFT_ghost_math_stability = F
+          EFT_mass_math_stability = F
+          EFT_ghost_stability = T
+          EFT_gradient_stability = T
+          EFT_mass_stability = F
+          EFT_mass_stability_rate = 10.0
+          EFT_additional_priors = T
+          EFTCAMB_turn_on_time = 0.01
+          EFTCAMB_stability_time = 1.e-10
+          EFTCAMB_stability_threshold = 0.0
+          output_root = eftcamb_test/results/spectra_results/${TOKEN}
+          DEFAULT(dsir_hp_base.ini)
+          EOF
+          done
+      - name: Run matched models
+        working-directory: eftcamb/fortran
+        run: |
+          mkdir -p eftcamb_test/results/spectra_results
+          ./camb eftcamb_test/parameters/dsir_hp_gr.ini > ../../hp_gr.log 2>&1
+          for f in eftcamb_test/parameters/dsir_hp_b*.ini; do
+            token=$(basename "$f" .ini)
+            ./camb "$f" > "../../${token}.log" 2>&1
+          done
+      - name: Compare high-precision responses
+        run: |
+          python3 ci/eftcamb_fr_gr_limit.py \
+            --root eftcamb/fortran \
+            --gr-token dsir_hp_gr \
+            --models 0:dsir_hp_b0 1e-8:dsir_hp_b1em8 1e-7:dsir_hp_b1em7 \
+            --json b0_highprec_comparison.json
+          cat b0_highprec_comparison.json
+      - name: Upload high-precision floor audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: eftcamb-b0-highprec-${{ github.sha }}
+          path: |
+            b0_highprec_comparison.json
+            hp_gr.log
+            dsir_hp_b*.log
+            eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_hp_*matterpower*.dat
+          if-no-files-found: error
