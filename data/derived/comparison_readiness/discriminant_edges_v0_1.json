@@ -1,0 +1,55 @@
+{
+  "schema": "dsir.discriminant_edges.v0.1",
+  "scope": "Only degeneracy edges and separators established by pre-frozen hard gates are included.",
+  "edges": [
+    {
+      "id": "C0_vs_C4_WDM_low_k",
+      "pair": ["C0_LCDM", "C4_WDM_3keV"],
+      "degenerate_in": "linear_structure_low_k",
+      "established_separators": ["small_scale_transfer"],
+      "evidence": {
+        "run_id": 32772758188,
+        "artifact_digest": "sha256:f110de1071cb11ce7e927b403f92002c766b03e384715ddd435af2c1c67c4131",
+        "metrics": {"r_T_k0p1": -3.455573396393456e-06, "r_T_k10": -0.10375152156555713},
+        "hard_thresholds": {"abs_r_T_k0p1_max": 0.0001, "abs_r_T_k10_min": 0.05}
+      }
+    },
+    {
+      "id": "C3_cs2_vs_cv2_low_k_P",
+      "pair": ["C3_GDM_cs2", "C3_GDM_cv2"],
+      "degenerate_in": "low_k_P_Delta_and_Weyl_amplitude",
+      "established_separators": ["metric_slip"],
+      "evidence": {
+        "run_id": 32774501069,
+        "artifact_digest": "sha256:4197b9286e53481164f5a842796199ea94ded202d4e62f6cb232186247291d0e",
+        "metrics": {"P_angle_deg": 0.3226163698784104, "r_W_angle_deg_at_1e-7": 0.3007368754963291, "slip_angle_deg_at_1e-7": 137.9432119480814, "combined_angle_deg": 56.96321243480535},
+        "hard_thresholds": {"r_W_angle_deg_max": 1.0, "slip_angle_deg_min": 120.0, "combined_angle_deg_min": 45.0}
+      }
+    },
+    {
+      "id": "C3_cs2_vs_C5_fR_scale_only",
+      "pair": ["C3_GDM_cs2", "C5_designer_fR"],
+      "degenerate_in": "leading_low_k_scale_mode_shape",
+      "established_separators": ["time_evolution_or_response_sign"],
+      "evidence": {
+        "run_id": 32774501126,
+        "artifact_digest": "sha256:3d7e86924030ff946da05297174df3bb2db09cf3c0ce534356270177dfa1f7f0",
+        "metrics": {"scale_angle_deg": 0.07813346403305796, "time_unoriented_angle_deg": 25.181715013069738, "full_oriented_angle_deg": 154.81815488219547},
+        "hard_thresholds": {"scale_angle_deg_max": 1.0, "time_unoriented_angle_deg_min": 15.0, "full_oriented_angle_deg_min": 120.0}
+      }
+    },
+    {
+      "id": "C3_cv2_vs_C5_fR_scale_only",
+      "pair": ["C3_GDM_cv2", "C5_designer_fR"],
+      "degenerate_in": "leading_low_k_scale_mode_shape",
+      "established_separators": ["time_evolution_or_response_sign"],
+      "evidence": {
+        "run_id": 32774501126,
+        "artifact_digest": "sha256:3d7e86924030ff946da05297174df3bb2db09cf3c0ce534356270177dfa1f7f0",
+        "metrics": {"scale_angle_deg": 0.10168554590398661, "time_unoriented_angle_deg": 25.487933405807624, "full_oriented_angle_deg": 154.51185701938417},
+        "hard_thresholds": {"scale_angle_deg_max": 1.0, "time_unoriented_angle_deg_min": 15.0, "full_oriented_angle_deg_min": 120.0}
+      }
+    }
+  ],
+  "forbidden_rule": "Do not add candidate/possible separators until a frozen hard gate passes for the specified pair and domain."
+}
