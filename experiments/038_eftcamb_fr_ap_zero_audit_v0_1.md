@@ -1,16 +1,14 @@
 # Experiment 038 — H-EFTCAMB designer-f(R) AP-zero audit v0.1
 
 **Date:** 2026-08-25  
-**Status before successful hard scientific run:** protocol frozen; result pending  
+**Status:** **HARD PASS — `PASS_EFTCAMB_FR_AP_ZERO_AUDIT_V0_1`**  
 **Scope:** C5 background/AP contract only
 
 ## Purpose
 
 Experiment 036 left the C5 designer-f(R) AP geometry cell masked rather than assuming zero. The frozen C5 configs use `EFTwDE=0`, suggesting a Lambda-like background, but DSIR forbids converting that expectation into a zero-valued observation cell without an explicit source or numerical contract.
 
-Experiment 038 therefore reruns the **same pinned high-precision H-EFTCAMB C5 configurations**, preserves their background files, verifies the pinned source-level LCDM expansion selection, and numerically tests whether changing `B0` alters `H(z)`, `D_M(z)`, or the validated Experiment 035 AP response.
-
-A PASS allows the C5 **B0 direction** in the AP geometry block to be encoded as validated zero. A FAIL is retained as a scientific result and the nonzero response must be propagated instead.
+Experiment 038 reruns the **same pinned high-precision H-EFTCAMB C5 configurations**, preserves their background files, verifies the pinned source-level LCDM expansion selection, and tests whether changing `B0` alters `H(z)`, `D_M(z)`, or the validated Experiment 035 AP response.
 
 ## Immutable provenance
 
@@ -24,13 +22,20 @@ Exact frozen C5 hard-production configuration artifact:
 - artifact ID `9532245261`;
 - artifact name `eftcamb-mgs1-hard-92350bb5087d17c874626c75b96779ae264dd1f6`;
 - digest `sha256:9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635`;
-- preserved hard config lineage `dsir_mgs1_hp_*`.
+- hard config lineage `dsir_mgs1_hp_*`.
 
-The audit copies those exact INI files into a clean checkout/build of the pinned upstream solver. It does **not** reconstruct the C5 cosmology by hand.
+Successful Experiment 038 hard run:
+
+- run `32785800977`;
+- status `PASS_EFTCAMB_FR_AP_ZERO_AUDIT_V0_1`;
+- result artifact ID `9541598468`;
+- artifact SHA256 `24b7fa5951c06d4cea72e6c0bf6baad2d2174f2d86794ec0818cf57c309b81c8`;
+- hard head SHA `e8e8b266e1f36bf6086100b156bd40d71ed4d8c2`;
+- frozen repository summary `data/derived/observational_whitening/experiment_038_eftcamb_fr_ap_zero_audit_v0_1.json`.
 
 ## Source-level background contract
 
-The pinned designer-f(R) source explicitly maps
+The pinned designer-f(R) source maps
 
 `EFTwDE = 0`
 
@@ -38,30 +43,29 @@ to
 
 `wDE_LCDM_parametrization_1D`.
 
-The pinned neutral-parametrization source evaluates that function as
+The pinned neutral parametrization evaluates
 
 \[
 w_{DE}(a)=-1
 \]
 
-exactly, with zero derivatives. The workflow greps these exact source statements at the pinned commit before the hard numerical audit.
+exactly, with zero derivatives. The workflow verifies those exact statements at the pinned commit before running the numerical hard audit.
 
-Thus the expansion-history choice for this frozen designer branch is source-proven LCDM. The remaining numerical question is whether varying `B0` leaks into the saved background/AP outputs despite that design contract.
+Thus the frozen C5 `B0` manifold lives on a source-proven LCDM expansion branch.
 
 ## Provenance / infrastructure corrections before scientific execution
 
-Two non-scientific failures were encountered before any Experiment 038 hard script executed:
+Several infrastructure assumptions were corrected before the first scientific hard-script result. **No scientific threshold was altered.**
 
-1. The first draft referenced older calibration filenames `dsir_mgs1_*`; inspection of the immutable hard artifact showed the production lineage is `dsir_mgs1_hp_*`.
-2. A later workflow expected an EFT-specific `background.dat` for the standard `EFTflag=0` GR branch. All GR/designer solver runs completed and every designer run reported `EFTCAMB: theory stable`, but the EFT-specific writer does not provide that GR file through this execution path. The scientific script was skipped.
+1. The immutable hard artifact showed that the production lineage is `dsir_mgs1_hp_*`, not the older calibration names `dsir_mgs1_*`.
+2. The standard `EFTflag=0` branch did not emit the EFT-specific background file through this execution path. Rather than modify upstream physics only for instrumentation, the numerical reference was changed to exact designer `B0=0`, while the pinned source establishes its LCDM background contract. The GR configuration is still rerun and checked as `EFTflag=0`.
+3. CAMB appends `_` to a nonempty `output_root`; the frozen roots themselves already end in `_`. Therefore actual files use a double separator, e.g. `dsir_mgs1_hp_b0__background.dat`. This is the same naming convention already present in the frozen matter-power artifact.
 
-Neither failure inspected or changed the hard geometry tolerances below. Rather than modify upstream physics merely to instrument the GR path, the numerical audit now uses the exact designer `B0=0`, `EFTwDE=0` background as the same-branch numerical reference, while the source-level contract identifies that branch with LCDM expansion.
-
-The frozen GR INI (`EFTflag=0`) is still rerun and its configuration contract is checked, preserving the original common-baseline lineage.
+These were provenance/file-path repairs only; the hard geometry tolerances below remained fixed.
 
 ## Models
 
-Frozen high-precision GR configuration:
+Frozen high-precision GR control:
 
 `EFTflag=0`.
 
@@ -72,81 +76,80 @@ Designer family:
 - `EFTwDE=0`;
 - `EFTB0={0,1e-7,1e-6,1e-5,1e-4,1e-3}`.
 
-The hard script parses these values from each preserved INI and fails if the expected contract is not present.
+The numerical background reference is
 
-## Numerical background reference and outputs
+`dsir_mgs1_hp_b0__background.dat`,
 
-The numerical reference is
+namely exact designer `B0=0` on the same source-proven LCDM branch.
 
-`dsir_mgs1_hp_b0_background.dat`,
-
-namely the exact `B0=0` point on the same source-proven LCDM designer branch.
-
-The pinned upstream background writer stores columns
-
-`a z tau r Hz DL DA DV DM HzRs DAoRs DVoRs DMoRs`.
-
-For each production `B0` the audit checks:
-
-1. identical redshift sampling relative to designer `B0=0`;
-2. relative `H(z)` response;
-3. relative nonzero-row `D_M(z)` response;
-4. full-table exact equality as a diagnostic;
-5. AP response derived from the full same-solver `H(z)` history.
-
-For the AP layer,
-
-\[
-r_E(z;B_0)=\ln\frac{H(z;B_0)}{H(z;B_0=0)},
-\]
-
-and the validated Experiment 035 operator gives
-
-\[
-\Delta\ln(D_H/D_M)=-\Delta\ln F_{AP}.
-\]
-
-The target redshifts are the corrected ShapeFit geometry bins
-
-`z=(0.51,0.71,0.92,1.32,1.49)`.
-
-## Hard thresholds frozen before the first scientific CI output
-
-H-EFTCAMB writes the background table with finite text precision. To remain comfortably above output rounding while still excluding any physically material geometry deformation, the thresholds were frozen **before a scientific hard-script result existed**:
+## Hard thresholds frozen before scientific output
 
 - maximum redshift-grid mismatch `<=1e-10`;
 - maximum relative `H(z)` mismatch `<=1e-8`;
 - maximum relative `D_M(z)` mismatch over nonzero rows `<=1e-8`;
-- maximum absolute `Delta ln(D_H/D_M)` at the five target redshifts `<=1e-8`;
-- all frozen configuration contracts must pass;
-- the pinned-source `EFTwDE=0 -> wDE_LCDM -> w=-1` contract must pass.
+- maximum absolute `Delta ln(D_H/D_M)` at the five ShapeFit geometry redshifts `<=1e-8`;
+- all frozen configuration contracts required;
+- pinned-source `EFTwDE=0 -> wDE_LCDM -> w=-1` contract required.
 
-Full numeric-table bitwise equality is recorded only as a diagnostic and is **not** a PASS requirement.
+Full numeric-table exact equality was diagnostic only, not a PASS requirement. No angular, rank, or significance threshold was defined.
 
-No angular, rank, or significance threshold is defined.
+## Hard result
 
-## Scientific interpretation if PASS
-
-A PASS establishes, for the frozen high-precision C5 designer-f(R) manifold,
+For **every** audited point
 
 \[
-K_{AP}t_{B_0}=0
+B_0\in\{0,10^{-7},10^{-6},10^{-5},10^{-4},10^{-3}\},
 \]
 
-to the hard numerical tolerance **on a source-proven LCDM expansion branch**, while the already established structure response is nonzero.
+the saved numerical background table is exactly equal to the `B0=0` table at saved solver precision. The aggregate diagnostics are
 
-Together with Experiment 037 this would supply two qualitatively different hard examples — GDM closure physics and designer modified gravity — whose microscopic directions are background/AP-null but perturbation-active.
+\[
+\max |\Delta H/H|=0,
+\]
 
-That would strengthen the DSIR notion of **channel null spaces / block-sparse influence**, but would not prove a universal law.
+\[
+\max |\Delta D_M/D_M|=0,
+\]
+
+and
+
+\[
+\max_z |\Delta\ln(D_H/D_M)|=0
+\]
+
+at the five target redshifts `z=(0.51,0.71,0.92,1.32,1.49)`.
+
+The redshift grids also match exactly and all configuration contracts pass.
+
+Thus the result is not merely below the frozen `1e-8` tolerance; it is a **saved-solver exact zero** over the entire frozen production `B0` grid.
+
+## Scientific interpretation
+
+For the frozen high-precision C5 designer-f(R) manifold,
+
+\[
+\boxed{K_{AP}t_{B_0}=0}
+\]
+
+on the source-proven LCDM expansion branch, while the already validated C5 perturbation/structure response is nonzero.
+
+Together with Experiment 037, DSIR now has two qualitatively different hard examples of channel-null/block-sparse influence:
+
+1. **GDM closure physics:** `cs2/cv2` directions are background/AP-null but structure/metric-active.
+2. **Designer modified gravity:** the `B0` direction is background/AP-null but structure-active.
+
+This strengthens the working hypothesis that an influence trajectory may contain exact channel-null coordinates and that absence of an AP/background response does not imply proximity to the common physical origin in the full response space.
+
+It is still not a universal law: both examples are deliberately constructed families with fixed background contracts, and future families may not share this sparsity.
 
 ## Claim boundary
 
-Experiment 038 cannot establish:
+Experiment 038 does **not** establish:
 
 - zero background response for arbitrary f(R) or arbitrary modified gravity;
-- zero perturbation response (C5 is already strongly nonzero there);
-- parameter constraints or detection significance;
+- zero perturbation response;
+- a DESI likelihood or parameter constraint;
 - intrinsic response rank;
-- a new residual law or discovery.
+- a residual law or discovery.
 
-G5 remains PARTIAL after this experiment unless all other family-complete observational kernels and robustness requirements are separately satisfied. G7 and G8 remain OPEN.
+G5 remains **PARTIAL**. G7 and G8 remain **OPEN**.
