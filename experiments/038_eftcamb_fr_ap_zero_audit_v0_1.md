@@ -8,7 +8,7 @@
 
 Experiment 036 left the C5 designer-f(R) AP geometry cell masked rather than assuming zero. The frozen C5 configs use `EFTwDE=0`, suggesting a Lambda-like background, but DSIR forbids converting that expectation into a zero-valued observation cell without an explicit analytic or numerical contract.
 
-Experiment 038 therefore reruns the **same pinned H-EFTCAMB C5 configurations** and preserves the background files that the earlier MG-S1 artifact did not upload. It then compares the full saved background geometry with the same-solver GR reference and maps `H(z)` through the already validated Experiment 035 AP operator.
+Experiment 038 therefore reruns the **same pinned high-precision H-EFTCAMB C5 configurations** and preserves the background files that the earlier hard MG-S1 artifact did not upload. It compares the full saved background geometry with the same-solver GR reference and maps `H(z)` through the validated Experiment 035 AP operator.
 
 A PASS allows the C5 AP geometry cell to be encoded as validated zero. A FAIL is retained as a scientific result and the nonzero background response must be propagated instead.
 
@@ -18,26 +18,31 @@ Pinned upstream:
 
 `EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`.
 
-Exact frozen C5 configuration artifact:
+Exact frozen C5 hard-production configuration artifact:
 
 - source workflow run `32759477319`;
 - artifact ID `9532245261`;
 - artifact name `eftcamb-mgs1-hard-92350bb5087d17c874626c75b96779ae264dd1f6`;
-- digest `sha256:9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635`.
+- digest `sha256:9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635`;
+- preserved hard config lineage `dsir_mgs1_hp_*`.
 
-The audit copies the preserved `dsir_mgs1_*.ini` files from that immutable artifact into a clean checkout/build of the pinned upstream solver. It does **not** reconstruct the C5 cosmology by hand.
+The audit copies those `dsir_mgs1_hp_*.ini` files from the immutable artifact into a clean checkout/build of the pinned upstream solver. It does **not** reconstruct the C5 cosmology by hand.
+
+## Provenance correction before scientific execution
+
+The first draft of the Experiment 038 workflow referenced the older calibration filenames `dsir_mgs1_*`. Inspection of the exact frozen hard artifact showed that the production lineage is instead `dsir_mgs1_hp_*`. This was corrected before accepting any scientific result from Experiment 038. The AP formulas and pre-frozen numerical thresholds below were unchanged. Any run that fails only because the old filenames do not exist is infrastructure/provenance failure, not a scientific gate result.
 
 ## Why a new run is necessary
 
-The upstream pinned source `fortran/eftcamb/10_EFTCAMB_background_output.f90` implements
+The pinned upstream source `fortran/eftcamb/10_EFTCAMB_background_output.f90` implements
 
 `CreateFile(TRIM(outroot)//'background.dat')`
 
-when background output is enabled. The frozen `dsir_mgs1_base.ini` has `EFTCAMB_write_background = T`, so the solver produced background files. The previous MG-S1 artifact upload list preserved matter-power files and configs but omitted `*background.dat`. Therefore no model reredefinition is required; only preservation and audit of the existing upstream output type is missing.
+when background output is enabled. The frozen `dsir_mgs1_hp_base.ini` has `EFTCAMB_write_background = T`, so the solver is configured to write background files. The previous hard MG-S1 artifact preserved matter-power files and configs but omitted `*background.dat`. Therefore no model redefinition is required; only preservation and audit of the existing upstream output type is missing.
 
 ## Models
 
-Same-solver GR reference:
+Same-solver high-precision GR reference:
 
 `EFTflag=0`.
 
@@ -80,7 +85,7 @@ The target redshifts are the corrected ShapeFit geometry bins
 
 `z=(0.51,0.71,0.92,1.32,1.49)`.
 
-## Hard thresholds frozen before the first CI execution
+## Hard thresholds frozen before the first scientific CI output
 
 H-EFTCAMB writes the background table with `ES20.10` numerical formatting. To remain comfortably above text-output rounding while still excluding any physically material geometry deformation, freeze:
 
@@ -92,11 +97,11 @@ H-EFTCAMB writes the background table with `ES20.10` numerical formatting. To re
 
 Full numeric-table bitwise equality is recorded only as a diagnostic and is **not** a PASS requirement.
 
-These thresholds are frozen before inspecting any Experiment 038 solver output. No angular, rank, or significance threshold is defined.
+No angular, rank, or significance threshold is defined.
 
 ## Scientific interpretation if PASS
 
-A PASS would establish, for the frozen C5 designer-f(R) manifold,
+A PASS would establish, for the frozen high-precision C5 designer-f(R) manifold,
 
 \[
 K_{AP}t_{B_0}=0
