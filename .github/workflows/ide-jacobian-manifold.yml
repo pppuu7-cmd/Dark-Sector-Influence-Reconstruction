@@ -1,4 +1,4 @@
-name: Interacting-vacuum alpha-beta Jacobian calibration
+name: Interacting-vacuum alpha-beta tangent-cone calibration
 
 on:
   workflow_dispatch:
@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/ide-jacobian-manifold.yml'
       - 'ci/ide_jacobian_scan.py'
+      - 'ci/ide_tangent_cone_geometry.py'
       - 'patches/apply_class_iv_ac627d54_compile_fix.py'
       - 'experiments/027_ide_jacobian_manifold.md'
 
@@ -141,7 +142,7 @@ jobs:
             echo "$tok $rc" | tee -a ../ide_run_status.tsv
           done
 
-      - name: Extract H and P response manifolds and central Jacobian
+      - name: Extract H and P response manifold with physical validity mask
         run: |
           set -euxo pipefail
           python3 ci/ide_jacobian_scan.py \
@@ -157,26 +158,37 @@ jobs:
               b_p1em2:0:1e-2:b_p1em2_ b_m1em2:0:-1e-2:b_m1em2_ \
             --json ide_jacobian_manifold.json
 
+      - name: Audit positivity-masked tangent cone
+        run: |
+          set -euxo pipefail
+          python3 ci/ide_tangent_cone_geometry.py \
+            --input ide_jacobian_manifold.json \
+            --directory external_iv/ide_outputs \
+            --base-step 1e-4 \
+            --json ide_tangent_cone_geometry.json
+
       - name: Record provenance
         run: |
           {
-            echo 'DSIR interacting-vacuum alpha-beta Jacobian calibration'
+            echo 'DSIR interacting-vacuum alpha-beta tangent-cone calibration'
             echo 'Pinned model convention: Q = alpha H rho_idm + beta H rho_iv.'
-            echo 'Composition: f_idm_iv=1 and f_iv=1, so all source CDM and Lambda are assigned to interacting components up to the synchronous-gauge residual CDM floor.'
-            echo 'Axes: alpha-only and beta-only, symmetric +/-1e-4,+/-1e-3,+/-1e-2.'
+            echo 'Composition: f_idm_iv=1 and f_iv=1; interaction coefficients vary at fixed component assignment.'
+            echo 'Axes sampled symmetrically, but physical full-history density positivity is applied before geometry.'
+            echo 'Calibration predecessor found +alpha invalid under rho_iv>=0 while -alpha and +/-beta remain valid.'
+            echo 'Therefore alpha uses a left-sided physical tangent and beta a central tangent; invalid +alpha is not imputed.'
             echo 'Responses: same-solver r_H and r_Delta relative to alpha=beta=0.'
-            echo 'Validity: failed solver points and negative-density backgrounds are recorded explicitly and never imputed.'
-            echo 'No hard Jacobian-rank threshold is defined in this calibration run.'
+            echo 'No hard tangent-cone rank threshold is defined in this calibration run.'
             echo "DSIR commit: $GITHUB_SHA"
             echo -n 'class_iv upstream: '; cat ide_jacobian_upstream_sha.txt
           } > ide_jacobian_environment.txt
 
-      - name: Upload IDE Jacobian artifact
+      - name: Upload IDE tangent-cone artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ide-jacobian-manifold-${{ github.sha }}
+          name: ide-tangent-cone-${{ github.sha }}
           path: |
             ide_jacobian_manifold.json
+            ide_tangent_cone_geometry.json
             ide_jacobian_environment.txt
             ide_run_status.tsv
             ide_jacobian_upstream_sha.txt
