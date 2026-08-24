@@ -1,0 +1,188 @@
+{
+  "schema": "dsir.observational_whitening.ap_family_geometry.v0.1",
+  "status": "PASS_AP_FAMILY_GEOMETRY_V0_1",
+  "failures": [],
+  "scope": "C1/C2 nonzero background directions mapped from their frozen full solver artifacts into corrected DESI DR1 DH/DM marginal geometry block",
+  "not_a_claim": [
+    "not a full four-channel ShapeFit likelihood",
+    "not a parameter constraint or detection significance",
+    "not yet a family-complete C0-C5 geometry claim",
+    "does not close G5 or advance G7"
+  ],
+  "source_artifacts": {
+    "C1": {
+      "run_id": 32771133024,
+      "artifact_id": 9536242626,
+      "digest": "sha256:ece064524a3efe0bc83d19dc98cc674a9a88f405aa56e9886cdf4ebd30d8134b",
+      "upstream": "s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829"
+    },
+    "C2": {
+      "run_id": 32760042765,
+      "artifact_id": 9532491954,
+      "digest": "sha256:408322a2ee79907dd98cdd0e532daaed1e1aeeb1b633f42ab5321cb32149ab6d",
+      "upstream": "kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c"
+    }
+  },
+  "thresholds_frozen_before_ci_hard_run": {
+    "wde_1e3_relative_l2_max": 0.005,
+    "ide_alpha_1e3_relative_l2_max": 0.005,
+    "ide_beta_1e3_relative_l2_max": 0.005,
+    "all_direction_entries_finite": true,
+    "all_direction_norms_nonzero": true
+  },
+  "bins": [
+    "LRG1",
+    "LRG2",
+    "LRG3",
+    "ELG2",
+    "QSO"
+  ],
+  "z_eff": [
+    0.51,
+    0.71,
+    0.92,
+    1.32,
+    1.49
+  ],
+  "DH_over_DM_reference_vector": [
+    1.637266,
+    1.165867,
+    0.844996,
+    0.470709,
+    0.426508
+  ],
+  "DH_over_DM_marginal_sigma": [
+    0.09861532335291509,
+    0.0602860663835351,
+    0.04031263821681732,
+    0.03210810333856549,
+    0.02417810166245481
+  ],
+  "directions": {
+    "C1_smooth_w_nonphantom": {
+      "log_DH_over_DM_tangent": [
+        -0.08510984046568335,
+        -0.06797823578100746,
+        -0.04265448304776608,
+        0.0050382170122584835,
+        0.022134569447783317
+      ],
+      "absolute_observable_tangent": [
+        -0.13934744805988752,
+        -0.07925358181529583,
+        -0.03604286755743015,
+        0.0023715340916231785,
+        0.009440570946035167
+      ],
+      "marginal_whitened_tangent": [
+        -1.4130405227309777,
+        -1.3146251956644663,
+        -0.8940835715980022,
+        0.07386092123276232,
+        0.39045956038372714
+      ],
+      "whitened_norm_per_parameter_unit": 2.163844370775661
+    },
+    "C2_IDE_alpha_negative": {
+      "log_DH_over_DM_tangent": [
+        0.030627503155842443,
+        0.053290331548840934,
+        0.07892399388611775,
+        0.1270186368688762,
+        0.14614649767446405
+      ],
+      "absolute_observable_tangent": [
+        0.050145369581953536,
+        0.06212943897185253,
+        0.06669045913779395,
+        0.05978881554191185,
+        0.062332650430140316
+      ],
+      "marginal_whitened_tangent": [
+        0.5084947032267803,
+        1.0305770918372754,
+        1.6543312987630894,
+        1.8621098515681764,
+        2.5780622192905307
+      ],
+      "whitened_norm_per_parameter_unit": 3.7644821632380077
+    },
+    "C2_IDE_beta": {
+      "log_DH_over_DM_tangent": [
+        -0.049410408036931266,
+        -0.07498257680920252,
+        -0.09786283232288838,
+        -0.12839946661214927,
+        -0.1370031505614537
+      ],
+      "absolute_observable_tangent": [
+        -0.08089798112499431,
+        -0.08741971187681451,
+        -0.08269370186151138,
+        -0.060438784529538166,
+        -0.0584329397396645
+      ],
+      "marginal_whitened_tangent": [
+        -0.8203388517571895,
+        -1.4500815382555787,
+        -2.0513096021339994,
+        -1.8823529964457386,
+        -2.4167711988076648
+      ],
+      "whitened_norm_per_parameter_unit": 4.045688966506645
+    }
+  },
+  "finite_difference_convergence": {
+    "C1_w": {
+      "1e-3_relative_l2": 0.0015563369067206232,
+      "1e-2_relative_l2": 0.01722152850406304,
+      "1e-3_angle_deg": 0.07606772174098163,
+      "1e-2_angle_deg": 0.8362990827809735
+    },
+    "C2_alpha_physical_ray": {
+      "1e-3_relative_l2": 0.00013881893807444795,
+      "1e-2_relative_l2": 0.0015270100388121777,
+      "1e-3_angle_deg": 0.00042732543744896024,
+      "1e-2_angle_deg": 0.004721003351544936
+    },
+    "C2_beta": {
+      "1e-3_relative_l2": 2.2598694354308047e-07,
+      "1e-2_relative_l2": 2.2766678795369904e-05,
+      "1e-3_angle_deg": 4.7536104815230715e-06,
+      "1e-2_angle_deg": 0.00043709875507650037
+    }
+  },
+  "pairwise_angles": [
+    {
+      "a": "C1_smooth_w_nonphantom",
+      "b": "C2_IDE_alpha_negative",
+      "log_oriented_deg": 102.72577686125574,
+      "absolute_oriented_deg": 127.61905950219881,
+      "whitened_oriented_deg": 107.19650685317205,
+      "whitened_acute_deg": 72.80349314682795
+    },
+    {
+      "a": "C1_smooth_w_nonphantom",
+      "b": "C2_IDE_beta",
+      "log_oriented_deg": 69.05419313791128,
+      "absolute_oriented_deg": 42.04658061660358,
+      "whitened_oriented_deg": 64.15109363018881,
+      "whitened_acute_deg": 64.15109363018881
+    },
+    {
+      "a": "C2_IDE_alpha_negative",
+      "b": "C2_IDE_beta",
+      "log_oriented_deg": 171.4185922364238,
+      "absolute_oriented_deg": 169.16782953744897,
+      "whitened_oriented_deg": 170.96209936601292,
+      "whitened_acute_deg": 9.037900633987078
+    }
+  ],
+  "key_result": "C2 alpha-negative physical-ray and beta geometry directions are nearly antiparallel; their strong structure-block separation cannot be replaced by AP alone.",
+  "zero_geometry_contracts_not_hard_tested_here": {
+    "C0": "origin by definition",
+    "C3_GDM_cs2_cv2": "w_gdm history held at zero while cs2/cv2 are closure/perturbation parameters; numeric AP-zero audit deferred",
+    "C5_designer_fR": "designer configuration uses EFTwDE=0 (Lambda-like background); numeric AP-zero audit deferred",
+    "C4_WDM": "separate small-scale block; not inserted into this low-k AP comparison"
+  }
+}
