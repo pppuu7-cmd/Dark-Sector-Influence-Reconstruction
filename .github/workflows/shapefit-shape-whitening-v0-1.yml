@@ -11,8 +11,12 @@ on:
       - 'src/dsir/shapefit_response.py'
       - 'tests/test_observational_whitening.py'
       - 'data/derived/comparison_readiness/local_response_tangents_v0_1.json'
+      - 'data/derived/observational_whitening/experiment_034_shapefit_shape_whitening_v0_1.json'
       - 'data/observations/desi_dr1_shapefit_erratum_2026.json'
       - 'experiments/034_shapefit_shape_whitening_v0_1.md'
+      - 'docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-24.md'
+      - 'docs/STATUS.md'
+      - 'docs/RECOVERY_LATEST.md'
 
 jobs:
   shapefit-shape-whitening:
