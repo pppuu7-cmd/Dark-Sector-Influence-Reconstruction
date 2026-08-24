@@ -1,8 +1,9 @@
 # Experiment 032 — GDM Weyl/slip discriminant for sound-speed vs viscosity
 
 Date: 2026-08-24
-Status: CALIBRATION DEFINED; RUN PENDING
-Input degeneracy: Experiment 028 low-k matter-power angle `cs2` vs `cv2` = 0.3226 deg
+Status: CALIBRATION PASS; HARD THRESHOLDS FROZEN; FRESH RERUN PENDING
+
+Input degeneracy: Experiment 028 low-k matter-power angle `cs2` vs `cv2` = `0.322616 deg`.
 
 ## Question
 
@@ -10,13 +11,11 @@ Can an independent metric-potential channel break the near-degeneracy between GD
 
 ## Source-level motivation
 
-Pinned GDM_CLASS explicitly evolves or constructs GDM shear from `cv2_gdm`, and adds `(rho+p)*shear_gdm` to the total anisotropic stress entering the Einstein equations. Density-transfer output in CLASS format explicitly contains both `phi` and `psi` even when the integration gauge is synchronous, where the code reconstructs these potentials from synchronous metric variables.
-
-This makes metric slip a physically distinct test channel rather than a relabeling of the matter-power response.
+Pinned GDM_CLASS explicitly evolves/constructs GDM shear from `cv2_gdm`, and adds the GDM shear contribution to the total anisotropic stress entering the Einstein equations. Transfer output provides reconstructed `phi` and `psi`, allowing a metric response that is not a relabeling of the matter-power block.
 
 ## Models
 
-Use the same pinned GDM_CLASS commit, baseline, p8 precision and synchronous gauge as the validated C3 manifold.
+Same pinned GDM_CLASS commit, common baseline, validated p8 precision and synchronous gauge as the C3 manifold.
 
 Reference:
 
@@ -24,7 +23,7 @@ Reference:
 w=c_s^2=c_v^2=0.
 \]
 
-Local one-axis controls:
+Controls:
 
 \[
 c_s^2=10^{-7},10^{-6},\qquad c_v^2=0,
@@ -36,23 +35,21 @@ and
 c_v^2=10^{-7},10^{-6},\qquad c_s^2=0.
 \]
 
-Dynamic shear remains enabled for all runs, including the zero reference, so only the numerical value of `cv2` changes.
+Dynamic shear is enabled in reference and all controls.
 
 ## Metric responses
 
-From the `mTk` output reconstruct
+Define
 
 \[
 W=\Phi+\Psi,
+\qquad
+r_W(k,z)=\ln\left|\frac{W_{model}}{W_{ref}}\right|,
 \]
 
-where the omitted factor 1/2 cancels in the same-solver ratio, and
+with an explicit sign-preservation requirement for `Phi+Psi` on all retained cells.
 
-\[
-r_W(k,z)=\ln\left|\frac{W_{model}}{W_{ref}}\right|.
-\]
-
-Also define the dimensionless slip coordinate
+Define dimensionless slip
 
 \[
 s(k,z)=\frac{\Phi-\Psi}{\Phi+\Psi},
@@ -60,19 +57,54 @@ s(k,z)=\frac{\Phi-\Psi}{\Phi+\Psi},
 \Delta s=s_{model}-s_{ref}.
 \]
 
-The extractor requires the sign of `Phi+Psi` to remain unchanged relative to the reference on every retained cell; otherwise the log-Weyl response is invalid and the run must not silently take an absolute-value crossing as a smooth response.
+## Calibration result
 
-## Geometry
+The first run was intentionally threshold-free. It returned:
 
-For each channel independently estimate positive one-sided response tangents at `1e-7` and compare them with `1e-6` finite differences.
+- `r_W` cs2/cv2 angle at `1e-7`: `0.300737 deg`;
+- `r_W` cs2/cv2 angle at `1e-6`: `0.377256 deg`;
+- `Delta slip` cs2/cv2 angle at `1e-7`: `137.943212 deg`;
+- `Delta slip` cs2/cv2 angle at `1e-6`: `138.145199 deg`;
+- equalized two-block angle at `1e-7`: `56.963212 deg`.
 
-Report:
+Tangent convergence from `1e-7` to `1e-6` remained below `0.4 deg`; all relative L2 changes were below `0.75%`.
 
-- `cs2` versus `cv2` angle in `r_W`;
-- `cs2` versus `cv2` angle in `Delta slip`;
-- convergence angle and relative L2 change from `1e-7` to `1e-6` for each axis;
-- a combined metric angle after separately normalizing the Weyl and slip channel blocks, so arbitrary units do not decide which block dominates.
+Interpretation: Weyl-amplitude response remains almost degenerate, while slip strongly rotates the two positive physical rays. This is a candidate channel separator, not yet a hard result at the calibration stage.
+
+## Frozen hard gate
+
+The following thresholds are fixed **before** the fresh rerun and must not be changed in response to its outcome:
+
+\[
+\theta_{r_W}(c_s^2,c_v^2)\le1^\circ
+\]
+
+at both `1e-7` and `1e-6`;
+
+\[
+\theta_{\Delta s}(c_s^2,c_v^2)\ge120^\circ
+\]
+
+at both steps;
+
+\[
+\theta_{combined}\ge45^\circ;
+\]
+
+for every axis/channel tangent-convergence angle,
+
+\[
+\Delta\theta_{10^{-7}\to10^{-6}}\le1^\circ;
+\]
+
+and every relative L2 tangent change must satisfy
+
+\[
+\Delta_{L2}\le0.02.
+\]
+
+The machine checker is `ci/gdm_weyl_slip_hard_gate.py`.
 
 ## Scientific rule
 
-This first run is calibration only. No angular threshold for declaring the metric channel a proven separator is chosen in advance. If the calibration produces a stable large separation, a quantitative separator threshold must be frozen **before** a fresh hard rerun. Only then may this channel label the GDM `cs2`/`cv2` edge as broken in the discriminant graph.
+A PASS means only that the calibrated `cs2`/`cv2` low-k degeneracy has a reproducible metric-slip separator in the pinned C3 setup. It is not an observational evidence ratio and is not a discovery claim. Observational sensitivity/covariance must still be applied before saying that real data can distinguish the mechanisms.
