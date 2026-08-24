@@ -1,5 +1,14 @@
 import numpy as np
-from dsir.rank import effective_rank,variance_rank,singular_values,whiten_features,noise_edge_rank,weighted_noise_edge_rank
+from dsir.rank import (
+    effective_rank,
+    variance_rank,
+    singular_values,
+    whiten_features,
+    noise_edge_rank,
+    weighted_noise_edge_rank,
+    family_balanced_weights,
+    normalize_prior_weights,
+)
 
 def test_exact_rank_one():
     z=np.outer(np.arange(1,8.0),np.arange(1,5.0)); assert abs(effective_rank(z)-1.0)<1e-10; assert variance_rank(z,0.999999)==1
@@ -22,3 +31,26 @@ def test_weighted_noise_rank_uniform_weights_matches_unweighted():
 def test_weighted_noise_rank_rejects_nonpositive_weights():
     import pytest
     with pytest.raises(ValueError): weighted_noise_edge_rank(np.ones((3,2)),np.array([1.,0.,1.]),n_null=5)
+
+def test_family_balanced_weights_remove_catalog_multiplicity_prior():
+    labels=np.array(['A']*6+['B']*2+['C'])
+    w=family_balanced_weights(labels)
+    # The returned vector has mean one, but each family has equal total mass.
+    totals=[w[labels==fam].sum() for fam in ['A','B','C']]
+    assert np.allclose(totals,totals[0])
+    assert np.isclose(w.mean(),1.0)
+    assert np.isclose(w[labels=='A'][0]*3.0,w[labels=='B'][0])
+    assert np.isclose(w[labels=='B'][0]*2.0,w[labels=='C'][0])
+
+def test_family_balanced_weights_preserve_explicit_within_family_prior():
+    labels=np.array(['A','A','B','B'])
+    local=np.array([1.,3.,2.,2.])
+    w=family_balanced_weights(labels,local)
+    assert np.isclose(w[1]/w[0],3.0)
+    assert np.isclose(w[2],w[3])
+    assert np.isclose(w[:2].sum(),w[2:].sum())
+
+def test_prior_weight_normalization_rejects_invalid():
+    import pytest
+    assert np.allclose(normalize_prior_weights(np.array([1.,2.,3.])),np.array([0.5,1.0,1.5]))
+    with pytest.raises(ValueError): normalize_prior_weights(np.array([1.,np.nan]))
