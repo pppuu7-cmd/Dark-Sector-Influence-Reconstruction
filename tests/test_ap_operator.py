@@ -19,7 +19,11 @@ def test_constant_calibration_mode_cancels_exactly():
     e = np.sqrt(0.3 * (1 + z) ** 3 + 0.7)
     r = 0.137 * np.ones_like(z)
     out = fap_log_response(z, e, r)
-    assert np.max(np.abs(out[1:])) < 2e-15
+    # Algebraic cancellation is exact; discrete cumulative integration and
+    # floating-point summation leave a few-ulp residual.  Keep this unit-level
+    # guard safely at machine precision; the pre-frozen scientific hard gate
+    # remains unchanged at 1e-12.
+    assert np.max(np.abs(out[1:])) < 1e-14
 
 
 def test_exact_operator_matches_direct_wcdm_ratio_even_when_anchored():
