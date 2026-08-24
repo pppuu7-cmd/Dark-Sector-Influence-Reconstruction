@@ -1,4 +1,4 @@
-name: Cross-solver wCDM response bridge calibration
+name: Cross-solver wCDM response bridge hard regression
 
 on:
   workflow_dispatch:
@@ -10,6 +10,7 @@ on:
       - 'patches/apply_class_iv_ac627d54_compile_fix.py'
       - 'config/response_basis_v0_1_1.json'
       - 'docs/RESPONSE_BASIS_V0_1_1.md'
+      - 'experiments/020_cross_solver_response_bridge.md'
 
 jobs:
   bridge:
@@ -152,18 +153,20 @@ jobs:
           ./class lcdm.ini dsir_bridge.pre 2>&1 | tee bridge_outputs/lcdm.log
           ./class wcdm.ini dsir_bridge.pre 2>&1 | tee bridge_outputs/wcdm.log
 
-      - name: Compare same-solver log responses
+      - name: Hard gate same-solver log responses across lineages
         run: |
           python3 ci/cross_solver_response_bridge.py \
             --dir-a gdm_solver/bridge_outputs \
             --dir-b ide_solver/bridge_outputs \
-            --json cross_solver_bridge.json
+            --json cross_solver_bridge.json \
+            --max-bridge 1e-9
 
       - name: Record provenance
         run: |
           {
-            echo "DSIR cross-solver smooth-wCDM response bridge"
-            echo "calibration only: no PASS threshold imposed"
+            echo "DSIR cross-solver smooth-wCDM response bridge hard regression"
+            echo "hard threshold frozen before this run: max |r_GDMCLASS-r_classiv| <= 1e-9"
+            echo "calibration predecessor at matched p8: 2.374740404320619e-10"
             echo "definition: r_S=ln(P_wCDM^S/P_LCDM^S); compare r_GDMCLASS-r_classiv"
             echo "physics: w0=-0.9, wa=0, cs2=1, synchronous gauge, matched primordial parameters"
             echo "numerics: identical p8 precision preset passed to both CLASS-family lineages"
