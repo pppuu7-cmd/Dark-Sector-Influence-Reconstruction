@@ -5,36 +5,45 @@ DSIR remains a reconstruction/meta-inference framework, not a fundamental theory
 | Item | Status | Evidence |
 |---|---|---|
 | Project separation from RTK | PASS | dedicated DSIR repository; RTK excluded from this research line |
-| Recovery/manual backup | PASS and live | `docs/RECOVERY_MANUAL.md` + `docs/RECOVERY_LATEST.md` + gates/log/provenance |
-| Conservation/gauge contract | **PASS for v0.1.1 scope (G1)** | source-level Bianchi/exchange bookkeeping + hard Newtonian/synchronous comoving-matter regression |
-| Response basis v0.1.1 | **PASS G2** | `P_Delta`/`r_Delta` same-solver quotient; Experiments 018/020; cross-solver hard bridge `1e-9` PASS |
+| Recovery/manual backup | PASS and live | `RECOVERY_MANUAL.md` + `RECOVERY_LATEST.md` + gates/log/provenance |
+| Conservation/gauge contract | **PASS G1 v0.1.1** | Bianchi/exchange bookkeeping + hard Newtonian/synchronous comoving-matter regression |
+| Response basis v0.1.1 | **PASS G2** | same-solver `P_Delta/r_Delta`; hard cross-solver bridge `1e-9` PASS |
+| Six-family background atlas | **PASS G3A v0.1** | control embeddings and exact background intersections documented |
+| Six-family beyond-background atlas | **PASS G3B v0.1 block-aware** | C1 smooth-w, C2 IDE tangent cone, C3 GDM cs2/cv2, C4 WDM small-scale block, C5 full designer-f(R), C0 reference |
+| Comparison readiness | **PASS** | Exp.030 run `32772758188`, `failures=[]`, status `PASS_READY_FOR_BLOCK_AWARE_MODEL_COMPARISON` |
+| First cross-family comparison | **COMPLETE** | Exp.031; raw theory-space low-k comparison, no observational ranking |
+| GDM cs2/cv2 low-k degeneracy | **HARD ESTABLISHED** | P angle `0.3226 deg`; Weyl amplitude also nearly collinear |
+| GDM cs2/cv2 slip separator | **HARD PASS** | run `32774501069`: slip `137.943 deg`, equalized two-block angle `56.963 deg` |
+| GDM vs f(R) scale-only degeneracy | **HARD ESTABLISHED** | scale-mode angles `0.0781/0.1017 deg` |
+| GDM vs f(R) time/sign separator | **HARD PASS** | run `32774501126`: time-mode `25.18/25.49 deg`, full oriented `154.82/154.51 deg` |
+| WDM low-k blindness / high-k separator | **HARD ESTABLISHED** | 3 keV: `r_T(0.1)=-3.46e-6`, `r_T(10)=-0.10375` |
 | Synthetic latent-rank recovery | PASS | injected rank 3 recovered with corrected global noise edge |
-| Rank coordinate/covariance robustness | PASS on tested suite; G5 PARTIAL | Exp. 011: 30/30 after whitening; naive raw ranks 20–35 |
-| Theory-catalog prior sensitivity | FAILURE MODE IDENTIFIED + control PASS | Exp. 012 + family-balanced atlas sampling; report `R_model(pi)` |
-| Missing-response handling | PASS method gate | explicit validity masks/common-subspace rule; no zero/mean imputation |
-| DESI DR2 BAO/AP response | PASS G6A | calibration-free AP and relative expansion |
+| Whitening robustness | PASS tested suite; G5 PARTIAL | 30/30 coordinate/rescaling cases recover rank 3 after whitening |
+| Theory-catalog prior sensitivity | CONTROLLED FAILURE MODE | report `R_model(pi)`; family-balanced sampling implemented |
+| Missing-response handling | PASS method gate | validity masks/common subspaces; no zero/mean imputation |
+| DESI DR2 AP response | PASS G6A | calibration-free AP and relative expansion |
 | DESI DR1 corrected ShapeFit response | PASS G6B | geometry-growth-shape covariance from 2026 erratum |
-| Conditional innovation quotient | PASS as G7 preparation | aggregate remains null-consistent (`chi2~5.53/5`, `p~0.355`) |
-| Interacting-vacuum source/full solver | PASS IDE-S0/S1 | source convention + hard `2e-8` power and `2e-12` semantic-background gates |
-| GDM source/full solver | PASS GDM-S0/S1 | source zero closure + p8 hard core actual `1.471e-6` under frozen `5e-6` gate |
-| GDM nonzero manifold | CALIBRATION RUNNING | first one-axis scan varies constant `cs2` at `w=cv2=0` with the validated p8 preset |
-| GDM ultra-large-scale sector | SEPARATE DIAGNOSTIC | `k<1e-3 h/Mpc` finite-start/IC sensitive; excluded from first common rank block |
-| Raw matter gauge audit | FAILURE MODE RESOLVED | default raw mismatch `~9.84e-5`; p8 raw `~5.1e-6`; explicit comoving Delta_m `2.5514e-6`; hard `5e-6` PASS |
-| class_iv synchronous vTk header | UPSTREAM DEFECT IDENTIFIED | velocity title block inserts `d_idm_iv` although theta source is absent; species-level vTk excluded from common basis |
-| Cross-solver response bridge | **PASS** | matched p8 smooth-wCDM same-solver quotients agree to `2.3747e-10`; frozen hard gate `1e-9` PASS |
-| Old BZ-like f(R) control | DIAGNOSTIC ONLY | QS production comparison restricted to `k>=0.01 h/Mpc` |
-| H-EFTCAMB designer-f(R) GR limit | **PASS MG-S0** | exact `B0=0` hard rerun: max stock-export `|r_Delta|=1.092696e-6 < 2e-6`; `|B0_found|=2.221e-17 < 1e-12`; theory stability PASS |
-| H-EFTCAMB small-B0 boundary | IMPLEMENTATION BOUNDARY IDENTIFIED | pinned solver uses `EFTCAMB_GR_threshold=1e-8`; `B0<=1e-8` is not treated as an independent nonzero atlas point |
-| WDM small-scale response | PASS method block | separate linear-transfer block retained; WDM invisibility on `k<=0.1` is not interpreted as absence of physics |
-| Common six-family perturbation matrix | PARTIAL G3B | C5 zero-limit is now validated; next blockers are nonzero multi-z f(R), GDM/IDE manifold sampling, and overlap assembly |
-| New residual law | OPEN G7 | none claimed |
-| Withheld prediction | OPEN G8 | required before discovery |
+| Conditional innovation | PASS preparation | aggregate null-consistent (`chi2~5.53/5`, `p~0.355`) |
+| IDE solver/manifold | PASS + calibrated cone | hard zero limit; alpha positivity boundary; alpha/beta structure angle `58.93 deg` |
+| GDM solver/manifold | PASS + calibrated two-axis patch | zero limit hard PASS; cs2/cv2 nearly collinear in P |
+| H-EFTCAMB designer f(R) | **MG-S0 + MG-S1 PASS** | exact GR limit and common-baseline production `B0=1e-6..1e-3` |
+| Discriminant graph v0.1 | HARD EVIDENCE FROZEN; CI pending/next | four proven edges; expected minimum separator set has three channels |
+| New residual law | OPEN G7 | no law claimed; raw-theory comparison is now unblocked |
+| Withheld prediction | OPEN G8 | mandatory before discovery |
+
+## Current comparison findings
+
+1. GDM sound speed and viscosity are nearly the same low-k matter-power direction, but metric slip separates them strongly.
+2. GDM pressure/viscosity and designer f(R) have almost identical leading **scale shapes** on the current low-k grid, but differ in time evolution and physical response sign.
+3. Smooth non-phantom wDE has a much flatter k-dependence than GDM/f(R).
+4. IDE beta is much less separable into a single `A(z)S(k)` response than the other tested directions.
+5. The descriptive six-direction raw-theory singular spectrum has a tiny sixth value, but **no intrinsic-rank claim is allowed** until observational whitening and a frozen rank threshold are applied.
 
 ## Immediate continuation
 
-1. Freeze MG-S0 PASS in gates/recovery and merge the H-EFTCAMB control branch after diff review.
-2. Run MG-S1: nonzero stable designer-f(R) values on all frozen `z x k` nodes using same-solver GR quotients.
-3. Complete the p8 nonzero GDM `cs2` manifold calibration and add a nonzero IDE interaction manifold.
-4. Sample balanced model instances per family with explicit validity masks and separate low-k/small-scale blocks.
-5. Assemble the first six-family response atlas, quotient identities/nuisance directions, whiten, and estimate `R_model(pi)` under multiple defensible priors.
-6. Resume G7 law search only after rank/manifold stability checks; no discovery claim before G8 withheld prediction.
+1. Merge/stabilize the comparison-readiness branch after all fresh hard runs are green.
+2. Run the hard-evidence discriminant graph workflow from `main` and freeze its exact minimum hitting set.
+3. Build the first **observationally whitened** cross-family comparison: map validated theory responses to measurable geometry/growth/lensing/shape channels and apply survey covariance/kernels.
+4. Re-estimate local/global response rank under multiple family priors `pi` and report raw-theory vs data-whitened geometry separately.
+5. Use the discriminant graph to choose the next independent real-data channel, with slip/lensing and small-scale transfer as high-value targets.
+6. Resume G7 relation search only after observational-whitened rank/manifold stability; no discovery claim before G8.
