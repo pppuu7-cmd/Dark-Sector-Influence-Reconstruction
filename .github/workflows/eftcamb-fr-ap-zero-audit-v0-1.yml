@@ -9,6 +9,12 @@ on:
       - 'ci/eftcamb_ap_zero_audit_v0_1.py'
       - 'src/dsir/ap_operator.py'
       - 'experiments/038_eftcamb_fr_ap_zero_audit_v0_1.md'
+      - 'data/derived/observational_whitening/experiment_038_eftcamb_fr_ap_zero_audit_v0_1.json'
+      - 'docs/SCIENTIFIC_FINDINGS_REGISTER.md'
+      - 'docs/STATUS.md'
+      - 'docs/RECOVERY_LATEST.md'
+      - 'docs/RECOVERY_MANUAL.md'
+      - 'docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-25.md'
 
 permissions:
   contents: read
@@ -46,6 +52,12 @@ jobs:
           git rev-parse HEAD | tee ../eftcamb_exp038_upstream_sha.txt
           cd fortran
           make camb
+      - name: Verify pinned LCDM designer background source contract
+        run: |
+          fr=eftcamb/fortran/eftcamb/07f_designer_models/007p3_Designer_fR.f90
+          neutral=eftcamb/fortran/eftcamb/04f_parametrizations_1D/04p000_neutral_parametrizations_1D.f90
+          grep -Fq 'allocate( wDE_LCDM_parametrization_1D::self%DesfRwDE )' "$fr"
+          grep -Fq 'wDELCDMParametrized1DValue = -1._dl' "$neutral"
       - name: Restore exact frozen high-precision DSIR C5 configs
         run: |
           src=inputs/c5/eftcamb/fortran/eftcamb_test/parameters
@@ -65,7 +77,7 @@ jobs:
           for tok in b0 b1em7 b1em6 b1em5 b1em4 b1em3; do
             ./camb "eftcamb_test/parameters/dsir_mgs1_hp_${tok}.ini" 2>&1 | tee "../../exp038_${tok}.log"
           done
-      - name: Require stable designer runs and background files
+      - name: Require stable designer runs and designer background files
         run: |
           for tok in b0 b1em7 b1em6 b1em5 b1em4 b1em3; do
             grep -q 'EFTCAMB: theory stable' "exp038_${tok}.log"
@@ -75,10 +87,10 @@ jobs:
             fi
           done
           root=eftcamb/fortran/eftcamb_test/results/spectra_results
-          test -f "$root/dsir_mgs1_hp_gr_background.dat"
           for tok in b0 b1em7 b1em6 b1em5 b1em4 b1em3; do
             test -f "$root/dsir_mgs1_hp_${tok}_background.dat"
           done
+          find "$root" -maxdepth 1 -name 'dsir_mgs1_hp_*background.dat' -print | sort | tee exp038_background_manifest.txt
       - name: Run Experiment 038 hard audit
         run: |
           python ci/eftcamb_ap_zero_audit_v0_1.py \
@@ -93,6 +105,7 @@ jobs:
             eftcamb_fr_ap_zero_audit_v0_1.json
             eftcamb_exp038_upstream_sha.txt
             exp038_*.log
+            exp038_background_manifest.txt
             eftcamb/fortran/eftcamb_test/parameters/dsir_mgs1_hp_*.ini
             eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_mgs1_hp_*background.dat
           if-no-files-found: error
