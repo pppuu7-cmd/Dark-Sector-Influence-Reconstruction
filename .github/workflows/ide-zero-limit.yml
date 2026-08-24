@@ -1,4 +1,4 @@
-name: Interacting-vacuum zero-coupling linear-core calibration
+name: Interacting-vacuum zero-coupling frozen-grid calibration
 
 on:
   workflow_dispatch:
@@ -36,11 +36,6 @@ jobs:
           cd ..
           sha256sum patches/apply_class_iv_ac627d54_compile_fix.py | tee iv_compile_repair_sha256.txt
           cd external_iv
-          # Legacy fork assumptions:
-          # 1) background.h defines work_rom as a tentative global definition,
-          #    which requires pre-GCC-10 -fcommon semantics.
-          # 2) its Makefile puts dynamic GSL libraries before object files;
-          #    --no-as-needed preserves the intended legacy link semantics.
           make -j2 \
             OPTFLAG="-O2 -fcommon" \
             LDFLAG="-g -fPIC -Wl,--no-as-needed -lgsl -lgslcblas" \
@@ -74,7 +69,7 @@ jobs:
           n_s = 0.9619
           alpha_s = 0.
           P_k_max_h/Mpc = 0.25
-          z_pk = 0,1
+          z_pk = 0,0.295,0.51,0.706,0.934,1,1.317,1.491,2.33
           headers = yes
           write background = yes
           write thermodynamics = no
@@ -116,7 +111,7 @@ jobs:
           n_s = 0.9619
           alpha_s = 0.
           P_k_max_h/Mpc = 0.25
-          z_pk = 0,1
+          z_pk = 0,0.295,0.51,0.706,0.934,1,1.317,1.491,2.33
           headers = yes
           write background = yes
           write thermodynamics = no
@@ -124,14 +119,14 @@ jobs:
           root = dsir_outputs/ide0_
           EOF
 
-      - name: Run matched linear-core calculations
+      - name: Run matched frozen-grid calculations
         working-directory: external_iv
         run: |
           ./class dsir_baseline.ini 2>&1 | tee dsir_outputs/baseline.log
           ./class dsir_ide0.ini 2>&1 | tee dsir_outputs/ide0.log
           ls -lah dsir_outputs
 
-      - name: Compare matched numerical products (calibration only)
+      - name: Compare matched products and frozen k nodes
         run: |
           python3 ci/compare_class_outputs.py \
             --directory external_iv/dsir_outputs \
@@ -143,8 +138,10 @@ jobs:
         run: |
           cp external_iv/test_idm_iv_lcdm.ini external_iv/dsir_outputs/upstream_test_idm_iv_lcdm.ini
           {
-            echo "DSIR interacting-vacuum zero-coupling linear-core calibration"
-            echo "scope: background + mPk to 0.25 h/Mpc; optional CMB block deferred"
+            echo "DSIR interacting-vacuum zero-coupling frozen-grid calibration"
+            echo "scope: background + mPk to 0.25 h/Mpc"
+            echo "z grid: 0,0.295,0.51,0.706,0.934,1,1.317,1.491,2.33"
+            echo "frozen k core: 0.001,0.003,0.01,0.03,0.1 h/Mpc"
             echo "DSIR commit: $GITHUB_SHA"
             echo -n "class_iv upstream: "
             cat iv_upstream_sha.txt
