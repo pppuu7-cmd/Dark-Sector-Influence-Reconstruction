@@ -2,9 +2,8 @@
 """Compare matched CLASS-family numeric output files with different root prefixes.
 
 Designed for DSIR solver-regression workflows. It emits JSON metrics but does
-not decide a physics tolerance unless --max-rel is supplied. This lets the first
-clean-room run calibrate a justified tolerance instead of baking in an arbitrary
-number before seeing solver behavior.
+not decide a physics tolerance unless --max-rel is supplied. For P(k) files it
+also reports the frozen dsir-response-v0.1 k nodes.
 """
 from __future__ import annotations
 
@@ -13,6 +12,8 @@ import json
 from pathlib import Path
 
 import numpy as np
+
+K_FROZEN_CORE = (1e-3, 3e-3, 1e-2, 3e-2, 1e-1)
 
 
 def load_numeric(path: Path):
@@ -27,10 +28,36 @@ def load_numeric(path: Path):
     return arr
 
 
-def compare(a: np.ndarray, b: np.ndarray):
+def frozen_pk_nodes(a: np.ndarray, b: np.ndarray):
+    if a.shape[1] != 2 or b.shape[1] != 2:
+        return None
+    ka, pa = a[:, 0], a[:, 1]
+    kb, pb = b[:, 0], b[:, 1]
+    if np.any(ka <= 0) or np.any(kb <= 0) or np.any(pa <= 0) or np.any(pb <= 0):
+        return None
+    nodes = np.asarray([k for k in K_FROZEN_CORE if k >= max(ka.min(), kb.min()) and k <= min(ka.max(), kb.max())])
+    if not nodes.size:
+        return None
+    pa_i = np.exp(np.interp(np.log(nodes), np.log(ka), np.log(pa)))
+    pb_i = np.exp(np.interp(np.log(nodes), np.log(kb), np.log(pb)))
+    out = {}
+    for k, va, vb in zip(nodes, pa_i, pb_i):
+        out[f"k_{k:g}"] = {"k_h_mpc": float(k), "abs_relative": float(abs(vb / va - 1.0))}
+    core_a = (ka >= 1e-3) & (ka <= 1e-1)
+    if np.any(core_a):
+        pb_on_a = np.exp(np.interp(np.log(ka[core_a]), np.log(kb), np.log(pb)))
+        rel = np.abs(pb_on_a / pa[core_a] - 1.0)
+        out["core_grid_summary"] = {
+            "max_abs_relative": float(np.max(rel)),
+            "median_abs_relative": float(np.median(rel)),
+            "k_at_max_h_mpc": float(ka[core_a][np.argmax(rel)]),
+        }
+    return out
+
+
+def compare(a: np.ndarray, b: np.ndarray, is_pk: bool = False):
     if a.shape != b.shape:
         return {"shape_match": False, "shape_a": a.shape, "shape_b": b.shape}
-    # First column is normally x (ell, k, z, tau...); require it to match tightly.
     xscale = max(float(np.max(np.abs(a[:, 0]))), 1.0)
     x_abs = float(np.max(np.abs(a[:, 0] - b[:, 0])))
     vals_a, vals_b = a[:, 1:], b[:, 1:]
@@ -41,12 +68,17 @@ def compare(a: np.ndarray, b: np.ndarray):
         relscale = max(scale, 1e-300)
         per_col.append({"column": j + 1, "scale": scale, "max_abs": absdiff, "max_abs_over_peak": absdiff / relscale})
     valid = [v["max_abs_over_peak"] for v in per_col if v["scale"] > 1e-30]
-    return {
+    out = {
         "shape_match": True,
         "x_max_abs_over_scale": x_abs / xscale,
         "max_abs_over_peak_across_nonzero_columns": max(valid) if valid else 0.0,
         "columns": per_col,
     }
+    if is_pk:
+        nodes = frozen_pk_nodes(a, b)
+        if nodes is not None:
+            out["frozen_core_nodes"] = nodes
+    return out
 
 
 def main():
@@ -62,14 +94,18 @@ def main():
     files_a = {p.name[len(args.root_a):]: p for p in d.glob(args.root_a + "*.dat")}
     files_b = {p.name[len(args.root_b):]: p for p in d.glob(args.root_b + "*.dat")}
     common = sorted(set(files_a) & set(files_b))
-    metrics = {"common_numeric_candidates": common, "files": {}}
+    metrics = {
+        "common_numeric_candidates": common,
+        "frozen_core_k_h_mpc": list(K_FROZEN_CORE),
+        "files": {},
+    }
     global_max = 0.0
     compared = 0
     for suffix in common:
         aa, bb = load_numeric(files_a[suffix]), load_numeric(files_b[suffix])
         if aa is None or bb is None:
             continue
-        m = compare(aa, bb)
+        m = compare(aa, bb, is_pk=suffix.endswith("_pk.dat"))
         metrics["files"][suffix] = m
         if m.get("shape_match"):
             compared += 1
