@@ -1,0 +1,199 @@
+name: Interacting-vacuum alpha-beta tangent-cone calibration
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/ide-jacobian-manifold.yml'
+      - 'ci/ide_jacobian_scan.py'
+      - 'ci/ide_tangent_cone_geometry.py'
+      - 'patches/apply_class_iv_ac627d54_compile_fix.py'
+      - 'experiments/027_ide_jacobian_manifold.md'
+
+jobs:
+  ide-jacobian:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout DSIR
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip libgsl-dev
+          python3 -m pip install --user numpy
+
+      - name: Build repaired pinned class_iv
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/kaeonikc/class_iv.git external_iv
+          cd external_iv
+          git checkout ac627d54e9ce196a08878d1ba33999819925d19c
+          git rev-parse HEAD | tee ../ide_jacobian_upstream_sha.txt
+          python3 ../patches/apply_class_iv_ac627d54_compile_fix.py source/background.c
+          git diff --check
+          git diff -- source/background.c | tee ../ide_jacobian_compile_fix.diff
+          make -j2 \
+            OPTFLAG="-O2 -fcommon" \
+            LDFLAG="-g -fPIC -Wl,--no-as-needed -lgsl -lgslcblas" \
+            class
+
+      - name: Freeze matched p8 precision preset
+        run: |
+          cat > external_iv/dsir_ide_p8.pre <<'EOF'
+          k_step_sub = 0.0010
+          k_step_super = 0.000003
+          k_step_super_reduction = 0.1
+          start_small_k_at_tau_c_over_tau_h = 1e-6
+          start_large_k_at_tau_h_over_tau_k = 0.05
+          tight_coupling_trigger_tau_c_over_tau_h = 0.005
+          tight_coupling_trigger_tau_c_over_tau_k = 0.008
+          start_sources_at_tau_c_over_tau_h = 0.006
+          tol_perturb_integration = 3e-10
+          perturb_sampling_stepsize = 0.00035
+          radiation_streaming_approximation = 2
+          radiation_streaming_trigger_tau_over_tau_k = 240.
+          radiation_streaming_trigger_tau_c_over_tau = 100.
+          ur_fluid_approximation = 2
+          ur_fluid_trigger_tau_over_tau_k = 50.
+          EOF
+
+      - name: Write common-baseline zero-interaction realization
+        run: |
+          mkdir -p external_iv/ide_outputs
+          cat > external_iv/ide0.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          N_ur = 3.046
+          omega_cdm = 0.1200
+          alpha_idm_iv = 0.
+          beta_idm_iv = 0.
+          f_idm_iv = 1.
+          f_iv = 1.
+          Omega_dcdmdr = 0.0
+          N_ncdm = 0
+          Omega_k = 0.
+          Omega_fld = 0
+          Omega_scf = 0
+          Omega_idm_dr = 0.
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          write background = yes
+          write thermodynamics = no
+          write primordial = no
+          root = ide_outputs/ide0_
+          EOF
+
+      - name: Write symmetric alpha and beta axis models
+        run: |
+          set -euxo pipefail
+          cd external_iv
+          for spec in \
+            'a_p1em4 1e-4 0' 'a_m1em4 -1e-4 0' \
+            'a_p1em3 1e-3 0' 'a_m1em3 -1e-3 0' \
+            'a_p1em2 1e-2 0' 'a_m1em2 -1e-2 0' \
+            'b_p1em4 0 1e-4' 'b_m1em4 0 -1e-4' \
+            'b_p1em3 0 1e-3' 'b_m1em3 0 -1e-3' \
+            'b_p1em2 0 1e-2' 'b_m1em2 0 -1e-2'; do
+            set -- $spec; tok=$1; alpha=$2; beta=$3
+            sed \
+              -e "s/^alpha_idm_iv = .*/alpha_idm_iv = ${alpha}/" \
+              -e "s/^beta_idm_iv = .*/beta_idm_iv = ${beta}/" \
+              -e "s#root = ide_outputs/ide0_#root = ide_outputs/${tok}_#" \
+              ide0.ini > "${tok}.ini"
+          done
+
+      - name: Run zero-interaction reference
+        working-directory: external_iv
+        run: |
+          set -euxo pipefail
+          ./class ide0.ini dsir_ide_p8.pre 2>&1 | tee ide_outputs/ide0.log
+
+      - name: Run interaction-axis calibration without imputing failures
+        working-directory: external_iv
+        run: |
+          set -u
+          : > ../ide_run_status.tsv
+          for tok in \
+            a_p1em4 a_m1em4 a_p1em3 a_m1em3 a_p1em2 a_m1em2 \
+            b_p1em4 b_m1em4 b_p1em3 b_m1em3 b_p1em2 b_m1em2; do
+            set +e
+            set -o pipefail
+            ./class "${tok}.ini" dsir_ide_p8.pre 2>&1 | tee "ide_outputs/${tok}.log"
+            rc=$?
+            set +o pipefail
+            set -e
+            echo "$tok $rc" | tee -a ../ide_run_status.tsv
+          done
+
+      - name: Extract H and P response manifold with physical validity mask
+        run: |
+          set -euxo pipefail
+          python3 ci/ide_jacobian_scan.py \
+            --directory external_iv/ide_outputs \
+            --reference-prefix ide0_ \
+            --run-status ide_run_status.tsv \
+            --models \
+              a_p1em4:1e-4:0:a_p1em4_ a_m1em4:-1e-4:0:a_m1em4_ \
+              a_p1em3:1e-3:0:a_p1em3_ a_m1em3:-1e-3:0:a_m1em3_ \
+              a_p1em2:1e-2:0:a_p1em2_ a_m1em2:-1e-2:0:a_m1em2_ \
+              b_p1em4:0:1e-4:b_p1em4_ b_m1em4:0:-1e-4:b_m1em4_ \
+              b_p1em3:0:1e-3:b_p1em3_ b_m1em3:0:-1e-3:b_m1em3_ \
+              b_p1em2:0:1e-2:b_p1em2_ b_m1em2:0:-1e-2:b_m1em2_ \
+            --json ide_jacobian_manifold.json
+
+      - name: Audit positivity-masked tangent cone
+        run: |
+          set -euxo pipefail
+          python3 ci/ide_tangent_cone_geometry.py \
+            --input ide_jacobian_manifold.json \
+            --directory external_iv/ide_outputs \
+            --base-step 1e-4 \
+            --json ide_tangent_cone_geometry.json
+
+      - name: Record provenance
+        run: |
+          {
+            echo 'DSIR interacting-vacuum alpha-beta tangent-cone calibration'
+            echo 'Pinned model convention: Q = alpha H rho_idm + beta H rho_iv.'
+            echo 'Composition: f_idm_iv=1 and f_iv=1; interaction coefficients vary at fixed component assignment.'
+            echo 'Axes sampled symmetrically, but physical full-history density positivity is applied before geometry.'
+            echo 'Calibration predecessor found +alpha invalid under rho_iv>=0 while -alpha and +/-beta remain valid.'
+            echo 'Therefore alpha uses a left-sided physical tangent and beta a central tangent; invalid +alpha is not imputed.'
+            echo 'Responses: same-solver r_H and r_Delta relative to alpha=beta=0.'
+            echo 'No hard tangent-cone rank threshold is defined in this calibration run.'
+            echo "DSIR commit: $GITHUB_SHA"
+            echo -n 'class_iv upstream: '; cat ide_jacobian_upstream_sha.txt
+          } > ide_jacobian_environment.txt
+
+      - name: Upload IDE tangent-cone artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ide-tangent-cone-${{ github.sha }}
+          path: |
+            ide_jacobian_manifold.json
+            ide_tangent_cone_geometry.json
+            ide_jacobian_environment.txt
+            ide_run_status.tsv
+            ide_jacobian_upstream_sha.txt
+            ide_jacobian_compile_fix.diff
+            external_iv/dsir_ide_p8.pre
+            external_iv/*.ini
+            external_iv/ide_outputs/
+          if-no-files-found: error
