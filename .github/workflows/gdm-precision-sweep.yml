@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        level: [p5, p6]
+        level: [p7, p8]
 
     steps:
       - name: Checkout DSIR
@@ -41,8 +41,8 @@ jobs:
           LEVEL: ${{ matrix.level }}
         run: |
           case "$LEVEL" in
-            p5) KSUB=0.0020; KSUPER=0.000010; TOL=1e-8; SAMPLE=0.0010 ;;
-            p6) KSUB=0.0015; KSUPER=0.000007; TOL=3e-9; SAMPLE=0.0007 ;;
+            p7) KSUB=0.0012; KSUPER=0.000005; TOL=1e-9; SAMPLE=0.00050 ;;
+            p8) KSUB=0.0010; KSUPER=0.000003; TOL=3e-10; SAMPLE=0.00035 ;;
           esac
           cat > external_gdm/dsir_precision.pre <<EOF
           k_step_sub = $KSUB
