@@ -14,7 +14,7 @@ on:
 jobs:
   bridge:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
     steps:
       - name: Checkout DSIR
         uses: actions/checkout@v4
@@ -47,9 +47,9 @@ jobs:
             LDFLAG="-g -fPIC -Wl,--no-as-needed -lgsl -lgslcblas" \
             class
 
-      - name: Write matched p8 precision for GDM lineage
+      - name: Write matched p8 precision for both lineages
         run: |
-          cat > gdm_solver/dsir_bridge.pre <<'EOF'
+          cat > dsir_bridge.pre <<'EOF'
           k_step_sub = 0.0010
           k_step_super = 0.000003
           k_step_super_reduction = 0.1
@@ -66,6 +66,8 @@ jobs:
           ur_fluid_approximation = 2
           ur_fluid_trigger_tau_over_tau_k = 50.
           EOF
+          cp dsir_bridge.pre gdm_solver/dsir_bridge.pre
+          cp dsir_bridge.pre ide_solver/dsir_bridge.pre
 
       - name: Write matched LambdaCDM and smooth-wCDM configs
         run: |
@@ -147,8 +149,8 @@ jobs:
       - name: Run class_iv lineage reference and deformation
         working-directory: ide_solver
         run: |
-          ./class lcdm.ini 2>&1 | tee bridge_outputs/lcdm.log
-          ./class wcdm.ini 2>&1 | tee bridge_outputs/wcdm.log
+          ./class lcdm.ini dsir_bridge.pre 2>&1 | tee bridge_outputs/lcdm.log
+          ./class wcdm.ini dsir_bridge.pre 2>&1 | tee bridge_outputs/wcdm.log
 
       - name: Compare same-solver log responses
         run: |
@@ -164,6 +166,7 @@ jobs:
             echo "calibration only: no PASS threshold imposed"
             echo "definition: r_S=ln(P_wCDM^S/P_LCDM^S); compare r_GDMCLASS-r_classiv"
             echo "physics: w0=-0.9, wa=0, cs2=1, synchronous gauge, matched primordial parameters"
+            echo "numerics: identical p8 precision preset passed to both CLASS-family lineages"
             echo "DSIR commit: $GITHUB_SHA"
             echo -n "GDM_CLASS upstream: "; cat gdm_upstream_sha.txt
             echo -n "class_iv upstream: "; cat ide_upstream_sha.txt
@@ -176,6 +179,7 @@ jobs:
           path: |
             cross_solver_bridge.json
             bridge_environment.txt
+            dsir_bridge.pre
             gdm_upstream_sha.txt
             ide_upstream_sha.txt
             ide_applied_compile_fix.diff
