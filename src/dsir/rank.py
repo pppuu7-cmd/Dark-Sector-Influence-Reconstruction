@@ -37,6 +37,42 @@ def noise_edge_rank(z: np.ndarray,n_null: int=400,quantile: float=0.95,seed: int
     edge=float(np.quantile(null,quantile)); return int(np.sum(obs>edge)),obs,edge
 
 
+def normalize_prior_weights(row_weights: np.ndarray) -> np.ndarray:
+    """Normalize positive theory-sample prior weights to mean one."""
+    w=np.asarray(row_weights,dtype=float)
+    if w.ndim!=1 or w.size==0: raise ValueError("row_weights must be a non-empty 1D array")
+    if np.any(~np.isfinite(w)) or np.any(w<=0): raise ValueError("row_weights must be finite and strictly positive")
+    return w*(len(w)/w.sum())
+
+
+def family_balanced_weights(family_labels, within_family_weights=None) -> np.ndarray:
+    """Give every named theory family equal total prior mass.
+
+    By default samples are uniform within each family. Optional positive
+    `within_family_weights` encode an explicit intra-family sampling prior;
+    those weights are normalized separately inside each family before all
+    families are assigned equal total mass. The final vector has mean one so
+    it can be passed directly to `weighted_noise_edge_rank`.
+    """
+    labels=np.asarray(family_labels, dtype=object)
+    if labels.ndim!=1 or labels.size==0: raise ValueError("family_labels must be a non-empty 1D sequence")
+    if any(str(x)=="" for x in labels): raise ValueError("family labels must be non-empty")
+    if within_family_weights is None:
+        base=np.ones(labels.size,dtype=float)
+    else:
+        base=np.asarray(within_family_weights,dtype=float)
+        if base.shape!=labels.shape: raise ValueError("within_family_weights must match family_labels")
+        if np.any(~np.isfinite(base)) or np.any(base<=0): raise ValueError("within-family weights must be finite and positive")
+    out=np.empty(labels.size,dtype=float)
+    # Preserve first-seen family identity instead of sorting arbitrary objects.
+    families=list(dict.fromkeys(labels.tolist()))
+    for fam in families:
+        idx=np.flatnonzero(labels==fam)
+        local=base[idx]
+        out[idx]=(1.0/len(families))*local/local.sum()
+    return normalize_prior_weights(out)
+
+
 def weighted_noise_edge_rank(z: np.ndarray,row_weights: np.ndarray,n_null: int=400,quantile: float=0.95,seed: int=0) -> tuple[int,np.ndarray,float]:
     """Noise-edge rank under an explicit prior over model samples.
 
@@ -48,7 +84,6 @@ def weighted_noise_edge_rank(z: np.ndarray,row_weights: np.ndarray,n_null: int=4
     z=np.asarray(z,dtype=float); w=np.asarray(row_weights,dtype=float)
     if z.ndim!=2: raise ValueError("z must be 2D")
     if w.shape!=(z.shape[0],): raise ValueError("row_weights must have one entry per row")
-    if np.any(~np.isfinite(w)) or np.any(w<=0): raise ValueError("row_weights must be finite and strictly positive")
-    w=w*(len(w)/w.sum()); rw=np.sqrt(w)[:,None]; obs=singular_values(z*rw); rng=np.random.default_rng(seed); null=np.empty(n_null)
+    w=normalize_prior_weights(w); rw=np.sqrt(w)[:,None]; obs=singular_values(z*rw); rng=np.random.default_rng(seed); null=np.empty(n_null)
     for i in range(n_null): null[i]=singular_values(rng.normal(size=z.shape)*rw)[0]
     edge=float(np.quantile(null,quantile)); return int(np.sum(obs>edge)),obs,edge
