@@ -18,9 +18,11 @@ DSIR remains a reconstruction/meta-inference framework, not a fundamental theory
 | GDM vs f(R) time/sign separator | **HARD PASS** | run `32774501126`: time-mode `25.18/25.49 deg`, full oriented `154.82/154.51 deg` |
 | WDM low-k blindness / high-k separator | **HARD ESTABLISHED** | 3 keV: `r_T(0.1)=-3.46e-6`, `r_T(10)=-0.10375` |
 | Synthetic latent-rank recovery | PASS | injected rank 3 recovered with corrected global noise edge |
-| Whitening robustness | PASS tested suite; **G5 PARTIAL** | 30/30 synthetic coordinate/rescaling cases + first real-covariance shape proxy; family-complete data-whitened stress tests remain |
+| Whitening robustness | PASS tested suite; **G5 PARTIAL** | 30/30 synthetic coordinate/rescaling cases + first real-covariance shape proxy + hard AP operator; family-complete data-whitened stress tests remain |
 | First cross-family real-covariance whitening | **PARTIAL PASS / Exp.034** | run `32777716140`: `PASS_PROXY_OBSERVATIONAL_WHITENING_SHAPE_BLOCK`; corrected DESI DR1 `m+n` marginal errors |
 | Shape-proxy adequacy | MIXED / LIMIT FOUND | smooth-w residual <=1.33%; IDE <=5.87%; GDM/f(R) finite-node ShapeFit residual about 36%, so no full DESI distinguishability claim |
+| Calibration-free AP operator | **HARD PASS / Exp.035** | run `32778635058`: direct wCDM bridge `1.00e-14`, calibration-mode residual `7.83e-15`, DH/DM sign identity exact at reported precision |
+| AP production-history coverage | **OPEN INPUT REQUIREMENT** | AP integral starts at z=0; seven-node structure atlas starts at z=0.295 and must not be extrapolated; full solver `background.dat` histories required |
 | Theory-catalog prior sensitivity | CONTROLLED FAILURE MODE | report `R_model(pi)`; family-balanced sampling implemented |
 | Missing-response handling | PASS method gate | validity masks/common subspaces; no zero/mean imputation |
 | DESI DR2 AP response | PASS G6A | calibration-free AP and relative expansion |
@@ -39,14 +41,16 @@ DSIR remains a reconstruction/meta-inference framework, not a fundamental theory
 2. GDM pressure/viscosity and designer f(R) have almost identical leading raw scale shapes, but differ in time/sign. In the first whitened `m+n` proxy their acute history angle is about `23 deg`; however the ShapeFit-basis residual is about `36%`, so this is not promoted to a DESI distinguishability claim.
 3. Smooth non-phantom wDE has a much flatter k-dependence than GDM/f(R), and its finite-node ShapeFit representation is much better behaved (maximum residual about `1.33%`).
 4. IDE beta remains unusually non-separable in raw `A(z)S(k)` geometry, while its first shape proxy is nearly redshift-constant on the selected bins.
-5. The new five-bin unit-direction shape spectrum `(1,0.20559,0.01065,0.00195,1.37e-6)` is descriptive only. **No intrinsic-rank claim is allowed** without family-complete observation operators, full covariance whitening, frozen null/rank thresholds, and prior stress tests.
+5. The exact AP identity now proves that the response-basis anchoring `r_E(z;z*=0.51)` does not discard AP information: any additive constant in log E cancels from `F_AP=E chi`. Production geometry still needs the full history below z=0.295.
+6. The five-bin unit-direction shape spectrum `(1,0.20559,0.01065,0.00195,1.37e-6)` is descriptive only. **No intrinsic-rank claim is allowed** without family-complete observation operators, full covariance whitening, frozen null/rank thresholds, and prior stress tests.
 
 ## Immediate continuation
 
-1. Build a family-complete `DH/DM` / AP geometry operator on the DESI ShapeFit redshift support.
-2. Build a family-complete gauge-safe `f_sigma_s8` growth operator.
-3. Replace or calibrate the finite-node `m+n` proxy with a survey/window-aware shape response and propagate compression-model error.
-4. Then form the full corrected ShapeFit block `Z=C^{-1/2} Delta O` and compare raw-theory versus data-whitened geometry side by side.
-5. Stress-test local/global response spectra under family priors `pi`, channel removal, solver precision, and within-family sampling before assigning any `R_model(pi)` statement.
-6. In parallel, prioritize an observational lensing/slip block and a small-scale-transfer block because the hard discriminant graph identifies them as high-value independent separators.
-7. Resume G7 residual-law search only after observationally whitened manifold/rank stability; no discovery claim before G8.
+1. Extract/regenerate full `z=0..2.33` same-solver background histories for C1 smooth-w and C2 IDE and map them through the validated AP operator.
+2. Encode perturbation-only/background-equivalent directions as exact-zero AP responses only where their model definition and solver controls establish that fact; never use zero as missing-data imputation.
+3. Build a family-complete gauge-safe `f_sigma_s8` growth operator.
+4. Replace or calibrate the finite-node `m+n` proxy with a survey/window-aware shape response and propagate compression-model error.
+5. Then form the full corrected ShapeFit block `Z=C^{-1/2} Delta O` and compare raw-theory versus data-whitened geometry side by side.
+6. Stress-test local/global response spectra under family priors `pi`, channel removal, solver precision, and within-family sampling before assigning any `R_model(pi)` statement.
+7. In parallel, prioritize observational lensing/slip and small-scale-transfer blocks because the hard discriminant graph identifies them as high-value independent separators.
+8. Resume G7 residual-law search only after observationally whitened manifold/rank stability; no discovery claim before G8.

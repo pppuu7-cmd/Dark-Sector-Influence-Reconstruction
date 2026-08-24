@@ -1,0 +1,40 @@
+name: DSIR calibration-free AP operator v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/ap-operator-v0-1.yml'
+      - 'ci/ap_operator_v0_1.py'
+      - 'src/dsir/ap_operator.py'
+      - 'tests/test_ap_operator.py'
+      - 'experiments/035_ap_operator_v0_1.md'
+      - 'data/derived/observational_whitening/experiment_035_ap_operator_v0_1.json'
+      - 'docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-24.md'
+      - 'docs/STATUS.md'
+      - 'docs/RECOVERY_LATEST.md'
+
+jobs:
+  ap-operator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install DSIR and tests
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . pytest
+      - name: Unit tests
+        run: pytest -q tests/test_ap_operator.py
+      - name: Run Experiment 035 hard method gate
+        run: python ci/ap_operator_v0_1.py --json ap_operator_v0_1.json
+      - name: Upload AP operator artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ap-operator-v0-1-${{ github.sha }}
+          path: ap_operator_v0_1.json
+          if-no-files-found: error
