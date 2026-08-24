@@ -1,0 +1,97 @@
+name: Transfer-level gauge-invariant matter audit
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/gauge-transfer-audit.yml'
+      - 'ci/gdm_calibration_trigger.txt'
+
+jobs:
+  transfer-gauge-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout DSIR
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3
+
+      - name: Clone and build pinned GDM_CLASS
+        run: |
+          git clone https://github.com/s-ilic/gdm_class_public.git external_gdm
+          cd external_gdm
+          git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          git rev-parse HEAD | tee ../gdm_upstream_sha.txt
+          make -j2 class
+
+      - name: Write identical transfer configurations
+        run: |
+          mkdir -p external_gdm/dsir_transfer_outputs
+          cat > external_gdm/newt_transfer.ini <<'EOF'
+          h = 0.67
+          omega_b = 0.0224
+          omega_cdm = 0.1200
+          omega_gdm = 0.0
+          Omega_Lambda = 0.684
+          A_s = 2.10e-9
+          n_s = 0.965
+          tau_reio = 0.054
+          gauge = newtonian
+          output = mTk,vTk
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0,1
+          headers = yes
+          write background = yes
+          root = dsir_transfer_outputs/newt_
+          EOF
+          cat > external_gdm/sync_transfer.ini <<'EOF'
+          h = 0.67
+          omega_b = 0.0224
+          omega_cdm = 0.1200
+          omega_gdm = 0.0
+          Omega_Lambda = 0.684
+          A_s = 2.10e-9
+          n_s = 0.965
+          tau_reio = 0.054
+          gauge = synchronous
+          output = mTk,vTk
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0,1
+          headers = yes
+          write background = yes
+          root = dsir_transfer_outputs/sync_
+          EOF
+
+      - name: Run transfer calculations
+        working-directory: external_gdm
+        run: |
+          ./class newt_transfer.ini 2>&1 | tee dsir_transfer_outputs/newt.log
+          ./class sync_transfer.ini 2>&1 | tee dsir_transfer_outputs/sync.log
+          ls -lah dsir_transfer_outputs
+
+      - name: Record provenance
+        run: |
+          {
+            echo "DSIR transfer-level gauge audit"
+            echo "purpose: identify a common comoving/gauge-invariant matter-density response from delta_m and theta_m transfer outputs"
+            echo "no candidate formula or PASS threshold is imposed before inspecting the artifact"
+            echo "DSIR commit: $GITHUB_SHA"
+            echo -n "GDM upstream: "
+            cat gdm_upstream_sha.txt
+          } > external_gdm/dsir_transfer_outputs/environment.txt
+
+      - name: Upload transfer audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gauge-transfer-audit-${{ github.sha }}
+          path: |
+            external_gdm/dsir_transfer_outputs/
+            external_gdm/newt_transfer.ini
+            external_gdm/sync_transfer.ini
+            gdm_upstream_sha.txt
+          if-no-files-found: error
