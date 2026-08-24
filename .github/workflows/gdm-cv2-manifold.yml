@@ -1,0 +1,185 @@
+name: GDM viscosity and two-axis Jacobian calibration
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/gdm-cv2-manifold.yml'
+      - 'ci/gdm_cv2_scan.py'
+      - 'ci/gdm_two_axis_geometry.py'
+      - 'ci/gdm_cs2_scan.py'
+      - 'experiments/028_gdm_cv2_manifold.md'
+
+jobs:
+  gdm-cv2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build/runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Clone and build pinned GDM_CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/s-ilic/gdm_class_public.git external_gdm
+          cd external_gdm
+          git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          git rev-parse HEAD | tee ../gdm_cv2_upstream_sha.txt
+          make -j2 class
+
+      - name: Freeze validated p8 precision preset
+        run: |
+          cat > external_gdm/dsir_p8.pre <<'EOF'
+          k_step_sub = 0.0010
+          k_step_super = 0.000003
+          k_step_super_reduction = 0.1
+          start_small_k_at_tau_c_over_tau_h = 1e-6
+          start_large_k_at_tau_h_over_tau_k = 0.05
+          tight_coupling_trigger_tau_c_over_tau_h = 0.005
+          tight_coupling_trigger_tau_c_over_tau_k = 0.008
+          start_sources_at_tau_c_over_tau_h = 0.006
+          tol_perturb_integration = 3e-10
+          perturb_sampling_stepsize = 0.00035
+          radiation_streaming_approximation = 2
+          radiation_streaming_trigger_tau_over_tau_k = 240.
+          radiation_streaming_trigger_tau_c_over_tau = 100.
+          ur_fluid_approximation = 2
+          ur_fluid_trigger_tau_over_tau_k = 50.
+          EOF
+
+      - name: Write common zero-closure GDM reference
+        run: |
+          mkdir -p external_gdm/cv2_outputs
+          cat > external_gdm/gdm0.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          omega_cdm = 0.0
+          omega_gdm = 0.1200
+          Omega_Lambda = 0.684
+          N_ur = 3.046
+          N_ncdm = 0
+          Omega_k = 0.
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          type_gdm = time_only_bins
+          smooth_bins_gdm = yes
+          time_transition_width_gdm = 8.
+          time_values_gdm = 0.00001, 0.0001, 0.001, 0.01, 0.1
+          w_values_gdm = 0., 0., 0., 0., 0., 0.
+          cs2_values_gdm = 0., 0., 0., 0., 0., 0.
+          cv2_values_gdm = 0., 0., 0., 0., 0., 0.
+          dynamic_shear_gdm = yes
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          write background = yes
+          root = cv2_outputs/gdm0_
+          EOF
+
+      - name: Write viscosity scan and local sound-speed controls
+        run: |
+          set -euxo pipefail
+          cd external_gdm
+          for pair in '1e-8 1em8' '1e-7 1em7' '1e-6 1em6' '1e-5 1em5' '1e-4 1em4'; do
+            set -- $pair; V=$1; TOK=$2
+            sed \
+              -e "s/cv2_values_gdm = 0., 0., 0., 0., 0., 0./cv2_values_gdm = ${V}, ${V}, ${V}, ${V}, ${V}, ${V}/" \
+              -e "s#root = cv2_outputs/gdm0_#root = cv2_outputs/gdmcv2_${TOK}_#" \
+              gdm0.ini > "gdmcv2_${TOK}.ini"
+          done
+          for pair in '1e-8 1em8' '1e-7 1em7' '1e-6 1em6'; do
+            set -- $pair; V=$1; TOK=$2
+            sed \
+              -e "s/cs2_values_gdm = 0., 0., 0., 0., 0., 0./cs2_values_gdm = ${V}, ${V}, ${V}, ${V}, ${V}, ${V}/" \
+              -e "s#root = cv2_outputs/gdm0_#root = cv2_outputs/gdmcs2_${TOK}_#" \
+              gdm0.ini > "gdmcs2_${TOK}.ini"
+          done
+
+      - name: Run reference viscosity scan and sound-speed controls
+        working-directory: external_gdm
+        run: |
+          set -euxo pipefail
+          ./class gdm0.ini dsir_p8.pre 2>&1 | tee cv2_outputs/gdm0.log
+          for f in gdmcv2_*.ini gdmcs2_*.ini; do
+            tok=$(basename "$f" .ini)
+            ./class "$f" dsir_p8.pre 2>&1 | tee "cv2_outputs/${tok}.log"
+          done
+
+      - name: Extract same-solver viscosity manifold
+        run: |
+          set -euxo pipefail
+          python3 ci/gdm_cv2_scan.py \
+            --directory external_gdm/cv2_outputs \
+            --reference-prefix gdm0_ \
+            --models \
+              1e-8:gdmcv2_1em8_ \
+              1e-7:gdmcv2_1em7_ \
+              1e-6:gdmcv2_1em6_ \
+              1e-5:gdmcv2_1em5_ \
+              1e-4:gdmcv2_1em4_ \
+            --json gdm_cv2_manifold.json
+
+      - name: Reproduce local sound-speed tangent in same run
+        run: |
+          set -euxo pipefail
+          python3 ci/gdm_cs2_scan.py \
+            --directory external_gdm/cv2_outputs \
+            --reference-prefix gdm0_ \
+            --models \
+              1e-8:gdmcs2_1em8_ \
+              1e-7:gdmcs2_1em7_ \
+              1e-6:gdmcs2_1em6_ \
+            --json gdm_cs2_local_control.json
+
+      - name: Audit local two-axis GDM Jacobian geometry
+        run: |
+          set -euxo pipefail
+          python3 ci/gdm_two_axis_geometry.py \
+            --cs2 gdm_cs2_local_control.json \
+            --cv2 gdm_cv2_manifold.json \
+            --local-max 1e-6 \
+            --json gdm_cs2_cv2_geometry.json
+
+      - name: Record provenance
+        run: |
+          {
+            echo 'DSIR GDM viscosity + cs2/cv2 two-axis Jacobian calibration'
+            echo 'Pinned GDM_CLASS and validated p8 precision; same zero-closure reference.'
+            echo 'w=0; dynamic_shear_gdm=yes.'
+            echo 'cv2 scan: 1e-8,1e-7,1e-6,1e-5,1e-4; cs2 local controls: 1e-8,1e-7,1e-6.'
+            echo 'No hard tangent-domain or two-axis rank threshold is frozen in this calibration.'
+            echo "DSIR commit: $GITHUB_SHA"
+            echo -n 'GDM_CLASS upstream: '; cat gdm_cv2_upstream_sha.txt
+          } > gdm_cv2_environment.txt
+
+      - name: Upload calibration artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gdm-cv2-manifold-${{ github.sha }}
+          path: |
+            gdm_cv2_manifold.json
+            gdm_cs2_local_control.json
+            gdm_cs2_cv2_geometry.json
+            gdm_cv2_environment.txt
+            gdm_cv2_upstream_sha.txt
+            external_gdm/dsir_p8.pre
+            external_gdm/gdm*.ini
+            external_gdm/cv2_outputs/
+          if-no-files-found: error
