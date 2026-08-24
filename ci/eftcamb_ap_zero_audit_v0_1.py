@@ -2,11 +2,15 @@
 """Experiment 038: numerical background/AP-null audit for frozen designer f(R).
 
 The pinned H-EFTCAMB source maps EFTwDE=0 to its dedicated LCDM w_DE
-parametrization (w=-1 exactly).  The executable's EFT background writer is
+parametrization (w=-1 exactly). The executable's EFT background writer is
 not emitted for EFTflag=0, so the numerical null test uses the designer B0=0
 background as the same-branch reference and separately verifies the frozen GR
-configuration contract.  This avoids modifying upstream physics merely to
+configuration contract. This avoids modifying upstream physics merely to
 instrument the GR output path.
+
+CAMB appends '_' to a nonempty output_root. The frozen hard INIs already end
+those roots in '_', therefore their actual products carry a double underscore
+before the output suffix, e.g. dsir_mgs1_hp_b0__background.dat.
 """
 from __future__ import annotations
 
@@ -123,6 +127,10 @@ def audit_one(ref_table, ref_z, ref_h, ref_dm, model_path: Path, ini_path: Path,
     }
 
 
+def background_name(token: str) -> str:
+    return f"{PREFIX}{token}__background.dat"
+
+
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--background-root", required=True)
@@ -132,10 +140,10 @@ def main() -> None:
     bgroot, parroot = Path(args.background_root), Path(args.parameter_root)
 
     # The EFT-specific background writer is not produced for EFTflag=0.
-    # Use the exact designer B0=0 point as the numerical reference.  The workflow
+    # Use the exact designer B0=0 point as the numerical reference. The workflow
     # separately hard-checks in the pinned source that EFTwDE=0 selects the
     # dedicated LCDM w_DE parametrization, whose value is exactly -1.
-    ref_path = bgroot / f"{PREFIX}b0_background.dat"
+    ref_path = bgroot / background_name("b0")
     ref_table, ref_z, ref_h, ref_dm = load_background(ref_path)
 
     gr_ini = parroot / f"{PREFIX}gr.ini"
@@ -144,15 +152,16 @@ def main() -> None:
     rows = [
         audit_one(
             ref_table, ref_z, ref_h, ref_dm,
-            bgroot / f"{PREFIX}{token}_background.dat",
+            bgroot / background_name(token),
             parroot / f"{PREFIX}{token}.ini",
             b0,
         )
         for token, b0 in MODELS
     ]
 
-    # Frozen before first scientific CI output. background.dat uses ES20.10;
-    # 1e-8 remains safely above text rounding while excluding material geometry drift.
+    # Frozen before first scientific CI output. background.dat uses finite text
+    # precision; 1e-8 remains safely above output rounding while excluding
+    # material geometry drift.
     thresholds = {
         "z_grid_max_abs": 1e-10,
         "max_relative_H": 1e-8,
@@ -189,6 +198,12 @@ def main() -> None:
             "EFTwDE_0_selects": "wDE_LCDM_parametrization_1D",
             "wDE_LCDM_value": -1.0,
             "verified_by_workflow_grep_on_pinned_source": True,
+        },
+        "output_naming_contract": {
+            "frozen_output_root_ends_with_underscore": True,
+            "CAMB_appends_underscore": True,
+            "background_suffix": "_background.dat",
+            "effective_separator_before_background": "__",
         },
         "numerical_reference": {
             "file": ref_path.name,
