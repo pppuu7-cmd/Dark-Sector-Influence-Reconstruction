@@ -2,6 +2,8 @@
 
 | Gate | Requirement | Status |
 |---|---|---|
+| N0 | Prior-art/non-duplication audit of the complete DSIR architecture | **PASS-PROVISIONAL** — individual ingredients have substantial prior art, but no exact duplicate of the complete `heterogeneous atlas -> solver-controlled response -> whitened/prior-sensitive rank -> identity quotient -> cross-channel law -> withheld prediction` chain was identified in the 2026-08-24 audit. This is not proof of global novelty; see `docs/NOVELTY_AUDIT_N0.md`. |
+| N1 | Citation-graph/full-text audit of the closest competitors and adjacent terminology | OPEN — required before manuscript novelty claims. |
 | G0 | LambdaCDM embedding reproduces reference observables | PARTIAL — multiple solver-specific LambdaCDM/control limits pass; a broader solver-independent reference suite remains desirable |
 | G1 | Bianchi/conservation and gauge-invariant bookkeeping verified | **PASS for v0.1.1 scope** — covariant conservation contract frozen; comoving total-matter construction source-audited; Newtonian/synchronous hard gauge regression passes at `5e-6`; cross-solver response bridge passes at `1e-9` |
 | G2 | Response basis and conventions frozen | **PASS v0.1.1** — background rules retained from v0.1; perturbation coordinate upgraded to same-solver comoving total-matter response `r_Delta`; Experiment 018/020 |
@@ -14,6 +16,22 @@
 | G7 | First nontrivial residual cross-channel relation after quotienting known identities/measurement degeneracies | OPEN — current conditional-innovation aggregate is null-consistent; law search resumes only after the production six-family matrix is complete |
 | G8 | Relation survives withheld prediction | OPEN |
 | G9 | Candidate underlying dynamics/action reconstructed or ruled out | OPEN |
+
+## N0 novelty contract
+
+N0 explicitly records that the following are **prior art and cannot be claimed as DSIR inventions**: effective dark-sector stress tensors, dark degeneracy, GDM stress closure, PPF/EFT theory dictionaries, PCA/SVD of cosmological theory banks, entropy effective rank, LambdaCDM-reference/reaction ratios, model-independent interacting-dark-sector reconstruction, symbolic regression in cosmology, and LambdaCDM-as-theory-space/fixed-point organization.
+
+The current **provisional** DSIR-specific combination is narrower:
+
+`heterogeneous DM+DE+interaction+MG response atlas`
+` -> same-solver model/reference quotient + cross-solver bridge`
+` -> covariance-whitened/noise-calibrated latent dimension`
+` -> theory-family-prior profile R_model(pi)`
+` -> quotient of exact identities/calibration/measurement-degeneracy directions`
+` -> cross-channel relation discovery`
+` -> withheld physical-channel prediction`.
+
+N0 must be reopened if a prior work is found implementing substantially this same chain under any terminology. N1 full-text/citation-graph audit remains OPEN, so manuscript-level novelty wording is not yet authorized.
 
 ## G1 conservation and gauge contract
 
@@ -76,4 +94,4 @@ A conservative hard threshold `1e-9` was frozen before the clean rerun. The hard
 
 ## Hard scientific rule
 
-No discovery claim is permitted before G8 withheld prediction.
+No discovery claim is permitted before G8 withheld prediction. No broad methodological novelty claim is permitted before N1 citation-graph/full-text audit.
