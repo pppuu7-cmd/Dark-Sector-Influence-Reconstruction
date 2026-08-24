@@ -1,0 +1,47 @@
+name: DSIR cross-family comparison readiness gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/comparison-readiness.yml'
+      - 'ci/cross_family_comparison_readiness.py'
+      - 'data/derived/comparison_readiness/local_response_tangents_v0_1.json'
+      - 'src/dsir/linear_controls.py'
+      - 'experiments/030_comparison_readiness_gate.md'
+
+jobs:
+  comparison-readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install runtime dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Run frozen block-aware comparison-readiness gate
+        env:
+          PYTHONPATH: src
+        run: |
+          python3 ci/cross_family_comparison_readiness.py \
+            --input data/derived/comparison_readiness/local_response_tangents_v0_1.json \
+            --json comparison_readiness_v0_1.json
+      - name: Record aggregate provenance
+        run: |
+          {
+            echo 'DSIR comparison readiness aggregate v0.1'
+            echo 'Thresholds are stored in the frozen input snapshot and were committed before this aggregate run.'
+            echo 'Low-k comparison scope: C1/C2/C3/C5 response objects on frozen 7z x 5k P_Delta coordinates.'
+            echo 'C0 is the reference origin. C4 WDM remains a separate small-scale transfer block and is never zero-imputed into low-k.'
+            echo 'This gate does not perform observational whitening or model ranking.'
+            echo "DSIR commit: $GITHUB_SHA"
+          } > comparison_readiness_environment.txt
+      - name: Upload comparison-readiness artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: comparison-readiness-${{ github.sha }}
+          path: |
+            comparison_readiness_v0_1.json
+            comparison_readiness_environment.txt
+            data/derived/comparison_readiness/local_response_tangents_v0_1.json
+          if-no-files-found: error
