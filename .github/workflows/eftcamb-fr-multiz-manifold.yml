@@ -52,29 +52,31 @@ jobs:
           sed -i 's/^transfer_kmax[[:space:]]*=.*/transfer_kmax = 0.25/' dsir_mgs1_base.ini
           sed -i 's/^transfer_k_per_logint[[:space:]]*=.*/transfer_k_per_logint = 80/' dsir_mgs1_base.ini
           sed -i 's/^transfer_num_redshifts[[:space:]]*=.*/transfer_num_redshifts = 7/' dsir_mgs1_base.ini
-          sed -i 's/^transfer_redshift(1)[[:space:]]*=.*/transfer_redshift(1) = 0.295/' dsir_mgs1_base.ini
-          sed -i 's/^transfer_filename(1)[[:space:]]*=.*/transfer_filename(1) = z1_transfer.dat/' dsir_mgs1_base.ini
-          sed -i 's/^transfer_matterpower(1)[[:space:]]*=.*/transfer_matterpower(1) = z1_matterpower.dat/' dsir_mgs1_base.ini
+          # CAMB requires transfer redshifts in strictly decreasing order. File
+          # labels z1..z7 retain the frozen DSIR ascending-z semantic mapping.
+          sed -i 's/^transfer_redshift(1)[[:space:]]*=.*/transfer_redshift(1) = 2.33/' dsir_mgs1_base.ini
+          sed -i 's/^transfer_filename(1)[[:space:]]*=.*/transfer_filename(1) = z7_transfer.dat/' dsir_mgs1_base.ini
+          sed -i 's/^transfer_matterpower(1)[[:space:]]*=.*/transfer_matterpower(1) = z7_matterpower.dat/' dsir_mgs1_base.ini
           sed -i 's/^number_of_threads[[:space:]]*=.*/number_of_threads = 2/' dsir_mgs1_base.ini
           cat >> dsir_mgs1_base.ini <<'EOF'
-          transfer_redshift(2) = 0.51
-          transfer_filename(2) = z2_transfer.dat
-          transfer_matterpower(2) = z2_matterpower.dat
-          transfer_redshift(3) = 0.706
-          transfer_filename(3) = z3_transfer.dat
-          transfer_matterpower(3) = z3_matterpower.dat
+          transfer_redshift(2) = 1.491
+          transfer_filename(2) = z6_transfer.dat
+          transfer_matterpower(2) = z6_matterpower.dat
+          transfer_redshift(3) = 1.317
+          transfer_filename(3) = z5_transfer.dat
+          transfer_matterpower(3) = z5_matterpower.dat
           transfer_redshift(4) = 0.934
           transfer_filename(4) = z4_transfer.dat
           transfer_matterpower(4) = z4_matterpower.dat
-          transfer_redshift(5) = 1.317
-          transfer_filename(5) = z5_transfer.dat
-          transfer_matterpower(5) = z5_matterpower.dat
-          transfer_redshift(6) = 1.491
-          transfer_filename(6) = z6_transfer.dat
-          transfer_matterpower(6) = z6_matterpower.dat
-          transfer_redshift(7) = 2.33
-          transfer_filename(7) = z7_transfer.dat
-          transfer_matterpower(7) = z7_matterpower.dat
+          transfer_redshift(5) = 0.706
+          transfer_filename(5) = z3_transfer.dat
+          transfer_matterpower(5) = z3_matterpower.dat
+          transfer_redshift(6) = 0.51
+          transfer_filename(6) = z2_transfer.dat
+          transfer_matterpower(6) = z2_matterpower.dat
+          transfer_redshift(7) = 0.295
+          transfer_filename(7) = z1_transfer.dat
+          transfer_matterpower(7) = z1_matterpower.dat
           EOF
       - name: Write GR, exact-zero and nonzero designer configurations
         working-directory: eftcamb/fortran/eftcamb_test/parameters
@@ -108,17 +110,23 @@ jobs:
       - name: Run common-baseline GR and designer manifold
         working-directory: eftcamb/fortran
         run: |
+          set -o pipefail
           mkdir -p eftcamb_test/results/spectra_results
           ./camb eftcamb_test/parameters/dsir_mgs1_gr.ini 2>&1 | tee ../../mgs1_gr.log
-          for f in eftcamb_test/parameters/dsir_mgs1_b*.ini; do
-            tok=$(basename "$f" .ini)
-            ./camb "$f" 2>&1 | tee "../../${tok}.log"
+          for tok in b0 b1em7 b1em6 b1em5 b1em4 b1em3; do
+            f="eftcamb_test/parameters/dsir_mgs1_${tok}.ini"
+            ./camb "$f" 2>&1 | tee "../../dsir_mgs1_${tok}.log"
           done
       - name: Require solver stability for every designer point
         run: |
-          for f in dsir_mgs1_b*.log; do
+          for tok in b0 b1em7 b1em6 b1em5 b1em4 b1em3; do
+            f="dsir_mgs1_${tok}.log"
             echo "checking $f"
             grep -q 'EFTCAMB: theory stable' "$f"
+            if grep -q 'ERROR STOP' "$f"; then
+              echo "unexpected solver error in $f"
+              exit 2
+            fi
           done
       - name: Extract frozen multi-z responses
         run: |
@@ -136,6 +144,7 @@ jobs:
             echo 'h=0.67, ombh2=0.0224, omch2=0.1200, omnuh2=0, massless_neutrinos=3.046'
             echo 'As=2.10e-9, ns=0.965, helium_fraction=0.2404, flat geometry'
             echo 'B0 grid: 0,1e-7,1e-6,1e-5,1e-4,1e-3; all nonzero points are above pinned GR threshold 1e-8'
+            echo 'CAMB transfer redshifts are stored decreasing but files z1..z7 map to the frozen ascending DSIR redshift semantics'
             echo 'CALIBRATION ONLY: multi-z exact-zero tolerance is not pre-frozen on this first common-baseline run'
             echo -n 'H-EFTCAMB upstream: '; cat eftcamb_mgs1_upstream_sha.txt
             echo "DSIR commit: $GITHUB_SHA"
