@@ -1,8 +1,17 @@
 {
   "basis_id": "dsir-response-v0.1.1",
   "parent_basis": "dsir-response-v0.1",
-  "status": "frozen-candidate-pending-cross-solver-bridge",
+  "status": "frozen-pass",
   "date": "2026-08-24",
+  "validation": {
+    "gauge_hard_threshold": 5e-6,
+    "gauge_hard_status": "PASS",
+    "cross_solver_bridge_model": "smooth wCDM: w0=-0.9, wa=0, cs2=1",
+    "cross_solver_bridge_calibration_max_abs": 2.374740404320619e-10,
+    "cross_solver_bridge_hard_threshold": 1e-9,
+    "cross_solver_bridge_hard_status": "PASS",
+    "scope_note": "The 1e-9 bridge threshold validates the tested overlapping smooth-wCDM deformation at matched p8 precision. It is not a universal tolerance for all solvers/theories."
+  },
   "changes_from_parent": [
     "Replace ambiguous raw matter-power coordinate by explicitly comoving total-matter spectrum P_Delta.",
     "Require same-solver reference quotients for model/reference perturbation responses whenever possible.",
