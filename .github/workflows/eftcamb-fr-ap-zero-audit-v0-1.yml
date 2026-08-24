@@ -9,6 +9,7 @@ on:
       - 'ci/eftcamb_ap_zero_audit_v0_1.py'
       - 'src/dsir/ap_operator.py'
       - 'experiments/038_eftcamb_fr_ap_zero_audit_v0_1.md'
+      - 'experiments/039_shapefit_growth_operator_contract_v0_1.md'
       - 'data/derived/observational_whitening/experiment_038_eftcamb_fr_ap_zero_audit_v0_1.json'
       - 'docs/SCIENTIFIC_FINDINGS_REGISTER.md'
       - 'docs/STATUS.md'
@@ -77,7 +78,7 @@ jobs:
           for tok in b0 b1em7 b1em6 b1em5 b1em4 b1em3; do
             ./camb "eftcamb_test/parameters/dsir_mgs1_hp_${tok}.ini" 2>&1 | tee "../../exp038_${tok}.log"
           done
-      - name: Require stable designer runs and actual CAMB background files
+      - name: Require stable designer runs and actual CAMB outputs
         run: |
           for tok in b0 b1em7 b1em6 b1em5 b1em4 b1em3; do
             grep -q 'EFTCAMB: theory stable' "exp038_${tok}.log"
@@ -90,15 +91,17 @@ jobs:
           # CAMB appends '_' to output_root; the frozen roots already end in '_'.
           for tok in b0 b1em7 b1em6 b1em5 b1em4 b1em3; do
             test -f "$root/dsir_mgs1_hp_${tok}__background.dat"
+            test -f "$root/dsir_mgs1_hp_${tok}__z1_transfer.dat"
           done
           find "$root" -maxdepth 1 -name 'dsir_mgs1_hp_*background.dat' -print | sort | tee exp038_background_manifest.txt
+          find "$root" -maxdepth 1 -name 'dsir_mgs1_hp_*transfer.dat' -print | sort | tee exp038_transfer_manifest.txt
       - name: Run Experiment 038 hard audit
         run: |
           python ci/eftcamb_ap_zero_audit_v0_1.py \
             --background-root eftcamb/fortran/eftcamb_test/results/spectra_results \
             --parameter-root eftcamb/fortran/eftcamb_test/parameters \
             --json eftcamb_fr_ap_zero_audit_v0_1.json
-      - name: Upload Experiment 038 result and preserved backgrounds
+      - name: Upload Experiment 038 result, backgrounds and transfer handoff
         uses: actions/upload-artifact@v4
         with:
           name: eftcamb-fr-ap-zero-audit-v0-1-${{ github.sha }}
@@ -107,6 +110,8 @@ jobs:
             eftcamb_exp038_upstream_sha.txt
             exp038_*.log
             exp038_background_manifest.txt
+            exp038_transfer_manifest.txt
             eftcamb/fortran/eftcamb_test/parameters/dsir_mgs1_hp_*.ini
             eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_mgs1_hp_*background.dat
+            eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_mgs1_hp_*transfer.dat
           if-no-files-found: error
