@@ -1,4 +1,4 @@
-name: GDM zero-limit precision convergence sweep
+name: GDM zero-limit linear-core precision sweep
 
 on:
   workflow_dispatch:
@@ -9,9 +9,9 @@ on:
       - 'ci/physics_window_metrics.py'
 
 jobs:
-  gdm-precision-sweep:
+  gdm-linear-core-precision:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -35,19 +35,15 @@ jobs:
           git rev-parse HEAD | tee ../gdm_upstream_sha.txt
           make -j2 class
 
-      - name: Select monotone precision level
+      - name: Select monotone perturbation precision level
         env:
           LEVEL: ${{ matrix.level }}
         run: |
           case "$LEVEL" in
-            p1)
-              KSUB=0.015; KSUPER=0.0001; TOL=1e-6; SAMPLE=0.01; LUR=150 ;;
-            p2)
-              KSUB=0.008; KSUPER=0.00005; TOL=3e-7; SAMPLE=0.005; LUR=180 ;;
-            p3)
-              KSUB=0.005; KSUPER=0.00003; TOL=1e-7; SAMPLE=0.003; LUR=220 ;;
-            p4)
-              KSUB=0.003; KSUPER=0.00002; TOL=3e-8; SAMPLE=0.002; LUR=250 ;;
+            p1) KSUB=0.015; KSUPER=0.0001;  TOL=1e-6; SAMPLE=0.01  ;;
+            p2) KSUB=0.008; KSUPER=0.00005; TOL=3e-7; SAMPLE=0.005 ;;
+            p3) KSUB=0.005; KSUPER=0.00003; TOL=1e-7; SAMPLE=0.003 ;;
+            p4) KSUB=0.003; KSUPER=0.00002; TOL=3e-8; SAMPLE=0.002 ;;
           esac
           cat > external_gdm/dsir_precision.pre <<EOF
           k_step_sub = $KSUB
@@ -58,9 +54,6 @@ jobs:
           tight_coupling_trigger_tau_c_over_tau_h = 0.005
           tight_coupling_trigger_tau_c_over_tau_k = 0.008
           start_sources_at_tau_c_over_tau_h = 0.006
-          l_max_g = 50
-          l_max_pol_g = 25
-          l_max_ur = $LUR
           tol_perturb_integration = $TOL
           perturb_sampling_stepsize = $SAMPLE
           radiation_streaming_approximation = 2
@@ -68,17 +61,9 @@ jobs:
           radiation_streaming_trigger_tau_c_over_tau = 100.
           ur_fluid_approximation = 2
           ur_fluid_trigger_tau_over_tau_k = 50.
-          l_logstep = 1.026
-          l_linstep = 25
-          neglect_CMB_sources_below_visibility = 1e-30
-          transfer_neglect_late_source = 3000.
-          l_switch_limber = 40
-          accurate_lensing = 1
-          num_mu_minus_lmax = 1000.
-          delta_l_max = 1000.
           EOF
 
-      - name: Write matched cosmologies
+      - name: Write matched linear-core cosmologies
         run: |
           mkdir -p external_gdm/dsir_precision_outputs
           cat > external_gdm/dsir_baseline.ini <<'EOF'
@@ -91,10 +76,8 @@ jobs:
           n_s = 0.965
           tau_reio = 0.054
           gauge = newtonian
-          output = tCl,pCl,lCl,mPk
-          lensing = yes
-          l_max_scalars = 800
-          P_k_max_h/Mpc = 2.0
+          output = mPk
+          P_k_max_h/Mpc = 0.25
           z_pk = 0,1
           write background = yes
           root = dsir_precision_outputs/baseline_
@@ -118,22 +101,20 @@ jobs:
           cs2_values_gdm = 0., 0., 0., 0., 0., 0.
           cv2_values_gdm = 0., 0., 0., 0., 0., 0.
           dynamic_shear_gdm = yes
-          output = tCl,pCl,lCl,mPk
-          lensing = yes
-          l_max_scalars = 800
-          P_k_max_h/Mpc = 2.0
+          output = mPk
+          P_k_max_h/Mpc = 0.25
           z_pk = 0,1
           write background = yes
           root = dsir_precision_outputs/gdm0_
           EOF
 
-      - name: Run matched calculations
+      - name: Run matched linear-core calculations
         working-directory: external_gdm
         run: |
           ./class dsir_baseline.ini dsir_precision.pre 2>&1 | tee dsir_precision_outputs/baseline.log
           ./class dsir_gdm0.ini dsir_precision.pre 2>&1 | tee dsir_precision_outputs/gdm0.log
 
-      - name: Compute scale-aware metrics
+      - name: Compute scale-aware P(k) metrics
         run: |
           python3 ci/physics_window_metrics.py \
             --directory external_gdm/dsir_precision_outputs \
@@ -146,8 +127,9 @@ jobs:
           LEVEL: ${{ matrix.level }}
         run: |
           {
-            echo "DSIR GDM zero-limit precision convergence sweep"
+            echo "DSIR GDM zero-limit linear-core precision sweep"
             echo "precision level: $LEVEL"
+            echo "scope: background + linear P(k), k_max=0.25 h/Mpc; CMB calibrated separately"
             echo "DSIR commit: $GITHUB_SHA"
             echo -n "GDM upstream: "
             cat gdm_upstream_sha.txt
@@ -159,7 +141,7 @@ jobs:
       - name: Upload precision-level artifact
         uses: actions/upload-artifact@v4
         with:
-          name: gdm-precision-${{ matrix.level }}-${{ github.sha }}
+          name: gdm-linear-core-${{ matrix.level }}-${{ github.sha }}
           path: |
             external_gdm/dsir_precision_outputs/
             external_gdm/dsir_baseline.ini
