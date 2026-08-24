@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-24  
 **Read first:** `docs/RECOVERY_MANUAL.md`  
-Then read this file, `docs/GATES.md`, `docs/STATUS.md`, `docs/RESEARCH_LOG.md`, `docs/PROVENANCE.md`, `docs/CONSERVATION_GAUGE_V0_1.md`, and the response-basis specifications.
+Then read this file, `docs/GATES.md`, `docs/STATUS.md`, `docs/RESEARCH_LOG.md`, `docs/PROVENANCE.md`, `docs/CONSERVATION_GAUGE_V0_1.md`, `docs/NOVELTY_AUDIT_N0.md`, and the response-basis specifications.
 
 Hard boundary: **DSIR is separate from RTK. Do not modify, use, or overwrite the RTK repository/project while continuing DSIR.**
 
@@ -10,6 +10,8 @@ Hard boundary: **DSIR is separate from RTK. Do not modify, use, or overwrite the
 
 ## 1. Current gate state
 
+- **N0 PASS-PROVISIONAL:** prior-art/non-duplication audit found extensive precedent for individual ingredients but no exact duplicate of the complete DSIR chain. This is not proof of global novelty. `docs/NOVELTY_AUDIT_N0.md` and `config/novelty_prior_art_n0.json` are authoritative for novelty wording.
+- **N1 OPEN:** citation-graph/full-text audit of the closest competitors is required before manuscript-level claims such as “first”, “new framework”, or “novel methodology”.
 - **G1 PASS for v0.1.1 scope:** conservation/Bianchi bookkeeping and a gauge-safe common total-matter construction are validated. Newtonian/synchronous comoving hard gate passed.
 - **G2 PASS v0.1.1:** response basis upgraded from ambiguous raw `P_m` to explicit comoving total-matter `P_Delta` with same-solver reference quotients. Cross-solver hard bridge passed.
 - **GDM-S0/S1 PASS.**
@@ -22,7 +24,7 @@ Hard boundary: **DSIR is separate from RTK. Do not modify, use, or overwrite the
 
 ## 2. Production response basis v0.1.1
 
-Files on the response-basis development line:
+Files:
 
 - `config/response_basis_v0_1_1.json`
 - `docs/RESPONSE_BASIS_V0_1_1.md`
@@ -211,7 +213,7 @@ Before the final rerun DSIR froze
 \boxed{\max|\Delta r_{\rm bridge}|\le10^{-9}}.
 \]
 
-The clean hard regression passed.
+The clean hard regression passed, including the final repeat on PR #3 before merge into `main`.
 
 Scope: this validates the response-quotient architecture for this overlapping smooth-wCDM deformation. It does not assert that all solvers/theories agree universally to `1e-9`.
 
@@ -279,7 +281,44 @@ Do not use it in the production matrix until DSIR establishes its GR/small-`B0` 
 
 ---
 
-## 8. Rank/law-discovery rules that remain mandatory
+## 8. Novelty contract after N0
+
+Authoritative files:
+
+- `docs/NOVELTY_AUDIT_N0.md`
+- `config/novelty_prior_art_n0.json`
+
+N0 explicitly establishes that these **cannot** be claimed as DSIR inventions:
+
+- effective dark-sector stress tensor / moving MG to an effective source;
+- dark degeneracy and non-uniqueness of DM/DE decomposition;
+- GDM `(w,c_s^2,c_vis^2)` stress closure;
+- PPF/EFT common theory dictionaries;
+- PCA/SVD of representative cosmological/MG theory banks;
+- entropy effective-rank formula;
+- target/reference or LambdaCDM reaction ratios;
+- model-independent reconstruction of interacting dark-sector functions;
+- symbolic regression in dark-energy/cosmological reconstruction;
+- organizing LambdaCDM as a point/fixed point in dark-sector theory space.
+
+The current provisional DSIR-specific combination is:
+
+`heterogeneous DM+DE+interaction+MG atlas`
+` -> common observable response`
+` -> same-solver quotient + cross-solver bridge`
+` -> covariance whitening/noise calibration`
+` -> R_model(pi) prior sensitivity`
+` -> quotient of identities/calibration/measurement degeneracies`
+` -> cross-channel law discovery`
+` -> withheld physical-channel prediction`.
+
+This is only a **methodological novelty hypothesis**. N1 remains OPEN and can still force a reframe.
+
+The closest conceptual competitor identified in N0 is the July-2026 paper **“LambdaCDM as a fixed point: Controlled dark-sector deformations and late-time structure growth”**, which organizes controlled dark-sector deformations around LambdaCDM and maps them into late-time growth/lensing observables. Never claim DSIR is the first “dark-sector theory space”.
+
+---
+
+## 9. Rank/law-discovery rules that remain mandatory
 
 Before any rank claim:
 
@@ -314,18 +353,20 @@ Therefore **G7 is OPEN**.
 
 ---
 
-## 9. Exact continuation sequence
+## 10. Exact continuation sequence
 
-1. Review and merge the v0.1.1 response-basis PR only after its unit tests and hard bridge are green.
-2. Create a separate MG research branch from the updated `main`.
-3. Clean-build pinned H-EFTCAMB `eftcamb@16d9c4e9...` with recursive submodules.
-4. Run an author-provided designer-f(R) smoke test.
-5. Establish **MG-S0** by comparing GR with a sequence of designer `EFTB0 -> 0` values; do not choose the tolerance after seeing the desired production point.
-6. Choose a nonzero, stable designer-f(R) control and compute its same-solver `r_Delta(k,z)` on all frozen nodes.
-7. Compare H-EFTCAMB full response with the old BZ-like toy only on the QS-safe `{0.01,0.03,0.1}` sub-block; disagreement at lower k is not a toy failure because the toy is out of domain there.
-8. Assemble the first genuinely common six-family response matrix: LambdaCDM, smooth wCDM/quintessence-like, thermal WDM, full designer-f(R), GDM, interacting vacuum.
-9. Project identities/nuisance modes, transform covariance consistently, whiten, and estimate `R_model(pi)` over defensible theory-family priors.
-10. Resume G7 nonlinear/invariant/symbolic-law search only after matrix stability checks.
-11. A candidate law must predict a withheld channel before G8 can pass.
+1. Treat response basis v0.1.1 as merged/frozen in `main` at merge commit `71297dd1d73d9b3846d47a4d77c81b193cf584b8`.
+2. Keep novelty work isolated in `research/novelty-n0` / PR #4 until reviewed; N0 is PASS-PROVISIONAL and N1 remains OPEN.
+3. Create a separate MG research branch from updated `main`.
+4. Clean-build pinned H-EFTCAMB `eftcamb@16d9c4e9...` with recursive submodules.
+5. Run an author-provided designer-f(R) smoke test.
+6. Establish **MG-S0** by comparing GR with a sequence of designer `EFTB0 -> 0` values; do not choose the tolerance after seeing the desired production point.
+7. Choose a nonzero, stable designer-f(R) control and compute its same-solver `r_Delta(k,z)` on all frozen nodes.
+8. Compare H-EFTCAMB full response with the old BZ-like toy only on the QS-safe `{0.01,0.03,0.1}` sub-block; disagreement at lower k is not a toy failure because the toy is out of domain there.
+9. Assemble the first genuinely common six-family response matrix: LambdaCDM, smooth wCDM/quintessence-like, thermal WDM, full designer-f(R), GDM, interacting vacuum.
+10. Project identities/nuisance modes, transform covariance consistently, whiten, and estimate `R_model(pi)` over defensible theory-family priors.
+11. Resume G7 nonlinear/invariant/symbolic-law search only after matrix stability checks.
+12. A candidate law must predict a withheld channel before G8 can pass.
+13. Before any manuscript novelty claim, complete N1 citation-graph/full-text audit and rerun the novelty search immediately before preprint submission.
 
-**Never claim discovery before G8.**
+**Never claim discovery before G8. Never claim broad methodological novelty before N1.**
