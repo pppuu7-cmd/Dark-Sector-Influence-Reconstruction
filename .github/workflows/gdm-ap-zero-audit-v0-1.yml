@@ -9,6 +9,11 @@ on:
       - 'ci/gdm_ap_zero_audit_v0_1.py'
       - 'src/dsir/ap_operator.py'
       - 'experiments/037_gdm_ap_zero_audit_v0_1.md'
+      - 'data/derived/observational_whitening/experiment_037_gdm_ap_zero_audit_v0_1.json'
+      - 'docs/STATUS.md'
+      - 'docs/RECOVERY_LATEST.md'
+      - 'docs/SCIENTIFIC_FINDINGS_REGISTER.md'
+      - 'docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-25.md'
 
 permissions:
   contents: read
