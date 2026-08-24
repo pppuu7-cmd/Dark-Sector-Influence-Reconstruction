@@ -6,7 +6,7 @@
 **Live overlay:** `docs/RECOVERY_LATEST.md`  
 **Scientific interpretation register:** `docs/SCIENTIFIC_FINDINGS_REGISTER.md`
 
-This file is the stable recovery/methodology manual. It must be updated whenever an iteration changes the mathematics, hard provenance, scientific interpretation, gate state, or exact continuation sequence. `RECOVERY_LATEST.md` is updated every substantive iteration even when the stable derivations below do not change.
+This file is the stable recovery/methodology manual. Update it whenever an iteration changes the mathematics, hard provenance, scientific interpretation, gate state, or exact continuation sequence. `RECOVERY_LATEST.md` is the more frequently updated live checkpoint.
 
 After any chat/session loss read, in order:
 
@@ -21,7 +21,7 @@ After any chat/session loss read, in order:
 
 ## 0. Hard project boundary and claim discipline
 
-DSIR is independent of RTK. **Never edit, import, overwrite, merge, or silently use the RTK project as a prior.** A mature external theory may later be embedded only as another candidate family subject to exactly the same DSIR gates.
+DSIR is independent of RTK. **Never edit, import, overwrite, merge, or silently use the RTK project as a prior.** A mature external theory may later enter only as an ordinary candidate family subject to the same DSIR gates.
 
 DSIR is a **reconstruction/meta-inference framework**, not a fundamental theory. No discovery or new law of nature is claimed. In particular:
 
@@ -29,10 +29,13 @@ DSIR is a **reconstruction/meta-inference framework**, not a fundamental theory.
 - an observational degeneracy is not a physical identity;
 - a compressed-data correlation is not causality;
 - a known conservation/definition identity is not a discovery;
+- a missing response is not zero;
+- a validated zero is not missing;
+- a theory-level temporal response is not automatically tracer RSD;
 - no residual-law claim is permitted before G7;
 - no discovery claim is permitted before a withheld prediction passes G8.
 
-Negative results, failed approximations, failed CI attempts, and superseded interpretations are preserved rather than erased.
+Negative results, failed approximations, infrastructure failures, and superseded interpretations are preserved rather than erased.
 
 ---
 
@@ -50,18 +53,18 @@ not
 
 `assumed model name -> fit parameters -> declare ontology`.
 
-Three layers are kept distinct:
+Three layers remain distinct:
 
 ### Layer A — data/measurement
 Likelihood vectors, covariances, window functions, nuisance parameters, selection effects, survey compression and calibration.
 
 ### Layer B — response/influence
-Background expansion, AP geometry, growth, density power, metric potentials/slip/lensing, small-scale transfer, tensor propagation and other observable effects.
+Background expansion, AP geometry, growth/velocity, density power, metric potentials/slip/lensing, small-scale transfer, tensor propagation and other observable effects.
 
 ### Layer C — theory
 LambdaCDM, smooth dark energy, interacting sectors, GDM, WDM, modified gravity, EFT/PPF, etc.
 
-Law search is performed primarily in Layer B after quotienting known identities and measurement degeneracies.
+Law search is performed primarily in Layer B after quotienting known identities and measurement/compression degeneracies.
 
 ---
 
@@ -73,7 +76,7 @@ A useful common theory-layer object is
 \boxed{X_{\mu\nu}=M_0^2G_{\mu\nu}-T^{known}_{\mu\nu}}.
 \]
 
-It is a bookkeeping residual that can represent missing stress-energy, modified-gravity contributions, or mixtures. It is not itself a unique observable because it depends on the split defining `T_known`, the normalization `M0`, and perturbative gauge/frame choices.
+It can represent missing stress-energy, modified-gravity contributions, or mixtures. It is not itself a unique observable because it depends on the split defining `T_known`, normalization `M0`, and perturbative gauge/frame choices.
 
 For homogeneous FLRW after a chosen bookkeeping split,
 
@@ -85,7 +88,7 @@ For homogeneous FLRW after a chosen bookkeeping split,
 p_X=-M_0^2\left(2\dot H+3H^2+K/a^2\right)-p_{known}.
 \]
 
-At scalar level one can decompose the residual response into density, momentum, pressure and anisotropic stress, but DSIR first maps theory output into gauge/frame-robust observable response quantities.
+At scalar level the residual may be decomposed into density, momentum, pressure and anisotropic stress, but DSIR first maps theory output into gauge/frame-robust observable response quantities.
 
 ---
 
@@ -93,7 +96,7 @@ At scalar level one can decompose the residual response into density, momentum, 
 
 Total known+dark bookkeeping must respect the Bianchi identity. Interacting-component source terms must sum to zero in the full stress-energy balance; a scalar `Q` without its four-vector/momentum-transfer convention is insufficient at perturbation level.
 
-For the production matter response define
+For production matter response define
 
 \[
 \delta_m=\frac{\sum_i\rho_i\delta_i}{\rho_m},
@@ -111,7 +114,7 @@ and the comoving total-matter contrast
 
 This was hard-regressed between Newtonian and synchronous gauge implementations. Production matter-power comparisons use the comoving total-matter quantity rather than a gauge-specific raw density contrast.
 
-Important later RSD caveat: a gauge-safe total-matter density variable does **not** automatically identify the tracer velocity entering a galaxy RSD compression. Experiment 039 makes that distinction explicit.
+**RSD caveat:** a gauge-safe total-matter density variable does not automatically identify the galaxy/tracer velocity entering RSD. Experiment 039 keeps density and tracer-velocity conventions separate until explicitly validated.
 
 ---
 
@@ -119,11 +122,7 @@ Important later RSD caveat: a gauge-safe total-matter density variable does **no
 
 ### 4.1 Structure grid
 
-Redshift nodes:
-
-`z={0.295,0.51,0.706,0.934,1.317,1.491,2.33}`.
-
-Low-k nodes:
+`z={0.295,0.51,0.706,0.934,1.317,1.491,2.33}`,
 
 `k={0.001,0.003,0.01,0.03,0.1} h/Mpc`.
 
@@ -134,17 +133,17 @@ Low-k nodes:
 \qquad z_*=0.51.
 \]
 
-The anchor removes an arbitrary multiplicative expansion normalization but, as Experiment 035 proves, loses no AP information.
-
 ### 4.3 Production structure response
 
 \[
 \boxed{r_\Delta(k,z)=\ln\frac{P^S_{\Delta,model}(k,z)}{P^S_{\Delta,ref}(k,z)}}.
 \]
 
-`S` denotes the same solver lineage/numerical setup whenever possible. Cross-solver comparisons require an explicit bridge/regression, not direct absolute-spectrum subtraction.
+`S` denotes matched solver lineage/numerical setup whenever possible. Cross-solver comparisons require an explicit bridge/regression.
 
-The smooth-w cross-solver bridge passed the frozen tolerance. Missing response cells remain missing unless an analytic or numerical contract proves an exact zero.
+### 4.4 Missing versus validated zero
+
+Undefined cells stay masked. A zero enters a response matrix only after an analytic or solver-level contract proves it. Experiments 037 and 038 are canonical examples: their zero geometry cells are evidence, not imputation.
 
 ---
 
@@ -153,8 +152,7 @@ The smooth-w cross-solver bridge passed the frozen tolerance. Missing response c
 For flat FLRW,
 
 \[
-D_H=\frac{c}{H_0E(z)},
-\qquad
+D_H=\frac{c}{H_0E(z)},\qquad
 D_M=\frac{c}{H_0}\int_0^z\frac{dz'}{E(z')}.
 \]
 
@@ -164,7 +162,7 @@ Therefore
 \boxed{F_{AP}(z)=\frac{D_M}{D_H}=E(z)\int_0^z\frac{dz'}{E(z')}}.
 \]
 
-If the model/reference expansion ratio is represented by
+If
 
 \[
 E_{model}(z)=A\,E_{ref}(z)e^{r_E(z)},
@@ -198,16 +196,15 @@ Linearizing,
 Experiment 035 hard validation:
 
 - run `32778635058`;
-- status `PASS_CALIBRATION_FREE_AP_OPERATOR_V0_1`;
 - direct wCDM bridge error `1.00475e-14`;
-- additive calibration-mode residual `7.82967e-15`;
+- additive calibration residual `7.82967e-15`;
 - `D_H/D_M` sign identity error `0`;
 - quadratic remainder halving ratio `0.2499966`;
 - artifact `9538896209`, SHA256 `f4a70ff9c67bdf45b520f7a2babaf63280fde6b841c45539a9c6fc22e3479d9f`.
 
 ### Critical production rule
 
-AP integrates from `z=0`. The seven-node structure atlas begins at `z=0.295` and **must not be extrapolated to zero**. Production AP calculations use full solver background histories.
+AP integrates from `z=0`. The seven-node structure atlas begins at `z=0.295` and **must not be extrapolated to zero**. Production AP uses full solver background histories.
 
 ---
 
@@ -215,45 +212,39 @@ AP integrates from `z=0`. The seven-node structure atlas begins at `z=0.295` and
 
 The corrected 2026 erratum product is mandatory. Superseded DR1 Appendix-A values are forbidden.
 
-Frozen coordinate order:
+Frozen order:
 
 `[D_V/r_d, D_H/D_M, f_sigma_s8, m+n]`.
 
-Informative bins used by the current AP/shape projection:
+Informative bins:
 
-`LRG1, LRG2, LRG3, ELG2, QSO`
+`LRG1, LRG2, LRG3, ELG2, QSO`,
 
-at
+at `z_eff=(0.51,0.71,0.92,1.32,1.49)`.
 
-`z_eff=(0.51,0.71,0.92,1.32,1.49)`.
+### 6.1 Shape proxy and its hard limitation
 
-### 6.1 Shape proxy
-
-The ShapeFit deformation is represented as
+Use
 
 \[
-\ln(P'/P_{ref})=A+\frac{m}{a}\tanh\left[a\ln(k/k_p)\right]+n\ln(k/k_p),
+\ln(P'/P_{ref})=A+\frac{m}{0.6}\tanh\left[0.6\ln(k/0.03)\right]+n\ln(k/0.03).
 \]
 
-with
+At the pivot the local slope is `m+n`.
 
-`a=0.6`, `k_p=0.03 h/Mpc`.
+Experiment 034 used only marginal `m+n` variance because all four ShapeFit coordinates were not predicted for every family; a full covariance inverse with fake zeros is forbidden.
 
-At the pivot the local logarithmic slope is `m+n`.
-
-Experiment 034 used only the marginal `m+n` variance because every family did not yet predict all four ShapeFit coordinates; a full `4x4` covariance inverse with fake zeros is forbidden.
-
-Hard result run `32777716140`:
+Hard findings:
 
 - GDM `cs2/cv2` whitened shape-history acute angle `0.189582 deg`;
 - GDM/f(R) proxy separation about `23 deg`;
-- but finite-node ShapeFit representation leaves roughly `36%` relative residual for GDM `cs2`, GDM `cv2` and designer f(R).
+- finite-node ShapeFit representation residual about `36%` for GDM `cs2`, GDM `cv2` and designer f(R).
 
-Hence the `~23 deg` result is **not** a DESI distinguishability claim. A survey/window-aware shape operator or explicit compression-model error is required.
+Therefore the ~`23 deg` proxy angle is **not** a DESI distinguishability claim. A survey/window-aware shape operator or explicit compression-model error is required.
 
 ### 6.2 Exact ShapeFit growth convention — Experiment 039 contract
 
-ShapeFit does not fundamentally measure textbook `f sigma_8` at a fixed absolute radius. Define
+ShapeFit does not fundamentally measure textbook fixed-radius `f sigma8`. Define
 
 \[
 s=\frac{r_d}{r_d^{ref}},
@@ -263,17 +254,9 @@ s=\frac{r_d}{r_d^{ref}},
 \boxed{\sigma_{s8}=\sigma(R=s\,8h^{-1}{\rm Mpc})}.
 \]
 
-The ShapeFit interpretation also uses a rescaled no-wiggle pivot amplitude
+The ShapeFit amplitude convention also contains the rescaled no-wiggle spectrum. DSIR must therefore track `r_d`, the smoothing-radius rescaling, and template normalization before mapping a theory to the reported growth coordinate.
 
-\[
-A_{sp}=s^{-3}P^{lin}_{nw}(k_p/s),
-\]
-
-with the reported growth amplitude related to `f A_sp^{1/2}` by a reference-template normalization. Primary source: Brieden, Gil-Marin & Verde, arXiv:2106.07641, Eqs. (3.5)–(3.6), (3.11)–(3.12).
-
-Therefore DSIR must track `r_d`, the smoothing rescaling, and the ShapeFit amplitude convention.
-
-For scale-dependent growth a single scalar `f(z)` can fail. Before admitting a model into scalar `f sigma_s8` compression, define tracer-relevant density/velocity moments at `R=s*8 h^-1 Mpc`:
+For scale-dependent/nonstandard velocity growth, one scalar can fail. Define tracer-relevant moments at `R=s*8 h^-1 Mpc`:
 
 \[
 S_{\delta\delta}=\int d\ln k\,\Delta^2_{\delta\delta}W_{TH}^2,
@@ -287,7 +270,7 @@ S_{\delta\Theta}=\int d\ln k\,\Delta^2_{\delta\Theta}W_{TH}^2,
 S_{\Theta\Theta}=\int d\ln k\,\Delta^2_{\Theta\Theta}W_{TH}^2.
 \]
 
-If `Theta=f delta` with a scale-independent `f`, then
+If `Theta=f delta` with scale-independent `f`, then
 
 \[
 \frac{S_{\delta\Theta}}{\sqrt{S_{\delta\delta}}}
@@ -295,16 +278,18 @@ If `Theta=f delta` with a scale-independent `f`, then
 =f\sigma_{s8}.
 \]
 
-Define the representability defect
+Define
 
 \[
 \boxed{{\cal D}_{RSD}=1-
 \frac{S_{\delta\Theta}^2}{S_{\delta\delta}S_{\Theta\Theta}}}.
 \]
 
-By Cauchy-Schwarz, `0 <= D_RSD <= 1` for a positive covariance measure. `D_RSD=0` is the single-amplitude representable limit. A nonzero value means a forced scalar `f sigma_s8` can lose physical information; then DSIR must move to a survey/window-aware anisotropic RSD forward operator.
+By Cauchy-Schwarz, `0 <= D_RSD <= 1` for a positive covariance measure. `D_RSD=0` is the single-amplitude representable limit. Nonzero defect means a forced scalar `f_sigma_s8` loses information; then use a survey/window-aware anisotropic RSD forward operator.
 
-The exact tracer velocity/gauge/sign convention must be fixed per family before numerical use. This is a compression-validity gate, not a new dark-sector law.
+**Hard output-quality rule added 2026-08-25:** old H-EFTCAMB text logs print `sigma8` and `sigma8^2_vd/sigma8` only to roughly four decimal places. At small `B0` this quantizes the response and generates unstable finite-difference tangents. Those logs are rejected for production growth tangents. Use high-precision machine-readable transfer/cross-power products instead.
+
+Pinned CAMB exposes transfer variables `delta_tot`, `v_newtonian_cdm`, and `v_newtonian_baryon`, so the high-precision bridge is feasible. Exact total-matter/tracer velocity weighting must be defined before numerical use.
 
 ---
 
@@ -314,68 +299,37 @@ The exact tracer velocity/gauge/sign convention must be fixed per family before 
 Common response origin.
 
 ### C1 — smooth non-phantom dark energy
-One-sided physical coordinate
-
-\[
-\epsilon_w=1+w\rightarrow0^+.
-\]
-
-Production tangent step `1e-4`.
-
-Pinned solver lineage used for the current tangent artifact:
-
-`s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
+One-sided `epsilon_w=1+w -> 0+`, production tangent step `1e-4`. Current pinned response lineage uses `s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
 
 ### C2 — interacting vacuum
-Current implementation:
 
 \[
 Q=H(\alpha\rho_{idm}+\beta\rho_{iv}).
 \]
 
-The frozen full-history positivity condition excludes the positive-alpha side in the current realization. Use the physical coordinate
-
-\[
-u=-\alpha\ge0
-\]
-
-plus a two-sided beta line.
-
-Pinned upstream:
-
-`kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`.
-
-Never compare coupling signs without preserving the implementation convention.
+The frozen full-history positivity condition excludes positive alpha. Use physical coordinate `u=-alpha>=0` plus a two-sided beta line. Pinned upstream `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`.
 
 ### C3 — generalized dark matter
-Pinned GDM_CLASS lineage:
+Pinned GDM_CLASS `s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`. Frozen closure patch varies `cs2/cv2` with `w_gdm=0`.
 
-`s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
-
-Frozen closure patch varies `cs2/cv2` with
-
-`w_gdm=0`.
-
-Experiment 037 now hard-proves that these sampled closure directions are background/AP-null while perturbation-active.
+Experiment 037 hard-proves these sampled closure directions are background/AP-null while perturbation-active.
 
 ### C4 — thermal WDM
-Kept in a separate small-scale transfer block. It is almost blind on the frozen low-k structure range and becomes strongly visible at high k. Do not force it into an unrelated low-k/AP block merely to make a rectangular matrix.
+Separate small-scale transfer block. It is nearly blind on the frozen low-k range and visible at high k. Do not force it into unrelated low-k/AP blocks just to create a rectangle.
 
 ### C5 — designer f(R)
-Pinned H-EFTCAMB upstream:
+Pinned H-EFTCAMB `EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`.
 
-`EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`.
-
-Frozen hard-production config artifact:
+Frozen hard config artifact:
 
 - run `32759477319`;
 - artifact `9532245261`;
-- digest `sha256:9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635`;
-- hard config lineage `dsir_mgs1_hp_*`;
+- SHA256 `9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635`;
+- config lineage `dsir_mgs1_hp_*`;
 - `DesignerEFTmodel=1`, `EFTwDE=0`;
-- production `B0={1e-6,1e-5,1e-4,1e-3}`, with `0` and `1e-7` controls.
+- controls `B0=0,1e-7`; production `B0={1e-6,1e-5,1e-4,1e-3}`.
 
-Experiment 038 is the dedicated numerical background/AP audit. Until its hard result is frozen, the C5 AP cell stays masked.
+Experiment 038 hard-proves the frozen B0 direction is exactly background/AP-null while its structure response is nonzero.
 
 ---
 
@@ -383,161 +337,168 @@ Experiment 038 is the dedicated numerical background/AP audit. Until its hard re
 
 ### 8.1 GDM pressure versus viscosity
 
-Matter-power directions are almost collinear:
+Low-k matter-power angle `0.322616 deg`; marginally whitened ShapeFit `m+n` proxy `0.189582 deg`. Metric slip is `137.943212 deg` oriented and equalized two-block angle `56.963212 deg`.
 
-`angle_P = 0.322616 deg`.
-
-After DESI `m+n` marginal covariance weighting:
-
-`angle_shape = 0.189582 deg`.
-
-Metric slip strongly separates them:
-
-`137.943212 deg` oriented,
-
-with equalized two-block angle `56.963212 deg`.
-
-Interpretation: density suppression can erase the pressure/viscosity distinction while metric-potential relations retain it.
+Experiment 040 finite-bin temporal-growth angle is `1.334013 deg`: time evolution helps weakly but leaves the microphysics strongly degenerate. Metric slip remains necessary.
 
 ### 8.2 GDM versus designer f(R)
 
-Leading scale-mode angles are only
+Leading scale modes: `0.07813/0.10169 deg`.
 
-`0.07813/0.10169 deg`,
+Experiment 040 temporal-growth acute angles:
 
-but time modes differ by about
+- GDM cs2 / f(R): `16.052212 deg`;
+- GDM cv2 / f(R): `17.284277 deg`.
 
-`25.18/25.49 deg`,
+Full frozen `(k,z)` structure: `25.18/25.49 deg` acute with opposite oriented rays around `155 deg`.
 
-and full physical rays are oppositely oriented around
-
-`154.82/154.51 deg`.
-
-Interpretation: scale shape alone is insufficient; time/sign evolution carries mechanism information.
+Thus time is a genuine separator relative to scale-only compression, while full structure retains more information than growth-only compression.
 
 ### 8.3 WDM scale blindness
 
-For the 3 keV control,
+3 keV control:
 
-`r_T(k=0.1)=-3.46e-6`,
+`r_T(0.1)=-3.46e-6`,
 
-but
+`r_T(10)=-0.10375`.
 
-`r_T(k=10)=-0.10375`.
+### 8.4 IDE AP versus temporal growth versus structure
 
-A model can therefore lie nearly in the null space of one scale block while being strongly visible in another.
+Experiment 036 AP acute alpha/beta angle:
 
-### 8.4 IDE AP versus structure
+`9.0379006 deg`.
 
-Experiment 036 hard run `32782545098` maps exact frozen C1/C2 full-background artifacts through the validated AP operator and corrected DESI `D_H/D_M` marginal errors.
+Experiment 040 temporal-growth acute angle:
 
-Production tangent convergence (`1e-3` vs `1e-4`, frozen relative-L2 ceiling `0.005`):
+`29.3978236 deg`.
 
-- smooth-w `0.0015563369`;
-- IDE negative-alpha `0.00013881894`;
-- IDE beta `2.25987e-7`.
+Full frozen structure angle:
 
-Whitened acute AP angles:
+`58.9337977 deg`.
 
-- smooth-w vs IDE negative-alpha `72.803493 deg`;
-- smooth-w vs IDE beta `64.151094 deg`;
-- IDE negative-alpha vs beta
+Temporal growth restores part, but not all, of the mechanism information lost by AP.
 
-\[
-\boxed{9.0379006^\circ}.
-\]
+### 8.5 Smooth-w / IDE-alpha channel reversal
 
-Their frozen structure-block angle is about `58.9338 deg`.
+- AP: `72.803493 deg` acute;
+- full structure: `52.194293 deg`;
+- finite-bin temporal growth: only `10.310585 deg`.
 
-Thus two IDE mechanisms that are substantially separated in structure become nearly antiparallel in AP geometry. AP alone cannot identify the interaction mechanism.
+A pair well separated by AP can become nearly degenerate after another physically meaningful projection.
 
-### 8.5 Exact GDM AP null — Experiment 037
+### 8.6 IDE-alpha / GDM temporal enhancement
 
-Hard run `32783243120`, artifact `9540510596`, SHA256 `ba1fa93e348f9685d84a675311c79f9c746574463086710b4a46911d125f4edf`.
+IDE negative-alpha vs GDM cs2/cv2 changes from about `24.8-24.9 deg` in full raw structure geometry to about `60.9 deg` in temporal growth.
 
-Audited:
+### 8.7 Exact C3 and C5 AP nulls
 
-- `cs2={1e-8,1e-7,1e-6}` with `w=0,cv2=0`;
-- `cv2={1e-8,1e-7,1e-6,1e-5,1e-4}` with `w=0,cs2=0`.
-
-For every point:
-
-- redshift-grid mismatch `0`;
-- `max_relative_H=0`;
-- all saved numerical background columns exactly equal to reference;
-- `Delta ln(D_H/D_M)=0` at all five DESI target redshifts.
-
-Therefore, within this frozen C3 manifold,
+Experiment 037:
 
 \[
 K_{AP}t_{cs2}=K_{AP}t_{cv2}=0
 \]
 
-while structure/metric responses are nonzero. This is a hard example of **channel nullity / block-sparse influence**.
+for frozen GDM `w_gdm=0` closure directions.
+
+Experiment 038:
+
+\[
+\boxed{K_{AP}t_{B0}=0}
+\]
+
+for frozen designer f(R) on the source-proven `EFTwDE=0 -> w=-1` branch.
+
+Both have nonzero perturbation/structure responses. Exact channel-null/block-sparse influence is therefore hard-reproduced in a dark-fluid closure family and a modified-gravity family. This supports a meta-hypothesis, not a universal law.
 
 ---
 
-## 9. Discriminant graph
+## 9. Experiment 040 finite-bin temporal structure operator
 
-Experiment 033 hard run `32775055341` constructs the current evidence graph of unresolved theory-family degeneracies and available separators.
+For adjacent early->late frozen nodes define
 
-The unique minimum hitting set for the **current frozen graph** is
+\[
+\boxed{\Delta\bar f_P(k)=
+\frac{r_\Delta(k,z_{late})-r_\Delta(k,z_{early})}
+{2[\ln a_{late}-\ln a_{early}]}}.
+\]
+
+This is a theory-space finite temporal derivative, **not tracer RSD**.
+
+Hard controls frozen before pairwise interpretation:
+
+- endpoint reconstruction tolerance `1e-12`;
+- constant-mode annihilation `1e-14`;
+- linearity `1e-12`;
+- finite/nonzero output for every admitted frozen direction;
+- no pairwise angle threshold.
+
+Hard run `32785987735`:
+
+- endpoint reconstruction `1.1102230246251565e-16`;
+- constant residual `0`;
+- linearity residual `9.769962616701378e-15`;
+- artifact `9541462864`, SHA256 `0457823510fead4ff56e8e29843e39de47805f8fbfda86f4d9d33585be556ac9`.
+
+**General hard lesson from frozen examples:** degeneracies can migrate between operators. An operator may improve one pair while collapsing another. Therefore there is no globally best scalar response channel; use joint multi-channel geometry.
+
+---
+
+## 10. Discriminant graph
+
+Experiment 033 hard run `32775055341` gives the unique minimum hitting set for the current frozen evidence graph:
 
 \[
 \boxed{\{\text{metric slip},\;\text{small-scale transfer},\;\text{time/sign evolution}\}}.
 \]
 
-This does not prove a universal optimal survey strategy. It must be recomputed when families/operators are added.
+Experiment 040 strengthens the rationale: time evolution is valuable for several pairs but does not resolve GDM cs2/cv2, so metric information remains independently necessary.
+
+This is not a universal survey strategy and must be recomputed as families/operators are added.
 
 ---
 
-## 10. Emerging scientific meta-hypothesis
+## 11. Emerging scientific meta-hypothesis
 
-Repeated hard examples support the working hypothesis:
+Repeated hard examples support:
 
 > Model identity is encoded by a **multi-channel influence trajectory**, not by a single response shape.
 
 Schematic map:
 
 \[
-\theta_{micro}\rightarrow X_{\mu\nu}
-\rightarrow\{K_1X,K_2X,\ldots\}.
+\theta_{micro}\rightarrow X_{\mu\nu}\rightarrow\{K_1X,K_2X,\ldots\}.
 \]
 
-Different theory directions may satisfy
+Different directions can satisfy
 
 \[
-K_i t_A\simeq K_i t_B
-\]
-
-while
-
-\[
+K_i t_A\simeq K_i t_B,
+\qquad
 K_j t_A\not\simeq K_j t_B,
 \]
 
-or even
+or
 
 \[
 K_i t_A=0,
 \qquad K_j t_A\neq0.
 \]
 
-This is **not a law**. It is promoted only as a supported meta-hypothesis because independent examples now exist for GDM, GDM/f(R), WDM and IDE.
+Experiments 037/038 add cross-family hard examples of exact block sparsity. Experiment 040 adds hard examples of **degeneracy migration**: the same model pair can be separated in one operator and nearly collinear in another.
 
-Falsification/stress tests include:
+This remains a supported meta-hypothesis, not a law. Falsification/stress tests include:
 
-- family-complete geometry+growth+shape projection fails to restore distinctions;
-- channel separators disappear under modest solver/covariance perturbations;
-- new families remain degenerate across all proposed channels;
-- inferred dimensionality is dominated by family sampling/prior choices;
-- survey/window-aware forward modelling reverses the compressed-space conclusions.
+- family-complete observation-space projection fails to restore known distinctions;
+- separators disappear under solver/covariance perturbations;
+- new families remain degenerate across all independent channels;
+- inferred dimensionality is dominated by sampling/prior choices;
+- survey/window-aware modelling reverses compressed-space conclusions.
 
-All interpretation statuses live in `docs/SCIENTIFIC_FINDINGS_REGISTER.md`. Contradicted findings are marked `SUPERSEDED/RETRACTED`, never silently deleted.
+Authoritative interpretation statuses live in `docs/SCIENTIFIC_FINDINGS_REGISTER.md`.
 
 ---
 
-## 11. Whitening, latent rank and prior sensitivity
+## 12. Whitening, latent rank and prior sensitivity
 
 For observation vector `x` with covariance `C`, whiten
 
@@ -545,7 +506,7 @@ For observation vector `x` with covariance `C`, whiten
 z=C^{-1/2}(x-x_{ref}).
 \]
 
-For theory-response matrix `Z`, compute
+For theory response matrix `Z`, compute
 
 \[
 Z=USV^T.
@@ -553,19 +514,15 @@ Z=USV^T.
 
 A singular spectrum is interpretable only after covariance/operator treatment.
 
-### Correct noise-edge rule
-
-An early ordered-singular-value null comparison overestimated synthetic rank because strong signal spikes deform the remaining spectrum. The corrected procedure calibrates a **global upper noise spectral edge** under the same weighted/whitened geometry.
-
-Experiment 001 then recovered injected rank 3.
+An early ordered-singular-value null comparison overestimated synthetic rank because strong signal spikes deform the remaining spectrum. Correct calibration uses a **global upper noise spectral edge** under the same weighted/whitened geometry. Experiment 001 then recovered injected rank 3.
 
 Experiment 011: 30/30 synthetic coordinate/rescaling/correlation cases recovered rank 3 after covariance was transformed consistently and whitened; unwhitened analyses returned false ranks around 20–35.
 
 ### Theory-catalog prior sensitivity
 
-A finite theory catalog contains an implicit sampling prior. In Experiment 012, family multiplicities `900/90/10` caused naive catalog-frequency weighting to detect only two of three true directions; equal-family weighting with the same weights propagated into null calibration recovered three.
+A finite theory catalog has an implicit sampling prior. In Experiment 012, family multiplicities `900/90/10` caused naive catalog-frequency weighting to detect two of three true directions; equal-family weighting with the same weights propagated into null calibration recovered all three.
 
-Therefore report a sensitivity profile
+Therefore report
 
 \[
 R_{model}(\pi),
@@ -577,17 +534,17 @@ Current raw six-direction normalized singular ratios
 
 `(1,0.52046,0.26140,0.20087,0.08299,5.9178e-4)`
 
-are descriptive only. **Do not call this `R_model=5`.** No intrinsic-rank threshold has been frozen for the real family-complete observational problem.
+are descriptive only. **Do not call this `R_model=5`.**
 
 ---
 
-## 12. Known-identity and measurement-degeneracy quotient
+## 13. Known-identity and measurement/compression quotient
 
 Before symbolic/law search remove:
 
 - Bianchi/conservation identities;
 - definitions such as `f`, `Sigma`, AP transformations;
-- exact identities built into a control parameterization;
+- identities built into controls;
 - shared calibration modes;
 - gauge/frame artifacts;
 - survey-covariance degeneracy directions;
@@ -600,144 +557,137 @@ The law-search object is schematically
 {\text{known identities}+\text{measurement degeneracies}+\text{invalid compression directions}}.
 \]
 
-Only residual relations in this quotient can advance toward G7.
-
-The current corrected DESI conditional-growth innovation is null-consistent (`chi2~5.53` for 5 dof, `p~0.355`); this negative result is retained.
+The current corrected DESI conditional-growth innovation is null-consistent (`chi2~5.53` for 5 dof, `p~0.355`); retain this negative result.
 
 ---
 
-## 13. Hard workflow discipline
+## 14. Hard workflow discipline
 
-Every scientific hard gate should follow this order:
+Every scientific hard gate follows:
 
 1. state physical question and allowed claim;
 2. pin upstream solver/data/config artifacts;
-3. freeze numerical/statistical thresholds before examining the target hard output;
+3. freeze scientific numerical/statistical thresholds before examining target hard output;
 4. run CI/Actions;
 5. distinguish infrastructure failures from scientific failures;
 6. freeze result JSON + run/artifact/digest provenance;
-7. update `STATUS`, `RECOVERY_LATEST`, this manual when methodology/state changes, dated log and scientific findings register;
-8. rerun the final head after documentation/result binding;
+7. update `STATUS`, `RECOVERY_LATEST`, this manual if methodology/state changed, dated log and findings register;
+8. rerun final head after result/document binding;
 9. merge only after final regression success.
 
-Do not loosen scientific thresholds to make a result pass. Infrastructure/path/tolerance-roundoff bugs may be repaired only with explicit chronology and without changing the scientific question after seeing the target result.
+Do not loosen scientific thresholds to make a result pass. Infrastructure/path/naming bugs may be repaired with explicit chronology while preserving the scientific question and thresholds.
 
-Undefined response cells are masked. A zero can enter the matrix only after a hard theory/solver contract such as Experiment 037.
+Canonical examples:
+
+- Exp037/038: zero admitted only after hard solver validation;
+- Exp038: several path/output-root assumptions failed before scientific script execution; thresholds stayed unchanged;
+- Exp040: pairwise angles were not hard thresholds, preventing post-hoc tuning.
 
 ---
 
-## 14. Current gate state
-
-Authoritative live gate table is `docs/GATES.md`; current recovery state is:
+## 15. Current gate state
 
 - **G1 PASS v0.1.1** — conservation/gauge contract.
-- **G2 PASS v0.1.1** — frozen response basis and solver bridge.
+- **G2 PASS v0.1.1** — response basis and solver bridge.
 - **G3A PASS v0.1** — six-family background atlas.
 - **G3B PASS v0.1 block-aware** — six-family beyond-background atlas.
 - **G4 PASS** — synthetic low-rank recovery.
-- **G5 PARTIAL** — synthetic robustness plus partial real-covariance shape/AP projection; family-complete observational kernels and rank stability still missing.
-- **G6A PASS** — calibration-free DESI DR2 AP layer.
-- **G6B PASS** — corrected DESI DR1 ShapeFit covariance layer.
-- **G7 OPEN** — no new residual law.
+- **G5 PARTIAL** — synthetic robustness plus partial real-covariance shape/AP projection and theory temporal operator; observational growth/window and family-complete joint whitening remain.
+- **G6A PASS** — DESI DR2 AP.
+- **G6B PASS** — corrected DESI DR1 ShapeFit covariance.
+- **G7 OPEN** — no residual law.
 - **G8 OPEN** — no withheld prediction.
 
-Do not promote G7/G8 because of a visually small angle or descriptive SVD spectrum.
+Do not promote G7/G8 because of a small angle, exact null, or descriptive spectrum.
 
 ---
 
-## 15. Exact continuation sequence from this snapshot
+## 16. Exact continuation sequence from this snapshot
 
-### Step A — finish Experiment 038 C5 AP audit
+### Step A — numerical Experiment 039 density/velocity representability
 
-Use the frozen high-precision `dsir_mgs1_hp_*` configs from artifact `9532245261`, rebuild the exact pinned H-EFTCAMB upstream, preserve `<output_root>background.dat`, and compare GR with designer `B0={0,1e-7,1e-6,1e-5,1e-4,1e-3}`.
+Use high-precision machine-readable density and velocity transfer/cross-power products. Do **not** use rounded printed CAMB growth summaries for small-deformation tangents.
 
-Pre-frozen hard thresholds:
+For C5, the pinned CAMB transfer layer exposes at least:
 
-- redshift-grid mismatch `<=1e-10`;
-- relative `H` mismatch `<=1e-8`;
-- relative nonzero-row `D_M` mismatch `<=1e-8`;
-- absolute AP log response `<=1e-8`.
+- `delta_tot`;
+- `v_newtonian_cdm`;
+- `v_newtonian_baryon`.
 
-If PASS, C5 becomes a validated AP-zero direction. If FAIL, propagate the measured nonzero geometry rather than changing the threshold.
+Define the total-matter/tracer velocity convention explicitly before constructing moments. Preserve transfer files from the exact frozen hard configurations.
 
-### Step B — form the block-aware family-complete AP geometry cell
+For C3 GDM and C2 IDE, create matched pinned-solver transfer-output runs and enforce the same gauge/total-matter semantics. Do not silently mix solver conventions.
 
-- C0: origin;
-- C1: validated nonzero smooth-w tangent;
-- C2: validated alpha/beta tangents;
-- C3: Experiment 037 hard zero;
-- C5: Experiment 038 result;
-- C4: retain in the separate small-scale block unless a physically validated geometry operator is explicitly introduced.
+Then compute `r_d`, `s`, `R=s*8 h^-1 Mpc`, density/velocity moments and `D_RSD` under thresholds frozen before scientific interpretation.
 
-### Step C — Experiment 039 numerical growth representability
+### Step B — decide scalar ShapeFit growth admissibility
 
-For each family establish the tracer-relevant density/velocity convention, compute `r_d`, `s`, the `sigma_s8` smoothing scale, and the RSD representability defect `D_RSD` under a pre-frozen tolerance.
+If `D_RSD` is negligible under a justified frozen tolerance, a scalar `f_sigma_s8` bridge may be used for that family. If not, retain a multi-k/anisotropic RSD operator and do not force the model into a one-number compression.
 
-Do not force a scalar `f sigma_s8` for scale-dependent/nonstandard velocity models that fail representability.
+### Step C — survey/window-aware shape mapping
 
-### Step D — survey/window-aware shape mapping
+Replace/calibrate the finite-node `m+n` proxy for GDM/f(R), or propagate its compression-model error.
 
-Replace or calibrate the finite-node `m+n` proxy for GDM/f(R), or explicitly propagate its compression-model error.
+### Step D — full corrected ShapeFit block
 
-### Step E — full corrected ShapeFit block
-
-Only when geometry, growth and shape coordinates are valid for a family form
+Only when valid geometry, growth and shape coordinates exist form
 
 \[
 \boxed{Z=C^{-1/2}\Delta O}.
 \]
 
-Use validity masks/common observable subspaces; never fake rectangular completeness with zeros.
+Use validity masks/common observable subspaces; never fake completeness with unvalidated zeros.
 
-### Step F — rank/manifold robustness
+### Step E — rank/manifold robustness
 
-Freeze null/rank thresholds before inspecting the resulting real spectrum. Stress-test:
+Freeze null/rank thresholds before inspecting the real spectrum. Stress-test:
 
 - family prior `pi`;
-- within-family sampling density;
+- within-family sampling;
 - solver precision;
 - covariance perturbations;
 - channel removal;
 - compression-model uncertainty.
 
-### Step G — additional independent separators
+### Step F — independent separator channels
 
-Prioritize observational versions of metric slip/lensing and WDM small-scale transfer because the current discriminant graph identifies them as high-value independent channels.
+Build observational slip/lensing and WDM small-scale-transfer layers because the current discriminant graph identifies them as independently necessary.
 
-### Step H — G7/G8
+### Step G — G7/G8
 
-Only after stable family-complete observational response geometry search for residual laws. Any candidate must predict at least one deliberately withheld channel without refitting before G8 can PASS.
+Only after stable family-complete observational response geometry search for residual laws. Any candidate must predict a deliberately withheld channel without refitting before G8 can PASS.
 
 ---
 
-## 16. Minimal recovery checklist for a new session
+## 17. Minimal recovery checklist
 
-1. Inspect latest `main` commit and open PRs/workflows.
+1. Inspect latest `main`, open PRs and Actions runs.
 2. Read this file, `RECOVERY_LATEST`, findings register, status and gates.
-3. Reproduce/fetch the latest frozen result artifact and verify its digest.
-4. Confirm upstream solver pins before any rerun.
-5. Classify failures as environment, provenance/path, numerical implementation, or scientific gate failure before modifying code.
+3. Verify latest frozen result artifact/digest.
+4. Confirm upstream pins before reruns.
+5. Classify any failure as environment, provenance/path, numerical implementation, or scientific gate failure before changing code.
 6. Never change physics merely to make CI green.
-7. Continue the exact sequence in Section 15 unless a newly discovered contradiction requires an earlier gate to reopen.
+7. Continue Section 16 unless a contradiction requires reopening an earlier gate.
 
-### Current critical provenance anchors
+### Critical provenance anchors
 
 - GDM/smooth-w: `s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
 - IDE: `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`.
 - designer f(R): `EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`.
 - C5 hard config artifact: run `32759477319`, artifact `9532245261`, SHA256 `9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635`.
-- C3 AP-zero result: run `32783243120`, artifact `9540510596`, SHA256 `ba1fa93e348f9685d84a675311c79f9c746574463086710b4a46911d125f4edf`.
-- C1/C2 AP geometry result: run `32782545098`, artifact `9540273287`, SHA256 `553faa2ef7ddbc44e25ddd6faca237d0be7fc265b9c23cfafb2a32570534d126`.
+- C3 AP-zero: run `32783243120`, artifact `9540510596`, SHA256 `ba1fa93e348f9685d84a675311c79f9c746574463086710b4a46911d125f4edf`.
+- C5 AP-zero: run `32785800977`, artifact `9541598468`, SHA256 `24b7fa5951c06d4cea72e6c0bf6baad2d2174f2d86794ec0818cf57c309b81c8`.
+- C1/C2 AP geometry: run `32782545098`, artifact `9540273287`, SHA256 `553faa2ef7ddbc44e25ddd6faca237d0be7fc265b9c23cfafb2a32570534d126`.
+- finite-bin temporal response: run `32785987735`, artifact `9541462864`, SHA256 `0457823510fead4ff56e8e29843e39de47805f8fbfda86f4d9d33585be556ac9`.
 
 ---
 
-## 17. Short recovery summary
+## 18. Short recovery summary
 
-**Mission:** infer the minimal common observable influence structure of the dark sector without assuming a DM/DE/MG ontology.  
-**Current state:** six-family block-aware atlas and several hard cross-family degeneracy/separator results exist; observational projection is being built channel by channel.  
-**Strongest emerging pattern:** degeneracy/nullity is observation-channel dependent; a model direction may be nearly identical to another in one channel or exactly null there while remaining strongly distinct elsewhere.  
-**Hard examples:** GDM pressure/viscosity power degeneracy vs slip separation; GDM/f(R) scale degeneracy vs time/sign separation; WDM low-k blindness vs high-k transfer; IDE AP degeneracy vs structure separation; GDM exact AP null with nonzero perturbations.  
-**Important compression limit:** finite-node ShapeFit `m+n` fails at ~36% residual for GDM/f(R); scalar ShapeFit growth also requires a representability test before use in scale-dependent theories.  
-**Immediate task:** finish C5 H-EFTCAMB background/AP audit, then build valid family-complete AP and growth operators.  
-**No law/discovery:** G7/G8 remain open.  
+**Mission:** infer the minimal observable influence structure of the dark sector without assuming DM/DE/MG ontology.  
+**Current state:** six-family block-aware atlas; validated AP bridge; C1/C2 nonzero AP directions; C3 and C5 exact AP-null directions; finite-bin theory temporal operator; real-covariance shape proxy with known limitation.  
+**Strongest emerging pattern:** degeneracy/nullity is operator-dependent. Exact channel-null structure now appears in both GDM and designer f(R), and pairwise degeneracies can migrate between AP, temporal growth, and full structure.  
+**Important limits:** finite-node ShapeFit `m+n` leaves ~36% residual for GDM/f(R); printed CAMB growth summaries are too coarse for small-B0 tangents; scalar ShapeFit growth requires a density/velocity representability test.  
+**Immediate task:** high-precision Experiment 039 density/velocity transfer bridge and `D_RSD`, then survey-aware shape and full corrected ShapeFit whitening.  
+**No law/discovery:** G5 remains partial; G7/G8 remain open.  
 **Never mix DSIR with RTK.**
