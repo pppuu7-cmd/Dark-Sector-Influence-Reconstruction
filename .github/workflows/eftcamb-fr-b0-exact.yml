@@ -1,0 +1,106 @@
+name: H-EFTCAMB exact B0=0 probe
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/eftcamb-fr-b0-exact.yml'
+      - 'ci/eftcamb_fr_gr_limit.py'
+
+jobs:
+  exact-zero:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git gfortran gcc make liblapack-dev libblas-dev python3 python3-pip
+          python3 -m pip install --user numpy
+      - name: Clone and serial-build pinned H-EFTCAMB
+        run: |
+          git clone --recursive https://github.com/EFTCAMB/EFTCAMB.git eftcamb
+          cd eftcamb
+          git checkout 16d9c4e9f85751e30efd0a53b177941713078904
+          git submodule update --init --recursive
+          cd fortran
+          make camb
+      - name: Write matched lean GR and exact-zero designer configs
+        working-directory: eftcamb/fortran/eftcamb_test/parameters
+        run: |
+          cp base_params.ini dsir_b0_base.ini
+          sed -i 's/^get_scalar_cls[[:space:]]*=.*/get_scalar_cls = F/' dsir_b0_base.ini
+          sed -i 's/^get_tensor_cls[[:space:]]*=.*/get_tensor_cls = F/' dsir_b0_base.ini
+          sed -i 's/^do_lensing[[:space:]]*=.*/do_lensing = F/' dsir_b0_base.ini
+          sed -i 's/^transfer_kmax[[:space:]]*=.*/transfer_kmax = 0.25/' dsir_b0_base.ini
+          sed -i 's/^transfer_k_per_logint[[:space:]]*=.*/transfer_k_per_logint = 80/' dsir_b0_base.ini
+          sed -i 's/^transfer_num_redshifts[[:space:]]*=.*/transfer_num_redshifts = 1/' dsir_b0_base.ini
+          sed -i 's/^transfer_redshift(1)[[:space:]]*=.*/transfer_redshift(1) = 0/' dsir_b0_base.ini
+          sed -i 's/^number_of_threads[[:space:]]*=.*/number_of_threads = 2/' dsir_b0_base.ini
+          cat > dsir_b0_gr.ini <<'EOF'
+          EFTflag = 0
+          output_root = eftcamb_test/results/spectra_results/dsir_b0_gr
+          DEFAULT(dsir_b0_base.ini)
+          EOF
+          cat > dsir_fr_b0.ini <<'EOF'
+          EFTflag = 3
+          DesignerEFTmodel = 1
+          EFTwDE = 0
+          EFTB0 = 0
+          EFT_ghost_math_stability = F
+          EFT_mass_math_stability = F
+          EFT_ghost_stability = T
+          EFT_gradient_stability = T
+          EFT_mass_stability = F
+          EFT_mass_stability_rate = 10.0
+          EFT_additional_priors = T
+          EFTCAMB_turn_on_time = 0.01
+          EFTCAMB_stability_time = 1.e-10
+          EFTCAMB_stability_threshold = 0.0
+          output_root = eftcamb_test/results/spectra_results/dsir_fr_b0
+          DEFAULT(dsir_b0_base.ini)
+          EOF
+      - name: Run GR reference
+        working-directory: eftcamb/fortran
+        run: |
+          mkdir -p eftcamb_test/results/spectra_results
+          ./camb eftcamb_test/parameters/dsir_b0_gr.ini 2>&1 | tee ../../b0_gr.log
+      - name: Probe exact B0 zero without converting unsupported limit into CI failure
+        working-directory: eftcamb/fortran
+        run: |
+          set +e
+          ./camb eftcamb_test/parameters/dsir_fr_b0.ini 2>&1 | tee ../../b0_exact.log
+          code=${PIPESTATUS[0]}
+          set -e
+          echo "$code" > ../../b0_exact_exit_code.txt
+          if [ "$code" -eq 0 ]; then
+            touch ../../b0_exact_supported.txt
+          fi
+      - name: Compare exact-zero output when supported
+        run: |
+          if [ -f b0_exact_supported.txt ]; then
+            python3 ci/eftcamb_fr_gr_limit.py \
+              --root eftcamb/fortran \
+              --gr-token dsir_b0_gr \
+              --models 0:dsir_fr_b0 \
+              --json b0_exact_comparison.json
+          else
+            printf '{"status":"UNSUPPORTED_OR_FAILED","exit_code":%s}\n' "$(cat b0_exact_exit_code.txt)" > b0_exact_comparison.json
+          fi
+      - name: Upload exact-zero probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: eftcamb-exact-b0-${{ github.sha }}
+          path: |
+            b0_exact_comparison.json
+            b0_exact_exit_code.txt
+            b0_exact_supported.txt
+            b0_gr.log
+            b0_exact.log
+            eftcamb/fortran/eftcamb_test/parameters/dsir_b0_*.ini
+            eftcamb/fortran/eftcamb_test/parameters/dsir_fr_b0.ini
+            eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_b0_*matterpower*.dat
+            eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_fr_b0*matterpower*.dat
+          if-no-files-found: warn
