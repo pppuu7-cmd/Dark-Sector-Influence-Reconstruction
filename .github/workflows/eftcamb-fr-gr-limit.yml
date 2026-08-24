@@ -36,7 +36,10 @@ jobs:
         working-directory: eftcamb/fortran
         run: |
           make clean || true
-          make -j2 camb 2>&1 | tee ../../eftcamb_build.log
+          # Upstream's own test_spectra.sh uses a serial `make camb`. The
+          # Makefile dependency graph races under -j2 on current gfortran:
+          # inidriver.f90 can be compiled before camb.mod exists.
+          make camb 2>&1 | tee ../../eftcamb_build.log
           test -x ./camb
 
       - name: Run upstream GR and designer-fR smoke controls
@@ -132,6 +135,7 @@ jobs:
             echo 'No hard scientific tolerance: calibration only.'
             echo 'Upstream author controls: 1_EFT_GR.ini and 4_Des_F_R_LCDM_2.ini'
             echo 'Designer setup: EFTflag=3, DesignerEFTmodel=1, EFTwDE=0, EFTB0 sweep.'
+            echo 'Build note: serial make camb, matching upstream test script, avoids a parallel camb.mod race.'
             echo 'DSIR core k nodes: 0.001,0.003,0.01,0.03,0.1 h/Mpc; z=0 calibration.'
             echo "DSIR commit: $GITHUB_SHA"
             echo -n 'H-EFTCAMB upstream: '; cat eftcamb_upstream_sha.txt
