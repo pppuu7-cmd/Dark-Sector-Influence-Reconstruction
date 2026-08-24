@@ -1,40 +1,34 @@
-# DSIR RECOVERY LATEST — comparison-ready live overlay
+# DSIR RECOVERY LATEST — observational-whitening live overlay
 
 **Date:** 2026-08-24  
 **Read first:** `docs/RECOVERY_MANUAL.md`  
-Then read this file, `docs/GATES.md`, `docs/STATUS.md`, `docs/RESEARCH_LOG.md`, `docs/RESEARCH_LOG_COMPARISON_2026-08-24.md`, `docs/PROVENANCE.md`, `docs/DISCRIMINANT_GRAPH.md`, and the response-basis specifications.
+Then read this file, `docs/GATES.md`, `docs/STATUS.md`, `docs/RESEARCH_LOG_COMPARISON_2026-08-24.md`, `docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-24.md`, `docs/PROVENANCE.md`, `docs/DISCRIMINANT_GRAPH.md`, and the response-basis specifications.
 
 Hard boundary: **DSIR is separate from RTK. Do not modify, use, overwrite, or merge the RTK repository/project while continuing DSIR.**
 
 ---
 
-## 1. Scientific status — major milestone
+## 1. Current scientific state
 
-DSIR remains a reconstruction/meta-inference framework, **not yet a fundamental theory**, and no new law of nature is claimed.
-
-However the project has now crossed the model-comparison readiness barrier:
-
-\[
-\boxed{\text{G3B = PASS in the v0.1 block-aware scope}}
-\]
-
-and Experiment 030 hard run `32772758188` returned
-
-`PASS_READY_FOR_BLOCK_AWARE_MODEL_COMPARISON`, with `failures=[]`.
-
-The first raw-theory cross-family comparison (Experiment 031) is complete. Two conditional-degeneracy separators have also passed fresh hard reruns after thresholds were frozen.
+DSIR is a reconstruction/meta-inference framework, **not a fundamental theory**, and no new law of nature is claimed.
 
 Current gates:
 
 - **G1 PASS v0.1.1:** conservation/gauge contract and comoving total-matter response validated.
-- **G2 PASS v0.1.1:** same-solver `r_Delta` basis and cross-solver bridge validated.
+- **G2 PASS v0.1.1:** same-solver `r_Delta` basis and cross-solver smooth-w bridge validated.
 - **G3A PASS v0.1:** six control families embedded at background level.
-- **G3B PASS v0.1 block-aware:** all six families have validated beyond-background response paths with explicit scale/channel masks.
+- **G3B PASS v0.1 block-aware:** six-family beyond-background atlas comparison-ready.
 - **G4 PASS:** synthetic low-rank recovery.
-- **G5 PARTIAL:** whitening, missingness, family-prior protections exist; observationally whitened cross-family rank stress tests remain.
+- **G5 PARTIAL:** synthetic whitening/prior/missingness protections pass; Experiment 034 adds the first real-covariance cross-family shape proxy, but family-complete observational whitening/rank stress tests remain.
 - **G6A/G6B PASS:** DESI DR2 AP and corrected DESI DR1 ShapeFit real-data response layers.
-- **G7 OPEN:** raw-theory comparison is now unblocked, but no residual-law claim before observational whitening/rank stability.
+- **G7 OPEN:** no residual-law claim before family-complete observation kernels and data-whitened rank/manifold stability.
 - **G8 OPEN:** no discovery before a withheld physical prediction.
+
+Comparison readiness hard run: Experiment 030, run `32772758188`, `PASS_READY_FOR_BLOCK_AWARE_MODEL_COMPARISON`, `failures=[]`.
+
+First cross-family raw-theory comparison: Experiment 031 complete. Hard conditional separators: Experiments 031/032 PASS. Hard-evidence discriminant graph: Experiment 033 run `32775055341` PASS.
+
+First partial observational whitening: Experiment 034 run `32777716140` PASS with status `PASS_PROXY_OBSERVATIONAL_WHITENING_SHAPE_BLOCK`.
 
 ---
 
@@ -54,18 +48,12 @@ Background response:
 r_E(z;z_*)=\ln\left[\frac{H(z)/H(z_*)}{H_{ref}(z)/H_{ref}(z_*)}\right],\qquad z_*=0.51.
 \]
 
-For total matter,
+Total-matter comoving contrast:
 
 \[
 \delta_m=\frac{\sum_i\rho_i\delta_i}{\rho_m},\qquad
 \theta_m=\frac{\sum_i(\rho_i+p_i)\theta_i}{\rho_m+p_m},\qquad
-w_m=\frac{p_m}{\rho_m}.
-\]
-
-Production comoving contrast:
-
-\[
-\boxed{\Delta_m=\delta_m+3(1+w_m){\cal H}\frac{\theta_m}{k^2}}.
+\Delta_m=\delta_m+3(1+w_m){\cal H}\frac{\theta_m}{k^2}.
 \]
 
 Production perturbation response:
@@ -74,329 +62,148 @@ Production perturbation response:
 \boxed{r_\Delta(k,z)=\ln\frac{P_{\Delta,model}^{S}(k,z)}{P_{\Delta,ref}^{S}(k,z)}}.
 \]
 
-`S` is the same solver lineage with matched numerical precision for model/reference. Absolute spectra from different solver vintages are not interpreted as dark-sector responses.
+`S` must be the same solver lineage with matched numerical settings for model/reference whenever possible. Cross-solver smooth-w response bridge mismatch is `2.3747404043e-10 < 1e-9`.
 
-Cross-solver smooth-w hard bridge:
+Never identify global SVD span with microscopic dimension. For a smooth manifold use the local Jacobian
 
 \[
-\max|\Delta r_{bridge}|=2.3747404043\times10^{-10}<10^{-9}.
+J_{ai}=\partial r_a/\partial\theta_i,
 \]
+
+and use a tangent cone when viability truncates parameter space.
 
 ---
 
-## 3. Tangent, tangent-cone and manifold geometry
+## 3. Validated family atlas
 
-Do **not** identify SVD span with microscopic dimension.
+- **C0 LambdaCDM/GR:** common response origin.
+- **C1 smooth non-phantom DE:** one-sided `epsilon_w=1+w -> 0+` ray; smallest resolved step `1e-4`.
+- **C2 interacting vacuum:** `Q=H(alpha rho_idm + beta rho_iv)`; `alpha>0` invalid under full-history `rho_iv>=0`; use negative-alpha ray plus central beta line. Structure angle `58.9338 deg`, background angle `10.8306 deg`.
+- **C3 GDM:** pinned GDM_CLASS; zero-limit PASS. `cs2/cv2` low-k matter-power angle `0.322616 deg`, local two-axis `sigma2/sigma1=2.572e-3`.
+- **C4 thermal WDM:** intentionally separate small-scale block; 3 keV control `r_T(0.1)=-3.46e-6`, `r_T(10)=-0.10375`.
+- **C5 designer f(R):** official H-EFTCAMB; MG-S0/MG-S1 PASS; production `B0={1e-6,1e-5,1e-4,1e-3}`.
 
-For a smooth parameterized response manifold `r(theta)`, local geometry is set by the Jacobian
-
-\[
-J_{ai}=\frac{\partial r_a}{\partial\theta_i}.
-\]
-
-A curved one-parameter manifold can have global SVD rank greater than one. Therefore report separately:
-
-- local tangent/Jacobian rank;
-- global linear-span spectrum;
-- curvature / tangent rotation.
-
-If viability truncates parameter space, use a **tangent cone**, not an artificial symmetric derivative.
-
-For IDE,
-
-\[
-Q=H(\alpha\rho_{idm}+\beta\rho_{iv}).
-\]
-
-Full-history positivity found all tested `alpha>0` points invalid because `rho_iv<0` at early times, while `alpha<0` and both beta signs remain valid. Thus use
-
-\[
-t_\alpha=\lim_{\alpha\to0^-}\frac{r(\alpha,0)}{\alpha}
-\]
-
-and a central beta tangent.
-
-At the smallest calibrated step:
-
-\[
-\theta_H(\alpha,\beta)=10.8306^\circ,
-\qquad
-\theta_P(\alpha,\beta)=58.9338^\circ.
-\]
-
-Structure therefore separates the IDE axes much more strongly than the background.
+Undefined theory/channel cells remain masked, never zero-imputed.
 
 ---
 
-## 4. Validated family patches
+## 4. Raw-theory comparison and hard discriminants
 
-### C0 — LambdaCDM/GR
+The six nonzero low-k response objects are C1 smooth-w, C2 negative-alpha, C2 beta, C3 cs2, C3 cv2, C5 designer-f(R). C0 is the origin; C4 is a separate small-scale block.
 
-Common response origin; several independent zero-limit regressions pass.
+Raw normalized six-direction singular ratios:
 
-### C1 — smooth non-phantom dark energy
+`(1,0.52046,0.26140,0.20087,0.08299,5.9178e-4)`.
 
-One-sided local ray
+**Do not call this `R_model=5`.** No intrinsic-rank threshold was frozen.
 
-\[
-\epsilon_w=1+w\to0^+.
-\]
+Hard theory-level separators:
 
-p8 scan uses `epsilon_w={1e-4,1e-3,1e-2}`. The `1e-4` tangent is resolved; change at `1e-3` is about `0.12%` in L2 and `0.014 deg`.
+- GDM `cs2/cv2`: low-k P/Weyl nearly collinear, but metric slip hard run `32774501069` gives Weyl `0.300737 deg`, slip `137.943212 deg`, equalized combined `56.963212 deg`.
+- GDM vs designer f(R): leading scale shapes nearly identical (`0.07813/0.10169 deg`), but time modes differ `25.18/25.49 deg` and full physical rays have opposite orientation (`154.82/154.51 deg`).
+- WDM: low-k blindness broken by the small-scale transfer block.
 
-### C2 — interacting vacuum
-
-Pinned `kaeonikc/class_iv@ac627d54...`, with provenance-tracked compile-only brace repair and legacy toolchain semantics. IDE-S1 hard zero limit passes. Local physical geometry is the alpha/beta tangent cone described above.
-
-### C3 — GDM
-
-Pinned `s-ilic/gdm_class_public@4c87916...`, validated p8 precision. Zero-limit hard PASS actual `1.471014806e-6` under frozen `5e-6` threshold.
-
-Sound-speed local scan (`w=cv2=0`) shows near-one-dimensional tangent behavior for small `cs2`; strong deformation bends the manifold. Positive control:
+Experiment 033 hard graph run `32775055341` gives the exact unique minimum hitting set for the **current frozen hard-evidence graph**:
 
 \[
-r_\Delta(k,z)\approx-c_s^2 A(z)k^2
+\{\text{metric slip},\text{small-scale transfer},\text{time/sign evolution}\}.
 \]
 
-with max relative L2 residual about `2.01e-3`.
-
-Viscosity scan with dynamic shear gives a second microphysical parameter, but the low-k matter-power tangent is nearly the same:
-
-\[
-\boxed{\theta_P(c_s^2,c_v^2)=0.322616^\circ}
-\]
-
-and the two-axis local singular ratio is
-
-\[
-\sigma_2/\sigma_1=2.572\times10^{-3}.
-\]
-
-### C4 — thermal WDM
-
-Never impute it into the low-k block. For the 3 keV control,
-
-\[
-r_T(0.1)=-3.46\times10^{-6},\qquad r_T(10)=-0.10375.
-\]
-
-Thus low-k is an identifiability blind block and the validated separator is a separate small-scale transfer block.
-
-### C5 — full designer f(R)
-
-Pinned official H-EFTCAMB `EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`, branch `eftcamb`.
-
-Designer configuration: `EFTflag=3`, `DesignerEFTmodel=1`, `EFTwDE=0`, parameter `EFTB0=B0`.
-
-MG-S0 exact-GR hard PASS. MG-S1 common-baseline multi-z hard PASS. Production points:
-
-`B0={1e-6,1e-5,1e-4,1e-3}`.
-
-Maximum response amplitudes:
-
-- `1e-6 -> 8.90411e-4`
-- `1e-5 -> 6.21099e-3`
-- `1e-4 -> 4.29053e-2`
-- `1e-3 -> 1.54344e-1`
-
-`B0=1e-7` is a transition control near the solver GR threshold, not a production atlas point.
+This is not a universal survey design.
 
 ---
 
-## 5. Comparison readiness and first model comparison
+## 5. Experiment 034 — first real-covariance cross-family bridge
 
-Experiment 030 hard run:
+The corrected DESI DR1 ShapeFit covariance is ordered as
 
-- run ID `32772758188`;
-- artifact digest `sha256:f110de1071cb11ce7e927b403f92002c766b03e384715ddd435af2c1c67c4131`;
-- status `PASS_READY_FOR_BLOCK_AWARE_MODEL_COMPARISON`;
-- `failures=[]`.
+`[DV/rd, DH/DM, f_sigma_s8, m+n]`.
 
-Six nonzero low-k response objects:
+The frozen atlas does not yet predict all four coordinates for every family, so using the full inverse covariance would falsely insert zero response in unpredicted channels. Experiment 034 therefore uses only a conservative marginal `m+n` shape block.
 
-1. C1 smooth-w ray;
-2. C2 IDE negative-alpha ray;
-3. C2 IDE beta line;
-4. C3 GDM cs2 ray;
-5. C3 GDM cv2 ray;
-6. C5 designer-f(R) ray.
-
-C0 is the origin; C4 WDM is a separate small-scale block.
-
-Raw unit-direction singular ratios:
+Finite-node ShapeFit proxy:
 
 \[
-(1,0.52046,0.26140,0.20087,0.08299,5.9178\times10^{-4}).
+r_\Delta(k,z)\approx A(z)+\frac{m(z)}{a}\tanh\left[a\ln\frac{k}{k_p}\right]+n(z)\ln\frac{k}{k_p},
 \]
 
-**Do not call this `R_model=5`.** No intrinsic-rank threshold was frozen and observational whitening is not yet applied.
-
-Experiment 031 first comparison separates full `(z,k)` direction, leading scale shape, and leading time shape using
+with `a=0.6`, `k_p=0.03 h/Mpc`, and
 
 \[
-R(z,k)=U\Sigma V^T,
+K_{shape}[r_\Delta](z)=\hat m(z)+\hat n(z).
 \]
 
-with leading approximation
+Whitening on `LRG1,LRG2,LRG3,ELG2,QSO` is
 
 \[
-R\simeq\sigma_1A_1(z)S_1(k).
+Z_i^{shape}=\frac{\Delta(m+n)_i}{\sqrt{C_{ii}^{m+n,m+n}}}.
 \]
 
-Key findings:
+The Schur-complement conditional shape error is diagnostic only; it is not used as evidence until the other channels are predicted.
 
-- GDM cs2/cv2 full low-k angle `0.3226 deg`;
-- GDM cs2 vs f(R) scale angle `0.07813 deg`;
-- GDM cv2 vs f(R) scale angle `0.10169 deg`;
-- corresponding time-mode angles `25.18 deg`, `25.49 deg`;
-- full oriented GDM/f(R) angles `154.82 deg`, `154.51 deg`;
-- smooth wDE vs GDM scale shapes differ by about `59.42 deg`;
-- IDE beta is the least separable response (`rank-1 variance fraction ~0.92235`).
+Hard run `32777716140`:
 
-The first-comparison conditional-discriminant thresholds were frozen before a fresh rerun. Run `32774501126` passed with `failures=[]`.
+- unit tests `3 passed`;
+- exact synthetic ShapeFit recovery error `8.326672684688674e-17`;
+- status `PASS_PROXY_OBSERVATIONAL_WHITENING_SHAPE_BLOCK`;
+- artifact ID `9538572755`;
+- artifact ZIP SHA256 `b1c6dc98d933e564d1c74ee549917621e5b4e2fbdc4e37d760bf80c2b13c4a38`.
+
+Key shape-history angles:
+
+- GDM `cs2/cv2`: raw acute `0.190257 deg`, whitened acute `0.189582 deg` — degeneracy survives real `m+n` covariance weighting.
+- GDM `cs2/f(R)`: raw acute `20.771942 deg`, whitened acute `22.995730 deg`.
+- GDM `cv2/f(R)`: raw acute `20.956124 deg`, whitened acute `23.178674 deg`.
+- smooth-w/GDM `cs2`: raw acute `12.132482 deg`, whitened acute `12.795598 deg`.
+
+Descriptive unit-direction spectrum in this five-bin shape proxy:
+
+`(1,0.2055855,0.0106523,0.00194843,1.37046e-6)`.
+
+**No rank claim.**
+
+Critical limitation discovered: the finite-node ShapeFit template residual is small for smooth-w (`<=1.33%`) and moderate for IDE (`<=5.87%`), but about `36%` for GDM `cs2`, GDM `cv2`, and designer f(R). Therefore the roughly `23 deg` GDM/f(R) whitened proxy angle is **not** a full DESI distinguishability result. A survey/window-aware shape operator or explicit compression-model-error propagation is required.
+
+Frozen machine-readable result:
+
+`data/derived/observational_whitening/experiment_034_shapefit_shape_whitening_v0_1.json`.
+
+Detailed chronology:
+
+`docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-24.md`.
 
 ---
 
-## 6. Hard channel-discriminant results
+## 6. Real-data context already available
 
-### GDM cs2 vs cv2
+DESI DR2 AP supplies a calibration-free geometry response via `F_AP=D_M/D_H`. Corrected DESI DR1 ShapeFit supplies joint geometry/growth/shape covariance; superseded uncorrected Appendix-A growth/covariance numbers must not be used.
 
-Low-k matter power and Weyl amplitude are nearly degenerate, but metric slip is not.
-
-After calibration, thresholds were frozen:
-
-- Weyl angle `<=1 deg`;
-- slip angle `>=120 deg`;
-- combined equalized angle `>=45 deg`;
-- tangent convergence `<=1 deg`;
-- relative L2 change `<=2%`.
-
-Fresh hard run `32774501069` PASS, `failures=[]`:
-
-\[
-\theta_W=0.300737^\circ,
-\qquad
-\theta_{slip}=137.943212^\circ,
-\]
-
-\[
-\theta_{combined}=56.963212^\circ.
-\]
-
-Artifact digest:
-`sha256:4197b9286e53481164f5a842796199ea94ded202d4e62f6cb232186247291d0e`.
-
-Thus `metric_slip` is an established theory-level separator for this frozen C3 edge.
-
-### GDM vs designer f(R)
-
-The leading low-k **scale shape** is nearly identical, but time evolution / physical response sign separates the mechanisms.
-
-Hard rerun `32774501126` PASS after thresholds were frozen:
-
-\[
-\theta_S(cs2,fR)=0.07813^\circ,
-\qquad
-\theta_t(cs2,fR)=25.18^\circ,
-\]
-
-\[
-\theta_{full}^{oriented}(cs2,fR)=154.82^\circ,
-\]
-
-with analogous cv2 values `0.10169 deg`, `25.49 deg`, `154.51 deg`.
-
-Thus `time_evolution_or_response_sign` is an established separator for the frozen scale-only degeneracy.
-
----
-
-## 7. Hard-evidence discriminant graph v0.1
-
-Experiment 033 graph CI run `32775055341` PASS.
-
-Artifact digest:
-`sha256:8a6e926dbea9c369ffb4d22bc9e73c7f33c59bcdf6507f30bd5bd6624376de06`.
-
-Status:
-
-`PASS_HARD_EVIDENCE_DISCRIMINANT_GRAPH_V0_1`.
-
-Four established edges:
-
-1. C0 vs 3 keV WDM in low-k -> `small_scale_transfer`;
-2. GDM cs2 vs cv2 in low-k P/Weyl amplitude -> `metric_slip`;
-3. GDM cs2 vs designer f(R) in leading scale shape -> `time_evolution_or_response_sign`;
-4. GDM cv2 vs designer f(R) in leading scale shape -> same separator.
-
-Exact minimum hitting set for this **current hard-established edge catalogue** is unique:
-
-\[
-\boxed{
-\{\text{metric slip},\text{small-scale transfer},\text{time/sign evolution}\}
-}
-\]
-
-with cardinality 3.
-
-This is not a universal globally optimal survey design; it is the exact minimum for the current frozen evidence graph.
-
----
-
-## 8. Real-data layer already available
-
-DESI DR2 AP gives a calibration-free geometry response via
-
-\[
-F_{AP}=D_M/D_H.
-\]
-
-Flat-FLRW relative expansion identity:
-
-\[
-\frac{E(z_2)}{E(z_1)}=
-\frac{F_{AP}(z_2)}{F_{AP}(z_1)}
-\exp\left[-\int_{z_1}^{z_2}\frac{dz}{F_{AP}(z)}\right].
-\]
-
-Corrected DESI DR1 ShapeFit provides joint geometry/growth/shape covariance. The original Appendix-A growth/covariance numbers were superseded by a 2026 erratum and must not be used.
-
-Measurement-induced AP/growth correlations are removed conditionally using
-
-\[
-r_g^\perp=r_g-C_{gN}C_{NN}^{-1}r_N.
-\]
-
-Current aggregate remains null-consistent:
+The existing conditional-innovation aggregate is null-consistent:
 
 \[
 \chi^2\simeq5.53/5,\qquad p\simeq0.355.
 \]
 
+This remains a null result, not a dark-sector law.
+
 ---
 
-## 9. Exact continuation sequence — NEW MAIN FRONT
+## 7. Exact continuation sequence from this checkpoint
 
-The next major stage is **observational whitening of the cross-family comparison**.
-
-1. Stabilize/merge comparison PR #14 after final diff review and all hard workflows are green.
-2. Preserve Experiment 033 graph result and provenance in `main`.
-3. Build observation operators that map validated theory responses into actually measured channels. Keep separate:
-   - DESI geometry / AP;
-   - DESI growth/ShapeFit and shape;
-   - lensing/Weyl/slip-like response channels;
-   - WDM small-scale transfer / Ly-alpha-like block.
-4. For each data block construct
+1. Build a family-complete `DH/DM` / AP observation operator on the DESI ShapeFit redshift support.
+2. Build a family-complete gauge-safe `f_sigma_s8` growth operator from the validated solver lineages.
+3. Replace/calibrate the finite-node `m+n` proxy with a survey/window-aware ShapeFit map or explicitly propagate compression-model error.
+4. Only after 1–3 form the full corrected ShapeFit block
 
 \[
-Z=C^{-1/2}\Delta O
+Z=C^{-1/2}\Delta O.
 \]
 
-using the actual covariance/kernel for that block. Never use raw theory angles as observational significance.
-5. Report raw-theory geometry and data-whitened geometry side by side.
-6. Recompute pairwise separability, local Jacobian spectra and `R_model(pi)` under multiple defensible family priors.
-7. Stress-test against removal of families, redshift/scale sub-blocks, solver precision and within-family sampling.
-8. Use the hard discriminant graph to choose the most valuable next real-data channel.
-9. Only after data-whitened manifold/rank stability may G7 residual-law search resume.
+5. Report raw-theory and data-whitened pairwise geometry side by side.
+6. Stress-test local Jacobian/global spectra and `R_model(pi)` under family priors, channel removal, solver precision, and within-family sampling; freeze rank/null thresholds before interpreting the spectrum.
+7. In parallel build an observational lensing/slip block, because the hard graph says metric slip is the best established separator for the GDM `cs2/cv2` degeneracy.
+8. Build/ingest a small-scale-transfer observational block for WDM.
+9. Resume G7 residual-law search only after family-complete observationally whitened manifold/rank stability.
 10. Any candidate relation must predict a withheld physical channel before G8 can PASS.
 
 **Never claim discovery before G8.**
