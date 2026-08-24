@@ -1,0 +1,99 @@
+name: DSIR GDM density-velocity transfer exploration v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/gdm-density-velocity-transfer-exploration-v0-1.yml'
+      - 'experiments/042_gdm_density_velocity_transfer_exploration_v0_1.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  gdm-density-velocity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git gcc make
+      - name: Download exact frozen C3 manifold artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 32759738560
+          name: gdm-cv2-manifold-15c7128d4220b954783a8ba7cce7c06744f7f0ac
+          path: inputs/c3
+      - name: Clone and build pinned GDM_CLASS
+        run: |
+          git clone https://github.com/s-ilic/gdm_class_public.git gdm_class
+          cd gdm_class
+          git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          git rev-parse HEAD | tee ../exp042_upstream_sha.txt
+          make -j2
+      - name: Prepare exact frozen configs with output-only extension
+        run: |
+          mkdir -p exp042_runs/outputs
+          cp inputs/c3/external_gdm/dsir_p8.pre exp042_runs/
+          for tok in gdm0 gdmcs2_1em8 gdmcs2_1em7 gdmcs2_1em6 gdmcv2_1em8 gdmcv2_1em7 gdmcv2_1em6 gdmcv2_1em5 gdmcv2_1em4; do
+            test -f "inputs/c3/external_gdm/${tok}.ini"
+            cp "inputs/c3/external_gdm/${tok}.ini" "exp042_runs/${tok}.ini"
+          done
+          python - <<'PY'
+          from pathlib import Path
+          tokens = [
+              'gdm0','gdmcs2_1em8','gdmcs2_1em7','gdmcs2_1em6',
+              'gdmcv2_1em8','gdmcv2_1em7','gdmcv2_1em6','gdmcv2_1em5','gdmcv2_1em4'
+          ]
+          for tok in tokens:
+              p = Path('exp042_runs') / f'{tok}.ini'
+              s = p.read_text()
+              old_output = 'output = mPk'
+              old_root = f'root = cv2_outputs/{tok}_'
+              if s.count(old_output) != 1 or s.count(old_root) != 1:
+                  raise SystemExit(f'unexpected frozen config structure for {tok}')
+              s = s.replace(old_output, 'output = mPk,mTk,vTk')
+              s = s.replace(old_root, f'root = outputs/{tok}_')
+              p.write_text(s)
+          PY
+          grep -R '^output = mPk,mTk,vTk$' exp042_runs/*.ini | wc -l | grep -qx '9'
+      - name: Run frozen GDM manifold with density and velocity transfers
+        working-directory: exp042_runs
+        run: |
+          set -o pipefail
+          for tok in gdm0 gdmcs2_1em8 gdmcs2_1em7 gdmcs2_1em6 gdmcv2_1em8 gdmcv2_1em7 gdmcv2_1em6 gdmcv2_1em5 gdmcv2_1em4; do
+            ../gdm_class/class "${tok}.ini" dsir_p8.pre 2>&1 | tee "../exp042_${tok}.log"
+          done
+      - name: Require complete exploratory outputs
+        run: |
+          root=exp042_runs/outputs
+          for tok in gdm0 gdmcs2_1em8 gdmcs2_1em7 gdmcs2_1em6 gdmcv2_1em8 gdmcv2_1em7 gdmcv2_1em6 gdmcv2_1em5 gdmcv2_1em4; do
+            for zi in 1 2 3 4 5 6 7; do
+              test -f "$root/${tok}_z${zi}_pk.dat"
+              test -f "$root/${tok}_z${zi}_tk.dat"
+            done
+          done
+          head -n 12 "$root/gdmcs2_1em6_z1_tk.dat" | tee exp042_transfer_header_sample.txt
+          find "$root" -maxdepth 1 -type f | sort | tee exp042_output_manifest.txt
+      - name: Upload Experiment 042 exploratory handoff
+        uses: actions/upload-artifact@v4
+        with:
+          name: gdm-density-velocity-transfer-exploration-v0-1-${{ github.sha }}
+          path: |
+            exp042_upstream_sha.txt
+            exp042_*.log
+            exp042_transfer_header_sample.txt
+            exp042_output_manifest.txt
+            exp042_runs/*.ini
+            exp042_runs/dsir_p8.pre
+            exp042_runs/outputs/*.dat
+          if-no-files-found: error
