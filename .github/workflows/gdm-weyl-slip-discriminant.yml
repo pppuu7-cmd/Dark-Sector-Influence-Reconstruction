@@ -1,0 +1,131 @@
+name: GDM Weyl-slip discriminant calibration
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/gdm-weyl-slip-discriminant.yml'
+      - 'ci/gdm_weyl_slip_discriminant.py'
+      - 'experiments/032_gdm_weyl_slip_discriminant.md'
+
+jobs:
+  gdm-metric-discriminant:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+      - name: Clone and build pinned GDM_CLASS
+        run: |
+          git clone https://github.com/s-ilic/gdm_class_public.git solver
+          cd solver
+          git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          git rev-parse HEAD | tee ../gdm_metric_upstream_sha.txt
+          make -j2 class
+      - name: Freeze validated p8 precision
+        run: |
+          cat > solver/dsir_p8.pre <<'EOF'
+          k_step_sub = 0.0010
+          k_step_super = 0.000003
+          k_step_super_reduction = 0.1
+          start_small_k_at_tau_c_over_tau_h = 1e-6
+          start_large_k_at_tau_h_over_tau_k = 0.05
+          tight_coupling_trigger_tau_c_over_tau_h = 0.005
+          tight_coupling_trigger_tau_c_over_tau_k = 0.008
+          start_sources_at_tau_c_over_tau_h = 0.006
+          tol_perturb_integration = 3e-10
+          perturb_sampling_stepsize = 0.00035
+          radiation_streaming_approximation = 2
+          radiation_streaming_trigger_tau_over_tau_k = 240.
+          radiation_streaming_trigger_tau_c_over_tau = 100.
+          ur_fluid_approximation = 2
+          ur_fluid_trigger_tau_over_tau_k = 50.
+          EOF
+      - name: Write zero reference and local cs2/cv2 controls
+        run: |
+          mkdir -p solver/out
+          cat > solver/gdm0.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          omega_cdm = 0.0
+          omega_gdm = 0.1200
+          Omega_Lambda = 0.684
+          N_ur = 3.046
+          N_ncdm = 0
+          Omega_k = 0.
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          type_gdm = time_only_bins
+          smooth_bins_gdm = yes
+          time_transition_width_gdm = 8.
+          time_values_gdm = 0.00001, 0.0001, 0.001, 0.01, 0.1
+          w_values_gdm = 0., 0., 0., 0., 0., 0.
+          cs2_values_gdm = 0., 0., 0., 0., 0., 0.
+          cv2_values_gdm = 0., 0., 0., 0., 0., 0.
+          dynamic_shear_gdm = yes
+          output = mPk,mTk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          write background = yes
+          root = out/gdm0_
+          EOF
+          for spec in 'cs 1e-7 1em7' 'cs 1e-6 1em6' 'cv 1e-7 1em7' 'cv 1e-6 1em6'; do
+            set -- $spec; axis=$1; val=$2; tok=$3
+            cp solver/gdm0.ini solver/${axis}${tok}.ini
+            if [ "$axis" = cs ]; then
+              sed -i "s/cs2_values_gdm = .*/cs2_values_gdm = ${val}, ${val}, ${val}, ${val}, ${val}, ${val}/" solver/${axis}${tok}.ini
+            else
+              sed -i "s/cv2_values_gdm = .*/cv2_values_gdm = ${val}, ${val}, ${val}, ${val}, ${val}, ${val}/" solver/${axis}${tok}.ini
+            fi
+            sed -i "s#root = out/gdm0_#root = out/${axis}${tok}_#" solver/${axis}${tok}.ini
+          done
+      - name: Run same-solver metric-transfer controls
+        working-directory: solver
+        run: |
+          set -euxo pipefail
+          ./class gdm0.ini dsir_p8.pre 2>&1 | tee out/gdm0.log
+          for f in cs1em7.ini cs1em6.ini cv1em7.ini cv1em6.ini; do
+            ./class "$f" dsir_p8.pre 2>&1 | tee "out/${f%.ini}.log"
+          done
+      - name: Extract Weyl and slip response geometry
+        run: |
+          python3 ci/gdm_weyl_slip_discriminant.py --directory solver/out --json gdm_weyl_slip_discriminant.json
+      - name: Record provenance
+        run: |
+          {
+            echo 'DSIR GDM Weyl/slip discriminant calibration'
+            echo 'Independent metric channel: phi and psi from pinned GDM_CLASS mTk output.'
+            echo 'Reference and cs2/cv2 models use identical p8, baseline, gauge and solver.'
+            echo 'Steps: 1e-7 and 1e-6 on each positive one-sided axis.'
+            echo 'Calibration only: no separator threshold is frozen in this first run.'
+            echo "DSIR commit: $GITHUB_SHA"
+            echo -n 'GDM_CLASS upstream: '; cat gdm_metric_upstream_sha.txt
+          } > gdm_weyl_slip_environment.txt
+      - name: Upload metric discriminant artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gdm-weyl-slip-${{ github.sha }}
+          path: |
+            gdm_weyl_slip_discriminant.json
+            gdm_weyl_slip_environment.txt
+            gdm_metric_upstream_sha.txt
+            solver/dsir_p8.pre
+            solver/*.ini
+            solver/out/
+          if-no-files-found: error
