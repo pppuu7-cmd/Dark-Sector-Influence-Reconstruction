@@ -1,0 +1,36 @@
+name: DSIR Python regression suite
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'experiments/*.py'
+      - '.github/workflows/unit-tests.yml'
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout DSIR
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test dependencies
+        run: python -m pip install --upgrade pip numpy scipy pytest
+      - name: Run regression tests
+        env:
+          PYTHONPATH: src
+        run: pytest -q tests
+      - name: Run response-basis experiment regression
+        env:
+          PYTHONPATH: src
+        run: python experiments/017_response_basis_v0_1_regression.py
+      - name: Run f(R) QS domain audit
+        env:
+          PYTHONPATH: src
+        run: python experiments/019_fr_quasistatic_domain_audit.py
