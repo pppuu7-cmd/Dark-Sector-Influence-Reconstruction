@@ -1,0 +1,40 @@
+name: DSIR finite-bin structure-growth response v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/finite-bin-growth-response-v0-1.yml'
+      - 'ci/finite_bin_growth_response_v0_1.py'
+      - 'experiments/040_finite_bin_growth_response_v0_1.md'
+      - 'data/derived/comparison_readiness/local_response_tangents_v0_1.json'
+      - 'data/derived/comparison_readiness/experiment_040_finite_bin_growth_response_v0_1.json'
+
+permissions:
+  contents: read
+
+jobs:
+  finite-bin-growth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install DSIR
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+      - name: Run Experiment 040 hard operator audit
+        run: |
+          python ci/finite_bin_growth_response_v0_1.py \
+            --atlas data/derived/comparison_readiness/local_response_tangents_v0_1.json \
+            --json experiment_040_finite_bin_growth_response_v0_1.json
+      - name: Upload Experiment 040 result
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite-bin-growth-response-v0-1-${{ github.sha }}
+          path: experiment_040_finite_bin_growth_response_v0_1.json
+          if-no-files-found: error
