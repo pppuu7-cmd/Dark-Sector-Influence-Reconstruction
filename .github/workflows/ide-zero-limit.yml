@@ -1,4 +1,4 @@
-name: Interacting-vacuum zero-coupling frozen-grid calibration
+name: Interacting-vacuum zero-coupling hard regression
 
 on:
   workflow_dispatch:
@@ -8,6 +8,7 @@ on:
       - '.github/workflows/ide-zero-limit.yml'
       - 'ci/ide_calibration_trigger.txt'
       - 'ci/compare_class_outputs.py'
+      - 'ci/compare_ide_background.py'
       - 'patches/apply_class_iv_ac627d54_compile_fix.py'
 
 jobs:
@@ -126,20 +127,31 @@ jobs:
           ./class dsir_ide0.ini 2>&1 | tee dsir_outputs/ide0.log
           ls -lah dsir_outputs
 
-      - name: Compare matched products and frozen k nodes
+      - name: Hard gate linear-core P(k)
         run: |
           python3 ci/compare_class_outputs.py \
             --directory external_iv/dsir_outputs \
             --root-a baseline_ \
             --root-b ide0_ \
-            --json external_iv/dsir_outputs/comparison.json
+            --json external_iv/dsir_outputs/comparison.json \
+            --max-core-rel 2e-8
 
-      - name: Record environment and source-authored reference
+      - name: Hard gate semantic background
+        run: |
+          python3 ci/compare_ide_background.py \
+            --baseline external_iv/dsir_outputs/baseline_background.dat \
+            --ide external_iv/dsir_outputs/ide0_background.dat \
+            --json external_iv/dsir_outputs/background_semantic.json \
+            --max-rel 2e-12
+
+      - name: Record environment and frozen tolerances
         run: |
           cp external_iv/test_idm_iv_lcdm.ini external_iv/dsir_outputs/upstream_test_idm_iv_lcdm.ini
           {
-            echo "DSIR interacting-vacuum zero-coupling frozen-grid calibration"
-            echo "scope: background + mPk to 0.25 h/Mpc"
+            echo "DSIR interacting-vacuum zero-coupling HARD regression"
+            echo "linear-core tolerance frozen before this run: max |Delta P/P| <= 2e-8 for 1e-3<=k<=1e-1 h/Mpc"
+            echo "semantic-background tolerance frozen before this run: <= 2e-12 peak-normalized"
+            echo "calibration basis: two prior clean-room runs; worst core P residual ~9.94e-9; worst semantic background residual ~8.1e-13"
             echo "z grid: 0,0.295,0.51,0.706,0.934,1,1.317,1.491,2.33"
             echo "frozen k core: 0.001,0.003,0.01,0.03,0.1 h/Mpc"
             echo "DSIR commit: $GITHUB_SHA"
@@ -155,10 +167,10 @@ jobs:
             gcc --version | head -1
           } > external_iv/dsir_outputs/environment.txt
 
-      - name: Upload calibration artifact
+      - name: Upload regression artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ide-zero-limit-${{ github.sha }}
+          name: ide-zero-limit-hard-${{ github.sha }}
           path: |
             external_iv/dsir_outputs/
             external_iv/dsir_baseline.ini
@@ -167,4 +179,6 @@ jobs:
             iv_compile_repair_sha256.txt
             iv_applied_compile_fix.diff
             patches/apply_class_iv_ac627d54_compile_fix.py
+            ci/compare_class_outputs.py
+            ci/compare_ide_background.py
           if-no-files-found: error
