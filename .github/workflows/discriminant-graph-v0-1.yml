@@ -1,0 +1,33 @@
+name: DSIR hard-evidence discriminant graph v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/discriminant-graph-v0-1.yml'
+      - 'ci/build_discriminant_graph_v0_1.py'
+      - 'data/derived/comparison_readiness/discriminant_edges_v0_1.json'
+      - 'src/dsir/discriminants.py'
+      - 'experiments/033_discriminant_graph_v0_1.md'
+
+jobs:
+  graph:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build graph and minimum hard-evidence separator set
+        run: |
+          set -euxo pipefail
+          python3 ci/build_discriminant_graph_v0_1.py \
+            --input data/derived/comparison_readiness/discriminant_edges_v0_1.json \
+            --json discriminant_graph_v0_1.json
+      - name: Upload graph artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: discriminant-graph-v0-1-${{ github.sha }}
+          path: |
+            discriminant_graph_v0_1.json
+            data/derived/comparison_readiness/discriminant_edges_v0_1.json
+          if-no-files-found: error
