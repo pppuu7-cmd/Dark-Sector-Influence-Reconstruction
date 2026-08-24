@@ -16,12 +16,18 @@ DSIR is a reconstruction/meta-inference framework, not a fundamental theory. Not
 
 **Status: HARD ESTABLISHED for the current frozen examples; broader principle SUPPORTED, not universal.**
 
-Different microscopic directions can become almost collinear after one observation operator while remaining well separated after another. The degeneracy therefore belongs to the pair `(physical direction, observation operator)`, not to the microscopic models alone.
+Different microscopic directions can become almost collinear—or exactly null—after one observation operator while remaining well separated after another. The degeneracy/null space therefore belongs to the pair `(physical direction, observation operator)`, not to the microscopic models alone.
 
 Schematic statement:
 
 \[
-K_i\,t_A \simeq K_i\,t_B,\qquad K_j\,t_A \not\simeq K_j\,t_B.
+K_i\,t_A \simeq K_i\,t_B,\qquad K_j\,t_A \not\simeq K_j\,t_B,
+\]
+
+with the stronger channel-null possibility
+
+\[
+K_i\,t_A=0,\qquad K_j\,t_A\neq0.
 \]
 
 Current hard examples:
@@ -30,10 +36,11 @@ Current hard examples:
 2. GDM versus designer f(R): leading scale-mode angles only `0.07813/0.10169 deg`, but time modes differ by about `25.18/25.49 deg` and full physical rays have opposite orientation around `154.82/154.51 deg`.
 3. WDM: essentially blind in the frozen low-k block but strongly visible in the separate small-scale transfer block (`r_T(0.1)=-3.46e-6`, `r_T(10)=-0.10375` for the 3 keV control).
 4. IDE negative-alpha versus beta: Experiment 036 gives a DESI `DH/DM` marginally whitened AP acute angle `9.0379006 deg` (`170.9620994 deg` oriented), while the frozen structure-block angle is `58.9338 deg`.
+5. GDM `cs2/cv2` with frozen `w_gdm=0`: Experiment 037 gives exactly zero saved-solver background/AP response for every audited nonzero closure parameter while the same directions are already known to produce nonzero perturbation responses.
 
-**Interpretation:** model identity is not expected to be carried by one response shape alone; complementary influence channels are required.
+**Interpretation:** model identity is not expected to be carried by one response shape alone; complementary influence channels are required, and some physical directions can lie in the exact null space of an entire channel.
 
-**Revisit if:** a future family-complete observational projection makes these separators disappear, or if solver/systematic audits overturn any hard pairwise result.
+**Revisit if:** a future family-complete observational projection makes these separators disappear, or if solver/systematic audits overturn any hard pairwise/null result.
 
 ## F2 — density-shape compression can erase microphysical distinctions
 
@@ -127,6 +134,8 @@ The repeated hard pattern across GDM, f(R), WDM, and IDE suggests that the usefu
 \theta_{micro}\rightarrow X_{\mu\nu}\rightarrow\{K_1X,K_2X,\ldots\}.
 \]
 
+Experiment 037 sharpens the hypothesis: the trajectory can be **block-sparse**, with an exactly zero coordinate in one channel and a substantial response in another. Thus absence of a geometry response need not indicate proximity to the common physical origin in the full response space.
+
 A stronger future formulation would require showing that the joint observational map consistently restores distinctions that individual blocks lose, under family-prior, covariance, solver-precision, and channel-removal stress tests.
 
 **Falsification tests:**
@@ -135,6 +144,25 @@ A stronger future formulation would require showing that the joint observational
 - discriminant graph becomes unstable under modest solver/covariance perturbations;
 - new families produce unresolved degeneracies across all proposed independent channels;
 - local manifold/rank behavior is dominated by arbitrary family sampling or compression choices.
+
+## F9 — frozen GDM pressure/viscosity directions are exactly background/AP-null but perturbation-active
+
+**Status: HARD ESTABLISHED for the sampled C3 `w_gdm=0` manifold (Experiment 037).**
+
+Experiment 037 reuses the exact immutable GDM_CLASS artifact that generated the frozen C3 manifold. It audits `cs2={1e-8,1e-7,1e-6}` and `cv2={1e-8,1e-7,1e-6,1e-5,1e-4}`, while verifying from each INI that `w_gdm=0` and the other closure direction is zero.
+
+For every audited variant:
+
+- the full saved background redshift grid matches the reference exactly;
+- every saved numerical background column is bitwise equal to the reference table;
+- `max_relative_H=0`;
+- the validated AP operator returns `Delta ln(D_H/D_M)=0` at all five DESI target redshifts.
+
+The pre-frozen hard tolerances were `1e-12` on redshift-grid mismatch, relative `H`, and absolute AP log response, so the zero result is not an artifact of a threshold chosen after inspection. Hard provenance: run `32783243120`, status `PASS_GDM_AP_ZERO_AUDIT_V0_1`, result artifact ID `9540510596`, SHA256 `ba1fa93e348f9685d84a675311c79f9c746574463086710b4a46911d125f4edf`.
+
+**Interpretation:** within this frozen GDM manifold, `cs2/cv2` are pure perturbation-channel directions with respect to the background/AP block. This supplies a hard example of response-space block sparsity and justifies encoding the C3 AP geometry cell as zero rather than as missing.
+
+**Boundary:** this does not apply to arbitrary GDM histories with nonzero/time-dependent `w_gdm`; it does not mean the model is observationally null, because the same directions are strongly nonzero in structure/metric channels.
 
 ## Iteration protocol for this register
 
