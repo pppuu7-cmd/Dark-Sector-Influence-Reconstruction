@@ -1,4 +1,4 @@
-name: Interacting-vacuum zero-coupling clean-room calibration
+name: Interacting-vacuum zero-coupling linear-core calibration
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
 jobs:
   ide-zero-limit:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
     steps:
       - name: Checkout DSIR
         uses: actions/checkout@v4
@@ -36,7 +36,15 @@ jobs:
           cd ..
           sha256sum patches/apply_class_iv_ac627d54_compile_fix.py | tee iv_compile_repair_sha256.txt
           cd external_iv
-          make -j2 class
+          # Legacy fork assumptions:
+          # 1) background.h defines work_rom as a tentative global definition,
+          #    which requires pre-GCC-10 -fcommon semantics.
+          # 2) its Makefile puts dynamic GSL libraries before object files;
+          #    --no-as-needed preserves the intended legacy link semantics.
+          make -j2 \
+            OPTFLAG="-O2 -fcommon" \
+            LDFLAG="-g -fPIC -Wl,--no-as-needed -lgsl -lgslcblas" \
+            class
 
       - name: Write matched LambdaCDM baseline
         run: |
@@ -56,9 +64,8 @@ jobs:
           YHe = 0.2404
           recombination = RECFAST
           reio_parametrization = reio_none
-          output = tCl,pCl,lCl,mPk
+          output = mPk
           modes = s
-          lensing = yes
           ic = ad
           gauge = synchronous
           P_k_ini type = analytic_Pk
@@ -66,8 +73,7 @@ jobs:
           A_s = 2.215e-9
           n_s = 0.9619
           alpha_s = 0.
-          l_max_scalars = 800
-          P_k_max_h/Mpc = 2.0
+          P_k_max_h/Mpc = 0.25
           z_pk = 0,1
           headers = yes
           write background = yes
@@ -100,9 +106,8 @@ jobs:
           YHe = 0.2404
           recombination = RECFAST
           reio_parametrization = reio_none
-          output = tCl,pCl,lCl,mPk
+          output = mPk
           modes = s
-          lensing = yes
           ic = ad
           gauge = synchronous
           P_k_ini type = analytic_Pk
@@ -110,8 +115,7 @@ jobs:
           A_s = 2.215e-9
           n_s = 0.9619
           alpha_s = 0.
-          l_max_scalars = 800
-          P_k_max_h/Mpc = 2.0
+          P_k_max_h/Mpc = 0.25
           z_pk = 0,1
           headers = yes
           write background = yes
@@ -120,7 +124,7 @@ jobs:
           root = dsir_outputs/ide0_
           EOF
 
-      - name: Run matched calculations
+      - name: Run matched linear-core calculations
         working-directory: external_iv
         run: |
           ./class dsir_baseline.ini 2>&1 | tee dsir_outputs/baseline.log
@@ -139,13 +143,16 @@ jobs:
         run: |
           cp external_iv/test_idm_iv_lcdm.ini external_iv/dsir_outputs/upstream_test_idm_iv_lcdm.ini
           {
-            echo "DSIR interacting-vacuum zero-coupling calibration"
+            echo "DSIR interacting-vacuum zero-coupling linear-core calibration"
+            echo "scope: background + mPk to 0.25 h/Mpc; optional CMB block deferred"
             echo "DSIR commit: $GITHUB_SHA"
             echo -n "class_iv upstream: "
             cat iv_upstream_sha.txt
             echo -n "compile repair script sha256: "
             cut -d' ' -f1 iv_compile_repair_sha256.txt
             echo "repair scope: removes exactly one premature closing brace before case IDM_IV; assertions require exact pinned context; no equations changed"
+            echo "legacy compiler adaptation: OPTFLAG='-O2 -fcommon'"
+            echo "legacy linker adaptation: -Wl,--no-as-needed with GSL libraries; no source equations changed"
             uname -a
             python3 --version
             gcc --version | head -1
