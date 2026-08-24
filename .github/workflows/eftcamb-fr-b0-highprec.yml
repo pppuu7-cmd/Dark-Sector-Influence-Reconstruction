@@ -29,13 +29,19 @@ jobs:
           from pathlib import Path
           p=Path('fortran/results.f90')
           s=p.read_text()
-          old="write (unit, '(*(E15.6))') MTrans%TransferData(Transfer_kh,i,1),outpower(i,:)"
-          new="write (unit, '(*(E25.16))') MTrans%TransferData(Transfer_kh,i,1),outpower(i,:)"
-          n=s.count(old)
-          if n != 1:
-              raise SystemExit(f'expected exactly one matter-power format target, found {n}')
-          p.write_text(s.replace(old,new))
-          print('output-only patch:', old, '->', new)
+          targets={
+              "write (unit, '(*(E15.6))') MTrans%TransferData(Transfer_kh,i,1),outpower(i,:)":
+              "write (unit, '(*(E25.16))') MTrans%TransferData(Transfer_kh,i,1),outpower(i,:)",
+              "write (unit, '(*(E15.6))') minkh*exp((i-1)*dlnkh),outpower(i,1)":
+              "write (unit, '(*(E25.16))') minkh*exp((i-1)*dlnkh),outpower(i,1)",
+          }
+          for old,new in targets.items():
+              n=s.count(old)
+              if n != 1:
+                  raise SystemExit(f'expected exactly one target {old!r}, found {n}')
+              s=s.replace(old,new)
+              print('output-only patch:', old, '->', new)
+          p.write_text(s)
           PY
           cd fortran
           make camb
