@@ -1,7 +1,7 @@
 # Experiment 033 — hard-evidence discriminant graph v0.1
 
 Date: 2026-08-24
-Status: GRAPH DEFINED; CI RUN PENDING
+Status: HARD EVIDENCE FROZEN; GRAPH CI REQUESTED
 
 ## Goal
 
@@ -25,24 +25,28 @@ Established separator: `small_scale_transfer`.
 
 ### E2 — GDM sound speed vs viscosity in low-k matter/Weyl amplitude
 
-The low-k matter-power response has angle about `0.3226 deg`; the Weyl-amplitude response remains below `0.4 deg`. After thresholds were frozen, the slip hard rerun passed with
+The low-k matter-power response has angle about `0.3226 deg`; the Weyl-amplitude response remains below `0.4 deg`. Thresholds were frozen before the hard rerun. GitHub Actions run `32774501069` passed with `failures=[]`:
 
 \[
-\theta_{slip}=137.94^\circ\;(10^{-7}),
+\theta_{slip}=137.9432^\circ\;(10^{-7}),
 \]
 
-and combined equalized channel angle `56.96 deg`.
+`r_W` angle `0.3007 deg`, and combined equalized channel angle `56.9632 deg`.
+
+Artifact digest: `sha256:4197b9286e53481164f5a842796199ea94ded202d4e62f6cb232186247291d0e`.
 
 Established separator: `metric_slip`.
 
 ### E3/E4 — GDM vs designer f(R) in the leading scale-shape projection
 
-After thresholds were frozen, the first-comparison hard rerun passed:
+Thresholds were frozen before the hard rerun. GitHub Actions run `32774501126` passed with `failures=[]`:
 
 - GDM cs2 vs f(R) scale angle `0.07813 deg`;
 - GDM cv2 vs f(R) scale angle `0.10169 deg`;
 - time-mode unoriented angles `25.18 deg` and `25.49 deg`;
 - full oriented response angles `154.82 deg` and `154.51 deg`.
+
+Artifact digest: `sha256:3d7e86924030ff946da05297174df3bb2db09cf3c0ce534356270177dfa1f7f0`.
 
 Thus the leading scale shape is nearly degenerate, but time evolution / response sign separates the controls.
 
