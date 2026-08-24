@@ -1,0 +1,159 @@
+{
+  "audit_id": "DSIR-N0-2026-08-24",
+  "status": "pass-provisional-nonduplication-not-global-novelty-proof",
+  "audit_date": "2026-08-24",
+  "axes": {
+    "A": "effective residual/source tensor or equivalent",
+    "B": "theory dictionary/common language",
+    "C": "heterogeneous DM+DE+interaction+MG coverage",
+    "D": "response-to-reference representation",
+    "E": "same-solver quotient plus explicit cross-solver bridge",
+    "F": "covariance-whitened/noise-calibrated latent dimension",
+    "G": "theory-family-prior sensitivity R_model(pi)",
+    "H": "quotient of physical identities and measurement degeneracies",
+    "I": "cross-channel law/invariant discovery",
+    "J": "withheld physical-channel prediction",
+    "K": "background+scalar+tensor/coupling+nonlinear influence atlas"
+  },
+  "prior_art": [
+    {
+      "id": "kunz-dark-degeneracy",
+      "year": 2007,
+      "title": "The dark degeneracy: On the number and nature of dark components",
+      "url": "https://arxiv.org/abs/astro-ph/0702615",
+      "overlap": {"A":"Y","B":"P","C":"P","D":"-","E":"-","F":"-","G":"-","H":"Y","I":"-","J":"-","K":"P"},
+      "threat": "critical-prior-art-for-observable-total-source",
+      "note": "Gravity constrains total stress-energy and does not uniquely decompose DM/DE."
+    },
+    {
+      "id": "hu-sawicki-ppf",
+      "year": 2007,
+      "title": "Parameterized Post-Friedmann Framework for Modified Gravity",
+      "doi": "10.1103/PhysRevD.76.104043",
+      "url": "https://doi.org/10.1103/PhysRevD.76.104043",
+      "overlap": {"A":"Y","B":"Y","C":"P","D":"-","E":"-","F":"-","G":"-","H":"P","I":"-","J":"-","K":"P"},
+      "threat": "critical-prior-art-for-effective-source",
+      "note": "Explicit effective dark-energy stress tensor for modified gravity; formal MG/generalized-DE equivalence."
+    },
+    {
+      "id": "baker-ferreira-skordis-ppf",
+      "year": 2013,
+      "title": "The Parameterized Post-Friedmann Framework for Theories of Modified Gravity: Concepts, Formalism and Examples",
+      "doi": "10.1103/PhysRevD.87.024015",
+      "url": "https://doi.org/10.1103/PhysRevD.87.024015",
+      "overlap": {"A":"P","B":"Y","C":"P","D":"-","E":"-","F":"-","G":"-","H":"P","I":"-","J":"-","K":"Y"},
+      "threat": "high-prior-art-for-theory-dictionary",
+      "note": "Unified MG perturbation dictionary and direct theory-space correspondence."
+    },
+    {
+      "id": "hu-gdm",
+      "year": 1998,
+      "title": "Structure Formation with Generalized Dark Matter",
+      "url": "https://arxiv.org/abs/astro-ph/9801234",
+      "overlap": {"A":"P","B":"Y","C":"P","D":"-","E":"-","F":"-","G":"-","H":"P","I":"-","J":"-","K":"P"},
+      "threat": "high-prior-art-for-dark-fluid-closure",
+      "note": "Stress-tensor language with w, sound speed and viscosity/anisotropic stress."
+    },
+    {
+      "id": "eft-de-review",
+      "year": 2020,
+      "title": "Effective field theory of dark energy: A review",
+      "doi": "10.1016/j.physrep.2020.02.004",
+      "url": "https://doi.org/10.1016/j.physrep.2020.02.004",
+      "overlap": {"A":"P","B":"Y","C":"P","D":"-","E":"-","F":"P","G":"-","H":"P","I":"-","J":"-","K":"Y"},
+      "threat": "critical-prior-art-for-DE-MG-common-language",
+      "note": "Model-independent single-field DE/MG EFT for background and linear perturbations."
+    },
+    {
+      "id": "gleyzes-theory-space",
+      "year": 2017,
+      "title": "Parametrizing modified gravity for cosmological surveys",
+      "url": "https://arxiv.org/abs/1705.04714",
+      "overlap": {"A":"-","B":"Y","C":"-","D":"-","E":"-","F":"P","G":"-","H":"-","I":"-","J":"-","K":"P"},
+      "threat": "medium-high-prior-art-for-theory-space-compression",
+      "note": "Compresses EFT theory space into simple parametrizations while preserving observables."
+    },
+    {
+      "id": "zanoletti-leonard-pca",
+      "year": 2025,
+      "title": "Principal Components for Model-Agnostic Modified Gravity with 3x2pt",
+      "url": "https://arxiv.org/abs/2503.20951",
+      "overlap": {"A":"-","B":"P","C":"-","D":"P","E":"-","F":"Y","G":"-","H":"-","I":"-","J":"-","K":"P"},
+      "threat": "high-prior-art-for-PCA-of-theory-bank",
+      "note": "PCA built from nonlinear features of representative gravity theories."
+    },
+    {
+      "id": "roy-vetterli-effective-rank",
+      "year": 2007,
+      "title": "The Effective Rank: A Measure of Effective Dimensionality",
+      "url": "https://eurasip.org/Proceedings/Eusipco/Eusipco2007/Papers/a5p-h05.pdf",
+      "overlap": {"A":"-","B":"-","C":"-","D":"-","E":"-","F":"Y","G":"-","H":"-","I":"-","J":"-","K":"-"},
+      "threat": "critical-prior-art-for-entropy-rank-formula",
+      "note": "Entropy-based effective rank is established mathematics."
+    },
+    {
+      "id": "cataneo-react",
+      "year": 2019,
+      "title": "On the road to percent accuracy: non-linear reaction of the matter power spectrum to dark energy and modified gravity",
+      "doi": "10.1093/mnras/stz1836",
+      "url": "https://doi.org/10.1093/mnras/stz1836",
+      "overlap": {"A":"-","B":"P","C":"P","D":"Y","E":"P","F":"-","G":"-","H":"-","I":"-","J":"-","K":"P"},
+      "threat": "high-prior-art-for-reference-ratio-methods",
+      "note": "Target/pseudo spectrum reaction ratios relative to a LambdaCDM-like reference."
+    },
+    {
+      "id": "dark-degeneracy-i",
+      "year": 2020,
+      "title": "Dark degeneracy I: Dynamical or interacting dark energy?",
+      "doi": "10.1016/j.dark.2020.100490",
+      "url": "https://doi.org/10.1016/j.dark.2020.100490",
+      "overlap": {"A":"P","B":"P","C":"P","D":"-","E":"-","F":"-","G":"-","H":"Y","I":"-","J":"-","K":"P"},
+      "threat": "high-prior-art-for-equivalence-classes",
+      "note": "Explicit background and perturbation degeneracy conditions for dynamical DE vs interacting vacuum."
+    },
+    {
+      "id": "lcdm-fixed-point-2026",
+      "year": 2026,
+      "title": "LambdaCDM as a fixed point: Controlled dark-sector deformations and late-time structure growth",
+      "doi": "10.1016/j.aop.2026.170466",
+      "url": "https://doi.org/10.1016/j.aop.2026.170466",
+      "overlap": {"A":"P","B":"Y","C":"P","D":"P","E":"-","F":"P","G":"-","H":"P","I":"P","J":"-","K":"P"},
+      "threat": "highest-current-conceptual-competitor",
+      "note": "Organizes controlled dark-sector deformations around a LambdaCDM fixed point and maps them to late-time observables."
+    },
+    {
+      "id": "symbolic-regression-desi-dr2",
+      "year": 2025,
+      "title": "Symbolic regression analysis of dynamical dark energy with DESI-DR2 and SN data",
+      "doi": "10.1016/j.dark.2025.102108",
+      "url": "https://doi.org/10.1016/j.dark.2025.102108",
+      "overlap": {"A":"-","B":"-","C":"-","D":"-","E":"-","F":"-","G":"-","H":"P","I":"Y","J":"P","K":"-"},
+      "threat": "high-prior-art-for-symbolic-regression-in-dark-energy",
+      "note": "PySR reconstruction of w(z) from DESI DR2 and supernova data."
+    },
+    {
+      "id": "symbolic-regression-flrw-2026",
+      "year": 2026,
+      "title": "Model-independent constraints on generalized FLRW consistency relations with bootstrap-based symbolic regression",
+      "url": "https://arxiv.org/abs/2604.05822",
+      "overlap": {"A":"-","B":"-","C":"-","D":"-","E":"-","F":"-","G":"-","H":"Y","I":"Y","J":"P","K":"-"},
+      "threat": "high-prior-art-for-symbolic-consistency-tests",
+      "note": "Symbolic-regression reconstruction used for model-independent FLRW consistency relations."
+    }
+  ],
+  "dsir_target": {"A":"Y","B":"Y","C":"Y","D":"Y","E":"Y","F":"Y","G":"Y","H":"Y","I":"Y","J":"Y","K":"Y"},
+  "provisional_distinctive_combination": ["C","E","F","G","H","I","J"],
+  "prohibited_novelty_claims": [
+    "effective dark-sector stress tensor is new",
+    "dark degeneracy is new",
+    "GDM stress closure is new",
+    "PPF/EFT theory dictionary is new",
+    "PCA/SVD over cosmological theory banks is new",
+    "entropy effective rank is new",
+    "ratio/response to LambdaCDM is new",
+    "model-independent IDE reconstruction is new",
+    "symbolic regression in dark-energy cosmology is new",
+    "LambdaCDM as a dark-sector theory-space fixed point is new"
+  ],
+  "reopen_condition": "Reopen N0 if prior work is found implementing substantially the same heterogeneous response-manifold -> solver quotient/bridge -> whitened prior-sensitive rank -> identity quotient -> cross-channel law -> withheld-channel prediction chain."
+}
