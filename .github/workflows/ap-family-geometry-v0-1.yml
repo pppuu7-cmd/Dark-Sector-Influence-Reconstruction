@@ -10,6 +10,11 @@ on:
       - 'src/dsir/ap_operator.py'
       - 'experiments/036_ap_family_geometry_v0_1.md'
       - 'data/observations/desi_dr1_shapefit_erratum_2026.json'
+      - 'data/derived/observational_whitening/experiment_036_ap_family_geometry_v0_1.json'
+      - 'docs/STATUS.md'
+      - 'docs/RECOVERY_LATEST.md'
+      - 'docs/SCIENTIFIC_FINDINGS_REGISTER.md'
+      - 'docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-25.md'
 
 permissions:
   contents: read
