@@ -8,7 +8,7 @@ on:
       - '.github/workflows/ide-zero-limit.yml'
       - 'ci/ide_calibration_trigger.txt'
       - 'ci/compare_class_outputs.py'
-      - 'patches/class_iv_ac627d54_background_switch_compile_fix.patch'
+      - 'patches/apply_class_iv_ac627d54_compile_fix.py'
 
 jobs:
   ide-zero-limit:
@@ -24,18 +24,17 @@ jobs:
           sudo apt-get install -y build-essential git python3 python3-pip libgsl-dev
           python3 -m pip install --user numpy
 
-      - name: Clone pinned class_iv and apply compile-only patch
+      - name: Clone pinned class_iv and apply assertion-checked compile repair
         run: |
           git clone https://github.com/kaeonikc/class_iv.git external_iv
           cd external_iv
           git checkout ac627d54e9ce196a08878d1ba33999819925d19c
           git rev-parse HEAD | tee ../iv_upstream_sha.txt
-          git apply --check ../patches/class_iv_ac627d54_background_switch_compile_fix.patch
-          git apply ../patches/class_iv_ac627d54_background_switch_compile_fix.patch
+          python3 ../patches/apply_class_iv_ac627d54_compile_fix.py source/background.c
           git diff --check
           git diff -- source/background.c | tee ../iv_applied_compile_fix.diff
           cd ..
-          sha256sum patches/class_iv_ac627d54_background_switch_compile_fix.patch | tee iv_compile_patch_sha256.txt
+          sha256sum patches/apply_class_iv_ac627d54_compile_fix.py | tee iv_compile_repair_sha256.txt
           cd external_iv
           make -j2 class
 
@@ -89,9 +88,9 @@ jobs:
           beta_idm_iv = 0.
           f_idm_iv = 1.
           f_iv = 1.
-          # NOTE: upstream test_idm_iv_lcdm.ini intentionally leaves
-          # fluid_equation_of_state = IDM_IV commented out. This selects the
-          # explicit separate idm_iv/iv component path rather than the effective-fluid path.
+          # Upstream test_idm_iv_lcdm.ini intentionally leaves
+          # fluid_equation_of_state = IDM_IV commented out: use the
+          # explicit separate idm_iv/iv component path.
           Omega_dcdmdr = 0.0
           N_ncdm = 0
           Omega_k = 0.
@@ -144,9 +143,9 @@ jobs:
             echo "DSIR commit: $GITHUB_SHA"
             echo -n "class_iv upstream: "
             cat iv_upstream_sha.txt
-            echo -n "compile patch sha256: "
-            cut -d' ' -f1 iv_compile_patch_sha256.txt
-            echo "patch scope: removes one premature closing brace before case IDM_IV; no equations changed"
+            echo -n "compile repair script sha256: "
+            cut -d' ' -f1 iv_compile_repair_sha256.txt
+            echo "repair scope: removes exactly one premature closing brace before case IDM_IV; assertions require exact pinned context; no equations changed"
             uname -a
             python3 --version
             gcc --version | head -1
@@ -161,7 +160,7 @@ jobs:
             external_iv/dsir_baseline.ini
             external_iv/dsir_ide0.ini
             iv_upstream_sha.txt
-            iv_compile_patch_sha256.txt
+            iv_compile_repair_sha256.txt
             iv_applied_compile_fix.diff
-            patches/class_iv_ac627d54_background_switch_compile_fix.patch
+            patches/apply_class_iv_ac627d54_compile_fix.py
           if-no-files-found: error
