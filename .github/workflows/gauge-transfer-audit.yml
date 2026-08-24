@@ -1,4 +1,4 @@
-name: High-precision comoving-matter gauge audit
+name: Hard comoving-matter gauge regression
 
 on:
   workflow_dispatch:
@@ -31,7 +31,7 @@ jobs:
           git rev-parse HEAD | tee ../gdm_upstream_sha.txt
           make -j2 class
 
-      - name: Write p8 precision
+      - name: Write frozen p8 precision
         run: |
           cat > external_gdm/dsir_precision.pre <<'EOF'
           k_step_sub = 0.0010
@@ -89,37 +89,37 @@ jobs:
           root = dsir_transfer_outputs/sync_
           EOF
 
-      - name: Run p8 transfer calculations
+      - name: Run frozen p8 transfer calculations
         working-directory: external_gdm
         run: |
           ./class newt_transfer.ini dsir_precision.pre 2>&1 | tee dsir_transfer_outputs/newt.log
           ./class sync_transfer.ini dsir_precision.pre 2>&1 | tee dsir_transfer_outputs/sync.log
-          ls -lah dsir_transfer_outputs
 
-      - name: Reconstruct and compare comoving matter density
+      - name: Hard gate comoving matter density
         run: |
           python3 ci/gauge_invariant_matter_audit.py \
             --directory external_gdm/dsir_transfer_outputs \
             --h 0.67 \
-            --json external_gdm/dsir_transfer_outputs/comoving_gauge_audit.json
+            --json external_gdm/dsir_transfer_outputs/comoving_gauge_audit.json \
+            --max-rel 5e-6
 
-      - name: Record provenance
+      - name: Record provenance and frozen tolerance
         run: |
           {
-            echo "DSIR high-precision comoving-matter gauge audit"
-            echo "candidate frozen before this run: Delta_m = delta_m + 3 a H theta_m/k^2 for pressureless matter"
-            echo "candidate sign/coefficient independently inferred from default-precision Newtonian/synchronous transfer transformation"
+            echo "DSIR HARD comoving-matter gauge regression"
+            echo "definition frozen before this run: Delta_m = delta_m + 3 a H theta_m/k^2 for pressureless matter"
+            echo "hard tolerance frozen before this run: Newtonian/synchronous max |Delta_Delta/Delta| <= 5e-6 on 1e-3<=k<=1e-1 h/Mpc"
+            echo "calibration p8 maximum before freezing tolerance: 2.551425316e-6"
             echo "p8 precision is identical to GDM-S1 hard regression"
-            echo "no gauge tolerance imposed yet; this run calibrates the invariant numerical floor"
             echo "DSIR commit: $GITHUB_SHA"
             echo -n "GDM upstream: "
             cat gdm_upstream_sha.txt
           } > external_gdm/dsir_transfer_outputs/environment.txt
 
-      - name: Upload transfer audit artifact
+      - name: Upload hard gauge artifact
         uses: actions/upload-artifact@v4
         with:
-          name: comoving-gauge-audit-${{ github.sha }}
+          name: comoving-gauge-hard-${{ github.sha }}
           path: |
             external_gdm/dsir_transfer_outputs/
             external_gdm/newt_transfer.ini
