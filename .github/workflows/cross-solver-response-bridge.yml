@@ -1,0 +1,188 @@
+name: Cross-solver wCDM response bridge calibration
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/cross-solver-response-bridge.yml'
+      - 'ci/cross_solver_response_bridge.py'
+      - 'patches/apply_class_iv_ac627d54_compile_fix.py'
+      - 'config/response_basis_v0_1_1.json'
+      - 'docs/RESPONSE_BASIS_V0_1_1.md'
+
+jobs:
+  bridge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout DSIR
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip libgsl-dev
+          python3 -m pip install --user numpy
+
+      - name: Build pinned GDM_CLASS
+        run: |
+          git clone https://github.com/s-ilic/gdm_class_public.git gdm_solver
+          cd gdm_solver
+          git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          git rev-parse HEAD | tee ../gdm_upstream_sha.txt
+          make -j2 class
+
+      - name: Build repaired pinned class_iv
+        run: |
+          git clone https://github.com/kaeonikc/class_iv.git ide_solver
+          cd ide_solver
+          git checkout ac627d54e9ce196a08878d1ba33999819925d19c
+          git rev-parse HEAD | tee ../ide_upstream_sha.txt
+          python3 ../patches/apply_class_iv_ac627d54_compile_fix.py source/background.c
+          git diff --check
+          git diff -- source/background.c | tee ../ide_applied_compile_fix.diff
+          make -j2 \
+            OPTFLAG="-O2 -fcommon" \
+            LDFLAG="-g -fPIC -Wl,--no-as-needed -lgsl -lgslcblas" \
+            class
+
+      - name: Write matched p8 precision for GDM lineage
+        run: |
+          cat > gdm_solver/dsir_bridge.pre <<'EOF'
+          k_step_sub = 0.0010
+          k_step_super = 0.000003
+          k_step_super_reduction = 0.1
+          start_small_k_at_tau_c_over_tau_h = 1e-6
+          start_large_k_at_tau_h_over_tau_k = 0.05
+          tight_coupling_trigger_tau_c_over_tau_h = 0.005
+          tight_coupling_trigger_tau_c_over_tau_k = 0.008
+          start_sources_at_tau_c_over_tau_h = 0.006
+          tol_perturb_integration = 3e-10
+          perturb_sampling_stepsize = 0.00035
+          radiation_streaming_approximation = 2
+          radiation_streaming_trigger_tau_over_tau_k = 240.
+          radiation_streaming_trigger_tau_c_over_tau = 100.
+          ur_fluid_approximation = 2
+          ur_fluid_trigger_tau_over_tau_k = 50.
+          EOF
+
+      - name: Write matched LambdaCDM and smooth-wCDM configs
+        run: |
+          mkdir -p gdm_solver/bridge_outputs ide_solver/bridge_outputs
+          for solver in gdm_solver ide_solver; do
+            cat > $solver/lcdm.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          N_ur = 3.046
+          omega_cdm = 0.1200
+          N_ncdm = 0
+          Omega_k = 0.
+          Omega_fld = 0
+          Omega_scf = 0
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          write background = yes
+          write thermodynamics = no
+          write primordial = no
+          root = bridge_outputs/lcdm_
+          EOF
+            cat > $solver/wcdm.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          N_ur = 3.046
+          omega_cdm = 0.1200
+          N_ncdm = 0
+          Omega_k = 0.
+          Omega_Lambda = 0
+          Omega_scf = 0
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          fluid_equation_of_state = CLP
+          use_ppf = no
+          w0_fld = -0.9
+          wa_fld = 0.
+          cs2_fld = 1.
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          write background = yes
+          write thermodynamics = no
+          write primordial = no
+          root = bridge_outputs/wcdm_
+          EOF
+          done
+
+      - name: Run GDM lineage reference and deformation
+        working-directory: gdm_solver
+        run: |
+          ./class lcdm.ini dsir_bridge.pre 2>&1 | tee bridge_outputs/lcdm.log
+          ./class wcdm.ini dsir_bridge.pre 2>&1 | tee bridge_outputs/wcdm.log
+
+      - name: Run class_iv lineage reference and deformation
+        working-directory: ide_solver
+        run: |
+          ./class lcdm.ini 2>&1 | tee bridge_outputs/lcdm.log
+          ./class wcdm.ini 2>&1 | tee bridge_outputs/wcdm.log
+
+      - name: Compare same-solver log responses
+        run: |
+          python3 ci/cross_solver_response_bridge.py \
+            --dir-a gdm_solver/bridge_outputs \
+            --dir-b ide_solver/bridge_outputs \
+            --json cross_solver_bridge.json
+
+      - name: Record provenance
+        run: |
+          {
+            echo "DSIR cross-solver smooth-wCDM response bridge"
+            echo "calibration only: no PASS threshold imposed"
+            echo "definition: r_S=ln(P_wCDM^S/P_LCDM^S); compare r_GDMCLASS-r_classiv"
+            echo "physics: w0=-0.9, wa=0, cs2=1, synchronous gauge, matched primordial parameters"
+            echo "DSIR commit: $GITHUB_SHA"
+            echo -n "GDM_CLASS upstream: "; cat gdm_upstream_sha.txt
+            echo -n "class_iv upstream: "; cat ide_upstream_sha.txt
+          } > bridge_environment.txt
+
+      - name: Upload bridge artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cross-solver-response-bridge-${{ github.sha }}
+          path: |
+            cross_solver_bridge.json
+            bridge_environment.txt
+            gdm_upstream_sha.txt
+            ide_upstream_sha.txt
+            ide_applied_compile_fix.diff
+            gdm_solver/bridge_outputs/
+            ide_solver/bridge_outputs/
+            gdm_solver/lcdm.ini
+            gdm_solver/wcdm.ini
+            ide_solver/lcdm.ini
+            ide_solver/wcdm.ini
+          if-no-files-found: error
