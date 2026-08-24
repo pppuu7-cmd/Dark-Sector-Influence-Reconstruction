@@ -1,4 +1,4 @@
-name: H-EFTCAMB designer-fR high-precision output audit
+name: H-EFTCAMB designer-fR high-precision hard regression
 
 on:
   workflow_dispatch:
@@ -8,6 +8,8 @@ on:
       - '.github/workflows/eftcamb-fr-multiz-highprec.yml'
       - 'ci/eftcamb_fr_multiz.py'
       - 'ci/eftcamb_fr_manifold_summary.py'
+      - 'ci/eftcamb_fr_mgs1_gate.py'
+      - 'experiments/026_eftcamb_fr_multiz_manifold.md'
 
 jobs:
   mgs1_highprec:
@@ -116,7 +118,7 @@ jobs:
           EOF
           done
 
-      - name: Run common-baseline high-precision audit
+      - name: Run fresh common-baseline high-precision regression
         working-directory: eftcamb/fortran
         run: |
           set -euxo pipefail
@@ -126,7 +128,7 @@ jobs:
             ./camb "eftcamb_test/parameters/dsir_mgs1_hp_${tok}.ini" 2>&1 | tee "../../dsir_mgs1_hp_${tok}.log"
           done
 
-      - name: Require stable, error-free designer runs
+      - name: Require stable error-free designer runs
         run: |
           set -euxo pipefail
           for tok in b0 b1em7 b1em6 b1em5 b1em4 b1em3; do
@@ -146,25 +148,38 @@ jobs:
           python3 ci/eftcamb_fr_multiz.py --root eftcamb/fortran --gr-token dsir_mgs1_hp_gr_ --model-token dsir_mgs1_hp_b1em3_ --B0 1e-3 --json mgs1_hp_B0_1e-3.json
           python3 ci/eftcamb_fr_manifold_summary.py --glob 'mgs1_hp_B0_*.json' --json mgs1_hp_manifold_summary.json
 
-      - name: Record precision provenance
+      - name: Hard gate frozen MG-S1 production manifold
+        run: |
+          set -euxo pipefail
+          python3 ci/eftcamb_fr_mgs1_gate.py \
+            --glob 'mgs1_hp_B0_*.json' \
+            --zero-max 2e-6 \
+            --production-min-b0 1e-6 \
+            --production-min-response 1e-4 \
+            --json mgs1_hp_hard_gate.json
+
+      - name: Record hard-regression provenance
         run: |
           {
-            echo 'DSIR MG-S1 high-precision I/O audit'
-            echo 'Physics and common baseline identical to Experiment 026 calibration.'
-            echo 'Only CAMB text writer format changed: E15.6 -> E25.16 before compilation.'
-            echo 'Purpose: distinguish solver response from ASCII-output quantization floor.'
+            echo 'DSIR MG-S1 high-precision HARD regression'
+            echo 'Thresholds were frozen before this fresh run.'
+            echo 'exact-zero max |r_Delta| <= 2e-6 over all 7x5 frozen cells'
+            echo 'production B0 >= 1e-6; each production max response >= 1e-4; maxima strictly increase with B0'
+            echo 'B0=1e-7 is a solver-threshold transition control and is excluded from the production gate'
+            echo 'Physics/common baseline identical to Experiment 026 calibration.'
+            echo 'Text-output formatting only: pinned CAMB E15.6 occurrences are raised to E25.16 before compilation; equations and parameters are unchanged.'
             echo -n 'H-EFTCAMB upstream: '; cat eftcamb_mgs1_hp_upstream_sha.txt
             echo "DSIR commit: $GITHUB_SHA"
           } > mgs1_hp_environment.txt
 
-      - name: Upload high-precision audit artifact
+      - name: Upload hard-regression artifact
         uses: actions/upload-artifact@v4
         with:
-          name: eftcamb-mgs1-highprec-${{ github.sha }}
+          name: eftcamb-mgs1-hard-${{ github.sha }}
           path: |
             mgs1_hp_*.json
-            mgs1_hp_*.log
             dsir_mgs1_hp_*.log
+            mgs1_hp_gr.log
             mgs1_hp_environment.txt
             mgs1_writer_before.txt
             mgs1_writer_after.txt
