@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/gdm-precision-sweep.yml'
       - 'ci/physics_window_metrics.py'
+      - 'ci/gdm_calibration_trigger.txt'
 
 jobs:
   gdm-linear-core-precision:
