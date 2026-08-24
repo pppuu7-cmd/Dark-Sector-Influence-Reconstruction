@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/first-model-comparison.yml'
       - 'ci/first_cross_family_comparison.py'
+      - 'ci/first_model_comparison_hard_discriminants.py'
       - 'data/derived/comparison_readiness/local_response_tangents_v0_1.json'
       - 'experiments/031_first_model_comparison.md'
 
@@ -20,9 +21,16 @@ jobs:
         run: python3 -m pip install --user numpy
       - name: Compare validated local response objects
         run: |
+          set -euxo pipefail
           python3 ci/first_cross_family_comparison.py \
             --input data/derived/comparison_readiness/local_response_tangents_v0_1.json \
             --json first_cross_family_comparison_v0_1.json
+      - name: Enforce frozen conditional-discriminant thresholds
+        run: |
+          set -euxo pipefail
+          python3 ci/first_model_comparison_hard_discriminants.py \
+            --input first_cross_family_comparison_v0_1.json \
+            --json first_model_comparison_hard_discriminants_v0_1.json
       - name: Record comparison scope
         run: |
           {
@@ -30,7 +38,8 @@ jobs:
             echo 'Input snapshot passed corrected comparison-readiness gate.'
             echo 'Scope: raw/unwhitened theory response on the common low-k 7z x 5k block.'
             echo 'C0 is reference origin; C4 WDM is a separate small-scale transfer block.'
-            echo 'This comparison is not a likelihood ranking and not a discovery claim.'
+            echo 'Frozen post-calibration hard tests: GDM cs2/cv2 full angle <=1 deg; GDM/fR scale-mode angle <=1 deg; GDM/fR time-mode unoriented angle >=15 deg; full oriented angle >=120 deg.'
+            echo 'PASS establishes conditional response-space separators only, not observational evidence or discovery.'
             echo "DSIR commit: $GITHUB_SHA"
           } > first_model_comparison_environment.txt
       - name: Upload comparison artifact
@@ -39,6 +48,7 @@ jobs:
           name: first-model-comparison-${{ github.sha }}
           path: |
             first_cross_family_comparison_v0_1.json
+            first_model_comparison_hard_discriminants_v0_1.json
             first_model_comparison_environment.txt
             data/derived/comparison_readiness/local_response_tangents_v0_1.json
           if-no-files-found: error
