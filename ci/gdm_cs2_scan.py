@@ -10,11 +10,22 @@ from __future__ import annotations
 import argparse
 import glob
 import json
+import re
 from pathlib import Path
 
 import numpy as np
 
 CORE_K=np.array([0.001,0.003,0.01,0.03,0.1],float)
+
+
+def header_redshift(path: str) -> float:
+    with open(path) as f:
+        for _ in range(8):
+            line=f.readline()
+            m=re.search(r"redshift\s+z\s*=\s*([+\-0-9.eE]+)",line)
+            if m:
+                return float(m.group(1))
+    raise ValueError(f"could not recover redshift from header: {path}")
 
 
 def load_pk(path: str):
@@ -54,17 +65,26 @@ def main():
     refs=files_for(d,args.reference_prefix)
     out={"definition":"r_Delta ~= ln(P_GDM(cs2)/P_GDM(cs2=0)), same pinned GDM_CLASS+p8",
          "core_k_h_mpc":CORE_K.tolist(),"reference_prefix":args.reference_prefix,"models":[]}
+    z_union=set()
     for spec in args.models:
         cs_s,prefix=spec.split(":",1); cs=float(cs_s)
         fs=files_for(d,prefix); common=sorted(set(refs)&set(fs))
         if not common: raise ValueError(f"no common pk suffixes for {prefix}")
         rec={"cs2":cs,"prefix":prefix,"files":[],"max_abs_r_core":0.0}
         for suffix in common:
+            zr=header_redshift(refs[suffix]); zm=header_redshift(fs[suffix])
+            if abs(zr-zm)>1e-12:
+                raise ValueError(f"redshift mismatch for {suffix}: ref={zr}, model={zm}")
             rr=np.log(core(fs[suffix])/core(refs[suffix]))
-            rec["files"].append({"suffix":suffix,"r_core":rr.tolist(),"max_abs":float(np.max(np.abs(rr)))})
+            rec["files"].append({"suffix":suffix,"z":zr,"r_core":rr.tolist(),"max_abs":float(np.max(np.abs(rr)))})
             rec["max_abs_r_core"]=max(rec["max_abs_r_core"],float(np.max(np.abs(rr))))
+            z_union.add(zr)
+        rec["files"].sort(key=lambda x:x["z"])
         out["models"].append(rec)
     out["models"].sort(key=lambda x:x["cs2"])
+    out["z_nodes"]=sorted(z_union)
+    if any([f["z"] for f in m["files"]]!=out["z_nodes"] for m in out["models"]):
+        raise ValueError("models do not share the same explicit redshift nodes")
     out["status"]="CALIBRATION_ONLY"
     Path(args.json).write_text(json.dumps(out,indent=2)+"\n")
     print(json.dumps(out,indent=2))
