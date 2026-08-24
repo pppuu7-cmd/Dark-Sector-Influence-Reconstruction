@@ -1,4 +1,4 @@
-name: GDM zero-limit linear-core precision tail
+name: GDM zero-limit linear-core hard regression
 
 on:
   workflow_dispatch:
@@ -10,14 +10,9 @@ on:
       - 'ci/gdm_calibration_trigger.txt'
 
 jobs:
-  gdm-linear-core-precision-tail:
+  gdm-linear-core-hard:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        level: [p7, p8]
-
     steps:
       - name: Checkout DSIR
         uses: actions/checkout@v4
@@ -36,25 +31,19 @@ jobs:
           git rev-parse HEAD | tee ../gdm_upstream_sha.txt
           make -j2 class
 
-      - name: Select monotone perturbation precision level
-        env:
-          LEVEL: ${{ matrix.level }}
+      - name: Write frozen p8 precision
         run: |
-          case "$LEVEL" in
-            p7) KSUB=0.0012; KSUPER=0.000005; TOL=1e-9; SAMPLE=0.00050 ;;
-            p8) KSUB=0.0010; KSUPER=0.000003; TOL=3e-10; SAMPLE=0.00035 ;;
-          esac
-          cat > external_gdm/dsir_precision.pre <<EOF
-          k_step_sub = $KSUB
-          k_step_super = $KSUPER
+          cat > external_gdm/dsir_precision.pre <<'EOF'
+          k_step_sub = 0.0010
+          k_step_super = 0.000003
           k_step_super_reduction = 0.1
           start_small_k_at_tau_c_over_tau_h = 1e-6
           start_large_k_at_tau_h_over_tau_k = 0.05
           tight_coupling_trigger_tau_c_over_tau_h = 0.005
           tight_coupling_trigger_tau_c_over_tau_k = 0.008
           start_sources_at_tau_c_over_tau_h = 0.006
-          tol_perturb_integration = $TOL
-          perturb_sampling_stepsize = $SAMPLE
+          tol_perturb_integration = 3e-10
+          perturb_sampling_stepsize = 0.00035
           radiation_streaming_approximation = 2
           radiation_streaming_trigger_tau_over_tau_k = 240.
           radiation_streaming_trigger_tau_c_over_tau = 100.
@@ -107,29 +96,29 @@ jobs:
           root = dsir_precision_outputs/gdm0_
           EOF
 
-      - name: Run matched linear-core calculations
+      - name: Run matched p8 calculations
         working-directory: external_gdm
         run: |
           ./class dsir_baseline.ini dsir_precision.pre 2>&1 | tee dsir_precision_outputs/baseline.log
           ./class dsir_gdm0.ini dsir_precision.pre 2>&1 | tee dsir_precision_outputs/gdm0.log
 
-      - name: Compute scale-aware and frozen-node P(k) metrics
+      - name: Hard gate frozen linear core
         run: |
           python3 ci/physics_window_metrics.py \
             --directory external_gdm/dsir_precision_outputs \
             --root-a baseline_ \
             --root-b gdm0_ \
-            --json external_gdm/dsir_precision_outputs/physics_windows.json
+            --json external_gdm/dsir_precision_outputs/physics_windows.json \
+            --max-core-rel 5e-6
 
-      - name: Record provenance
-        env:
-          LEVEL: ${{ matrix.level }}
+      - name: Record provenance and frozen tolerance
         run: |
           {
-            echo "DSIR GDM zero-limit linear-core precision tail"
-            echo "precision level: $LEVEL"
-            echo "scope: background + linear P(k), k_max=0.25 h/Mpc; CMB calibrated separately"
-            echo "frozen core nodes: 0.001,0.003,0.01,0.03,0.1 h/Mpc"
+            echo "DSIR GDM zero-limit HARD linear-core regression"
+            echo "p8 precision frozen before this run"
+            echo "hard tolerance frozen before this run: max |Delta P/P| <= 5e-6 on 1e-3<=k<=1e-1 h/Mpc"
+            echo "calibration basis: p6,p7,p8 core maxima approximately 4.70e-6,2.96e-6,1.47e-6"
+            echo "CMB/high-precision and finite-start evidence are tracked in separate workflows"
             echo "DSIR commit: $GITHUB_SHA"
             echo -n "GDM upstream: "
             cat gdm_upstream_sha.txt
@@ -138,14 +127,15 @@ jobs:
             gcc --version | head -1
           } > external_gdm/dsir_precision_outputs/environment.txt
 
-      - name: Upload precision-level artifact
+      - name: Upload hard-regression artifact
         uses: actions/upload-artifact@v4
         with:
-          name: gdm-linear-core-${{ matrix.level }}-${{ github.sha }}
+          name: gdm-linear-core-hard-${{ github.sha }}
           path: |
             external_gdm/dsir_precision_outputs/
             external_gdm/dsir_baseline.ini
             external_gdm/dsir_gdm0.ini
             external_gdm/dsir_precision.pre
             gdm_upstream_sha.txt
+            ci/physics_window_metrics.py
           if-no-files-found: error
