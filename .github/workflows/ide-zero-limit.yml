@@ -8,6 +8,7 @@ on:
       - '.github/workflows/ide-zero-limit.yml'
       - 'ci/ide_calibration_trigger.txt'
       - 'ci/compare_class_outputs.py'
+      - 'patches/class_iv_ac627d54_background_switch_compile_fix.patch'
 
 jobs:
   ide-zero-limit:
@@ -23,12 +24,19 @@ jobs:
           sudo apt-get install -y build-essential git python3 python3-pip libgsl-dev
           python3 -m pip install --user numpy
 
-      - name: Clone and build pinned class_iv
+      - name: Clone pinned class_iv and apply compile-only patch
         run: |
           git clone https://github.com/kaeonikc/class_iv.git external_iv
           cd external_iv
           git checkout ac627d54e9ce196a08878d1ba33999819925d19c
           git rev-parse HEAD | tee ../iv_upstream_sha.txt
+          git apply --check ../patches/class_iv_ac627d54_background_switch_compile_fix.patch
+          git apply ../patches/class_iv_ac627d54_background_switch_compile_fix.patch
+          git diff --check
+          git diff -- source/background.c | tee ../iv_applied_compile_fix.diff
+          cd ..
+          sha256sum patches/class_iv_ac627d54_background_switch_compile_fix.patch | tee iv_compile_patch_sha256.txt
+          cd external_iv
           make -j2 class
 
       - name: Write matched LambdaCDM baseline
@@ -136,6 +144,9 @@ jobs:
             echo "DSIR commit: $GITHUB_SHA"
             echo -n "class_iv upstream: "
             cat iv_upstream_sha.txt
+            echo -n "compile patch sha256: "
+            cut -d' ' -f1 iv_compile_patch_sha256.txt
+            echo "patch scope: removes one premature closing brace before case IDM_IV; no equations changed"
             uname -a
             python3 --version
             gcc --version | head -1
@@ -150,4 +161,7 @@ jobs:
             external_iv/dsir_baseline.ini
             external_iv/dsir_ide0.ini
             iv_upstream_sha.txt
+            iv_compile_patch_sha256.txt
+            iv_applied_compile_fix.diff
+            patches/class_iv_ac627d54_background_switch_compile_fix.patch
           if-no-files-found: error
