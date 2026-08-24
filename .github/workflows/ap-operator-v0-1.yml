@@ -10,6 +10,10 @@ on:
       - 'src/dsir/ap_operator.py'
       - 'tests/test_ap_operator.py'
       - 'experiments/035_ap_operator_v0_1.md'
+      - 'data/derived/observational_whitening/experiment_035_ap_operator_v0_1.json'
+      - 'docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-24.md'
+      - 'docs/STATUS.md'
+      - 'docs/RECOVERY_LATEST.md'
 
 jobs:
   ap-operator:
