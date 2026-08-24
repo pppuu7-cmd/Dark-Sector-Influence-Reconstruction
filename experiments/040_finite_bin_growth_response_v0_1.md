@@ -1,7 +1,7 @@
 # Experiment 040 — finite-bin structure-growth response v0.1
 
 **Date:** 2026-08-25  
-**Status:** protocol frozen; hard run pending  
+**Status:** **HARD PASS — `PASS_FINITE_BIN_GROWTH_RESPONSE_V0_1`**  
 **Scope:** theory-response temporal operator on the frozen low-k atlas
 
 ## Motivation
@@ -36,23 +36,72 @@ The frozen seven-node grid gives six adjacent time intervals and five k nodes, h
 
 ## Why finite bins instead of a numerical derivative
 
-A preliminary derivative diagnostic suggested that GDM versus f(R) separation grows substantially when temporal evolution is retained. Experiment 040 deliberately replaces that interpolation-dependent derivative with an exact finite-bin operator on the already frozen response nodes. No new solver interpolation or smoothing scale enters.
+A preliminary derivative diagnostic suggested that temporal evolution can materially alter cross-family geometry. Experiment 040 replaces that interpolation-dependent derivative with an exact finite-bin operator on the already frozen response nodes. No new solver interpolation or smoothing scale enters.
 
 ## Hard controls frozen before pairwise interpretation
 
 The hard gate tests only algebraic/operator properties, not scientifically interesting angles:
 
-1. endpoint reconstruction:
-   \[
-   2\sum_i \Delta\bar f_{P,i}\,\Delta\ln a_i
-   =r_\Delta(z_{lowest})-r_\Delta(z_{highest})
-   \]
-   for every k, with maximum absolute error `<=1e-12`;
-2. a response constant in redshift is annihilated, maximum absolute output `<=1e-14`;
-3. linearity `K(x+y)=Kx+Ky`, maximum absolute residual `<=1e-12`;
-4. every admitted frozen direction produces finite nonzero output.
+1. endpoint reconstruction tolerance `<=1e-12`;
+2. constant-in-redshift response annihilation `<=1e-14`;
+3. linearity residual `<=1e-12`;
+4. every admitted frozen direction finite and nonzero.
 
-**No pairwise angular threshold is defined.** Pairwise angles are descriptive outputs computed only after the operator controls are frozen.
+**No pairwise angular threshold is defined.** Pairwise angles are descriptive outputs computed only after the operator controls were frozen.
+
+Successful hard run `32785987735` produced:
+
+- endpoint reconstruction max absolute error `1.1102230246251565e-16`;
+- constant-mode residual `0`;
+- linearity residual `9.769962616701378e-15`;
+- failures `[]`.
+
+Hard result artifact:
+
+- artifact ID `9541462864`;
+- SHA256 `0457823510fead4ff56e8e29843e39de47805f8fbfda86f4d9d33585be556ac9`;
+- frozen summary `data/derived/comparison_readiness/experiment_040_finite_bin_growth_response_v0_1.json`.
+
+## Hard comparison findings
+
+### IDE alpha/beta: temporal structure partially restores information lost by AP
+
+For the C2 physical directions:
+
+- corrected-DESI AP acute angle from Experiment 036: `9.0379006 deg`;
+- Experiment 040 finite-bin growth acute angle: `29.3978236 deg`;
+- full frozen structure acute angle: `58.9337977 deg`.
+
+Thus the temporal structure block restores a substantial fraction of the mechanism separation erased by AP, but not all of the full `(k,z)` structure information.
+
+### Smooth-w versus IDE alpha: a new channel-dependent reversal
+
+Smooth-w versus the physical IDE negative-alpha ray gives:
+
+- AP acute angle: `72.8034931 deg`;
+- full frozen structure acute angle: `52.1942934 deg`;
+- finite-bin growth acute angle: only `10.3105847 deg`.
+
+Therefore the same two directions that are well separated by geometry become nearly degenerate after the finite-bin temporal-growth operator. This is an especially clean example that degeneracy belongs to `(physical direction, observation/response operator)`, not to a model pair alone.
+
+Smooth-w versus IDE beta shows the same tendency more moderately: raw structure `80.5208665 deg`, finite-bin growth `26.8292000 deg`; AP from Experiment 036 was `64.1510936 deg`.
+
+### GDM pressure versus viscosity: time evolution helps only weakly
+
+GDM `cs2/cv2` changes from raw low-k structure angle `0.3226164 deg` to finite-bin growth `1.3340128 deg`. Time evolution increases the angle by roughly a factor four but leaves the two directions strongly collinear. It therefore does **not** replace metric slip as the established separator.
+
+### GDM versus designer f(R): temporal information separates scale-shape lookalikes
+
+The previously established leading **scale-only** modes differ by only about `0.078-0.102 deg`. Experiment 040 finite-bin growth gives:
+
+- GDM `cs2` versus f(R): `16.0522115 deg` acute (`163.9477885 deg` oriented);
+- GDM `cv2` versus f(R): `17.2842773 deg` acute (`162.7157227 deg` oriented).
+
+The full raw `(k,z)` structure angles are still larger, about `25.18-25.49 deg` acute. Therefore finite-bin growth isolates a real temporal separator relative to scale-only compression, while confirming that retaining the complete structure history is more informative than growth-only compression.
+
+### IDE alpha versus GDM: temporal operator increases separation
+
+IDE negative-alpha versus GDM changes from about `24.8-24.9 deg` acute in full raw structure direction geometry to about `60.9 deg` in finite-bin growth. This identifies another pair for which time evolution is a particularly informative coordinate.
 
 ## Input
 
@@ -62,20 +111,11 @@ Use exactly
 
 This keeps the same source directions and solver provenance used by the first block-aware family comparison. The C5 vector is the minimum resolved `B0=1e-6` production ray, not falsely relabeled as a `B0->0` derivative; angular comparisons are invariant under positive rescaling, but amplitude comparisons across heterogeneous parameter units remain forbidden.
 
-## Comparisons of highest interest
-
-The hard run will report both raw-structure and finite-bin-growth angles for every available pair. In interpretation, prioritize:
-
-- C3 GDM `cs2` versus `cv2`: does time evolution break their density-shape degeneracy?
-- C3 GDM versus C5 designer f(R): does temporal evolution separate scale-shape lookalikes?
-- C2 IDE negative-alpha versus beta: does temporal structure restore information lost in AP geometry?
-- C1 smooth-w versus the scale-dependent families.
-
 ## Relation to Experiment 039
 
 Experiment 039 defines the stricter ShapeFit/RSD representability contract, including the sound-horizon-rescaled `sigma_s8` convention and a density/velocity representability defect. Experiment 040 does **not** bypass that requirement.
 
-Instead it answers a prior question: whether time evolution of the validated total-matter structure response contains useful discrimination worth carrying into the more expensive tracer/window-aware RSD layer.
+Instead it establishes which temporal features are valuable enough to preserve when constructing the more expensive tracer/window-aware RSD layer.
 
 ## Claim boundary
 
