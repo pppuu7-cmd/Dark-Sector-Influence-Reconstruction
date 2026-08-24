@@ -1,0 +1,53 @@
+schema_version: 0.2
+purpose: "One frozen theory/parameter/solver realization in the DSIR response atlas"
+instance:
+  id: required
+  family: required
+  family_role: required  # baseline | control | manifold_sample
+  parameters: {}
+  theory_references: []
+  assumptions: []
+solver:
+  name: required
+  repository: required
+  commit: required
+  submodule_commits: {}
+  patches: []
+  gauge: required
+  precision_profile: required
+  build_environment: required
+reference_quotient:
+  reference_instance_id: required
+  same_solver_required: true
+  matched_parameters: []
+  allowed_differences: []
+response_basis:
+  id: dsir-response-v0.1.1
+  z_nodes: [0.295, 0.51, 0.706, 0.934, 1.317, 1.491, 2.33]
+  k_linear_h_mpc: [0.001, 0.003, 0.01, 0.03, 0.1]
+responses:
+  relative_expansion:
+    values: null
+    valid: null
+    units: dimensionless
+  comoving_matter_power:
+    values: null
+    valid: null
+    units: dimensionless_log_response
+  optional_channels: {}
+validity:
+  stability_conditions: []
+  excluded_domains: []
+  missing_reason_codes: {}
+  observational_viability: "not_assessed"
+  solver_zero_limit_gate: required
+  common_basis_gate: required
+sampling_prior:
+  family_prior_label: required
+  within_family_coordinate: required
+  within_family_weight: required
+provenance:
+  generated_by: required
+  generated_at_utc: required
+  artifact_sha256: required
+  notes: []
