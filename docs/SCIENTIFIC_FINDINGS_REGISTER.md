@@ -29,6 +29,7 @@ Current hard examples:
 1. GDM `cs2` versus `cv2`: low-k matter-power angle `0.322616 deg`; DESI `m+n` proxy after marginal covariance weighting `0.189582 deg`, while metric slip gives `137.943212 deg` oriented and an equalized two-block angle `56.963212 deg`.
 2. GDM versus designer f(R): leading scale-mode angles only `0.07813/0.10169 deg`, but time modes differ by about `25.18/25.49 deg` and full physical rays have opposite orientation around `154.82/154.51 deg`.
 3. WDM: essentially blind in the frozen low-k block but strongly visible in the separate small-scale transfer block (`r_T(0.1)=-3.46e-6`, `r_T(10)=-0.10375` for the 3 keV control).
+4. IDE negative-alpha versus beta: Experiment 036 gives a DESI `DH/DM` marginally whitened AP acute angle `9.0379006 deg` (`170.9620994 deg` oriented), while the frozen structure-block angle is `58.9338 deg`.
 
 **Interpretation:** model identity is not expected to be carried by one response shape alone; complementary influence channels are required.
 
@@ -82,17 +83,25 @@ Hard numerical bridge errors are at the `1e-14` level.
 
 **Production requirement discovered:** AP depends on the full history from `z=0`; the seven-node structure atlas beginning at `z=0.295` must never be extrapolated to zero for production AP work.
 
-## F6 — IDE interaction directions appear nearly degenerate in AP geometry while being separated in structure
+## F6 — IDE interaction directions are nearly degenerate in AP geometry while being separated in structure
 
-**Status: PRELIMINARY pending Experiment 036 hard CI.**
+**Status: HARD ESTABLISHED for the C2 local directions in Experiment 036.**
 
-Using the exact frozen C1/C2 full-background artifacts and the validated AP operator, the current extraction gives for IDE negative-alpha versus beta an approximately antiparallel AP response with DESI `DH/DM` marginally whitened acute angle near `9.04 deg`, while their frozen structure-block angle is about `58.93 deg`.
+Experiment 036 uses the exact frozen full-background artifacts that generated the C1/C2 response atlas and maps them through the hard-validated Experiment 035 AP operator. The corrected DESI DR1 ShapeFit `DH/DM` marginal block gives:
 
-Other preliminary AP angles are smooth-w versus IDE negative-alpha near `72.80 deg` acute, and smooth-w versus IDE beta near `64.15 deg`.
+- IDE negative-alpha versus beta: `170.9620994 deg` oriented, `9.0379006 deg` acute;
+- smooth-w versus IDE negative-alpha: `72.8034931 deg` acute;
+- smooth-w versus IDE beta: `64.1510936 deg` acute.
 
-**Interpretation if hard-confirmed:** background geometry alone cannot identify the IDE interaction mechanism; growth/structure provides complementary information. This would be another independent example of F1.
+The frozen IDE alpha/beta structure-block angle remains `58.9338 deg`.
 
-**Do not promote until:** Experiment 036 hard run passes with the pre-frozen convergence thresholds and exact pinned input histories.
+Finite-difference convergence at the production `1e-4` tangents passes the pre-frozen `0.5%` relative-L2 ceiling by wide margins: smooth-w `0.00155634`, IDE alpha `0.000138819`, IDE beta `2.26e-7` when compared with `1e-3` steps.
+
+Hard provenance: run `32782545098`, status `PASS_AP_FAMILY_GEOMETRY_V0_1`, artifact ID `9540273287`, artifact SHA256 `553faa2ef7ddbc44e25ddd6faca237d0be7fc265b9c23cfafb2a32570534d126`.
+
+**Interpretation:** background AP geometry alone cannot identify which of these two IDE interaction directions generated the response; structure/growth information is complementary and cannot be replaced by AP alone.
+
+**Boundary:** this is a local tangent/cone statement for the current C2 realization, not a universal theorem about all interacting-dark-sector models, and it is not a parameter-significance or full-likelihood statement.
 
 ## F7 — current hard discriminator graph requires complementary channel types
 
@@ -112,7 +121,7 @@ Experiment 033 gives the unique minimum hitting set
 
 **Status: SUPPORTED HYPOTHESIS, not a law.**
 
-The repeated pattern across GDM, f(R), WDM, and preliminarily IDE suggests that the useful model identifier is not a single response function but the trajectory of the residual source through several observation operators:
+The repeated hard pattern across GDM, f(R), WDM, and IDE suggests that the useful model identifier is not a single response function but the trajectory of the residual source through several observation operators:
 
 \[
 \theta_{micro}\rightarrow X_{\mu\nu}\rightarrow\{K_1X,K_2X,\ldots\}.
