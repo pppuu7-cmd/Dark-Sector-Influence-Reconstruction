@@ -2,8 +2,9 @@
 """Scale-aware comparison metrics for CLASS-family calibration runs.
 
 This script is deliberately diagnostic: it reports numerical differences in
-physically meaningful k/ell windows and does NOT decide PASS/FAIL. Scientific
-tolerances must be frozen only after a convergence study.
+physically meaningful k/ell windows and at the frozen DSIR v0.1 linear-core
+nodes. It does NOT decide PASS/FAIL. Scientific tolerances must be frozen only
+after a convergence study.
 """
 from __future__ import annotations
 
@@ -16,6 +17,7 @@ from pathlib import Path
 import numpy as np
 
 K_THRESHOLDS = (1e-4, 1e-3, 1e-2, 3e-2, 5e-2, 1e-1, 2e-1, 5e-1, 1.0)
+K_FROZEN_CORE = (1e-3, 3e-3, 1e-2, 3e-2, 1e-1)
 ELL_MINS = (2, 30, 50, 100)
 
 
@@ -38,6 +40,12 @@ def rel_stats(x: np.ndarray) -> dict[str, float]:
     }
 
 
+def log_interp_positive(k: np.ndarray, p: np.ndarray, nodes: np.ndarray) -> np.ndarray:
+    if np.any(k <= 0) or np.any(p <= 0):
+        raise ValueError("frozen-node log interpolation requires positive k and P(k)")
+    return np.exp(np.interp(np.log(nodes), np.log(k), np.log(p)))
+
+
 def compare_pk(path_a: str, path_b: str) -> dict:
     a = load_numeric(path_a)
     b = load_numeric(path_b)
@@ -47,9 +55,9 @@ def compare_pk(path_a: str, path_b: str) -> dict:
     # by tiny amounts. Only evaluate the common k support.
     common = (ka >= kb.min()) & (ka <= kb.max()) & np.isfinite(pa) & (pa != 0)
     k = ka[common]
-    pa = pa[common]
+    pa_common = pa[common]
     pb_i = np.interp(k, kb, pb)
-    rel = np.abs(pb_i / pa - 1.0)
+    rel = np.abs(pb_i / pa_common - 1.0)
     windows = {}
     for kmin in K_THRESHOLDS:
         m = k >= kmin
@@ -58,11 +66,24 @@ def compare_pk(path_a: str, path_b: str) -> dict:
             idx = np.argmax(rel[m])
             s["k_at_max"] = float(k[m][idx])
             windows[f"k_ge_{kmin:g}"] = s
+
+    node_values = {}
+    nodes = np.asarray([x for x in K_FROZEN_CORE if x >= max(ka.min(), kb.min()) and x <= min(ka.max(), kb.max())])
+    if nodes.size:
+        pa_nodes = log_interp_positive(ka, pa, nodes)
+        pb_nodes = log_interp_positive(kb, pb, nodes)
+        for kval, aval, bval in zip(nodes, pa_nodes, pb_nodes):
+            node_values[f"k_{kval:g}"] = {
+                "k_h_mpc": float(kval),
+                "abs_relative": float(abs(bval / aval - 1.0)),
+            }
+
     return {
         "k_min_common": float(k.min()),
         "k_max_common": float(k.max()),
         "overall": rel_stats(rel),
         "windows": windows,
+        "frozen_core_nodes": node_values,
     }
 
 
@@ -108,6 +129,7 @@ def main() -> None:
     directory = Path(args.directory)
     out: dict[str, object] = {
         "note": "Diagnostic only; no PASS/FAIL threshold encoded.",
+        "frozen_core_k_h_mpc": list(K_FROZEN_CORE),
         "pk": {},
         "cl": {},
     }
