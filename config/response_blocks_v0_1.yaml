@@ -1,0 +1,26 @@
+schema_version: 0.1
+blocks:
+  cosmological_linear_core:
+    kind: comoving_matter_power_response
+    basis: response_basis_v0_1_1
+    k_h_mpc: [0.001, 0.003, 0.01, 0.03, 0.1]
+    validity_rule: model-specific solver/domain mask required
+    role: common low-k response block
+
+  small_scale_linear_transfer:
+    kind: linear_transfer_log_power_ratio
+    symbol: r_T
+    definition: "ln(P_model/P_ref)=2 ln(T_model/T_ref)"
+    k_h_mpc: [0.1, 0.3, 1.0, 3.0, 10.0, 20.0]
+    role: discriminant block for cutoff/pressure/free-streaming physics
+    interpretation: linear transfer fingerprint, not nonlinear z=0 matter power
+    required_metadata:
+      - transfer_model_or_solver
+      - reference_model
+      - validity_domain
+      - baryonic_modeling_status
+      - nonlinear_mapping_status
+    forbidden_interpretations:
+      - direct nonlinear z=0 P(k)
+      - Ly-alpha likelihood without dedicated forward model
+      - zero imputation for families lacking a valid high-k prediction
