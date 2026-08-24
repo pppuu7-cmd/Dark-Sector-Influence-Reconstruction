@@ -16,12 +16,14 @@ sys.path.insert(0, str(ROOT / "src"))
 from dsir.ap_operator import dh_over_dm_log_response, interpolate_log_response
 
 TARGET_Z = np.array([0.51, 0.71, 0.92, 1.32, 1.49], dtype=float)
+PREFIX = "dsir_mgs1_hp_"
 PINNED_UPSTREAM = "EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904"
 SOURCE_CONFIG_ARTIFACT = {
     "run_id": 32759477319,
     "artifact_id": 9532245261,
     "artifact_name": "eftcamb-mgs1-hard-92350bb5087d17c874626c75b96779ae264dd1f6",
     "digest": "sha256:9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635",
+    "config_lineage": "dsir_mgs1_hp_*",
 }
 
 MODELS = [
@@ -65,15 +67,7 @@ def interp_log(z: np.ndarray, y: np.ndarray, grid: np.ndarray) -> np.ndarray:
     return np.exp(np.interp(grid, z, np.log(y)))
 
 
-def audit_one(
-    ref_table: np.ndarray,
-    ref_z: np.ndarray,
-    ref_h: np.ndarray,
-    ref_dm: np.ndarray,
-    model_path: Path,
-    ini_path: Path,
-    expected_b0: float,
-) -> dict:
+def audit_one(ref_table, ref_z, ref_h, ref_dm, model_path: Path, ini_path: Path, expected_b0: float) -> dict:
     tab, z, h, dm = load_background(model_path)
     if tab.shape != ref_table.shape:
         raise ValueError(f"background shape mismatch {model_path}: {tab.shape} vs {ref_table.shape}")
@@ -94,7 +88,6 @@ def audit_one(
     z_mismatch = float(np.max(np.abs(z - ref_z)))
     max_abs_h = float(np.max(np.abs(h - ref_h)))
     max_rel_h = float(np.max(np.abs((h - ref_h) / ref_h)))
-
     dm_mask = np.abs(ref_dm) > 1e-12
     max_abs_dm = float(np.max(np.abs(dm - ref_dm)))
     max_rel_dm = float(np.max(np.abs((dm[dm_mask] - ref_dm[dm_mask]) / ref_dm[dm_mask])))
@@ -102,8 +95,7 @@ def audit_one(
     grid = np.linspace(0.0, 2.33, 30001)
     href = interp_log(ref_z, ref_h, grid)
     hmod = interp_log(z, h, grid)
-    loge = np.log(hmod / href)
-    dhlog_full = dh_over_dm_log_response(grid, href, loge)
+    dhlog_full = dh_over_dm_log_response(grid, href, np.log(hmod / href))
     dhlog = interpolate_log_response(grid, dhlog_full, TARGET_Z)
 
     return {
@@ -129,32 +121,25 @@ def main() -> None:
     p.add_argument("--parameter-root", required=True)
     p.add_argument("--json", required=True)
     args = p.parse_args()
+    bgroot, parroot = Path(args.background_root), Path(args.parameter_root)
 
-    bgroot = Path(args.background_root)
-    parroot = Path(args.parameter_root)
-
-    ref_path = bgroot / "dsir_mgs1_gr_background.dat"
-    gr_ini = parroot / "dsir_mgs1_gr.ini"
+    ref_path = bgroot / f"{PREFIX}gr_background.dat"
+    gr_ini = parroot / f"{PREFIX}gr.ini"
     ref_table, ref_z, ref_h, ref_dm = load_background(ref_path)
     gr_contract = bool(read_ini_value(gr_ini, "EFTflag") == 0.0)
 
-    rows = []
-    for token, b0 in MODELS:
-        rows.append(
-            audit_one(
-                ref_table,
-                ref_z,
-                ref_h,
-                ref_dm,
-                bgroot / f"dsir_mgs1_{token}_background.dat",
-                parroot / f"dsir_mgs1_{token}.ini",
-                b0,
-            )
+    rows = [
+        audit_one(
+            ref_table, ref_z, ref_h, ref_dm,
+            bgroot / f"{PREFIX}{token}_background.dat",
+            parroot / f"{PREFIX}{token}.ini",
+            b0,
         )
+        for token, b0 in MODELS
+    ]
 
-    # Frozen before the first hard CI execution. H-EFTCAMB writes background.dat
-    # with ES20.10 precision; 1e-8 is deliberately looser than output rounding
-    # while still making a material AP/background deformation impossible to hide.
+    # Frozen before first scientific CI output. background.dat uses ES20.10;
+    # 1e-8 remains safely above text rounding while excluding material geometry drift.
     thresholds = {
         "z_grid_max_abs": 1e-10,
         "max_relative_H": 1e-8,
@@ -162,28 +147,22 @@ def main() -> None:
         "max_abs_log_DH_over_DM": 1e-8,
         "config_contract_required": True,
     }
-
     failures = []
     if not gr_contract:
         failures.append("gr_config_contract")
     for rec in rows:
         tag = f"B0_{rec['B0']:.0e}"
-        if not rec["config_contract_ok"]:
-            failures.append(tag + "_config")
-        if rec["z_grid_max_abs"] > thresholds["z_grid_max_abs"]:
-            failures.append(tag + "_z_grid")
-        if rec["max_relative_H"] > thresholds["max_relative_H"]:
-            failures.append(tag + "_H")
-        if rec["max_relative_DM_nonzero_rows"] > thresholds["max_relative_DM_nonzero_rows"]:
-            failures.append(tag + "_DM")
-        if rec["max_abs_log_DH_over_DM"] > thresholds["max_abs_log_DH_over_DM"]:
-            failures.append(tag + "_AP")
+        if not rec["config_contract_ok"]: failures.append(tag + "_config")
+        if rec["z_grid_max_abs"] > thresholds["z_grid_max_abs"]: failures.append(tag + "_z_grid")
+        if rec["max_relative_H"] > thresholds["max_relative_H"]: failures.append(tag + "_H")
+        if rec["max_relative_DM_nonzero_rows"] > thresholds["max_relative_DM_nonzero_rows"]: failures.append(tag + "_DM")
+        if rec["max_abs_log_DH_over_DM"] > thresholds["max_abs_log_DH_over_DM"]: failures.append(tag + "_AP")
 
     out = {
         "schema": "dsir.observational_whitening.eftcamb_fr_ap_zero_audit.v0.1",
         "status": "PASS_EFTCAMB_FR_AP_ZERO_AUDIT_V0_1" if not failures else "FAIL_EFTCAMB_FR_AP_ZERO_AUDIT_V0_1",
         "failures": failures,
-        "scope": "same-solver numerical background/AP audit of the frozen C5 designer-f(R) B0 manifold with EFTwDE=0",
+        "scope": "same-solver numerical background/AP audit of the frozen high-precision C5 designer-f(R) B0 manifold with EFTwDE=0",
         "not_a_claim": [
             "not a theorem for arbitrary modified-gravity backgrounds",
             "not a test that f(R) perturbation responses vanish",
@@ -204,9 +183,8 @@ def main() -> None:
             "all_config_contracts_ok": all(r["config_contract_ok"] for r in rows),
             "all_numeric_background_tables_exact": all(r["all_numeric_background_columns_exact"] for r in rows),
         },
-        "key_result": "If PASS, the frozen designer-f(R) EFTwDE=0 B0 direction is validated as background/AP-null relative to its same-solver GR baseline over the production B0 grid.",
+        "key_result": "If PASS, the frozen high-precision designer-f(R) EFTwDE=0 B0 direction is validated as background/AP-null relative to its same-solver GR baseline over the production B0 grid.",
     }
-
     Path(args.json).write_text(json.dumps(out, indent=2) + "\n")
     print(json.dumps(out, indent=2))
     if failures:
