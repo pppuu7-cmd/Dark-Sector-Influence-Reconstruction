@@ -85,3 +85,16 @@ DSIR remains a reconstruction/meta-inference framework, not a fundamental theory
 
 ❌ **G8 remains OPEN**: no withheld-family/model prediction sufficient for discovery/universal-model construction has been completed. Exp049B is withheld within one validated control family, not a withheld dark-sector family.
 
+<!-- EXP049A_F22_SYNC_2026-08-26 -->
+## Exp049A / F22 status — 2026-08-26
+
+🟢 Source-native physical-scale extraction PASS: run `32904376001`, artifact `9584346604`.
+
+🟢 Exact designer-f(R) diagnostic controls pass; max terminal `B0` relative error `8.75255e-9 < 1e-6`.
+
+🟢 GDM Exp049B/F21 supplies independent withheld confirmation that `k_I^geo` migrates downward after the dynamic-shear proxy enters the low-k window.
+
+🟡 Designer-f(R) shows the same window-entry/localization ordering retrospectively; Exp049C is the required withheld test.
+
+🔴 No G7 residual law, no G8 discovery, no universal-model construction, no intrinsic-rank/no-hair claim.
+

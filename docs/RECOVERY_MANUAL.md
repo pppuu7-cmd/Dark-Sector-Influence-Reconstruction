@@ -505,3 +505,28 @@ All steps negative; operator controls pass by many orders of magnitude. Status: 
 
 Do not upgrade this to a universal scale law. `k_v_QS` is not yet an exact eigenmode scale. The required next cross-mechanism check is Exp049A using exact pinned designer-f(R) `B(a)` diagnostics. G7 and G8 remain open.
 
+<!-- EXP049A_F22_SYNC_2026-08-26 -->
+## Recovery addendum — physical transition-scale bridge (Exp049A/F22)
+
+When reconstructing the research, do not infer a characteristic scale from fitted localization. Re-derive it from the pinned source equations.
+
+### C3 GDM
+For frozen `w_gdm=0`, pressure enters the Euler equation through a `c_s^2 k^2` gradient, giving the labelled Hubble-gradient crossing
+\[k_s=\mathcal H/\sqrt{c_s^2}.\]
+Pinned dynamic shear satisfies a damping/source equation of the form
+\[\sigma'=-3\mathcal H\sigma + (8/3)c_v^2(\theta+\text{metric shear}),\]
+while Euler contains `-k^2 sigma`. Neglecting `sigma'` and metric shear only for the diagnostic quasi-steady estimate gives `sigma~(8/9)c_v^2 theta/Hconf`, hence
+\[k_{v,QS}=\sqrt{9/8}\,\mathcal H/\sqrt{c_v^2}.\]
+Never relabel this as an exact Jeans/eigenmode scale.
+
+### C5 designer f(R)
+Pinned EFTCAMB defines
+\[B=\frac{f_R'}{1+f_R}\frac{H}{H'}=\frac{f_{RR}R'}{1+f_R}\frac{H}{H'},\]
+prime `d/d ln a`. Exp049A adds diagnostic-only output of `x,a,B,R/H0^2,f_R,E,E',E''` without changing the solved equations. With `Rbar=R/H0^2`,
+\[\frac{1+f_R}{3f_{RR}H_0^2}=\frac{Rbar'}{3B(H'/H)},\quad Rbar'=3(4E'+E''),\quad H'/H=E'/(2E).\]
+The comoving inverse-Compton wavenumber is `a*(100/c)*sqrt((1+f_R)/(3 f_RR H0^2))` in `h/Mpc`; scalaron mass additionally subtracts `Rbar/3` inside the mass-squared expression.
+
+Recovery provenance: run `32904376001`, artifact `9584346604`, artifact digest `6a2c7f4e072fe7ee5d3a125bd798e975ab7031f5e7e92f3c71b47dbe71856f22`; pinned GDM_CLASS `4c87916a...`, pinned H-EFTCAMB `16d9c4e9...`.
+
+Scientific discipline: the Exp049A f(R) alignment is retrospective. Only GDM has a withheld validation so far (Exp049B/F21). Exp049C must be frozen before new intermediate B0 outputs. Do not advance G7 or G8 from F22 alone.
+
