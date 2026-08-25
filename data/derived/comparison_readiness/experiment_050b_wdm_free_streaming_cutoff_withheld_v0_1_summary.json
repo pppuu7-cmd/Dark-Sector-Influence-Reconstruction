@@ -1,0 +1,42 @@
+{
+  "schema": "dsir.comparison_readiness.experiment_050b_wdm_cutoff_withheld.summary.v0.1",
+  "status": "PASS_WDM_FREE_STREAMING_CUTOFF_WITHHELD_V0_1",
+  "run_id": 32911928403,
+  "artifact_id": 9586893981,
+  "artifact_sha256": "7c01e71c4223115976dc6887a1bcac06cac99e7fc50d039fae47307dd105ff0e",
+  "scientific_head_sha": "38a80d71af47bbda08bc27ff6fd9368439f91a4d",
+  "merge_sha": "7630cf23554bdd9e0bc7c738bb3b0b33d1b67388",
+  "target_log_power_response": -0.1,
+  "minimum_positive_step_h_mpc": 0.0001,
+  "masses_keV": [2.5, 3.5, 4.0, 4.5],
+  "z_nodes": [0.295, 0.51, 0.706, 0.934, 1.317, 1.491, 2.33],
+  "k_cross_h_mpc_by_z": {
+    "0.295": [8.386656402025581, 12.192829270364323, 14.230130558707161, 16.473743002953903],
+    "0.51": [8.386671908120977, 12.192857436501443, 14.230157002797846, 16.47378285648339],
+    "0.706": [8.386686804546146, 12.192884455626155, 14.230182353520242, 16.47382104060666],
+    "0.934": [8.386704648610182, 12.19291675305794, 14.230212628902473, 16.473866606176156],
+    "1.317": [8.386735164577459, 12.19297180385561, 14.230264159520681, 16.473944065671144],
+    "1.491": [8.386749020384643, 12.192996706367799, 14.230287432202587, 16.473978999648317],
+    "2.33": [8.386813793520922, 12.19311211245794, 14.230394882027367, 16.474139763389395]
+  },
+  "minimum_measured_mass_step_h_mpc": 2.037282769569428,
+  "maximum_measured_mass_step_h_mpc": 3.806298318937017,
+  "redshift_drift_h_mpc": {
+    "2.5": 0.00015739149534077512,
+    "3.5": 0.0002828420936165088,
+    "4.0": 0.00026432332020576155,
+    "4.5": 0.00039676043549263795
+  },
+  "descriptive_combined_mass_fit_z0p295": {
+    "power_law_exponent": 1.1434056233515584,
+    "max_relative_residual": 0.007699861659985263,
+    "hard_claim": false
+  },
+  "not_a_claim": [
+    "not a universal free-streaming exponent",
+    "not a withheld-family G8 test",
+    "not a Ly-alpha or nonlinear WDM result",
+    "not a proof that the GDM/fR interaction-centroid coordinate applies to WDM",
+    "not a G7 law or intrinsic-rank result"
+  ]
+}
