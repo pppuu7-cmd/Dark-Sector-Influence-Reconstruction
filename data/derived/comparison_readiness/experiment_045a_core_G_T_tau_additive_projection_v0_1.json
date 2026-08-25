@@ -1,0 +1,58 @@
+{
+  "schema": "dsir.core_hair.G_T_tau_additive_projection.v0.1",
+  "status": "FAIL_COMPACT_G_T_TAU_CORE_LOW_K_V0_1",
+  "failures": [
+    "exact_additive_core",
+    "compact_core_adequacy"
+  ],
+  "scope": "common frozen low-k theory-response block C1/C2/C3/C5; C4 WDM excluded because informative high-k block is not common-grid",
+  "family_complete_C1_to_C5": false,
+  "c4_wdm_missing_not_zero": true,
+  "input": "data/derived/comparison_readiness/local_response_tangents_v0_1.json",
+  "z_nodes": [0.295,0.51,0.706,0.934,1.317,1.491,2.33],
+  "k_h_mpc": [0.001,0.003,0.01,0.03,0.1],
+  "definition": "R(z,k)=mu+T(k)+tau(z)+I(z,k)",
+  "thresholds_frozen_before_target": {
+    "operator_control_tol": 1e-12,
+    "exact_max_interaction_norm_fraction": 1e-8,
+    "compact_min_core_power_capture": 0.95,
+    "compact_max_pairwise_acute_angle_distortion_deg": 5.0
+  },
+  "operator_controls": {
+    "accumulation_dtype": "numpy.longdouble",
+    "max_relative_reconstruction_error": 0.0,
+    "max_scaled_zero_mean_residual": 4.219780177668098e-21,
+    "max_normalized_core_interaction_inner_product": 2.566438376248073e-15,
+    "pass": true
+  },
+  "exact_additive_core_all_directions": false,
+  "compact_core_adequacy_common_block": false,
+  "max_pairwise_acute_angle_distortion_deg": 14.313543287523885,
+  "directions": [
+    {"id":"C1_smooth_w_nonphantom","family":"C1","norm_R":1.699557205508302,"mu":-0.26497524685421314,"interaction_norm_fraction":0.03287106794734498,"core_power_capture":0.998919492892001,"exact_additive_pass":false,"compact_capture_pass":true,"G_power_fraction":0.8507600360211282,"T_power_fraction":0.002907556211496339,"tau_power_fraction":0.14525190065937654,"interaction_power_fraction":0.0010805071079989705},
+    {"id":"C2_IDE_alpha_negative","family":"C2","norm_R":0.0054760537832338725,"mu":-0.0005715431645592093,"interaction_norm_fraction":3.965767964836191e-6,"core_power_capture":0.9999999999842727,"exact_additive_pass":false,"compact_capture_pass":true,"G_power_fraction":0.3812683059350584,"T_power_fraction":0.6157425121744105,"tau_power_fraction":0.002989181874803876,"interaction_power_fraction":1.5727315550920985e-11},
+    {"id":"C2_IDE_beta","family":"C2","norm_R":5.138666597958417,"mu":-0.284142872480847,"interaction_norm_fraction":7.412505594907331e-6,"core_power_capture":0.9999999999450547,"exact_additive_pass":false,"compact_capture_pass":true,"G_power_fraction":0.10701402406676686,"T_power_fraction":0.8038972959598767,"tau_power_fraction":0.08908867991841117,"interaction_power_fraction":5.4945239194532485e-11},
+    {"id":"C3_GDM_cs2","family":"C3","norm_R":186542.42056137405,"mu":-15019.776996146751,"interaction_norm_fraction":0.2128507302378961,"core_power_capture":0.9546945666371944,"exact_additive_pass":false,"compact_capture_pass":true,"G_power_fraction":0.22690277007040074,"T_power_fraction":0.7133758486671853,"tau_power_fraction":0.014415947899608338,"interaction_power_fraction":0.045305433362805625},
+    {"id":"C3_GDM_cv2","family":"C3","norm_R":121105.64938947426,"mu":-9765.835689413161,"interaction_norm_fraction":0.2088867845647293,"core_power_capture":0.9563663112342083,"exact_additive_pass":false,"compact_capture_pass":true,"G_power_fraction":0.22759256204596323,"T_power_fraction":0.7148749361346483,"tau_power_fraction":0.01389881305359692,"interaction_power_fraction":0.043633688765791635},
+    {"id":"C5_designer_fR_B0","family":"C5","norm_R":0.0012349683611083495,"mu":7.97010853693413e-5,"interaction_norm_fraction":0.5475915262807326,"core_power_capture":0.7001435203455377,"exact_additive_pass":false,"compact_capture_pass":false,"G_power_fraction":0.14577560507593326,"T_power_fraction":0.45912113764860485,"tau_power_fraction":0.0952467776209996,"interaction_power_fraction":0.29985647965446227}
+  ],
+  "pairwise_angles": [
+    {"a":"C1_smooth_w_nonphantom","b":"C2_IDE_alpha_negative","full_acute_deg":52.19429339210078,"core_acute_deg":52.170260381331055,"abs_angle_distortion_deg":0.024033010769727525},
+    {"a":"C1_smooth_w_nonphantom","b":"C2_IDE_beta","full_acute_deg":80.52086652065735,"core_acute_deg":80.51568808264717,"abs_angle_distortion_deg":0.005178438010176478},
+    {"a":"C1_smooth_w_nonphantom","b":"C3_GDM_cs2","full_acute_deg":59.8041606971451,"core_acute_deg":59.16473540483646,"abs_angle_distortion_deg":0.639425292308637},
+    {"a":"C1_smooth_w_nonphantom","b":"C3_GDM_cv2","full_acute_deg":59.81546669973374,"core_acute_deg":59.20290608432064,"abs_angle_distortion_deg":0.612560615413102},
+    {"a":"C1_smooth_w_nonphantom","b":"C5_designer_fR_B0","full_acute_deg":60.942973908438574,"core_acute_deg":55.023027720349305,"abs_angle_distortion_deg":5.91994618808927},
+    {"a":"C2_IDE_alpha_negative","b":"C2_IDE_beta","full_acute_deg":58.93379766070734,"core_acute_deg":58.933797661370136,"abs_angle_distortion_deg":6.627942639170215e-10},
+    {"a":"C2_IDE_alpha_negative","b":"C3_GDM_cs2","full_acute_deg":24.93454727387643,"core_acute_deg":21.866139720176733,"abs_angle_distortion_deg":3.0684075536996964},
+    {"a":"C2_IDE_alpha_negative","b":"C3_GDM_cv2","full_acute_deg":24.786398074293942,"core_acute_deg":21.81992792103934,"abs_angle_distortion_deg":2.966470153254601},
+    {"a":"C2_IDE_alpha_negative","b":"C5_designer_fR_B0","full_acute_deg":42.45027269296784,"core_acute_deg":28.13672940544396,"abs_angle_distortion_deg":14.313543287523885},
+    {"a":"C2_IDE_beta","b":"C3_GDM_cs2","full_acute_deg":56.285084149548936,"core_acute_deg":55.38365946944705,"abs_angle_distortion_deg":0.9014246801018828},
+    {"a":"C2_IDE_beta","b":"C3_GDM_cv2","full_acute_deg":56.29338497032958,"core_acute_deg":55.426809891695825,"abs_angle_distortion_deg":0.8665750786337583},
+    {"a":"C2_IDE_beta","b":"C5_designer_fR_B0","full_acute_deg":59.40410068973369,"core_acute_deg":52.53443556631907,"abs_angle_distortion_deg":6.86966512341462},
+    {"a":"C3_GDM_cs2","b":"C3_GDM_cv2","full_acute_deg":0.32261636988179954,"core_acute_deg":0.16362651857136828,"abs_angle_distortion_deg":0.15898985131043125},
+    {"a":"C3_GDM_cs2","b":"C5_designer_fR_B0","full_acute_deg":25.181845117804528,"core_acute_deg":14.773836434750109,"abs_angle_distortion_deg":10.408008683054419},
+    {"a":"C3_GDM_cv2","b":"C5_designer_fR_B0","full_acute_deg":25.488142980615834,"core_acute_deg":14.927868429565933,"abs_angle_distortion_deg":10.5602745510499}
+  ],
+  "hard_provenance": {"run_id":32883280742,"artifact_id":9576600500,"artifact_sha256":"59839a2717646e50501a949cf5b310cb6c0e55f85dd6839fce2832c704ec28dd","head_sha":"b3e2aacb1330a68b7b3ae07e8802a0ac5dc03c63"},
+  "not_a_claim": ["not family-complete because C4 WDM requires a high-k/domain-support extension","not observational whitening or survey distinguishability","not an intrinsic latent-rank claim","not a dark-sector no-hair theorem","not a residual law or discovery"]
+}

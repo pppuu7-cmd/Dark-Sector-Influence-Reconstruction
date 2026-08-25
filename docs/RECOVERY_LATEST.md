@@ -5,6 +5,7 @@
 **Scientific findings:** `docs/SCIENTIFIC_FINDINGS_REGISTER.md`  
 **Current status:** `docs/STATUS.md`  
 **Gates:** `docs/GATES.md`  
+**Influence atlas:** `docs/BUYANOVGPT_TABLE.md`  
 **Latest observational log:** `docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-25.md`
 
 This is the mandatory per-iteration recovery layer. Update it after every substantive research iteration. If a later result contradicts an earlier interpretation, preserve chronology and mark the old conclusion `SUPERSEDED/RETRACTED` rather than deleting it.
@@ -27,14 +28,18 @@ DSIR is a reconstruction/meta-inference framework, not a fundamental theory. No 
 - **G7 OPEN** — no residual-law claim yet.
 - **G8 OPEN** — no discovery before a withheld prediction.
 
-Latest hard chronology:
+Latest controlled chronology:
 
 - Exp034 run `32777716140` — ShapeFit `m+n` marginal whitening proxy PASS.
 - Exp035 run `32778635058` — exact calibration-free AP operator PASS.
 - Exp036 run `32782545098` — C1/C2 production AP geometry PASS.
 - Exp037 run `32783243120` — GDM C3 AP-zero audit PASS.
-- Exp038 run `32785800977` — designer-f(R) C5 AP-zero audit PASS.
+- Exp038 final regression run `32786915513` — designer-f(R) C5 AP-zero + transfer handoff PASS.
 - Exp040 run `32785987735` — finite-bin theory growth operator PASS.
+- Exp041 run `32791510072` — C5 high-precision density/velocity scalar-RSD representability PASS; scalar compression is not exact.
+- Exp042 run `32793688546` — GDM synchronous/Newtonian absolute comoving-density bridge FAIL; exploratory velocity science rejected.
+- Exp043 run `32794067542` — tighter-precision GDM gauge bridge convergence FAIL; absolute mismatch does not improve.
+- Exp045A run `32883280742` — simple additive `(G,T,tau)` core FAIL on common C1/C2/C3/C5 low-k block; scale-time interaction is required for faithful C5 representation.
 
 ---
 
@@ -77,7 +82,7 @@ Never infer microscopic dimension from a raw catalog SVD. Missing response is ne
 - **C1** smooth non-phantom DE: one-sided `epsilon_w=1+w -> 0+`, production step `1e-4`.
 - **C2** IDE `Q=H(alpha rho_idm+beta rho_iv)`: positive alpha excluded by frozen positivity history; physical coordinate is negative-alpha ray `u=-alpha>=0` plus two-sided beta line.
 - **C3** GDM: pinned GDM_CLASS, `cs2/cv2` closure directions with frozen `w_gdm=0`.
-- **C4** thermal WDM: separate small-scale transfer block.
+- **C4** thermal WDM: separate small-scale transfer block. Do not zero-impute it into the low-k common-grid atlas.
 - **C5** designer f(R): pinned H-EFTCAMB, production `B0={1e-6,1e-5,1e-4,1e-3}`.
 
 ---
@@ -130,29 +135,17 @@ Hard run `32783243120`, result artifact `9540510596`, SHA256 `ba1fa93e348f9685d8
 
 Pinned upstream `EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`. Frozen hard config artifact run `32759477319`, artifact `9532245261`, hard lineage `dsir_mgs1_hp_*`.
 
-The pinned source maps `EFTwDE=0` to exact `w_DE=-1`. Experiment 038 reruns
-
-`B0={0,1e-7,1e-6,1e-5,1e-4,1e-3}`
-
-and finds for every point:
-
-- redshift-grid mismatch `0`;
-- maximum relative `H` response `0`;
-- maximum relative `D_M` response `0`;
-- maximum `|Delta ln(D_H/D_M)| = 0`;
-- all saved numerical background columns exactly equal to `B0=0` at stored solver precision.
-
-Thus
+The pinned source maps `EFTwDE=0` to exact `w_DE=-1`. Experiment 038 reruns `B0={0,1e-7,1e-6,1e-5,1e-4,1e-3}` and finds every saved background/AP quantity exactly equal to the `B0=0` reference at stored solver precision. Thus
 
 \[
 \boxed{K_{AP}t_{B0}=0}
 \]
 
-for the frozen C5 B0 direction, while its previously validated perturbation/structure response is nonzero.
+for the frozen C5 B0 direction while its perturbation/structure response is nonzero.
 
-Hard run `32785800977`, result artifact `9541598468`, SHA256 `24b7fa5951c06d4cea72e6c0bf6baad2d2174f2d86794ec0818cf57c309b81c8`.
+First scientific hard run `32785800977`, artifact `9541598468`. Final transfer-preserving regression run `32786915513`, artifact `9541895055`, SHA256 `74d975790d00a04762d45bf183481f69d6fc54b84d186c63e89b88bbb9d20b16`.
 
-**Scientific consequence:** exact background/AP channel-null structure is now hard-reproduced in two qualitatively different families: GDM closure physics and designer modified gravity. This supports block-sparse influence trajectories but is not a universal law because both are frozen constructions with fixed background contracts.
+**Scientific consequence:** exact background/AP channel-null structure is hard-reproduced in two qualitatively different families: GDM closure physics and designer modified gravity. This supports block-sparse influence trajectories but is not a universal law.
 
 ---
 
@@ -168,13 +161,7 @@ Define for adjacent frozen early->late nodes
 
 This is a theory-space temporal derivative of power response, **not tracer RSD and not ShapeFit `f_sigma_s8`**.
 
-Hard controls were frozen before looking at pair angles and pass:
-
-- endpoint reconstruction `1.1102230246251565e-16`;
-- constant-mode residual `0`;
-- linearity residual `9.769962616701378e-15`.
-
-Run `32785987735`, artifact `9541462864`, SHA256 `0457823510fead4ff56e8e29843e39de47805f8fbfda86f4d9d33585be556ac9`.
+Hard controls pass at machine precision. Run `32785987735`, artifact `9541462864`, SHA256 `0457823510fead4ff56e8e29843e39de47805f8fbfda86f4d9d33585be556ac9`.
 
 Key hard comparisons:
 
@@ -184,57 +171,143 @@ Key hard comparisons:
 - GDM cs2/cv2: full structure `0.3226 deg` -> temporal growth only `1.3340 deg`; metric slip remains necessary.
 - GDM cs2/cv2 / f(R): leading scale-only `0.078-0.102 deg` -> temporal growth `16.05-17.28 deg` -> full structure `25.18-25.49 deg`.
 
-**Hard interpretation:** pairwise degeneracies migrate between response operators. Adding a new channel does not monotonically make every pair more distinguishable; it can separate one pair and collapse another. Joint multi-channel geometry is therefore the correct object.
+**Hard interpretation:** pairwise degeneracies migrate between response operators. Joint multi-channel geometry is the correct object.
 
 ---
 
-## 6. Experiment 039 — ShapeFit growth/RSD contract
+## 6. Experiments 039/041 — ShapeFit growth/RSD representability
 
-The corrected ShapeFit growth coordinate is **`f_sigma_s8`**, not naive fixed-radius textbook `f sigma8`.
-
-Use
+The corrected ShapeFit growth coordinate is `f_sigma_s8`, with
 
 \[
 s=r_d/r_d^{ref},\qquad R=s\,8h^{-1}{\rm Mpc}.
 \]
 
-Before compressing scale-dependent growth into one scalar, test density/velocity representability. Planned diagnostic:
+For scale-dependent density/velocity fields define
 
 \[
 {\cal D}_{RSD}=1-\frac{S_{\delta\Theta}^2}{S_{\delta\delta}S_{\Theta\Theta}}.
 \]
 
-If this is non-negligible, a single scalar `f_sigma_s8` is not an adequate representation and a survey/window-aware anisotropic RSD operator is required.
+Experiment 041 established the identity
 
-Pinned CAMB exposes machine-readable transfer variables including `delta_tot`, `v_newtonian_cdm`, and `v_newtonian_baryon`, allowing a proper high-precision density/velocity bridge.
+\[
+{\cal D}_{RSD}=\frac{\mathrm{Var}_w[g]}{\langle g^2\rangle_w},\qquad g=\Theta/\delta,
+\]
 
-### Hard negative/limit result
+and `CV_w(g)=sqrt(D/(1-D))`.
 
-Do **not** derive the small-B0 C5 growth tangent from old printed H-EFTCAMB logs. They print `sigma8` and `sigma8^2_vd/sigma8` only to roughly four decimals; at `B0=1e-7` rounding quantizes away most of the signal and produces artificial sparse/unstable derivatives. This output representation is rejected for tangent calibration.
+C5 hard run `32791510072`, artifact `9543375564`, SHA256 `1e4d86f7f13185d69a07b71afa9bfd6fefa6003119064652d6388491738212bc`.
+
+At `kmax=0.24 h/Mpc`, representative defects are:
+
+- GR floor ~`1.42e-10`;
+- `B0=1e-6`: `5.18e-6`;
+- `B0=1e-5`: `1.92e-4`;
+- `B0=1e-4`: `8.81e-4`;
+- `B0=1e-3`: `8.78e-4`.
+
+Thus scalar growth compression is not exact for the frozen designer-f(R) direction. Also preserve F12: old printed CAMB growth summaries are too coarse for small-B0 tangent calibration.
 
 ---
 
-## 7. Current scientific findings to remember
+## 7. Experiments 042/043 — GDM gauge/velocity negative chronology
 
-Read `docs/SCIENTIFIC_FINDINGS_REGISTER.md` for the authoritative statuses. Newest entries include:
+The pinned GDM_CLASS synchronous transfer output is not a safe RSD velocity representation because the dark-matter velocity is gauge-fixed/ill-conditioned. The branch exposes an N-body transfer route, but pinned upstream stops because the derivative of `H_T_Nb_prime` is not propagated.
+
+Experiment 042 therefore compared matched synchronous and Newtonian runs and required an independently reconstructed comoving matter field to agree before any velocity science was admitted.
+
+Run `32793688546`:
+
+- raw transfer k-grid mismatch `2.16e-11` (later recognized as a bad comparison because adaptive transfer grids can differ by gauge);
+- max absolute `ln|Delta_S/Delta_N| = 2.58664e-6`, above frozen `1e-6`;
+- max model/reference response difference `6.78698e-7`, within `1e-6`.
+
+Status: `FAIL_GDM_SYNC_NEWTONIAN_DELTA_BRIDGE_V0_2`. Exploratory velocity angles and `D_RSD` from this run are **not scientific claims**.
+
+Experiment 043 corrected the k-grid method by interpolating each gauge independently to frozen DSIR nodes and tightened only perturbation integration precision:
+
+- p8 absolute bridge `2.51958e-6`, response bridge `6.78698e-7`;
+- p10 absolute bridge `3.00625e-6`, response bridge `8.02174e-7`;
+- p10/p8 absolute residual ratio `1.19316`.
+
+Run `32794067542`, artifact `9544255453`, SHA256 `c62613798a6a6f8e9e573bb158315ca03a5c9f998805ebfc6bdda25de4d4100a`.
+
+**Negative conclusion:** tighter perturbation precision does not explain the absolute synchronous/Newtonian mismatch. Do not loosen the gate and do not use the exploratory GDM velocity/RSD branch as validated physics yet.
+
+---
+
+## 8. Experiments 044/045A — BuyanovGPT table and `(G,T,tau)` core test
+
+The chat nickname **BuyanovGPT table** now refers to `docs/BUYANOVGPT_TABLE.md`, an influence atlas, not a separate theory.
+
+Preserve these distinctions:
+
+- `N_repr` = dimension needed to reconstruct/approximate responses;
+- `N_disc` = independent channels needed to distinguish mechanisms;
+- they need not be equal;
+- the black-hole/no-hair analogy is only a falsifiable organizer, not a theorem;
+- the current minimum discriminator set `{slip, small-scale transfer, time/sign}` does **not** prove three fundamental parameters.
+
+The conversational candidate `Core=(G,T,tau)` was made operational using
+
+\[
+R(z,k)=\mu+T(k)+\tau(z)+I(z,k),
+\]
+
+where `I` is the irreducible scale-time interaction.
+
+Pre-frozen compact adequacy required >=95% core power capture for every direction and <=5 deg distortion of every pairwise acute angle. Final controlled run `32883280742`, artifact `9576600500`, SHA256 `59839a2717646e50501a949cf5b310cb6c0e55f85dd6839fce2832c704ec28dd`.
+
+Operator controls pass:
+
+- reconstruction error `0`;
+- zero-mean residual `4.22e-21`;
+- normalized core/interaction inner product `2.57e-15`.
+
+Scientific status:
+
+`FAIL_COMPACT_G_T_TAU_CORE_LOW_K_V0_1`.
+
+Key interaction fractions:
+
+- C1 smooth-w: `||I||/||R||=0.03287`, interaction power `0.108%`;
+- C2 IDE alpha/beta: interaction essentially negligible (`~1e-11` power);
+- C3 GDM cs2/cv2: `||I||/||R||~0.21`, interaction power `~4.4-4.5%`;
+- C5 designer f(R): `||I||/||R||=0.54759`, interaction power **29.99%**, core captures only **70.01%**.
+
+Dropping `I` changes GDM/f(R) acute angles from about `25 deg` to about `15 deg`; the largest pairwise distortion is IDE negative-alpha/f(R), `14.31 deg`.
+
+**Hard conclusion on this block:** simple additive `(G,T,tau)` is not sufficient. **Scale-time nonseparability `I(k,z)` is a hard-required representation component for C5 and non-negligible for C3 on the frozen low-k theory block.** Do not yet call `I` a universal parameter or new fundamental degree of freedom.
+
+C4 WDM is outside this common-grid test; its informative high-k transfer must be extended with time information before any C1-C5 complete core claim.
+
+---
+
+## 9. Current scientific findings to remember
+
+Read `docs/SCIENTIFIC_FINDINGS_REGISTER.md` for authoritative status.
+
+Newest/high-priority entries:
 
 - **F10 HARD:** frozen designer-f(R) B0 is exactly background/AP-null but perturbation-active.
-- **F11 HARD for frozen examples:** degeneracies migrate between AP, temporal growth, and full structure.
+- **F11 HARD:** degeneracies migrate between AP, temporal growth, and full structure.
 - **F12 LIMIT:** printed CAMB growth summaries are too coarse for small-B0 tangent calibration.
-
-Earlier hard findings F1–F9 remain active unless explicitly marked superseded.
+- **F13 HARD:** frozen designer-f(R) density/velocity response is not exactly scalar-growth representable.
+- **F14 LIMIT/NEGATIVE (to consolidate):** GDM synchronous/Newtonian absolute comoving-density bridge remains above threshold and does not converge under p10 precision; reject exploratory velocity science.
+- **F15 HARD/NEGATIVE:** the simple additive `(G,T,tau)` core fails on the common C1/C2/C3/C5 low-k block; C5 has a large scale-time interaction component.
 
 ---
 
-## 8. Exact continuation from this checkpoint
+## 10. Exact continuation from this checkpoint
 
-1. Extend Experiment 039 to a numerical high-precision density/velocity representability test. Never use the rounded CAMB summary logs for small-B0 derivatives.
-2. Preserve C5 H-EFTCAMB `transfer_filename` products from the same pinned hard configurations; use the transfer variables to build density and velocity moments.
-3. Define and validate a total-matter/tracer velocity convention before mixing CDM and baryon Newtonian-gauge velocities. Do not silently equate solver-specific velocity variables.
-4. For C3 GDM and C2 IDE, launch matched pinned-solver transfer-output runs with the same total-matter/gauge contract.
-5. Apply the ShapeFit smoothing-radius convention `R=s*8 h^-1 Mpc`, calculate the density/velocity moments and `D_RSD`, and only then decide whether scalar `f_sigma_s8` is admissible family by family.
-6. Replace/calibrate the finite-node `m+n` proxy with a survey/window-aware shape operator or propagate compression-model error.
-7. Form the full corrected ShapeFit block `Z=C^{-1/2} Delta O` only after geometry+growth+shape operators are validated on common observable coordinates.
-8. Freeze null/rank thresholds before inspecting the resulting whitened spectrum; stress-test family prior `pi`, within-family sampling, covariance, solver precision, and channel removal.
-9. Continue observational slip/lensing and WDM small-scale transfer layers in parallel because Exp033 identifies them as independent discriminators.
-10. Resume G7 residual-law search only after observationally whitened manifold/rank stability. **Never claim discovery before G8.**
+1. Consolidate Exp042/043 negative chronology into main and close stale exploratory PRs only after preservation; never erase failures.
+2. Treat `I(k,z)` scale-time nonseparability as a **candidate response signature** and test whether its shape/direction is stable across parameter steps, solver precision and families.
+3. Quantify whether `I` itself separates GDM from f(R), IDE and smooth-w better than additive summaries; freeze comparison criteria before target interpretation.
+4. Extend C4 WDM with physically relevant high-k **and time** support before testing whether WDM has an analogous `I(k,z)` signature.
+5. Continue survey/window-aware shape and RSD forward modelling; no observation-space distinguishability claim from theory angles alone.
+6. Preserve slip/lensing because GDM cs2/cv2 proves density/time compression can miss mechanism information.
+7. Estimate minimal latent response dimension only after common-domain/observation operators exist; do not force the answer to 3, 4, or any chosen number.
+8. Continue searching for cross-family regularities, exact nulls, degeneracy migrations, orientation/sign changes, domain-localized effects and failed compressions. These are the primary DSIR research target.
+9. Build a universal model only when `docs/UNIVERSAL_MODEL_READINESS.md` criteria are satisfied and a withheld-family test is credible.
+10. Resume G7 only after observationally whitened manifold/rank stability. **Never claim discovery before G8.**
