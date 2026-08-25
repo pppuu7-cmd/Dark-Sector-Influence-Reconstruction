@@ -1,0 +1,33 @@
+name: One-shot Exp050B F25 documentation sync
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'ci/exp050b_doc_sync.py'
+      - '.github/workflows/exp050b-doc-sync.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - name: Append F25 recovery/status/gates/atlas records
+        run: python3 ci/exp050b_doc_sync.py
+      - name: Commit synchronized documentation
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/
+          if git diff --cached --quiet; then
+            echo 'No documentation changes needed.'
+          else
+            git commit -m 'Exp050B: sync F25 recovery status gates atlas'
+            git push origin HEAD:${{ github.head_ref || github.ref_name }}
+          fi
