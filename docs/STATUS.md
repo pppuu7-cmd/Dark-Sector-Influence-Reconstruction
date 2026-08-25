@@ -30,14 +30,17 @@ DSIR remains a reconstruction/meta-inference framework, not a fundamental theory
 | C3 GDM velocity/RSD bridge | **HARD VALIDATION FAIL / Exp042-043** | absolute sync/Newtonian Delta bridge `~2.5-3.0e-6` > `1e-6`; p10 worsens by factor `1.193`; exploratory velocity science rejected |
 | BuyanovGPT influence atlas | **LIVE** | `docs/BUYANOVGPT_TABLE.md`; response taxonomy only, not theory |
 | Candidate `Core=(G,T,tau)` | **HARD NEGATIVE / Exp045A** | compact additive core fails common C1/C2/C3/C5 low-k block |
-| Scale-time interaction `I(k,z)` | **NEW HARD RESPONSE FEATURE / candidate signature** | C5 ~29.99% response power in irreducible interaction; C3 ~4.4-4.5%; not yet universal parameter |
+| Scale-time interaction `I(k,z)` | **HARD RESPONSE FEATURE / Exp045A+046** | C5 `chi_I=0.299856`; C3 `~0.044`; IDE interaction near-null on current grid |
+| Pairwise interaction localization | **HARD DESCRIPTIVE / Exp046** | GDM/f(R) `eta_I=0.612-0.614`; IDE-alpha/f(R) `0.572`; GDM cs2/cv2 `0.731` but total angle only `0.323 deg` |
+| GDM interaction morphology | **HARD DESCRIPTIVE / Exp046** | cs2/cv2 interaction angle `0.743 deg`; interaction alone does not solve pressure/viscosity degeneracy |
+| GDM vs f(R) interaction morphology | **HARD DESCRIPTIVE / Exp046** | interaction angles `10.99/11.71 deg`; joint k-x-z structure materially carries separation |
 | Representation vs discrimination dimension | **METHOD RULE** | keep `N_repr` distinct from `N_disc` |
 | Synthetic latent-rank recovery | PASS | injected rank 3 recovered |
 | Whitening robustness | tested suite PASS; **G5 PARTIAL** | family-complete joint observational whitening still missing |
 | DESI DR2 AP | PASS G6A | calibration-free AP/relative expansion |
 | DESI corrected DR1 ShapeFit | PASS G6B | corrected covariance layer |
 | Discriminant graph | **HARD current graph only** | `{slip, small-scale transfer, time/sign}`; not three-parameter theorem |
-| Scientific findings register | **LIVE through F15** | status-preserving chronology |
+| Scientific findings register | **LIVE through F16** | status-preserving chronology |
 | Universal model readiness | **NOT YET** | continue atlas; withheld validation and stable observation-space dimension required |
 | New residual law | **OPEN G7** | no law claim |
 | Withheld prediction | **OPEN G8** | mandatory before discovery |
@@ -46,24 +49,27 @@ DSIR remains a reconstruction/meta-inference framework, not a fundamental theory
 
 1. **Exact channel-null structure repeats across different physics:** frozen GDM cs2/cv2 and designer-f(R) B0 are exactly background/AP-null while perturbation-active.
 2. **Degeneracies migrate rather than monotonically disappear:** AP, temporal growth, density structure, slip and small-scale transfer can reorder the same model pairs.
-3. **GDM pressure/viscosity remains a density/time microphysical degeneracy; slip is the established separator.**
-4. **GDM/f(R) are not separated merely by “scale + time”.** Exp045A shows a material part of the separation lives in the joint scale-time interaction.
+3. **GDM pressure/viscosity remains a density/time microphysical degeneracy; slip is the established separator.** Exp046 shows even the interaction shapes are nearly collinear (`0.743 deg`).
+4. **GDM/f(R) are not separated merely by “scale + time”.** Exp046 quantifies that `61.2-61.4%` of their normalized shape-separation power is in the irreducible scale-time interaction.
 5. **Simple additive `(G,T,tau)` was explicitly tested and falsified.** C5 additive core captures only `70.01%` of low-k response power; irreducible interaction contributes `29.99%`.
-6. **C3 also has non-negligible nonseparability:** `~4.4-4.5%` interaction power for cs2/cv2.
-7. **IDE is strikingly different in this diagnostic:** both local IDE directions are almost perfectly additive in `G+T+tau` on the current grid. This contrast with GDM/f(R) is a new mechanism-comparison target.
-8. The largest Exp045A pairwise geometry distortion after dropping interaction is IDE-alpha/f(R), `14.31 deg`; GDM/f(R) distortions are `~10.4-10.6 deg`.
-9. C4 WDM is not allowed into the low-k matrix as zero. Its high-k time-dependent atlas is needed before any family-complete core/nonseparability statement.
-10. **GDM velocity/RSD remains unvalidated:** tighter precision does not cure the synchronous/Newtonian absolute density mismatch, so exploratory velocity angles/defects are inadmissible.
-11. Minimal latent dimension remains open. Do not equate the current three-channel discriminator set with three universal parameters.
+6. **C3 has moderate nonseparability:** `chi_I~0.0436-0.0453` for cs2/cv2.
+7. **IDE is strikingly different in this diagnostic:** both local IDE directions are essentially additive in `G+T+tau`, and IDE alpha/beta have `eta_I~1.5e-11`.
+8. **A large `eta_I` is not detectability.** GDM cs2/cv2 have `eta_I=0.731` but total acute angle `0.323 deg`; interaction carries most of a tiny distinction.
+9. **For materially separated pairs the localization can be physically useful:** GDM/f(R) combines `~25 deg` total separation with `eta_I~0.612`, while IDE-alpha/f(R) has `42.45 deg` and `eta_I~0.572`.
+10. Smooth-w interaction morphology is almost orthogonal to GDM/f(R) interaction morphology (`~69.6-70 deg`), suggesting a potentially useful mechanism-level structural classifier to stress-test.
+11. C4 WDM is not allowed into the low-k matrix as zero. Its high-k time-dependent atlas is needed before family-complete nonseparability claims.
+12. **GDM velocity/RSD remains unvalidated:** tighter precision does not cure the synchronous/Newtonian absolute density mismatch, so exploratory velocity angles/defects are inadmissible.
+13. Minimal latent dimension remains open. Do not equate the current three-channel discriminator set, or `I`, with a chosen number of universal parameters.
 
 ## Immediate continuation
 
-1. Quantify the morphology, sign/orientation and step-size stability of `I(k,z)` across C1/C2/C3/C5 with thresholds frozen before target interpretation.
-2. Test whether the interaction component itself separates GDM from f(R) more cleanly than additive scale/time summaries.
-3. Extend C4 WDM to a physically relevant high-k `(k,z)` atlas and test its `I(k,z)` without domain mismatch.
-4. Preserve slip/lensing and small-scale transfer as independent channels.
-5. Continue survey/window-aware shape and RSD work; no survey distinguishability from theory angles alone.
-6. Estimate `N_repr` and `N_disc` only after common observation-space operators exist; stress-test priors, sampling, solver precision, covariance and channel removal.
-7. Continue primary model-to-model comparisons and search for exact nulls, channel reversals, sign changes, localization and robust cross-family relations.
-8. Universal model only after readiness criteria and a credible withheld-family test.
-9. G7 remains open; no discovery before G8.
+1. Stress-test `chi_I`, `eta_I` and interaction-shape angles across available finite parameter steps / manifold amplitudes rather than only one local tangent normalization.
+2. Test whether the ordering `IDE near-null -> smooth-w weak -> GDM moderate -> f(R) strong` survives those step changes; this is the most promising current cross-family regularity candidate.
+3. Check grid/domain sensitivity by removing one k or z node at a time and measuring stability of `chi_I` and key `eta_I`; pre-freeze stability metrics before interpretation.
+4. Extend C4 WDM to a physically relevant high-k `(k,z)` atlas and test its interaction morphology without domain mismatch.
+5. Preserve slip/lensing and small-scale transfer as independent channels; interaction morphology does not replace them.
+6. Continue survey/window-aware shape and RSD work; no survey distinguishability from theory angles alone.
+7. Estimate `N_repr` and `N_disc` only after common observation-space operators exist; stress-test priors, sampling, solver precision, covariance and channel removal.
+8. Continue primary model-to-model comparisons and search for exact nulls, channel reversals, sign changes, localization and robust cross-family relations.
+9. Universal model only after readiness criteria and a credible withheld-family test.
+10. G7 remains open; no discovery before G8.
