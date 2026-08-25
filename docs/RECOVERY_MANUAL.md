@@ -2,78 +2,63 @@
 
 **Project:** Dark-Sector Influence Reconstruction (DSIR)  
 **Repository:** `pppuu7-cmd/Dark-Sector-Influence-Reconstruction`  
-**Manual snapshot:** 2026-08-25 after Exp046  
+**Manual snapshot:** 2026-08-25 after Exp047B  
 **Live overlay:** `docs/RECOVERY_LATEST.md`  
+**Scientific register:** `docs/SCIENTIFIC_FINDINGS_REGISTER.md`  
 **Influence atlas:** `docs/BUYANOVGPT_TABLE.md`  
-**Scientific interpretation register:** `docs/SCIENTIFIC_FINDINGS_REGISTER.md`  
-**Preserved previous full manual:** `docs/RECOVERY_MANUAL_PRE_EXP044_2026-08-25.md`
+**Preserved older detailed manual:** `docs/RECOVERY_MANUAL_PRE_EXP044_2026-08-25.md`
 
-The preserved pre-Exp044 manual contains older detailed derivations and infrastructure chronology. This file is the current stable methodology/recovery manual and must be updated whenever mathematics, hard provenance, interpretation, gate state or the exact continuation sequence changes.
+Use this file to recover the active methodology and state after chat/session loss. For older derivation/infrastructure detail, read the preserved pre-Exp044 manual rather than inventing missing history.
 
-After any chat/session loss read, in order:
+Recovery read order:
 
 1. `docs/RECOVERY_MANUAL.md`;
 2. `docs/RECOVERY_LATEST.md`;
 3. `docs/SCIENTIFIC_FINDINGS_REGISTER.md`;
-4. `docs/BUYANOVGPT_TABLE.md`;
-5. `docs/GATES.md` and `docs/STATUS.md`;
-6. latest dated research log;
-7. newest numbered experiment protocol and frozen result JSON;
-8. `docs/RECOVERY_MANUAL_PRE_EXP044_2026-08-25.md` when older derivation detail is needed.
+4. `docs/STATUS.md` and `docs/GATES.md`;
+5. `docs/BUYANOVGPT_TABLE.md`;
+6. newest experiment protocol/result JSON and dated research log;
+7. preserved older manual/register snapshots when historical detail is needed.
 
 ---
 
-## 0. Hard project boundary and claim discipline
+## 0. Non-negotiable project/claim rules
 
-DSIR is independent of RTK. **Never edit, import, overwrite, merge or silently use RTK as a prior.**
+DSIR is independent of RTK. **Never mix repositories or silently use RTK as a prior.**
 
-DSIR is a reconstruction/meta-inference framework, not a fundamental theory. Preserve these rules:
+DSIR is a reconstruction/meta-inference framework, not a fundamental theory. Preserve these boundaries:
 
 - missing response is never zero;
-- a validated zero is evidence, not missing data;
-- raw SVD rank is not microscopic dimension;
-- an observational degeneracy is not a physical identity;
+- a validated zero is evidence;
+- raw SVD/catalog dimension is not microscopic dimension;
 - theory-space angles are not survey distinguishability;
 - a compressed-data correlation is not causality;
-- a known identity is not a discovery;
-- a theory-level temporal response is not automatically tracer RSD;
-- negative results, failed approximations, numerical limitations and infrastructure history are retained;
+- a known identity is not discovery;
+- negative results and infrastructure failures are preserved;
 - no residual-law claim before G7;
-- no discovery claim before G8 withheld prediction.
+- no discovery before G8 withheld prediction.
 
-Primary strategy: **compare physically different models, locate exact nulls, approximate degeneracies, channel reversals, scale/time/sign structures, domain localization and cross-family regularities.** Minimal latent dimension is parallel work; never force it to 3, 4 or another chosen value. A universal model is postponed until `docs/UNIVERSAL_MODEL_READINESS.md` is satisfied.
+Primary scientific program: compare qualitatively different models, identify exact nulls, degeneracies, channel reversals, sign/orientation changes, scale/time structure, domain localization and cross-family regularities. Minimal latent dimension is parallel work, not an assumption. Universal-model construction remains postponed until `docs/UNIVERSAL_MODEL_READINESS.md` criteria are met.
 
 ---
 
-## 1. Scientific question and inverse architecture
+## 1. Inverse architecture and residual bookkeeping
 
 Central question:
 
-> What is the minimal observable influence structure required to reproduce empirically allowed dark-sector effects, and which relations survive model labels, gauge conventions, observational compression, covariance whitening and theory-family priors?
+> What is the minimal observable influence structure required to reproduce allowed dark-sector effects, and which relations survive model labels, gauge conventions, observational compression, covariance whitening and family priors?
 
-Direction of inference:
+Inference direction:
 
-`data -> observable response operators -> response geometry/manifolds -> cross-channel relations -> candidate effective dynamics -> candidate fundamental theory`.
+`data -> observation/response operators -> response geometry -> cross-channel relations -> candidate effective dynamics -> candidate theory`.
 
-Keep three layers distinct:
-
-- **data/measurement:** likelihoods, covariances, windows, nuisance and selection effects;
-- **response/influence:** expansion/AP, density/growth/velocity, metric potentials/slip/lensing, small-scale transfer, tensor channels;
-- **theory:** LambdaCDM, smooth DE, IDE, GDM, WDM, modified gravity, EFT/PPF, etc.
-
-Law search belongs mainly to the response layer after quotienting known identities and measurement/compression degeneracies.
-
----
-
-## 2. Common residual source bookkeeping
-
-Use
+Common bookkeeping object:
 
 \[
 \boxed{X_{\mu\nu}=M_0^2G_{\mu\nu}-T^{known}_{\mu\nu}}.
 \]
 
-For homogeneous FLRW,
+For FLRW,
 
 \[
 \rho_X=3M_0^2(H^2+K/a^2)-\rho_{known},
@@ -83,19 +68,17 @@ For homogeneous FLRW,
 p_X=-M_0^2(2\dot H+3H^2+K/a^2)-p_{known}.
 \]
 
-`X_{mu nu}` is bookkeeping, not a unique observable; it depends on the split defining `T_known` and normalization/frame choices. At perturbation level map solver output into gauge/frame-safe response quantities before model comparison.
+`X_munu` is bookkeeping, not a unique observable. Map solver output into validated response quantities before comparing theories.
 
 ---
 
-## 3. Frozen conservation/gauge and matter-response contract — G1/G2
+## 2. Frozen matter/gauge and response basis — G1/G2 PASS
 
-Production total matter:
+Total matter:
 
 \[
 \delta_m=\frac{\sum_i\rho_i\delta_i}{\rho_m},
-\]
-
-\[
+\qquad
 \theta_m=\frac{\sum_i(\rho_i+p_i)\theta_i}{\rho_m+p_m},
 \]
 
@@ -103,13 +86,13 @@ Production total matter:
 \boxed{\Delta_m=\delta_m+3(1+w_m){\cal H}\frac{\theta_m}{k^2}}.
 \]
 
-Frozen structure grid:
+Frozen structure nodes:
 
 `z={0.295,0.51,0.706,0.934,1.317,1.491,2.33}`,
 
 `k={0.001,0.003,0.01,0.03,0.1} h/Mpc`.
 
-Anchored background response:
+Anchored expansion response:
 
 \[
 \boxed{r_E(z;z_*)=\ln\left[\frac{H(z)/H(z_*)}{H_{ref}(z)/H_{ref}(z_*)}\right]},\qquad z_*=0.51.
@@ -121,178 +104,150 @@ Production structure response:
 \boxed{r_\Delta(k,z)=\ln\frac{P^S_{\Delta,model}(k,z)}{P^S_{\Delta,ref}(k,z)}}.
 \]
 
-`S` denotes matched solver lineage/setup whenever possible. Cross-solver comparison requires an explicit bridge.
-
-**RSD caveat:** gauge-safe total-matter density does not automatically identify the tracer velocity entering galaxy RSD.
+Cross-solver comparisons require explicit bridges. RSD tracer velocity is not automatically the same semantic object as gauge-safe total-matter density.
 
 ---
 
-## 4. Frozen six-family atlas and provenance
+## 3. Frozen family atlas and pinned upstream
 
 - **C0:** LambdaCDM/GR origin.
-- **C1:** smooth non-phantom DE, one-sided `epsilon_w=1+w -> 0+`, production step `1e-4`.
-- **C2:** interacting vacuum `Q=H(alpha rho_idm + beta rho_iv)`; positive alpha excluded by frozen positivity history; physical coordinate `u=-alpha>=0` plus beta line.
-- **C3:** GDM `cs2/cv2` closure directions, `w_gdm=0`.
-- **C4:** thermal WDM, separate informative high-k transfer block.
+- **C1:** smooth non-phantom DE; `epsilon_w=1+w -> 0+`; production step `1e-4`.
+- **C2:** IDE `Q=H(alpha rho_idm+beta rho_iv)`; positive alpha excluded by positivity history; use `u=-alpha>=0` and beta line.
+- **C3:** GDM `cs2/cv2`, frozen `w_gdm=0`.
+- **C4:** thermal WDM, separate high-k transfer block. Never insert as low-k zero.
 - **C5:** designer f(R), H-EFTCAMB `DesignerEFTmodel=1`, `EFTwDE=0`, production `B0={1e-6,1e-5,1e-4,1e-3}`, controls `0,1e-7`.
 
-Pinned upstream:
+Pinned source revisions:
 
 - C1/C3: `s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`;
 - C2: `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`;
 - C5: `EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`.
 
-C5 hard config artifact: run `32759477319`, artifact `9532245261`, SHA256 `9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635`, lineage `dsir_mgs1_hp_*`.
+C5 immutable hard config artifact: run `32759477319`, artifact `9532245261`, SHA256 `9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635`, lineage `dsir_mgs1_hp_*`.
 
 ---
 
-## 5. AP operator and exact geometry-null results
+## 4. AP and exact null-space results
 
-For flat FLRW,
+Flat-FLRW AP:
 
 \[
 D_H=\frac{c}{H_0E(z)},\qquad D_M=\frac{c}{H_0}\int_0^z\frac{dz'}{E(z')},
 \]
 
-therefore
-
 \[
-\boxed{F_{AP}(z)=\frac{D_M}{D_H}=E(z)\int_0^z\frac{dz'}{E(z')}}.
+\boxed{F_{AP}=\frac{D_M}{D_H}=E(z)\int_0^z\frac{dz'}{E(z')}}.
 \]
 
-A multiplicative normalization of `E` cancels exactly. Corrected ShapeFit geometry uses `D_H/D_M`:
+Multiplicative normalization of `E` cancels exactly. Corrected ShapeFit coordinate obeys
 
 \[
 \Delta\ln(D_H/D_M)=-\Delta\ln F_{AP}.
 \]
 
-AP requires full background history from `z=0`; never extrapolate the seven-node structure atlas below `z=0.295`.
+Never extrapolate the seven-node structure grid to `z=0` for production AP; use full solver backgrounds.
 
-Hard examples:
+Hard nulls:
 
-- Exp035 AP bridge error `~1e-14`.
-- Exp036 IDE alpha/beta AP acute `9.0379 deg` versus full structure `58.9338 deg`.
-- Exp037 frozen GDM closure directions:
-  \[
-  K_{AP}t_{cs2}=K_{AP}t_{cv2}=0.
-  \]
-- Exp038 frozen designer-f(R) B0:
-  \[
-  K_{AP}t_{B0}=0.
-  \]
+\[
+K_{AP}t_{cs2}=K_{AP}t_{cv2}=0
+\]
 
-Final C5 transfer-preserving regression: run `32786915513`, artifact `9541895055`, SHA256 `74d975790d00a04762d45bf183481f69d6fc54b84d186c63e89b88bbb9d20b16`.
+for frozen GDM closure directions (Exp037), and
 
-**Hard cross-family lesson:** `K_geometry t=0` does not imply `t≈0`; physics can be exactly invisible in background/AP and still perturbation-active.
+\[
+K_{AP}t_{B0}=0
+\]
+
+for frozen designer f(R) (Exp038), while both are perturbation-active.
+
+C5 final transfer-preserving Exp038 regression: run `32786915513`, artifact `9541895055`, SHA256 `74d975790d00a04762d45bf183481f69d6fc54b84d186c63e89b88bbb9d20b16`.
+
+**Hard lesson:** no background/AP anomaly does not imply proximity to the physical origin in the full response space.
 
 ---
 
-## 6. ShapeFit shape and density/velocity contracts
+## 5. Temporal response, degeneracy migration and compression limits
 
-Corrected DR1 ShapeFit order:
-
-`[D_V/r_d, D_H/D_M, f_sigma_s8, m+n]`.
-
-Finite-node shape proxy:
-
-\[
-\ln(P'/P_{ref})=A+\frac{m}{0.6}\tanh[0.6\ln(k/0.03)]+n\ln(k/0.03).
-\]
-
-It leaves about `36%` representation residual for GDM/f(R), so proxy angles are not DESI distinguishability.
-
-Correct growth convention:
-
-\[
-s=\frac{r_d}{r_d^{ref}},\qquad \sigma_{s8}=\sigma(R=s\,8h^{-1}{\rm Mpc}).
-\]
-
-For density/velocity moments:
-
-\[
-\boxed{{\cal D}_{RSD}=1-\frac{S_{\delta\Theta}^2}{S_{\delta\delta}S_{\Theta\Theta}}}.
-\]
-
-Exp041 establishes
-
-\[
-\boxed{{\cal D}_{RSD}=\frac{\mathrm{Var}_w[g]}{\langle g^2\rangle_w}},\qquad g=\Theta/\delta,
-\]
-
-and
-
-\[
-CV_w(g)=\sqrt{\frac{{\cal D}_{RSD}}{1-{\cal D}_{RSD}}}.
-\]
-
-C5 hard run `32791510072`, artifact `9543375564`, SHA256 `1e4d86f7f13185d69a07b71afa9bfd6fefa6003119064652d6388491738212bc`.
-
-At `kmax=0.24 h/Mpc`, GR floor is `~1.42e-10`; production B0 gives `D_RSD=5.18e-6,1.92e-4,8.81e-4,8.78e-4` for `1e-6,1e-5,1e-4,1e-3`. Hence scalar growth compression is not exact for frozen designer f(R).
-
-Old printed H-EFTCAMB `sigma8` summaries have only about four decimals and are rejected for small-B0 tangent work.
-
----
-
-## 7. Temporal response and degeneracy migration — Exp040
-
-For adjacent frozen early->late nodes,
+Finite-bin theory temporal response:
 
 \[
 \boxed{\Delta\bar f_P(k)=\frac{r_\Delta(k,z_{late})-r_\Delta(k,z_{early})}{2[\ln a_{late}-\ln a_{early}]}}.
 \]
 
-This is theory-space temporal response, not tracer RSD.
+Key Exp040 comparisons:
 
-Hard comparisons:
+- IDE alpha/beta: AP `9.04 deg` -> temporal `29.40 deg` -> structure `58.93 deg`;
+- smooth-w/IDE-alpha: AP `72.80`, temporal `10.31`, structure `52.19 deg`;
+- GDM cs2/cv2: structure `0.3226`, temporal `1.334 deg`, slip still required;
+- GDM/f(R): scale-only `0.078-0.102`, temporal `16-17`, full `(k,z)` `25.18-25.49 deg`.
 
-- IDE alpha/beta: AP `9.04 deg` -> temporal `29.40 deg` -> structure `58.93 deg`.
-- smooth-w/IDE-alpha: AP `72.80 deg`, temporal `10.31 deg`, structure `52.19 deg`.
-- IDE-alpha/GDM: structure `~25 deg` -> temporal `~61 deg`.
-- GDM cs2/cv2: structure `0.3226 deg` -> temporal `1.3340 deg`; slip remains necessary.
-- GDM/f(R): scale-only `0.078-0.102 deg` -> temporal `16-17 deg` -> full `(k,z)` `25.18-25.49 deg`.
+**Hard lesson:** degeneracies migrate between operators; one channel can separate one pair and collapse another.
 
-**Hard interpretation:** degeneracies migrate between response operators. Adding one channel can separate one pair and collapse another.
+Corrected ShapeFit order:
+
+`[D_V/r_d, D_H/D_M, f_sigma_s8, m+n]`.
+
+Finite-node `m+n` representation leaves ~36% residual for GDM/f(R), so proxy angles are not survey distinguishability.
 
 ---
 
-## 8. GDM velocity/gauge negative chronology — Exp042/043
+## 6. Density/velocity representability and GDM velocity negative gate
 
-Preserve the sequence:
+ShapeFit growth uses
 
-1. synchronous GDM velocity is gauge-ill-conditioned for RSD;
-2. pinned N-body transfer route stops upstream because the derivative of `H_T_Nb_prime` is not propagated;
-3. Exp042 parser initially mishandled a 16-vs-15-column gauge layout; parser-only fix did not alter thresholds;
-4. actual synchronous/Newtonian comoving-density bridge failed: `2.58664e-6 > 1e-6`, while response bridge was `6.78698e-7`;
-5. Exp043 independently interpolated each gauge to frozen nodes and tightened numerical precision only.
+\[
+s=r_d/r_d^{ref},\qquad R=s\,8h^{-1}{\rm Mpc}.
+\]
 
-Exp043 p8 absolute bridge `2.51958e-6`; p10 `3.00625e-6`; ratio `1.19316`. Response bridge remains below `1e-6` but absolute bridge fails.
+Density/velocity representability defect:
+
+\[
+\boxed{{\cal D}_{RSD}=1-\frac{S_{\delta\Theta}^2}{S_{\delta\delta}S_{\Theta\Theta}}}
+=\frac{\mathrm{Var}_w[g]}{\langle g^2\rangle_w},\qquad g=\Theta/\delta.
+\]
+
+C5 Exp041 hard run `32791510072`, artifact `9543375564`, SHA256 `1e4d86f7f13185d69a07b71afa9bfd6fefa6003119064652d6388491738212bc` shows nonzero production `D_RSD`, so scalar growth compression is not exact for frozen designer f(R).
+
+Old printed CAMB growth summaries are rejected for small-B0 tangents because of four-decimal quantization.
+
+GDM Exp042/043 negative chronology:
+
+- synchronous velocity is gauge-ill-conditioned for RSD;
+- pinned N-body transfer route is incomplete upstream;
+- Exp042 absolute synchronous/Newtonian comoving-density bridge fails `1e-6`;
+- Exp043 tighter perturbation precision worsens the absolute residual (`2.5196e-6 -> 3.0063e-6`, ratio `1.19316`).
 
 Run `32794067542`, artifact `9544255453`, SHA256 `c62613798a6a6f8e9e573bb158315ca03a5c9f998805ebfc6bdda25de4d4100a`.
 
-**Negative result:** tighter precision does not cure the mismatch. Do not loosen the gate or use Exp042 velocity/RSD values as validated science.
+Do not loosen the gate and do not use exploratory GDM velocity/RSD outputs as validated physics.
 
 ---
 
-## 9. BuyanovGPT atlas, no-hair analogy and dimensions
+## 7. BuyanovGPT taxonomy and dimension discipline
 
-`docs/BUYANOVGPT_TABLE.md` is a response influence atlas, not a theory.
+`docs/BUYANOVGPT_TABLE.md` is a response atlas/hypothesis organizer, not a theory. Provisional labels include:
 
-Provisional response labels include `G` global amplitude, `T` scale, `tau` time, `S` metric slip/aniso-stress, `M` small-scale/free-streaming localization, `N` interaction/exchange and `B` background/geometry. They are **not proven independent fundamental parameters**.
+- `G` global amplitude/growth;
+- `T` scale dependence;
+- `tau` time evolution;
+- `S` metric slip/aniso-stress;
+- `M` small-scale/free-streaming localization;
+- `N` interaction/exchange;
+- `B` background/geometry.
 
-Keep separate:
+Keep distinct:
 
-- `N_repr`: coordinates needed to reconstruct/approximate responses;
-- `N_disc`: channels needed to discriminate mechanisms.
+- `N_repr`: coordinates/functions needed to reconstruct responses;
+- `N_disc`: independent channels needed to discriminate mechanisms.
 
-GDM cs2/cv2 proves these concepts can differ: density/time responses are almost collinear but slip separates the mechanisms.
-
-The dark-sector no-hair analogy is only a falsifiable organizing question. There is no theorem.
+No dark-sector no-hair theorem exists. The analogy is only a falsifiable organizing question.
 
 ---
 
-## 10. Exp045A — simple additive `Core=(G,T,tau)` falsified
+## 8. Exp045A — additive `(G,T,tau)` core falsified
 
-Orthogonal decomposition:
+For each response matrix define
 
 \[
 \mu=\langle R\rangle_{z,k},
@@ -300,9 +255,7 @@ Orthogonal decomposition:
 
 \[
 T(k)=\langle R\rangle_z-\mu,
-\]
-
-\[
+\qquad
 \tau(z)=\langle R\rangle_k-\mu,
 \]
 
@@ -310,150 +263,153 @@ T(k)=\langle R\rangle_z-\mu,
 \boxed{R(z,k)=\mu+T(k)+\tau(z)+I(z,k)}.
 \]
 
-`I(z,k)` is the irreducible scale-time interaction. Under the uniform frozen-grid inner product, the additive core and interaction are orthogonal.
+`I` is irreducible scale-time interaction and is orthogonal to the additive core under the frozen-grid inner product.
 
-Pre-frozen compact adequacy required `>=95%` core power capture for every direction and `<=5 deg` distortion of every pairwise acute angle.
-
-Run `32883280742`, artifact `9576600500`, SHA256 `59839a2717646e50501a949cf5b310cb6c0e55f85dd6839fce2832c704ec28dd`.
-
-Controls pass. Scientific result:
-
-`FAIL_COMPACT_G_T_TAU_CORE_LOW_K_V0_1`.
-
-Direction interaction power
+Define
 
 \[
-\boxed{\chi_I=\frac{\|I\|^2}{\|R\|^2}}:
+\boxed{\chi_I=\frac{\|I\|^2}{\|R\|^2}}.
 \]
+
+Hard run `32883280742`, artifact `9576600500`, SHA256 `59839a2717646e50501a949cf5b310cb6c0e55f85dd6839fce2832c704ec28dd`.
+
+Full-grid `chi_I`:
 
 - C1 smooth-w `0.0010805`;
 - C2 IDE alpha `1.57e-11`;
 - C2 IDE beta `5.49e-11`;
 - C3 GDM cs2 `0.0453054`;
 - C3 GDM cv2 `0.0436337`;
-- C5 designer f(R) **`0.299856`**.
+- C5 f(R) `0.299856`.
 
-Dropping `I` changes GDM/f(R) acute angles from `25.18/25.49 deg` to `14.77/14.93 deg`; maximum pairwise distortion is IDE-alpha/f(R), `14.31 deg`.
+C5 additive core captures only `70.01%`; compact `(G,T,tau)` hypothesis fails. Dropping `I` reduces GDM/f(R) angles from `25.18/25.49` to `14.77/14.93 deg`.
 
-**Hard negative conclusion:** scale and time are not generally separable response coordinates. C5 requires a large joint `k x z` component, C3 a moderate one, while the local IDE directions are essentially additive on this grid.
+Do not infer `I` is a fourth fundamental parameter or that `N_repr=4`.
 
 ---
 
-## 11. Exp046 — exact pairwise localization of separation in scale-time interaction
+## 9. Exp046 — pairwise interaction localization
 
-Normalize each response:
+For normalized responses
 
 \[
-u_A=R_A/\|R_A\|,\qquad u_B=R_B/\|R_B\|.
+u_A=R_A/\|R_A\|,\qquad u_B=R_B/\|R_B\|,
 \]
 
-Choose orientation
+choose the acute orientation `s=sign(<u_A,u_B>)` and
 
 \[
-s=\mathrm{sign}\langle u_A,u_B\rangle
+d=u_A-su_B=d_C+d_I.
 \]
 
-and pair difference
+Orthogonality gives
 
 \[
-d=u_A-su_B.
-\]
-
-Apply the same linear orthogonal decomposition to obtain
-
-\[
-d=d_C+d_I,
+\boxed{\|d\|^2=\|d_C\|^2+\|d_I\|^2},
 \]
 
 so
 
 \[
-\boxed{\|d\|^2=\|d_C\|^2+\|d_I\|^2}.
+\boxed{\eta_I=\frac{\|d_I\|^2}{\|d\|^2}}.
 \]
 
-Define the pairwise interaction-localization fraction
+Hard run `32884761188`, artifact `9577142860`, SHA256 `6e2c7026efe17a81bee10c9a9904c78f5299dce1bf594535be5ded600a3d2834`.
 
-\[
-\boxed{\eta_I(A,B)=\frac{\|d_I\|^2}{\|d\|^2}},\qquad \eta_C=1-\eta_I.
-\]
+Key full-grid `eta_I`:
 
-This identity is exact for the frozen-grid inner product. `eta_I` measures the fraction of **normalized pairwise response-shape separation power** in scale-time interaction. It is not significance or detectability.
+- GDM cs2/cv2 `0.7311`, but total angle only `0.323 deg`;
+- GDM cs2/f(R) `0.6120`;
+- GDM cv2/f(R) `0.6138`;
+- IDE-alpha/f(R) `0.5719`;
+- IDE alpha/beta `~1.5e-11`.
 
-Hard run `32884761188`, artifact `9577142860`, SHA256 `6e2c7026efe17a81bee10c9a9904c78f5299dce1bf594535be5ded600a3d2834`, source head `d292cb90245c3e472dcbffd076947181fd6ed7cf`.
+GDM cs2/cv2 interaction shapes remain nearly collinear (`0.743 deg`), so interaction does not replace slip.
 
-Controls:
-
-- unit norm residual `5.42e-20`;
-- core/interaction orthogonality `1.01e-14`;
-- Pythagorean residual `3.25e-19`;
-- angle/chord residual `4.76e-15`.
-
-Key `eta_I`:
-
-- GDM cs2/cv2 **`0.731139`**;
-- GDM cv2/f(R) **`0.613829`**;
-- GDM cs2/f(R) **`0.611982`**;
-- IDE-alpha/f(R) **`0.571946`**;
-- IDE-beta/f(R) `0.305340`;
-- smooth-w/f(R) `0.280354`;
-- IDE-alpha/GDM cs2/cv2 `0.243027/0.236822`;
-- IDE alpha/beta `1.49e-11`.
-
-Valid interaction-shape acute angles:
-
-- GDM cs2/cv2 `0.742556 deg`;
-- GDM cs2/f(R) `10.985703 deg`;
-- GDM cv2/f(R) `11.710540 deg`;
-- smooth-w versus GDM/f(R) approximately `69.6-70.0 deg`.
-
-### Interpretation rules
-
-1. **Always report `eta_I` with total pair angle/distance.** GDM cs2/cv2 have `eta_I=0.731` but total angle only `0.323 deg`; interaction carries most of a tiny distinction and does not solve the microphysical degeneracy.
-2. GDM/f(R) combine a material full angle (`~25 deg`) with `eta_I~0.612`; therefore a substantial fraction of their separation genuinely lives in how scale dependence evolves with time.
-3. Interaction morphology itself leaves GDM cs2/cv2 nearly collinear (`0.743 deg`), so metric slip remains necessary.
-4. The ordering `IDE near-null -> smooth-w weak -> GDM moderate -> f(R) strong` in `chi_I` is a promising mechanism-level regularity candidate, **not yet a law**.
-
-Repo summary: `data/derived/comparison_readiness/experiment_046_scale_time_interaction_morphology_v0_1.json`.
+PR #25 merged to `main` as `bb4261224efd09b2063f29faca22d6f2efbda1f7` after current-head regressions passed.
 
 ---
 
-## 12. Current strongest cross-family patterns
+## 10. Exp047B — leave-one-node robustness of scale-time interaction
 
-### A. Block-sparse influence
+Purpose: test whether Exp046 results are driven by one particular frozen `k` or `z` node.
+
+Generate exactly 12 reduced grids: leave out each of five k nodes and each of seven z nodes once, recomputing the decomposition from scratch. No scientific drift threshold was set; only algebraic controls could fail.
+
+First run failed only at JSON serialization of `numpy.longdouble`; serialization-only fix left formulas/grids/thresholds unchanged.
+
+Successful provenance:
+
+- run `32894616114`;
+- source head `9a05c451401ac2cede3a56ef4ca2a1923eecb9c3`;
+- artifact `9580724793`;
+- SHA256 `948038245e4eeea9ca569a48e138f5bdddaede19f0ff98ea941fc91a00272bb7`.
+
+Controls pass:
+
+- reconstruction `0`;
+- max core/I orthogonality `8.3946e-14`;
+- max Pythagorean residual `2.3505e-17`;
+- ceiling `1e-12`.
+
+### Hard descriptive hierarchy robustness
+
+The ordering
 
 \[
-K_{AP}t_{GDM}=0,\quad K_{pert}t_{GDM}\neq0,
+\boxed{\text{IDE near-null}<\text{smooth-w}<\text{GDM}<f(R)}
 \]
+
+is preserved in **12/12** single-node deletions. Both IDE directions stay below the existing `chi_I=1e-6` morphology floor in **12/12** grids.
+
+Leave-one-node `chi_I` ranges:
+
+- IDE alpha `1.99e-13 .. 7.36e-11`;
+- IDE beta `3.66e-13 .. 7.45e-11`;
+- smooth-w `3.91e-5 .. 1.34e-3`;
+- GDM cs2 `0.0279 .. 0.0525`;
+- GDM cv2 `0.0265 .. 0.0505`;
+- f(R) `0.2233 .. 0.3497`.
+
+### Hard descriptive GDM/f(R) pair robustness
+
+- cs2/f(R): `eta_I=0.5504 .. 0.6539`;
+- cv2/f(R): `eta_I=0.5520 .. 0.6554`.
+
+Thus more than half of normalized GDM/f(R) shape-separation power remains in irreducible interaction for every leave-one-node grid. This is descriptive because `eta_I>0.5` was not preregistered as a scientific gate.
+
+### Hard limitation: smooth-w magnitude
+
+Removing `k=0.001 h/Mpc` changes
 
 \[
-K_{AP}t_{f(R)}=0,\quad K_{pert}t_{f(R)}\neq0.
+\chi_I:1.0805\times10^{-3}\rightarrow3.9123\times10^{-5},
 \]
 
-### B. Degeneracy migration
+about `27.6x` lower. The smooth-w **tier** is robust; the precise `chi_I` magnitude is not yet a grid-insensitive family invariant.
 
-Pair similarity belongs to `(model directions + response operator)`, not to the pair alone.
+**Current safest interpretation:** `chi_I` is presently a response descriptor whose coarse mechanism hierarchy is robust on this grid, while absolute magnitudes have family-dependent domain sensitivity. GDM/f(R) joint `k x z` separation is substantially more robust than smooth-w magnitude.
 
-### C. Domain localization
-
-WDM: low-k nearly blind, high-k visible.
-
-### D. Mechanism information outside density growth
-
-GDM pressure/viscosity require metric slip for robust separation.
-
-### E. Scale-time nonseparability
-
-`chi_I` differs by many orders across mechanisms on the current grid, and Exp046 shows interaction can carry most of the materially relevant GDM/f(R) separation.
-
-### F. Representation is not discrimination
-
-A direction may need a component for accurate representation without that component being an effective mechanism discriminator, and vice versa. Keep `N_repr` and `N_disc` separate.
-
-Current discriminant graph minimum hitting set remains `{metric slip, small-scale transfer, time/sign evolution}` for the frozen evidence graph only.
+Detailed result: `experiments/047b_interaction_leave_one_node_stability_v0_1.md` and `data/derived/comparison_readiness/experiment_047b_interaction_leave_one_node_stability_v0_1.json`.
 
 ---
 
-## 13. Gate state
+## 11. Current strongest cross-family patterns
+
+1. **Block-sparse influence:** GDM and designer f(R) can be exactly geometry/AP-null but perturbation-active.
+2. **Degeneracy migration:** pair similarity belongs to `(direction, operator)`, not the model pair alone.
+3. **Domain localization:** WDM is low-k blind/high-k active.
+4. **Metric information can be indispensable:** GDM pressure/viscosity remain density/time/interaction-degenerate but slip-separated.
+5. **Scale-time nonseparability:** current coarse hierarchy `IDE << smooth-w < GDM < f(R)` survives every single-node deletion.
+6. **Persistent GDM/f(R) joint evolution:** `eta_I` remains `0.55-0.655` under all leave-one-node tests.
+7. **Magnitude is not automatically invariant:** smooth-w low-k sensitivity is a hard caution against overinterpreting `chi_I` as a universal scalar hair.
+8. **Representation is not discrimination:** keep `N_repr` and `N_disc` separate.
+
+Current discriminant-graph minimum hitting set remains `{metric slip, small-scale transfer, time/sign evolution}` for the current evidence graph only.
+
+---
+
+## 12. Gate state
 
 - G1 PASS v0.1.1.
 - G2 PASS v0.1.1.
@@ -469,27 +425,27 @@ No universal-model, intrinsic-rank, law or discovery claim.
 
 ---
 
-## 14. Exact continuation sequence
+## 13. Exact continuation sequence
 
-1. **Exp047A amplitude/step stability:** reconstruct `chi_I` and interaction morphology from available finite family-manifold amplitudes; test whether the hierarchy `IDE -> smooth-w -> GDM -> f(R)` survives beyond one local tangent.
-2. **Exp047B leave-one-node-out stability:** delete each k node and each z node in turn, recompute `chi_I` and key `eta_I`, and quantify maximum/rms drift under pre-frozen metrics.
-3. Only if those tests are stable, define an independent confirmatory mechanism-classification gate. Do not choose a threshold after seeing results.
-4. Extend C4 WDM to a high-k time-dependent `(k,z)` atlas and evaluate its `chi_I`/interaction morphology without low-k zero imputation.
+1. **Exp047A amplitude/finite-step stability:** inspect immutable C1/C2/C3/C5 manifold artifacts and reconstruct finite-amplitude response matrices where complete `(k,z)` output exists. Test the nonseparability hierarchy away from one local tangent.
+2. For smooth-w, diagnose the `k=0.001` sensitivity using neighboring low-k support and solver-precision/domain checks before assigning physical meaning.
+3. If amplitude stability supports the hierarchy, preregister an independent future classification test using thresholds not fitted to Exp045A/046/047B outcomes.
+4. Extend C4 WDM to a high-k time-dependent `(k,z)` atlas and evaluate its nonseparability without cross-domain zero imputation.
 5. Preserve metric slip/lensing and high-k transfer as independent channels.
-6. Continue survey/window-aware shape and RSD forward modelling; theory-space geometry is not survey detectability.
-7. Estimate stable `N_repr`/`N_disc` only after common observation coordinates and prior/sampling/precision/covariance/channel-removal stress tests.
-8. Continue searching for exact nulls, degeneracy migration, orientation/sign changes, localization and robust cross-family relations.
-9. Universal model only after readiness criteria and a credible withheld-family prediction plan.
-10. Resume G7 only after observationally whitened stability; **no discovery before G8**.
+6. Continue survey/window-aware shape and RSD operators before detectability claims.
+7. Estimate stable `N_repr`/`N_disc` only after common observation coordinates plus prior/sampling/precision/covariance/channel-removal stress tests.
+8. Continue searching for exact nulls, channel reversals, orientation/sign changes, localization and robust cross-family relations.
+9. Universal model only after readiness criteria and a withheld-family prediction plan.
+10. G7 stays open; **no discovery before G8**.
 
 ---
 
-## 15. Short recovery summary
+## 14. Short recovery summary
 
-**Mission:** reconstruct dark-sector influence without assuming DM/DE/MG ontology.  
-**Current state:** six-family block-aware atlas; exact AP nulls for frozen GDM and designer f(R); hard degeneracy migration; C5 density/velocity compression defect; unresolved GDM velocity bridge; additive `(G,T,tau)` core falsified; scale-time interaction morphology quantified.  
-**Newest hard insight:** for GDM/f(R), about **61%** of normalized low-k structure-shape separation power lies in irreducible `k x z` interaction. GDM cs2/cv2 show why this is not automatically detectability: `eta_I=0.731` but total separation is tiny.  
-**Priority hypothesis:** `chi_I` hierarchy `IDE near-null -> smooth-w weak -> GDM moderate -> f(R) strong`; stress-test before elevation.  
-**Boundary:** C4 requires high-k time support; `I` is not a universal parameter/hair.  
+**Mission:** infer observable dark-sector influence without assuming DM/DE/MG ontology.  
+**Current state:** six-family block-aware atlas; exact AP nulls for frozen GDM/f(R); hard degeneracy migration; C5 density/velocity compression defect; GDM velocity bridge negative; additive `(G,T,tau)` core falsified; scale-time interaction and pairwise localization quantified and grid-stress-tested.  
+**Newest robust pattern:** `IDE near-null < smooth-w < GDM < f(R)` in `chi_I` survives 12/12 leave-one-node grids; GDM/f(R) keeps `eta_I=0.55-0.655`.  
+**Newest caution:** smooth-w absolute `chi_I` is strongly low-k sensitive and should not yet be called a precise invariant.  
+**Priority next:** amplitude/finite-step stability, then C4 high-k time support and observation-space validation.  
 **No law/discovery:** G5 partial, G7/G8 open.  
 **Never mix DSIR with RTK.**
