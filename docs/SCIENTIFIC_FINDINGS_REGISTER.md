@@ -39,6 +39,7 @@ Current hard examples:
 5. GDM `cs2/cv2` with frozen `w_gdm=0`: Experiment 037 gives exactly zero saved-solver background/AP response while the same directions are nonzero in perturbation channels.
 6. Designer f(R) `B0`: Experiment 038 gives exactly zero saved-solver background/AP response over `B0=0..1e-3` on the source-proven `EFTwDE=0` LCDM background branch, while the frozen structure response is nonzero.
 7. Smooth-w versus IDE negative-alpha: AP separates them strongly (`72.803493 deg` acute), whereas the finite-bin temporal-growth operator collapses them to `10.310585 deg` acute.
+8. The same C5 `B0` direction that is exactly AP-null in Experiment 038 is density-velocity compression-active in Experiment 041: all production `B0=1e-6..1e-3` have a nonzero high-precision `D_RSD` well above the GR / `B0=0` numerical floor.
 
 **Interpretation:** model identity is not expected to be carried by one response shape alone; complementary influence channels are required. Some physical directions can lie in the exact null space of an entire channel, and the location of pairwise degeneracies can migrate when the observation/response operator changes.
 
@@ -138,7 +139,7 @@ The repeated hard pattern across GDM, f(R), WDM, and IDE suggests that the usefu
 \theta_{micro}\rightarrow X_{\mu\nu}\rightarrow\{K_1X,K_2X,\ldots\}.
 \]
 
-Experiments 037 and 038 sharpen this: the trajectory can be **block-sparse**, with an exactly zero coordinate in background/AP and a substantial response in perturbation channels in two qualitatively different families. Experiment 040 further shows that pairwise degeneracies can migrate between projections of the same physical directions.
+Experiments 037 and 038 sharpen this: the trajectory can be **block-sparse**, with an exactly zero coordinate in background/AP and a substantial response in perturbation channels in two qualitatively different families. Experiment 040 further shows that pairwise degeneracies can migrate between projections of the same physical directions. Experiment 041 strengthens the same picture with an observational-compression example: the frozen C5 direction is exactly geometry-null but has a nonzero density-velocity representability defect.
 
 Thus absence of a geometry response does not imply proximity to the common physical origin in the full response space, and a pair that is well separated in one channel can be nearly degenerate in another.
 
@@ -183,7 +184,7 @@ For every audited `B0`:
 - `max_abs Delta ln(D_H/D_M)=0`;
 - every saved numerical background column is exactly equal to `B0=0` at saved solver precision.
 
-These exact zeros are stronger than the pre-frozen `1e-8` tolerances. Hard provenance: run `32785800977`, artifact ID `9541598468`, SHA256 `24b7fa5951c06d4cea72e6c0bf6baad2d2174f2d86794ec0818cf57c309b81c8`.
+These exact zeros are stronger than the pre-frozen `1e-8` tolerances. The final merged rerun is run `32786915513`, artifact ID `9541895055`, SHA256 `74d975790d00a04762d45bf183481f69d6fc54b84d186c63e89b88bbb9d20b16`.
 
 **Interpretation:** the frozen C5 `B0` direction is a second hard example of an exact background/AP null with a nonzero perturbation response, now in modified gravity rather than a dark-fluid closure family.
 
@@ -219,9 +220,56 @@ The same temporal projection has opposite effects on different pairs:
 
 The frozen C5 H-EFTCAMB logs print `sigma8` and `sigma8^2_vd/sigma8` only to roughly four decimal places. At `B0=1e-7` this rounding makes most redshift values identical to the reference even when larger-B0 runs show a smooth nonzero perturbation trend. Finite-difference tangents inferred from these printed values are therefore dominated by quantization/rounding artifacts.
 
-**Consequence:** DSIR will not use those text logs for the small-B0 growth tangent or for an RSD representability claim. Experiment 039 must use high-precision machine-readable density/velocity transfer or cross-power outputs. Pinned CAMB exposes `delta_tot`, `v_newtonian_cdm`, and `v_newtonian_baryon` transfer variables, so a proper numerical bridge is feasible.
+**Consequence:** DSIR will not use those text logs for the small-B0 growth tangent or for an RSD representability claim. Experiment 041 instead uses an independent high-precision `E24.16` transfer-output rerun while changing only the text I/O precision. Pinned CAMB exposes `delta_tot`, `v_newtonian_cdm`, and `v_newtonian_baryon` transfer variables.
 
 This is a methodological failure of an output representation, not a failure of the underlying C5 solver/model.
+
+## F13 — scalar growth compression is not exact for frozen designer f(R)
+
+**Status: HARD ESTABLISHED for the frozen C5 production manifold and CAMB-native density/CDM-velocity convention (Experiment 041).**
+
+For
+
+\[
+g(k,z)=\Theta(k,z)/\delta(k,z)
+\]
+
+and positive ShapeFit top-hat weight, define
+
+\[
+{\cal D}_{RSD}=1-\frac{S_{\delta\Theta}^2}{S_{\delta\delta}S_{\Theta\Theta}}.
+\]
+
+Experiment 041 proves the exact identity
+
+\[
+\boxed{{\cal D}_{RSD}=\frac{\operatorname{Var}_{w}[g]}{\langle g^2\rangle_w}}
+\]
+
+so the defect is a normalized weighted scale variance of the density-velocity growth ratio. The corresponding weighted coefficient of variation is
+
+\[
+\boxed{CV_w(g)=\sqrt{\frac{{\cal D}_{RSD}}{1-{\cal D}_{RSD}}}}.
+\]
+
+The confirmatory workflow froze its thresholds after an explicitly exploratory low-precision extraction but before an independent `E24.16` transfer run. It changed only CAMB text-output precision, not solver physics.
+
+At `k_max=0.24 h/Mpc`, maximum defects over the frozen redshifts are:
+
+- GR: `1.41895e-10`;
+- designer `B0=0`: `1.41973e-10`;
+- `B0=1e-6`: `5.17750e-6`;
+- `B0=1e-5`: `1.92250e-4`;
+- `B0=1e-4`: `8.80583e-4`;
+- `B0=1e-3`: `8.78038e-4`.
+
+At the aggressive `k_max=0.10 h/Mpc` cut every production point remains above its pre-frozen nonzero threshold. The `k_max=0.24` weighted fractional scale variation of `g` is approximately `0.23%`, `1.39%`, `2.97%`, and `2.96%` for `B0=1e-6,1e-5,1e-4,1e-3`, versus about `0.0012%` numerical floor for GR / `B0=0`.
+
+Hard provenance: run `32791510072`, artifact ID `9543375564`, SHA256 `1e4d86f7f13185d69a07b71afa9bfd6fefa6003119064652d6388491738212bc`, status `PASS_C5_RSD_REPRESENTABILITY_HIGH_PRECISION_V0_1`, `failures=[]`.
+
+**Interpretation:** one scale-independent `f sigma_s8`-like amplitude is a lossy compression for the frozen C5 designer-f(R) production direction. This is particularly informative together with F10: the same microscopic direction is exactly background/AP-null but density-velocity compression-active.
+
+**Boundary:** this is not a DESI detection, not an arbitrary-f(R) theorem, and not yet a family-complete observational RSD block. C1/C2/C3/C4 still require their own density/velocity audits.
 
 ## Iteration protocol for this register
 
