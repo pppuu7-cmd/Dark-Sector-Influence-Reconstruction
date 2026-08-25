@@ -216,3 +216,35 @@ DSIR does **not** claim a dark-sector no-hair theorem or a universal model. Any 
 5. Continue observation/window/covariance projection before detectability claims.
 6. Estimate `N_repr` and `N_disc` only after common observation-space operators exist.
 7. Universal model only after `docs/UNIVERSAL_MODEL_READINESS.md` criteria and a credible withheld-family test.
+
+<!-- DSIR_EXP050A_DOC_SYNC_2026_08_26 -->
+## 12. Exp050A update — C4 high-k time geometry
+
+The previous C4 entry `I unknown until high-k time atlas exists` is superseded by Exp050A.
+
+| C4 quantity | Hard result on frozen high-k linear atlas |
+|---|---|
+| masses | `2,3,5 keV` |
+| k-domain | `0.1,0.3,1,3,10,20 h/Mpc` |
+| z-domain | standard seven DSIR nodes |
+| high-k suppression | strong; e.g. at z=0.295, k=20: `r=-1.193,-0.445,-0.119` |
+| redshift drift | tiny: max `6.83e-5,2.26e-5,5.07e-6` |
+| irreducible interaction `chi_I` | `2.58e-10,2.21e-10,2.29e-10` |
+| atlas interpretation | **domain-localized free-streaming / scale-dominated; nearly time-separable on this frozen linear domain** |
+
+This gives the current response-class contrast:
+
+`IDE`: near-separable low-k exchange response;
+`smooth-w`: weak low-k interaction;
+`GDM`: moderate low-k interaction, viscosity curvature/window flow;
+`WDM`: strong high-k scale signature with almost no `k x z` interaction;
+`designer-f(R)`: strong low-k scale-time interaction and curved window flow.
+
+Do not compare these `chi_I` numbers as if they came from one common k-domain; the atlas remains block-aware/masked.
+
+### Updated continuation
+
+1. Recompute block-aware discriminant coverage including the C4 time block.
+2. Design a withheld/intermediate WDM free-streaming test before proposing any generalized transition-window law involving C4.
+3. Preserve metric slip for GDM pressure/viscosity and high-k transfer for WDM as distinct channel requirements.
+4. Continue observation-space mapping before any `N_repr`/`N_disc` hard claim.

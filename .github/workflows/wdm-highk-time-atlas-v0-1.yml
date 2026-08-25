@@ -1,0 +1,196 @@
+name: DSIR thermal-WDM high-k time atlas v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/wdm-highk-time-atlas-v0-1.yml'
+      - 'ci/wdm_highk_time_atlas_v0_1.py'
+      - 'experiments/050a_wdm_highk_time_atlas_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  wdm-highk-time-atlas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CLASS toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Clone and build pinned official CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/lesgourg/class_public.git class_public
+          cd class_public
+          git checkout e85808324f51fc694d12e3ed7439552a3c3f9540
+          git rev-parse HEAD | tee ../exp050a_class_upstream_sha.txt
+          test "$(git rev-parse HEAD)" = 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+          grep -Fq 'ncdm_fluid_approximation = 3' pk_ref.pre
+          grep -Fq 'l_max_ncdm=50' pk_ref.pre
+          grep -Fq 'tol_ncdm_bg = 1.e-10' pk_ref.pre
+          make -j2 class
+
+      - name: Freeze matched CDM and thermal-relic configurations
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          mkdir -p outputs
+          cat > dsir_wdm_base.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          Omega_k = 0.
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 25.
+          primordial_P_k_max_h/Mpc = 25.
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          write background = yes
+          EOF
+
+          cat > dsir_cdm.ini <<'EOF'
+          omega_cdm = 0.1200
+          N_ur = 3.046
+          N_ncdm = 0
+          root = outputs/cdm_
+          EOF
+          cat dsir_wdm_base.ini >> dsir_cdm.ini
+
+          cat > dsir_wdm2.ini <<'EOF'
+          omega_cdm = 0.0
+          N_ur = 3.044994641011603
+          N_ncdm = 1
+          m_ncdm = 2000.
+          omega_ncdm = 0.1200
+          T_ncdm = 0.12709722253653888
+          deg_ncdm = 1.0
+          root = outputs/wdm2_
+          EOF
+          cat dsir_wdm_base.ini >> dsir_wdm2.ini
+
+          cat > dsir_wdm3.ini <<'EOF'
+          omega_cdm = 0.0
+          N_ur = 3.0454144920184594
+          N_ncdm = 1
+          m_ncdm = 3000.
+          omega_ncdm = 0.1200
+          T_ncdm = 0.11102965073016244
+          deg_ncdm = 1.0
+          root = outputs/wdm3_
+          EOF
+          cat dsir_wdm_base.ini >> dsir_wdm3.ini
+
+          cat > dsir_wdm5.ini <<'EOF'
+          omega_cdm = 0.0
+          N_ur = 3.045703698065544
+          N_ncdm = 1
+          m_ncdm = 5000.
+          omega_ncdm = 0.1200
+          T_ncdm = 0.09364603424286322
+          deg_ncdm = 1.0
+          root = outputs/wdm5_
+          EOF
+          cat dsir_wdm_base.ini >> dsir_wdm5.ini
+
+      - name: Verify frozen thermal mapping before solver run
+        run: |
+          python3 - <<'PY'
+          import math
+          omega=0.1200
+          Tnu=(4/11)**(1/3)
+          frozen={
+            2:(0.12709722253653888,3.044994641011603),
+            3:(0.11102965073016244,3.0454144920184594),
+            5:(0.09364603424286322,3.045703698065544),
+          }
+          for m,(T,Nur) in frozen.items():
+            r=(94.1*omega/(m*1000.0))**(1/3)
+            calcT=r*Tnu
+            dneff=r**4
+            calcNur=3.046-dneff
+            assert abs(calcT-T)<2e-15,(m,calcT,T)
+            assert abs(calcNur-Nur)<2e-15,(m,calcNur,Nur)
+            print(m,calcT,dneff,calcNur)
+          PY
+          grep -Fq "both (Omega_ncdm, m_ncdm) or (omega_ncdm, m_ncdm) are" class_public/explanatory.ini
+          grep -Fq "CLASS will renormalise the psd in order to fulfill both" class_public/explanatory.ini
+
+      - name: Run matched reference and thermal relics with upstream high-precision preset
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          ./class dsir_cdm.ini pk_ref.pre 2>&1 | tee ../exp050a_cdm.log
+          for m in 2 3 5; do
+            ./class "dsir_wdm${m}.ini" pk_ref.pre 2>&1 | tee "../exp050a_wdm${m}.log"
+          done
+
+      - name: Require seven explicit P(k,z) outputs per model
+        run: |
+          set -euxo pipefail
+          for prefix in cdm_ wdm2_ wdm3_ wdm5_; do
+            n=$(find class_public/outputs -maxdepth 1 -type f -name "${prefix}*pk.dat" | wc -l)
+            test "$n" -eq 7
+            for f in class_public/outputs/${prefix}*pk.dat; do
+              grep -Eiq 'redshift[[:space:]]+z[[:space:]]*=' "$f"
+              test "$(grep -vc '^#' "$f")" -gt 20
+            done
+          done
+
+      - name: Build separate C4 high-k time atlas
+        run: |
+          python3 ci/wdm_highk_time_atlas_v0_1.py \
+            --directory class_public/outputs \
+            --reference-prefix cdm_ \
+            --models 2:wdm2_ 3:wdm3_ 5:wdm5_ \
+            --h 0.67 --omega-wdm 0.1200 \
+            --json wdm_highk_time_atlas_v0_1.json
+          cat wdm_highk_time_atlas_v0_1.json
+
+      - name: Record immutable provenance
+        if: always()
+        run: |
+          {
+            echo 'Experiment 050A thermal-WDM high-k time atlas'
+            echo 'Calibration/domain completion only; no scientific threshold on time drift, chi_I, mass ordering, or Viel-fit agreement.'
+            echo 'Frozen masses: 2,3,5 keV; k={0.1,0.3,1,3,10,20} h/Mpc; seven standard DSIR redshifts.'
+            echo 'Matched CDM omega=0.1200. WDM uses one FD ncdm species with m+omega enforced, thermal T_x from 94.1 eV instantaneous-decoupling relation, and N_ur adjusted to preserve total N_eff=3.046 at early times.'
+            echo 'Official upstream pk_ref.pre retained, including ncdm_fluid_approximation=3 (ncdmfa_none in this pinned source) and l_max_ncdm=50.'
+            echo "DSIR head: $GITHUB_SHA"
+            echo -n 'CLASS upstream: '; cat exp050a_class_upstream_sha.txt
+          } > exp050a_environment.txt
+
+      - name: Upload C4 high-k time-atlas artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wdm-highk-time-atlas-v0-1-${{ github.sha }}
+          path: |
+            wdm_highk_time_atlas_v0_1.json
+            exp050a_environment.txt
+            exp050a_class_upstream_sha.txt
+            exp050a_*.log
+            class_public/dsir_*.ini
+            class_public/pk_ref.pre
+            class_public/outputs/cdm_*pk.dat
+            class_public/outputs/wdm*pk.dat
+            class_public/outputs/*background.dat
+          if-no-files-found: warn

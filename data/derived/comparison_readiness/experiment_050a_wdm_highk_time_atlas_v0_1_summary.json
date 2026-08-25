@@ -1,0 +1,52 @@
+{
+  "schema": "dsir.comparison_readiness.experiment_050a_wdm_highk_time_atlas.summary.v0.1",
+  "status": "PASS_WDM_HIGHK_TIME_ATLAS_OPERATOR_CONTROLS_V0_1",
+  "run_id": 32908751625,
+  "artifact_id": 9585845292,
+  "artifact_sha256": "5d02bdce07da95c2bb9eab01acb2641f110b6b16e4ecf29ac2e8b1619d053139",
+  "head_sha": "fa5f2e57bff008e860b4ab1ecd30116714c3b7ce",
+  "z_nodes": [0.295, 0.51, 0.706, 0.934, 1.317, 1.491, 2.33],
+  "k_h_mpc": [0.1, 0.3, 1.0, 3.0, 10.0, 20.0],
+  "models": [
+    {
+      "m_keV": 2.0,
+      "max_abs_redshift_drift": 6.830400953861115e-05,
+      "chi_I": 2.582569480833426e-10,
+      "k_I_geo_h_mpc": 8.808726445541794,
+      "z_I": 1.5704810471260546,
+      "r_z0p295_k10": -0.2722369175407584,
+      "r_z0p295_k20": -1.193444719684679,
+      "z0p295_minus_legacy_matched_k10": 0.013880691863987826,
+      "z0p295_minus_legacy_matched_k20": 0.08413245481274423
+    },
+    {
+      "m_keV": 3.0,
+      "max_abs_redshift_drift": 2.2572074507676287e-05,
+      "chi_I": 2.2080731267222584e-10,
+      "k_I_geo_h_mpc": 8.376457114975683,
+      "z_I": 1.5734857687696222,
+      "r_z0p295_k10": -0.09467422831969537,
+      "r_z0p295_k20": -0.4451668163119628,
+      "z0p295_minus_legacy_matched_k10": 0.010793799455657407,
+      "z0p295_minus_legacy_matched_k20": 0.042454205642007525
+    },
+    {
+      "m_keV": 5.0,
+      "max_abs_redshift_drift": 5.065003658655254e-06,
+      "chi_I": 2.2916098385197284e-10,
+      "k_I_geo_h_mpc": 6.206377563204789,
+      "z_I": 1.5896611062628485,
+      "r_z0p295_k10": -0.024469456460567075,
+      "r_z0p295_k20": -0.11917076016749072,
+      "z0p295_minus_legacy_matched_k10": 0.005271855946311129,
+      "z0p295_minus_legacy_matched_k20": 0.02046300724482515
+    }
+  ],
+  "key_result": "C4 thermal-WDM is strongly scale-dominated and nearly time-separable on the frozen high-k linear atlas: chi_I is about 2.2e-10 to 2.6e-10 while the high-k suppression itself is large.",
+  "not_a_claim": [
+    "not a Ly-alpha likelihood or observational constraint",
+    "not a nonlinear WDM statement",
+    "not a universal theorem of time separability",
+    "not a G7/G8 or universal-rank result"
+  ]
+}
