@@ -121,6 +121,7 @@ jobs:
             --newtonian-root exp042_newtonian/outputs \
             --json experiment_042_gdm_density_velocity_gauge_bridge_v0_2.json
       - name: Upload Experiment 042 gauge bridge and exploratory handoff
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gdm-density-velocity-gauge-bridge-v0-2-${{ github.sha }}
@@ -136,4 +137,4 @@ jobs:
             exp042_newtonian/*.ini
             exp042_newtonian/dsir_p8.pre
             exp042_newtonian/outputs/*.dat
-          if-no-files-found: error
+          if-no-files-found: warn
