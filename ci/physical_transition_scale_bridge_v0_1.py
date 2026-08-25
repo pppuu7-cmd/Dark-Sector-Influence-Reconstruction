@@ -162,7 +162,9 @@ def fr_records(localization, fr_root: Path):
         raise ValueError("f(R) localization length mismatch")
     records, controls = [], {"B0_terminal_relative_errors": [], "diagnostic_rows": {}}
     for B0, token, zi, ki, ch in zip(FR_B0, FR_TOKENS, zc, kg, chi):
-        matches = sorted(fr_root.glob(f"**/dsir_mgs1_hp_{token}_dsir_transition_scale.dat"))
+        # CAMB appends an underscore to output_root; the frozen C5 roots already
+        # end in an underscore, so diagnostic products normally contain "__".
+        matches = sorted(fr_root.glob(f"**/dsir_mgs1_hp_{token}_*dsir_transition_scale.dat"))
         if len(matches) != 1:
             raise ValueError(f"expected one diagnostic for {token}, found {matches}")
         path, d = matches[0], load_fr_diag(matches[0])
