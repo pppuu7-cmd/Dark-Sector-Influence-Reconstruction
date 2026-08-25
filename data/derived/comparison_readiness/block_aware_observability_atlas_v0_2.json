@@ -1,0 +1,101 @@
+{
+  "schema": "dsir.block_aware_observability_atlas.v0.2",
+  "date": "2026-08-26",
+  "status": "EVIDENCE_MASK_ONLY",
+  "state_vocabulary": {
+    "active": "validated nonzero response in the stated block/domain",
+    "hard_zero": "validated exact or stored-precision null in the stated block/domain",
+    "near_null": "validated very small response, but not an exact zero",
+    "degenerate": "active response whose direction is validated nearly collinear with another named direction in this block",
+    "unknown": "not validated in this block; never interpret as zero",
+    "solver_limited": "desired block exists conceptually but current solver/bridge validation is insufficient"
+  },
+  "blocks": {
+    "B_AP": "background / AP geometry",
+    "G_lowk": "low-k full structure response",
+    "tau_lowk": "low-k finite-bin temporal response",
+    "I_kz": "irreducible scale-time interaction, with family-specific validated k-domain",
+    "S_slip": "metric slip / anisotropic-stress response",
+    "M_highk": "high-k transfer / free-streaming response",
+    "C_dv": "density-velocity scalar-compressibility / representability"
+  },
+  "directions": {
+    "C1_smooth_w": {
+      "B_AP": {"state":"active","domain":"z<=2.33 AP/background","evidence":"F5/F11"},
+      "G_lowk": {"state":"active","domain":"k=0.001..0.1 h/Mpc","evidence":"F11/F15"},
+      "tau_lowk": {"state":"active","domain":"finite-bin low-k","evidence":"F11"},
+      "I_kz": {"state":"active","domain":"low-k","evidence":"F15/F17/F18","chi_I_reference":0.0010805},
+      "S_slip": {"state":"unknown","domain":"not hard-audited","evidence":null},
+      "M_highk": {"state":"unknown","domain":"not sampled as production high-k block","evidence":null},
+      "C_dv": {"state":"unknown","domain":"not hard-audited","evidence":null}
+    },
+    "C2_IDE_alpha": {
+      "B_AP": {"state":"active","domain":"AP/background","evidence":"F6/F11"},
+      "G_lowk": {"state":"active","domain":"k=0.001..0.1 h/Mpc","evidence":"F6/F15"},
+      "tau_lowk": {"state":"active","domain":"finite-bin low-k","evidence":"F6/F11"},
+      "I_kz": {"state":"near_null","domain":"low-k","evidence":"F15/F17/F18","chi_I_reference":1.57e-11},
+      "S_slip": {"state":"unknown","domain":"not hard-audited","evidence":null},
+      "M_highk": {"state":"unknown","domain":"not production-sampled","evidence":null},
+      "C_dv": {"state":"unknown","domain":"not hard-audited","evidence":null}
+    },
+    "C2_IDE_beta": {
+      "B_AP": {"state":"active","domain":"AP/background","evidence":"F6/F11"},
+      "G_lowk": {"state":"active","domain":"k=0.001..0.1 h/Mpc","evidence":"F6/F15"},
+      "tau_lowk": {"state":"active","domain":"finite-bin low-k","evidence":"F6/F11"},
+      "I_kz": {"state":"near_null","domain":"low-k","evidence":"F15/F17/F18","chi_I_reference":5.49e-11},
+      "S_slip": {"state":"unknown","domain":"not hard-audited","evidence":null},
+      "M_highk": {"state":"unknown","domain":"not production-sampled","evidence":null},
+      "C_dv": {"state":"unknown","domain":"not hard-audited","evidence":null}
+    },
+    "C3_GDM_cs2": {
+      "B_AP": {"state":"hard_zero","domain":"frozen w_gdm=0 manifold","evidence":"F9"},
+      "G_lowk": {"state":"degenerate","domain":"k=0.001..0.1 h/Mpc","evidence":"F2","degenerate_with":"C3_GDM_cv2","acute_angle_deg":0.322616},
+      "tau_lowk": {"state":"degenerate","domain":"finite-bin low-k","evidence":"F2/F11","degenerate_with":"C3_GDM_cv2","acute_angle_deg":1.334013},
+      "I_kz": {"state":"active","domain":"low-k","evidence":"F15/F17/F18","chi_I_reference":0.045305},
+      "S_slip": {"state":"active","domain":"validated GDM slip block","evidence":"F2/F7","separates_from":"C3_GDM_cv2"},
+      "M_highk": {"state":"unknown","domain":"not production-sampled as high-k block","evidence":null},
+      "C_dv": {"state":"solver_limited","domain":"Newtonian/synchronous bridge not hard-valid","evidence":"F14"}
+    },
+    "C3_GDM_cv2": {
+      "B_AP": {"state":"hard_zero","domain":"frozen w_gdm=0 manifold","evidence":"F9"},
+      "G_lowk": {"state":"degenerate","domain":"k=0.001..0.1 h/Mpc","evidence":"F2","degenerate_with":"C3_GDM_cs2","acute_angle_deg":0.322616},
+      "tau_lowk": {"state":"degenerate","domain":"finite-bin low-k","evidence":"F2/F11","degenerate_with":"C3_GDM_cs2","acute_angle_deg":1.334013},
+      "I_kz": {"state":"active","domain":"low-k","evidence":"F15/F17/F18/F21","chi_I_reference":0.043634},
+      "S_slip": {"state":"active","domain":"validated GDM slip block","evidence":"F2/F7","separates_from":"C3_GDM_cs2"},
+      "M_highk": {"state":"unknown","domain":"not production-sampled as high-k block","evidence":null},
+      "C_dv": {"state":"solver_limited","domain":"Newtonian/synchronous bridge not hard-valid","evidence":"F14"}
+    },
+    "C4_thermal_WDM": {
+      "B_AP": {"state":"unknown","domain":"matched-background/AP null not hard-audited","evidence":null},
+      "G_lowk": {"state":"near_null","domain":"legacy/control low-k visibility","evidence":"F1/F7","reference":"3 keV r(k=0.1)=-3.46e-6"},
+      "tau_lowk": {"state":"unknown","domain":"C4 production time atlas is high-k, not low-k common block","evidence":null},
+      "I_kz": {"state":"near_null","domain":"high-k k=0.1..20 h/Mpc","evidence":"F24","chi_I_range":[2.2080731267222584e-10,2.582569480833426e-10]},
+      "S_slip": {"state":"unknown","domain":"not hard-audited","evidence":null},
+      "M_highk": {"state":"active","domain":"solver-native high-k time atlas","evidence":"F24","reference":"2 keV r(k=20,z=0.295)=-1.19344"},
+      "C_dv": {"state":"unknown","domain":"not hard-audited","evidence":null}
+    },
+    "C5_designer_fR": {
+      "B_AP": {"state":"hard_zero","domain":"frozen designer EFTwDE=0 B0 manifold","evidence":"F10"},
+      "G_lowk": {"state":"active","domain":"k=0.001..0.1 h/Mpc","evidence":"F3/F11/F15"},
+      "tau_lowk": {"state":"active","domain":"finite-bin low-k","evidence":"F3/F11"},
+      "I_kz": {"state":"active","domain":"low-k","evidence":"F15/F17/F18/F22/F23","chi_I_reference":0.299856},
+      "S_slip": {"state":"unknown","domain":"not yet hard-audited in DSIR atlas","evidence":null},
+      "M_highk": {"state":"unknown","domain":"not production-sampled as C4-like high-k block","evidence":null},
+      "C_dv": {"state":"active","domain":"high-precision density-velocity representability","evidence":"F13","reference":"D_RSD nonzero"}
+    }
+  },
+  "pairwise_hard_geometry": [
+    {"pair":["C0_LCDM","C4_thermal_WDM"],"degenerate_in":"low-k visibility","separator":"M_highk","evidence":"F1/F7/F24"},
+    {"pair":["C3_GDM_cs2","C3_GDM_cv2"],"degenerate_in":"G_lowk/tau_lowk","separator":"S_slip","evidence":"F2/F7"},
+    {"pair":["C3_GDM_cs2","C5_designer_fR"],"degenerate_in":"leading scale-only mode","separator":"tau_lowk/full k-z","evidence":"F3/F11/F16"},
+    {"pair":["C3_GDM_cv2","C5_designer_fR"],"degenerate_in":"leading scale-only mode","separator":"tau_lowk/full k-z","evidence":"F3/F11/F16"},
+    {"pair":["C2_IDE_alpha","C2_IDE_beta"],"degenerate_in":"B_AP approximately (9.04 deg)","separator":"G_lowk/tau_lowk","evidence":"F6"}
+  ],
+  "discipline": [
+    "unknown is never zero",
+    "solver_limited is never zero",
+    "near_null is not hard_zero",
+    "blocks with different k-domains remain masked rather than concatenated by zero padding",
+    "this atlas is observability bookkeeping, not an intrinsic-rank estimate"
+  ]
+}

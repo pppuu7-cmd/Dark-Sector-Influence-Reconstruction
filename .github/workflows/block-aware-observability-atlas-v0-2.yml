@@ -1,0 +1,35 @@
+name: DSIR block-aware observability atlas v0.2
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/block-aware-observability-atlas-v0-2.yml'
+      - 'ci/validate_block_aware_observability_atlas_v0_2.py'
+      - 'data/derived/comparison_readiness/block_aware_observability_atlas_v0_2.json'
+      - 'experiments/051a_block_aware_observability_atlas_v0_2.md'
+
+permissions:
+  contents: read
+
+jobs:
+  evidence-mask:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate evidence mask without zero imputation
+        run: |
+          python3 ci/validate_block_aware_observability_atlas_v0_2.py \
+            --atlas data/derived/comparison_readiness/block_aware_observability_atlas_v0_2.json \
+            --json block_aware_observability_atlas_v0_2_validation.json
+          cat block_aware_observability_atlas_v0_2_validation.json
+      - name: Upload validation
+        uses: actions/upload-artifact@v4
+        with:
+          name: block-aware-observability-atlas-v0-2-${{ github.sha }}
+          path: block_aware_observability_atlas_v0_2_validation.json
+          if-no-files-found: error
