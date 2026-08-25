@@ -1,0 +1,35 @@
+name: DSIR interaction leave-one-node stability v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'ci/interaction_leave_one_node_stability_v0_1.py'
+      - 'experiments/047b_interaction_leave_one_node_stability_v0_1.md'
+      - 'data/derived/comparison_readiness/local_response_tangents_v0_1.json'
+      - '.github/workflows/interaction-leave-one-node-stability-v0-1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  interaction-node-stability:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install numpy
+        run: python -m pip install numpy
+      - name: Run deterministic leave-one-node stress test
+        run: |
+          python ci/interaction_leave_one_node_stability_v0_1.py \
+            --input data/derived/comparison_readiness/local_response_tangents_v0_1.json \
+            --json experiment_047b_interaction_leave_one_node_stability_v0_1.json
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: interaction-leave-one-node-stability-v0-1-${{ github.sha }}
+          path: experiment_047b_interaction_leave_one_node_stability_v0_1.json
+          if-no-files-found: error

@@ -5,7 +5,7 @@
 **Scientific findings:** `docs/SCIENTIFIC_FINDINGS_REGISTER.md`  
 **Status:** `docs/STATUS.md`  
 **Influence atlas:** `docs/BUYANOVGPT_TABLE.md`  
-**Latest hard comparison:** Experiment 046.
+**Latest hard comparison:** Experiment 047B.
 
 This is the mandatory live checkpoint. Preserve negative results and superseded interpretations; never silently delete history.
 
@@ -43,7 +43,7 @@ Missing response is never zero. C4 WDM remains a separate high-k block until a t
 
 ---
 
-## 3. Strong hard results before Exp046
+## 3. Strong hard results before scale-time decomposition
 
 1. Frozen GDM `cs2/cv2` and designer-f(R) `B0` are exactly background/AP-null while perturbation-active.
 2. Degeneracies migrate between AP, temporal response, full structure, slip and high-k transfer.
@@ -81,103 +81,137 @@ Thus additive `G+T+tau` captures only `70.01%` of C5 response power. It is not a
 
 ---
 
-## 5. Exp046 — scale-time interaction morphology
+## 5. Exp046 — pairwise localization in scale-time interaction
 
-### Definitions
-
-For one direction:
+For normalized model responses, define
 
 \[
-\boxed{\chi_I=\frac{\|I\|^2}{\|R\|^2}}.
+\boxed{\eta_I(A,B)=\frac{\|d_I\|^2}{\|d\|^2}},
+\qquad
+\|d\|^2=\|d_C\|^2+\|d_I\|^2.
 \]
 
-For a normalized pair `u_A,u_B`, align orientation with `s=sign(<u_A,u_B>)`, define `d=u_A-su_B`, and use the orthogonal split
+`eta_I` is the fraction of normalized pairwise shape-separation power localized in irreducible scale-time interaction. It is **not significance/detectability**.
 
-\[
-d=d_C+d_I,
-\]
-
-\[
-\boxed{\|d\|^2=\|d_C\|^2+\|d_I\|^2}.
-\]
-
-Then
-
-\[
-\boxed{\eta_I(A,B)=\frac{\|d_I\|^2}{\|d\|^2}}.
-\]
-
-`eta_I` is the fraction of pairwise normalized shape-separation power localized in scale-time interaction. It is **not significance/detectability**.
-
-### Hard provenance
+Hard provenance:
 
 - run `32884761188`;
 - artifact `9577142860`;
-- artifact SHA256 `6e2c7026efe17a81bee10c9a9904c78f5299dce1bf594535be5ded600a3d2834`;
-- source head `d292cb90245c3e472dcbffd076947181fd6ed7cf`;
-- exact artifact retained by Actions;
-- repo summary: `data/derived/comparison_readiness/experiment_046_scale_time_interaction_morphology_v0_1.json`.
+- artifact SHA256 `6e2c7026efe17a81bee10c9a9904c78f5299dce1bf594535be5ded600a3d2834`.
 
-Hard controls pass:
+Key full-grid values:
 
-- unit norm residual `5.42e-20`;
-- core/interaction orthogonality `1.01e-14`;
-- Pythagorean residual `3.25e-19`;
-- angle/chord identity residual `4.76e-15`.
-
-### Pairwise localization
-
-Key `eta_I` values:
-
-- GDM cs2/cv2: **0.731139**;
-- GDM cv2/f(R): **0.613829**;
-- GDM cs2/f(R): **0.611982**;
-- IDE alpha/f(R): **0.571946**;
-- IDE beta/f(R): `0.305340`;
-- smooth-w/f(R): `0.280354`;
-- IDE alpha/GDM cs2/cv2: `0.243027 / 0.236822`;
+- GDM cs2/cv2: `eta_I=0.731139`, but total angle only `0.322616 deg`;
+- GDM cs2/f(R): `0.611982`, total angle `25.181845 deg`;
+- GDM cv2/f(R): `0.613829`, total angle `25.488143 deg`;
+- IDE-alpha/f(R): `0.571946`;
 - IDE alpha/beta: `1.49e-11`.
 
-Interaction-shape acute angles where `chi_I>=1e-6`:
+Interaction-shape angles:
 
-- GDM cs2/cv2: `0.742556 deg`;
-- GDM cs2/f(R): `10.985703 deg`;
-- GDM cv2/f(R): `11.710540 deg`;
-- smooth-w vs GDM/f(R): roughly `69.6-70.0 deg`.
+- GDM cs2/cv2 `0.742556 deg`;
+- GDM cs2/f(R) `10.985703 deg`;
+- GDM cv2/f(R) `11.710540 deg`;
+- smooth-w versus GDM/f(R) approximately `69.6-70 deg`.
 
-### Hard interpretation
+**Hard interpretation:** a substantial part of GDM/f(R) separation is specifically joint `k x z` evolution, not independent scale-only plus time-only summaries. Interaction does not solve GDM pressure/viscosity; slip remains necessary.
 
-**GDM/f(R):** their total structure angle is already `~25 deg`, and about **61% of the normalized pairwise separation power is specifically in nonseparable `k x z` structure.** The earlier statement “time separates scale lookalikes” is therefore sharpened: a substantial part of the information lies in *how the scale dependence changes with time*.
-
-**GDM cs2/cv2:** `eta_I=0.731`, but their total angle is only `0.323 deg`. Interaction carries most of a **tiny** distinction and its own shapes remain almost collinear (`0.743 deg`). Therefore interaction does not replace metric slip as the pressure/viscosity discriminator.
-
-**Mechanism-ordering candidate:** on the current local low-k grid,
-
-`IDE interaction near-null -> smooth-w weak -> GDM moderate -> designer f(R) strong`.
-
-This is promising but not yet universal. It must survive step/amplitude and grid/domain stress tests.
+PR #25 was merged to `main` with merge commit `bb4261224efd09b2063f29faca22d6f2efbda1f7` after all current-head regressions passed.
 
 ---
 
-## 6. Scientific findings register
+## 6. Exp047B — leave-one-node interaction robustness
+
+### Protocol
+
+Exactly 12 deterministic reduced grids:
+
+- remove each of five k nodes once;
+- remove each of seven z nodes once.
+
+Recompute `mu+T+tau+I`, `chi_I`, and selected `eta_I` from scratch on every grid. No scientific drift threshold was introduced after seeing Exp046; only algebraic controls can fail.
+
+### Infrastructure chronology
+
+First attempt computed the target but failed at JSON serialization of `numpy.longdouble`. The fix was serialization-only. Formulas, grid variants and frozen control thresholds were unchanged.
+
+### Hard provenance
+
+- successful run `32894616114`;
+- source head `9a05c451401ac2cede3a56ef4ca2a1923eecb9c3`;
+- artifact `9580724793`;
+- artifact SHA256 `948038245e4eeea9ca569a48e138f5bdddaede19f0ff98ea941fc91a00272bb7`;
+- repo summary `data/derived/comparison_readiness/experiment_047b_interaction_leave_one_node_stability_v0_1.json`.
+
+Controls pass:
+
+- reconstruction error `0`;
+- max core/I orthogonality `8.3946e-14`;
+- max Pythagorean residual `2.3505e-17`;
+- frozen control ceiling `1e-12`.
+
+### Hard descriptive robustness
+
+The ordering
+
+\[
+\boxed{\text{IDE near-null}<\text{smooth-w}<\text{GDM}<f(R)}
+\]
+
+survives **12/12** leave-one-node variants. Both IDE directions stay below the pre-existing `chi_I=1e-6` morphology floor in **12/12** variants.
+
+`chi_I` leave-one-node ranges:
+
+- IDE alpha: `1.99e-13 .. 7.36e-11`;
+- IDE beta: `3.66e-13 .. 7.45e-11`;
+- smooth-w: `3.91e-5 .. 1.34e-3`;
+- GDM cs2: `0.0279 .. 0.0525`;
+- GDM cv2: `0.0265 .. 0.0505`;
+- f(R): `0.2233 .. 0.3497`.
+
+GDM/f(R) pairwise localization remains high under every deletion:
+
+- cs2/f(R): `eta_I=0.5504 .. 0.6539`;
+- cv2/f(R): `eta_I=0.5520 .. 0.6554`.
+
+Thus every leave-one-node grid still places more than half of normalized GDM/f(R) shape-separation power in irreducible interaction. This is descriptive robustness, not a preregistered `>0.5` gate.
+
+### Important limitation
+
+Smooth-w is strongly sensitive to the lowest-k node. Removing `k=0.001 h/Mpc` changes
+
+\[
+\chi_I:1.0805\times10^{-3}\rightarrow3.9123\times10^{-5},
+\]
+
+a factor `0.0362` of full (about `27.6x` lower).
+
+Therefore current `chi_I` is safer as a **coarse mechanism-tier descriptor** than a precise family invariant. The tier remains robust; the smooth-w magnitude does not.
+
+---
+
+## 7. Scientific findings register
 
 Newest entries:
 
 - F13 HARD — C5 density/velocity response not exactly scalar-growth representable.
 - F14 HARD LIMIT — GDM velocity/RSD bridge fails current gauge validation.
 - F15 HARD NEGATIVE — simple additive `(G,T,tau)` core fails.
-- **F16 HARD descriptive — pairwise model separation can be localized in irreducible scale-time interaction.**
+- F16 HARD descriptive — pairwise model separation can be localized in irreducible scale-time interaction.
+- **F17 HARD descriptive robustness — the nonseparability tier ordering survives all 12 single-node deletions; GDM/f(R) interaction localization remains high, while smooth-w absolute `chi_I` is grid-sensitive.**
 
-Always report `eta_I` together with the total pair distance/angle.
+Standalone F17 record: `docs/SCIENTIFIC_FINDING_F17_INTERACTION_GRID_ROBUSTNESS.md`.
+
+Always report `eta_I` with total pair distance/angle.
 
 ---
 
-## 7. Exact continuation from this checkpoint
+## 8. Exact continuation from this checkpoint
 
-1. **Exp047A amplitude/step stability:** use available finite family-manifold points to recompute `chi_I` and interaction morphology at multiple parameter amplitudes. Test whether the ordering IDE -> smooth-w -> GDM -> f(R) is stable rather than a local-tangent artifact.
-2. **Exp047B leave-one-node-out stability:** remove each k node and each z node in turn, recompute `chi_I` and key `eta_I`, and freeze stability summaries before interpretation.
-3. If both stability tests support the same hierarchy, define an independent confirmatory mechanism-classification gate; do not define a threshold post hoc from the observed values.
-4. Extend C4 WDM to a physically relevant high-k **time-dependent** response atlas and test its `chi_I`/interaction morphology separately before combining domains.
+1. **Exp047A amplitude/finite-step stability:** inspect immutable C1/C2/C3/C5 manifold artifacts and reconstruct finite-amplitude `(k,z)` responses where available. Test whether `IDE near-null < smooth-w < GDM < f(R)` survives movement along parameter rays, not only local tangents.
+2. Identify the physical/numerical origin of smooth-w sensitivity to `k=0.001`: test low-k solver precision and/or neighboring k support before assigning physical meaning.
+3. If amplitude stability supports the hierarchy, pre-freeze an **independent future classification gate** using criteria not fitted to the current observed values.
+4. Extend C4 WDM to a physically relevant high-k **time-dependent** response atlas and test its nonseparability separately before any family-complete claim.
 5. Preserve metric slip/lensing and high-k transfer as independent discriminators; `I` does not replace them.
 6. Continue survey/window-aware shape and RSD forward modelling; theory response geometry is not survey detectability.
 7. Estimate `N_repr` and `N_disc` only after stable common observation-space operators and prior/sampling/precision/covariance/channel-removal stress tests.

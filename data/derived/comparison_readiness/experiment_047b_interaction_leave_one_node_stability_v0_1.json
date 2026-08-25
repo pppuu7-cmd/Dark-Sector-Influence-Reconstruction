@@ -1,0 +1,56 @@
+{
+  "schema": "dsir.scale_time_interaction.leave_one_node_stability.v0.1.repo_summary",
+  "status": "PASS_INTERACTION_LEAVE_ONE_NODE_OPERATOR_CONTROLS_V0_1",
+  "scope": "common frozen low-k C1/C2/C3/C5 theory response; deterministic 5 leave-one-k plus 7 leave-one-z grids; C4 excluded by domain contract",
+  "run_id": 32894616114,
+  "artifact_id": 9580724793,
+  "artifact_sha256": "948038245e4eeea9ca569a48e138f5bdddaede19f0ff98ea941fc91a00272bb7",
+  "source_head_sha": "9a05c451401ac2cede3a56ef4ca2a1923eecb9c3",
+  "frozen": {
+    "operator_control_tol": 1e-12,
+    "existing_interaction_morphology_floor_chi_I": 1e-6,
+    "scientific_stability_threshold": null,
+    "leave_one_k_count": 5,
+    "leave_one_z_count": 7
+  },
+  "controls": {
+    "max_relative_reconstruction_error": 0.0,
+    "max_normalized_core_interaction_orthogonality": 8.394589160523456e-14,
+    "max_pairwise_pythagorean_residual": 2.350530885316692e-17,
+    "pass": true
+  },
+  "descriptive_robustness": {
+    "tier_order_preserved_in_all_12_reduced_grids": true,
+    "ide_both_below_chi_I_1e-6_in_all_12_reduced_grids": true,
+    "tier_order_failures": 0,
+    "ide_floor_crossings": 0
+  },
+  "direction_ranges": {
+    "C1_smooth_w_nonphantom": {"full":0.0010805071079989705,"min":3.912276054336957e-5,"max":0.001343561700559121,"min_ratio":0.03620777712033973,"max_ratio":1.2434547543581742},
+    "C2_IDE_alpha_negative": {"full":1.5727315550920985e-11,"min":1.9926841893642658e-13,"max":7.360541614050182e-11},
+    "C2_IDE_beta": {"full":5.4945239194532485e-11,"min":3.6576201278211125e-13,"max":7.453983488650002e-11},
+    "C3_GDM_cs2": {"full":0.045305433362805625,"min":0.027944712742841726,"max":0.05245284939636842,"min_ratio":0.6168070950576864,"max_ratio":1.1577606812923813},
+    "C3_GDM_cv2": {"full":0.043633688765791635,"min":0.026493198154791054,"max":0.05051700373452391,"min_ratio":0.6071730102168544,"max_ratio":1.1577523047771456},
+    "C5_designer_fR_B0": {"full":0.29985647965446227,"min":0.22333629004636146,"max":0.34969352531059295,"min_ratio":0.7448106184122538,"max_ratio":1.1662029972257397}
+  },
+  "pair_eta_I_ranges": {
+    "C3_GDM_cs2__C3_GDM_cv2": {"full":0.7311385399684471,"min":0.6524927739369981,"max":0.7377350133410425,"max_abs_drift":0.07864576603144897},
+    "C3_GDM_cs2__C5_designer_fR_B0": {"full":0.6119820903862085,"min":0.5503709709171014,"max":0.6538576103867193,"max_abs_drift":0.06161111946910719},
+    "C3_GDM_cv2__C5_designer_fR_B0": {"full":0.6138290926801929,"min":0.5519734778081574,"max":0.655406138333482,"max_abs_drift":0.06185561487203544},
+    "C2_IDE_alpha_negative__C5_designer_fR_B0": {"full":0.5719459994726119,"min":0.5275117675726894,"max":0.694616571202747,"max_abs_drift":0.12267057173013513},
+    "C2_IDE_alpha_negative__C2_IDE_beta": {"full":1.4862571674279293e-11,"min":1.4913679546439336e-13,"max":2.7284071201179346e-11,"max_abs_drift":1.47134348788149e-11}
+  },
+  "notable_node_sensitivity": {
+    "smooth_w_drop_k_0p001": "chi_I falls from 1.0805e-3 to 3.9123e-5, a factor 0.0362 of full; tier order nevertheless remains intact",
+    "gdm_drop_z_2p33": "chi_I falls to 0.02794/0.02649 but remains well above smooth-w and below fR",
+    "fR_range": "chi_I remains 0.2233 to 0.3497 under every single-node deletion"
+  },
+  "interpretation_boundary": [
+    "leave-one-node stability is an internal grid robustness test, not independent-data confirmation",
+    "the tier ordering is descriptive and was not a preregistered scientific pass threshold",
+    "smooth-w absolute chi_I is strongly sensitive to the k=0.001 node and is not grid-insensitive",
+    "eta_I is separation-power localization, not detectability or significance",
+    "C4 WDM remains excluded by domain contract",
+    "not a universal mechanism law, intrinsic rank, no-hair theorem, G7 law, or discovery"
+  ]
+}
