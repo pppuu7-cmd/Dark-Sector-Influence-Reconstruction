@@ -1,0 +1,91 @@
+{
+  "schema": "dsir.observational_whitening.c5_rsd_representability_high_precision_summary.v0.1",
+  "status": "PASS_C5_RSD_REPRESENTABILITY_HIGH_PRECISION_V0_1",
+  "failures": [],
+  "hard_provenance": {
+    "run_id": 32791510072,
+    "artifact_id": 9543375564,
+    "artifact_name": "c5-rsd-representability-high-precision-v0-1-c57c929e4c712e4bbe3e773e813fa6d782d4d3dc",
+    "artifact_digest": "sha256:1e4d86f7f13185d69a07b71afa9bfd6fefa6003119064652d6388491738212bc",
+    "head_sha": "1f0313120397e8990ece2900e1056c0727f597ae",
+    "pinned_upstream": "EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904",
+    "source_config_artifact": {
+      "run_id": 32759477319,
+      "artifact_id": 9532245261,
+      "digest": "sha256:9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635",
+      "config_lineage": "dsir_mgs1_hp_*"
+    }
+  },
+  "chronology": {
+    "exploratory_E15p6_result_inspected_before_confirmatory_protocol": true,
+    "confirmatory_thresholds_frozen_before_independent_E24p16_run": true,
+    "precision_change_is_output_only": "Transfer_SaveToFiles E15.6 -> E24.16"
+  },
+  "source_variable_contract": {
+    "density": "Transfer_tot",
+    "velocity": "Transfer_Newt_vel_cdm",
+    "baryon_velocity": "diagnostic only",
+    "verified_by_workflow_on_pinned_source": true
+  },
+  "shape_fit": {
+    "s_rd_over_rdref": 1.0,
+    "R_hinv_Mpc": 8.0,
+    "reason": "frozen C5 B0 direction is on the Experiment-038 validated identical LCDM background/recombination branch"
+  },
+  "k_cuts_h_Mpc": [0.1, 0.15, 0.2, 0.24],
+  "thresholds_confirmatory": {
+    "control_max_D_RSD": 1e-08,
+    "production_min_maxz_D_RSD_kmax_0p24": 1e-07,
+    "production_min_maxz_D_RSD_kmax_0p10": 1e-08,
+    "negative_D_RSD_tolerance": 1e-12
+  },
+  "summary_models": {
+    "gr": {
+      "max_all_z_cuts": 2.3362134449200767e-10,
+      "k0p24": {"z": 2.33, "D_RSD": 1.4189527330898954e-10, "g_min": 0.9689620144584639, "g_max": 0.969274246952863, "g_span": 0.0003122324943991561},
+      "k0p10": {"z": 2.33, "D_RSD": 2.3362134449200767e-10},
+      "weighted_cv_at_k0p24_max": 1.1911980243818565e-05
+    },
+    "b0": {
+      "max_all_z_cuts": 2.3331336862497665e-10,
+      "k0p24": {"z": 2.33, "D_RSD": 1.419729889207133e-10, "g_min": 0.9689620144584639, "g_max": 0.969274246952863, "g_span": 0.0003122324943991561},
+      "k0p10": {"z": 2.33, "D_RSD": 2.3331336862497665e-10},
+      "weighted_cv_at_k0p24_max": 1.1915241875046835e-05
+    },
+    "b1em7": {
+      "max_all_z_cuts": 1.2562646543035072e-06,
+      "k0p24": {"z": 0.295, "D_RSD": 1.2562646543035072e-06, "g_min": 0.6843198384387779, "g_max": 0.6871205655464909, "g_span": 0.0028007271077130635},
+      "k0p10": {"z": 0.295, "D_RSD": 3.8910821453796984e-08},
+      "weighted_cv_at_k0p24_max": 0.0011208328298664219
+    },
+    "b1em6": {
+      "max_all_z_cuts": 5.177504811215705e-06,
+      "k0p24": {"z": 0.295, "D_RSD": 5.177504811215705e-06, "g_min": 0.6843217799947788, "g_max": 0.6899843210952219, "g_span": 0.005662541100443064},
+      "k0p10": {"z": 0.295, "D_RSD": 1.7383740313903218e-07},
+      "weighted_cv_at_k0p24_max": 0.002275418998318896
+    },
+    "b1em5": {
+      "max_all_z_cuts": 0.0001922497237620835,
+      "k0p24": {"z": 0.295, "D_RSD": 0.0001922497237620835, "g_min": 0.6843349548070512, "g_max": 0.7188430684573573, "g_span": 0.03450811365030615},
+      "k0p10": {"z": 0.295, "D_RSD": 1.2403086243839567e-05},
+      "weighted_cv_at_k0p24_max": 0.013866747665738992
+    },
+    "b1em4": {
+      "max_all_z_cuts": 0.0008805834571887772,
+      "k0p24": {"z": 0.295, "D_RSD": 0.0008805834571887772, "g_min": 0.6843681318136867, "g_max": 0.7726623875804345, "g_span": 0.08829425576674776},
+      "k0p10": {"z": 0.295, "D_RSD": 0.00030063090369158996},
+      "weighted_cv_at_k0p24_max": 0.0296877006156431
+    },
+    "b1em3": {
+      "max_all_z_cuts": 0.0008780382939984621,
+      "k0p24": {"z": 1.317, "D_RSD": 0.0008780382939984621, "g_min": 0.9162157815745638, "g_max": 1.0369926034674135, "g_span": 0.12077682189284966},
+      "k0p10": {"z": 0.51, "D_RSD": 0.0005938816725110652},
+      "weighted_cv_at_k0p24_max": 0.02964472841440438
+    }
+  },
+  "interpretation": {
+    "identity": "D_RSD = Var_w[g] / <g^2>_w; weighted_CV = sqrt(D_RSD/(1-D_RSD))",
+    "hard_result": "GR and B0=0 remain below the 1e-8 control ceiling; every production B0=1e-6..1e-3 exceeds the frozen nonzero defect thresholds at kmax=0.24 and kmax=0.10.",
+    "boundary": "C5-only CAMB-native total-matter/CDM-velocity compression-validity result; not a DESI detection and not family-complete RSD."
+  }
+}

@@ -1,0 +1,124 @@
+name: DSIR C5 RSD representability high precision v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/c5-rsd-representability-high-precision-v0-1.yml'
+      - 'ci/c5_rsd_representability_high_precision_v0_1.py'
+      - 'experiments/041_c5_rsd_representability_high_precision_v0_1.md'
+      - 'data/derived/observational_whitening/experiment_041_c5_rsd_representability_high_precision_v0_1.json'
+      - 'docs/SCIENTIFIC_FINDINGS_REGISTER.md'
+      - 'docs/STATUS.md'
+      - 'docs/RECOVERY_LATEST.md'
+      - 'docs/RECOVERY_MANUAL.md'
+      - 'docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-25.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  c5-rsd-representability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install DSIR and H-EFTCAMB toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git gfortran gcc make liblapack-dev libblas-dev
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+      - name: Download exact frozen C5 configuration artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 32759477319
+          name: eftcamb-mgs1-hard-92350bb5087d17c874626c75b96779ae264dd1f6
+          path: inputs/c5
+      - name: Clone pinned H-EFTCAMB and apply I/O-only precision patch
+        run: |
+          git clone --recursive https://github.com/EFTCAMB/EFTCAMB.git eftcamb
+          cd eftcamb
+          git checkout 16d9c4e9f85751e30efd0a53b177941713078904
+          git submodule update --init --recursive
+          git rev-parse HEAD | tee ../exp041_upstream_sha.txt
+          cd ..
+          grep -Fq 'integer :: transfer_power_var = Transfer_tot' eftcamb/fortran/results.f90
+          grep -Fq 's2 = PresentDefault (Transfer_Newt_vel_cdm, var_v)' eftcamb/fortran/results.f90
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('eftcamb/fortran/results.f90')
+          s = p.read_text()
+          old = "write(unit,'(*(E15.6))') MTrans%TransferData(Transfer_kh:Transfer_max,ik,i)"
+          new = "write(unit,'(*(E24.16))') MTrans%TransferData(Transfer_kh:Transfer_max,ik,i)"
+          if s.count(old) != 1:
+              raise SystemExit(f'expected exactly one transfer-output format site, found {s.count(old)}')
+          p.write_text(s.replace(old, new))
+          PY
+          grep -Fq "write(unit,'(*(E24.16))') MTrans%TransferData(Transfer_kh:Transfer_max,ik,i)" eftcamb/fortran/results.f90
+          git -C eftcamb diff -- fortran/results.f90 | tee exp041_io_precision_patch.diff
+          test "$(git -C eftcamb diff --numstat -- fortran/results.f90 | awk '{print $1+$2}')" -eq 2
+      - name: Build patched-output pinned H-EFTCAMB
+        working-directory: eftcamb/fortran
+        run: make camb
+      - name: Restore exact frozen high-precision C5 configs
+        run: |
+          src=inputs/c5/eftcamb/fortran/eftcamb_test/parameters
+          dst=eftcamb/fortran/eftcamb_test/parameters
+          for tok in base gr b0 b1em7 b1em6 b1em5 b1em4 b1em3; do
+            test -f "$src/dsir_mgs1_hp_${tok}.ini"
+          done
+          cp "$src"/dsir_mgs1_hp_*.ini "$dst"/
+      - name: Run GR and frozen designer manifold with high-precision transfers
+        working-directory: eftcamb/fortran
+        run: |
+          set -o pipefail
+          mkdir -p eftcamb_test/results/spectra_results
+          ./camb eftcamb_test/parameters/dsir_mgs1_hp_gr.ini 2>&1 | tee ../../exp041_gr.log
+          for tok in b0 b1em7 b1em6 b1em5 b1em4 b1em3; do
+            ./camb "eftcamb_test/parameters/dsir_mgs1_hp_${tok}.ini" 2>&1 | tee "../../exp041_${tok}.log"
+          done
+      - name: Require stable runs and complete transfer/matter-power outputs
+        run: |
+          for tok in b0 b1em7 b1em6 b1em5 b1em4 b1em3; do
+            grep -q 'EFTCAMB: theory stable' "exp041_${tok}.log"
+            if grep -q 'ERROR STOP' "exp041_${tok}.log"; then
+              echo "unexpected solver error for ${tok}"
+              exit 2
+            fi
+          done
+          root=eftcamb/fortran/eftcamb_test/results/spectra_results
+          for tok in gr b0 b1em7 b1em6 b1em5 b1em4 b1em3; do
+            for zi in 1 2 3 4 5 6 7; do
+              test -f "$root/dsir_mgs1_hp_${tok}__z${zi}_transfer.dat"
+              test -f "$root/dsir_mgs1_hp_${tok}__z${zi}_matterpower.dat"
+            done
+          done
+          head -n 2 "$root/dsir_mgs1_hp_b1em3__z1_transfer.dat" | tee exp041_transfer_precision_sample.txt
+      - name: Run Experiment 041 confirmatory hard audit
+        run: |
+          python ci/c5_rsd_representability_high_precision_v0_1.py \
+            --spectra-root eftcamb/fortran/eftcamb_test/results/spectra_results \
+            --parameter-root eftcamb/fortran/eftcamb_test/parameters \
+            --json experiment_041_c5_rsd_representability_high_precision_v0_1.json
+      - name: Upload Experiment 041 result and exact handoff
+        uses: actions/upload-artifact@v4
+        with:
+          name: c5-rsd-representability-high-precision-v0-1-${{ github.sha }}
+          path: |
+            experiment_041_c5_rsd_representability_high_precision_v0_1.json
+            exp041_upstream_sha.txt
+            exp041_io_precision_patch.diff
+            exp041_transfer_precision_sample.txt
+            exp041_*.log
+            eftcamb/fortran/eftcamb_test/parameters/dsir_mgs1_hp_*.ini
+            eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_mgs1_hp_*__z*_transfer.dat
+            eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_mgs1_hp_*__z*_matterpower.dat
+          if-no-files-found: error
