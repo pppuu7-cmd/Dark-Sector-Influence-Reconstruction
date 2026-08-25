@@ -1,0 +1,161 @@
+name: DSIR GDM window-crossing validation v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/gdm-window-crossing-validation-v0-1.yml'
+      - 'ci/gdm_window_crossing_validation_v0_1.py'
+      - 'experiments/049b_gdm_window_crossing_validation_v0_1.md'
+
+jobs:
+  gdm-window-crossing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Clone and build pinned GDM_CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/s-ilic/gdm_class_public.git external_gdm
+          cd external_gdm
+          git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          git rev-parse HEAD | tee ../exp049b_gdm_upstream_sha.txt
+          make -j2 class
+
+      - name: Freeze validated p8 precision preset
+        run: |
+          cat > external_gdm/dsir_p8.pre <<'EOF'
+          k_step_sub = 0.0010
+          k_step_super = 0.000003
+          k_step_super_reduction = 0.1
+          start_small_k_at_tau_c_over_tau_h = 1e-6
+          start_large_k_at_tau_h_over_tau_k = 0.05
+          tight_coupling_trigger_tau_c_over_tau_h = 0.005
+          tight_coupling_trigger_tau_c_over_tau_k = 0.008
+          start_sources_at_tau_c_over_tau_h = 0.006
+          tol_perturb_integration = 3e-10
+          perturb_sampling_stepsize = 0.00035
+          radiation_streaming_approximation = 2
+          radiation_streaming_trigger_tau_over_tau_k = 240.
+          radiation_streaming_trigger_tau_c_over_tau = 100.
+          ur_fluid_approximation = 2
+          ur_fluid_trigger_tau_over_tau_k = 50.
+          EOF
+
+      - name: Write same-solver frozen zero reference
+        run: |
+          mkdir -p external_gdm/window_outputs
+          cat > external_gdm/gdm0.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          omega_cdm = 0.0
+          omega_gdm = 0.1200
+          Omega_Lambda = 0.684
+          N_ur = 3.046
+          N_ncdm = 0
+          Omega_k = 0.
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          type_gdm = time_only_bins
+          smooth_bins_gdm = yes
+          time_transition_width_gdm = 8.
+          time_values_gdm = 0.00001, 0.0001, 0.001, 0.01, 0.1
+          w_values_gdm = 0., 0., 0., 0., 0., 0.
+          cs2_values_gdm = 0., 0., 0., 0., 0., 0.
+          cv2_values_gdm = 0., 0., 0., 0., 0., 0.
+          dynamic_shear_gdm = yes
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          write background = yes
+          root = window_outputs/gdm0_
+          EOF
+
+      - name: Write withheld intermediate viscosity grid
+        run: |
+          set -euxo pipefail
+          cd external_gdm
+          for pair in '1.5e-5 1p5em5' '2e-5 2em5' '3e-5 3em5' '5e-5 5em5' '7e-5 7em5'; do
+            set -- $pair; V=$1; TOK=$2
+            sed \
+              -e "s/cv2_values_gdm = 0., 0., 0., 0., 0., 0./cv2_values_gdm = ${V}, ${V}, ${V}, ${V}, ${V}, ${V}/" \
+              -e "s#root = window_outputs/gdm0_#root = window_outputs/gdmcv2_${TOK}_#" \
+              gdm0.ini > "gdmcv2_${TOK}.ini"
+          done
+
+      - name: Run reference and withheld models
+        working-directory: external_gdm
+        run: |
+          set -euxo pipefail
+          ./class gdm0.ini dsir_p8.pre 2>&1 | tee window_outputs/gdm0.log
+          for f in gdmcv2_*.ini; do
+            tok=$(basename "$f" .ini)
+            ./class "$f" dsir_p8.pre 2>&1 | tee "window_outputs/${tok}.log"
+          done
+
+      - name: Extract intermediate response manifold
+        run: |
+          python3 ci/gdm_cv2_scan.py \
+            --directory external_gdm/window_outputs \
+            --reference-prefix gdm0_ \
+            --models \
+              1.5e-5:gdmcv2_1p5em5_ \
+              2e-5:gdmcv2_2em5_ \
+              3e-5:gdmcv2_3em5_ \
+              5e-5:gdmcv2_5em5_ \
+              7e-5:gdmcv2_7em5_ \
+            --json exp049b_gdm_cv2_intermediate_scan.json
+
+      - name: Test pre-frozen scale-localization prediction
+        run: |
+          python3 ci/gdm_window_crossing_validation_v0_1.py \
+            --scan exp049b_gdm_cv2_intermediate_scan.json \
+            --background external_gdm/window_outputs/gdm0_background.dat \
+            --json gdm_window_crossing_validation_v0_1.json
+          cat gdm_window_crossing_validation_v0_1.json
+
+      - name: Record provenance
+        if: always()
+        run: |
+          {
+            echo 'Experiment 049B withheld GDM window-crossing validation'
+            echo 'Prediction frozen before intermediate P(k,z) outputs: k_I_geo non-increasing with cv2 on 1.5e-5..7e-5; tolerance 1e-6 h/Mpc.'
+            echo 'No z_I prediction.'
+            echo "DSIR head: $GITHUB_SHA"
+            echo -n 'GDM_CLASS upstream: '; cat exp049b_gdm_upstream_sha.txt
+          } > exp049b_environment.txt
+
+      - name: Upload withheld validation artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gdm-window-crossing-validation-v0-1-${{ github.sha }}
+          path: |
+            gdm_window_crossing_validation_v0_1.json
+            exp049b_gdm_cv2_intermediate_scan.json
+            exp049b_environment.txt
+            exp049b_gdm_upstream_sha.txt
+            external_gdm/dsir_p8.pre
+            external_gdm/gdm0.ini
+            external_gdm/gdmcv2_*.ini
+            external_gdm/window_outputs/
+          if-no-files-found: warn

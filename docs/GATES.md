@@ -96,3 +96,25 @@ Thus the GDM `cs2/cv2` matter-power degeneracy has a reproducible metric-slip se
 ## Hard scientific rule
 
 No discovery claim is permitted before G8 withheld prediction. A raw theory-space separator is not observational distinguishability until survey response kernels and covariance whitening are applied.
+
+<!-- DSIR_EXP049B_DOC_SYNC_2026_08_26 -->
+## Gate update — 2026-08-26 Exp049B
+
+### Physical-window mechanism bridge
+
+**State: SUPPORTED/PARTIAL; not a new top-level PASS gate.**
+
+Exp049B is a genuine pre-frozen interpolation prediction inside C3. After the source-derived dynamic-viscosity proxy enters `k<=0.1 h/Mpc`, all five newly computed intermediate amplitudes satisfy the frozen directional prediction that `k_I_geo` is non-increasing with `cv2`.
+
+This upgrades the C3 **window-crossing mechanism explanation** from retrospective support to independent within-family support.
+
+It does **not** close G7 because:
+- the proxy is quasi-steady rather than a validated exact eigenmode scale;
+- only C3 has the withheld validation so far;
+- designer-f(R) exact `B(a)` bridge is still being tested;
+- no common functional law across families has been frozen and validated.
+
+It does **not** close G8 because the withheld points belong to a known C3 ray, not a withheld model family/mechanism.
+
+Therefore top-level state remains: **G7 OPEN, G8 OPEN**.
+

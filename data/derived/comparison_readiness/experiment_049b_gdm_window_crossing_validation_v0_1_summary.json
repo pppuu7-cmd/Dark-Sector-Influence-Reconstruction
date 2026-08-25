@@ -1,0 +1,45 @@
+{
+  "schema": "dsir.gdm_window_crossing_validation.v0.1",
+  "status": "PASS_GDM_WINDOW_CROSSING_VALIDATION_V0_1",
+  "provenance": {
+    "workflow_run": 32904158849,
+    "artifact_id": 9584180621,
+    "artifact_sha256": "892db89ea5e530af6b8c1aae5404ef75c0fc84448e671e780ce02d91b4711a8a",
+    "science_head": "30e2157c77e29d18dbf40d7438f34b0dce84cf4c",
+    "gdm_class": "4c87916aab5ca124a68f1dd16f31846fc13d1829"
+  },
+  "frozen_before_intermediate_outputs": {
+    "cv2_grid": [1.5e-05, 2e-05, 3e-05, 5e-05, 7e-05],
+    "z_reference": 1.317,
+    "kmax_h_mpc": 0.1,
+    "prediction": "k_I_geo must be non-increasing as cv2 increases after k_v_QS has entered the k<=0.1 window",
+    "monotonic_positive_step_tolerance_h_mpc": 1e-06,
+    "no_prediction_for_z_I": true
+  },
+  "source_scale_definition": "k_v_QS=sqrt(9/8)*Hconf/sqrt(cv2), dynamic-shear quasi-steady proxy",
+  "Hconf_at_zref_h_mpc": 0.0003098131661618541,
+  "rows": [
+    {"cv2": 1.5e-05, "k_v_QS_at_zref_h_mpc": 0.08484582985947185, "chi_I": 0.03761007716509149, "k_I_geo_h_mpc": 0.05017431771732427, "z_I": 1.2612842179622579},
+    {"cv2": 2e-05, "k_v_QS_at_zref_h_mpc": 0.07347864406347489, "chi_I": 0.03543758395038622, "k_I_geo_h_mpc": 0.049834596099353104, "z_I": 1.2720835123133443},
+    {"cv2": 3e-05, "k_v_QS_at_zref_h_mpc": 0.0599950616490326, "chi_I": 0.031145379771770936, "k_I_geo_h_mpc": 0.04904564599273566, "z_I": 1.2950716589552973},
+    {"cv2": 5e-05, "k_v_QS_at_zref_h_mpc": 0.04647197492427811, "chi_I": 0.0235805866359694, "k_I_geo_h_mpc": 0.04704559799944906, "z_I": 1.3395793971084524},
+    {"cv2": 7e-05, "k_v_QS_at_zref_h_mpc": 0.03927598733289058, "chi_I": 0.01803742812561059, "k_I_geo_h_mpc": 0.04460429715047142, "z_I": 1.3715731727928782}
+  ],
+  "k_I_geo_steps_h_mpc": [-0.00033972161797116845, -0.0007889501066174406, -0.0020000479932866036, -0.0024413008489776386],
+  "prediction_pass": true,
+  "source_scale_contract_pass": true,
+  "operator_controls": {
+    "tol": 1e-12,
+    "recon": 0.0,
+    "orth": 2.428856192170801e-19,
+    "zero": 7.067685880557805e-21,
+    "qres": 2.168404344971009e-19,
+    "pass": true
+  },
+  "interpretation_boundary": [
+    "This is a genuinely withheld intermediate-amplitude directional test; the five intermediate P(k,z) outputs were not available when the prediction was frozen.",
+    "The test predicts only the direction of scale-localization flow, not its magnitude and not the redshift-localization flow.",
+    "k_v_QS is a quasi-steady source-derived proxy, not an exact eigenmode scale.",
+    "A pass supports but does not prove a universal law and does not close G7/G8."
+  ]
+}
