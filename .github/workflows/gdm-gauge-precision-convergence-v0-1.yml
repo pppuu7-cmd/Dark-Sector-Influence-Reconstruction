@@ -1,0 +1,124 @@
+name: DSIR GDM gauge precision convergence v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/gdm-gauge-precision-convergence-v0-1.yml'
+      - 'ci/gdm_gauge_precision_convergence_v0_1.py'
+      - 'experiments/043_gdm_gauge_precision_convergence_v0_1.md'
+      - 'data/derived/observational_whitening/experiment_043_gdm_gauge_precision_convergence_v0_1.json'
+      - 'docs/SCIENTIFIC_FINDINGS_REGISTER.md'
+      - 'docs/STATUS.md'
+      - 'docs/RECOVERY_LATEST.md'
+      - 'docs/RECOVERY_MANUAL.md'
+      - 'docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-25.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  gdm-gauge-precision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git gcc make
+          python -m pip install --upgrade pip
+          python -m pip install numpy
+      - name: Download exact frozen C3 artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 32759738560
+          name: gdm-cv2-manifold-15c7128d4220b954783a8ba7cce7c06744f7f0ac
+          path: inputs/c3
+      - name: Clone and build pinned GDM_CLASS
+        run: |
+          git clone https://github.com/s-ilic/gdm_class_public.git gdm_class
+          cd gdm_class
+          git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          git rev-parse HEAD | tee ../exp043_upstream_sha.txt
+          make -j2 class
+      - name: Prepare p8 and frozen p10 diagnostic configurations
+        run: |
+          for prec in p8 p10; do
+            for gauge in sync newt; do
+              mkdir -p "exp043_${prec}_${gauge}/outputs"
+              cp inputs/c3/external_gdm/dsir_p8.pre "exp043_${prec}_${gauge}/precision.pre"
+              for tok in gdm0 gdmcs2_1em6 gdmcv2_1em6 gdmcv2_1em4; do
+                cp "inputs/c3/external_gdm/${tok}.ini" "exp043_${prec}_${gauge}/${tok}.ini"
+              done
+            done
+          done
+          python - <<'PY'
+          from pathlib import Path
+          toks=['gdm0','gdmcs2_1em6','gdmcv2_1em6','gdmcv2_1em4']
+          for prec in ['p8','p10']:
+            for gauge in ['sync','newt']:
+              d=Path(f'exp043_{prec}_{gauge}')
+              for tok in toks:
+                p=d/f'{tok}.ini'; s=p.read_text()
+                s=s.replace('output = mPk','output = mPk,mTk,vTk')
+                s=s.replace(f'root = cv2_outputs/{tok}_',f'root = outputs/{tok}_')
+                if gauge=='newt': s=s.replace('gauge = synchronous','gauge = newtonian')
+                p.write_text(s)
+          for d in [Path('exp043_p10_sync'),Path('exp043_p10_newt')]:
+            p=d/'precision.pre'; s=p.read_text()
+            if 'tol_perturb_integration = 3e-10' not in s or 'perturb_sampling_stepsize = 0.00035' not in s:
+              raise SystemExit('unexpected p8 precision contract')
+            s=s.replace('tol_perturb_integration = 3e-10','tol_perturb_integration = 3e-12')
+            s=s.replace('perturb_sampling_stepsize = 0.00035','perturb_sampling_stepsize = 0.00015')
+            p.write_text(s)
+          PY
+      - name: Run p8 and p10 synchronous/Newtonian diagnostic matrix
+        run: |
+          set -o pipefail
+          for prec in p8 p10; do
+            for gauge in sync newt; do
+              pushd "exp043_${prec}_${gauge}"
+              for tok in gdm0 gdmcs2_1em6 gdmcv2_1em6 gdmcv2_1em4; do
+                ../gdm_class/class "${tok}.ini" precision.pre 2>&1 | tee "../exp043_${prec}_${gauge}_${tok}.log"
+              done
+              popd
+            done
+          done
+      - name: Require complete diagnostic outputs
+        run: |
+          for prec in p8 p10; do
+            for gauge in sync newt; do
+              root="exp043_${prec}_${gauge}/outputs"
+              for tok in gdm0 gdmcs2_1em6 gdmcv2_1em6 gdmcv2_1em4; do
+                test -f "$root/${tok}_background.dat"
+                for zi in 1 2 3 4 5 6 7; do test -f "$root/${tok}_z${zi}_tk.dat"; done
+              done
+            done
+          done
+      - name: Run frozen Exp043 convergence audit
+        run: |
+          python ci/gdm_gauge_precision_convergence_v0_1.py \
+            --p8-sync exp043_p8_sync/outputs --p8-newt exp043_p8_newt/outputs \
+            --p10-sync exp043_p10_sync/outputs --p10-newt exp043_p10_newt/outputs \
+            --p8-precision exp043_p8_sync/precision.pre --p10-precision exp043_p10_sync/precision.pre \
+            --json experiment_043_gdm_gauge_precision_convergence_v0_1.json
+      - name: Upload Exp043 result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gdm-gauge-precision-convergence-v0-1-${{ github.sha }}
+          path: |
+            experiment_043_gdm_gauge_precision_convergence_v0_1.json
+            exp043_upstream_sha.txt
+            exp043_*.log
+            exp043_p8_sync/precision.pre
+            exp043_p10_sync/precision.pre
+          if-no-files-found: warn
