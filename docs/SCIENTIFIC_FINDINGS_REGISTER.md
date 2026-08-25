@@ -346,13 +346,89 @@ Valid interaction-shape acute angles:
 
 ---
 
-## Research discipline after F16
+## F17 — scale-time interaction hierarchy survives every single-node deletion
+
+**Status: HARD ESTABLISHED descriptive grid robustness on the frozen C1/C2/C3/C5 low-k theory-response atlas (Exp047B); broader mechanism interpretation SUPPORTED only.**
+
+Experiment 047B recomputes the decomposition and pairwise interaction localization on exactly twelve deterministic reduced grids: five leave-one-k-out and seven leave-one-z-out variants. No scientific drift threshold was applied post hoc.
+
+Hard provenance:
+
+- run `32894616114`;
+- source head `9a05c451401ac2cede3a56ef4ca2a1923eecb9c3`;
+- artifact `9580724793`;
+- artifact SHA256 `948038245e4eeea9ca569a48e138f5bdddaede19f0ff98ea941fc91a00272bb7`.
+
+Controls pass:
+
+- reconstruction error `0`;
+- max core/I orthogonality `8.3946e-14`;
+- max pairwise Pythagorean residual `2.3505e-17`;
+- frozen ceiling `1e-12`.
+
+### Direction-level robustness
+
+The descriptive ordering
+
+\[
+\boxed{\text{IDE near-null}<\text{smooth-w}<\text{GDM}<f(R)}
+\]
+
+is preserved in **12/12** single-node deletions. Both IDE directions remain below the existing `chi_I=1e-6` morphology floor in **12/12** reduced grids.
+
+Leave-one-node ranges:
+
+- IDE alpha `1.99e-13 .. 7.36e-11`;
+- IDE beta `3.66e-13 .. 7.45e-11`;
+- smooth-w `3.91e-5 .. 1.34e-3`;
+- GDM cs2 `0.0279 .. 0.0525`;
+- GDM cv2 `0.0265 .. 0.0505`;
+- designer f(R) `0.2233 .. 0.3497`.
+
+### Pairwise robustness
+
+GDM cs2/f(R):
+
+\[
+\eta_I=0.5504..0.6539,
+\]
+
+GDM cv2/f(R):
+
+\[
+\eta_I=0.5520..0.6554.
+\]
+
+Thus every single-node deletion keeps more than half of the normalized GDM/f(R) response-shape separation power in irreducible scale-time interaction. This is descriptive hard robustness, not a preregistered `eta_I>0.5` gate.
+
+### Hard limitation
+
+Smooth-w's absolute interaction magnitude is not grid-insensitive. Removing `k=0.001 h/Mpc` changes
+
+\[
+\chi_I=1.0805\times10^{-3}\rightarrow3.9123\times10^{-5},
+\]
+
+a factor `0.0362` of the full-grid value. Therefore its **tier** is robust, but its precise `chi_I` is not yet a stable family invariant.
+
+GDM cs2/cv2 keep `eta_I=0.6525..0.7377`, but their total response distance remains tiny; interaction still does not replace metric slip.
+
+**Supported interpretation:** on the current low-k response domain, GDM closure physics and designer modified gravity exhibit persistent scale-time coupling qualitatively stronger than the local IDE directions, and GDM/f(R) separation remains substantially encoded in joint `k x z` evolution rather than a single special node.
+
+**Boundary:** this is internal grid robustness, not independent-data confirmation, survey distinguishability, intrinsic rank, a universal mechanism law, a fourth parameter, no-hair theorem, G7 law or discovery. C4 remains excluded by domain contract.
+
+Detailed standalone record: `docs/SCIENTIFIC_FINDING_F17_INTERACTION_GRID_ROBUSTNESS.md`.
+
+---
+
+## Research discipline after F17
 
 1. Keep `N_repr` distinct from `N_disc`.
 2. Never interpret `eta_I` without the total pair distance/angle; report both.
-3. Test `chi_I` and interaction morphology across parameter step, solver precision and grid/domain changes before calling them stable mechanism coordinates.
-4. Add C4 only after a high-k `(k,z)` response atlas exists.
-5. Preserve slip/lensing because interaction morphology does not resolve GDM pressure/viscosity.
-6. Continue observation-space window/covariance projection before detectability claims.
-7. Continue cross-family null-space, channel-migration, orientation/sign, localization and failed-compression searches.
-8. No G7 law and no G8 discovery claim yet.
+3. Treat current `chi_I` primarily as a mechanism-tier descriptor; smooth-w demonstrates that precise magnitudes can be node/domain sensitive.
+4. Next test parameter-amplitude/finite-step stability of `chi_I` and interaction morphology using independent manifold points where available.
+5. Add C4 only after a high-k `(k,z)` time-dependent response atlas exists; never insert low-k zero.
+6. Preserve slip/lensing because interaction morphology does not resolve GDM pressure/viscosity.
+7. Continue observation-space window/covariance projection before detectability claims.
+8. Continue cross-family null-space, channel-migration, orientation/sign, localization and failed-compression searches.
+9. No G7 law and no G8 discovery claim yet.
