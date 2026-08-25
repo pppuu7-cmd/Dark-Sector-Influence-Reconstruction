@@ -1,0 +1,41 @@
+{
+  "schema": "dsir.fr_window_crossing_validation.summary.v0.1",
+  "status": "PASS_FR_WINDOW_CROSSING_VALIDATION_V0_1",
+  "source_run": 32907619613,
+  "source_head": "a575a2e78b21eab36b88db8622e14509a30cae5a",
+  "artifact_id": 9585579947,
+  "artifact_sha256": "bc2145365d14939473c73f36c0ee2ca41920d7be8eb50a31a1858c6f66aed942",
+  "pinned_EFTCAMB": "EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904",
+  "frozen_before_outputs": {
+    "B0_grid": [0.00015,0.0002,0.0003,0.0005,0.0007],
+    "prediction": "k_I_geo non-increasing with B0",
+    "max_positive_step_h_mpc": 1e-6
+  },
+  "operator_controls": {
+    "threshold": 1e-12,
+    "max_reconstruction": 0.0,
+    "max_orthogonality": 5.684110056647428e-20,
+    "max_zero_mean": 6.776263578034403e-22,
+    "max_profile_normalization": 1.0842021724855044e-19
+  },
+  "source_scale_contract": {
+    "max_terminal_B0_relative_error": 7.507774783810374e-11,
+    "terminal_B0_threshold": 1e-6,
+    "all_transitions_inside_kmax_at_any_frozen_z": true,
+    "k_compton_min_strictly_decreases_with_B0": true
+  },
+  "models": [
+    {"B0":0.00015,"k_compton_min_h_mpc":0.0573746866846495,"k_I_geo_h_mpc":0.04801621662941202,"chi_I":0.2701418997236175,"z_I":0.943330008281},
+    {"B0":0.0002,"k_compton_min_h_mpc":0.04968805547593071,"k_I_geo_h_mpc":0.04725140617446749,"chi_I":0.2572299853986217,"z_I":0.9666715916086778},
+    {"B0":0.0003,"k_compton_min_h_mpc":0.04057032218492984,"k_I_geo_h_mpc":0.04591884210351828,"chi_I":0.23735055721334924,"z_I":1.002605602185857},
+    {"B0":0.0005,"k_compton_min_h_mpc":0.03142593817783471,"k_I_geo_h_mpc":0.04376281226388947,"chi_I":0.21048367445574387,"z_I":1.0513484811983758},
+    {"B0":0.0007,"k_compton_min_h_mpc":0.026560020377845033,"k_I_geo_h_mpc":0.04203393200802907,"chi_I":0.19235647112802767,"z_I":1.0843657093558756}
+  ],
+  "consecutive_k_I_steps_h_mpc": [-0.0007648104549445311,-0.0013325640709492131,-0.0021560298396288077,-0.0017288802558604044],
+  "interpretation": "The pre-frozen designer-f(R) directional window-crossing/localization prediction passes on five previously uncomputed intermediate amplitudes. Together with Exp049B/F21 this gives withheld directional support in two physically distinct mechanisms.",
+  "not_a_claim": [
+    "Two-family support is not universality across the dark sector.",
+    "No exact universal mapping k_I(k_transition) has been established.",
+    "No G7 residual law, G8 discovery, intrinsic field count, no-hair theorem, or observation-space detectability follows."
+  ]
+}

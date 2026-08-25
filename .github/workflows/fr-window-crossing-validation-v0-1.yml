@@ -1,0 +1,230 @@
+name: DSIR designer-fR window-crossing validation v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/fr-window-crossing-validation-v0-1.yml'
+      - 'ci/fr_window_crossing_validation_v0_1.py'
+      - 'experiments/049c_fr_window_crossing_validation_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  fr-window-crossing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install H-EFTCAMB toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git gfortran gcc make liblapack-dev libblas-dev python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Clone pinned H-EFTCAMB, raise text precision, and instrument exact B(a)
+        run: |
+          set -euxo pipefail
+          git clone --recursive https://github.com/EFTCAMB/EFTCAMB.git eftcamb
+          cd eftcamb
+          git checkout 16d9c4e9f85751e30efd0a53b177941713078904
+          git submodule update --init --recursive
+          git rev-parse HEAD | tee ../exp049c_eftcamb_upstream_sha.txt
+          cd fortran
+          grep -n 'E15.6' results.f90 | tee ../../exp049c_writer_before.txt
+          sed -i 's/E15\.6/E25.16/g' results.f90
+          grep -n 'E25.16' results.f90 | tee ../../exp049c_writer_after.txt
+          test "$(grep -c 'E25.16' results.f90)" -ge 2
+          cd ../..
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('eftcamb/fortran/eftcamb/07f_designer_models/007p3_Designer_fR.f90')
+          s=p.read_text()
+          old='    type(TTextFile) :: file_debug_1, file_debug_2\n'
+          new=old+'    type(TTextFile) :: dsir_transition_diag\n    logical :: dsir_transition_diag_open = .false.\n'
+          assert s.count(old)==1, s.count(old)
+          s=s.replace(old,new)
+          old='        call self%solve_designer_equations( params_cache, A_ini, B0, only_B0=.False., success=success, feedback_level=feedback_level )\n'
+          new='''        if ( present(outroot) ) then\n            call dsir_transition_diag%CreateFile( TRIM(outroot)//'dsir_transition_scale.dat' )\n            write(dsir_transition_diag%unit,'(a)') '# x a B Rbar f_R E Eprime Eprime2'\n            dsir_transition_diag_open = .true.\n        end if\n        call self%solve_designer_equations( params_cache, A_ini, B0, only_B0=.False., success=success, feedback_level=feedback_level )\n        if ( present(outroot) ) then\n            dsir_transition_diag_open = .false.\n            call dsir_transition_diag%close()\n        end if\n'''
+          assert s.count(old)==1, s.count(old)
+          s=s.replace(old,new)
+          old='''            if ( DebugEFTCAMB ) then\n                inquire( unit=file_debug_2%unit, opened=is_open )\n'''
+          new='''            if ( dsir_transition_diag_open ) then\n                write(dsir_transition_diag%unit,'(8ES25.16E3)') x, a, B, Ricci, f_sub_R, EFunction, EFunPrime, EFunPrime2\n            end if\n\n            if ( DebugEFTCAMB ) then\n                inquire( unit=file_debug_2%unit, opened=is_open )\n'''
+          assert s.count(old)==1, s.count(old)
+          s=s.replace(old,new)
+          p.write_text(s)
+          PY
+          cd eftcamb
+          git diff --check
+          git diff -- fortran/results.f90 fortran/eftcamb/07f_designer_models/007p3_Designer_fR.f90 | tee ../exp049c_diagnostic_precision_only.patch
+          grep -Fq 'dsir_transition_diag_open' ../exp049c_diagnostic_precision_only.patch
+          cd fortran
+          make camb
+
+      - name: Write exact high-precision multiz baseline
+        working-directory: eftcamb/fortran/eftcamb_test/parameters
+        run: |
+          set -euxo pipefail
+          cp base_params.ini dsir_frwc_base.ini
+          sed -i 's/^get_scalar_cls[[:space:]]*=.*/get_scalar_cls = F/' dsir_frwc_base.ini
+          sed -i 's/^get_tensor_cls[[:space:]]*=.*/get_tensor_cls = F/' dsir_frwc_base.ini
+          sed -i 's/^do_lensing[[:space:]]*=.*/do_lensing = F/' dsir_frwc_base.ini
+          sed -i 's/^do_nonlinear[[:space:]]*=.*/do_nonlinear = 0/' dsir_frwc_base.ini
+          sed -i 's/^hubble[[:space:]]*=.*/hubble = 67/' dsir_frwc_base.ini
+          sed -i 's/^ombh2[[:space:]]*=.*/ombh2 = 0.0224/' dsir_frwc_base.ini
+          sed -i 's/^omch2[[:space:]]*=.*/omch2 = 0.1200/' dsir_frwc_base.ini
+          sed -i 's/^omnuh2[[:space:]]*=.*/omnuh2 = 0/' dsir_frwc_base.ini
+          sed -i 's/^massless_neutrinos[[:space:]]*=.*/massless_neutrinos = 3.046/' dsir_frwc_base.ini
+          sed -i 's/^nu_mass_eigenstates[[:space:]]*=.*/nu_mass_eigenstates = 0/' dsir_frwc_base.ini
+          sed -i 's/^massive_neutrinos[[:space:]]*=.*/massive_neutrinos = 0/' dsir_frwc_base.ini
+          sed -i 's/^helium_fraction[[:space:]]*=.*/helium_fraction = 0.2404/' dsir_frwc_base.ini
+          sed -i 's/^scalar_amp(1)[[:space:]]*=.*/scalar_amp(1) = 2.10e-9/' dsir_frwc_base.ini
+          sed -i 's/^scalar_spectral_index(1)[[:space:]]*=.*/scalar_spectral_index(1) = 0.965/' dsir_frwc_base.ini
+          sed -i 's/^reionization[[:space:]]*=.*/reionization = F/' dsir_frwc_base.ini
+          sed -i 's/^transfer_kmax[[:space:]]*=.*/transfer_kmax = 0.25/' dsir_frwc_base.ini
+          sed -i 's/^transfer_k_per_logint[[:space:]]*=.*/transfer_k_per_logint = 80/' dsir_frwc_base.ini
+          sed -i 's/^transfer_num_redshifts[[:space:]]*=.*/transfer_num_redshifts = 7/' dsir_frwc_base.ini
+          sed -i 's/^transfer_redshift(1)[[:space:]]*=.*/transfer_redshift(1) = 2.33/' dsir_frwc_base.ini
+          sed -i 's/^transfer_filename(1)[[:space:]]*=.*/transfer_filename(1) = z7_transfer.dat/' dsir_frwc_base.ini
+          sed -i 's/^transfer_matterpower(1)[[:space:]]*=.*/transfer_matterpower(1) = z7_matterpower.dat/' dsir_frwc_base.ini
+          sed -i 's/^number_of_threads[[:space:]]*=.*/number_of_threads = 2/' dsir_frwc_base.ini
+          if grep -Eq '^EFTCAMB_write_background[[:space:]]*=' dsir_frwc_base.ini; then
+            sed -i 's/^EFTCAMB_write_background[[:space:]]*=.*/EFTCAMB_write_background = T/' dsir_frwc_base.ini
+          else
+            echo 'EFTCAMB_write_background = T' >> dsir_frwc_base.ini
+          fi
+          cat >> dsir_frwc_base.ini <<'EOF'
+          transfer_redshift(2) = 1.491
+          transfer_filename(2) = z6_transfer.dat
+          transfer_matterpower(2) = z6_matterpower.dat
+          transfer_redshift(3) = 1.317
+          transfer_filename(3) = z5_transfer.dat
+          transfer_matterpower(3) = z5_matterpower.dat
+          transfer_redshift(4) = 0.934
+          transfer_filename(4) = z4_transfer.dat
+          transfer_matterpower(4) = z4_matterpower.dat
+          transfer_redshift(5) = 0.706
+          transfer_filename(5) = z3_transfer.dat
+          transfer_matterpower(5) = z3_matterpower.dat
+          transfer_redshift(6) = 0.51
+          transfer_filename(6) = z2_transfer.dat
+          transfer_matterpower(6) = z2_matterpower.dat
+          transfer_redshift(7) = 0.295
+          transfer_filename(7) = z1_transfer.dat
+          transfer_matterpower(7) = z1_matterpower.dat
+          EOF
+
+      - name: Write GR, zero-designer, and withheld configurations
+        working-directory: eftcamb/fortran/eftcamb_test/parameters
+        run: |
+          set -euxo pipefail
+          cat > dsir_frwc_gr.ini <<'EOF'
+          EFTflag = 0
+          output_root = eftcamb_test/results/spectra_results/dsir_frwc_gr_
+          DEFAULT(dsir_frwc_base.ini)
+          EOF
+          for pair in '0 b0' '1.5e-4 b1p5em4' '2e-4 b2em4' '3e-4 b3em4' '5e-4 b5em4' '7e-4 b7em4'; do
+            set -- $pair; B0=$1; TOK=$2
+            cat > dsir_frwc_${TOK}.ini <<EOF
+          EFTflag = 3
+          DesignerEFTmodel = 1
+          EFTwDE = 0
+          EFTB0 = ${B0}
+          EFT_ghost_math_stability = F
+          EFT_mass_math_stability = F
+          EFT_ghost_stability = T
+          EFT_gradient_stability = T
+          EFT_mass_stability = F
+          EFT_mass_stability_rate = 10.0
+          EFT_additional_priors = T
+          EFTCAMB_turn_on_time = 0.01
+          EFTCAMB_stability_time = 1.e-10
+          EFTCAMB_stability_threshold = 0.0
+          output_root = eftcamb_test/results/spectra_results/dsir_frwc_${TOK}_
+          DEFAULT(dsir_frwc_base.ini)
+          EOF
+          done
+
+      - name: Run fresh GR, zero point, and withheld designer models
+        working-directory: eftcamb/fortran
+        run: |
+          set -euxo pipefail
+          mkdir -p eftcamb_test/results/spectra_results
+          ./camb eftcamb_test/parameters/dsir_frwc_gr.ini 2>&1 | tee ../../exp049c_gr.log
+          for tok in b0 b1p5em4 b2em4 b3em4 b5em4 b7em4; do
+            ./camb "eftcamb_test/parameters/dsir_frwc_${tok}.ini" 2>&1 | tee "../../exp049c_${tok}.log"
+          done
+
+      - name: Require stable designer solutions and exact diagnostics
+        run: |
+          set -euxo pipefail
+          root=eftcamb/fortran/eftcamb_test/results/spectra_results
+          for tok in b0 b1p5em4 b2em4 b3em4 b5em4 b7em4; do
+            grep -q 'EFTCAMB: theory stable' "exp049c_${tok}.log"
+            ! grep -q 'ERROR STOP' "exp049c_${tok}.log"
+          done
+          for tok in b1p5em4 b2em4 b3em4 b5em4 b7em4; do
+            matches=("$root/dsir_frwc_${tok}_"*dsir_transition_scale.dat)
+            test "${#matches[@]}" -eq 1
+            test -f "${matches[0]}"
+            test "$(grep -vc '^#' "${matches[0]}")" -ge 1000
+            cp "${matches[0]}" "exp049c_diag_${tok}.dat"
+          done
+
+      - name: Extract identical multiz comoving-density responses
+        run: |
+          set -euxo pipefail
+          python3 ci/eftcamb_fr_multiz.py --root eftcamb/fortran --gr-token dsir_frwc_gr_ --model-token dsir_frwc_b0_ --B0 0 --json exp049c_B0_0.json
+          python3 ci/eftcamb_fr_multiz.py --root eftcamb/fortran --gr-token dsir_frwc_gr_ --model-token dsir_frwc_b1p5em4_ --B0 1.5e-4 --json exp049c_B0_1p5e-4.json
+          python3 ci/eftcamb_fr_multiz.py --root eftcamb/fortran --gr-token dsir_frwc_gr_ --model-token dsir_frwc_b2em4_ --B0 2e-4 --json exp049c_B0_2e-4.json
+          python3 ci/eftcamb_fr_multiz.py --root eftcamb/fortran --gr-token dsir_frwc_gr_ --model-token dsir_frwc_b3em4_ --B0 3e-4 --json exp049c_B0_3e-4.json
+          python3 ci/eftcamb_fr_multiz.py --root eftcamb/fortran --gr-token dsir_frwc_gr_ --model-token dsir_frwc_b5em4_ --B0 5e-4 --json exp049c_B0_5e-4.json
+          python3 ci/eftcamb_fr_multiz.py --root eftcamb/fortran --gr-token dsir_frwc_gr_ --model-token dsir_frwc_b7em4_ --B0 7e-4 --json exp049c_B0_7e-4.json
+
+      - name: Test pre-frozen designer-fR localization prediction
+        run: |
+          python3 ci/fr_window_crossing_validation_v0_1.py \
+            --zero exp049c_B0_0.json \
+            --models \
+              1.5e-4:exp049c_B0_1p5e-4.json:exp049c_diag_b1p5em4.dat \
+              2e-4:exp049c_B0_2e-4.json:exp049c_diag_b2em4.dat \
+              3e-4:exp049c_B0_3e-4.json:exp049c_diag_b3em4.dat \
+              5e-4:exp049c_B0_5e-4.json:exp049c_diag_b5em4.dat \
+              7e-4:exp049c_B0_7e-4.json:exp049c_diag_b7em4.dat \
+            --json fr_window_crossing_validation_v0_1.json
+          cat fr_window_crossing_validation_v0_1.json
+
+      - name: Record immutable provenance
+        if: always()
+        run: |
+          {
+            echo 'Experiment 049C withheld designer-f(R) window-crossing validation'
+            echo 'Prediction frozen before withheld outputs: k_I_geo non-increasing over B0={1.5e-4,2e-4,3e-4,5e-4,7e-4}; positive-step tolerance 1e-6 h/Mpc.'
+            echo 'No z_I, chi_I, exact magnitude, or survey-significance prediction.'
+            echo 'Same high-precision multiz/comoving-density response operator as the frozen C5 manifold.'
+            echo 'Only output precision and diagnostic-only B(a) writer are patched; equations and physics parameters are unchanged.'
+            echo "DSIR head: $GITHUB_SHA"
+            echo -n 'H-EFTCAMB upstream: '; cat exp049c_eftcamb_upstream_sha.txt
+          } > exp049c_environment.txt
+
+      - name: Upload withheld validation artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fr-window-crossing-validation-v0-1-${{ github.sha }}
+          path: |
+            fr_window_crossing_validation_v0_1.json
+            exp049c_B0_*.json
+            exp049c_diag_*.dat
+            exp049c_environment.txt
+            exp049c_eftcamb_upstream_sha.txt
+            exp049c_diagnostic_precision_only.patch
+            exp049c_writer_before.txt
+            exp049c_writer_after.txt
+            exp049c_*.log
+            eftcamb/fortran/eftcamb_test/parameters/dsir_frwc_*.ini
+            eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_frwc_*matterpower*.dat
+          if-no-files-found: warn
