@@ -1,7 +1,7 @@
 # Experiment 041 — C5 high-precision RSD representability v0.1
 
 **Date:** 2026-08-25  
-**Status:** confirmatory protocol frozen after an explicitly exploratory low-precision extraction; independent high-precision run pending  
+**Status:** **HARD PASS — `PASS_C5_RSD_REPRESENTABILITY_HIGH_PRECISION_V0_1`**  
 **Scope:** C5 designer-f(R) only; CAMB-native total-matter-density / Newtonian-CDM-velocity compression validity
 
 ## Question
@@ -93,24 +93,50 @@ The representability defect is
 
 By Cauchy-Schwarz `0<=D_RSD<=1` in the exact positive-weight limit. `D_RSD=0` means that one scalar density-velocity amplitude represents the entire weighted k-range. A positive value measures the weighted non-collinearity caused by scale-dependent `g(k)`.
 
-## Why a new high-precision run is required
+An exact useful rewriting follows by defining the normalized positive weight
+
+\[
+p(k)=\frac{\Delta^2_{dd}W_{TH}^2}{S_{dd}}.
+\]
+
+Then
+
+\[
+\boxed{
+{\cal D}_{RSD}
+=\frac{\operatorname{Var}_{p}[g]}{\langle g^2\rangle_p}
+}
+\]
+
+and the weighted coefficient of variation is
+
+\[
+\boxed{
+\frac{\sigma_{g,p}}{|\langle g\rangle_p|}
+=\sqrt{\frac{{\cal D}_{RSD}}{1-{\cal D}_{RSD}}}
+}.
+\]
+
+Thus the defect is literally a normalized weighted variance of the scale-dependent effective growth ratio, not an arbitrary diagnostic distance.
+
+## Why a new high-precision run was required
 
 The first exploratory extraction used the ordinary CAMB transfer text format `E15.6`. It suggested:
 
 - GR / designer `B0=0`: `D_RSD` near the numerical floor (`~1e-10`);
 - production C5: nonzero defects ranging from roughly `1e-6` to `1e-3` depending on `B0`, redshift and k-cut.
 
-Those numbers were **inspected before this confirmatory protocol** and therefore are not themselves a hard result. In addition, the six-digit transfer mantissa is inadequate for a clean small-response threshold.
+Those numbers were inspected before the confirmatory protocol and therefore were never treated as a hard result. In addition, the six-digit transfer mantissa was inadequate for a clean small-response threshold.
 
-The confirmatory workflow changes only the text-output format in the pinned `Transfer_SaveToFiles` routine from
+The confirmatory workflow changed only the text-output format in the pinned `Transfer_SaveToFiles` routine from
 
 `E15.6 -> E24.16`.
 
-No evolution equation, parameter, stability rule, sampling grid or physics routine is changed. The workflow records the exact I/O-only diff and rebuilds the pinned solver.
+No evolution equation, parameter, stability rule, sampling grid or physics routine was changed. The workflow verified the exact one-line I/O-only diff and rebuilt the pinned solver.
 
 ## Frozen models and redshifts
 
-Use the exact hard-production config lineage `dsir_mgs1_hp_*` from immutable artifact:
+Exact hard-production config lineage `dsir_mgs1_hp_*` from immutable artifact:
 
 - source run `32759477319`;
 - artifact `9532245261`;
@@ -120,7 +146,7 @@ Runs:
 
 - GR;
 - designer `B0=0`;
-- exploratory transition control `B0=1e-7`;
+- transition control `B0=1e-7`;
 - production `B0={1e-6,1e-5,1e-4,1e-3}`.
 
 Redshifts are the frozen seven structure nodes
@@ -129,46 +155,89 @@ Redshifts are the frozen seven structure nodes
 
 ## k-range robustness
 
-Compute the defect independently for upper cuts
+The defect was computed independently for upper cuts
 
 `k_max={0.10,0.15,0.20,0.24} h/Mpc`.
 
-The lower integration limit is the first common positive point between the transfer and matter-power tables. Matter power is log-interpolated onto the transfer k-grid; no extrapolation is allowed.
+The lower integration limit is the first common positive point between the transfer and matter-power tables. Matter power is log-interpolated onto the transfer k-grid; no extrapolation is used.
 
-## Confirmatory hard thresholds
+## Confirmatory thresholds frozen before the high-precision target output
 
-These thresholds are frozen **after** the explicitly exploratory `E15.6` extraction but **before** the independent `E24.16` target output. This chronology is intentional and must be preserved.
+1. GR control: `max_z,kcut D_RSD <=1e-8`.
+2. Designer `B0=0` control: `max_z,kcut D_RSD <=1e-8`.
+3. Every production point `B0={1e-6,1e-5,1e-4,1e-3}`: `max_z D_RSD(k_max=0.24) >=1e-7`.
+4. The same production points under the aggressive low-k cut: `max_z D_RSD(k_max=0.10) >=1e-8`.
+5. All moments/defects finite; negative numerical Cauchy-Schwarz violations no larger than `1e-12`.
+6. Exact source variable contracts and the I/O-only precision patch required.
 
-1. GR control:
-   `max_z,kcut D_RSD <= 1e-8`.
-2. Designer `B0=0` control:
-   `max_z,kcut D_RSD <= 1e-8`.
-3. Every production point `B0={1e-6,1e-5,1e-4,1e-3}` must show
-   `max_z D_RSD(k_max=0.24) >= 1e-7`.
-4. The same four production points must remain detectably non-collinear under the aggressive low-k cut:
-   `max_z D_RSD(k_max=0.10) >= 1e-8`.
-5. All moments and defects must be finite, and numerical Cauchy-Schwarz violations below zero may not exceed `1e-12` in magnitude.
-6. The exact source variable contracts and the I/O-only precision patch must be verified by the workflow.
+`B0=1e-7` was a transition diagnostic and had no required nonzero threshold. No monotonicity requirement in `B0` was imposed.
 
-The `B0=1e-7` point is a transition diagnostic and has no required nonzero threshold.
+## Hard result
 
-No monotonicity requirement in `B0` is imposed; representability is a shape property and need not be monotonic with a microscopic parameter.
+Hard run:
 
-## Claim if PASS
+- run ID `32791510072`;
+- artifact ID `9543375564`;
+- artifact name `c5-rsd-representability-high-precision-v0-1-c57c929e4c712e4bbe3e773e813fa6d782d4d3dc`;
+- artifact digest `sha256:1e4d86f7f13185d69a07b71afa9bfd6fefa6003119064652d6388491738212bc`;
+- result status `PASS_C5_RSD_REPRESENTABILITY_HIGH_PRECISION_V0_1`;
+- `failures=[]`.
 
-A PASS establishes only that, for the frozen C5 designer-f(R) production manifold and the CAMB-native total-matter/CDM-velocity convention,
+Maximum defects over redshift at `k_max=0.24 h/Mpc`:
+
+| model | max `D_RSD` |
+|---|---:|
+| GR | `1.4189527331e-10` |
+| designer `B0=0` | `1.4197298892e-10` |
+| `B0=1e-7` control | `1.2562646543e-6` |
+| `B0=1e-6` | `5.1775048112e-6` |
+| `B0=1e-5` | `1.9224972376e-4` |
+| `B0=1e-4` | `8.8058345719e-4` |
+| `B0=1e-3` | `8.7803829400e-4` |
+
+Maximum defects over redshift at `k_max=0.10 h/Mpc`:
+
+| model | max `D_RSD` |
+|---|---:|
+| GR | `2.3362134449e-10` |
+| designer `B0=0` | `2.3331336862e-10` |
+| `B0=1e-7` control | `3.8910821454e-8` |
+| `B0=1e-6` | `1.7383740314e-7` |
+| `B0=1e-5` | `1.2403086244e-5` |
+| `B0=1e-4` | `3.0063090369e-4` |
+| `B0=1e-3` | `5.9388167251e-4` |
+
+Every pre-frozen production threshold passes. The production defects stand roughly four to six orders of magnitude above the GR / `B0=0` numerical floor.
+
+At the `k_max=0.24` redshift where each model's defect is largest, the exact weighted coefficient of variation of `g(k)` is approximately:
+
+- `B0=1e-6`: `0.2275%`;
+- `B0=1e-5`: `1.3867%`;
+- `B0=1e-4`: `2.9688%`;
+- `B0=1e-3`: `2.9645%`;
+- GR / `B0=0`: about `0.00119%` numerical floor.
+
+The `B0=1e-4` and `1e-3` defects plateau rather than remaining monotonic. This is permitted by the frozen protocol and is scientifically sensible because representability measures response shape, not simply microscopic amplitude.
+
+## Scientific interpretation
+
+**HARD ESTABLISHED for the frozen C5 manifold:** the designer-f(R) production direction cannot in general be represented exactly by one scale-independent density-velocity growth amplitude over the ShapeFit smoothing window. The loss remains detectable even after restricting to `k<=0.1 h/Mpc`.
+
+Equivalently, modified gravity generates a genuinely scale-dependent
 
 \[
-\exists B_0>0:\quad {\cal D}_{RSD}>0
+g(k,z)=\Theta(k,z)/\delta(k,z)
 \]
 
-well above the validated GR/B0=0 numerical floor, including after a conservative `k<=0.1 h/Mpc` cut.
+inside the relevant weighted range. Therefore a scalar `f sigma_s8`-like coordinate is a lossy compression for this C5 family; DSIR must retain scale-dependent anisotropic/RSD information or carry an explicit compression-error model.
 
-Scientific interpretation:
+This finding complements Experiment 038 in a particularly sharp way:
 
-**the C5 modified-gravity direction cannot in general be represented exactly by one scale-independent density-velocity growth amplitude over the smoothing window.**
+\[
+K_{AP}t_{B0}=0
+\]
 
-That would make scalar `f sigma_s8` a lossy compression for this family and justify retaining scale-dependent anisotropic/RSD information in DSIR.
+exactly on the frozen designer background branch, while the density-velocity relation is nontrivially scale dependent. **The same microscopic direction is therefore geometry-null but growth-compression-active.**
 
 ## Claim boundary
 
