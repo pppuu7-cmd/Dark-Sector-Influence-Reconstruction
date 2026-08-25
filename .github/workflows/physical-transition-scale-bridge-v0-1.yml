@@ -146,9 +146,10 @@ jobs:
           root=eftcamb/fortran/eftcamb_test/results/spectra_results
           for tok in b1em6 b1em5 b1em4 b1em3; do
             grep -q 'EFTCAMB: theory stable' "exp049_${tok}.log"
-            ! CAMB frozen output_root already ends in one underscore.
-            test -f "$root/dsir_mgs1_hp_${tok}_dsir_transition_scale.dat"
-            test "$(grep -vc '^#' "$root/dsir_mgs1_hp_${tok}_dsir_transition_scale.dat")" -ge 1000
+            matches=("$root/dsir_mgs1_hp_${tok}_"*dsir_transition_scale.dat)
+            test "${#matches[@]}" -eq 1
+            test -f "${matches[0]}"
+            test "$(grep -vc '^#' "${matches[0]}")" -ge 1000
           done
 
       - name: Compute source-native transition-scale bridge
@@ -170,6 +171,7 @@ jobs:
             echo 'C3 artifact: run 32759738560, digest sha256:126c839ce948b5b25ec46b687af70e230c31d87071e6526727d1551a3c0f136d'
             echo 'C5 config artifact: run 32759477319, digest sha256:9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635'
             echo 'Scientific alignment thresholds: NONE (descriptive/supporting only).'
+            echo 'CAMB output-root naming: frozen root ends underscore and CAMB appends another; diagnostic glob accepts the resulting double separator.'
             echo "DSIR head: $GITHUB_SHA"
             echo -n 'GDM upstream: '; cat exp049_gdm_upstream_sha.txt
             echo -n 'H-EFTCAMB upstream: '; cat exp049_eftcamb_upstream_sha.txt
@@ -186,5 +188,5 @@ jobs:
             exp049_eftcamb_upstream_sha.txt
             exp049_eftcamb_diagnostic_only.patch
             exp049_b*.log
-            eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_mgs1_hp_b1em*_dsir_transition_scale.dat
+            eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_mgs1_hp_b1em*dsir_transition_scale.dat
           if-no-files-found: error
