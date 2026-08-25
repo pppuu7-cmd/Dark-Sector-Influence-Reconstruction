@@ -1,0 +1,35 @@
+name: One-shot Exp049B document sync
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp049b-doc-sync.yml'
+      - 'ci/exp049b_doc_sync.py'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Append idempotent Exp049B recovery and finding records
+        run: python3 ci/exp049b_doc_sync.py
+      - name: Commit synchronized documentation to PR branch
+        run: |
+          set -euxo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/SCIENTIFIC_FINDINGS_REGISTER.md docs/RECOVERY_LATEST.md docs/RECOVERY_MANUAL.md docs/STATUS.md docs/GATES.md
+          if git diff --cached --quiet; then
+            echo 'Documentation already synchronized.'
+            exit 0
+          fi
+          git commit -m 'docs: synchronize F18-F21 and Exp049B recovery'
+          git push origin "HEAD:${{ github.head_ref }}"
