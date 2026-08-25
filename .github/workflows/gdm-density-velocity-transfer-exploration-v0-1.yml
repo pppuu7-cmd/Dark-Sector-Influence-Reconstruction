@@ -6,7 +6,14 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/gdm-density-velocity-transfer-exploration-v0-1.yml'
+      - 'ci/gdm_density_velocity_gauge_bridge_v0_2.py'
       - 'experiments/042_gdm_density_velocity_transfer_exploration_v0_1.md'
+      - 'data/derived/observational_whitening/experiment_042_gdm_density_velocity_gauge_bridge_v0_2.json'
+      - 'docs/SCIENTIFIC_FINDINGS_REGISTER.md'
+      - 'docs/STATUS.md'
+      - 'docs/RECOVERY_LATEST.md'
+      - 'docs/RECOVERY_MANUAL.md'
+      - 'docs/RESEARCH_LOG_OBSERVATIONAL_2026-08-25.md'
 
 permissions:
   contents: read
@@ -21,10 +28,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install build tools
+      - name: Install build tools and analysis dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y git gcc make
+          python -m pip install --upgrade pip
+          python -m pip install numpy
       - name: Download exact frozen C3 manifold artifact
         uses: actions/download-artifact@v4
         with:
@@ -42,16 +51,16 @@ jobs:
           make -j2 class
           test -x class
           grep -Fq 'Nbody gauge transfer functions' source/input.c
-          grep -Fq 'ppt->has_Nbody_gauge_transfers' source/perturbations.c
-      - name: Prepare exact frozen configs with output-only and N-body-transfer extensions
+          grep -Fq 'We need to compute the derivative of H_T_Nb_prime numerically' source/perturbations.c
+      - name: Prepare exact frozen synchronous and Newtonian configs
         run: |
-          mkdir -p exp042_runs/outputs exp042_nbody/outputs
-          cp inputs/c3/external_gdm/dsir_p8.pre exp042_runs/
-          cp inputs/c3/external_gdm/dsir_p8.pre exp042_nbody/
+          mkdir -p exp042_sync/outputs exp042_newtonian/outputs
+          cp inputs/c3/external_gdm/dsir_p8.pre exp042_sync/
+          cp inputs/c3/external_gdm/dsir_p8.pre exp042_newtonian/
           for tok in gdm0 gdmcs2_1em8 gdmcs2_1em7 gdmcs2_1em6 gdmcv2_1em8 gdmcv2_1em7 gdmcv2_1em6 gdmcv2_1em5 gdmcv2_1em4; do
             test -f "inputs/c3/external_gdm/${tok}.ini"
-            cp "inputs/c3/external_gdm/${tok}.ini" "exp042_runs/${tok}.ini"
-            cp "inputs/c3/external_gdm/${tok}.ini" "exp042_nbody/${tok}.ini"
+            cp "inputs/c3/external_gdm/${tok}.ini" "exp042_sync/${tok}.ini"
+            cp "inputs/c3/external_gdm/${tok}.ini" "exp042_newtonian/${tok}.ini"
           done
           python - <<'PY'
           from pathlib import Path
@@ -60,7 +69,7 @@ jobs:
               'gdmcv2_1em8','gdmcv2_1em7','gdmcv2_1em6','gdmcv2_1em5','gdmcv2_1em4'
           ]
           for tok in tokens:
-              for directory, nbody in [('exp042_runs', False), ('exp042_nbody', True)]:
+              for directory, gauge in [('exp042_sync','synchronous'), ('exp042_newtonian','newtonian')]:
                   p = Path(directory) / f'{tok}.ini'
                   s = p.read_text()
                   old_output = 'output = mPk'
@@ -69,54 +78,62 @@ jobs:
                       raise SystemExit(f'unexpected frozen config structure for {directory}/{tok}')
                   s = s.replace(old_output, 'output = mPk,mTk,vTk')
                   s = s.replace(old_root, f'root = outputs/{tok}_')
-                  if nbody:
-                      s += '\n# Experiment 042 output-coordinate extension only\nNbody gauge transfer functions = yes\n'
+                  if gauge == 'newtonian':
+                      if s.count('gauge = synchronous') != 1:
+                          raise SystemExit(f'missing frozen synchronous gauge line for {tok}')
+                      s = s.replace('gauge = synchronous', 'gauge = newtonian')
                   p.write_text(s)
           PY
-          grep -R '^output = mPk,mTk,vTk$' exp042_runs/*.ini | wc -l | grep -qx '9'
-          grep -R '^Nbody gauge transfer functions = yes$' exp042_nbody/*.ini | wc -l | grep -qx '9'
+          grep -R '^gauge = synchronous$' exp042_sync/*.ini | wc -l | grep -qx '9'
+          grep -R '^gauge = newtonian$' exp042_newtonian/*.ini | wc -l | grep -qx '9'
       - name: Run frozen synchronous transfer diagnostics
-        working-directory: exp042_runs
+        working-directory: exp042_sync
         run: |
           set -o pipefail
           for tok in gdm0 gdmcs2_1em8 gdmcs2_1em7 gdmcs2_1em6 gdmcv2_1em8 gdmcv2_1em7 gdmcv2_1em6 gdmcv2_1em5 gdmcv2_1em4; do
             ../gdm_class/class "${tok}.ini" dsir_p8.pre 2>&1 | tee "../exp042_sync_${tok}.log"
           done
-      - name: Run frozen N-body-gauge transfer outputs
-        working-directory: exp042_nbody
+      - name: Run same frozen manifold in Newtonian gauge
+        working-directory: exp042_newtonian
         run: |
           set -o pipefail
           for tok in gdm0 gdmcs2_1em8 gdmcs2_1em7 gdmcs2_1em6 gdmcv2_1em8 gdmcv2_1em7 gdmcv2_1em6 gdmcv2_1em5 gdmcv2_1em4; do
-            ../gdm_class/class "${tok}.ini" dsir_p8.pre 2>&1 | tee "../exp042_nbody_${tok}.log"
+            ../gdm_class/class "${tok}.ini" dsir_p8.pre 2>&1 | tee "../exp042_newtonian_${tok}.log"
           done
-      - name: Require complete exploratory outputs
+      - name: Require complete synchronous and Newtonian outputs
         run: |
-          for directory in exp042_runs exp042_nbody; do
+          for directory in exp042_sync exp042_newtonian; do
             root="$directory/outputs"
             for tok in gdm0 gdmcs2_1em8 gdmcs2_1em7 gdmcs2_1em6 gdmcv2_1em8 gdmcv2_1em7 gdmcv2_1em6 gdmcv2_1em5 gdmcv2_1em4; do
+              test -f "$root/${tok}_background.dat"
               for zi in 1 2 3 4 5 6 7; do
                 test -f "$root/${tok}_z${zi}_pk.dat"
                 test -f "$root/${tok}_z${zi}_tk.dat"
               done
             done
           done
-          head -n 12 exp042_runs/outputs/gdmcs2_1em6_z1_tk.dat | tee exp042_sync_header_sample.txt
-          head -n 12 exp042_nbody/outputs/gdmcs2_1em6_z1_tk.dat | tee exp042_nbody_header_sample.txt
-          find exp042_runs/outputs exp042_nbody/outputs -maxdepth 1 -type f | sort | tee exp042_output_manifest.txt
-      - name: Upload Experiment 042 exploratory handoff
+          head -n 12 exp042_sync/outputs/gdmcs2_1em6_z1_tk.dat | tee exp042_sync_header_sample.txt
+          head -n 12 exp042_newtonian/outputs/gdmcs2_1em6_z1_tk.dat | tee exp042_newtonian_header_sample.txt
+      - name: Run frozen gauge bridge and exploratory velocity analysis
+        run: |
+          python ci/gdm_density_velocity_gauge_bridge_v0_2.py \
+            --sync-root exp042_sync/outputs \
+            --newtonian-root exp042_newtonian/outputs \
+            --json experiment_042_gdm_density_velocity_gauge_bridge_v0_2.json
+      - name: Upload Experiment 042 gauge bridge and exploratory handoff
         uses: actions/upload-artifact@v4
         with:
-          name: gdm-density-velocity-transfer-exploration-v0-1-${{ github.sha }}
+          name: gdm-density-velocity-gauge-bridge-v0-2-${{ github.sha }}
           path: |
+            experiment_042_gdm_density_velocity_gauge_bridge_v0_2.json
             exp042_upstream_sha.txt
             exp042_*.log
             exp042_sync_header_sample.txt
-            exp042_nbody_header_sample.txt
-            exp042_output_manifest.txt
-            exp042_runs/*.ini
-            exp042_runs/dsir_p8.pre
-            exp042_runs/outputs/*.dat
-            exp042_nbody/*.ini
-            exp042_nbody/dsir_p8.pre
-            exp042_nbody/outputs/*.dat
+            exp042_newtonian_header_sample.txt
+            exp042_sync/*.ini
+            exp042_sync/dsir_p8.pre
+            exp042_sync/outputs/*.dat
+            exp042_newtonian/*.ini
+            exp042_newtonian/dsir_p8.pre
+            exp042_newtonian/outputs/*.dat
           if-no-files-found: error
