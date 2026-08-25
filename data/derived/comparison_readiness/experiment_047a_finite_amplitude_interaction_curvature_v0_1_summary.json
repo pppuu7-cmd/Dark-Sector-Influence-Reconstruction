@@ -1,0 +1,47 @@
+{
+  "schema": "dsir.scale_time_interaction.finite_amplitude_curvature.summary.v0.1",
+  "status": "PASS_FINITE_AMPLITUDE_OPERATOR_CONTROLS_V0_1",
+  "scope": "sampled finite-amplitude C1/C2/C3/C5 frozen low-k theory-response manifolds; C4 excluded by domain contract",
+  "run_id": 32900174734,
+  "artifact_id": 9582737965,
+  "artifact_sha256": "95d6ce81bc208443ca2377c6f1c4b9523393e2620a2876a2fb53c36a8beabb37",
+  "source_head": "efdd85847d4244285716824f960329fa24cbf852",
+  "operator_controls": {
+    "tol": 1e-12,
+    "max_relative_reconstruction_error": 0.0,
+    "max_normalized_core_interaction_orthogonality": 7.327040942861508e-15,
+    "max_scaled_zero_mean_residual": 9.425796320793312e-21,
+    "pass": true
+  },
+  "chi_I_envelopes": {
+    "IDE": [1.4351094796233825e-11, 5.49452391943093e-11],
+    "smooth_w": [0.0010805071079989718, 0.0010880589959530685],
+    "GDM": [0.013010457459860382, 0.04541026522999108],
+    "designer_fR": [0.17332672878348168, 0.3133257918584585]
+  },
+  "descriptive_nonoverlap_order_preserved": true,
+  "gap_factors": {
+    "smooth_min_over_IDE_max": 19665163.421672396,
+    "GDM_min_over_smooth_max": 11.957492661934266,
+    "fR_min_over_GDM_max": 3.8169063295628702
+  },
+  "max_turning_deg": {
+    "smooth_w": {"response": 0.15500303304377333, "interaction": 0.2274365038922103},
+    "IDE_alpha_negative": {"response": 0.2510862532700714, "interaction": null},
+    "IDE_beta_central": {"response": 0.004135794459253828, "interaction": null},
+    "GDM_cs2": {"response": 0.027905829436295045, "interaction": 0.032411809915813806},
+    "GDM_cv2": {"response": 7.17651292978534, "interaction": 12.191552877838552},
+    "designer_fR": {"response": 12.136658935563, "interaction": 12.99689688618451}
+  },
+  "selected_chi_I_sequences": {
+    "GDM_cv2": [[1e-8,0.043770632885406856],[1e-7,0.04373654222991275],[1e-6,0.04339323956874339],[1e-5,0.039749502411828626],[1e-4,0.013010457459860382]],
+    "designer_fR": [[1e-6,0.29985647965446227],[1e-5,0.3133257918584585],[1e-4,0.2861675088200474],[1e-3,0.17332672878348168]]
+  },
+  "interpretation": [
+    "The sampled finite-amplitude class envelopes remain non-overlapping on the current low-k domain.",
+    "chi_I is not a family constant: GDM viscosity and designer f(R) show material amplitude evolution.",
+    "A one-parameter microscopic family can turn by O(10 deg) in response space; global response modes therefore need not equal microscopic degrees of freedom.",
+    "No scientific stability threshold was post-frozen; envelope ordering is descriptive, not a universal law.",
+    "C4 WDM is missing, not zero."
+  ]
+}
