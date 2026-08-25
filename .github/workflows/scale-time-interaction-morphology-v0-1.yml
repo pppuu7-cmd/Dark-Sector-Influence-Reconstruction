@@ -1,0 +1,37 @@
+name: DSIR scale-time interaction morphology v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/scale-time-interaction-morphology-v0-1.yml'
+      - 'ci/scale_time_interaction_morphology_v0_1.py'
+      - 'experiments/046_scale_time_interaction_morphology_v0_1.md'
+      - 'data/derived/comparison_readiness/local_response_tangents_v0_1.json'
+      - 'data/derived/comparison_readiness/experiment_045a_core_G_T_tau_additive_projection_v0_1.json'
+
+permissions:
+  contents: read
+
+jobs:
+  interaction-morphology:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install numpy
+        run: python -m pip install numpy
+      - name: Run interaction morphology analysis
+        run: |
+          python ci/scale_time_interaction_morphology_v0_1.py \
+            --input data/derived/comparison_readiness/local_response_tangents_v0_1.json \
+            --json experiment_046_scale_time_interaction_morphology_v0_1.json
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: scale-time-interaction-morphology-v0-1-${{ github.sha }}
+          path: experiment_046_scale_time_interaction_morphology_v0_1.json
+          if-no-files-found: error
