@@ -89,8 +89,22 @@ def jsonable(obj):
         return [jsonable(v) for v in obj]
     if isinstance(obj, tuple):
         return [jsonable(v) for v in obj]
+    if isinstance(obj, np.ndarray):
+        return [jsonable(v) for v in obj.tolist()]
+    if isinstance(obj, np.bool_):
+        return bool(obj)
+    if isinstance(obj, np.integer):
+        return int(obj)
+    if isinstance(obj, np.floating):
+        return float(obj)
     if isinstance(obj, np.generic):
-        return obj.item()
+        value = obj.item()
+        if isinstance(value, (int, float, bool, str)) or value is None:
+            return value
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return str(value)
     return obj
 
 
