@@ -1,0 +1,164 @@
+name: DSIR WDM free-streaming cutoff withheld v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/wdm-free-streaming-cutoff-withheld-v0-1.yml'
+      - 'ci/wdm_free_streaming_cutoff_withheld_v0_1.py'
+      - 'experiments/050b_wdm_free_streaming_cutoff_withheld_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  wdm-cutoff-withheld:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CLASS toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Clone and build pinned official CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/lesgourg/class_public.git class_public
+          cd class_public
+          git checkout e85808324f51fc694d12e3ed7439552a3c3f9540
+          git rev-parse HEAD | tee ../exp050b_class_upstream_sha.txt
+          test "$(git rev-parse HEAD)" = 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+          grep -Fq 'ncdm_fluid_approximation = 3' pk_ref.pre
+          grep -Fq 'l_max_ncdm=50' pk_ref.pre
+          grep -Fq 'tol_ncdm_bg = 1.e-10' pk_ref.pre
+          make -j2 class
+
+      - name: Freeze matched reference and withheld thermal relics
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          mkdir -p outputs
+          cat > dsir_wdm_base.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          Omega_k = 0.
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 25.
+          primordial_P_k_max_h/Mpc = 25.
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          write background = yes
+          EOF
+
+          cat > dsir_cdm.ini <<'EOF'
+          omega_cdm = 0.1200
+          N_ur = 3.046
+          N_ncdm = 0
+          root = outputs/cdm_
+          EOF
+          cat dsir_wdm_base.ini >> dsir_cdm.ini
+
+          python3 - <<'PY'
+          from pathlib import Path
+          Tnu=(4/11)**(1/3)
+          omega=0.1200
+          frozen=[
+            (2.5,'2p5',0.11798660978175946,3.0452533659113095),
+            (3.5,'3p5',0.10546864757797404,3.0455232722490684),
+            (4.0,'4p0',0.10087713237836908,3.045601023021053),
+            (4.5,'4p5',0.09699333388436425,3.0456590077769192),
+          ]
+          base=Path('dsir_wdm_base.ini').read_text()
+          for m,tok,T,Nur in frozen:
+              r=(94.1*omega/(m*1000.0))**(1/3)
+              calcT=r*Tnu; calcNur=3.046-r**4
+              assert abs(calcT-T)<2e-15,(m,calcT,T)
+              assert abs(calcNur-Nur)<2e-15,(m,calcNur,Nur)
+              s=f'''omega_cdm = 0.0\nN_ur = {Nur:.16g}\nN_ncdm = 1\nm_ncdm = {m*1000.0:.1f}\nomega_ncdm = 0.1200\nT_ncdm = {T:.17g}\ndeg_ncdm = 1.0\nroot = outputs/wdm{tok}_\n'''+base
+              Path(f'dsir_wdm{tok}.ini').write_text(s)
+              print(m,tok,calcT,calcNur)
+          PY
+
+      - name: Verify CLASS mass-density normalization contract
+        run: |
+          set -euxo pipefail
+          grep -Fq "both (Omega_ncdm, m_ncdm) or (omega_ncdm, m_ncdm) are" class_public/explanatory.ini
+          grep -Fq "CLASS will renormalise the psd in order to fulfill both" class_public/explanatory.ini
+          for tok in 2p5 3p5 4p0 4p5; do
+            grep -Fq 'omega_ncdm = 0.1200' "class_public/dsir_wdm${tok}.ini"
+          done
+
+      - name: Run matched reference and withheld masses
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          ./class dsir_cdm.ini pk_ref.pre 2>&1 | tee ../exp050b_cdm.log
+          for tok in 2p5 3p5 4p0 4p5; do
+            ./class "dsir_wdm${tok}.ini" pk_ref.pre 2>&1 | tee "../exp050b_wdm${tok}.log"
+          done
+
+      - name: Require seven explicit P(k,z) outputs per model
+        run: |
+          set -euxo pipefail
+          for prefix in cdm_ wdm2p5_ wdm3p5_ wdm4p0_ wdm4p5_; do
+            n=$(find class_public/outputs -maxdepth 1 -type f -name "${prefix}*pk.dat" | wc -l)
+            test "$n" -eq 7
+            for f in class_public/outputs/${prefix}*pk.dat; do
+              grep -Eiq 'redshift[[:space:]]+z[[:space:]]*=' "$f"
+              test "$(grep -vc '^#' "$f")" -gt 20
+            done
+          done
+
+      - name: Test pre-frozen cutoff-scale prediction
+        run: |
+          python3 ci/wdm_free_streaming_cutoff_withheld_v0_1.py \
+            --directory class_public/outputs \
+            --reference-prefix cdm_ \
+            --models 2.5:wdm2p5_ 3.5:wdm3p5_ 4.0:wdm4p0_ 4.5:wdm4p5_ \
+            --json wdm_free_streaming_cutoff_withheld_v0_1.json
+          cat wdm_free_streaming_cutoff_withheld_v0_1.json
+
+      - name: Record immutable provenance
+        if: always()
+        run: |
+          {
+            echo 'Experiment 050B withheld thermal-WDM free-streaming cutoff test'
+            echo 'Prediction frozen before withheld solver outputs: on every standard DSIR redshift, the first ln(P_WDM/P_CDM)=-0.1 crossing must increase with m={2.5,3.5,4.0,4.5} keV by >1e-4 h/Mpc per consecutive mass step.'
+            echo 'No scaling exponent, exact crossing value, chi_I, or legacy-fit agreement threshold is frozen.'
+            echo 'Same matched density/N_eff mapping and pinned CLASS/pk_ref.pre lineage as Exp050A.'
+            echo "DSIR head: $GITHUB_SHA"
+            echo -n 'CLASS upstream: '; cat exp050b_class_upstream_sha.txt
+          } > exp050b_environment.txt
+
+      - name: Upload withheld cutoff validation artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wdm-free-streaming-cutoff-withheld-v0-1-${{ github.sha }}
+          path: |
+            wdm_free_streaming_cutoff_withheld_v0_1.json
+            exp050b_environment.txt
+            exp050b_class_upstream_sha.txt
+            exp050b_*.log
+            class_public/dsir_*.ini
+            class_public/pk_ref.pre
+            class_public/outputs/cdm_*pk.dat
+            class_public/outputs/wdm*pk.dat
+          if-no-files-found: warn
