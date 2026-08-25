@@ -4,12 +4,19 @@ from pathlib import Path
 
 import numpy as np
 
+LD=np.longdouble
+
+
+def norm_ld(x):
+    x=np.asarray(x,dtype=LD)
+    return np.sqrt(np.sum(x*x,dtype=LD),dtype=LD)
+
 
 def angle_deg(a, b, acute=False):
-    a=np.asarray(a,float).ravel(); b=np.asarray(b,float).ravel()
-    na=np.linalg.norm(a); nb=np.linalg.norm(b)
+    a=np.asarray(a,dtype=LD).ravel(); b=np.asarray(b,dtype=LD).ravel()
+    na=norm_ld(a); nb=norm_ld(b)
     if na==0 or nb==0: return float('nan')
-    c=float(np.dot(a,b)/(na*nb)); c=max(-1.0,min(1.0,c))
+    c=float(np.sum(a*b,dtype=LD)/(na*nb)); c=max(-1.0,min(1.0,c))
     ang=math.degrees(math.acos(c))
     return min(ang,180.0-ang) if acute else ang
 
@@ -30,36 +37,40 @@ def main():
     exact_thr=1e-8; min_capture=0.95; max_angle_dist=5.0
     control_tol=1e-12
     rows=[]; full={}; core={}; failures=[]
-    max_recon=0.0; max_zero_mean=0.0; max_orth=0.0
+    max_recon=LD(0); max_zero_mean=LD(0); max_orth=LD(0)
     for d in src['directions']:
-        R=np.asarray(d['vector'],float).reshape(nz,nk)
-        mu=float(R.mean())
-        T=R.mean(axis=0)-mu
-        tau=R.mean(axis=1)-mu
-        G=np.full_like(R,mu)
+        # Extended accumulation precision is an implementation/control fix only.
+        # It changes no input vector, definition, grid, or frozen threshold.
+        R=np.asarray(d['vector'],dtype=LD).reshape(nz,nk)
+        mu=np.sum(R,dtype=LD)/LD(R.size)
+        mean_z=np.sum(R,axis=0,dtype=LD)/LD(nz)
+        mean_k=np.sum(R,axis=1,dtype=LD)/LD(nk)
+        T=mean_z-mu
+        tau=mean_k-mu
+        G=np.full(R.shape,mu,dtype=LD)
         Tm=np.tile(T,(nz,1))
         taum=np.tile(tau[:,None],(1,nk))
         C=G+Tm+taum
         I=R-C
-        nr=np.linalg.norm(R); nc=np.linalg.norm(C); ni=np.linalg.norm(I)
-        recon=np.linalg.norm(R-C-I)/max(nr,1e-300)
-        zmean=max(abs(float(T.mean())),abs(float(tau.mean())))/max(1.0,nr)
-        orth=abs(float(np.vdot(C,I)))/(nc*ni) if nc>0 and ni>0 else 0.0
+        nr=norm_ld(R); nc=norm_ld(C); ni=norm_ld(I)
+        recon=norm_ld(R-C-I)/max(nr,LD('1e-300'))
+        zmean=max(abs(np.sum(T,dtype=LD)/LD(nk)),abs(np.sum(tau,dtype=LD)/LD(nz)))/max(LD(1),nr)
+        orth=abs(np.sum(C*I,dtype=LD))/(nc*ni) if nc>0 and ni>0 else LD(0)
         max_recon=max(max_recon,recon); max_zero_mean=max(max_zero_mean,zmean); max_orth=max(max_orth,orth)
-        frac=ni/max(nr,1e-300)
-        capture=(nc*nc)/(nr*nr) if nr>0 else float('nan')
+        frac=ni/max(nr,LD('1e-300'))
+        capture=(nc*nc)/(nr*nr) if nr>0 else LD('nan')
         components={
-            'G_power_fraction': float(np.linalg.norm(G)**2/nr**2),
-            'T_power_fraction': float(np.linalg.norm(Tm)**2/nr**2),
-            'tau_power_fraction': float(np.linalg.norm(taum)**2/nr**2),
+            'G_power_fraction': float(norm_ld(G)**2/nr**2),
+            'T_power_fraction': float(norm_ld(Tm)**2/nr**2),
+            'tau_power_fraction': float(norm_ld(taum)**2/nr**2),
             'interaction_power_fraction': float(ni**2/nr**2),
         }
         row={
-            'id':d['id'],'family':d['family'],'norm_R':float(nr),'mu':mu,
+            'id':d['id'],'family':d['family'],'norm_R':float(nr),'mu':float(mu),
             'interaction_norm_fraction':float(frac),
             'core_power_capture':float(capture),
-            'exact_additive_pass':bool(frac<=exact_thr),
-            'compact_capture_pass':bool(capture>=min_capture),
+            'exact_additive_pass':bool(frac<=LD(exact_thr)),
+            'compact_capture_pass':bool(capture>=LD(min_capture)),
             **components,
         }
         rows.append(row); full[d['id']]=R.ravel(); core[d['id']]=C.ravel()
@@ -72,7 +83,7 @@ def main():
             ac=angle_deg(core[a],core[b],acute=True)
             dist=abs(ac-af); max_dist=max(max_dist,dist)
             pair.append({'a':a,'b':b,'full_acute_deg':af,'core_acute_deg':ac,'abs_angle_distortion_deg':dist})
-    controls_pass=bool(max_recon<=control_tol and max_zero_mean<=control_tol and max_orth<=control_tol)
+    controls_pass=bool(max_recon<=LD(control_tol) and max_zero_mean<=LD(control_tol) and max_orth<=LD(control_tol))
     exact_all=bool(all(r['exact_additive_pass'] for r in rows))
     compact_all=bool(all(r['compact_capture_pass'] for r in rows) and max_dist<=max_angle_dist)
     if not controls_pass: failures.append('operator_controls')
@@ -101,6 +112,7 @@ def main():
             'compact_max_pairwise_acute_angle_distortion_deg':max_angle_dist,
         },
         'operator_controls':{
+            'accumulation_dtype':'numpy.longdouble',
             'max_relative_reconstruction_error':float(max_recon),
             'max_scaled_zero_mean_residual':float(max_zero_mean),
             'max_normalized_core_interaction_inner_product':float(max_orth),
