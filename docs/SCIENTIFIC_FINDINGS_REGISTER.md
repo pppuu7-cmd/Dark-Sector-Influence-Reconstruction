@@ -1,284 +1,295 @@
 # DSIR scientific findings register
 
-**Live document.** Update this file on every research iteration that adds, strengthens, limits, supersedes, or falsifies a scientific interpretation. Technical recovery remains in `RECOVERY_MANUAL.md` and `RECOVERY_LATEST.md`; this register preserves the evolving scientific meaning of the calculations.
+**Live document.** Update on every iteration that adds, strengthens, limits, supersedes, or falsifies a scientific interpretation.  
+**Preserved previous full register:** `docs/SCIENTIFIC_FINDINGS_REGISTER_PRE_EXP045A_2026-08-25.md`.  
+**Recovery:** `docs/RECOVERY_MANUAL.md`, `docs/RECOVERY_LATEST.md`.  
+**Influence atlas:** `docs/BUYANOVGPT_TABLE.md`.
 
-DSIR is a reconstruction/meta-inference framework, not a fundamental theory. Nothing below is a discovery or a new law of nature unless future gates explicitly establish that status.
+DSIR is a reconstruction/meta-inference framework, not a fundamental theory. Nothing below is a discovery or a new law unless future gates establish that status.
 
 ## Status vocabulary
 
-- **HARD ESTABLISHED** — reproduced by a frozen hard workflow or exact validated identity; claim is restricted to the stated response basis/model set.
-- **SUPPORTED / PARTIAL** — backed by validated calculations, but an important observation operator, covariance block, family, or robustness layer is still missing.
-- **PRELIMINARY** — numerically extracted or analytically motivated before the corresponding frozen hard run is complete.
-- **LIMIT / NEGATIVE RESULT** — a demonstrated limitation, degeneracy, failed approximation, or no-go within a stated domain.
-- **SUPERSEDED / RETRACTED** — later evidence invalidated or materially changed the earlier interpretation. Do not delete the old entry; preserve chronology and link the replacement.
+- **HARD ESTABLISHED** — reproduced by a frozen hard workflow or exact validated identity, restricted to the stated domain.
+- **SUPPORTED / PARTIAL** — backed by validated calculations but missing a major observation/family/robustness layer.
+- **PRELIMINARY** — motivated or numerically indicated before confirmatory hard validation.
+- **LIMIT / NEGATIVE RESULT** — demonstrated limitation, failed approximation, degeneracy, no-go, or validation failure in a stated domain.
+- **SUPERSEDED / RETRACTED** — later evidence materially invalidated an earlier interpretation; never delete the chronology.
 
-## F1 — observational degeneracy is channel-dependent
+---
 
-**Status: HARD ESTABLISHED for the current frozen examples; broader principle SUPPORTED, not universal.**
+## F1 — observational degeneracy/nullity is channel-dependent
 
-Different microscopic directions can become almost collinear—or exactly null—after one observation operator while remaining well separated after another. The degeneracy/null space therefore belongs to the pair `(physical direction, observation operator)`, not to the microscopic models alone.
+**Status: HARD ESTABLISHED for current frozen examples; broader principle SUPPORTED.**
 
-Schematic statement:
-
-\[
-K_i\,t_A \simeq K_i\,t_B,\qquad K_j\,t_A \not\simeq K_j\,t_B,
-\]
-
-with the stronger channel-null possibility
+The relevant object is `(physical direction, response/observation operator)`. A direction can be almost collinear with another, or exactly null, in one channel and separated in another:
 
 \[
-K_i\,t_A=0,\qquad K_j\,t_A\neq0.
+K_i t_A\simeq K_i t_B,\quad K_j t_A\not\simeq K_j t_B,
 \]
 
-Current hard examples:
+or
 
-1. GDM `cs2` versus `cv2`: low-k matter-power angle `0.322616 deg`; DESI `m+n` proxy after marginal covariance weighting `0.189582 deg`, while metric slip gives `137.943212 deg` oriented and an equalized two-block angle `56.963212 deg`.
-2. GDM versus designer f(R): leading scale-mode angles only `0.07813/0.10169 deg`; finite-bin temporal-growth angles are `16.052/17.284 deg` acute; full frozen `(k,z)` structure gives about `25.18/25.49 deg` acute with opposite orientation near `155 deg`.
-3. WDM: essentially blind in the frozen low-k block but strongly visible in the separate small-scale transfer block (`r_T(0.1)=-3.46e-6`, `r_T(10)=-0.10375` for the 3 keV control).
-4. IDE negative-alpha versus beta: AP acute angle `9.0379006 deg`, finite-bin temporal-growth angle `29.3978236 deg`, full frozen structure angle `58.9337977 deg`.
-5. GDM `cs2/cv2` with frozen `w_gdm=0`: Experiment 037 gives exactly zero saved-solver background/AP response while the same directions are nonzero in perturbation channels.
-6. Designer f(R) `B0`: Experiment 038 gives exactly zero saved-solver background/AP response over `B0=0..1e-3` on the source-proven `EFTwDE=0` LCDM background branch, while the frozen structure response is nonzero.
-7. Smooth-w versus IDE negative-alpha: AP separates them strongly (`72.803493 deg` acute), whereas the finite-bin temporal-growth operator collapses them to `10.310585 deg` acute.
-8. The same C5 `B0` direction that is exactly AP-null in Experiment 038 is density-velocity compression-active in Experiment 041: all production `B0=1e-6..1e-3` have a nonzero high-precision `D_RSD` well above the GR / `B0=0` numerical floor.
+\[
+K_i t_A=0,\quad K_j t_A\neq0.
+\]
 
-**Interpretation:** model identity is not expected to be carried by one response shape alone; complementary influence channels are required. Some physical directions can lie in the exact null space of an entire channel, and the location of pairwise degeneracies can migrate when the observation/response operator changes.
+Hard examples include GDM cs2/cv2 density-vs-slip, GDM/f(R) scale-vs-time/full structure, WDM low-k-vs-high-k, IDE AP-vs-structure, and the exact AP nulls of frozen GDM and designer f(R).
 
-**Revisit if:** a future family-complete observational projection makes these separators disappear, or if solver/systematic audits overturn any hard pairwise/null result.
+**Interpretation:** model identity is a multi-channel influence trajectory, not one scalar response.
 
-## F2 — density-shape compression can erase microphysical distinctions
+---
 
-**Status: HARD ESTABLISHED for GDM `cs2/cv2` in the current low-k and ShapeFit-proxy blocks.**
+## F2 — density-shape compression can erase GDM pressure/viscosity microphysics
 
-The GDM pressure and viscosity directions are nearly identical in low-k matter-power response, and real DESI DR1 `m+n` marginal weighting does not resolve the degeneracy. Metric slip does.
+**Status: HARD ESTABLISHED for frozen C3 low-k/ShapeFit-proxy blocks.**
 
-Experiment 040 adds a temporal test: their finite-bin growth angle rises from `0.322616 deg` to `1.334013 deg`, but this remains a strong degeneracy. Time evolution helps weakly and does not replace metric slip.
+GDM cs2/cv2:
 
-**Interpretation:** the density field can retain the net suppression of growth while losing information about whether that suppression arose from effective pressure or viscosity; metric-potential relations retain substantially more of that distinction.
+- low-k matter-power acute angle `0.322616 deg`;
+- DESI `m+n` marginal-whitened proxy `0.189582 deg`;
+- finite-bin temporal response `1.334013 deg`;
+- metric-slip oriented angle `137.943212 deg` and equalized two-block acute `56.963212 deg`.
 
-**Boundary:** this is not a statement about every survey or every nonlinear scale.
+**Interpretation:** density/time retains net growth suppression while losing much of the pressure-vs-viscosity mechanism information; slip retains it.
 
-## F3 — scale shape alone is insufficient for separating GDM-like suppression from designer f(R)
+---
 
-**Status: HARD ESTABLISHED at theory-response level; observational distinguishability still PARTIAL.**
+## F3 — scale-only shape is insufficient for GDM versus designer f(R)
 
-GDM and designer f(R) have almost identical leading scale modes in the frozen low-k response atlas (`0.078-0.102 deg`). Experiment 040 isolates their temporal response and finds `16.052 deg` (GDM cs2/fR) and `17.284 deg` (GDM cv2/fR) acute finite-bin growth angles. Full frozen `(k,z)` structure is more separating still, around `25.18-25.49 deg` acute.
+**Status: HARD ESTABLISHED at theory-response level; observational distinguishability PARTIAL.**
 
-**Interpretation:** a useful classifier must retain `(k,z,sign/orientation)` information rather than compressing a response to a scale-only template. Temporal information is a genuine separator, but growth-only compression still loses information relative to the full structure history.
+GDM/f(R):
 
-**Observation-space caution:** Experiment 034 finds about `23 deg` whitened `m+n` proxy separation, but the finite-node ShapeFit representation leaves roughly `36%` relative residual for GDM and f(R). Therefore this is not a DESI distinguishability claim.
+- leading scale-only `0.078-0.102 deg`;
+- temporal response `16.05-17.28 deg`;
+- full `(k,z)` structure `25.18-25.49 deg`.
 
-## F4 — compressed ShapeFit `m+n` is not an adequate universal operator for strongly scale-dependent new physics
+Experiment 045A further sharpens this: removing irreducible scale-time interaction collapses the GDM/f(R) angle to about `14.8-14.9 deg`.
+
+**Interpretation:** the separator is not merely “scale + time”; the coupling of scale and time itself carries information.
+
+---
+
+## F4 — compressed ShapeFit `m+n` is not a universal shape operator
 
 **Status: LIMIT / NEGATIVE RESULT, HARD.**
 
-The frozen finite-node ShapeFit-basis proxy has small/acceptable residuals for smooth-w and IDE directions, but roughly `36%` relative L2 residual for GDM `cs2`, GDM `cv2`, and designer f(R) over the full frozen `0.001-0.1 h/Mpc` range.
+The finite-node ShapeFit proxy leaves roughly `36%` relative representation residual for GDM cs2, GDM cv2 and designer f(R). Therefore proxy angles are not DESI distinguishability claims. A survey/window-aware shape operator or explicit compression-model error is required.
 
-**Consequence:** absence of an anomaly in a small set of compressed shape parameters cannot automatically be interpreted as absence of an anomalous full shape. A survey/window-aware response or explicit compression-model error is required before full observational claims.
+---
 
-## F5 — AP geometry is exactly insensitive to the arbitrary normalization of the anchored expansion response
+## F5 — AP geometry is exactly insensitive to expansion normalization anchor
 
-**Status: HARD ESTABLISHED analytic + numerical identity (Experiment 035).**
-
-For flat FLRW,
+**Status: HARD ESTABLISHED analytic + numerical identity (Exp035).**
 
 \[
-F_{AP}(z)=E(z)\int_0^z\frac{dz'}{E(z')}.
+F_{AP}(z)=E(z)\int_0^z\frac{dz'}{E(z')},
 \]
 
-If `E_model=A E_ref exp(r_E)`, the constant factor `A` cancels exactly. Therefore anchoring the DSIR expansion response at `z*=0.51` removes no AP information. The ShapeFit geometry response is
+so multiplicative normalization cancels, and
 
 \[
 \Delta\ln(D_H/D_M)=-\Delta\ln F_{AP}.
 \]
 
-Hard numerical bridge errors are at the `1e-14` level.
+Numerical bridge errors are `~1e-14`. Production AP must use full history from `z=0`; never extrapolate the seven-node structure grid below `z=0.295`.
 
-**Production requirement discovered:** AP depends on the full history from `z=0`; the seven-node structure atlas beginning at `z=0.295` must never be extrapolated to zero for production AP work.
+---
 
-## F6 — IDE interaction directions are nearly degenerate in AP geometry while being separated in structure
+## F6 — IDE interaction directions are AP-degenerate but structure-separated
 
-**Status: HARD ESTABLISHED for the C2 local directions; refined by Experiment 040.**
+**Status: HARD ESTABLISHED for frozen local C2 directions.**
 
-Experiment 036 gives corrected DESI DR1 `DH/DM` marginal geometry:
+IDE negative-alpha/beta:
 
-- IDE negative-alpha versus beta: `170.9620994 deg` oriented, `9.0379006 deg` acute;
-- smooth-w versus IDE negative-alpha: `72.8034931 deg` acute;
-- smooth-w versus IDE beta: `64.1510936 deg` acute.
+- AP acute `9.0379006 deg`;
+- temporal response `29.3978236 deg`;
+- full structure `58.9337977 deg`.
 
-Experiment 040 then gives IDE alpha/beta finite-bin temporal-growth separation `29.3978236 deg` acute, while the frozen full structure angle is `58.9337977 deg`.
+Time restores part, but not all, of the mechanism information lost by AP.
 
-Thus temporal structure restores part of the mechanism information lost in AP but not all of the complete `(k,z)` structure information.
+---
 
-Hard Exp036 provenance: run `32782545098`, artifact ID `9540273287`, SHA256 `553faa2ef7ddbc44e25ddd6faca237d0be7fc265b9c23cfafb2a32570534d126`.
-
-Hard Exp040 provenance: run `32785987735`, artifact ID `9541462864`, SHA256 `0457823510fead4ff56e8e29843e39de47805f8fbfda86f4d9d33585be556ac9`.
-
-**Boundary:** these are local tangent/cone and theory-response statements, not parameter significance or a full likelihood.
-
-## F7 — current hard discriminator graph requires complementary channel types
+## F7 — current hard discriminator graph needs complementary channel types
 
 **Status: HARD ESTABLISHED for the current frozen evidence graph only.**
 
-Experiment 033 gives the unique minimum hitting set
+Unique minimum hitting set from Exp033:
 
 \[
 \{\text{metric slip},\;\text{small-scale transfer},\;\text{time/sign evolution}\}.
 \]
 
-Experiment 040 strengthens the rationale: temporal evolution can be highly informative for some pairs but leaves the GDM cs2/cv2 microphysical degeneracy almost intact, so qualitatively independent metric information remains necessary.
+This is not a universal survey design and **not proof of three fundamental dark-sector parameters**. Recompute as families/operators expand.
 
-**Boundary:** this is not a universal optimal survey design and must be recomputed as observational kernels/families are added.
+---
 
-## F8 — emerging DSIR meta-hypothesis: model identity is a multi-channel influence trajectory
+## F8 — model identity as a block-sparse multi-channel influence trajectory
 
 **Status: SUPPORTED HYPOTHESIS, not a law.**
 
-The repeated hard pattern across GDM, f(R), WDM, and IDE suggests that the useful model identifier is not a single response function but the trajectory of the residual source through several observation operators:
+Repeated results support
 
 \[
-\theta_{micro}\rightarrow X_{\mu\nu}\rightarrow\{K_1X,K_2X,\ldots\}.
+\theta_{micro}\rightarrow X_{\mu\nu}\rightarrow\{K_1X,K_2X,\ldots\},
 \]
 
-Experiments 037 and 038 sharpen this: the trajectory can be **block-sparse**, with an exactly zero coordinate in background/AP and a substantial response in perturbation channels in two qualitatively different families. Experiment 040 further shows that pairwise degeneracies can migrate between projections of the same physical directions. Experiment 041 strengthens the same picture with an observational-compression example: the frozen C5 direction is exactly geometry-null but has a nonzero density-velocity representability defect.
+with exact null blocks possible. Exp037/038 give two qualitatively different background/AP-null but perturbation-active examples; Exp040 shows degeneracy migration; Exp041 shows geometry-null yet density/velocity-compression-active C5.
 
-Thus absence of a geometry response does not imply proximity to the common physical origin in the full response space, and a pair that is well separated in one channel can be nearly degenerate in another.
+---
 
-A stronger future formulation requires showing that the joint observational map consistently restores distinctions that individual blocks lose, under family-prior, covariance, solver-precision, and channel-removal stress tests.
+## F9 — frozen GDM cs2/cv2 are exactly background/AP-null but perturbation-active
 
-**Falsification tests:**
+**Status: HARD ESTABLISHED for sampled C3 `w_gdm=0` manifold (Exp037).**
 
-- family-complete AP+growth+shape whitening fails to restore known structure distinctions;
-- discriminant graph becomes unstable under modest solver/covariance perturbations;
-- new families produce unresolved degeneracies across all proposed independent channels;
-- local manifold/rank behavior is dominated by arbitrary family sampling or compression choices.
+For audited cs2/cv2 variants, all saved background columns and AP responses equal reference at stored solver precision:
 
-## F9 — frozen GDM pressure/viscosity directions are exactly background/AP-null but perturbation-active
+\[
+K_{AP}t_{cs2}=K_{AP}t_{cv2}=0.
+\]
 
-**Status: HARD ESTABLISHED for the sampled C3 `w_gdm=0` manifold (Experiment 037).**
+Run `32783243120`, artifact `9540510596`, SHA256 `ba1fa93e348f9685d84a675311c79f9c746574463086710b4a46911d125f4edf`.
 
-Experiment 037 reuses the exact immutable GDM_CLASS artifact that generated the frozen C3 manifold. It audits `cs2={1e-8,1e-7,1e-6}` and `cv2={1e-8,1e-7,1e-6,1e-5,1e-4}`, verifying `w_gdm=0` and the other closure direction zero.
+Boundary: not arbitrary GDM with nonzero/time-dependent `w_gdm`.
 
-For every audited variant the saved background table is exactly equal to the reference, `max_relative_H=0`, and the validated AP operator returns `Delta ln(D_H/D_M)=0` at all five DESI target redshifts.
-
-Pre-frozen hard tolerances were `1e-12`; hard provenance: run `32783243120`, artifact ID `9540510596`, SHA256 `ba1fa93e348f9685d84a675311c79f9c746574463086710b4a46911d125f4edf`.
-
-**Interpretation:** within this frozen GDM manifold, `cs2/cv2` are pure perturbation-channel directions with respect to background/AP.
-
-**Boundary:** this does not apply to arbitrary GDM histories with nonzero/time-dependent `w_gdm`.
+---
 
 ## F10 — frozen designer-f(R) B0 is exactly background/AP-null but perturbation-active
 
-**Status: HARD ESTABLISHED for the sampled high-precision C5 manifold (Experiment 038).**
+**Status: HARD ESTABLISHED for sampled high-precision C5 manifold (Exp038).**
 
-The pinned H-EFTCAMB source maps `EFTwDE=0` to an exact `w_DE=-1` parametrization. Experiment 038 reruns the immutable hard C5 configurations
-
-`B0={0,1e-7,1e-6,1e-5,1e-4,1e-3}`
-
-and compares their full saved background tables on the same designer branch.
-
-For every audited `B0`:
-
-- redshift grid mismatch `0`;
-- `max_relative_H=0`;
-- `max_relative_DM_nonzero_rows=0`;
-- `max_abs Delta ln(D_H/D_M)=0`;
-- every saved numerical background column is exactly equal to `B0=0` at saved solver precision.
-
-These exact zeros are stronger than the pre-frozen `1e-8` tolerances. The final merged rerun is run `32786915513`, artifact ID `9541895055`, SHA256 `74d975790d00a04762d45bf183481f69d6fc54b84d186c63e89b88bbb9d20b16`.
-
-**Interpretation:** the frozen C5 `B0` direction is a second hard example of an exact background/AP null with a nonzero perturbation response, now in modified gravity rather than a dark-fluid closure family.
-
-**Boundary:** this does not imply arbitrary f(R) or modified-gravity models have LCDM backgrounds; it follows from this specific designer `EFTwDE=0` construction.
-
-## F11 — degeneracies migrate between AP, temporal growth, and full structure
-
-**Status: HARD ESTABLISHED for the frozen pairwise examples in Experiment 040; broader principle SUPPORTED.**
-
-Experiment 040 applies a finite-bin temporal operator
+For `B0={0,1e-7,1e-6,1e-5,1e-4,1e-3}` on the designer `EFTwDE=0` branch, saved background/AP quantities are exactly reference at stored solver precision:
 
 \[
-\Delta\bar f_P=\frac{r_\Delta(late)-r_\Delta(early)}{2\Delta\ln a}
+K_{AP}t_{B0}=0.
 \]
 
-to the already frozen low-k structure atlas. Operator controls pass at machine precision and no pairwise angle was used as a hard threshold.
+Final regression run `32786915513`, artifact `9541895055`, SHA256 `74d975790d00a04762d45bf183481f69d6fc54b84d186c63e89b88bbb9d20b16`.
 
-The same temporal projection has opposite effects on different pairs:
+Boundary: this is specific to the frozen designer construction, not arbitrary f(R)/MG.
 
-- smooth-w vs IDE negative-alpha: full structure `52.1943 deg` -> temporal growth `10.3106 deg`, while AP is `72.8035 deg`;
-- IDE negative-alpha vs GDM cs2/cv2: full structure about `24.8-24.9 deg` -> temporal growth about `60.9 deg`;
-- IDE negative-alpha vs beta: AP `9.0379 deg` -> temporal growth `29.3978 deg` -> full structure `58.9338 deg`;
-- GDM cs2/cv2: structure `0.3226 deg` -> temporal growth only `1.3340 deg`, still strongly degenerate;
-- GDM cs2/cv2 vs designer f(R): scale-only `0.078-0.102 deg` -> temporal growth `16.05-17.28 deg` -> full structure `25.18-25.49 deg`.
+---
 
-**Interpretation:** adding a channel does not monotonically make every model pair more distinct. An operator can expose one mechanism contrast while erasing another. This motivates joint multi-channel geometry rather than selecting a single globally 'best' scalar observable.
+## F11 — degeneracies migrate between AP, temporal response and full structure
 
-**Boundary:** Experiment 040 is theory-response temporal structure, not tracer RSD or ShapeFit `f_sigma_s8`; observational distinguishability still requires the validated density-velocity/window/covariance operator.
+**Status: HARD ESTABLISHED for frozen pairwise examples (Exp040); broader principle SUPPORTED.**
+
+Examples:
+
+- smooth-w/IDE-alpha: AP `72.80 deg`, temporal `10.31 deg`, structure `52.19 deg`;
+- IDE-alpha/GDM: structure `~24.8-24.9 deg`, temporal `~60.9 deg`;
+- GDM cs2/cv2: structure `0.3226 deg`, temporal `1.3340 deg`;
+- GDM/f(R): scale-only `~0.1 deg`, temporal `16-17 deg`, full `25 deg`.
+
+**Interpretation:** no single globally best scalar channel; an operator can separate one pair and collapse another.
+
+---
 
 ## F12 — printed CAMB growth summaries are inadequate for small-B0 tangent calibration
 
-**Status: LIMIT / NEGATIVE RESULT for the current frozen C5 logs.**
+**Status: LIMIT / NEGATIVE RESULT for frozen C5 logs.**
 
-The frozen C5 H-EFTCAMB logs print `sigma8` and `sigma8^2_vd/sigma8` only to roughly four decimal places. At `B0=1e-7` this rounding makes most redshift values identical to the reference even when larger-B0 runs show a smooth nonzero perturbation trend. Finite-difference tangents inferred from these printed values are therefore dominated by quantization/rounding artifacts.
+H-EFTCAMB text logs print `sigma8` and `sigma8^2_vd/sigma8` to only about four decimals. Small-B0 differences are quantized away and finite-difference tangents become artificial. Use machine-readable high-precision transfer/cross-power products instead.
 
-**Consequence:** DSIR will not use those text logs for the small-B0 growth tangent or for an RSD representability claim. Experiment 041 instead uses an independent high-precision `E24.16` transfer-output rerun while changing only the text I/O precision. Pinned CAMB exposes `delta_tot`, `v_newtonian_cdm`, and `v_newtonian_baryon` transfer variables.
+---
 
-This is a methodological failure of an output representation, not a failure of the underlying C5 solver/model.
+## F13 — frozen designer-f(R) density/velocity response is not exactly scalar-growth representable
 
-## F13 — scalar growth compression is not exact for frozen designer f(R)
+**Status: HARD ESTABLISHED (Exp041).**
 
-**Status: HARD ESTABLISHED for the frozen C5 production manifold and CAMB-native density/CDM-velocity convention (Experiment 041).**
-
-For
+Define
 
 \[
-g(k,z)=\Theta(k,z)/\delta(k,z)
+{\cal D}_{RSD}=1-\frac{S_{\delta\Theta}^2}{S_{\delta\delta}S_{\Theta\Theta}}
+=\frac{\mathrm{Var}_w[g]}{\langle g^2\rangle_w},\qquad g=\Theta/\delta.
 \]
 
-and positive ShapeFit top-hat weight, define
+At `kmax=0.24 h/Mpc`:
+
+- GR floor `~1.42e-10`;
+- B0 `1e-6`: `5.18e-6`;
+- `1e-5`: `1.92e-4`;
+- `1e-4`: `8.81e-4`;
+- `1e-3`: `8.78e-4`.
+
+Run `32791510072`, artifact `9543375564`, SHA256 `1e4d86f7f13185d69a07b71afa9bfd6fefa6003119064652d6388491738212bc`.
+
+**Interpretation:** one scalar `f_sigma_s8`-like amplitude is not an exact representation for this scale-dependent C5 response.
+
+---
+
+## F14 — current pinned GDM Newtonian velocity/RSD route is not validated by the synchronous/Newtonian density bridge
+
+**Status: LIMIT / NEGATIVE RESULT, HARD for Exp042/043 validation tests.**
+
+Chronology:
+
+1. synchronous GDM velocity is gauge-ill-conditioned for RSD;
+2. pinned built-in N-body transfer route stops upstream because `H_T_Nb_prime` derivative is not propagated;
+3. Exp042 matched synchronous/Newtonian runs and, after a parser-only 16-vs-15-column fix, found max absolute comoving-density bridge residual `2.58664e-6` > frozen `1e-6`, while model/reference response difference was `6.78698e-7` < `1e-6`;
+4. Exp043 independently interpolated each gauge to frozen nodes and tightened perturbation precision only.
+
+Exp043:
+
+- p8 absolute bridge `2.51958e-6`, response bridge `6.78698e-7`;
+- p10 absolute bridge `3.00625e-6`, response bridge `8.02174e-7`;
+- p10/p8 absolute residual ratio `1.19316`.
+
+Run `32794067542`, artifact `9544255453`, SHA256 `c62613798a6a6f8e9e573bb158315ca03a5c9f998805ebfc6bdda25de4d4100a`.
+
+**Hard negative conclusion:** tighter perturbation precision does not explain the absolute mismatch. Do not loosen the gate. Exp042 GDM velocity angles and `D_RSD` remain exploratory and must not be used as validated physics.
+
+---
+
+## F15 — simple additive `(G,T,tau)` core is insufficient; scale-time nonseparability carries material response information
+
+**Status: LIMIT / NEGATIVE RESULT, HARD on common C1/C2/C3/C5 frozen low-k theory block (Exp045A).**
+
+The chat proposed a candidate core organized by global growth/amplitude `G`, scale-only `T`, and time-only `tau`. Exp045A made this testable via
 
 \[
-{\cal D}_{RSD}=1-\frac{S_{\delta\Theta}^2}{S_{\delta\delta}S_{\Theta\Theta}}.
+\boxed{R(z,k)=\mu+T(k)+\tau(z)+I(z,k)},
 \]
 
-Experiment 041 proves the exact identity
+with orthogonal irreducible scale-time interaction `I`.
 
-\[
-\boxed{{\cal D}_{RSD}=\frac{\operatorname{Var}_{w}[g]}{\langle g^2\rangle_w}}
-\]
+Pre-frozen compact adequacy required >=95% core power capture for every direction and <=5 deg pairwise-angle distortion.
 
-so the defect is a normalized weighted scale variance of the density-velocity growth ratio. The corresponding weighted coefficient of variation is
+Final controlled run `32883280742`, artifact `9576600500`, SHA256 `59839a2717646e50501a949cf5b310cb6c0e55f85dd6839fce2832c704ec28dd`.
 
-\[
-\boxed{CV_w(g)=\sqrt{\frac{{\cal D}_{RSD}}{1-{\cal D}_{RSD}}}}.
-\]
+Operator controls pass:
 
-The confirmatory workflow froze its thresholds after an explicitly exploratory low-precision extraction but before an independent `E24.16` transfer run. It changed only CAMB text-output precision, not solver physics.
+- reconstruction error `0`;
+- zero-mean residual `4.22e-21`;
+- normalized core/I inner product `2.57e-15`.
 
-At `k_max=0.24 h/Mpc`, maximum defects over the frozen redshifts are:
+Scientific status:
 
-- GR: `1.41895e-10`;
-- designer `B0=0`: `1.41973e-10`;
-- `B0=1e-6`: `5.17750e-6`;
-- `B0=1e-5`: `1.92250e-4`;
-- `B0=1e-4`: `8.80583e-4`;
-- `B0=1e-3`: `8.78038e-4`.
+`FAIL_COMPACT_G_T_TAU_CORE_LOW_K_V0_1`.
 
-At the aggressive `k_max=0.10 h/Mpc` cut every production point remains above its pre-frozen nonzero threshold. The `k_max=0.24` weighted fractional scale variation of `g` is approximately `0.23%`, `1.39%`, `2.97%`, and `2.96%` for `B0=1e-6,1e-5,1e-4,1e-3`, versus about `0.0012%` numerical floor for GR / `B0=0`.
+Interaction structure:
 
-Hard provenance: run `32791510072`, artifact ID `9543375564`, SHA256 `1e4d86f7f13185d69a07b71afa9bfd6fefa6003119064652d6388491738212bc`, status `PASS_C5_RSD_REPRESENTABILITY_HIGH_PRECISION_V0_1`, `failures=[]`.
+- C1 smooth-w: interaction power `0.108%`;
+- C2 IDE alpha/beta: interaction power essentially negligible (`~1e-11`);
+- C3 GDM cs2/cv2: interaction power `4.53% / 4.36%`;
+- C5 designer f(R): interaction power **29.99%**, so additive core captures only **70.01%**.
 
-**Interpretation:** one scale-independent `f sigma_s8`-like amplitude is a lossy compression for the frozen C5 designer-f(R) production direction. This is particularly informative together with F10: the same microscopic direction is exactly background/AP-null but density-velocity compression-active.
+Dropping `I` changes GDM/f(R) acute angles from `25.18/25.49 deg` to `14.77/14.93 deg`; maximum pairwise distortion is IDE-alpha/f(R), **14.31 deg**.
 
-**Boundary:** this is not a DESI detection, not an arbitrary-f(R) theorem, and not yet a family-complete observational RSD block. C1/C2/C3/C4 still require their own density/velocity audits.
+**Hard interpretation:** the simple additive three-type core is falsified on this block. For frozen C5, and to a lesser extent C3, **how scale dependence evolves with time is itself information that cannot be reconstructed by separate scale-only and time-only summaries.**
 
-## Iteration protocol for this register
+**New hypothesis, not yet a law:** `I(k,z)` may be a useful mechanism-sensitive response signature. Do not yet call it a universal parameter/hair or infer `N_repr=4`.
 
-At every substantive iteration:
+**Boundary:** C4 WDM is not in this common low-k matrix; family-complete testing requires a high-k time-dependent atlas and no zero imputation.
 
-1. Re-evaluate all entries directly touched by the new result.
-2. Change status rather than silently rewriting history.
-3. Preserve negative results and failed approximations.
-4. Add exact experiment/run/artifact provenance once hard-frozen.
-5. Distinguish theory-space separation from survey-level distinguishability.
-6. Never infer intrinsic rank, a residual law, or discovery from descriptive singular spectra or selected pairwise angles.
-7. Mirror any material change into `RECOVERY_LATEST.md`, `STATUS.md`, the dated research log, and gate files when a gate changes.
+---
+
+## Research discipline after F15
+
+1. Keep `N_repr` (representation dimension) distinct from `N_disc` (discrimination dimension).
+2. Preserve the hard discriminator graph, but do not equate its three channel types with three universal parameters.
+3. Test `I(k,z)` morphology/stability across solver precision, parameter step and families before elevating it beyond a response signature.
+4. Add C4 only after constructing a physically relevant high-k `(k,z)` operator.
+5. Continue cross-family comparisons, null-space mapping, sign/orientation analysis, channel migration and failed-compression audits.
+6. Only after observation-space operators and withheld validation should latent dimension or universal-model claims be considered.
+7. No G7 law and no G8 discovery claim yet.
