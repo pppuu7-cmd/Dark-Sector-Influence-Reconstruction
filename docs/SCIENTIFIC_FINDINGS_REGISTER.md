@@ -591,3 +591,42 @@ Standalone record: `docs/SCIENTIFIC_FINDING_F24_WDM_HIGHK_TIME_SEPARABILITY.md`.
 4. Recompute the discriminant graph / masked comparison geometry with the new C4 time block before any dimensionality claim.
 5. Continue observational kernel/covariance projection and withheld-mechanism testing.
 6. G7 and G8 remain open; universal-model construction remains premature.
+
+<!-- DSIR_EXP050B_DOC_SYNC_2026_08_26 -->
+## F25 — thermal-WDM free-streaming cutoff scale passes withheld mass ordering
+
+**Status: HARD ESTABLISHED for the frozen Exp050B interpolation test; broader scaling law SUPPORTED only.**
+
+Because F24 showed that the C4 high-k response is nearly time-separable, Exp050B tested a mechanism-native cutoff coordinate rather than the GDM/f(R) interaction centroid:
+
+\[
+r_{\rm WDM}(k_{0.1},z)=\ln[P_{\rm WDM}/P_{\rm CDM}]=-0.1.
+\]
+
+Before generating the new CLASS outputs, the masses `2.5,3.5,4.0,4.5 keV` and the gate
+
+\[
+k_{0.1}(m_{i+1},z)-k_{0.1}(m_i,z)>10^{-4}\ h/{\rm Mpc}
+\]
+
+were frozen for every consecutive mass step at all seven DSIR redshifts.
+
+Clean confirmation run `32911928403` passed. Artifact `9586893981`, SHA256 `7c01e71c4223115976dc6887a1bcac06cac99e7fc50d039fae47307dd105ff0e`. At `z=0.295`, `k_0.1={8.386656,12.192829,14.230131,16.473743} h/Mpc`; the minimum mass step over all redshifts is `2.037283 h/Mpc`, far above the frozen sign guard. An earlier independent run `32911710049` also passed.
+
+The redshift drift of each crossing is only `1.57e-4..3.97e-4 h/Mpc` over `z=0.295..2.33`, descriptively reinforcing the scale-dominated/time-stationary F24 picture.
+
+A post-result combined fit of old+new masses gives roughly `k_0.1 proportional to m^1.1434` with <0.8% relative residual, but this exponent was not preregistered and is **not** a hard law.
+
+Standalone record: `docs/SCIENTIFIC_FINDING_F25_WDM_FREE_STREAMING_CUTOFF_WITHHELD.md`.
+
+**Boundary:** withheld interpolation inside C4, not a withheld-family G8 test; no Ly-alpha/nonlinear claim; no G7 closure; no universal parameter-count claim.
+
+---
+
+## Research discipline after F25
+
+1. Use mechanism-native characteristic coordinates: interaction localization for current nonseparable GDM/f(R), cutoff scale for nearly separable WDM.
+2. Do not promote the descriptive WDM mass exponent without a new preregistered mass/threshold test.
+3. Use the Exp051A block-aware evidence mask for cross-family coverage; never zero-pad C4 into low-k matrices.
+4. Next dimensionality work should produce masked bounds/coverage, not a raw zero-imputed SVD rank.
+5. G7 and G8 remain open.
