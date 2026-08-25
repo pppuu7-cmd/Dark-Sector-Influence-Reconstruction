@@ -258,3 +258,24 @@ Every `k_I_geo` step is negative, so the withheld prediction passes. This is the
 
 Current active next test: Exp049A PR #29, exact pinned EFTCAMB `B(a)` / Compton-scale bridge. Do not use its result until the corrected CAMB double-underscore diagnostic naming run completes.
 
+<!-- EXP049A_F22_SYNC_2026-08-26 -->
+## 2026-08-26 — Exp049A physical transition-scale bridge / F22
+
+Clean lineage branch: `research/physical-transition-scale-bridge-v0-2`, rebuilt from current `main` after PR #30/F21 merge. The old PR #29 is scientifically superseded only because it carried stacked Exp047/048 ancestry; its successful Exp049A artifact is retained unchanged.
+
+Hard run: `32904376001`, artifact `9584346604`, SHA256 `6a2c7f4e072fe7ee5d3a125bd798e975ab7031f5e7e92f3c71b47dbe71856f22`.
+
+Key equations:
+- GDM pressure: `k_s = Hconf/sqrt(cs2)`.
+- GDM dynamic-shear quasi-steady proxy: `k_v_QS = sqrt(9/8) Hconf/sqrt(cv2)`.
+- designer f(R): `B=f_R'/(1+f_R)*H/H'`; with diagnostic background quantities, `(1+f_R)/(3 f_RR H0^2)=Rbar'/(3 B H'/H)`.
+
+Key exact/derived values:
+- GDM `cv2=1e-5`: `k_v_QS(z_I)=0.103107 h/Mpc`, `k_I^geo=0.0504785`.
+- GDM `cv2=1e-4`: `k_v_QS(z_I)=0.0331561`, `k_I^geo=0.0406271`.
+- f(R) `B0=1e-5`: min frozen-z `k_C=0.222210`, outside low-k window; `k_I^geo=0.0508385`.
+- f(R) `B0=1e-4`: min frozen-z `k_C=0.0702692`, inside window; `k_I^geo=0.0488757`.
+- f(R) `B0=1e-3`: `k_C(z_I)=0.0550213`, `k_I^geo=0.0399397`.
+
+Interpretation status: exact source-scale extraction HARD; cross-family window-crossing principle SUPPORTED/PARTIAL. GDM has withheld support via F21; f(R) still needs Exp049C. G7/G8 remain OPEN.
+

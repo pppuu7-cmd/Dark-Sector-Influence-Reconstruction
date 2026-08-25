@@ -118,3 +118,13 @@ It does **not** close G8 because the withheld points belong to a known C3 ray, n
 
 Therefore top-level state remains: **G7 OPEN, G8 OPEN**.
 
+<!-- EXP049A_F22_SYNC_2026-08-26 -->
+## Exp049A/F22 gate note — physical transition-scale hypothesis
+
+- **Source/algebra gate:** 🟢 PASS for frozen C3/C5 implementations (Exp049A run `32904376001`).
+- **GDM independent prediction gate:** 🟢 PASS via Exp049B/F21.
+- **designer-f(R) independent prediction gate:** 🟡 OPEN; Exp049C required.
+- **Cross-family universalization:** 🔴 NOT ELIGIBLE. One withheld family is insufficient; C4 and observation-space/domain robustness remain missing.
+- **G7:** OPEN.
+- **G8:** OPEN.
+

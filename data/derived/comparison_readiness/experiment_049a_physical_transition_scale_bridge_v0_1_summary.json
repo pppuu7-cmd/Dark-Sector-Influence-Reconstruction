@@ -1,0 +1,45 @@
+{
+  "schema": "dsir.physical_transition_scale_bridge.summary.v0.1",
+  "status": "PASS_PHYSICAL_TRANSITION_SCALE_OPERATOR_CONTROLS_V0_1",
+  "source_run": 32904376001,
+  "source_head": "bdccf72fd1e63edc91f2927278623cd5b27e0e95",
+  "artifact_id": 9584346604,
+  "artifact_sha256": "6a2c7f4e072fe7ee5d3a125bd798e975ab7031f5e7e92f3c71b47dbe71856f22",
+  "pinned": {
+    "GDM_CLASS": "s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829",
+    "EFTCAMB": "EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904"
+  },
+  "hard_controls": {
+    "gdm_cs2_max_relative_H_vs_gdm0": 0.0,
+    "gdm_cv2_max_relative_H_vs_gdm0": 0.0,
+    "fr_max_B0_terminal_relative_error": 8.752545392216849e-09,
+    "fr_terminal_B0_threshold": 1e-06
+  },
+  "gdm_window_pattern": {
+    "cs2": [
+      {"value": 1e-08, "k_transition_h_mpc": 3.0626826992407676, "k_I_geo_h_mpc": 0.0509889, "inside_any_frozen_z": false},
+      {"value": 1e-07, "k_transition_h_mpc": 0.9684992922344247, "k_I_geo_h_mpc": 0.0509907, "inside_any_frozen_z": false},
+      {"value": 1e-06, "k_transition_h_mpc": 0.3062475658271347, "k_I_geo_h_mpc": 0.0510082, "inside_any_frozen_z": false}
+    ],
+    "cv2": [
+      {"value": 1e-08, "k_transition_h_mpc": 3.254071825353495, "k_I_geo_h_mpc": 0.0509858, "inside_any_frozen_z": false},
+      {"value": 1e-07, "k_transition_h_mpc": 1.029043868884051, "k_I_geo_h_mpc": 0.0509818, "inside_any_frozen_z": false},
+      {"value": 1e-06, "k_transition_h_mpc": 0.32546398537975746, "k_I_geo_h_mpc": 0.0509412, "inside_any_frozen_z": false},
+      {"value": 1e-05, "k_transition_h_mpc": 0.10310732392610573, "k_I_geo_h_mpc": 0.0504785, "inside_any_frozen_z": true},
+      {"value": 0.0001, "k_transition_h_mpc": 0.033156120889872874, "k_I_geo_h_mpc": 0.0406271, "inside_any_frozen_z": true}
+    ]
+  },
+  "designer_fR": [
+    {"B0": 1e-06, "k_compton_at_zI_h_mpc": 1.52751913311391, "k_compton_frozen_z_min": 0.7026885087544154, "k_I_geo_h_mpc": 0.0510862, "inside_any_frozen_z": false},
+    {"B0": 1e-05, "k_compton_at_zI_h_mpc": 0.41520062696375487, "k_compton_frozen_z_min": 0.2222097123245016, "k_I_geo_h_mpc": 0.0508385, "inside_any_frozen_z": false},
+    {"B0": 0.0001, "k_compton_at_zI_h_mpc": 0.14236454077564734, "k_compton_frozen_z_min": 0.070269184579607, "k_I_geo_h_mpc": 0.0488757, "inside_any_frozen_z": true},
+    {"B0": 0.001, "k_compton_at_zI_h_mpc": 0.05502131069610953, "k_compton_frozen_z_min": 0.022222027394782465, "k_I_geo_h_mpc": 0.0399397, "inside_any_frozen_z": true}
+  ],
+  "interpretation": "Exact source-derived characteristic scales show the same descriptive ordering in C3 dynamic shear and C5 designer-f(R): localization is nearly stationary while the transition is outside the frozen low-k window and migrates to smaller k after the transition enters it. Only GDM has independent withheld confirmation so far (Exp049B/F21).",
+  "not_a_claim": [
+    "No post-hoc scientific alignment threshold was used in Exp049A.",
+    "The f(R) alignment is retrospective support until Exp049C or another withheld test succeeds.",
+    "GDM k_v_QS is a quasi-steady proxy, not an exact eigenmode scale.",
+    "No universal law, G7 closure, intrinsic field count, or survey detectability claim follows."
+  ]
+}

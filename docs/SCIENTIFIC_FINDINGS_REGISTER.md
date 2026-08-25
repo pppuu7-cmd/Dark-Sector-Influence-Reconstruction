@@ -524,3 +524,19 @@ Standalone record: `docs/SCIENTIFIC_FINDING_F21_GDM_WINDOW_CROSSING_VALIDATION.m
 4. Do not infer a common temporal trajectory from the scale result.
 5. G7 and G8 remain open; universal-model construction remains premature.
 
+<!-- EXP049A_F22_SYNC_2026-08-26 -->
+## F22 — source-native transition scales track interaction-localization migration
+
+**Status: source-scale extraction HARD ESTABLISHED for frozen C3/C5; cross-family window-crossing interpretation SUPPORTED / PARTIAL.**
+
+Exp049A derives characteristic scales from pinned solver equations rather than fitting them to localization. For frozen GDM,
+\[k_s=\mathcal H/\sqrt{c_s^2},\qquad k_{v,QS}=\sqrt{9/8}\,\mathcal H/\sqrt{c_v^2},\]
+where the viscosity expression is explicitly a quasi-steady proxy, not an exact eigenmode scale. For pinned designer f(R), EFTCAMB's exact B definition and diagnostic `B(a),f_R,R/H0^2,E,E',E''` give the inverse Compton scale through
+\[\frac{1+f_R}{3f_{RR}H_0^2}=\frac{(R/H_0^2)'}{3B(H'/H)}.\]
+
+Hard provenance: run `32904376001`, artifact `9584346604`, SHA256 `6a2c7f4e072fe7ee5d3a125bd798e975ab7031f5e7e92f3c71b47dbe71856f22`; max terminal B0 relative error `8.75255e-9` versus frozen `1e-6` control.
+
+Observed ordering: GDM pressure stays outside the low-k window and `k_I^geo` stays near `0.051`; dynamic shear enters around `cv2~1e-5` and localization migrates downward. Designer f(R) similarly has `k_C` outside the window for `B0=1e-6,1e-5`, entering on the frozen z range by `1e-4`, with `k_I^geo` moving from `0.0510862` to `0.0399397` by `B0=1e-3`.
+
+The GDM ordering now has an independent withheld confirmation (Exp049B/F21). The f(R) ordering remains retrospective until Exp049C. No universal law, G7 closure, field count, or detectability claim follows. Standalone record: `docs/SCIENTIFIC_FINDING_F22_PHYSICAL_TRANSITION_SCALE_BRIDGE.md`.
+

@@ -1,0 +1,192 @@
+name: DSIR physical transition-scale bridge v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/physical-transition-scale-bridge-v0-1.yml'
+      - 'ci/physical_transition_scale_bridge_v0_1.py'
+      - 'experiments/049_physical_transition_scale_bridge_v0_1.md'
+      - 'data/derived/comparison_readiness/experiment_048b_finite_amplitude_localization_flow_v0_1_summary.json'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  physical-transition-scale:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install analysis and H-EFTCAMB toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git gfortran gcc make liblapack-dev libblas-dev
+          python -m pip install --upgrade pip
+          python -m pip install numpy
+
+      - name: Download immutable frozen C3 artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 32759738560
+          name: gdm-cv2-manifold-15c7128d4220b954783a8ba7cce7c06744f7f0ac
+          path: inputs/gdm
+
+      - name: Audit pinned GDM source and frozen closure contract
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/s-ilic/gdm_class_public.git gdm_source
+          cd gdm_source
+          git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          git rev-parse HEAD | tee ../exp049_gdm_upstream_sha.txt
+          grep -Fq 'dy[pv->index_pt_shear_gdm] = /* fluid shear */' source/perturbations.c
+          grep -Fq -- '-3.*a_prime_over_a*y[pv->index_pt_shear_gdm]' source/perturbations.c
+          grep -Fq '8./3.*cv2_gdm/(1.+w_gdm)' source/perturbations.c
+          grep -Fq -- '- s2_squared*k2*shear_gdm' source/perturbations.c
+          cd ..
+          test -f inputs/gdm/external_gdm/gdm0.ini
+          grep -Eq '^dynamic_shear_gdm[[:space:]]*=[[:space:]]*yes' inputs/gdm/external_gdm/gdm0.ini
+          grep -Eq '^Omega_k[[:space:]]*=[[:space:]]*0\.' inputs/gdm/external_gdm/gdm0.ini
+          grep -Eq '^h[[:space:]]*=[[:space:]]*0\.67' inputs/gdm/external_gdm/gdm0.ini
+          grep -Eq '^w_values_gdm[[:space:]]*=[[:space:]]*0\.' inputs/gdm/external_gdm/gdm0.ini
+          test -f inputs/gdm/external_gdm/cv2_outputs/gdm0_background.dat
+          test -f inputs/gdm/external_gdm/cv2_outputs/gdmcs2_1em6_background.dat
+          test -f inputs/gdm/external_gdm/cv2_outputs/gdmcv2_1em4_background.dat
+
+      - name: Download immutable frozen C5 configuration artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 32759477319
+          name: eftcamb-mgs1-hard-92350bb5087d17c874626c75b96779ae264dd1f6
+          path: inputs/c5
+
+      - name: Clone pinned H-EFTCAMB and verify exact designer B contract
+        run: |
+          set -euxo pipefail
+          git clone --recursive https://github.com/EFTCAMB/EFTCAMB.git eftcamb
+          cd eftcamb
+          git checkout 16d9c4e9f85751e30efd0a53b177941713078904
+          git submodule update --init --recursive
+          git rev-parse HEAD | tee ../exp049_eftcamb_upstream_sha.txt
+          fr=fortran/eftcamb/07f_designer_models/007p3_Designer_fR.f90
+          grep -Fq 'self%B0 = Ini%Read_Double' "$fr"
+          grep -Fq 'self%EFTOmega%y(ind)    = f_sub_R' "$fr"
+          grep -Fq 'B       = 2._dl/3._dl/(1._dl +f_sub_R)' "$fr"
+          grep -Fq 'Ricci    = 3._dl*(4._dl*EFunction+EFunPrime)' "$fr"
+          grep -Fq 'allocate( wDE_LCDM_parametrization_1D::self%DesfRwDE )' "$fr"
+
+      - name: Add diagnostic-only B(a) instrumentation
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('eftcamb/fortran/eftcamb/07f_designer_models/007p3_Designer_fR.f90')
+          s=p.read_text()
+
+          old='    type(TTextFile) :: file_debug_1, file_debug_2\n'
+          new=old+'    type(TTextFile) :: dsir_transition_diag\n    logical :: dsir_transition_diag_open = .false.\n'
+          assert s.count(old)==1, s.count(old)
+          s=s.replace(old,new)
+
+          old='        call self%solve_designer_equations( params_cache, A_ini, B0, only_B0=.False., success=success, feedback_level=feedback_level )\n'
+          new='''        if ( present(outroot) ) then\n            call dsir_transition_diag%CreateFile( TRIM(outroot)//\'dsir_transition_scale.dat\' )\n            write(dsir_transition_diag%unit,\'(a)\') \'# x a B Rbar f_R E Eprime Eprime2\'\n            dsir_transition_diag_open = .true.\n        end if\n        call self%solve_designer_equations( params_cache, A_ini, B0, only_B0=.False., success=success, feedback_level=feedback_level )\n        if ( present(outroot) ) then\n            dsir_transition_diag_open = .false.\n            call dsir_transition_diag%close()\n        end if\n'''
+          assert s.count(old)==1, s.count(old)
+          s=s.replace(old,new)
+
+          old='''            if ( DebugEFTCAMB ) then\n                inquire( unit=file_debug_2%unit, opened=is_open )\n'''
+          new='''            if ( dsir_transition_diag_open ) then\n                write(dsir_transition_diag%unit,\'(8ES25.16E3)\') x, a, B, Ricci, f_sub_R, EFunction, EFunPrime, EFunPrime2\n            end if\n\n            if ( DebugEFTCAMB ) then\n                inquire( unit=file_debug_2%unit, opened=is_open )\n'''
+          assert s.count(old)==1, s.count(old)
+          s=s.replace(old,new)
+          p.write_text(s)
+          PY
+          cd eftcamb
+          git diff --check
+          git diff -- fortran/eftcamb/07f_designer_models/007p3_Designer_fR.f90 | tee ../exp049_eftcamb_diagnostic_only.patch
+          grep -Fq 'dsir_transition_diag_open' ../exp049_eftcamb_diagnostic_only.patch
+
+      - name: Build instrumented pinned H-EFTCAMB
+        working-directory: eftcamb/fortran
+        run: make camb
+
+      - name: Restore exact frozen C5 production configs
+        run: |
+          set -euxo pipefail
+          src=inputs/c5/eftcamb/fortran/eftcamb_test/parameters
+          dst=eftcamb/fortran/eftcamb_test/parameters
+          for tok in base b1em6 b1em5 b1em4 b1em3; do
+            test -f "$src/dsir_mgs1_hp_${tok}.ini"
+            cp "$src/dsir_mgs1_hp_${tok}.ini" "$dst/"
+          done
+          grep -Eq '^EFTCAMB_write_background[[:space:]]*=[[:space:]]*T' "$dst/dsir_mgs1_hp_base.ini"
+          for tok in b1em6 b1em5 b1em4 b1em3; do
+            grep -Eq '^EFTwDE[[:space:]]*=[[:space:]]*0' "$dst/dsir_mgs1_hp_${tok}.ini"
+          done
+
+      - name: Run exact frozen designer f(R) production manifold with diagnostic writer
+        working-directory: eftcamb/fortran
+        run: |
+          set -euxo pipefail
+          mkdir -p eftcamb_test/results/spectra_results
+          for tok in b1em6 b1em5 b1em4 b1em3; do
+            ./camb "eftcamb_test/parameters/dsir_mgs1_hp_${tok}.ini" 2>&1 | tee "../../exp049_${tok}.log"
+          done
+
+      - name: Require stable models and diagnostic files
+        run: |
+          set -euxo pipefail
+          root=eftcamb/fortran/eftcamb_test/results/spectra_results
+          for tok in b1em6 b1em5 b1em4 b1em3; do
+            grep -q 'EFTCAMB: theory stable' "exp049_${tok}.log"
+            matches=("$root/dsir_mgs1_hp_${tok}_"*dsir_transition_scale.dat)
+            test "${#matches[@]}" -eq 1
+            test -f "${matches[0]}"
+            test "$(grep -vc '^#' "${matches[0]}")" -ge 1000
+          done
+
+      - name: Compute source-native transition-scale bridge
+        run: |
+          python ci/physical_transition_scale_bridge_v0_1.py \
+            --localization-summary data/derived/comparison_readiness/experiment_048b_finite_amplitude_localization_flow_v0_1_summary.json \
+            --gdm-background inputs/gdm/external_gdm/cv2_outputs/gdm0_background.dat \
+            --gdm-cs2-background inputs/gdm/external_gdm/cv2_outputs/gdmcs2_1em6_background.dat \
+            --gdm-cv2-background inputs/gdm/external_gdm/cv2_outputs/gdmcv2_1em4_background.dat \
+            --gdm-h 0.67 \
+            --fr-root eftcamb/fortran/eftcamb_test/results/spectra_results \
+            --json physical_transition_scale_bridge_v0_1.json
+          cat physical_transition_scale_bridge_v0_1.json
+
+      - name: Record immutable provenance
+        run: |
+          {
+            echo 'Experiment 049A physical transition-scale bridge'
+            echo 'C3 artifact: run 32759738560, digest sha256:126c839ce948b5b25ec46b687af70e230c31d87071e6526727d1551a3c0f136d'
+            echo 'C5 config artifact: run 32759477319, digest sha256:9e16460bc04605456383a30655cc5314597bfbb356bbc99af7eb5cfa9b7a8635'
+            echo 'Scientific alignment thresholds: NONE (descriptive/supporting only).'
+            echo 'CAMB output-root naming: frozen root ends underscore and CAMB appends another; diagnostic glob accepts the resulting double separator.'
+            echo "DSIR head: $GITHUB_SHA"
+            echo -n 'GDM upstream: '; cat exp049_gdm_upstream_sha.txt
+            echo -n 'H-EFTCAMB upstream: '; cat exp049_eftcamb_upstream_sha.txt
+          } > exp049_environment.txt
+
+      - name: Upload Exp049A result and exact diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: physical-transition-scale-bridge-v0-1-${{ github.sha }}
+          path: |
+            physical_transition_scale_bridge_v0_1.json
+            exp049_environment.txt
+            exp049_gdm_upstream_sha.txt
+            exp049_eftcamb_upstream_sha.txt
+            exp049_eftcamb_diagnostic_only.patch
+            exp049_b*.log
+            eftcamb/fortran/eftcamb_test/results/spectra_results/dsir_mgs1_hp_b1em*dsir_transition_scale.dat
+          if-no-files-found: error
