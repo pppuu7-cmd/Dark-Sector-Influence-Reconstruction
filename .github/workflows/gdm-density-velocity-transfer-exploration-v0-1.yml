@@ -15,7 +15,7 @@ permissions:
 jobs:
   gdm-density-velocity:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -39,17 +39,19 @@ jobs:
           cd gdm_class
           git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
           git rev-parse HEAD | tee ../exp042_upstream_sha.txt
-          # Build only the executable. The default `all` target also builds the
-          # optional Python/Cython wrapper, which is not used by this workflow.
           make -j2 class
           test -x class
-      - name: Prepare exact frozen configs with output-only extension
+          grep -Fq 'Nbody gauge transfer functions' source/input.c
+          grep -Fq 'ppt->has_Nbody_gauge_transfers' source/perturbations.c
+      - name: Prepare exact frozen configs with output-only and N-body-transfer extensions
         run: |
-          mkdir -p exp042_runs/outputs
+          mkdir -p exp042_runs/outputs exp042_nbody/outputs
           cp inputs/c3/external_gdm/dsir_p8.pre exp042_runs/
+          cp inputs/c3/external_gdm/dsir_p8.pre exp042_nbody/
           for tok in gdm0 gdmcs2_1em8 gdmcs2_1em7 gdmcs2_1em6 gdmcv2_1em8 gdmcv2_1em7 gdmcv2_1em6 gdmcv2_1em5 gdmcv2_1em4; do
             test -f "inputs/c3/external_gdm/${tok}.ini"
             cp "inputs/c3/external_gdm/${tok}.ini" "exp042_runs/${tok}.ini"
+            cp "inputs/c3/external_gdm/${tok}.ini" "exp042_nbody/${tok}.ini"
           done
           python - <<'PY'
           from pathlib import Path
@@ -58,35 +60,49 @@ jobs:
               'gdmcv2_1em8','gdmcv2_1em7','gdmcv2_1em6','gdmcv2_1em5','gdmcv2_1em4'
           ]
           for tok in tokens:
-              p = Path('exp042_runs') / f'{tok}.ini'
-              s = p.read_text()
-              old_output = 'output = mPk'
-              old_root = f'root = cv2_outputs/{tok}_'
-              if s.count(old_output) != 1 or s.count(old_root) != 1:
-                  raise SystemExit(f'unexpected frozen config structure for {tok}')
-              s = s.replace(old_output, 'output = mPk,mTk,vTk')
-              s = s.replace(old_root, f'root = outputs/{tok}_')
-              p.write_text(s)
+              for directory, nbody in [('exp042_runs', False), ('exp042_nbody', True)]:
+                  p = Path(directory) / f'{tok}.ini'
+                  s = p.read_text()
+                  old_output = 'output = mPk'
+                  old_root = f'root = cv2_outputs/{tok}_'
+                  if s.count(old_output) != 1 or s.count(old_root) != 1:
+                      raise SystemExit(f'unexpected frozen config structure for {directory}/{tok}')
+                  s = s.replace(old_output, 'output = mPk,mTk,vTk')
+                  s = s.replace(old_root, f'root = outputs/{tok}_')
+                  if nbody:
+                      s += '\n# Experiment 042 output-coordinate extension only\nNbody gauge transfer functions = yes\n'
+                  p.write_text(s)
           PY
           grep -R '^output = mPk,mTk,vTk$' exp042_runs/*.ini | wc -l | grep -qx '9'
-      - name: Run frozen GDM manifold with density and velocity transfers
+          grep -R '^Nbody gauge transfer functions = yes$' exp042_nbody/*.ini | wc -l | grep -qx '9'
+      - name: Run frozen synchronous transfer diagnostics
         working-directory: exp042_runs
         run: |
           set -o pipefail
           for tok in gdm0 gdmcs2_1em8 gdmcs2_1em7 gdmcs2_1em6 gdmcv2_1em8 gdmcv2_1em7 gdmcv2_1em6 gdmcv2_1em5 gdmcv2_1em4; do
-            ../gdm_class/class "${tok}.ini" dsir_p8.pre 2>&1 | tee "../exp042_${tok}.log"
+            ../gdm_class/class "${tok}.ini" dsir_p8.pre 2>&1 | tee "../exp042_sync_${tok}.log"
+          done
+      - name: Run frozen N-body-gauge transfer outputs
+        working-directory: exp042_nbody
+        run: |
+          set -o pipefail
+          for tok in gdm0 gdmcs2_1em8 gdmcs2_1em7 gdmcs2_1em6 gdmcv2_1em8 gdmcv2_1em7 gdmcv2_1em6 gdmcv2_1em5 gdmcv2_1em4; do
+            ../gdm_class/class "${tok}.ini" dsir_p8.pre 2>&1 | tee "../exp042_nbody_${tok}.log"
           done
       - name: Require complete exploratory outputs
         run: |
-          root=exp042_runs/outputs
-          for tok in gdm0 gdmcs2_1em8 gdmcs2_1em7 gdmcs2_1em6 gdmcv2_1em8 gdmcv2_1em7 gdmcv2_1em6 gdmcv2_1em5 gdmcv2_1em4; do
-            for zi in 1 2 3 4 5 6 7; do
-              test -f "$root/${tok}_z${zi}_pk.dat"
-              test -f "$root/${tok}_z${zi}_tk.dat"
+          for directory in exp042_runs exp042_nbody; do
+            root="$directory/outputs"
+            for tok in gdm0 gdmcs2_1em8 gdmcs2_1em7 gdmcs2_1em6 gdmcv2_1em8 gdmcv2_1em7 gdmcv2_1em6 gdmcv2_1em5 gdmcv2_1em4; do
+              for zi in 1 2 3 4 5 6 7; do
+                test -f "$root/${tok}_z${zi}_pk.dat"
+                test -f "$root/${tok}_z${zi}_tk.dat"
+              done
             done
           done
-          head -n 12 "$root/gdmcs2_1em6_z1_tk.dat" | tee exp042_transfer_header_sample.txt
-          find "$root" -maxdepth 1 -type f | sort | tee exp042_output_manifest.txt
+          head -n 12 exp042_runs/outputs/gdmcs2_1em6_z1_tk.dat | tee exp042_sync_header_sample.txt
+          head -n 12 exp042_nbody/outputs/gdmcs2_1em6_z1_tk.dat | tee exp042_nbody_header_sample.txt
+          find exp042_runs/outputs exp042_nbody/outputs -maxdepth 1 -type f | sort | tee exp042_output_manifest.txt
       - name: Upload Experiment 042 exploratory handoff
         uses: actions/upload-artifact@v4
         with:
@@ -94,9 +110,13 @@ jobs:
           path: |
             exp042_upstream_sha.txt
             exp042_*.log
-            exp042_transfer_header_sample.txt
+            exp042_sync_header_sample.txt
+            exp042_nbody_header_sample.txt
             exp042_output_manifest.txt
             exp042_runs/*.ini
             exp042_runs/dsir_p8.pre
             exp042_runs/outputs/*.dat
+            exp042_nbody/*.ini
+            exp042_nbody/dsir_p8.pre
+            exp042_nbody/outputs/*.dat
           if-no-files-found: error
