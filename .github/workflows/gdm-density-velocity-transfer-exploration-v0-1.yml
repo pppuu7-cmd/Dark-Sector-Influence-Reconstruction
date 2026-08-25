@@ -33,13 +33,16 @@ jobs:
           run-id: 32759738560
           name: gdm-cv2-manifold-15c7128d4220b954783a8ba7cce7c06744f7f0ac
           path: inputs/c3
-      - name: Clone and build pinned GDM_CLASS
+      - name: Clone and build pinned GDM_CLASS binary
         run: |
           git clone https://github.com/s-ilic/gdm_class_public.git gdm_class
           cd gdm_class
           git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
           git rev-parse HEAD | tee ../exp042_upstream_sha.txt
-          make -j2
+          # Build only the executable. The default `all` target also builds the
+          # optional Python/Cython wrapper, which is not used by this workflow.
+          make -j2 class
+          test -x class
       - name: Prepare exact frozen configs with output-only extension
         run: |
           mkdir -p exp042_runs/outputs
