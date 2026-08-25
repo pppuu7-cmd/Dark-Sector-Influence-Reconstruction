@@ -128,3 +128,14 @@ Therefore top-level state remains: **G7 OPEN, G8 OPEN**.
 - **G7:** OPEN.
 - **G8:** OPEN.
 
+<!-- F23_FR_WINDOW_CROSSING_SYNC_2026-08-26 -->
+## F23 gate note — finite-window transition/localization hypothesis
+
+- C3 GDM independent withheld prediction: 🟢 PASS (F21 / Exp049B).
+- C5 designer-f(R) independent withheld prediction: 🟢 PASS (F23 / Exp049C).
+- Two-mechanism directional replication: 🟢 HARD for the exact tested rays/domains.
+- Universal cross-family law: 🟡 NOT ESTABLISHED. Two mechanisms are insufficient; C4 and observation-space/domain robustness are missing.
+- Exact universal collapse function in `k_transition/k_window`: not tested.
+- G7: OPEN.
+- G8: OPEN.
+

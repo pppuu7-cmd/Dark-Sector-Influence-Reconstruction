@@ -98,3 +98,18 @@ DSIR remains a reconstruction/meta-inference framework, not a fundamental theory
 
 🔴 No G7 residual law, no G8 discovery, no universal-model construction, no intrinsic-rank/no-hair claim.
 
+<!-- F23_FR_WINDOW_CROSSING_SYNC_2026-08-26 -->
+## F23 status — second withheld mechanism
+
+🟢 Exp049C designer-f(R) withheld prediction PASS: run `32907619613`, artifact `9585579947`.
+
+🟢 Exact source-scale contract PASS; max terminal B0 error `7.51e-11`, every withheld exact k_C enters `k<=0.1` on the frozen z grid, and min k_C decreases with B0.
+
+🟢 `k_I^geo` decreases at every withheld step: `0.0480162 -> 0.0420339 h/Mpc`.
+
+🟢 Together with GDM F21, the finite-window directional prediction is independently supported in **two physically distinct frozen mechanisms**.
+
+🟡 Cross-family universality remains unestablished; C4 high-k time atlas, broader family/domain tests and observation-space kernels remain missing.
+
+🔴 G7 OPEN. G8 OPEN. Universal-model construction remains deferred.
+

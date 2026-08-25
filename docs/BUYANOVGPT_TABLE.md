@@ -216,3 +216,27 @@ DSIR does **not** claim a dark-sector no-hair theorem or a universal model. Any 
 5. Continue observation/window/covariance projection before detectability claims.
 6. Estimate `N_repr` and `N_disc` only after common observation-space operators exist.
 7. Universal model only after `docs/UNIVERSAL_MODEL_READINESS.md` criteria and a credible withheld-family test.
+
+<!-- F23_ATLAS_UPDATE_2026-08-26 -->
+## Atlas update through F23 — 2026-08-26
+
+This section supersedes older provisional localization wording where it conflicts.
+
+| Family/direction | Geometry/AP | low-k structure | irreducible k-z interaction | physical transition-scale status | independent localization prediction |
+|---|---|---|---|---|---|
+| C1 smooth-w | active | active | weak but grid-sensitive | no source scale assigned in current atlas | not tested |
+| C2 IDE alpha/beta | active; alpha/beta AP-near-degenerate | active and separating | near-null on current local rays | no transition-scale claim | not tested |
+| C3 GDM cs2 | exact AP/background null | active; density nearly collinear with cv2 | moderate | pressure Hubble-gradient scale source-derived; remains outside current low-k window for sampled cs2 | not applicable to current sampled crossing |
+| C3 GDM cv2 | exact AP/background null | active; slip separates microphysics | moderate | dynamic-shear quasi-steady `k_v,QS=sqrt(9/8) Hconf/sqrt(cv2)` | 🟢 withheld PASS F21 |
+| C4 thermal WDM | background geometry not represented by static transfer control | low-k nearly blind; high-k transfer strongly active | **unknown in time-dependent high-k block** | half-mode/free-streaming block separate | **running Exp050A; missing is not zero** |
+| C5 designer f(R) B0 | exact AP/background null on frozen designer branch | active and scale-dependent | strong | exact EFTCAMB B-derived inverse-Compton scale | 🟢 withheld PASS F23 |
+
+Current mechanism-level statement: when the source-derived transition lies inside the finite low-k window, moving it to smaller k predicts non-increasing interaction-energy scale localization on the tested C3-cv2 and C5-B0 withheld rays. This is two-family replicated evidence, **not a universal dark-sector law**.
+
+Current missing blocks that prevent family-complete rank/law claims:
+1. C4 genuine high-k `(k,z)` response (Exp050A running);
+2. observation/window/covariance projection for the interaction/localization descriptors;
+3. additional withheld families/directions rather than interpolation only within C3/C5;
+4. validated GDM velocity/RSD channel remains blocked by gauge bridge;
+5. no common block may be filled by zero for a missing family.
+

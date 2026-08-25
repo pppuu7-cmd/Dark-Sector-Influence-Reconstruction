@@ -530,3 +530,25 @@ Recovery provenance: run `32904376001`, artifact `9584346604`, artifact digest `
 
 Scientific discipline: the Exp049A f(R) alignment is retrospective. Only GDM has a withheld validation so far (Exp049B/F21). Exp049C must be frozen before new intermediate B0 outputs. Do not advance G7 or G8 from F22 alone.
 
+<!-- F23_FR_WINDOW_CROSSING_SYNC_2026-08-26 -->
+## Recovery addendum — F23 second withheld window-crossing validation
+
+To reproduce F23, use the frozen Exp049C contract, not the production anchors used to motivate F22.
+
+1. Pin H-EFTCAMB at `16d9c4e9f85751e30efd0a53b177941713078904`.
+2. Use the established high-precision seven-redshift comoving-density response extractor `ci/eftcamb_fr_multiz.py` and low-k nodes `{0.001,0.003,0.01,0.03,0.1} h/Mpc`.
+3. Generate only the pre-frozen withheld B0 grid `{1.5e-4,2e-4,3e-4,5e-4,7e-4}` plus matched GR and designer B0=0 controls.
+4. Diagnostic-only source instrumentation writes `a,B,R/H0^2,f_R,E,E',E''`; equations remain unchanged.
+5. Derive exact inverse-Compton scale from
+\[
+B=\frac{f_R'}{1+f_R}\frac{H}{H'},\qquad
+\frac{1+f_R}{3f_{RR}H_0^2}=\frac{(R/H_0^2)'}{3B(H'/H)}.
+\]
+6. Source contract must pass before interpreting localization: terminal B0 relative error `<=1e-6`, every model has min frozen-z k_C `<=0.1`, and those minima decrease strictly with B0.
+7. Decompose `R(B0)=r_Delta(B0)-r_Delta(B0=0)` into additive core plus irreducible interaction and require reconstruction/orthogonality/zero-mean/profile controls `<=1e-12`.
+8. The pre-frozen prediction is only `Delta k_I^geo <= +1e-6 h/Mpc` between consecutive amplitudes. Do not back-fill predictions for chi_I or z_I.
+
+Immutable successful artifact: run `32907619613`, artifact `9585579947`, SHA256 `bc2145365d14939473c73f36c0ee2ca41920d7be8eb50a31a1858c6f66aed942`.
+
+Combined evidence discipline: F21+F23 establish the directional result only on the tested GDM/f(R) rays. Keep G7/G8 open; do not infer universal field count or no-hair theorem. C4 remains a separate high-k domain until Exp050A or successors build an overlap-connected time atlas.
+

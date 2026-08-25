@@ -61,3 +61,19 @@ Continue the existing DSIR methodology:
 - extend the observationally meaningful response atlas;
 - in parallel track `N_repr` and `N_disc` separately and stress-test their stability;
 - when the readiness criteria above are met, use this document and the accumulated recovery/findings files as the launch point for the universal dark-sector model.
+
+<!-- F23_READINESS_UPDATE_2026-08-26 -->
+## Readiness update after F21/F23
+
+The withheld-validation criterion has improved materially: the same pre-frozen directional finite-window prediction has now passed on independent interpolation grids in C3 GDM dynamic shear and C5 designer f(R).
+
+This **does not trigger universal-model construction**. Remaining blockers include at least:
+
+- C4 has no validated time-dependent high-k atlas yet (Exp050A running);
+- interaction/localization geometry is not yet projected through complete observation/window/covariance operators;
+- no stable family-complete representational dimensionality has been established;
+- GDM velocity/RSD remains gauge-validation limited;
+- G7 residual-law closure and G8 withheld model-level prediction remain open.
+
+Status: **NOT READY**. Continue the comparative atlas and independent falsification program.
+

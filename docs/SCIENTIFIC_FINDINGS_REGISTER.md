@@ -540,3 +540,36 @@ Observed ordering: GDM pressure stays outside the low-k window and `k_I^geo` sta
 
 The GDM ordering now has an independent withheld confirmation (Exp049B/F21). The f(R) ordering remains retrospective until Exp049C. No universal law, G7 closure, field count, or detectability claim follows. Standalone record: `docs/SCIENTIFIC_FINDING_F22_PHYSICAL_TRANSITION_SCALE_BRIDGE.md`.
 
+<!-- F23_FR_WINDOW_CROSSING_SYNC_2026-08-26 -->
+## F23 — withheld designer-f(R) validation extends the finite-window prediction to a second mechanism
+
+**Status: HARD ESTABLISHED for the frozen Exp049C test; two-family predictive support HARD for the tested GDM/f(R) rays; broader universality SUPPORTED / PARTIAL only.**
+
+Exp049C froze five previously uncomputed designer-f(R) amplitudes before solver output,
+
+\[
+B_0=\{1.5,2,3,5,7\}\times10^{-4},
+\]
+
+and predicted only
+
+\[
+k_I^{geo}(B_{0,i+1})-k_I^{geo}(B_{0,i})\le10^{-6}\;h/{\rm Mpc}.
+\]
+
+Run `32907619613`, artifact `9585579947`, SHA256 `bc2145365d14939473c73f36c0ee2ca41920d7be8eb50a31a1858c6f66aed942` passed source eligibility, operator controls and the scientific prediction.
+
+Withheld `k_I^geo` values are
+
+`0.0480162, 0.0472514, 0.0459188, 0.0437628, 0.0420339 h/Mpc`,
+
+with consecutive steps
+
+`-7.6481e-4, -1.33256e-3, -2.15603e-3, -1.72888e-3 h/Mpc`.
+
+Minimum exact frozen-z inverse-Compton scales decrease simultaneously from `0.0573747` to `0.0265600 h/Mpc`. Maximum terminal B0 relative error is `7.50777e-11`; all operator residuals are below `5.7e-20` versus the frozen `1e-12` algebraic ceiling.
+
+Combined with GDM Exp049B/F21, the same directional finite-window statement has now survived two independently frozen interpolation tests in physically distinct mechanisms. This is **not** a universal function, a dark-sector theorem, a field count, a no-hair result, G7 closure, G8 discovery, or survey detectability.
+
+Standalone record: `docs/SCIENTIFIC_FINDING_F23_FR_WINDOW_CROSSING_VALIDATION.md`.
+

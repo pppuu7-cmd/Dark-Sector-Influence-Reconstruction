@@ -279,3 +279,27 @@ Key exact/derived values:
 
 Interpretation status: exact source-scale extraction HARD; cross-family window-crossing principle SUPPORTED/PARTIAL. GDM has withheld support via F21; f(R) still needs Exp049C. G7/G8 remain OPEN.
 
+<!-- F23_FR_WINDOW_CROSSING_SYNC_2026-08-26 -->
+## 2026-08-26 — Exp049C / F23 withheld designer-f(R) validation
+
+Hard result: `PASS_FR_WINDOW_CROSSING_VALIDATION_V0_1`.
+
+Provenance: run `32907619613`, scientific head `a575a2e78b21eab36b88db8622e14509a30cae5a`, artifact `9585579947`, digest `bc2145365d14939473c73f36c0ee2ca41920d7be8eb50a31a1858c6f66aed942`, pinned EFTCAMB `16d9c4e9f85751e30efd0a53b177941713078904`.
+
+Frozen before output:
+- B0 grid `{1.5e-4,2e-4,3e-4,5e-4,7e-4}`;
+- source eligibility: terminal B0 error `<=1e-6`, exact min frozen-z k_C `<=0.1 h/Mpc` for every model, and decreasing min k_C with B0;
+- single scientific prediction: consecutive `k_I^geo` steps `<=+1e-6 h/Mpc`;
+- no prediction for z_I, chi_I, exact magnitude or survey significance.
+
+Result:
+- `k_I^geo={0.0480162,0.0472514,0.0459188,0.0437628,0.0420339}` h/Mpc;
+- all four steps negative;
+- min frozen-z `k_C={0.0573747,0.0496881,0.0405703,0.0314259,0.0265600}` h/Mpc;
+- max terminal B0 error `7.50777e-11`;
+- operator controls max `5.68411e-20`.
+
+Interpretation: two tested mechanisms (GDM dynamic shear and designer f(R)) now have genuine withheld directional support for transition-scale motion through a finite response window being accompanied by non-increasing interaction-energy scale localization. Broader universality remains unproven. G7/G8 remain OPEN.
+
+Active next domain-completion task: Exp050A constructs the missing C4 thermal-WDM high-k time-dependent Boltzmann atlas. Never insert C4 low-k or missing high-k entries as zero.
+
