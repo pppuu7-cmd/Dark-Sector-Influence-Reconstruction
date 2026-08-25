@@ -18,6 +18,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref || github.ref_name }}
+      - name: Prepare chronology target
+        run: |
+          mkdir -p docs
+          touch docs/RESEARCH_LOG_2026-08-26_EXP050A.md
       - name: Append idempotent Exp050A records
         run: python3 ci/exp050a_doc_sync.py
       - name: Commit synchronized documentation to PR branch
