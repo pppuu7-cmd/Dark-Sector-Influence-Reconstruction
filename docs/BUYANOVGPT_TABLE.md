@@ -1,127 +1,218 @@
 # BuyanovGPT table — DSIR influence atlas
 
-**Date:** 2026-08-25  
+**Date:** 2026-08-26  
 **Status:** live research atlas / hypothesis organizer  
-**Important:** this is not a fundamental theory, not a no-hair theorem, and not evidence that the dark sector has exactly three parameters.
+**Important:** this is not a fundamental theory, not a no-hair theorem, and not evidence that the dark sector has any preselected number of parameters.
 
-The nickname **BuyanovGPT table** refers to the DSIR classification of dark-sector models by observable influence channels rather than by microscopic model labels.
+The nickname **BuyanovGPT table** refers to the DSIR classification of dark-sector models by observable influence channels and response geometry rather than by microscopic model names alone.
 
-## 1. Hard lesson already established
+## 1. Hard structural lesson
 
-The same microscopic direction can be null, degenerate, or strongly separated depending on the observation/response operator. Therefore model identity belongs to a **multi-channel influence trajectory**, not to one scalar response.
+Model identity belongs to a **multi-channel influence trajectory**. The same microscopic direction may be exactly null, nearly degenerate, or strongly separated depending on the operator.
 
-Current hard discriminator graph minimum hitting set for the frozen evidence graph:
+Current hard minimum hitting set for the frozen evidence graph remains:
 
 `{metric slip, small-scale transfer, time/sign evolution}`.
 
-This is a property of the current evidence graph only, not a proof of three fundamental parameters.
+This is not a theorem about fundamental parameter count.
 
-## 2. Candidate influence labels from the chat
+## 2. Current response labels
 
-The following labels are retained as provisional bookkeeping:
+Provisional bookkeeping labels:
 
-- `G` — growth/global structure-amplitude information;
-- `T` — scale/transfer dependence;
+- `G` — global growth / structure-amplitude information;
+- `T` — scale / transfer dependence;
 - `tau` — time evolution;
-- `I` — **scale-time nonseparability**, the irreducible `k x z` interaction left after additive `G+T+tau` projection;
+- `I` — irreducible scale-time nonseparability after additive projection;
 - `S` — metric slip / anisotropic-stress / gravitational-potential information;
 - `M` — small-scale/free-streaming/domain-localized information;
-- `N` — interaction / exchange / non-conservation information;
-- `B` — background/geometry information when independently relevant.
+- `N` — interaction / exchange information;
+- `B` — background / geometry information.
 
-These are **response types**, not guaranteed independent parameters.
+These are response types, **not guaranteed independent parameters**.
 
-## 3. Core + Activation hypothesis: first falsification
+For the common low-k structure block,
 
-The chat proposed
+\[
+R(z,k)=\mu+T(k)+\tau(z)+I(z,k),
+\]
 
-`Core ?= (G,T,tau)`
+with
 
-with mechanism-sensitive additional channels such as
+\[
+\chi_I=\frac{\|I\|^2}{\|R\|^2}.
+\]
 
-`Activation ?= (S,M,N)`.
+## 3. The simple Core=(G,T,tau) hypothesis is falsified
 
-Experiment 045A made the core hypothesis operational by decomposing each common-grid response as
-
-`R(z,k)=mu + T(k) + tau(z) + I(z,k)`.
-
-### Hard result
-
-Run `32883280742`, artifact `9576600500`, SHA256 `59839a2717646e50501a949cf5b310cb6c0e55f85dd6839fce2832c704ec28dd`.
-
-Status:
+Exp045A hard result:
 
 `FAIL_COMPACT_G_T_TAU_CORE_LOW_K_V0_1`.
 
-Therefore the **simple additive three-type core is falsified** on the common C1/C2/C3/C5 low-k theory block.
+Key local interaction-power fractions:
 
-Key nonseparable fractions:
+| Direction | `chi_I` |
+|---|---:|
+| C1 smooth-w | `0.0010805` |
+| C2 IDE negative-alpha | `1.57e-11` |
+| C2 IDE beta | `5.49e-11` |
+| C3 GDM cs2 | `0.045305` |
+| C3 GDM cv2 | `0.043634` |
+| C5 designer f(R) | **`0.299856`** |
 
-| Direction | `||I||/||R||` | interaction power | core power capture |
-|---|---:|---:|---:|
-| C1 smooth-w | 3.29% | 0.108% | 99.892% |
-| C2 IDE negative-alpha | 0.000397% | ~`1.6e-9%` | ~100% |
-| C2 IDE beta | 0.000741% | ~`5.5e-9%` | ~100% |
-| C3 GDM cs2 | **21.29%** | **4.53%** | 95.47% |
-| C3 GDM cv2 | **20.89%** | **4.36%** | 95.64% |
-| C5 designer f(R) | **54.76%** | **29.99%** | **70.01%** |
+Thus `T(k)` and `tau(z)` cannot generally be treated as independent additive summaries. **How scale dependence evolves with time carries information.**
 
-This means that `T(k)` and `tau(z)` cannot in general be treated as independent additive summaries. **How scale dependence evolves in time is itself informative.**
+Do not replace the failed three-core hypothesis by an untested four-parameter claim. `I` is a required representation component for some tested responses, not yet a fundamental hair.
 
-Dropping `I` reduces GDM/f(R) acute angles from about `25.2-25.5 deg` to about `14.8-14.9 deg`. The largest pairwise distortion is IDE negative-alpha/f(R): **14.31 deg**.
+## 4. Pairwise localization of separation
 
-### Revised working architecture
+Exp046 defines
 
-Do **not** replace the failed hypothesis by an untested four-parameter claim. The current evidence supports only the weaker organizer
+\[
+\eta_I(A,B)=\frac{\|d_I\|^2}{\|d\|^2}
+\]
 
-`Structure fingerprint = (G, T, tau, I) + other channels`,
+for the fraction of normalized pairwise response-shape separation power carried by irreducible `k x z` interaction.
 
-where `I` is now a **hard-required representation component for C5 on the tested block**, not yet a universal fundamental "hair".
+Key hard descriptive values:
 
-## 4. Current family map
+- GDM cs2/f(R): `0.611982`;
+- GDM cv2/f(R): `0.613829`;
+- IDE-alpha/f(R): `0.571946`;
+- GDM cs2/cv2: `0.731139`, **but total angle only `0.323 deg`**.
 
-The table below distinguishes **validated facts** from **candidate labels**.
+Therefore `eta_I` must always be interpreted together with total distance/angle. A large fraction of a tiny distinction is still a tiny distinction.
 
-| Family | Validated influence facts | Current table interpretation |
+Metric slip remains the established GDM pressure/viscosity separator.
+
+## 5. Grid robustness — Exp047B
+
+The descriptive hierarchy
+
+\[
+\boxed{\mathrm{IDE\ near\!-\!null}<\mathrm{smooth\!-\!w}<\mathrm{GDM}<f(R)}
+\]
+
+survives **12/12** deterministic single-node deletions (5 leave-one-k and 7 leave-one-z). Both IDE directions remain below the existing `chi_I=1e-6` morphology floor in every reduced grid.
+
+GDM/f(R) pairwise interaction localization remains material under every deletion:
+
+- cs2/f(R): `eta_I=0.5504..0.6539`;
+- cv2/f(R): `eta_I=0.5520..0.6554`.
+
+Hard caveat: smooth-w's absolute `chi_I` is sensitive to `k=0.001 h/Mpc`; removing that node lowers it by a factor about `27.6`. The **tier** is robust, the precise scalar value is not yet a family invariant.
+
+## 6. Finite-amplitude manifolds — Exp047A
+
+Exp047A reuses exact immutable solver products and asks whether the local hierarchy persists away from the tangent limit.
+
+Hard provenance:
+
+- run `32900174734`;
+- artifact `9582737965`;
+- SHA256 `95d6ce81bc208443ca2377c6f1c4b9523393e2620a2876a2fb53c36a8beabb37`.
+
+All algebraic controls pass.
+
+Sampled finite-amplitude `chi_I` envelopes:
+
+| Class | sampled range |
+|---|---:|
+| IDE | `1.4351e-11 .. 5.4945e-11` |
+| smooth-w | `0.00108051 .. 0.00108806` |
+| GDM | `0.0130105 .. 0.0454103` |
+| designer f(R) | `0.173327 .. 0.313326` |
+
+The envelopes remain non-overlapping over all sampled physical amplitudes:
+
+\[
+\boxed{\mathrm{IDE}<\mathrm{smooth\!-\!w}<\mathrm{GDM}<f(R)}.
+\]
+
+Minimum descriptive gaps:
+
+- smooth over IDE: factor `1.97e7`;
+- GDM over smooth: factor `11.96`;
+- f(R) over GDM: factor `3.82`.
+
+This strengthens the response-class hierarchy, but no post-hoc scientific stability threshold was imposed and it is **not a universal law**.
+
+## 7. New axis: trajectory geometry
+
+`chi_I` is not constant along a family. One microscopic parameter may trace a curved path in response space.
+
+Maximum sampled turning relative to each family's smallest reliable amplitude:
+
+| Direction | full response turn | interaction turn |
+|---|---:|---:|
+| smooth-w | `0.155 deg` | `0.227 deg` |
+| IDE alpha physical ray | `0.251 deg` | interaction below morphology floor |
+| IDE beta central | `0.0041 deg` | interaction below morphology floor |
+| GDM cs2 | `0.0279 deg` | `0.0324 deg` |
+| GDM cv2 | **`7.18 deg`** | **`12.19 deg`** |
+| designer f(R) | **`12.14 deg`** | **`13.00 deg`** |
+
+Examples:
+
+GDM viscosity:
+
+\[
+\chi_I(cv^2)=0.04377\rightarrow0.01301
+\]
+
+across `1e-8 -> 1e-4`.
+
+Designer f(R):
+
+\[
+0.29986,\ 0.31333,\ 0.28617,\ 0.17333
+\]
+
+for `B0={1e-6,1e-5,1e-4,1e-3}`.
+
+**Interpretation:** response-space complexity can arise from curvature of a one-dimensional physical manifold. Significant global SVD modes must not automatically be counted as additional microscopic degrees of freedom.
+
+Keep distinct:
+
+\[
+N_{micro},\quad N_{manifold},\quad N_{repr},\quad N_{disc}.
+\]
+
+## 8. Current family map
+
+| Family | Validated influence facts | Current atlas interpretation |
 |---|---|---|
 | C0 LambdaCDM/GR | common response origin | origin / zero point |
-| C1 smooth non-phantom DE | nonzero background/AP and structure response; additive core captures 99.89% structure power | background + largely separable growth/time response on current low-k block |
-| C2 IDE | alpha/beta nonzero AP and structure responses; channel migration; additive core captures essentially all low-k structure power | exchange mechanism candidate `N`; tested structure is extremely close to additive `G+T+tau` |
-| C3 GDM (`w=0`) | exact background/AP null; cs2/cv2 almost collinear in density/time; slip separates; ~4.4-4.5% structure power is nonseparable | perturbation-only direction; demonstrated `S` discriminator and non-negligible `I` |
-| C4 thermal WDM | frozen low-k nearly blind, high-k transfer strongly nonzero | domain-localized/free-streaming candidate `M`; cannot be inserted into common low-k core matrix as zero; `I` status unknown until high-k/time extension |
-| C5 designer f(R) | exact background/AP null; nonzero structure; scale-only close to GDM but time/full structure separate; density-velocity compression defect; ~30% structure power nonseparable | strongest current example that scale and time must be treated jointly; large `I` |
+| C1 smooth non-phantom DE | nonzero background/AP; low-k response largely additive; weak `I`; finite trajectory nearly straight | background-active, weak scale-time coupling |
+| C2 IDE | alpha/beta channel migration; low-k `I` near numerical-null across finite amplitudes | exchange-active candidate `N`; current structure highly separable in scale/time |
+| C3 GDM (`w=0`) | exact background/AP null; density pressure/viscosity degeneracy; slip separates; moderate `I` | perturbation-only; `S` crucial; pressure ray nearly straight, viscosity bends at large amplitude |
+| C4 thermal WDM | low-k nearly blind, high-k transfer strong | domain-localized/free-streaming candidate `M`; `I` unknown until high-k time atlas exists |
+| C5 designer f(R) | exact background/AP null; scale-only near GDM; time/full structure separate; RSD scalar compression defect; strong `I`; curved finite trajectory | strongest current scale-time coupling example; modified-gravity response manifold visibly curved |
 
-## 5. Representation dimension versus discrimination dimension
+## 9. New promising comparison: localization geometry
 
-Keep two quantities conceptually separate:
+Preliminary analysis after Exp047A suggests that for the smallest reliable GDM and f(R) responses, the **interaction-power localization over k** is almost identical while its localization over redshift is strongly different.
 
-- `N_repr`: minimum coordinates needed to reconstruct/approximate the response atlas;
-- `N_disc`: minimum independent channels needed to distinguish different physical mechanisms.
+This may explain the older combination:
 
-A small `N_repr` does not imply a small `N_disc`. The hard GDM `cs2/cv2` example demonstrates why: their density/time fingerprints are nearly collinear while metric slip carries mechanism information.
+`scale-only near-degeneracy + temporal/full-structure separation`.
 
-Experiment 045A adds a second warning: even if separate `G`, `T`, and `tau` summaries appear intuitive, their additive combination can have insufficient `N_repr` because the joint `k x z` interaction carries information.
+This is not yet registered as a hard finding. The next experiment must explicitly define localization profiles and controls before promoting it.
 
-## 6. Dark-sector no-hair hypothesis
+## 10. No-hair / universal-model boundary
 
-The black-hole analogy is retained only as a falsifiable organizing idea:
+The only defensible current hypothesis is:
 
-> many microscopic dark-sector models might project onto a much smaller stable observable influence space.
+> many microscopic dark-sector models may project onto a smaller structured observable influence space whose geometry includes null patterns, channel migration, nonseparability and trajectory curvature.
 
-DSIR does **not** claim an analogue of the black-hole no-hair theorem. The first simple three-core candidate has already failed. Any revised low-dimensional basis must survive:
+DSIR does **not** claim a dark-sector no-hair theorem or a universal model. Any dimensionality claim must survive C4 domain completion, observational projection, solver/gauge stress tests, prior/sampling changes, channel removal and withheld-family prediction.
 
-1. family expansion including C4's proper high-k domain;
-2. gauge and cross-solver bridges;
-3. observation/window/covariance projection;
-4. family-prior and sampling changes;
-5. channel removal;
-6. withheld-family prediction.
+## 11. Current continuation
 
-## 7. Current research program
-
-1. Continue the main model-comparison atlas and search for new hard cross-family regularities.
-2. Preserve exact nulls, failed compressions, channel reversals, scale-time interaction and numerical/gauge limitations.
-3. Test candidate low-dimensional coordinates without forcing the answer to three, four, or any preselected number.
-4. Extend C4 WDM with its physically relevant high-k domain before any family-complete core claim.
-5. Investigate whether `I(k,z)` has stable mechanism-specific patterns across GDM, f(R), IDE and future families.
-6. Build a universal model only when `docs/UNIVERSAL_MODEL_READINESS.md` criteria are satisfied.
+1. Formalize interaction localization profiles over `k` and `z`; test whether GDM/f(R) are scale-localization lookalikes but time-localization opposites.
+2. Connect trajectory bending to movement of characteristic transition scales through the finite observational window.
+3. Extend C4 WDM to a high-k **time-dependent** atlas and compute its scale-time interaction without zero imputation.
+4. Preserve slip/lensing and high-k transfer as independent channels.
+5. Continue observation/window/covariance projection before detectability claims.
+6. Estimate `N_repr` and `N_disc` only after common observation-space operators exist.
+7. Universal model only after `docs/UNIVERSAL_MODEL_READINESS.md` criteria and a credible withheld-family test.
