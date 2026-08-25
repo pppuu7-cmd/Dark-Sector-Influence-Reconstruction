@@ -505,3 +505,44 @@ All steps negative; operator controls pass by many orders of magnitude. Status: 
 
 Do not upgrade this to a universal scale law. `k_v_QS` is not yet an exact eigenmode scale. The required next cross-mechanism check is Exp049A using exact pinned designer-f(R) `B(a)` diagnostics. G7 and G8 remain open.
 
+<!-- DSIR_EXP050A_DOC_SYNC_2026_08_26 -->
+## Recovery update — Exp049A through Exp050A (2026-08-26)
+
+### Window-crossing result chain
+
+Exp048B first observed that finite-amplitude GDM-viscosity and designer-f(R) interaction localization moves toward smaller `k_I^geo`. Exp049A then derived characteristic scales from pinned source equations rather than fitting the response:
+
+- GDM pressure: `k_s=Hconf/sqrt(cs2)`;
+- GDM dynamic-shear labelled quasi-steady proxy: `k_v,QS=sqrt(9/8) Hconf/sqrt(cv2)`;
+- designer-f(R): exact inverse-Compton scale from the pinned EFTCAMB `B(a)` definition through `f_RR`.
+
+Exp049B froze new GDM amplitudes before output and predicted non-increasing `k_I^geo`; run `32904158849` passed. Exp049C then froze new designer-f(R) `B0={1.5,2,3,5,7}e-4` before output and the same directional prediction; run `32907619613` passed. Therefore two physically distinct represented mechanisms now have genuine withheld interpolation support for the finite-window directional principle. This is still not G7 or G8.
+
+### C4 high-k time completion — Exp050A
+
+Use pinned official CLASS solver output, not the old static Viel fit, for production `P_WDM(k,z)/P_CDM(k,z)` comparisons.
+
+Frozen domain:
+
+- masses `m={2,3,5} keV`;
+- `k={0.1,0.3,1,3,10,20} h/Mpc`;
+- `z={0.295,0.51,0.706,0.934,1.317,1.491,2.33}`.
+
+Response:
+
+`r_WDM(k,z)=ln[P_WDM(k,z)/P_CDM(k,z)]`.
+
+Hard run `32908751625`, artifact `9585845292`, SHA256 `5d02bdce07da95c2bb9eab01acb2641f110b6b16e4ecf29ac2e8b1619d053139`.
+
+At `z=0.295`, `r(k=20)` is `-1.1934447, -0.4451668, -0.1191708` for `2,3,5 keV`. Maximum redshift drift is only `6.83e-5, 2.26e-5, 5.07e-6`.
+
+Applying `R=mu+T(k)+tau(z)+I(k,z)` gives `chi_I={2.5826e-10,2.2081e-10,2.2916e-10}`. Hence current linear high-k thermal-WDM is strongly scale-dominated and nearly time-separable. Do not generalize this beyond the frozen domain.
+
+Legacy Viel comparison is descriptive only; the solver atlas is the DSIR production time-dependent C4 block.
+
+### Recovery discipline
+
+- Never zero-pad C4 into low-k matrices.
+- Keep C4 high-k and C1/C2/C3/C5 low-k as masked blocks until an operator genuinely maps them to common observation coordinates.
+- Keep `N_micro`, `N_manifold`, `N_repr`, `N_disc` distinct.
+- G7/G8 remain open; universal-model construction stays blocked.

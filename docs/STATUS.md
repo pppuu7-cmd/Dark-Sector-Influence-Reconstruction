@@ -85,3 +85,27 @@ DSIR remains a reconstruction/meta-inference framework, not a fundamental theory
 
 ❌ **G8 remains OPEN**: no withheld-family/model prediction sufficient for discovery/universal-model construction has been completed. Exp049B is withheld within one validated control family, not a withheld dark-sector family.
 
+<!-- DSIR_EXP050A_DOC_SYNC_2026_08_26 -->
+## 2026-08-26 update — Exp049A/049C/050A
+
+✅ **Exp049A/F22 merged via clean PR #31**: source-native GDM and designer-f(R) characteristic-scale bridge is hard at the solver-definition level.
+
+✅ **Exp049C/F23 withheld designer-f(R) prediction PASS**: run `32907619613`, artifact `9585579947`, SHA256 `bc2145365d14939473c73f36c0ee2ca41920d7be8eb50a31a1858c6f66aed942`. Together with GDM F21, the same directional window-crossing prediction has passed in two distinct tested mechanisms.
+
+✅ **Exp050A/F24 thermal-WDM high-k time atlas PASS**: run `32908751625`, artifact `9585845292`, SHA256 `5d02bdce07da95c2bb9eab01acb2641f110b6b16e4ecf29ac2e8b1619d053139`. C4 now has a solver-native time-dependent high-k response block. `chi_I` is about `2.2e-10..2.6e-10` despite large high-k suppression, so WDM is strongly scale-dominated / nearly time-separable on this frozen linear domain.
+
+✅ **Scientific findings live through F24**: standalone F22-F24 plus synchronized main register.
+
+🟡 **G3B is strengthened, not redefined**: C4 is no longer time-domain missing, but remains a separate high-k block and is never zero-imputed into low-k comparisons.
+
+❌ **G7 remains OPEN**: two-family directional window-crossing support is not yet a model-independent residual law.
+
+❌ **G8 remains OPEN**: the successful withheld points are within already represented mechanisms/families; no withheld-family discovery gate has passed.
+
+### Immediate continuation
+
+1. Fold the new C4 high-k `(k,z)` block into the masked BuyanovGPT observability atlas and recompute pairwise discriminant coverage without forcing a common k-domain.
+2. Test WDM mass-flow stability / free-streaming-scale localization with pre-frozen intermediate masses or an independent high-k operator.
+3. Revisit masked representation/discrimination dimension only after the C4 block is included; do not call raw SVD mode count intrinsic rank.
+4. Continue observational window/covariance projection and exact-null/channel-reversal searches.
+5. Keep universal-model construction blocked until readiness criteria are genuinely satisfied.

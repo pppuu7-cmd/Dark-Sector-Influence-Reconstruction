@@ -118,3 +118,25 @@ It does **not** close G8 because the withheld points belong to a known C3 ray, n
 
 Therefore top-level state remains: **G7 OPEN, G8 OPEN**.
 
+<!-- DSIR_EXP050A_DOC_SYNC_2026_08_26 -->
+## Gate update — 2026-08-26 Exp049C / Exp050A
+
+### Two-mechanism withheld window-crossing support
+
+**State: HARD for the two frozen withheld tests; broader G7 interpretation remains SUPPORTED/PARTIAL.**
+
+Exp049B/F21 (GDM dynamic shear) and Exp049C/F23 (designer-f(R)) independently froze the same directional statement before their new intermediate outputs: after the relevant source-derived transition lies inside the finite response window, moving that transition toward smaller k with increasing microscopic parameter is accompanied by non-increasing `k_I^geo`. Both tests passed with every measured step negative.
+
+This is stronger than retrospective correlation, but G7 remains OPEN because no model-independent functional relation has been frozen across a sufficiently broad set of mechanisms/operators and quotient identities.
+
+G8 remains OPEN because these are withheld interpolation points within mechanisms already represented in the atlas, not a truly withheld model family/mechanism used for discovery validation.
+
+### C4 time-domain completion
+
+Exp050A hard run `32908751625` fills the previous C4 high-k time-dependent response gap with pinned CLASS for thermal WDM masses 2, 3 and 5 keV on six high-k nodes and seven redshifts. Operator/provenance controls pass.
+
+This strengthens **G3B block-aware comparison readiness**: C4 is no longer represented only by a static transfer proxy. However, C4 remains a distinct high-k block; it is not valid to zero-pad it into the low-k C1/C2/C3/C5 matrix.
+
+The new C4 response is nearly time-separable (`chi_I ~ 2e-10`) on the frozen linear domain, which is a scientific feature, not a new gate closure.
+
+Top-level state remains: **G7 OPEN, G8 OPEN, G9 OPEN**.

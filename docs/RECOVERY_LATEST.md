@@ -258,3 +258,18 @@ Every `k_I_geo` step is negative, so the withheld prediction passes. This is the
 
 Current active next test: Exp049A PR #29, exact pinned EFTCAMB `B(a)` / Compton-scale bridge. Do not use its result until the corrected CAMB double-underscore diagnostic naming run completes.
 
+<!-- DSIR_EXP050A_DOC_SYNC_2026_08_26 -->
+# Live recovery overlay — Exp050A / F24
+
+Current main scientific frontier after F21-F24:
+
+- F21: withheld GDM dynamic-shear window-crossing direction PASS.
+- F22: source-native GDM and designer-f(R) characteristic-scale bridge HARD at solver-definition level.
+- F23: withheld designer-f(R) window-crossing direction PASS; same directional principle now succeeds in two distinct tested mechanisms.
+- F24: C4 thermal-WDM high-k time-dependent CLASS atlas PASS. WDM high-k suppression is large but scale-time interaction is tiny (`chi_I ~ 2.2e-10..2.6e-10`).
+
+Exp050A frozen grid: masses `2,3,5 keV`; `k=0.1,0.3,1,3,10,20 h/Mpc`; standard seven DSIR redshifts. Run `32908751625`; artifact `9585845292`; SHA256 `5d02bdce07da95c2bb9eab01acb2641f110b6b16e4ecf29ac2e8b1619d053139`.
+
+Important boundary: C4 now has time dependence measured, but remains a separate high-k block. Missing/common-domain cells stay masked, never zero. No universal WDM separability theorem, no Ly-alpha likelihood, no G7/G8 closure.
+
+Next reconstruction step: recompute the block-aware influence/discriminant atlas including C4 time geometry, then design a withheld high-k/free-streaming validation rather than forcing C4 onto low-k nodes.

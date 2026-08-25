@@ -524,3 +524,54 @@ Standalone record: `docs/SCIENTIFIC_FINDING_F21_GDM_WINDOW_CROSSING_VALIDATION.m
 4. Do not infer a common temporal trajectory from the scale result.
 5. G7 and G8 remain open; universal-model construction remains premature.
 
+<!-- DSIR_EXP050A_DOC_SYNC_2026_08_26 -->
+## F22 — source-native transition scales track interaction-localization migration
+
+**Status: source-scale extraction HARD ESTABLISHED for frozen C3/C5; cross-family interpretation SUPPORTED/PARTIAL.**
+
+Exp049A derives characteristic scales directly from pinned solver equations. For GDM, `k_s=Hconf/sqrt(cs2)` and the labelled quasi-steady dynamic-shear proxy is `k_v,QS=sqrt(9/8) Hconf/sqrt(cv2)`. For designer-f(R), the pinned EFTCAMB definition of `B(a)` yields an exact inverse-Compton scale through `f_RR` reconstructed from `B, R, H` derivatives.
+
+GDM pressure scales remain outside the low-k window and `k_I^geo` stays near `0.051 h/Mpc`; GDM viscosity and designer-f(R) both begin migrating to lower `k_I^geo` after their source-derived transition scales enter the frozen window. Run `32904376001`, artifact `9584346604`, SHA256 `6a2c7f4e072fe7ee5d3a125bd798e975ab7031f5e7e92f3c71b47dbe71856f22`.
+
+Standalone record: `docs/SCIENTIFIC_FINDING_F22_PHYSICAL_TRANSITION_SCALE_BRIDGE.md`.
+
+---
+
+## F23 — designer-f(R) passes the pre-frozen window-crossing localization prediction
+
+**Status: HARD ESTABLISHED for Exp049C withheld interpolation; broader universality SUPPORTED/PARTIAL.**
+
+Before generating new C5 outputs, Exp049C froze `B0={1.5,2,3,5,7}e-4` and the single directional prediction `Delta k_I^geo <= 1e-6 h/Mpc` for increasing B0 once the exact source-derived inverse-Compton transition is inside the finite window.
+
+Withheld `k_I^geo` values are `0.0480162, 0.0472514, 0.0459188, 0.0437628, 0.0420339 h/Mpc`; every step is negative. Run `32907619613`, artifact `9585579947`, SHA256 `bc2145365d14939473c73f36c0ee2ca41920d7be8eb50a31a1858c6f66aed942`.
+
+Together with F21, the same directional finite-window principle now has withheld support in two physically distinct mechanisms: GDM dynamic shear and designer modified gravity. This is not yet a universal law and does not close G7 or G8.
+
+Standalone record: `docs/SCIENTIFIC_FINDING_F23_FR_WINDOW_CROSSING_VALIDATION.md`.
+
+---
+
+## F24 — thermal-WDM high-k response is strongly scale-dominated and nearly time-separable
+
+**Status: HARD ESTABLISHED descriptive response geometry for the frozen C4 thermal-WDM high-k atlas (Exp050A).**
+
+Exp050A fills the previous C4 time-domain gap with solver-native CLASS `P(k,z)` responses for `m={2,3,5} keV`, `k={0.1,0.3,1,3,10,20} h/Mpc`, and the standard seven DSIR redshifts.
+
+At `z=0.295`, `r_WDM(k=20)` is `-1.19344, -0.445167, -0.119171` for `2,3,5 keV`. Yet the maximum redshift drift is only `6.83e-5, 2.26e-5, 5.07e-6`, and the irreducible scale-time interaction fractions are `2.58e-10, 2.21e-10, 2.29e-10`.
+
+Thus a response can be very large while remaining almost exactly separable into scale-dominated plus tiny time dependence. C4 is qualitatively distinct from current low-k C3/C5 examples, especially designer-f(R), where `k x z` interaction is material.
+
+Run `32908751625`, artifact `9585845292`, SHA256 `5d02bdce07da95c2bb9eab01acb2641f110b6b16e4ecf29ac2e8b1619d053139`.
+
+Standalone record: `docs/SCIENTIFIC_FINDING_F24_WDM_HIGHK_TIME_SEPARABILITY.md`.
+
+---
+
+## Research discipline after F24
+
+1. C4 now has a genuine high-k time-dependent solver atlas; do not zero-pad it onto the low-k matrix.
+2. Treat WDM `chi_I~1e-10` as a frozen-domain result, not a theorem of universal time separability.
+3. The two-family F21/F23 window-crossing prediction is stronger than retrospective support but is still not a universal law.
+4. Recompute the discriminant graph / masked comparison geometry with the new C4 time block before any dimensionality claim.
+5. Continue observational kernel/covariance projection and withheld-mechanism testing.
+6. G7 and G8 remain open; universal-model construction remains premature.
