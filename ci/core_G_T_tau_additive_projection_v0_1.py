@@ -14,6 +14,12 @@ def angle_deg(a, b, acute=False):
     return min(ang,180.0-ang) if acute else ang
 
 
+def json_default(obj):
+    if isinstance(obj, np.generic):
+        return obj.item()
+    raise TypeError(f'Object of type {obj.__class__.__name__} is not JSON serializable')
+
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument('--input', required=True)
@@ -66,9 +72,9 @@ def main():
             ac=angle_deg(core[a],core[b],acute=True)
             dist=abs(ac-af); max_dist=max(max_dist,dist)
             pair.append({'a':a,'b':b,'full_acute_deg':af,'core_acute_deg':ac,'abs_angle_distortion_deg':dist})
-    controls_pass=max_recon<=control_tol and max_zero_mean<=control_tol and max_orth<=control_tol
-    exact_all=all(r['exact_additive_pass'] for r in rows)
-    compact_all=all(r['compact_capture_pass'] for r in rows) and max_dist<=max_angle_dist
+    controls_pass=bool(max_recon<=control_tol and max_zero_mean<=control_tol and max_orth<=control_tol)
+    exact_all=bool(all(r['exact_additive_pass'] for r in rows))
+    compact_all=bool(all(r['compact_capture_pass'] for r in rows) and max_dist<=max_angle_dist)
     if not controls_pass: failures.append('operator_controls')
     if not exact_all: failures.append('exact_additive_core')
     if not compact_all: failures.append('compact_core_adequacy')
@@ -95,14 +101,14 @@ def main():
             'compact_max_pairwise_acute_angle_distortion_deg':max_angle_dist,
         },
         'operator_controls':{
-            'max_relative_reconstruction_error':max_recon,
-            'max_scaled_zero_mean_residual':max_zero_mean,
-            'max_normalized_core_interaction_inner_product':max_orth,
-            'pass':controls_pass,
+            'max_relative_reconstruction_error':float(max_recon),
+            'max_scaled_zero_mean_residual':float(max_zero_mean),
+            'max_normalized_core_interaction_inner_product':float(max_orth),
+            'pass':bool(controls_pass),
         },
-        'exact_additive_core_all_directions':exact_all,
-        'compact_core_adequacy_common_block':compact_all,
-        'max_pairwise_acute_angle_distortion_deg':max_dist,
+        'exact_additive_core_all_directions':bool(exact_all),
+        'compact_core_adequacy_common_block':bool(compact_all),
+        'max_pairwise_acute_angle_distortion_deg':float(max_dist),
         'directions':rows,
         'pairwise_angles':pair,
         'not_a_claim':[
@@ -113,8 +119,9 @@ def main():
             'not a residual law or discovery'
         ]
     }
-    Path(args.json).write_text(json.dumps(out,indent=2,sort_keys=False)+'\n')
-    print(json.dumps(out,indent=2))
+    rendered=json.dumps(out,indent=2,sort_keys=False,default=json_default)+'\n'
+    Path(args.json).write_text(rendered)
+    print(rendered)
     raise SystemExit(0 if controls_pass else 2)
 
 if __name__=='__main__': main()
