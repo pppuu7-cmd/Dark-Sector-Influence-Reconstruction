@@ -220,3 +220,41 @@ Next decisive test: bridge measured localization to a solver-level characteristi
 4. Continue observation/window/covariance projection before detectability claims.
 5. Continue null-space, channel-migration, sign/orientation, localization-flow and failed-compression searches.
 6. Universal model only after readiness and withheld-family validation.
+
+<!-- DSIR_EXP049B_DOC_SYNC_2026_08_26 -->
+## 2026-08-26 live overlay — Exp049B withheld GDM window-crossing validation
+
+**New hard result:** `PASS_GDM_WINDOW_CROSSING_VALIDATION_V0_1`.
+
+Provenance:
+- workflow run `32904158849`;
+- artifact `9584180621`;
+- artifact SHA256 `892db89ea5e530af6b8c1aae5404ef75c0fc84448e671e780ce02d91b4711a8a`;
+- branch/PR: `research/gdm-window-crossing-validation-v0-1`, PR #30;
+- pinned upstream `s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`;
+- same frozen p8 precision and C3 cosmology as the validated viscosity manifold.
+
+The prediction was frozen **before** any of the five intermediate P(k,z) outputs existed. At fixed frozen `z=1.317`, the source-audited dynamic-shear equations give the quasi-steady proxy
+
+\[
+k_{v,QS}=\sqrt{9/8}\,\mathcal H/\sqrt{c_v^2}.
+\]
+
+The crossing `k_v_QS=0.1 h/Mpc` occurs near `cv2=1.08e-5`; therefore the withheld grid `1.5e-5,2e-5,3e-5,5e-5,7e-5` was chosen after the predicted entrance into the window.
+
+Pre-frozen scientific gate: `k_I_geo` must be non-increasing with `cv2`, positive-step tolerance `1e-6 h/Mpc`; no prediction for `z_I`, `chi_I`, or shift magnitude.
+
+Results:
+
+| cv2 | k_v_QS(z=1.317) | k_I_geo | chi_I | z_I |
+|---:|---:|---:|---:|---:|
+| 1.5e-5 | 0.084846 | 0.050174 | 0.037610 | 1.26128 |
+| 2e-5 | 0.073479 | 0.049835 | 0.035438 | 1.27208 |
+| 3e-5 | 0.059995 | 0.049046 | 0.031145 | 1.29507 |
+| 5e-5 | 0.046472 | 0.047046 | 0.023581 | 1.33958 |
+| 7e-5 | 0.039276 | 0.044604 | 0.018037 | 1.37157 |
+
+Every `k_I_geo` step is negative, so the withheld prediction passes. This is the first independent validation of the GDM scale-window interpretation. It is not yet a designer-f(R) or universal result.
+
+Current active next test: Exp049A PR #29, exact pinned EFTCAMB `B(a)` / Compton-scale bridge. Do not use its result until the corrected CAMB double-underscore diagnostic naming run completes.
+

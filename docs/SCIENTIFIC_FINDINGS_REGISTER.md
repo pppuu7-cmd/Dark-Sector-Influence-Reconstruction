@@ -432,3 +432,95 @@ Detailed standalone record: `docs/SCIENTIFIC_FINDING_F17_INTERACTION_GRID_ROBUST
 7. Continue observation-space window/covariance projection before detectability claims.
 8. Continue cross-family null-space, channel-migration, orientation/sign, localization and failed-compression searches.
 9. No G7 law and no G8 discovery claim yet.
+
+<!-- DSIR_EXP049B_DOC_SYNC_2026_08_26 -->
+## F18 — finite-amplitude interaction hierarchy persists while response manifolds curve
+
+**Status: HARD ESTABLISHED descriptive finite-manifold result on sampled C1/C2/C3/C5 low-k rays (Exp047A); broader classification only SUPPORTED.**
+
+Across every retained finite amplitude in Exp047A the sampled interaction-power classes remain non-overlapping in the order
+
+\[
+\boxed{\mathrm{IDE}<\mathrm{smooth\mbox{-}w}<\mathrm{GDM}<f(R)}.
+\]
+
+At the same time GDM-viscosity and designer-\(f(R)\) response/interaction directions rotate with amplitude. Therefore `chi_I` is **not** a constant model label and tangent dimension must remain distinct from finite-manifold linear span and curvature.
+
+Standalone record: `docs/SCIENTIFIC_FINDING_F18_FINITE_INTERACTION_MANIFOLD.md`.
+
+---
+
+## F19 — interaction-energy localization has complementary scale and time geometry
+
+**Status: HARD ESTABLISHED descriptive operator result for frozen C1/C3/C5 low-k directions (Exp048A).**
+
+For
+
+\[
+q_k(k)=\frac{\sum_z I^2}{\|I\|^2},\qquad q_z(z)=\frac{\sum_k I^2}{\|I\|^2},
+\]
+
+GDM and designer-\(f(R)\) are almost identical in scale localization (`q_k` angle `0.040-0.051 deg`) but separated in time localization (`20.15-21.52 deg`). Smooth-w and \(f(R)\) show the complementary pattern: `q_z` angle `1.93 deg`, `q_k` angle `79.37 deg`.
+
+GDM cs2/cv2 remain almost degenerate in localization (`q_k=0.0113 deg`, `q_z=1.382 deg`), so metric slip remains the validated microphysical separator.
+
+Standalone record: `docs/SCIENTIFIC_FINDING_F19_INTERACTION_LOCALIZATION_GEOMETRY.md`.
+
+---
+
+## F20 — finite-amplitude GDM viscosity and designer-f(R) localization migrates toward lower k, but temporal flow is not universal
+
+**Status: HARD ESTABLISHED descriptive finite-manifold result (Exp048B); physical window-crossing explanation was initially SUPPORTED only.**
+
+GDM viscosity moves from `k_I_geo≈0.05099` to `0.04063 h/Mpc` as `cv2` grows `1e-8 -> 1e-4`; designer-f(R) moves `0.05109 -> 0.03994 h/Mpc` over `B0=1e-6 -> 1e-3`. Their time centroids differ qualitatively: GDM is nearly monotone upward, whereas f(R) is non-monotone.
+
+Thus a common scale-migration pattern does not imply a universal time trajectory. Exp049B below supplies the first withheld test of the GDM scale-migration interpretation.
+
+Standalone record: `docs/SCIENTIFIC_FINDING_F20_FINITE_LOCALIZATION_FLOW.md`.
+
+---
+
+## F21 — GDM interaction localization follows the pre-frozen window-crossing direction on withheld intermediate amplitudes
+
+**Status: HARD ESTABLISHED for the Exp049B C3 withheld interpolation test; broader physical-window principle SUPPORTED/PARTIAL.**
+
+Before generating any intermediate outputs, Exp049B froze the dynamic-shear quasi-steady proxy
+
+\[
+\boxed{k_{v,\mathrm{QS}}=\sqrt{9/8}\,\mathcal H/\sqrt{c_v^2}}
+\]
+
+and a single directional prediction on the new grid `cv2={1.5e-5,2e-5,3e-5,5e-5,7e-5}`: once this proxy has entered `k<=0.1 h/Mpc`, the interaction-energy centroid must be non-increasing with increasing `cv2`, allowing only `1e-6 h/Mpc` positive numerical drift.
+
+Run `32904158849` passed. Artifact `9584180621`, SHA256 `892db89ea5e530af6b8c1aae5404ef75c0fc84448e671e780ce02d91b4711a8a`.
+
+Source-derived proxy at fixed `z=1.317`:
+
+`0.084846, 0.073479, 0.059995, 0.046472, 0.039276 h/Mpc`.
+
+Withheld measured localization:
+
+`0.050174, 0.049835, 0.049046, 0.047046, 0.044604 h/Mpc`.
+
+All four measured steps are negative:
+
+`-3.397e-4, -7.890e-4, -2.000e-3, -2.441e-3 h/Mpc`.
+
+Operator controls are clean: reconstruction `0`, core/interaction orthogonality `2.43e-19`, zero-mean residual `7.07e-21`, profile-normalization residual `2.17e-19` against the frozen `1e-12` ceiling.
+
+**Hard interpretation:** the previously observed GDM viscosity scale-localization migration survives a genuinely withheld intermediate-amplitude test in the direction predicted by source-derived window penetration.
+
+**Boundary:** this does not prove `k_v_QS` is the exact viscosity eigenmode scale, does not yet validate the same principle for designer-f(R), does not establish a universal dark-sector law, and does not close G7 or G8.
+
+Standalone record: `docs/SCIENTIFIC_FINDING_F21_GDM_WINDOW_CROSSING_VALIDATION.md`.
+
+---
+
+## Research discipline after F21
+
+1. Treat F21 as independent support for a C3 window-crossing mechanism, not a universal law.
+2. Keep `k_v_QS` explicitly labelled quasi-steady until an eigenmode/closure derivation is validated.
+3. Use Exp049A exact designer-B diagnostics as the next cross-mechanism test; a mismatch must be retained as a negative result.
+4. Do not infer a common temporal trajectory from the scale result.
+5. G7 and G8 remain open; universal-model construction remains premature.
+

@@ -69,3 +69,19 @@ DSIR remains a reconstruction/meta-inference framework, not a fundamental theory
 6. Continue exact-null, channel-reversal, orientation/sign, localization-flow and failed-compression searches.
 7. Universal model only after readiness and withheld-family validation.
 8. G7 remains open; no discovery before G8.
+
+<!-- DSIR_EXP049B_DOC_SYNC_2026_08_26 -->
+## 2026-08-26 update — Exp049B
+
+✅ **PR #27 Exp047A merged** into `main` as merge `a29e44ceca75da5dd9efc997ddfa3dfc9b3d707c`.
+
+✅ **PR #28 Exp048A/B merged** into `main` as merge `282d0d8000ee551ae8f365c55f063e910edab91a`.
+
+✅ **Exp049B withheld GDM window-crossing test PASS**: run `32904158849`, artifact `9584180621`, SHA256 `892db89ea5e530af6b8c1aae5404ef75c0fc84448e671e780ce02d91b4711a8a`. New intermediate `cv2` points obey the pre-frozen non-increasing `k_I_geo` prediction.
+
+🟡 **Exp049A designer-f(R) exact physical-scale bridge remains active** on PR #29. A CAMB output-root double-underscore naming issue was identified before scientific reading and corrected; only the corrected head/run may be interpreted.
+
+❌ **G7 remains OPEN**: no universal residual law has been established.
+
+❌ **G8 remains OPEN**: no withheld-family/model prediction sufficient for discovery/universal-model construction has been completed. Exp049B is withheld within one validated control family, not a withheld dark-sector family.
+

@@ -449,3 +449,59 @@ No universal-model, intrinsic-rank, law or discovery claim.
 **Priority next:** amplitude/finite-step stability, then C4 high-k time support and observation-space validation.  
 **No law/discovery:** G5 partial, G7/G8 open.  
 **Never mix DSIR with RTK.**
+
+<!-- DSIR_EXP049B_DOC_SYNC_2026_08_26 -->
+## Recovery addition — Exp049B physical-window validation (2026-08-26)
+
+### Why this experiment exists
+
+Exp048B showed, retrospectively, that GDM viscosity localization moves toward lower k at large amplitude. Exp049A source audit identified a physical diagnostic scale from the exact pinned dynamic-shear equations. Exp049B converts that retrospective pattern into a withheld prediction.
+
+For frozen `w=ca2=0`, flat C3 with `dynamic_shear_gdm=yes`:
+
+\[
+\theta'\supset-\mathcal H\theta-k^2\sigma,
+\qquad
+\sigma'=-3\mathcal H\sigma+\frac{8}{3}c_v^2(\theta+\mathrm{metric\ shear}).
+\]
+
+Under a **diagnostic quasi-steady approximation only** (`sigma'≈0`, metric-shear omitted only in this estimate),
+
+\[
+\sigma\simeq\frac{8}{9}\frac{c_v^2}{\mathcal H}\theta,
+\]
+
+and equality of viscous and Hubble damping gives
+
+\[
+\boxed{k_{v,QS}=\sqrt{9/8}\,\mathcal H/\sqrt{c_v^2}}.
+\]
+
+Use the same-run CLASS background to obtain `Hconf=aH`; never reconstruct it from a hand-closed Friedmann approximation.
+
+### Frozen independent test
+
+Reference redshift: `z=1.317`; window edge `kmax=0.1 h/Mpc`; crossing amplitude about `1.08e-5`.
+
+Withheld grid: `cv2={1.5e-5,2e-5,3e-5,5e-5,7e-5}`.
+
+Frozen prediction before solver output:
+
+`k_I_geo(cv2[i+1]) <= k_I_geo(cv2[i]) + 1e-6 h/Mpc`.
+
+No time-centroid or magnitude prediction was frozen.
+
+### Result and provenance
+
+Run `32904158849`; artifact `9584180621`; SHA256 `892db89ea5e530af6b8c1aae5404ef75c0fc84448e671e780ce02d91b4711a8a`.
+
+Measured `k_I_geo`:
+
+`0.0501743 -> 0.0498346 -> 0.0490456 -> 0.0470456 -> 0.0446043 h/Mpc`.
+
+All steps negative; operator controls pass by many orders of magnitude. Status: **HARD ESTABLISHED for this withheld C3 interpolation test**.
+
+### Recovery boundary
+
+Do not upgrade this to a universal scale law. `k_v_QS` is not yet an exact eigenmode scale. The required next cross-mechanism check is Exp049A using exact pinned designer-f(R) `B(a)` diagnostics. G7 and G8 remain open.
+
