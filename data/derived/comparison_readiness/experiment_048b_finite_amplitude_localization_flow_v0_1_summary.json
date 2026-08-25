@@ -1,0 +1,30 @@
+{
+  "schema": "dsir.scale_time_interaction.finite_amplitude_localization_flow.summary.v0.1",
+  "status": "PASS_FINITE_AMPLITUDE_LOCALIZATION_OPERATOR_CONTROLS_V0_1",
+  "scope": "finite-amplitude C1/C3/C5 low-k response manifolds; IDE below morphology floor; C4 excluded",
+  "run_id": 32901217195,
+  "artifact_id": 9583169227,
+  "artifact_sha256": "492868495ca8b224db29283595f184b22dbbee9dd02461bf49d068f1ea85aff7",
+  "science_head": "95180579572d41dd90cbfca942513ac46c648912",
+  "operator_controls": {
+    "max_relative_reconstruction_error": 0.0,
+    "max_normalized_core_interaction_orthogonality": 1.1538235435164652e-18,
+    "max_scaled_zero_mean_residual": 9.425796320793312e-21,
+    "max_profile_normalization_residual": 2.168404344971009e-19,
+    "tol": 1e-12,
+    "pass": true
+  },
+  "series_summary": {
+    "smooth_w": {"k_geo": [0.00216448,0.00216404,0.00216338], "z_centroid": [0.976076,0.976495,0.980630], "max_qk_turn_deg": 0.0097404, "max_qz_turn_deg": 0.351357},
+    "GDM_cs2": {"k_geo": [0.0509889,0.0509907,0.0510082], "z_centroid": [1.219113,1.219059,1.218525], "max_qk_turn_deg": 0.0083822, "max_qz_turn_deg": 0.0493960},
+    "GDM_cv2": {"k_geo": [0.0509858,0.0509818,0.0509412,0.0504785,0.0406271], "z_centroid": [1.234133,1.234267,1.235635,1.251247,1.390233], "chi_I": [0.0437706,0.0437365,0.0433932,0.0397495,0.0130105], "max_qk_turn_deg": 3.8049624, "max_qz_turn_deg": 12.3134383, "pearson_chi_vs_log_kgeo": 0.9964117, "pearson_chi_vs_zcentroid": -0.9997851},
+    "designer_fR": {"k_geo": [0.0510862,0.0508385,0.0488757,0.0399397], "z_centroid": [0.984356,0.835547,0.914096,1.119051], "chi_I": [0.2998565,0.3133258,0.2861675,0.1733267], "max_qk_turn_deg": 4.0446995, "max_qz_turn_deg": 12.3986142, "pearson_chi_vs_log_kgeo": 0.9945469, "pearson_chi_vs_zcentroid": -0.8957699}
+  },
+  "interpretation": [
+    "Smooth-w and GDM pressure have essentially stationary localization over the sampled finite rays.",
+    "GDM viscosity and designer f(R) both shift interaction-energy localization toward lower k at large amplitude while chi_I falls.",
+    "The temporal localization flow is not universal: GDM viscosity moves to higher z nearly monotonically, while f(R) is nonmonotonic in z centroid.",
+    "This supports, but does not prove, the hypothesis that nonseparability is sensitive to a transition moving through the finite response window rather than being a monotonic coupling-strength measure.",
+    "Pearson coefficients over 3-5 points are descriptive only."
+  ]
+}

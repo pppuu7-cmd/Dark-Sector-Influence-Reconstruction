@@ -1,0 +1,38 @@
+{
+  "schema": "dsir.scale_time_interaction.localization_geometry.summary.v0.1",
+  "status": "PASS_INTERACTION_LOCALIZATION_OPERATOR_CONTROLS_V0_1",
+  "scope": "frozen local C1/C2/C3/C5 low-k theory-response directions; C4 excluded by domain contract",
+  "run_id": 32900967558,
+  "artifact_id": 9583033485,
+  "artifact_sha256": "32455f976daa3c3821d80e4db595ab333cdb7d5cb74d92ab28865cbd81fe41f8",
+  "science_head": "879148df48087fe72ef4a360c9bca3b5e2766458",
+  "operator_controls": {
+    "max_relative_reconstruction_error": 0.0,
+    "max_normalized_core_interaction_orthogonality": 2.566438376248073e-15,
+    "max_scaled_zero_mean_residual": 4.219780177668098e-21,
+    "max_profile_normalization_residual": 1.0842021724855044e-19,
+    "tol": 1e-12,
+    "pass": true
+  },
+  "centroids": {
+    "smooth_w": {"k_geo_h_mpc": 0.002164482734774835, "z_energy": 0.9760762467447746, "peak": [0.295, 0.001]},
+    "GDM_cs2": {"k_geo_h_mpc": 0.05099596117445472, "z_energy": 1.2188985439153195, "peak": [2.33, 0.1]},
+    "GDM_cv2": {"k_geo_h_mpc": 0.05096965848701247, "z_energy": 1.234675454679919, "peak": [2.33, 0.1]},
+    "designer_fR": {"k_geo_h_mpc": 0.05108616112070928, "z_energy": 0.9843561866387082, "peak": [0.295, 0.1]}
+  },
+  "pairwise": {
+    "GDM_cs2__fR": {"q_k_angle_deg": 0.04023299858899381, "q_z_angle_deg": 20.148846575633307, "q_k_hellinger": 0.0011109714992731594, "q_z_hellinger": 0.13355122319106208},
+    "GDM_cv2__fR": {"q_k_angle_deg": 0.051465122450570173, "q_z_angle_deg": 21.521130123430492, "q_k_hellinger": 0.0014192887029385061, "q_z_hellinger": 0.14063566713659198},
+    "smooth_w__fR": {"q_k_angle_deg": 79.36651802325177, "q_z_angle_deg": 1.9267350650971915, "q_k_hellinger": 0.640690667855612, "q_z_hellinger": 0.02431755960053081},
+    "smooth_w__GDM_cs2": {"q_k_angle_deg": 79.35073526625708, "q_z_angle_deg": 19.979519072056853},
+    "smooth_w__GDM_cv2": {"q_k_angle_deg": 79.34582054385669, "q_z_angle_deg": 21.35952390795767},
+    "GDM_cs2__GDM_cv2": {"q_k_angle_deg": 0.011280603111966922, "q_z_angle_deg": 1.3820561530038362}
+  },
+  "interpretation": [
+    "GDM and designer f(R) are near-identical in the scale localization of interaction energy but strongly separated in its redshift localization.",
+    "Smooth-w and designer f(R) show the complementary pattern: similar redshift localization but radically different scale localization.",
+    "The localization pair (q_k,q_z) therefore contains mechanism information that one scalar chi_I cannot represent.",
+    "Near equality of q_k is not equality of the signed interaction field and is not observational distinguishability.",
+    "No scientific threshold was post-frozen; the numerical geometry is hard descriptive, not a universal law."
+  ]
+}

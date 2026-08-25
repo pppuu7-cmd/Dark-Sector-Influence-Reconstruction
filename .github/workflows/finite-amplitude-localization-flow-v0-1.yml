@@ -1,0 +1,64 @@
+name: DSIR finite-amplitude localization flow v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/finite-amplitude-localization-flow-v0-1.yml'
+      - 'ci/finite_amplitude_localization_flow_v0_1.py'
+      - 'experiments/048b_finite_amplitude_localization_flow_v0_1.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  finite-localization-flow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install numpy
+        run: python -m pip install numpy
+      - name: Download immutable C1 artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 32771133024
+          name: wde-tangent-930078ec7f3c61ea5f2b01ecae2bc7c39e2889d7
+          path: inputs/c1
+      - name: Download immutable C3 artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 32759738560
+          name: gdm-cv2-manifold-15c7128d4220b954783a8ba7cce7c06744f7f0ac
+          path: inputs/c3
+      - name: Download immutable C5 artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 32759477319
+          name: eftcamb-mgs1-hard-92350bb5087d17c874626c75b96779ae264dd1f6
+          path: inputs/c5
+      - name: Run finite-amplitude localization flow
+        run: |
+          python ci/finite_amplitude_localization_flow_v0_1.py \
+            --c1 inputs/c1/wde_tangent.json \
+            --c3-cv2 inputs/c3/gdm_cv2_manifold.json \
+            --c3-cs2 inputs/c3/gdm_cs2_local_control.json \
+            --c5 inputs/c5/mgs1_hp_manifold_summary.json \
+            --json experiment_048b_finite_amplitude_localization_flow_v0_1.json
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite-amplitude-localization-flow-v0-1-${{ github.sha }}
+          path: experiment_048b_finite_amplitude_localization_flow_v0_1.json
+          if-no-files-found: error
