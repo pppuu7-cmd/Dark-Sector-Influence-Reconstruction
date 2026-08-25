@@ -284,12 +284,75 @@ Dropping `I` changes GDM/f(R) acute angles from `25.18/25.49 deg` to `14.77/14.9
 
 ---
 
-## Research discipline after F15
+## F16 — pairwise model separation can be localized in irreducible scale-time interaction
 
-1. Keep `N_repr` (representation dimension) distinct from `N_disc` (discrimination dimension).
-2. Preserve the hard discriminator graph, but do not equate its three channel types with three universal parameters.
-3. Test `I(k,z)` morphology/stability across solver precision, parameter step and families before elevating it beyond a response signature.
-4. Add C4 only after constructing a physically relevant high-k `(k,z)` operator.
-5. Continue cross-family comparisons, null-space mapping, sign/orientation analysis, channel migration and failed-compression audits.
-6. Only after observation-space operators and withheld validation should latent dimension or universal-model claims be considered.
-7. No G7 law and no G8 discovery claim yet.
+**Status: HARD ESTABLISHED descriptive response geometry for the frozen C1/C2/C3/C5 low-k block (Exp046); broader mechanism principle SUPPORTED.**
+
+Experiment 046 defines
+
+\[
+\chi_I=\frac{\|I\|^2}{\|R\|^2}
+\]
+
+for individual directions and, after response normalization and acute-orientation alignment,
+
+\[
+\boxed{\eta_I(A,B)=\frac{\|d_I\|^2}{\|d\|^2}},
+\qquad
+\|d\|^2=\|d_C\|^2+\|d_I\|^2.
+\]
+
+Thus `eta_I` is an exact orthogonal decomposition of **pairwise normalized shape-separation power** into additive-core and scale-time-interaction pieces.
+
+Hard provenance:
+
+- run `32884761188`;
+- artifact `9577142860`;
+- artifact SHA256 `6e2c7026efe17a81bee10c9a9904c78f5299dce1bf594535be5ded600a3d2834`;
+- source head `d292cb90245c3e472dcbffd076947181fd6ed7cf`.
+
+Controls pass:
+
+- max unit-norm error `5.42e-20`;
+- max core/interaction orthogonality residual `1.01e-14`;
+- max pairwise Pythagorean residual `3.25e-19`;
+- max acute-angle/chord residual `4.76e-15`.
+
+Key `eta_I` values:
+
+- GDM cs2/cv2: **`0.731139`**;
+- GDM cv2/f(R): **`0.613829`**;
+- GDM cs2/f(R): **`0.611982`**;
+- IDE-alpha/f(R): **`0.571946`**;
+- IDE-beta/f(R): `0.305340`;
+- smooth-w/f(R): `0.280354`;
+- IDE-alpha/GDM cs2/cv2: `0.243027 / 0.236822`;
+- IDE alpha/beta: `1.49e-11`.
+
+Valid interaction-shape acute angles:
+
+- GDM cs2/cv2: `0.742556 deg`;
+- GDM cs2/f(R): `10.985703 deg`;
+- GDM cv2/f(R): `11.710540 deg`;
+- smooth-w versus GDM/f(R): approximately `69.6-70.0 deg`.
+
+**Hard interpretation:** for GDM/f(R), roughly **61% of their normalized low-k structure-shape separation power resides specifically in scale-time nonseparability**, so the previously observed temporal/full-structure separation is substantially a joint `k x z` effect rather than a sum of independent scale-only and time-only summaries.
+
+**Hard negative refinement:** a large `eta_I` is not the same as large distinguishability. GDM cs2/cv2 have `eta_I=0.731` but a total acute angle only `0.323 deg`; interaction carries most of a tiny difference and their interaction shapes are themselves almost collinear (`0.743 deg`). Metric slip therefore remains the demonstrated microphysical separator.
+
+**Supported mechanism pattern:** the pair `(interaction strength chi_I, interaction morphology)` may classify response mechanisms more usefully than a single interaction amplitude, but this must survive tangent-step, solver-precision, domain, observational-kernel and withheld-family tests.
+
+**Boundary:** `eta_I` is not S/N, likelihood significance, Bayes evidence or survey distinguishability. C4 remains excluded by domain contract. No intrinsic-rank, universal fourth parameter, no-hair theorem, G7 law or discovery claim follows.
+
+---
+
+## Research discipline after F16
+
+1. Keep `N_repr` distinct from `N_disc`.
+2. Never interpret `eta_I` without the total pair distance/angle; report both.
+3. Test `chi_I` and interaction morphology across parameter step, solver precision and grid/domain changes before calling them stable mechanism coordinates.
+4. Add C4 only after a high-k `(k,z)` response atlas exists.
+5. Preserve slip/lensing because interaction morphology does not resolve GDM pressure/viscosity.
+6. Continue observation-space window/covariance projection before detectability claims.
+7. Continue cross-family null-space, channel-migration, orientation/sign, localization and failed-compression searches.
+8. No G7 law and no G8 discovery claim yet.

@@ -1,0 +1,60 @@
+{
+  "schema": "dsir.scale_time_interaction_morphology.v0.1.repo_summary",
+  "status": "PASS_SCALE_TIME_INTERACTION_MORPHOLOGY_CONTROLS_V0_1",
+  "scope": "common frozen low-k C1/C2/C3/C5 theory response; C4 excluded by domain contract",
+  "run_id": 32884761188,
+  "artifact_id": 9577142860,
+  "artifact_name": "scale-time-interaction-morphology-v0-1-a6740dc1006954941e54b83658658b2e2c3fce54",
+  "artifact_sha256": "6e2c7026efe17a81bee10c9a9904c78f5299dce1bf594535be5ded600a3d2834",
+  "source_head_sha": "d292cb90245c3e472dcbffd076947181fd6ed7cf",
+  "definition": {
+    "direction": "chi_I=||I||^2/||R||^2",
+    "pair": "eta_I=||I_A-s I_B||^2/||u_A-s u_B||^2, u=R/||R||, s=sign(<u_A,u_B>)"
+  },
+  "frozen_thresholds": {
+    "control_tol": 1e-12,
+    "interaction_morphology_validity_floor_chi_I": 1e-6,
+    "scientific_eta_or_angle_threshold": null
+  },
+  "controls": {
+    "max_unit_norm_error": 5.421010862427522e-20,
+    "max_core_interaction_orthogonality": 1.012463205758017e-14,
+    "max_pair_pythagorean_residual": 3.2526065174565133e-19,
+    "max_acute_angle_chord_identity_residual": 4.7587831400886915e-15,
+    "pass": true
+  },
+  "chi_I": {
+    "C1_smooth_w_nonphantom": 0.0010805071079989705,
+    "C2_IDE_alpha_negative": 1.572731555092099e-11,
+    "C2_IDE_beta": 5.494523919453264e-11,
+    "C3_GDM_cs2": 0.045305433362805625,
+    "C3_GDM_cv2": 0.043633688765791635,
+    "C5_designer_fR_B0": 0.29985647965446227
+  },
+  "high_value_pairwise_eta_I": {
+    "C3_GDM_cs2__C3_GDM_cv2": 0.7311385399684471,
+    "C3_GDM_cs2__C5_designer_fR_B0": 0.6119820903862085,
+    "C3_GDM_cv2__C5_designer_fR_B0": 0.6138290926801929,
+    "C2_IDE_alpha_negative__C5_designer_fR_B0": 0.5719459994726119,
+    "C2_IDE_beta__C5_designer_fR_B0": 0.30533963836022343,
+    "C1_smooth_w_nonphantom__C5_designer_fR_B0": 0.2803537126797567,
+    "C2_IDE_alpha_negative__C3_GDM_cs2": 0.24302738284241604,
+    "C2_IDE_alpha_negative__C3_GDM_cv2": 0.23682167243062183,
+    "C2_IDE_alpha_negative__C2_IDE_beta": 1.4862571674279374e-11
+  },
+  "interaction_shape_acute_deg": {
+    "C3_GDM_cs2__C3_GDM_cv2": 0.7425560116321419,
+    "C3_GDM_cs2__C5_designer_fR_B0": 10.985702653075634,
+    "C3_GDM_cv2__C5_designer_fR_B0": 11.710540393276744,
+    "C1_smooth_w_nonphantom__C3_GDM_cs2": 69.92057832346278,
+    "C1_smooth_w_nonphantom__C3_GDM_cv2": 69.96205209009194,
+    "C1_smooth_w_nonphantom__C5_designer_fR_B0": 69.59092979734153
+  },
+  "interpretation_boundary": [
+    "eta_I is a fraction of pairwise separation power, not a significance or detectability metric",
+    "a large eta_I can accompany a tiny total pair distance, as for GDM cs2/cv2",
+    "unwhitened theory-response geometry only; not survey distinguishability",
+    "not intrinsic rank, universal fourth parameter, no-hair theorem, residual law, or discovery",
+    "C4 WDM remains missing by domain contract, not zero"
+  ]
+}
