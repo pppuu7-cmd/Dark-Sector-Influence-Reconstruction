@@ -58,24 +58,54 @@ def H_of_z(bg: np.ndarray, z: float) -> float:
     return float(np.exp(np.interp(np.log1p(z), np.log1p(zz), np.log(hh))))
 
 
-def load_tk(path: Path) -> np.ndarray:
+def load_tk(path: Path) -> dict:
+    """Load CLASS transfer output while respecting its gauge-dependent layout.
+
+    In this pinned GDM_CLASS branch the synchronous table contains an auxiliary
+    CDM density column (16 total columns), while the Newtonian table omits that
+    column (15 total columns).  The DSIR matter definition uses baryons+GDM in
+    both gauges, so bind required fields by the verified layout rather than a
+    single hard-coded column count.
+    """
     a = np.loadtxt(path, comments="#")
-    if a.ndim != 2 or a.shape[1] < 16:
+    if a.ndim != 2:
         raise ValueError(f"unexpected CLASS transfer table {path}: {a.shape}")
-    if not np.all(np.isfinite(a[:, [0, 2, 4, 11, 12]])):
+
+    if a.shape[1] == 16:
+        # k,d_g,d_b,d_cdm,d_gdm,d_fld,d_ur,d_tot,phi,psi,t_g,t_b,t_gdm,t_fld,t_ur,t_tot
+        idx = {"kh": 0, "delta_b": 2, "delta_gdm": 4, "theta_b": 11, "theta_gdm": 12}
+        layout = "synchronous_16col_with_aux_cdm"
+    elif a.shape[1] == 15:
+        # k,d_g,d_b,d_gdm,d_fld,d_ur,d_tot,phi,psi,t_g,t_b,t_gdm,t_fld,t_ur,t_tot
+        idx = {"kh": 0, "delta_b": 2, "delta_gdm": 3, "theta_b": 10, "theta_gdm": 11}
+        layout = "newtonian_15col_no_aux_cdm"
+    else:
+        raise ValueError(f"unexpected CLASS transfer table {path}: {a.shape}")
+
+    required = a[:, [idx["kh"], idx["delta_b"], idx["delta_gdm"], idx["theta_b"], idx["theta_gdm"]]]
+    if not np.all(np.isfinite(required)):
         raise ValueError(f"non-finite required transfer values {path}")
-    return a
+
+    return {
+        "kh": a[:, idx["kh"]],
+        "delta_b": a[:, idx["delta_b"]],
+        "delta_gdm": a[:, idx["delta_gdm"]],
+        "theta_b": a[:, idx["theta_b"]],
+        "theta_gdm": a[:, idx["theta_gdm"]],
+        "layout": layout,
+        "ncol": int(a.shape[1]),
+    }
 
 
 def matter_fields(root: Path, token: str, zi: int) -> dict:
     z = ZS[zi - 1]
     tk = load_tk(root / f"{token}_z{zi}_tk.dat")
     bg = load_background(root / f"{token}_background.dat")
-    kh = tk[:, 0]
-    delta_b = tk[:, 2]
-    delta_gdm = tk[:, 4]
-    theta_b = tk[:, 11]
-    theta_gdm = tk[:, 12]
+    kh = tk["kh"]
+    delta_b = tk["delta_b"]
+    delta_gdm = tk["delta_gdm"]
+    theta_b = tk["theta_b"]
+    theta_gdm = tk["theta_gdm"]
     delta_m = WB * delta_b + WG * delta_gdm
     theta_m = WB * theta_b + WG * theta_gdm
     Hcal = H_of_z(bg, z) / (1.0 + z)  # 1/Mpc
@@ -89,6 +119,8 @@ def matter_fields(root: Path, token: str, zi: int) -> dict:
         "delta": delta_m,
         "theta": theta_m,
         "Hcal": Hcal,
+        "layout": tk["layout"],
+        "ncol": tk["ncol"],
     }
 
 
@@ -168,6 +200,10 @@ def main() -> None:
         for zi, z in enumerate(ZS, start=1):
             fs = matter_fields(sync, token, zi)
             fn = matter_fields(newt, token, zi)
+            if fs["layout"] != "synchronous_16col_with_aux_cdm":
+                failures.append(f"{token}_z{zi}_sync_layout")
+            if fn["layout"] != "newtonian_15col_no_aux_cdm":
+                failures.append(f"{token}_z{zi}_newtonian_layout")
             grid_err = float(np.max(np.abs(fs["kh"] - fn["kh"])))
             max_grid = max(max_grid, grid_err)
             Ds = interp_signed_logk(fs["kh"], fs["Delta"], K_NODES)
@@ -187,7 +223,8 @@ def main() -> None:
             resp_err = float(np.max(np.abs(resp_s - resp_n)))
             max_resp = max(max_resp, resp_err)
             bridge_rows.append({
-                "token": token, "z": z, "k_grid_max_abs": grid_err,
+                "token": token, "z": z, "sync_layout": fs["layout"],
+                "newtonian_layout": fn["layout"], "k_grid_max_abs": grid_err,
                 "max_abs_log_Delta_sync_over_newtonian": delta_err,
                 "max_abs_response_difference": resp_err,
             })
@@ -213,7 +250,6 @@ def main() -> None:
     d_cv = np.asarray(vectors[cv]["Delta_response"])
     t_cs = np.asarray(vectors[cs]["Theta_response"])
     t_cv = np.asarray(vectors[cv]["Theta_response"])
-    # Equalize block norms before forming one descriptive joint angle.
     dcsn, dcvn = d_cs / np.linalg.norm(d_cs), d_cv / np.linalg.norm(d_cv)
     tcsn, tcvn = t_cs / np.linalg.norm(t_cs), t_cv / np.linalg.norm(t_cv)
 
@@ -254,6 +290,8 @@ def main() -> None:
             "synchronous_theta_found_gauge_ill_conditioned_for_RSD": True,
             "pinned_builtin_Nbody_transfer_attempt_failed_upstream_before_output": "H_T_Nb_prime derivative not yet propagated in this branch",
             "gauge_bridge_thresholds_frozen_before_first_newtonian_target_output": True,
+            "first_newtonian_analysis_attempt_failed_before_science_due_to_15_vs_16_column_parser_assumption": True,
+            "parser_fix_changed_layout binding only and left all frozen scientific thresholds unchanged": True,
         },
         "gauge_thresholds": GAUGE_THRESHOLDS,
         "bridge_aggregate": {
