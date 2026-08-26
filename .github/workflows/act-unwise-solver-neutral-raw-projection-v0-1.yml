@@ -1,0 +1,55 @@
+name: ACT x unWISE solver-neutral raw projection v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/act-unwise-solver-neutral-raw-projection-v0-1.yml'
+      - 'ci/act_unwise_solver_neutral_raw_projection_v0_1.py'
+      - 'src/dsir/act_unwise_projection.py'
+      - 'experiments/066a_solver_neutral_act_unwise_raw_projection_v0_1.md'
+
+jobs:
+  equivalence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install numerical dependency
+        run: python3 -m pip install --user numpy
+      - name: Fetch pinned upstream source only
+        run: |
+          set -euxo pipefail
+          git clone --no-checkout https://github.com/ACTCollaboration/unWISExLens_lklh.git external/unWISExLens_lklh
+          git -C external/unWISExLens_lklh checkout 6302c30d9e70f8e4ff2d4a84a9977b4471705179
+          test "$(git -C external/unWISExLens_lklh rev-parse HEAD)" = "6302c30d9e70f8e4ff2d4a84a9977b4471705179"
+      - name: Run frozen Exp066A equivalence
+        run: |
+          set -euxo pipefail
+          python3 ci/act_unwise_solver_neutral_raw_projection_v0_1.py \
+            --external-repo external/unWISExLens_lklh \
+            --output data/derived/g7/exp066a_solver_neutral_raw_projection_v0_1.json
+      - name: Enforce frozen scientific contract
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp066a_solver_neutral_raw_projection_v0_1.json'
+          d=json.load(open(p))
+          assert d['status'] in {
+            'PASS_SOLVER_NEUTRAL_RAW_PROJECTION_EQUIVALENCE_V0_1',
+            'FAIL_SOLVER_NEUTRAL_RAW_PROJECTION_EQUIVALENCE_V0_1',
+          }
+          assert d['frozen_numerics']['ell']==[10.0,30.0,80.0,150.0,300.0]
+          assert d['frozen_numerics']['gauss_legendre_order']==96
+          assert d['frozen_numerics']['equivalence_tolerance']==5e-13
+          assert d['solver_neutral_interface']['poisson_reconstruction_forbidden'] is True
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP066A_RESULT', d['status'])
+          PY
+      - name: Upload regression result
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp066a-solver-neutral-raw-projection-${{ github.sha }}
+          path: data/derived/g7/exp066a_solver_neutral_raw_projection_v0_1.json
+          if-no-files-found: error
