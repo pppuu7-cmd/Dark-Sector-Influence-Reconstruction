@@ -1,0 +1,71 @@
+{
+  "experiment": "Exp071D",
+  "date": "2026-08-27",
+  "status": "DESCRIPTIVE_POST_UNBLINDING_ONLY",
+  "workflow_run_id": 33024722072,
+  "artifact_id": 9627946054,
+  "artifact_sha256": "2805a5312cbbabbd408861e340426e5b7d02db5c5499cbbd3ae9d6b52b30b9f7",
+  "families": {
+    "C3_GDM": {
+      "PC1_fraction": 0.9982624432600844,
+      "PC1_PC2_fraction": 0.999996066683681,
+      "path_excess_over_endpoint_chord": 0.0038802916352091987,
+      "endpoint_progress_strictly_increasing": true,
+      "max_tangent_turn_degrees": 7.797237592337576
+    },
+    "C5_fR": {
+      "PC1_fraction": 0.9973559544596902,
+      "PC1_PC2_fraction": 0.9999940656761911,
+      "path_excess_over_endpoint_chord": 0.005861181862210962,
+      "endpoint_progress_strictly_increasing": true,
+      "max_tangent_turn_degrees": 6.717124762710593
+    },
+    "C7_IDM_DR": {
+      "PC1_fraction": 0.9952151144254074,
+      "PC1_PC2_fraction": 0.9999994761499293,
+      "path_excess_over_endpoint_chord": 0.00993828079174608,
+      "endpoint_progress_strictly_increasing": true,
+      "max_tangent_turn_degrees": 9.951057674506496
+    },
+    "C8_IDM_photon": {
+      "PC1_fraction": 0.9073214848049216,
+      "PC1_PC2_fraction": 0.9845980506015476,
+      "path_excess_over_endpoint_chord": 0.727485967078044,
+      "endpoint_progress_strictly_increasing": false,
+      "endpoint_progress_coordinate": [0.0, 0.8315220609092202, 1.0290826774217519, 0.867869425454615, 1.0],
+      "min_adjacent_tangent_cosine": -0.9563246346141665,
+      "max_tangent_turn_degrees": 163.00389603189726
+    },
+    "C9_IDM_baryon": {
+      "PC1_fraction": 0.9139418894021957,
+      "PC1_PC2_fraction": 0.9999279852597623,
+      "path_excess_over_endpoint_chord": 0.23672256079967657,
+      "endpoint_progress_strictly_increasing": true,
+      "max_tangent_turn_degrees": 67.0950165074348
+    },
+    "K1_primordial_tilt": {
+      "PC1_fraction": 0.7636367562180137,
+      "PC1_PC2_fraction": 0.9156020622824562,
+      "path_excess_over_endpoint_chord": 0.9030429291650872,
+      "endpoint_progress_strictly_increasing": true,
+      "max_tangent_turn_degrees": 110.74203618083561
+    },
+    "K2_baryon_fraction": {
+      "PC1_fraction": 0.999043969028475,
+      "PC1_PC2_fraction": 0.9996568557611211,
+      "path_excess_over_endpoint_chord": 0.30818079710495816,
+      "endpoint_progress_strictly_increasing": false,
+      "endpoint_progress_coordinate": [0.0, 0.3723704436234043, 0.7686452002400649, 1.1513770882123349, 1.0000000000000002],
+      "min_adjacent_tangent_cosine": -0.9838601963690847,
+      "max_tangent_turn_degrees": 169.69204275430147
+    }
+  },
+  "interpretation": [
+    "local PCA/SVD dimensionality does not imply monotone microscopic-parameter inversion",
+    "ordinary K2 is nearly one-dimensional yet backtracks strongly while the F30 normalized-path behavior is not dark-specific",
+    "dark C8 IDM-photon also backtracks, so endpoint monotonicity cannot be introduced as a universal dark-sector discriminator",
+    "matter-only response geometry is a transfer/mechanism taxonomy rather than a dark-sector identity statistic",
+    "independent matter/Weyl or slip/lensing information remains necessary for stronger specificity"
+  ],
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
