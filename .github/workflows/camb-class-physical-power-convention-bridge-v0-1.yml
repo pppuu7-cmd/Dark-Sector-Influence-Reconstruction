@@ -1,0 +1,90 @@
+name: CAMB CLASS physical power convention bridge v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/camb-class-physical-power-convention-bridge-v0-1.yml'
+      - 'ci/camb_class_physical_power_convention_bridge_v0_1.py'
+      - 'experiments/067b_camb_class_physical_power_convention_bridge_v0_1.md'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/camb-class-physical-power-convention-bridge-v0-1.yml'
+      - 'ci/camb_class_physical_power_convention_bridge_v0_1.py'
+      - 'experiments/067b_camb_class_physical_power_convention_bridge_v0_1.md'
+
+jobs:
+  convention:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install solver build dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran git python3-dev
+          python3 -m pip install --user numpy scipy cython setuptools wheel packaging
+
+      - name: Fetch and install pinned CAMB
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          git clone https://github.com/cmbant/CAMB.git external/CAMB
+          git -C external/CAMB checkout fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          test "$(git -C external/CAMB rev-parse HEAD)" = 'fa3f097343fbbe427cc04b4f5f0041c22c6ec764'
+          grep -Fq 'Weyl                    10' external/CAMB/docs/source/transfer_variables.rst
+          grep -Fq 'divided by :math:`k^2`' external/CAMB/docs/source/transfer_variables.rst
+          python3 -m pip install --user ./external/CAMB
+
+      - name: Fetch and install pinned CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/lesgourg/class_public.git external/class_public
+          git -C external/class_public checkout e85808324f51fc694d12e3ed7439552a3c3f9540
+          test "$(git -C external/class_public rev-parse HEAD)" = 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+          grep -Fq 'Weyl_pk = pk * ((phi+psi)/2./d_m)**2 * k4' external/class_public/python/classy.pyx
+          python3 -m pip install --user ./external/class_public
+
+      - name: Run frozen Exp067B comparison
+        run: |
+          set -euxo pipefail
+          python3 ci/camb_class_physical_power_convention_bridge_v0_1.py \
+            --camb-repo external/CAMB \
+            --class-repo external/class_public \
+            --output data/derived/g7/exp067b_camb_class_physical_power_convention_bridge_v0_1.json
+
+      - name: Preserve frozen outcome
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp067b_camb_class_physical_power_convention_bridge_v0_1.json'
+          d=json.load(open(p))
+          assert d['status'] in {
+              'PASS_CAMB_CLASS_PHYSICAL_POWER_CONVENTION_BRIDGE_V0_1',
+              'FAIL_CAMB_CLASS_PHYSICAL_POWER_CONVENTION_BRIDGE_V0_1',
+          }
+          assert d['support']['k_Mpc^-1'] == [0.005,0.02,0.05,0.1,0.2]
+          assert d['support']['z'] == [0.0,0.5,1.0,2.0]
+          assert d['cross_solver_log_statistics']['threshold_each'] == 0.03
+          assert d['adiabatic_coherence']['threshold_each'] == 5e-8
+          assert d['missing_k2_negative_control']['minimum_required'] == 5.0
+          assert d['gate_state'] == {'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP067B_RESULT', d['status'])
+          print('SOURCE', d['source_contracts']['pass'])
+          print('CLASS_INTERNAL', d['CLASS_internal_Weyl_control']['pass'])
+          print('LOG_STATS', d['cross_solver_log_statistics'])
+          print('COHERENCE', d['adiabatic_coherence'])
+          print('NEGATIVE_CONTROL', d['missing_k2_negative_control'])
+          PY
+
+      - name: Upload validation record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp067b-camb-class-power-convention-${{ github.sha }}
+          path: data/derived/g7/exp067b_camb_class_physical_power_convention_bridge_v0_1.json
+          if-no-files-found: warn
