@@ -1,0 +1,156 @@
+name: Known-sector F30 specificity control v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/known-sector-f30-specificity-control-v0-1.yml'
+      - 'ci/known_sector_f30_specificity_control_v0_1.py'
+      - 'experiments/071c_known_sector_f30_specificity_control_prereg_v0_1.md'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/known-sector-f30-specificity-control-v0-1.yml'
+      - 'ci/known_sector_f30_specificity_control_v0_1.py'
+      - 'experiments/071c_known_sector_f30_specificity_control_prereg_v0_1.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  prospective-known-sector-controls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+      - name: Download immutable Exp060A training sources
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euxo pipefail
+          mkdir -p inputs/c3 inputs/c5 inputs/c7 inputs/c8
+          gh run download 32904158849 --repo "$GITHUB_REPOSITORY" --dir inputs/c3
+          gh run download 32907619613 --repo "$GITHUB_REPOSITORY" --dir inputs/c5
+          gh run download 32920776596 --repo "$GITHUB_REPOSITORY" --dir inputs/c7
+          gh run download 32926084015 --repo "$GITHUB_REPOSITORY" --dir inputs/c8
+      - name: Clone and build pinned official CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/lesgourg/class_public.git class_public
+          git -C class_public checkout e85808324f51fc694d12e3ed7439552a3c3f9540
+          test "$(git -C class_public rev-parse HEAD)" = 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+          git -C class_public rev-parse HEAD | tee exp071c_class_upstream_sha.txt
+          make -C class_public -j2 class
+      - name: Materialize exactly preregistered reference K1 K2 configs
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          mkdir -p outputs
+          python3 - <<'PY'
+          from pathlib import Path
+          COMMON='''h = 0.67
+          T_cmb = 2.7255
+          Omega_k = 0.
+          N_ur = 3.046
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          alpha_s = 0.
+          P_k_max_h/Mpc = 1.0
+          primordial_P_k_max_h/Mpc = 1.0
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          '''
+          def write(name,ob,oc,ns):
+              text=f'root = outputs/{name}_\nomega_b = {ob:.17g}\nomega_cdm = {oc:.17g}\nn_s = {ns:.17g}\n'+COMMON
+              Path(f'dsir_{name}.ini').write_text(text)
+          write('ref',0.0224,0.1200,0.965)
+          for i,ns in enumerate([0.970,0.975,0.980,0.985,0.990],1):write(f'ns{i}',0.0224,0.1200,ns)
+          obs=[0.0228,0.0232,0.0236,0.0240,0.0244]
+          ocs=[0.1196,0.1192,0.1188,0.1184,0.1180]
+          for i,(ob,oc) in enumerate(zip(obs,ocs),1):
+              assert abs((ob+oc)-0.1424)<2e-15
+              write(f'bar{i}',ob,oc,0.965)
+          assert len(list(Path('.').glob('dsir_*.ini')))==11
+          PY
+      - name: Generate fresh known-sector control spectra
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          ./class dsir_ref.ini 2>&1 | tee ../exp071c_ref.log
+          for name in ns1 ns2 ns3 ns4 ns5 bar1 bar2 bar3 bar4 bar5; do
+            ./class "dsir_${name}.ini" 2>&1 | tee "../exp071c_${name}.log"
+          done
+      - name: Require exact frozen output cardinality
+        run: |
+          set -euxo pipefail
+          for prefix in ref_ ns1_ ns2_ ns3_ ns4_ ns5_ bar1_ bar2_ bar3_ bar4_ bar5_; do
+            test "$(find class_public/outputs -maxdepth 1 -type f -name "${prefix}*pk.dat" | wc -l)" -eq 7
+          done
+          test "$(git -C class_public rev-parse HEAD)" = 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+      - name: Evaluate unchanged frozen Exp060A F30 operator
+        run: |
+          set -euxo pipefail
+          python3 ci/known_sector_f30_specificity_control_v0_1.py \
+            --gdm-root inputs/c3 --fr-root inputs/c5 --c7-root inputs/c7 --c8-root inputs/c8 \
+            --directory class_public/outputs --config-directory class_public \
+            --json exp071c_known_sector_f30_specificity_control_v0_1.json
+      - name: Assert preregistered classification semantics
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('exp071c_known_sector_f30_specificity_control_v0_1.json'))
+          assert d['status']=='COMPLETE_KNOWN_SECTOR_F30_SPECIFICITY_CONTROL_V0_1'
+          assert d['K1_n_s']==[0.97,0.975,0.98,0.985,0.99]
+          assert d['K2_omega_b']==[0.0228,0.0232,0.0236,0.024,0.0244]
+          assert d['K2_omega_cdm']==[0.1196,0.1192,0.1188,0.1184,0.118]
+          assert d['primary_specificity_classification'] in {'F30_DARK_SPECIFICITY_WEAKENED_BY_KNOWN_SECTOR_CONTROL','NO_F30_SPECIFICITY_WEAKENING_FROM_K1_K2'}
+          k1=d['K1_primordial_tilt']['pass_full_and_all_leave_one_z']
+          k2=d['K2_baryon_fraction_fixed_omega_m']['pass_full_and_all_leave_one_z']
+          expected='F30_DARK_SPECIFICITY_WEAKENED_BY_KNOWN_SECTOR_CONTROL' if (k1 or k2) else 'NO_F30_SPECIFICITY_WEAKENING_FROM_K1_K2'
+          assert d['primary_specificity_classification']==expected
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP071C_PRIMARY',d['primary_specificity_classification'])
+          print('K1_PASS',k1); print('K2_PASS',k2)
+          print('K1_SVD',d['K1_primordial_tilt']['family_local_centered_svd'])
+          print('K2_SVD',d['K2_baryon_fraction_fixed_omega_m']['family_local_centered_svd'])
+          PY
+      - name: Record prospective provenance
+        if: always()
+        run: |
+          {
+            echo 'Exp071C K1/K2 grids and classification logic were frozen in commit 4180661fe3187c710c363cdbafac12de2dc70d41 before these spectra were generated.'
+            echo 'F30 operator is inherited unchanged from Exp060A C3+C5+C7+C8 training only.'
+            echo 'No C9 response is a training input and no Exp071B quantity tunes this gate.'
+            echo 'G7/G8/G9 remain OPEN irrespective of outcome.'
+            echo "DSIR head: $GITHUB_SHA"
+            echo -n 'CLASS upstream: '; cat exp071c_class_upstream_sha.txt 2>/dev/null || true
+          } > exp071c_environment.txt
+      - name: Upload immutable prospective control record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp071c-known-sector-f30-specificity-${{ github.sha }}
+          path: |
+            exp071c_known_sector_f30_specificity_control_v0_1.json
+            exp071c_environment.txt
+            exp071c_class_upstream_sha.txt
+            exp071c_*.log
+            class_public/dsir_*.ini
+            class_public/outputs/*pk.dat
+          if-no-files-found: warn
