@@ -1,0 +1,82 @@
+name: CAMB transfer precision mechanism v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/camb-transfer-precision-mechanism-v0-1.yml'
+      - 'ci/camb_transfer_precision_mechanism_v0_1.py'
+      - 'experiments/067d_camb_transfer_precision_mechanism_v0_1.md'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/camb-transfer-precision-mechanism-v0-1.yml'
+      - 'ci/camb_transfer_precision_mechanism_v0_1.py'
+      - 'experiments/067d_camb_transfer_precision_mechanism_v0_1.md'
+
+jobs:
+  precision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CAMB build dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran git python3-dev
+          python3 -m pip install --user numpy cython setuptools wheel packaging
+
+      - name: Fetch and install pinned CAMB
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          git clone https://github.com/cmbant/CAMB.git external/CAMB
+          git -C external/CAMB checkout fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          test "$(git -C external/CAMB rev-parse HEAD)" = 'fa3f097343fbbe427cc04b4f5f0041c22c6ec764'
+          grep -Fq 'real, dimension(:, :, :), allocatable :: TransferData' external/CAMB/fortran/classes.f90
+          grep -Fq '("TransferData", POINTER(c_float))' external/CAMB/camb/results.py
+          grep -Fq 'subroutine Transfer_GetUnsplinedPower' external/CAMB/fortran/results.f90
+          python3 -m pip install --user ./external/CAMB
+
+      - name: Run frozen Exp067D audit
+        run: |
+          set -euxo pipefail
+          python3 ci/camb_transfer_precision_mechanism_v0_1.py \
+            --camb-repo external/CAMB \
+            --output data/derived/g7/exp067d_camb_transfer_precision_mechanism_v0_1.json
+
+      - name: Preserve precision classification
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp067d_camb_transfer_precision_mechanism_v0_1.json'
+          d=json.load(open(p))
+          assert d['classification'] in {
+              'FLOAT32_TRANSFER_PRODUCT_CAUSALLY_CONFIRMED_V0_1',
+              'FLOAT32_TRANSFER_PRODUCT_NOT_SUFFICIENT_V0_1',
+          }
+          assert d['official_native']['inherited_threshold'] == 5e-8
+          assert d['float32_first_product']['field_match_threshold'] == 5e-12
+          assert d['promote_before_product_control']['threshold'] == 1e-12
+          assert d['common_factor_reconstruction']['threshold'] == 5e-12
+          assert d['support']['native_k_count'] == 127
+          assert d['Exp067B_state'] == 'HARD_FAIL_UNCHANGED'
+          assert d['Exp067C_state'] == 'NATIVE_CAMB_COHERENCE_DEFECT_V0_1'
+          assert d['gate_state'] == {'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP067D_CLASSIFICATION', d['classification'])
+          print('OFFICIAL', d['official_native'])
+          print('FLOAT32', d['float32_first_product'])
+          print('PROMOTED64', d['promote_before_product_control'])
+          print('COMMON_FACTOR', d['common_factor_reconstruction'])
+          PY
+
+      - name: Upload precision record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp067d-camb-transfer-precision-${{ github.sha }}
+          path: data/derived/g7/exp067d_camb_transfer_precision_mechanism_v0_1.json
+          if-no-files-found: warn
