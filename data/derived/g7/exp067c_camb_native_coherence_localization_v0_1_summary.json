@@ -1,0 +1,52 @@
+{
+  "experiment": "Exp067C",
+  "date": "2026-08-26",
+  "diagnosis": "NATIVE_CAMB_COHERENCE_DEFECT_V0_1",
+  "workflow_run": 32997216952,
+  "workflow_job": 98269515280,
+  "pr": 68,
+  "pinned_CAMB_commit": "fa3f097343fbbe427cc04b4f5f0041c22c6ec764",
+  "artifact_id": 9617073194,
+  "artifact_sha256": "836c6f0306a34a52af3b4948d525b08e3cb892f5a2dc06b923fb1dc30c5d1bfa",
+  "inherited_coherence_threshold": 5e-8,
+  "native_support": {
+    "z": [0.0, 0.5, 1.0, 2.0],
+    "k_interval_Mpc^-1": [0.005, 0.2],
+    "native_k_count": 127
+  },
+  "native_raw": {
+    "E_max": 1.616012643701481e-7,
+    "passes_inherited_threshold": false,
+    "max_location": {
+      "z": 2.0,
+      "k_Mpc^-1": 0.12632564157247544,
+      "signed_rho2_minus_1": -1.616012643701481e-7
+    }
+  },
+  "interpolator_on_native_knots": {
+    "E_max": 1.6160126170561284e-7,
+    "passes_inherited_threshold": false,
+    "max_relative_reconstruction_error": {
+      "P_mm": 9.089054960716207e-15,
+      "P_Wm": 7.211942007043579e-15,
+      "P_WW": 2.2547572135202584e-14
+    }
+  },
+  "interpolator_on_Exp067B_targets": {
+    "E_max": 9.253183930191256e-8,
+    "passes_inherited_threshold": false,
+    "max_location": {
+      "z": 1.0,
+      "k_Mpc^-1": 0.005,
+      "signed_rho2_minus_1": -9.253183930191256e-8
+    },
+    "Exp067B_absolute_reproduction_difference": 0.0
+  },
+  "source_mechanism_clue": {
+    "Transfer_GetUnsplinedPower": "forms P_xy from M%TransferData(s1)*M%TransferData(s2) times a common double-precision factor",
+    "MatterTransferData_TransferData_declaration": "default real (single precision)",
+    "next_test": "Exp067D must test whether float32 transfer-product rounding quantitatively reproduces the native coherence defect and whether pre-multiplication promotion to float64 removes it."
+  },
+  "Exp067B_state": "HARD_FAIL_UNCHANGED",
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
