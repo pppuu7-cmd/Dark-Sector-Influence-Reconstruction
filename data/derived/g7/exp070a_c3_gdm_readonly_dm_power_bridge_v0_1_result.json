@@ -1,0 +1,68 @@
+{
+  "experiment": "Exp070A",
+  "date": "2026-08-26",
+  "status": "FAIL_C3_GDM_READONLY_DM_PHYSICAL_POWER_BRIDGE_V0_1",
+  "classification": "scientific FAIL of the frozen Exp070A bridge; the accessor itself is read-only/native-output-invariant, while the preregistered D_m-to-mPk reconstruction and post-build patch-scope harness fail",
+  "preregistration_commit": "c07e1dc73df2ee0bb9faad46ec8a8877d683a5d9",
+  "source_branch_head_at_evaluable_run": "c7a3d12ab8f0b2e77e60b91160faa533fb180b87",
+  "workflow_run": 33013313926,
+  "workflow_job": 98324933074,
+  "pr_checkout_merge_sha": "5775b80e08137b21b2d4bbe701afc024a01e88e0",
+  "artifact_id": 9623467440,
+  "artifact_zip_sha256": "dedb1f6f446a2c25abdf60be20ba4981e51637d19a32734108459cf160848fab",
+  "solver": "s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829",
+  "checks": {
+    "V1_patch_scope": {
+      "pass": false,
+      "reported_changed_paths": ["python/cclassy.pxd", "python/classy.pyx", "python/gdm_classy.cpython-312-x86_64-linux-gnu.so"],
+      "frozen_allowed_source_paths": ["python/cclassy.pxd", "python/classy.pyx"],
+      "diagnostic_note": "the workflow pre-build scope step showed exactly the two allowed source files; the aggregate V1 used post-build git status and additionally counted the generated untracked extension .so. Exp070A nevertheless remains FAIL under its frozen implementation."
+    },
+    "V2_native_output_invariance": {
+      "pass": true,
+      "max_relative_error": {"cs2_0": 0.0, "cs2_1e-6": 0.0, "cs2_1e-5": 0.0},
+      "threshold": 1e-10
+    },
+    "V3_Dm_native_mPk_reconstruction": {
+      "pass": false,
+      "max_relative_error": {
+        "cs2_0": 0.047535866637680765,
+        "cs2_1e-6": 0.047533058613078744,
+        "cs2_1e-5": 0.04750778741966378
+      },
+      "threshold": 0.0005
+    },
+    "V4_signed_Weyl_construction": {
+      "pass": true,
+      "P_Wm_sign_all_models": -1
+    },
+    "V5_same_mode_coherence": {
+      "pass": true,
+      "max_abs_rho2_minus_1": 2.220446049250313e-16,
+      "threshold": 2e-10
+    },
+    "V6_wrong_d_tot_negative_control": {
+      "pass": false,
+      "reason": "frozen V6 also required correct reconstruction V3 to pass",
+      "wrong_d_tot_separation_itself": true,
+      "wrong_d_tot_max_relative_error": {
+        "cs2_0": 0.05074119451132908,
+        "cs2_1e-6": 0.05073463800765336,
+        "cs2_1e-5": 0.050675635103298186
+      },
+      "frozen_nonzero_model_separation_threshold": 0.001
+    },
+    "V7_accessor_repeatability": {
+      "pass": true,
+      "bitwise_all_repeated_queries": true
+    },
+    "V8_no_state_mutation": {
+      "pass": true,
+      "max_relative_change_after_accessor": {"cs2_0": 0.0, "cs2_1e-6": 0.0, "cs2_1e-5": 0.0},
+      "threshold": 1e-12
+    }
+  },
+  "scientific_interpretation": "The wrapper-only accessor exposes a deterministic signed gauge-invariant D_m source without changing native mPk, but the frozen linear-in-log-k signed-amplitude reconstruction misses native mPk by about 4.75 percent. A mechanism audit is required before any corrective provider experiment. d_tot is independently worse and remains an invalid substitute.",
+  "anti_retuning": "Exp070A remains FAIL. Do not remove the generated .so from V1 retroactively, do not alter the V3 interpolation/normalization rule, and do not loosen any V2/V3/V5/V6/V8 threshold after output.",
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
