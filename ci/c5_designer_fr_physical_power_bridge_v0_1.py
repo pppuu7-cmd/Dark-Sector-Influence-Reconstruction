@@ -110,7 +110,8 @@ def child_run(args):
             "token": args.token,
             "B0": B0_TOKENS[args.token],
             "camb_module": str(Path(camb.__file__).resolve()),
-            "nonlinear_enum": int(pars.NonLinear),
+            "nonlinear_enum": str(pars.NonLinear),
+            "nonlinear_none": bool(pars.NonLinear == model.NonLinear_none),
             "H0": float(pars.H0),
             "z": Z.tolist(),
             "k_Mpc^-1": K.tolist(),
@@ -174,7 +175,7 @@ def aggregate(args):
             else:
                 ok &= bool(np.all(a != 0))
             token_ok &= ok
-        token_ok &= case["nonlinear_enum"] == 0
+        token_ok &= bool(case["nonlinear_none"])
         A3_cells[token] = {"pass": bool(token_ok)}
         A3 &= token_ok
     A3 &= len(cases) == len(B0_TOKENS)
