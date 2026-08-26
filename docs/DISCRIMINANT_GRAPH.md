@@ -59,3 +59,34 @@ This statement is intentionally narrow: it is the minimum for the **current hard
 ## Relationship to law discovery
 
 Law discovery and the discriminant graph are dual. A proposed universal relation is stronger if it survives a channel chosen specifically for maximal degeneracy-breaking power. Conversely, a relation found only inside a degenerate projection (for example scale-shape alone) must not be promoted to a fundamental law until discriminant channels have been tested.
+
+## Experiment 052A — masked discriminant coverage v0.2 — 2026-08-26
+
+Exp052A recomputes the graph under the machine-readable Exp051A evidence mask after the C4 high-k time atlas was completed. No unknown or solver-limited block is converted to zero.
+
+Hard run:
+
+- run `32915627840` — PASS;
+- artifact `9588050351`;
+- SHA256 `433d9447ad4de06774210f1b7a2467469cf654cce54cc1c2522864e3d385d9ac`.
+
+The current hard catalogue contains **four** established degeneracy edges in total:
+
+- three edges whose two endpoints both lie among the seven non-reference Exp051A directions;
+- one external-reference edge, `C0 LambdaCDM vs C4 WDM`.
+
+The exact minimum hitting set over **all four** hard edges remains uniquely
+
+\[
+\boxed{
+\{M_{\rm high-k},\;S_{\rm slip},\;\tau/\mathrm{full}\ k z\}
+}
+\]
+
+with cardinality 3.
+
+However, among the seven non-reference directions there are `21` pairwise pairs, and only `3` currently appear as pair-specific hard degeneracy/separator edges. Therefore `18/21` non-reference pairs remain **unresolved by the hard edge catalogue**.
+
+This is an important scope restriction. The three-channel hitting set is a hard lower bound for the current proven degeneracy graph, not evidence that three channels classify every current model pair. An absent edge means neither `distinguishable` nor `degenerate`; it means the required pair-specific hard gate has not yet been run.
+
+C4 time-domain completion strengthens its evidence mask but does not create a new separator edge by itself. New pairwise comparisons must still freeze their own domains and thresholds before they enter this graph.
