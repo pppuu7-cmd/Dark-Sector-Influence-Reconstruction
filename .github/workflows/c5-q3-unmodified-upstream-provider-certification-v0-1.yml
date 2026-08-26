@@ -1,0 +1,146 @@
+name: C5 q3 unmodified-upstream provider certification v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/c5-q3-unmodified-upstream-provider-certification-v0-1.yml'
+      - 'ci/c5_q3_unmodified_upstream_provider_certification_v0_1.py'
+      - 'experiments/069h_c5_q3_unmodified_upstream_provider_certification_prereg_v0_1.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  q3-provider-certification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install H-EFTCAMB Python toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y git gfortran gcc make liblapack-dev libblas-dev python3 python3-dev python3-pip
+          python3 -m pip install --user numpy scipy sympy packaging
+          python3 -m py_compile ci/c5_q3_unmodified_upstream_provider_certification_v0_1.py
+
+      - name: Build pinned H-EFTCAMB Python backend
+        run: |
+          set -euxo pipefail
+          git clone --recursive https://github.com/EFTCAMB/EFTCAMB.git eftcamb
+          git -C eftcamb checkout 16d9c4e9f85751e30efd0a53b177941713078904
+          git -C eftcamb submodule update --init --recursive
+          test "$(git -C eftcamb rev-parse HEAD)" = '16d9c4e9f85751e30efd0a53b177941713078904'
+          grep -Fq 'def set_accuracy(' eftcamb/camb/model.py
+          grep -Fq 'self.Accuracy.AccuracyBoost = AccuracyBoost' eftcamb/camb/model.py
+          grep -Fq 'self.Accuracy.lAccuracyBoost = lAccuracyBoost' eftcamb/camb/model.py
+          grep -Fq 'self.DoLateRadTruncation = DoLateRadTruncation' eftcamb/camb/model.py
+          make -C eftcamb/fortran python
+          test "$(git -C eftcamb rev-parse HEAD)" = '16d9c4e9f85751e30efd0a53b177941713078904'
+
+      - name: Write Exp069B-F matched ordinary baseline
+        run: |
+          set -euxo pipefail
+          mkdir -p exp069h_configs
+          cp eftcamb/fortran/eftcamb_test/parameters/base_params.ini exp069h_configs/base.ini
+          sed -i 's/^get_scalar_cls[[:space:]]*=.*/get_scalar_cls = F/' exp069h_configs/base.ini
+          sed -i 's/^get_tensor_cls[[:space:]]*=.*/get_tensor_cls = F/' exp069h_configs/base.ini
+          sed -i 's/^do_lensing[[:space:]]*=.*/do_lensing = F/' exp069h_configs/base.ini
+          sed -i 's/^do_nonlinear[[:space:]]*=.*/do_nonlinear = 0/' exp069h_configs/base.ini
+          sed -i 's/^hubble[[:space:]]*=.*/hubble = 67/' exp069h_configs/base.ini
+          sed -i 's/^ombh2[[:space:]]*=.*/ombh2 = 0.0224/' exp069h_configs/base.ini
+          sed -i 's/^omch2[[:space:]]*=.*/omch2 = 0.1200/' exp069h_configs/base.ini
+          sed -i 's/^omnuh2[[:space:]]*=.*/omnuh2 = 0/' exp069h_configs/base.ini
+          sed -i 's/^massless_neutrinos[[:space:]]*=.*/massless_neutrinos = 3.046/' exp069h_configs/base.ini
+          sed -i 's/^nu_mass_eigenstates[[:space:]]*=.*/nu_mass_eigenstates = 0/' exp069h_configs/base.ini
+          sed -i 's/^massive_neutrinos[[:space:]]*=.*/massive_neutrinos = 0/' exp069h_configs/base.ini
+          sed -i 's/^helium_fraction[[:space:]]*=.*/helium_fraction = 0.2404/' exp069h_configs/base.ini
+          sed -i 's/^scalar_amp(1)[[:space:]]*=.*/scalar_amp(1) = 2.10e-9/' exp069h_configs/base.ini
+          sed -i 's/^scalar_spectral_index(1)[[:space:]]*=.*/scalar_spectral_index(1) = 0.965/' exp069h_configs/base.ini
+          sed -i 's/^reionization[[:space:]]*=.*/reionization = F/' exp069h_configs/base.ini
+          sed -i 's/^transfer_kmax[[:space:]]*=.*/transfer_kmax = 0.30/' exp069h_configs/base.ini
+          sed -i 's/^feedback_level[[:space:]]*=.*/feedback_level = 3/' exp069h_configs/base.ini
+          for key in EFTflag DesignerEFTmodel EFTwDE EFTB0 EFT_ghost_math_stability EFT_mass_math_stability EFT_ghost_stability EFT_gradient_stability EFT_mass_stability EFT_mass_stability_rate EFT_additional_priors EFTCAMB_turn_on_time EFTCAMB_stability_time EFTCAMB_stability_threshold model_background_num_points EFTCAMB_skip_RGR EFTCAMB_GR_threshold; do
+            sed -i "/^[[:space:]]*${key}[[:space:]]*=/d" exp069h_configs/base.ini
+          done
+          grep -Fq 'high_accuracy_default=T' exp069h_configs/base.ini
+          grep -Fq 'transfer_high_precision = T' exp069h_configs/base.ini
+
+      - name: Execute frozen Exp069H q3 provider certification
+        run: |
+          set -euxo pipefail
+          python3 ci/c5_q3_unmodified_upstream_provider_certification_v0_1.py \
+            --eft-root eftcamb \
+            --config exp069h_configs/base.ini \
+            --output data/derived/g7/exp069h_c5_q3_unmodified_upstream_provider_certification_v0_1_summary.json
+
+      - name: Assert frozen Exp069H contract and failure semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp069h_c5_q3_unmodified_upstream_provider_certification_v0_1_summary.json'
+          d=json.load(open(p))
+          assert d['experiment']=='Exp069H'
+          assert d['status'] in {
+              'COMPLETE_C5_Q3_UNMODIFIED_UPSTREAM_PROVIDER_CERTIFICATION_V0_1',
+              'INCOMPLETE_C5_Q3_UNMODIFIED_UPSTREAM_PROVIDER_CERTIFICATION_V0_1'}
+          assert d['scientific_classification'] in {
+              'PASS_C5_Q3_UNMODIFIED_UPSTREAM_PHYSICAL_PROVIDER_V0_1',
+              'FAIL_C5_Q3_UNMODIFIED_UPSTREAM_PHYSICAL_PROVIDER_V0_1',
+              'INCOMPLETE_EXP069H'}
+          f=d['frozen']
+          assert f['q']==3.0
+          assert f['B0']==[0.0,1e-12,1e-10,1e-08,1e-06]
+          assert f['tiny_B0']==[1e-12,1e-10,1e-08]
+          assert f['z']==[0.0,0.295,0.51,0.934,1.491,2.33,3.0]
+          assert f['k_Mpc^-1']==[0.003,0.01,0.03,0.1,0.2]
+          assert f['k_per_logint']==320
+          assert f['target_and_raw_closure_limit']==5e-6
+          assert f['production_signal_min']==1e-3
+          assert f['independent_zero_repeatability_max']==1e-12
+          assert f['block_order']==['mm','Wm','WW']
+          assert f['P_Wm_signed'] is True
+          assert d['expected_solver_sha']=='16d9c4e9f85751e30efd0a53b177941713078904'
+          assert d['exp069b_preserved']=='FAIL_C5_EXPLICIT_EFT_PYTHON_POWER_BRIDGE_V0_1'
+          assert d['exp069f_preserved']=='GENERAL_ACCURACY_RECOVERS_FROZEN_GR_LIMIT'
+          assert d['exp069g_contract_binding'] is True
+          assert d['support_mask_applied'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          cl=d['scientific_classification']
+          if cl=='PASS_C5_Q3_UNMODIFIED_UPSTREAM_PHYSICAL_PROVIDER_V0_1':
+              assert d['status'].startswith('COMPLETE_')
+              assert d['c5_provider_certified'] is True
+              assert d['support_mask_preregistration_authorized'] is True
+              assert d['hard_checks'] and all(v['pass'] is True for v in d['hard_checks'].values())
+          elif cl=='FAIL_C5_Q3_UNMODIFIED_UPSTREAM_PHYSICAL_PROVIDER_V0_1':
+              assert d['status'].startswith('COMPLETE_')
+              assert d['c5_provider_certified'] is False
+              assert d['support_mask_preregistration_authorized'] is False
+              assert d['hard_checks'] and any(v['pass'] is False for v in d['hard_checks'].values())
+          else:
+              assert d['status'].startswith('INCOMPLETE_')
+              assert d['c5_provider_certified'] is False
+              assert d['support_mask_preregistration_authorized'] is False
+          print('EXP069H_CLASSIFICATION',cl)
+          if d.get('hard_checks'):
+              for k,v in d['hard_checks'].items(): print(k,v)
+          PY
+          test "$(git -C eftcamb rev-parse HEAD)" = '16d9c4e9f85751e30efd0a53b177941713078904'
+          test -z "$(git -C eftcamb status --porcelain --untracked-files=no)"
+
+      - name: Upload immutable Exp069H record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp069h-c5-q3-provider-${{ github.sha }}
+          path: |
+            data/derived/g7/exp069h_c5_q3_unmodified_upstream_provider_certification_v0_1_summary.json
+            data/derived/g7/exp069h_cases/*.json
+            data/derived/g7/exp069h_cases/*.log
+            exp069h_configs/base.ini
+          if-no-files-found: warn
