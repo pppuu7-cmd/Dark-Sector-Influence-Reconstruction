@@ -1,0 +1,131 @@
+name: DSIR IDM-photon source selector v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/idm-photon-source-selector-v0-1.yml'
+      - 'ci/idm_photon_source_selector_v0_1.py'
+      - 'experiments/056a_idm_photon_source_selector_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  source-only-c8-selector:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Clone and build pinned official CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/lesgourg/class_public.git class_public
+          cd class_public
+          git checkout e85808324f51fc694d12e3ed7439552a3c3f9540
+          test "$(git rev-parse HEAD)" = 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+          git rev-parse HEAD | tee ../exp056a_class_upstream_sha.txt
+          grep -Fq 'u_idm_g = 0' explanatory.ini
+          grep -Fq 'n_index_idm_g = 0' explanatory.ini
+          grep -n 'ptdw->dmu_idm_g = 3./8./_PI_/_G_' source/thermodynamics.c | head -n 2 | tee ../exp056a_dmu_source.txt
+          grep -n 'S_idm_g = 4./3. .*rho_g.*rho_idm' source/perturbations.c | head -n 2 | tee ../exp056a_S_source.txt
+          grep -n 'theta_idm.*theta_g' source/perturbations.c | grep 'S_idm_g' | head -n 2 | tee ../exp056a_euler_source.txt
+          test -s ../exp056a_dmu_source.txt
+          test -s ../exp056a_S_source.txt
+          test -s ../exp056a_euler_source.txt
+          make -j2 class
+
+      - name: Run one source-only trial coupling
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          mkdir -p outputs
+          cat > dsir_idm_photon_source_trial.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          omega_cdm = 0.0
+          omega_idm = 0.1200
+          m_idm = 1e9
+          Omega_k = 0.
+          N_ur = 3.046
+          u_idm_g = 1e-8
+          n_index_idm_g = 0
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          root = outputs/trial_
+          write background = yes
+          write thermodynamics = yes
+          background_verbose = 0
+          thermodynamics_verbose = 0
+          perturbations_verbose = 0
+          transfer_verbose = 0
+          primordial_verbose = 0
+          spectra_verbose = 0
+          nonlinear_verbose = 0
+          lensing_verbose = 0
+          output_verbose = 0
+          EOF
+          ./class dsir_idm_photon_source_trial.ini 2>&1 | tee ../exp056a_trial.log
+          test -s outputs/trial_background.dat
+          test -s outputs/trial_thermodynamics.dat
+
+      - name: Enforce no-response contamination rule
+        run: |
+          set -euxo pipefail
+          test "$(find class_public/outputs -type f -name '*pk.dat' | wc -l)" -eq 0
+          test "$(find class_public/outputs -type f \( -name '*cl.dat' -o -name '*tk.dat' -o -name '*sources.dat' \) | wc -l)" -eq 0
+          find class_public/outputs -maxdepth 1 -type f -printf '%f\n' | sort | tee exp056a_output_manifest.txt
+          test "$(wc -l < exp056a_output_manifest.txt)" -eq 2
+          grep -Fxq 'trial_background.dat' exp056a_output_manifest.txt
+          grep -Fxq 'trial_thermodynamics.dat' exp056a_output_manifest.txt
+
+      - name: Select C8 couplings from source equations only
+        run: |
+          set -euxo pipefail
+          python3 ci/idm_photon_source_selector_v0_1.py \
+            --background class_public/outputs/trial_background.dat \
+            --thermodynamics class_public/outputs/trial_thermodynamics.dat \
+            --json idm_photon_source_selector_v0_1.json
+          cat idm_photon_source_selector_v0_1.json
+          grep -Fq '"response_generated": false' idm_photon_source_selector_v0_1.json
+          grep -Fq 'PASS_IDM_PHOTON_SOURCE_SELECTOR_V0_1' idm_photon_source_selector_v0_1.json
+
+      - name: Record source-only provenance
+        if: always()
+        run: |
+          {
+            echo 'Experiment 056A C8 IDM-photon source-only selector v0.1.'
+            echo 'No C8 matter-power or perturbation response is allowed in this run.'
+            echo 'Mechanism source: Gamma_idm<-gamma = (4/3 rho_g/rho_idm) dmu_idm_g.'
+            echo 'Source transition: Gamma=Hconf; k_source=Hconf/h.'
+            echo 'Trial coupling u_idm_g=1e-8; n_index_idm_g=0.'
+            echo "DSIR head: $GITHUB_SHA"
+            echo -n 'CLASS upstream: '; cat exp056a_class_upstream_sha.txt 2>/dev/null || true
+          } > exp056a_environment.txt
+
+      - name: Upload source-only record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: idm-photon-source-selector-v0-1-${{ github.sha }}
+          path: |
+            idm_photon_source_selector_v0_1.json
+            exp056a_environment.txt
+            exp056a_output_manifest.txt
+            exp056a_class_upstream_sha.txt
+            exp056a_dmu_source.txt
+            exp056a_S_source.txt
+            exp056a_euler_source.txt
+            exp056a_trial.log
+            class_public/dsir_idm_photon_source_trial.ini
+          if-no-files-found: warn
