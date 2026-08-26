@@ -39,10 +39,10 @@ def exact_readback(req:dict[str,Any],rb:dict[str,Any]):
         if isinstance(v,bool): same=present and bool(got) is v
         elif isinstance(v,int) and not isinstance(v,bool):
             try: same=present and int(got)==v
-            except: same=False
+            except Exception: same=False
         elif isinstance(v,float):
             try: same=present and np.isclose(float(got),v,rtol=2e-13,atol=1e-15)
-            except: same=False
+            except Exception: same=False
         else: same=present and got==v
         rec[k]={"requested":j(v),"readback":j(got),"present":present,"pass":bool(same)}; ok &= bool(same)
     return bool(ok),rec
@@ -53,8 +53,11 @@ def powers(res):
     for n,v1,v2 in (("mm","delta_nonu","delta_nonu"),("Wm","Weyl","delta_nonu"),("WW","Weyl","Weyl")):
         kh,zs,pk=res.get_linear_matter_power_spectrum(v1,v2,hubble_units=False,nonlinear=False)
         ip=res.get_matter_power_interpolator(nonlinear=False,var1=v1,var2=v2,hubble_units=False,k_hunit=False,log_interp=True)
+        raw=np.asarray(pk,float); target=np.asarray(ip.P(Z,K,grid=True),float)
+        if not np.all(np.isfinite(raw)) or not np.all(np.isfinite(target)):
+            raise ValueError(f"non-finite power output in {n}")
         out[n]={"raw_k_Mpc^-1":np.asarray(kh,float).tolist(),"raw_z":np.asarray(zs,float).tolist(),
-                "raw_power":np.asarray(pk,float).tolist(),"target_power":np.asarray(ip.P(Z,K,grid=True),float).tolist()}
+                "raw_power":raw.tolist(),"target_power":target.tolist()}
     return out
 
 
@@ -100,20 +103,47 @@ def run(script,root,cfg,kind,q,out,log):
     return {"returncode":p.returncode,"output_exists":out.exists(),"success":bool(p.returncode==0 and out.exists()),"log":str(log)}
 
 
+def target_relative(num,den,label):
+    n=np.asarray(num,float); d=np.asarray(den,float)
+    if n.shape!=d.shape or not np.all(np.isfinite(n)) or not np.all(np.isfinite(d)):
+        raise ValueError(f"bad target arrays {label}: {n.shape} {d.shape}")
+    if np.any(d==0.0):
+        raise ValueError(f"zero GR target denominator in frozen target grid {label}")
+    r=(n-d)/d
+    if not np.all(np.isfinite(r)): raise ValueError(f"non-finite target residual {label}")
+    return r
+
+
+def raw_relative(num,den,label):
+    n=np.asarray(num,float); d=np.asarray(den,float)
+    if n.shape!=d.shape or not np.all(np.isfinite(n)) or not np.all(np.isfinite(d)):
+        raise ValueError(f"bad raw arrays {label}: {n.shape} {d.shape}")
+    valid=d!=0.0
+    excluded=int(np.size(d)-np.count_nonzero(valid))
+    if not np.any(valid): return None,None,excluded
+    r=np.full(d.shape,np.nan,float); r[valid]=(n[valid]-d[valid])/d[valid]
+    finite=np.isfinite(r[valid])
+    if not np.all(finite): raise ValueError(f"non-finite valid raw residual {label}")
+    return r,float(np.max(np.abs(r[valid]))),excluded
+
+
 def compare(gr,de):
     rec={"blocks":{},"raw_grids_exact":True}; Ms=[]; Rs=[]
     for b in ('mm','Wm','WW'):
         g=np.asarray(gr['blocks'][b]['target_power'],float); d=np.asarray(de['blocks'][b]['target_power'],float)
-        r=(d-g)/g; m=float(np.max(np.abs(r))); Ms.append(m)
+        r=target_relative(d,g,b); m=float(np.max(np.abs(r))); Ms.append(m)
         kg=np.asarray(gr['blocks'][b]['raw_k_Mpc^-1'],float); kd=np.asarray(de['blocks'][b]['raw_k_Mpc^-1'],float)
         zg=np.asarray(gr['blocks'][b]['raw_z'],float); zd=np.asarray(de['blocks'][b]['raw_z'],float)
         same=bool(np.array_equal(kg,kd) and np.array_equal(zg,zd)); rec['raw_grids_exact'] &= same
-        raw=None; rm=None
+        raw=None; rm=None; excluded=None
         if same:
             pg=np.asarray(gr['blocks'][b]['raw_power'],float); pd=np.asarray(de['blocks'][b]['raw_power'],float)
-            raw=(pd-pg)/pg; rm=float(np.max(np.abs(raw))); Rs.append(rm)
+            raw,rm,excluded=raw_relative(pd,pg,b)
+            if rm is not None: Rs.append(rm)
         rec['blocks'][b]={"signed_target_residual":r.tolist(),"M_target":m,
-                          "raw_grid_exact":same,"signed_raw_residual":None if raw is None else raw.tolist(),"M_raw":rm}
+                          "raw_grid_exact":same,
+                          "signed_raw_residual":None if raw is None else [[None if not np.isfinite(x) else float(x) for x in row] for row in raw],
+                          "M_raw":rm,"raw_zero_denominator_cells_excluded":excluded}
     rec['M_q']=float(max(Ms)); rec['R_q']=float(max(Rs)) if Rs and rec['raw_grids_exact'] else None
     return rec
 
@@ -146,20 +176,25 @@ def aggregate(a):
     sha0=subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip(); script=Path(__file__).resolve()
     cases=[]; all_ok=True
     for i,q in enumerate(Q):
-        row={"index":i,"q":q,"executions":{}}
-        pair={}
+        row={"index":i,"q":q,"executions":{}}; pair={}
         for kind in ('gr','designer'):
             jp=work/f'q{i}_{kind}.json'; lp=work/f'q{i}_{kind}.log'; ex=run(script,root,cfg,kind,q,jp,lp)
             row['executions'][kind]=ex; all_ok &= ex['success']
             if jp.exists(): pair[kind]=json.loads(jp.read_text())
         row['success']=bool('gr' in pair and 'designer' in pair)
         if row['success']:
-            row['GR']=pair['gr']; row['designer0']=pair['designer']; row['comparison']=compare(pair['gr'],pair['designer']); row['early_diagnostics']=derived_diff(pair['gr'],pair['designer'])
+            try:
+                row['GR']=pair['gr']; row['designer0']=pair['designer']; row['comparison']=compare(pair['gr'],pair['designer']); row['early_diagnostics']=derived_diff(pair['gr'],pair['designer'])
+            except Exception as e:
+                row['success']=False; row['analysis_error']=str(e); all_ok=False
         cases.append(row)
     sha1=subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip()
     m=[r['comparison']['M_q'] if r['success'] else None for r in cases]; rr=[r['comparison']['R_q'] if r['success'] else None for r in cases]
     passing=[Q[i] for i in range(1,len(Q)) if m[i] is not None and m[i] <= HARD]
-    primary='GENERAL_ACCURACY_RECOVERS_FROZEN_GR_LIMIT' if passing else 'GENERAL_ACCURACY_DOES_NOT_RECOVER_FROZEN_GR_LIMIT'
+    if all_ok:
+        primary='GENERAL_ACCURACY_RECOVERS_FROZEN_GR_LIMIT' if passing else 'GENERAL_ACCURACY_DOES_NOT_RECOVER_FROZEN_GR_LIMIT'
+    else:
+        primary='INCOMPLETE_CASE_OR_ANALYSIS_FAILURE'
     diag={"M_q":m,"R_q":rr,"first_passing_q":passing[0] if passing else None,
           "M_over_M1":[None if x is None or m[0] is None else x/m[0] for x in m],
           "R_over_R1":[None if x is None or rr[0] is None else x/rr[0] for x in rr],
@@ -170,13 +205,15 @@ def aggregate(a):
         for i in range(1,len(cases)):
             if not cases[i]['success']: continue
             diag['target_residual_correlation_to_q1'][str(Q[i])]={b:corr(cases[0]['comparison']['blocks'][b]['signed_target_residual'],cases[i]['comparison']['blocks'][b]['signed_target_residual']) for b in ('mm','Wm','WW')}
-    controls={"all_case_processes_success":all_ok,"pinned_solver_before_and_after":sha0==PIN and sha1==PIN,"frozen_q_order":Q,
+    controls={"all_case_processes_success":bool(all(r['executions']['gr']['success'] and r['executions']['designer']['success'] for r in cases)),
+              "all_case_analysis_success":bool(all(r['success'] for r in cases)),
+              "pinned_solver_before_and_after":sha0==PIN and sha1==PIN,"frozen_q_order":Q,
               "all_raw_grids_exact":bool(all(r['success'] and r['comparison']['raw_grids_exact'] for r in cases)),
               "all_nonlinear_none":bool(all(r['success'] and r['GR']['nonlinear_none'] and r['designer0']['nonlinear_none'] for r in cases)),
               "all_accuracy_readback":bool(all(r['success'] and r['GR']['accuracy']=={'AccuracyBoost':r['q'],'lAccuracyBoost':r['q'],'lSampleBoost':1.0,'DoLateRadTruncation':True} and r['designer0']['accuracy']=={'AccuracyBoost':r['q'],'lAccuracyBoost':r['q'],'lSampleBoost':1.0,'DoLateRadTruncation':True} for r in cases)),
               "all_designer_readback":bool(all(r['success'] and r['designer0']['active']['readback_all_requested_match'] for r in cases))}
     result={"experiment":"Exp069F","date":"2026-08-27","status":"COMPLETE_C5_EXPLICIT_EFT_GENERAL_ACCURACY_CONVERGENCE_V0_1" if all_ok else "INCOMPLETE_C5_EXPLICIT_EFT_GENERAL_ACCURACY_CONVERGENCE_V0_1",
-            "primary_classification":primary,"hard_GR_limit":HARD,"first_passing_q":passing[0] if passing else None,
+            "primary_classification":primary,"hard_GR_limit":HARD,"first_passing_q":passing[0] if all_ok and passing else None,
             "solver_sha_before":sha0,"solver_sha_after":sha1,"expected_solver_sha":PIN,
             "frozen":{"q":Q,"z":Z.tolist(),"k_Mpc^-1":K.tolist(),"z_bg":ZBG.tolist(),"kmax_Mpc^-1":KMAX,"k_per_logint":KPL,
                       "lSampleBoost":1.0,"DoLateRadTruncation":True,"designer":EFT},
