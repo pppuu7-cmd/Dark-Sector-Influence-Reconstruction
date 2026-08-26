@@ -1,0 +1,47 @@
+{
+  "experiment": "Exp067A",
+  "date": "2026-08-26",
+  "status": "PASS_ACT_UNWISE_OBSERVATIONAL_COVARIANCE_WHITENING_V0_1",
+  "workflow_run": 32994782105,
+  "workflow_job": 98261038810,
+  "execution_commit": "2b02556bcac07c475d160736241c8e8b8ed0d1fc",
+  "pinned_external_repo": "ACTCollaboration/unWISExLens_lklh",
+  "pinned_commit": "6302c30d9e70f8e4ff2d4a84a9977b4471705179",
+  "archive_sha256": "1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570",
+  "covariance_convention": "raw released selected covariance inherited from Exp065B; no Hartlap rescaling or any other covariance modification in Exp067A",
+  "selected_dimension": 26,
+  "checks": {
+    "A1_provenance_and_ordering": true,
+    "A2_covariance_symmetry_finite": {
+      "pass": true,
+      "symmetry_ratio": 0.0,
+      "threshold": 1e-12
+    },
+    "A3_direct_cholesky": {
+      "pass": true,
+      "reconstruction_relative_inf": 7.799310879558051e-17,
+      "threshold": 5e-12,
+      "lambda_min_diagnostic": 1.2742353176342933e-17,
+      "lambda_max_diagnostic": 3.980349119528573e-15
+    },
+    "A4_whitening_identity": {
+      "pass": true,
+      "identity_inf_residual": 1.0425503003180775e-15,
+      "threshold": 5e-10
+    },
+    "A5_deterministic_roundtrip": {
+      "pass": true,
+      "rng_seed": 20260893,
+      "relative_inf_error": 3.1871930361769926e-16,
+      "threshold": 5e-12,
+      "input_vector_sha256_float64_bytes": "b5ffbd25d42ae3b84ea6b28db999dbf247138cb19ce7dafb1b06957097fb4f53"
+    }
+  },
+  "operator_hashes": {
+    "selected_covariance_float64_bytes_sha256": "df7e285c40009e0ba20cc5d920342e1066ceff69d277fdf3233ac63463ffddb9",
+    "cholesky_L_float64_bytes_sha256": "6a30b1792d8b3f29ae66102dadb285f394f6aa4c30cba29dc3c3234a1897f109",
+    "whitener_W_float64_bytes_sha256": "b32e59a98b6910427ac5026bc3f882ea8b0934b65de9abe44c599e1c7ec66822"
+  },
+  "interpretation": "The exact 26-coordinate ACT DR6 x unWISE observational covariance and direct Cholesky whitening operator are reproducible without symmetrization, Hartlap rescaling, jitter, shrinkage, clipping, diagonal loading, pseudoinverse or nearest-PSD projection. This makes a covariance-whitened cross-channel law eligible for later preregistration but does not itself close G7.",
+  "gate_state": {"G7":"OPEN","G8":"OPEN","G9":"OPEN"}
+}
