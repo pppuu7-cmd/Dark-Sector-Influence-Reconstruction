@@ -1,0 +1,73 @@
+{
+  "experiment": "Exp069A",
+  "date": "2026-08-26",
+  "status": "FAIL_C5_DESIGNER_FR_PHYSICAL_POWER_BRIDGE_V0_1",
+  "classification": "scientific FAIL of the frozen Exp069A Python-INI bridge implementation; not an infrastructure exception and not a refutation of designer-f(R) physics",
+  "preregistration_commit": "370eaf8e34344ff93a0bb52e1d516ee151177bc2",
+  "source_branch_head_at_evaluable_run": "21c44d455cf426303e7672f6018042d6022f7e0f",
+  "workflow_run": 33009561221,
+  "workflow_job": 98311997044,
+  "pr_checkout_merge_sha": "c1aabda591ed339ab4165d5ae22cce2f25c3d7f3",
+  "artifact_id": 9622218451,
+  "artifact_zip_sha256": "8f10f440634e68e7cb732c82e07bbf2e533df5c73f69c87c8687c2d80a2295f9",
+  "solver": "EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904",
+  "frozen_grid": {
+    "z": [0.0, 0.295, 0.51, 0.934, 1.491, 2.33, 3.0],
+    "k_Mpc^-1": [0.003, 0.01, 0.03, 0.1, 0.2],
+    "kmax_internal_Mpc^-1": 0.3,
+    "B0": [0.0, 1e-6, 1e-5, 1e-4, 1e-3]
+  },
+  "checks": {
+    "A1_provenance_and_source_contract": {
+      "pass": true
+    },
+    "A2_stable_solver_execution": {
+      "pass": false,
+      "evidence": "all designer child processes returned 0 and produced power arrays, but none emitted the required EFTCAMB stability marker"
+    },
+    "A3_physical_unit_direct_powers": {
+      "pass": false,
+      "note": "all individual power-array finiteness/sign checks passed, but the frozen aggregate A3 inherited A2=false"
+    },
+    "A4_unit_roundtrip": {
+      "pass": true,
+      "max_relative_error": 5.463145055090619e-15,
+      "threshold": 2e-8
+    },
+    "A5_exact_designer_GR_limit": {
+      "pass": true,
+      "max_relative_error_mm": 0.0,
+      "max_relative_error_Wm": 0.0,
+      "max_relative_error_WW": 0.0,
+      "threshold": 5e-6
+    },
+    "A6_signed_coherence": {
+      "pass": true,
+      "max_abs_rho2_minus_1": 1.5189047264385636e-7,
+      "threshold": 2e-5,
+      "P_Wm_sign": -1
+    },
+    "A7_missing_k2_negative_control": {
+      "pass": true,
+      "max_relative_discrepancy_WW": 12345679011.345678,
+      "max_relative_discrepancy_Wm": 111110.11111111112,
+      "required_minimum": 100.0
+    },
+    "A8_production_nondegeneracy": {
+      "pass": false,
+      "max_abs_log_response_all_production_points": {
+        "mm": 0.0,
+        "Wm": 0.0,
+        "WW": 0.0
+      }
+    }
+  },
+  "diagnosis": {
+    "upstream_native_executable_precedent": "the same designer INI contract previously produced nonzero C5 responses through the pinned native ./camb executable",
+    "upstream_python_contract": "pinned camb/eftcamb.py exposes CAMBparams.EFTCAMB.initialize_parameters(camb_parameters, EFTCAMB_params, ...), and upstream material/test_eftcamb_tree_MR.py uses that explicit initializer",
+    "exp069a_path": "camb.read_ini(..., no_validate=True) followed by camb.get_results(pars)",
+    "inference": "the additional EFTCAMB dictionary was never explicitly initialized in the frozen Exp069A Python state; the observed exact B0 degeneracy is consistent with a no-op EFT layer"
+  },
+  "anti_retuning": "Exp069A remains FAIL. Any corrected Python EFT initialization must be a separately preregistered experiment with unchanged physics/grid/tolerances.",
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
