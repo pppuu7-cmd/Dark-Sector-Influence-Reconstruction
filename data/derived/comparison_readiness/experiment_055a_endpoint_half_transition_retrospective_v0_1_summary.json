@@ -1,0 +1,49 @@
+{
+  "schema": "dsir.endpoint_half_transition_retrospective.summary.v0.1",
+  "date": "2026-08-26",
+  "status": "RETROSPECTIVE_COMMON_HALF_TRANSITION_CANDIDATE_POSITIVE_V0_1",
+  "run_id": 32921449255,
+  "run_merge_checkout_sha": "4194c3c6efa18d8fb6a0ef581e3993ba5670cb35",
+  "source_branch_head": "3f31235b9fefb3ddf173f4f5da31916dbb08f7c8",
+  "artifact_id": 9589960526,
+  "artifact_sha256": "bb737e4cb290923b08faab6ac77d16ef95e1357115791d779e92a8ae454743d2",
+  "operator": {
+    "u": "(R(k)-R(k_min))/(R(k_max)-R(k_min)) at each redshift",
+    "crossing": "unique u=0.5 crossing interpolated linearly in ln(k)",
+    "k50_geo": "exp(mean_z ln(k50(z)))",
+    "candidate_relation": "C50 = Delta ln(k50_geo)/Delta ln(k_source) > 0"
+  },
+  "row_crossings_verified": 105,
+  "expected_row_crossings": 105,
+  "all_adjacent_C50_positive": true,
+  "all_leave_one_z_adjacent_C50_positive": true,
+  "families": {
+    "C3_GDM_dynamic_shear": {
+      "k50_geo_h_mpc": [0.051283531812514556,0.051191345476354295,0.05099081755551065,0.050535437337524504,0.05003177152568722],
+      "C50_adjacent": [0.012508247258432217,0.01936006542428441,0.035122548771924826,0.05953885288981531],
+      "leave_one_z_C50_range": [0.011511795620710117,0.06429118715125495],
+      "nonmonotone_rows": 0
+    },
+    "C5_designer_fR": {
+      "k50_geo_h_mpc": [0.05082760298713266,0.05061786765887073,0.050239634532909,0.04959446333782759,0.049047509237739484],
+      "C50_adjacent": [0.02874709656208363,0.03699731253944332,0.05060643700092015,0.06592181071914563],
+      "leave_one_z_C50_range": [0.022079135533863155,0.07527866945413268],
+      "nonmonotone_rows": 0
+    },
+    "C7_IDM_DR": {
+      "k50_geo_h_mpc": [0.0687286640562388,0.06496381213232315,0.06115402677492533,0.058188726886555395,0.05695898297729927],
+      "C50_adjacent": [0.39165435973182766,0.2981004603620628,0.19460288818580604,0.12696576794644446],
+      "leave_one_z_C50_range": [0.1269582721302103,0.39168170925203327],
+      "nonmonotone_rows": 35
+    }
+  },
+  "candidate_qualified_for_future_preregistration": true,
+  "interpretation": [
+    "Endpoint-affine normalization removes response offset and multiplicative amplitude/sign before defining a transition location.",
+    "The directional relation C50>0 is shared retrospectively by C3, C5 and already-unblinded C7 and survives every single-redshift deletion.",
+    "C7 demonstrates that global monotonicity is not required; uniqueness of the half-transition crossing is the relevant validity condition.",
+    "No common slope-magnitude band is supported because C7 C50 values are substantially larger than C3/C5 values.",
+    "This result does not rescue Exp054C/F27 and cannot close G7 or G8 because the operator was proposed after C7 unblinding.",
+    "A genuinely fresh mechanism/family is required for prospective confirmation."
+  ]
+}
