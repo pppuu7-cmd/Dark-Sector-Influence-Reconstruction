@@ -1,0 +1,42 @@
+{
+  "schema": "dsir.common_source_response_slope_calibration.summary.v0.1",
+  "status": "CALIBRATION_COMMON_SLOPE_POSITIVE",
+  "clean_run_id": 32918043518,
+  "clean_head_sha": "0852c8b450497b424ca4bcf9a99c842e39a1d8ad",
+  "artifact_id": 9588852319,
+  "artifact_sha256": "a74c2a6fea0c1d9310e64f5ffaf1c08f2b1d03d7e943f579da2abb6359dc9e05",
+  "superseded_infrastructure_run": {
+    "run_id": 32917924724,
+    "artifact_id": 9588813857,
+    "reason": "raw Exp049C gate uses k_compton_frozen_z_min_h_mpc while the parser initially expected the later repository-summary alias k_compton_min_h_mpc; calibration slopes were never computed in this run"
+  },
+  "frozen_before_calibration_output": {
+    "definition": "C = Delta ln(k_R_geo) / Delta ln(k_source), where k_R_geo is the geometric scale centroid of full response power R^2",
+    "reject_rule": "reject common law before C7 if any eligible adjacent C3 or C5 C is non-finite or <=0",
+    "prospective_band_rule": "if all slopes are positive, C7 band = [0.5*min(C), 2*max(C)]",
+    "no_recalibration_after_C7": true
+  },
+  "C3_GDM_dynamic_shear": {
+    "k_source_h_mpc": [0.08484582985947185, 0.07347864406347489, 0.0599950616490326, 0.04647197492427811, 0.03927598733289058],
+    "k_R_geo_h_mpc": [0.09880092037038812, 0.09873558947054621, 0.09858944466768237, 0.09824026761082941, 0.09783048046477212],
+    "C_adjacent": [0.004598524157212275, 0.007306472811003575, 0.013891297595156631, 0.024846024802521436]
+  },
+  "C5_designer_fR": {
+    "k_source_h_mpc": [0.0573746866846495, 0.04968805547593071, 0.04057032218492984, 0.03142593817783471, 0.026560020377845033],
+    "k_R_geo_h_mpc": [0.09793151821889257, 0.0976335353318352, 0.09708936966495717, 0.09614946342276717, 0.09534802290134385],
+    "C_adjacent": [0.021186286878666284, 0.02756969848914564, 0.03808879179098489, 0.04975609611415861]
+  },
+  "all_positive": true,
+  "minimum_C": 0.004598524157212275,
+  "maximum_C": 0.04975609611415861,
+  "prospective_C7_band": [0.0022992620786061375, 0.09951219222831723],
+  "max_profile_normalization_residual": 2.220446049250313e-16,
+  "interpretation": "On the two pre-existing source-scale mechanisms C3 and C5, the full-response scale centroid co-moves with the mechanism-native source scale. This retrospective calibration only freezes a prospective band; it does not validate that band on a new family.",
+  "not_a_claim": [
+    "not G7 closure",
+    "not G8 discovery",
+    "not a universal source-response exponent",
+    "not an intrinsic rank or field count",
+    "C7 has not contributed any response output to calibration"
+  ]
+}
