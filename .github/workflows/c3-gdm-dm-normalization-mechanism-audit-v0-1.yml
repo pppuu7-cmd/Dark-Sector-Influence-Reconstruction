@@ -1,0 +1,91 @@
+name: C3 GDM D_m normalization mechanism audit v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/c3-gdm-dm-normalization-mechanism-audit-v0-1.yml'
+      - 'ci/c3_gdm_dm_normalization_mechanism_audit_v0_1.py'
+      - 'patches/apply_gdm_class_readonly_dm_accessor.py'
+      - 'experiments/070b_c3_dm_normalization_mechanism_audit_v0_1.md'
+
+jobs:
+  exp070b-mechanism-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pinned-wrapper build dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y git gcc g++ make python3 python3-dev python3-pip libgomp1
+          python3 -m pip install --user 'numpy<2' 'Cython<3' six
+
+      - name: Clone pinned GDM_CLASS and apply frozen read-only accessor
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/s-ilic/gdm_class_public.git gdm_patched
+          git -C gdm_patched checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          test "$(git -C gdm_patched rev-parse HEAD)" = '4c87916aab5ca124a68f1dd16f31846fc13d1829'
+          python3 patches/apply_gdm_class_readonly_dm_accessor.py gdm_patched
+          git -C gdm_patched status --porcelain=v1 | tee exp070b_patch_status_prebuild.txt
+          test "$(git -C gdm_patched status --porcelain=v1 | wc -l)" -eq 2
+          git -C gdm_patched status --porcelain=v1 | grep -F 'python/cclassy.pxd'
+          git -C gdm_patched status --porcelain=v1 | grep -F 'python/classy.pyx'
+
+      - name: Build patched pinned Python wrapper
+        run: |
+          set -euxo pipefail
+          make -C gdm_patched -j2 libclass.a
+          (cd gdm_patched/python && python3 setup.py build_ext --inplace)
+          test -n "$(find gdm_patched/python -maxdepth 1 -name 'gdm_classy*.so' -print -quit)"
+
+      - name: Run frozen Exp070B mechanism audit
+        run: |
+          set -euxo pipefail
+          python3 ci/c3_gdm_dm_normalization_mechanism_audit_v0_1.py \
+            --wrapper gdm_patched \
+            --output data/derived/g7/exp070b_c3_dm_normalization_mechanism_audit_v0_1_summary.json
+
+      - name: Validate mechanism-only classification boundary
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp070b_c3_dm_normalization_mechanism_audit_v0_1_summary.json'
+          d=json.load(open(p))
+          assert d['primary_label'] in {
+              'INTERPOLATION_DOMINATED',
+              'COMMON_MULTIPLICATIVE_NORMALIZATION_SIGNATURE',
+              'SOURCE_IDENTITY_MISMATCH',
+              'MIXED_OR_UNRESOLVED_MECHANISM',
+          }
+          assert d['solver']=='s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829'
+          assert d['frozen']['interpolation_attribution_factor']==10.0
+          assert d['frozen']['common_normalization_bound']==5e-3
+          assert d['frozen']['source_identity_bound']==5e-4
+          assert d['exp070a_state']=='PERMANENT_SCIENTIFIC_FAIL_UNCHANGED'
+          assert d['corrective_c3_bridge_authorized'] is False
+          assert d['support_validity_mask_authorized'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['execution_integrity']=='PASS'
+          print('EXP070B_PRIMARY_LABEL', d['primary_label'])
+          print('M1_NATIVE_MAX', d['M1_native_node_mismatch']['max_relative_error_all_cases'])
+          print('M2', d['M2_interpolation_attribution'])
+          print('M3', d['M3_common_multiplicative_normalization'])
+          print('M4', d['M4_source_identity'])
+          print('M5', d['M5_wrong_source_d_tot'])
+          print('M6', d['M6_repeatability_no_mutation']['pass'])
+          PY
+
+      - name: Upload immutable Exp070B audit record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp070b-c3-dm-normalization-${{ github.sha }}
+          path: |
+            data/derived/g7/exp070b_c3_dm_normalization_mechanism_audit_v0_1_summary.json
+            exp070b_patch_status_prebuild.txt
+          if-no-files-found: warn
