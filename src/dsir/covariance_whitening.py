@@ -4,6 +4,9 @@ The routines in this module deliberately avoid covariance symmetrisation,
 shrinkage, eigenvalue clipping, jitter, pseudoinverses and nearest-PSD
 projections. They are intended for preregistered covariance gates where any
 failure must remain visible.
+
+Exp067A's scientific contract was frozen on ``main`` before this implementation;
+this module contains no tunable scientific thresholds.
 """
 from __future__ import annotations
 
