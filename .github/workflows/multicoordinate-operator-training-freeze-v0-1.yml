@@ -1,0 +1,68 @@
+name: DSIR multicoordinate operator training freeze v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/multicoordinate-operator-training-freeze-v0-1.yml'
+      - 'ci/multicoordinate_operator_training_freeze_v0_1.py'
+      - 'experiments/060a_multicoordinate_operator_training_freeze_v0_1.md'
+      - 'docs/RESEARCH_CHECKPOINT_EXP060A_PREREG_2026-08-26.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  freeze-training-only-operator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install analysis dependency
+        run: python3 -m pip install --user numpy
+      - name: Download immutable already-unblinded training artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euxo pipefail
+          mkdir -p inputs/c3 inputs/c5 inputs/c7 inputs/c8
+          gh run download 32904158849 --repo "$GITHUB_REPOSITORY" --dir inputs/c3
+          gh run download 32907619613 --repo "$GITHUB_REPOSITORY" --dir inputs/c5
+          gh run download 32920776596 --repo "$GITHUB_REPOSITORY" --dir inputs/c7
+          gh run download 32926084015 --repo "$GITHUB_REPOSITORY" --dir inputs/c8
+          test "$(find inputs/c3 -name exp049b_gdm_cv2_intermediate_scan.json | wc -l)" -eq 1
+          test "$(find inputs/c5 -name 'exp049c_B0_*.json' | wc -l)" -ge 5
+          test "$(find inputs/c7 -name idm_dr_common_source_response_slope_v0_1.json | wc -l)" -eq 1
+          test "$(find inputs/c8 -name idm_photon_endpoint_half_transition_prospective_v0_1.json | wc -l)" -eq 1
+      - name: Freeze exact training-only ell-q construction
+        run: |
+          set -euxo pipefail
+          python3 ci/multicoordinate_operator_training_freeze_v0_1.py \
+            --gdm-root inputs/c3 --fr-root inputs/c5 --c7-root inputs/c7 --c8-root inputs/c8 \
+            --json multicoordinate_operator_training_freeze_v0_1.json
+          grep -Fq 'PASS_TRAINING_ONLY_OPERATOR_FREEZE_V0_1' multicoordinate_operator_training_freeze_v0_1.json
+      - name: Record immutable provenance and withheld boundary
+        run: |
+          {
+            echo 'Experiment 060A training-only freeze of Exp058A multicoordinate operator.'
+            echo 'Training runs: C3=32904158849; C5=32907619613; C7=32920776596; C8=32926084015.'
+            echo 'C9 IDM-baryon source selector: Exp059A clean run 32942212728; merged before this operator freeze.'
+            echo 'No C9 response is downloaded, generated, or inspected here.'
+            echo 'Full and every leave-one-redshift PC2 are rebuilt only from immutable C3/C5/C7/C8 training responses.'
+            echo 'Path step tolerance=1e-10; segment orientation/on-segment tolerance=1e-10 after training-only standardization.'
+            echo "DSIR head: $GITHUB_SHA"
+          } > exp060a_environment.txt
+      - name: Enforce no C9 response contamination
+        run: |
+          set -euxo pipefail
+          test "$(find . -type f \( -name '*idm_baryon*pk*' -o -name '*c9*pk*' \) | wc -l)" -eq 0
+      - name: Upload freeze record
+        uses: actions/upload-artifact@v4
+        with:
+          name: multicoordinate-operator-training-freeze-v0-1-${{ github.sha }}
+          path: |
+            multicoordinate_operator_training_freeze_v0_1.json
+            exp060a_environment.txt
+          if-no-files-found: error
