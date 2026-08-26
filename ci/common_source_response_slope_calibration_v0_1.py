@@ -68,7 +68,10 @@ def gdm(root: Path):
 
 def fr(root: Path):
     gate=readj(unique(root,"fr_window_crossing_validation_v0_1.json"))
-    source={float(x["B0"]):float(x["k_compton_min_h_mpc"]) for x in gate["models"]}
+    # Raw Exp049C gate schema stores the source statistic under the explicit
+    # frozen-z minimum key. This is the same quantity later renamed to the
+    # shorter k_compton_min_h_mpc in the immutable repository summary.
+    source={float(x["B0"]):float(x["k_compton_frozen_z_min_h_mpc"]) for x in gate["models"]}
     payload={}
     for p in root.rglob("exp049c_B0_*.json"):
         j=readj(p); b=float(j["B0"])
