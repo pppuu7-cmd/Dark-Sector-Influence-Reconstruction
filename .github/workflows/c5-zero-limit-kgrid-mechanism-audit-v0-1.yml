@@ -1,0 +1,94 @@
+name: C5 zero-limit k-grid mechanism audit v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/c5-zero-limit-kgrid-mechanism-audit-v0-1.yml'
+      - 'ci/c5_zero_limit_kgrid_mechanism_audit_v0_1.py'
+      - 'experiments/069c_c5_zero_limit_kgrid_mechanism_audit_v0_1.md'
+
+jobs:
+  zero-limit-kgrid-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install H-EFTCAMB Python toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y git gfortran gcc make liblapack-dev libblas-dev python3 python3-dev python3-pip
+          python3 -m pip install --user numpy scipy sympy packaging
+
+      - name: Build pinned H-EFTCAMB Python backend
+        run: |
+          set -euxo pipefail
+          git clone --recursive https://github.com/EFTCAMB/EFTCAMB.git eftcamb
+          git -C eftcamb checkout 16d9c4e9f85751e30efd0a53b177941713078904
+          git -C eftcamb submodule update --init --recursive
+          test "$(git -C eftcamb rev-parse HEAD)" = '16d9c4e9f85751e30efd0a53b177941713078904'
+          make -C eftcamb/fortran python
+
+      - name: Write Exp069B-matched ordinary baseline
+        run: |
+          set -euxo pipefail
+          mkdir -p exp069c_configs
+          cp eftcamb/fortran/eftcamb_test/parameters/base_params.ini exp069c_configs/base.ini
+          sed -i 's/^get_scalar_cls[[:space:]]*=.*/get_scalar_cls = F/' exp069c_configs/base.ini
+          sed -i 's/^get_tensor_cls[[:space:]]*=.*/get_tensor_cls = F/' exp069c_configs/base.ini
+          sed -i 's/^do_lensing[[:space:]]*=.*/do_lensing = F/' exp069c_configs/base.ini
+          sed -i 's/^do_nonlinear[[:space:]]*=.*/do_nonlinear = 0/' exp069c_configs/base.ini
+          sed -i 's/^hubble[[:space:]]*=.*/hubble = 67/' exp069c_configs/base.ini
+          sed -i 's/^ombh2[[:space:]]*=.*/ombh2 = 0.0224/' exp069c_configs/base.ini
+          sed -i 's/^omch2[[:space:]]*=.*/omch2 = 0.1200/' exp069c_configs/base.ini
+          sed -i 's/^omnuh2[[:space:]]*=.*/omnuh2 = 0/' exp069c_configs/base.ini
+          sed -i 's/^massless_neutrinos[[:space:]]*=.*/massless_neutrinos = 3.046/' exp069c_configs/base.ini
+          sed -i 's/^nu_mass_eigenstates[[:space:]]*=.*/nu_mass_eigenstates = 0/' exp069c_configs/base.ini
+          sed -i 's/^massive_neutrinos[[:space:]]*=.*/massive_neutrinos = 0/' exp069c_configs/base.ini
+          sed -i 's/^helium_fraction[[:space:]]*=.*/helium_fraction = 0.2404/' exp069c_configs/base.ini
+          sed -i 's/^scalar_amp(1)[[:space:]]*=.*/scalar_amp(1) = 2.10e-9/' exp069c_configs/base.ini
+          sed -i 's/^scalar_spectral_index(1)[[:space:]]*=.*/scalar_spectral_index(1) = 0.965/' exp069c_configs/base.ini
+          sed -i 's/^reionization[[:space:]]*=.*/reionization = F/' exp069c_configs/base.ini
+          sed -i 's/^transfer_kmax[[:space:]]*=.*/transfer_kmax = 0.30/' exp069c_configs/base.ini
+          sed -i 's/^feedback_level[[:space:]]*=.*/feedback_level = 3/' exp069c_configs/base.ini
+          for key in EFTflag DesignerEFTmodel EFTwDE EFTB0 EFT_ghost_math_stability EFT_mass_math_stability EFT_ghost_stability EFT_gradient_stability EFT_mass_stability EFT_mass_stability_rate EFT_additional_priors EFTCAMB_turn_on_time EFTCAMB_stability_time EFTCAMB_stability_threshold; do
+            sed -i "/^[[:space:]]*${key}[[:space:]]*=/d" exp069c_configs/base.ini
+          done
+
+      - name: Run frozen descriptive Exp069C scan
+        run: |
+          set -euxo pipefail
+          python3 ci/c5_zero_limit_kgrid_mechanism_audit_v0_1.py \
+            --eft-root eftcamb \
+            --config exp069c_configs/base.ini \
+            --output data/derived/g7/exp069c_c5_zero_limit_kgrid_mechanism_audit_v0_1_summary.json
+
+      - name: Assert descriptive-only semantics
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp069c_c5_zero_limit_kgrid_mechanism_audit_v0_1_summary.json'
+          d=json.load(open(p))
+          assert d['status']=='DESCRIPTIVE_C5_ZERO_LIMIT_KGRID_AUDIT_V0_1'
+          assert d['exp069b_preserved_status']=='FAIL_C5_EXPLICIT_EFT_PYTHON_POWER_BRIDGE_V0_1'
+          assert d['frozen_k_per_logint']==[40,80,160,320]
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP069C',d['classifications'])
+          for n in ('40','80','160','320'):
+            print('kpl',n,{b:d['metrics'][n]['blocks'][b]['target_max_abs_residual'] for b in ('mm','Wm','WW')})
+          PY
+
+      - name: Upload immutable Exp069C mechanism record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp069c-c5-zero-limit-kgrid-${{ github.sha }}
+          path: |
+            data/derived/g7/exp069c_c5_zero_limit_kgrid_mechanism_audit_v0_1_summary.json
+            data/derived/g7/exp069c_cases/*.json
+            data/derived/g7/exp069c_cases/*.log
+            exp069c_configs/base.ini
+          if-no-files-found: warn
