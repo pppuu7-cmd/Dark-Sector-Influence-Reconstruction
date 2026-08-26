@@ -1,0 +1,90 @@
+name: C3 GDM native-grid physical power provider v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/c3-gdm-native-grid-physical-power-provider-v0-1.yml'
+      - 'ci/c3_gdm_native_grid_physical_power_provider_v0_1.py'
+      - 'patches/apply_gdm_class_readonly_dm_accessor.py'
+      - 'experiments/070c_c3_native_grid_physical_power_provider_v0_1.md'
+
+jobs:
+  exp070c-native-provider:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pinned-wrapper build dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y git gcc g++ make python3 python3-dev python3-pip libgomp1
+          python3 -m pip install --user 'numpy<2' 'Cython<3' six
+
+      - name: Clone pinned GDM_CLASS and apply validated read-only accessor
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/s-ilic/gdm_class_public.git gdm_patched
+          git -C gdm_patched checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          test "$(git -C gdm_patched rev-parse HEAD)" = '4c87916aab5ca124a68f1dd16f31846fc13d1829'
+          python3 patches/apply_gdm_class_readonly_dm_accessor.py gdm_patched
+          git -C gdm_patched status --porcelain=v1 | tee exp070c_patch_status_prebuild.txt
+          test "$(git -C gdm_patched status --porcelain=v1 | wc -l)" -eq 2
+          git -C gdm_patched status --porcelain=v1 | grep -F 'python/cclassy.pxd'
+          git -C gdm_patched status --porcelain=v1 | grep -F 'python/classy.pyx'
+
+      - name: Build patched pinned Python wrapper
+        run: |
+          set -euxo pipefail
+          make -C gdm_patched -j2 libclass.a
+          (cd gdm_patched/python && python3 setup.py build_ext --inplace)
+          test -n "$(find gdm_patched/python -maxdepth 1 -name 'gdm_classy*.so' -print -quit)"
+
+      - name: Run frozen Exp070C provider certification
+        run: |
+          set -euxo pipefail
+          python3 ci/c3_gdm_native_grid_physical_power_provider_v0_1.py \
+            --wrapper gdm_patched \
+            --output data/derived/g7/exp070c_c3_native_grid_physical_power_provider_v0_1_summary.json
+
+      - name: Preserve frozen scientific PASS or FAIL
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp070c_c3_native_grid_physical_power_provider_v0_1_summary.json'
+          d=json.load(open(p))
+          assert d['status'] in {
+              'PASS_C3_GDM_NATIVE_GRID_PHYSICAL_POWER_PROVIDER_V0_1',
+              'FAIL_C3_GDM_NATIVE_GRID_PHYSICAL_POWER_PROVIDER_V0_1',
+          }
+          assert d['solver']=='s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829'
+          assert d['exp070a_state']=='PERMANENT_SCIENTIFIC_FAIL_UNCHANGED'
+          assert d['exp070b_mechanism']=='INTERPOLATION_DOMINATED'
+          assert d['construction']['amplitude_interpolation_used'] is False
+          assert d['frozen']['C1_tolerance']==1e-10
+          assert d['frozen']['C4_tolerance']==2e-10
+          assert d['frozen']['C5_min_separation']==1e-3
+          assert d['frozen']['C6_tolerance']==1e-12
+          assert d['support_validity_mask_authorized'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP070C_RESULT',d['status'])
+          for key in (
+              'C1_native_matter_power_closure','C2_native_grid_alignment',
+              'C3_signed_weyl_finiteness','C4_same_mode_coherence',
+              'C5_missing_k2_negative_control','C6_repeatability_no_mutation',
+              'C7_provider_output_contract'):
+              print(key,d[key]['pass'])
+          PY
+
+      - name: Upload immutable Exp070C provider record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp070c-c3-native-provider-${{ github.sha }}
+          path: |
+            data/derived/g7/exp070c_c3_native_grid_physical_power_provider_v0_1_summary.json
+            exp070c_patch_status_prebuild.txt
+          if-no-files-found: warn
