@@ -1,0 +1,116 @@
+name: C5 explicit-EFT Python physical power bridge v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/c5-explicit-eft-python-power-bridge-v0-1.yml'
+      - 'ci/c5_explicit_eft_python_power_bridge_v0_1.py'
+      - 'experiments/069b_c5_explicit_eft_python_power_bridge_v0_1.md'
+
+jobs:
+  c5-explicit-eft-python-power:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install H-EFTCAMB toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y git gfortran gcc make liblapack-dev libblas-dev python3 python3-dev python3-pip
+          python3 -m pip install --user numpy scipy sympy packaging
+
+      - name: Clone and build pinned H-EFTCAMB Python backend
+        run: |
+          set -euxo pipefail
+          git clone --recursive https://github.com/EFTCAMB/EFTCAMB.git eftcamb
+          git -C eftcamb checkout 16d9c4e9f85751e30efd0a53b177941713078904
+          git -C eftcamb submodule update --init --recursive
+          test "$(git -C eftcamb rev-parse HEAD)" = '16d9c4e9f85751e30efd0a53b177941713078904'
+          make -C eftcamb/fortran python
+          test -n "$(find eftcamb/camb -maxdepth 1 -type f \( -name 'camblib.so' -o -name '_camb*.so' \) -print -quit)"
+
+      - name: Write frozen ordinary CAMB baseline only
+        run: |
+          set -euxo pipefail
+          mkdir -p exp069b_configs
+          cp eftcamb/fortran/eftcamb_test/parameters/base_params.ini exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^get_scalar_cls[[:space:]]*=.*/get_scalar_cls = F/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^get_tensor_cls[[:space:]]*=.*/get_tensor_cls = F/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^do_lensing[[:space:]]*=.*/do_lensing = F/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^do_nonlinear[[:space:]]*=.*/do_nonlinear = 0/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^hubble[[:space:]]*=.*/hubble = 67/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^ombh2[[:space:]]*=.*/ombh2 = 0.0224/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^omch2[[:space:]]*=.*/omch2 = 0.1200/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^omnuh2[[:space:]]*=.*/omnuh2 = 0/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^massless_neutrinos[[:space:]]*=.*/massless_neutrinos = 3.046/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^nu_mass_eigenstates[[:space:]]*=.*/nu_mass_eigenstates = 0/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^massive_neutrinos[[:space:]]*=.*/massive_neutrinos = 0/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^helium_fraction[[:space:]]*=.*/helium_fraction = 0.2404/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^scalar_amp(1)[[:space:]]*=.*/scalar_amp(1) = 2.10e-9/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^scalar_spectral_index(1)[[:space:]]*=.*/scalar_spectral_index(1) = 0.965/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^reionization[[:space:]]*=.*/reionization = F/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^transfer_kmax[[:space:]]*=.*/transfer_kmax = 0.30/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^transfer_k_per_logint[[:space:]]*=.*/transfer_k_per_logint = 80/' exp069b_configs/dsir_c5_base.ini
+          sed -i 's/^feedback_level[[:space:]]*=.*/feedback_level = 3/' exp069b_configs/dsir_c5_base.ini
+
+          # The corrective contract requires the base file to carry no EFT model
+          # selection/stability state. All such keys enter only through the
+          # explicit Python EFTCAMB.initialize_parameters dictionary.
+          for key in \
+            EFTflag DesignerEFTmodel EFTwDE EFTB0 \
+            EFT_ghost_math_stability EFT_mass_math_stability \
+            EFT_ghost_stability EFT_gradient_stability EFT_mass_stability \
+            EFT_mass_stability_rate EFT_additional_priors \
+            EFTCAMB_turn_on_time EFTCAMB_stability_time EFTCAMB_stability_threshold; do
+            sed -i "/^[[:space:]]*${key}[[:space:]]*=/d" exp069b_configs/dsir_c5_base.ini
+          done
+          ! grep -Eq '^[[:space:]]*(EFTflag|DesignerEFTmodel|EFTwDE|EFTB0|EFT_ghost_math_stability|EFT_mass_math_stability|EFT_ghost_stability|EFT_gradient_stability|EFT_mass_stability|EFT_mass_stability_rate|EFT_additional_priors|EFTCAMB_turn_on_time|EFTCAMB_stability_time|EFTCAMB_stability_threshold)[[:space:]]*=' exp069b_configs/dsir_c5_base.ini
+
+      - name: Run frozen Exp069B explicit-EFT physical-power bridge
+        run: |
+          set -euxo pipefail
+          python3 ci/c5_explicit_eft_python_power_bridge_v0_1.py \
+            --eft-root eftcamb \
+            --config exp069b_configs/dsir_c5_base.ini \
+            --output data/derived/g7/exp069b_c5_explicit_eft_python_power_bridge_v0_1_summary.json
+
+      - name: Preserve scientific PASS or FAIL
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp069b_c5_explicit_eft_python_power_bridge_v0_1_summary.json'
+          d=json.load(open(p))
+          assert d['status'] in {
+              'PASS_C5_EXPLICIT_EFT_PYTHON_POWER_BRIDGE_V0_1',
+              'FAIL_C5_EXPLICIT_EFT_PYTHON_POWER_BRIDGE_V0_1',
+          }
+          assert d['exp069a_preserved_status']=='FAIL_C5_DESIGNER_FR_PHYSICAL_POWER_BRIDGE_V0_1'
+          assert d['provenance']['expected_solver_commit']=='16d9c4e9f85751e30efd0a53b177941713078904'
+          assert d['frozen_grid']['z']==[0.0,0.295,0.51,0.934,1.491,2.33,3.0]
+          assert d['frozen_grid']['k_Mpc^-1']==[0.003,0.01,0.03,0.1,0.2]
+          assert d['frozen_grid']['kmax_internal_Mpc^-1']==0.3
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP069B_RESULT', d['status'])
+          for key in (
+              'B2_explicit_EFT_active_state', 'B3_physical_unit_direct_powers',
+              'B4_unit_roundtrip', 'B5_exact_designer_GR_limit',
+              'B6_signed_coherence', 'B8_production_nondegeneracy'):
+              print(key, d[key]['pass'])
+          print('B7_missing_k2_negative_control', d['B7_missing_k2_negative_control']['pass'])
+          PY
+
+      - name: Upload immutable Exp069B record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp069b-c5-explicit-eft-power-${{ github.sha }}
+          path: |
+            data/derived/g7/exp069b_c5_explicit_eft_python_power_bridge_v0_1_summary.json
+            data/derived/g7/exp069b_cases/*.json
+            data/derived/g7/exp069b_cases/*.log
+            exp069b_configs/dsir_c5_base.ini
+          if-no-files-found: warn

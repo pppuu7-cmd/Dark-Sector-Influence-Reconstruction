@@ -1,0 +1,63 @@
+{
+  "experiment": "Exp069B",
+  "date": "2026-08-26",
+  "status": "FAIL_C5_EXPLICIT_EFT_PYTHON_POWER_BRIDGE_V0_1",
+  "classification": "scientific FAIL of the frozen Exp069B exact designer-GR-limit criterion; explicit EFT activation and production nondegeneracy are independently demonstrated",
+  "preregistration_commit": "9c0c3d990367bfe8663e25a187e2a71d33134a83",
+  "source_branch_head_at_evaluable_run": "8d74fe1b01b2c66a4c0d8c41760160bebd7bb682",
+  "workflow_run": 33012245685,
+  "workflow_job": 98321238662,
+  "pr_checkout_merge_sha": "dd65576dceb83f429af0dc064dcf9659d88e6756",
+  "artifact_id": 9623153120,
+  "artifact_zip_sha256": "8d26cf91a7ccb6923a5a7bbb15b78fb3bd3a818f6a9bb6bfb197be460d818688",
+  "solver": "EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904",
+  "checks": {
+    "B1_provenance_source_contract": true,
+    "B2_explicit_EFT_active_state": true,
+    "B3_physical_unit_direct_powers": true,
+    "B4_unit_roundtrip": {
+      "pass": true,
+      "GR_max_relative_error": 5.463145055090619e-15,
+      "designer_B0_zero_max_relative_error": 5.525191875747775e-15,
+      "threshold": 2e-8
+    },
+    "B5_exact_designer_GR_limit": {
+      "pass": false,
+      "threshold": 5e-6,
+      "mm_max_relative_error": 5.306426059592383e-6,
+      "Wm_max_relative_error": 5.289846757230358e-6,
+      "WW_max_relative_error": 5.3517542934318244e-6
+    },
+    "B6_signed_coherence": {
+      "pass": true,
+      "maximum_abs_rho2_minus_1_over_all_cases": 1.5421508092750003e-7,
+      "threshold": 2e-5,
+      "P_Wm_sign": -1
+    },
+    "B7_missing_k2_negative_control": {
+      "pass": true,
+      "max_relative_discrepancy_WW": 12345679011.345678,
+      "max_relative_discrepancy_Wm": 111110.11111111112,
+      "required_minimum": 100.0
+    },
+    "B8_production_nondegeneracy": {
+      "pass": true,
+      "max_abs_log_response": {
+        "B0_1e-6": {"mm": 0.013163693829028428, "Wm": 0.013163690933776569, "WW": 0.01316359687136532},
+        "B0_1e-5": {"mm": 0.06595271999177946, "Wm": 0.06595417031773636, "WW": 0.06595561702214443},
+        "B0_1e-4": {"mm": 0.19492370581352075, "Wm": 0.19494280235706005, "WW": 0.19496179988086482},
+        "B0_1e-3": {"mm": 0.36952869970714636, "Wm": 0.36972556532266054, "WW": 0.3699222528423434}
+      }
+    }
+  },
+  "active_state_evidence": {
+    "EFTflag": 3,
+    "DesignerEFTmodel": 1,
+    "EFTCAMB_model_is_designer": true,
+    "model_name": "Designer f(R)",
+    "EFTCAMB_skip_stability": false,
+    "EFTB0_readback_matches_all_cases": true
+  },
+  "anti_retuning": "The frozen 5e-6 B5 threshold is not relaxed. Any later C5 correction must be a separately numbered/preregistered experiment motivated by a diagnosed numerical or semantic mechanism, not by this miss.",
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
