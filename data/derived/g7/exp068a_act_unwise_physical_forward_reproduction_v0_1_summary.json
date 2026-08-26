@@ -1,0 +1,165 @@
+{
+  "experiment": "Exp068A",
+  "date": "2026-08-26",
+  "status": "FAIL_ACT_UNWISE_PHYSICAL_FORWARD_REPRODUCTION_V0_1",
+  "scope": "physical linear/no-CLEFT ACT x unWISE raw forward-adapter reproduction; no G7 law and no G8 family",
+  "provenance": {
+    "upstream_commit": "6302c30d9e70f8e4ff2d4a84a9977b4471705179",
+    "expected_upstream_commit": "6302c30d9e70f8e4ff2d4a84a9977b4471705179",
+    "CAMB_commit": "fa3f097343fbbe427cc04b4f5f0041c22c6ec764",
+    "expected_CAMB_commit": "fa3f097343fbbe427cc04b4f5f0041c22c6ec764",
+    "archive_sha256": "1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570",
+    "expected_archive_sha256": "1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570",
+    "pass": true
+  },
+  "source_contract": {
+    "compute_raw_spectra_present": true,
+    "evaluate_pk_kmax_present": true,
+    "cosmo_from_camb_present": true,
+    "dNdz_present": true,
+    "dN_dz_Helper_present": true,
+    "pass": true
+  },
+  "frozen_domain": {
+    "ell_first": 0,
+    "ell_last": 6143,
+    "ell_count": 6144,
+    "zmin": 0.0,
+    "zmax": 3.0,
+    "projector_kmax_Mpc^-1": 10.0,
+    "CAMB_internal_kmax_Mpc^-1": 12.0,
+    "Gauss_Legendre_order": 96,
+    "CAMB_redshift_grid_size": 128,
+    "linear_no_CLEFT": true
+  },
+  "R0_cosmology": {
+    "H0_km_s_Mpc": 67.0,
+    "ombh2": 0.0224,
+    "omch2": 0.12,
+    "omk": 0.0,
+    "mnu_eV": 0.0,
+    "nnu": 3.046,
+    "TCMB_K": 2.7255,
+    "YHe": 0.24,
+    "As": 2.1e-09,
+    "ns": 0.965,
+    "pivot_Mpc^-1": 0.05,
+    "w": -1.0
+  },
+  "tracer_binding": {
+    "pass": false,
+    "data_root": "/home/runner/work/Dark-Sector-Influence-Reconstruction/Dark-Sector-Influence-Reconstruction/external/unwise_data/data/v1.0",
+    "samples": {
+      "Blue": {
+        "exists": true,
+        "finite_files": true,
+        "file_shapes": {"xmatch": [401, 2], "xcorr": [401, 2], "pcs": [500, 5]},
+        "sha256": {
+          "xmatch": "3dcd96d096faa9f9cf2214e07b6a0ea18d30d41913907a5c55f94eadcecf20be",
+          "xcorr": "e237aa1a831af52a291812c30b213546221a73079f99cf3659546ed3d85276e5",
+          "pcs": "17779ad0757872a0149d7d870f29b83deebe7d17eb6e788ca8c8e6dc9acbf269"
+        },
+        "expected_n_pcs": 3,
+        "observed_n_pcs": 4,
+        "projection_node_xmatch_shape": [96],
+        "projection_node_bdNdz_shape": [96, 5],
+        "projection_node_xmatch_nonzero": 96,
+        "projection_node_bdNdz_nonzero": 320,
+        "pass": false
+      },
+      "Green": {
+        "exists": true,
+        "finite_files": true,
+        "file_shapes": {"xmatch": [401, 2], "xcorr": [401, 2], "pcs": [500, 7]},
+        "sha256": {
+          "xmatch": "732141917e13fd106b3382775287c75d8708ee241e55b5c563e7c0e5825a0189",
+          "xcorr": "7d1ce45f35fa5113056aef48ffa1028fc9e73ada50fd2fbac768d41aae6016a6",
+          "pcs": "a4591fcd0f0630dde4f470173f1f7be6955731d753c1387e604a193b25a4ef1c"
+        },
+        "expected_n_pcs": 5,
+        "observed_n_pcs": 6,
+        "projection_node_xmatch_shape": [96],
+        "projection_node_bdNdz_shape": [96, 7],
+        "projection_node_xmatch_nonzero": 96,
+        "projection_node_bdNdz_nonzero": 546,
+        "pass": false
+      }
+    }
+  },
+  "physical_provider_sanity": {
+    "pass": true,
+    "cells": [
+      {"z": 0.5, "k_Mpc^-1": 0.02, "P_WW": 4.977038150984566e-11, "P_Wm": -0.0013961103973289255, "P_mm": 39162.33616103322, "pass": true},
+      {"z": 0.5, "k_Mpc^-1": 0.1, "P_WW": 8.10334071729612e-12, "P_Wm": -0.00022730712005597866, "P_mm": 6376.200639615199, "pass": true},
+      {"z": 0.5, "k_Mpc^-1": 0.2, "P_WW": 2.2716530036979833e-12, "P_Wm": -6.372221662896131e-05, "P_mm": 1787.4741440427824, "pass": true},
+      {"z": 1.0, "k_Mpc^-1": 0.02, "P_WW": 5.505733371708482e-11, "P_Wm": -0.001158311071885078, "P_mm": 24368.861624361765, "pass": true},
+      {"z": 1.0, "k_Mpc^-1": 0.1, "P_WW": 8.964134017944243e-12, "P_Wm": -0.0001885899247233328, "P_mm": 3967.6070165981087, "pass": true},
+      {"z": 1.0, "k_Mpc^-1": 0.2, "P_WW": 2.5129634299686738e-12, "P_Wm": -5.286842047079078e-05, "P_mm": 1112.260473257865, "pass": true},
+      {"z": 2.0, "k_Mpc^-1": 0.02, "P_WW": 5.853739426221898e-11, "P_Wm": -0.0008210167372106802, "P_mm": 11515.17666364305, "pass": true},
+      {"z": 2.0, "k_Mpc^-1": 0.1, "P_WW": 9.530740320449697e-12, "P_Wm": -0.0001336735586640543, "P_mm": 1874.8408322751952, "pass": true},
+      {"z": 2.0, "k_Mpc^-1": 0.2, "P_WW": 2.6718028461681904e-12, "P_Wm": -3.7473421293634864e-05, "P_mm": 525.5841632402785, "pass": true}
+    ]
+  },
+  "raw_component_equivalence": {
+    "pass": true,
+    "tolerance_factor": 5e-13,
+    "components": {
+      "sample0/bdndz_norm": {"shape_reference": [5], "shape_dsir": [5], "finite_pattern_equal": true, "max_abs_reference": 1.0000063710288054, "max_abs_difference": 0.0, "threshold": 5.000031855144027e-13, "reference_identically_zero": false, "dsir_identically_zero": false, "pass": true},
+      "sample0/gg/gg_b": {"shape_reference": [6144, 5, 1], "shape_dsir": [6144, 5, 1], "finite_pattern_equal": true, "max_abs_reference": 0.0, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": true, "dsir_identically_zero": true, "pass": true},
+      "sample0/gg/gg_bsq": {"shape_reference": [6144, 25], "shape_dsir": [6144, 25], "finite_pattern_equal": true, "max_abs_reference": 2.8611973417824423e-06, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": false, "dsir_identically_zero": false, "pass": true},
+      "sample0/gg/gg_nob": {"shape_reference": [6144, 1], "shape_dsir": [6144, 1], "finite_pattern_equal": true, "max_abs_reference": 0.0, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": true, "dsir_identically_zero": true, "pass": true},
+      "sample0/gg/gmu_b": {"shape_reference": [6144, 5], "shape_dsir": [6144, 5], "finite_pattern_equal": true, "max_abs_reference": 1.6634675747773317e-07, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": false, "dsir_identically_zero": false, "pass": true},
+      "sample0/gg/gmu_nob": {"shape_reference": [6144, 1], "shape_dsir": [6144, 1], "finite_pattern_equal": true, "max_abs_reference": 0.0, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": true, "dsir_identically_zero": true, "pass": true},
+      "sample0/gg/mumu": {"shape_reference": [6144], "shape_dsir": [6144], "finite_pattern_equal": true, "max_abs_reference": 2.5836864521334784e-08, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": false, "dsir_identically_zero": false, "pass": true},
+      "sample0/kg/kg_b": {"shape_reference": [6144, 5], "shape_dsir": [6144, 5], "finite_pattern_equal": true, "max_abs_reference": 5.941018853189526e-07, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": false, "dsir_identically_zero": false, "pass": true},
+      "sample0/kg/kg_nob": {"shape_reference": [6144, 1], "shape_dsir": [6144, 1], "finite_pattern_equal": true, "max_abs_reference": 0.0, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": true, "dsir_identically_zero": true, "pass": true},
+      "sample0/kg/kmu": {"shape_reference": [6144], "shape_dsir": [6144], "finite_pattern_equal": true, "max_abs_reference": 4.2459668338017555e-08, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": false, "dsir_identically_zero": false, "pass": true},
+      "sample1/bdndz_norm": {"shape_reference": [7], "shape_dsir": [7], "finite_pattern_equal": true, "max_abs_reference": 0.9999216606024935, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": false, "dsir_identically_zero": false, "pass": true},
+      "sample1/gg/gg_b": {"shape_reference": [6144, 7, 1], "shape_dsir": [6144, 7, 1], "finite_pattern_equal": true, "max_abs_reference": 0.0, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": true, "dsir_identically_zero": true, "pass": true},
+      "sample1/gg/gg_bsq": {"shape_reference": [6144, 49], "shape_dsir": [6144, 49], "finite_pattern_equal": true, "max_abs_reference": 5.000267485528644e-07, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": false, "dsir_identically_zero": false, "pass": true},
+      "sample1/gg/gg_nob": {"shape_reference": [6144, 1], "shape_dsir": [6144, 1], "finite_pattern_equal": true, "max_abs_reference": 0.0, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": true, "dsir_identically_zero": true, "pass": true},
+      "sample1/gg/gmu_b": {"shape_reference": [6144, 7], "shape_dsir": [6144, 7], "finite_pattern_equal": true, "max_abs_reference": 6.405276216419782e-08, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": false, "dsir_identically_zero": false, "pass": true},
+      "sample1/gg/gmu_nob": {"shape_reference": [6144, 1], "shape_dsir": [6144, 1], "finite_pattern_equal": true, "max_abs_reference": 0.0, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": true, "dsir_identically_zero": true, "pass": true},
+      "sample1/gg/mumu": {"shape_reference": [6144], "shape_dsir": [6144], "finite_pattern_equal": true, "max_abs_reference": 3.841075841365583e-08, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": false, "dsir_identically_zero": false, "pass": true},
+      "sample1/kg/kg_b": {"shape_reference": [6144, 7], "shape_dsir": [6144, 7], "finite_pattern_equal": true, "max_abs_reference": 2.45381472754403e-07, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": false, "dsir_identically_zero": false, "pass": true},
+      "sample1/kg/kg_nob": {"shape_reference": [6144, 1], "shape_dsir": [6144, 1], "finite_pattern_equal": true, "max_abs_reference": 0.0, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": true, "dsir_identically_zero": true, "pass": true},
+      "sample1/kg/kmu": {"shape_reference": [6144], "shape_dsir": [6144], "finite_pattern_equal": true, "max_abs_reference": 6.19732228304028e-08, "max_abs_difference": 0.0, "threshold": 5e-13, "reference_identically_zero": false, "dsir_identically_zero": false, "pass": true}
+    }
+  },
+  "nontrivial_physical_signal_control": {
+    "pass": true,
+    "samples": {
+      "Blue": {
+        "nonzero": {
+          "bdndz_norm": {"pass": true, "reference_nonzero": 5, "dsir_nonzero": 5},
+          "gg/gg_bsq": {"pass": true, "reference_nonzero": 153600, "dsir_nonzero": 153600},
+          "gg/gmu_b": {"pass": true, "reference_nonzero": 30720, "dsir_nonzero": 30720},
+          "gg/mumu": {"pass": true, "reference_nonzero": 6144, "dsir_nonzero": 6144},
+          "kg/kg_b": {"pass": true, "reference_nonzero": 30720, "dsir_nonzero": 30720},
+          "kg/kmu": {"pass": true, "reference_nonzero": 6144, "dsir_nonzero": 6144}
+        },
+        "zero": {
+          "gg/gg_b": {"pass": true}, "gg/gg_nob": {"pass": true}, "gg/gmu_nob": {"pass": true}, "kg/kg_nob": {"pass": true}
+        },
+        "pass": true
+      },
+      "Green": {
+        "nonzero": {
+          "bdndz_norm": {"pass": true, "reference_nonzero": 7, "dsir_nonzero": 7},
+          "gg/gg_bsq": {"pass": true, "reference_nonzero": 301056, "dsir_nonzero": 301056},
+          "gg/gmu_b": {"pass": true, "reference_nonzero": 43008, "dsir_nonzero": 43008},
+          "gg/mumu": {"pass": true, "reference_nonzero": 6144, "dsir_nonzero": 6144},
+          "kg/kg_b": {"pass": true, "reference_nonzero": 43008, "dsir_nonzero": 43008},
+          "kg/kmu": {"pass": true, "reference_nonzero": 6144, "dsir_nonzero": 6144}
+        },
+        "zero": {
+          "gg/gg_b": {"pass": true}, "gg/gg_nob": {"pass": true}, "gg/gmu_nob": {"pass": true}, "kg/kg_nob": {"pass": true}
+        },
+        "pass": true
+      }
+    }
+  },
+  "interpretation": "PASS validates the physical R0 CAMB + released Blue/Green tracer raw forward adapter on all 6144 input multipoles; FAIL blocks nuisance quotient construction and must be diagnosed separately.",
+  "next_step_if_pass": "Preregister the 26D selected-space nuisance tangent quotient using Exp067A whitening and the frozen selected ordering; freeze the SVD rank rule before fitting any G7 relation.",
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
