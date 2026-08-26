@@ -1,0 +1,125 @@
+name: DSIR IDM-baryon source selector v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/idm-baryon-source-selector-v0-1.yml'
+      - 'experiments/059a_idm_baryon_source_selector_v0_1.md'
+      - 'docs/RESEARCH_CHECKPOINT_EXP059A_PREREG_2026-08-26.md'
+
+permissions:
+  contents: read
+
+jobs:
+  source-only-c9-selector:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CLASS toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3
+
+      - name: Clone and build pinned official CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/lesgourg/class_public.git class_public
+          cd class_public
+          git checkout e85808324f51fc694d12e3ed7439552a3c3f9540
+          test "$(git rev-parse HEAD)" = 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+          git rev-parse HEAD | tee ../exp059a_class_upstream_sha.txt
+          grep -Fq 'cross_idm_b = 0.' explanatory.ini
+          grep -Fq 'n_index_idm_b = 0' explanatory.ini
+          grep -R -n 'cross_idm_b' source include | head -n 20 | tee ../exp059a_cross_source.txt
+          grep -R -n 'n_index_idm_b' source include | head -n 20 | tee ../exp059a_nindex_source.txt
+          test -s ../exp059a_cross_source.txt
+          test -s ../exp059a_nindex_source.txt
+          make -j2 class
+
+      - name: Freeze and run source-only C9 grid
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          mkdir -p outputs configs
+          python3 - <<'PY'
+          from pathlib import Path
+          grid=[('1e-30','x1em30'),('1e-29','x1em29'),('1e-28','x1em28'),('1e-27','x1em27'),('1e-26','x1em26')]
+          common='''h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          omega_cdm = 0.0
+          omega_idm = 0.1200
+          m_idm = 1e9
+          Omega_k = 0.
+          N_ur = 3.046
+          n_index_idm_b = 0
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          write background = yes
+          write thermodynamics = yes
+          overwrite_root = yes
+          background_verbose = 0
+          thermodynamics_verbose = 0
+          perturbations_verbose = 0
+          transfer_verbose = 0
+          primordial_verbose = 0
+          spectra_verbose = 0
+          nonlinear_verbose = 0
+          lensing_verbose = 0
+          output_verbose = 0
+          '''
+          for cross,tok in grid:
+              text=common+f'cross_idm_b = {cross}\nroot = outputs/{tok}\n'
+              Path(f'configs/{tok}.ini').write_text(text)
+          PY
+          for tok in x1em30 x1em29 x1em28 x1em27 x1em26; do
+            ./class "configs/${tok}.ini" 2>&1 | tee "../exp059a_${tok}.log"
+            test -s "outputs/${tok}_background.dat"
+            test -s "outputs/${tok}_thermodynamics.dat"
+          done
+
+      - name: Enforce no-response contamination rule
+        run: |
+          set -euxo pipefail
+          test "$(find class_public/outputs -type f -name '*pk.dat' | wc -l)" -eq 0
+          test "$(find class_public/outputs -type f \( -name '*cl.dat' -o -name '*tk.dat' -o -name '*sources.dat' \) | wc -l)" -eq 0
+          find class_public/outputs -maxdepth 1 -type f -printf '%f\n' | sort | tee exp059a_output_manifest.txt
+          test "$(wc -l < exp059a_output_manifest.txt)" -eq 10
+          for tok in x1em30 x1em29 x1em28 x1em27 x1em26; do
+            grep -Fxq "${tok}_background.dat" exp059a_output_manifest.txt
+            grep -Fxq "${tok}_thermodynamics.dat" exp059a_output_manifest.txt
+          done
+
+      - name: Record source-only provenance
+        if: always()
+        run: |
+          {
+            echo 'Experiment 059A C9 IDM-baryon source-only selector v0.1.'
+            echo 'No C9 perturbation, transfer, angular-spectrum, or matter-power response is allowed in this run.'
+            echo 'Microscopic source coordinate: s=log10(cross_idm_b/cm^2).'
+            echo 'Frozen grid: 1e-30,1e-29,1e-28,1e-27,1e-26 cm^2; n_index_idm_b=0; m_idm=1e9 eV.'
+            echo 'Reference cosmology: h=0.67, omega_b=0.0224, omega_idm=0.1200, omega_cdm=0, N_ur=3.046.'
+            echo "DSIR head: $GITHUB_SHA"
+            echo -n 'CLASS upstream: '; cat exp059a_class_upstream_sha.txt 2>/dev/null || true
+          } > exp059a_environment.txt
+
+      - name: Upload source-only record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: idm-baryon-source-selector-v0-1-${{ github.sha }}
+          path: |
+            exp059a_environment.txt
+            exp059a_output_manifest.txt
+            exp059a_class_upstream_sha.txt
+            exp059a_cross_source.txt
+            exp059a_nindex_source.txt
+            exp059a_*.log
+            class_public/configs/*.ini
+          if-no-files-found: warn
