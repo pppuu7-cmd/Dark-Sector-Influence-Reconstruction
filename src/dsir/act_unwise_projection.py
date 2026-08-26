@@ -1,7 +1,7 @@
 """Solver-neutral raw ACT x unWISE projection basis.
 
 This module deliberately stops before CLEFT/nuisance evaluation and before survey
-bandpower binning.  Its inputs are geometry, three independent power-spectrum
+bandpower binning. Its inputs are geometry, three independent power-spectrum
 providers (Weyl-Weyl, Weyl-matter, matter-matter), and tracer redshift kernels.
 The algebra follows the pinned unWISExLens raw no-CLEFT projection branch used
 by Exp066A.
@@ -62,7 +62,7 @@ def compute_raw_no_cleft(
     """Compute the no-CLEFT raw Clgg/Clkappa-g component basis.
 
     The returned dictionaries intentionally mirror the pinned upstream raw
-    component names so the equivalence test is direct.  No Poisson relation is
+    component names so the equivalence test is direct. No Poisson relation is
     imposed between the three input power spectra.
     """
     ell_vals = np.asarray(ell_vals, dtype=float)
@@ -91,12 +91,10 @@ def compute_raw_no_cleft(
     for i, dndz in enumerate(dndz_list):
         bdndz_h = dndz.bdNdz(z_vals, pcs=True) * hubble_vals[:, None]
         dndz_h = dndz.dNdz(z_vals) * hubble_vals
+        n_bias_cols = dndz.n_pcs + 1
 
         bdndz_norm = np.sum(bdndz_h * gauss_w[:, None], axis=0) * (chi_max - chi_min) / 2
 
-        # With CLEFT disabled, only the leading bias-weighted cosmological pieces
-        # survive.  Keep the zero basis slots explicit to prevent later zero-
-        # imputation from being confused with an undefined observable channel.
         p_mg_b = bdndz_h[:, None, :] * p_wm[:, :, None]
         kg_b = np.nansum(
             p_mg_b * kappa_kernel[:, None, None] * gauss_w[:, None, None], axis=0
@@ -110,10 +108,12 @@ def compute_raw_no_cleft(
             bdndz_h[:, None, :, None]
             * bdndz_h[:, None, None, :]
             * p_mm[:, :, None, None]
-        ).reshape(len(z_vals), len(ell_vals), (dndz.n_pcs + 1) ** 2)
+        ).reshape(len(z_vals), len(ell_vals), n_bias_cols**2)
         gg_bsq = np.nansum(p_gg_bsq * gauss_w[:, None, None], axis=0) * (chi_max - chi_min) / 2
 
-        gg_b = np.zeros((len(ell_vals), 1, 1), dtype=float)
+        # Exact shapes of the algebraically zero no-CLEFT basis slots matter:
+        # gg_b carries one redshift-PC/bias column and one CLEFT-basis column.
+        gg_b = np.zeros((len(ell_vals), n_bias_cols, 1), dtype=float)
         gg_nob = np.zeros((len(ell_vals), 1), dtype=float)
         mumu = np.nansum(
             (mu_kernel[i] ** 2)[:, None] * p_ww * gauss_w[:, None], axis=0
