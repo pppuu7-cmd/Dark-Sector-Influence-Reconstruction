@@ -88,11 +88,14 @@ jobs:
           frozen=[('ref',0.0),('idm1',1e-30),('idm2',1e-29),('idm3',1e-28),('idm4',1e-27),('idm5',1e-26)]
           for name,cross in frozen:
               Path(f'dsir_{name}.ini').write_text(f'cross_idm_b = {cross:.17g}\nroot = outputs/{name}_\n'+base)
+          # Validate the numerical frozen grid rather than Python's particular
+          # decimal rendering of binary floats. This changes no scientific input.
+          expected=dict(frozen)
+          for name,want in frozen:
+              first=Path(f'dsir_{name}.ini').read_text().splitlines()[0]
+              got=float(first.split('=',1)[1].strip())
+              assert got == want, (name, got, want)
           PY
-          grep -Fq 'cross_idm_b = 0' dsir_ref.ini
-          grep -Fq 'cross_idm_b = 1e-30' dsir_idm1.ini
-          grep -Fq 'cross_idm_b = 1e-29' dsir_idm2.ini
-          grep -Fq 'cross_idm_b = 9.9999999999999997e-29' dsir_idm3.ini || grep -Fq 'cross_idm_b = 1e-28' dsir_idm3.ini
 
       - name: Generate first C9 matter-power response
         working-directory: class_public
