@@ -2,6 +2,12 @@ name: F30 specificity and manifold retrospective audit v0.1
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/f30-specificity-manifold-retrospective-v0-1.yml'
+      - 'ci/f30_specificity_manifold_retrospective_v0_1.py'
+      - 'experiments/071b_f30_specificity_manifold_retrospective_v0_1.md'
   pull_request:
     branches: [main]
     paths:
