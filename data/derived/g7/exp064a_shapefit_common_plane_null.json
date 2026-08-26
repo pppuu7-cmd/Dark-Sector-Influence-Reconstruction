@@ -1,0 +1,41 @@
+{
+  "experiment": "Exp064A",
+  "run_id": 32976353679,
+  "job_id": 98201925184,
+  "artifact_id": 9609613504,
+  "artifact_sha256": "7d5a7482f52a5ca3f6f420d44f206433a1be3fa64b3c4e9c00800e9e7f1c09b8",
+  "status": "NO_NONTRIVIAL_COMMON_PLANE_RELATION_V0_1",
+  "scope": "training-only exploratory common-plane audit; not a withheld test",
+  "channels": ["DH_over_DM/fid-1", "f_sigma_s8/fid-1", "m_plus_n"],
+  "bins": ["LRG1", "LRG2", "LRG3", "ELG2", "QSO"],
+  "relation": "a_AP*r_AP + a_growth*r_growth + a_shape*r_shape = 0",
+  "observed": {
+    "lambda_min": 0.09740761172177222,
+    "normal": [0.6631539009610431, -0.32356655882320945, 0.6749308006391896],
+    "generalized_eigenvalues": [0.09740761172177222, 0.611569848917278, 1.2509242902108735],
+    "train_abs_z": [0.3809656905096998, 0.44547350103293737, 0.31061298307966273, 0.1926795331950366, 0.032347037061295936],
+    "loo_abs_z": [0.4380180953927617, 0.5557888764515281, 0.3620960356404868, 1.4449272400272382, 0.10812056873870501],
+    "loo_rms": 0.739104789926628,
+    "loo_max": 1.4449272400272382
+  },
+  "null": {
+    "model": "independent Gaussian residuals N(0,C_dimless) in each bin",
+    "seed": 20260826,
+    "draws": 20000,
+    "alpha": 0.05,
+    "criterion": "lower-tail p(lambda_min)<=0.05 AND lower-tail p(LOO_RMS)<=0.05"
+  },
+  "p_values": {
+    "lambda_min_lower": 0.26533673316334183,
+    "loo_rms_lower": 0.3612319384030798,
+    "loo_max_lower_descriptive_only": 0.5310734463276836
+  },
+  "null_quantiles": {
+    "lambda_min": {"q05": 0.02732801893959313, "median": 0.1803262862800596, "q95": 0.5844921838899364},
+    "loo_rms": {"q05": 0.30761284204937794, "median": 0.8956902563793974, "q95": 1.6112395375841246},
+    "loo_max": {"q05": 0.4730771174619939, "median": 1.3903957487267689, "q95": 2.5664441406509515}
+  },
+  "nontrivial": false,
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"},
+  "anti_retuning": "The fitted plane is not promoted to a law and no withheld family may be chosen to rescue it. Any different channel/data/kernel choice requires a new recorded experiment."
+}

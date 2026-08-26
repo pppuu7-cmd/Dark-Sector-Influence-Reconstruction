@@ -1,0 +1,48 @@
+name: ShapeFit common-plane null audit v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/shapefit-common-plane-null-audit-v0-1.yml'
+      - 'experiments/064_shapefit_common_plane_null_audit.py'
+      - 'docs/EXP064A_SHAPEFIT_COMMON_PLANE_NULL_AUDIT_2026-08-26.md'
+      - 'data/observations/desi_dr1_shapefit_erratum_2026.json'
+      - 'src/dsir/shapefit_response.py'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Run Exp064A
+        run: |
+          set -euxo pipefail
+          python3 experiments/064_shapefit_common_plane_null_audit.py
+      - name: Enforce scientific-result preservation contract
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp064a_shapefit_common_plane_null.json'
+          d=json.load(open(p))
+          assert d['status'] in {
+              'PASS_NONTRIVIAL_COMMON_PLANE_CANDIDATE_V0_1',
+              'NO_NONTRIVIAL_COMMON_PLANE_RELATION_V0_1',
+          }
+          assert d['null']['draws'] == 20000
+          assert d['null']['seed'] == 20260826
+          assert d['null']['alpha'] == 0.05
+          assert d['gate_state'] == {'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert len(d['bins']) == 5
+          print('PASS_EXP064A_RESULT_PRESERVATION_CONTRACT', d['status'])
+          PY
+      - name: Upload audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp064a-shapefit-common-plane-${{ github.sha }}
+          path: data/derived/g7/exp064a_shapefit_common_plane_null.json
+          if-no-files-found: error
