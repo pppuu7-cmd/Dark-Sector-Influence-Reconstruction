@@ -1,0 +1,40 @@
+{
+  "schema": "dsir.comparison_readiness.experiment_053a_dcdm_withheld_temporal_localization.summary.v0.1",
+  "status": "PASS_DCDM_WITHHELD_TEMPORAL_LOCALIZATION_V0_1",
+  "clean_run_id": 32915877993,
+  "clean_artifact_id": 9588160014,
+  "clean_artifact_sha256": "541e3449801f0e853fa573784fd72685ad407c1a3f041b18884e715017aa5e10",
+  "clean_head_sha": "7653bae9059ddeae065b0ae87d27350b9476b794",
+  "first_science_run_id": 32915842684,
+  "first_science_artifact_id": 9588147663,
+  "first_science_artifact_sha256": "5723b752b822e16c631591e332ce19d303bc573c2cc9247ec048e11189e875c8",
+  "superseded_infrastructure_run": {
+    "run_id": 32915553193,
+    "artifact_id": 9588060019,
+    "artifact_sha256": "643b0e40c2cb932ccfbd9c1ff41ce0117fe661a5cf7e019e70f9a445a56550dc",
+    "reason": "background filename check failed before the preregistered science gate; solver outputs existed but the science test was skipped"
+  },
+  "frozen_gamma_over_H0": [0.25, 0.5, 1.0, 2.0],
+  "frozen_z_nodes": [0.295, 0.51, 0.706, 0.934, 1.317, 1.491, 2.33],
+  "frozen_k_h_mpc": [0.001, 0.003, 0.01, 0.03, 0.1],
+  "prefrozen_prediction": "z_R increases by more than 1e-3 for every consecutive Gamma/H0 step",
+  "z_R_sequence": [0.6304573019112576, 0.6343829813154673, 0.6419613202245631, 0.6562403431099975],
+  "z_R_steps": [0.0039256794042097365, 0.007578338909095761, 0.014279022885434367],
+  "response_l2": [0.12543118382536836, 0.24710993608014944, 0.4801284801505555, 0.9094948079661056],
+  "chi_I_descriptive": [0.08201984576199521, 0.0796907931107649, 0.07512692817462058, 0.06645803006966483],
+  "k_R_h_mpc_descriptive": [0.013671012900815247, 0.013532626675057896, 0.013325298482949647, 0.013118520107679934],
+  "extreme_full_response_angle_deg_descriptive": 2.1650630751370454,
+  "scale_sign_pivot_descriptive": {
+    "statement": "all four sampled DCDM responses are positive at k=0.001 h/Mpc and negative at sufficiently larger frozen k; the first zero crossing moves mainly with redshift and only weakly with Gamma/H0",
+    "approx_zero_crossing_h_mpc_gamma0p25": [0.0026801579903655707, 0.0031423195688240306, 0.0036704781050830217, 0.004240461315198527, 0.005074204028257127, 0.005404971772680408, 0.006687507435395923],
+    "approx_zero_crossing_h_mpc_gamma2": [0.0025705960651851325, 0.002981772951732194, 0.003530204262794498, 0.00413467653346813, 0.0050156159284833295, 0.005362437510709719, 0.006689375965136909]
+  },
+  "key_result": "A genuinely withheld DCDM->dark-radiation mechanism, not used to construct F21/F23/F25, passes the preregistered characteristic-epoch motion prediction: the response-power temporal centroid shifts to higher redshift as Gamma/H0 increases.",
+  "not_a_claim": [
+    "not formal G8 closure while G7 lacks one frozen model-independent quantitative relation",
+    "not observational detectability",
+    "not a universal mapping from Gamma/H to z_R",
+    "chi_I, k_R and scale-sign pivot are descriptive post-gate findings",
+    "not an intrinsic-rank or universal-model result"
+  ]
+}
