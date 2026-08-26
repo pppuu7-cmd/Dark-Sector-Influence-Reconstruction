@@ -1,0 +1,162 @@
+name: DSIR IDM-photon endpoint half-transition prospective v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/idm-photon-endpoint-half-transition-prospective-v0-1.yml'
+      - 'ci/idm_photon_endpoint_half_transition_prospective_v0_1.py'
+      - 'experiments/056b_idm_photon_endpoint_half_transition_prospective_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  prospective-c8-half-transition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CLASS toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Clone and build pinned official CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/lesgourg/class_public.git class_public
+          cd class_public
+          git checkout e85808324f51fc694d12e3ed7439552a3c3f9540
+          test "$(git rev-parse HEAD)" = 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+          git rev-parse HEAD | tee ../exp056b_class_upstream_sha.txt
+          grep -Fq 'u_idm_g = 0' explanatory.ini
+          grep -Fq 'n_index_idm_g = 0' explanatory.ini
+          grep -n 'ptdw->dmu_idm_g = 3./8./_PI_/_G_' source/thermodynamics.c | head -n 2 | tee ../exp056b_dmu_source.txt
+          grep -n 'S_idm_g = 4./3. .*rho_g.*rho_idm' source/perturbations.c | head -n 2 | tee ../exp056b_drag_source.txt
+          test -s ../exp056b_dmu_source.txt
+          test -s ../exp056b_drag_source.txt
+          make -j2 class
+
+      - name: Freeze exact matched reference and C8 response configurations
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          mkdir -p outputs
+          cat > dsir_idm_photon_base.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          omega_cdm = 0.0
+          omega_idm = 0.1200
+          m_idm = 1e9
+          Omega_k = 0.
+          N_ur = 3.046
+          n_index_idm_g = 0
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 1.0
+          primordial_P_k_max_h/Mpc = 1.0
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          EOF
+
+          python3 - <<'PY'
+          from pathlib import Path
+          base=Path('dsir_idm_photon_base.ini').read_text()
+          frozen=[
+            ('ref',0.0),
+            ('idm1',1.9784961959913951e-13),
+            ('idm2',2.7180740724473660e-13),
+            ('idm3',4.2866377403625277e-13),
+            ('idm4',7.7340788471244140e-13),
+            ('idm5',1.1546648138593298e-12),
+          ]
+          for name,u in frozen:
+              Path(f'dsir_{name}.ini').write_text(f'u_idm_g = {u:.17g}\nroot = outputs/{name}_\n'+base)
+              print(name,format(u,'.17g'))
+          PY
+          grep -Fq 'u_idm_g = 0' dsir_ref.ini
+          grep -Fq 'u_idm_g = 1.9784961959913951e-13' dsir_idm1.ini
+          grep -Fq 'u_idm_g = 2.7180740724473658e-13' dsir_idm2.ini
+          grep -Fq 'u_idm_g = 4.2866377403625277e-13' dsir_idm3.ini
+          grep -Fq 'u_idm_g = 7.7340788471244145e-13' dsir_idm4.ini
+          grep -Fq 'u_idm_g = 1.1546648138593298e-12' dsir_idm5.ini
+
+      - name: Run first prospective C8 response set
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          ./class dsir_ref.ini 2>&1 | tee ../exp056b_ref.log
+          for name in idm1 idm2 idm3 idm4 idm5; do
+            ./class "dsir_${name}.ini" 2>&1 | tee "../exp056b_${name}.log"
+          done
+
+      - name: Require seven explicit P(k,z) outputs per configuration
+        run: |
+          set -euxo pipefail
+          for prefix in ref_ idm1_ idm2_ idm3_ idm4_ idm5_; do
+            n=$(find class_public/outputs -maxdepth 1 -type f -name "${prefix}*pk.dat" | wc -l)
+            test "$n" -eq 7
+            for f in class_public/outputs/${prefix}*pk.dat; do
+              grep -Eiq 'redshift[[:space:]]+z[[:space:]]*=' "$f"
+              test "$(grep -vc '^#' "$f")" -gt 20
+            done
+          done
+
+      - name: Evaluate pre-frozen Exp056B half-transition gate
+        run: |
+          set +e
+          python3 ci/idm_photon_endpoint_half_transition_prospective_v0_1.py \
+            --directory class_public/outputs \
+            --reference-prefix ref_ \
+            --models idm1_ idm2_ idm3_ idm4_ idm5_ \
+            --json idm_photon_endpoint_half_transition_prospective_v0_1.json
+          code=$?
+          cat idm_photon_endpoint_half_transition_prospective_v0_1.json
+          echo "$code" > exp056b_gate_exit_code.txt
+          exit "$code"
+
+      - name: Record immutable prospective provenance
+        if: always()
+        run: |
+          {
+            echo 'Experiment 056B prospective C8 IDM-photon endpoint half-transition v0.1.'
+            echo 'Complete scientific contract preregistered at 84d05ad72af1aea4fe3beadf071ee20cadf93c19 before first C8 P(k,z).'
+            echo 'Exp056A source-only run 32922159744 selected the frozen coupling grid without response contamination.'
+            echo 'Frozen gate: unique endpoint-normalized u=0.5 crossing in every row; all four C50>0; all 28 leave-one-z C50>0.'
+            echo 'No universal magnitude band and no post-output recalibration are permitted.'
+            echo "DSIR head: $GITHUB_SHA"
+            echo -n 'CLASS upstream: '; cat exp056b_class_upstream_sha.txt 2>/dev/null || true
+          } > exp056b_environment.txt
+
+      - name: Upload prospective C8 validation record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: idm-photon-endpoint-half-transition-prospective-v0-1-${{ github.sha }}
+          path: |
+            idm_photon_endpoint_half_transition_prospective_v0_1.json
+            exp056b_gate_exit_code.txt
+            exp056b_environment.txt
+            exp056b_class_upstream_sha.txt
+            exp056b_dmu_source.txt
+            exp056b_drag_source.txt
+            exp056b_*.log
+            class_public/dsir_*.ini
+            class_public/outputs/ref_*pk.dat
+            class_public/outputs/idm*pk.dat
+          if-no-files-found: warn
