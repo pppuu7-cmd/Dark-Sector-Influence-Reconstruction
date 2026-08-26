@@ -37,7 +37,7 @@ jobs:
           grep -Fq 'Gamma_DM-DR = - 4/3' explanatory.ini
           grep -Fq "default = 'free_streaming'" explanatory.ini
           grep -n 'a_idm_dr.*pow((1.+z)/1.e7' source/thermodynamics.c | tee ../exp054c_rate_source.txt
-          grep -n '4./3. .*Omega0_idr.*Omega0_idm' source/thermodynamics.c | head -n 5 | tee ../exp054c_drag_source.txt
+          grep -n 'S_idm_dr = 4./3. .*rho_idr.*rho_idm' source/perturbations.c | head -n 5 | tee ../exp054c_drag_source.txt
           test -s ../exp054c_rate_source.txt
           test -s ../exp054c_drag_source.txt
           make -j2 class
