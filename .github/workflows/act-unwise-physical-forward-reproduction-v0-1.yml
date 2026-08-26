@@ -44,9 +44,17 @@ jobs:
         run: |
           set -euxo pipefail
           mkdir -p external/unwise_data
-          curl --fail --location --retry 4 --retry-delay 3 \
-            'https://portal.nersc.gov/project/act/act_x_unWISE_xcorr+3x2pt/data_unWISExLens.tar.gz' \
-            -o external/data_unWISExLens.tar.gz
+          # Infrastructure-only mirror fallback. The immutable archive digest
+          # below is the scientific/provenance binding, so either official host
+          # must deliver byte-identical data or this step fails before science.
+          if ! curl --fail --location --retry 3 --retry-delay 3 \
+            'https://lambda.gsfc.nasa.gov/data/suborbital/ACT/act_x_unWISE/data_unWISExLens.tar.gz' \
+            -o external/data_unWISExLens.tar.gz; then
+            rm -f external/data_unWISExLens.tar.gz
+            curl --fail --location --retry 4 --retry-delay 3 \
+              'https://portal.nersc.gov/project/act/act_x_unWISE_xcorr+3x2pt/data_unWISExLens.tar.gz' \
+              -o external/data_unWISExLens.tar.gz
+          fi
           echo '1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570  external/data_unWISExLens.tar.gz' | sha256sum -c -
           tar -xzf external/data_unWISExLens.tar.gz -C external/unwise_data
 
