@@ -1,0 +1,47 @@
+{
+  "experiment": "Exp066C",
+  "date": "2026-08-26",
+  "status": "PASS_ACT_UNWISE_EXACT_SHOT_NOISE_TEMPLATE_V0_1",
+  "workflow_run": 32983242318,
+  "workflow_job": 98224843271,
+  "pinned_external_repo": "ACTCollaboration/unWISExLens_lklh",
+  "pinned_commit": "6302c30d9e70f8e4ff2d4a84a9977b4471705179",
+  "archive_sha256": "1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570",
+  "frozen_numerics": {
+    "rng_seed": 20260827,
+    "dtype": "float64",
+    "equivalence_tolerance": 5e-13,
+    "solve_residual_tolerance": 1e-10
+  },
+  "small_matrix_literal_upstream_equivalence": {
+    "pass": true,
+    "max_abs_difference": 2.117582368135751e-21,
+    "threshold": 5e-13,
+    "solve_residual_inf": 8.881784197001252e-16
+  },
+  "released_ACT_exact_solve": {
+    "pass": true,
+    "coupling_shape": [6144,6144],
+    "bandwindow_shape": [59,6144],
+    "solve_residual_inf": 4.884981308350689e-15,
+    "solve_residual_threshold": 1e-10,
+    "w2": 0.19147177798593715,
+    "Blue_selected_noise": [9.041781683480886e-08,9.032112813670384e-08,9.023941641070002e-08,9.020423570732356e-08,9.016607293740732e-08,9.022771123460065e-08],
+    "Green_selected_noise": [1.6544384315808472e-07,1.6430494746593176e-07,1.640263761714128e-07,1.6419681785225122e-07,1.643013680803517e-07,1.6395639921349397e-07]
+  },
+  "diagnostics": {
+    "Exp066B_constant_mode_relative_residual_reproduced": 0.3615744168461421,
+    "exact_vs_rejected_shortcut_relative_difference_Blue": 0.003894561121389647,
+    "exact_vs_rejected_shortcut_relative_difference_Green": 0.004151819288819618
+  },
+  "bridge_logic": {
+    "Exp066B_B1_free_cleft": "PASS_IMMUTABLE",
+    "Exp066B_B2_signal_operator": "PASS_IMMUTABLE",
+    "Exp066B_B3_constant_mode_shortcut": "FAIL_IMMUTABLE",
+    "Exp066B_B4_selected_ordering": "PASS_IMMUTABLE",
+    "Exp066C_exact_noise_replacement": "PASS",
+    "ACT_unWISE_selected_bandpower_operator_bridge": "PASS"
+  },
+  "interpretation": "The exact survey-only white-noise template N*w2*W*C^{-1}*1 is reproducible via a float64 linear solve without regularisation. Combined with the immutable Exp066B B1/B2/B4 passes, the selected-bandpower operator bridge is closed. The rejected Exp066B constant-mode shortcut remains a permanent failed approximation.",
+  "gate_state": {"G7":"OPEN","G8":"OPEN","G9":"OPEN"}
+}
