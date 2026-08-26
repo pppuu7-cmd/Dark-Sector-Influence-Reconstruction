@@ -1,0 +1,37 @@
+name: DSIR masked discriminant coverage v0.2
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/masked-discriminant-coverage-v0-2.yml'
+      - 'ci/masked_discriminant_coverage_v0_2.py'
+      - 'experiments/052a_masked_discriminant_coverage_v0_2.md'
+      - 'data/derived/comparison_readiness/block_aware_observability_atlas_v0_2.json'
+      - 'data/derived/comparison_readiness/discriminant_edges_v0_1.json'
+
+permissions:
+  contents: read
+
+jobs:
+  masked-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compute exact hard-edge hitting sets under masks
+        run: |
+          python3 ci/masked_discriminant_coverage_v0_2.py \
+            --atlas data/derived/comparison_readiness/block_aware_observability_atlas_v0_2.json \
+            --edges data/derived/comparison_readiness/discriminant_edges_v0_1.json \
+            --json masked_discriminant_coverage_v0_2.json
+          cat masked_discriminant_coverage_v0_2.json
+      - name: Upload masked coverage result
+        uses: actions/upload-artifact@v4
+        with:
+          name: masked-discriminant-coverage-v0-2-${{ github.sha }}
+          path: masked_discriminant_coverage_v0_2.json
+          if-no-files-found: error
