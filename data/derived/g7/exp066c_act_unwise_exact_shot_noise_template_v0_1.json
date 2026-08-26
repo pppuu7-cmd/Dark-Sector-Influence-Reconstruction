@@ -1,0 +1,44 @@
+{
+  "experiment": "Exp066C",
+  "status": "PASS_ACT_UNWISE_EXACT_SHOT_NOISE_TEMPLATE_V0_1",
+  "scope": "exact shot-noise forward-operator correction only; no observational fit, G7 law search, or withheld-family evaluation",
+  "pinned_external_repo": "ACTCollaboration/unWISExLens_lklh",
+  "pinned_commit": "6302c30d9e70f8e4ff2d4a84a9977b4471705179",
+  "archive_sha256": "1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570",
+  "provenance_pass": true,
+  "frozen_criteria": {
+    "C1_relative_solve_tolerance": 5e-11,
+    "C2_relative_equivalence_factor": 5e-12,
+    "C3_min_nonconstant_delta": 1e-6
+  },
+  "checks": {
+    "C1_exact_linear_solve_closure": {"pass": true},
+    "C2_upstream_bandpower_equivalence": {"pass": true},
+    "C3_nonconstant_template_control": {"pass": true},
+    "C4_selected_vector_closure": {"pass": true, "final_vector_length": 26}
+  },
+  "samples": {
+    "Blue_ACT": {
+      "C1": {"relative_residual": 6.52315926577459e-15, "threshold": 5e-11, "condition_number": 12.711071624037752, "w2": 0.19147177798593715, "pass": true},
+      "C2": {"selected_count": 6, "max_abs_difference": 4.218847493575595e-15, "threshold": 5.072522954317512e-12, "pass": true},
+      "C3": {"max_abs_x_minus_one": 1.1140436272781788, "minimum_required": 1e-6, "pass": true},
+      "C4": {"sample_vector_length": 13, "pass": true}
+    },
+    "Green_ACT": {
+      "C1": {"relative_residual": 6.52315926577459e-15, "threshold": 5e-11, "condition_number": 12.711071624037752, "w2": 0.19147177798593715, "pass": true},
+      "C2": {"selected_count": 6, "max_abs_difference": 4.218847493575595e-15, "threshold": 5.1005923390015e-12, "pass": true},
+      "C3": {"max_abs_x_minus_one": 1.1140436272781788, "minimum_required": 1e-6, "pass": true},
+      "C4": {"sample_vector_length": 13, "pass": true}
+    }
+  },
+  "immutable_lineage": {"Exp066B": "FAIL_ACT_UNWISE_SELECTED_BANDPOWER_CLOSURE_V0_1"},
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"},
+  "github_actions": {
+    "run_id": 32989328863,
+    "job_id": 98242896864,
+    "conclusion": "success",
+    "artifact_id": 9614063228,
+    "artifact_zip_sha256": "2409cd974691f09d80893d8d64f7f61ac5bccff4e28d4eb4251a5a21baf80baf"
+  },
+  "anti_retuning": "No pseudoinverse, jitter, regularisation, threshold relaxation, cut changes, ordering changes, nuisance changes, or reclassification of Exp066B."
+}
