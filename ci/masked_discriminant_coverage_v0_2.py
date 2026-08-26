@@ -41,7 +41,8 @@ def main():
     if edges.get('schema')!='dsir.discriminant_edges.v0.1': failures.append('edges_schema')
 
     directions=atlas.get('directions',{})
-    # Aliases from old edge names to current evidence-mask names.
+    # Exp051A stores seven non-reference response directions. C0 is an external
+    # response origin in the old hard edge catalogue, not one of these seven rows.
     aliases={
       'C4_WDM_3keV':'C4_thermal_WDM',
       'C5_designer_fR':'C5_designer_fR',
@@ -66,7 +67,7 @@ def main():
           'source_schema':'dsir.discriminant_edges.v0.1'
         })
 
-    # Exact hitting sets of the hard edge catalogue.
+    # Exact hitting sets use all hard edges, including C0-vs-C4.
     hitting=[]
     for subset in powerset(channels):
         if all(any(s in subset for s in e['hard_separators']) for e in normalized_edges):
@@ -78,7 +79,7 @@ def main():
         min_size=min(len(x) for x in hitting)
         minima=[sorted(x) for x in hitting if len(x)==min_size]
 
-    # Mask-aware pair inventory: this is not a claim of distinguishability.
+    # Mask-aware pair inventory for the seven non-reference atlas directions.
     names=sorted(directions)
     pair_inventory=[]
     for a,b in itertools.combinations(names,2):
@@ -105,9 +106,15 @@ def main():
           'has_hard_edge_evidence':bool(hard_edge_ids)
         })
 
-    # Current graph coverage. There are 7 atlas directions => 21 pairwise pairs.
+    hard_edges_internal=[e for e in normalized_edges if all(x in directions for x in e['pair'])]
+    hard_edges_external=[e for e in normalized_edges if not all(x in directions for x in e['pair'])]
     hard_pair_count=sum(1 for x in pair_inventory if x['has_hard_edge_evidence'])
     unresolved_pair_count=len(pair_inventory)-hard_pair_count
+
+    # Explicitly preserve the one external-reference edge in the current catalogue.
+    if len(hard_edges_external)!=1 or set(hard_edges_external[0]['pair'])!={'C0_LCDM','C4_thermal_WDM'}:
+        failures.append('unexpected_external_reference_edge_set')
+
     # C4 time completion must not silently create a new hard separator edge.
     c4_edges=[e for e in normalized_edges if 'C4_thermal_WDM' in e['pair']]
     if len(c4_edges)!=1 or c4_edges[0]['hard_separators']!=['M_highk']:
@@ -117,24 +124,27 @@ def main():
       'schema':'dsir.masked_discriminant_coverage.v0.2',
       'status':'PASS_MASKED_DISCRIMINANT_COVERAGE_V0_2' if not failures else 'FAIL_MASKED_DISCRIMINANT_COVERAGE_V0_2',
       'failures':failures,
-      'direction_count':len(names),
-      'pair_count':len(pair_inventory),
-      'hard_degeneracy_edge_count':len(normalized_edges),
-      'hard_pair_count_in_current_atlas':hard_pair_count,
-      'pairs_without_hard_edge_evidence':unresolved_pair_count,
+      'nonreference_direction_count':len(names),
+      'nonreference_pair_count':len(pair_inventory),
+      'hard_degeneracy_edge_count_total':len(normalized_edges),
+      'hard_edges_internal_to_nonreference_atlas':len(hard_edges_internal),
+      'hard_edges_with_external_reference_endpoint':len(hard_edges_external),
+      'external_reference_edges':hard_edges_external,
+      'hard_pair_count_in_nonreference_pair_inventory':hard_pair_count,
+      'nonreference_pairs_without_hard_edge_evidence':unresolved_pair_count,
       'normalized_hard_edges':normalized_edges,
       'candidate_channel_universe':sorted(channels),
       'minimum_hitting_set_cardinality_current_hard_graph':min_size,
       'minimum_hitting_sets_current_hard_graph':minima,
-      'pair_inventory':pair_inventory,
+      'pair_inventory_nonreference':pair_inventory,
       'interpretation':{
         'hard_lower_bound_on_separator_types_for_current_edge_catalogue':min_size,
-        'scope':'only the existing hard-established degeneracy edges; not all atlas pairs',
+        'scope':'all four existing hard-established degeneracy edges, including external reference edge C0-vs-C4; pair inventory itself contains only seven non-reference atlas directions',
         'c4_time_completion_effect':'strengthens C4 evidence mask but creates no new pairwise hard separator edge without a frozen comparison gate'
       },
       'not_a_claim':[
         'not N_micro, N_manifold, N_repr or an intrinsic numerical rank',
-        'not proof that pairs without hard edges are degenerate or distinguishable',
+        'not proof that nonreference pairs without hard edges are degenerate or distinguishable',
         'not a survey-optimal channel set',
         'not zero-imputed matrix completion',
         'not G7/G8 closure'
