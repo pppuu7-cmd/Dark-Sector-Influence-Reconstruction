@@ -1,0 +1,91 @@
+name: C3 GDM read-only D_m physical power bridge v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/c3-gdm-readonly-dm-power-bridge-v0-1.yml'
+      - 'ci/c3_gdm_readonly_dm_power_bridge_v0_1.py'
+      - 'patches/apply_gdm_class_readonly_dm_accessor.py'
+      - 'experiments/070a_c3_gdm_readonly_dm_power_bridge_v0_1.md'
+
+jobs:
+  c3-readonly-dm-provider:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pinned-wrapper build dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y git gcc g++ make python3 python3-dev python3-pip libgomp1
+          python3 -m pip install --user 'numpy<2' 'Cython<3' six
+
+      - name: Clone pristine and patched pinned GDM_CLASS trees
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/s-ilic/gdm_class_public.git gdm_pristine
+          git -C gdm_pristine checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          test "$(git -C gdm_pristine rev-parse HEAD)" = '4c87916aab5ca124a68f1dd16f31846fc13d1829'
+          cp -a gdm_pristine gdm_patched
+          python3 patches/apply_gdm_class_readonly_dm_accessor.py gdm_patched
+          test "$(git -C gdm_patched rev-parse HEAD)" = '4c87916aab5ca124a68f1dd16f31846fc13d1829'
+          git -C gdm_patched status --porcelain=v1 | tee exp070a_patch_status.txt
+          test "$(git -C gdm_patched status --porcelain=v1 | wc -l)" -eq 2
+          git -C gdm_patched status --porcelain=v1 | grep -F 'python/cclassy.pxd'
+          git -C gdm_patched status --porcelain=v1 | grep -F 'python/classy.pyx'
+
+      - name: Build pristine and patched Python wrappers independently
+        run: |
+          set -euxo pipefail
+          make -C gdm_pristine -j2 libclass.a
+          (cd gdm_pristine/python && python3 setup.py build_ext --inplace)
+          make -C gdm_patched -j2 libclass.a
+          (cd gdm_patched/python && python3 setup.py build_ext --inplace)
+          test -n "$(find gdm_pristine/python -maxdepth 1 -name 'gdm_classy*.so' -print -quit)"
+          test -n "$(find gdm_patched/python -maxdepth 1 -name 'gdm_classy*.so' -print -quit)"
+
+      - name: Run frozen Exp070A provider validation
+        run: |
+          set -euxo pipefail
+          python3 ci/c3_gdm_readonly_dm_power_bridge_v0_1.py \
+            --pristine gdm_pristine \
+            --patched gdm_patched \
+            --output data/derived/g7/exp070a_c3_gdm_readonly_dm_power_bridge_v0_1_summary.json
+
+      - name: Preserve scientific PASS or FAIL
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp070a_c3_gdm_readonly_dm_power_bridge_v0_1_summary.json'
+          d=json.load(open(p))
+          assert d['status'] in {
+              'PASS_C3_GDM_READONLY_DM_PHYSICAL_POWER_BRIDGE_V0_1',
+              'FAIL_C3_GDM_READONLY_DM_PHYSICAL_POWER_BRIDGE_V0_1',
+          }
+          assert d['solver']=='s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829'
+          assert d['V1_patch_scope']['allowed_paths']==['python/cclassy.pxd','python/classy.pyx']
+          assert d['frozen']['cs2']=={'zero':0.0,'1em6':1e-06,'1em5':1e-05}
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP070A_RESULT', d['status'])
+          for key in (
+              'V1_patch_scope','V2_native_output_invariance','V3_Dm_native_mPk_reconstruction',
+              'V4_signed_Weyl_construction','V5_same_mode_coherence',
+              'V6_wrong_d_tot_negative_control','V7_accessor_repeatability','V8_no_state_mutation'):
+              print(key, d[key]['pass'])
+          PY
+
+      - name: Upload immutable Exp070A record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp070a-c3-gdm-readonly-dm-${{ github.sha }}
+          path: |
+            data/derived/g7/exp070a_c3_gdm_readonly_dm_power_bridge_v0_1_summary.json
+            data/derived/g7/exp070a_cases/*.json
+            data/derived/g7/exp070a_cases/*.log
+            exp070a_patch_status.txt
+          if-no-files-found: warn
