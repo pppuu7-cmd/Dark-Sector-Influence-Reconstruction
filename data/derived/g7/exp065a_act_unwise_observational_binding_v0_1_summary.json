@@ -1,0 +1,38 @@
+{
+  "experiment": "Exp065A",
+  "date": "2026-08-26",
+  "status": "FAIL_ACT_UNWISE_OBSERVATIONAL_BINDING_ELIGIBILITY_V0_1",
+  "workflow_run": 32978244624,
+  "workflow_job": 98208175963,
+  "pinned_external_repo": "ACTCollaboration/unWISExLens_lklh",
+  "pinned_commit": "6302c30d9e70f8e4ff2d4a84a9977b4471705179",
+  "archive_sha256": "1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570",
+  "passed_checks": [
+    "pinned_git_commit",
+    "declared_versions",
+    "data_root",
+    "bandpowers_gg_kg",
+    "bandwindow_transfer_operators",
+    "redshift_auxiliary",
+    "likelihood_source_contract"
+  ],
+  "failed_check": "covariance_binding",
+  "covariance_diagnostics": {
+    "Blue_ACT_lambda_min": 2.653905235216682e-19,
+    "Blue_ACT_lambda_max": 3.179821561449604e-13,
+    "Green_ACT_lambda_min": 6.410676842780359e-19,
+    "Green_ACT_lambda_max": 6.47889240410309e-14,
+    "full_236x236_lambda_min": -1.65028271985107e-19,
+    "full_236x236_lambda_max": 3.229098231297519e-13,
+    "full_236x236_positive_definite": false
+  },
+  "post_failure_source_audit": {
+    "finding": "The official likelihood first applies the configured ell selections to each auto/cross covariance with select_from_matrix, then assembles the likelihood covariance. Exp065A tested the unselected full 236x236 block, so this FAIL must be preserved but does not establish that the official selected likelihood covariance is invalid.",
+    "official_default_ACT_scale_cuts": {
+      "Clgg": [100, 402],
+      "Clkg": [51, 402]
+    },
+    "next_experiment": "Exp065B must reproduce the official likelihood selection path exactly and audit the selected covariance as a new corrective eligibility experiment. Exp065A criteria/results are not changed retroactively."
+  },
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
