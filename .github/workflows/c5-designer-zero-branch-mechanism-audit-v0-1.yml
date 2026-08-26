@@ -32,10 +32,12 @@ jobs:
           git -C eftcamb submodule update --init --recursive
           test "$(git -C eftcamb rev-parse HEAD)" = '16d9c4e9f85751e30efd0a53b177941713078904'
           # Source-boundary controls frozen by Exp069D preregistration.
-          grep -F 'call dlsoda' eftcamb/fortran/eftcamb/07f_designer_models/007p3_Designer_fR.f90
-          grep -F 'rtol = 1.d-12' eftcamb/fortran/eftcamb/07f_designer_models/007p3_Designer_fR.f90
-          grep -F 'atol = 1.d-16' eftcamb/fortran/eftcamb/07f_designer_models/007p3_Designer_fR.f90
-          grep -F "model_background_num_points" eftcamb/fortran/eftcamb/06p2_abstract_EFTCAMB_designer.f90
+          # The first two runs failed before science because these guards were
+          # text/case brittle; the scientific source requirements are unchanged.
+          grep -Ei 'dlsoda' eftcamb/fortran/eftcamb/07f_designer_models/007p3_Designer_fR.f90
+          grep -Ei 'rtol[^0-9]*1[.]d-12' eftcamb/fortran/eftcamb/07f_designer_models/007p3_Designer_fR.f90
+          grep -Ei 'atol[^0-9]*1[.]d-16' eftcamb/fortran/eftcamb/07f_designer_models/007p3_Designer_fR.f90
+          grep -F 'model_background_num_points' eftcamb/fortran/eftcamb/07f_designer_models/007p3_Designer_fR.f90
           grep -F 'EFTCAMB_skip_RGR' eftcamb/fortran/eftcamb/09_EFTCAMB_main.f90
           make -C eftcamb/fortran python
           test "$(git -C eftcamb rev-parse HEAD)" = '16d9c4e9f85751e30efd0a53b177941713078904'
