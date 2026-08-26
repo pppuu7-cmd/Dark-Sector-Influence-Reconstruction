@@ -1,0 +1,84 @@
+name: Matter-response geometry taxonomy retrospective v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/matter-response-geometry-taxonomy-retrospective-v0-1.yml'
+      - 'ci/matter_response_geometry_taxonomy_retrospective_v0_1.py'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  retrospective-taxonomy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install analysis dependencies
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --user numpy
+          python3 -m py_compile ci/matter_response_geometry_taxonomy_retrospective_v0_1.py
+          gh --version
+
+      - name: Download immutable already-unblinded source artifacts
+        run: |
+          set -euxo pipefail
+          mkdir -p exp071d_inputs/{c3,c5,c7,c8,c9,known}
+          gh run download 32904158849 -n 'gdm-window-crossing-validation-v0-1-6f5383ee692df1a5b46a433f8db7514dc0ad45c6' -D exp071d_inputs/c3
+          gh run download 32907619613 -n 'fr-window-crossing-validation-v0-1-205cd5d0acd9d95eda1ee3a6b5e1d2b3d8c05f53' -D exp071d_inputs/c5
+          gh run download 32920776596 -n 'idm-dr-common-source-response-slope-v0-1-5a1f34d2e6813e450331ab2b7c194bbb000f0996' -D exp071d_inputs/c7
+          gh run download 32926084015 -n 'idm-photon-endpoint-half-transition-prospective-v0-1-718e62154447b1efdfad6c6ae3740bdbdac5d1f9' -D exp071d_inputs/c8
+          gh run download 32957427686 -n 'idm-baryon-multicoordinate-prospective-v0-1-3cec27e058772cf292eb9185fc8a8d360ad96729' -D exp071d_inputs/c9
+          gh run download 33020203400 -n 'exp071c-known-sector-f30-specificity-da74d592fbcc2bba9cd223e924b245a3e52437e1' -D exp071d_inputs/known
+
+      - name: Execute descriptive post-unblinding taxonomy
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/retrospective
+          python3 ci/matter_response_geometry_taxonomy_retrospective_v0_1.py \
+            --c3-root exp071d_inputs/c3 \
+            --c5-root exp071d_inputs/c5 \
+            --c7-root exp071d_inputs/c7 \
+            --c8-root exp071d_inputs/c8 \
+            --c9-root exp071d_inputs/c9 \
+            --known-root exp071d_inputs/known \
+            --json data/derived/retrospective/exp071d_matter_response_geometry_taxonomy_retrospective_v0_1.json
+
+      - name: Assert interpretation boundary only
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/retrospective/exp071d_matter_response_geometry_taxonomy_retrospective_v0_1.json'
+          d=json.load(open(p))
+          assert d['experiment']=='Exp071D'
+          assert d['status']=='DESCRIPTIVE_POST_UNBLINDING_ONLY'
+          assert set(d['families'])=={
+              'C3_GDM','C5_fR','C7_IDM_DR','C8_IDM_photon','C9_IDM_baryon',
+              'K1_primordial_tilt','K2_baryon_fraction'}
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert any('not a dark-sector identity statistic' in x for x in d['interpretation_boundary'])
+          for name,row in d['families'].items():
+              assert 0.0 <= row['PC1_fraction'] <= 1.0
+              assert 0.0 <= row['PC1_PC2_fraction'] <= 1.000000000001
+              print(name,'PC1',row['PC1_fraction'],'path_excess',row['path_excess_over_endpoint_chord'],
+                    'monotone',row['endpoint_progress_strictly_increasing'],
+                    'max_turn',row['max_tangent_turn_degrees'])
+          PY
+
+      - name: Upload immutable Exp071D descriptive record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp071d-matter-response-taxonomy-${{ github.sha }}
+          path: |
+            data/derived/retrospective/exp071d_matter_response_geometry_taxonomy_retrospective_v0_1.json
+          if-no-files-found: warn
