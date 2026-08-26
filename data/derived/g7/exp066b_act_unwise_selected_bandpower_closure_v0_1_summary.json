@@ -1,0 +1,51 @@
+{
+  "experiment": "Exp066B",
+  "date": "2026-08-26",
+  "status": "FAIL_ACT_UNWISE_SELECTED_BANDPOWER_CLOSURE_V0_1",
+  "workflow_run": 32982563070,
+  "workflow_job": 98222539772,
+  "pinned_external_repo": "ACTCollaboration/unWISExLens_lklh",
+  "pinned_commit": "6302c30d9e70f8e4ff2d4a84a9977b4471705179",
+  "archive_sha256": "1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570",
+  "preregistration_commit": "ee80305fef9bb56954e4a82d1207ffaf2dab4ca5",
+  "frozen_numerics": {
+    "rng_seed": 20260826,
+    "synthetic_ell_count": 64,
+    "equivalence_tolerance": 5e-13,
+    "constant_mode_tolerance": 1e-10
+  },
+  "subtests": {
+    "B1_free_cleft_nuisance_algebra": {
+      "pass": true,
+      "Blue_coeff_and_spectra_max_abs_difference": 0.0,
+      "Green_coeff_and_spectra_max_abs_difference": 0.0,
+      "Blue_cleft_zero_delta_gg": 0.5911779003209406,
+      "Blue_cleft_zero_delta_kg": 0.21864469967698902,
+      "Green_cleft_zero_delta_gg": 0.723245926342057,
+      "Green_cleft_zero_delta_kg": 0.22015605355207762
+    },
+    "B2_released_bandwindow_transfer_operator": {
+      "pass": true,
+      "small_matrix_signal_identity_max_abs_difference": 3.9968028886505635e-15,
+      "small_matrix_threshold": 1.9770242331084897e-12,
+      "coupling_shape": [6144, 6144],
+      "bandwindow_shape": [59, 6144]
+    },
+    "B3_shot_noise_constant_mode": {
+      "pass": false,
+      "gg_relative_residual_C1_minus_w2_1": 0.3615744168461421,
+      "gg_w2": 0.19147177798593715,
+      "kg_relative_residual_descriptive_only": 0.342838189662599,
+      "frozen_threshold": 1e-10
+    },
+    "B4_selected_ordering": {
+      "pass": true,
+      "combined_selected_dimension": 26,
+      "gg_midpoints": [126.5,176.5,226.5,276.5,326.5,376.5],
+      "kg_midpoints": [76.5,126.5,176.5,226.5,276.5,326.5,376.5]
+    }
+  },
+  "interpretation": "The frozen v0.1 cheap white-noise reduction is false for the released ACT coupling matrix. The free-CLEFT nuisance algebra, signal bandwindow/transfer reduction, and selected ordering remain validated. This FAIL forbids replacing the upstream white-noise term by a constant full-sky template after W-only reduction.",
+  "allowed_corrective_direction": "A separately preregistered experiment may evaluate the exact upstream noise template w2*W*C^{-1}*1 (or an algebraically equivalent exact solve/precomputed template) without changing Exp066B. No approximation, jitter or threshold relaxation is permitted.",
+  "gate_state": {"G7":"OPEN","G8":"OPEN","G9":"OPEN"}
+}
