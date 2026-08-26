@@ -1,0 +1,74 @@
+name: DSIR common source-response slope calibration v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/common-source-response-slope-calibration-v0-1.yml'
+      - 'ci/common_source_response_slope_calibration_v0_1.py'
+      - 'experiments/054a_common_source_response_slope_calibration_v0_1.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  common-source-response-calibration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install analysis dependency
+        run: python3 -m pip install --user numpy
+
+      - name: Download immutable C3 and C5 withheld artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euxo pipefail
+          mkdir -p inputs/gdm inputs/fr
+          gh run download 32904158849 --repo "$GITHUB_REPOSITORY" --dir inputs/gdm
+          gh run download 32907619613 --repo "$GITHUB_REPOSITORY" --dir inputs/fr
+          find inputs/gdm -name exp049b_gdm_cv2_intermediate_scan.json -print | tee exp054a_gdm_inputs.txt
+          find inputs/gdm -name gdm_window_crossing_validation_v0_1.json -print | tee -a exp054a_gdm_inputs.txt
+          find inputs/fr -name 'exp049c_B0_*.json' -print | sort | tee exp054a_fr_inputs.txt
+          find inputs/fr -name fr_window_crossing_validation_v0_1.json -print | tee -a exp054a_fr_inputs.txt
+          test "$(grep -c exp049b_gdm_cv2_intermediate_scan.json exp054a_gdm_inputs.txt)" -eq 1
+          test "$(grep -c gdm_window_crossing_validation_v0_1.json exp054a_gdm_inputs.txt)" -eq 1
+          test "$(grep -c fr_window_crossing_validation_v0_1.json exp054a_fr_inputs.txt)" -eq 1
+
+      - name: Apply frozen common-slope calibration rule
+        run: |
+          set -euxo pipefail
+          python3 ci/common_source_response_slope_calibration_v0_1.py \
+            --gdm-root inputs/gdm \
+            --fr-root inputs/fr \
+            --json common_source_response_slope_calibration_v0_1.json
+          cat common_source_response_slope_calibration_v0_1.json
+
+      - name: Record immutable provenance
+        if: always()
+        run: |
+          {
+            echo 'Experiment 054A common source-response slope calibration'
+            echo 'No C7 spectra existed or were generated in this workflow.'
+            echo 'Frozen branching rule: any C3/C5 C<=0 rejects the common law before C7.'
+            echo 'If positive: prospective C7 band = [0.5*min(C), 2*max(C)].'
+            echo 'C3 source run: 32904158849'
+            echo 'C5 source run: 32907619613'
+            echo "DSIR head: $GITHUB_SHA"
+          } > exp054a_environment.txt
+
+      - name: Upload calibration record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: common-source-response-slope-calibration-v0-1-${{ github.sha }}
+          path: |
+            common_source_response_slope_calibration_v0_1.json
+            exp054a_environment.txt
+            exp054a_gdm_inputs.txt
+            exp054a_fr_inputs.txt
+          if-no-files-found: warn
