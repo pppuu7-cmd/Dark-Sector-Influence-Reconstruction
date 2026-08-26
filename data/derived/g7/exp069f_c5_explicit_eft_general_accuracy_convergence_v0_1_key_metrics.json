@@ -1,0 +1,58 @@
+{
+  "experiment": "Exp069F",
+  "date": "2026-08-27",
+  "execution_status": "COMPLETE_C5_EXPLICIT_EFT_GENERAL_ACCURACY_CONVERGENCE_V0_1",
+  "scientific_classification": "GENERAL_ACCURACY_RECOVERS_FROZEN_GR_LIMIT",
+  "preregistration_commit": "43ef913645a43f091e728623291bc21642a56ab9",
+  "execution_head": "30706773a0069b6bbe3144443debeeffa6fba328",
+  "workflow_run_id": 33023027901,
+  "artifact_id": 9627458877,
+  "artifact_sha256": "d8e1a42bf813d5ae105ea33e723868d454ff7584424373ecfe4594a2dfe49358",
+  "solver": "EFTCAMB/EFTCAMB",
+  "solver_sha": "16d9c4e9f85751e30efd0a53b177941713078904",
+  "hard_target_gr_limit": 5e-6,
+  "q_order": [1.0, 2.0, 3.0, 4.0],
+  "M_q_target": [
+    5.302921926164412e-6,
+    2.904403568550871e-6,
+    1.7011186858522977e-6,
+    1.3107890273503598e-6
+  ],
+  "R_q_raw_same_node": [
+    9.938162077359033e-6,
+    5.400555774622087e-6,
+    2.8421302380756537e-6,
+    1.5177816179258466e-6
+  ],
+  "first_preregistered_target_passing_q": 2.0,
+  "first_q_with_both_target_and_raw_below_5e-6_descriptive": 3.0,
+  "M_monotone_nonincreasing": true,
+  "R_monotone_nonincreasing": true,
+  "target_residual_correlation_to_q1": {
+    "2.0": {"mm": 0.9781269857593777, "Wm": 0.9812948662768788, "WW": 0.9821392234341504},
+    "3.0": {"mm": 0.956522533157649, "Wm": 0.9563739265559057, "WW": 0.9485134500072326},
+    "4.0": {"mm": 0.8725005148348621, "Wm": 0.8749098454966886, "WW": 0.8895749551881622}
+  },
+  "paired_background_diagnostics": {
+    "H_z_max_abs_relative_difference_each_q": [0.0, 0.0, 0.0, 0.0],
+    "conformal_time_max_abs_relative_difference_each_q": [0.0, 0.0, 0.0, 0.0],
+    "derived_recombination_and_equality_quantities": "bitwise/numerically equal within each paired q in the immutable artifact"
+  },
+  "integrity_controls": {
+    "all_case_processes_success": true,
+    "all_case_analysis_success": true,
+    "pinned_solver_before_and_after": true,
+    "all_raw_grids_exact": true,
+    "all_nonlinear_none": true,
+    "all_accuracy_readback": true,
+    "all_designer_readback": true
+  },
+  "interpretation_boundary": {
+    "Exp069B": "PERMANENT_FAIL_UNCHANGED",
+    "C5_provider_certified": false,
+    "support_mask_authorized": false,
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
