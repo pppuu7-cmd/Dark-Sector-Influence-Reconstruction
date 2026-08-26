@@ -65,6 +65,7 @@ jobs:
           b_idr = 0.
           alpha_idm_dr = 1.5
           beta_idr = 1.5
+          idr_streaming_trigger_tau_over_tau_k = 49.
           output = mPk
           modes = s
           ic = ad
@@ -105,6 +106,7 @@ jobs:
           grep -Fq 'a_idm_dr = 200366331342.04977' dsir_idm3.ini
           grep -Fq 'a_idm_dr = 634135393232.74707' dsir_idm4.ini
           grep -Fq 'a_idm_dr = 1381558672367.1924' dsir_idm5.ini
+          grep -Fq 'idr_streaming_trigger_tau_over_tau_k = 49.' dsir_ref.ini
 
       - name: Run first prospective C7 response set
         working-directory: class_public
@@ -145,6 +147,7 @@ jobs:
             echo 'Scientific contract preregistered in prior commit 1df523f02a549dccc9b7bb11cb608922546b56c1 before first C7 P(k,z).'
             echo 'Frozen C band: [0.0022992620786061375,0.09951219222831723].'
             echo 'Frozen low-k nodes: 0.001,0.003,0.01,0.03,0.1 h/Mpc; seven standard DSIR redshifts.'
+            echo 'Numerical-only control: idr_streaming_trigger_tau_over_tau_k=49 to avoid equality with pk_ref ur trigger=50; idr streaming approximation remains the pinned default none.'
             echo 'No recalibration or C7-selected node/coupling changes are permitted for v0.1.'
             echo "DSIR head: $GITHUB_SHA"
             echo -n 'CLASS upstream: '; cat exp054c_class_upstream_sha.txt 2>/dev/null || true
