@@ -1,0 +1,37 @@
+{
+  "experiment": "Exp066A",
+  "date": "2026-08-26",
+  "status": "PASS_SOLVER_NEUTRAL_RAW_PROJECTION_EQUIVALENCE_V0_1",
+  "workflow_run": 32980938654,
+  "workflow_job": 98217145957,
+  "pinned_external_repo": "ACTCollaboration/unWISExLens_lklh",
+  "pinned_commit": "6302c30d9e70f8e4ff2d4a84a9977b4471705179",
+  "frozen_numerics": {
+    "ell": [10.0, 30.0, 80.0, 150.0, 300.0],
+    "zmin": 0.0,
+    "zmax": 3.0,
+    "kmax_Mpc^-1": 1000.0,
+    "gauss_legendre_order": 96,
+    "equivalence_tolerance": 5e-13
+  },
+  "equivalence": {
+    "all_raw_components_pass": true,
+    "maximum_observed_absolute_difference": 0.0,
+    "zero_basis_shapes_and_values_pass": true
+  },
+  "independent_spectrum_controls": {
+    "P_WW_times_1p1_changes_only": ["kg/kmu", "gg/mumu"],
+    "P_Wm_times_1p1_changes_only": ["kg/kg_b", "gg/gmu_b"],
+    "P_mm_times_1p1_changes_only": ["gg/gg_bsq"],
+    "pass": true
+  },
+  "solver_neutral_interface": {
+    "geometry": ["chi(z)", "z_of_chi(chi)", "H(z)[Mpc^-1]", "f_K(chi)[Mpc]", "H0[Mpc^-1]", "h", "Omega_m", "curvature[Mpc^-2]", "chi_star[Mpc]"],
+    "spectra": ["P_WW(k,z)", "P_Wm(k,z)", "P_mm(k,z)"],
+    "spectral_k_unit": "Mpc^-1",
+    "poisson_reconstruction_forbidden": true
+  },
+  "scientific_interpretation": "The no-CLEFT raw ACT x unWISE projection basis can be supplied by a solver-neutral geometry-plus-three-spectrum interface without collapsing Weyl and matter through a GR Poisson assumption. This is a projection-bridge result only.",
+  "next_step": "Exp066B: freeze and validate nuisance/CLEFT closure plus released bandwindow/transfer mapping on a reference cosmology before any G7 relation search.",
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
