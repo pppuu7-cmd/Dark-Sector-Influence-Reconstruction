@@ -1,0 +1,172 @@
+name: DSIR IDM-DR common source-response slope v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/idm-dr-common-source-response-slope-v0-1.yml'
+      - 'ci/idm_dr_common_source_response_slope_v0_1.py'
+      - 'experiments/054c_idm_dr_common_source_response_slope_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  prospective-c7-common-slope:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CLASS toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Clone and build pinned official CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/lesgourg/class_public.git class_public
+          cd class_public
+          git checkout e85808324f51fc694d12e3ed7439552a3c3f9540
+          git rev-parse HEAD | tee ../exp054c_class_upstream_sha.txt
+          test "$(git rev-parse HEAD)" = 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+          grep -Fq "Can be passed as 'a_idm_dr'" explanatory.ini
+          grep -Fq 'Gamma_DM-DR = - 4/3' explanatory.ini
+          grep -Fq "default = 'free_streaming'" explanatory.ini
+          grep -n 'a_idm_dr.*pow((1.+z)/1.e7' source/thermodynamics.c | tee ../exp054c_rate_source.txt
+          grep -n 'S_idm_dr = 4./3. .*rho_idr.*rho_idm' source/perturbations.c | head -n 5 | tee ../exp054c_drag_source.txt
+          test -s ../exp054c_rate_source.txt
+          test -s ../exp054c_drag_source.txt
+          make -j2 class
+
+      - name: Freeze exact matched reference and C7 response configurations
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          mkdir -p outputs
+          cat > dsir_idm_dr_base.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          omega_cdm = 0.0
+          omega_idm = 0.1200
+          Omega_k = 0.
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          N_ur = 3.046
+          N_idr = 0.2
+          stat_f_idr = 0.875
+          nindex_idm_dr = 4
+          idr_nature = free_streaming
+          b_idr = 0.
+          alpha_idm_dr = 1.5
+          beta_idr = 1.5
+          idr_streaming_trigger_tau_over_tau_k = 49.
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 1.0
+          primordial_P_k_max_h/Mpc = 1.0
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          write background = yes
+          EOF
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          base=Path('dsir_idm_dr_base.ini').read_text()
+          frozen=[
+            ('ref',0.0),
+            ('idm1',43913804613.585236),
+            ('idm2',82005193007.92964),
+            ('idm3',200366331342.04977),
+            ('idm4',634135393232.7471),
+            ('idm5',1381558672367.1924),
+          ]
+          for name,a in frozen:
+              text=f'a_idm_dr = {a:.17g}\nroot = outputs/{name}_\n'+base
+              Path(f'dsir_{name}.ini').write_text(text)
+              print(name,format(a,'.17g'))
+          PY
+
+          grep -Fq 'a_idm_dr = 0' dsir_ref.ini
+          grep -Fq 'a_idm_dr = 43913804613.585236' dsir_idm1.ini
+          grep -Fq 'a_idm_dr = 82005193007.929642' dsir_idm2.ini
+          grep -Fq 'a_idm_dr = 200366331342.04977' dsir_idm3.ini
+          grep -Fq 'a_idm_dr = 634135393232.74707' dsir_idm4.ini
+          grep -Fq 'a_idm_dr = 1381558672367.1924' dsir_idm5.ini
+          grep -Fq 'idr_streaming_trigger_tau_over_tau_k = 49.' dsir_ref.ini
+
+      - name: Run first prospective C7 response set
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          ./class dsir_ref.ini pk_ref.pre 2>&1 | tee ../exp054c_ref.log
+          for name in idm1 idm2 idm3 idm4 idm5; do
+            ./class "dsir_${name}.ini" pk_ref.pre 2>&1 | tee "../exp054c_${name}.log"
+          done
+
+      - name: Require seven explicit P(k,z) outputs per configuration
+        run: |
+          set -euxo pipefail
+          for prefix in ref_ idm1_ idm2_ idm3_ idm4_ idm5_; do
+            n=$(find class_public/outputs -maxdepth 1 -type f -name "${prefix}*pk.dat" | wc -l)
+            test "$n" -eq 7
+            for f in class_public/outputs/${prefix}*pk.dat; do
+              grep -Eiq 'redshift[[:space:]]+z[[:space:]]*=' "$f"
+              test "$(grep -vc '^#' "$f")" -gt 20
+            done
+          done
+
+      - name: Evaluate pre-frozen Exp054C common-slope gate
+        run: |
+          set -euxo pipefail
+          python3 ci/idm_dr_common_source_response_slope_v0_1.py \
+            --directory class_public/outputs \
+            --reference-prefix ref_ \
+            --models idm1_ idm2_ idm3_ idm4_ idm5_ \
+            --json idm_dr_common_source_response_slope_v0_1.json
+          cat idm_dr_common_source_response_slope_v0_1.json
+
+      - name: Record immutable prospective provenance
+        if: always()
+        run: |
+          {
+            echo 'Experiment 054C prospective C7 IDM-DR common source-response slope v0.1'
+            echo 'Scientific contract preregistered in prior commit 1df523f02a549dccc9b7bb11cb608922546b56c1 before first C7 P(k,z).'
+            echo 'Frozen C band: [0.0022992620786061375,0.09951219222831723].'
+            echo 'Frozen low-k nodes: 0.001,0.003,0.01,0.03,0.1 h/Mpc; seven standard DSIR redshifts.'
+            echo 'Numerical-only control: idr_streaming_trigger_tau_over_tau_k=49 to avoid equality with pk_ref ur trigger=50; idr streaming approximation remains the pinned default none.'
+            echo 'No recalibration or C7-selected node/coupling changes are permitted for v0.1.'
+            echo "DSIR head: $GITHUB_SHA"
+            echo -n 'CLASS upstream: '; cat exp054c_class_upstream_sha.txt 2>/dev/null || true
+          } > exp054c_environment.txt
+
+      - name: Upload prospective C7 validation record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: idm-dr-common-source-response-slope-v0-1-${{ github.sha }}
+          path: |
+            idm_dr_common_source_response_slope_v0_1.json
+            exp054c_environment.txt
+            exp054c_class_upstream_sha.txt
+            exp054c_rate_source.txt
+            exp054c_drag_source.txt
+            exp054c_*.log
+            class_public/dsir_*.ini
+            class_public/pk_ref.pre
+            class_public/outputs/ref_*pk.dat
+            class_public/outputs/idm*pk.dat
+          if-no-files-found: warn
