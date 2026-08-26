@@ -41,10 +41,15 @@ jobs:
           python3 ci/idm_dr_source_selector_v0_1.py --json idm_dr_source_selector_v0_1.json
           cat idm_dr_source_selector_v0_1.json
 
-      - name: Enforce no C7 response products in source-selector workflow
+      - name: Enforce no generated C7 response products in DSIR work area
         run: |
           set -euxo pipefail
-          test "$(find . -type f \( -name '*pk.dat' -o -name '*matterpower*' -o -name '*tk.dat' \) | wc -l)" -eq 0
+          # The pinned upstream clone contains its own shipped example/reference
+          # data. Exclude that read-only audit tree and reject response products
+          # created anywhere else in this workflow.
+          generated="$(find . -path './class_source' -prune -o -type f \( -name '*pk.dat' -o -name '*matterpower*' -o -name '*tk.dat' \) -print)"
+          printf '%s\n' "$generated"
+          test -z "$generated"
 
       - name: Record source-only provenance
         if: always()
