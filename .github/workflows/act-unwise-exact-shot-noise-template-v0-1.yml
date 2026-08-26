@@ -1,4 +1,5 @@
 name: ACT x unWISE exact shot noise template v0.1
+# Event-sync retrigger only; frozen Exp066C scientific contract is unchanged.
 
 on:
   workflow_dispatch:
