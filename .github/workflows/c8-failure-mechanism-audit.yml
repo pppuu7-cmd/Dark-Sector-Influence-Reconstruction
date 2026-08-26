@@ -1,0 +1,83 @@
+name: DSIR C8 failure mechanism audit
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/c8-failure-mechanism-audit.yml'
+      - 'ci/c8_failure_mechanism_audit.py'
+      - 'experiments/057a_c8_failure_mechanism_audit.md'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+      - name: Clone pinned CLASS
+        run: |
+          git clone https://github.com/lesgourg/class_public.git class_public
+          cd class_public
+          git checkout e85808324f51fc694d12e3ed7439552a3c3f9540
+          test "$(git rev-parse HEAD)" = 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+          make -j2 class
+      - name: Reproduce exact Exp056B response grid
+        working-directory: class_public
+        run: |
+          mkdir -p outputs
+          cat > dsir_idm_photon_base.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          omega_cdm = 0.0
+          omega_idm = 0.1200
+          m_idm = 1e9
+          Omega_k = 0.
+          N_ur = 3.046
+          n_index_idm_g = 0
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 1.0
+          primordial_P_k_max_h/Mpc = 1.0
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          EOF
+          python3 - <<'PY'
+          from pathlib import Path
+          base=Path('dsir_idm_photon_base.ini').read_text()
+          frozen=[('ref',0.0),('idm1',1.9784961959913951e-13),('idm2',2.7180740724473660e-13),('idm3',4.2866377403625277e-13),('idm4',7.7340788471244140e-13),('idm5',1.1546648138593298e-12)]
+          for name,u in frozen:
+              Path(f'dsir_{name}.ini').write_text(f'u_idm_g = {u:.17g}\nroot = outputs/{name}_\n'+base)
+          PY
+          ./class dsir_ref.ini
+          for name in idm1 idm2 idm3 idm4 idm5; do ./class "dsir_${name}.ini"; done
+      - name: Run diagnostic audit
+        run: |
+          python3 ci/c8_failure_mechanism_audit.py --directory class_public/outputs --json exp057a_c8_failure_mechanism_audit.json
+      - name: Upload audit record
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp057a-c8-failure-mechanism-${{ github.sha }}
+          path: |
+            exp057a_c8_failure_mechanism_audit.json
+            class_public/dsir_*.ini
+          if-no-files-found: error
