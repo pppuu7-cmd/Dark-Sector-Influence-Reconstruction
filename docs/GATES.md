@@ -177,3 +177,30 @@ However the observable coordinates and microscopic control variables are not yet
 The block-aware observability atlas v0.2 is now the required input for future rank/coverage claims. Unknown, solver-limited and near-null cells cannot be filled with zeros. Any future `N_repr` or `N_disc` gate must state which fully observed submatrix or masked bound it uses.
 
 Top-level state: **G7 OPEN, G8 OPEN, G9 OPEN**.
+
+<!-- DSIR_F26_C6_SYNC_2026_08_26 -->
+## Gate update — 2026-08-26 Exp052A / Exp053A
+
+### Masked discriminant coverage
+
+Exp052A hard run `32915627840` confirms the exact minimum hitting set for the **current four-edge hard catalogue** remains three separator types: `M_highk`, `S_slip`, and `tau_or_full_kz`. This is not a universal `N_disc`: 18 of 21 pairs among the seven non-reference Exp051A directions still lack pair-specific hard-edge evidence.
+
+### First withheld-family mechanism test
+
+Exp053A introduces C6 DCDM->dark radiation, which was not used to construct the characteristic-scale findings. The preregistered temporal response-localization prediction passed on clean run `32915877993`:
+
+`z_R={0.6304573,0.6343830,0.6419613,0.6562403}` for `Gamma/H0={0.25,0.5,1,2}`, with all consecutive shifts above the frozen `1e-3` guard.
+
+This is the first genuine withheld-family/mechanism support for the broad DSIR characteristic-scale/epoch organizing idea.
+
+### Why G8 remains OPEN
+
+G8 is defined as survival of a **relation** under withheld prediction. Before Exp053A, DSIR had a broad qualitative characteristic-scale/epoch hypothesis but did not have one single model-independent quantitative G7 relation whose exact mathematical form could be evaluated on DCDM without adapting the observable coordinate.
+
+Therefore F26 cannot retroactively convert the broad hypothesis into a passed G7/G8 law. The correct state is:
+
+- withheld-family evidence now exists;
+- constructing a precise G7 candidate is now scientifically justified;
+- that candidate must then face a fresh prospective test.
+
+**G7 OPEN, G8 OPEN, G9 OPEN.**

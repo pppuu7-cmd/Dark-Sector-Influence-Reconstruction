@@ -61,3 +61,17 @@ Continue the existing DSIR methodology:
 - extend the observationally meaningful response atlas;
 - in parallel track `N_repr` and `N_disc` separately and stress-test their stability;
 - when the readiness criteria above are met, use this document and the accumulated recovery/findings files as the launch point for the universal dark-sector model.
+
+<!-- DSIR_F26_C6_SYNC_2026_08_26 -->
+## 2026-08-26 readiness update after F26
+
+A major prerequisite has improved: DSIR now has a **genuine withheld-family/mechanism validation** (C6 DCDM, Exp053A) for the broad characteristic-scale/epoch organizing idea.
+
+This does **not** satisfy the universal-model readiness criterion for withheld validation of a universal relation, because the relation was not yet formulated as one common quantitative equation before C6. The result changes readiness from `no withheld family evidence` to `withheld-family hypothesis support exists; common-law validation still missing`.
+
+Universal-model construction therefore remains blocked. Required next steps include:
+
+- formulate a common quantitative relation without fitting C6 post hoc;
+- validate it prospectively on fresh points/mechanisms;
+- continue masked pairwise atlas coverage and observation-space validation;
+- keep solver/gauge/domain robustness explicit.

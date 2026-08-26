@@ -610,3 +610,40 @@ This supports characteristic-scale thinking but does not yet provide a common un
 ### Recovery discipline
 
 Use `data/derived/comparison_readiness/block_aware_observability_atlas_v0_2.json` for masks. Missing/unknown/solver-limited cells are not zeros. G7/G8 remain open.
+
+<!-- DSIR_F26_C6_SYNC_2026_08_26 -->
+## Recovery update — Exp052A / Exp053A / F26 (2026-08-26)
+
+### Exp052A masked discriminant coverage
+
+Use `data/derived/comparison_readiness/block_aware_observability_atlas_v0_2.json` plus `discriminant_edges_v0_1.json`. Final run `32915627840` PASS, artifact `9588050351`, SHA256 `433d9447ad4de06774210f1b7a2467469cf654cce54cc1c2522864e3d385d9ac`.
+
+The exact hitting set over all four hard edges (including external C0-vs-C4) is uniquely `{M_highk,S_slip,tau_or_full_kz}`. Among seven non-reference directions, only 3/21 pairs are represented by pair-specific hard degeneracy/separator edges; 18/21 remain unresolved. Never interpret absent edges as either separation or degeneracy.
+
+### C6 DCDM source equations
+
+Pinned official CLASS: `lesgourg/class_public@e85808324f51fc694d12e3ed7439552a3c3f9540`.
+
+Background source:
+
+`d rho_dcdm/d ln a = -3 rho_dcdm - (Gamma/H) rho_dcdm`
+
+`d rho_dr/d ln a = -4 rho_dr + (Gamma/H) rho_dcdm`.
+
+Perturbation code contains explicit DCDM decay terms and sourced DR multipoles.
+
+Frozen C6 setup: stable reference `omega_cdm=0.1200`; DCDM `omega_ini_dcdm=0.1200`, `omega_cdm=0`; `Gamma/H0={0.25,0.5,1,2}`. Standard seven z and five low-k nodes.
+
+Response `r=ln(P_DCDM/P_CDM)`. Temporal power weights `q_z=sum_k r^2/sum_zk r^2`. Centroid `1+z_R=exp(sum q_z ln(1+z))`. Pre-frozen criterion: every consecutive `z_R` step > `1e-3`, with `||r||_2>1e-4`.
+
+Initial run `32915553193` generated solver outputs but failed a too-specific background filename assertion. The science step was skipped. Only the filename glob was corrected; all science definitions stayed frozen.
+
+Clean run `32915877993` PASS. `z_R={0.6304573,0.6343830,0.6419613,0.6562403}` and steps `{0.00392568,0.00757834,0.01427902}`. Artifact `9588160014`, SHA256 `541e3449801f0e853fa573784fd72685ad407c1a3f041b18884e715017aa5e10`.
+
+### C6 post-gate descriptors
+
+`chi_I={0.08202,0.07969,0.07513,0.06646}`; extreme full-response angle ~`2.165 deg`. Every sampled model has a low-k sign pivot: positive response at `k=0.001`, negative at sufficiently larger k. The first zero crossing shifts from roughly `0.0026 h/Mpc` at z=.295 to `0.0067 h/Mpc` at z=2.33, with weak Gamma dependence. This pivot is descriptive only.
+
+### Gate discipline after F26
+
+F26 is true withheld-family support for the broad characteristic-scale/epoch hypothesis, but G8 still requires a common quantitative G7 relation frozen *before* a fresh prospective validation. Do not close G7/G8 retroactively.

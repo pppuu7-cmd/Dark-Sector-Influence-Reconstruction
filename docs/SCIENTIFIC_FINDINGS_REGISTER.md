@@ -630,3 +630,43 @@ Standalone record: `docs/SCIENTIFIC_FINDING_F25_WDM_FREE_STREAMING_CUTOFF_WITHHE
 3. Use the Exp051A block-aware evidence mask for cross-family coverage; never zero-pad C4 into low-k matrices.
 4. Next dimensionality work should produce masked bounds/coverage, not a raw zero-imputed SVD rank.
 5. G7 and G8 remain open.
+
+<!-- DSIR_F26_C6_SYNC_2026_08_26 -->
+## F26 — withheld-family DCDM response localization moves to earlier epochs with decay rate
+
+**Status: HARD ESTABLISHED for Exp053A; broader characteristic-scale/epoch principle STRONGLY SUPPORTED, not yet a frozen universal law.**
+
+C6 is decaying cold dark matter into dark radiation in pinned official CLASS, a mechanism not used to construct F21/F23/F25. Before the first C6 outputs were inspected, Exp053A froze `Gamma/H0={0.25,0.5,1,2}` and the temporal response-power centroid
+
+\[
+1+z_R=\exp\left[\sum_z q_z\ln(1+z)\right],\qquad
+q_z=\frac{\sum_k r^2(k,z)}{\sum_{z,k}r^2(k,z)}.
+\]
+
+The prediction was `Delta z_R > 1e-3` for every consecutive decay-rate step. Clean run `32915877993` passed with
+
+`z_R={0.6304573,0.6343830,0.6419613,0.6562403}`
+
+and steps
+
+`{0.00392568,0.00757834,0.01427902}`.
+
+Artifact `9588160014`, SHA256 `541e3449801f0e853fa573784fd72685ad407c1a3f041b18884e715017aa5e10`; merged PR #39 at `6c9880e3cc7f3769e08dd6baf29f56186e97ce66`.
+
+The first run `32915553193` is infrastructure-only: all solver outputs were generated, but a background filename assertion failed and the preregistered science step was skipped. Only the filename glob was corrected; the science contract was unchanged.
+
+Post-gate descriptive morphology: `chi_I=0.0820 -> 0.0665`, extreme full-response angle about `2.17 deg`, and a redshift-moving scale-sign pivot near `k~0.0026..0.0067 h/Mpc` that depends only weakly on Gamma/H0.
+
+Standalone record: `docs/SCIENTIFIC_FINDING_F26_DCDM_WITHHELD_FAMILY_TEMPORAL_LOCALIZATION.md`.
+
+**Boundary:** F26 is the first true withheld-family/mechanism validation of the broad characteristic-scale/epoch idea, but it does not retroactively close G8 because G7 still lacks one common preregistered quantitative relation shared across mechanisms.
+
+---
+
+## Research discipline after F26
+
+1. Distinguish `withheld-family support for a hypothesis` from `withheld validation of one frozen universal relation`.
+2. Use C6 to formulate the next G7 candidate quantitatively, then test that new formula prospectively.
+3. Preserve the new C6 sign-pivot as descriptive until a separate preregistered test.
+4. Extend the block-aware atlas additively; do not rewrite frozen Exp051A/052 results.
+5. Continue resolving the 18/21 non-reference pairwise hard-evidence gaps identified by Exp052A.
