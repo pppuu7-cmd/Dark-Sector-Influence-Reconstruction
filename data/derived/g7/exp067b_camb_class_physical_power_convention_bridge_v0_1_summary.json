@@ -1,0 +1,37 @@
+{
+  "experiment": "Exp067B",
+  "date": "2026-08-26",
+  "status": "FAIL_CAMB_CLASS_PHYSICAL_POWER_CONVENTION_BRIDGE_V0_1",
+  "workflow_run": 32995950843,
+  "workflow_job": 98265107213,
+  "pinned_CAMB_commit": "fa3f097343fbbe427cc04b4f5f0041c22c6ec764",
+  "pinned_CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+  "source_contracts_pass": true,
+  "CLASS_internal_Weyl_control": {
+    "pass": true,
+    "max_relative_error": 6.661338147750939e-16,
+    "threshold": 1e-10
+  },
+  "cross_solver_log_statistics": {
+    "pass": true,
+    "D_mm": 0.009223043583295664,
+    "D_WW": 0.009223034132369808,
+    "D_Wm": 0.009222993947731269,
+    "threshold_each": 0.03
+  },
+  "cross_sign_match_all_20_cells": true,
+  "adiabatic_coherence": {
+    "pass": false,
+    "CAMB_max_abs_rho2_minus_1": 9.253183930191256e-08,
+    "CLASS_max_abs_rho2_minus_1": 2.220446049250313e-16,
+    "threshold_each": 5e-08
+  },
+  "missing_k2_negative_control": {
+    "pass": true,
+    "median_abs_log_wrong_over_CAMB": 11.98280678708279,
+    "minimum_required": 5.0
+  },
+  "interpretation": "Exp067B v0.1 is a permanent FAIL solely because the preregistered CAMB rank-one coherence tolerance was exceeded. The physical k^2 Weyl convention, signs, CLASS internal Weyl construction, missing-k^2 negative control and all three CAMB↔CLASS cross-solver 3% power comparisons passed. The 5e-8 coherence threshold is not relaxed or reclassified here.",
+  "next_allowed_action": "A separately preregistered diagnostic must localize the CAMB coherence defect on the native power grid versus PkInterpolator target nodes before any corrective convention gate is defined.",
+  "gate_state": {"G7":"OPEN","G8":"OPEN","G9":"OPEN"}
+}
