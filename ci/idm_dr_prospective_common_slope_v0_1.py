@@ -85,7 +85,6 @@ def table_titles(path:Path):
             else: break
     marks=list(re.finditer(r'(?<!\S)(\d+):',text))
     if not marks:
-        # CLASS often writes all numbered titles on one header without strict whitespace before the number.
         marks=list(re.finditer(r'(\d+):',text))
     out={}
     for i,m in enumerate(marks):
@@ -93,6 +92,13 @@ def table_titles(path:Path):
         title=text[m.end():j].strip()
         out[int(m.group(1))-1]=title
     return out
+
+
+def col_exact(titles:dict[int,str],expected:str):
+    hits=[i for i,t in titles.items() if t.strip().lower()==expected.strip().lower()]
+    if len(hits)!=1:
+        raise ValueError(f"expected one exact title {expected!r}; hits={[(i,titles[i]) for i in hits]}; all={titles}")
+    return hits[0]
 
 
 def col_by_substring(titles:dict[int,str],needle:str):
@@ -122,11 +128,13 @@ def solver_source_crossing(directory:Path,prefix:str):
     if len(bg_hits)!=1 or len(th_hits)!=1:
         raise ValueError(f"expected one background+thermodynamics for {prefix}; bg={bg_hits}, th={th_hits}")
     bg,bt=load_named_table(bg_hits[0]); th,tt=load_named_table(th_hits[0])
-    bz=bg[:,col_by_substring(bt,'z')]
+    # Exact matching is intentional: substring 'z' would also match CLASS title
+    # 'comov.snd.hrz.' and turn a source-control parser issue into a false result.
+    bz=bg[:,col_exact(bt,'z')]
     bH=bg[:,col_by_substring(bt,'H [1/Mpc]')]
     bridm=bg[:,col_by_substring(bt,'rho_idm')]
     bridr=bg[:,col_by_substring(bt,'rho_idr')]
-    tz=th[:,col_by_substring(tt,'z')]
+    tz=th[:,col_exact(tt,'z')]
     dmu=th[:,col_by_substring(tt,'dmu_idm_dr')]
     mask=np.isfinite(tz)&np.isfinite(dmu)&(tz>0)&(dmu>0)
     tz,dmu=tz[mask],dmu[mask]
