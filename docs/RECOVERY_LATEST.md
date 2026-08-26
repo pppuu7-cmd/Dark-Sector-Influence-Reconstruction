@@ -315,3 +315,22 @@ F24+F25 current C4 picture: strong high-k suppression, almost no irreducible k-z
 Exp051A block-aware evidence mask is merged and should be used for cross-family bookkeeping. No zero imputation.
 
 G7/G8 remain open. Next: masked pairwise coverage and a truly independent test of WDM scale-collapse or a withheld family/mechanism.
+
+<!-- DSIR_F26_C6_SYNC_2026_08_26 -->
+# Live recovery overlay — Exp052A / Exp053A / F26
+
+Current main scientific head after PR #39: `6c9880e3cc7f3769e08dd6baf29f56186e97ce66` (later docs-only commits may advance main).
+
+Exp052A: masked hard-edge graph PASS. Four hard degeneracy edges total; unique current hitting set `{M_highk,S_slip,tau/full-kz}`; only 3/21 non-reference pairs have pair-specific hard edge evidence, so 18/21 are unresolved.
+
+Exp053A/F26: first true withheld-family mechanism validation. C6 = DCDM -> dark radiation in pinned official CLASS. Frozen before first C6 science output: `Gamma/H0={0.25,0.5,1,2}`, standard low-k and z grids, response-power temporal centroid `z_R`, prediction each consecutive `Delta z_R>1e-3`.
+
+Clean run `32915877993` PASS; artifact `9588160014`; SHA256 `541e3449801f0e853fa573784fd72685ad407c1a3f041b18884e715017aa5e10`.
+
+Result: `z_R={0.6304573,0.6343830,0.6419613,0.6562403}`; steps `{0.00392568,0.00757834,0.01427902}`.
+
+The initial failed run `32915553193` is infrastructure-only: background filename assertion failed before the science step; no preregistered result was exposed. Only filename glob was corrected.
+
+Descriptive C6 follow-ups: `chi_I~0.066..0.082`, extreme ray angle ~2.17 deg, scale-sign pivot near `0.0026..0.0067 h/Mpc` moving mainly with redshift.
+
+Important gate state: genuine withheld-family support now exists, but G7/G8 remain open because no one common quantitative relation was frozen before C6. Next action is to formulate that relation and test it prospectively, not retroactively.

@@ -144,3 +144,25 @@ DSIR remains a reconstruction/meta-inference framework, not a fundamental theory
 2. Test whether WDM cutoff curves collapse under `k/k_0.1` using a new independent mass/threshold set before calling the C4 manifold self-similar.
 3. Seek a genuinely withheld mechanism/family for G8 rather than accumulating only within-family interpolation wins.
 4. Continue observational window/covariance projection.
+
+<!-- DSIR_F26_C6_SYNC_2026_08_26 -->
+## 2026-08-26 update — Exp052A / Exp053A / F26
+
+✅ **Exp052A masked discriminant coverage PASS and merged.** Run `32915627840`, artifact `9588050351`, SHA256 `433d9447ad4de06774210f1b7a2467469cf654cce54cc1c2522864e3d385d9ac`. Four hard degeneracy edges still require the unique three-type hitting set `{M_highk,S_slip,tau/full-kz}`, but only 3 of 21 non-reference atlas pairs have pair-specific hard-edge evidence; 18/21 remain unresolved.
+
+✅ **Exp053A/F26 first true withheld-family mechanism PASS.** New C6 DCDM->dark-radiation family was not used to construct F21/F23/F25. Pre-frozen `Gamma/H0={0.25,0.5,1,2}` temporal-centroid prediction passed on clean run `32915877993` with `z_R=0.630457,0.634383,0.641961,0.656240` and all steps >`1e-3`.
+
+✅ **C6 provenance:** official CLASS `e85808324f51fc694d12e3ed7439552a3c3f9540`; artifact `9588160014`, SHA256 `541e3449801f0e853fa573784fd72685ad407c1a3f041b18884e715017aa5e10`; merged PR #39, SHA `6c9880e3cc7f3769e08dd6baf29f56186e97ce66`.
+
+🟡 **New descriptive C6 fingerprints:** moderate `chi_I=0.066..0.082`, near-ray curvature up to ~2.17 deg, and a redshift-moving scale-sign pivot. These were not preregistered and require dedicated follow-up.
+
+🟡 **G7 materially closer but still OPEN.** We now have mechanism-specific characteristic-scale/epoch motion in GDM viscosity, designer-f(R), WDM and a truly withheld DCDM family, but not one common mathematical relation frozen prospectively across them.
+
+🟡 **G8 readiness improved but G8 remains OPEN.** The missing ingredient is no longer lack of a withheld family; it is lack of a prior universal G7 relation for that withheld family to validate.
+
+### Immediate continuation
+
+1. Formulate a quantitative source-localization -> response-localization G7 candidate without retroactive thresholding.
+2. Preregister a new DCDM interpolation test of that quantitative bridge and/or apply it prospectively to another new mechanism.
+3. Resolve high-value pairwise gaps from Exp052A, prioritizing C1-C2 and C2-C5 common blocks.
+4. Keep observation-space kernel/covariance projection on the critical path before detectability claims.

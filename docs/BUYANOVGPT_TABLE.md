@@ -281,3 +281,33 @@ The current useful common abstraction is not “one universal k_I”. It is **ch
 - WDM: nearly separable transfer cutoff.
 
 Whether these can be mapped to a common residual-law coordinate is an open G7 problem.
+
+<!-- DSIR_F26_C6_SYNC_2026_08_26 -->
+## 14. C6 DCDM withheld-family extension — F26
+
+C6 introduces a mechanism qualitatively different from C1-C5: cold dark matter decays into dark radiation with lifetime control `Gamma/H0`.
+
+| C6 channel | Current status |
+|---|---|
+| background | active; dedicated AP angle not yet hard-audited |
+| low-k structure | active |
+| temporal localization | **active + preregistered withheld-family PASS** |
+| `I(k,z)` | active, `chi_I~0.066..0.082` descriptive range |
+| metric slip | unknown |
+| high-k transfer | unknown |
+| density-velocity compression | unknown |
+
+Pre-frozen temporal centroid moves `0.63046 -> 0.65624` as `Gamma/H0` grows `0.25 -> 2`, passing every `Delta z_R>1e-3` step.
+
+New descriptive C6 fingerprint: redshift-moving scale-sign pivot around `k~0.0026..0.0067 h/Mpc`, approximately insensitive to decay-rate amplitude along the sampled ray.
+
+### Updated cross-mechanism picture
+
+The current common abstraction is increasingly **motion/localization of response features**, not a universal fixed coordinate:
+
+- GDM viscosity: spatial transition + interaction localization;
+- designer f(R): Compton transition + interaction localization;
+- WDM: free-streaming cutoff with nearly time-separable response;
+- DCDM: lifetime/epoch control + temporal response localization, plus a descriptive scale-sign pivot.
+
+This is now supported by a truly withheld family, but remains an organizing principle rather than a frozen G7 law.
