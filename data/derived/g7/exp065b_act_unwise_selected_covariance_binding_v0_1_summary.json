@@ -1,0 +1,47 @@
+{
+  "experiment": "Exp065B",
+  "date": "2026-08-26",
+  "status": "PASS_ACT_UNWISE_SELECTED_COVARIANCE_ELIGIBLE_V0_1",
+  "workflow_run": 32980117716,
+  "workflow_job": 98214421282,
+  "pinned_external_repo": "ACTCollaboration/unWISExLens_lklh",
+  "pinned_commit": "6302c30d9e70f8e4ff2d4a84a9977b4471705179",
+  "archive_sha256": "1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570",
+  "frozen_scale_cuts": {
+    "Clgg": [100, 402],
+    "Clkg": [51, 402]
+  },
+  "selected_counts_per_sample": {
+    "Blue_ACT": {"Clgg": 6, "Clkg": 7, "total": 13},
+    "Green_ACT": {"Clgg": 6, "Clkg": 7, "total": 13}
+  },
+  "selected_ell_midpoints": {
+    "Clgg": [126.5, 176.5, 226.5, 276.5, 326.5, 376.5],
+    "Clkg": [76.5, 126.5, 176.5, 226.5, 276.5, 326.5, 376.5]
+  },
+  "Blue_selected_covariance": {
+    "shape": [13, 13],
+    "lambda_min": 2.0718128137257107e-17,
+    "lambda_max": 3.577335297568705e-15,
+    "cholesky_success": true,
+    "inverse_residual_inf": 1.5417651827035471e-15
+  },
+  "Green_selected_covariance": {
+    "shape": [13, 13],
+    "lambda_min": 2.1711842660783815e-17,
+    "lambda_max": 2.74054725824845e-15,
+    "cholesky_success": true,
+    "inverse_residual_inf": 1.0586612801907153e-15
+  },
+  "combined_selected_covariance": {
+    "shape": [26, 26],
+    "lambda_min": 1.2742353176342933e-17,
+    "lambda_max": 3.980349119528573e-15,
+    "cholesky_success": true,
+    "inverse_residual_inf": 3.8167569492587215e-15
+  },
+  "anti_regularization": "No jitter, eigenvalue clipping, diagonal loading, shrinkage, nearest-PSD projection, or scale-cut retuning was applied.",
+  "scientific_interpretation": "ACT DR6 x unWISE XCorrACT provides a reproducible lensing+clustering observational block with explicit selected covariance and survey operators. This is eligibility only, not a DSIR law.",
+  "next_step": "Freeze a solver-neutral forward-response interface separating survey operator from the pinned likelihood's CAMB-specific theory backend, before any cross-channel law or withheld-family selection.",
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
