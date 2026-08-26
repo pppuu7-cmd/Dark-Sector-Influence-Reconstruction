@@ -1,0 +1,152 @@
+name: DSIR IDM-baryon multicoordinate prospective v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/idm-baryon-multicoordinate-prospective-v0-1.yml'
+      - 'ci/idm_baryon_multicoordinate_prospective_v0_1.py'
+      - 'experiments/061a_idm_baryon_multicoordinate_prospective_v0_1.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  prospective-c9-multicoordinate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Download immutable C3 C5 C7 C8 training responses
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euxo pipefail
+          mkdir -p inputs/c3 inputs/c5 inputs/c7 inputs/c8
+          gh run download 32904158849 --repo "$GITHUB_REPOSITORY" --dir inputs/c3
+          gh run download 32907619613 --repo "$GITHUB_REPOSITORY" --dir inputs/c5
+          gh run download 32920776596 --repo "$GITHUB_REPOSITORY" --dir inputs/c7
+          gh run download 32926084015 --repo "$GITHUB_REPOSITORY" --dir inputs/c8
+
+      - name: Clone and build pinned official CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/lesgourg/class_public.git class_public
+          cd class_public
+          git checkout e85808324f51fc694d12e3ed7439552a3c3f9540
+          test "$(git rev-parse HEAD)" = 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+          git rev-parse HEAD | tee ../exp061a_class_upstream_sha.txt
+          grep -Fq 'cross_idm_b = 0.' explanatory.ini
+          grep -Fq 'n_index_idm_b = 0' explanatory.ini
+          make -j2 class
+
+      - name: Freeze exact matched reference and C9 response configs
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          mkdir -p outputs
+          cat > dsir_idm_baryon_base.ini <<'EOF'
+          h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          omega_cdm = 0.0
+          omega_idm = 0.1200
+          m_idm = 1e9
+          Omega_k = 0.
+          N_ur = 3.046
+          n_index_idm_b = 0
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 1.0
+          primordial_P_k_max_h/Mpc = 1.0
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          EOF
+          python3 - <<'PY'
+          from pathlib import Path
+          base=Path('dsir_idm_baryon_base.ini').read_text()
+          frozen=[('ref',0.0),('idm1',1e-30),('idm2',1e-29),('idm3',1e-28),('idm4',1e-27),('idm5',1e-26)]
+          for name,cross in frozen:
+              Path(f'dsir_{name}.ini').write_text(f'cross_idm_b = {cross:.17g}\nroot = outputs/{name}_\n'+base)
+          # Validate the numerical frozen grid rather than Python's particular
+          # decimal rendering of binary floats. This changes no scientific input.
+          expected=dict(frozen)
+          for name,want in frozen:
+              first=Path(f'dsir_{name}.ini').read_text().splitlines()[0]
+              got=float(first.split('=',1)[1].strip())
+              assert got == want, (name, got, want)
+          PY
+
+      - name: Generate first C9 matter-power response
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          ./class dsir_ref.ini 2>&1 | tee ../exp061a_ref.log
+          for name in idm1 idm2 idm3 idm4 idm5; do
+            ./class "dsir_${name}.ini" 2>&1 | tee "../exp061a_${name}.log"
+          done
+
+      - name: Require seven P(k,z) outputs per configuration
+        run: |
+          set -euxo pipefail
+          for prefix in ref_ idm1_ idm2_ idm3_ idm4_ idm5_; do
+            test "$(find class_public/outputs -maxdepth 1 -type f -name "${prefix}*pk.dat" | wc -l)" -eq 7
+          done
+
+      - name: Evaluate exact pre-frozen Exp058A Exp060A gate
+        run: |
+          set -euxo pipefail
+          python3 ci/idm_baryon_multicoordinate_prospective_v0_1.py \
+            --gdm-root inputs/c3 --fr-root inputs/c5 --c7-root inputs/c7 --c8-root inputs/c8 \
+            --directory class_public/outputs --reference-prefix ref_ \
+            --models idm1_ idm2_ idm3_ idm4_ idm5_ \
+            --json idm_baryon_multicoordinate_prospective_v0_1.json
+          cat idm_baryon_multicoordinate_prospective_v0_1.json
+
+      - name: Record immutable prospective provenance
+        if: always()
+        run: |
+          {
+            echo 'Experiment 061A first prospective C9 IDM-baryon multicoordinate response test v0.1.'
+            echo 'C9 source grid was frozen source-only in Exp059A before any C9 matter-power response.'
+            echo 'Exact ell-q operator, training-only PC2/sign/standardization and tolerances were frozen in Exp060A before any C9 response.'
+            echo 'No post-C9 retuning, axis rotation, sign flip, k/z change, point deletion or tolerance change is permitted.'
+            echo 'Scientific FAIL is retained as a result and does not make infrastructure execution fail.'
+            echo "DSIR head: $GITHUB_SHA"
+            echo -n 'CLASS upstream: '; cat exp061a_class_upstream_sha.txt 2>/dev/null || true
+          } > exp061a_environment.txt
+
+      - name: Upload prospective C9 record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: idm-baryon-multicoordinate-prospective-v0-1-${{ github.sha }}
+          path: |
+            idm_baryon_multicoordinate_prospective_v0_1.json
+            exp061a_environment.txt
+            exp061a_class_upstream_sha.txt
+            exp061a_*.log
+            class_public/dsir_*.ini
+            class_public/outputs/ref_*pk.dat
+            class_public/outputs/idm*pk.dat
+          if-no-files-found: warn
