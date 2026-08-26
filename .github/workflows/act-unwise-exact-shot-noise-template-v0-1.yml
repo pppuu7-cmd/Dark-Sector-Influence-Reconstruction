@@ -8,6 +8,12 @@ on:
       - '.github/workflows/act-unwise-exact-shot-noise-template-v0-1.yml'
       - 'ci/act_unwise_exact_shot_noise_template_v0_1.py'
       - 'experiments/066c_act_unwise_exact_shot_noise_template_v0_1.md'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/act-unwise-exact-shot-noise-template-v0-1.yml'
+      - 'ci/act_unwise_exact_shot_noise_template_v0_1.py'
+      - 'experiments/066c_act_unwise_exact_shot_noise_template_v0_1.md'
 
 jobs:
   exact-shot-noise:
