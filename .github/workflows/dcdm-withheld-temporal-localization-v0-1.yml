@@ -130,8 +130,10 @@ jobs:
             done
           done
           for prefix in dcdm_g0p25_ dcdm_g0p5_ dcdm_g1_ dcdm_g2_; do
-            test -f "class_public/outputs/${prefix}background.dat"
-            grep -Eq 'rho_dcdm|rho_dr' "class_public/outputs/${prefix}background.dat"
+            matches=(class_public/outputs/${prefix}*background.dat)
+            test "${#matches[@]}" -eq 1
+            test -f "${matches[0]}"
+            grep -Eq 'rho_dcdm|rho_dr' "${matches[0]}"
           done
 
       - name: Test pre-frozen withheld-family temporal-localization prediction
@@ -151,6 +153,7 @@ jobs:
             echo 'Frozen before first C6 outputs: gamma=Gamma/H0={0.25,0.5,1,2}; z_R defined from squared low-k P(k,z) response; every consecutive z_R step must exceed +1e-3.'
             echo 'Reference stable omega_cdm=0.1200; DCDM uses omega_ini_dcdm=0.1200 and CLASS-inferred flat Omega_Lambda closure.'
             echo 'C6 DCDM was not used to construct F21/F23/F25.'
+            echo 'Infrastructure correction after first run: background filename is matched by prefix glob only; scientific contract unchanged and first scientific gate was never executed.'
             echo "DSIR head: $GITHUB_SHA"
             echo -n 'CLASS upstream: '; cat exp053a_class_upstream_sha.txt
           } > exp053a_environment.txt
