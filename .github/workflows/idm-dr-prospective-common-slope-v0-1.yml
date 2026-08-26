@@ -60,6 +60,11 @@ jobs:
           b_idr = 0.
           alpha_idm_dr = 1.5
           beta_idr = 1.5
+          # pk_ref.pre sets ur_fluid_trigger_tau_over_tau_k=50 and
+          # ncdm_fluid_trigger_tau_over_tau_k=51. Pinned CLASS forbids an IDR
+          # approximation switch at exactly the same time. Move only this
+          # numerical switch to 49; no physical/science parameter changes.
+          idr_streaming_trigger_tau_over_tau_k = 49.
           N_ncdm = 0
           Omega_k = 0.
           Omega_fld = 0
@@ -120,7 +125,7 @@ jobs:
             'a4':634135393232.7471,
             'a5':1381558672367.1924,
           }
-          common=['omega_idm = 0.1200','omega_cdm = 0.0','N_idr = 0.2','N_ur = 3.046','nindex_idm_dr = 4','idr_nature = free_streaming']
+          common=['omega_idm = 0.1200','omega_cdm = 0.0','N_idr = 0.2','N_ur = 3.046','nindex_idm_dr = 4','idr_nature = free_streaming','idr_streaming_trigger_tau_over_tau_k = 49.']
           ref=Path('dsir_c7_ref.ini').read_text()
           assert 'a_idm_dr = 0.' in ref
           for needle in common: assert needle in ref
@@ -188,6 +193,7 @@ jobs:
             echo 'Exp054B source-only selector existed before C7 response and froze all five a_idm_dr values and source k nodes.'
             echo 'No widening, recentring, point dropping or reordering is allowed after C7 outputs.'
             echo 'Matched reference has identical omega_idm, N_idr and radiation background with a_idm_dr=0.'
+            echo 'Infrastructure correction after run 32918808306: set only idr_streaming_trigger_tau_over_tau_k=49 to avoid equality with pk_ref ur=50/ncdm=51 switches; the first run stopped in input_init before any C7 spectrum.'
             echo "DSIR head: $GITHUB_SHA"
             echo -n 'CLASS upstream: '; cat exp054c_class_upstream_sha.txt
           } > exp054c_environment.txt
