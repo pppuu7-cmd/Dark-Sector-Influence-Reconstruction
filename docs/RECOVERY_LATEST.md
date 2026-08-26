@@ -294,3 +294,24 @@ Exp050A frozen grid: masses `2,3,5 keV`; `k=0.1,0.3,1,3,10,20 h/Mpc`; standard s
 Important boundary: C4 now has time dependence measured, but remains a separate high-k block. Missing/common-domain cells stay masked, never zero. No universal WDM separability theorem, no Ly-alpha likelihood, no G7/G8 closure.
 
 Next reconstruction step: recompute the block-aware influence/discriminant atlas including C4 time geometry, then design a withheld high-k/free-streaming validation rather than forcing C4 onto low-k nodes.
+
+<!-- DSIR_EXP050B_DOC_SYNC_2026_08_26 -->
+# Live recovery overlay — Exp050B / F25
+
+Latest hard scientific result: Exp050B/F25 withheld thermal-WDM cutoff-scale ordering PASS.
+
+Definition:
+
+`r_WDM(k,z)=ln[P_WDM(k,z)/P_CDM(k,z)]`, with `k_0.1` the first downward crossing `r_WDM=-0.1`.
+
+Frozen before outputs: masses `2.5,3.5,4.0,4.5 keV`; every consecutive `k_0.1` mass step had to exceed `1e-4 h/Mpc` at each of the seven DSIR redshifts.
+
+Hard run `32911928403`; artifact `9586893981`; SHA256 `7c01e71c4223115976dc6887a1bcac06cac99e7fc50d039fae47307dd105ff0e`; merged science SHA `7630cf23554bdd9e0bc7c738bb3b0b33d1b67388`.
+
+At z=0.295: `k_0.1=8.386656,12.192829,14.230131,16.473743 h/Mpc`. Minimum step over all redshifts `2.037283 h/Mpc`. Redshift drift per mass only `1.57e-4..3.97e-4 h/Mpc`.
+
+F24+F25 current C4 picture: strong high-k suppression, almost no irreducible k-z interaction, stable cutoff-scale motion with mass. Do not replace this by `k_I^geo`; WDM uses its own mechanism-native coordinate.
+
+Exp051A block-aware evidence mask is merged and should be used for cross-family bookkeeping. No zero imputation.
+
+G7/G8 remain open. Next: masked pairwise coverage and a truly independent test of WDM scale-collapse or a withheld family/mechanism.

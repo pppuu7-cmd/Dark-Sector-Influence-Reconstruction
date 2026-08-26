@@ -248,3 +248,36 @@ Do not compare these `chi_I` numbers as if they came from one common k-domain; t
 2. Design a withheld/intermediate WDM free-streaming test before proposing any generalized transition-window law involving C4.
 3. Preserve metric slip for GDM pressure/viscosity and high-k transfer for WDM as distinct channel requirements.
 4. Continue observation-space mapping before any `N_repr`/`N_disc` hard claim.
+
+<!-- DSIR_EXP050B_DOC_SYNC_2026_08_26 -->
+## 13. Exp050B/F25 update — C4 free-streaming scale flow
+
+C4 now has a validated mechanism-native finite-amplitude coordinate:
+
+`k_0.1(z)` defined by `ln(P_WDM/P_CDM)=-0.1`.
+
+Withheld masses `2.5,3.5,4.0,4.5 keV` passed the preregistered prediction that `k_0.1` increases with mass at every one of the seven DSIR redshifts.
+
+At z=0.295:
+
+| m [keV] | k_0.1 [h/Mpc] |
+|---:|---:|
+| 2.5 | 8.38666 |
+| 3.5 | 12.19283 |
+| 4.0 | 14.23013 |
+| 4.5 | 16.47374 |
+
+This sharpens the C4 atlas label from merely `M/high-k active` to:
+
+**strong scale-dominated free-streaming response + nearly time-separable shape + monotonic cutoff-scale manifold.**
+
+Descriptive, not hard: all old+new masses at z=0.295 fit roughly `k_0.1 ~ m^1.1434` to <0.8% relative residual. A new preregistered test is required before treating that exponent as stable.
+
+### Cross-family lesson
+
+The current useful common abstraction is not “one universal k_I”. It is **characteristic response-scale motion with mechanism-dependent coordinates**:
+
+- GDM viscosity / f(R): nonseparable interaction localization;
+- WDM: nearly separable transfer cutoff.
+
+Whether these can be mapped to a common residual-law coordinate is an open G7 problem.

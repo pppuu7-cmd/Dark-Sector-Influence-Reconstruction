@@ -571,3 +571,42 @@ Legacy Viel comparison is descriptive only; the solver atlas is the DSIR product
 - Keep C4 high-k and C1/C2/C3/C5 low-k as masked blocks until an operator genuinely maps them to common observation coordinates.
 - Keep `N_micro`, `N_manifold`, `N_repr`, `N_disc` distinct.
 - G7/G8 remain open; universal-model construction stays blocked.
+
+<!-- DSIR_EXP050B_DOC_SYNC_2026_08_26 -->
+## Recovery update — Exp050B / F25 (2026-08-26)
+
+### Why WDM uses a different scale coordinate
+
+Exp050A/F24 found `chi_I ~ 2e-10` on the solver-native high-k C4 atlas. Therefore an interaction-energy centroid is numerically inappropriate as the primary mechanism coordinate. Exp050B instead defines
+
+`k_0.1(z): r_WDM(k_0.1,z)=-0.1`,
+
+where `r_WDM=ln(P_WDM/P_CDM)` and the first downward crossing is interpolated in log k between native CLASS samples.
+
+### Frozen withheld contract
+
+Masses `m={2.5,3.5,4.0,4.5} keV`. Same pinned CLASS and matched density/N_eff setup as Exp050A. At every standard DSIR redshift require
+
+`k_0.1(m[i+1],z)-k_0.1(m[i],z) > 1e-4 h/Mpc`.
+
+No exact values or scaling exponent were frozen.
+
+### Result
+
+Clean run `32911928403` PASS; artifact `9586893981`; SHA256 `7c01e71c4223115976dc6887a1bcac06cac99e7fc50d039fae47307dd105ff0e`.
+
+At z=0.295 the crossings are `8.386656,12.192829,14.230131,16.473743 h/Mpc`. All 21 consecutive mass-step checks across the seven redshifts are positive (three steps per redshift); minimum step `2.037283 h/Mpc`.
+
+A post-result combined fit with Exp050A masses 2,3,5 keV gives `k_0.1 ~ m^1.1434` with max relative residual ~0.77%, but this is descriptive only and must be independently preregistered before hardening.
+
+### Current mechanism geometry
+
+- C3 GDM viscosity: moderate low-k k-z interaction; characteristic motion tracked by interaction localization/source viscous scale.
+- C5 designer f(R): strong low-k k-z interaction; characteristic motion tracked by interaction localization/exact Compton scale.
+- C4 thermal WDM: strong high-k but nearly time-separable response; characteristic motion tracked by a transfer cutoff scale.
+
+This supports characteristic-scale thinking but does not yet provide a common universal residual equation.
+
+### Recovery discipline
+
+Use `data/derived/comparison_readiness/block_aware_observability_atlas_v0_2.json` for masks. Missing/unknown/solver-limited cells are not zeros. G7/G8 remain open.

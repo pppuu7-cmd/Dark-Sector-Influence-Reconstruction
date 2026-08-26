@@ -122,3 +122,25 @@ DSIR remains a reconstruction/meta-inference framework, not a fundamental theory
 3. Revisit masked representation/discrimination dimension only after the C4 block is included; do not call raw SVD mode count intrinsic rank.
 4. Continue observational window/covariance projection and exact-null/channel-reversal searches.
 5. Keep universal-model construction blocked until readiness criteria are genuinely satisfied.
+
+<!-- DSIR_EXP050B_DOC_SYNC_2026_08_26 -->
+## 2026-08-26 update — Exp050B / F25
+
+✅ **Exp050B withheld C4 cutoff-scale prediction PASS.** Frozen masses `{2.5,3.5,4.0,4.5} keV`; on all seven DSIR redshifts every consecutive mass step moves the solver-defined `r_WDM=-0.1` crossing to higher k. Clean run `32911928403`, artifact `9586893981`, SHA256 `7c01e71c4223115976dc6887a1bcac06cac99e7fc50d039fae47307dd105ff0e`; science merged via PR #35 at `7630cf23554bdd9e0bc7c738bb3b0b33d1b67388`.
+
+✅ **F25 HARD for the frozen within-C4 interpolation.** At z=0.295, `k_0.1={8.38666,12.19283,14.23013,16.47374} h/Mpc`. Minimum positive mass-step over all z is `2.03728 h/Mpc`; total redshift drift per mass is only `1.57e-4..3.97e-4 h/Mpc`.
+
+✅ **Exp051A block-aware observability atlas v0.2 merged.** Missing, near-null and solver-limited cells are machine-explicit; C4 high-k stays masked from the low-k matrix.
+
+🟡 **Descriptive only:** old+new WDM points are well summarized by `k_0.1 ~ m^1.1434` at z=0.295, but this exponent was fitted after seeing the new outputs and is not a hard law.
+
+❌ **G7 remains OPEN.** We now have mechanism-specific characteristic-scale motion in C3/C5 and C4, but not one preregistered model-independent functional law across them.
+
+❌ **G8 remains OPEN.** F25 is withheld interpolation within C4, not a withheld family/mechanism.
+
+### Immediate continuation
+
+1. Use the Exp051A evidence mask to compute hard pairwise coverage deficits and a masked separator graph v0.2.
+2. Test whether WDM cutoff curves collapse under `k/k_0.1` using a new independent mass/threshold set before calling the C4 manifold self-similar.
+3. Seek a genuinely withheld mechanism/family for G8 rather than accumulating only within-family interpolation wins.
+4. Continue observational window/covariance projection.

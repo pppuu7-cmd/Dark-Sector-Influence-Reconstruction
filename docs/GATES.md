@@ -150,3 +150,30 @@ This strengthens **G3B block-aware comparison readiness**: C4 is no longer repre
 The new C4 response is nearly time-separable (`chi_I ~ 2e-10`) on the frozen linear domain, which is a scientific feature, not a new gate closure.
 
 Top-level state remains: **G7 OPEN, G8 OPEN, G9 OPEN**.
+
+<!-- DSIR_EXP050B_DOC_SYNC_2026_08_26 -->
+## Gate update — 2026-08-26 Exp050B / F25
+
+### C4 withheld interpolation
+
+**State: HARD PASS within the frozen thermal-WDM family.**
+
+Exp050B froze new masses `2.5,3.5,4.0,4.5 keV` and the directional cutoff-scale criterion before generating their CLASS outputs. The solver-defined first `ln(P_WDM/P_CDM)=-0.1` crossing increases with mass at all seven frozen redshifts; clean run `32911928403` passed.
+
+This strengthens the C4 mechanism atlas and shows that the free-streaming response has a stable scale coordinate. It does **not** close G8 because the held-out points are interpolation inside an already represented family.
+
+### G7 boundary after F21/F23/F25
+
+There are now preregistered directional successes in three response directions/mechanisms:
+
+- C3 GDM viscosity: interaction-localization scale moves with the source-derived viscous transition;
+- C5 designer-f(R): interaction-localization scale moves with the exact inverse-Compton transition;
+- C4 thermal WDM: solver cutoff `k_0.1` moves monotonically with relic mass.
+
+However the observable coordinates and microscopic control variables are not yet unified by one frozen model-independent equation. Therefore **G7 remains OPEN**. A common qualitative phrase such as “characteristic scales move through the response window” is not yet a residual law.
+
+### Exp051A mask
+
+The block-aware observability atlas v0.2 is now the required input for future rank/coverage claims. Unknown, solver-limited and near-null cells cannot be filled with zeros. Any future `N_repr` or `N_disc` gate must state which fully observed submatrix or masked bound it uses.
+
+Top-level state: **G7 OPEN, G8 OPEN, G9 OPEN**.
