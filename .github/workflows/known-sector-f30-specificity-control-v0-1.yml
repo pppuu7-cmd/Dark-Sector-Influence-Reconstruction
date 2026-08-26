@@ -2,6 +2,12 @@ name: Known-sector F30 specificity control v0.1
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/known-sector-f30-specificity-control-v0-1.yml'
+      - 'ci/known_sector_f30_specificity_control_v0_1.py'
+      - 'experiments/071c_known_sector_f30_specificity_control_prereg_v0_1.md'
   pull_request:
     branches: [main]
     paths:
@@ -113,17 +119,14 @@ jobs:
           assert d['K1_n_s']==[0.97,0.975,0.98,0.985,0.99]
           assert d['K2_omega_b']==[0.0228,0.0232,0.0236,0.024,0.0244]
           assert d['K2_omega_cdm']==[0.1196,0.1192,0.1188,0.1184,0.118]
-          assert d['primary_specificity_classification'] in {
-            'F30_DARK_SPECIFICITY_WEAKENED_BY_KNOWN_SECTOR_CONTROL',
-            'NO_F30_SPECIFICITY_WEAKENING_FROM_K1_K2'}
+          assert d['primary_specificity_classification'] in {'F30_DARK_SPECIFICITY_WEAKENED_BY_KNOWN_SECTOR_CONTROL','NO_F30_SPECIFICITY_WEAKENING_FROM_K1_K2'}
           k1=d['K1_primordial_tilt']['pass_full_and_all_leave_one_z']
           k2=d['K2_baryon_fraction_fixed_omega_m']['pass_full_and_all_leave_one_z']
           expected='F30_DARK_SPECIFICITY_WEAKENED_BY_KNOWN_SECTOR_CONTROL' if (k1 or k2) else 'NO_F30_SPECIFICITY_WEAKENING_FROM_K1_K2'
           assert d['primary_specificity_classification']==expected
           assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
           print('EXP071C_PRIMARY',d['primary_specificity_classification'])
-          print('K1_PASS',k1)
-          print('K2_PASS',k2)
+          print('K1_PASS',k1); print('K2_PASS',k2)
           print('K1_SVD',d['K1_primordial_tilt']['family_local_centered_svd'])
           print('K2_SVD',d['K2_baryon_fraction_fixed_omega_m']['family_local_centered_svd'])
           PY
