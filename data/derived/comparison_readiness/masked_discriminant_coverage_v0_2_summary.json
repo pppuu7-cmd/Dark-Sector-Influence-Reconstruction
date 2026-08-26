@@ -1,0 +1,27 @@
+{
+  "schema": "dsir.masked_discriminant_coverage.summary.v0.2",
+  "status": "PASS_MASKED_DISCRIMINANT_COVERAGE_V0_2",
+  "run_id": 32915627840,
+  "artifact_id": 9588050351,
+  "artifact_sha256": "433d9447ad4de06774210f1b7a2467469cf654cce54cc1c2522864e3d385d9ac",
+  "head_sha": "c82a61741350b81826bb25a21e31f747ed88b6d4",
+  "nonreference_direction_count": 7,
+  "nonreference_pair_count": 21,
+  "hard_degeneracy_edge_count_total": 4,
+  "hard_edges_internal_to_nonreference_atlas": 3,
+  "hard_edges_with_external_reference_endpoint": 1,
+  "nonreference_pairs_without_hard_edge_evidence": 18,
+  "minimum_hitting_set_cardinality_current_hard_graph": 3,
+  "minimum_hitting_sets_current_hard_graph": [
+    ["M_highk", "S_slip", "tau_or_full_kz"]
+  ],
+  "scope": "Exact hitting set uses all four current hard degeneracy edges, including the external C0-vs-C4 reference edge. The 21-pair inventory contains only the seven non-reference Exp051A directions.",
+  "key_limit": "18 of 21 non-reference pairs still have no pair-specific hard degeneracy/separator edge evidence; absence of an edge means unresolved, not distinguishable or degenerate.",
+  "not_a_claim": [
+    "not N_micro, N_manifold, N_repr or intrinsic rank",
+    "not a universal N_disc",
+    "not a survey-optimal channel set",
+    "not zero-imputed matrix completion",
+    "not G7/G8 closure"
+  ]
+}
