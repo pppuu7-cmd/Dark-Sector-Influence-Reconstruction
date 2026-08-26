@@ -91,9 +91,9 @@ jobs:
           PY
           grep -Fq 'u_idm_g = 0' dsir_ref.ini
           grep -Fq 'u_idm_g = 1.9784961959913951e-13' dsir_idm1.ini
-          grep -Fq 'u_idm_g = 2.718074072447366e-13' dsir_idm2.ini
+          grep -Fq 'u_idm_g = 2.7180740724473658e-13' dsir_idm2.ini
           grep -Fq 'u_idm_g = 4.2866377403625277e-13' dsir_idm3.ini
-          grep -Fq 'u_idm_g = 7.734078847124414e-13' dsir_idm4.ini
+          grep -Fq 'u_idm_g = 7.7340788471244145e-13' dsir_idm4.ini
           grep -Fq 'u_idm_g = 1.1546648138593298e-12' dsir_idm5.ini
 
       - name: Run first prospective C8 response set
