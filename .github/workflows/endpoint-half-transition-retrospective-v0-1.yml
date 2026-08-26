@@ -1,0 +1,73 @@
+name: DSIR endpoint half-transition retrospective v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/endpoint-half-transition-retrospective-v0-1.yml'
+      - 'ci/endpoint_half_transition_retrospective_v0_1.py'
+      - 'experiments/055a_endpoint_half_transition_retrospective_v0_1.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  retrospective-half-transition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install analysis dependency
+        run: python3 -m pip install --user numpy
+
+      - name: Download immutable C3 C5 C7 artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euxo pipefail
+          mkdir -p inputs/gdm inputs/fr inputs/c7
+          gh run download 32904158849 --repo "$GITHUB_REPOSITORY" --dir inputs/gdm
+          gh run download 32907619613 --repo "$GITHUB_REPOSITORY" --dir inputs/fr
+          gh run download 32920776596 --repo "$GITHUB_REPOSITORY" --dir inputs/c7
+          test "$(find inputs/gdm -name exp049b_gdm_cv2_intermediate_scan.json | wc -l)" -eq 1
+          test "$(find inputs/gdm -name gdm_window_crossing_validation_v0_1.json | wc -l)" -eq 1
+          test "$(find inputs/fr -name fr_window_crossing_validation_v0_1.json | wc -l)" -eq 1
+          test "$(find inputs/c7 -name idm_dr_common_source_response_slope_v0_1.json | wc -l)" -eq 1
+
+      - name: Evaluate retrospective common half-transition candidate
+        run: |
+          set -euxo pipefail
+          python3 ci/endpoint_half_transition_retrospective_v0_1.py \
+            --gdm-root inputs/gdm \
+            --fr-root inputs/fr \
+            --c7-root inputs/c7 \
+            --json endpoint_half_transition_retrospective_v0_1.json
+          cat endpoint_half_transition_retrospective_v0_1.json
+
+      - name: Record provenance and claim boundary
+        if: always()
+        run: |
+          {
+            echo 'Experiment 055A endpoint-normalized half-transition retrospective screen.'
+            echo 'Inputs are immutable prior artifacts only; no new theory response generated.'
+            echo 'C3 run/artifact: 32904158849 / 9584180621.'
+            echo 'C5 run/artifact: 32907619613 / 9585579947.'
+            echo 'C7 run/artifact: 32920776596 / 9589768992.'
+            echo 'C7 was already unblinded when this operator was proposed; it is NOT withheld evidence.'
+            echo 'Exp054C/F27 remains a hard prospective failure and is not rescued.'
+            echo 'No G7/G8 closure is permitted from Exp055A.'
+            echo "DSIR head: $GITHUB_SHA"
+          } > exp055a_environment.txt
+
+      - name: Upload retrospective candidate record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: endpoint-half-transition-retrospective-v0-1-${{ github.sha }}
+          path: |
+            endpoint_half_transition_retrospective_v0_1.json
+            exp055a_environment.txt
+          if-no-files-found: warn
