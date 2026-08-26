@@ -1,0 +1,68 @@
+{
+  "schema": "dsir.block_aware_observability_atlas.c6_extension.v0.1",
+  "date": "2026-08-26",
+  "base_atlas": "data/derived/comparison_readiness/block_aware_observability_atlas_v0_2.json",
+  "status": "HARD_C6_EXTENSION_AFTER_EXP053A",
+  "direction": "C6_DCDM_to_DR",
+  "cells": {
+    "B_AP": {
+      "state": "active",
+      "domain": "background necessarily changes along the frozen DCDM decay-rate family; dedicated AP operator not yet hard-quantified",
+      "evidence": "Exp053A pinned background/source audit + solver backgrounds",
+      "boundary": "active background evolution is established by the nonzero DCDM/DR source terms and changed H(a), but an AP angle/null audit has not yet been frozen"
+    },
+    "G_lowk": {
+      "state": "active",
+      "domain": "k={0.001,0.003,0.01,0.03,0.1} h/Mpc; seven standard DSIR redshifts",
+      "evidence": "F26 / Exp053A",
+      "reference": "response L2 grows from 0.1254 to 0.9095 across Gamma/H0=0.25..2"
+    },
+    "tau_lowk": {
+      "state": "active",
+      "domain": "same low-k grid",
+      "evidence": "F26 / Exp053A",
+      "reference": "pre-frozen response-power temporal centroid z_R increases 0.63046 -> 0.65624"
+    },
+    "I_kz": {
+      "state": "active",
+      "domain": "same low-k grid",
+      "evidence": "F26 descriptive morphology after hard gate",
+      "chi_I_range": [0.06645803006966483, 0.08201984576199521],
+      "boundary": "chi_I was not part of the preregistered gate; active/nonzero is descriptive-hard from exact saved responses, not a universal family tier claim"
+    },
+    "S_slip": {
+      "state": "unknown",
+      "domain": "not hard-audited for C6",
+      "evidence": null
+    },
+    "M_highk": {
+      "state": "unknown",
+      "domain": "not production-sampled for C6",
+      "evidence": null
+    },
+    "C_dv": {
+      "state": "unknown",
+      "domain": "not hard-audited for C6",
+      "evidence": null
+    }
+  },
+  "new_descriptive_fingerprints": {
+    "scale_sign_pivot": {
+      "status": "DESCRIPTIVE_FOLLOWUP_REQUIRED",
+      "statement": "all four sampled rates have positive response at k=0.001 h/Mpc and negative response at sufficiently larger k; first zero crossing moves mainly with redshift and weakly with Gamma/H0",
+      "z0p295_zero_crossing_h_mpc": [0.0026801579903655707, 0.002666055499609237, 0.0026354901256276804, 0.0025705960651851325],
+      "z2p33_zero_crossing_h_mpc": [0.006687507435395923, 0.00669642836730056, 0.006704403251328099, 0.006689375965136909]
+    },
+    "near_ray_curvature": {
+      "status": "DESCRIPTIVE",
+      "extreme_full_response_angle_deg": 2.1650630751370454
+    }
+  },
+  "discipline": [
+    "C6 is not retroactively inserted into Exp051A/Exp052 frozen results; this extension is additive",
+    "unknown is never zero",
+    "the B_AP cell does not substitute for a dedicated AP operator audit",
+    "the scale-sign pivot is not hard until independently preregistered",
+    "F26 is withheld-family support for characteristic epoch motion but does not by itself close G7 or G8"
+  ]
+}
