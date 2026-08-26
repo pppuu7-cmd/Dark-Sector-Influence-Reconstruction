@@ -27,9 +27,14 @@ jobs:
         run: |
           set -euxo pipefail
           mkdir -p external/unwise_data
-          curl --fail --location --retry 4 --retry-delay 3 \
-            'https://portal.nersc.gov/project/act/act_x_unWISE_xcorr+3x2pt/data_unWISExLens.tar.gz' \
-            -o external/data_unWISExLens.tar.gz
+          PRIMARY='https://portal.nersc.gov/project/act/act_x_unWISE_xcorr+3x2pt/data_unWISExLens.tar.gz'
+          NASA_MIRROR='https://lambda.gsfc.nasa.gov/data/suborbital/ACT/act_x_unWISE/data_unWISExLens.tar.gz'
+          if ! curl --fail --location --retry 2 --retry-delay 2 --connect-timeout 10 --max-time 45 \
+            "$PRIMARY" -o external/data_unWISExLens.tar.gz; then
+            rm -f external/data_unWISExLens.tar.gz
+            curl --fail --location --retry 4 --retry-delay 3 \
+              "$NASA_MIRROR" -o external/data_unWISExLens.tar.gz
+          fi
           echo '1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570  external/data_unWISExLens.tar.gz' | sha256sum -c -
           tar -xzf external/data_unWISExLens.tar.gz -C external/unwise_data
       - name: Run Exp065B selected covariance audit
