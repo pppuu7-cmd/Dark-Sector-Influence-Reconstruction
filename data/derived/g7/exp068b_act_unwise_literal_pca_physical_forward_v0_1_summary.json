@@ -1,0 +1,71 @@
+{
+  "experiment": "Exp068B",
+  "date": "2026-08-26",
+  "status": "PASS_ACT_UNWISE_LITERAL_PCA_PHYSICAL_FORWARD_V0_1",
+  "scope": "corrective physical linear/no-CLEFT ACT x unWISE forward reproduction with literal pinned-upstream mean-plus-PCA tracer semantics; Exp068A FAIL remains permanent",
+  "preregistration_commit": "0fa3cfdbde0e6baea2aab53a4545bd668c61cd4f",
+  "source_head": "342b53e1fd686df4aed57b26b360ae5b7ef45f15",
+  "workflow_run": 33007727478,
+  "artifact": {
+    "id": 9621695396,
+    "name": "exp068b-act-unwise-literal-pca-0d5496fd66cc8d1234940e608f1e493189d9f125",
+    "sha256": "6f6cd856d6ea9f2f728fb56908f589c9e25006f3e98243776c796fcd05431d40"
+  },
+  "provenance": {
+    "upstream_commit": "6302c30d9e70f8e4ff2d4a84a9977b4471705179",
+    "CAMB_commit": "fa3f097343fbbe427cc04b4f5f0041c22c6ec764",
+    "archive_sha256": "1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570",
+    "pass": true
+  },
+  "frozen_domain": {
+    "ell_first": 0,
+    "ell_last": 6143,
+    "ell_count": 6144,
+    "zmin": 0.0,
+    "zmax": 3.0,
+    "projector_kmax_Mpc^-1": 10.0,
+    "CAMB_internal_kmax_Mpc^-1": 12.0,
+    "Gauss_Legendre_order": 96,
+    "CAMB_redshift_grid_size": 128,
+    "linear_no_CLEFT": true,
+    "raw_equivalence_tolerance_factor": 5e-13
+  },
+  "hard_tests": {
+    "B1_provenance": true,
+    "B2_literal_tracer_PCA_binding": true,
+    "B3_physical_provider_sanity": true,
+    "B4_full_raw_component_equivalence": true,
+    "B5_nontrivial_physical_signal_control": true,
+    "B6_zero_displacement_coefficient_control": true
+  },
+  "literal_PCA_semantics": {
+    "Blue": {
+      "sampled_pca_nuisance_count": 3,
+      "correction_file_shape": [500, 5],
+      "observed_n_pcs_mean_plus_sampled": 4,
+      "expanded_bdNdz_shape": [96, 5],
+      "zero_displacement_coefficients": [1.0, 1.0, 0.0, 0.0, 0.0],
+      "normalization_dot": 0.9999930073020711
+    },
+    "Green": {
+      "sampled_pca_nuisance_count": 5,
+      "correction_file_shape": [500, 7],
+      "observed_n_pcs_mean_plus_sampled": 6,
+      "expanded_bdNdz_shape": [96, 7],
+      "zero_displacement_coefficients": [1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      "normalization_dot": 0.9999195790912987
+    }
+  },
+  "raw_equivalence": {
+    "all_compared_components_pass": true,
+    "maximum_observed_absolute_difference": 0.0
+  },
+  "provider_examples": [
+    {"z": 0.5, "k_Mpc^-1": 0.02, "P_WW": 4.977038150984584e-11, "P_Wm": -0.0013961103973289266, "P_mm": 39162.33616103322},
+    {"z": 1.0, "k_Mpc^-1": 0.10, "P_WW": 8.964134017944243e-12, "P_Wm": -0.0001885899247233328, "P_mm": 3967.6070165981087},
+    {"z": 2.0, "k_Mpc^-1": 0.20, "P_WW": 2.6718028461681997e-12, "P_Wm": -3.747342129363493e-05, "P_mm": 525.5841632402776}
+  ],
+  "exp068a_status_preserved": "FAIL_ACT_UNWISE_PHYSICAL_FORWARD_REPRODUCTION_V0_1",
+  "interpretation": "Exp068B prospectively validates the physical R0 linear/no-CLEFT raw ACT x unWISE forward bridge under the literal released upstream tracer convention. It does not retroactively change Exp068A and does not close G7/G8/G9.",
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
