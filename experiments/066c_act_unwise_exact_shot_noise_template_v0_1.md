@@ -1,7 +1,7 @@
 # Exp066C — ACT DR6 × unWISE exact shot-noise template v0.1
 
 Date: 2026-08-26
-Status: preregistered before execution.
+Status: **PASS_ACT_UNWISE_EXACT_SHOT_NOISE_TEMPLATE_V0_1**.
 
 ## Purpose
 
@@ -70,6 +70,17 @@ Otherwise:
 
 Any FAIL is preserved and motivates a separately numbered experiment. Exp066B is never rewritten or reclassified.
 
+## Executed outcome
+
+GitHub Actions run `32989328863` on integrated `main` commit `b6b1e765d6c9179637bb81891332e68ab24a12f3` completed successfully.
+
+- C1: PASS for both Blue/Green; relative solve residual `6.52315926577459e-15 <= 5e-11`; condition number `12.711071624037752`.
+- C2: PASS for both Blue/Green; max selected-bin difference `4.218847493575595e-15`, below frozen thresholds `5.072522954317512e-12` and `5.1005923390015e-12`.
+- C3: PASS; `max_abs(x-1)=1.1140436272781788 > 1e-6`, directly confirming that the exact template is nonconstant and therefore distinct from the Exp066B shortcut.
+- C4: PASS; final selected vector length is exactly 26 with the frozen Blue/Green gg/kg ordering.
+
+Preserved result: `data/derived/g7/exp066c_act_unwise_exact_shot_noise_template_v0_1.json`.
+
 ## Gate semantics
 
-Even a PASS repairs only the forward-operator bridge. `G7`, `G8`, and `G9` remain OPEN. A later experiment must separately preregister a covariance-whitened, training-only cross-channel relation and null statistic before any fresh withheld-family evaluation.
+This PASS repairs only the forward-operator bridge. `G7`, `G8`, and `G9` remain OPEN. The next experiment must separately preregister observational covariance selection/whitening and a training-only cross-channel statistic before any fresh withheld-family evaluation.
