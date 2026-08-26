@@ -1,0 +1,77 @@
+{
+  "experiment": "Exp067E",
+  "date": "2026-08-26",
+  "status": "PASS_CAMB_CLASS_OUT_OF_SAMPLE_POWER_CONVENTION_V0_1",
+  "workflow_run": 32998659859,
+  "workflow_job": 98274406590,
+  "pr": 70,
+  "artifact_id": 9617676816,
+  "artifact_sha256": "6e6419040b7295dfe4b1b4c126a5cfeaa6e1e24a76a7e29c05ccd7c706f65ee2",
+  "pinned_CAMB_commit": "fa3f097343fbbe427cc04b4f5f0041c22c6ec764",
+  "pinned_CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+  "support": {
+    "z": [0.0, 0.5, 1.0, 2.0],
+    "k_Mpc^-1": [0.005, 0.02, 0.05, 0.1, 0.2]
+  },
+  "references": {
+    "R0": {
+      "role": "regression_anchor",
+      "D_mm": 0.009223043583295664,
+      "D_WW": 0.00922303413236992,
+      "D_Wm": 0.009222993947731269,
+      "CLASS_internal_Weyl_max_relative_error": 6.661338147750939e-16,
+      "CAMB_native_k_count": 127,
+      "CAMB_official_coherence_E": 1.616012643701481e-7,
+      "CAMB_float32_reconstruction_E": 1.616012642591258e-7,
+      "CAMB_float32_field_match_max_abs": 6.661338147750939e-16,
+      "CAMB_promoted64_E": 0.0,
+      "CAMB_common_factor_max_spread": 4.440892098500626e-16,
+      "missing_k2_negative_control": 11.98280678708279,
+      "pass": true
+    },
+    "R1": {
+      "role": "fresh_low_matter_high_h",
+      "parameters": {"h": 0.72, "omega_b": 0.0220, "omega_cdm": 0.1050, "A_s": 2.00e-9, "n_s": 0.970},
+      "D_mm": 0.00881946838483925,
+      "D_WW": 0.008819302225434025,
+      "D_Wm": 0.008819398432905792,
+      "CLASS_internal_Weyl_max_relative_error": 8.881784197001252e-16,
+      "CAMB_native_k_count": 126,
+      "CAMB_official_coherence_E": 1.6329542074089431e-7,
+      "CAMB_float32_reconstruction_E": 1.6329542074089431e-7,
+      "CAMB_float32_field_match_max_abs": 6.661338147750939e-16,
+      "CAMB_promoted64_E": 0.0,
+      "CAMB_common_factor_max_spread": 4.440892098500626e-16,
+      "missing_k2_negative_control": 11.983202010405568,
+      "pass": true
+    },
+    "R2": {
+      "role": "fresh_high_matter_low_h",
+      "parameters": {"h": 0.62, "omega_b": 0.0230, "omega_cdm": 0.1350, "A_s": 2.20e-9, "n_s": 0.960},
+      "D_mm": 0.008589973300161178,
+      "D_WW": 0.00858999166527139,
+      "D_Wm": 0.008589951688828657,
+      "CLASS_internal_Weyl_max_relative_error": 6.661338147750939e-16,
+      "CAMB_native_k_count": 129,
+      "CAMB_official_coherence_E": 1.6987003437218817e-7,
+      "CAMB_float32_reconstruction_E": 1.6987003392809896e-7,
+      "CAMB_float32_field_match_max_abs": 6.661338147750939e-16,
+      "CAMB_promoted64_E": 0.0,
+      "CAMB_common_factor_max_spread": 5.551115123125783e-16,
+      "missing_k2_negative_control": 11.982269131540482,
+      "pass": true
+    }
+  },
+  "inherited_thresholds": {
+    "cross_solver_log": 0.03,
+    "CLASS_internal_Weyl": 1e-10,
+    "missing_k2_min": 5.0,
+    "CAMB_float32_field_match": 5e-12,
+    "CAMB_common_factor": 5e-12,
+    "CAMB_promoted64": 1e-12
+  },
+  "interpretation": "The corrected CAMB↔CLASS physical Weyl/matter power convention is prospectively certified on two preregistered out-of-sample LambdaCDM references. The pinned CAMB O(1e-7) rank-one floor remains explicitly attributed to and controlled by the independently confirmed float32-first transfer-product mechanism. Exp067B remains a historical HARD FAIL and is not reclassified.",
+  "Exp067B_state": "HARD_FAIL_UNCHANGED",
+  "Exp067D_state": "FLOAT32_TRANSFER_PRODUCT_CAUSALLY_CONFIRMED_V0_1",
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
