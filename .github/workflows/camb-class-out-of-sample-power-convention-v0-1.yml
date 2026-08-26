@@ -1,0 +1,92 @@
+name: CAMB CLASS out-of-sample power convention v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/camb-class-out-of-sample-power-convention-v0-1.yml'
+      - 'ci/camb_class_out_of_sample_power_convention_v0_1.py'
+      - 'experiments/067e_camb_class_out_of_sample_power_convention_v0_1.md'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/camb-class-out-of-sample-power-convention-v0-1.yml'
+      - 'ci/camb_class_out_of_sample_power_convention_v0_1.py'
+      - 'experiments/067e_camb_class_out_of_sample_power_convention_v0_1.md'
+
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install solver build dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran git python3-dev
+          python3 -m pip install --user numpy scipy cython setuptools wheel packaging
+
+      - name: Fetch and install pinned CAMB
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          git clone https://github.com/cmbant/CAMB.git external/CAMB
+          git -C external/CAMB checkout fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          test "$(git -C external/CAMB rev-parse HEAD)" = 'fa3f097343fbbe427cc04b4f5f0041c22c6ec764'
+          grep -Fq 'real, dimension(:, :, :), allocatable :: TransferData' external/CAMB/fortran/classes.f90
+          grep -Fq '("TransferData", POINTER(c_float))' external/CAMB/camb/results.py
+          python3 -m pip install --user ./external/CAMB
+
+      - name: Fetch and install pinned CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/lesgourg/class_public.git external/class_public
+          git -C external/class_public checkout e85808324f51fc694d12e3ed7439552a3c3f9540
+          test "$(git -C external/class_public rev-parse HEAD)" = 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+          grep -Fq 'Weyl_pk = pk * ((phi+psi)/2./d_m)**2 * k4' external/class_public/python/classy.pyx
+          python3 -m pip install --user ./external/class_public
+
+      - name: Run frozen Exp067E certification
+        run: |
+          set -euxo pipefail
+          python3 ci/camb_class_out_of_sample_power_convention_v0_1.py \
+            --camb-repo external/CAMB \
+            --class-repo external/class_public \
+            --output data/derived/g7/exp067e_camb_class_out_of_sample_power_convention_v0_1.json
+
+      - name: Preserve certification result
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp067e_camb_class_out_of_sample_power_convention_v0_1.json'
+          d=json.load(open(p))
+          assert d['status'] in {
+              'PASS_CAMB_CLASS_OUT_OF_SAMPLE_POWER_CONVENTION_V0_1',
+              'FAIL_CAMB_CLASS_OUT_OF_SAMPLE_POWER_CONVENTION_V0_1',
+          }
+          assert [r['name'] for r in d['references']] == ['R0','R1','R2']
+          assert d['fresh_references_present_exactly'] is True
+          assert d['inherited_thresholds']['cross_solver_log'] == 0.03
+          assert d['inherited_thresholds']['CLASS_internal'] == 1e-10
+          assert d['inherited_thresholds']['missing_k2'] == 5.0
+          assert d['inherited_thresholds']['CAMB_float32_field_match'] == 5e-12
+          assert d['inherited_thresholds']['CAMB_common_factor'] == 5e-12
+          assert d['inherited_thresholds']['CAMB_promoted64'] == 1e-12
+          assert d['Exp067B_state'] == 'HARD_FAIL_UNCHANGED'
+          assert d['Exp067D_state'] == 'FLOAT32_TRANSFER_PRODUCT_CAUSALLY_CONFIRMED_V0_1'
+          assert d['gate_state'] == {'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP067E_STATUS', d['status'])
+          for r in d['references']:
+              print(r['name'], r['pass'], r['cross_solver_log_statistics'], r['CLASS_internal_Weyl_control'], r['CAMB_precision_signature'], r['missing_k2_negative_control'])
+          PY
+
+      - name: Upload certification record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp067e-out-of-sample-power-convention-${{ github.sha }}
+          path: data/derived/g7/exp067e_camb_class_out_of_sample_power_convention_v0_1.json
+          if-no-files-found: warn
