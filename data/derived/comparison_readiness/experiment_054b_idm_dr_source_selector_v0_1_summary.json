@@ -1,0 +1,67 @@
+{
+  "schema": "dsir.idm_dr_source_selector.summary.v0.1",
+  "status": "PASS_IDM_DR_SOURCE_SELECTOR_V0_1",
+  "clean_run_id": 32918454307,
+  "clean_head_sha": "9f396f5e8ff5525c5ff4db19de22458eaaadf43e",
+  "artifact_id": 9588983087,
+  "artifact_sha256": "bcd2e7c7cdf2be4b5b907d88da69dcea9403c5bd649efb2bbba7c75c94787100",
+  "superseded_infrastructure_run": {
+    "run_id": 32918398959,
+    "artifact_id": 9588965323,
+    "reason": "source selector itself passed, but the no-response guard saw a shipped reference pk.dat inside the read-only upstream CLASS clone; no generated C7 response existed"
+  },
+  "pinned_CLASS": "lesgourg/class_public@e85808324f51fc694d12e3ed7439552a3c3f9540",
+  "frozen_mechanism": {
+    "omega_idm": 0.12,
+    "omega_cdm": 0.0,
+    "omega_b": 0.0224,
+    "h": 0.67,
+    "N_ur": 3.046,
+    "N_idr": 0.2,
+    "nindex_idm_dr": 4.0,
+    "matched_future_reference": "identical IDM+IDR background with a_idm_dr=0"
+  },
+  "source_definition": "Gamma_idm<-idr=(4/3) omega_idr a_idm_dr (1+z)[(1+z)/1e7]^n = conformal H; k_source=conformal H/h",
+  "frozen_target_k_source_h_mpc": [
+    0.08484582985947185,
+    0.07347864406347489,
+    0.0599950616490326,
+    0.04647197492427811,
+    0.03927598733289058
+  ],
+  "selected_a_idm_dr_per_mpc": [
+    43913804613.585236,
+    82005193007.92964,
+    200366331342.04977,
+    634135393232.7471,
+    1381558672367.1924
+  ],
+  "decoupling_z": [
+    24396.37364209745,
+    20920.90114594715,
+    16802.32942065075,
+    12679.57704983725,
+    10491.73599128981
+  ],
+  "recovered_k_source_h_mpc": [
+    0.08484582985947192,
+    0.07347864406347485,
+    0.05999506164903252,
+    0.04647197492427817,
+    0.03927598733289062
+  ],
+  "max_target_relative_error": 1.4432899320127035e-15,
+  "frozen_target_relative_tolerance": 1e-10,
+  "inherited_prospective_Exp054C_C_band": [
+    0.0022992620786061375,
+    0.09951219222831723
+  ],
+  "no_generated_C7_response_products": true,
+  "interpretation": "This is source-only parameter selection. The five couplings and inherited Exp054A acceptance band are now frozen before any C7 matter-power response is generated.",
+  "not_a_claim": [
+    "not C7 scientific validation",
+    "not G7 closure",
+    "not G8 discovery",
+    "not a universal exponent"
+  ]
+}
