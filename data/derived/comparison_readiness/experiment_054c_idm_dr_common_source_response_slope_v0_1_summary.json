@@ -1,0 +1,33 @@
+{
+  "schema": "dsir.idm_dr_common_source_response_slope.result_summary.v0.1",
+  "date": "2026-08-26",
+  "status": "FAIL_IDM_DR_COMMON_SOURCE_RESPONSE_SLOPE_V0_1",
+  "scientific_contract_commit_before_first_c7_response": "1df523f02a549dccc9b7bb11cb608922546b56c1",
+  "first_science_evaluable_run_id": 32920776596,
+  "run_head_sha": "304383093968107a114494d312efacd78890e49a",
+  "pull_request_merge_checkout_sha": "5a1f34d2e6813e450331ab2b7c194bbb000f0996",
+  "artifact_id": 9589768992,
+  "artifact_sha256": "fa61a7ae5d53550fd9bf057a4354f8f343e74c18f93a4ce23d5ed964f6dc4c2a",
+  "pinned_CLASS": "lesgourg/class_public@e85808324f51fc694d12e3ed7439552a3c3f9540",
+  "frozen_C_band": [0.0022992620786061375, 0.09951219222831723],
+  "k_source_h_mpc": [0.08484582985947185, 0.07347864406347489, 0.0599950616490326, 0.04647197492427811, 0.03927598733289058],
+  "k_R_geo_h_mpc": [0.06627534448012025, 0.08089267258696022, 0.09263360642811724, 0.0979643754756457, 0.09915097962038458],
+  "C_adjacent": [-1.3855941362973454, -0.6685100505008796, -0.2190645818161967, -0.07156512046984509],
+  "failed_pairs": [[1,2],[2,3],[3,4],[4,5]],
+  "response_power": [0.0019421067978940476, 0.003792524214394997, 0.010438439133667897, 0.03633585442877219, 0.07837219551615715],
+  "q_k_at_kmax_0p1": [0.6923248345076866, 0.8416566060211851, 0.9431586744790664, 0.9849710142032811, 0.9939178108997202],
+  "max_qk_normalization_residual": 2.220446049250313e-16,
+  "post_gate_descriptive_diagnosis_not_part_of_preregistered_gate": {
+    "chi_I_scale_time_interaction_fraction": [1.475440000241278e-08, 7.555147454989964e-09, 2.744597865624417e-09, 7.882074913983199e-10, 3.6530051416708955e-10],
+    "endpoint_normalized_half_transition_k50_geo_h_mpc": [0.0687286640562388, 0.06496381213232315, 0.06115402677492533, 0.05818872688655539, 0.05695898297729927],
+    "k50_adjacent_log_slopes": [0.3916543600906537, 0.2981004595907744, 0.19460288647000355, 0.1269657691556174],
+    "interpretation": "C7 is almost scale-only on the frozen grid. The failed R^2 centroid is increasingly dominated by the k=0.1 endpoint as suppression amplitude grows. A separate endpoint-normalized half-transition coordinate moves in the source-scale direction, but this is post-gate descriptive evidence only and cannot rescue Exp054C."
+  },
+  "scientific_interpretation": [
+    "The Exp054A v0.1 common quantitative R^2-centroid slope law is prospectively falsified by C7 IDM-DR.",
+    "All four C7 adjacent slopes have the opposite sign to the pre-frozen C3+C5 relation.",
+    "No acceptance-band widening or post-output recalibration is permitted.",
+    "The broader mechanism-native characteristic-scale/epoch organizing idea is not falsified by this operator-specific failure.",
+    "G7 remains open and G8 remains open for a new relation."
+  ]
+}
