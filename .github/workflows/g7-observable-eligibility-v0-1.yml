@@ -1,0 +1,54 @@
+name: G7 observable eligibility audit v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/g7-observable-eligibility-v0-1.yml'
+      - 'experiments/063_g7_observable_eligibility.py'
+      - 'experiments/009_desi_dr1_multichannel_identifiability.py'
+      - 'experiments/010_conditional_innovations.py'
+      - 'src/dsir/shapefit_response.py'
+      - 'src/dsir/conditioning.py'
+      - 'data/observations/desi_dr1_shapefit_erratum_2026.json'
+      - 'docs/EXP063A_G7_OBSERVABLE_ELIGIBILITY_2026-08-26.md'
+
+jobs:
+  eligibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Re-run existing covariance quotient controls
+        run: |
+          set -euxo pipefail
+          python3 experiments/009_desi_dr1_multichannel_identifiability.py
+          python3 experiments/010_conditional_innovations.py
+      - name: Run Exp063A eligibility audit
+        run: |
+          set -euxo pipefail
+          python3 experiments/063_g7_observable_eligibility.py
+      - name: Enforce non-discovery contract
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp063a_observable_eligibility.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_OBSERVABLE_ELIGIBILITY_AUDIT'
+          assert d['eligible_training_block']['zero_imputation'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert 'no survey response kernel' in d['ineligible_for_g7_claim_without_new_binding']['reason']
+          print('PASS_EXP063A_NON_DISCOVERY_CONTRACT')
+          PY
+      - name: Upload audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp063a-g7-observable-eligibility-${{ github.sha }}
+          path: |
+            data/derived/g7/exp063a_observable_eligibility.json
+            data/derived/desi_dr1_shapefit/experiment_009_output.txt
+            data/derived/desi_dr1_shapefit/experiment_010_output.txt
+          if-no-files-found: error
