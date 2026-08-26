@@ -70,9 +70,9 @@ The bridge must not reconstruct `Weyl` from `delta_nonu` using a Poisson equatio
 The first execution contains two solver cases under matched background/primordial/precision settings:
 
 1. **GR control:** designer-f(R) parameter `B0 = 0`;
-2. **C5 modified control:** one already-used nonzero designer-f(R) B0 point from the existing validated C5 manifold. The exact nonzero B0 value must be copied from the current canonical C5 experiment/configuration, not chosen after viewing Exp069A output.
+2. **C5 modified control:** `B0 = 1e-6`.
 
-No parameter optimization is permitted.
+`B0=1e-6` is frozen because the canonical high-precision C5 manifold already treats `B0 >= 1e-6` as the production region, while `B0=1e-7` is explicitly a solver-threshold transition control. No parameter optimization or substitution of another nonzero B0 is permitted in Exp069A v0.1.
 
 ## Frozen support grid
 
@@ -138,7 +138,7 @@ If the wrong control does not fail, Exp069A is FAIL because the convention test 
 
 ### A6 — nontrivial modified-gravity control
 
-The nonzero C5 point must differ from the GR control in at least one of the three physical spectra by
+The `B0=1e-6` C5 point must differ from the GR control in at least one of the three physical spectra by
 
 \[
 \max |P_{C5}/P_{GR}-1| > 10^{-6}
