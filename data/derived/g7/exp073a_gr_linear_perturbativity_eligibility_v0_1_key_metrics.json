@@ -1,0 +1,63 @@
+{
+  "experiment": "Exp073A",
+  "date": "2026-08-27",
+  "status": "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
+  "workflow_run": 33032781761,
+  "workflow_job": 98388840817,
+  "artifact_id": 9630897385,
+  "artifact_digest": "sha256:0f2212d691c38c3e953d2a0d823b498a5557b9485fc759079719000cdc48cb25",
+  "artifact_json_sha256": "a8bbafa971283cadf9ff27a27af4d0c4e3042bc0aec590d690142d39c919abb2",
+  "execution_merge_sha": "03c9d0281a6ea780d29c6fb4a689dbd55e51fdf5",
+  "frontier": {
+    "z_min": 0.0087345857837422,
+    "z_max": 2.33,
+    "k_min_Mpc^-1": 0.000704833374744468,
+    "k_max_Mpc^-1": 4.818261097432861
+  },
+  "primary_threshold_Delta2": 1.0,
+  "diagnostics": {
+    "T_0p5_retained_dimension": 0,
+    "T_1_retained_dimension": 0,
+    "T_2_retained_dimension": 0
+  },
+  "pair_summary_primary": {
+    "pair_count": 64,
+    "pair_count_primary_pass": 7,
+    "median_incremental_nonperturbative_fraction": 0.33104901805931586,
+    "max_incremental_nonperturbative_fraction": 0.8399156776753174,
+    "median_combined_invalid_fraction": 0.34145708039221284,
+    "max_combined_invalid_fraction": 0.9501004682310411,
+    "median_pair_max_Delta2_inside_geometry": 10.106721461271324,
+    "max_pair_max_Delta2_inside_geometry": 10.106721461271324
+  },
+  "CAMB_reference_control": {
+    "evaluated_frontier_cells": 348469,
+    "kmin_Mpc^-1": 0.00004999999844585545,
+    "kmax_Mpc^-1": 12.599999389648438,
+    "zmin": 0.0,
+    "zmax": 3.0,
+    "all_cells_non_extrapolated": true,
+    "finite_positive_Pmm_and_Delta2": true,
+    "unit_roundtrip_max_relative_discrepancy": 2.9799904762709264e-15,
+    "unit_roundtrip_tolerance": 2e-8
+  },
+  "hard_controls": {
+    "P1": true,
+    "P2": true,
+    "P3": true,
+    "P4": true,
+    "P5": true,
+    "P6": true,
+    "P7": true,
+    "P8": true
+  },
+  "interpretation_boundary": {
+    "linear_no_CLEFT_route_eligible": false,
+    "blind_linear_C3_C5_frontier_extension_authorized": false,
+    "covariance_restriction_authorized": false,
+    "next_admissible_branch": "solver-neutral nonlinear independent matter/Weyl feasibility audit",
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
