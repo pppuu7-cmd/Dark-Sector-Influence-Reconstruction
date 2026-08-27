@@ -1,0 +1,136 @@
+name: Exp073B current-stack nonlinear matter-Weyl feasibility v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073b-current-stack-nonlinear-matter-weyl-feasibility-v0-1.yml'
+      - 'ci/exp073b_current_stack_nonlinear_matter_weyl_feasibility_v0_1.py'
+      - 'experiments/073b_solver_neutral_nonlinear_matter_weyl_feasibility_prereg_v0_1.md'
+      - '.github/workflows/c3-gdm-native-grid-physical-power-provider-v0-1.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  provenance-first-feasibility-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install audit dependencies
+        run: |
+          set -euxo pipefail
+          python3 -m py_compile ci/exp073b_current_stack_nonlinear_matter_weyl_feasibility_v0_1.py
+          gh --version
+
+      - name: Bind exact immutable Exp073A parent artifact
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp073a_parent
+          gh api repos/${GITHUB_REPOSITORY}/actions/artifacts/9630897385 > external/exp073a_meta.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('external/exp073a_meta.json'))
+          assert d['id']==9630897385
+          assert d['digest']=='sha256:0f2212d691c38c3e953d2a0d823b498a5557b9485fc759079719000cdc48cb25'
+          assert d['workflow_run']['id']==33032781761
+          assert d['workflow_run']['head_sha']=='03c9d0281a6ea780d29c6fb4a689dbd55e51fdf5'
+          PY
+          gh run download 33032781761 \
+            -n 'exp073a-gr-linear-perturbativity-eligibility-03c9d0281a6ea780d29c6fb4a689dbd55e51fdf5' \
+            -D external/exp073a_parent
+          PARENT_JSON="$(find external/exp073a_parent -name 'exp073a_gr_linear_perturbativity_eligibility_v0_1.json' -print -quit)"
+          test -n "$PARENT_JSON"
+          echo 'a8bbafa971283cadf9ff27a27af4d0c4e3042bc0aec590d690142d39c919abb2  '"$PARENT_JSON" | sha256sum -c -
+          cp "$PARENT_JSON" external/exp073a.json
+
+      - name: Reproduce frozen C3 source target and certified C3 source identity
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp073b_source_audit
+          PIN='4c87916aab5ca124a68f1dd16f31846fc13d1829'
+
+          set +e
+          gh api "repos/lesgourg/class_public/commits/${PIN}" \
+            > external/exp073b_source_audit/frozen_c3_commit.json \
+            2> external/exp073b_source_audit/frozen_c3_commit.stderr
+          RC=$?
+          set -e
+          printf '%s\n' "$RC" > external/exp073b_source_audit/frozen_c3_commit.rc
+
+          gh api "repos/s-ilic/gdm_class_public/commits/${PIN}" \
+            > external/exp073b_source_audit/actual_c3_commit.json
+          python3 - <<'PY'
+          import json
+          pin='4c87916aab5ca124a68f1dd16f31846fc13d1829'
+          d=json.load(open('external/exp073b_source_audit/actual_c3_commit.json'))
+          assert d['sha']==pin
+          wf=open('.github/workflows/c3-gdm-native-grid-physical-power-provider-v0-1.yml').read()
+          assert 'https://github.com/s-ilic/gdm_class_public.git' in wf
+          assert pin in wf
+          print('FROZEN_C3_API_RC',open('external/exp073b_source_audit/frozen_c3_commit.rc').read().strip())
+          print('ACTUAL_C3_SHA',d['sha'])
+          PY
+
+      - name: Execute frozen Exp073B provenance-first audit
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073b_current_stack_nonlinear_matter_weyl_feasibility_v0_1.py \
+            --exp073a-json external/exp073a.json \
+            --exp073a-meta external/exp073a_meta.json \
+            --prereg experiments/073b_solver_neutral_nonlinear_matter_weyl_feasibility_prereg_v0_1.md \
+            --c3-workflow .github/workflows/c3-gdm-native-grid-physical-power-provider-v0-1.yml \
+            --expected-c3-api-rc external/exp073b_source_audit/frozen_c3_commit.rc \
+            --expected-c3-api-stderr external/exp073b_source_audit/frozen_c3_commit.stderr \
+            --actual-c3-commit-json external/exp073b_source_audit/actual_c3_commit.json \
+            --output data/derived/g7/exp073b_current_stack_nonlinear_matter_weyl_feasibility_v0_1.json
+
+      - name: Assert frozen Exp073B provenance-failure semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073b_current_stack_nonlinear_matter_weyl_feasibility_v0_1.json'
+          d=json.load(open(p))
+          assert d['experiment']=='Exp073B'
+          assert d['status']=='FAIL_EXP073B_REPRODUCTION_OR_PROVENANCE'
+          assert d['parent_Exp073A_binding']['pass'] is True
+          assert d['frozen_C3_source_target']['repository']=='lesgourg/class_public'
+          assert d['frozen_C3_source_target']['commit']=='4c87916aab5ca124a68f1dd16f31846fc13d1829'
+          assert d['frozen_C3_source_target']['commit_resolves'] is False
+          assert d['certified_C3_workflow_source']['repository']=='s-ilic/gdm_class_public'
+          assert d['certified_C3_workflow_source']['commit_resolves'] is True
+          assert d['provenance_diagnosis']['source_repository_identity_mismatch'] is True
+          assert d['provenance_diagnosis']['frozen_SHA_missing_from_frozen_repository'] is True
+          assert d['provenance_diagnosis']['same_SHA_resolves_in_actual_certified_C3_repository'] is True
+          assert d['capability_tests']['F7_provenance_completeness'] is False
+          assert d['capability_tests']['F8_no_downstream_leakage'] is True
+          for key in ('F1_projector_separability','F2_upstream_nonlinear_CLEFT_scope','F3_C3_GDM_nonlinear_provider','F4_C5_designer_fR_nonlinear_provider','F5_support_plausibility','F6_independence_sign_semantics'):
+              assert d['capability_tests'][key]=='NOT_EVALUATED_AFTER_HARD_PROVENANCE_FAILURE'
+          assert d['controls']['nonlinear_cosmology_output_computed'] is False
+          assert d['controls']['provider_extended'] is False
+          assert d['corrective_boundary']['Exp073B_must_remain_FAIL'] is True
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073B_RESULT',d['status'])
+          print('FROZEN_C3',d['frozen_C3_source_target'])
+          print('ACTUAL_C3',d['certified_C3_workflow_source'])
+          PY
+
+      - name: Upload immutable Exp073B audit record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073b-current-stack-feasibility-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073b_current_stack_nonlinear_matter_weyl_feasibility_v0_1.json
+            external/exp073b_source_audit/frozen_c3_commit.rc
+            external/exp073b_source_audit/frozen_c3_commit.stderr
+            external/exp073b_source_audit/actual_c3_commit.json
+          if-no-files-found: warn
