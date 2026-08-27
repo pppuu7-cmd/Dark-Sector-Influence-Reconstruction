@@ -1,0 +1,113 @@
+name: KiDS BOSS BNT exact physical support v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/kids-boss-bnt-physical-support-v0-1.yml'
+      - 'ci/kids_boss_bnt_physical_support_v0_1.py'
+      - 'src/dsir/bnt.py'
+      - 'src/dsir/kids_boss_support.py'
+      - 'tests/test_bnt.py'
+      - 'tests/test_kids_boss_support.py'
+      - 'experiments/073g_kids_boss_bnt_exact_physical_support_prereg_v0_1.md'
+      - 'experiments/073g_kids_boss_bnt_operator_binding_v0_1.md'
+      - 'experiments/073g_kids_boss_bnt_support_execution_binding_v0_1.md'
+      - 'data/derived/g7/exp073g_kids_boss_bnt_operator_binding_v0_1.json'
+      - 'data/derived/g7/exp073g_kids_boss_bnt_support_execution_binding_v0_1.json'
+
+jobs:
+  exact-physical-support:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install numerical and CAMB build dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran git python3-dev
+          python3 -m pip install --user numpy scipy pytest setuptools wheel packaging pyyaml
+
+      - name: Fetch pinned public sources
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          git clone https://github.com/KiDS-WL/Cat_to_Obs_K1000_P1.git external/kids
+          git -C external/kids checkout 36676da44471979dacb779155d7e6e7212ae1f4f
+          test "$(git -C external/kids rev-parse HEAD)" = '36676da44471979dacb779155d7e6e7212ae1f4f'
+
+          git clone https://github.com/pltaylor16/x-cut.git external/x-cut
+          git -C external/x-cut checkout fcab1439c896ff4bff0fa21300366eef8107578c
+          test "$(git -C external/x-cut rev-parse HEAD)" = 'fcab1439c896ff4bff0fa21300366eef8107578c'
+
+          git clone https://github.com/KiDS-WL/kcap.git external/kcap
+          git -C external/kcap checkout 1a0fcfe1dea694a176c30ec019d6f0ca101e8ae8
+          test "$(git -C external/kcap rev-parse HEAD)" = '1a0fcfe1dea694a176c30ec019d6f0ca101e8ae8'
+
+          git clone https://github.com/KiDS-WL/kcap_boss_module.git external/kcap_boss_module
+          git -C external/kcap_boss_module checkout 0e894a7e58b257f50f9348f35309b3171688f004
+          test "$(git -C external/kcap_boss_module rev-parse HEAD)" = '0e894a7e58b257f50f9348f35309b3171688f004'
+
+          git clone https://github.com/cmbant/CAMB.git external/CAMB
+          git -C external/CAMB checkout fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          test "$(git -C external/CAMB rev-parse HEAD)" = 'fa3f097343fbbe427cc04b4f5f0041c22c6ec764'
+          python3 -m pip install --user ./external/CAMB
+
+      - name: Run algebra regression tests
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import pathlib, yaml
+          yaml.safe_load(pathlib.Path('.github/workflows/kids-boss-bnt-physical-support-v0-1.yml').read_text())
+          PY
+          python3 -m pytest tests/test_bnt.py tests/test_kids_boss_support.py -q
+
+      - name: Execute frozen Exp073G support audit
+        run: |
+          set -euxo pipefail
+          python3 ci/kids_boss_bnt_physical_support_v0_1.py \
+            --kids-repo external/kids \
+            --xcut-repo external/x-cut \
+            --kcap-repo external/kcap \
+            --boss-repo external/kcap_boss_module \
+            --camb-repo external/CAMB \
+            --output data/derived/g7/exp073g_kids_boss_bnt_physical_support_v0_1.json
+
+      - name: Assert frozen classification vocabulary and exclusions
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073g_kids_boss_bnt_physical_support_v0_1.json'
+          d=json.load(open(p))
+          assert d['status'] in {
+              'PASS_KIDS_BOSS_BNT_PHYSICAL_SUPPORT_EXP073G',
+              'FAIL_KIDS_BOSS_BNT_PHYSICAL_SUPPORT_EXP073G',
+              'FAIL_EXP073G_REPRODUCTION_OR_PROVENANCE',
+          }
+          assert d['frozen_support']['max_invalid_positive_fraction'] == 0.05
+          assert d['candidate_counts'] == {'mm':84,'Wm':24,'WW':48,'total':156}
+          assert len(d['coordinates']) == 156
+          assert d['controls'] == {
+              'covariance_values_read': False,
+              'measured_residuals_read': False,
+              'nuisance_rank_or_SVD_read': False,
+              'G7_relation_read': False,
+              'G8_output_read': False,
+              'held_out_performance_read': False,
+          }
+          assert d['gate_state'] == {'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073G_RESULT', d['status'])
+          print('RETAINED_COUNTS', d['retained_counts'])
+          print('CRITERIA', d['criteria'])
+          PY
+
+      - name: Upload immutable Exp073G result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073g-kids-boss-bnt-physical-support-${{ github.sha }}
+          path: data/derived/g7/exp073g_kids_boss_bnt_physical_support_v0_1.json
+          if-no-files-found: warn
