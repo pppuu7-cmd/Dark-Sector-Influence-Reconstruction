@@ -62,6 +62,10 @@ jobs:
         run: |
           python papers/dsir1/figures/fig05_curvature_and_localization.py
 
+      - name: Build Figure 6 failure-resistant science
+        run: |
+          python papers/dsir1/figures/fig06_failure_resistant_science.py
+
       - name: Record build checksums
         run: |
           mkdir -p papers/dsir1/build
