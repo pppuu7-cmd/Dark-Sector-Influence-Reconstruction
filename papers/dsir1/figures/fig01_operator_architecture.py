@@ -74,9 +74,9 @@ def main() -> None:
     ax.text(0.5, 0.37, r"$r_1\sim_B r_2\;\Longleftrightarrow\;A_B(r_1-r_2)=0\;\Longleftrightarrow\;r_1-r_2\in\ker A_B$", ha="center", va="center", fontsize=13)
 
     # Compatible-channel refinement shown separately to keep its assumption explicit.
-    # Use a transpose-stacking notation supported by Matplotlib mathtext.
+    # Baseline MathText only: avoid matrix/style extensions so CI needs no TeX engine.
     ax.text(0.08, 0.19, "Compatible independent channel stacking", fontsize=10, fontweight="bold", ha="left")
-    ax.text(0.08, 0.12, r"$A_{B\oplus C}=(A_B,A_C)^{\mathsf T}$", fontsize=12, ha="left")
+    ax.text(0.08, 0.12, r"$A_{B\oplus C}=(A_B,A_C)^T$", fontsize=12, ha="left")
     ax.text(0.39, 0.12, r"$\Rightarrow\quad\ker A_{B\oplus C}=\ker A_B\cap\ker A_C$", fontsize=12, ha="left")
     ax.text(0.08, 0.045, "Caveat: if a joint analysis refits shared nuisance directions, the quotient need not be blockwise compatible.", fontsize=9.5, ha="left")
 
