@@ -26,6 +26,7 @@ MANUSCRIPT_V02 = HERE / "manuscript_v0_2.md"
 BUILD = HERE / "build_manuscript_v0_2.py"
 SUPPORT_SNAPSHOT = HERE / "evidence" / "observation_space_support_chain_v0_1.json"
 SUPPORT_SECTION = HERE / "sections" / "observation_space_support_closure.md"
+SUPPORT_SUPPLEMENT = HERE / "supplement" / "observation_route_detailed.md"
 
 EXP045A = REPO / "data/derived/comparison_readiness/experiment_045a_core_G_T_tau_additive_projection_v0_1.json"
 EXP046 = REPO / "data/derived/comparison_readiness/experiment_046_scale_time_interaction_morphology_v0_1.json"
@@ -72,6 +73,7 @@ def check_required_files() -> None:
         BUILD,
         SUPPORT_SNAPSHOT,
         SUPPORT_SECTION,
+        SUPPORT_SUPPLEMENT,
         EXP045A,
         EXP046,
         EXP047A,
@@ -265,6 +267,19 @@ def check_support_snapshot_boundary() -> None:
     require(all(d["boundary"][g] == "OPEN" for g in ("G7", "G8", "G9")), "G7/G8/G9 support-chain boundary changed")
 
 
+def check_supplement_machine_provenance() -> None:
+    text = read(SUPPORT_SUPPLEMENT)
+    for token in [
+        "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
+        "GAP_EXISTING_STACK_NONLINEAR_MATTER_WEYL_ROUTE_EXP073B",
+        "C3_COMPLETION_ENSEMBLE_NOT_FEASIBLE_EXP073E",
+        "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
+        "PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0",
+        "science_gate_scored=false",
+    ]:
+        require_contains(text, token, "supplement/observation_route_detailed.md")
+
+
 def build_and_check_manuscript() -> None:
     subprocess.run([sys.executable, str(BUILD)], cwd=REPO, check=True)
     require(MANUSCRIPT_V02.exists(), "v0.2 manuscript was not generated")
@@ -277,11 +292,10 @@ def build_and_check_manuscript() -> None:
         "# 11. Data, code, and reproducibility",
         "# 12. Outlook",
         "# 13. Conclusions",
-        "FAIL_IDM_DR_COMMON_SOURCE_RESPONSE_SLOPE_V0_1",
+        "prospective scientific FAIL",
         "## 7.1 Observation-space support closure and perturbativity",
-        "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
-        "GAP_EXISTING_STACK_NONLINEAR_MATTER_WEYL_ROUTE_EXP073B",
-        "C3_COMPLETION_ENSEMBLE_NOT_FEASIBLE_EXP073E",
+        "tested linear route is therefore physically ineligible",
+        "reproduction prerequisites only",
         "Figure 7 summarizes",
         "A_B=Q_BW_BK_B",
     ]:
@@ -293,6 +307,15 @@ def build_and_check_manuscript() -> None:
     require_contains(text, "does **not** claim a universal dark-sector law", "manuscript_v0_2.md")
     require_contains(text, "no claim of new fundamental physics", "manuscript_v0_2.md")
     require_contains(text, "Consequently DSIR does **not** compute or quote", "manuscript_v0_2.md")
+
+    for forbidden in [
+        "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
+        "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
+        "PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0",
+        "paper/dsir-i-observable-response-geometry",
+        "fa61a7ae5d53550fd9bf057a4354f8f343e74c18f93a4ce23d5ed964f6dc4c2a",
+    ]:
+        require(forbidden not in text, f"Machine-only token leaked into journal narrative: {forbidden}")
 
 
 def main() -> None:
@@ -307,6 +330,7 @@ def main() -> None:
         ("formal quotient operator", check_formal_operator),
         ("provenance matrix P1-P23", check_provenance_matrix),
         ("support/provider/model-boundary chain", check_support_snapshot_boundary),
+        ("supplement machine provenance", check_supplement_machine_provenance),
         ("v0.2 manuscript build", build_and_check_manuscript),
     ]
 
