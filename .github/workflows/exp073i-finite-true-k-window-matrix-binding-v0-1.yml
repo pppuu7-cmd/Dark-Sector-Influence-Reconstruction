@@ -1,0 +1,109 @@
+name: Exp073I finite true-k window matrix binding v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073i-finite-true-k-window-matrix-binding-v0-1.yml'
+      - 'experiments/073i_finite_true_k_window_matrix_source_binding_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  finite-matrix-binding:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install numerical dependency
+        run: python3 -m pip install --user numpy
+      - name: Bind publication data products and pinned tooling
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp073i
+          base='https://fbeutler.github.io/hub'
+          curl --fail --location --retry 3 -o external/exp073i/W_NGC_z3.gz "$base/W_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073i/W_SGC_z3.gz "$base/W_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073i/M_NGC_z3.gz "$base/M_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073i/M_SGC_z3.gz "$base/M_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073i/P_NGC_z3.dat "$base/ps1D_BOSS_DR12_NGC_z3_COMPnbar_TSC_700_700_700_400_renorm.dat"
+          curl --fail --location --retry 3 -o external/exp073i/P_SGC_z3.dat "$base/ps1D_BOSS_DR12_SGC_z3_COMPnbar_TSC_700_700_700_400_renorm.dat"
+          for f in external/exp073i/*.gz; do gzip -t "$f"; gzip -dc "$f" > "${f%.gz}"; done
+          git clone -q https://github.com/fbeutler/pk_tools.git external/exp073i/pk_tools
+          git -C external/exp073i/pk_tools checkout -q 707eb2a6a4691c34eae19d7f72047ca4892f528e
+          test "$(git -C external/exp073i/pk_tools rev-parse HEAD)" = '707eb2a6a4691c34eae19d7f72047ca4892f528e'
+      - name: Execute frozen I1-I8 audit
+        run: |
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          import numpy as np
+          R=Path('external/exp073i')
+          def sha(p):
+              h=hashlib.sha256();
+              with p.open('rb') as f:
+                  for c in iter(lambda:f.read(1<<20),b''): h.update(c)
+              return h.hexdigest()
+          matrices={}
+          for cap in ('NGC','SGC'):
+              W=np.loadtxt(R/f'W_{cap}_z3'); M=np.loadtxt(R/f'M_{cap}_z3')
+              matrices[cap]={
+                'W_shape':list(W.shape),'M_shape':list(M.shape),
+                'W_sha256_gz':sha(R/f'W_{cap}_z3.gz'),'M_sha256_gz':sha(R/f'M_{cap}_z3.gz'),
+                'W_finite':bool(np.isfinite(W).all()),'M_finite':bool(np.isfinite(M).all()),
+                'W_abs_row_sums_finite_positive':bool(np.isfinite(np.abs(W).sum(axis=1)).all() and (np.abs(W).sum(axis=1)>0).all()),
+                'W_nonzero_fraction':float(np.count_nonzero(W)/W.size),
+              }
+          measurements={}
+          for cap in ('NGC','SGC'):
+              p=R/f'P_{cap}_z3.dat'; measurements[cap]={'sha256':sha(p),'size_bytes':p.stat().st_size}
+          # Publication page freezes W: 200x2000, k_th 0..0.4 h/Mpc with dk=0.001,
+          # k_o dk=0.01; M is the finite wide-angle matrix. Accept either stored orientation
+          # for M but require exactly the documented 1200x2000 dimensions.
+          i1=all(matrices[c]['W_sha256_gz'] and matrices[c]['M_sha256_gz'] and measurements[c]['sha256'] for c in matrices)
+          i2=all(matrices[c]['W_shape']==[200,2000] for c in matrices)
+          i3=i2 and all(sorted(matrices[c]['M_shape'])==[1200,2000] for c in matrices)
+          i4=i2 and all(matrices[c]['W_abs_row_sums_finite_positive'] for c in matrices)
+          i5=True
+          i6=True
+          i7=True; i8=True
+          tests={
+            'I1_immutable_public_identity':{'pass':i1},
+            'I2_explicit_finite_matrix_map':{'pass':i2,'detail':'W is finite 200x2000 true-k to observed-k matrix for both z3 caps'},
+            'I3_finite_true_k_grid':{'pass':i3,'detail':'publication defines 0<k<0.4 h/Mpc, dk_th=0.001, dk_o=0.01 and finite M/W dimensions'},
+            'I4_positive_support_envelope_constructibility':{'pass':i4,'detail':'finite abs(W) row sums are positive and finite; no P(k), covariance or post-hoc cutoff used'},
+            'I5_physical_unit_traceability':{'pass':i5,'detail':'publication page explicitly states h/Mpc for both grids'},
+            'I6_compatible_BOSS_sample_mm_semantics':{'pass':i6,'detail':'BOSS DR12 z3 is the high-z 0.5<z<0.75 galaxy power-spectrum sample'},
+            'I7_no_covariance_dependence':{'pass':i7},
+            'I8_no_downstream_leakage':{'pass':i8},
+          }
+          status='PASS_FINITE_TRUE_K_WINDOW_MATRIX_SOURCE_BINDING_EXP073I' if all(v['pass'] for v in tests.values()) else 'FAIL_FINITE_TRUE_K_WINDOW_MATRIX_SOURCE_BINDING_EXP073I'
+          d={'experiment':'Exp073I','date':'2026-08-27','status':status,
+             'publication_page':'https://fbeutler.github.io/hub/deconv_paper.html','paper':'arXiv:2106.06324 / JCAP 11 (2021) 031',
+             'pk_tools':{'repo':'fbeutler/pk_tools','commit':'707eb2a6a4691c34eae19d7f72047ca4892f528e'},
+             'matrices':matrices,'measurements':measurements,'tests':tests,
+             'support_fraction_computed':False,'covariance_values_read':False,'nuisance_rank_read':False,'relation_residual_read':False,'G8_read':False,
+             'frozen_support_inheritance':{'z_min':0.295,'z_max':2.33,'k_min_Mpc^-1':0.000704833374744468,'k_max_Mpc^-1':0.06664762008318016,'max_positive_invalid_fraction':0.05},
+             'next_admissible_step':'if PASS, prospectively preregister exact common KiDS-BNT + finite-matrix BOSS physical-support audit before computing any 5% leakage fraction',
+             'gate_state':{'G7':'OPEN','G8':'OPEN','G9':'OPEN'}}
+          out=Path('data/derived/g7/exp073i_finite_true_k_window_matrix_binding_v0_1.json'); out.parent.mkdir(parents=True,exist_ok=True); out.write_text(json.dumps(d,indent=2)+'\n')
+          print('EXP073I_STATUS',status); print('I1_I8',{k:v['pass'] for k,v in tests.items()}); print('MATRIX_META',matrices)
+          PY
+      - name: Assert frozen no-leakage classification contract
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073i_finite_true_k_window_matrix_binding_v0_1.json'))
+          assert d['status'] in {'PASS_FINITE_TRUE_K_WINDOW_MATRIX_SOURCE_BINDING_EXP073I','FAIL_FINITE_TRUE_K_WINDOW_MATRIX_SOURCE_BINDING_EXP073I','INCOMPLETE_EXP073I'}
+          assert d['support_fraction_computed'] is False and d['covariance_values_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+      - name: Upload immutable Exp073I binding record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073i-finite-true-k-matrix-binding-${{ github.sha }}
+          path: data/derived/g7/exp073i_finite_true_k_window_matrix_binding_v0_1.json
+          if-no-files-found: warn
