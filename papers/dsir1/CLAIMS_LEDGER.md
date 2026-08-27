@@ -52,6 +52,8 @@ This ledger separates statements that are already supported by frozen DSIR evide
 
 9. **A simple attempted cross-family universalization was prospectively falsified.** Exp054C applied a common C3/C5-calibrated full-response centroid-slope law to a withheld IDM-DR/C7 family after freezing the positive acceptance interval `0.0022992621 <= C_i <= 0.0995121922`. All four withheld slopes were negative (`-1.3856,-0.6685,-0.2191,-0.07157`) and failed. The correct article-level conclusion is that this specific common scalar law is falsified; the interval is not widened and the sign is not redefined after the result.
 
+10. **Matter-response geometric simplicity is not dark-sector-specific.** A retrospective, explicitly post-unblinding Exp071D control shows that an ordinary known-sector baryon-fraction (`K2`) path can be almost one-dimensional in matter-response space (`PC1 fraction ~0.99904`) while backtracking and reaching a sampled adjacent-tangent turn of about `169.69 deg`. This is allowed only as a non-overclaim/specificity control: matter-only low dimensionality or near-directionality is a mechanism/transfer diagnostic, not a dark-sector identity statistic. Exp071D creates no new hard gate, threshold, or dark-specific theorem.
+
 ## B. Claims explicitly prohibited in DSIR-I
 
 - No claim of discovery of new fundamental physics.
@@ -64,9 +66,10 @@ This ledger separates statements that are already supported by frozen DSIR evide
 - No zero-imputation of undefined/masked theory-channel cells.
 - No retrospective threshold tuning to convert failed experiments into passes.
 - No rescue of Exp054C by widening the frozen interval, flipping the expected sign, redefining the C7 response coordinate, or reusing C7 as a fresh withheld family for a law chosen after inspecting C7.
+- No promotion of Exp071D's post-unblinding known-sector taxonomy to a prospective dark-sector specificity theorem or threshold.
 
 ## C. First-paper scope
 
-DSIR-I is a **methodological and phenomenological response-atlas paper**. It establishes a common language for comparing physically different dark-sector mechanisms, shows with frozen examples why single-channel or low-dimensional summaries fail, formalizes channel-conditional equivalence, and documents prospective/withheld validation practice including genuine prospective falsification.
+DSIR-I is a **methodological and phenomenological response-atlas paper**. It establishes a common language for comparing physically different dark-sector mechanisms, shows with frozen examples why single-channel or low-dimensional summaries fail, formalizes channel-conditional equivalence, and documents prospective/withheld validation practice including genuine prospective falsification. A retrospective known-sector control is retained only to constrain interpretation and prevent dark-specific overclaiming.
 
 A later paper may address fully observational quotient distances after the common support mask, covariance whitening, nuisance tangent SVD, and fresh withheld-family relation tests are completed. The first paper must remain publishable even if no universal G7 relation is ever found.
