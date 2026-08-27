@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Deterministically assemble DSIR-I manuscript v0.2 from frozen text components.
 
-The script does not edit manuscript.md in place. It inserts the prospective
-falsification subsection into Results, inserts the reproducibility section
-before Outlook, renumbers the final top-level headings, and writes
-manuscript_v0_2.md.
+The script does not edit manuscript.md in place. It injects the frozen author
+metadata, inserts the prospective falsification subsection into Results,
+inserts the reproducibility section before Outlook, renumbers the final
+headings, and writes manuscript_v0_2.md.
 """
 
 from __future__ import annotations
@@ -20,6 +20,8 @@ OUT = HERE / "manuscript_v0_2.md"
 RESULTS_INSERT_MARKER = "# 7. Failure-resistant numerical validation"
 OUTLOOK_MARKER = "# 11. Outlook"
 CONCLUSION_MARKER = "# 12. Conclusions"
+AUTHOR_PLACEHOLDER = 'author:\n  - "[authors to be finalized]"'
+AUTHOR_BLOCK = '''author:\n  - "Aleksey Buyanov"\naffiliation: "Independent Researcher"\nlocation: "Moscow, Russia"\nemail: "pppuu7@gmail.com"\norcid: "0009-0001-2621-9305"'''
 
 
 def read(path: Path) -> str:
@@ -36,6 +38,9 @@ def main() -> None:
     base = read(BASE)
     falsification = read(FALSIFICATION)
     repro = read(REPRO)
+
+    require_once(base, AUTHOR_PLACEHOLDER)
+    base = base.replace(AUTHOR_PLACEHOLDER, AUTHOR_BLOCK, 1)
 
     for marker in (RESULTS_INSERT_MARKER, OUTLOOK_MARKER, CONCLUSION_MARKER):
         require_once(base, marker)
@@ -71,6 +76,9 @@ def main() -> None:
 
     # Hard guards against accidental duplicate/incomplete assembly.
     checks = [
+        "Aleksey Buyanov",
+        'affiliation: "Independent Researcher"',
+        'orcid: "0009-0001-2621-9305"',
         "FAIL_IDM_DR_COMMON_SOURCE_RESPONSE_SLOPE_V0_1",
         "# 11. Data, code, and reproducibility",
         "# 12. Outlook",
