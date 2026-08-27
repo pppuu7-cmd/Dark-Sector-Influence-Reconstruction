@@ -1,0 +1,79 @@
+name: DSIR-I paper build v0.2
+
+on:
+  push:
+    branches:
+      - paper/dsir-i-observable-response-geometry
+    paths:
+      - 'papers/dsir1/**'
+      - 'data/derived/comparison_readiness/**'
+      - 'data/derived/g7/**'
+      - 'docs/SCIENTIFIC_FINDING_F27_COMMON_RESPONSE_CENTROID_WITHHELD_FAILURE.md'
+      - 'docs/CHANNEL_CONDITIONAL_EQUIVALENCE_QUOTIENT_THEOREMS_2026-08-27.md'
+      - 'recovery/exp070c_provider_checkpoint_2026-08-27.md'
+      - 'recovery/exp069h_c5_provider_certification_checkpoint_2026-08-27.md'
+      - '.github/workflows/paper-dsir1-build-v0-2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout paper branch
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install paper build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy matplotlib
+
+      - name: Run deterministic manuscript audit and v0.2 assembly
+        run: |
+          python papers/dsir1/audit_paper_v0_2.py
+
+      - name: Build central Figure 3 from frozen experiment summaries
+        run: |
+          python papers/dsir1/figures/fig03_chiI_hierarchy.py
+
+      - name: Record build checksums
+        run: |
+          mkdir -p papers/dsir1/build
+          sha256sum papers/dsir1/manuscript_v0_2.md > papers/dsir1/build/SHA256SUMS.txt
+          find papers/dsir1/figures/generated -maxdepth 1 -type f -print0 | sort -z | xargs -0 sha256sum >> papers/dsir1/build/SHA256SUMS.txt
+          {
+            echo "git_commit=${GITHUB_SHA}"
+            echo "workflow_run_id=${GITHUB_RUN_ID}"
+            echo "workflow_run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "python=$(python --version 2>&1)"
+          } > papers/dsir1/build/BUILD_ENVIRONMENT.txt
+          cat papers/dsir1/build/SHA256SUMS.txt
+
+      - name: Upload paper build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir1-paper-v0-2-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 90
+          path: |
+            papers/dsir1/manuscript_v0_2.md
+            papers/dsir1/PROVENANCE_MATRIX.md
+            papers/dsir1/CLAIMS_LEDGER.md
+            papers/dsir1/AUTHOR_METADATA.yml
+            papers/dsir1/FIGURE_MANIFEST.md
+            papers/dsir1/figures/generated/fig03_chiI_hierarchy.pdf
+            papers/dsir1/figures/generated/fig03_chiI_hierarchy.png
+            papers/dsir1/figures/generated/fig03_chiI_hierarchy.svg
+            papers/dsir1/figures/generated/fig03_chiI_hierarchy_provenance.json
+            papers/dsir1/build/SHA256SUMS.txt
+            papers/dsir1/build/BUILD_ENVIRONMENT.txt
