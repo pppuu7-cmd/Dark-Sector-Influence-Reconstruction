@@ -16,13 +16,29 @@ Working title:
 
 **Dark-Sector Influence Reconstruction I: Observable-response geometry, channel-conditional equivalence, and failure-resistant model comparison**
 
+## Author metadata
+
+- Name: **Aleksey Buyanov**
+- Affiliation: **Independent Researcher**
+- Location: **Moscow, Russia**
+- Email: `pppuu7@gmail.com`
+- ORCID: `0009-0001-2621-9305`
+
+Publication rule: list the author as an independent researcher; do not display an institutional affiliation unless the author explicitly changes this instruction.
+
 ## Authoritative paper files
 
-- `papers/dsir1/manuscript.md` — full manuscript draft v0.1.
+- `papers/dsir1/manuscript.md` — base manuscript draft v0.1.
+- `papers/dsir1/build_manuscript_v0_2.py` — deterministic v0.2 assembler; injects current author metadata and new sections without overwriting v0.1.
+- `papers/dsir1/AUTHOR_METADATA.yml` — canonical author metadata for publication preparation.
 - `papers/dsir1/CLAIMS_LEDGER.md` — hard boundary between supported claims and prohibited overclaims.
+- `papers/dsir1/PROVENANCE_MATRIX.md` — manuscript claim -> experiment -> run -> artifact -> digest -> frozen criterion traceability.
+- `papers/dsir1/FIGURE_MANIFEST.md` — publication figure sources and caption boundaries.
 - `papers/dsir1/references.bib` — initial bibliography.
 - `papers/dsir1/README.md` — figure/table roadmap and reproducibility tasks.
 - `papers/dsir1/LITERATURE_POSITIONING.md` — prior-art comparison and journal/publication assessment.
+- `papers/dsir1/sections/prospective_falsification.md` — prospective universalization failure text for v0.2.
+- `papers/dsir1/sections/data_code_reproducibility.md` — reproducibility section for v0.2.
 
 ## Central mathematical statement
 
@@ -62,6 +78,8 @@ This is an identifiability theorem/definition, not a new fundamental law.
 
 8. Scientific FAILs remain provenance. Later corrective providers do not overwrite the original failed contracts.
 
+9. Exp054C/F27 prospectively falsified a simple common C3/C5/C7 full-response-centroid law; the failure remains part of the article evidence rather than being retrospectively repaired.
+
 ## Prohibited claims
 
 - Do not claim discovery of new fundamental physics.
@@ -80,6 +98,7 @@ Current gate boundary: `G7=OPEN`, `G8=OPEN`, `G9=OPEN`.
 - `docs/GATES.md`
 - `docs/DSIR_METHOD.md`
 - `docs/CHANNEL_CONDITIONAL_EQUIVALENCE_QUOTIENT_THEOREMS_2026-08-27.md`
+- `docs/SCIENTIFIC_FINDING_F27_COMMON_RESPONSE_CENTROID_WITHHELD_FAILURE.md`
 - `recovery/exp070c_provider_checkpoint_2026-08-27.md`
 - `recovery/exp069h_c5_provider_certification_checkpoint_2026-08-27.md`
 - `recovery/exp071a_g7_common_physical_support_mask_preregistration_2026-08-27.md`
@@ -107,12 +126,13 @@ Natural targets: JCAP, Physical Review D, MNRAS.
 Highest-value remaining tasks before submission:
 
 1. publication-quality figures generated from immutable artifacts;
-2. claim -> experiment -> run -> artifact -> threshold provenance table;
-3. observation-space closure for at least one flagship degeneracy-breaking example if feasible;
-4. expanded prior-art comparison in Introduction/Discussion;
-5. adversarial robustness tests under alternative norms/domains/solver settings where justified;
-6. final notation audit and journal/arXiv LaTeX conversion.
+2. observation-space closure for at least one flagship degeneracy-breaking example if feasible;
+3. expanded prior-art comparison in Introduction/Discussion;
+4. adversarial robustness tests under alternative norms/domains/solver settings where justified;
+5. final notation audit and journal/arXiv LaTeX conversion.
+
+Already completed in the paper branch: claim -> experiment -> run -> artifact -> digest provenance matrix, figure manifest, prospective-falsification section, reproducibility section, and the first reproducible Figure 3 plotting script.
 
 ## Resume instruction
 
-On recovery, first read this checkpoint, then `papers/dsir1/CLAIMS_LEDGER.md`, then `papers/dsir1/manuscript.md`, then `papers/dsir1/LITERATURE_POSITIONING.md`. Do not reconstruct the paper from chat memory if these files are available.
+On recovery, first read this checkpoint, then `papers/dsir1/AUTHOR_METADATA.yml`, `papers/dsir1/CLAIMS_LEDGER.md`, `papers/dsir1/PROVENANCE_MATRIX.md`, `papers/dsir1/manuscript.md`, `papers/dsir1/build_manuscript_v0_2.py`, and `papers/dsir1/LITERATURE_POSITIONING.md`. Do not reconstruct the paper from chat memory if these files are available.
