@@ -1,0 +1,44 @@
+{
+  "experiment": "Exp073H",
+  "date": "2026-08-27",
+  "status": "FAIL_FOURIER_MM_OPERATOR_SOURCE_BINDING_EXP073H",
+  "workflow_run": 33039103109,
+  "workflow_job": 98408423778,
+  "artifact_id": 9633155256,
+  "artifact_digest": "sha256:1f3543c1459d5349791cbba6ddeb4c2908960527411cf12cf95ba450b3f59ce5",
+  "execution_head_sha": "d66c0c064ca597fc7f72e0151b3ab8e4fe6190b7",
+  "official_archive_sha256": "23bb7813a7b6ae0e041f070f40716511ff21243e11f6c2783fec64d72de5b823",
+  "tests": {
+    "H1_immutable_public_identity": true,
+    "H2_explicit_Fourier_coordinate": true,
+    "H3_finite_positive_support_normalization": false,
+    "H4_physical_unit_traceability": true,
+    "H5_high_z_compatibility": true,
+    "H6_mm_semantics": true,
+    "H7_no_covariance_dependence": true,
+    "H8_no_downstream_leakage": true
+  },
+  "window_numeric_shape": {
+    "files": 6,
+    "rows_per_file": 5000,
+    "columns_per_file": 7,
+    "first_column_min": 0.100115,
+    "first_column_max": 9988.5,
+    "first_column_semantics": "separation s in Mpc/h, consistent with Beutler et al. 2017 Appendix A / Eq. 22 W_l^2(s) window multipoles"
+  },
+  "high_z_measurement": {
+    "redshift": "0.5<z<0.75",
+    "multipoles": ["P0", "P2", "P4"],
+    "k_unit": "h/Mpc",
+    "P0_P2_k_approx_range_h_Mpc^-1": [0.015761, 0.145105],
+    "P4_k_approx_range_h_Mpc^-1": [0.015761, 0.095141]
+  },
+  "interpretation": "The Beutler fallback is immutably bound and directly Fourier-binned, but its released survey-window objects are separation-space W_l^2(s) multipoles, not a finite non-negative true-k mixing matrix. Under frozen H3, obtaining an all-k positive support envelope would require an additional theory weighting or post-hoc cutoff, which is forbidden.",
+  "support_fraction_computed": false,
+  "covariance_values_read": false,
+  "nuisance_rank_read": false,
+  "relation_residual_read": false,
+  "G8_read": false,
+  "next_admissible_step": "Prospectively freeze and audit a public clustering release that explicitly publishes finite true-k window/mixing matrices, beginning with Beutler & McDonald 2021 unified BOSS DR12 products.",
+  "gate_state": {"G7":"OPEN","G8":"OPEN","G9":"OPEN"}
+}
