@@ -2,7 +2,7 @@
 
 **Working title:** *Dark-Sector Influence Reconstruction I: Observable-response geometry, channel-conditional equivalence, and failure-resistant model comparison*
 
-**Status:** manuscript v0.1 scope lock, 2026-08-27.
+**Status:** manuscript v0.2 evidence boundary, 2026-08-27.
 
 This ledger separates statements that are already supported by frozen DSIR evidence from statements that remain outside the first-paper claim boundary.
 
@@ -50,6 +50,8 @@ This ledger separates statements that are already supported by frozen DSIR evide
 
 8. **Failure-resistant provenance is part of the method.** Scientific FAILs are preserved rather than overwritten by later corrective providers. In particular, the original C5 q=1 bridge failure and C3 target-grid interpolation failure remain provenance even though separately justified providers later pass their own prospectively frozen contracts.
 
+9. **A simple attempted cross-family universalization was prospectively falsified.** Exp054C applied a common C3/C5-calibrated full-response centroid-slope law to a withheld IDM-DR/C7 family after freezing the positive acceptance interval `0.0022992621 <= C_i <= 0.0995121922`. All four withheld slopes were negative (`-1.3856,-0.6685,-0.2191,-0.07157`) and failed. The correct article-level conclusion is that this specific common scalar law is falsified; the interval is not widened and the sign is not redefined after the result.
+
 ## B. Claims explicitly prohibited in DSIR-I
 
 - No claim of discovery of new fundamental physics.
@@ -61,9 +63,10 @@ This ledger separates statements that are already supported by frozen DSIR evide
 - No claim that theory-space angular separation is already survey-level detectability.
 - No zero-imputation of undefined/masked theory-channel cells.
 - No retrospective threshold tuning to convert failed experiments into passes.
+- No rescue of Exp054C by widening the frozen interval, flipping the expected sign, redefining the C7 response coordinate, or reusing C7 as a fresh withheld family for a law chosen after inspecting C7.
 
 ## C. First-paper scope
 
-DSIR-I is a **methodological and phenomenological response-atlas paper**. It establishes a common language for comparing physically different dark-sector mechanisms, shows with frozen examples why single-channel or low-dimensional summaries fail, formalizes channel-conditional equivalence, and documents prospective/withheld validation practice.
+DSIR-I is a **methodological and phenomenological response-atlas paper**. It establishes a common language for comparing physically different dark-sector mechanisms, shows with frozen examples why single-channel or low-dimensional summaries fail, formalizes channel-conditional equivalence, and documents prospective/withheld validation practice including genuine prospective falsification.
 
-A later paper may address fully observational quotient distances after the common support mask, covariance whitening, nuisance tangent SVD, and fresh withheld-family relation tests are completed.
+A later paper may address fully observational quotient distances after the common support mask, covariance whitening, nuisance tangent SVD, and fresh withheld-family relation tests are completed. The first paper must remain publishable even if no universal G7 relation is ever found.
