@@ -1,0 +1,86 @@
+name: Exp073J KiDS-BNT component support v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073j-kids-bnt-component-support-v0-1.yml'
+      - 'ci/exp073j_kids_bnt_component_support_v0_1.py'
+      - 'ci/exp073j_kids_bnt_component_support_v0_1_runner.py'
+      - 'src/dsir/bnt.py'
+      - 'experiments/073j_kids_bnt_component_support_preoutput_binding_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  kids-bnt-component-support:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pinned numerical toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran git python3-dev
+          python3 -m pip install --user numpy scipy cython setuptools wheel packaging
+          python3 -m py_compile ci/exp073j_kids_bnt_component_support_v0_1.py ci/exp073j_kids_bnt_component_support_v0_1_runner.py src/dsir/bnt.py
+
+      - name: Bind exact KiDS public release
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          git clone --no-checkout https://github.com/KiDS-WL/Cat_to_Obs_K1000_P1.git external/kids
+          git -C external/kids checkout 36676da44471979dacb779155d7e6e7212ae1f4f
+          test "$(git -C external/kids rev-parse HEAD)" = '36676da44471979dacb779155d7e6e7212ae1f4f'
+
+      - name: Bind and install exact CAMB geometry backend
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/cmbant/CAMB.git external/CAMB
+          git -C external/CAMB checkout fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          test "$(git -C external/CAMB rev-parse HEAD)" = 'fa3f097343fbbe427cc04b4f5f0041c22c6ec764'
+          python3 -m pip install --user ./external/CAMB
+
+      - name: Execute frozen non-classifying KiDS-BNT support audit
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073j_kids_bnt_component_support_v0_1_runner.py \
+            --kids-root external/kids \
+            --camb-root external/CAMB \
+            --output data/derived/g7/exp073j_kids_bnt_component_support_v0_1.json
+
+      - name: Assert frozen component and no-downstream semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073j_kids_bnt_component_support_v0_1.json'))
+          assert d['record_type']=='KIDS_BNT_COMPONENT_SUPPORT_NONCLASSIFYING'
+          assert d['status'] in {'COMPLETE_NONCLASSIFYING_KIDS_BNT_COMPONENT_EXP073J','FAIL_EXP073J_KIDS_COMPONENT_REPRODUCTION_OR_NUMERICAL_COMPLETENESS'}
+          assert d['scientific_classification_authorized'] is False
+          assert d['frozen']['max_positive_invalid_fraction']==0.05
+          assert d['frozen']['min_final_retained_dimension']==15
+          assert d['component_total_coordinates']==72
+          assert d['controls']['covariance_values_read'] is False
+          assert d['controls']['nuisance_rank_read'] is False
+          assert d['controls']['relation_residual_read'] is False
+          assert d['controls']['G8_read'] is False
+          assert d['controls']['fiducial_pk_weighting_used'] is False
+          assert d['controls']['GR_matter_to_Weyl_closure_used'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073J_KIDS_STATUS',d['status'])
+          print('RETAINED',d['component_retained_coordinates'],'Wm',d['component_retained_Wm'],'WW',d['component_retained_WW'])
+          print('TESTS',{k:v['pass'] for k,v in d['tests'].items()})
+          PY
+
+      - name: Upload immutable KiDS-BNT component record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073j-kids-bnt-component-support-${{ github.sha }}
+          path: data/derived/g7/exp073j_kids_bnt_component_support_v0_1.json
+          if-no-files-found: warn
