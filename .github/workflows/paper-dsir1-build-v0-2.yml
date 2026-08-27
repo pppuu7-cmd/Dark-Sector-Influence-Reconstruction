@@ -116,8 +116,10 @@ jobs:
             papers/dsir1/SUPPORT_OPERATOR_PROVENANCE.md
             papers/dsir1/OBSERVATION_ROUTE_LEDGER.md
             papers/dsir1/NUMERICAL_METHODS_APPENDIX.md
+            papers/dsir1/REFEREE_ADVERSARIAL_AUDIT.md
             papers/dsir1/CLAIMS_LEDGER.md
             papers/dsir1/AUTHOR_METADATA.yml
+            papers/dsir1/LITERATURE_POSITIONING.md
             papers/dsir1/FIGURE_MANIFEST.md
             papers/dsir1/FIGURE_CAPTIONS.md
             papers/dsir1/FIGURE_PLACEMENT.md
