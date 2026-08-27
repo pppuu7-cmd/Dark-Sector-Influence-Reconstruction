@@ -6,6 +6,8 @@ import datetime as dt
 import json
 import math
 import socket
+import subprocess
+import tempfile
 import time
 import urllib.error
 import urllib.request
@@ -43,31 +45,45 @@ class TransportError(RuntimeError):
 
 
 def fetch_range(url: str, start: int, size: int, expected_total: int, attempts: int = 5) -> bytes:
+    """Fetch the exact preregistered byte range with a transport-only curl backend.
+
+    The scientific/sample contract is unchanged. A response is accepted only when
+    the server supplies the exact requested Content-Range and exact byte count.
+    """
     end = start + size - 1
+    expected_cr = f'bytes {start}-{end}/{expected_total}'
     last = None
     for attempt in range(1, attempts + 1):
         try:
-            req = urllib.request.Request(
-                url,
-                headers={
-                    'Range': f'bytes={start}-{end}',
-                    'Accept-Encoding': 'identity',
-                    'User-Agent': 'DSIR-Exp073R0-row-equivalence/0.1',
-                },
-            )
-            with urllib.request.urlopen(req, timeout=180) as r:
-                status = getattr(r, 'status', None)
-                if status != 206:
-                    raise TransportError(f'expected HTTP 206, got {status}')
-                cr = r.headers.get('Content-Range', '')
-                expected_cr = f'bytes {start}-{end}/{expected_total}'
-                if cr.strip() != expected_cr:
-                    raise TransportError(f'Content-Range {cr!r} != {expected_cr!r}')
-                data = r.read(size + 1)
-            if len(data) != size:
-                raise TransportError(f'received {len(data)} bytes, expected {size}')
-            return data
-        except (TimeoutError, socket.timeout, urllib.error.URLError, TransportError) as exc:
+            with tempfile.TemporaryDirectory(prefix='exp073r0-range-') as td:
+                body = Path(td) / 'body.bin'
+                headers = Path(td) / 'headers.txt'
+                cmd = [
+                    'curl', '--fail', '--silent', '--show-error', '--location', '--http1.1',
+                    '--retry', '4', '--retry-delay', '2', '--retry-all-errors',
+                    '--connect-timeout', '30', '--max-time', '300',
+                    '--header', 'Accept-Encoding: identity',
+                    '--header', 'User-Agent: DSIR-Exp073R0-row-equivalence/0.1-curl-transport',
+                    '--range', f'{start}-{end}',
+                    '--dump-header', str(headers), '--output', str(body), url,
+                ]
+                subprocess.run(cmd, check=True, timeout=330)
+                data = body.read_bytes()
+                htxt = headers.read_text(errors='replace')
+                content_ranges = []
+                for line in htxt.splitlines():
+                    if line.lower().startswith('content-range:'):
+                        content_ranges.append(line.split(':', 1)[1].strip())
+                if not content_ranges:
+                    raise TransportError('missing Content-Range header')
+                if content_ranges[-1] != expected_cr:
+                    raise TransportError(
+                        f'Content-Range {content_ranges[-1]!r} != {expected_cr!r}'
+                    )
+                if len(data) != size:
+                    raise TransportError(f'received {len(data)} bytes, expected {size}')
+                return data
+        except (subprocess.SubprocessError, TimeoutError, socket.timeout, OSError, TransportError) as exc:
             last = exc
             if attempt < attempts:
                 time.sleep(min(5 * attempt, 20))
