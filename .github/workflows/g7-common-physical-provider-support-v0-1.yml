@@ -80,7 +80,7 @@ jobs:
             --unit-audit exp071a_inputs/unit/data/derived/g7/exp069i_c5_raw_k_unit_provenance_audit_v0_1.json \
             --eft-root eftcamb \
             --config exp071a_configs/base.ini \
-            --output data/derived/g7/exp071a_common_physical_provider_support_v0_1.json
+            --output "${GITHUB_WORKSPACE}/data/derived/g7/exp071a_common_physical_provider_support_v0_1.json"
       - name: Assert frozen Exp071A semantics
         run: |
           set -euxo pipefail
