@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/exp073j-kids-bnt-component-support-v0-1.yml'
       - 'ci/exp073j_kids_bnt_component_support_v0_1.py'
+      - 'ci/exp073j_kids_bnt_component_support_v0_1_runner.py'
       - 'src/dsir/bnt.py'
       - 'experiments/073j_kids_bnt_component_support_preoutput_binding_v0_1.md'
 
@@ -26,7 +27,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential gfortran git python3-dev
           python3 -m pip install --user numpy scipy cython setuptools wheel packaging
-          python3 -m py_compile ci/exp073j_kids_bnt_component_support_v0_1.py src/dsir/bnt.py
+          python3 -m py_compile ci/exp073j_kids_bnt_component_support_v0_1.py ci/exp073j_kids_bnt_component_support_v0_1_runner.py src/dsir/bnt.py
 
       - name: Bind exact KiDS public release
         run: |
@@ -47,7 +48,7 @@ jobs:
       - name: Execute frozen non-classifying KiDS-BNT support audit
         run: |
           set -euxo pipefail
-          python3 ci/exp073j_kids_bnt_component_support_v0_1.py \
+          python3 ci/exp073j_kids_bnt_component_support_v0_1_runner.py \
             --kids-root external/kids \
             --camb-root external/CAMB \
             --output data/derived/g7/exp073j_kids_bnt_component_support_v0_1.json
