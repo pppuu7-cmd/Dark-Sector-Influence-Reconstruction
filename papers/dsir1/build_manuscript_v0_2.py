@@ -4,9 +4,10 @@
 The script does not edit manuscript.md in place. It injects the frozen author
 metadata, inserts prospectively/retrospectively classified result components,
 surfaces the support-eligibility results in Abstract/Introduction/Conclusions,
-adds compact related-work positioning, adds deterministic Figure 1--7 textual
-references at frozen narrative anchors, inserts the reproducibility section
-before Outlook, renumbers the final headings, and writes manuscript_v0_2.md.
+adds the evidence-graded mechanism-to-response map and compact related-work
+positioning, adds deterministic Figure 1--7 textual references at frozen
+narrative anchors, inserts the reproducibility section before Outlook,
+renumbers the final headings, and writes manuscript_v0_2.md.
 """
 
 from __future__ import annotations
@@ -15,6 +16,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 BASE = HERE / "manuscript.md"
+MECHANISM_RESPONSE = HERE / "sections" / "mechanism_response_map.md"
 FALSIFICATION = HERE / "sections" / "prospective_falsification.md"
 SUPPORT_CLOSURE = HERE / "sections" / "observation_space_support_closure.md"
 RELATED_WORK = HERE / "sections" / "related_work_positioning.md"
@@ -22,6 +24,7 @@ KNOWN_SECTOR = HERE / "sections" / "known_sector_nonoverclaim.md"
 REPRO = HERE / "sections" / "data_code_reproducibility.md"
 OUT = HERE / "manuscript_v0_2.md"
 
+RESULTS_MARKER = "# 6. Results"
 RESULTS_INSERT_MARKER = "# 7. Failure-resistant numerical validation"
 PRIOR_ART_MARKER = "# 8. Relation to existing dark-sector parameterizations"
 INTERPRETATION_MARKER = "# 9. Interpretation"
@@ -105,6 +108,7 @@ def insert_before(text: str, marker: str, inserted: str) -> str:
 
 def main() -> None:
     base = read(BASE)
+    mechanism_response = read(MECHANISM_RESPONSE)
     falsification = read(FALSIFICATION)
     support_closure = read(SUPPORT_CLOSURE)
     related_work = read(RELATED_WORK)
@@ -129,6 +133,7 @@ def main() -> None:
     base = base.replace(CONCLUSION_FOURTH, CONCLUSION_FOURTH + "\n\n" + CONCLUSION_FIFTH, 1)
 
     for marker in (
+        RESULTS_MARKER,
         RESULTS_INSERT_MARKER,
         PRIOR_ART_MARKER,
         INTERPRETATION_MARKER,
@@ -140,6 +145,12 @@ def main() -> None:
 
     for marker, reference in FIGURE_INSERTIONS:
         base = insert_before(base, marker, reference)
+
+    require(
+        mechanism_response.startswith("## 5.1 Evidence-graded mechanism-to-response map"),
+        "mechanism-response section heading changed",
+    )
+    base = insert_before(base, RESULTS_MARKER, mechanism_response)
 
     base = insert_before(base, RESULTS_INSERT_MARKER, FIGURE5_REFERENCE)
 
@@ -199,6 +210,11 @@ def main() -> None:
         "formal observational quotient is not automatically a physically admissible one",
         "raw-row/HEALPix mapping prerequisites now pass",
         "physical support has not yet been scored",
+        "## 5.1 Evidence-graded mechanism-to-response map",
+        "C7 IDM-DR",
+        "prospective WITHHELD FAIL",
+        "K2 baryon-fraction control",
+        "moving characteristic scale does **not** imply a large `chi_I`",
         "FAIL_IDM_DR_COMMON_SOURCE_RESPONSE_SLOPE_V0_1",
         "## 7.1 Observation-space support closure and perturbativity",
         "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
