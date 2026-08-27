@@ -12,6 +12,9 @@ Working title:
 - `CLAIMS_LEDGER.md` — hard boundary between supported claims and prohibited overclaims.
 - `PROVENANCE_MATRIX.md` — central manuscript claim -> experiment -> run -> artifact -> digest -> frozen criterion traceability.
 - `SUPPORT_OPERATOR_PROVENANCE.md` — late observation-route provenance extension P24--P29.
+- `OBSERVATION_ROUTE_LEDGER.md` — supplementary fail-closed status ladder from support failure through exact-realization/prerequisite gates.
+- `NUMERICAL_METHODS_APPENDIX.md` — numerical conventions, grids, norms, provider/failure semantics and support/quotient order.
+- `REFEREE_ADVERSARIAL_AUDIT.md` — skeptical referee-style attack/defense checklist.
 - `FIGURE_MANIFEST.md`, `FIGURE_CAPTIONS.md`, `FIGURE_PLACEMENT.md` — frozen seven-figure publication contract.
 - `LITERATURE_POSITIONING.md` — prior-art comparison and publication/journal assessment.
 - `references.bib` — literature bibliography.
@@ -35,62 +38,41 @@ DSIR-I is not a dark-sector discovery paper. It is a response-geometry / identif
 
 ## Main figures
 
-### Figure 1 — DSIR operator architecture
+1. **Operator architecture:** `r(theta) -> K_B -> W_B -> Q_B -> s_B`.
+2. **Additive-core failure:** recomputed `R`, `mu+T+tau`, `I`, `chi_I`.
+3. **Robust chi_I hierarchy:** finite-amplitude envelopes + 12/12 leave-one-node robustness.
+4. **Channel-conditional degeneracy:** GDM pressure/viscosity and GDM/f(R) examples.
+5. **Curvature and mechanism diversity:** GDM/f(R) bending + WDM/DCDM localization.
+6. **Failure-resistant science:** provider correction histories + prospective F27 failure.
+7. **Observation-space support closure:** Exp072A FAIL -> Exp072C frontier -> Exp073A ineligibility.
 
-`r(theta) -> K_B -> W_B -> Q_B -> s_B`, with `A_B=Q_B W_B K_B` and exact channel-conditional equivalence `A_B(r1-r2)=0`.
-
-### Figure 2 — Failure of the additive scale+time core
-
-Recompute representative `R`, additive `mu+T+tau`, irreducible `I(k,z)`, and `chi_I` directly from the frozen low-k atlas.
-
-### Figure 3 — Robust chi_I hierarchy
-
-Finite-amplitude `chi_I` envelopes for IDE, smooth-DE, GDM and designer-f(R), plus 12/12 deterministic leave-one-node robustness.
-
-### Figure 4 — Channel-conditional degeneracy breaking
-
-- GDM `cs2` vs `cv2`: low-k matter angle ~0.3226 deg vs metric-slip angle ~137.94 deg;
-- GDM vs f(R): leading scale-mode angle ~0.08-0.10 deg vs time/full-response separation.
-
-### Figure 5 — Curved trajectories and mechanism diversity
-
-GDM/f(R) trajectory bending, WDM cutoff motion, and DCDM temporal-centroid motion.
-
-### Figure 6 — Failure-resistant science
-
-- C3 target-grid interpolation FAIL -> mechanism audit -> native-grid provider PASS;
-- C5 q=1 GR-limit FAIL -> prospective accuracy ladder -> q=3 provider PASS;
-- common C3/C5 centroid calibration -> frozen prediction -> withheld C7/IDM-DR opposite-sign slopes -> FAIL.
-
-### Figure 7 — Observation-space support closure
-
-Exp072A support FAIL -> Exp072C planning frontier -> Exp073A linear-route ineligibility. Later normalizability/provenance/reproduction steps are discussed in the text and supplement rather than overloading the main figure.
+Detailed Exp073M--R0 provenance/reproduction chronology is kept in supplement tables rather than overloading the main figures.
 
 ## Main tables / supplement targets
 
-1. Theory-family atlas C0-C6 and active/blind channels.
-2. Representative `chi_I` and `eta_I` values.
-3. Channel-conditioned pairwise angles.
-4. Finite-amplitude curvature metrics.
-5. Central claim/run/artifact provenance table based on `PROVENANCE_MATRIX.md`.
-6. Observation-route eligibility table based on `SUPPORT_OPERATOR_PROVENANCE.md`.
-7. Prospective PASS/FAIL/INCOMPLETE ledger so the paper cannot become success-selected.
+- Theory-family atlas C0--C6 and active/blind channels.
+- Representative `chi_I` and `eta_I` values.
+- Channel-conditioned pairwise angles.
+- Finite-amplitude curvature metrics.
+- Central claim/run/artifact table from `PROVENANCE_MATRIX.md`.
+- Observation-route eligibility table from `OBSERVATION_ROUTE_LEDGER.md` / `SUPPORT_OPERATOR_PROVENANCE.md`.
+- Prospective PASS/FAIL/INCOMPLETE ledger so the article cannot become success-selected.
 
 ## Current observation-route boundary
 
-The required order is now explicit:
+Required order:
 
 `finite positive support measure -> exact reproducible real-data operator/input realization -> physical support eligibility -> physically justified theory providers -> covariance restriction/whitening -> nuisance quotient -> relation/null tests`.
 
-Key late results already article-eligible:
+Late article-eligible results:
 
-- Exp073L: absolute-response route nonnormalizable (`8/8` Wm and `8/8` WW nonnormalizable).
-- Exp073N: exact DES Y3 real-data realization fails mandatory provenance/reproduction **before** support scoring.
-- Exp073O: public Cosmotheka DES Y1 Wm replacement found prospectively under unchanged future support criteria.
+- Exp073L: absolute-response route nonnormalizable (`8/8` Wm and `8/8` WW).
+- Exp073N: exact DES Y3 real-data realization fails mandatory provenance before support scoring.
+- Exp073O: public Cosmotheka DES Y1 Wm replacement found prospectively with unchanged future support gate.
 - Exp073P2: all frozen DES Y1 release inputs checksum-bound.
 - Exp073S0: redMaGiC mask and lens/source `n(z)` reproduced.
 - Exp073R0: raw-row/HEALPix equivalence PASS on the frozen sample contract; `science_gate_scored=false`.
-- Exp073R1: preregistered and launched in `main`, but **not** an article result until a completed frozen output exists.
+- Exp073R1: preregistered/launched in `main`, but **not** an article result until a completed frozen output exists.
 
 ## Preparation status
 
@@ -103,20 +85,23 @@ Completed in the paper branch:
 - [x] Chat-independent recovery checkpoints.
 - [x] Exact central claim-to-run/artifact/digest provenance matrix.
 - [x] Late observation-route provenance extension through P29.
+- [x] Observation-route status ledger with candidate/FAIL/replacement/prerequisite/PRE-RESULT semantics.
 - [x] Publication Figure 1--7 scripts, captions, placement and CI generation.
 - [x] Prospective Exp054C/F27 falsification integrated.
 - [x] Known-sector post-unblinding specificity control integrated with explicit non-overclaim boundary.
 - [x] Observation-space support, perturbativity, provider/model-definition, normalizability, exact-provenance and reproduction prerequisites integrated.
-- [x] Fail-closed CI audits for manuscript, figures, support chain and late operator eligibility.
+- [x] Numerical methods appendix draft.
+- [x] Referee-style adversarial audit draft.
+- [x] Fail-closed CI audits for manuscript, figures, support chain and route-status semantics.
 
 Remaining before submission:
 
-- [ ] Build final family/block atlas and prospective PASS/FAIL/INCOMPLETE tables for the supplement.
-- [ ] Add a dedicated numerical-method appendix with solver versions, gauges, masks, norms, precision settings, and provider lineage.
-- [ ] Perform a final referee-style adversarial audit of every Abstract/Conclusions sentence against both provenance ledgers.
+- [ ] Build final family/block atlas and compact quantitative tables for main text/supplement.
+- [ ] Resolve final provider/source lineage presentation into a compact camera-ready table if the journal requires package-version labels in addition to immutable commit/artifact provenance.
+- [ ] Apply the referee audit to a final line-by-line Abstract/Conclusions freeze after any future article-eligible result is added.
 - [ ] Re-run the literature search immediately before submission and finish DOI/journal metadata.
-- [ ] Decide whether a completed future Exp073P support result belongs in DSIR-I without scope creep; do not make a covariance quotient a publication requirement after a support FAIL.
-- [ ] Convert the stable manuscript to journal/arXiv LaTeX after notation and final table/figure numbering are frozen.
+- [ ] Decide whether any completed future Exp073R1/Exp073P support result belongs in DSIR-I without scope creep; do not make a covariance quotient a publication requirement after a support FAIL.
+- [ ] Convert the stable manuscript and appendices to journal/arXiv LaTeX after notation and final table/figure numbering are frozen.
 
 ## Non-negotiable gate boundary
 
