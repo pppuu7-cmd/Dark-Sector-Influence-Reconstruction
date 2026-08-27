@@ -12,10 +12,11 @@
   - exact same-NSIDE `hp.ud_grade(...,4096)` identity passed;
   - redMaGiC retained pixels: `6536725`;
   - lens/source n(z) each contain 400 rows and reproduce the frozen schemas.
-- Exp073R0 attempt 1, run `33086178147`, ended `cancelled` during the frozen sampled raw-row audit because the workflow-level `timeout-minutes: 35` was reached. No result JSON was produced; this is infrastructure/incomplete, not a scientific PASS/FAIL.
-- Infrastructure-only repair PR `#151` changed only the Exp073R0 job timeout from 35 to 120 minutes. The 16 prospectively fixed windows, exact row offsets/types, HEALPix mapper, bin-coverage requirement, and all PASS/FAIL semantics are unchanged.
-- Exp073R0 attempt 2 is GitHub Actions run `33092211100` on merge commit `5ee34c3fc80ab1091b7e925d321d880dbadade3c`. Do not duplicate it while queued/running. Its preregistered PASS remains the only authorization to execute Exp073R1.
-- Exp073R1 full one-pass weak-lensing mask contract is now prospectively frozen in `experiments/073r1_desy1_full_onepass_weak_lensing_mask_prereg_v0_1.md`, before any Exp073R0 attempt-2 output. This freeze does not authorize execution before R0 PASS. It fixes the exact two catalogue hashes/layouts, `nside=4096`, `coords='C'`, final four-bin row selection, `hp.ang2pix(...,lonlat=True)`, unweighted count-map construction, exact completeness/repeatability/provenance controls, and a strict ban on `f_invalid` or downstream covariance/G8 quantities.
+- Exp073R0 attempt 1, run `33086178147`, ended `cancelled` during the frozen sampled raw-row audit because the workflow-level `timeout-minutes: 35` was reached. No result JSON was produced; infrastructure/incomplete only.
+- Infrastructure-only repair PR `#151` changed only the Exp073R0 job timeout from 35 to 120 minutes; frozen scientific semantics were unchanged.
+- Exp073R0 attempt 2, run `33092211100`, job `98587741090`, head `5ee34c3fc80ab1091b7e925d321d880dbadade3c`, ended during the sampled metacal byte-range transport after all retries failed with `TimeoutError: The read operation timed out`. This is `INCOMPLETE_EXP073R0`, not deterministic FAIL and not PASS. Upload artifact `9656933701` was preserved with ZIP digest `sha256:a5037b4e644ddd9faba48088b3bc6a394874d30c81a9cf84f9627ae71efcff6d`.
+- A job-level rerun of Exp073R0 was requested without changing sample windows, row layouts, decoder, selection, HEALPix mapping or acceptance semantics. Treat it as attempt 3 of the same frozen equivalence audit; do not duplicate it while queued/running.
+- Exp073R1 full one-pass weak-lensing mask contract is prospectively frozen in `experiments/073r1_desy1_full_onepass_weak_lensing_mask_prereg_v0_1.md`, before any attempt-2 scientific output. This freeze does not authorize execution before R0 PASS. It fixes exact catalogue hashes/layouts, `nside=4096`, `coords='C'`, four-bin row selection, `hp.ang2pix(...,lonlat=True)`, unweighted count-map construction, completeness/repeatability/provenance controls, and a strict ban on `f_invalid` or downstream covariance/G8 quantities.
 
 ## Frozen Exp073P scientific acceptance criteria — unchanged
 
@@ -31,10 +32,10 @@ No covariance, whitening, nuisance SVD/rank, quotient/relation/null or G8 output
 
 ## Next admissible step
 
-1. First resolve Exp073R0 attempt 2 exactly as preregistered.
+1. Resolve Exp073R0 attempt 3 under the unchanged frozen contract.
 2. If R0 is `PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0`, execute the already-frozen Exp073R1 contract without changing it. Exp073R1 remains a reproduction/input-construction experiment and must not compute `f_invalid`.
-3. If R0 is deterministic FAIL, preserve it; Exp073R1 execution remains forbidden. Repair only the implementation equivalence under a new prospective record before any full-catalogue mask construction.
-4. If R0 is again infrastructure/incomplete, preserve that distinction; diagnose transport/runtime mechanics without changing frozen scientific criteria or the frozen Exp073R1 contract.
+3. If R0 is deterministic FAIL, preserve it; Exp073R1 execution remains forbidden. Repair only implementation equivalence under a new prospective record.
+4. If R0 is again infrastructure/incomplete, preserve that distinction and harden only transport/runtime mechanics without changing scientific criteria or the frozen Exp073R1 contract.
 5. Only after all Exp073P input/operator prerequisites are independently reproduced may the already-frozen physical-support leakage calculation be executed.
 
 ## Gate state
