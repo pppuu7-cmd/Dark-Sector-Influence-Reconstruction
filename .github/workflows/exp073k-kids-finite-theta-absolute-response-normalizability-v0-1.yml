@@ -1,0 +1,68 @@
+name: Exp073K KiDS finite-theta absolute-response normalizability v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073k-kids-finite-theta-absolute-response-normalizability-v0-1.yml'
+      - 'ci/exp073k_kids_finite_theta_absolute_response_normalizability_v0_1.py'
+      - 'ci/exp073j_kids_bnt_component_support_v0_1.py'
+      - 'experiments/073k_kids_finite_theta_absolute_response_normalizability_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  absolute-response-normalizability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install numerical dependencies
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --user numpy scipy
+          python3 -m py_compile ci/exp073k_kids_finite_theta_absolute_response_normalizability_v0_1.py
+      - name: Bind exact KiDS release
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          git clone --no-checkout https://github.com/KiDS-WL/Cat_to_Obs_K1000_P1.git external/kids
+          git -C external/kids checkout 36676da44471979dacb779155d7e6e7212ae1f4f
+          test "$(git -C external/kids rev-parse HEAD)" = '36676da44471979dacb779155d7e6e7212ae1f4f'
+      - name: Execute preregistered asymptotic ladder
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073k_kids_finite_theta_absolute_response_normalizability_v0_1.py \
+            --kids-root external/kids \
+            --output data/derived/g7/exp073k_kids_finite_theta_absolute_response_normalizability_v0_1.json
+      - name: Assert frozen classification contract
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073k_kids_finite_theta_absolute_response_normalizability_v0_1.json'))
+          assert d['status'] in {
+            'NONNORMALIZABLE_DISCRETE_ABSOLUTE_RESPONSE_EXP073K',
+            'FINITE_ABSOLUTE_RESPONSE_NOT_EXCLUDED_EXP073K',
+            'INDETERMINATE_ABSOLUTE_RESPONSE_ASYMPTOTICS_EXP073K',
+            'FAIL_EXP073K_REPRODUCTION_OR_NUMERICAL_COMPLETENESS'}
+          assert d['cutoffs_ell']==[7500.0,15000.0,30000.0,60000.0,120000.0]
+          assert abs(d['q_sqrt_frozen']-0.6464466094067263)<1e-15
+          assert d['interpretation_boundary']['changes_Exp073J_5pct_threshold'] is False
+          assert d['interpretation_boundary']['authorizes_posthoc_ell_cut'] is False
+          assert d['interpretation_boundary']['authorizes_fiducial_power_weighting'] is False
+          assert d['interpretation_boundary']['covariance_restriction_authorized'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073K_RESULT',d['status'])
+          print('COUNTS',d['classification_counts'])
+          print('CONTROLS',{k:v['pass'] for k,v in d['controls'].items()})
+          PY
+      - name: Upload immutable Exp073K record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073k-kids-normalizability-${{ github.sha }}
+          path: data/derived/g7/exp073k_kids_finite_theta_absolute_response_normalizability_v0_1.json
+          if-no-files-found: warn
