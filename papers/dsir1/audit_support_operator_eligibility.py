@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Deterministic audit for DSIR-I late support-operator eligibility claims."""
+"""Deterministic audit for DSIR-I late support-operator eligibility claims.
+
+Scientific classifications remain fail-closed in the evidence/provenance layer,
+while the compact journal section is guarded by human-readable physical claims.
+This editorial separation does not change any frozen support criterion.
+"""
 
 from __future__ import annotations
 
@@ -10,6 +15,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 SNAPSHOT = HERE / "evidence" / "support_operator_eligibility_v0_1.json"
 SECTION = HERE / "sections" / "observation_space_support_closure.md"
+SUPPLEMENT = HERE / "supplement" / "observation_route_detailed.md"
 CLAIMS = HERE / "CLAIMS_LEDGER.md"
 PROVENANCE = HERE / "SUPPORT_OPERATOR_PROVENANCE.md"
 REPRO = HERE / "sections" / "data_code_reproducibility.md"
@@ -112,8 +118,8 @@ def main() -> None:
     require(s["lens_nz"]["rows"] == 400 and s["source_nz"]["rows"] == 400, "Exp073S0 n(z) row count changed")
     require(s["support_fraction_computed"] is False and s["covariance_read"] is False and s["nuisance_or_SVD_read"] is False, "Exp073S0 crossed downstream boundary")
 
-    # Exp073R0 is now a completed reproduction/equivalence PASS, but explicitly
-    # not the physical-support gate.
+    # Exp073R0 is a completed reproduction/equivalence PASS, explicitly not
+    # the physical-support gate.
     r0 = e["Exp073R0"]
     require(r0["status"] == "PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0", "Exp073R0 status changed")
     require(r0["workflow_run"] == 33103083736 and r0["artifact_id"] == 9661445512, "Exp073R0 provenance changed")
@@ -141,25 +147,33 @@ def main() -> None:
     require(all(boundary[g] == "OPEN" for g in ("G7", "G8", "G9")), "Late support-operator chain changed G7/G8/G9")
 
     section = read(SECTION)
+    supplement = read(SUPPLEMENT)
     claims = read(CLAIMS)
     provenance = read(PROVENANCE)
     repro = read(REPRO)
 
-    # Prose-level guards check scientific content rather than exact machine
-    # status strings, which are already guarded above.
+    # Compact journal prose is guarded by physical statements, not exact
+    # internal identifiers. Exact identifiers remain mandatory below.
     for token in [
-        "A second eligibility condition: the support measure must itself be normalizable",
-        "all eight Wm components and all eight WW components were classified as nonnormalizable",
-        "f_{\\rm shell}=1-2^{-p}",
-        "Exp073N therefore remains",
-        "Cosmotheka DES Y1",
-        "6,536,725",
+        "positive support measure itself be normalizable",
+        "all eight Wm and all eight WW components remain nonnormalizable",
+        "order-unity dyadic-shell contributions",
+        "exact real-data realization",
+        "public DES Y1 replacement",
+        "raw-row-to-HEALPix reproduction prerequisites",
+        "no physical-support PASS",
+        "G7, G8, and G9 remain open",
+    ]:
+        require(token in section, f"Support section physical statement missing: {token}")
+
+    # Machine classifications and chronology are retained in the supplement.
+    for token in [
+        "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
         "PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0",
-        "131,072 rows",
         "science_gate_scored=false",
         "Exp073R1",
     ]:
-        require(token in section, f"Support section token missing: {token}")
+        require(token in supplement, f"Support supplement classification missing: {token}")
 
     for token in [
         "A physical-support fraction also requires a finite positive support measure.",
@@ -184,6 +198,7 @@ def main() -> None:
     print("PASS: Exp073P2/S0 public-input and small-input reproduction boundary preserved")
     print("PASS: Exp073R0 raw-row/HEALPix equivalence PASS preserved as pre-support only")
     print("PASS: pre-result Exp073R1 excluded from science claims")
+    print("PASS: journal prose / supplement machine-classification separation")
     print("PASS: DSIR-I support-operator eligibility audit")
 
 
