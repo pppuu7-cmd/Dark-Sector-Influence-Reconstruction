@@ -1,0 +1,75 @@
+{
+  "experiment": "Exp073J",
+  "record_type": "BOSS_FINITE_MATRIX_COMPONENT_SUPPORT_KEY_METRICS_NONCLASSIFYING",
+  "date": "2026-08-27",
+  "implementation_merge_sha": "1bd022ffca543361d265a72b782ef96fe069d2ce",
+  "workflow_run": 33042052616,
+  "workflow_job": 98417620281,
+  "artifact_id": 9634226231,
+  "artifact_digest": "sha256:239b198c1adfc21333779ef1efb597885710bddd593b380a67ac6dd1399daa65",
+  "frozen": {
+    "z_min": 0.295,
+    "z_max": 2.33,
+    "k_min_Mpc^-1": 0.000704833374744468,
+    "k_max_Mpc^-1": 0.06664762008318016,
+    "max_positive_invalid_fraction": 0.05,
+    "h_fid": 0.676,
+    "true_k_h_midpoint_min": 0.0005,
+    "true_k_h_midpoint_max": 0.3995,
+    "true_k_h_step": 0.001,
+    "selected_observed_multipoles": [0, 2, 4]
+  },
+  "operator": {
+    "composition": "C = W @ M",
+    "W_shape": [200, 2000],
+    "M_shape": [2000, 1200],
+    "C_shape": [200, 1200],
+    "positive_envelope": "abs(C[row,:])",
+    "source_semantics": "fbeutler/pk_tools@707eb2a6a4691c34eae19d7f72047ca4892f528e"
+  },
+  "provenance": {
+    "NGC": {
+      "W_decompressed_sha256": "a308dc562d1a7224cefcf91d32580877929e0daa33806517e0d2d53710236827",
+      "M_decompressed_sha256": "3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042"
+    },
+    "SGC": {
+      "W_decompressed_sha256": "2a542a2d48f3e8c8299f58a885d5273238e4ade32c0f0de020d8b9f23afe7759",
+      "M_decompressed_sha256": "3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042"
+    }
+  },
+  "result": {
+    "component_total_coordinates": 240,
+    "component_retained_coordinates": 54,
+    "component_all_rows_pass_5pct": false,
+    "NGC": {
+      "retained": 27,
+      "P0": {"count": 40, "retained": 9, "min_invalid_fraction": 0.002213959460846613, "median_invalid_fraction": 0.9999887141365439, "max_invalid_fraction": 0.999997602100605},
+      "P2": {"count": 40, "retained": 9, "min_invalid_fraction": 0.0012390706117164454, "median_invalid_fraction": 0.999989219725431, "max_invalid_fraction": 0.9999998612545},
+      "P4": {"count": 40, "retained": 9, "min_invalid_fraction": 0.0010474446573866731, "median_invalid_fraction": 0.9999774024264547, "max_invalid_fraction": 0.9999998268500497}
+    },
+    "SGC": {
+      "retained": 27,
+      "P0": {"count": 40, "retained": 9, "min_invalid_fraction": 0.00254071137932458, "median_invalid_fraction": 0.9999867806044584, "max_invalid_fraction": 0.9999975838559001},
+      "P2": {"count": 40, "retained": 9, "min_invalid_fraction": 0.0011952253099337408, "median_invalid_fraction": 0.9999880185469635, "max_invalid_fraction": 0.9999998801363604},
+      "P4": {"count": 40, "retained": 9, "min_invalid_fraction": 0.0012856305029946952, "median_invalid_fraction": 0.9999738294432895, "max_invalid_fraction": 0.9999999111098086}
+    }
+  },
+  "controls": {
+    "implementation_checks_all_pass": true,
+    "covariance_values_read": false,
+    "nuisance_rank_read": false,
+    "relation_residual_read": false,
+    "G8_read": false,
+    "pk_weighting_used": false,
+    "posthoc_k_cut_used": false
+  },
+  "interpretation_boundary": {
+    "scientific_classification_authorized": false,
+    "full_Exp073J_classified": false,
+    "covariance_restriction_authorized": false,
+    "next_required_block": "KiDS-BNT Wm/WW exact positive support audit and full Exp073J combination",
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
