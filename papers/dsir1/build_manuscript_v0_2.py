@@ -4,10 +4,11 @@
 The script does not edit manuscript.md in place. It injects the frozen author
 metadata, inserts prospectively/retrospectively classified result components,
 surfaces the support-eligibility results in Abstract/Introduction/Conclusions,
-adds the evidence-graded mechanism-to-response map and compact related-work
-positioning, adds deterministic Figure 1--7 textual references at frozen
-narrative anchors, inserts the reproducibility section before Outlook,
-renumbers the final headings, and writes manuscript_v0_2.md.
+adds the moving-scale explanatory bridge, evidence-graded mechanism-to-response
+map and compact related-work positioning, adds deterministic Figure 1--7
+textual references at frozen narrative anchors, inserts the reproducibility
+section before Outlook, renumbers the final headings, and writes
+manuscript_v0_2.md.
 """
 
 from __future__ import annotations
@@ -16,6 +17,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 BASE = HERE / "manuscript.md"
+MOVING_SCALE = HERE / "sections" / "moving_scale_bridge.md"
 MECHANISM_RESPONSE = HERE / "sections" / "mechanism_response_map.md"
 FALSIFICATION = HERE / "sections" / "prospective_falsification.md"
 SUPPORT_CLOSURE = HERE / "sections" / "observation_space_support_closure.md"
@@ -25,6 +27,7 @@ KNOWN_SECTOR = HERE / "sections" / "known_sector_nonoverclaim.md"
 REPRO = HERE / "sections" / "data_code_reproducibility.md"
 OUT = HERE / "manuscript_v0_2.md"
 
+CHANNEL_MARKER = "# 4. Channel-conditional equivalence"
 RESULTS_MARKER = "# 6. Results"
 RESULTS_INSERT_MARKER = "# 7. Failure-resistant numerical validation"
 PRIOR_ART_MARKER = "# 8. Relation to existing dark-sector parameterizations"
@@ -109,6 +112,7 @@ def insert_before(text: str, marker: str, inserted: str) -> str:
 
 def main() -> None:
     base = read(BASE)
+    moving_scale = read(MOVING_SCALE)
     mechanism_response = read(MECHANISM_RESPONSE)
     falsification = read(FALSIFICATION)
     support_closure = read(SUPPORT_CLOSURE)
@@ -117,8 +121,6 @@ def main() -> None:
     known_sector = read(KNOWN_SECTOR)
     repro = read(REPRO)
 
-    # Machine classifications remain available in the supplement/provenance
-    # layer even though journal prose uses human-readable status language.
     for token in (
         "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
         "GAP_EXISTING_STACK_NONLINEAR_MATTER_WEYL_ROUTE_EXP073B",
@@ -147,6 +149,7 @@ def main() -> None:
     base = base.replace(CONCLUSION_FOURTH, CONCLUSION_FOURTH + "\n\n" + CONCLUSION_FIFTH, 1)
 
     for marker in (
+        CHANNEL_MARKER,
         RESULTS_MARKER,
         RESULTS_INSERT_MARKER,
         PRIOR_ART_MARKER,
@@ -156,6 +159,12 @@ def main() -> None:
         CONCLUSION_MARKER,
     ):
         require_once(base, marker)
+
+    require(
+        moving_scale.startswith("## 3.4 Moving characteristic scales and scale-time nonseparability"),
+        "moving-scale bridge heading changed",
+    )
+    base = insert_before(base, CHANNEL_MARKER, moving_scale)
 
     for marker, reference in FIGURE_INSERTIONS:
         base = insert_before(base, marker, reference)
@@ -222,6 +231,10 @@ def main() -> None:
         "formal observational quotient is not automatically a physically admissible one",
         "raw-row/HEALPix mapping prerequisites now pass",
         "physical support has not yet been scored",
+        "## 3.4 Moving characteristic scales and scale-time nonseparability",
+        "leading interaction is an outer product and has rank one",
+        "retrospective consistency check rather than a new withheld test",
+        "Frobenius cosine about 0.916--0.919",
         "## 5.1 Evidence-graded mechanism-to-response map",
         "C7 IDM-DR",
         "prospective WITHHELD FAIL",
@@ -264,8 +277,6 @@ def main() -> None:
         if item not in assembled:
             raise RuntimeError(f"Required v0.2 content missing: {item}")
 
-    # Journal narrative must remain readable; exact machine identifiers belong
-    # in provenance/supplement rather than unbreakable body text.
     for forbidden in (
         "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
         "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
