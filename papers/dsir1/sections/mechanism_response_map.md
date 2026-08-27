@@ -1,6 +1,6 @@
 ## 5.1 Evidence-graded mechanism-to-response map
 
-The family list above states where each benchmark is active; the more useful cross-mechanism question is **which equation-level cue tells us which response structure to inspect**. Table 1 therefore grades the current map as a many-to-many diagnostic rather than a one-to-one classifier. A response pattern is not unique to dark physics, and the broad program of perturbation “fingerprinting” is prior art [@Bashinsky2007DarkKinetics; @SaponeKunz2009Fingerprinting; @SaponeKunzAmendola2010Fingerprinting; @SaponeMajerotto2012Fingerprinting].
+The family list above states where each benchmark is active; the more useful cross-mechanism question is **which equation-level cue tells us which response structure to inspect**. The table below therefore grades the current map as a many-to-many diagnostic rather than a one-to-one classifier. A response pattern is not unique to dark physics, and the broad program of perturbation “fingerprinting” is prior art [@Bashinsky2007DarkKinetics; @SaponeKunz2009Fingerprinting; @SaponeKunzAmendola2010Fingerprinting; @SaponeMajerotto2012Fingerprinting].
 
 | Family / control | Equation-level cue | Highest-value DSIR block(s) | Frozen response pattern | Evidence status |
 |---|---|---|---|---|
