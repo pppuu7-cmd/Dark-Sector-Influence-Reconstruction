@@ -25,6 +25,32 @@ More importantly, Exp073D identifies an asymmetry in the model definitions thems
 
 Exp073E tested whether that completion freedom could be represented prospectively by a finite labelled ensemble while preserving the full frozen C3 linear semantics. Under its frozen E1--E8 requirements the available completion classes were not sufficient: existing constructions either omit part of the pressure/viscosity content, lack independent nonlinear Weyl blocks, or introduce additional theory content that refines/replaces the original phenomenological family. The classification `C3_COMPLETION_ENSEMBLE_NOT_FEASIBLE_EXP073E` therefore forbids hiding a retrospectively chosen nonlinear closure inside a provider and then treating it as the unchanged C3 model.
 
+### A second eligibility condition: the support measure must itself be normalizable
+
+Domain coverage is not the only prerequisite. A support fraction such as
+
+\[
+f_{\rm out}
+=\frac{\int_{\Omega\setminus D}|\mathcal K(x)|\,d\mu(x)}
+{\int_{\Omega}|\mathcal K(x)|\,d\mu(x)}
+\]
+
+is meaningful only if the prospectively chosen positive normalizer in the denominator is finite and non-zero. This matters for transforms whose absolute response has an ultraviolet tail. A preliminary Exp073G BOSS audit already exposed the mechanism: for a configuration-space Fourier--Bessel kernel \(K_\ell(k;s)\propto k^2j_\ell(ks)\), the asymptotic relation \(j_\ell(ks)=O(k^{-1})\) makes the absolute operator response generically grow as \(O(k)\), so an all-\(k\) positive-operator-only normalizer is not finite. Exp073G is retained only as a methodological corroboration because its formal status is a reproduction/provenance failure, not a scientific support FAIL.
+
+Exp073L then supplied the completed numerical normalizability test under frozen criteria. Extending the KiDS absolute-response ladder to \(\ell=1.2\times10^5,2.4\times10^5,4.8\times10^5\), all eight Wm components and all eight WW components were classified as nonnormalizable; none was finite. The final local exponent ranges were approximately 1.494--1.518 for Wm and 1.493--1.516 for WW, while the final dyadic-shell fractions remained approximately 0.645--0.651. The half-step convergence discrepancy was only \(1.94\times10^{-6}\), far below the frozen 0.005 numerical tolerance. For a pure dyadic power-law normalization the shell relation
+
+\[
+f_{\rm shell}=1-2^{-p}
+\]
+
+shows directly why a positive exponent near \(p\simeq1.5\) leaves an order-unity fraction in every newly opened ultraviolet shell rather than converging to a finite absolute-response normalizer.
+
+This negative result rules out a common but dangerous repair: DSIR does not impose a retrospective high-\(\ell\) cutoff, nor multiply by a fiducial power spectrum chosen after seeing the divergence, merely to manufacture a finite support fraction. Either the observable/operator definition supplies a finite positive support measure by construction, or that route remains ineligible for the frozen support test.
+
+Exp073M demonstrates that this normalizability requirement is restrictive but not a universal no-go. A prospectively classified finite-positive candidate was found using harmonic-space DES Y3 galaxy--galaxy lensing for Wm, DES Y1 harmonic cosmic shear for WW, and the already finite BOSS matrix component for mm. The candidate passed all frozen M1--M8 preconditions, including immutable public provenance, finite positive normalization by construction, signed Wm semantics, independent WW semantics, redshift information, later applicability of the unchanged 5% support criterion, and no downstream leakage. Crucially, Exp073M did **not** evaluate a physical support fraction and therefore did not authorize covariance restriction or close G7.
+
+The later DES input chain strengthens reproducibility without changing that boundary. Exp073P2 completed SHA256 identity binding for every DES Y1 release object frozen by the route, including the 84.08 GB metacalibration catalogue and the 2.74 GB source-redshift-binning file. Exp073S0 then exactly reproduced the public redMaGiC mask and lens/source \(n(z)\) prerequisites: the native \(N_{\rm side}=4096\) mask remained an identity under same-resolution `ud_grade`, 6,536,725 pixels exceeded the frozen 0.5 mask cut (sky fraction 0.0324683), and both lens and source redshift distributions reproduced their 400-row public tables. These are provenance/reproduction PASSes only; no support fraction, covariance, nuisance SVD, or G7 relation was read. The currently retried Exp073R0 raw-row/HEALPix equivalence audit is likewise excluded from article claims until it produces a completed scientific result.
+
 The methodological consequence is important. If \(M_{\rm supp}\) selects only observation coordinates whose kernels satisfy a prospectively frozen physical-support criterion, then the covariance and theory projection entering the quotient must be restricted consistently,
 
 \[
@@ -41,6 +67,6 @@ W_{B,{\rm supp}}=C_{B,{\rm supp}}^{-1/2},
 A_{B,{\rm supp}}=Q_{B,{\rm supp}}W_{B,{\rm supp}}K_{B,{\rm supp}}.
 \]
 
-For Exp072A the eligible row set is empty on the current C3/C5 domain. The Exp072C extension that would recover 15 rows is nonperturbative under Exp073A; Exp073B/C show that the required independent nonlinear three-block layer is not available from the existing certified/public stack; and Exp073D/E show that, for C3, forcing such an extension would additionally require new model-defining physics rather than a neutral numerical upgrade. Consequently DSIR does **not** compute or quote a C3/C5 ACTxunWISE covariance-whitened, nuisance-quotiented survey distance from this route. G7, G8, and G9 remain open.
+For Exp072A the eligible row set is empty on the current C3/C5 domain. The Exp072C extension that would recover 15 rows is nonperturbative under Exp073A; Exp073B/C show that the required independent nonlinear three-block layer is not available from the existing certified/public stack; Exp073D/E show that, for C3, forcing such an extension would additionally require new model-defining physics rather than a neutral numerical upgrade; and Exp073L shows that even an otherwise reproducible observational transform is unusable for a frozen support fraction if its chosen positive absolute-response measure is nonnormalizable. Consequently DSIR does **not** compute or quote a C3/C5 covariance-whitened, nuisance-quotiented survey distance from any route that fails either physical-domain closure or support-measure normalizability. G7, G8, and G9 remain open.
 
-Figure 7 summarizes the quantitative support-closure part of this chain: the failed 26-coordinate leakage mask, the required joint support extension, and the subsequent perturbativity ineligibility. The later provider/model-definition audits explain why this failure cannot be repaired by a hidden nonlinear extrapolation. The negative result strengthens rather than weakens the operator construction because it identifies explicit physical and model-definition conditions under which the formal quotient must not yet be evaluated.
+Figure 7 summarizes the quantitative ACTxunWISE support-closure part of this chain: the failed 26-coordinate leakage mask, the required joint support extension, and the subsequent perturbativity ineligibility. The later provider/model-definition and support-normalizability audits explain why these failures cannot be repaired by a hidden nonlinear extrapolation or an arbitrary normalization choice. The negative results strengthen rather than weaken the operator construction because they identify explicit physical, model-definition, and measure-theoretic conditions under which the formal quotient must not yet be evaluated.
