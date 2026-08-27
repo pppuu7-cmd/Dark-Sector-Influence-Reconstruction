@@ -1,0 +1,160 @@
+{
+  "experiment": "Exp073G",
+  "record_type": "PRE_OUTPUT_OPERATOR_AND_BNT_BINDING",
+  "date": "2026-08-27",
+  "support_evaluated": false,
+  "retained_dimension_evaluated": false,
+  "parent_main_sha": "53f323da439a3f0357c6628c45672683352874c8",
+  "kids_public_source": {
+    "repository": "KiDS-WL/Cat_to_Obs_K1000_P1",
+    "commit": "36676da44471979dacb779155d7e6e7212ae1f4f",
+    "tree": "36932b9f499a5fd469890caebf62418f3f8bc40e"
+  },
+  "bnt_public_source": {
+    "repository": "pltaylor16/x-cut",
+    "commit": "fcab1439c896ff4bff0fa21300366eef8107578c",
+    "tree": "d76d2c37030406634a3592d2831d02c9915ee7f7",
+    "BNT.py_sha256": "d79f38f136101f44e437f27e2934ed799408d493a666db8f617f97466f60bd27",
+    "BNT.py_git_blob": "7e12909a070927bdf530bd5ba39e3612998b0739",
+    "bound_semantics": "continuous-bin zeroth and inverse-distance moment nulling"
+  },
+  "geometry": {
+    "identity": "Exp068B R0 flat massless-neutrino LCDM geometry",
+    "camb": "cmbant/CAMB@fa3f097343fbbe427cc04b4f5f0041c22c6ec764",
+    "H0_km_s_Mpc": 67.0,
+    "ombh2": 0.0224,
+    "omch2": 0.12,
+    "mnu_eV": 0.0,
+    "nnu": 3.046,
+    "TCMB_K": 2.7255,
+    "YHe": 0.24,
+    "w": -1.0,
+    "k_units": "physical Mpc^-1"
+  },
+  "operator_files": [
+    {
+      "role": "kids_source_nz_tomo1",
+      "path": "data/kids/nofz/SOM_N_of_Z/K1000_NS_V1.0.0A_ugriZYJHKs_photoz_SG_mask_LF_svn_309c_2Dbins_v2_DIRcols_Fid_blindC_TOMO1_Nz.asc",
+      "sha256": "2a6df5daac35f1cc78e658f76563392a37f8cf870c017ee9413ea42db0e6c7dd",
+      "git_blob": "0a0622a056bbc2bf36b4a056a2504dde8c5ec61d"
+    },
+    {
+      "role": "kids_source_nz_tomo2",
+      "path": "data/kids/nofz/SOM_N_of_Z/K1000_NS_V1.0.0A_ugriZYJHKs_photoz_SG_mask_LF_svn_309c_2Dbins_v2_DIRcols_Fid_blindC_TOMO2_Nz.asc",
+      "sha256": "00db976261a76f0c414973f3e979715e7207d2779ebe709adacb61daa97e47c8",
+      "git_blob": "170636bbe2f031a48d68afc1441eff03ee1b3907"
+    },
+    {
+      "role": "kids_source_nz_tomo3",
+      "path": "data/kids/nofz/SOM_N_of_Z/K1000_NS_V1.0.0A_ugriZYJHKs_photoz_SG_mask_LF_svn_309c_2Dbins_v2_DIRcols_Fid_blindC_TOMO3_Nz.asc",
+      "sha256": "a8f9122a94d88c026dae55dc97645a8c76aea123fcd151d95b72f6329ae2f1ab",
+      "git_blob": "c381093ab19d076b4db1921e990e52c55bae2522"
+    },
+    {
+      "role": "kids_source_nz_tomo4",
+      "path": "data/kids/nofz/SOM_N_of_Z/K1000_NS_V1.0.0A_ugriZYJHKs_photoz_SG_mask_LF_svn_309c_2Dbins_v2_DIRcols_Fid_blindC_TOMO4_Nz.asc",
+      "sha256": "5533796481ab679b352561625284d87e22916db119efb9db2e2f2459caba2fce",
+      "git_blob": "60ce9c4982fd93a90b353beeb4e5a7c424387b0b"
+    },
+    {
+      "role": "kids_source_nz_tomo5",
+      "path": "data/kids/nofz/SOM_N_of_Z/K1000_NS_V1.0.0A_ugriZYJHKs_photoz_SG_mask_LF_svn_309c_2Dbins_v2_DIRcols_Fid_blindC_TOMO5_Nz.asc",
+      "sha256": "e3b1e77a8189342d87228192de8734de3c8a6f9287619502e50463c7dde76b9e",
+      "git_blob": "ceecd5452df2edbdd64b45bb7d1c07605b55c6b9"
+    },
+    {
+      "role": "boss_2dflens_lens_nz_bin2",
+      "path": "data/boss/nofz/BOSS_and_2dFLenS_n_of_z2_res_0.01_extended.txt",
+      "sha256": "d650c75b3636cf1fec3e1ee8f6fafbb5eceaefc6ea55414d7b7fd83c8de3a83c",
+      "git_blob": "67ff40d217dccf6a1239cb4017ebb2ebe9a195f4"
+    },
+    {
+      "role": "kids_released_2x2pt_bandpower_vector_identity_only",
+      "path": "data/kids/bp_K1000_ALL_BLIND_C_no_m_bias_V1.0.0A_ugriZYJHKs_photoz_SG_mask_LF_svn_309c_2Dbins_v2_goldclasses_Flag_SOM_Fid_nbins_8_Ell_100.0_1500.0.asc",
+      "sha256": "f2f5305f71866f7caeb90cc1131196c2979e57835cba17becb7857dd6d055879",
+      "git_blob": "ef3040570ced8cac513470ec53d336bf87eac4cc"
+    },
+    {
+      "role": "kids_bandpower_operator_source",
+      "path": "src/bandpowers/xi2bandpow.c",
+      "sha256": "3a2311c06432b131696caa9c8cd46799fd85f8316335cad6dc76a4d8eee92e7a",
+      "git_blob": "fdd7013e5fb7e7d599d273aebbaa04a438c02344"
+    },
+    {
+      "role": "kids_bandpower_argument_binding",
+      "path": "Calc_2pt_Stats/doall_calc2pt.sh",
+      "sha256": "9e0d67d7def7a626a47f92bc422a17a2ad79438d1a361959950259af56e752be",
+      "git_blob": "f27a5d38f835354c3189b7b85d275a6b5ddbba43"
+    },
+    {
+      "role": "boss_highz_dataset_contract",
+      "path": "data/boss/Sanchez_etal_2017/BOSS.DR12.highz.3xiwedges.dataset",
+      "sha256": "889a12d73145f8ca4037402f4a312e6a93aa7a20977ee07c3d430cd0b5e46c8d",
+      "git_blob": "6235fcc6444761673b49095f0d9a375c071a4f29"
+    },
+    {
+      "role": "boss_highz_radial_bands",
+      "path": "data/Data_Plots/clustering_wedges/wedges_data/BOSS.DR12_rbands.txt",
+      "sha256": "90ff937b38e1e648febf50ecee6046a361ae4cc45708e292c0b09fb21ca84162",
+      "git_blob": "4e4770f0f1d974f1cbb0adacc740121d1e407065"
+    },
+    {
+      "role": "boss_highz_window_operator",
+      "path": "data/Data_Plots/clustering_wedges/wedges_data/BOSS.DR12_windows.txt",
+      "sha256": "d03fb658ce10b32edbfd8f3344bb0d933d6e026ae5c65a8fe32f519a9c4f8f0f",
+      "git_blob": "38ee5e2d2ef770fbf9a7530b1f8e7279cb88755d"
+    },
+    {
+      "role": "boss_highz_measurement_identity_only",
+      "path": "data/boss/Sanchez_etal_2017/BOSS.DR12.highz.3xiwedges_measurements.txt",
+      "sha256": "86e172eb0fe2b6689744e80c2491ccd51c59bf22ea495c3d0344b82c0de13256",
+      "git_blob": "6c51f2356c3f52731cd4197fe3738bf13002ef16"
+    }
+  ],
+  "frozen_bnt_convention": {
+    "nz_coordinate": "published lower bin edge plus half the constant bin width",
+    "nz_normalization": "each source n(z) is normalized to unit trapezoidal z integral before matrix construction",
+    "matrix_rule": "x-cut BNT.py zeroth and inverse-chi moment system",
+    "localized_rows_zero_based": [2, 3, 4],
+    "excluded_rows_zero_based": [0, 1],
+    "exclusion_reason": "the first two public BNT rows do not satisfy both localization moments",
+    "cosmic_shear_transform": "M C_ell M^T",
+    "galaxy_galaxy_lensing_transform": "M on the source-shear index only",
+    "nulling_tolerance": 1e-10,
+    "deterministic_relative_tolerance": 1e-12
+  },
+  "frozen_pre_support_selection": {
+    "boss_clustering": "published fiducial high-z bin only, 0.5<z<0.75; low-z 0.2<z<0.5 excluded geometrically; overlapping intermediate diagnostic bin is not part of the fiducial low/high pair",
+    "ggl_lens": "released lens bin 2 only, nominal 0.5<z<0.75; lens bin 1 is excluded geometrically",
+    "kids_bandpowers": {
+      "number_of_log_ell_bins": 8,
+      "ell_min": 100.0,
+      "ell_max": 1500.0,
+      "theta_min_arcmin": 0.5,
+      "theta_max_arcmin": 300.0,
+      "log_apodisation_width": 0.5
+    },
+    "boss_highz_wedges": {
+      "number_of_wedges": 3,
+      "points_per_wedge_before_support_mask": 28,
+      "point_indices_one_based_inclusive": [5, 32],
+      "window_shape": [32, 180]
+    }
+  },
+  "candidate_coordinate_inventory_before_support_mask": {
+    "mm_boss_highz": 84,
+    "Wm_lens2_x_localized_BNT_sources": 24,
+    "WW_localized_BNT_source_pairs": 48,
+    "total": 156,
+    "is_support_result": false
+  },
+  "controls": {
+    "covariance_values_read": false,
+    "nuisance_rank_read": false,
+    "relation_residual_read": false,
+    "G8_read": false,
+    "support_fraction_computed": false,
+    "source_and_operator_hashes_frozen_before_support_output": true
+  },
+  "next_step": "implement exact positive broad-window support envelopes and evaluate the frozen Exp073G 5 percent gate"
+}
