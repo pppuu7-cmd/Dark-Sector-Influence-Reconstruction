@@ -1,0 +1,90 @@
+name: Exp073H Beutler full-shape Fourier fallback binding v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073h-beutler-fullshape-fourier-binding-v0-1.yml'
+      - 'experiments/073h_fourier_space_mm_operator_source_binding_prereg_v0_1.md'
+      - 'experiments/073h_beutler_fullshape_fourier_fallback_binding_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  fallback-binding:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download official SDSS Beutler full-shape archive
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp073h_beutler/extracted
+          URL='https://data.sdss.org/sas/dr12/boss/papers/clustering/Beutler_etal_DR12COMBINED_fullshape_powspec.tar.gz'
+          curl --fail --location --retry 3 --retry-delay 2 -o external/exp073h_beutler/archive.tar.gz "$URL"
+          sha256sum external/exp073h_beutler/archive.tar.gz | tee external/exp073h_beutler/archive.sha256
+          tar -tzf external/exp073h_beutler/archive.tar.gz | LC_ALL=C sort > external/exp073h_beutler/archive_members.txt
+          tar -xzf external/exp073h_beutler/archive.tar.gz -C external/exp073h_beutler/extracted
+      - name: Build immutable non-covariance operator inventory
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,re
+          from pathlib import Path
+          root=Path('external/exp073h_beutler/extracted'); arc=Path('external/exp073h_beutler/archive.tar.gz')
+          def sha(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for c in iter(lambda:f.read(1<<20),b''): h.update(c)
+              return h.hexdigest()
+          files=[]; meta=[]
+          for p in sorted(root.rglob('*')):
+              if not p.is_file(): continue
+              rel=str(p.relative_to(root)); lo=rel.lower(); cov=any(x in lo for x in ('cov','mock'))
+              files.append({'path':rel,'size':p.stat().st_size,'sha256':sha(p),'covariance_like':cov})
+              if cov or p.stat().st_size>8_000_000: continue
+              try: txt=p.read_text(errors='strict')
+              except Exception: continue
+              rows=[]
+              for line in txt.splitlines():
+                  s=line.strip()
+                  if not s or s.startswith('#'): continue
+                  vals=[]; ok=True
+                  for t in s.replace(',',' ').split():
+                      try: vals.append(float(t))
+                      except Exception: ok=False; break
+                  if ok and vals: rows.append(vals)
+                  if len(rows)>=2000: break
+              if rows:
+                  first=[r[0] for r in rows]
+                  meta.append({'path':rel,'rows_sampled':len(rows),'column_widths':sorted(set(map(len,rows))),'first_column_min':min(first),'first_column_max':max(first)})
+          members=Path('external/exp073h_beutler/archive_members.txt').read_text().splitlines()
+          d={'experiment':'Exp073H','date':'2026-08-27','record_type':'PRE_SUPPORT_BEUTLER_FALLBACK_BINDING',
+             'support_fraction_computed':False,'covariance_values_read':False,'G8_read':False,
+             'official_url':'https://data.sdss.org/sas/dr12/boss/papers/clustering/Beutler_etal_DR12COMBINED_fullshape_powspec.tar.gz',
+             'archive_sha256':sha(arc),'archive_size_bytes':arc.stat().st_size,'member_count':len(members),'files':files,
+             'noncov_numeric_metadata':meta,
+             'window_candidates':[x for x in members if re.search(r'window|win|matrix',x,re.I) and not re.search(r'cov|mock',x,re.I)],
+             'measurement_candidates':[x for x in members if re.search(r'power|pk|multipole|measurement|data',x,re.I) and not re.search(r'cov|mock|window|win',x,re.I)],
+             'gate_state':{'G7':'OPEN','G8':'OPEN','G9':'OPEN'}}
+          out=Path('data/derived/g7/exp073h_beutler_fullshape_fourier_binding_v0_1.json'); out.parent.mkdir(parents=True,exist_ok=True); out.write_text(json.dumps(d,indent=2)+'\n')
+          print('ARCHIVE_SHA256',d['archive_sha256']); print('WINDOW_CANDIDATES',len(d['window_candidates'])); print('MEASUREMENT_CANDIDATES',len(d['measurement_candidates']))
+          PY
+      - name: Assert pre-support no-leakage contract
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073h_beutler_fullshape_fourier_binding_v0_1.json'))
+          assert d['support_fraction_computed'] is False and d['covariance_values_read'] is False and d['G8_read'] is False
+          assert d['archive_size_bytes']>0 and d['member_count']>0
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073h-beutler-fullshape-binding-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073h_beutler_fullshape_fourier_binding_v0_1.json
+            external/exp073h_beutler/archive.sha256
+            external/exp073h_beutler/archive_members.txt
+          if-no-files-found: error
