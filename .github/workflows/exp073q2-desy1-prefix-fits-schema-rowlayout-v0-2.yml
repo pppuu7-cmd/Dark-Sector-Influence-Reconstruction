@@ -1,0 +1,56 @@
+name: Exp073Q2 DES Y1 prefix FITS schema row-layout v0.2
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073q2-desy1-prefix-fits-schema-rowlayout-v0-2.yml'
+      - 'ci/exp073q2_prefix_fits_schema_rowlayout_probe_v0_2.py'
+      - 'experiments/073q2_transport_resilient_first_table_schema_addendum_v0_2.md'
+
+permissions:
+  contents: read
+
+jobs:
+  schema-row-layout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe exact DES Y1 FITS prefixes with transport retries
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073q2_prefix_fits_schema_rowlayout_probe_v0_2.py \
+            --source-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_source_redshift_binning_v1.fits \
+            --source-bytes 2738626560 \
+            --metacal-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/shear_catalogs/mcal-y1a1-combined-riz-unblind-v4-matched.fits \
+            --metacal-bytes 84075649920 \
+            --prefix-mib 8 \
+            --output data/derived/g7/exp073q2_desy1_fits_schema_rowlayout_v0_2.json
+      - name: Assert preregistered schema-only contract
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073q2_desy1_fits_schema_rowlayout_v0_2.json'
+          d=json.load(open(p))
+          assert d['status']=='SCHEMA_ROW_LAYOUT_PASS_EXP073Q2'
+          assert d['row_count_equal'] is True
+          assert d['full_object_redownloaded'] is False
+          assert d['science_gate_scored'] is False
+          assert d['coordinate_provenance']=={'nside':4096,'coords':'C','status':'RESOLVED'}
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print(json.dumps({
+            'status':d['status'],
+            'source_rows':d['source_rows'],
+            'metacal_rows':d['metacal_rows'],
+            'source_required':d['source']['fits']['required_columns'],
+            'metacal_required':d['metacal']['fits']['required_columns'],
+          }, indent=2, sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073q2-desy1-prefix-schema-${{ github.sha }}
+          path: data/derived/g7/exp073q2_desy1_fits_schema_rowlayout_v0_2.json
+          if-no-files-found: warn
