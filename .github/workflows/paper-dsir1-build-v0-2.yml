@@ -46,6 +46,10 @@ jobs:
         run: |
           python papers/dsir1/figures/fig03_chiI_hierarchy.py
 
+      - name: Build Figure 4 from frozen discriminant edges
+        run: |
+          python papers/dsir1/figures/fig04_channel_conditional_degeneracy.py
+
       - name: Record build checksums
         run: |
           mkdir -p papers/dsir1/build
@@ -75,5 +79,9 @@ jobs:
             papers/dsir1/figures/generated/fig03_chiI_hierarchy.png
             papers/dsir1/figures/generated/fig03_chiI_hierarchy.svg
             papers/dsir1/figures/generated/fig03_chiI_hierarchy_provenance.json
+            papers/dsir1/figures/generated/fig04_channel_conditional_degeneracy.pdf
+            papers/dsir1/figures/generated/fig04_channel_conditional_degeneracy.png
+            papers/dsir1/figures/generated/fig04_channel_conditional_degeneracy.svg
+            papers/dsir1/figures/generated/fig04_channel_conditional_degeneracy_provenance.json
             papers/dsir1/build/SHA256SUMS.txt
             papers/dsir1/build/BUILD_ENVIRONMENT.txt
