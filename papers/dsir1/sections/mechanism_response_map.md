@@ -2,17 +2,17 @@
 
 The family list above states where each benchmark is active; the more useful cross-mechanism question is **which equation-level cue tells us which response structure to inspect**. The table below therefore grades the current map as a many-to-many diagnostic rather than a one-to-one classifier. A response pattern is not unique to dark physics, and the broad program of perturbation “fingerprinting” is prior art [@Bashinsky2007DarkKinetics; @SaponeKunz2009Fingerprinting; @SaponeKunzAmendola2010Fingerprinting; @SaponeMajerotto2012Fingerprinting].
 
-| Family / control | Equation-level cue | Highest-value DSIR block(s) | Frozen response pattern | Evidence status |
-|---|---|---|---|---|
-| C1 smooth DE | homogeneous `w != -1` changes expansion/growth history | background/AP + temporal growth | background active; weak low-k scale-time nonseparability; nearly straight finite-amplitude ray | HARD-ATLAS on tested C1 rays |
-| C2 IDE | source/exchange terms in component continuity equations with conserved total stress-energy | background/growth + temporal/sign structure | exchange active; tested low-k rays are almost scale-time separable | HARD-ATLAS on tested IDE directions |
-| C3 GDM pressure | pressure-gradient/effective propagation term | low-k matter + temporal response | perturbation active, frozen background/AP null; moderate `k x z` interaction | HARD-ATLAS |
-| C3 GDM viscosity | anisotropic-stress/shear closure modifies the metric relation | matter + Weyl/slip | matter pressure/viscosity angle `0.3226 deg`, metric-slip angle `137.94 deg`; viscosity ray bends at finite amplitude | HARD-ATLAS; theory-response angles, not survey significance |
-| C4 thermal WDM | collisionless free-streaming cutoff scale | high-k transfer + cutoff drift | strong high-k suppression, nearly time-separable on the frozen block; withheld masses move `k_0.1` monotonically | HARD-ATLAS + WITHHELD interpolation |
-| C5 designer `f(R)` | scalar/Compton-like scale changes scale- and time-dependent gravitational response | matter + Weyl/slip + temporal response | strongest current low-k `k x z` interaction; curved finite-amplitude trajectory; exact GR boundary in the pinned theory | HARD-ATLAS; no Paper-I survey-detectability claim |
-| C6 DCDM -> dark radiation | finite lifetime creates an epoch/source scale | temporal localization + matter/sign structure | temporal centroid moves with `Gamma/H0`; scale-sign pivot remains descriptive | WITHHELD mechanism for centroid direction |
-| C7 IDM-DR | drag/interaction dynamics with a distinct scale/time response | scale/time localization | the preregistered C3/C5-derived positive common centroid-slope rule fails with opposite-sign withheld slopes | prospective WITHHELD FAIL |
-| K2 baryon-fraction control | ordinary known-sector transfer physics | matter-response geometry | an almost one-dimensional matter path can strongly backtrack (`~169.69 deg`) | DESCRIPTIVE known-sector specificity control |
+| Family / control | Equation cue and block to inspect | Frozen response pattern / evidence boundary |
+|---|---|---|
+| C1 smooth DE | homogeneous `w != -1`; background/AP + temporal growth | background active; weak low-k scale-time nonseparability; nearly straight finite-amplitude ray — HARD-ATLAS on tested C1 rays |
+| C2 IDE | source/exchange terms with conserved total stress-energy; background/growth + temporal/sign structure | exchange active; tested low-k rays almost scale-time separable — HARD-ATLAS on tested IDE directions |
+| C3 GDM pressure | pressure-gradient/effective propagation; low-k matter + temporal response | perturbation active with frozen background/AP null; moderate `k x z` interaction — HARD-ATLAS |
+| C3 GDM viscosity | anisotropic-stress/shear closure; matter + Weyl/slip | matter pressure/viscosity angle `0.3226 deg`, metric-slip angle `137.94 deg`; finite-amplitude bending — HARD-ATLAS, theory-response not survey significance |
+| C4 thermal WDM | collisionless free-streaming cutoff; high-k transfer + cutoff drift | strong high-k suppression but nearly time-separable; withheld masses move `k_0.1` monotonically — HARD-ATLAS + WITHHELD interpolation |
+| C5 designer `f(R)` | scalar/Compton-like transition; matter + Weyl/slip + temporal response | strongest current low-k `k x z` interaction; curved finite-amplitude trajectory; exact GR boundary in pinned theory — HARD-ATLAS, no Paper-I detectability claim |
+| C6 DCDM -> dark radiation | finite lifetime/epoch source; temporal localization + matter/sign structure | temporal centroid moves with `Gamma/H0`; scale-sign pivot remains descriptive — WITHHELD mechanism for centroid direction |
+| C7 IDM-DR | drag/interaction dynamics; scale/time localization | preregistered C3/C5-derived positive common centroid-slope rule fails with opposite-sign withheld slopes — prospective WITHHELD FAIL |
+| K2 baryon-fraction control | ordinary known-sector transfer; matter-response geometry | almost one-dimensional matter path can strongly backtrack (`~169.69 deg`) — DESCRIPTIVE known-sector specificity control |
 
 The table supports a deliberately weaker mechanism grammar: finite dynamical scales motivate scale-localization tests; finite lifetime/epoch scales motivate temporal-localization tests; anisotropic stress makes an independent metric-sensitive channel valuable; and evolving response shapes motivate an explicit scale-time interaction diagnostic. None of these implications is reversible. In particular, a moving characteristic scale does **not** imply a large `chi_I`: the frozen WDM block supplies a counterexample with a strong cutoff and nearly time-separable evolution. Likewise, metric slip is neither dark-sector-specific nor by itself evidence for violation of the equivalence principle.
 
