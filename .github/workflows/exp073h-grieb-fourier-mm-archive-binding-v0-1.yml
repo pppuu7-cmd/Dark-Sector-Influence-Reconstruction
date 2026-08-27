@@ -1,0 +1,130 @@
+name: Exp073H Grieb Fourier mm archive binding v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073h-grieb-fourier-mm-archive-binding-v0-1.yml'
+      - 'experiments/073h_fourier_space_mm_operator_source_binding_prereg_v0_1.md'
+      - 'experiments/073h_grieb_official_archive_binding_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  official-archive-binding:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download exact official SDSS Grieb archive
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp073h
+          URL='https://data.sdss.org/sas/dr12/boss/papers/clustering/GRIEB_ET_AL_2016_COMBINEDDR12_power_spectrum_wedges.tar.gz'
+          curl --fail --location --retry 3 --retry-delay 2 --output external/exp073h/grieb.tar.gz "$URL"
+          test -s external/exp073h/grieb.tar.gz
+          sha256sum external/exp073h/grieb.tar.gz | tee external/exp073h/archive.sha256
+          tar -tzf external/exp073h/grieb.tar.gz | LC_ALL=C sort > external/exp073h/archive_members.txt
+          test -s external/exp073h/archive_members.txt
+
+      - name: Extract archive without reading covariance numerical contents
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp073h/extracted
+          tar -xzf external/exp073h/grieb.tar.gz -C external/exp073h/extracted
+          find external/exp073h/extracted -type f -printf '%P\n' | LC_ALL=C sort > external/exp073h/files.txt
+          grep -Eiv '(cov|covariance|mock)' external/exp073h/files.txt > external/exp073h/noncov_files.txt || true
+          grep -Ei '(window|win)' external/exp073h/noncov_files.txt > external/exp073h/window_candidates.txt || true
+          grep -Ei '(wedge|power|pk|ps|data|measurement)' external/exp073h/noncov_files.txt > external/exp073h/measurement_candidates.txt || true
+
+      - name: Build immutable pre-support inventory
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import hashlib,json,re
+          from pathlib import Path
+          root=Path('external/exp073h/extracted')
+          archive=Path('external/exp073h/grieb.tar.gz')
+          def sha(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for c in iter(lambda:f.read(1<<20),b''): h.update(c)
+              return h.hexdigest()
+          files=[]
+          numeric_meta=[]
+          for p in sorted(root.rglob('*')):
+              if not p.is_file(): continue
+              rel=str(p.relative_to(root))
+              low=rel.lower()
+              is_cov=any(x in low for x in ('cov','covariance','mock'))
+              rec={'path':rel,'size':p.stat().st_size,'sha256':sha(p),'covariance_like':is_cov}
+              files.append(rec)
+              if is_cov: continue
+              # Read only small non-covariance ASCII-like files for source/operator metadata.
+              if p.stat().st_size>5_000_000: continue
+              try: txt=p.read_text(errors='strict')
+              except Exception: continue
+              rows=[]
+              for line in txt.splitlines():
+                  s=line.strip()
+                  if not s or s.startswith('#'): continue
+                  vals=[]
+                  ok=True
+                  for t in s.replace(',',' ').split():
+                      try: vals.append(float(t))
+                      except Exception: ok=False; break
+                  if ok and vals: rows.append(vals)
+                  if len(rows)>=1000: break
+              if rows:
+                  widths=sorted(set(map(len,rows)))
+                  first=[r[0] for r in rows if r]
+                  numeric_meta.append({'path':rel,'rows_sampled':len(rows),'column_widths':widths,'first_column_min':min(first),'first_column_max':max(first)})
+          members=Path('external/exp073h/archive_members.txt').read_text().splitlines()
+          inventory={
+            'experiment':'Exp073H','date':'2026-08-27','record_type':'PRE_SUPPORT_OFFICIAL_ARCHIVE_BINDING',
+            'support_fraction_computed':False,'covariance_values_read':False,'G8_read':False,
+            'official_url':'https://data.sdss.org/sas/dr12/boss/papers/clustering/GRIEB_ET_AL_2016_COMBINEDDR12_power_spectrum_wedges.tar.gz',
+            'archive_sha256':sha(archive),'archive_size_bytes':archive.stat().st_size,
+            'member_count':len(members),'files':files,'noncov_numeric_metadata':numeric_meta,
+            'candidate_window_paths':[x for x in members if re.search(r'window|win',x,re.I) and not re.search(r'cov|mock',x,re.I)],
+            'candidate_measurement_paths':[x for x in members if re.search(r'wedge|power|pk|measurement|data',x,re.I) and not re.search(r'cov|mock',x,re.I)],
+            'gate_state':{'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          }
+          out=Path('data/derived/g7/exp073h_grieb_official_archive_binding_v0_1.json')
+          out.parent.mkdir(parents=True,exist_ok=True)
+          out.write_text(json.dumps(inventory,indent=2)+'\n')
+          print('ARCHIVE_SHA256',inventory['archive_sha256'])
+          print('ARCHIVE_SIZE',inventory['archive_size_bytes'])
+          print('MEMBER_COUNT',inventory['member_count'])
+          print('WINDOW_CANDIDATES',len(inventory['candidate_window_paths']))
+          print('MEASUREMENT_CANDIDATES',len(inventory['candidate_measurement_paths']))
+          print('NONCOV_NUMERIC_FILES',len(numeric_meta))
+          PY
+
+      - name: Assert no downstream leakage and upload binding record
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073h_grieb_official_archive_binding_v0_1.json'
+          d=json.load(open(p))
+          assert d['record_type']=='PRE_SUPPORT_OFFICIAL_ARCHIVE_BINDING'
+          assert d['support_fraction_computed'] is False
+          assert d['covariance_values_read'] is False
+          assert d['G8_read'] is False
+          assert d['archive_size_bytes']>0 and d['member_count']>0
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073h-grieb-official-archive-binding-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073h_grieb_official_archive_binding_v0_1.json
+            external/exp073h/archive.sha256
+            external/exp073h/archive_members.txt
+            external/exp073h/noncov_files.txt
+            external/exp073h/window_candidates.txt
+            external/exp073h/measurement_candidates.txt
+          if-no-files-found: error
