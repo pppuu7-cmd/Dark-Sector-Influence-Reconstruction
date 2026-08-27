@@ -8,6 +8,7 @@ on:
       - 'papers/dsir1/**'
       - 'data/derived/comparison_readiness/**'
       - 'data/derived/g7/**'
+      - 'data/derived/retrospective/exp071d_matter_response_geometry_taxonomy_key_metrics_v0_1.json'
       - 'docs/SCIENTIFIC_FINDING_F27_COMMON_RESPONSE_CENTROID_WITHHELD_FAILURE.md'
       - 'docs/CHANNEL_CONDITIONAL_EQUIVALENCE_QUOTIENT_THEOREMS_2026-08-27.md'
       - 'recovery/exp070c_provider_checkpoint_2026-08-27.md'
@@ -45,6 +46,10 @@ jobs:
       - name: Run deterministic manuscript audit and v0.2 assembly
         run: |
           python papers/dsir1/audit_paper_v0_2.py
+
+      - name: Audit retrospective known-sector specificity control
+        run: |
+          python papers/dsir1/audit_retrospective_specificity_control.py
 
       - name: Build Figure 1 operator architecture
         run: |
@@ -96,6 +101,7 @@ jobs:
             papers/dsir1/AUTHOR_METADATA.yml
             papers/dsir1/FIGURE_MANIFEST.md
             papers/dsir1/FIGURE_CAPTIONS.md
+            papers/dsir1/FIGURE_PLACEMENT.md
             papers/dsir1/figures/generated/*.pdf
             papers/dsir1/figures/generated/*.png
             papers/dsir1/figures/generated/*.svg
