@@ -1,0 +1,182 @@
+name: ACT x unWISE joint low-z high-k support frontier v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/act-unwise-joint-lowz-highk-support-frontier-v0-1.yml'
+      - 'ci/act_unwise_joint_lowz_highk_support_frontier_v0_1.py'
+      - 'ci/act_unwise_angular_support_leakage_mask_v0_1.py'
+      - 'experiments/072c_joint_lowz_highk_support_frontier_prereg_v0_1.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  joint-support-frontier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install numerical and CAMB build dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran git python3-dev
+          python3 -m pip install --user numpy scipy cython setuptools wheel packaging pyyaml healpy
+          python3 -m py_compile ci/act_unwise_joint_lowz_highk_support_frontier_v0_1.py
+          gh --version
+
+      - name: Bind exact immutable Exp072A and Exp072B artifacts
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp072a_parent external/exp072b_parent
+
+          gh api repos/${GITHUB_REPOSITORY}/actions/artifacts/9629763833 > external/exp072a_meta.json
+          gh api repos/${GITHUB_REPOSITORY}/actions/artifacts/9630210086 > external/exp072b_meta.json
+          python3 - <<'PY'
+          import json
+          a=json.load(open('external/exp072a_meta.json'))
+          b=json.load(open('external/exp072b_meta.json'))
+          assert a['id']==9629763833
+          assert a['digest']=='sha256:9ecf7d61b4db5e091392a23f508cd5dd3d04dafe32a4a66d1256a70d9947701d'
+          assert a['workflow_run']['id']==33029362485
+          assert a['workflow_run']['head_sha']=='553f6867f1cf71d4661a9f7b1f739a970648d05d'
+          assert b['id']==9630210086
+          assert b['digest']=='sha256:5bbca5717d29d24f8ba3b5ae24d8cc752bd5d90460859ae79f5212ca764615ad'
+          assert b['workflow_run']['id']==33030657898
+          assert b['workflow_run']['head_sha']=='3dce5449e9d23dbc71091905ad51bd8c7b45bba2'
+          PY
+
+          gh run download 33029362485 \
+            -n 'exp072a-act-unwise-angular-support-leakage-d25431771dcfbd863c37057b3e9b3e13184e3bc7' \
+            -D external/exp072a_parent
+          gh run download 33030657898 \
+            -n 'exp072b-support-boundary-decomposition-3dce5449e9d23dbc71091905ad51bd8c7b45bba2' \
+            -D external/exp072b_parent
+
+          A_JSON="$(find external/exp072a_parent -name 'exp072a_act_unwise_angular_support_leakage_mask_v0_1.json' -print -quit)"
+          B_JSON="$(find external/exp072b_parent -name 'exp072b_exp072a_support_boundary_decomposition_v0_1.json' -print -quit)"
+          test -n "$A_JSON"
+          test -n "$B_JSON"
+          echo '56b96c096830bf8399ef18df41251a14ded00101a1f206b4419ccb6b5730abe3  '"$A_JSON" | sha256sum -c -
+          echo 'd90b387b6acb5b48c6daae0f25da9adb7ea6ed851e3b22c8a79c6bc56b2d0f1d  '"$B_JSON" | sha256sum -c -
+          cp "$A_JSON" external/exp072a.json
+          cp "$B_JSON" external/exp072b.json
+
+      - name: Fetch and install pinned CAMB
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          git clone https://github.com/cmbant/CAMB.git external/CAMB
+          git -C external/CAMB checkout fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          test "$(git -C external/CAMB rev-parse HEAD)" = 'fa3f097343fbbe427cc04b4f5f0041c22c6ec764'
+          python3 -m pip install --user ./external/CAMB
+
+      - name: Fetch pinned ACT x unWISE upstream source
+        run: |
+          set -euxo pipefail
+          git clone --no-checkout https://github.com/ACTCollaboration/unWISExLens_lklh.git external/unWISExLens_lklh
+          git -C external/unWISExLens_lklh checkout 6302c30d9e70f8e4ff2d4a84a9977b4471705179
+          test "$(git -C external/unWISExLens_lklh rev-parse HEAD)" = '6302c30d9e70f8e4ff2d4a84a9977b4471705179'
+
+      - name: Restore immutable official data archive cache
+        id: archive-cache
+        uses: actions/cache@v4
+        with:
+          path: external/data_unWISExLens.tar.gz
+          key: act-unwise-data-1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570
+
+      - name: Fetch official ACT x unWISE archive on cache miss
+        if: steps.archive-cache.outputs.cache-hit != 'true'
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          if ! curl --fail --location --retry 3 --retry-delay 3 \
+            'https://lambda.gsfc.nasa.gov/data/suborbital/ACT/act_x_unWISE/data_unWISExLens.tar.gz' \
+            -o external/data_unWISExLens.tar.gz; then
+            rm -f external/data_unWISExLens.tar.gz
+            curl --fail --location --retry 4 --retry-delay 3 \
+              'https://portal.nersc.gov/project/act/act_x_unWISE_xcorr+3x2pt/data_unWISExLens.tar.gz' \
+              -o external/data_unWISExLens.tar.gz
+          fi
+
+      - name: Verify and extract immutable official data archive
+        run: |
+          set -euxo pipefail
+          echo '1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570  external/data_unWISExLens.tar.gz' | sha256sum -c -
+          mkdir -p external/unwise_data
+          tar -xzf external/data_unWISExLens.tar.gz -C external/unwise_data
+
+      - name: Execute frozen Exp072C joint support frontier
+        run: |
+          set -euxo pipefail
+          python3 ci/act_unwise_joint_lowz_highk_support_frontier_v0_1.py \
+            --upstream-repo external/unWISExLens_lklh \
+            --camb-repo external/CAMB \
+            --extracted-root external/unwise_data \
+            --archive external/data_unWISExLens.tar.gz \
+            --exp072a-json external/exp072a.json \
+            --exp072a-meta external/exp072a_meta.json \
+            --exp072b-json external/exp072b.json \
+            --exp072b-meta external/exp072b_meta.json \
+            --output data/derived/g7/exp072c_joint_lowz_highk_support_frontier_v0_1.json
+
+      - name: Assert frozen Exp072C diagnostic semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp072c_joint_lowz_highk_support_frontier_v0_1.json'
+          d=json.load(open(p))
+          assert d['experiment']=='Exp072C'
+          assert d['status'] in {
+              'DIAGNOSTIC_JOINT_LOWZ_HIGHK_FRONTIER_FOUND_EXP072C',
+              'DIAGNOSTIC_JOINT_LOWZ_HIGHK_FRONTIER_NOT_FOUND_EXP072C',
+              'FAIL_EXP072C_REPRODUCTION_OR_PROVENANCE',
+          }
+          assert d['Exp072A_preserved']=='FAIL_ACT_UNWISE_ANGULAR_SUPPORT_LEAKAGE_MASK_V0_1'
+          assert d['Exp072B_preserved']=='DIAGNOSTIC_K_ONLY_TARGET_NOT_FOUND_EXP072B'
+          assert d['fixed_boundaries']['threshold']==0.05
+          assert d['fixed_boundaries']['z_max']==2.33
+          assert d['fixed_boundaries']['k_min_Mpc^-1']==0.000704833374744468
+          assert d['fixed_boundaries']['z_min_current']==0.295
+          assert d['fixed_boundaries']['k_max_current_Mpc^-1']==0.06664762008318016
+          assert d['controls']['covariance_read'] is False
+          assert d['controls']['nuisance_SVD_or_rank_read'] is False
+          assert d['controls']['G7_relation_or_null_read'] is False
+          assert d['controls']['G8_response_read'] is False
+          assert d['controls']['physical_provider_extended'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          if d['status']=='FAIL_EXP072C_REPRODUCTION_OR_PROVENANCE':
+              assert any(v is False for v in d['hard_controls'].values())
+          else:
+              assert all(v is True for v in d['hard_controls'].values())
+          if d['status']=='DIAGNOSTIC_JOINT_LOWZ_HIGHK_FRONTIER_FOUND_EXP072C':
+              assert d['pareto_frontier_count'] > 0
+              assert d['minimal_redshift_extension_endpoint'] is not None
+              assert d['minimal_k_extension_endpoint'] is not None
+          else:
+              if d['status']=='DIAGNOSTIC_JOINT_LOWZ_HIGHK_FRONTIER_NOT_FOUND_EXP072C':
+                  assert d['pareto_frontier_count']==0
+          print('EXP072C_RESULT',d['status'])
+          print('Z_CANDIDATES',d['candidate_sets']['z_candidate_count'])
+          print('FINITE_ROUTE_POINTS',d['finite_route_point_count'])
+          print('FRONTIER_COUNT',d['pareto_frontier_count'])
+          print('MIN_Z_EXTENSION',d['minimal_redshift_extension_endpoint'])
+          print('MIN_K_EXTENSION',d['minimal_k_extension_endpoint'])
+          print('FRONTIER',d['pareto_frontier'])
+          PY
+
+      - name: Upload immutable Exp072C diagnostic record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp072c-joint-lowz-highk-frontier-${{ github.sha }}
+          path: data/derived/g7/exp072c_joint_lowz_highk_support_frontier_v0_1.json
+          if-no-files-found: warn
