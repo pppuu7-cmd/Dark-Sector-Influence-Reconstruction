@@ -1,0 +1,54 @@
+{
+  "experiment": "Exp073S0",
+  "date": "2026-08-27",
+  "status": "PASS_DESY1_REDMAGIC_MASK_NZ_REPRODUCTION_EXP073S0",
+  "workflow_run": 33086762750,
+  "workflow_job": 98568401949,
+  "execution_sha": "82c5804b1fcbbdc100f09a9878643ddc51975d8e",
+  "artifact_id": 9652504743,
+  "artifact_name": "exp073s0-redmagic-mask-nz-82c5804b1fcbbdc100f09a9878643ddc51975d8e",
+  "artifact_digest": "sha256:c6f84c35e7ade17a6054ad77d4117b64a6c69fbbefe0d0f89e6491bbe88b358e",
+  "parent_state": {
+    "Exp073P2": "PASS_REMAINING_DESY1_RELEASE_CHECKSUM_BINDING_EXP073P2",
+    "Exp073Q2": "schema PASS",
+    "science_gate_scored": false
+  },
+  "mask": {
+    "input_nside": 4096,
+    "npix": 201326592,
+    "same_nside_ud_grade_exact_identity": true,
+    "unseen_pixels_before_zeroing": 194789867,
+    "retained_pixels_gt_0p5": 6536725,
+    "retained_fraction_sky": 0.03246826430161794,
+    "sum": 6444786.03125,
+    "mean_retained": 0.985935010460131,
+    "min_retained": 0.8125,
+    "max_retained": 1.0,
+    "dense_numeric_sha256": "7eb243d77febe59d1fb327095b385b40084f4b6140ae4421f1c45c787088e918",
+    "sparse_pixel_value_sha256": "c1449c30efb31ce0b7f6cab01f2ea11faad8156a3021033518015b3e853abd3b"
+  },
+  "lens_nz": {
+    "rows": 400,
+    "z_min": 0.0051,
+    "z_max": 3.9951000000000003,
+    "bins": ["BIN1", "BIN2", "BIN3", "BIN4", "BIN5"],
+    "numeric_sha256": "395e043566c3c06e960c95d8b7b617b29a42f5d4fa4e65d5dd66f2e5f674a383"
+  },
+  "source_nz": {
+    "rows": 400,
+    "z_min": 0.0051,
+    "z_max": 3.9951000000000003,
+    "bins": ["BIN1", "BIN2", "BIN3", "BIN4"],
+    "numeric_sha256": "ab4d447dc72e0fdf9cdd470b2eb9cb4d5aa5a6a1bd89f1b55bd047a18f972f97"
+  },
+  "interpretation_boundary": {
+    "closes_only_small_input_P3_prerequisite": true,
+    "support_fraction_computed": false,
+    "covariance_read": false,
+    "nuisance_or_SVD_read": false,
+    "G8_read": false,
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
