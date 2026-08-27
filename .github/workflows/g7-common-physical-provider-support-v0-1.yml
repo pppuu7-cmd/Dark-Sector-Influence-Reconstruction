@@ -1,0 +1,119 @@
+name: G7 common physical provider support v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/g7-common-physical-provider-support-v0-1.yml'
+      - 'ci/g7_common_physical_provider_support_v0_1.py'
+      - 'experiments/071a_g7_common_physical_support_execution_binding_v0_1.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  common-provider-support:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y git gfortran gcc make liblapack-dev libblas-dev python3 python3-dev python3-pip
+          python3 -m pip install --user numpy scipy sympy packaging
+          python3 -m py_compile ci/g7_common_physical_provider_support_v0_1.py
+          gh --version
+      - name: Download immutable certified provider records
+        run: |
+          set -euxo pipefail
+          mkdir -p exp071a_inputs/{c3,c5,unit}
+          gh run download 33017214292 -n 'exp070c-c3-native-provider-3e7d1da2384b296b4786b95fcd743fca5904d752' -D exp071a_inputs/c3
+          gh run download 33024638764 -n 'exp069h-c5-q3-provider-26162b0f2472dc1862eeb60b564a3563eaae12f9' -D exp071a_inputs/c5
+          gh run download 33026608144 -n 'exp069i-c5-raw-k-unit-fa32b651d0c05042a6743e71e373ea13d91c9aa7' -D exp071a_inputs/unit
+          test -f exp071a_inputs/c3/data/derived/g7/exp070c_c3_native_grid_physical_power_provider_v0_1_summary.json
+          test -f exp071a_inputs/c5/data/derived/g7/exp069h_c5_q3_unmodified_upstream_provider_certification_v0_1_summary.json
+          test -f exp071a_inputs/unit/data/derived/g7/exp069i_c5_raw_k_unit_provenance_audit_v0_1.json
+      - name: Build pinned H-EFTCAMB provider runtime
+        run: |
+          set -euxo pipefail
+          git clone --recursive https://github.com/EFTCAMB/EFTCAMB.git eftcamb
+          git -C eftcamb checkout 16d9c4e9f85751e30efd0a53b177941713078904
+          git -C eftcamb submodule update --init --recursive
+          make -C eftcamb/fortran python
+          test "$(git -C eftcamb rev-parse HEAD)" = '16d9c4e9f85751e30efd0a53b177941713078904'
+      - name: Write Exp069H-matched C5 baseline
+        run: |
+          set -euxo pipefail
+          mkdir -p exp071a_configs
+          cp eftcamb/fortran/eftcamb_test/parameters/base_params.ini exp071a_configs/base.ini
+          sed -i 's/^get_scalar_cls[[:space:]]*=.*/get_scalar_cls = F/' exp071a_configs/base.ini
+          sed -i 's/^get_tensor_cls[[:space:]]*=.*/get_tensor_cls = F/' exp071a_configs/base.ini
+          sed -i 's/^do_lensing[[:space:]]*=.*/do_lensing = F/' exp071a_configs/base.ini
+          sed -i 's/^do_nonlinear[[:space:]]*=.*/do_nonlinear = 0/' exp071a_configs/base.ini
+          sed -i 's/^hubble[[:space:]]*=.*/hubble = 67/' exp071a_configs/base.ini
+          sed -i 's/^ombh2[[:space:]]*=.*/ombh2 = 0.0224/' exp071a_configs/base.ini
+          sed -i 's/^omch2[[:space:]]*=.*/omch2 = 0.1200/' exp071a_configs/base.ini
+          sed -i 's/^omnuh2[[:space:]]*=.*/omnuh2 = 0/' exp071a_configs/base.ini
+          sed -i 's/^massless_neutrinos[[:space:]]*=.*/massless_neutrinos = 3.046/' exp071a_configs/base.ini
+          sed -i 's/^nu_mass_eigenstates[[:space:]]*=.*/nu_mass_eigenstates = 0/' exp071a_configs/base.ini
+          sed -i 's/^massive_neutrinos[[:space:]]*=.*/massive_neutrinos = 0/' exp071a_configs/base.ini
+          sed -i 's/^helium_fraction[[:space:]]*=.*/helium_fraction = 0.2404/' exp071a_configs/base.ini
+          sed -i 's/^scalar_amp(1)[[:space:]]*=.*/scalar_amp(1) = 2.10e-9/' exp071a_configs/base.ini
+          sed -i 's/^scalar_spectral_index(1)[[:space:]]*=.*/scalar_spectral_index(1) = 0.965/' exp071a_configs/base.ini
+          sed -i 's/^reionization[[:space:]]*=.*/reionization = F/' exp071a_configs/base.ini
+          sed -i 's/^transfer_kmax[[:space:]]*=.*/transfer_kmax = 0.30/' exp071a_configs/base.ini
+          for key in EFTflag DesignerEFTmodel EFTwDE EFTB0 EFT_ghost_math_stability EFT_mass_math_stability EFT_ghost_stability EFT_gradient_stability EFT_mass_stability EFT_mass_stability_rate EFT_additional_priors EFTCAMB_turn_on_time EFTCAMB_stability_time EFTCAMB_stability_threshold model_background_num_points EFTCAMB_skip_RGR EFTCAMB_GR_threshold; do
+            sed -i "/^[[:space:]]*${key}[[:space:]]*=/d" exp071a_configs/base.ini
+          done
+      - name: Execute frozen Exp071A provider-space support evaluation
+        run: |
+          set -euxo pipefail
+          python3 ci/g7_common_physical_provider_support_v0_1.py \
+            --c3 exp071a_inputs/c3/data/derived/g7/exp070c_c3_native_grid_physical_power_provider_v0_1_summary.json \
+            --c5-cert exp071a_inputs/c5/data/derived/g7/exp069h_c5_q3_unmodified_upstream_provider_certification_v0_1_summary.json \
+            --unit-audit exp071a_inputs/unit/data/derived/g7/exp069i_c5_raw_k_unit_provenance_audit_v0_1.json \
+            --eft-root eftcamb \
+            --config exp071a_configs/base.ini \
+            --output data/derived/g7/exp071a_common_physical_provider_support_v0_1.json
+      - name: Assert frozen Exp071A semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp071a_common_physical_provider_support_v0_1.json'))
+          assert d['experiment']=='Exp071A'
+          assert d['scope']=='COMMON_PROVIDER_PHYSICAL_SUPPORT_INTERSECTION'
+          assert d['scientific_classification'] in {'PASS_COMMON_PHYSICAL_SUPPORT_MASK_V0_1','FAIL_COMMON_PHYSICAL_SUPPORT_MASK_V0_1','INCOMPLETE_EXP071A'}
+          assert d['frozen_execution']['C5_B0']==1e-6
+          assert d['frozen_execution']['PSD_tolerance']==1e-6
+          assert d['frozen_execution']['blocks']==['mm','Wm','WW']
+          assert d['controls']['downstream_covariance_or_relation_read'] is False
+          assert d['covariance_restriction_authorized'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          if d['scientific_classification']=='PASS_COMMON_PHYSICAL_SUPPORT_MASK_V0_1':
+              assert d['counts']['retained_cells']>0
+              assert d['counts']['distinct_retained_z']>=2
+              assert d['counts']['distinct_retained_k']>=2
+              assert all(v['retained']>0 for v in d['counts']['by_block'].values())
+              assert d['next_authorization']=='PREREGISTER_ACT_UNWISE_ANGULAR_SUPPORT_LEAKAGE_AUDIT'
+          print('EXP071A_CLASSIFICATION',d['scientific_classification'])
+          print('COUNTS',d['counts'])
+          print('COMMON_Z',d['frozen_execution']['common_z'])
+          PY
+          test "$(git -C eftcamb rev-parse HEAD)" = '16d9c4e9f85751e30efd0a53b177941713078904'
+          test -z "$(git -C eftcamb status --porcelain --untracked-files=no)"
+      - name: Upload immutable Exp071A record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp071a-common-provider-support-${{ github.sha }}
+          path: |
+            data/derived/g7/exp071a_common_physical_provider_support_v0_1.json
+            exp071a_configs/base.ini
+          if-no-files-found: warn
