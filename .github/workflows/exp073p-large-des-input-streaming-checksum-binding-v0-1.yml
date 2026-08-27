@@ -1,0 +1,78 @@
+name: Exp073P large DES input streaming checksum binding v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073p-large-des-input-streaming-checksum-binding-v0-1.yml'
+      - 'ci/exp073p_streaming_full_object_sha256_binding_v0_1.py'
+      - 'experiments/073p_large_des_input_streaming_checksum_binding_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  source-bin-full-sha256:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stream exact 2.74 GB source-bin release object through SHA256
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_streaming_full_object_sha256_binding_v0_1.py \
+            --name y1_source_redshift_binning_v1.fits \
+            --url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_source_redshift_binning_v1.fits \
+            --expected-bytes 2738626560 \
+            --output data/derived/g7/exp073p_y1_source_redshift_binning_v1_streaming_sha256_v0_1.json
+      - name: Assert provenance-only contract
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073p_y1_source_redshift_binning_v1_streaming_sha256_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_FULL_OBJECT_STREAMING_SHA256_BINDING'
+          assert d['expected_bytes']==2738626560 == d['observed_bytes']
+          assert d['support_fraction_evaluated'] is False
+          assert d['retained_dimension_evaluated'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073p-source-bin-full-sha256-${{ github.sha }}
+          path: data/derived/g7/exp073p_y1_source_redshift_binning_v1_streaming_sha256_v0_1.json
+          if-no-files-found: warn
+
+  metacal-full-sha256:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stream exact 84.1 GB Metacalibration release object through SHA256
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_streaming_full_object_sha256_binding_v0_1.py \
+            --name mcal-y1a1-combined-riz-unblind-v4-matched.fits \
+            --url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/shear_catalogs/mcal-y1a1-combined-riz-unblind-v4-matched.fits \
+            --expected-bytes 84075649920 \
+            --output data/derived/g7/exp073p_mcal_y1a1_streaming_sha256_v0_1.json
+      - name: Assert provenance-only contract
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073p_mcal_y1a1_streaming_sha256_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_FULL_OBJECT_STREAMING_SHA256_BINDING'
+          assert d['expected_bytes']==84075649920 == d['observed_bytes']
+          assert d['support_fraction_evaluated'] is False
+          assert d['retained_dimension_evaluated'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073p-metacal-full-sha256-${{ github.sha }}
+          path: data/derived/g7/exp073p_mcal_y1a1_streaming_sha256_v0_1.json
+          if-no-files-found: warn
