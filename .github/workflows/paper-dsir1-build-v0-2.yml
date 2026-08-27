@@ -47,6 +47,14 @@ jobs:
         run: |
           python papers/dsir1/audit_paper_v0_2.py
 
+      - name: Audit JCAP front matter
+        run: |
+          python papers/dsir1/audit_jcap_front_matter.py
+
+      - name: Build JCAP-facing manuscript candidate
+        run: |
+          python papers/dsir1/build_jcap_candidate.py
+
       - name: Audit retrospective known-sector specificity control
         run: |
           python papers/dsir1/audit_retrospective_specificity_control.py
@@ -95,6 +103,7 @@ jobs:
         run: |
           mkdir -p papers/dsir1/build
           sha256sum papers/dsir1/manuscript_v0_2.md > papers/dsir1/build/SHA256SUMS.txt
+          sha256sum papers/dsir1/manuscript_jcap_candidate.md >> papers/dsir1/build/SHA256SUMS.txt
           find papers/dsir1/figures/generated -maxdepth 1 -type f -print0 | sort -z | xargs -0 sha256sum >> papers/dsir1/build/SHA256SUMS.txt
           {
             echo "git_commit=${GITHUB_SHA}"
@@ -112,6 +121,9 @@ jobs:
           retention-days: 90
           path: |
             papers/dsir1/manuscript_v0_2.md
+            papers/dsir1/manuscript_jcap_candidate.md
+            papers/dsir1/JCAP_FRONT_MATTER_DRAFT.md
+            papers/dsir1/JCAP_SUBMISSION_CHECKLIST.md
             papers/dsir1/PROVENANCE_MATRIX.md
             papers/dsir1/SUPPORT_OPERATOR_PROVENANCE.md
             papers/dsir1/OBSERVATION_ROUTE_LEDGER.md
