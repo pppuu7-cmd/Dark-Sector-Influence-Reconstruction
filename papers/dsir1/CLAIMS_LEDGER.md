@@ -54,6 +54,8 @@ This ledger separates statements that are already supported by frozen DSIR evide
 
 10. **Matter-response geometric simplicity is not dark-sector-specific.** A retrospective, explicitly post-unblinding Exp071D control shows that an ordinary known-sector baryon-fraction (`K2`) path can be almost one-dimensional in matter-response space (`PC1 fraction ~0.99904`) while backtracking and reaching a sampled adjacent-tangent turn of about `169.69 deg`. This is allowed only as a non-overclaim/specificity control: matter-only low dimensionality or near-directionality is a mechanism/transfer diagnostic, not a dark-sector identity statistic. Exp071D creates no new hard gate, threshold, or dark-specific theorem.
 
+11. **Observational support closure is a scientific eligibility condition, not a bookkeeping step.** In the frozen ACTxunWISE C3/C5 route, Exp072A retained `0/26` candidate coordinates at the preregistered 5% support-leakage criterion, so covariance restriction and nuisance quotienting were not authorized. Exp072B showed that an upper-k-only extension does not rescue the route. Exp072C found a joint planning frontier at `z_min=0.0087346` and `k_max=4.81826 Mpc^-1` with retained dimension 15, requiring descriptive extensions of about `72.29x` in upper k and `33.77x` toward lower redshift relative to the then-current common support. Exp073A then classified the GR-reference linear/no-CLEFT route to that frontier as ineligible: only `7/64` source pairs pass the primary `Delta^2<=1` criterion and the retained dimension remains zero for diagnostic thresholds 0.5, 1, and 2. The allowed conclusion is that the full ACTxunWISE C3/C5 quotient must not yet be evaluated on this route; this is not a failure of DSIR response geometry and does not close G7/G8/G9.
+
 ## B. Claims explicitly prohibited in DSIR-I
 
 - No claim of discovery of new fundamental physics.
@@ -67,9 +69,13 @@ This ledger separates statements that are already supported by frozen DSIR evide
 - No retrospective threshold tuning to convert failed experiments into passes.
 - No rescue of Exp054C by widening the frozen interval, flipping the expected sign, redefining the C7 response coordinate, or reusing C7 as a fresh withheld family for a law chosen after inspecting C7.
 - No promotion of Exp071D's post-unblinding known-sector taxonomy to a prospective dark-sector specificity theorem or threshold.
+- No covariance-whitened or nuisance-quotiented C3/C5 ACTxunWISE survey distance from the failed Exp072A current-support route.
+- No interpretation of the Exp072C Pareto frontier as an already certified C3/C5 physical provider domain.
+- No reinterpretation of Exp073A linear-route ineligibility as a falsification of the DSIR operator framework itself.
+- No scientific interpretation of the first Exp073B workflow failure: run `33033220464` stopped during pinned-source checkout before the frozen capability audit executed.
 
 ## C. First-paper scope
 
-DSIR-I is a **methodological and phenomenological response-atlas paper**. It establishes a common language for comparing physically different dark-sector mechanisms, shows with frozen examples why single-channel or low-dimensional summaries fail, formalizes channel-conditional equivalence, and documents prospective/withheld validation practice including genuine prospective falsification. A retrospective known-sector control is retained only to constrain interpretation and prevent dark-specific overclaiming.
+DSIR-I is a **methodological and phenomenological response-atlas paper**. It establishes a common language for comparing physically different dark-sector mechanisms, shows with frozen examples why single-channel or low-dimensional summaries fail, formalizes channel-conditional equivalence, documents prospective/withheld validation practice including genuine prospective falsification, and now includes a completed negative observation-space eligibility chain showing why physical support must be certified before whitening or nuisance quotienting. A retrospective known-sector control is retained only to constrain interpretation and prevent dark-specific overclaiming.
 
-A later paper may address fully observational quotient distances after the common support mask, covariance whitening, nuisance tangent SVD, and fresh withheld-family relation tests are completed. The first paper must remain publishable even if no universal G7 relation is ever found.
+A later paper may address fully observational quotient distances after an eligible common support, covariance whitening, nuisance tangent SVD, and fresh withheld-family relation tests are completed. The first paper must remain publishable even if no universal G7 relation is ever found.
