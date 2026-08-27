@@ -1,0 +1,96 @@
+name: Exp073P growth-history SD SACC binding v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073p-growth-history-sd-sacc-binding-v0-1.yml'
+      - 'ci/exp073p_growth_history_sd_sacc_binding_v0_1.py'
+      - 'experiments/073p_growth_history_sd_sacc_preoutput_binding_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  checksum-and-schema-binding:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone exact frozen growth-history source
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/Cosmotheka/growth-history.git external/growth-history
+          git -C external/growth-history checkout 6accbf70e55e8a55e7a61289c85d8665bfb1e310
+          test "$(git -C external/growth-history rev-parse HEAD)" = '6accbf70e55e8a55e7a61289c85d8665bfb1e310'
+          test "$(git -C external/growth-history rev-parse HEAD^{tree})" = '06ca903788fbb2c0791ac7c80e276ce6a78230fd'
+
+      - name: Install frozen FITS header reader
+        run: python3 -m pip install --disable-pip-version-check astropy==7.1.0
+
+      - name: Download exact README-labelled SD SACC object
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp073p_sacc
+          curl \
+            --fail \
+            --location \
+            --retry 4 \
+            --retry-all-errors \
+            --connect-timeout 30 \
+            --max-time 1800 \
+            --dump-header external/exp073p_sacc/headers.txt \
+            --output external/exp073p_sacc/SD_sacc.fits \
+            --write-out '%{url_effective}\n%{http_code}\n%{size_download}\n' \
+            'https://entangled.physics.ox.ac.uk/index.php/s/cF1x6j4biWXjDy3/download' \
+            > external/exp073p_sacc/transfer.txt
+
+      - name: Execute checksum and header-only binding
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_growth_history_sd_sacc_binding_v0_1.py \
+            --source-root external/growth-history \
+            --sacc external/exp073p_sacc/SD_sacc.fits \
+            --headers external/exp073p_sacc/headers.txt \
+            --transfer external/exp073p_sacc/transfer.txt \
+            --output data/derived/g7/exp073p_growth_history_sd_sacc_binding_v0_1.json
+
+      - name: Assert no support or downstream leakage
+        run: |
+          python3 - <<'PY'
+          import json
+          p = 'data/derived/g7/exp073p_growth_history_sd_sacc_binding_v0_1.json'
+          d = json.load(open(p))
+          assert d['status'] in {
+              'BOUND_GROWTH_HISTORY_SD_SACC_CHECKSUM_FOR_OPERATOR_AUDIT_EXP073P',
+              'INCOMPLETE_EXP073P_GROWTH_HISTORY_SD_SACC_BINDING',
+          }
+          assert d['scientific_classification'] is None
+          assert d['operator_payload_semantics_read'] is False
+          assert d['covariance_data_read'] is False
+          assert d['support_fraction_evaluated'] is False
+          assert d['retained_dimension_evaluated'] is False
+          assert d['input_checksum_gate_complete'] is False
+          assert d['support_evaluation_authorized'] is False
+          assert d['large_raw_des_objects_consumed'] is False
+          f = d['frozen_contract_preserved']
+          assert f['f_invalid_max'] == 0.05
+          assert f['minimum_retained_dimension'] == 15
+          assert f['nside_classifying'] == 4096
+          assert f['covariance_read'] is False
+          assert f['nuisance_read'] is False
+          assert f['relation_null_read'] is False
+          assert f['G8_read'] is False
+          assert d['gate_state'] == {'G7': 'OPEN', 'G8': 'OPEN', 'G9': 'OPEN'}
+          print('EXP073P_SD_SACC_BINDING', d['status'])
+          PY
+
+      - name: Upload immutable binding record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073p-growth-history-sd-sacc-binding-${{ github.sha }}
+          path: data/derived/g7/exp073p_growth_history_sd_sacc_binding_v0_1.json
+          if-no-files-found: warn
