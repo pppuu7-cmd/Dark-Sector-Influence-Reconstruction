@@ -1,0 +1,118 @@
+{
+  "experiment": "Exp073G",
+  "record_type": "PRE_OUTPUT_SUPPORT_ENVELOPE_EXECUTION_BINDING",
+  "date": "2026-08-27",
+  "support_evaluated": false,
+  "retained_dimension_evaluated": false,
+  "parent_operator_binding_main_sha": "7888f9a9b405e928eaf07c01238a64fa636aeefd",
+  "additional_sources": {
+    "kcap": {
+      "repository": "KiDS-WL/kcap",
+      "branch": "sanchez2017",
+      "commit": "1a0fcfe1dea694a176c30ec019d6f0ca101e8ae8",
+      "tree": "35cc43a1b8f01502b626d9d4b2914c100c16e6f9",
+      "files": [
+        {
+          "path": "cosebis/BandPower_interface.cc",
+          "git_blob": "aad51baaa166cf11aa2baf2cbc6049e6cfa198b6",
+          "sha256": "42fd8788bec206af6c4f5e99798e0cc68a70c2fb31d3d65499b314d00c0f2e98"
+        },
+        {
+          "path": "cosebis/modules/BandPower_W.cc",
+          "git_blob": "4f75803c64e80e5540ae47f91fa5636cb834d4ef",
+          "sha256": "b7e2c74c928507308e1436b4e7052a242213aa3ea7193ade663ff9c37e51a863"
+        },
+        {
+          "path": "cosebis/modules/BandPower_g.cc",
+          "git_blob": "f18f03652d28bac14f3e635ebc944a518dfa07ef",
+          "sha256": "1ad01fe613875c66a3ee7b901f81641066b836540a76632f15e9c4e643bd8b72"
+        }
+      ]
+    },
+    "kcap_boss_module": {
+      "repository": "KiDS-WL/kcap_boss_module",
+      "commit": "0e894a7e58b257f50f9348f35309b3171688f004",
+      "tree": "875f0ef7c8cabe50247b04302b91f5c433ccd141",
+      "scientific_source_unchanged_since": "e9d0739811b5c317715b0b0da18c05f15ce7aaca",
+      "files": [
+        {"path": "CosmoMC_BOSS/source/twopt_model.f90", "git_blob": "f27f9d3a484a36276fc40e7a51e5cc88b8f9f323", "sha256": "3cbcc3852f905887beb5a5035d2ba377939f045985a90a9e357cdf44d268416b"},
+        {"path": "python_interface/cosmosis_module.py", "git_blob": "6d4654384d0ecd095f756d963e0f4736d53b2cea", "sha256": "049b787fe55b3305729362659e1bfa66dbb02a1761139f03262baf7c272844b2"},
+        {"path": "CosmoMC_BOSS/source/twopt_data.f90", "git_blob": "2a8e711544c1b42f4fa07a4c3a8a55bd25cfea7d", "sha256": "3a59e0e00328bccb1391d1da72a1ac2e06e9aad031efc2dc548f0812b7ac935a"},
+        {"path": "CosmoMC_BOSS/source/twopt_likelihood.f90", "git_blob": "33ebc41fcd38ce088081a7d50618f4b8d9fdd7e0", "sha256": "58455e03eb48465126155f541ac9d618182a2ce7c272cca6db0daf5f08aef8c0"},
+        {"path": "CosmoMC_BOSS/source/fiducial.f90", "git_blob": "983dce62345a3742a521588ff5f526249eaea73f", "sha256": "ceebe572c6b03969f5a8a7fd7d1a1497cd574cd45f93f1f263c1f04e9e94f06b"}
+      ]
+    },
+    "boss_highz_nz": {
+      "path": "data/boss/nofz/BOSS_n_of_z2_res_0.01.txt",
+      "git_blob": "259e5c3db55b29f544a5c8c95c2617ed81f80ea9",
+      "sha256": "00237c6f5a8df94b7c8de6e1a94d2d6fdf1bf934687183f9dbafb529d8c99c9b",
+      "positive_tabulated_support": [0.5, 0.74]
+    }
+  },
+  "kids_harmonic_operator": {
+    "ell_domain": [0.1, 10000.0],
+    "kcap_internal_log_table_nodes": 1000,
+    "support_log_ell_nodes": 4097,
+    "theta_min_arcmin": 0.5,
+    "theta_max_arcmin": 300.0,
+    "log_apodisation_width": 0.5,
+    "theta_log_gauss_nodes_production": 4096,
+    "theta_log_gauss_nodes_control": 2048,
+    "normalized_L1_filter_tolerance": 2e-5,
+    "ggl_positive_operator": "abs(ell*W_2/N)",
+    "shear_positive_operator": "0.5*(abs(ell*W_0/N)+abs(ell*W_4/N))",
+    "N": "log(ell_high/ell_low)"
+  },
+  "lensing_support": {
+    "source_interpolation": "linear between frozen half-bin coordinates; zero outside",
+    "source_kernel": "q_a(z)=-chi(z)*integral_z^infinity dz_s n_a(z_s)*(chi_s-chi)/chi_s",
+    "bnt_rows_zero_based": [2, 3, 4],
+    "ggl_envelope": "n_lens(z)*abs(q_A(z))/chi(z)^2",
+    "shear_envelope": "(dchi/dz)*abs(q_A(z)*q_B(z))/chi(z)^2",
+    "limber_k": "(ell+0.5)/chi in physical Mpc^-1",
+    "z_domain": [0.0, 6.0],
+    "z_midpoint_cells_production": 12000,
+    "z_midpoint_cells_control": 24000,
+    "coordinate_fraction_tolerance": 2e-5
+  },
+  "boss_configuration_operator": {
+    "selected_window_rows_zero_based_half_open": [4, 32],
+    "selected_window_columns_zero_based_half_open": [20, 160],
+    "wedges": 3,
+    "effective_redshift_for_AP": 0.61,
+    "fiducial_Omega_m": 0.31,
+    "fiducial_h": 0.7,
+    "k_h_lower_h_Mpc": 0.002029430636295734,
+    "k_h_upper_h_Mpc": 6.0,
+    "cutoffs": {
+      "0": {"kcut_h_Mpc": 0.7, "power": 2.0},
+      "2": {"kcut_h_Mpc": 0.58, "power": 4.0},
+      "4": {"kcut_h_Mpc": 0.6, "power": 2.0}
+    },
+    "mu_gauss_nodes_production": 128,
+    "mu_gauss_nodes_control": 64,
+    "k_h_log_nodes_production": 32769,
+    "k_h_log_nodes_control": 16385,
+    "coordinate_fraction_tolerance": 2e-5,
+    "upper_tail_max_cutoff": 2e-32,
+    "positive_envelope": "k_h^2*sum_r abs(window_ir)*sum_L cutoff_L*mean_mu(abs(L_L(mu_true)*j_L(k_h*s_true)))",
+    "physical_k_conversion": "k_Mpc^-1=h*k_h_h_Mpc"
+  },
+  "frozen_support": {
+    "z_min": 0.295,
+    "z_max": 2.33,
+    "k_min_Mpc^-1": 0.000704833374744468,
+    "k_max_Mpc^-1": 0.06664762008318016,
+    "max_invalid_positive_fraction": 0.05
+  },
+  "candidate_coordinates": {"mm": 84, "Wm": 24, "WW": 48, "total": 156},
+  "controls": {
+    "covariance_values_read": false,
+    "measured_residuals_read": false,
+    "nuisance_rank_or_SVD_read": false,
+    "G7_relation_read": false,
+    "G8_output_read": false,
+    "support_fraction_computed": false
+  },
+  "next_step": "implement and execute the now fully bound Exp073G positive support evaluator"
+}
