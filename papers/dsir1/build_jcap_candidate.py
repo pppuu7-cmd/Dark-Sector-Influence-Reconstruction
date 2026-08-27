@@ -68,19 +68,36 @@ def main() -> None:
     )
     out = out.replace(OUTLOOK_START, disclosure + OUTLOOK_START, 1)
 
-    # Journal-facing claim guards.
     for token in (
         "has not yet been scored for physical support",
         "not a universal dark-sector law",
         "claim of new fundamental physics",
-        "G7=OPEN",
-        "G8=OPEN",
-        "G9=OPEN",
         "AI-assisted technology disclosure",
         "OpenAI ChatGPT",
         "takes full responsibility for the content of the manuscript",
     ):
         require(token in out, f"JCAP candidate lost required boundary: {token}")
+
+    # Gate boundary may be written compactly or in journal prose. Require all
+    # three gates to be explicitly open without depending on one punctuation
+    # style.
+    gate_boundary_ok = (
+        all(f"{g}=OPEN" in out for g in ("G7", "G8", "G9"))
+        or "G7, G8, and G9 remain open" in out
+        or "G7, G8, G9 remain OPEN" in out
+        or "G7/G8/G9 remain OPEN" in out
+    )
+    require(gate_boundary_ok, "JCAP candidate lost explicit G7/G8/G9 OPEN boundary")
+
+    for forbidden in (
+        "G7 is closed",
+        "G8 is closed",
+        "G9 is closed",
+        "G7=CLOSED",
+        "G8=CLOSED",
+        "G9=CLOSED",
+    ):
+        require(forbidden not in out, f"JCAP candidate contains forbidden gate promotion: {forbidden}")
 
     OUT.write_text(out.rstrip() + "\n", encoding="utf-8")
     print(f"wrote {OUT}")
