@@ -84,7 +84,7 @@ jobs:
             'https://raw.githubusercontent.com/LSSTDESC/LSS_DC1_paper/8979efd021be92214ce6048f315b40e2dadf6937/texmf/bib/JHEP.bst' \
             --output papers/dsir1/jcap/JHEP.bst
 
-          test "$(git hash-object papers/dsir1/jcap/jcappub.sty)" = 'ae3cea7cdba7a875174ae5232b94cdec560d6afc'
+          test "$(git hash-object papers/dsir1/jcap/jcappub.sty)" = '6d7508b34b5f0069d3d590186c97ba84c608b89e'
           test "$(git hash-object papers/dsir1/jcap/JHEP.bst)" = '7b9b88cfed16dc5c7249cb5265288416bf842d86'
 
           grep -F '\ProvidesPackage{jcappub}[2012/08/02 r764]' papers/dsir1/jcap/jcappub.sty
