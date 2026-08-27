@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Audit the DSIR-I observation-space support/perturbativity claim chain.
+"""Audit the DSIR-I observation-space support/provider/model-boundary chain.
 
-This audit binds the manuscript-facing snapshot of Exp072A/B/C and Exp073A.
-It deliberately refuses to promote the first Exp073B infrastructure failure to
-scientific evidence.
+The audit binds the manuscript-facing snapshot of Exp072A/B/C and Exp073A--E.
+It preserves the first Exp073B checkout failure as infrastructure-only while
+binding the later corrected-source capability audit as the valid scientific
+Exp073B result.
 """
 
 from __future__ import annotations
@@ -84,13 +85,50 @@ def main() -> None:
     require(close(p["median_pair_max_Delta2_inside_geometry"], 10.106721461271324), "Exp073A Delta2 diagnostic changed")
     require(p["linear_no_CLEFT_route_eligible"] is False and p["covariance_restriction_authorized"] is False, "Exp073A route was improperly promoted")
 
-    boundary = d["boundary"]
-    require(boundary == {**boundary, "G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}, "Gate-boundary keys missing")
-    require(boundary["G7"] == boundary["G8"] == boundary["G9"] == "OPEN", "G7/G8/G9 must remain OPEN")
+    b73 = e["Exp073B"]
+    require(b73["status"] == "GAP_EXISTING_STACK_NONLINEAR_MATTER_WEYL_ROUTE_EXP073B", "Exp073B valid classification changed")
+    require(b73["completed_workflow_run"] == 33033279245 and b73["artifact_id"] == 9631041961, "Exp073B valid provenance changed")
+    require(b73["artifact_digest"] == "sha256:743ef140774eaeef164c506590a14ef999f2cb98e2bf5fd79e42bda9e69f96a5", "Exp073B artifact digest changed")
+    require(b73["initial_infrastructure_attempt"]["workflow_run"] == 33033220464, "Exp073B initial infra run changed")
+    require(b73["initial_infrastructure_attempt"]["scientific_classification"] is False, "Exp073B initial infra failure was promoted to science")
+    require(b73["projector_three_block_interface_sufficient"] is True, "Exp073B projector sufficiency changed")
+    require(b73["C3_complete_nonlinear_three_block_provider"] is False, "Exp073B C3 provider gap changed")
+    require(b73["C5_complete_nonlinear_three_block_provider"] is False, "Exp073B C5 provider gap changed")
+    require(b73["complete_existing_candidate_support_plausible"] is False, "Exp073B candidate plausibility changed")
+    require(b73["covariance_restriction_authorized"] is False, "Exp073B improperly authorized covariance restriction")
 
-    b73 = d["Exp073B"]
-    require(b73["included_in_science_claims"] is False, "Exp073B infrastructure failure was promoted to science")
-    require("before the frozen capability audit executed" in b73["reason"], "Exp073B exclusion reason weakened")
+    c73 = e["Exp073C"]
+    require(c73["status"] == "NO_COMPLETE_PUBLIC_CANDIDATE_ROUTE_EXP073C", "Exp073C classification changed")
+    require(c73["preregistered_before_candidate_ranking"] is True, "Exp073C lost prospective ranking boundary")
+    require(c73["complete_public_or_composable_candidate_found"] is False, "Exp073C now claims a complete public candidate")
+    require(c73["C5_nonlinear_matter_candidates_exist"] is True, "Exp073C partial C5 landscape changed")
+    require(c73["C5_independent_signed_Wm_WW_public_provider_found"] is False, "Exp073C C5 Weyl-provider boundary changed")
+    require(c73["C3_nonlinear_matter_partial_candidates_exist"] is True, "Exp073C partial C3 landscape changed")
+    require(c73["C3_independent_signed_Wm_WW_public_provider_found"] is False, "Exp073C C3 Weyl-provider boundary changed")
+    require(c73["covariance_restriction_authorized"] is False, "Exp073C improperly authorized covariance restriction")
+
+    d73 = e["Exp073D"]
+    require(d73["status"] == "C3_NONLINEAR_COMPLETION_NONIDENTIFIABLE_C5_DEFINED_EXP073D", "Exp073D classification changed")
+    require(d73["C3_frozen_definition_order"] == "linear_perturbative", "Exp073D C3 definition order changed")
+    require(d73["C3_nonlinear_continuation_unique"] is False, "Exp073D C3 nonlinear uniqueness changed")
+    require(d73["C3_unique_nonlinear_three_block_inference_from_frozen_vector"] is False, "Exp073D C3 three-block identifiability changed")
+    require(d73["C5_nonlinear_theory_defined_in_principle"] is True, "Exp073D C5 theory-definition result changed")
+    require(d73["C5_current_certified_nonlinear_provider_present"] is False, "Exp073D C5 provider status changed")
+    require(d73["posthoc_single_C3_nonlinear_closure_forbidden"] is True, "Exp073D post-hoc C3 closure guard removed")
+    require(d73["covariance_restriction_authorized"] is False, "Exp073D improperly authorized covariance restriction")
+
+    e73 = e["Exp073E"]
+    require(e73["status"] == "C3_COMPLETION_ENSEMBLE_NOT_FEASIBLE_EXP073E", "Exp073E classification changed")
+    require(e73["full_C3_linear_limit_preservation_established"] is False, "Exp073E full-C3 preservation boundary changed")
+    require(e73["at_least_two_physically_distinct_assumptions_descriptively_exist"] is True, "Exp073E descriptive completion diversity changed")
+    require(e73["provider_certifiable_independent_nonlinear_three_block_route"] is False, "Exp073E provider-certifiability changed")
+    require(e73["no_downstream_leakage"] is True, "Exp073E downstream-leakage guard changed")
+    require(e73["completion_ensemble_feasible_under_frozen_E1_E8"] is False, "Exp073E ensemble feasibility changed")
+    require(e73["current_ACT_unWISE_G7_route_blocked_before_covariance_restriction"] is True, "Exp073E route-block boundary changed")
+
+    boundary = d["boundary"]
+    require(boundary["G7"] == boundary["G8"] == boundary["G9"] == "OPEN", "G7/G8/G9 must remain OPEN")
+    require("Exp073A/B/C/D/E" in boundary["claim"], "Support-chain boundary does not include completed Exp073A--E")
 
     section = read(SECTION)
     claims = read(CLAIMS)
@@ -100,20 +138,28 @@ def main() -> None:
         "0.0087346",
         "4.81826",
         "7 of 64",
+        "GAP_EXISTING_STACK_NONLINEAR_MATTER_WEYL_ROUTE_EXP073B",
+        "C3_COMPLETION_ENSEMBLE_NOT_FEASIBLE_EXP073E",
         "G7, G8, and G9 remain open",
-        "must not yet be evaluated",
+        "does **not** compute or quote",
     ]:
         require(token in section, f"Section token missing: {token}")
     require("Observational support closure is a scientific eligibility condition" in claims, "Claims ledger missing support-closure claim")
-    for pid in ("P16", "P17", "P18", "P19"):
+    require("The present nonlinear obstruction is in the physical provider layer" in claims, "Claims ledger missing Exp073B/C provider-boundary claim")
+    require("Nonlinear continuation is model-definition dependent" in claims, "Claims ledger missing Exp073D identifiability claim")
+    require("A finite C3 nonlinear-completion ensemble is not currently feasible" in claims, "Claims ledger missing Exp073E boundary")
+    for pid in ("P16", "P17", "P18", "P19", "P20", "P21", "P22", "P23"):
         require(f"| {pid} |" in provenance, f"Provenance row {pid} missing")
 
     print("PASS: Exp072A support-mask FAIL preserved")
     print("PASS: Exp072B k-only non-rescue preserved")
     print("PASS: Exp072C planning frontier preserved")
     print("PASS: Exp073A linear-route ineligibility preserved")
-    print("PASS: Exp073B infrastructure failure excluded from science claims")
-    print("PASS: DSIR-I observation-space support closure audit")
+    print("PASS: Exp073B initial infrastructure failure + corrected capability GAP distinguished")
+    print("PASS: Exp073C no-complete-public-route boundary preserved")
+    print("PASS: Exp073D C3/C5 nonlinear identifiability asymmetry preserved")
+    print("PASS: Exp073E completion-ensemble boundary preserved")
+    print("PASS: DSIR-I observation-space support/provider/model-boundary audit")
 
 
 if __name__ == "__main__":
