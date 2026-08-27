@@ -42,12 +42,16 @@ jobs:
       - name: Clone exact pinned provider and ACT sources
         run: |
           set -euxo pipefail
-          git clone https://github.com/lesgourg/class_public.git external/class_public
+          # C3 has always been certified against the GDM fork, not vanilla CLASS.
+          git clone https://github.com/s-ilic/gdm_class_public.git external/class_public
           git -C external/class_public checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          test "$(git -C external/class_public rev-parse HEAD)" = '4c87916aab5ca124a68f1dd16f31846fc13d1829'
           git clone https://github.com/EFTCAMB/EFTCAMB.git external/EFTCAMB
           git -C external/EFTCAMB checkout 16d9c4e9f85751e30efd0a53b177941713078904
+          test "$(git -C external/EFTCAMB rev-parse HEAD)" = '16d9c4e9f85751e30efd0a53b177941713078904'
           git clone https://github.com/ACTCollaboration/unWISExLens_lklh.git external/unWISExLens_lklh
           git -C external/unWISExLens_lklh checkout 6302c30d9e70f8e4ff2d4a84a9977b4471705179
+          test "$(git -C external/unWISExLens_lklh rev-parse HEAD)" = '6302c30d9e70f8e4ff2d4a84a9977b4471705179'
       - name: Execute frozen Exp073B source capability audit
         run: |
           set -euxo pipefail
