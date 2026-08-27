@@ -1,9 +1,9 @@
 {
-  "snapshot": "DSIR-I support-operator eligibility evidence v0.1",
+  "snapshot": "DSIR-I support-operator eligibility evidence v0.2",
   "date": "2026-08-27",
   "source_repository": "pppuu7-cmd/Dark-Sector-Influence-Reconstruction",
   "source_branch": "main",
-  "source_main_seen_at": "5ee34c3fc80ab1091b7e925d321d880dbadade3c",
+  "source_main_seen_at": "4b466f1c27019438c76a92dd7830ac6a2cc3fe7d",
   "experiments": {
     "Exp073G": {
       "status": "FAIL_EXP073G_REPRODUCTION_OR_PROVENANCE",
@@ -74,7 +74,56 @@
       },
       "support_fraction_evaluated": false,
       "covariance_read_for_selection": false,
-      "threshold_changed": false
+      "threshold_changed": false,
+      "later_exact_realdata_provenance_status": "rejected_by_Exp073N_for_exact_frozen_realdata_realization"
+    },
+    "Exp073N": {
+      "status": "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
+      "implementation_merge": "6868ed9113e2697675756f23fae8d350a9239bf6",
+      "workflow_run": 33062650033,
+      "workflow_job": 98484967582,
+      "artifact_id": 9642372335,
+      "artifact_digest": "sha256:914d23e9d708a7b8cb9e097a69845e2630ec265b5ccc489ce9a8d389d4e198db",
+      "artifact_json_sha256": "e4eb6cd10ac964030e84596ee352f22c5c2d4fae91e917a68db567cef2b6adeb",
+      "operator_repository_reproduced": true,
+      "exact_DES_Y3_realdata_Wm_realization_reproducible": false,
+      "reasons": [
+        "frozen public pin contains only Y3 flask configurations, not a real-data Y3 GGL configuration",
+        "frozen ggltest.py executes only type=flask and raises NotImplementedError otherwise",
+        "the exact published Y3 real-data Wm NaMaster workspace/input realization is therefore not reproducible from the frozen public source binding"
+      ],
+      "support_fraction_evaluated": false,
+      "scientific_support_fail": false,
+      "common_rectangle": "0.295 <= z <= 2.33; k <= 0.06664762008318016 Mpc^-1",
+      "future_f_invalid_threshold": 0.05,
+      "future_minimum_retained_dimension": 15
+    },
+    "Exp073O": {
+      "status": "PUBLIC_REALDATA_FINITE_HARMONIC_WM_REPLACEMENT_FOUND_EXP073O",
+      "result_commit": "3f16dabdbfe9842b928d2fd0e00e481194637583",
+      "candidate": "COSMOTHEKA_DESY1_GC_X_WL_PSEUDO_CL",
+      "source_repository": "Cosmotheka/Cosmotheka",
+      "source_commit": "7bde066626f66cd7bbe79cc46224d2342840e463",
+      "tests": {
+        "O1_public_immutable_realdata_provenance": true,
+        "O2_finite_operator": true,
+        "O3_exact_public_inputs_bindable": true,
+        "O4_signed_Wm": true,
+        "O5_no_GR_closure": true,
+        "O6_no_model_or_downstream_weighting": true,
+        "O7_exact_support_audit_possible": true,
+        "O8_provenance_completeness": true
+      },
+      "frozen_bpw_edge_count": 39,
+      "harmonic_lmax_bounded_by": "3*nside",
+      "support_fraction_evaluated": false,
+      "covariance_read_for_candidate_selection": false,
+      "nuisance_read": false,
+      "relation_null_read": false,
+      "G8_read": false,
+      "parent_Exp073N_preserved": "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
+      "future_f_invalid_threshold": 0.05,
+      "future_minimum_retained_dimension": 15
     },
     "Exp073P2": {
       "status": "PASS_REMAINING_DESY1_RELEASE_CHECKSUM_BINDING_EXP073P2",
@@ -126,13 +175,40 @@
       "support_fraction_computed": false,
       "covariance_read": false,
       "nuisance_or_SVD_read": false
+    },
+    "Exp073R0": {
+      "status": "PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0",
+      "workflow_run": 33103083736,
+      "execution_sha": "94b05d307295d5e9263646983ece9514f9fa2e88",
+      "artifact_id": 9661445512,
+      "artifact_digest": "sha256:bfa97a88218cda6e6e6c58d915e8e5b21500fa677a484205691f2f01662ed4d0",
+      "completed_utc": "2026-08-27T19:26:21.080756+00:00",
+      "sample_rows": 131072,
+      "nrows_parent": 136930995,
+      "n_windows": 16,
+      "window_rows": 8192,
+      "nside": 4096,
+      "coords": "C",
+      "source_fields_exact": true,
+      "metacal_fields_exact": true,
+      "bins_with_selected_rows": [0, 1, 2, 3],
+      "per_bin": {
+        "0": {"selected_rows": 7674, "unique_pixels": 4300, "pixel_indices_exact": true},
+        "1": {"selected_rows": 7667, "unique_pixels": 4277, "pixel_indices_exact": true},
+        "2": {"selected_rows": 7272, "unique_pixels": 4178, "pixel_indices_exact": true},
+        "3": {"selected_rows": 3618, "unique_pixels": 2650, "pixel_indices_exact": true}
+      },
+      "science_gate_scored": false,
+      "support_fraction_computed": false,
+      "article_use": "reproduction/equivalence prerequisite PASS only; not the physical-support gate"
     }
   },
   "pending_or_excluded": {
-    "Exp073R0": {
+    "Exp073R1": {
       "science_claim_included": false,
-      "state": "retry after infrastructure timeout; frozen science unchanged",
-      "latest_retry_commit": "5ee34c3fc80ab1091b7e925d321d880dbadade3c"
+      "state": "preregistered and gated implementation merged; no completed R1 scientific output observed in the article snapshot",
+      "preregistration_commit": "71d61efc17535f45a81f45d1a037abfdb8aaaeeb",
+      "gated_implementation_merge": "4b466f1c27019438c76a92dd7830ac6a2cc3fe7d"
     }
   },
   "boundary": {
@@ -142,14 +218,17 @@
     "claims": [
       "A support fraction requires a prospectively defined finite positive normalizer; it is not meaningful when the chosen absolute-response measure is nonnormalizable.",
       "Exp073L is a completed normalizability result, not a support-fraction result.",
-      "Exp073M establishes only a finite-positive operator candidate satisfying the frozen M1-M8 preconditions; its physical support fraction is not yet scored.",
-      "Exp073P2 and Exp073S0 close provenance/reproduction prerequisites only and do not authorize covariance, nuisance quotienting, or G7 closure."
+      "Exp073M established an operator-class candidate, but Exp073N independently rejected its exact frozen DES Y3 real-data realization at the mandatory provenance gate before any support output.",
+      "Exp073O prospectively replaced the rejected Wm realization with a public finite DES Y1 pseudo-C_ell operator satisfying O1-O8 while leaving the 5% support threshold and minimum retained dimension unchanged.",
+      "Exp073P2, Exp073S0 and Exp073R0 close increasingly deep public-input/reproduction prerequisites only; none evaluates the physical support fraction or authorizes covariance, nuisance quotienting, or G7 closure."
     ],
     "forbidden": [
       "Do not impose a post-hoc high-ell cutoff or fiducial power weighting to convert Exp073L into a finite support fraction.",
-      "Do not interpret Exp073M as an eligible support mask before its frozen physical-support audit is executed.",
-      "Do not interpret Exp073S0 mask or n(z) reproduction as a survey-level DSIR model comparison.",
-      "Do not interpret the pending Exp073R0 retry as a scientific result."
+      "Do not reinterpret Exp073N as a physical-support FAIL; no support fraction was evaluated.",
+      "Do not erase Exp073N after Exp073O; the provenance failure remains part of the scientific record.",
+      "Do not interpret Exp073O as an eligible support mask before the frozen Exp073P physical-support audit is executed.",
+      "Do not interpret Exp073P2, Exp073S0 or Exp073R0 as a survey-level DSIR model comparison.",
+      "Do not interpret the preregistered/gated Exp073R1 implementation as a scientific result before a completed output exists."
     ]
   }
 }
