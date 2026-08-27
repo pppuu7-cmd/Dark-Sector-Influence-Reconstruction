@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Build a journal-facing DSIR-I markdown candidate from manuscript_v0_2.
 
-The scientific body remains the audited v0.2 assembly.  This builder changes
+The scientific body remains the audited v0.2 assembly. This builder changes
 only presentation required for JCAP preparation: formula-free abstract and an
-explicit AI-assisted-technology disclosure.  It does not alter any scientific
+explicit AI-assisted-technology disclosure. It does not alter any scientific
 result, threshold, gate state, figure, or provenance binding.
 """
 
@@ -14,6 +14,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 SOURCE = HERE / "manuscript_v0_2.md"
 FRONT = HERE / "JCAP_FRONT_MATTER_DRAFT.md"
+ACK = HERE / "ACKNOWLEDGMENTS_AND_DISCLOSURES.md"
 OUT = HERE / "manuscript_jcap_candidate.md"
 
 ABSTRACT_START = "# Abstract"
@@ -27,13 +28,14 @@ def require(cond: bool, message: str) -> None:
 
 
 def extract_between(text: str, start: str, end: str) -> str:
-    require(start in text and end in text, f"missing front-matter boundary: {start} -> {end}")
+    require(start in text and end in text, f"missing section boundary: {start} -> {end}")
     return text.split(start, 1)[1].split(end, 1)[0].strip()
 
 
 def main() -> None:
     src = SOURCE.read_text(encoding="utf-8")
     front = FRONT.read_text(encoding="utf-8")
+    ack = ACK.read_text(encoding="utf-8")
 
     abstract = extract_between(
         front,
@@ -41,15 +43,10 @@ def main() -> None:
         "## Candidate JCAP keywords",
     )
     ai_statement = extract_between(
-        front,
-        "## AI-assisted technology disclosure candidate",
-        "## Data, software and code availability candidate",
+        ack,
+        "## AI-assisted technology disclosure",
+        "## Authorship boundary",
     )
-    # Remove Markdown blockquote marker from the prepared disclosure.
-    ai_statement = "\n".join(
-        line[2:] if line.startswith("> ") else line
-        for line in ai_statement.splitlines()
-    ).strip()
 
     require(src.count(ABSTRACT_START) == 1, "assembled manuscript must contain one Abstract heading")
     require(src.count(INTRO_START) == 1, "assembled manuscript must contain one Introduction heading")
@@ -75,11 +72,13 @@ def main() -> None:
     for token in (
         "has not yet been scored for physical support",
         "not a universal dark-sector law",
-        "not a claim of new fundamental physics",
+        "claim of new fundamental physics",
         "G7=OPEN",
         "G8=OPEN",
         "G9=OPEN",
         "AI-assisted technology disclosure",
+        "OpenAI ChatGPT",
+        "takes full responsibility for the content of the manuscript",
     ):
         require(token in out, f"JCAP candidate lost required boundary: {token}")
 
