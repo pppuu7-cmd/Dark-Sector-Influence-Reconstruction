@@ -42,11 +42,19 @@ jobs:
         run: |
           python papers/dsir1/audit_paper_v0_2.py
 
-      - name: Build central Figure 3 from frozen experiment summaries
+      - name: Build Figure 1 operator architecture
+        run: |
+          python papers/dsir1/figures/fig01_operator_architecture.py
+
+      - name: Build Figure 2 additive-core failure
+        run: |
+          python papers/dsir1/figures/fig02_additive_core_failure.py
+
+      - name: Build Figure 3 finite-amplitude hierarchy
         run: |
           python papers/dsir1/figures/fig03_chiI_hierarchy.py
 
-      - name: Build Figure 4 from frozen discriminant edges
+      - name: Build Figure 4 channel-conditional degeneracy
         run: |
           python papers/dsir1/figures/fig04_channel_conditional_degeneracy.py
 
@@ -75,13 +83,9 @@ jobs:
             papers/dsir1/CLAIMS_LEDGER.md
             papers/dsir1/AUTHOR_METADATA.yml
             papers/dsir1/FIGURE_MANIFEST.md
-            papers/dsir1/figures/generated/fig03_chiI_hierarchy.pdf
-            papers/dsir1/figures/generated/fig03_chiI_hierarchy.png
-            papers/dsir1/figures/generated/fig03_chiI_hierarchy.svg
-            papers/dsir1/figures/generated/fig03_chiI_hierarchy_provenance.json
-            papers/dsir1/figures/generated/fig04_channel_conditional_degeneracy.pdf
-            papers/dsir1/figures/generated/fig04_channel_conditional_degeneracy.png
-            papers/dsir1/figures/generated/fig04_channel_conditional_degeneracy.svg
-            papers/dsir1/figures/generated/fig04_channel_conditional_degeneracy_provenance.json
+            papers/dsir1/figures/generated/*.pdf
+            papers/dsir1/figures/generated/*.png
+            papers/dsir1/figures/generated/*.svg
+            papers/dsir1/figures/generated/*_provenance.json
             papers/dsir1/build/SHA256SUMS.txt
             papers/dsir1/build/BUILD_ENVIRONMENT.txt
