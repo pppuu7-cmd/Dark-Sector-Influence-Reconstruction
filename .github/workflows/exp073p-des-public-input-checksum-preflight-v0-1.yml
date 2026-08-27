@@ -1,0 +1,69 @@
+name: Exp073P DES public-input checksum preflight v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073p-des-public-input-checksum-preflight-v0-1.yml'
+      - 'ci/exp073p_des_public_input_checksum_preflight_v0_1.py'
+      - 'experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  pre-support-input-binding:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone exact frozen Cosmotheka source
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/Cosmotheka/Cosmotheka.git external/Cosmotheka
+          git -C external/Cosmotheka checkout 7bde066626f66cd7bbe79cc46224d2342840e463
+          test "$(git -C external/Cosmotheka rev-parse HEAD)" = '7bde066626f66cd7bbe79cc46224d2342840e463'
+
+      - name: Execute provenance-first DES public-input preflight
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_des_public_input_checksum_preflight_v0_1.py \
+            --cosmotheka-root external/Cosmotheka \
+            --parent data/derived/g7/exp073o_cosmotheka_desy1_realdata_wm_replacement_v0_1.json \
+            --download-dir external/exp073p_preflight_downloads \
+            --output data/derived/g7/exp073p_des_public_input_checksum_preflight_v0_1.json
+
+      - name: Assert no support evaluation or downstream leakage
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073p_des_public_input_checksum_preflight_v0_1.json'
+          d=json.load(open(p))
+          assert d['status'] in {
+              'READY_FOR_EXP073P_SUPPORT_IMPLEMENTATION',
+              'BLOCKED_PRE_SUPPORT_INPUT_CHECKSUM_BINDING_EXP073P_PREFLIGHT',
+          }
+          assert d['scientific_classification'] is None
+          assert d['support_fraction_evaluated'] is False
+          assert d['retained_dimension_evaluated'] is False
+          f=d['frozen_contract_preserved']
+          assert f['f_invalid_max']==0.05
+          assert f['minimum_retained_dimension']==15
+          assert f['nside_classifying']==4096
+          assert f['covariance_read'] is False
+          assert f['nuisance_read'] is False
+          assert f['relation_null_read'] is False
+          assert f['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073P_PREFLIGHT', d['status'])
+          PY
+
+      - name: Upload immutable preflight record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073p-des-public-input-preflight-${{ github.sha }}
+          path: data/derived/g7/exp073p_des_public_input_checksum_preflight_v0_1.json
+          if-no-files-found: warn
