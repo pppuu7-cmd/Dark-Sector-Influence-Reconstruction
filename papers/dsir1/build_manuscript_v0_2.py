@@ -4,9 +4,9 @@
 The script does not edit manuscript.md in place. It injects the frozen author
 metadata, inserts prospectively/retrospectively classified result components,
 surfaces the support-eligibility results in Abstract/Introduction/Conclusions,
-adds deterministic Figure 1--7 textual references at frozen narrative anchors,
-inserts the reproducibility section before Outlook, renumbers the final
-headings, and writes manuscript_v0_2.md.
+adds compact related-work positioning, adds deterministic Figure 1--7 textual
+references at frozen narrative anchors, inserts the reproducibility section
+before Outlook, renumbers the final headings, and writes manuscript_v0_2.md.
 """
 
 from __future__ import annotations
@@ -17,12 +17,14 @@ HERE = Path(__file__).resolve().parent
 BASE = HERE / "manuscript.md"
 FALSIFICATION = HERE / "sections" / "prospective_falsification.md"
 SUPPORT_CLOSURE = HERE / "sections" / "observation_space_support_closure.md"
+RELATED_WORK = HERE / "sections" / "related_work_positioning.md"
 KNOWN_SECTOR = HERE / "sections" / "known_sector_nonoverclaim.md"
 REPRO = HERE / "sections" / "data_code_reproducibility.md"
 OUT = HERE / "manuscript_v0_2.md"
 
 RESULTS_INSERT_MARKER = "# 7. Failure-resistant numerical validation"
 PRIOR_ART_MARKER = "# 8. Relation to existing dark-sector parameterizations"
+INTERPRETATION_MARKER = "# 9. Interpretation"
 LIMITATIONS_MARKER = "# 10. Limitations and claim boundary"
 OUTLOOK_MARKER = "# 11. Outlook"
 CONCLUSION_MARKER = "# 12. Conclusions"
@@ -100,6 +102,7 @@ def main() -> None:
     base = read(BASE)
     falsification = read(FALSIFICATION)
     support_closure = read(SUPPORT_CLOSURE)
+    related_work = read(RELATED_WORK)
     known_sector = read(KNOWN_SECTOR)
     repro = read(REPRO)
 
@@ -123,6 +126,7 @@ def main() -> None:
     for marker in (
         RESULTS_INSERT_MARKER,
         PRIOR_ART_MARKER,
+        INTERPRETATION_MARKER,
         LIMITATIONS_MARKER,
         OUTLOOK_MARKER,
         CONCLUSION_MARKER,
@@ -150,6 +154,11 @@ def main() -> None:
             1,
         )
     base = insert_before(base, PRIOR_ART_MARKER, support_closure)
+
+    # Keep current prior-art prose in the immutable base and add the closest
+    # modern neighboring approaches immediately before Interpretation.
+    require(related_work.startswith("## 8.1 Closest neighboring approaches"), "related-work section heading changed")
+    base = insert_before(base, INTERPRETATION_MARKER, related_work)
 
     if known_sector.startswith("## Known-sector specificity control"):
         known_sector = known_sector.replace(
@@ -192,6 +201,11 @@ def main() -> None:
         "4.81826",
         "72.29",
         "Figure 7 summarizes",
+        "## 8.1 Closest neighboring approaches",
+        "HojjatiEtAl2012",
+        "PetriMarraVonMarttens2026",
+        "KoppSkordisThomas2016",
+        "BodeOstrikerTurok2001",
         "## 9.4 Known-sector specificity control",
         "0.9990439690",
         "169.692",
