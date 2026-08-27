@@ -1,0 +1,46 @@
+{
+  "audit": "pre-output-source-provenance-v0.1",
+  "checks": {
+    "finite_ell_edges_present": true,
+    "ggl_blob_present": true,
+    "ggl_execution_is_flask_only": true,
+    "no_public_y3_real_data_ggl_config_at_pin": true,
+    "operator_pin_exact": true,
+    "y1_config_uses_site_local_absolute_inputs": true,
+    "y1_ww_config_present": true,
+    "y3_configs_are_flask_only": true
+  },
+  "date": "2026-08-27",
+  "downstream_authorized": false,
+  "exact_y3_wm_real_data_operator_reproducible_from_frozen_public_source": false,
+  "experiment": "Exp073N",
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  },
+  "interpretation": "Frozen public operator source lacks a real-data DES Y3 GGL configuration at the pinned commit; the public ggltest.py execution path is FLASK-only. Exp073N mandatory pre-output binding therefore cannot reproduce the exact published Y3 Wm NaMaster workspace/input realization. This is a reproduction/provenance classification, not a 5% physical-support scientific FAIL.",
+  "inventory": {
+    "binNicola2020_sha256": "05224053479e7d103cca640ab2629fc07bfdef5781612a08dae6bf97d74c812e",
+    "ggltest_sha256": "8d62e76981f452ccad697dab8087bf7857cd7af605343611d74f99c1961e1b5b",
+    "y1mcal_csh_sha256": "a25cd5c6e9fc692bce96c8e2ff3faa58045bb9cbaef43966ec1cd449a1daba77",
+    "y3_yaml_configs": [
+      "y3flask_csh.yml",
+      "y3flask_gcl.yml"
+    ]
+  },
+  "operator_head": "21e589a3cfc3e30f1b06a4636ccc2da8aceda5ab",
+  "operator_pin": "21e589a3cfc3e30f1b06a4636ccc2da8aceda5ab",
+  "operator_repository": "hocamachoc/3x2hs_measurements",
+  "parent_exp073m": "FINITE_POSITIVE_SUPPORT_OPERATOR_CANDIDATE_FOUND_EXP073M",
+  "retained_dimension": null,
+  "status": "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
+  "support_fraction": null,
+  "support_output_evaluated": false,
+  "workflow_run": 33062650033,
+  "workflow_job": 98484967582,
+  "artifact_id": 9642372335,
+  "artifact_digest": "sha256:914d23e9d708a7b8cb9e097a69845e2630ec265b5ccc489ce9a8d389d4e198db",
+  "artifact_json_sha256": "e4eb6cd10ac964030e84596ee352f22c5c2d4fae91e917a68db567cef2b6adeb",
+  "execution_merge_sha": "6868ed9113e2697675756f23fae8d350a9239bf6"
+}
