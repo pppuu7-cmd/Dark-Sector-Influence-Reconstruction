@@ -29,25 +29,17 @@ FIGURES = {
     7: ("fig:support", "../figures/generated/fig07_observation_space_support_closure.pdf"),
 }
 
-# Main-manuscript tables are deliberately enumerated rather than accepted
-# generically. Adding/removing/reordering a table therefore requires an
-# explicit publication-layout change here and cannot silently alter numbering.
+# Frozen Paper-I main-table policy: only the conceptual evidence-graded map and
+# exact finite-amplitude hierarchy remain in the journal narrative. Detailed
+# family/tangent/angle/turning/localization/route tables are supplementary.
 TABLE_META = {
     1: (
-        "tab:atlas",
-        "Theory-family atlas and the representative response character used in DSIR-I.",
-    ),
-    2: (
         "tab:mechanism-response",
         "Evidence-graded mechanism-to-response map. Equation-level cues identify which response blocks are informative; the mapping is many-to-many and is not a unique inversion to microphysics.",
     ),
-    3: (
-        "tab:chiI",
-        "Representative irreducible scale-time interaction fractions on the frozen low-wavenumber response atlas.",
-    ),
-    4: (
+    2: (
         "tab:chiI-envelopes",
-        "Finite-amplitude sampled interaction-fraction envelopes on the frozen response families.",
+        "Finite-amplitude sampled interaction-fraction envelopes on the frozen response families. The ordering is descriptive for the tested domains and survives all twelve deterministic single-node deletions.",
     ),
 }
 
@@ -176,7 +168,7 @@ def table_env(index: int, header: list[str], rows: list[list[str]]) -> str:
     require(all(len(r) == ncols for r in rows), f"inconsistent column count in table #{index}")
 
     if ncols == 3:
-        colspec = r"p{0.10\textwidth} p{0.30\textwidth} p{0.52\textwidth}"
+        colspec = r"p{0.17\textwidth} p{0.34\textwidth} p{0.41\textwidth}"
     else:
         colspec = r"p{0.42\textwidth} p{0.46\textwidth}"
 
@@ -328,7 +320,7 @@ def convert_body(markdown: str) -> str:
     close_lists()
     require(not in_math, "unclosed display math block")
     require(inserted_figures == set(range(1, 8)), f"not all seven figures inserted: {sorted(inserted_figures)}")
-    require(table_count == 4, f"expected exactly four main-manuscript Markdown tables, found {table_count}")
+    require(table_count == 2, f"expected exactly two main-manuscript Markdown tables, found {table_count}")
     return "\n".join(out).strip()
 
 
@@ -393,12 +385,13 @@ def main() -> None:
         r"\label{fig:curvature}",
         r"\label{fig:failure}",
         r"\label{fig:support}",
-        r"\label{tab:atlas}",
         r"\label{tab:mechanism-response}",
-        r"\label{tab:chiI}",
         r"\label{tab:chiI-envelopes}",
     ):
         require(token in tex, f"required JCAP LaTeX token missing: {token}")
+
+    for forbidden_label in (r"\label{tab:atlas}", r"\label{tab:chiI}"):
+        require(forbidden_label not in tex, f"supplement-only table leaked into JCAP main TeX: {forbidden_label}")
 
     require("[@" not in tex, "unconverted Pandoc citation remains in TeX")
     require("**" not in tex, "unconverted Markdown bold remains in TeX")
@@ -409,6 +402,7 @@ def main() -> None:
     OUTDIR.mkdir(parents=True, exist_ok=True)
     OUT.write_text(tex, encoding="utf-8")
     print(f"wrote {OUT}")
+    print("PASS: JCAP LaTeX main-table count = 2")
 
 
 if __name__ == "__main__":
