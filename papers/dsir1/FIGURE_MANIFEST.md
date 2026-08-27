@@ -3,7 +3,7 @@
 **Date:** 2026-08-27  
 **Rule:** every figure must be reproducible from frozen repository products without hand-edited scientific numbers. Plot aesthetics may change; scientific selections, masks, normalizations, thresholds, and orientation rules may not be changed after viewing the plot unless the change is explicitly versioned and justified.
 
-First complete reproducible six-figure baseline: workflow run `33032395387`, source commit `3ec77ea804db6198e072a5da5461b4db59e558ac`, artifact `9630730946`, digest `sha256:7c98b5933346e2b3ee1feaab6f7f9651c7b03a1fb03413ceb4631a09b1fe42c7`. See `papers/dsir1/BUILD_BASELINE_V0_2.md`. Figure 7 is a later, separately provenance-bound extension incorporating the completed Exp072A/B/C -> Exp073A support-eligibility chain.
+First complete reproducible six-figure baseline: workflow run `33032395387`, source commit `3ec77ea804db6198e072a5da5461b4db59e558ac`, artifact `9630730946`, digest `sha256:7c98b5933346e2b3ee1feaab6f7f9651c7b03a1fb03413ceb4631a09b1fe42c7`. See `papers/dsir1/BUILD_BASELINE_V0_2.md`. The first seven-figure build completed successfully in workflow run `33033775218`; Figure 7 has since been strengthened to bind the completed Exp072A/B/C -> Exp073A/B/C/D/E support/provider/model-definition chain.
 
 ## Build status
 
@@ -15,7 +15,7 @@ First complete reproducible six-figure baseline: workflow run `33032395387`, sou
 | 4 | channel-conditional degeneracy breaking | `papers/dsir1/figures/fig04_channel_conditional_degeneracy.py` | IMPLEMENTED; frozen discriminant-edge gates re-evaluated; CI PASS baseline |
 | 5 | curvature and mechanism localization | `papers/dsir1/figures/fig05_curvature_and_localization.py` | IMPLEMENTED; Exp047A/050B/053A provenance guarded; CI PASS baseline |
 | 6 | failure-resistant science chronology | `papers/dsir1/figures/fig06_failure_resistant_science.py` | IMPLEMENTED; permanent FAILs and F27 prefrozen band guarded; CI PASS baseline |
-| 7 | observation-space support closure and perturbativity eligibility | `papers/dsir1/figures/fig07_observation_space_support_closure.py` | IMPLEMENTED; Exp072A/B/C and Exp073A provenance/status/boundary guarded; awaiting/current seven-figure CI baseline |
+| 7 | observation-space support closure, perturbativity, provider and model-definition eligibility | `papers/dsir1/figures/fig07_observation_space_support_closure.py` | IMPLEMENTED; quantitative panels Exp072A/B/C/073A plus fail-closed Exp073B/C/D/E boundary guards; seven-figure CI baseline established, strengthened build pending/current |
 
 Generated binaries are intentionally produced by GitHub Actions rather than committed as opaque hand-made figures. Each implemented figure writes PDF/PNG/SVG plus a provenance JSON containing source paths, run/artifact identifiers where applicable, checks, interpretation boundaries, and output SHA256 hashes.
 
@@ -194,7 +194,7 @@ The script requires the original C3/C5 statuses to remain FAIL, verifies the lat
 
 ## Figure 7 — Observation-space support closure and perturbativity eligibility
 
-**Purpose:** make explicit the physical-domain precondition for evaluating an observational quotient.
+**Purpose:** make explicit the physical-domain and model-definition preconditions for evaluating an observational quotient.
 
 Implemented layout:
 
@@ -209,13 +209,17 @@ Implemented layout:
 - Exp072A run `33029362485`, artifact `9629763833`, digest `sha256:9ecf7d61...7701d`;
 - Exp072B run `33030657898`, artifact `9630210086`, digest `sha256:5bbca571...615ad`;
 - Exp072C run `33031427090`, artifact `9630407069`, digest `sha256:0e726d9f...f2a71`;
-- Exp073A run `33032781761`, artifact `9630897385`, digest `sha256:0f2212d6...cb25`.
+- Exp073A run `33032781761`, artifact `9630897385`, digest `sha256:0f2212d6...cb25`;
+- Exp073B corrected-source capability run `33033279245`, artifact `9631041961`, digest `sha256:743ef140...f96a5`; initial run `33033220464` remains infrastructure-only;
+- Exp073C result commit `09c86a13512859a11f701a846aa00ed5f9bb9f02`;
+- Exp073D prereg/result `4f3ab9656731a0b4c0ff1a077eb90dd6f3f56e90 -> 4d93a0d213443e95b5da023f99fcad6acc579dc6`;
+- Exp073E prereg/result `077d024a5e91b704e9473cb546cd6e9eb3eeb297 -> df1578d933a16db3421d6f188f7bac1dcdfaddd4`.
 
 **Implementation:** `papers/dsir1/figures/fig07_observation_space_support_closure.py`.
 
-The script rechecks that every Exp072A coordinate remains above the frozen support threshold, Exp072B retains no finite upper-k-only coordinate target, Exp072C remains planning geometry only, Exp073A remains linear/no-CLEFT ineligible, G7/G8/G9 remain OPEN, and Exp073B is excluded from science claims.
+The script rechecks that every Exp072A coordinate remains above the frozen support threshold, Exp072B retains no finite upper-k-only coordinate target, Exp072C remains planning geometry only, and Exp073A remains linear/no-CLEFT ineligible. It additionally requires the valid Exp073B capability audit to preserve the distinction `projector interface sufficient / nonlinear C3-C5 three-block provider missing`, keeps the first Exp073B checkout failure infrastructure-only, requires Exp073C to retain its no-complete-public-route boundary, Exp073D to retain the C3/C5 nonlinear-identifiability asymmetry, Exp073E to retain the non-feasible completion-ensemble result, and G7/G8/G9 to remain OPEN.
 
-**Caption boundary:** Figure 7 is an eligibility/failure result, not a survey-level model-distance result. The Exp072C frontier is not an available physical-provider domain. Exp073A rejects only the tested linear/no-CLEFT route to that frontier. The first Exp073B workflow failed before its frozen capability audit executed and therefore contributes no physical FEASIBLE/GAP/FAIL classification.
+**Caption boundary:** Figure 7 is an eligibility/failure result, not a survey-level model-distance result. The Exp072C frontier is not an available physical-provider domain. Exp073A rejects only the tested linear/no-CLEFT route. Exp073B/C show a present provider/capability gap, not impossibility of future nonlinear modelling. Exp073D/E show that for frozen phenomenological C3/GDM, an arbitrary nonlinear completion would add model-defining physics and cannot be hidden as a neutral provider. No covariance/nuisance quotient is authorized from this chain, and no universal nonlinear-GDM no-go theorem is claimed.
 
 ---
 
@@ -250,5 +254,5 @@ A figure is manuscript-eligible only if all of the following hold:
 5. theory-response metrics are not labeled as observational significance;
 6. PASS/FAIL status and the applicable frozen threshold are stated where relevant;
 7. any withheld point is identified as within-family interpolation or withheld mechanism, as appropriate;
-8. physical support/perturbativity eligibility must pass before an observation-space distance is displayed;
+8. physical support/perturbativity/provider/model-definition eligibility must be established before an observation-space distance is displayed;
 9. the plotting script and output-data checksum are retained with the paper branch.
