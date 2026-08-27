@@ -2,7 +2,8 @@
 """Deterministically assemble DSIR-I manuscript v0.2 from frozen text components.
 
 The script does not edit manuscript.md in place. It injects the frozen author
-metadata, inserts the prospective falsification subsection into Results,
+metadata, inserts prospectively/retrospectively classified result components,
+adds deterministic Figure 1--6 textual references at frozen narrative anchors,
 inserts the reproducibility section before Outlook, renumbers the final
 headings, and writes manuscript_v0_2.md.
 """
@@ -14,14 +15,45 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 BASE = HERE / "manuscript.md"
 FALSIFICATION = HERE / "sections" / "prospective_falsification.md"
+KNOWN_SECTOR = HERE / "sections" / "known_sector_nonoverclaim.md"
 REPRO = HERE / "sections" / "data_code_reproducibility.md"
 OUT = HERE / "manuscript_v0_2.md"
 
 RESULTS_INSERT_MARKER = "# 7. Failure-resistant numerical validation"
+PRIOR_ART_MARKER = "# 8. Relation to existing dark-sector parameterizations"
+LIMITATIONS_MARKER = "# 10. Limitations and claim boundary"
 OUTLOOK_MARKER = "# 11. Outlook"
 CONCLUSION_MARKER = "# 12. Conclusions"
 AUTHOR_PLACEHOLDER = 'author:\n  - "[authors to be finalized]"'
 AUTHOR_BLOCK = '''author:\n  - "Aleksey Buyanov"\naffiliation: "Independent Researcher"\nlocation: "Moscow, Russia"\nemail: "pppuu7@gmail.com"\norcid: "0009-0001-2621-9305"'''
+
+FIGURE_INSERTIONS = [
+    (
+        "# 5. Theory atlas",
+        "Figure 1 summarizes the induced signature operator and the compatibility condition for channel refinement.",
+    ),
+    (
+        "## 6.3 The additive `(G,T,tau)` core is insufficient",
+        "Figure 4 juxtaposes the two frozen examples of channel-conditional degeneracy breaking.",
+    ),
+    (
+        "## 6.4 Finite-amplitude hierarchy and grid robustness",
+        "Figure 2 shows the additive projection and irreducible interaction directly for the frozen low-k response atlas.",
+    ),
+    (
+        "## 6.5 Irreducible scale-time structure carries GDM--\\(f(R)\\) separation",
+        "Figure 3 summarizes the finite-amplitude hierarchy and its deterministic leave-one-node robustness.",
+    ),
+]
+
+FIGURE5_REFERENCE = (
+    "Figure 5 compares response-manifold curvature with the distinct WDM scale-localization "
+    "and DCDM time-localization controls."
+)
+FIGURE6_REFERENCE = (
+    "Figure 6 summarizes the failure-resistant chronology, retaining original failed contracts "
+    "beside separately frozen corrective providers and the prospective F27 falsification."
+)
 
 
 def read(path: Path) -> str:
@@ -34,30 +66,60 @@ def require_once(text: str, marker: str) -> None:
         raise RuntimeError(f"Expected exactly one marker {marker!r}, found {n}")
 
 
+def insert_before(text: str, marker: str, inserted: str) -> str:
+    require_once(text, marker)
+    return text.replace(marker, inserted.rstrip() + "\n\n" + marker, 1)
+
+
 def main() -> None:
     base = read(BASE)
     falsification = read(FALSIFICATION)
+    known_sector = read(KNOWN_SECTOR)
     repro = read(REPRO)
 
     require_once(base, AUTHOR_PLACEHOLDER)
     base = base.replace(AUTHOR_PLACEHOLDER, AUTHOR_BLOCK, 1)
 
-    for marker in (RESULTS_INSERT_MARKER, OUTLOOK_MARKER, CONCLUSION_MARKER):
+    for marker in (
+        RESULTS_INSERT_MARKER,
+        PRIOR_ART_MARKER,
+        LIMITATIONS_MARKER,
+        OUTLOOK_MARKER,
+        CONCLUSION_MARKER,
+    ):
         require_once(base, marker)
 
-    # Keep the new falsification test inside Results as subsection 6.9.
+    # Freeze first-reference positions for Figures 1--4 without embedding opaque
+    # binaries in the source manuscript. Generated figures live in the CI build
+    # artifact; captions are canonical in FIGURE_CAPTIONS.md.
+    for marker, reference in FIGURE_INSERTIONS:
+        base = insert_before(base, marker, reference)
+
+    # Keep Figure 5 after the withheld-mechanism discussion but before the
+    # prospective cross-family falsification inserted as subsection 6.9.
+    base = insert_before(base, RESULTS_INSERT_MARKER, FIGURE5_REFERENCE)
+
+    # Keep the new prospective falsification test inside Results as subsection 6.9.
     if falsification.startswith("## Prospective falsification"):
         falsification = falsification.replace(
             "## Prospective falsification",
             "## 6.9 Prospective falsification",
             1,
         )
+    base = insert_before(base, RESULTS_INSERT_MARKER, falsification)
 
-    assembled = base.replace(
-        RESULTS_INSERT_MARKER,
-        falsification + "\n\n" + RESULTS_INSERT_MARKER,
-        1,
-    )
+    # Figure 6 closes the validation/falsification narrative before prior art.
+    base = insert_before(base, PRIOR_ART_MARKER, FIGURE6_REFERENCE)
+
+    # Retrospective known-sector specificity control belongs in Interpretation,
+    # not Results. It is explicitly post-unblinding and creates no new gate.
+    if known_sector.startswith("## Known-sector specificity control"):
+        known_sector = known_sector.replace(
+            "## Known-sector specificity control",
+            "## 9.4 Known-sector specificity control",
+            1,
+        )
+    base = insert_before(base, LIMITATIONS_MARKER, known_sector)
 
     # Insert reproducibility as new top-level Section 11 and shift the two
     # existing trailing sections by one number.
@@ -66,7 +128,7 @@ def main() -> None:
         "# 11. Data, code, and reproducibility",
         1,
     )
-    assembled = assembled.replace(OUTLOOK_MARKER, "# 12. Outlook", 1)
+    assembled = base.replace(OUTLOOK_MARKER, "# 12. Outlook", 1)
     assembled = assembled.replace(CONCLUSION_MARKER, "# 13. Conclusions", 1)
     assembled = assembled.replace(
         "# 12. Outlook",
@@ -80,6 +142,16 @@ def main() -> None:
         'affiliation: "Independent Researcher"',
         'orcid: "0009-0001-2621-9305"',
         "FAIL_IDM_DR_COMMON_SOURCE_RESPONSE_SLOPE_V0_1",
+        "## 9.4 Known-sector specificity control",
+        "0.9990439690",
+        "169.692",
+        "post-unblinding",
+        "Figure 1 summarizes",
+        "Figure 2 shows",
+        "Figure 3 summarizes",
+        "Figure 4 juxtaposes",
+        "Figure 5 compares",
+        "Figure 6 summarizes",
         "# 11. Data, code, and reproducibility",
         "# 12. Outlook",
         "# 13. Conclusions",
@@ -88,6 +160,13 @@ def main() -> None:
     for item in checks:
         if item not in assembled:
             raise RuntimeError(f"Required v0.2 content missing: {item}")
+
+    for figure_number in range(1, 7):
+        token = f"Figure {figure_number}"
+        if assembled.count(token) != 1:
+            raise RuntimeError(
+                f"Expected exactly one body reference to {token}, found {assembled.count(token)}"
+            )
 
     OUT.write_text(assembled.rstrip() + "\n", encoding="utf-8")
     print(f"wrote {OUT}")
