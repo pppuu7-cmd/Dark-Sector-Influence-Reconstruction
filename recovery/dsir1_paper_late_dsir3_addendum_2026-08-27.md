@@ -6,15 +6,15 @@ This addendum records article changes made after the earlier DSIR-I recovery che
 
 The late-DSIR3 article extension has passed the complete fail-closed paper pipeline.
 
-- paper source commit: `63a46e33877eeaa447f12a364c2d825153976618`
+- paper source commit: `27d46820a87e8c20634c8476fd23cf292f6ee66d`
 - workflow: `DSIR-I paper build v0.2`
-- workflow run: `33093258846`
-- job: `98591436167`
+- workflow run: `33093501161`
+- job: `98592285140`
 - result: `SUCCESS`
-- build artifact: `9655286407`
-- artifact digest: `sha256:100c80178d284f7ccf34cb6bac40ff32266afc739ee10446b2242b4f5a2c2e4e`
+- build artifact: `9655385461`
+- artifact digest: `sha256:f31425b040ecda3c613566b4d633770cd936b35b7110e532cc397f2516e3b083`
 
-The run passed the central manuscript audit, retrospective known-sector audit, Exp072A--Exp073E observation-space support/provider/model audit, the new late support-operator audit, Figures 1--7, checksum generation, and artifact upload. The generated v0.2 Abstract/Introduction/Conclusions now surface the support-normalizability result while preserving the pre-support status of the finite-positive DES/BOSS candidate.
+The run passed the central manuscript audit, retrospective known-sector audit, Exp072A--Exp073E observation-space support/provider/model audit, the late support-operator audit, Figures 1--7, checksum generation, and artifact upload. The generated v0.2 Abstract/Introduction/Conclusions now surface the support-normalizability result while preserving the pre-support status of the finite-positive DES/BOSS candidate. `papers/dsir1/LITERATURE_POSITIONING.md` has also been reframed so the publication strategy follows the same fail-closed eligibility sequence rather than requiring a covariance quotient after a failed support gate.
 
 This supersedes the earlier six-figure baseline for current development, but it does not alter the gate state `G7=OPEN`, `G8=OPEN`, `G9=OPEN`.
 
@@ -103,6 +103,7 @@ Exp073R0 is currently being retried after an infrastructure timeout. Retry confi
 - `papers/dsir1/sections/data_code_reproducibility.md`
 - `papers/dsir1/CLAIMS_LEDGER.md`
 - `papers/dsir1/build_manuscript_v0_2.py` — Abstract/Introduction/Conclusions now expose the two-stage support-eligibility rule
+- `papers/dsir1/LITERATURE_POSITIONING.md` — publication strategy now respects the support gate before covariance
 - `.github/workflows/paper-dsir1-build-v0-2.yml`
 
 ## Hard boundary
