@@ -1,0 +1,91 @@
+name: C5 raw-k unit provenance audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/c5-raw-k-unit-provenance-audit-v0-1.yml'
+      - 'ci/c5_raw_k_unit_provenance_audit_v0_1.py'
+      - 'experiments/069i_c5_raw_k_unit_provenance_audit_prereg_v0_1.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  raw-k-unit-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y git gfortran gcc make liblapack-dev libblas-dev python3 python3-dev python3-pip
+          python3 -m pip install --user numpy scipy sympy packaging
+          python3 -m py_compile ci/c5_raw_k_unit_provenance_audit_v0_1.py
+      - name: Build pinned H-EFTCAMB
+        run: |
+          set -euxo pipefail
+          git clone --recursive https://github.com/EFTCAMB/EFTCAMB.git eftcamb
+          git -C eftcamb checkout 16d9c4e9f85751e30efd0a53b177941713078904
+          git -C eftcamb submodule update --init --recursive
+          make -C eftcamb/fortran python
+          test "$(git -C eftcamb rev-parse HEAD)" = '16d9c4e9f85751e30efd0a53b177941713078904'
+          grep -Fq 'k_hunit=True' eftcamb/camb/results.py
+          grep -Fq 'kh = ks / (self.Params.H0 / 100)' eftcamb/camb/results.py
+      - name: Write matched ordinary-GR baseline
+        run: |
+          set -euxo pipefail
+          mkdir -p exp069i_configs
+          cp eftcamb/fortran/eftcamb_test/parameters/base_params.ini exp069i_configs/base.ini
+          sed -i 's/^get_scalar_cls[[:space:]]*=.*/get_scalar_cls = F/' exp069i_configs/base.ini
+          sed -i 's/^get_tensor_cls[[:space:]]*=.*/get_tensor_cls = F/' exp069i_configs/base.ini
+          sed -i 's/^do_lensing[[:space:]]*=.*/do_lensing = F/' exp069i_configs/base.ini
+          sed -i 's/^do_nonlinear[[:space:]]*=.*/do_nonlinear = 0/' exp069i_configs/base.ini
+          sed -i 's/^hubble[[:space:]]*=.*/hubble = 67/' exp069i_configs/base.ini
+          sed -i 's/^ombh2[[:space:]]*=.*/ombh2 = 0.0224/' exp069i_configs/base.ini
+          sed -i 's/^omch2[[:space:]]*=.*/omch2 = 0.1200/' exp069i_configs/base.ini
+          sed -i 's/^omnuh2[[:space:]]*=.*/omnuh2 = 0/' exp069i_configs/base.ini
+          sed -i 's/^massless_neutrinos[[:space:]]*=.*/massless_neutrinos = 3.046/' exp069i_configs/base.ini
+          sed -i 's/^nu_mass_eigenstates[[:space:]]*=.*/nu_mass_eigenstates = 0/' exp069i_configs/base.ini
+          sed -i 's/^massive_neutrinos[[:space:]]*=.*/massive_neutrinos = 0/' exp069i_configs/base.ini
+          sed -i 's/^helium_fraction[[:space:]]*=.*/helium_fraction = 0.2404/' exp069i_configs/base.ini
+          sed -i 's/^scalar_amp(1)[[:space:]]*=.*/scalar_amp(1) = 2.10e-9/' exp069i_configs/base.ini
+          sed -i 's/^scalar_spectral_index(1)[[:space:]]*=.*/scalar_spectral_index(1) = 0.965/' exp069i_configs/base.ini
+          sed -i 's/^reionization[[:space:]]*=.*/reionization = F/' exp069i_configs/base.ini
+          sed -i 's/^transfer_kmax[[:space:]]*=.*/transfer_kmax = 0.30/' exp069i_configs/base.ini
+      - name: Execute frozen Exp069I
+        run: |
+          set -euxo pipefail
+          python3 ci/c5_raw_k_unit_provenance_audit_v0_1.py \
+            --eft-root eftcamb \
+            --config exp069i_configs/base.ini \
+            --output data/derived/g7/exp069i_c5_raw_k_unit_provenance_audit_v0_1.json
+      - name: Assert frozen classification boundary
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp069i_c5_raw_k_unit_provenance_audit_v0_1.json'))
+          assert d['experiment']=='Exp069I'
+          assert d['scientific_classification'] in {'PASS_C5_RAW_K_UNIT_PROVENANCE_AUDIT_V0_1','FAIL_C5_RAW_K_UNIT_PROVENANCE_AUDIT_V0_1','INCOMPLETE_EXP069I'}
+          assert d['preserved']['Exp069B']=='FAIL_C5_EXPLICIT_EFT_PYTHON_POWER_BRIDGE_V0_1'
+          assert d['preserved']['Exp069H']=='PASS_C5_Q3_UNMODIFIED_UPSTREAM_PHYSICAL_PROVIDER_V0_1'
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP069I_CLASSIFICATION',d['scientific_classification'])
+          print('HISTORICAL_LABEL',d['historical_label_classification'])
+          print('CRITERIA',d['criteria'])
+          PY
+          test -z "$(git -C eftcamb status --porcelain --untracked-files=no)"
+      - name: Upload immutable Exp069I record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp069i-c5-raw-k-unit-${{ github.sha }}
+          path: |
+            data/derived/g7/exp069i_c5_raw_k_unit_provenance_audit_v0_1.json
+            exp069i_configs/base.ini
+          if-no-files-found: warn
