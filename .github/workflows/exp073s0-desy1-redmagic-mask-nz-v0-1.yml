@@ -1,0 +1,57 @@
+name: Exp073S0 DES Y1 redMaGiC mask and n(z) v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073s0-desy1-redmagic-mask-nz-v0-1.yml'
+      - 'ci/exp073s0_redmagic_mask_nz_reproduction_v0_1.py'
+      - 'experiments/073s0_desy1_redmagic_mask_and_nz_reproduction_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  reproduce-small-inputs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned-route numerical readers
+        run: python3 -m pip install --disable-pip-version-check --no-cache-dir 'numpy<2.4' astropy healpy
+      - name: Reproduce exact redMaGiC mask and released redshift kernels
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073s0_redmagic_mask_nz_reproduction_v0_1.py \
+            --mask-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits \
+            --lens-nz-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/chains/2pt_NG_mcal_1110.fits \
+            --source-nz-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_redshift_distributions_v1.fits \
+            --workdir /tmp/exp073s0 \
+            --output data/derived/g7/exp073s0_redmagic_mask_nz_v0_1.json
+      - name: Assert small-input P3 prerequisite only
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073s0_redmagic_mask_nz_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_DESY1_REDMAGIC_MASK_NZ_REPRODUCTION_EXP073S0'
+          assert d['mask']['input_nside']==4096
+          assert d['mask']['same_nside_ud_grade_exact_identity'] is True
+          assert d['mask']['retained_pixels_gt_0p5']>0
+          assert d['lens_nz']['rows']>1 and d['source_nz']['rows']>1
+          assert d['science_gate_scored'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print(json.dumps({
+            'status':d['status'],
+            'mask':d['mask'],
+            'lens_nz':{k:d['lens_nz'][k] for k in ['rows','z_min','z_max','numeric_sha256']},
+            'source_nz':{k:d['source_nz'][k] for k in ['rows','z_min','z_max','numeric_sha256']},
+          }, indent=2, sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073s0-redmagic-mask-nz-${{ github.sha }}
+          path: data/derived/g7/exp073s0_redmagic_mask_nz_v0_1.json
+          if-no-files-found: warn
