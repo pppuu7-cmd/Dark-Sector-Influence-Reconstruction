@@ -1,0 +1,57 @@
+name: Exp073N DES harmonic pre-output provenance audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073n-des-harmonic-preoutput-provenance-audit-v0-1.yml'
+      - 'ci/exp073n_des_harmonic_preoutput_provenance_audit_v0_1.py'
+      - 'experiments/073n_des_harmonic_common_physical_support_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  provenance-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clone exact frozen DES harmonic operator source
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/hocamachoc/3x2hs_measurements.git external/3x2hs_measurements
+          git -C external/3x2hs_measurements checkout 21e589a3cfc3e30f1b06a4636ccc2da8aceda5ab
+          test "$(git -C external/3x2hs_measurements rev-parse HEAD)" = '21e589a3cfc3e30f1b06a4636ccc2da8aceda5ab'
+      - name: Execute frozen Exp073N mandatory pre-output provenance audit
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073n_des_harmonic_preoutput_provenance_audit_v0_1.py \
+            --operator-root external/3x2hs_measurements \
+            --output data/derived/g7/exp073n_des_harmonic_preoutput_provenance_audit_v0_1.json
+      - name: Assert frozen failure semantics and no support leakage
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073n_des_harmonic_preoutput_provenance_audit_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE'
+          assert d['operator_head']=='21e589a3cfc3e30f1b06a4636ccc2da8aceda5ab'
+          assert d['exact_y3_wm_real_data_operator_reproducible_from_frozen_public_source'] is False
+          assert d['support_output_evaluated'] is False
+          assert d['support_fraction'] is None
+          assert d['retained_dimension'] is None
+          assert d['downstream_authorized'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert all(d['checks'].values())
+          print('EXP073N_RESULT',d['status'])
+          print('Y3_CONFIGS',d['inventory']['y3_yaml_configs'])
+          PY
+      - name: Upload immutable Exp073N provenance record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073n-preoutput-provenance-${{ github.sha }}
+          path: data/derived/g7/exp073n_des_harmonic_preoutput_provenance_audit_v0_1.json
+          if-no-files-found: warn
