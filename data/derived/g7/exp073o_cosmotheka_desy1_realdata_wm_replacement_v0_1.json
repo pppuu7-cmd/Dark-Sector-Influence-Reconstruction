@@ -1,0 +1,51 @@
+{
+  "experiment": "Exp073O",
+  "date": "2026-08-27",
+  "status": "PUBLIC_REALDATA_FINITE_HARMONIC_WM_REPLACEMENT_FOUND_EXP073O",
+  "candidate": "COSMOTHEKA_DESY1_GC_X_WL_PSEUDO_CL",
+  "source": {
+    "repository": "Cosmotheka/Cosmotheka",
+    "commit": "7bde066626f66cd7bbe79cc46224d2342840e463",
+    "paths": [
+      "cosmotheka/mappers/mapper_DESY1gc.py",
+      "cosmotheka/mappers/mapper_DESY1wl.py",
+      "cosmotheka/cls/cl.py",
+      "input/DESY1_eBOSS_P18CMBK.yml"
+    ]
+  },
+  "public_DES_Y1_inputs": {
+    "redmagic_catalog": "DES_Y1A1_3x2pt_redMaGiC_zerr_CATALOG.fits",
+    "redmagic_mask": "DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits",
+    "metacal_catalog": "mcal-y1a1-combined-riz-unblind-v4-matched.fits",
+    "source_zbin": "y1_source_redshift_binning_v1.fits",
+    "source_nz": "y1_redshift_distributions_v1.fits",
+    "lens_nz_source": "2pt_NG_mcal_1110.fits"
+  },
+  "criteria": {
+    "O1_public_immutable_realdata_provenance": {"pass": true},
+    "O2_finite_operator": {"pass": true, "detail": "Finite NaMaster NmtBin, NmtWorkspace coupling matrix, decoupled bandpowers and get_bandpower_windows; lmax bounded by 3*nside."},
+    "O3_exact_public_inputs_bindable": {"pass": true, "detail": "Cosmotheka real-data config names exact DES Y1 products; official DES Y1 release pages publish the matching redMaGiC catalog/mask and Metacalibration, source-bin and source-n(z) files."},
+    "O4_signed_Wm": {"pass": true, "detail": "Direct galaxy-density x galaxy-shear compute_coupled_cell followed by workspace decoupling; no absolute-value replacement in the observable."},
+    "O5_no_GR_closure": {"pass": true},
+    "O6_no_model_or_downstream_weighting": {"pass": true, "detail": "Finiteness comes from survey masks, finite harmonic domain and NaMaster coupling/binning, not fiducial P(k), covariance or G8 information."},
+    "O7_exact_support_audit_possible": {"pass": true, "detail": "Public lens/source redshift information, masks, explicit nside and frozen bpw_edges provide the angular/redshift operator inputs needed for a later support-only audit."},
+    "O8_provenance_completeness": {"pass": true}
+  },
+  "frozen_bpw_edges": [0,30,60,90,120,150,180,210,240,272,309,351,398,452,513,582,661,750,852,967,1098,1247,1416,1608,1826,2073,2354,2673,3035,3446,3914,4444,5047,5731,6508,7390,8392,9529,10821,12288],
+  "support_fraction_evaluated": false,
+  "covariance_read_for_candidate_selection": false,
+  "nuisance_read": false,
+  "relation_null_read": false,
+  "G8_read": false,
+  "parent_preservation": {
+    "Exp073N": "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
+    "Exp073L": "EXTENDED_LADDER_SUPPORTS_NONNORMALIZABLE_ABSOLUTE_RESPONSE_EXP073L",
+    "Exp073J_KiDS": "FAIL_EXP073J_KIDS_COMPONENT_REPRODUCTION_OR_NUMERICAL_COMPLETENESS",
+    "BOSS_mm_retained": "54/240 non-classifying",
+    "common_rectangle": "0.295 <= z <= 2.33; k <= 0.06664762008318016 Mpc^-1",
+    "future_f_invalid_threshold": 0.05,
+    "future_minimum_retained_dimension": 15
+  },
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"},
+  "next_admissible_step": "Prospectively freeze and execute an exact support-only audit using the Cosmotheka DES Y1 Wm operator, the existing reproducible independent WW route, and frozen BOSS finite-matrix mm component."
+}
