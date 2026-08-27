@@ -3,16 +3,18 @@
 **Date:** 2026-08-27  
 **Rule:** every figure must be reproducible from frozen repository products without hand-edited scientific numbers. Plot aesthetics may change; scientific selections, masks, normalizations, thresholds, and orientation rules may not be changed after viewing the plot unless the change is explicitly versioned and justified.
 
+First complete reproducible baseline: workflow run `33032395387`, source commit `3ec77ea804db6198e072a5da5461b4db59e558ac`, artifact `9630730946`, digest `sha256:7c98b5933346e2b3ee1feaab6f7f9651c7b03a1fb03413ceb4631a09b1fe42c7`. See `papers/dsir1/BUILD_BASELINE_V0_2.md`.
+
 ## Build status
 
 | Figure | Scientific role | Reproducible script | Status |
 |---|---|---|---|
-| 1 | operator/equivalence architecture | `papers/dsir1/figures/fig01_operator_architecture.py` | IMPLEMENTED; formal-source guarded |
-| 2 | additive scale+time core failure | `papers/dsir1/figures/fig02_additive_core_failure.py` | IMPLEMENTED; recomputes decomposition and checks Exp045A |
-| 3 | finite-amplitude nonseparability hierarchy | `papers/dsir1/figures/fig03_chiI_hierarchy.py` | IMPLEMENTED; Exp047A/B provenance guarded |
-| 4 | channel-conditional degeneracy breaking | `papers/dsir1/figures/fig04_channel_conditional_degeneracy.py` | IMPLEMENTED; frozen discriminant-edge gates re-evaluated |
-| 5 | curvature and mechanism localization | `papers/dsir1/figures/fig05_curvature_and_localization.py` | IMPLEMENTED; Exp047A/050B/053A provenance guarded |
-| 6 | failure-resistant science chronology | planned | NOT YET IMPLEMENTED |
+| 1 | operator/equivalence architecture | `papers/dsir1/figures/fig01_operator_architecture.py` | IMPLEMENTED; formal-source guarded; CI PASS |
+| 2 | additive scale+time core failure | `papers/dsir1/figures/fig02_additive_core_failure.py` | IMPLEMENTED; recomputes decomposition and checks Exp045A; CI PASS |
+| 3 | finite-amplitude nonseparability hierarchy | `papers/dsir1/figures/fig03_chiI_hierarchy.py` | IMPLEMENTED; Exp047A/B provenance guarded; CI PASS |
+| 4 | channel-conditional degeneracy breaking | `papers/dsir1/figures/fig04_channel_conditional_degeneracy.py` | IMPLEMENTED; frozen discriminant-edge gates re-evaluated; CI PASS |
+| 5 | curvature and mechanism localization | `papers/dsir1/figures/fig05_curvature_and_localization.py` | IMPLEMENTED; Exp047A/050B/053A provenance guarded; CI PASS |
+| 6 | failure-resistant science chronology | `papers/dsir1/figures/fig06_failure_resistant_science.py` | IMPLEMENTED; permanent FAILs and F27 prefrozen band guarded; CI PASS |
 
 Generated binaries are intentionally produced by GitHub Actions rather than committed as opaque hand-made figures. Each implemented figure writes PDF/PNG/SVG plus a provenance JSON containing source paths, run/artifact identifiers where applicable, checks, interpretation boundaries, and output SHA256 hashes.
 
@@ -167,11 +169,11 @@ Before plotting, the script requires the WDM cutoff to retain its frozen positiv
 
 **Purpose:** distinguish DSIR's validation protocol from success-only model atlases.
 
-Planned layout:
+Implemented layout:
 
-- panel A, C3 provider chain: `Exp070A FAIL (~4.75% target-grid defect) -> Exp070B interpolation-dominated mechanism audit -> Exp070C native-grid provider PASS (~2.81e-14 closure)`;
-- panel B, C5 provider chain: `Exp069B q=1 FAIL (5.306e-6 > frozen 5e-6) -> Exp069F prospective accuracy ladder -> Exp069H q=3 provider PASS`;
-- panel C, universality falsification: `C3/C5 calibration -> frozen positive common-centroid slope interval -> withheld C7/IDM-DR Exp054C slopes all negative -> FAIL`.
+- panel A, C3 provider chain: original Exp070A FAIL (`~4.75%` target-grid reconstruction defect) displayed beside the separately frozen Exp070C native-grid provider PASS (`~2.81e-14` closure); both applicable thresholds remain explicit;
+- panel B, C5 provider chain: original Exp069B q=1 FAIL (`5.306e-6 >` frozen `5e-6`) followed by the prospectively frozen Exp069F accuracy ladder and separately certified Exp069H q=3 provider;
+- panel C, universality falsification: the positive C3/C5 common-centroid slope interval frozen before withheld C7/IDM-DR response generation is shown together with all four negative Exp054C/F27 slopes.
 
 **Sources:**
 
@@ -181,7 +183,11 @@ Planned layout:
 - `recovery/exp069h_c5_provider_certification_checkpoint_2026-08-27.md`;
 - `docs/SCIENTIFIC_FINDING_F27_COMMON_RESPONSE_CENTROID_WITHHELD_FAILURE.md`.
 
-**Caption boundary:** later PASS contracts do not reclassify earlier FAIL contracts; the prospectively tested common-centroid law remains falsified.
+**Implementation:** `papers/dsir1/figures/fig06_failure_resistant_science.py`.
+
+The script requires the original C3/C5 statuses to remain FAIL, verifies the later corrective-provider checkpoint tokens without reclassifying those original experiments, checks monotone C5 accuracy convergence across the frozen ladder, and requires all four F27 withheld slopes to remain outside the prefrozen positive acceptance interval.
+
+**Caption boundary:** later PASS contracts do not reclassify earlier FAIL contracts; the prospectively tested common-centroid law remains falsified. F27 rejects that specific operator/law and does not close G7, G8, or G9.
 
 ---
 
