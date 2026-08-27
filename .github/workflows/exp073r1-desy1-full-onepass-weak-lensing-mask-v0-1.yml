@@ -1,0 +1,114 @@
+name: Exp073R1 DES Y1 full one-pass weak-lensing mask v0.1
+
+on:
+  workflow_dispatch:
+    inputs:
+      r0_run_id:
+        description: 'Completed Exp073R0 run ID whose immutable artifact authorizes R1 execution'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  full-onepass-mask:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      GH_TOKEN: ${{ github.token }}
+      R0_RUN_ID: ${{ inputs.r0_run_id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bind genuine Exp073R0 PASS before any full-catalogue transport
+        run: |
+          set -euxo pipefail
+          mkdir -p external/r0
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${R0_RUN_ID}" > external/r0_run.json
+          python3 - <<'PY'
+          import json, os
+          d=json.load(open('external/r0_run.json'))
+          assert str(d['id']) == os.environ['R0_RUN_ID']
+          assert d['status'] == 'completed'
+          assert d['conclusion'] == 'success'
+          assert d['path'] == '.github/workflows/exp073r0-desy1-raw-row-healpix-equivalence-v0-1.yml'
+          PY
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${R0_RUN_ID}/artifacts" > external/r0_artifacts.json
+          python3 - <<'PY' > external/r0_artifact_name.txt
+          import json
+          d=json.load(open('external/r0_artifacts.json'))
+          a=[x for x in d['artifacts'] if x['name'].startswith('exp073r0-row-healpix-equivalence-') and not x['expired']]
+          assert len(a)==1, a
+          print(a[0]['name'])
+          PY
+          R0_ARTIFACT_NAME="$(cat external/r0_artifact_name.txt)"
+          gh run download "${R0_RUN_ID}" -n "${R0_ARTIFACT_NAME}" -D external/r0
+          R0_JSON="$(find external/r0 -name 'exp073r0_raw_row_healpix_equivalence_v0_1.json' -print -quit)"
+          test -n "$R0_JSON"
+          cp "$R0_JSON" external/exp073r0_parent.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('external/exp073r0_parent.json'))
+          assert d['status']=='PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0'
+          assert d['bins_with_selected_rows']==[0,1,2,3]
+          assert all(d['source_field_exact'].values())
+          assert all(d['metacal_field_exact'].values())
+          assert all(v['pixel_indices_exact'] is True for v in d['per_bin'].values())
+          assert d['science_gate_scored'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+
+      - name: Install frozen mapper runtime
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --disable-pip-version-check --no-cache-dir 'numpy<2.4' healpy
+          python3 -m py_compile ci/exp073r1_desy1_full_onepass_weak_lensing_mask_v0_1.py
+
+      - name: Execute frozen Exp073R1 one-pass construction
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073r1_desy1_full_onepass_weak_lensing_mask_v0_1.py \
+            --source-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_source_redshift_binning_v1.fits \
+            --metacal-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/shear_catalogs/mcal-y1a1-combined-riz-unblind-v4-matched.fits \
+            --parent-json external/exp073r0_parent.json \
+            --output data/derived/g7/exp073r1_desy1_full_onepass_weak_lensing_mask_v0_1.json \
+            --workdir /tmp/exp073r1
+
+      - name: Assert frozen non-science R1 contract
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073r1_desy1_full_onepass_weak_lensing_mask_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1'
+          assert d['rows_read_source']==136930995
+          assert d['rows_read_metacal']==136930995
+          assert d['input_sha256_recomputed']['source']=='491f4bb742762fefe3aaab6d53d4342b6ff4a65401bc7b588d2918fdce3ee6fd'
+          assert d['input_sha256_recomputed']['metacal']=='39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8'
+          assert d['hard_controls'] and all(d['hard_controls'].values())
+          assert d['science_gate_scored'] is False
+          assert d['f_invalid_computed'] is False
+          assert d['covariance_read'] is False
+          assert d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print(json.dumps({
+            'status':d['status'],
+            'selected_rows_per_bin':d['selected_rows_per_bin'],
+            'masks':{k:{'unique_pixels':v['unique_pixels'],'sha256':v['sha256']} for k,v in d['masks'].items()},
+            'hard_controls':d['hard_controls']
+          },indent=2,sort_keys=True))
+          PY
+
+      - name: Upload immutable Exp073R1 reproduction record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073r1-desy1-full-mask-${{ github.sha }}-r0-${{ inputs.r0_run_id }}
+          path: |
+            data/derived/g7/exp073r1_desy1_full_onepass_weak_lensing_mask_v0_1.json
+            data/derived/g7/exp073r1_masks/
+            data/derived/g7/exp073r1_records/
+          if-no-files-found: warn
