@@ -7,10 +7,13 @@ no family-dependent renormalization and introduces no scientific threshold.
 Outputs:
   papers/dsir1/figures/generated/fig03_chiI_hierarchy.pdf
   papers/dsir1/figures/generated/fig03_chiI_hierarchy.png
+  papers/dsir1/figures/generated/fig03_chiI_hierarchy.svg
+  papers/dsir1/figures/generated/fig03_chiI_hierarchy_provenance.json
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -32,6 +35,14 @@ def load(path: Path) -> dict:
         return json.load(f)
 
 
+def sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def main() -> None:
     a = load(EXP047A)
     b = load(EXP047B)
@@ -40,6 +51,12 @@ def main() -> None:
         raise RuntimeError("Unexpected Exp047A provenance")
     if b["run_id"] != 32894616114 or b["artifact_id"] != 9580724793:
         raise RuntimeError("Unexpected Exp047B provenance")
+    if a["artifact_sha256"] != "95d6ce81bc208443ca2377c6f1c4b9523393e2620a2876a2fb53c36a8beabb37":
+        raise RuntimeError("Unexpected Exp047A artifact digest")
+    if b["artifact_sha256"] != "948038245e4eeea9ca569a48e138f5bdddaede19f0ff98ea941fc91a00272bb7":
+        raise RuntimeError("Unexpected Exp047B artifact digest")
+    if not a["operator_controls"]["pass"] or not b["controls"]["pass"]:
+        raise RuntimeError("Frozen operator controls are not PASS")
     if not a["descriptive_nonoverlap_order_preserved"]:
         raise RuntimeError("Frozen Exp047A ordering flag is not true")
     if not b["descriptive_robustness"]["tier_order_preserved_in_all_12_reduced_grids"]:
@@ -48,6 +65,10 @@ def main() -> None:
     envelope_keys = ["IDE", "smooth_w", "GDM", "designer_fR"]
     envelope_labels = ["IDE", "smooth DE", "GDM", r"designer $f(R)$"]
     envelopes = np.asarray([a["chi_I_envelopes"][key] for key in envelope_keys], dtype=float)
+
+    # Recompute the non-overlap statement rather than trusting only its stored flag.
+    if not np.all(envelopes[:-1, 1] < envelopes[1:, 0]):
+        raise RuntimeError("Finite-amplitude chi_I envelopes overlap or are out of order")
 
     range_keys = [
         "C2_IDE_beta",
@@ -96,12 +117,56 @@ def main() -> None:
 
     pdf = OUT / "fig03_chiI_hierarchy.pdf"
     png = OUT / "fig03_chiI_hierarchy.png"
+    svg = OUT / "fig03_chiI_hierarchy.svg"
     fig.savefig(pdf, bbox_inches="tight")
     fig.savefig(png, dpi=220, bbox_inches="tight")
+    fig.savefig(svg, bbox_inches="tight")
     plt.close(fig)
+
+    provenance = {
+        "figure": "DSIR-I Figure 3",
+        "script": str(Path(__file__).relative_to(REPO)),
+        "scientific_scope": "frozen finite-amplitude low-k C1/C2/C3/C5 theory-response atlas; C4 absent by domain contract",
+        "inputs": {
+            "Exp047A": {
+                "path": str(EXP047A.relative_to(REPO)),
+                "run_id": a["run_id"],
+                "artifact_id": a["artifact_id"],
+                "artifact_sha256": a["artifact_sha256"],
+            },
+            "Exp047B": {
+                "path": str(EXP047B.relative_to(REPO)),
+                "run_id": b["run_id"],
+                "artifact_id": b["artifact_id"],
+                "artifact_sha256": b["artifact_sha256"],
+            },
+        },
+        "assertions": {
+            "operator_controls_pass": True,
+            "finite_amplitude_envelopes_nonoverlap": True,
+            "tier_order": ["IDE", "smooth-DE", "GDM", "designer-f(R)"],
+            "leave_one_node_tier_order_preserved": "12/12",
+            "scientific_stability_threshold": None,
+        },
+        "outputs": {
+            "pdf": {"path": pdf.name, "sha256": sha256(pdf)},
+            "png": {"path": png.name, "sha256": sha256(png)},
+            "svg": {"path": svg.name, "sha256": sha256(svg)},
+        },
+        "interpretation_boundary": [
+            "sampled-domain descriptive ordering, not a universal mechanism law",
+            "leave-one-node stability is internal grid robustness, not independent-data confirmation",
+            "smooth-w absolute chi_I is sensitive to the k=0.001 h/Mpc node",
+            "theory-response morphology is not survey detection significance",
+        ],
+    }
+    prov_path = OUT / "fig03_chiI_hierarchy_provenance.json"
+    prov_path.write_text(json.dumps(provenance, indent=2) + "\n", encoding="utf-8")
 
     print(f"wrote {pdf}")
     print(f"wrote {png}")
+    print(f"wrote {svg}")
+    print(f"wrote {prov_path}")
     print("Exp047A sha256:", a["artifact_sha256"])
     print("Exp047B sha256:", b["artifact_sha256"])
 
