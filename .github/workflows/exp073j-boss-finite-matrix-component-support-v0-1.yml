@@ -1,0 +1,60 @@
+name: Exp073J BOSS finite-matrix component support v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073j-boss-finite-matrix-component-support-v0-1.yml'
+      - 'ci/exp073j_boss_finite_matrix_component_support_v0_1.py'
+      - 'experiments/073j_boss_finite_matrix_component_preoutput_binding_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  boss-component-support:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install numerical dependency
+        run: python3 -m pip install --user numpy
+      - name: Bind exact Exp073I BOSS z3 matrices
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp073j_boss
+          base='https://fbeutler.github.io/hub'
+          curl --fail --location --retry 3 -o external/exp073j_boss/W_NGC_z3.gz "$base/W_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073j_boss/W_SGC_z3.gz "$base/W_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073j_boss/M_NGC_z3.gz "$base/M_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073j_boss/M_SGC_z3.gz "$base/M_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          for f in external/exp073j_boss/*.gz; do gzip -t "$f"; gzip -dc "$f" > "${f%.gz}"; done
+      - name: Execute frozen non-classifying BOSS component support audit
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073j_boss_finite_matrix_component_support_v0_1.py \
+            --root external/exp073j_boss \
+            --output data/derived/g7/exp073j_boss_finite_matrix_component_support_v0_1.json
+      - name: Assert frozen no-downstream contract
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073j_boss_finite_matrix_component_support_v0_1.json'))
+          assert d['record_type']=='BOSS_FINITE_MATRIX_COMPONENT_SUPPORT_NONCLASSIFYING'
+          assert d['scientific_classification_authorized'] is False
+          assert d['frozen']['max_positive_invalid_fraction']==0.05
+          assert d['frozen']['h_fid']==0.676
+          assert d['controls']['covariance_values_read'] is False
+          assert d['controls']['nuisance_rank_read'] is False
+          assert d['controls']['relation_residual_read'] is False
+          assert d['controls']['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+      - name: Upload immutable BOSS component record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073j-boss-component-support-${{ github.sha }}
+          path: data/derived/g7/exp073j_boss_finite_matrix_component_support_v0_1.json
+          if-no-files-found: warn
