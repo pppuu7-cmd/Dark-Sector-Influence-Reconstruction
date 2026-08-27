@@ -1,0 +1,59 @@
+{
+  "experiment": "Exp072C",
+  "date": "2026-08-27",
+  "status": "DIAGNOSTIC_JOINT_LOWZ_HIGHK_FRONTIER_FOUND_EXP072C",
+  "workflow_run": 33031427090,
+  "workflow_job": 98384598473,
+  "artifact_id": 9630407069,
+  "artifact_digest": "sha256:0e726d9f12b2b8951a4d2598b3723d54db1a14c09070d8e8770d5256773f2a71",
+  "artifact_json_sha256": "d0d8e6a19177f4a7b94d2f0b95d6fee3b5cd85078e8eadee06e7f0faaf5864c0",
+  "execution_merge_sha": "b442cddd6ba032d1261a0994bc1c4f5cf899a9f7",
+  "parent_Exp072A": "FAIL_ACT_UNWISE_ANGULAR_SUPPORT_LEAKAGE_MASK_V0_1",
+  "parent_Exp072B": "DIAGNOSTIC_K_ONLY_TARGET_NOT_FOUND_EXP072B",
+  "fixed_threshold": 0.05,
+  "candidate_z_count": 28,
+  "candidate_k_count_ge_current": 568937,
+  "finite_route_point_count": 5,
+  "pareto_frontier_count": 1,
+  "pareto_frontier": [
+    {
+      "z_min": 0.0087345857837422,
+      "k_max_Mpc^-1": 4.818261097432861,
+      "retained_dimension": 15,
+      "Blue_ACT": {"gg": 1, "kg": 4},
+      "Green_ACT": {"gg": 3, "kg": 7},
+      "retained_indices": [0, 6, 7, 8, 9, 13, 14, 15, 19, 20, 21, 22, 23, 24, 25]
+    }
+  ],
+  "minimal_redshift_extension_endpoint": {
+    "z_min": 0.0087345857837422,
+    "k_max_Mpc^-1": 4.818261097432861
+  },
+  "minimal_k_extension_endpoint": {
+    "z_min": 0.0087345857837422,
+    "k_max_Mpc^-1": 4.818261097432861
+  },
+  "descriptive_extension_factors": {
+    "k_over_current_common_kmax": 72.29457093020555,
+    "k_over_current_C5_internal_0p30": 16.060870324776204,
+    "current_zmin_over_frontier_zmin": 33.77378244416437
+  },
+  "hard_controls": {
+    "C1": true,
+    "C2": true,
+    "C3": true,
+    "C4": true,
+    "C5": true,
+    "C6": true,
+    "C7": true,
+    "C8": true
+  },
+  "interpretation_boundary": {
+    "frontier_is_planning_geometry_only": true,
+    "physical_provider_extended": false,
+    "covariance_restriction_authorized": false,
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
