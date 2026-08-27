@@ -1,0 +1,48 @@
+name: Exp073Q DES Y1 FITS schema row-layout probe v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073q-desy1-fits-schema-rowlayout-probe-v0-1.yml'
+      - 'ci/exp073q_remote_fits_schema_rowlayout_probe_v0_1.py'
+      - 'experiments/073q_desy1_mapper_equivalent_mask_geometry_schema_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  schema-row-layout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe exact remote FITS headers with HTTP byte ranges only
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073q_remote_fits_schema_rowlayout_probe_v0_1.py \
+            --source-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_source_redshift_binning_v1.fits \
+            --source-bytes 2738626560 \
+            --metacal-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/shear_catalogs/mcal-y1a1-combined-riz-unblind-v4-matched.fits \
+            --metacal-bytes 84075649920 \
+            --output data/derived/g7/exp073q_desy1_fits_schema_rowlayout_v0_1.json
+      - name: Assert preregistered non-science contract
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073q_desy1_fits_schema_rowlayout_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='SCHEMA_ROW_LAYOUT_PASS_EXP073Q'
+          assert d['row_count_equal'] is True
+          assert d['full_object_redownloaded'] is False
+          assert d['science_gate_scored'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print(json.dumps(d, indent=2, sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073q-desy1-fits-schema-rowlayout-${{ github.sha }}
+          path: data/derived/g7/exp073q_desy1_fits_schema_rowlayout_v0_1.json
+          if-no-files-found: warn
