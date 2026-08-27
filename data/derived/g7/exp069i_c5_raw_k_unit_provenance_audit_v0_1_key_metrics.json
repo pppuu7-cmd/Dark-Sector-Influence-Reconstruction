@@ -1,0 +1,37 @@
+{
+  "experiment": "Exp069I",
+  "date": "2026-08-27",
+  "scientific_classification": "PASS_C5_RAW_K_UNIT_PROVENANCE_AUDIT_V0_1",
+  "preregistration_commit": "6b12a22e6b1bfe91f8863b5705b479dbcd640c83",
+  "execution_head": "fa32b651d0c05042a6743e71e373ea13d91c9aa7",
+  "workflow_run_id": 33026608144,
+  "artifact_id": 9628710949,
+  "artifact_sha256": "1eccd4fffc16842ebbf9c61a7f4103dd190da94de9ad9c2b901c6536f4edb71c",
+  "solver_sha": "16d9c4e9f85751e30efd0a53b177941713078904",
+  "h": 0.67,
+  "relative_guard": 1.4210854715202004e-14,
+  "criteria": {
+    "U1_default_semantics": true,
+    "U2_physical_conversion": true,
+    "U3_target_grid_immunity": true
+  },
+  "historical_label_classification": "HISTORICAL_LABEL_INCORRECT_VALUES_ARE_K_OVER_H",
+  "max_relative_k_conversion_error": {
+    "mm": 0.0,
+    "Wm": 0.0,
+    "WW": 0.0
+  },
+  "default_raw_k_first_last": [3.51760900230147e-6, 0.4486648738384247],
+  "physical_raw_k_Mpc^-1_first_last": [2.356798031541985e-6, 0.30060546547174455],
+  "power_default_equals_physical": {
+    "mm": true,
+    "Wm": true,
+    "WW": true
+  },
+  "preserved": {
+    "Exp069B": "FAIL_C5_EXPLICIT_EFT_PYTHON_POWER_BRIDGE_V0_1",
+    "Exp069F": "GENERAL_ACCURACY_RECOVERS_FROZEN_GR_LIMIT",
+    "Exp069H": "PASS_C5_Q3_UNMODIFIED_UPSTREAM_PHYSICAL_PROVIDER_V0_1"
+  },
+  "gate_state": {"G7":"OPEN","G8":"OPEN","G9":"OPEN"}
+}
