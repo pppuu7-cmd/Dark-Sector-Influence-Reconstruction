@@ -1,0 +1,59 @@
+name: Exp073R0 DES Y1 raw-row HEALPix equivalence v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073r0-desy1-raw-row-healpix-equivalence-v0-1.yml'
+      - 'ci/exp073r0_raw_row_healpix_equivalence_v0_1.py'
+      - 'experiments/073r0_desy1_raw_row_decode_healpix_equivalence_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  raw-row-healpix-equivalence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned-route numerical readers
+        run: |
+          python3 -m pip install --disable-pip-version-check --no-cache-dir 'numpy<2.4' astropy healpy
+      - name: Run prospectively sampled raw-row equivalence audit
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073r0_raw_row_healpix_equivalence_v0_1.py \
+            --source-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_source_redshift_binning_v1.fits \
+            --metacal-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/shear_catalogs/mcal-y1a1-combined-riz-unblind-v4-matched.fits \
+            --output data/derived/g7/exp073r0_raw_row_healpix_equivalence_v0_1.json \
+            --workdir /tmp/exp073r0
+      - name: Assert non-science equivalence contract
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073r0_raw_row_healpix_equivalence_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0'
+          assert d['bins_with_selected_rows']==[0,1,2,3]
+          assert all(d['source_field_exact'].values())
+          assert all(d['metacal_field_exact'].values())
+          assert all(x['pixel_indices_exact'] for x in d['per_bin'].values())
+          assert d['science_gate_scored'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print(json.dumps({
+            'status':d['status'],
+            'sample_rows':d['sample_rows'],
+            'bins':d['bins_with_selected_rows'],
+            'per_bin':d['per_bin'],
+            'numpy_version':d['numpy_version'],
+            'healpy_version':d['healpy_version'],
+          }, indent=2, sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073r0-row-healpix-equivalence-${{ github.sha }}
+          path: data/derived/g7/exp073r0_raw_row_healpix_equivalence_v0_1.json
+          if-no-files-found: warn
