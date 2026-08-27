@@ -12,7 +12,9 @@
   - exact same-NSIDE `hp.ud_grade(...,4096)` identity passed;
   - redMaGiC retained pixels: `6536725`;
   - lens/source n(z) each contain 400 rows and reproduce the frozen schemas.
-- Exp073R0 raw-row decoder + HEALPix mapper-equivalence audit is still running as GitHub Actions run `33086178147`; do not duplicate it. Its preregistered PASS is the only authorization for Exp073R1 full one-pass weak-lensing mask construction.
+- Exp073R0 attempt 1, run `33086178147`, ended `cancelled` during the frozen sampled raw-row audit because the workflow-level `timeout-minutes: 35` was reached. No result JSON was produced; this is infrastructure/incomplete, not a scientific PASS/FAIL.
+- Infrastructure-only repair PR `#151` changed only the Exp073R0 job timeout from 35 to 120 minutes. The 16 prospectively fixed windows, exact row offsets/types, HEALPix mapper, bin-coverage requirement, and all PASS/FAIL semantics are unchanged.
+- Exp073R0 attempt 2 is GitHub Actions run `33092211100` on merge commit `5ee34c3fc80ab1091b7e925d321d880dbadade3c`. Do not duplicate it while queued/running. Its preregistered PASS remains the only authorization for Exp073R1 full one-pass weak-lensing mask construction.
 
 ## Frozen Exp073P scientific acceptance criteria — unchanged
 
@@ -28,10 +30,10 @@ No covariance, whitening, nuisance SVD/rank, quotient/relation/null or G8 output
 
 ## Next admissible step
 
-1. First resolve Exp073R0 exactly as preregistered.
+1. First resolve Exp073R0 attempt 2 exactly as preregistered.
 2. If R0 is `PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0`, prospectively freeze and execute Exp073R1 full one-pass DES Y1 weak-lensing mask construction using the already checksum-bound source-bin and metacal catalogues. R1 must remain a reproduction/input-construction experiment and must not compute `f_invalid`.
 3. If R0 is deterministic FAIL, preserve it and repair only the implementation equivalence before any R1 or support calculation.
-4. If R0 is infrastructure/incomplete, preserve that distinction and retry without changing frozen scientific criteria.
+4. If R0 is again infrastructure/incomplete, preserve that distinction; diagnose transport/runtime mechanics without changing frozen scientific criteria.
 5. Only after all Exp073P input/operator prerequisites are independently reproduced may the already-frozen physical-support leakage calculation be executed.
 
 ## Gate state
