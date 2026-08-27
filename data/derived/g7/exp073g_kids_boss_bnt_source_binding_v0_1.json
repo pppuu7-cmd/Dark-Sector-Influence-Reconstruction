@@ -1,0 +1,60 @@
+{
+  "experiment": "Exp073G",
+  "record_type": "PRE_OUTPUT_SOURCE_BINDING",
+  "date": "2026-08-27",
+  "support_evaluated": false,
+  "parent_main_sha": "f5143d2fd0db5cd55d5bc869f8ff6cce7ae8b921",
+  "kids_release_page": "https://kids.strw.leidenuniv.nl/DR4/KiDS-1000_3x2pt_Cosmology.php",
+  "kids_release_page_claims_used": [
+    "3x2pt combines KiDS-1000 weak lensing, BOSS redshift-space clustering, and galaxy-galaxy lensing from KiDS/BOSS/2dFLenS overlap",
+    "public tarball exists",
+    "public open-source software/data repository contains 3x2pt data vectors and galaxy redshift distributions"
+  ],
+  "primary_public_repository": {
+    "repository": "KiDS-WL/Cat_to_Obs_K1000_P1",
+    "branch_at_binding": "master",
+    "frozen_commit": "36676da44471979dacb779155d7e6e7212ae1f4f",
+    "frozen_tree": "36932b9f499a5fd469890caebf62418f3f8bc40e",
+    "commit_date_utc": "2022-01-12T11:34:01Z",
+    "repository_url": "https://github.com/KiDS-WL/Cat_to_Obs_K1000_P1"
+  },
+  "public_operator_inventory_without_covariance_read": {
+    "boss_clustering": "data/boss/Sanchez_etal_2017",
+    "boss_and_2dflens_nz": "data/boss/nofz",
+    "kids_source_nz": "data/kids/nofz",
+    "kids_shear_bandpowers": "data/kids/bp_K1000_*",
+    "kids_xipm": "data/kids/xipm",
+    "kids_fits_data_vectors": "data/kids/fits and data/kids/fits_iterative_covariance",
+    "readme_statement": "repository provides unblinded Blind C data and public BOSS/KiDS data products"
+  },
+  "example_bound_git_objects": {
+    "kids_nofz_readme_blob": "75bf86e2889c77c4830071fda8e380258a6f5f5a",
+    "kids_nofz_SOM_directory_tree": "473b5caee7841386ded5db94ca699a69dddc06b0",
+    "kids_bandpower_bmode_blob": "931a37581985faa02bfcf28d9b192edd5301d773"
+  },
+  "frozen_support": {
+    "z_min": 0.295,
+    "z_max": 2.33,
+    "k_min_Mpc^-1": 0.000704833374744468,
+    "k_max_Mpc^-1": 0.06664762008318016,
+    "max_invalid_fraction": 0.05
+  },
+  "controls": {
+    "covariance_values_read": false,
+    "nuisance_rank_read": false,
+    "relation_residual_read": false,
+    "G8_read": false,
+    "source_identity_frozen_before_support_output": true
+  },
+  "remaining_pre_output_binding_work": [
+    "clone exact frozen repository commit and compute SHA256 of every n(z), bandpower/window and density/lens object actually used",
+    "freeze exact continuous-bin BNT matrix convention and implementation identity",
+    "freeze retained BOSS/2dFLenS lens/redshift selections before final support retained-dimension calculation",
+    "identify exact released bandpower/window operators required for broad-window support integration"
+  ],
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
