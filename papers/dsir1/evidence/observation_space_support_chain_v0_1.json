@@ -3,7 +3,7 @@
   "date": "2026-08-27",
   "source_repository": "pppuu7-cmd/Dark-Sector-Influence-Reconstruction",
   "source_branch": "main",
-  "source_main_seen_at": "1aae5ab8f019531f6dc97a71e827456df4f7dbf8",
+  "source_main_seen_at": "94553dd1053b062b274f030ee842530ea62f24b1",
   "experiments": {
     "Exp072A": {
       "status": "FAIL_ACT_UNWISE_ANGULAR_SUPPORT_LEAKAGE_MASK_V0_1",
@@ -101,21 +101,74 @@
       "median_pair_max_Delta2_inside_geometry": 10.106721461271324,
       "linear_no_CLEFT_route_eligible": false,
       "covariance_restriction_authorized": false
+    },
+    "Exp073B": {
+      "status": "GAP_EXISTING_STACK_NONLINEAR_MATTER_WEYL_ROUTE_EXP073B",
+      "completed_workflow_run": 33033279245,
+      "completed_workflow_job": 98390378310,
+      "artifact_id": 9631041961,
+      "artifact_digest": "sha256:743ef140774eaeef164c506590a14ef999f2cb98e2bf5fd79e42bda9e69f96a5",
+      "artifact_json_sha256": "20e1378a2959679fe02116f6bdf7206a96fbac36b57c603ec2730357766f83ec",
+      "execution_head": "ba64a1511dd36ad7f85f8ae325099f6d365fa2d2",
+      "result_commit": "c48d9ba3729abad7a95224e36df2131590904e31",
+      "initial_infrastructure_attempt": {
+        "workflow_run": 33033220464,
+        "scientific_classification": false,
+        "reason": "Pinned C3 source was initially cloned from vanilla lesgourg/class_public, where the historically certified GDM commit is absent; the audit did not execute. The source URL was corrected without changing frozen scientific criteria."
+      },
+      "projector_three_block_interface_sufficient": true,
+      "C3_complete_nonlinear_three_block_provider": false,
+      "C5_complete_nonlinear_three_block_provider": false,
+      "complete_existing_candidate_support_plausible": false,
+      "covariance_restriction_authorized": false
+    },
+    "Exp073C": {
+      "status": "NO_COMPLETE_PUBLIC_CANDIDATE_ROUTE_EXP073C",
+      "preregistered_before_candidate_ranking": true,
+      "result_commit": "09c86a13512859a11f701a846aa00ed5f9bb9f02",
+      "complete_public_or_composable_candidate_found": false,
+      "C5_nonlinear_matter_candidates_exist": true,
+      "C5_independent_signed_Wm_WW_public_provider_found": false,
+      "C3_nonlinear_matter_partial_candidates_exist": true,
+      "C3_independent_signed_Wm_WW_public_provider_found": false,
+      "interpretation": "The missing DSIR nonlinear three-block provider cannot currently be obtained by importing one established public package under the frozen requirements.",
+      "covariance_restriction_authorized": false
+    },
+    "Exp073D": {
+      "status": "C3_NONLINEAR_COMPLETION_NONIDENTIFIABLE_C5_DEFINED_EXP073D",
+      "preregistration_commit": "4f3ab9656731a0b4c0ff1a077eb90dd6f3f56e90",
+      "result_commit": "4d93a0d213443e95b5da023f99fcad6acc579dc6",
+      "C3_frozen_definition_order": "linear_perturbative",
+      "C3_nonlinear_continuation_unique": false,
+      "C3_unique_nonlinear_three_block_inference_from_frozen_vector": false,
+      "C5_nonlinear_theory_defined_in_principle": true,
+      "C5_current_certified_nonlinear_provider_present": false,
+      "posthoc_single_C3_nonlinear_closure_forbidden": true,
+      "covariance_restriction_authorized": false
+    },
+    "Exp073E": {
+      "status": "C3_COMPLETION_ENSEMBLE_NOT_FEASIBLE_EXP073E",
+      "preregistration_commit": "077d024a5e91b704e9473cb546cd6e9eb3eeb297",
+      "result_commit": "df1578d933a16db3421d6f188f7bac1dcdfaddd4",
+      "full_C3_linear_limit_preservation_established": false,
+      "at_least_two_physically_distinct_assumptions_descriptively_exist": true,
+      "provider_certifiable_independent_nonlinear_three_block_route": false,
+      "no_downstream_leakage": true,
+      "completion_ensemble_feasible_under_frozen_E1_E8": false,
+      "current_ACT_unWISE_G7_route_blocked_before_covariance_restriction": true
     }
   },
   "boundary": {
     "G7": "OPEN",
     "G8": "OPEN",
     "G9": "OPEN",
-    "claim": "The completed Exp072A/B/C -> Exp073A chain is an observation-space support/perturbativity eligibility result, not a completed observational quotient.",
+    "claim": "The completed Exp072A/B/C -> Exp073A/B/C/D/E chain is an observation-space support, perturbativity, provider-capability, and nonlinear-model-identifiability boundary, not a completed observational quotient.",
     "forbidden": [
-      "Do not compute or claim covariance-whitened/nuisance-quotiented C3/C5 survey distances from the failed current support route.",
+      "Do not compute or claim covariance-whitened/nuisance-quotiented C3/C5 survey distances from the blocked current ACTxunWISE route.",
       "Do not interpret the Exp072C frontier as an already available physical provider domain.",
-      "Do not treat Exp073A ineligibility as a failure of DSIR response geometry itself."
+      "Do not treat Exp073A ineligibility as a failure of DSIR response geometry itself.",
+      "Do not hide a chosen nonlinear C3 completion inside a numerical provider; completion identity changes/refines the model class.",
+      "Do not treat the initial Exp073B infrastructure-only run 33033220464 as a scientific result; the completed corrected-source audit is run 33033279245."
     ]
-  },
-  "Exp073B": {
-    "included_in_science_claims": false,
-    "reason": "First run 33033220464 failed during pinned source checkout before the frozen capability audit executed; no scientific FEASIBLE/GAP/FAIL classification was produced."
   }
 }
