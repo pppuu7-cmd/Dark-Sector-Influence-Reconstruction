@@ -1,0 +1,121 @@
+{
+  "snapshot": "DSIR-I observation-space support closure evidence v0.1",
+  "date": "2026-08-27",
+  "source_repository": "pppuu7-cmd/Dark-Sector-Influence-Reconstruction",
+  "source_branch": "main",
+  "source_main_seen_at": "1aae5ab8f019531f6dc97a71e827456df4f7dbf8",
+  "experiments": {
+    "Exp072A": {
+      "status": "FAIL_ACT_UNWISE_ANGULAR_SUPPORT_LEAKAGE_MASK_V0_1",
+      "workflow_run": 33029362485,
+      "workflow_job": 98378044465,
+      "artifact_id": 9629763833,
+      "artifact_digest": "sha256:9ecf7d61b4db5e091392a23f508cd5dd3d04dafe32a4a66d1256a70d9947701d",
+      "artifact_json_sha256": "56b96c096830bf8399ef18df41251a14ded00101a1f206b4419ccb6b5730abe3",
+      "implementation_merge_sha": "f7888f60a916537d4ffd69e179471a26f1ed2655",
+      "frozen_threshold": 0.05,
+      "candidate_dimension": 26,
+      "nominal_retained_dimension": 0,
+      "tightened_retained_dimension": 0,
+      "leakage_V0": [
+        0.9766604845505226, 0.9978006239739285, 0.9998576536002326, 0.9999536713346275, 0.9999735424201207, 0.999985571749533,
+        0.7642825952218016, 0.9065629718768274, 0.9796889100283589, 0.997741804913476, 0.9998574745117471, 0.9999883450881332, 0.9999990532013111,
+        0.8989342451263727, 0.9731212806978584, 0.995803788340234, 0.9995888521424942, 0.9999088218317776, 0.9999518607900633,
+        0.6151682900038838, 0.7812755264772403, 0.9083416829482325, 0.9723336656313886, 0.9945861923446497, 0.9993124534905542, 0.9999537035261437
+      ],
+      "posthoc_blockwise_min_V0": {
+        "gg/mm": 0.08425052286761503,
+        "gg/Wm": 0.6832935480972744,
+        "gg/WW": 0.8989342679620471,
+        "kg/Wm": 0.1364788719151473,
+        "kg/WW": 0.615168379027028
+      }
+    },
+    "Exp072B": {
+      "status": "DIAGNOSTIC_K_ONLY_TARGET_NOT_FOUND_EXP072B",
+      "workflow_run": 33030657898,
+      "workflow_job": 98382166843,
+      "artifact_id": 9630210086,
+      "artifact_digest": "sha256:5bbca5717d29d24f8ba3b5ae24d8cc752bd5d90460859ae79f5212ca764615ad",
+      "artifact_json_sha256": "d90b387b6acb5b48c6daae0f25da9adb7ea6ed851e3b22c8a79c6bc56b2d0f1d",
+      "execution_merge_sha": "3dce5449e9d23dbc71091905ad51bd8c7b45bba2",
+      "frozen_threshold": 0.05,
+      "pair_count": 64,
+      "coordinate_count": 26,
+      "finite_coordinate_upper_k_only_targets": 0,
+      "infinite_coordinate_upper_k_only_targets": 26,
+      "median_f_z_out": 0.4556923704004443,
+      "max_f_z_out": 0.8839350857532944,
+      "median_f_k_out": 0.9705092579400587,
+      "max_f_k_out": 0.9999982983363256,
+      "median_f_z_low": 0.45567647226245966,
+      "median_f_z_high": 8.58899591150497e-7,
+      "count_k_out_gt_z_out": 60,
+      "count_z_out_gt_k_out": 4,
+      "joint_lower_z_and_upper_k_extension_motivated": true
+    },
+    "Exp072C": {
+      "status": "DIAGNOSTIC_JOINT_LOWZ_HIGHK_FRONTIER_FOUND_EXP072C",
+      "workflow_run": 33031427090,
+      "workflow_job": 98384598473,
+      "artifact_id": 9630407069,
+      "artifact_digest": "sha256:0e726d9f12b2b8951a4d2598b3723d54db1a14c09070d8e8770d5256773f2a71",
+      "artifact_json_sha256": "d0d8e6a19177f4a7b94d2f0b95d6fee3b5cd85078e8eadee06e7f0faaf5864c0",
+      "execution_merge_sha": "b442cddd6ba032d1261a0994bc1c4f5cf899a9f7",
+      "fixed_threshold": 0.05,
+      "candidate_z_count": 28,
+      "candidate_k_count_ge_current": 568937,
+      "pareto_frontier_count": 1,
+      "z_min": 0.0087345857837422,
+      "k_max_Mpc^-1": 4.818261097432861,
+      "retained_dimension": 15,
+      "k_over_current_common_kmax": 72.29457093020555,
+      "k_over_current_C5_internal_0p30": 16.060870324776204,
+      "current_zmin_over_frontier_zmin": 33.77378244416437,
+      "frontier_is_planning_geometry_only": true,
+      "physical_provider_extended": false,
+      "covariance_restriction_authorized": false
+    },
+    "Exp073A": {
+      "status": "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
+      "workflow_run": 33032781761,
+      "workflow_job": 98388840817,
+      "artifact_id": 9630897385,
+      "artifact_digest": "sha256:0f2212d691c38c3e953d2a0d823b498a5557b9485fc759079719000cdc48cb25",
+      "artifact_json_sha256": "a8bbafa971283cadf9ff27a27af4d0c4e3042bc0aec590d690142d39c919abb2",
+      "execution_merge_sha": "03c9d0281a6ea780d29c6fb4a689dbd55e51fdf5",
+      "frontier_z_min": 0.0087345857837422,
+      "frontier_z_max": 2.33,
+      "frontier_k_min_Mpc^-1": 0.000704833374744468,
+      "frontier_k_max_Mpc^-1": 4.818261097432861,
+      "primary_threshold_Delta2": 1.0,
+      "T_0p5_retained_dimension": 0,
+      "T_1_retained_dimension": 0,
+      "T_2_retained_dimension": 0,
+      "pair_count": 64,
+      "pair_count_primary_pass": 7,
+      "median_incremental_nonperturbative_fraction": 0.33104901805931586,
+      "max_incremental_nonperturbative_fraction": 0.8399156776753174,
+      "median_combined_invalid_fraction": 0.34145708039221284,
+      "max_combined_invalid_fraction": 0.9501004682310411,
+      "median_pair_max_Delta2_inside_geometry": 10.106721461271324,
+      "linear_no_CLEFT_route_eligible": false,
+      "covariance_restriction_authorized": false
+    }
+  },
+  "boundary": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN",
+    "claim": "The completed Exp072A/B/C -> Exp073A chain is an observation-space support/perturbativity eligibility result, not a completed observational quotient.",
+    "forbidden": [
+      "Do not compute or claim covariance-whitened/nuisance-quotiented C3/C5 survey distances from the failed current support route.",
+      "Do not interpret the Exp072C frontier as an already available physical provider domain.",
+      "Do not treat Exp073A ineligibility as a failure of DSIR response geometry itself."
+    ]
+  },
+  "Exp073B": {
+    "included_in_science_claims": false,
+    "reason": "First run 33033220464 failed during pinned source checkout before the frozen capability audit executed; no scientific FEASIBLE/GAP/FAIL classification was produced."
+  }
+}
