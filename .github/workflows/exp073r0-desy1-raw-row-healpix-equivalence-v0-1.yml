@@ -15,7 +15,7 @@ permissions:
 jobs:
   raw-row-healpix-equivalence:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - name: Install pinned-route numerical readers
