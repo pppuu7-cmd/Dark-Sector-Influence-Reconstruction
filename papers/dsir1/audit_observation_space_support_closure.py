@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Audit the DSIR-I observation-space support/provider/model-boundary chain.
 
-The audit binds the manuscript-facing snapshot of Exp072A/B/C and Exp073A--E.
-It preserves the first Exp073B checkout failure as infrastructure-only while
-binding the later corrected-source capability audit as the valid scientific
-Exp073B result.
+The audit binds the scientific Exp072A/B/C and Exp073A--E snapshot while
+keeping machine classifications in the supplement/provenance layer rather than
+requiring unbreakable status identifiers in journal prose.  This is an
+editorial separation only: all scientific statuses and thresholds remain
+unchanged.
 """
 
 from __future__ import annotations
@@ -16,6 +17,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 SNAPSHOT = HERE / "evidence" / "observation_space_support_chain_v0_1.json"
 SECTION = HERE / "sections" / "observation_space_support_closure.md"
+SUPPLEMENT = HERE / "supplement" / "observation_route_detailed.md"
 CLAIMS = HERE / "CLAIMS_LEDGER.md"
 PROVENANCE = HERE / "PROVENANCE_MATRIX.md"
 
@@ -131,19 +133,32 @@ def main() -> None:
     require("Exp073A/B/C/D/E" in boundary["claim"], "Support-chain boundary does not include completed Exp073A--E")
 
     section = read(SECTION)
+    supplement = read(SUPPLEMENT)
     claims = read(CLAIMS)
     provenance = read(PROVENANCE)
+
+    # Human-readable scientific statements belong in journal prose.
     for token in [
         "support closure and perturbativity",
         "0.0087346",
         "4.81826",
         "7 of 64",
-        "GAP_EXISTING_STACK_NONLINEAR_MATTER_WEYL_ROUTE_EXP073B",
-        "C3_COMPLETION_ENSEMBLE_NOT_FEASIBLE_EXP073E",
-        "G7, G8, and G9 remain open",
+        "tested linear route is therefore physically ineligible",
         "does **not** compute or quote",
+        "G7, G8, and G9 remain open",
     ]:
         require(token in section, f"Section token missing: {token}")
+
+    # Exact machine classifications remain mandatory, but in supplement / provenance.
+    for token in [
+        "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
+        "GAP_EXISTING_STACK_NONLINEAR_MATTER_WEYL_ROUTE_EXP073B",
+        "C3_COMPLETION_ENSEMBLE_NOT_FEASIBLE_EXP073E",
+        "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
+        "PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0",
+    ]:
+        require(token in supplement, f"Supplement machine classification missing: {token}")
+
     require("Observational support closure is a scientific eligibility condition" in claims, "Claims ledger missing support-closure claim")
     require("The present nonlinear obstruction is in the physical provider layer" in claims, "Claims ledger missing Exp073B/C provider-boundary claim")
     require("Nonlinear continuation is model-definition dependent" in claims, "Claims ledger missing Exp073D identifiability claim")
@@ -159,6 +174,7 @@ def main() -> None:
     print("PASS: Exp073C no-complete-public-route boundary preserved")
     print("PASS: Exp073D C3/C5 nonlinear identifiability asymmetry preserved")
     print("PASS: Exp073E completion-ensemble boundary preserved")
+    print("PASS: journal prose / supplement machine-classification separation")
     print("PASS: DSIR-I observation-space support/provider/model-boundary audit")
 
 
