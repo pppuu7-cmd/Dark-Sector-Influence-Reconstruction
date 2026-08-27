@@ -2,9 +2,10 @@
 """Build a journal-facing DSIR-I markdown candidate from manuscript_v0_2.
 
 The scientific body remains the audited v0.2 assembly. This builder changes
-only presentation required for JCAP preparation: formula-free abstract and an
-explicit AI-assisted-technology disclosure. It does not alter any scientific
-result, threshold, gate state, figure, or provenance binding.
+only presentation required for JCAP preparation: formula-free abstract,
+canonical AI disclosure, and the frozen compact main-table policy. Detailed
+removed table content remains in supplement/numerical_tables.md. No scientific
+result, threshold, gate state, figure, or provenance binding is altered.
 """
 
 from __future__ import annotations
@@ -15,11 +16,17 @@ HERE = Path(__file__).resolve().parent
 SOURCE = HERE / "manuscript_v0_2.md"
 FRONT = HERE / "JCAP_FRONT_MATTER_DRAFT.md"
 ACK = HERE / "ACKNOWLEDGMENTS_AND_DISCLOSURES.md"
+SUPP_TABLES = HERE / "supplement" / "numerical_tables.md"
 OUT = HERE / "manuscript_jcap_candidate.md"
 
 ABSTRACT_START = "# Abstract"
 INTRO_START = "# 1. Introduction"
 OUTLOOK_START = "# 12. Outlook"
+
+FAMILY_ATLAS_HEADER = "| Class | Representative mechanism | Main response character used here |"
+TANGENT_CHI_HEADER = "| Direction | \\(\\chi_I\\) |"
+MECHANISM_RESPONSE_HEADER = "| Family / control | Equation cue and block to inspect | Frozen response pattern / evidence boundary |"
+ENVELOPE_HEADER = "| Family | sampled \\(\\chi_I\\) range |"
 
 
 def require(cond: bool, message: str) -> None:
@@ -32,10 +39,48 @@ def extract_between(text: str, start: str, end: str) -> str:
     return text.split(start, 1)[1].split(end, 1)[0].strip()
 
 
+def replace_markdown_table(text: str, header: str, replacement: str) -> str:
+    lines = text.splitlines()
+    hits = [i for i, line in enumerate(lines) if line.rstrip() == header]
+    require(len(hits) == 1, f"expected exactly one table header {header!r}, found {len(hits)}")
+    i = hits[0]
+    require(i + 1 < len(lines) and lines[i + 1].lstrip().startswith("|---"),
+            f"table separator missing after {header!r}")
+    j = i + 2
+    while j < len(lines) and lines[j].lstrip().startswith("|"):
+        j += 1
+    new_lines = lines[:i] + [replacement] + lines[j:]
+    return "\n".join(new_lines)
+
+
+def table_count(text: str) -> int:
+    lines = text.splitlines()
+    count = 0
+    for i in range(len(lines) - 1):
+        if lines[i].lstrip().startswith("|") and lines[i + 1].lstrip().startswith("|---"):
+            count += 1
+    return count
+
+
 def main() -> None:
     src = SOURCE.read_text(encoding="utf-8")
     front = FRONT.read_text(encoding="utf-8")
     ack = ACK.read_text(encoding="utf-8")
+    supplement = SUPP_TABLES.read_text(encoding="utf-8")
+
+    # Prove the removed details still exist in the supplement before compacting
+    # the journal rendering.
+    for token in (
+        "Supplementary Table S1",
+        "C3 GDM `c_s^2` | `4.5305e-2`",
+        "Supplementary Table S2",
+        "Supplementary Table S3",
+        "Supplementary Table S4",
+        "Supplementary Table S5",
+        "Supplementary Table S6",
+        "G7=OPEN",
+    ):
+        require(token in supplement, f"supplementary table contract missing: {token}")
 
     abstract = extract_between(
         front,
@@ -68,6 +113,25 @@ def main() -> None:
     )
     out = out.replace(OUTLOOK_START, disclosure + OUTLOOK_START, 1)
 
+    # Frozen two-table main-text policy. Scientific details are not deleted from
+    # the project; they are retained in supplementary numerical tables.
+    out = replace_markdown_table(
+        out,
+        FAMILY_ATLAS_HEADER,
+        "The full class-by-class response-block inventory is retained in Supplementary Table S1a; the main text uses the evidence-graded mechanism-to-response map below as the nonredundant atlas summary.",
+    )
+    out = replace_markdown_table(
+        out,
+        TANGENT_CHI_HEADER,
+        "Exact direction-by-direction tangent interaction fractions are retained in Supplementary Table S1b. The main-text quantitative comparison below focuses on the finite-amplitude class envelopes and their deterministic node robustness.",
+    )
+
+    require(FAMILY_ATLAS_HEADER not in out, "broad family atlas table leaked into JCAP main text")
+    require(TANGENT_CHI_HEADER not in out, "tangent chi_I table leaked into JCAP main text")
+    require(MECHANISM_RESPONSE_HEADER in out, "mechanism-to-response main table missing")
+    require(ENVELOPE_HEADER in out, "finite-amplitude envelope main table missing")
+    require(table_count(out) == 2, f"JCAP main text must contain exactly two Markdown tables; found {table_count(out)}")
+
     for token in (
         "Completed audits reject current routes at the support and normalizability stages",
         "not a universal dark-sector law",
@@ -75,6 +139,8 @@ def main() -> None:
         "AI-assisted technology disclosure",
         "OpenAI ChatGPT",
         "takes full responsibility for the content of the manuscript",
+        "Supplementary Table S1a",
+        "Supplementary Table S1b",
     ):
         require(token in out, f"JCAP candidate lost required boundary: {token}")
 
@@ -98,6 +164,7 @@ def main() -> None:
 
     OUT.write_text(out.rstrip() + "\n", encoding="utf-8")
     print(f"wrote {OUT}")
+    print("PASS: frozen JCAP main-table policy = 2 tables")
 
 
 if __name__ == "__main__":
