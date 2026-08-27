@@ -1,0 +1,49 @@
+{
+  "experiment": "Exp073B",
+  "date": "2026-08-27",
+  "status": "GAP_EXISTING_STACK_NONLINEAR_MATTER_WEYL_ROUTE_EXP073B",
+  "workflow_run": 33033279245,
+  "workflow_job": 98390378310,
+  "artifact_id": 9631041961,
+  "artifact_digest": "sha256:743ef140774eaeef164c506590a14ef999f2cb98e2bf5fd79e42bda9e69f96a5",
+  "artifact_json_sha256": "20e1378a2959679fe02116f6bdf7206a96fbac36b57c603ec2730357766f83ec",
+  "execution_head_sha": "ba64a1511dd36ad7f85f8ae325099f6d365fa2d2",
+  "first_attempt_infrastructure_only": {
+    "run": 33033220464,
+    "reason": "wrong vanilla CLASS clone for C3 pinned GDM commit; audit never executed",
+    "scientific_classification": null
+  },
+  "pinned_sources": {
+    "C3_GDM": "s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829",
+    "C5_designer_fR": "EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904",
+    "ACT_unWISE": "ACTCollaboration/unWISExLens_lklh@6302c30d9e70f8e4ff2d4a84a9977b4471705179"
+  },
+  "tests": {
+    "F1_projector_separability": true,
+    "F2_upstream_nonlinear_CLEFT_scope": true,
+    "F3_C3_GDM_nonlinear_provider": false,
+    "F4_C5_designer_fR_nonlinear_provider": false,
+    "F5_support_plausibility": false,
+    "F6_independence_sign_semantics_complete_candidate": false,
+    "F7_provenance_completeness": true,
+    "F8_no_downstream_leakage": true
+  },
+  "audit_trustworthy": true,
+  "key_findings": {
+    "projector_accepts_independent_blocks": true,
+    "upstream_CLEFT_Wm_uses_explicit_matter2weyl_factor": true,
+    "current_C3_provider_is_linear_pk_lin_plus_phi_psi": true,
+    "current_C5_provider_explicitly_uses_nonlinear_false": true,
+    "complete_existing_nonlinear_C3_three_block_provider": false,
+    "complete_existing_nonlinear_C5_three_block_provider": false
+  },
+  "interpretation_boundary": {
+    "new_or_external_nonlinear_provider_ingredient_required": true,
+    "GR_matter_to_Weyl_closure_authorized": false,
+    "generic_GR_halofit_HMcode_as_MG_Weyl_authorized": false,
+    "covariance_restriction_authorized": false,
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
