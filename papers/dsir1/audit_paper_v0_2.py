@@ -108,6 +108,9 @@ def check_claim_boundary() -> None:
         "No covariance-whitened or nuisance-quotiented C3/C5 ACTxunWISE survey distance",
         "No interpretation of the Exp072C Pareto frontier as an already certified C3/C5 physical provider domain.",
         "No scientific interpretation of the first Exp073B workflow failure",
+        "No hidden GR matter-to-Weyl closure",
+        "No post-hoc selection of one nonlinear C3 completion",
+        "No universal no-go theorem inferred from Exp073E",
     ]:
         require_contains(claims, token, "CLAIMS_LEDGER.md")
 
@@ -198,7 +201,7 @@ def check_formal_operator() -> None:
 
 def check_provenance_matrix() -> None:
     text = read(PROVENANCE)
-    for pid in [f"P{i}" for i in range(1, 20)]:
+    for pid in [f"P{i}" for i in range(1, 24)]:
         require_contains(text, f"| {pid} |", "PROVENANCE_MATRIX.md")
     for run in [
         "32883280742",
@@ -221,8 +224,15 @@ def check_provenance_matrix() -> None:
         "33030657898",
         "33031427090",
         "33032781761",
+        "33033279245",
     ]:
         require_contains(text, run, "PROVENANCE_MATRIX.md")
+    for commit in [
+        "09c86a13512859a11f701a846aa00ed5f9bb9f02",
+        "4d93a0d213443e95b5da023f99fcad6acc579dc6",
+        "df1578d933a16db3421d6f188f7bac1dcdfaddd4",
+    ]:
+        require_contains(text, commit, "PROVENANCE_MATRIX.md")
 
 
 def check_support_snapshot_boundary() -> None:
@@ -233,7 +243,25 @@ def check_support_snapshot_boundary() -> None:
     require(e["Exp072C"]["frontier_is_planning_geometry_only"], "Exp072C planning-only boundary removed")
     require(e["Exp073A"]["pair_count_primary_pass"] == 7, "Exp073A primary eligibility changed")
     require(not e["Exp073A"]["linear_no_CLEFT_route_eligible"], "Exp073A linear route was improperly promoted")
-    require(not d["Exp073B"]["included_in_science_claims"], "Exp073B infrastructure failure was promoted to science")
+
+    b73 = e["Exp073B"]
+    require(b73["status"] == "GAP_EXISTING_STACK_NONLINEAR_MATTER_WEYL_ROUTE_EXP073B", "Exp073B valid GAP changed")
+    require(b73["completed_workflow_run"] == 33033279245, "Exp073B completed run changed")
+    require(b73["initial_infrastructure_attempt"]["scientific_classification"] is False, "Initial Exp073B infra attempt was promoted to science")
+    require(b73["projector_three_block_interface_sufficient"] is True, "Exp073B projector boundary changed")
+    require(not b73["C3_complete_nonlinear_three_block_provider"] and not b73["C5_complete_nonlinear_three_block_provider"], "Exp073B provider-gap boundary changed")
+
+    require(e["Exp073C"]["status"] == "NO_COMPLETE_PUBLIC_CANDIDATE_ROUTE_EXP073C", "Exp073C classification changed")
+    require(not e["Exp073C"]["complete_public_or_composable_candidate_found"], "Exp073C complete-candidate boundary changed")
+
+    require(e["Exp073D"]["status"] == "C3_NONLINEAR_COMPLETION_NONIDENTIFIABLE_C5_DEFINED_EXP073D", "Exp073D classification changed")
+    require(not e["Exp073D"]["C3_nonlinear_continuation_unique"], "Exp073D C3 nonlinear uniqueness changed")
+    require(e["Exp073D"]["C5_nonlinear_theory_defined_in_principle"], "Exp073D C5 theory-definition result changed")
+
+    require(e["Exp073E"]["status"] == "C3_COMPLETION_ENSEMBLE_NOT_FEASIBLE_EXP073E", "Exp073E classification changed")
+    require(not e["Exp073E"]["completion_ensemble_feasible_under_frozen_E1_E8"], "Exp073E ensemble feasibility changed")
+    require(e["Exp073E"]["current_ACT_unWISE_G7_route_blocked_before_covariance_restriction"], "Exp073E route block changed")
+
     require(all(d["boundary"][g] == "OPEN" for g in ("G7", "G8", "G9")), "G7/G8/G9 support-chain boundary changed")
 
 
@@ -252,6 +280,8 @@ def build_and_check_manuscript() -> None:
         "FAIL_IDM_DR_COMMON_SOURCE_RESPONSE_SLOPE_V0_1",
         "## 7.1 Observation-space support closure and perturbativity",
         "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
+        "GAP_EXISTING_STACK_NONLINEAR_MATTER_WEYL_ROUTE_EXP073B",
+        "C3_COMPLETION_ENSEMBLE_NOT_FEASIBLE_EXP073E",
         "Figure 7 summarizes",
         "A_B=Q_BW_BK_B",
     ]:
@@ -275,8 +305,8 @@ def main() -> None:
         ("mechanism diversity", check_mechanism_diversity),
         ("failure preservation", check_failures_preserved),
         ("formal quotient operator", check_formal_operator),
-        ("provenance matrix P1-P19", check_provenance_matrix),
-        ("support-chain scope boundary", check_support_snapshot_boundary),
+        ("provenance matrix P1-P23", check_provenance_matrix),
+        ("support/provider/model-boundary chain", check_support_snapshot_boundary),
         ("v0.2 manuscript build", build_and_check_manuscript),
     ]
 
