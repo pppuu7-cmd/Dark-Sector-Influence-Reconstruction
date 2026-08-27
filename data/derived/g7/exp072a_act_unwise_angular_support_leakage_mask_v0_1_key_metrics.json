@@ -1,0 +1,65 @@
+{
+  "experiment": "Exp072A",
+  "status": "FAIL_ACT_UNWISE_ANGULAR_SUPPORT_LEAKAGE_MASK_V0_1",
+  "workflow_run": 33029362485,
+  "workflow_job": 98378044465,
+  "artifact_id": 9629763833,
+  "artifact_digest": "sha256:9ecf7d61b4db5e091392a23f508cd5dd3d04dafe32a4a66d1256a70d9947701d",
+  "artifact_json_sha256": "56b96c096830bf8399ef18df41251a14ded00101a1f206b4419ccb6b5730abe3",
+  "implementation_head_sha": "553f6867f1cf71d4661a9f7b1f739a970648d05d",
+  "implementation_merge_sha": "f7888f60a916537d4ffd69e179471a26f1ed2655",
+  "frozen_threshold": 0.05,
+  "counts": {
+    "candidate_dimension": 26,
+    "nominal_retained_dimension": 0,
+    "tightened_retained_dimension": 0,
+    "nominal_by_sample_channel": {
+      "Blue_ACT": {"gg": 0, "kg": 0},
+      "Green_ACT": {"gg": 0, "kg": 0}
+    },
+    "tightened_by_sample_channel": {
+      "Blue_ACT": {"gg": 0, "kg": 0},
+      "Green_ACT": {"gg": 0, "kg": 0}
+    }
+  },
+  "criteria": {
+    "A1_exact_provenance_and_source_contract": true,
+    "A2_Exp071A_support_binding": true,
+    "A3_operator_and_26_coordinate_binding": true,
+    "A4_positive_denominators_and_finite_fractions": true,
+    "A5_nominal_mask_computed_at_frozen_threshold": true,
+    "A6_nominal_blue_green_gg_kg_coverage": false,
+    "A7_nominal_dimension_at_least_15": false,
+    "A8_tightened_support_monotonicity_subset": true,
+    "A9_no_downstream_quantities_read": true
+  },
+  "nominal_mask_indices": [],
+  "tightened_mask_indices": [],
+  "coordinate_order": [
+    "Blue_ACT/gg/126.5", "Blue_ACT/gg/176.5", "Blue_ACT/gg/226.5", "Blue_ACT/gg/276.5", "Blue_ACT/gg/326.5", "Blue_ACT/gg/376.5",
+    "Blue_ACT/kg/76.5", "Blue_ACT/kg/126.5", "Blue_ACT/kg/176.5", "Blue_ACT/kg/226.5", "Blue_ACT/kg/276.5", "Blue_ACT/kg/326.5", "Blue_ACT/kg/376.5",
+    "Green_ACT/gg/126.5", "Green_ACT/gg/176.5", "Green_ACT/gg/226.5", "Green_ACT/gg/276.5", "Green_ACT/gg/326.5", "Green_ACT/gg/376.5",
+    "Green_ACT/kg/76.5", "Green_ACT/kg/126.5", "Green_ACT/kg/176.5", "Green_ACT/kg/226.5", "Green_ACT/kg/276.5", "Green_ACT/kg/326.5", "Green_ACT/kg/376.5"
+  ],
+  "leakage_V0": [
+    0.9766604845505226, 0.9978006239739285, 0.9998576536002326, 0.9999536713346275, 0.9999735424201207, 0.999985571749533,
+    0.7642825952218016, 0.9065629718768274, 0.9796889100283589, 0.997741804913476, 0.9998574745117471, 0.9999883450881332, 0.9999990532013111,
+    0.8989342451263727, 0.9731212806978584, 0.995803788340234, 0.9995888521424942, 0.9999088218317776, 0.9999518607900633,
+    0.6151682900038838, 0.7812755264772403, 0.9083416829482325, 0.9723336656313886, 0.9945861923446497, 0.9993124534905542, 0.9999537035261437
+  ],
+  "leakage_V1": [
+    0.9894377224701131, 0.9986789356287059, 0.9999442251056216, 0.9999911970032238, 0.999994609688036, 0.9999967771178703,
+    0.929953418381961, 0.9390042753912804, 0.9843615272182769, 0.9984792642493654, 0.9999310150863, 0.9999982009558572, 0.9999999307767202,
+    0.9301859925525796, 0.9785360063353138, 0.9970842983375161, 0.999795900269778, 0.9999576848408172, 0.9999750461996596,
+    0.8118678712711395, 0.8273548151225556, 0.9217597404046561, 0.9793457730962079, 0.99768175238727, 0.999941545849625, 0.9999986015528245
+  ],
+  "posthoc_blockwise_min_V0": {
+    "gg/mm": 0.08425052286761503,
+    "gg/Wm": 0.6832935480972744,
+    "gg/WW": 0.8989342679620471,
+    "kg/Wm": 0.1364788719151473,
+    "kg/WW": 0.615168379027028
+  },
+  "posthoc_blockwise_note": "Diagnostic only; not a preregistered acceptance criterion. Every applicable block minimum is above 0.05, so blockwise convention-invariant thresholding would not rescue any coordinate.",
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
