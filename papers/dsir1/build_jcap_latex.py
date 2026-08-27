@@ -2,7 +2,7 @@
 """Render the audited DSIR-I JCAP markdown candidate to LaTeX.
 
 This is intentionally a narrow, fail-closed Markdown renderer for the syntax
-actually used by DSIR-I.  It is not a general Markdown implementation.  The
+actually used by DSIR-I. It is not a general Markdown implementation. The
 scientific source remains manuscript_v0_2/manuscript_jcap_candidate; the TeX
 file is a deterministic submission rendering.
 """
@@ -29,6 +29,21 @@ FIGURES = {
     7: ("fig:support", "../figures/generated/fig07_observation_space_support_closure.pdf"),
 }
 
+TABLE_META = {
+    1: (
+        "tab:atlas",
+        "Theory-family atlas and the representative response character used in DSIR-I.",
+    ),
+    2: (
+        "tab:chiI",
+        "Representative irreducible scale-time interaction fractions on the frozen low-wavenumber response atlas.",
+    ),
+    3: (
+        "tab:chiI-envelopes",
+        "Finite-amplitude sampled interaction-fraction envelopes on the frozen response families.",
+    ),
+}
+
 
 def require(cond: bool, message: str) -> None:
     if not cond:
@@ -41,8 +56,6 @@ def extract_between(text: str, start: str, end: str) -> str:
 
 
 def escape_plain(s: str) -> str:
-    # Backslashes are reserved for explicit LaTeX/math tokens and should never
-    # occur in a plain-text segment produced by the tokenizer below.
     repl = {
         "&": r"\&",
         "%": r"\%",
@@ -65,8 +78,6 @@ def cite_tex(raw: str) -> str:
 
 def inline_tex(text: str) -> str:
     """Convert the restricted DSIR-I inline Markdown/LaTeX syntax."""
-    # Token priority matters: math/code/citations/bold/figure refs are protected
-    # from TeX escaping of surrounding prose.
     pattern = re.compile(
         r"(\\\(.*?\\\)|`[^`]+`|\[@[^\]]+\]|\*\*[^*]+\*\*|Figure [1-7])"
     )
@@ -116,8 +127,6 @@ def captions_by_old_number() -> dict[int, str]:
         caption = paras[0]
         caption = re.sub(rf"^\*\*Figure {n}\.[^*]*\*\*\s*", "", caption)
         if caption.startswith(f"**Figure {n}."):
-            # Fallback for captions whose bold lead contains punctuation that
-            # the conservative regex above did not consume.
             end = caption.find("**", 2)
             require(end > 0, f"malformed bold caption lead for Figure {n}")
             caption = caption[end + 2 :].strip()
@@ -140,6 +149,52 @@ def figure_env(old_n: int, caption: str) -> str:
     )
 
 
+def parse_table_row(line: str) -> list[str]:
+    require(line.startswith("|") and line.endswith("|"), f"malformed Markdown table row: {line}")
+    return [cell.strip() for cell in line[1:-1].split("|")]
+
+
+def is_table_separator(line: str) -> bool:
+    if not (line.startswith("|") and line.endswith("|")):
+        return False
+    cells = parse_table_row(line)
+    return bool(cells) and all(re.fullmatch(r":?-{3,}:?", c) for c in cells)
+
+
+def table_env(index: int, header: list[str], rows: list[list[str]]) -> str:
+    require(index in TABLE_META, f"unexpected extra main-manuscript table #{index}")
+    ncols = len(header)
+    require(ncols in (2, 3), f"unsupported table width {ncols} in table #{index}")
+    require(rows, f"table #{index} has no data rows")
+    require(all(len(r) == ncols for r in rows), f"inconsistent column count in table #{index}")
+
+    if ncols == 3:
+        colspec = r"p{0.10\textwidth} p{0.30\textwidth} p{0.52\textwidth}"
+    else:
+        colspec = r"p{0.42\textwidth} p{0.46\textwidth}"
+
+    label, caption = TABLE_META[index]
+    tex: list[str] = [
+        r"\begin{table}[t]",
+        r"\centering",
+        r"\small",
+        r"\begin{tabular}{" + colspec + "}",
+        r"\toprule",
+        " & ".join(r"\textbf{" + inline_tex(c) + "}" for c in header) + r" \\",
+        r"\midrule",
+    ]
+    for row in rows:
+        tex.append(" & ".join(inline_tex(c) for c in row) + r" \\")
+    tex += [
+        r"\bottomrule",
+        r"\end{tabular}",
+        r"\caption{" + inline_tex(caption) + "}",
+        r"\label{" + label + "}",
+        r"\end{table}",
+    ]
+    return "\n".join(tex)
+
+
 def convert_body(markdown: str) -> str:
     lines = markdown.splitlines()
     out: list[str] = []
@@ -148,6 +203,7 @@ def convert_body(markdown: str) -> str:
     in_enumerate = False
     inserted_figures: set[int] = set()
     captions = captions_by_old_number()
+    table_count = 0
 
     def close_lists() -> None:
         nonlocal in_itemize, in_enumerate
@@ -158,46 +214,71 @@ def convert_body(markdown: str) -> str:
             out.append(r"\end{enumerate}")
             in_enumerate = False
 
-    for raw in lines:
-        line = raw.rstrip()
+    i = 0
+    while i < len(lines):
+        line = lines[i].rstrip()
 
         if line.strip() == r"\[":
             close_lists()
             require(not in_math, "nested display math start")
             in_math = True
             out.append(r"\[")
+            i += 1
             continue
         if line.strip() == r"\]":
             require(in_math, "display math end without start")
             in_math = False
             out.append(r"\]")
+            i += 1
             continue
         if in_math:
             out.append(line)
+            i += 1
             continue
 
         if not line.strip():
             close_lists()
             out.append("")
+            i += 1
+            continue
+
+        if line.startswith("|"):
+            close_lists()
+            require(i + 1 < len(lines) and is_table_separator(lines[i + 1].rstrip()),
+                    f"table header lacks valid separator at source line {i + 1}")
+            header = parse_table_row(line)
+            sep = parse_table_row(lines[i + 1].rstrip())
+            require(len(sep) == len(header), "table separator width differs from header")
+            rows: list[list[str]] = []
+            j = i + 2
+            while j < len(lines) and lines[j].rstrip().startswith("|"):
+                row_line = lines[j].rstrip()
+                require(not is_table_separator(row_line), "unexpected second table separator")
+                rows.append(parse_table_row(row_line))
+                j += 1
+            table_count += 1
+            out.append(table_env(table_count, header, rows))
+            i = j
             continue
 
         if line.startswith("### "):
             close_lists()
             title = re.sub(r"^\d+(?:\.\d+)*\s+", "", line[4:])
             out.append(r"\subsubsection{" + inline_tex(title) + "}")
+            i += 1
             continue
         if line.startswith("## "):
             close_lists()
             title = re.sub(r"^\d+(?:\.\d+)*\s+", "", line[3:])
             out.append(r"\subsection{" + inline_tex(title) + "}")
+            i += 1
             continue
         if line.startswith("# "):
             close_lists()
             title = re.sub(r"^\d+\.\s+", "", line[2:])
-            # Abstract is supplied by jcappub front matter and must not occur in
-            # the body passed to this converter.
             require(title != "Abstract", "Abstract leaked into LaTeX body")
             out.append(r"\section{" + inline_tex(title) + "}")
+            i += 1
             continue
 
         if line.startswith("- "):
@@ -208,6 +289,7 @@ def convert_body(markdown: str) -> str:
                 out.append(r"\begin{itemize}")
                 in_itemize = True
             out.append(r"\item " + inline_tex(line[2:]))
+            i += 1
             continue
 
         mnum = re.match(r"^\d+\.\s+(.*)$", line)
@@ -219,11 +301,11 @@ def convert_body(markdown: str) -> str:
                 out.append(r"\begin{enumerate}")
                 in_enumerate = True
             out.append(r"\item " + inline_tex(mnum.group(1)))
+            i += 1
             continue
 
         close_lists()
         require(not line.startswith(">"), "Markdown blockquotes are unsupported in manuscript body")
-        require("|---" not in line and not line.startswith("|"), "Markdown tables must be rendered separately")
         require("```" not in line, "fenced code blocks are unsupported in manuscript body")
 
         old_refs = [int(x) for x in re.findall(r"Figure ([1-7])", line)]
@@ -232,10 +314,12 @@ def convert_body(markdown: str) -> str:
             if old_n not in inserted_figures:
                 out.append(figure_env(old_n, captions[old_n]))
                 inserted_figures.add(old_n)
+        i += 1
 
     close_lists()
     require(not in_math, "unclosed display math block")
     require(inserted_figures == set(range(1, 8)), f"not all seven figures inserted: {sorted(inserted_figures)}")
+    require(table_count == 3, f"expected exactly three main-manuscript Markdown tables, found {table_count}")
     return "\n".join(out).strip()
 
 
@@ -243,7 +327,6 @@ def main() -> None:
     src = SOURCE.read_text(encoding="utf-8")
     front = FRONT.read_text(encoding="utf-8")
 
-    # Remove YAML front matter if present.
     if src.startswith("---\n"):
         parts = src.split("---\n", 2)
         require(len(parts) == 3, "malformed YAML front matter")
@@ -263,6 +346,7 @@ def main() -> None:
     tex = rf"""\documentclass[11pt,a4paper]{{article}}
 \pdfoutput=1
 \usepackage{{jcappub}}
+\usepackage{{booktabs}}
 
 \title{{{title}}}
 \author[a]{{Aleksey Buyanov}}
@@ -284,11 +368,11 @@ def main() -> None:
 \end{{document}}
 """
 
-    # Submission-rendering guards.
     for token in (
         r"\documentclass[11pt,a4paper]{article}",
         r"\pdfoutput=1",
         r"\usepackage{jcappub}",
+        r"\usepackage{booktabs}",
         r"\author[a]{Aleksey Buyanov}",
         "Independent Researcher",
         r"\bibliographystyle{JHEP}",
@@ -300,6 +384,9 @@ def main() -> None:
         r"\label{fig:curvature}",
         r"\label{fig:failure}",
         r"\label{fig:support}",
+        r"\label{tab:atlas}",
+        r"\label{tab:chiI}",
+        r"\label{tab:chiI-envelopes}",
     ):
         require(token in tex, f"required JCAP LaTeX token missing: {token}")
 
@@ -307,6 +394,7 @@ def main() -> None:
     require("**" not in tex, "unconverted Markdown bold remains in TeX")
     require("```" not in tex, "unconverted Markdown fence remains in TeX")
     require("# 1." not in tex, "raw Markdown heading remains in TeX")
+    require("|---" not in tex, "raw Markdown table separator remains in TeX")
 
     OUTDIR.mkdir(parents=True, exist_ok=True)
     OUT.write_text(tex, encoding="utf-8")
