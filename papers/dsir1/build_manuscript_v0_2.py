@@ -3,7 +3,7 @@
 
 The script does not edit manuscript.md in place. It injects the frozen author
 metadata, inserts prospectively/retrospectively classified result components,
-adds deterministic Figure 1--6 textual references at frozen narrative anchors,
+adds deterministic Figure 1--7 textual references at frozen narrative anchors,
 inserts the reproducibility section before Outlook, renumbers the final
 headings, and writes manuscript_v0_2.md.
 """
@@ -15,6 +15,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 BASE = HERE / "manuscript.md"
 FALSIFICATION = HERE / "sections" / "prospective_falsification.md"
+SUPPORT_CLOSURE = HERE / "sections" / "observation_space_support_closure.md"
 KNOWN_SECTOR = HERE / "sections" / "known_sector_nonoverclaim.md"
 REPRO = HERE / "sections" / "data_code_reproducibility.md"
 OUT = HERE / "manuscript_v0_2.md"
@@ -74,6 +75,7 @@ def insert_before(text: str, marker: str, inserted: str) -> str:
 def main() -> None:
     base = read(BASE)
     falsification = read(FALSIFICATION)
+    support_closure = read(SUPPORT_CLOSURE)
     known_sector = read(KNOWN_SECTOR)
     repro = read(REPRO)
 
@@ -108,8 +110,17 @@ def main() -> None:
         )
     base = insert_before(base, RESULTS_INSERT_MARKER, falsification)
 
-    # Figure 6 closes the validation/falsification narrative before prior art.
+    # Figure 6 closes the provider/falsification chronology. The new support-
+    # closure subsection then extends Section 7 with an observation-space
+    # eligibility result and contains the first body reference to Figure 7.
     base = insert_before(base, PRIOR_ART_MARKER, FIGURE6_REFERENCE)
+    if support_closure.startswith("## Observation-space support closure"):
+        support_closure = support_closure.replace(
+            "## Observation-space support closure and perturbativity",
+            "## 7.1 Observation-space support closure and perturbativity",
+            1,
+        )
+    base = insert_before(base, PRIOR_ART_MARKER, support_closure)
 
     # Retrospective known-sector specificity control belongs in Interpretation,
     # not Results. It is explicitly post-unblinding and creates no new gate.
@@ -142,6 +153,11 @@ def main() -> None:
         'affiliation: "Independent Researcher"',
         'orcid: "0009-0001-2621-9305"',
         "FAIL_IDM_DR_COMMON_SOURCE_RESPONSE_SLOPE_V0_1",
+        "## 7.1 Observation-space support closure and perturbativity",
+        "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
+        "4.81826",
+        "72.29",
+        "Figure 7 summarizes",
         "## 9.4 Known-sector specificity control",
         "0.9990439690",
         "169.692",
@@ -161,7 +177,7 @@ def main() -> None:
         if item not in assembled:
             raise RuntimeError(f"Required v0.2 content missing: {item}")
 
-    for figure_number in range(1, 7):
+    for figure_number in range(1, 8):
         token = f"Figure {figure_number}"
         if assembled.count(token) != 1:
             raise RuntimeError(
