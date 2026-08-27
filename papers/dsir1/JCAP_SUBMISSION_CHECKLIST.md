@@ -1,20 +1,36 @@
 # DSIR-I JCAP submission checklist
 
-**Checked against current JCAP author guidance on 2026-08-27.**  
+**Checked against current JCAP author guidance on 2026-08-27; build state updated 2026-08-28.**  
 This checklist is operational and must be rechecked immediately before submission because journal requirements can change.
 
 ## A. Manuscript format
 
-- [ ] Convert stable manuscript to TeX/LaTeX.
-- [ ] Use `\documentclass[11pt,a4paper]{article}` with `\usepackage{jcappub}` for the JCAP-style source.
-- [ ] If PDF/PNG/JPG figures are used, place `\pdfoutput=1` immediately after the `\documentclass` line.
-- [ ] Ensure the complete archive compiles without network access or hidden local dependencies.
-- [ ] Include the `.bbl` file if BibTeX is used; include `.bib` as additional reproducibility aid.
-- [ ] Include all Figures 1--7 in accepted publication formats, preferably PDF for vector figures and PNG only where appropriate.
-- [ ] Keep the master `.tex` file at the archive root and record its exact filename for submission.
-- [ ] Ensure filenames contain no spaces and preserve exact case.
-- [ ] Keep the upload archive below the current JCAP 10 MB submission limit; supplementary material may be uploaded separately.
-- [ ] Keep the article comfortably below the journal's normal ~50-page ceiling after supplement decisions.
+- [x] Convert stable manuscript rendering to TeX/LaTeX via deterministic `build_jcap_latex.py`.
+- [x] Use `\documentclass[11pt,a4paper]{article}` with `\usepackage{jcappub}` for the JCAP-style source.
+- [x] Place `\pdfoutput=1` immediately after the `\documentclass` line for the PDF figure build.
+- [x] Compile the journal candidate through `pdflatex -> bibtex -> pdflatex -> pdflatex` with no unresolved citations/references.
+- [ ] Prove the final **submission archive itself** compiles offline without fetching style/data dependencies from the network.
+- [x] Generate and package the `.bbl` together with `.bib` in the compiled CI artifact.
+- [x] Include all Figures 1--7 in PDF form in the compiled artifact.
+- [ ] Assemble the final submission archive with the master `.tex` at the archive root and record its exact filename.
+- [ ] Verify final archive filenames contain no spaces and preserve exact case.
+- [x] Current compiled paper is 28 pages, comfortably below the journal's normal ~50-page ceiling.
+- [ ] Verify the **final** upload archive remains below the current JCAP 10 MB submission limit after supplement/style packaging.
+
+### First successful compiled-PDF baseline
+
+- commit: `0103439d24a499c00352275062350efd6a27b977`
+- workflow run: `33118926652`
+- job: `98680607479`
+- artifact: `9665694572`
+- artifact digest: `sha256:5c4e1d07a7e443dfd2f808be4d5fc967cee099e6d28450f7ae464baf8e935473`
+- final page count: `28`
+- `first_page_abstract=PASS`
+- `unresolved_references=0`
+- TeX engine: pdfTeX 1.40.25 / TeX Live 2023 (Debian)
+- BibTeX: 0.99d / TeX Live 2023 (Debian)
+
+The pinned SISSA `JHEP.bst` required a deterministic two-macro quoting repair (`apj`, `aa`) before BibTeX execution. The workflow preserves the unmodified upstream file, upstream blob identity, patched file and patch record. This is a build-compatibility patch, not a scientific or bibliography-content edit.
 
 ## B. Front matter
 
@@ -25,7 +41,7 @@ This checklist is operational and must be rechecked immediately before submissio
 - [x] Canonical JCAP-ready abstract prepared without formulae or references in `JCAP_FRONT_MATTER_DRAFT.md`.
 - [x] Abstract scope trimmed so the detailed Exp073M--R1 chronology remains outside the headline first-paper narrative.
 - [x] Sentence-level Abstract/Conclusions evidence map prepared in `ABSTRACT_CONCLUSIONS_CLAIM_AUDIT.md`.
-- [ ] Verify the abstract fits on the first page in the actual JCAP style.
+- [x] Actual compiled JCAP first page contains the Abstract, Keywords and author line; current abstract audit is 239 words.
 - [ ] Freeze 2--4 official JCAP keywords after final scope review.
 - [ ] Insert arXiv identifier.
 - [ ] Confirm the JCAP submission and arXiv versions are identical at submission time.
@@ -54,7 +70,8 @@ Every quantitative abstract statement must remain traceable to frozen evidence:
 - [x] prospective withheld common-scalar-law falsification;
 - [x] observational quotient stated as conditional, not completed;
 - [x] support and normalizability failures described as eligibility failures, not survey detections;
-- [x] detailed DES replacement/reproduction chronology removed from the JCAP abstract and left to Results/Supplement.
+- [x] detailed DES replacement/reproduction chronology removed from the JCAP abstract and left to Results/Supplement;
+- [x] N1B prior-art audit prevents the abstract from implying invention of dark-sector “fingerprinting”.
 
 Forbidden in final abstract unless later frozen evidence changes the state:
 
@@ -70,9 +87,9 @@ Current JCAP guidance requires disclosure of AI-assisted technology used during 
 
 - [x] Canonical disclosure written in `ACKNOWLEDGMENTS_AND_DISCLOSURES.md`.
 - [x] JCAP candidate builder sources the disclosure from that canonical file rather than duplicating it in front matter.
-- [ ] Confirm the final compiled JCAP manuscript contains the disclosure in Methods/Data-and-code or Acknowledgments.
-- [ ] Recheck wording against the final actual use before submission.
-- [ ] Do not cite AI output as scientific evidence.
+- [x] The compiled JCAP candidate is generated from the source into which the disclosure is deterministically injected.
+- [ ] Recheck disclosure wording against the final actual use immediately before submission.
+- [x] AI output is not used or cited as scientific evidence; scientific statements remain bound to frozen calculations/provenance or external literature.
 
 ## F. Data/software/code availability
 
@@ -94,38 +111,44 @@ Recommended main-paper center:
 2. DSIR response construction and block-aware masks;
 3. additive/nonseparable geometry;
 4. channel-conditional equivalence;
-5. multi-family atlas;
+5. evidence-graded mechanism-to-response atlas;
 6. degeneracy breaking, finite-amplitude hierarchy, curvature and withheld tests;
 7. concise failure-resistant numerical/observation-route admissibility section;
 8. interpretation, limitations, reproducibility and conclusions.
 
-Detailed Exp073M--R1 chronology belongs in supplement/provenance tables unless a later physical-support result changes the main scientific conclusion.
+Detailed Exp073M--R1 chronology belongs in supplement/provenance tables unless a later completed result materially changes a stated Paper-I limitation.
 
+- [x] Scientific core closed for the declared Paper-I scope in `PAPER1_SCIENTIFIC_CLOSURE_LEDGER.md`.
 - [x] Seven main figures exist and are CI-generated.
 - [x] Camera-ready table drafts exist.
 - [x] Observation-route ledger exists.
 - [x] Numerical-method appendix exists.
+- [x] Numerical/notation/units/gauge audit passed for Paper-I scope.
 - [x] Referee adversarial audit exists.
-- [ ] Decide final placement of Tables 1--7 between main text and supplement.
-- [ ] Remove redundant prose after tables are inserted.
-- [ ] Perform page-count and first-page front-matter test in JCAP style.
+- [x] Final main-vs-supplement table policy frozen in `TABLE_PLACEMENT_FREEZE.md`: target 2 main tables and 6 supplementary tables.
+- [ ] Implement the table-placement freeze in the final manuscript/supplement rendering and remove redundant prose.
+- [x] Current JCAP page-count and first-page front-matter test passed (`28` pages; Abstract/Keywords present on page 1).
+- [ ] Clean remaining visible layout warnings/overfull boxes before release-candidate freeze.
 
 ## H. References and literature
 
 - [x] Targeted novelty/positioning review prepared.
-- [ ] Repeat literature search immediately before arXiv upload.
-- [ ] Verify every DOI/journal volume/page/arXiv identifier in `references.bib`.
-- [ ] Convert citations to JCAP sequential numerical style in the LaTeX output.
+- [x] N1B audit explicitly narrows the “fingerprinting” claim against Bashinsky/Sapone and later literature.
+- [x] Closest prior lines are now discussed in manuscript prose: dark degeneracy, PPF/EFT/GDM, model-independent interaction reconstruction, model-agnostic MG PCA, model-breaking/observable-space geometry, nonlinear GDM and modern perturbation/fingerprinting work.
+- [x] Citation-key integrity passes: 22 unique cited keys / 31 occurrences in the successful compiled baseline; 29 unique BibTeX records; no missing or duplicate cited keys.
+- [x] JCAP numerical citations resolve in the final compiled PDF (`unresolved_references=0`).
+- [ ] Verify every cited DOI/journal volume/page/arXiv identifier against authoritative metadata.
+- [ ] Review the 7 currently uncited bibliography entries and either cite for a concrete purpose or remove from the final submission bibliography.
 - [ ] Cite public data/software repositories using persistent identifiers where available.
-- [ ] Explicitly discuss the closest prior lines: dark degeneracy, PPF/EFT/GDM, model-independent interaction reconstruction, model-agnostic MG PCA, model-breaking/observable-space geometry, nonlinear GDM and harmonic survey-operator methods.
+- [ ] Repeat literature search immediately before arXiv upload, with particular attention to 2026 work and citation-forward updates.
 
 ## I. Reproducibility freeze before arXiv
 
-- [ ] Stop scientific content changes at a named release-candidate commit.
-- [ ] Run the complete fail-closed paper CI on that exact commit.
-- [ ] Record workflow run, job, build artifact and SHA256 digest.
-- [ ] Confirm Figures 1--7 hashes.
-- [ ] Confirm manuscript and JCAP-candidate hashes.
+- [ ] Stop scientific/editorial content changes at a named release-candidate commit.
+- [ ] Run the complete fail-closed paper CI **and offline submission-archive compile** on that exact commit.
+- [ ] Record final workflow run, job, build artifact and SHA256 digest.
+- [ ] Confirm final Figures 1--7 hashes.
+- [ ] Confirm final manuscript, JCAP source and compiled PDF hashes.
 - [ ] Confirm claim ledgers and evidence JSON hashes.
 - [ ] Create git tag such as `dsir1-arxiv-v1` only after all previous checks pass.
 - [ ] Archive the tagged release and record DOI.
@@ -138,15 +161,17 @@ Current non-negotiable state:
 `G8 = OPEN`  
 `G9 = OPEN`
 
-Current observation-route state:
+Paper-I scientific closure does not alter these research gates.
+
+Current observation-route state used by Paper I:
 
 - Exp073L: nonnormalizable absolute-response support measure;
 - Exp073N: exact-realization provenance FAIL;
 - Exp073O: prospective public replacement FOUND;
 - Exp073P2/S0/R0: prerequisite PASSes only;
-- Exp073R1: active PRE-RESULT while workflow run `33108733415` remains in progress.
+- Exp073R1: not required to finish Paper I unless a completed frozen result changes a stated Paper-I limitation.
 
-If R1 ends in timeout/transport failure, apply only the already-recorded transport contingency. Do not reinterpret infrastructure failure as science and do not alter the frozen physical-support criterion.
+No future R1/P result may enter the manuscript merely because it is newer. Apply `SUBMISSION_SCOPE_FREEZE.md` first and classify it as main-text, supplement/provenance, defer, or exclude.
 
 ## K. Submission-system details
 
@@ -163,11 +188,12 @@ If R1 ends in timeout/transport failure, apply only the already-recorded transpo
 
 Submit only when all of the following are simultaneously true:
 
-- JCAP-style compilation succeeds from a clean archive;
+- final JCAP-style compilation succeeds from the self-contained offline submission archive;
 - abstract/front matter fit the first page and contain no formulae/references;
 - all headline claims pass the final adversarial provenance audit;
-- references and software/data citations are verified;
+- cited reference and software/data metadata are verified;
 - AI-assisted technology disclosure is present and accurate;
+- visible layout defects from long provenance/status identifiers have been removed from the narrative PDF;
 - exact arXiv/submission source identity is frozen;
 - repository snapshot is tagged and preferably DOI-archived;
 - no active research result is accidentally described as completed.
