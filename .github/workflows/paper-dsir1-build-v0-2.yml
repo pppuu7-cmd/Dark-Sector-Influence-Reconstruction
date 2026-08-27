@@ -58,6 +58,10 @@ jobs:
         run: |
           python papers/dsir1/figures/fig04_channel_conditional_degeneracy.py
 
+      - name: Build Figure 5 curvature and localization
+        run: |
+          python papers/dsir1/figures/fig05_curvature_and_localization.py
+
       - name: Record build checksums
         run: |
           mkdir -p papers/dsir1/build
