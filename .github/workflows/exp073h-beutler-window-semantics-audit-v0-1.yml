@@ -1,0 +1,59 @@
+name: Exp073H Beutler window semantics audit v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073h-beutler-window-semantics-audit-v0-1.yml'
+      - 'ci/exp073h_beutler_window_semantics_audit_v0_1.py'
+      - 'experiments/073h_fourier_space_mm_operator_source_binding_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  frozen-window-semantics-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact official SDSS Beutler archive
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp073h_beutler/extracted
+          URL='https://data.sdss.org/sas/dr12/boss/papers/clustering/Beutler_etal_DR12COMBINED_fullshape_powspec.tar.gz'
+          curl --fail --location --retry 3 --retry-delay 2 -o external/exp073h_beutler/archive.tar.gz "$URL"
+          echo '23bb7813a7b6ae0e041f070f40716511ff21243e11f6c2783fec64d72de5b823  external/exp073h_beutler/archive.tar.gz' | sha256sum -c -
+          tar -xzf external/exp073h_beutler/archive.tar.gz -C external/exp073h_beutler/extracted
+      - name: Execute frozen H1-H8 source/operator audit
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073h_beutler_window_semantics_audit_v0_1.py \
+            --archive external/exp073h_beutler/archive.tar.gz \
+            --root external/exp073h_beutler/extracted \
+            --output data/derived/g7/exp073h_beutler_window_semantics_audit_v0_1.json
+      - name: Assert frozen classification and no-leakage semantics
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073h_beutler_window_semantics_audit_v0_1.json'
+          d=json.load(open(p))
+          assert d['status'] in {'PASS_FOURIER_MM_OPERATOR_SOURCE_BINDING_EXP073H','FAIL_FOURIER_MM_OPERATOR_SOURCE_BINDING_EXP073H','INCOMPLETE_EXP073H'}
+          assert d['support_fraction_computed'] is False
+          assert d['covariance_values_read'] is False
+          assert d['nuisance_rank_read'] is False
+          assert d['relation_residual_read'] is False
+          assert d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          if d['status']=='FAIL_FOURIER_MM_OPERATOR_SOURCE_BINDING_EXP073H':
+              assert d['tests']['H3_finite_positive_support_normalization']['pass'] is False
+          print('EXP073H_CLASSIFICATION',d['status'])
+          PY
+      - name: Upload immutable Exp073H semantics record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073h-beutler-window-semantics-${{ github.sha }}
+          path: data/derived/g7/exp073h_beutler_window_semantics_audit_v0_1.json
+          if-no-files-found: warn
