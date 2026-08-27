@@ -10,6 +10,14 @@ from __future__ import annotations
 import numpy as np
 
 
+# NumPy 1.x exposes ``trapz`` while the current API exposes ``trapezoid``.
+# Keep the project-wide numpy>=1.24 contract and newer runners compatible.
+try:
+    _trapezoid = np.trapezoid
+except AttributeError:  # NumPy < 2.0
+    _trapezoid = np.trapz
+
+
 def normalize_nz(z: np.ndarray, nz: np.ndarray) -> np.ndarray:
     """Normalize one or more redshift distributions to unit z integral."""
     z = np.asarray(z, dtype=float)
@@ -18,7 +26,7 @@ def normalize_nz(z: np.ndarray, nz: np.ndarray) -> np.ndarray:
         raise ValueError("z must be a finite, strictly increasing one-dimensional grid")
     if nz.shape[-1] != z.size or np.any(~np.isfinite(nz)) or np.any(nz < 0):
         raise ValueError("n(z) must be finite, non-negative, and end on the z axis")
-    area = np.trapz(nz, z, axis=-1)
+    area = _trapezoid(nz, z, axis=-1)
     if np.any(~np.isfinite(area)) or np.any(area <= 0):
         raise ValueError("every n(z) integral must be finite and positive")
     return nz / np.expand_dims(area, axis=-1)
@@ -41,8 +49,8 @@ def continuous_bnt_matrix(z: np.ndarray, chi: np.ndarray, nz: np.ndarray) -> np.
     if nz.ndim != 2 or nz.shape[0] < 3:
         raise ValueError("BNT requires at least three source bins")
 
-    moment_0 = np.trapz(nz, z, axis=1)
-    moment_m1 = np.trapz(nz / chi[None, :], z, axis=1)
+    moment_0 = _trapezoid(nz, z, axis=1)
+    moment_m1 = _trapezoid(nz / chi[None, :], z, axis=1)
     matrix = np.eye(nz.shape[0], dtype=float)
     matrix[1, 0] = -1.0
     for i in range(2, nz.shape[0]):
@@ -70,8 +78,8 @@ def nulling_residuals(
     nz = normalize_nz(z, nz)
     if matrix.shape != (nz.shape[0], nz.shape[0]):
         raise ValueError("matrix shape does not match source-bin count")
-    moment_0 = np.trapz(nz, z, axis=1)
-    moment_m1 = np.trapz(nz / chi[None, :], z, axis=1)
+    moment_0 = _trapezoid(nz, z, axis=1)
+    moment_m1 = _trapezoid(nz / chi[None, :], z, axis=1)
 
     rows = matrix[2:]
     denom_0 = np.sum(np.abs(rows * moment_0[None, :]), axis=1)

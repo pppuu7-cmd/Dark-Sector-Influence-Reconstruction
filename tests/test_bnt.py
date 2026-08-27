@@ -15,7 +15,9 @@ def _synthetic_inputs():
 def test_normalize_nz_has_unit_integrals():
     z, _, nz = _synthetic_inputs()
     normalized = normalize_nz(z, nz)
-    assert np.allclose(np.trapz(normalized, z, axis=1), 1.0, rtol=0, atol=2e-15)
+    dz = np.diff(z)
+    integral = np.sum(0.5 * (normalized[:, 1:] + normalized[:, :-1]) * dz, axis=1)
+    assert np.allclose(integral, 1.0, rtol=0, atol=2e-15)
 
 
 def test_continuous_bnt_matrix_nulls_localized_rows():
