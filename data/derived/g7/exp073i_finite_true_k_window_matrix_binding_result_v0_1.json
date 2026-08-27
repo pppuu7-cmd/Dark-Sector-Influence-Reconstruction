@@ -1,0 +1,50 @@
+{
+  "experiment": "Exp073I",
+  "date": "2026-08-27",
+  "status": "PASS_FINITE_TRUE_K_WINDOW_MATRIX_SOURCE_BINDING_EXP073I",
+  "workflow_run": 33039228551,
+  "workflow_job": 98408810891,
+  "artifact_id": 9633204048,
+  "artifact_digest": "sha256:de203dc675ecac48ee2dfa42b79302459810b8bc5fc03eac6c112f1f79b61248",
+  "execution_head_sha": "05217b9b62ecdd2c4fd361b03dd5322024c25348",
+  "publication_page": "https://fbeutler.github.io/hub/deconv_paper.html",
+  "paper": "arXiv:2106.06324 / JCAP 11 (2021) 031",
+  "pk_tools_commit": "707eb2a6a4691c34eae19d7f72047ca4892f528e",
+  "NGC_z3": {
+    "W_shape": [200,2000],
+    "M_shape": [2000,1200],
+    "W_sha256_gz": "2aaba3a6ecc725ee5e44ca8f36425384edaa6e7f517cfd6ac219e6a03ad8edcc",
+    "M_sha256_gz": "5ae173a446deb3bb5d3a98b620e148ea77f3590ce96f442ce43b13560f1c74f9",
+    "measurement_sha256": "3153a8c54513c4c4d8881116a7264006654d5da90fa29abce7264fc8e682f49f"
+  },
+  "SGC_z3": {
+    "W_shape": [200,2000],
+    "M_shape": [2000,1200],
+    "W_sha256_gz": "1e947108a2a0eda3098aa56b05f7231a27632fb62b61e1e60035e42f0858c480",
+    "M_sha256_gz": "54457d342e644ffd1de7e892990a087b79523aa7ce23ba822afe1768f6817744",
+    "measurement_sha256": "7cabe0998fb068be65f38a50c2ccf48a2fa9f985c1d00673c0e93259290fd6a6"
+  },
+  "tests": {
+    "I1_immutable_public_identity": true,
+    "I2_explicit_finite_matrix_map": true,
+    "I3_finite_true_k_grid": true,
+    "I4_positive_support_envelope_constructibility": true,
+    "I5_physical_unit_traceability": true,
+    "I6_compatible_BOSS_sample_mm_semantics": true,
+    "I7_no_covariance_dependence": true,
+    "I8_no_downstream_leakage": true
+  },
+  "matrix_grid": {
+    "k_range_h_Mpc^-1": [0.0,0.4],
+    "delta_k_theory_h_Mpc^-1": 0.001,
+    "delta_k_observed_h_Mpc^-1": 0.01,
+    "positive_envelope": "finite abs(W) row sums; all rows finite and positive"
+  },
+  "support_fraction_computed": false,
+  "covariance_values_read": false,
+  "nuisance_rank_read": false,
+  "relation_residual_read": false,
+  "G8_read": false,
+  "next_admissible_step": "prospectively preregister and execute exact common KiDS-BNT + finite-matrix BOSS z3 physical-support audit with unchanged C3+C5 rectangle and 5% threshold",
+  "gate_state": {"G7":"OPEN","G8":"OPEN","G9":"OPEN"}
+}
