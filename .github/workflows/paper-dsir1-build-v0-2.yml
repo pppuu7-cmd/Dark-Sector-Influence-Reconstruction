@@ -110,6 +110,7 @@ jobs:
             papers/dsir1/manuscript_v0_2.md
             papers/dsir1/PROVENANCE_MATRIX.md
             papers/dsir1/SUPPORT_OPERATOR_PROVENANCE.md
+            papers/dsir1/OBSERVATION_ROUTE_LEDGER.md
             papers/dsir1/CLAIMS_LEDGER.md
             papers/dsir1/AUTHOR_METADATA.yml
             papers/dsir1/FIGURE_MANIFEST.md
