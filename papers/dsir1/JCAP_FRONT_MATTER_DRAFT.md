@@ -1,7 +1,7 @@
 # DSIR-I JCAP front matter draft
 
 **Status:** submission-preparation draft, 2026-08-27.  
-**Purpose:** provide a JCAP-compatible front-matter candidate without changing the frozen scientific claims in `manuscript.md`/`manuscript_v0_2.md`.
+**Purpose:** canonical JCAP-facing title/author/abstract/keywords source. Scientific claims remain bound to `manuscript_v0_2.md` and the provenance ledgers.
 
 ## Title
 
@@ -27,7 +27,7 @@ Choose 2--4 from the official JCAP list at submission. Current recommended set:
 3. **Cosmological perturbation theory in GR and beyond**
 4. **power spectrum**
 
-Rationale: this set routes the article toward dark-sector phenomenology, gravitational/cosmological perturbations, and the main structure-response observable without describing the paper as a machine-learning or purely statistical-methods contribution.
+Before submission, make one final scope decision on whether `power spectrum` should be replaced by the equally official keyword `dark matter theory`. Do not change keywords after submission; JCAP uses them for editor assignment.
 
 ## ArXiv field
 
@@ -35,15 +35,25 @@ Rationale: this set routes the article toward dark-sector phenomenology, gravita
 
 The JCAP-submitted version must match the arXiv version used for submission.
 
-## AI-assisted technology disclosure candidate
-
-> **AI-assisted technology statement.** OpenAI ChatGPT was used as an AI-assisted tool during preparation of this work for language editing, drafting and restructuring of manuscript prose, code-review suggestions, literature-search organization, and management of repository/reproducibility records. Scientific results, frozen acceptance criteria, numerical outputs, citations, code and manuscript claims are bound to the cited repository sources and remain the responsibility of the author. AI-generated text or suggestions are not used as scientific evidence or as a substitute for the cited literature and numerical provenance.
-
-Place this statement in the Acknowledgments or Methods/Data-and-code section in the final JCAP manuscript, consistent with the journal's current AI-assistance disclosure requirement.
-
 ## Data, software and code availability candidate
 
 > **Data, software and code availability.** The analysis code, frozen experiment contracts, scientific PASS/FAIL classifications, manuscript provenance ledgers, figure-generation scripts, and reproducible manuscript build are maintained in the public Dark-Sector Influence Reconstruction repository. Central quantitative claims are mapped to immutable workflow runs, artifacts or source commits and, where available, SHA256 digests. Public survey inputs used by the observation-route audits are identified by immutable source bindings and checksums in the repository. The exact release/archive identifier and repository citation should be inserted here after the submission snapshot is tagged and archived with a persistent DOI.
+
+## Disclosure source
+
+The canonical acknowledgments and AI-assisted-technology disclosure are stored in `papers/dsir1/ACKNOWLEDGMENTS_AND_DISCLOSURES.md`. The JCAP-facing manuscript builder must inject that disclosure rather than maintaining a second copy here.
+
+## JCAP LaTeX mapping
+
+```tex
+\title{Dark-Sector Influence Reconstruction I: Observable-response geometry, channel-conditional equivalence, and failure-resistant model comparison}
+\author[a]{Aleksey Buyanov}
+\affiliation[a]{Independent Researcher,\\ Moscow, Russia}
+\emailAdd{pppuu7@gmail.com}
+\abstract{<insert the JCAP-ready abstract above>}
+\keywords{dark energy theory, modified gravity, Cosmological perturbation theory in GR and beyond, power spectrum}
+\arxivnumber{<assigned arXiv id>}
+```
 
 ## Front-matter constraints retained for final LaTeX conversion
 
@@ -54,4 +64,4 @@ Place this statement in the Acknowledgments or Methods/Data-and-code section in 
 - Use ASCII-safe metadata where required by the submission system.
 - Select 2--4 official JCAP keywords only after the final scope is frozen.
 - Insert the real arXiv identifier before JCAP submission.
-- Do not claim that Exp073P physical support, covariance whitening, nuisance quotienting, G7, G8 or G9 is complete unless a later prospectively frozen result independently closes it.
+- Do not claim that Exp073P physical support, covariance whitening, nuisance quotienting, G7, G8 or G9 is complete unless later prospectively frozen evidence independently closes it.
