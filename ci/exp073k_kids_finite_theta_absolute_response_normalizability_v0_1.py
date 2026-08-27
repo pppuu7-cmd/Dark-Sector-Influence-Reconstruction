@@ -53,11 +53,11 @@ def summarize(ell,resp):
         pos=cumtrap(np.abs(resp[b]),ell); signed=cumtrap(resp[b],ell)
         Ns=[float(np.interp(L,ell,pos)) for L in CUTS]
         Ss=[float(np.interp(L,ell,signed)) for L in CUTS]
-        shell=[(Ns[i+1]-Ns[i])/Ns[i+1] for i in range(len(Ns)-1)]
-        p=[np.log(Ns[i+1]/Ns[i])/np.log(2.0) for i in range(len(Ns)-1)]
-        out.append({'band':b,'N_positive':Ns,'signed_integral':Ss,'dyadic_shell_fraction':shell,'local_power_exponent':p,
-                    'final_shell_fraction':shell[-1],'final_local_exponent':p[-1],
-                    'final_shell_rel_to_qsqrt':abs(shell[-1]-Q_SQRT)/Q_SQRT,
+        shell=[float((Ns[i+1]-Ns[i])/Ns[i+1]) for i in range(len(Ns)-1)]
+        p=[float(np.log(Ns[i+1]/Ns[i])/np.log(2.0)) for i in range(len(Ns)-1)]
+        out.append({'band':int(b),'N_positive':Ns,'signed_integral':Ss,'dyadic_shell_fraction':shell,'local_power_exponent':p,
+                    'final_shell_fraction':float(shell[-1]),'final_local_exponent':float(p[-1]),
+                    'final_shell_rel_to_qsqrt':float(abs(shell[-1]-Q_SQRT)/Q_SQRT),
                     'strictly_increasing':bool(all(Ns[i+1]>Ns[i] for i in range(len(Ns)-1)))})
     return out
 
@@ -84,27 +84,27 @@ def main():
         for b in (0,3,7):
             s1=shell_integral(r1,ell,30000,60000,b)
             s2=float(np.trapz(np.abs(r2[b]),e2))
-            rel=abs(s1-s2)/s2
-            ok=np.isfinite(rel) and rel<=5e-3
-            P2 &= bool(ok)
-            secondary.append({'response':name,'band':b,'primary_shell_integral':s1,'halfstep_shell_integral':s2,'relative_difference':rel,'pass':bool(ok)})
+            rel=float(abs(s1-s2)/s2)
+            ok=bool(np.isfinite(rel) and rel<=5e-3)
+            P2 &= ok
+            secondary.append({'response':name,'band':int(b),'primary_shell_integral':float(s1),'halfstep_shell_integral':float(s2),'relative_difference':rel,'pass':ok})
 
     def nonnorm_count(rows):
-        return sum(r['strictly_increasing'] and 1.35<=r['final_local_exponent']<=1.65 and 0.55<=r['final_shell_fraction']<=0.75 and r['final_shell_fraction']>=0.10 for r in rows)
+        return int(sum(r['strictly_increasing'] and 1.35<=r['final_local_exponent']<=1.65 and 0.55<=r['final_shell_fraction']<=0.75 and r['final_shell_fraction']>=0.10 for r in rows))
     def finite_count(rows):
-        return sum(r['strictly_increasing'] and r['final_shell_fraction']<0.10 and r['final_local_exponent']<0.25 for r in rows)
+        return int(sum(r['strictly_increasing'] and r['final_shell_fraction']<0.10 and r['final_local_exponent']<0.25 for r in rows))
     ng,ns=nonnorm_count(ggl),nonnorm_count(shear); fg,fs=finite_count(ggl),finite_count(shear)
-    P3=all(np.isfinite(r['N_positive']).all() if isinstance(r['N_positive'],np.ndarray) else all(np.isfinite(r['N_positive'])) for r in ggl+shear)
-    controls={'P1_provenance':P1,'P2_halfstep_shell_convergence':P2,'P3_finite_machine_outputs':P3,'P4_no_downstream_or_physics_weighting':True}
+    P3=bool(all(all(np.isfinite(r['N_positive'])) for r in ggl+shear))
+    controls={'P1_provenance':bool(P1),'P2_halfstep_shell_convergence':bool(P2),'P3_finite_machine_outputs':P3,'P4_no_downstream_or_physics_weighting':True}
     trustworthy=all(controls.values())
     if not trustworthy: status='FAIL_EXP073K_REPRODUCTION_OR_NUMERICAL_COMPLETENESS'
     elif ng>=7 and ns>=7: status='NONNORMALIZABLE_DISCRETE_ABSOLUTE_RESPONSE_EXP073K'
     elif fg>=7 and fs>=7: status='FINITE_ABSOLUTE_RESPONSE_NOT_EXCLUDED_EXP073K'
     else: status='INDETERMINATE_ABSOLUTE_RESPONSE_ASYMPTOTICS_EXP073K'
-    d={'experiment':'Exp073K','date':'2026-08-27','status':status,'q_sqrt_frozen':Q_SQRT,'cutoffs_ell':CUTS,
+    d={'experiment':'Exp073K','date':'2026-08-27','status':status,'q_sqrt_frozen':float(Q_SQRT),'cutoffs_ell':CUTS,
        'primary_delta_ell_above_20':1.0,'secondary_halfstep_shell':[30000.0,60000.0],
        'provenance':provenance,'responses':{'Wm_GGL':ggl,'WW_shear':shear},'secondary_checks':secondary,
-       'classification_counts':{'nonnormalizable_Wm':ng,'nonnormalizable_WW':ns,'finite_Wm':fg,'finite_WW':fs},
+       'classification_counts':{'nonnormalizable_Wm':int(ng),'nonnormalizable_WW':int(ns),'finite_Wm':int(fg),'finite_WW':int(fs)},
        'controls':{k:{'pass':bool(v)} for k,v in controls.items()},
        'interpretation_boundary':{'changes_Exp073J_5pct_threshold':False,'authorizes_posthoc_ell_cut':False,'authorizes_fiducial_power_weighting':False,'covariance_restriction_authorized':False},
        'gate_state':{'G7':'OPEN','G8':'OPEN','G9':'OPEN'}}
