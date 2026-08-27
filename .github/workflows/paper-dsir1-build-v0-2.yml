@@ -51,6 +51,10 @@ jobs:
         run: |
           python papers/dsir1/audit_retrospective_specificity_control.py
 
+      - name: Audit observation-space support closure
+        run: |
+          python papers/dsir1/audit_observation_space_support_closure.py
+
       - name: Build Figure 1 operator architecture
         run: |
           python papers/dsir1/figures/fig01_operator_architecture.py
@@ -74,6 +78,10 @@ jobs:
       - name: Build Figure 6 failure-resistant science
         run: |
           python papers/dsir1/figures/fig06_failure_resistant_science.py
+
+      - name: Build Figure 7 observation-space support closure
+        run: |
+          python papers/dsir1/figures/fig07_observation_space_support_closure.py
 
       - name: Record build checksums
         run: |
@@ -102,6 +110,7 @@ jobs:
             papers/dsir1/FIGURE_MANIFEST.md
             papers/dsir1/FIGURE_CAPTIONS.md
             papers/dsir1/FIGURE_PLACEMENT.md
+            papers/dsir1/evidence/*.json
             papers/dsir1/figures/generated/*.pdf
             papers/dsir1/figures/generated/*.png
             papers/dsir1/figures/generated/*.svg
