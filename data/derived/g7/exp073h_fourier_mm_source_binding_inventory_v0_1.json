@@ -1,0 +1,62 @@
+{
+  "experiment": "Exp073H",
+  "date": "2026-08-27",
+  "record_type": "PRE_SUPPORT_FOURIER_MM_SOURCE_INVENTORY",
+  "support_fraction_computed": false,
+  "covariance_values_read": false,
+  "G8_read": false,
+  "grieb_official_archive": {
+    "url": "https://data.sdss.org/sas/dr12/boss/papers/clustering/GRIEB_ET_AL_2016_COMBINEDDR12_power_spectrum_wedges.tar.gz",
+    "workflow_run": 33036439243,
+    "workflow_job": 98400031611,
+    "artifact_id": 9632164644,
+    "artifact_digest": "sha256:a86fdd64e64cb0da5568007bf651bb6aa11d7a96138925455b2e548423003c36",
+    "archive_sha256": "bbf7433bdb547819e86d16a1bb2d93c725d12aa5bd43058bf17c3e61ad020c0d",
+    "archive_size_bytes": 1314683,
+    "member_count": 20,
+    "measurement_candidates": 6,
+    "window_candidates": 0,
+    "k_center_range_h_Mpc^-1": [0.0225, 0.1975],
+    "binding_assessment": "INCOMPLETE_FOR_H1_H3_NO_WINDOW_OBJECTS_IN_OFFICIAL_ARCHIVE"
+  },
+  "beutler_official_fallback_archive": {
+    "url": "https://data.sdss.org/sas/dr12/boss/papers/clustering/Beutler_etal_DR12COMBINED_fullshape_powspec.tar.gz",
+    "workflow_run": 33036540053,
+    "workflow_job": 98400337690,
+    "artifact_id": 9632200120,
+    "artifact_digest": "sha256:460239c16fee6e63615000a20a825613f91fe1302af15fe49966e4d40fac1fb4",
+    "archive_sha256": "23bb7813a7b6ae0e041f070f40716511ff21243e11f6c2783fec64d72de5b823",
+    "archive_size_bytes": 3256735,
+    "member_count": 90,
+    "window_candidates": 15,
+    "measurement_candidates": 21,
+    "multipole_measurement_families": ["P0", "P2", "P4"],
+    "measurement_k_center_range_h_Mpc^-1": {
+      "P0_P2": [0.015639, 0.145105],
+      "P4": [0.015639, 0.095141]
+    },
+    "bound_window_family": "Beutleretal_window_z{1,2,3}_{NGC,SGC}.dat",
+    "binding_assessment": "PROMISING_REQUIRES_WINDOW_SEMANTICS_AUDIT_BEFORE_H1_H8_CLASSIFICATION"
+  },
+  "frozen_support_inheritance": {
+    "z_min": 0.295,
+    "z_max": 2.33,
+    "k_min_Mpc^-1": 0.000704833374744468,
+    "k_max_Mpc^-1": 0.06664762008318016,
+    "max_positive_invalid_fraction": 0.05
+  },
+  "controls": {
+    "threshold_changed": false,
+    "support_classification_attempted": false,
+    "covariance_values_read": false,
+    "nuisance_rank_read": false,
+    "relation_residual_read": false,
+    "G8_read": false
+  },
+  "next_admissible_step": "audit exact Beutler window-file semantics and finite true-k mixing support, bind unit/redshift conventions, then classify Exp073H H1-H8 without support fractions",
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
