@@ -2,7 +2,7 @@
 """Reproduce the retrospective Paper-I moving-scale/nonseparability bridge.
 
 This is an integrity/reproducibility audit, not a newly preregistered science
-gate.  The numerical tolerances below only detect accidental changes to the
+gate. The numerical tolerances below only detect accidental changes to the
 compact evidence snapshot; they are not physical acceptance thresholds.
 """
 from __future__ import annotations
@@ -94,8 +94,9 @@ def main() -> None:
         data.get("classification") == "RETROSPECTIVE_EVIDENCE_SNAPSHOT_NOT_NEW_PROSPECTIVE_GATE",
         "retrospective classification boundary missing",
     )
-    require("transcription/interpolation discrepancies" in data.get("correction_note", ""),
-            "evidence correction note missing")
+    correction = data.get("correction_note", "")
+    require("not byte-equivalent" in correction and "audit must reproduce" in correction,
+            "fail-closed evidence-correction note missing")
 
     boundaries = "\n".join(data.get("boundaries", []))
     for token in (
@@ -112,6 +113,8 @@ def main() -> None:
     k = np.asarray(data["wdm"]["k_h_mpc"], dtype=float)
     require(k.shape == (6,) and np.all(np.diff(k) > 0), "unexpected WDM k grid")
     require(data["wdm"]["target_log_power_response"] == -0.1, "cutoff target changed")
+    require("rechecked directly against the raw CLASS P(k) files" in data["wdm"]["crossing_extraction"],
+            "raw cutoff recheck provenance missing")
 
     expected_by_mass = {
         float(row["m_keV"]): row
@@ -146,7 +149,7 @@ def main() -> None:
     require(gdm["delta_log_span_min"] <= gdm["delta_log_span_max"], "bad GDM span range")
     require(fr["delta_log_span_min"] <= fr["delta_log_span_max"], "bad f(R) span range")
 
-    # Snapshot-only descriptive ordering.  This is not a universal threshold or gate.
+    # Snapshot-only descriptive ordering. This is not a universal threshold or gate.
     wdm_span_max = max(row["delta_log_span"] for row in observed)
     require(wdm_span_max < gdm["delta_log_span_min"] < fr["delta_log_span_min"],
             "retrospective source-scale-motion ordering changed")
