@@ -3,10 +3,10 @@
 
 The script does not edit manuscript.md in place. It injects the frozen author
 metadata, inserts prospectively/retrospectively classified result components,
-surfaces the support-closure result in Abstract/Introduction, adds deterministic
-Figure 1--7 textual references at frozen narrative anchors, inserts the
-reproducibility section before Outlook, renumbers the final headings, and writes
-manuscript_v0_2.md.
+surfaces the support-eligibility results in Abstract/Introduction/Conclusions,
+adds deterministic Figure 1--7 textual references at frozen narrative anchors,
+inserts the reproducibility section before Outlook, renumbers the final
+headings, and writes manuscript_v0_2.md.
 """
 
 from __future__ import annotations
@@ -33,14 +33,23 @@ ABSTRACT_FINAL_MARKER = (
     "DSIR-I is therefore a response-classification and identifiability result, not a claim of a universal dark-sector invariant or a discovery of new fundamental physics."
 )
 ABSTRACT_SUPPORT_SENTENCE = (
-    "A prospectively frozen ACTxunWISE support audit further shows that the observational quotient cannot be evaluated merely because its formal operator is defined: none of 26 candidate coordinates is supported by the current certified C3/C5 domain at the 5% leakage criterion, while the joint support extension that geometrically recovers 15 coordinates is ineligible under the tested linear perturbativity route. We therefore do not quote a covariance-whitened or nuisance-quotiented survey distance from that route."
+    "Prospectively frozen support audits further show that the observational quotient cannot be evaluated merely because its formal operator is defined: none of 26 ACTxunWISE candidate coordinates is supported by the current certified C3/C5 domain at the 5% leakage criterion, while the joint support extension that geometrically recovers 15 coordinates is ineligible under the tested linear perturbativity route. A separate KiDS operator audit finds the chosen positive absolute-response measure to be nonnormalizable, establishing finite positive support normalization as an additional precondition. We therefore do not quote a covariance-whitened or nuisance-quotiented survey distance from an ineligible route."
 )
 
 INTRO_OLD = (
     "This paper develops and tests the first part of that program. Its contributions are fivefold. First, we define a block-aware response geometry in which undefined model/channel combinations are masked rather than silently replaced by zeros. Second, we show quantitatively that a simple additive description of scale and time dependence fails for some mechanisms because an irreducible scale-time interaction carries substantial response power. Third, we demonstrate with frozen examples that degeneracy is channel conditional: matter-response lookalikes can be split by metric information, while scale-only lookalikes can be split by temporal evolution. Fourth, we separate microscopic parameter count from response-manifold curvature and linear representation rank. Fifth, we formalize exact channel-conditional equivalence through physical projection, covariance whitening, and nuisance quotienting, while keeping the current empirical atlas distinct from a completed survey-level detectability analysis."
 )
 INTRO_NEW = (
-    "This paper develops and tests the first part of that program. Its contributions are sixfold. First, we define a block-aware response geometry in which undefined model/channel combinations are masked rather than silently replaced by zeros. Second, we show quantitatively that a simple additive description of scale and time dependence fails for some mechanisms because an irreducible scale-time interaction carries substantial response power. Third, we demonstrate with frozen examples that degeneracy is channel conditional: matter-response lookalikes can be split by metric information, while scale-only lookalikes can be split by temporal evolution. Fourth, we separate microscopic parameter count from response-manifold curvature and linear representation rank. Fifth, we formalize exact channel-conditional equivalence through physical projection, covariance whitening, and nuisance quotienting. Sixth, we test the physical-support precondition for that quotient on a concrete ACTxunWISE C3/C5 route and preserve the negative result: the current certified domain retains no eligible observational coordinate at the frozen support threshold, while the enlarged geometric frontier fails the tested linear perturbativity eligibility contract. Thus the paper distinguishes a mathematically defined quotient from a physically authorized one rather than reporting a survey distance outside the certified theory domain."
+    "This paper develops and tests the first part of that program. Its contributions are sixfold. First, we define a block-aware response geometry in which undefined model/channel combinations are masked rather than silently replaced by zeros. Second, we show quantitatively that a simple additive description of scale and time dependence fails for some mechanisms because an irreducible scale-time interaction carries substantial response power. Third, we demonstrate with frozen examples that degeneracy is channel conditional: matter-response lookalikes can be split by metric information, while scale-only lookalikes can be split by temporal evolution. Fourth, we separate microscopic parameter count from response-manifold curvature and linear representation rank. Fifth, we formalize exact channel-conditional equivalence through physical projection, covariance whitening, and nuisance quotienting. Sixth, we make the eligibility of that quotient explicit: both the physical domain and the positive support measure must be certified before whitening. A concrete ACTxunWISE C3/C5 audit retains no coordinate on the current domain and reaches a nonperturbative planning frontier, while an independent KiDS absolute-response audit is nonnormalizable under its frozen support measure. Thus the paper distinguishes a mathematically defined quotient from a physically authorized one rather than manufacturing a survey distance through extrapolation or retrospective normalization."
+)
+
+CONCLUSION_COUNT_OLD = "The current atlas yields four main conclusions."
+CONCLUSION_COUNT_NEW = "The current atlas and observation-route audits yield five main conclusions."
+CONCLUSION_FOURTH = (
+    "Fourth, mechanism diversity matters. Thermal WDM exhibits a strong scale-localized but nearly time-separable response, whereas withheld DCDM produces a distinct temporal-localization flow. These cases support the use of response localization and trajectory geometry as organizing tools while simultaneously ruling out a naive universal scale-time template."
+)
+CONCLUSION_FIFTH = (
+    "Fifth, a formal observational quotient is not automatically a physically admissible one. The frozen support programme exposes two distinct prerequisites before covariance whitening: the observational kernel must lie on a physically justified theory/provider domain, and the prospectively chosen positive support measure must possess a finite non-zero normalizer. The current ACTxunWISE C3/C5 route fails the first requirement on its certified domain and its geometric extension is ineligible under the tested linear route; the tested KiDS absolute-response measure fails the second by remaining nonnormalizable along the frozen ultraviolet ladder. A finite-positive DES/BOSS harmonic operator candidate has been identified and its public inputs are being reproduced prospectively, but its physical support has not yet been scored and therefore does not close the observational quotient."
 )
 
 FIGURE_INSERTIONS = [
@@ -107,6 +116,14 @@ def main() -> None:
     )
     require_once(base, INTRO_OLD)
     base = base.replace(INTRO_OLD, INTRO_NEW, 1)
+
+    # Promote the completed eligibility logic into the conclusions without
+    # changing the immutable base manuscript. The finite-positive DES/BOSS route
+    # is explicitly described as pre-support, not as a passed survey quotient.
+    require_once(base, CONCLUSION_COUNT_OLD)
+    base = base.replace(CONCLUSION_COUNT_OLD, CONCLUSION_COUNT_NEW, 1)
+    require_once(base, CONCLUSION_FOURTH)
+    base = base.replace(CONCLUSION_FOURTH, CONCLUSION_FOURTH + "\n\n" + CONCLUSION_FIFTH, 1)
 
     for marker in (
         RESULTS_INSERT_MARKER,
@@ -179,7 +196,11 @@ def main() -> None:
         'affiliation: "Independent Researcher"',
         'orcid: "0009-0001-2621-9305"',
         "contributions are sixfold",
-        "none of 26 candidate coordinates",
+        "none of 26 ACTxunWISE candidate coordinates",
+        "positive absolute-response measure to be nonnormalizable",
+        "five main conclusions",
+        "formal observational quotient is not automatically a physically admissible one",
+        "physical support has not yet been scored",
         "FAIL_IDM_DR_COMMON_SOURCE_RESPONSE_SLOPE_V0_1",
         "## 7.1 Observation-space support closure and perturbativity",
         "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
