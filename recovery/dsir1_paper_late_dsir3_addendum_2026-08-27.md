@@ -2,6 +2,22 @@
 
 This addendum records article changes made after the earlier DSIR-I recovery checkpoint. It must be read together with `recovery/dsir1_paper_checkpoint_2026-08-27.md`.
 
+## Current expanded reproducible build
+
+The late-DSIR3 article extension has passed the complete fail-closed paper pipeline.
+
+- paper source commit: `63a46e33877eeaa447f12a364c2d825153976618`
+- workflow: `DSIR-I paper build v0.2`
+- workflow run: `33093258846`
+- job: `98591436167`
+- result: `SUCCESS`
+- build artifact: `9655286407`
+- artifact digest: `sha256:100c80178d284f7ccf34cb6bac40ff32266afc739ee10446b2242b4f5a2c2e4e`
+
+The run passed the central manuscript audit, retrospective known-sector audit, Exp072A--Exp073E observation-space support/provider/model audit, the new late support-operator audit, Figures 1--7, checksum generation, and artifact upload. The generated v0.2 Abstract/Introduction/Conclusions now surface the support-normalizability result while preserving the pre-support status of the finite-positive DES/BOSS candidate.
+
+This supersedes the earlier six-figure baseline for current development, but it does not alter the gate state `G7=OPEN`, `G8=OPEN`, `G9=OPEN`.
+
 ## New article-level methodological result
 
 The observation-space eligibility chain now contains two independent preconditions before covariance whitening or nuisance quotienting:
@@ -76,7 +92,7 @@ This closes input reproduction prerequisites only. `support_fraction_computed=fa
 
 ## Pending exclusion
 
-Exp073R0 is currently being retried after an infrastructure timeout. Latest retry commit observed: `5ee34c3fc80ab1091b7e925d321d880dbadade3c`. Its frozen scientific criteria are unchanged, but it is **not** an article result until a completed result is frozen.
+Exp073R0 is currently being retried after an infrastructure timeout. Retry configuration commit: `5ee34c3fc80ab1091b7e925d321d880dbadade3c`; latest observed checkpoint documenting the timeout/retry state: `0eea0909b6e286a14d28716211953829203796b0`. Its frozen scientific criteria are unchanged, but it is **not** an article result until a completed result is frozen.
 
 ## Paper files added/updated
 
@@ -86,6 +102,7 @@ Exp073R0 is currently being retried after an infrastructure timeout. Latest retr
 - `papers/dsir1/sections/observation_space_support_closure.md`
 - `papers/dsir1/sections/data_code_reproducibility.md`
 - `papers/dsir1/CLAIMS_LEDGER.md`
+- `papers/dsir1/build_manuscript_v0_2.py` — Abstract/Introduction/Conclusions now expose the two-stage support-eligibility rule
 - `.github/workflows/paper-dsir1-build-v0-2.yml`
 
 ## Hard boundary
