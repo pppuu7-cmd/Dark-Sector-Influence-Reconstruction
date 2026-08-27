@@ -3,18 +3,19 @@
 **Date:** 2026-08-27  
 **Rule:** every figure must be reproducible from frozen repository products without hand-edited scientific numbers. Plot aesthetics may change; scientific selections, masks, normalizations, thresholds, and orientation rules may not be changed after viewing the plot unless the change is explicitly versioned and justified.
 
-First complete reproducible baseline: workflow run `33032395387`, source commit `3ec77ea804db6198e072a5da5461b4db59e558ac`, artifact `9630730946`, digest `sha256:7c98b5933346e2b3ee1feaab6f7f9651c7b03a1fb03413ceb4631a09b1fe42c7`. See `papers/dsir1/BUILD_BASELINE_V0_2.md`.
+First complete reproducible six-figure baseline: workflow run `33032395387`, source commit `3ec77ea804db6198e072a5da5461b4db59e558ac`, artifact `9630730946`, digest `sha256:7c98b5933346e2b3ee1feaab6f7f9651c7b03a1fb03413ceb4631a09b1fe42c7`. See `papers/dsir1/BUILD_BASELINE_V0_2.md`. Figure 7 is a later, separately provenance-bound extension incorporating the completed Exp072A/B/C -> Exp073A support-eligibility chain.
 
 ## Build status
 
 | Figure | Scientific role | Reproducible script | Status |
 |---|---|---|---|
-| 1 | operator/equivalence architecture | `papers/dsir1/figures/fig01_operator_architecture.py` | IMPLEMENTED; formal-source guarded; CI PASS |
-| 2 | additive scale+time core failure | `papers/dsir1/figures/fig02_additive_core_failure.py` | IMPLEMENTED; recomputes decomposition and checks Exp045A; CI PASS |
-| 3 | finite-amplitude nonseparability hierarchy | `papers/dsir1/figures/fig03_chiI_hierarchy.py` | IMPLEMENTED; Exp047A/B provenance guarded; CI PASS |
-| 4 | channel-conditional degeneracy breaking | `papers/dsir1/figures/fig04_channel_conditional_degeneracy.py` | IMPLEMENTED; frozen discriminant-edge gates re-evaluated; CI PASS |
-| 5 | curvature and mechanism localization | `papers/dsir1/figures/fig05_curvature_and_localization.py` | IMPLEMENTED; Exp047A/050B/053A provenance guarded; CI PASS |
-| 6 | failure-resistant science chronology | `papers/dsir1/figures/fig06_failure_resistant_science.py` | IMPLEMENTED; permanent FAILs and F27 prefrozen band guarded; CI PASS |
+| 1 | operator/equivalence architecture | `papers/dsir1/figures/fig01_operator_architecture.py` | IMPLEMENTED; formal-source guarded; CI PASS baseline |
+| 2 | additive scale+time core failure | `papers/dsir1/figures/fig02_additive_core_failure.py` | IMPLEMENTED; recomputes decomposition and checks Exp045A; CI PASS baseline |
+| 3 | finite-amplitude nonseparability hierarchy | `papers/dsir1/figures/fig03_chiI_hierarchy.py` | IMPLEMENTED; Exp047A/B provenance guarded; CI PASS baseline |
+| 4 | channel-conditional degeneracy breaking | `papers/dsir1/figures/fig04_channel_conditional_degeneracy.py` | IMPLEMENTED; frozen discriminant-edge gates re-evaluated; CI PASS baseline |
+| 5 | curvature and mechanism localization | `papers/dsir1/figures/fig05_curvature_and_localization.py` | IMPLEMENTED; Exp047A/050B/053A provenance guarded; CI PASS baseline |
+| 6 | failure-resistant science chronology | `papers/dsir1/figures/fig06_failure_resistant_science.py` | IMPLEMENTED; permanent FAILs and F27 prefrozen band guarded; CI PASS baseline |
+| 7 | observation-space support closure and perturbativity eligibility | `papers/dsir1/figures/fig07_observation_space_support_closure.py` | IMPLEMENTED; Exp072A/B/C and Exp073A provenance/status/boundary guarded; awaiting/current seven-figure CI baseline |
 
 Generated binaries are intentionally produced by GitHub Actions rather than committed as opaque hand-made figures. Each implemented figure writes PDF/PNG/SVG plus a provenance JSON containing source paths, run/artifact identifiers where applicable, checks, interpretation boundaries, and output SHA256 hashes.
 
@@ -191,6 +192,33 @@ The script requires the original C3/C5 statuses to remain FAIL, verifies the lat
 
 ---
 
+## Figure 7 — Observation-space support closure and perturbativity eligibility
+
+**Purpose:** make explicit the physical-domain precondition for evaluating an observational quotient.
+
+Implemented layout:
+
+- panel A: all 26 Exp072A out-of-support kernel fractions against the frozen 5% threshold; the current common C3/C5 domain retains zero coordinates;
+- panel B: descriptive joint support-extension factors from the unique Exp072C Pareto frontier, together with `z_min=0.0087346`, `k_max=4.81826 Mpc^-1`, and planning-only retained dimension 15;
+- panel C: Exp073A primary perturbativity eligibility at `Delta^2<=1`, showing 7 passing versus 57 failing source pairs and zero retained dimension at diagnostic thresholds 0.5, 1, and 2.
+
+**Manuscript-facing source:** `papers/dsir1/evidence/observation_space_support_chain_v0_1.json`.
+
+**Immutable source provenance bound into the snapshot:**
+
+- Exp072A run `33029362485`, artifact `9629763833`, digest `sha256:9ecf7d61...7701d`;
+- Exp072B run `33030657898`, artifact `9630210086`, digest `sha256:5bbca571...615ad`;
+- Exp072C run `33031427090`, artifact `9630407069`, digest `sha256:0e726d9f...f2a71`;
+- Exp073A run `33032781761`, artifact `9630897385`, digest `sha256:0f2212d6...cb25`.
+
+**Implementation:** `papers/dsir1/figures/fig07_observation_space_support_closure.py`.
+
+The script rechecks that every Exp072A coordinate remains above the frozen support threshold, Exp072B retains no finite upper-k-only coordinate target, Exp072C remains planning geometry only, Exp073A remains linear/no-CLEFT ineligible, G7/G8/G9 remain OPEN, and Exp073B is excluded from science claims.
+
+**Caption boundary:** Figure 7 is an eligibility/failure result, not a survey-level model-distance result. The Exp072C frontier is not an available physical-provider domain. Exp073A rejects only the tested linear/no-CLEFT route to that frontier. The first Exp073B workflow failed before its frozen capability audit executed and therefore contributes no physical FEASIBLE/GAP/FAIL classification.
+
+---
+
 ## Supplementary figures
 
 ### S1 — Pairwise interaction localization
@@ -222,4 +250,5 @@ A figure is manuscript-eligible only if all of the following hold:
 5. theory-response metrics are not labeled as observational significance;
 6. PASS/FAIL status and the applicable frozen threshold are stated where relevant;
 7. any withheld point is identified as within-family interpolation or withheld mechanism, as appropriate;
-8. the plotting script and output-data checksum are retained with the paper branch.
+8. physical support/perturbativity eligibility must pass before an observation-space distance is displayed;
+9. the plotting script and output-data checksum are retained with the paper branch.
