@@ -36,6 +36,9 @@ def main() -> None:
     d = load(SNAPSHOT)
     e = d["experiments"]
 
+    # Machine-readable evidence guards: exact classifications and numerical
+    # provenance belong here, rather than requiring code-like status labels in
+    # the journal prose itself.
     g = e["Exp073G"]
     require(g["status"] == "FAIL_EXP073G_REPRODUCTION_OR_PROVENANCE", "Exp073G status changed")
     require(g["trustworthy_operator_no_go"] is True, "Exp073G operator no-go flag changed")
@@ -97,11 +100,13 @@ def main() -> None:
     provenance = read(PROVENANCE)
     repro = read(REPRO)
 
+    # Prose-level guards deliberately check scientific content rather than exact
+    # machine status strings, which are already guarded above.
     for token in [
         "A second eligibility condition: the support measure must itself be normalizable",
-        "EXTENDED_LADDER_SUPPORTS_NONNORMALIZABLE_ABSOLUTE_RESPONSE_EXP073L",
+        "all eight Wm components and all eight WW components were classified as nonnormalizable",
         "f_{\\rm shell}=1-2^{-p}",
-        "FINITE_POSITIVE_SUPPORT_OPERATOR_CANDIDATE_FOUND_EXP073M",
+        "A prospectively classified finite-positive candidate was found",
         "6,536,725",
         "Exp073R0",
     ]:
