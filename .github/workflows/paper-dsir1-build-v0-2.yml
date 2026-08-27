@@ -15,6 +15,10 @@ on:
       - '.github/workflows/paper-dsir1-build-v0-2.yml'
   workflow_dispatch:
 
+concurrency:
+  group: dsir1-paper-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -91,6 +95,7 @@ jobs:
             papers/dsir1/CLAIMS_LEDGER.md
             papers/dsir1/AUTHOR_METADATA.yml
             papers/dsir1/FIGURE_MANIFEST.md
+            papers/dsir1/FIGURE_CAPTIONS.md
             papers/dsir1/figures/generated/*.pdf
             papers/dsir1/figures/generated/*.png
             papers/dsir1/figures/generated/*.svg
