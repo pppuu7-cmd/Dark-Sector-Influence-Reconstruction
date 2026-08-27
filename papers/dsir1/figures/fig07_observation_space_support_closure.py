@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Build DSIR-I Figure 7: observation-space support closure.
 
-The figure visualizes the completed Exp072A/B/C -> Exp073A eligibility chain.
-It must never be interpreted as a completed covariance-whitened or nuisance-
-quotiented C3/C5 survey comparison.
+The plotted quantitative panels are Exp072A/B/C -> Exp073A. Scientific guards
+also bind the completed Exp073B--E follow-up chain, which explains why the
+failed linear route cannot be repaired by an unlabelled nonlinear extrapolation.
+The figure must never be interpreted as a completed covariance-whitened or
+nuisance-quotiented C3/C5 survey comparison.
 """
 
 from __future__ import annotations
@@ -34,9 +36,10 @@ def main() -> None:
     d = json.loads(SOURCE.read_text(encoding="utf-8"))
     e = d["experiments"]
     a, b, c, p = e["Exp072A"], e["Exp072B"], e["Exp072C"], e["Exp073A"]
+    b73, c73, d73, e73 = e["Exp073B"], e["Exp073C"], e["Exp073D"], e["Exp073E"]
 
     # Hard scientific guards. The figure must fail rather than silently redraw
-    # if the paper claim boundary changes.
+    # if any article-level eligibility/model-boundary claim is changed.
     if a["status"] != "FAIL_ACT_UNWISE_ANGULAR_SUPPORT_LEAKAGE_MASK_V0_1":
         raise RuntimeError("Exp072A support FAIL was reclassified")
     if a["candidate_dimension"] != 26 or a["nominal_retained_dimension"] != 0:
@@ -66,10 +69,31 @@ def main() -> None:
         raise RuntimeError("Exp073A retained dimension is no longer zero")
     if p["linear_no_CLEFT_route_eligible"] or p["covariance_restriction_authorized"]:
         raise RuntimeError("Exp073A route was improperly promoted")
+
+    if b73["status"] != "GAP_EXISTING_STACK_NONLINEAR_MATTER_WEYL_ROUTE_EXP073B":
+        raise RuntimeError("Exp073B valid capability GAP changed")
+    if b73["completed_workflow_run"] != 33033279245 or b73["artifact_id"] != 9631041961:
+        raise RuntimeError("Exp073B corrected-source provenance changed")
+    if b73["initial_infrastructure_attempt"]["scientific_classification"]:
+        raise RuntimeError("Exp073B first checkout failure was promoted to science")
+    if not b73["projector_three_block_interface_sufficient"]:
+        raise RuntimeError("Exp073B projector sufficiency changed")
+    if b73["C3_complete_nonlinear_three_block_provider"] or b73["C5_complete_nonlinear_three_block_provider"]:
+        raise RuntimeError("Exp073B provider-gap boundary changed")
+
+    if c73["status"] != "NO_COMPLETE_PUBLIC_CANDIDATE_ROUTE_EXP073C" or c73["complete_public_or_composable_candidate_found"]:
+        raise RuntimeError("Exp073C public-provider landscape boundary changed")
+    if d73["status"] != "C3_NONLINEAR_COMPLETION_NONIDENTIFIABLE_C5_DEFINED_EXP073D":
+        raise RuntimeError("Exp073D model-identifiability classification changed")
+    if d73["C3_nonlinear_continuation_unique"] or not d73["C5_nonlinear_theory_defined_in_principle"]:
+        raise RuntimeError("Exp073D C3/C5 nonlinear asymmetry changed")
+    if e73["status"] != "C3_COMPLETION_ENSEMBLE_NOT_FEASIBLE_EXP073E":
+        raise RuntimeError("Exp073E completion-ensemble classification changed")
+    if e73["completion_ensemble_feasible_under_frozen_E1_E8"]:
+        raise RuntimeError("Exp073E completion ensemble was improperly promoted")
+
     if any(d["boundary"][g] != "OPEN" for g in ("G7", "G8", "G9")):
         raise RuntimeError("G7/G8/G9 must remain OPEN")
-    if d["Exp073B"]["included_in_science_claims"]:
-        raise RuntimeError("Exp073B infrastructure failure must not enter Figure 7")
 
     fig, axes = plt.subplots(1, 3, figsize=(14.6, 4.8), constrained_layout=True)
 
@@ -166,7 +190,7 @@ def main() -> None:
             "file_sha256": sha256(SOURCE),
             "source_main_seen_at": d["source_main_seen_at"],
         },
-        "bound_experiments": {
+        "quantitative_panels_bound_to": {
             key: {
                 "status": e[key]["status"],
                 "workflow_run": e[key]["workflow_run"],
@@ -174,6 +198,18 @@ def main() -> None:
                 "artifact_digest": e[key]["artifact_digest"],
             }
             for key in ("Exp072A", "Exp072B", "Exp072C", "Exp073A")
+        },
+        "downstream_boundary_checks": {
+            "Exp073B": {
+                "status": b73["status"],
+                "workflow_run": b73["completed_workflow_run"],
+                "artifact_id": b73["artifact_id"],
+                "artifact_digest": b73["artifact_digest"],
+                "initial_infrastructure_run": b73["initial_infrastructure_attempt"]["workflow_run"],
+            },
+            "Exp073C": {"status": c73["status"], "result_commit": c73["result_commit"]},
+            "Exp073D": {"status": d73["status"], "result_commit": d73["result_commit"]},
+            "Exp073E": {"status": e73["status"], "result_commit": e73["result_commit"]},
         },
         "checked_facts": {
             "Exp072A_threshold": threshold,
@@ -185,6 +221,9 @@ def main() -> None:
             "Exp073A_primary_pass_pairs": passed,
             "Exp073A_total_pairs": p["pair_count"],
             "Exp073A_retained_dimensions": [p["T_0p5_retained_dimension"], p["T_1_retained_dimension"], p["T_2_retained_dimension"]],
+            "Exp073B_projector_interface_sufficient": b73["projector_three_block_interface_sufficient"],
+            "Exp073D_C3_nonlinear_unique": d73["C3_nonlinear_continuation_unique"],
+            "Exp073E_completion_ensemble_feasible": e73["completion_ensemble_feasible_under_frozen_E1_E8"],
         },
         "outputs": {
             "pdf": {"path": pdf.name, "sha256": sha256(pdf)},
@@ -195,8 +234,11 @@ def main() -> None:
             "Exp072A is a permanent support-mask FAIL for the current certified C3/C5 route",
             "Exp072C is planning geometry only and is not a certified physical provider extension",
             "Exp073A rejects the tested linear/no-CLEFT route to that frontier, not the DSIR framework",
+            "Exp073B valid corrected-source audit finds the three-block projector interface sufficient but the physical nonlinear provider layer missing",
+            "the first Exp073B run 33033220464 remains infrastructure-only and is not a science result",
+            "Exp073C finds no complete public/composable provider under its frozen landscape requirements, not a universal impossibility theorem",
+            "Exp073D/E forbid hiding an extra nonlinear C3 completion as a neutral provider under the unchanged frozen C3 model",
             "no covariance-whitened or nuisance-quotiented C3/C5 ACTxunWISE survey distance is authorized from this chain",
-            "Exp073B is excluded because its first workflow failed before the frozen capability audit executed",
             "G7/G8/G9 remain OPEN",
         ],
     }
