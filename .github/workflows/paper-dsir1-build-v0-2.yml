@@ -59,6 +59,10 @@ jobs:
         run: |
           python papers/dsir1/audit_support_operator_eligibility.py
 
+      - name: Audit observation-route ledger semantics
+        run: |
+          python papers/dsir1/audit_observation_route_ledger.py
+
       - name: Build Figure 1 operator architecture
         run: |
           python papers/dsir1/figures/fig01_operator_architecture.py
