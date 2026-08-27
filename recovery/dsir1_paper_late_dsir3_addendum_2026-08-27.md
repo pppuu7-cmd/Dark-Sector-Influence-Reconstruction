@@ -1,115 +1,137 @@
-# DSIR-I late-DSIR3 paper addendum — 2026-08-27
+# DSIR-I late-DSIR3/DSIR4 paper addendum — 2026-08-27
 
-This addendum records article changes made after the earlier DSIR-I recovery checkpoint. It must be read together with `recovery/dsir1_paper_checkpoint_2026-08-27.md`.
+This addendum records article changes after the original DSIR-I recovery checkpoint. It must be read together with `recovery/dsir1_paper_checkpoint_2026-08-27.md`.
 
-## Current expanded reproducible build
+## Current article state
 
-The late-DSIR3 article extension has passed the complete fail-closed paper pipeline.
+The paper branch now treats observation-space admissibility as a fail-closed sequence rather than a single projection step. The central rule is:
 
-- paper source commit: `27d46820a87e8c20634c8476fd23cf292f6ee66d`
-- workflow: `DSIR-I paper build v0.2`
-- workflow run: `33093501161`
-- job: `98592285140`
-- result: `SUCCESS`
-- build artifact: `9655385461`
-- artifact digest: `sha256:f31425b040ecda3c613566b4d633770cd936b35b7110e532cc397f2516e3b083`
+`finite positive support measure -> exact reproducible real-data operator/input realization -> physical support eligibility -> physically justified model/provider semantics -> covariance restriction/whitening -> nuisance quotient -> relation/null tests`.
 
-The run passed the central manuscript audit, retrospective known-sector audit, Exp072A--Exp073E observation-space support/provider/model audit, the late support-operator audit, Figures 1--7, checksum generation, and artifact upload. The generated v0.2 Abstract/Introduction/Conclusions now surface the support-normalizability result while preserving the pre-support status of the finite-positive DES/BOSS candidate. `papers/dsir1/LITERATURE_POSITIONING.md` has also been reframed so the publication strategy follows the same fail-closed eligibility sequence rather than requiring a covariance quotient after a failed support gate.
+The article still does **not** claim a completed survey quotient. `G7=OPEN`, `G8=OPEN`, `G9=OPEN`.
 
-This supersedes the earlier six-figure baseline for current development, but it does not alter the gate state `G7=OPEN`, `G8=OPEN`, `G9=OPEN`.
+A complete paper build including the DSIR4 Exp073N/O/R0 material passed as workflow run `33109097423` on source commit `b5fcfd559309f33ace4264735e986d5b40a0f80d`. The run conclusion is `SUCCESS` and includes the deterministic manuscript audit, support/operator audits, Figures 1--7, checksums, and artifact packaging. A later build adds the supplementary observation-route ledger and its own semantic audit; use the latest successful paper run when recovering after this file's commit.
 
-## New article-level methodological result
+## Completed normalizability result
 
-The observation-space eligibility chain now contains two independent preconditions before covariance whitening or nuisance quotienting:
-
-1. **physical-domain closure** — the observation kernel must lie inside a physically certified theory/provider domain;
-2. **support-measure normalizability** — the prospectively chosen positive measure used to define a support fraction must have a finite, non-zero normalizer.
-
-The second condition was added from late DSIR3 work.
-
-### Exp073L — completed normalizability result
+### Exp073L
 
 Status: `EXTENDED_LADDER_SUPPORTS_NONNORMALIZABLE_ABSOLUTE_RESPONSE_EXP073L`.
 
-- run: `33049366874`
-- artifact: `9637070322`
-- digest: `sha256:03a8f63155c40180c81b6472828210408b472463aec244fff8c442ad7cd7c684`
-- cutoffs: `ell=120000,240000,480000`
-- Wm: `8/8` nonnormalizable, `0` finite
-- WW: `8/8` nonnormalizable, `0` finite
-- final local exponents: approximately `1.493--1.518`
-- final dyadic-shell fractions: approximately `0.645--0.651`
-- half-step max relative difference: `1.9428e-6` against frozen tolerance `0.005`
+- run `33049366874`
+- artifact `9637070322`
+- digest `sha256:03a8f63155c40180c81b6472828210408b472463aec244fff8c442ad7cd7c684`
+- Wm `8/8` nonnormalizable, `0` finite
+- WW `8/8` nonnormalizable, `0` finite
+- local exponents approximately `1.493--1.518`
+- dyadic-shell fractions approximately `0.645--0.651`
+- half-step discrepancy `1.9428e-6` vs frozen tolerance `0.005`
 
-Article interpretation: the absolute-response support fraction is undefined for that frozen route. Do **not** impose a retrospective high-ell cutoff or fiducial-power weighting to force finite normalization.
+Interpretation: the frozen absolute-response route has no finite positive normalizer. No retrospective high-ell cutoff or fiducial-power weighting is permitted to manufacture one.
 
-The analytic interpretation recorded in the project is
+Analytic interpretation retained in the paper:
 
-`f_shell = 1 - 2^(-p)`
+`f_shell = 1 - 2^(-p)`.
 
-for a dyadic power-law cumulative normalization. With `p~1.5`, every new ultraviolet shell retains an order-unity contribution, consistent with nonnormalizability.
+Exp073G remains methodological corroboration only; its formal record is a reproduction/provenance failure, not a scientific support FAIL.
 
-### Exp073G — corroboration only
+## DSIR4 exact-realization provenance chain
 
-Status: `FAIL_EXP073G_REPRODUCTION_OR_PROVENANCE`.
-
-Its BOSS Fourier--Bessel operator analysis gives `K_l(k;s) proportional to k^2 j_l(ks)` and `j_l(ks)=O(1/k)`, hence a generic `O(k)` absolute-response tail. The record explicitly has `scientific_support_fail=false`; do not promote Exp073G itself into a scientific support FAIL.
-
-## Constructive path after the negative result
-
-### Exp073M — finite-positive candidate
+### Exp073M — candidate class
 
 Status: `FINITE_POSITIVE_SUPPORT_OPERATOR_CANDIDATE_FOUND_EXP073M`.
 
-Selected three-block route:
+A finite-positive harmonic class was identified using DES Y3 GGL Wm, DES Y1 shear WW, and finite BOSS mm. M1--M8 pass at the candidate-class level. No support fraction or downstream covariance/nuisance quantity was read.
 
-- Wm: DES Y3 harmonic galaxy--galaxy lensing
-- WW: DES Y1 harmonic cosmic shear
-- mm: existing finite BOSS matrix component
+### Exp073N — exact public realization FAIL
 
-All frozen M1--M8 preconditions pass, including finite positive normalization by construction and no downstream leakage. **No physical support fraction has yet been evaluated.** G7/G8/G9 remain OPEN.
+Status: `FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE`.
 
-### Exp073P2 — exact public-input binding
+- run `33062650033`
+- artifact `9642372335`
+- digest `sha256:914d23e9d708a7b8cb9e097a69845e2630ec265b5ccc489ce9a8d389d4e198db`
 
-Status: `PASS_REMAINING_DESY1_RELEASE_CHECKSUM_BINDING_EXP073P2`.
+The frozen operator repository itself reproduces, but the exact published DES Y3 real-data Wm realization cannot be reproduced from the frozen public binding: the available Y3 GGL configurations at that pin are flask configurations and the frozen `ggltest.py` path does not execute a real-data route.
 
-Every DES Y1 release object frozen by the route is now SHA256-bound before support output. This includes the `84,075,649,920` byte metacalibration catalogue and the `2,738,626,560` byte source-redshift-binning file.
+This is **not** a physical-support FAIL. No `f_invalid`, Wm/WW support fraction, or retained dimension was evaluated. The future rectangle, `f_invalid<=0.05` criterion, and minimum retained dimension 15 remain unchanged.
 
-### Exp073S0 — exact mask/n(z) reproduction
+### Exp073O — prospective public replacement FOUND
 
-Status: `PASS_DESY1_REDMAGIC_MASK_NZ_REPRODUCTION_EXP073S0`.
+Status: `PUBLIC_REALDATA_FINITE_HARMONIC_WM_REPLACEMENT_FOUND_EXP073O`.
 
-- run: `33086762750`
-- artifact: `9652504743`
-- digest: `sha256:c6f84c35e7ade17a6054ad77d4117b64a6c69fbbefe0d0f89e6491bbe88b358e`
-- native mask: `Nside=4096`
-- retained mask pixels above 0.5: `6,536,725`
-- retained sky fraction: `0.0324682643`
-- lens n(z): 400 rows, 5 bins
-- source n(z): 400 rows, 4 bins
+- result commit `3f16dabdbfe9842b928d2fd0e00e481194637583`
+- source `Cosmotheka/Cosmotheka@7bde066626f66cd7bbe79cc46224d2342840e463`
+- candidate `COSMOTHEKA_DESY1_GC_X_WL_PSEUDO_CL`
 
-This closes input reproduction prerequisites only. `support_fraction_computed=false`; covariance, nuisance/SVD, and G8 were not read.
+The DES Y1 redMaGiC x Metacal pseudo-`C_ell` Wm replacement passes O1--O8: immutable public provenance, finite NaMaster operator, bindable exact public inputs, signed Wm semantics, no hidden GR closure, no downstream/model weighting, redshift information, and later support-audit feasibility. Exp073N remains permanently failed. No physical support fraction was read during replacement selection.
 
-## Pending exclusion
+## Public-input / operator reproduction chain
 
-Exp073R0 is currently being retried after an infrastructure timeout. Retry configuration commit: `5ee34c3fc80ab1091b7e925d321d880dbadade3c`; latest observed checkpoint documenting the timeout/retry state: `0eea0909b6e286a14d28716211953829203796b0`. Its frozen scientific criteria are unchanged, but it is **not** an article result until a completed result is frozen.
+### Exp073P2
 
-## Paper files added/updated
+`PASS_REMAINING_DESY1_RELEASE_CHECKSUM_BINDING_EXP073P2`.
 
-- `papers/dsir1/evidence/support_operator_eligibility_v0_1.json`
-- `papers/dsir1/SUPPORT_OPERATOR_PROVENANCE.md` with P24--P26
+Every frozen DES Y1 release object is checksum-bound before support output, including the 84,075,649,920-byte metacalibration catalogue and the 2,738,626,560-byte source-redshift-binning file.
+
+### Exp073S0
+
+`PASS_DESY1_REDMAGIC_MASK_NZ_REPRODUCTION_EXP073S0`.
+
+- run `33086762750`
+- artifact `9652504743`
+- digest `sha256:c6f84c35e7ade17a6054ad77d4117b64a6c69fbbefe0d0f89e6491bbe88b358e`
+- native `Nside=4096`
+- 6,536,725 mask pixels above 0.5
+- `f_sky=0.0324682643`
+- lens/source `n(z)` each 400 rows, with 5/4 bins
+
+### Exp073R0
+
+`PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0`.
+
+- workflow run `33103083736`
+- execution `94b05d307295d5e9263646983ece9514f9fa2e88`
+- artifact `9661445512`
+- digest `sha256:bfa97a88218cda6e6e6c58d915e8e5b21500fa677a484205691f2f01662ed4d0`
+- 16 frozen windows x 8192 rows = 131,072 sampled rows
+- parent catalogue rows: 136,930,995
+- `Nside=4096`, `coords=C`
+- exact required source/metacalibration fields
+- exact HEALPix indices in all four source bins
+- selected rows `7674, 7667, 7272, 3618`
+- unique pixels `4300, 4277, 4178, 2650`
+
+The R0 artifact explicitly has `science_gate_scored=false`. R0 is a reproduction/equivalence prerequisite PASS, **not** the physical-support result.
+
+Two earlier R0 transport/infrastructure-incomplete attempts remain provenance and are not rewritten as scientific failures.
+
+## Exp073R1 boundary
+
+Exp073R1 was preregistered before the relevant R0 output (`71d61efc17535f45a81f45d1a037abfdb8aaaeeb`), its gated implementation was merged at `4b466f1c27019438c76a92dd7830ac6a2cc3fe7d`, and it was launched after genuine R0 PASS from main commit `af0b3c40ac37a8847d3f7b5f2c38dda6f7f09da4`.
+
+At the article snapshot used for these edits, workflow run `33108733415` was still in progress. It is therefore **not** an article result. Do not infer PASS, FAIL, support fraction, or survey-level eligibility from its preregistration, implementation, or launch.
+
+## Paper files now binding this chain
+
+- `papers/dsir1/evidence/support_operator_eligibility_v0_1.json` — manuscript evidence snapshot v0.2
+- `papers/dsir1/SUPPORT_OPERATOR_PROVENANCE.md` — P24--P29
+- `papers/dsir1/OBSERVATION_ROUTE_LEDGER.md` — supplementary fail-closed status table
 - `papers/dsir1/audit_support_operator_eligibility.py`
+- `papers/dsir1/audit_observation_route_ledger.py`
 - `papers/dsir1/sections/observation_space_support_closure.md`
 - `papers/dsir1/sections/data_code_reproducibility.md`
 - `papers/dsir1/CLAIMS_LEDGER.md`
-- `papers/dsir1/build_manuscript_v0_2.py` — Abstract/Introduction/Conclusions now expose the two-stage support-eligibility rule
-- `papers/dsir1/LITERATURE_POSITIONING.md` — publication strategy now respects the support gate before covariance
+- `papers/dsir1/build_manuscript_v0_2.py` — Abstract/Introduction/Conclusions expose normalizability + exact-realization + physical-support prerequisites
 - `.github/workflows/paper-dsir1-build-v0-2.yml`
 
-## Hard boundary
+## Hard recovery boundary
 
-The article still does not claim a completed survey quotient. The required order is now explicit:
+Never collapse these statuses:
 
-`finite positive support measure -> physical support eligibility -> physically justified theory providers -> covariance restriction/whitening -> nuisance quotient -> relation/null tests`.
+- Exp073M = candidate-class FOUND;
+- Exp073N = exact-realization provenance FAIL;
+- Exp073O = prospective replacement FOUND;
+- Exp073P2/S0/R0 = prerequisite PASSes;
+- Exp073R1 = pre-result until a completed frozen output exists.
 
-Current gates: `G7=OPEN`, `G8=OPEN`, `G9=OPEN`.
+A prerequisite PASS is not a physical-support PASS, and a physical-support PASS would still not by itself be a covariance/nuisance/G7 result.
