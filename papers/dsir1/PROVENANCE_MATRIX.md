@@ -1,0 +1,57 @@
+# DSIR-I manuscript claim provenance matrix
+
+**Date:** 2026-08-27  
+**Purpose:** manuscript-facing traceability from every central quantitative claim to a frozen experiment, workflow run, artifact/digest, criterion, and interpretation boundary.
+
+This file is stricter than the project-wide publication evidence map: it records the exact numerical provenance required to audit the current DSIR-I manuscript. A row marked `descriptive` is not converted into a preregistered scientific threshold by appearing in the paper.
+
+## Core claim matrix
+
+| ID | Manuscript-safe claim | Evidence / status | Run | Artifact | SHA256 digest | Frozen criterion / control | Key numerical result | Mandatory boundary |
+|---|---|---|---:|---:|---|---|---|---|
+| P1 | The simple additive low-k `mu+T(k)+tau(z)` representation is insufficient on the common C1/C2/C3/C5 block. | Exp045A — `FAIL_COMPACT_G_T_TAU_CORE_LOW_K_V0_1` | `32883280742` | `9576600500` | `59839a2717646e50501a949cf5b310cb6c0e55f85dd6839fce2832c704ec28dd` | core-power capture `>=0.95`; max pairwise angle distortion `<=5 deg`; operator tol `1e-12` | f(R) core capture `0.7001435`; max angle distortion `14.3135 deg`; GDM/f(R) full angles `25.18/25.49 deg` collapse to `14.77/14.93 deg` without `I` | common frozen low-k theory-response block only; C4 absent, not zero; no survey significance or universal four-parameter claim |
+| P2 | Irreducible scale-time structure can be quantified by `chi_I`, and pairwise separation can be localized by `eta_I`. | Exp046 — operator controls PASS, descriptive morphology HARD | `32884761188` | `9577142860` | `6e2c7026efe17a81bee10c9a9904c78f5299dce1bf594535be5ded600a3d2834` | control tol `1e-12`; interaction-shape reporting floor `chi_I>=1e-6`; no scientific eta threshold | `chi_I`: IDE `1.57e-11/5.49e-11`, smooth-w `1.0805e-3`, GDM `0.04531/0.04363`, f(R) `0.299856`; `eta_I` GDM/f(R) `0.611982/0.613829` | `eta_I` is separation-power localization, not S/N, likelihood significance, or detectability |
+| P3 | The finite-amplitude descriptive hierarchy `IDE < smooth-DE < GDM < f(R)` remains non-overlapping on the sampled low-k manifolds. | Exp047A — `PASS_FINITE_AMPLITUDE_OPERATOR_CONTROLS_V0_1`; ordering descriptive | `32900174734` | `9582737965` | `95d6ce81bc208443ca2377c6f1c4b9523393e2620a2876a2fb53c36a8beabb37` | operator tol `1e-12`; no post-hoc scientific stability threshold | envelopes: IDE `1.4351e-11..5.4945e-11`; smooth `1.08051e-3..1.08806e-3`; GDM `1.30105e-2..4.54103e-2`; f(R) `1.73327e-1..3.13326e-1` | sampled-domain descriptive ordering, not universal mechanism law |
+| P4 | A one-parameter microscopic family can trace a curved response trajectory, so linear representation rank is not microscopic parameter count. | Exp047A / F18 — HARD descriptive | `32900174734` | `9582737965` | `95d6ce81bc208443ca2377c6f1c4b9523393e2620a2876a2fb53c36a8beabb37` | same operator controls; interaction angle only above existing morphology floor | max full-response turn: GDM `cv2` `7.1765 deg`, designer-f(R) `12.1367 deg`; interaction turns `12.1916/12.9969 deg` | turning angles are not Frenet curvature; keep `N_micro`, `N_manifold`, `N_repr`, `N_disc` distinct |
+| P5 | The `chi_I` tier ordering survives every deterministic single-node deletion tested. | Exp047B — `PASS_INTERACTION_LEAVE_ONE_NODE_OPERATOR_CONTROLS_V0_1` | `32894616114` | `9580724793` | `948038245e4eeea9ca569a48e138f5bdddaede19f0ff98ea941fc91a00272bb7` | 5 leave-one-k + 7 leave-one-z; operator tol `1e-12`; existing morphology floor `1e-6`; no scientific drift threshold | tier order preserved `12/12`; GDM/f(R) `eta_I` ranges `0.5504..0.6539` and `0.5520..0.6554` | internal grid robustness, not independent-data confirmation; smooth-w absolute `chi_I` is node-sensitive |
+| P6 | GDM pressure and viscosity are nearly degenerate in the frozen low-k matter block. | Exp031 hard rerun PASS | `32774501126` | `9537418753` | `3d7e86924030ff946da05297174df3bb2db09cf3c0ce534356270177dfa1f7f0` | frozen comparison workflow; raw-theory response | matter angle `0.3226 deg` | raw theory geometry, not an observational posterior or detection significance |
+| P7 | The same GDM pressure/viscosity pair is strongly separated by metric slip. | Exp032 hard rerun PASS | `32774501069` | `9537445668` | `4197b9286e53481164f5a842796199ea94ded202d4e62f6cb232186247291d0e` | frozen gates: Weyl angle `<=1 deg`, slip `>=120 deg`, equalized combined `>=45 deg` | Weyl `0.3007 deg`; slip `137.9432 deg`; equalized Weyl+slip `56.9632 deg` | theory-level channel separator until final survey kernel/covariance/nuisance quotient is applied |
+| P8 | GDM and designer-f(R) can be almost aligned in a leading scale mode while separating through time/full response. | Exp031 hard rerun PASS | `32774501126` | `9537418753` | `3d7e86924030ff946da05297174df3bb2db09cf3c0ce534356270177dfa1f7f0` | frozen first-comparison controls | scale-mode angles `0.07813/0.10169 deg`; time/full acute structure `~25.18/25.49 deg`; oriented full rays `154.82/154.51 deg` | do not call scale-mode similarity microscopic equivalence or survey degeneracy |
+| P9 | Thermal WDM is strongly high-k scale dependent yet nearly time-separable on the frozen linear high-k atlas. | Exp050A — `PASS_WDM_HIGHK_TIME_ATLAS_OPERATOR_CONTROLS_V0_1` | `32908751625` | `9585845292` | `5d02bdce07da95c2bb9eab01acb2641f110b6b16e4ecf29ac2e8b1619d053139` | frozen high-k nodes `0.1..20 h/Mpc`, seven z nodes | `chi_I=2.21e-10..2.58e-10`; at z=0.295, k=20 response reaches `-1.193`, `-0.445`, `-0.119` for 2/3/5 keV | linear high-k solver response only; not Ly-alpha likelihood, nonlinear WDM, or universal time-separability theorem |
+| P10 | The WDM cutoff coordinate `k_0.1` increases monotonically with mass on preregistered withheld interpolation masses. | Exp050B — `PASS_WDM_FREE_STREAMING_CUTOFF_WITHHELD_V0_1` | `32911928403` | `9586893981` | `7c01e71c4223115976dc6887a1bcac06cac99e7fc50d039fae47307dd105ff0e` | target `ln(P_WDM/P_CDM)=-0.1`; required positive step `>=1e-4 h/Mpc` | at z=0.295: `8.38666,12.19283,14.23013,16.47374 h/Mpc` for 2.5/3.5/4.0/4.5 keV | withheld interpolation within represented WDM family; not G8 or universal exponent |
+| P11 | A genuinely withheld DCDM-to-dark-radiation mechanism passes the preregistered temporal-localization direction. | Exp053A — `PASS_DCDM_WITHHELD_TEMPORAL_LOCALIZATION_V0_1` | clean `32915877993` | `9588160014` | `541e3449801f0e853fa573784fd72685ad407c1a3f041b18884e715017aa5e10` | prediction frozen: every consecutive `z_R` shift `>1e-3` | `z_R=0.6304573,0.6343830,0.6419613,0.6562403`; steps `0.00393,0.00758,0.01428` | first withheld-family support for broad organizing idea, but not formal G8 because no prior single model-independent G7 law existed |
+| P12 | A proposed common C3/C5/C7 full-response-centroid law was prospectively falsified and remains failed. | Exp054C / F27 — `FAIL_IDM_DR_COMMON_SOURCE_RESPONSE_SLOPE_V0_1` | `32920776596` | `9589768992` | `fa61a7ae5d53550fd9bf057a4354f8f343e74c18f93a4ce23d5ed964f6dc4c2a` | acceptance interval frozen before C7: `0.0022992621 <= C_i <= 0.0995121922` | withheld IDM-DR slopes `-1.3856,-0.6685,-0.2191,-0.07157`, all opposite sign and all fail | do not widen interval, flip sign, or reuse C7 as a fresh withheld family for a relation chosen after seeing C7 |
+| P13 | The original C3 physical-power bridge failure is preserved; a separately justified native-grid provider later passes. | Exp070A FAIL -> Exp070B mechanism audit -> Exp070C PASS | FAIL `33013313926`; PASS `33017214292` | FAIL `9623467440`; PASS `9625032179` | FAIL `dedb1f6f446a2c25abdf60be20ba4981e51637d19a32734108459cf160848fab`; PASS `34cf89f2207c72b4e3d669f7e4e6419753b6b046ed7de9e3a9fa7fb144b4c081` | original reconstruction threshold `5e-4`; native provider closure `<=1e-10`; repeatability/state `<=1e-12` | original target-grid reconstruction defect `0.0475359`; native closure `2.8145e-14`; same-mode coherence `4.44e-16` | corrective provider does not overwrite Exp070A scientific FAIL; no amplitude interpolation in certified provider |
+| P14 | The original C5 q=1 exact-GR bridge miss is preserved; prospective accuracy convergence and q=3 provider certification recover the frozen limit without retuning. | Exp069B FAIL -> Exp069F convergence -> Exp069H provider PASS | FAIL `33012245685`; convergence `33023027901`; PASS `33024638764` | FAIL `9623153120`; convergence `9627458877`; PASS `9628053962` | FAIL `8d26cf91a7ccb6923a5a7bbb15b78fb3bd3a818f6a9bb6bfb197be460d818688`; convergence `d8e1a42bf813d5ae105ea33e723868d454ff7584424373ecfe4594a2dfe49358`; PASS `fa61b504d31edeba2afcbed0f4b14bda688df82a96d2cba55eac034682b5382f` | unchanged exact-GR limit `5e-6`; q ladder `[1,2,3,4]`; repeatability `1e-12`; production signal `>0.001` | q=1 target miss `5.3064e-6`; q=3 zero target `1.7011e-6`, raw `2.8421e-6`; production `0.013249` | no floor subtraction, renormalization, upstream source modification, or retrospective threshold relaxation |
+
+## Formal/method claim
+
+The channel-conditional signature operator
+
+`A_B = Q_B W_B K_B`
+
+and equivalence relation
+
+`r1 ~_B r2  <=>  A_B(r1-r2)=0`
+
+are mathematical definitions/theorems of the DSIR comparison construction. Their source is `docs/CHANNEL_CONDITIONAL_EQUIVALENCE_QUOTIENT_THEOREMS_2026-08-27.md`. They do not require a numerical workflow to be true, but **empirical claims about a survey-level equivalence class require the corresponding physical support, covariance, and nuisance quotient to have been executed**.
+
+## Citation/source paths
+
+- Exp045A: `data/derived/comparison_readiness/experiment_045a_core_G_T_tau_additive_projection_v0_1.json`
+- Exp046: `data/derived/comparison_readiness/experiment_046_scale_time_interaction_morphology_v0_1.json`
+- Exp047A: `data/derived/comparison_readiness/experiment_047a_finite_amplitude_interaction_curvature_v0_1_summary.json`
+- Exp047B: `data/derived/comparison_readiness/experiment_047b_interaction_leave_one_node_stability_v0_1.json`
+- Exp031/032 hard summary: `docs/GATES.md`; exact workflow artifacts are GitHub Actions runs `32774501126` and `32774501069`.
+- Exp050A: `data/derived/comparison_readiness/experiment_050a_wdm_highk_time_atlas_v0_1_summary.json`
+- Exp050B: `data/derived/comparison_readiness/experiment_050b_wdm_free_streaming_cutoff_withheld_v0_1_summary.json`
+- Exp053A: `data/derived/comparison_readiness/experiment_053a_dcdm_withheld_temporal_localization_v0_1_summary.json`
+- Exp054C/F27: `docs/SCIENTIFIC_FINDING_F27_COMMON_RESPONSE_CENTROID_WITHHELD_FAILURE.md`
+- Exp070A: `data/derived/g7/exp070a_c3_gdm_readonly_dm_power_bridge_v0_1_result.json`
+- Exp070C: `recovery/exp070c_provider_checkpoint_2026-08-27.md`
+- Exp069B: `data/derived/g7/exp069b_c5_explicit_eft_python_power_bridge_v0_1_result.json`
+- Exp069F/H: `recovery/exp069h_c5_provider_certification_checkpoint_2026-08-27.md`
+
+## Submission rule
+
+Before an arXiv/journal submission, every numerical sentence in Abstract, Results, Discussion, and Conclusions must map to at least one row above or be downgraded to explicitly labeled qualitative context. Any new experiment that changes a row must preserve the old status in the chronology rather than silently replacing it.
