@@ -3,9 +3,10 @@
 
 The script does not edit manuscript.md in place. It injects the frozen author
 metadata, inserts prospectively/retrospectively classified result components,
-adds deterministic Figure 1--7 textual references at frozen narrative anchors,
-inserts the reproducibility section before Outlook, renumbers the final
-headings, and writes manuscript_v0_2.md.
+surfaces the support-closure result in Abstract/Introduction, adds deterministic
+Figure 1--7 textual references at frozen narrative anchors, inserts the
+reproducibility section before Outlook, renumbers the final headings, and writes
+manuscript_v0_2.md.
 """
 
 from __future__ import annotations
@@ -27,6 +28,20 @@ OUTLOOK_MARKER = "# 11. Outlook"
 CONCLUSION_MARKER = "# 12. Conclusions"
 AUTHOR_PLACEHOLDER = 'author:\n  - "[authors to be finalized]"'
 AUTHOR_BLOCK = '''author:\n  - "Aleksey Buyanov"\naffiliation: "Independent Researcher"\nlocation: "Moscow, Russia"\nemail: "pppuu7@gmail.com"\norcid: "0009-0001-2621-9305"'''
+
+ABSTRACT_FINAL_MARKER = (
+    "DSIR-I is therefore a response-classification and identifiability result, not a claim of a universal dark-sector invariant or a discovery of new fundamental physics."
+)
+ABSTRACT_SUPPORT_SENTENCE = (
+    "A prospectively frozen ACTxunWISE support audit further shows that the observational quotient cannot be evaluated merely because its formal operator is defined: none of 26 candidate coordinates is supported by the current certified C3/C5 domain at the 5% leakage criterion, while the joint support extension that geometrically recovers 15 coordinates is ineligible under the tested linear perturbativity route. We therefore do not quote a covariance-whitened or nuisance-quotiented survey distance from that route."
+)
+
+INTRO_OLD = (
+    "This paper develops and tests the first part of that program. Its contributions are fivefold. First, we define a block-aware response geometry in which undefined model/channel combinations are masked rather than silently replaced by zeros. Second, we show quantitatively that a simple additive description of scale and time dependence fails for some mechanisms because an irreducible scale-time interaction carries substantial response power. Third, we demonstrate with frozen examples that degeneracy is channel conditional: matter-response lookalikes can be split by metric information, while scale-only lookalikes can be split by temporal evolution. Fourth, we separate microscopic parameter count from response-manifold curvature and linear representation rank. Fifth, we formalize exact channel-conditional equivalence through physical projection, covariance whitening, and nuisance quotienting, while keeping the current empirical atlas distinct from a completed survey-level detectability analysis."
+)
+INTRO_NEW = (
+    "This paper develops and tests the first part of that program. Its contributions are sixfold. First, we define a block-aware response geometry in which undefined model/channel combinations are masked rather than silently replaced by zeros. Second, we show quantitatively that a simple additive description of scale and time dependence fails for some mechanisms because an irreducible scale-time interaction carries substantial response power. Third, we demonstrate with frozen examples that degeneracy is channel conditional: matter-response lookalikes can be split by metric information, while scale-only lookalikes can be split by temporal evolution. Fourth, we separate microscopic parameter count from response-manifold curvature and linear representation rank. Fifth, we formalize exact channel-conditional equivalence through physical projection, covariance whitening, and nuisance quotienting. Sixth, we test the physical-support precondition for that quotient on a concrete ACTxunWISE C3/C5 route and preserve the negative result: the current certified domain retains no eligible observational coordinate at the frozen support threshold, while the enlarged geometric frontier fails the tested linear perturbativity eligibility contract. Thus the paper distinguishes a mathematically defined quotient from a physically authorized one rather than reporting a survey distance outside the certified theory domain."
+)
 
 FIGURE_INSERTIONS = [
     (
@@ -81,6 +96,17 @@ def main() -> None:
 
     require_once(base, AUTHOR_PLACEHOLDER)
     base = base.replace(AUTHOR_PLACEHOLDER, AUTHOR_BLOCK, 1)
+
+    # The support-chain result is central enough to appear in the abstract and
+    # contribution list, but the immutable numerical detail remains in §7.1.
+    require_once(base, ABSTRACT_FINAL_MARKER)
+    base = base.replace(
+        ABSTRACT_FINAL_MARKER,
+        ABSTRACT_SUPPORT_SENTENCE + " " + ABSTRACT_FINAL_MARKER,
+        1,
+    )
+    require_once(base, INTRO_OLD)
+    base = base.replace(INTRO_OLD, INTRO_NEW, 1)
 
     for marker in (
         RESULTS_INSERT_MARKER,
@@ -152,6 +178,8 @@ def main() -> None:
         "Aleksey Buyanov",
         'affiliation: "Independent Researcher"',
         'orcid: "0009-0001-2621-9305"',
+        "contributions are sixfold",
+        "none of 26 candidate coordinates",
         "FAIL_IDM_DR_COMMON_SOURCE_RESPONSE_SLOPE_V0_1",
         "## 7.1 Observation-space support closure and perturbativity",
         "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
