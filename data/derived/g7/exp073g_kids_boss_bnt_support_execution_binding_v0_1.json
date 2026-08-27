@@ -91,6 +91,8 @@
     },
     "mu_gauss_nodes_production": 128,
     "mu_gauss_nodes_control": 64,
+    "kr_uniform_nodes_production": 65537,
+    "kr_uniform_nodes_control": 32769,
     "k_h_log_nodes_production": 32769,
     "k_h_log_nodes_control": 16385,
     "coordinate_fraction_tolerance": 2e-5,

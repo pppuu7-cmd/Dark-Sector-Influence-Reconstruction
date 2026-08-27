@@ -135,6 +135,11 @@ redshift enters only the released scale operator.  The separate positive BOSS
 Use 128 Gauss--Legendre nodes in each observed-mu wedge and 32769 log-spaced
 `k_h` nodes over `[exp(-6.2),6] h/Mpc`.  Recompute with 64 mu nodes and 16385
 `k_h` nodes; every coordinate fraction must agree to absolute `2e-5`.
+For efficient exact AP angular averaging, tabulate the three wedge/multipole
+absolute Bessel averages on 65537 uniformly spaced nodes in
+`x=k_h*r` from zero through the largest transformed argument required by the
+bound radial/k range, then linearly interpolate.  Repeat with 32769 x nodes;
+the same coordinate-fraction tolerance applies.
 At the upper limit the slowest exact cutoff is below `2e-32`, which is the
 predeclared tail-closure control.  Convert only by `k_phys=h*k_h` and require
 the roundtrip tolerance from Exp073G G7.
