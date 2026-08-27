@@ -1,0 +1,168 @@
+name: ACT x unWISE GR linear perturbativity eligibility v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/act-unwise-gr-linear-perturbativity-eligibility-v0-1.yml'
+      - 'ci/act_unwise_gr_linear_perturbativity_eligibility_v0_1.py'
+      - 'ci/act_unwise_angular_support_leakage_mask_v0_1.py'
+      - 'ci/act_unwise_joint_lowz_highk_support_frontier_v0_1.py'
+      - 'ci/act_unwise_physical_forward_reproduction_v0_1.py'
+      - 'experiments/073a_gr_linear_perturbativity_eligibility_prereg_v0_1.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  gr-linear-perturbativity-eligibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install numerical and CAMB build dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran git python3-dev
+          python3 -m pip install --user numpy scipy cython setuptools wheel packaging pyyaml healpy
+          python3 -m py_compile ci/act_unwise_gr_linear_perturbativity_eligibility_v0_1.py
+          gh --version
+
+      - name: Bind exact immutable Exp072C artifact
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp072c_parent
+          gh api repos/${GITHUB_REPOSITORY}/actions/artifacts/9630407069 > external/exp072c_meta.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('external/exp072c_meta.json'))
+          assert d['id']==9630407069
+          assert d['digest']=='sha256:0e726d9f12b2b8951a4d2598b3723d54db1a14c09070d8e8770d5256773f2a71'
+          assert d['workflow_run']['id']==33031427090
+          assert d['workflow_run']['head_sha']=='b442cddd6ba032d1261a0994bc1c4f5cf899a9f7'
+          PY
+          gh run download 33031427090 \
+            -n 'exp072c-joint-lowz-highk-frontier-b442cddd6ba032d1261a0994bc1c4f5cf899a9f7' \
+            -D external/exp072c_parent
+          PARENT_JSON="$(find external/exp072c_parent -name 'exp072c_joint_lowz_highk_support_frontier_v0_1.json' -print -quit)"
+          test -n "$PARENT_JSON"
+          echo 'd0d8e6a19177f4a7b94d2f0b95d6fee3b5cd85078e8eadee06e7f0faaf5864c0  '"$PARENT_JSON" | sha256sum -c -
+          cp "$PARENT_JSON" external/exp072c.json
+
+      - name: Fetch and install pinned CAMB
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          git clone https://github.com/cmbant/CAMB.git external/CAMB
+          git -C external/CAMB checkout fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          test "$(git -C external/CAMB rev-parse HEAD)" = 'fa3f097343fbbe427cc04b4f5f0041c22c6ec764'
+          python3 -m pip install --user ./external/CAMB
+
+      - name: Fetch pinned ACT x unWISE upstream source
+        run: |
+          set -euxo pipefail
+          git clone --no-checkout https://github.com/ACTCollaboration/unWISExLens_lklh.git external/unWISExLens_lklh
+          git -C external/unWISExLens_lklh checkout 6302c30d9e70f8e4ff2d4a84a9977b4471705179
+          test "$(git -C external/unWISExLens_lklh rev-parse HEAD)" = '6302c30d9e70f8e4ff2d4a84a9977b4471705179'
+
+      - name: Restore immutable official data archive cache
+        id: archive-cache
+        uses: actions/cache@v4
+        with:
+          path: external/data_unWISExLens.tar.gz
+          key: act-unwise-data-1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570
+
+      - name: Fetch official ACT x unWISE archive on cache miss
+        if: steps.archive-cache.outputs.cache-hit != 'true'
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          if ! curl --fail --location --retry 3 --retry-delay 3 \
+            'https://lambda.gsfc.nasa.gov/data/suborbital/ACT/act_x_unWISE/data_unWISExLens.tar.gz' \
+            -o external/data_unWISExLens.tar.gz; then
+            rm -f external/data_unWISExLens.tar.gz
+            curl --fail --location --retry 4 --retry-delay 3 \
+              'https://portal.nersc.gov/project/act/act_x_unWISE_xcorr+3x2pt/data_unWISExLens.tar.gz' \
+              -o external/data_unWISExLens.tar.gz
+          fi
+
+      - name: Verify and extract immutable official data archive
+        run: |
+          set -euxo pipefail
+          echo '1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570  external/data_unWISExLens.tar.gz' | sha256sum -c -
+          mkdir -p external/unwise_data
+          tar -xzf external/data_unWISExLens.tar.gz -C external/unwise_data
+
+      - name: Execute frozen Exp073A perturbativity eligibility audit
+        run: |
+          set -euxo pipefail
+          python3 ci/act_unwise_gr_linear_perturbativity_eligibility_v0_1.py \
+            --upstream-repo external/unWISExLens_lklh \
+            --camb-repo external/CAMB \
+            --extracted-root external/unwise_data \
+            --archive external/data_unWISExLens.tar.gz \
+            --exp072c-json external/exp072c.json \
+            --exp072c-meta external/exp072c_meta.json \
+            --output data/derived/g7/exp073a_gr_linear_perturbativity_eligibility_v0_1.json
+
+      - name: Assert frozen Exp073A classification semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073a_gr_linear_perturbativity_eligibility_v0_1.json'
+          d=json.load(open(p))
+          assert d['experiment']=='Exp073A'
+          assert d['status'] in {
+              'ELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A',
+              'INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A',
+              'FAIL_EXP073A_REPRODUCTION_OR_PROVENANCE',
+          }
+          assert d['preserved_history']['Exp072A']=='FAIL_ACT_UNWISE_ANGULAR_SUPPORT_LEAKAGE_MASK_V0_1'
+          assert d['preserved_history']['Exp072B']=='DIAGNOSTIC_K_ONLY_TARGET_NOT_FOUND_EXP072B'
+          assert d['preserved_history']['Exp072C']=='DIAGNOSTIC_JOINT_LOWZ_HIGHK_FRONTIER_FOUND_EXP072C'
+          assert d['frontier']['z_min']==0.0087345857837422
+          assert d['frontier']['k_max_Mpc^-1']==4.818261097432861
+          assert d['perturbativity_definition']['primary_threshold']==1.0
+          assert d['perturbativity_definition']['combined_invalid_threshold']==0.05
+          assert len(d['coordinate_block_pairs'])==64
+          assert len(d['coordinates'])==26
+          assert d['controls']['covariance_read'] is False
+          assert d['controls']['nuisance_SVD_or_rank_read'] is False
+          assert d['controls']['G7_relation_or_null_read'] is False
+          assert d['controls']['G8_response_read'] is False
+          assert d['controls']['C3_provider_extended'] is False
+          assert d['controls']['C5_provider_extended'] is False
+          assert d['controls']['nonlinear_provider_used'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          if d['status']=='FAIL_EXP073A_REPRODUCTION_OR_PROVENANCE':
+              assert any(v is False for v in d['hard_controls'].values())
+          else:
+              assert all(v is True for v in d['hard_controls'].values())
+          primary=d['routes']['1.0']
+          if d['status']=='ELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A':
+              assert primary['pass'] is True
+          if d['status']=='INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A':
+              assert primary['pass'] is False
+          print('EXP073A_RESULT',d['status'])
+          print('PRIMARY_ROUTE',primary)
+          print('ROUTE_T0P5',d['routes']['0.5'])
+          print('ROUTE_T2',d['routes']['2.0'])
+          print('PAIR_SUMMARY_PRIMARY',d['pair_summary_primary'])
+          print('UNIT_ROUNDTRIP_MAX',d['unit_roundtrip']['max_relative_discrepancy'])
+          print('PMM_SUPPORT',d['CAMB_linear_reference_support'])
+          PY
+
+      - name: Upload immutable Exp073A scientific record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073a-gr-linear-perturbativity-eligibility-${{ github.sha }}
+          path: data/derived/g7/exp073a_gr_linear_perturbativity_eligibility_v0_1.json
+          if-no-files-found: warn
