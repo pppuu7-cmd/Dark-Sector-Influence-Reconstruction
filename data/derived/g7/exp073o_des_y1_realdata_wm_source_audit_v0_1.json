@@ -1,0 +1,75 @@
+{
+  "experiment": "Exp073O",
+  "date": "2026-08-27",
+  "scope": "candidate_source_provenance_audit",
+  "candidate": "DES_Y1_REALDATA_HARMONIC_GGL",
+  "candidate_disposition": "REJECT_DES_Y1_CANDIDATE_ON_O3_EXACT_PUBLIC_INPUT_BINDING",
+  "global_exp073o_classification": null,
+  "operator_source": {
+    "repository": "hocamachoc/3x2hs_measurements",
+    "commit": "21e589a3cfc3e30f1b06a4636ccc2da8aceda5ab",
+    "blobs": {
+      "ggltest-old.py": "58a0c4fa975115be778fb00a6a06000f0e2dd121",
+      "mcm_ggltest.py": "8d27e005beb787f7aa33d84c73b05ac9cd9e500f",
+      "mcalcat.py": "d8544fb86312a02ffd402577acb6b6fe0647f357",
+      "ggmap.py": "016aa1b98fee340948eea221f927babe43c76045",
+      "gcltest.py": "c438c14e6a2d31c58f0e5effbca01e855851939d"
+    }
+  },
+  "criteria": {
+    "O1_public_immutable_realdata_provenance": {
+      "pass": true,
+      "qualified": true,
+      "note": "Pinned source contains explicit y1metacal real-data operator branch; exact input reproducibility is separately tested by O3."
+    },
+    "O2_finite_operator": {
+      "pass": true,
+      "note": "Finite NmtBin plus NaMaster mode-coupling workspace and get_bandpower_windows."
+    },
+    "O3_exact_public_inputs_bindable": {
+      "pass": false,
+      "missing": [
+        "redmagic/wcountsmap_zbin{i}.fits",
+        "redmagic/maskmap.fits",
+        "public deterministic producer with frozen redMaGiC selections/weights/mask/pixelization",
+        "prospectively checksum-bound exact source redshift-binning realization"
+      ],
+      "note": "Pinned source tree contains readers but no reproducible producer for the required real-data redMaGiC lens products."
+    },
+    "O4_signed_Wm": {
+      "pass": true,
+      "note": "Direct galaxy-shear compute_coupled_cell and decoupling; no absolute value in measured cross spectrum."
+    },
+    "O5_no_GR_closure": {
+      "pass": true
+    },
+    "O6_no_model_or_downstream_weighting": {
+      "pass": true
+    },
+    "O7_exact_support_audit_possible": {
+      "pass": false,
+      "blocked_by": "O3"
+    },
+    "O8_provenance_completeness": {
+      "pass": false,
+      "blocked_by": "unbound catalogue-derived lens products"
+    }
+  },
+  "support_fraction_evaluated": false,
+  "covariance_read": false,
+  "nuisance_read": false,
+  "relation_null_read": false,
+  "G8_read": false,
+  "parent_preservation": {
+    "Exp073N": "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
+    "common_rectangle": "0.295 <= z <= 2.33; k <= 0.06664762008318016 Mpc^-1",
+    "future_f_invalid_threshold": 0.05,
+    "future_minimum_retained_dimension": 15
+  },
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  },
+  "next_admissible_step": "Continue prospectively frozen Exp073O landscape search for another public immutable real-data finite harmonic galaxy-shear operator, or exact public redMaGiC map/mask inputs/generator; checksum-bind before any support computation."
+}

@@ -3,66 +3,85 @@
 **Date:** 2026-08-27  
 **Stable historical manual:** `docs/RECOVERY_MANUAL.md`  
 **Prior late-stage overlay:** `docs/RECOVERY_POST_EXP067E_2026-08-26.md`  
-**Current detailed overlay:** `docs/RECOVERY_POST_EXP069F_PUBLICATION_2026-08-27.md`  
-**Current C5 protocol:** `experiments/069h_c5_q3_unmodified_upstream_provider_certification_prereg_v0_1.md`  
-**Publication state:** `docs/publications/ARTICLE_READINESS_LEDGER_V0_1.md`
+**C5 publication-era overlay:** `docs/RECOVERY_POST_EXP069F_PUBLICATION_2026-08-27.md`  
+**Current active experiment:** `experiments/073o_public_realdata_finite_harmonic_wm_replacement_prereg_v0_1.md`
 
 DSIR is independent of RTK. Preserve negative results, preregistration chronology and missing-domain masks. No RTK PASS can close a DSIR gate and no DSIR PASS can close an RTK gate.
 
-## Current scientific state
+## Current G7 scientific state
 
-- G1 PASS.
-- G2 PASS.
-- G3A/G3B PASS block-aware.
-- G4 PASS synthetic recovery.
-- observation-space preparation is advanced but the full physical-provider/support/nuisance chain is not complete.
-- C3 physical provider: eligible from Exp070C.
-- C5 physical provider: **NOT YET CERTIFIED**.
+- C3 physical provider: certified by Exp070C.
+- C5 physical provider: certified by Exp069H; raw-k provenance corrected/closed by Exp069I.
+- Exp071A common physical provider support: PASS.
+- The original ACT×unWISE observational route did not yield an admissible complete low-z/high-k linear route; later audits established the need for a different finite-support observational realization.
+- BOSS finite true-k matrix mm component: 54/240 coordinates retained in the non-classifying component audit.
+- KiDS configuration-space transformed Wm/WW route: absolute-response asymptotics supported non-normalizability in Exp073L.
+- Exp073M identified a finite harmonic operator class candidate.
+- Exp073N = `FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE`; no support fraction was computed.
+- Exp073O is prospectively frozen and **ACTIVE / UNCLASSIFIED**.
 - G7 OPEN.
 - G8 OPEN.
 - G9 OPEN.
 
-## Immutable newest C5 facts
+## Exp073O current candidate audit
 
-- Exp069B remains permanent FAIL at its frozen `5e-6` exact-zero target criterion.
-- Exp069E: `F0=4.7401579076280133e-17` while target power floor remained `5.302921926164412e-6`; physical-size EFT background residue is not the ppm-floor explanation.
-- Exp069F preregistration commit: `43ef913645a43f091e728623291bc21642a56ab9`.
-- Exp069F run `33023027901`, artifact `9627458877`, digest `sha256:d8e1a42bf813d5ae105ea33e723868d454ff7584424373ecfe4594a2dfe49358`.
-- Exp069F classification: `GENERAL_ACCURACY_RECOVERS_FROZEN_GR_LIMIT`.
-- target `M_q` for q=`[1,2,3,4]`: `[5.302921926e-6,2.904403569e-6,1.701118686e-6,1.310789027e-6]`.
-- raw same-node `R_q`: `[9.938162077e-6,5.400555775e-6,2.842130238e-6,1.517781618e-6]`.
-- q=2 is the formal first target PASS; q=3 is the first tested point with both target and raw below `5e-6`.
-- Exp069G minimum provider contract remains binding.
-- Exp069H is preregistered at q=3 and must be executed without changing its frozen C1–C8 criteria.
+The preferred DES Y1 real-data harmonic GGL lineage was audited at
 
-## Current interpretation
+`hocamachoc/3x2hs_measurements@21e589a3cfc3e30f1b06a4636ccc2da8aceda5ab`.
 
-Matter-only response geometry is a mechanism/transfer-shape taxonomy, not a unique dark-sector signature. Exp071C ordinary K2 passes the normalized response-path gate that F30 passed on fresh C9. Stronger dark-specific inference therefore requires independent matter/Weyl/slip/observational structure after covariance and nuisance treatment.
+Candidate-level outcome:
 
-No universal residual law, no new fundamental law and no dark-sector discovery claim is currently authorized.
+`REJECT_DES_Y1_CANDIDATE_ON_O3_EXACT_PUBLIC_INPUT_BINDING`
 
-## Publication readiness
+What is established:
 
-The repository now has a dedicated `docs/publications/` layer. The first proposed methodological paper, **DSIR-1 observable-response geometry**, is `READY_FOR_DRAFTING` from DSIR-only evidence. This does not mean submission-ready and does not depend on G7/G8.
+- an explicit `y1metacal` real-data galaxy-shear path exists in the pinned source;
+- it uses finite NaMaster ell bins, finite mode-coupling workspaces and `get_bandpower_windows()`;
+- the Wm measurement remains signed through the direct galaxy-density × shear cross measurement;
+- no GR closure or model/covariance weighting is required to make the angular operator finite.
 
-DSIR-2 remains blocked by C5 physical-provider certification; DSIR-3 by support/covariance/nuisance/G7; DSIR-4 by fresh G8; later RTK–DSIR synthesis requires independent mature publication records in both projects.
+Decisive blocker:
+
+- the real-data Y1 branch reads site-local derived redMaGiC products `wcountsmap_zbin{i}.fits` and `maskmap.fits`;
+- the audited pinned source contains readers but no public deterministic producer that reproduces those exact maps with frozen catalogue cuts, weights, mask semantics and pixelization;
+- the exact source redshift-binning realization also must be prospectively checksum-bound.
+
+Therefore O3 fails for this candidate. Public availability of the underlying catalogues is not sufficient under the frozen Exp073O contract.
+
+This candidate rejection is **not** the global Exp073O classification. Do not declare `NO_PUBLIC_REALDATA...` until the frozen landscape search is completed sufficiently to support that statement.
+
+Detailed record: `docs/EXP073O_DES_Y1_REALDATA_WM_SOURCE_AUDIT_2026-08-27.md`  
+Machine-readable record: `data/derived/g7/exp073o_des_y1_realdata_wm_source_audit_v0_1.json`
+
+## Frozen boundaries that remain unchanged
+
+- common physical rectangle: `0.295 <= z <= 2.33`, `k <= 0.06664762008318016 Mpc^-1`;
+- future physical-support threshold: `f_invalid <= 0.05`;
+- future minimum retained dimension: `15`;
+- Exp073N reproduction/provenance FAIL remains permanent;
+- no support fractions may be computed inside Exp073O;
+- covariance restriction/whitening is still closed;
+- nuisance SVD/rank is still closed;
+- quotient/relation/null is still closed;
+- fresh G8 is still closed.
 
 ## Exact continuation order
 
-1. Execute only the already-preregistered Exp069H q=3 provider certification.
-2. Preserve PASS/FAIL exactly.
-3. On PASS only: preregister common C3+C5 support-validity mask.
-4. Restrict physical covariance/whitener only after that mask.
-5. Freeze nuisance SVD/rank rule before quotienting.
-6. Execute G7 relation/null.
-7. Use a genuinely fresh family for G8 only after G7 is frozen.
-8. In parallel, prepare DSIR-1 manuscript figures/tables from the existing evidence map without importing unresolved G7/G8 claims or RTK evidence.
+1. Continue the already-frozen Exp073O public operator landscape search.
+2. First priority: find a publicly immutable checksum-bindable realization or deterministic generator for the exact DES Y1 redMaGiC lens count/mask products and source redshift-bin inputs.
+3. In parallel, audit another public real-data harmonic/pseudo-`C_ell` galaxy-shear release with finite bandpower windows/workspaces and exact public masks/binning/n(z).
+4. For any candidate, apply O1–O8 exactly as frozen; reject candidate-level failures without changing thresholds.
+5. Only if one candidate passes all O1–O8 may Exp073O be classified FOUND and a new support experiment be preregistered.
+6. Only that later support experiment may compute `f_invalid` in the unchanged common rectangle.
+7. Covariance/whitening remains forbidden until a full physical-support PASS.
+8. Nuisance tangent rank/SVD, quotient/relation/null and then fresh G8 follow only in the established G7 order.
 
 ## Recovery read order
 
 1. `docs/RECOVERY_MANUAL.md`
 2. `docs/RECOVERY_POST_EXP067E_2026-08-26.md`
 3. `docs/RECOVERY_POST_EXP069F_PUBLICATION_2026-08-27.md`
-4. `docs/publications/RESEARCH_CHRONOLOGY_V0_1.md`
-5. `docs/publications/ARTICLE_READINESS_LEDGER_V0_1.md`
-6. current experiment/result file
+4. `docs/RECOVERY_LATEST.md`
+5. `experiments/073o_public_realdata_finite_harmonic_wm_replacement_prereg_v0_1.md`
+6. `docs/EXP073O_DES_Y1_REALDATA_WM_SOURCE_AUDIT_2026-08-27.md`
+7. `data/derived/g7/exp073o_des_y1_realdata_wm_source_audit_v0_1.json`
