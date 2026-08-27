@@ -1,0 +1,81 @@
+name: Exp073L KiDS absolute-response extended asymptotic v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073l-kids-absolute-response-extended-asymptotic-v0-1.yml'
+      - 'ci/exp073l_kids_absolute_response_extended_asymptotic_v0_1.py'
+      - 'experiments/073l_kids_absolute_response_extended_asymptotic_prereg_v0_1.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  extended-asymptotic-ladder:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install numerical dependencies
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --user 'numpy<2' scipy
+          python3 -m py_compile ci/exp073l_kids_absolute_response_extended_asymptotic_v0_1.py
+      - name: Bind exact Exp073K parent and KiDS release
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp073k external
+          gh api repos/${GITHUB_REPOSITORY}/actions/artifacts/9636045444 > external/exp073k_meta.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('external/exp073k_meta.json'))
+          assert d['id']==9636045444
+          assert d['digest']=='sha256:358dcd196c32d929e3ebb64a905cc0e785321138d04d3474f0736b2c9f2be04e'
+          assert d['workflow_run']['id']==33046916180
+          assert d['workflow_run']['head_sha']=='86cb97b8a2933fbd70e3f80eef1420b170634524'
+          PY
+          gh run download 33046916180 -n 'exp073k-kids-normalizability-86cb97b8a2933fbd70e3f80eef1420b170634524' -D external/exp073k
+          P="$(find external/exp073k -name 'exp073k_kids_finite_theta_absolute_response_normalizability_v0_1.json' -print -quit)"
+          test -n "$P"
+          cp "$P" external/exp073k.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('external/exp073k.json'))
+          assert d['status']=='INDETERMINATE_ABSOLUTE_RESPONSE_ASYMPTOTICS_EXP073K'
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+          git clone --no-checkout https://github.com/KiDS-WL/Cat_to_Obs_K1000_P1.git external/kids
+          git -C external/kids checkout 36676da44471979dacb779155d7e6e7212ae1f4f
+          test "$(git -C external/kids rev-parse HEAD)" = '36676da44471979dacb779155d7e6e7212ae1f4f'
+      - name: Execute frozen extended asymptotic ladder
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073l_kids_absolute_response_extended_asymptotic_v0_1.py \
+            --kids-root external/kids \
+            --parent-json external/exp073k.json \
+            --output data/derived/g7/exp073l_kids_absolute_response_extended_asymptotic_v0_1.json
+      - name: Assert frozen classification semantics
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073l_kids_absolute_response_extended_asymptotic_v0_1.json'))
+          assert d['status'] in {'EXTENDED_LADDER_SUPPORTS_NONNORMALIZABLE_ABSOLUTE_RESPONSE_EXP073L','EXTENDED_LADDER_SUPPORTS_FINITE_SATURATION_EXP073L','INDETERMINATE_EXTENDED_ABSOLUTE_RESPONSE_ASYMPTOTICS_EXP073L','FAIL_EXP073L_REPRODUCTION_OR_NUMERICAL_COMPLETENESS'}
+          assert d['cutoffs_ell']==[120000.0,240000.0,480000.0]
+          assert d['interpretation_boundary']['changes_Exp073K_classification'] is False
+          assert d['interpretation_boundary']['changes_Exp073J_5pct_threshold'] is False
+          assert d['interpretation_boundary']['covariance_restriction_authorized'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073L_RESULT',d['status']); print('COUNTS',d['classification_counts'])
+          PY
+      - name: Upload immutable Exp073L record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073l-kids-extended-asymptotic-${{ github.sha }}
+          path: data/derived/g7/exp073l_kids_absolute_response_extended_asymptotic_v0_1.json
+          if-no-files-found: warn
