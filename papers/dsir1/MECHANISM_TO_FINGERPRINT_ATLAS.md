@@ -1,7 +1,8 @@
-# DSIR-I mechanism-to-fingerprint atlas — evidence-graded causal map v0.1
+# DSIR-I mechanism-to-response atlas — evidence-graded causal map v0.2
 
 **Date:** 2026-08-27  
 **Scope:** Paper I synthesis of already-frozen DSIR theory-response evidence.  
+**Historical path note:** the filename retains the earlier `FINGERPRINT` wording for provenance, but v0.2 deliberately uses **mechanism-to-response map** because dark-energy “fingerprinting” is explicit prior art (see the N1B novelty audit).  
 **Gate effect:** none. This document does not close G7/G8/G9 and does not convert a mechanism cue into a universal physical law.
 
 ## 1. Question
@@ -14,7 +15,7 @@ The useful direction is
 
 not `model name -> one global parameter distance`.
 
-This map is intentionally **many-to-many**. The same equation structure may occur in known-sector physics, and one mechanism may activate several response blocks. Therefore a fingerprint is a diagnostic/search prior, not an identity theorem.
+This map is intentionally **many-to-many**. The same equation structure may occur in known-sector physics, and one mechanism may activate several response blocks. Therefore a response pattern is a diagnostic/search prior, not an identity theorem. The general idea that dark-sector perturbation properties map to observable “fingerprints” predates DSIR; Paper I claims only the specific evidence-graded cross-mechanism response geometry and validation architecture documented here.
 
 ## 2. Evidence grades
 
@@ -24,14 +25,14 @@ This map is intentionally **many-to-many**. The same equation structure may occu
 - **STRUCTURAL:** follows from the form/definition of the equations or response operator, but is not by itself a dark-sector-specific empirical result.
 - **HYPOTHESIS:** candidate cross-mechanism rule requiring a future prospective test; must not be promoted in Paper I.
 
-## 3. Mechanism -> equation structure -> DSIR fingerprint
+## 3. Mechanism -> equation structure -> DSIR response pattern
 
-| Mechanism / control | Equation-level structure or physical scale | A priori block to inspect | Frozen DSIR fingerprint | Evidence grade and boundary |
+| Mechanism / control | Equation-level structure or physical scale | A priori block to inspect | Frozen DSIR response pattern | Evidence grade and boundary |
 |---|---|---|---|---|
 | C1 smooth non-phantom DE | altered homogeneous equation of state and expansion history; no new small-scale propagation scale in the frozen smooth setup | background/AP, time-dependent growth | background active; weak low-k irreducible scale-time component; finite-amplitude path nearly straight | **HARD-ATLAS** on frozen C1 rays; not a theorem for all scalar-field DE |
 | C2 IDE | component continuity equations contain exchange/source terms while total conservation is maintained | background/growth, temporal and sign structure | exchange-active response; tested low-k rays are extremely close to scale-time separable (`chi_I` near the numerical morphology floor) | **HARD-ATLAS** for tested IDE directions; exchange does not imply universal near-separability |
 | C3 GDM pressure `c_s^2` | pressure-gradient / effective propagation term introduces scale-sensitive clustering response | low-k matter + time evolution | perturbation-active with frozen background/AP null; moderate irreducible `k x z` interaction | **HARD-ATLAS** for frozen linear C3 definition |
-| C3 GDM viscosity `c_v^2` | anisotropic-stress/shear closure modifies metric-potential relation in addition to matter clustering | matter + Weyl/slip | pressure and viscosity are nearly collinear in matter (`~0.3226 deg`) but strongly separated in metric slip (`~137.94 deg`); viscosity ray bends at finite amplitude | **HARD-ATLAS**; theory-response angles, not survey significance |
+| C3 GDM viscosity `c_v^2` | anisotropic-stress/shear closure modifies metric-potential relation in addition to matter clustering | matter + Weyl/slip | pressure and viscosity are nearly collinear in matter (`~0.3226 deg`) but strongly separated in metric slip (`~137.94 deg`); viscosity ray bends at finite amplitude | **HARD-ATLAS**; theory-response angles, not survey significance; qualitative viscosity-channel discrimination has prior art |
 | C4 thermal WDM | collisionless free streaming introduces a characteristic high-k cutoff scale | high-k transfer and its redshift drift | strong high-k suppression but almost time-separable shape (`chi_I ~ 2e-10` on its own high-k block); `k_0.1` moves monotonically with withheld mass | **HARD-ATLAS + WITHHELD interpolation**; do not compare its `chi_I` numerically to low-k families as one common-domain rank |
 | C5 designer `f(R)` | extra scalar / Compton-like transition modifies scale- and time-dependent metric response while frozen background matches LCDM | low-k matter, Weyl/slip, temporal evolution | strongest low-k `k x z` interaction in the current atlas; visibly curved finite-amplitude response trajectory; exact GR boundary exists in the pinned theory | **HARD-ATLAS** for certified theory-response products; direct survey-level detectability remains outside Paper I |
 | C6 DCDM -> dark radiation | finite decay lifetime introduces an epoch/source scale and transfers energy between components | temporal localization, matter response, possible sign structure | response centroid moves with `Gamma/H0`; descriptive scale-sign pivot appears on sampled ray | **WITHHELD mechanism** for temporal-localization direction; pivot remains **DESCRIPTIVE** |
@@ -76,7 +77,9 @@ The safer Paper-I hypothesis is only:
 
 ### 4.4 Anisotropic stress / metric closure makes an independent metric channel high-value
 
-When two mechanisms are nearly degenerate in matter clustering but differ in anisotropic stress or in the metric closure, a slip/Weyl-sensitive block can split the equivalence class. C3 pressure/viscosity is the flagship frozen example.
+When two mechanisms are nearly degenerate in matter clustering but differ in anisotropic stress or in the metric closure, a slip/Weyl-sensitive block can split the equivalence class. C3 pressure/viscosity is the flagship frozen DSIR example.
+
+The qualitative principle is not claimed as new: dark-kinetics and dark-energy viscosity literature already maps anisotropic stress to additional observable information. DSIR-I contributes a frozen quantitative channel-conditional response example and embeds it in the same cross-family/provenance framework.
 
 This does not mean `Phi != Psi` is dark-specific or a violation of the equivalence principle. The claim is about **channel information**, not a fundamental-principle violation.
 
@@ -103,13 +106,14 @@ These are response **types**, not eight fundamental parameters.
 
 Draft-safe statement:
 
-> Across the tested families, equation-level mechanism differences are reflected in a small vocabulary of response structures—background activation/nulls, scale and temporal localization, metric-slip sensitivity, scale-time nonseparability, sign structure and trajectory curvature. The mapping is many-to-many and is therefore useful as a diagnostic atlas rather than as a unique classifier or universal dark-sector law.
+> Building on prior dark-kinetics and perturbation-fingerprinting work, the tested DSIR families occupy different combinations of background activation/nulls, scale and temporal localization, metric sensitivity, scale-time nonseparability, sign structure and trajectory curvature. This mapping is many-to-many and is used as an evidence-graded response atlas rather than as a unique classifier or universal dark-sector law.
 
 Forbidden upgrades:
 
+- “DSIR invented dark-sector fingerprinting”;
 - “periodic table of fundamental dark-sector particles”;
-- “one-to-one inversion from fingerprint to microphysics”;
-- “proof that a new physical scale implies modified gravity/dark matter”; 
+- “one-to-one inversion from response pattern to microphysics”;
+- “proof that a new physical scale implies modified gravity/dark matter”;
 - “large `chi_I` is a dark-sector detector”;
 - “metric slip proves equivalence-principle violation”;
 - “the atlas closes G7/G8/G9”.
@@ -118,7 +122,7 @@ Forbidden upgrades:
 
 ### Paper I
 
-Close only the **descriptive/structural atlas**. A final Paper-I audit should verify that every row above resolves to a frozen experiment or an explicitly structural statement and that known-sector non-uniqueness is visible in the main text.
+Close only the **descriptive/structural atlas**. A final Paper-I audit should verify that every row above resolves to a frozen experiment or an explicitly structural statement and that known-sector non-uniqueness and the historical fingerprinting prior are visible in the main text.
 
 ### Paper II
 
@@ -126,10 +130,10 @@ Test whether flagship theory-space channel splitting survives an independently v
 
 ### Paper III / later discovery stage
 
-Only after support, covariance, nuisance quotient and a frozen G7 relation may a fresh withheld family test whether any mechanism-to-fingerprint relation has predictive cross-family content beyond known-sector controls.
+Only after support, covariance, nuisance quotient and a frozen G7 relation may a fresh withheld family test whether any mechanism-to-response relation has predictive cross-family content beyond known-sector controls.
 
 ## 8. Current scientific verdict
 
-`PASS_PAPER1_MECHANISM_TO_FINGERPRINT_SYNTHESIS_V0_1`
+`PASS_PAPER1_MECHANISM_TO_RESPONSE_SYNTHESIS_V0_2`
 
-This PASS means the **table is internally consistent with the existing frozen DSIR-I evidence and claim boundary**. It is a synthesis/reproducibility PASS, not an empirical discovery gate and not a substitute for a fresh withheld-family test.
+This PASS means the **table is internally consistent with the existing frozen DSIR-I evidence, prior-art boundary and claim contract**. It is a synthesis/reproducibility PASS, not an empirical discovery gate and not a substitute for a fresh withheld-family test.
