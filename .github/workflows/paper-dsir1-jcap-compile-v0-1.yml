@@ -75,7 +75,7 @@ jobs:
           python papers/dsir1/figures/fig06_failure_resistant_science.py
           python papers/dsir1/figures/fig07_observation_space_support_closure.py
 
-      - name: Fetch pinned SISSA JCAP style and bibliography style
+      - name: Fetch and minimally patch pinned SISSA JCAP styles
         run: |
           curl --fail --location --silent --show-error \
             'https://raw.githubusercontent.com/LSSTDESC/LSS_DC1_paper/8979efd021be92214ce6048f315b40e2dadf6937/texmf/styles/jcappub.sty' \
@@ -86,9 +86,32 @@ jobs:
 
           test "$(git hash-object papers/dsir1/jcap/jcappub.sty)" = '6d7508b34b5f0069d3d590186c97ba84c608b89e'
           test "$(git hash-object papers/dsir1/jcap/JHEP.bst)" = '7b9b88cfed16dc5c7249cb5265288416bf842d86'
-
           grep -F '\ProvidesPackage{jcappub}[2012/08/02 r764]' papers/dsir1/jcap/jcappub.sty
           grep -F '% JHEP bibliography style ver. 2.7' papers/dsir1/jcap/JHEP.bst
+
+          cp papers/dsir1/jcap/JHEP.bst papers/dsir1/jcap/JHEP.upstream.bst
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('papers/dsir1/jcap/JHEP.bst')
+          s = p.read_text(encoding='utf-8')
+          fixes = {
+              'MACRO {apj} {ApJ}': 'MACRO {apj} {"ApJ"}',
+              'MACRO {aa} {A\\&A}': 'MACRO {aa} {"A\\&A"}',
+          }
+          for old, new in fixes.items():
+              if s.count(old) != 1:
+                  raise SystemExit(f'expected exactly one pinned JHEP macro to patch: {old!r}')
+              s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+          Path('papers/dsir1/jcap/JHEP_BST_PATCH.txt').write_text(
+              'upstream_commit=8979efd021be92214ce6048f315b40e2dadf6937\n'
+              'upstream_git_blob=7b9b88cfed16dc5c7249cb5265288416bf842d86\n'
+              'patch=quote two invalid BibTeX MACRO payloads only: apj and aa\n',
+              encoding='utf-8',
+          )
+          PY
+          grep -F 'MACRO {apj} {"ApJ"}' papers/dsir1/jcap/JHEP.bst
+          grep -F 'MACRO {aa} {"A\&A"}' papers/dsir1/jcap/JHEP.bst
 
       - name: Compile JCAP candidate
         working-directory: papers/dsir1/jcap
@@ -123,12 +146,14 @@ jobs:
           pdflatex --version > TEX_ENGINE.txt
           bibtex --version >> TEX_ENGINE.txt
           git hash-object jcappub.sty > JCAP_STYLE_GIT_BLOB.txt
-          git hash-object JHEP.bst > JHEP_BST_GIT_BLOB.txt
-          sha256sum dsir1_jcap.tex dsir1_jcap.pdf jcappub.sty JHEP.bst > COMPILE_SHA256SUMS.txt
+          git hash-object JHEP.upstream.bst > JHEP_BST_UPSTREAM_GIT_BLOB.txt
+          git hash-object JHEP.bst > JHEP_BST_PATCHED_GIT_BLOB.txt
+          sha256sum dsir1_jcap.tex dsir1_jcap.pdf jcappub.sty JHEP.upstream.bst JHEP.bst > COMPILE_SHA256SUMS.txt
 
           echo "pages=$pages" | tee COMPILE_STATUS.txt
           echo 'first_page_abstract=PASS' | tee -a COMPILE_STATUS.txt
           echo 'unresolved_references=0' | tee -a COMPILE_STATUS.txt
+          echo 'jhep_bst_patch=two_macro_quoting_only' | tee -a COMPILE_STATUS.txt
 
       - name: Upload compiled JCAP artifact
         uses: actions/upload-artifact@v4
@@ -142,12 +167,15 @@ jobs:
             papers/dsir1/jcap/dsir1_jcap.bbl
             papers/dsir1/jcap/dsir1_jcap.log
             papers/dsir1/jcap/jcappub.sty
+            papers/dsir1/jcap/JHEP.upstream.bst
             papers/dsir1/jcap/JHEP.bst
+            papers/dsir1/jcap/JHEP_BST_PATCH.txt
             papers/dsir1/jcap/PDFINFO.txt
             papers/dsir1/jcap/FIRST_PAGE.txt
             papers/dsir1/jcap/TEX_ENGINE.txt
             papers/dsir1/jcap/JCAP_STYLE_GIT_BLOB.txt
-            papers/dsir1/jcap/JHEP_BST_GIT_BLOB.txt
+            papers/dsir1/jcap/JHEP_BST_UPSTREAM_GIT_BLOB.txt
+            papers/dsir1/jcap/JHEP_BST_PATCHED_GIT_BLOB.txt
             papers/dsir1/jcap/COMPILE_SHA256SUMS.txt
             papers/dsir1/jcap/COMPILE_STATUS.txt
             papers/dsir1/references.bib
