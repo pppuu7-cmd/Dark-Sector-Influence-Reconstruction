@@ -11,7 +11,8 @@ A targeted literature search found several closely related research lines, but n
 3. channel-conditional equivalence classes formalized through physical projection, covariance whitening and nuisance quotienting;
 4. explicit separation of microscopic parameter count, manifold dimension, representation rank and discriminant count;
 5. prospective/withheld tests across qualitatively different mechanisms;
-6. preservation of scientific FAILs as immutable provenance rather than retrospective correction.
+6. preservation of scientific FAILs as immutable provenance rather than retrospective correction;
+7. an explicit **observation-route eligibility hierarchy** in which a formal quotient is evaluated only after a finite positive support measure, physical-domain support, and model/provider semantics have been prospectively certified.
 
 This is not proof of universal novelty. It is the current positioning from a targeted search and must be checked again before submission.
 
@@ -55,7 +56,7 @@ Difference from DSIR-I: these works reconstruct an interaction function within a
 
 Core overlap: use data/model-independent coordinates or principal components to identify informative modified-gravity response directions and degeneracies.
 
-Difference from DSIR-I: these approaches center on data compression or parametrized MG functions. DSIR-I emphasizes cross-family response manifolds, explicit channel-dependent equivalence, and mechanism-specific localization/nonseparability.
+Difference from DSIR-I: these approaches center on data compression or parametrized MG functions. DSIR-I emphasizes cross-family response manifolds, explicit channel-dependent equivalence, mechanism-specific localization/nonseparability, and a fail-closed distinction between a mathematically available projection and a physically eligible one.
 
 The 2025 paper is especially relevant because it extracts features from representative gravity theories to improve data reduction. The manuscript should state clearly that DSIR is not claiming invention of model-agnostic PCA or observable-space compression.
 
@@ -65,7 +66,7 @@ The 2025 paper is especially relevant because it extracts features from represen
 
 Core overlap: distinguish model space from observable space and quantify a survey's ability to rule out a model through the constrained observable volume.
 
-Difference from DSIR-I: the model-breaking measure is a survey figure of merit. DSIR-I focuses on response trajectories, kernels/equivalence classes and cross-mechanism morphology.
+Difference from DSIR-I: the model-breaking measure is a survey figure of merit. DSIR-I focuses on response trajectories, kernels/equivalence classes and cross-mechanism morphology. The current DSIR-I extension also asks a logically prior question: whether the chosen positive support measure, theory domain and physical provider semantics make that observable-space comparison admissible before a covariance-weighted distance is computed.
 
 This work should be cited in the section positioning the observational quotient and `N_disc`/identifiability concepts.
 
@@ -81,9 +82,17 @@ This work should be cited in the section positioning the observational quotient 
 
 Core overlap: build common phenomenological descriptions that bridge many underlying theories and separate background from perturbative effects.
 
-Difference from DSIR-I: PPF/EFT/GDM are theory/phenomenology bases. DSIR uses such models as inputs to a response-comparison program; it is not a replacement for EFT or PPF.
+Difference from DSIR-I: PPF/EFT/GDM are theory/phenomenology bases. DSIR uses such models as inputs to a response-comparison program; it is not a replacement for EFT or PPF. The Exp073D/E boundary is particularly relevant here: a phenomenological linear closure need not uniquely determine a nonlinear completion, so choosing one nonlinear provider can add model-defining assumptions rather than merely improve numerical accuracy.
 
-### 7. Recent theory-space classification around LambdaCDM
+### 7. Nonlinear GDM and weak-lensing mitigation routes
+
+The manuscript bibliography now includes dedicated nonlinear-GDM and survey-operator references, including Kopp, Skordis & Thomas (2016), Thomas, Kopp & Marković (2019), Pace, Sakr & Tutusaus (2020), the 2026 Euclid-like GDM forecast, KiDS-1000 multi-probe work, and BNT/nulling-systematics literature.
+
+Core overlap: these lines address nonlinear phenomenology, survey projection, and mitigation of small-scale systematics that become central when DSIR tries to move from theory-response geometry to a physical observation-space quotient.
+
+Difference from DSIR-I: DSIR does not use those works to justify an arbitrary nonlinear or ultraviolet completion. Instead, Exp073B--M separate four questions that are often blended together: whether a projector can accept the required spectra, whether a physically defined nonlinear provider exists for the model, whether the chosen model definition uniquely fixes nonlinear continuation, and whether the positive support measure is finite. The finite-positive DES/BOSS harmonic candidate is therefore treated as a prospectively testable route, not as permission to replace a failed configuration-space normalization post hoc.
+
+### 8. Recent theory-space classification around LambdaCDM
 
 **M. Naeem, "LambdaCDM as a fixed point: Controlled dark-sector deformations and late-time structure growth," Annals of Physics 490 (2026) 170466.**
 
@@ -103,14 +112,16 @@ The strongest publication-level novelty is not the phrase "model-independent dar
 - **Degeneracy-breaking examples tied to independent channels:** matter-power lookalikes split under metric slip; scale-mode lookalikes split under temporal/full response structure.
 - **Manifold-curvature bookkeeping:** one-parameter models can occupy several linear response modes, motivating the separation of `N_micro`, `N_manifold`, `N_repr`, and `N_disc`.
 - **Failure-resistant scientific provenance:** failed provider contracts are retained as results and later corrected providers must pass new prospective contracts.
+- **Observation-route eligibility before statistical distance:** the Exp072A--Exp073M chain distinguishes support-domain failure, perturbativity failure, missing-provider capability, nonlinear model-definition non-identifiability, and support-measure nonnormalizability. These are not collapsed into a generic "modelling uncertainty" label.
+- **Constructive negative-result handling:** after demonstrating that one absolute-response measure is nonnormalizable, DSIR prospectively identifies a finite-positive harmonic operator candidate rather than introducing a retrospective cutoff or fiducial weighting into the failed route.
 
-Any abstract/introduction should foreground these points. Claiming novelty merely from "model agnosticism" or "response space" would be vulnerable to prior-art criticism.
+Any abstract/introduction should foreground the operator/channel dependence, response morphology and eligibility hierarchy. Claiming novelty merely from "model agnosticism" or "response space" would be vulnerable to prior-art criticism.
 
 ## Publication potential
 
-### Current assessment: PROMISING, but not yet submission-ready
+### Current assessment: STRONG METHODS/PHENOMENOLOGY CORE, but not yet submission-final
 
-The manuscript has a credible publishable core because it contains more than a conceptual proposal:
+The manuscript now contains more than a conceptual proposal:
 
 - multiple solver-backed model families;
 - quantitative cross-family diagnostics;
@@ -118,37 +129,40 @@ The manuscript has a credible publishable core because it contains more than a c
 - finite-amplitude and leave-one-node robustness tests;
 - withheld/interpolation tests;
 - an explicit mathematical equivalence formalism;
-- a reproducible public repository.
+- a completed negative observation-route eligibility chain;
+- a distinct support-measure normalizability result;
+- a prospectively selected finite-positive harmonic candidate with public-input checksum/reproduction prerequisites being closed;
+- a reproducible public repository and fail-closed paper build.
 
-The strongest current risk is that a referee could classify the work as an extensive theory-space comparison rather than a decisive new cosmological result unless the paper demonstrates why the DSIR operators reveal information that established EFT/PCA/PPF approaches do not already summarize.
+The strongest remaining risk is no longer simply "the theory-space angles are not yet a likelihood." A referee may instead ask whether the observation-route eligibility work is central enough to the paper, or whether it becomes a second paper inside the response-atlas paper. The current manuscript should therefore keep the eligibility chain conceptually compact: it establishes when the formal quotient is *not allowed*, while the full DES/BOSS support/covariance/nuisance execution remains a later empirical stage unless it closes cleanly without destabilizing DSIR-I.
 
 ### What would most increase acceptance probability
 
-1. **Publication-quality figures derived directly from immutable artifacts.** The hierarchy, degeneracy breaking, manifold curvature and preserved FAIL->mechanism-audit->new-provider paths should be visually obvious.
+1. **Publication-quality figures derived directly from immutable artifacts.** The hierarchy, degeneracy breaking, manifold curvature, preserved FAIL->mechanism-audit->new-provider paths and support-eligibility chain should be visually obvious.
 2. **A hard claim-to-provenance table.** Every number in Abstract/Conclusions should map to experiment, commit, run, artifact and frozen threshold.
-3. **Observation-space closure for at least one central example.** Even if full G7 remains open, taking one flagship pair through common support, realistic covariance whitening and nuisance quotienting would substantially strengthen the paper against the criticism that current angles are theory-space only.
-4. **Stronger literature positioning.** Explicitly compare DSIR with dark degeneracy, PPF/EFT, PCA/model-agnostic MG, observable-space model breaking, and modern DESI dark-degeneracy analyses.
-5. **Adversarial robustness tests.** Alternative norm/weighting, domain shifts, solver/precision changes where available, and at least one known-sector or nuisance control under the same morphology statistic.
-6. **Notation discipline.** Avoid presenting `G,T,tau,I` as fundamental degrees of freedom; they are representation components. Avoid calling a finite catalogue rank a universal dark-sector rank.
-7. **A concise central claim.** The paper should be presented as: *equivalence and separability of dark-sector models are operator/channel dependent, and response geometry exposes robust cross-mechanism distinctions that single-channel summaries miss.*
+3. **Advance the finite-positive flagship route only in the frozen order.** Complete the prospectively frozen DES/BOSS input/operator prerequisites and then evaluate the unchanged 5% physical-support criterion. If support passes, proceed to covariance whitening and nuisance quotienting; if support fails, preserve that failure and do not force a quotient. Either outcome is scientifically interpretable.
+4. **Stronger literature positioning.** Explicitly compare DSIR with dark degeneracy, PPF/EFT, PCA/model-agnostic MG, observable-space model breaking, nonlinear GDM and weak-lensing/nulling approaches, and modern DESI dark-degeneracy analyses.
+5. **Adversarial robustness tests.** Alternative *prospectively defined* support/operator choices, domain shifts, solver/precision changes where available, and known-sector/nuisance controls are valuable. Avoid post-hoc weighting changes designed only to rescue a failed support measure.
+6. **Notation discipline.** Avoid presenting `G,T,tau,I` as fundamental degrees of freedom; they are representation components. Avoid calling a finite catalogue rank a universal dark-sector rank. Keep "candidate operator", "eligible support" and "survey quotient" as separate statuses.
+7. **A concise central claim.** The paper should be presented as: *equivalence and separability of dark-sector models are operator/channel dependent, and a physically meaningful observational quotient requires both response discrimination and prospectively certified observation-route eligibility.*
 
 ## Journal fit
 
 ### JCAP — strong fit
 
-JCAP explicitly covers theoretical, observational, computational and simulation work in cosmology and astroparticle physics. A methods/phenomenology paper combining cosmological perturbations, model comparison and reproducible numerical experiments is naturally within scope.
+JCAP explicitly covers theoretical, observational, computational and simulation work in cosmology and astroparticle physics. A methods/phenomenology paper combining cosmological perturbations, model comparison, survey-operator eligibility and reproducible numerical experiments is naturally within scope.
 
-**Assessment:** likely the most natural first target once figures, literature positioning and reproducibility supplement are complete.
+**Assessment:** likely the most natural first target once the current seven-figure manuscript, literature positioning and reproducibility supplement are converted into submission form.
 
 ### Physical Review D — plausible but higher bar
 
-PRD covers gravitation, cosmology, astrophysics and computational/data-science methods, but requires a significant and substantive addition to the literature. DSIR-I could fit well if the manuscript makes the mathematical/physical novelty sharp and demonstrates that the response geometry changes the interpretation of concrete degeneracies beyond existing parameterizations.
+PRD covers gravitation, cosmology, astrophysics and computational/data-science methods, but requires a significant and substantive addition to the literature. DSIR-I could fit well if the manuscript makes the mathematical/physical novelty sharp and demonstrates that the response geometry and eligibility hierarchy change the interpretation of concrete degeneracies beyond existing parameterizations.
 
-**Assessment:** realistic target after strengthening the observational quotient and positioning against prior work.
+**Assessment:** realistic target if the operator theorem plus support-eligibility result becomes the stronger center.
 
 ### MNRAS — strong alternative
 
-MNRAS publishes original observational and theoretical cosmology/astrophysics and explicitly requires clear novelty and significance. The cross-model numerical atlas and data-analysis methodology fit its scope.
+MNRAS publishes original observational and theoretical cosmology/astrophysics and explicitly requires clear novelty and significance. The cross-model numerical atlas, public survey-input provenance and data-analysis methodology fit its scope.
 
 **Assessment:** strong alternative, particularly if the paper emphasizes cosmological observables, survey channels and reproducible numerical methodology.
 
@@ -156,10 +170,11 @@ MNRAS publishes original observational and theoretical cosmology/astrophysics an
 
 1. Finish DSIR-I as a self-contained methods/phenomenology paper without waiting for G8/G9.
 2. Do not delay publication in pursuit of a universal law; that would likely belong in DSIR-II/III if it survives.
-3. Before submission, complete the common-support/covariance/nuisance quotient for at least one central degeneracy-breaking demonstration if feasible without changing the scope.
-4. Target JCAP first if the paper remains predominantly framework + cosmological response atlas; target PRD if the operator theorem/observation-space result becomes the stronger center.
-5. Keep MNRAS as a highly credible alternative.
+3. Advance the finite-positive DES/BOSS candidate only through its already frozen prerequisite/support sequence. Do not make completion of a covariance quotient a publication requirement if the support gate itself yields a scientifically interpretable FAIL.
+4. Keep the observation-route section compact enough that DSIR-I remains one coherent paper: response geometry defines the comparison, eligibility audits define when that comparison may enter observation space.
+5. Target JCAP first if the paper remains predominantly framework + cosmological response atlas + eligibility methodology; target PRD if the operator theorem/observation-space result becomes the stronger center.
+6. Keep MNRAS as a highly credible alternative.
 
 ## Novelty warning for future versions
 
-A fresh literature search must be repeated immediately before arXiv/journal submission, especially for 2026-2027 papers using DESI DR2, Stage-IV forecasts, model-agnostic MG PCA, theory-space geometry or dark-sector fixed-point/deformation language.
+A fresh literature search must be repeated immediately before arXiv/journal submission, especially for 2026-2027 papers using DESI DR2, Stage-IV forecasts, model-agnostic MG PCA, nonlinear GDM, BNT/nulling, theory-space geometry, observation-space support measures, or dark-sector fixed-point/deformation language.
