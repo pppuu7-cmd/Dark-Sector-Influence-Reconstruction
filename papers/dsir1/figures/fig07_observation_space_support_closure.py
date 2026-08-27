@@ -38,8 +38,6 @@ def main() -> None:
     a, b, c, p = e["Exp072A"], e["Exp072B"], e["Exp072C"], e["Exp073A"]
     b73, c73, d73, e73 = e["Exp073B"], e["Exp073C"], e["Exp073D"], e["Exp073E"]
 
-    # Hard scientific guards. The figure must fail rather than silently redraw
-    # if any article-level eligibility/model-boundary claim is changed.
     if a["status"] != "FAIL_ACT_UNWISE_ANGULAR_SUPPORT_LEAKAGE_MASK_V0_1":
         raise RuntimeError("Exp072A support FAIL was reclassified")
     if a["candidate_dimension"] != 26 or a["nominal_retained_dimension"] != 0:
@@ -97,8 +95,6 @@ def main() -> None:
 
     fig, axes = plt.subplots(1, 3, figsize=(14.6, 4.8), constrained_layout=True)
 
-    # Panel A: every candidate ACTxunWISE coordinate exceeds the prefrozen
-    # support leakage threshold on the current C3/C5 domain.
     ax = axes[0]
     x = np.arange(1, leakage.size + 1)
     ax.scatter(x, leakage, s=22)
@@ -112,9 +108,6 @@ def main() -> None:
     ax.legend(frameon=False, fontsize=8)
     ax.text(0.04, 0.08, "retained: 0 / 26", transform=ax.transAxes, fontweight="bold")
 
-    # Panel B: the geometric support expansion required before the 15-row mask
-    # even exists. These are descriptive expansion factors, not certified
-    # provider extensions.
     ax = axes[1]
     factors = np.asarray([
         float(c["k_over_current_common_kmax"]),
@@ -132,15 +125,13 @@ def main() -> None:
     ax.text(
         0.5,
         0.08,
-        "$z_{min}=0.00873$\n$k_{max}=4.818\,\\mathrm{Mpc}^{-1}$\n15 retained (geometry only)",
+        r"$z_{min}=0.00873$" "\n" r"$k_{max}=4.818\,\mathrm{Mpc}^{-1}$" "\n" "15 retained (geometry only)",
         transform=ax.transAxes,
         ha="center",
         va="bottom",
         fontsize=8.2,
     )
 
-    # Panel C: the proposed enlarged linear route is already nonperturbative for
-    # most source pairs, so downstream covariance/nuisance quotienting is barred.
     ax = axes[2]
     passed = int(p["pair_count_primary_pass"])
     failed = int(p["pair_count"] - passed)
