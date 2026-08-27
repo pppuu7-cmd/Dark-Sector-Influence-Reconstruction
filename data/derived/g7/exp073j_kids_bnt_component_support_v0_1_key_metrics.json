@@ -1,0 +1,57 @@
+{
+  "experiment": "Exp073J",
+  "record_type": "KIDS_BNT_COMPONENT_SUPPORT_RESULT_KEY_METRICS",
+  "date": "2026-08-27",
+  "status": "FAIL_EXP073J_KIDS_COMPONENT_REPRODUCTION_OR_NUMERICAL_COMPLETENESS",
+  "workflow_run": 33045812989,
+  "workflow_job": 98429422683,
+  "artifact_id": 9635628042,
+  "artifact_digest": "sha256:907ac6130afb2292eac6e8cdd03493bb0f3b4507d5042e1ac15c282bbb901d3b",
+  "artifact_json_sha256": "7edbbc6d842ddfee63e59bcdf71f5cb1074fdf9a50ec0656ffd4c522a10b2a35",
+  "implementation_merge_sha": "55a9fa869e79a0aac11c54aac0115ff281352f24",
+  "frozen_scientific_thresholds_unchanged": {
+    "z_min": 0.295,
+    "z_max": 2.33,
+    "k_min_Mpc^-1": 0.000704833374744468,
+    "k_max_Mpc^-1": 0.06664762008318016,
+    "max_positive_invalid_fraction": 0.05,
+    "min_final_retained_dimension": 15
+  },
+  "component_inventory": {
+    "total": 72,
+    "Wm": 24,
+    "WW": 48,
+    "reported_retained_total": 0,
+    "reported_retained_Wm": 0,
+    "reported_retained_WW": 0,
+    "retained_counts_are_not_scientifically_classifying": true
+  },
+  "hard_controls": {
+    "K1_provenance": true,
+    "K2_BNT": true,
+    "K3_bandpower_and_pmweights": true,
+    "K4_positive_norms": true,
+    "K5_full_physical_k_mapping": true,
+    "K6_angular_convergence": false,
+    "K7_support_convergence": false,
+    "K8_signed_Wm_semantics": true,
+    "K9_no_downstream_or_pk_weighting": true,
+    "K10_machine_inventory": true
+  },
+  "diagnostics": {
+    "max_coarse_fine_support_fraction_difference": 0.001723739486547582,
+    "coarse_vs_fine_to_ell30000_relative_discrepancy_order": "1e-5 or better for every band",
+    "Wm_positive_tail_fraction_ell30000_to_60000_min": 0.6541062896011035,
+    "Wm_positive_tail_fraction_ell30000_to_60000_max": 0.7140341747063638,
+    "WW_positive_tail_fraction_ell30000_to_60000_min": 0.6433749924210542,
+    "WW_positive_tail_fraction_ell30000_to_60000_max": 0.7014734710492828
+  },
+  "interpretation_boundary": {
+    "full_Exp073J_scientific_classification_authorized": false,
+    "covariance_restriction_authorized": false,
+    "next_admissible_step": "prospectively frozen KiDS finite-theta absolute-response normalizability mechanism audit",
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
