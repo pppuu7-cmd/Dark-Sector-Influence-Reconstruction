@@ -1,28 +1,14 @@
 {
   "schema": "dsir.paper1.moving_scale_nonseparability_bridge.evidence.v0.1",
   "classification": "RETROSPECTIVE_EVIDENCE_SNAPSHOT_NOT_NEW_PROSPECTIVE_GATE",
-  "z_nodes": [
-    0.295,
-    0.51,
-    0.706,
-    0.934,
-    1.317,
-    1.491,
-    2.33
-  ],
+  "correction_note": "The pre-audit draft copied intermediate GDM/f(R) redshift-scale arrays with small transcription/interpolation discrepancies. They are deliberately removed here rather than hidden by an integrity tolerance. Exact contextual ranges below are bound to the immutable source artifacts; the WDM matrix-level test remains fully reproducible from the compact snapshot.",
+  "z_nodes": [0.295, 0.51, 0.706, 0.934, 1.317, 1.491, 2.33],
   "wdm": {
     "source_run": 32908751625,
     "artifact_id": 9585845292,
     "artifact_zip_sha256": "5d02bdce07da95c2bb9eab01acb2641f110b6b16e4ecf29ac2e8b1619d053139",
     "source_head": "fa5f2e57bff008e860b4ab1ecd30116714c3b7ce",
-    "k_h_mpc": [
-      0.1,
-      0.3,
-      1.0,
-      3.0,
-      10.0,
-      20.0
-    ],
+    "k_h_mpc": [0.1, 0.3, 1.0, 3.0, 10.0, 20.0],
     "target_log_power_response": -0.1,
     "crossing_extraction": "same first downward crossing and log-k interpolation definition as Exp050B, applied retrospectively to Exp050A masses 2,3,5 keV",
     "models": [
@@ -70,37 +56,35 @@
       }
     ]
   },
-  "gdm": {
-    "source_run": 32904158849,
-    "artifact_id": 9584180621,
-    "artifact_zip_sha256": "892db89ea5e530af6b8c1aae5404ef75c0fc84448e671e780ce02d91b4711a8a",
-    "source_head": "30e2157c77e29d18dbf40d7438f34b0dce84cf4c",
-    "source_scale": "k_v_QS=sqrt(9/8)*Hconf/sqrt(cv2); quasi-steady proxy",
-    "models": [
-      {"cv2":1.5e-05,"k_v_QS_frozen_z_h_mpc":[0.08262207116186592,0.08060675629257002,0.08047165779955747,0.08152059176502274,0.08484582985947185,0.08669966446374925,0.09662994634431535],"chi_I":0.03761007716509149},
-      {"cv2":2e-05,"k_v_QS_frozen_z_h_mpc":[0.0715528112773295,0.06980754389809096,0.06969055246586117,0.07059900455505345,0.07347864406347489,0.07508490083884972,0.08368401120379028],"chi_I":0.03543758395038622},
-      {"cv2":3e-05,"k_v_QS_frozen_z_h_mpc":[0.05842262474737081,0.056997550667859004,0.05690198735744612,0.057643692531694155,0.0599950616490326,0.06130629141112075,0.06832769136222642],"chi_I":0.031145379771770936},
-      {"cv2":5e-05,"k_v_QS_frozen_z_h_mpc":[0.0452540853370806,0.04415014069454629,0.04407611561099322,0.04465063569779361,0.04647197492427811,0.04748781989038045,0.05292734225403692],"chi_I":0.0235805866359694},
-      {"cv2":7e-05,"k_v_QS_frozen_z_h_mpc":[0.0382467948077388,0.03731383141344161,0.03725126646245752,0.03773683132131603,0.03927598733289058,0.04013426398644114,0.04473109779939476],"chi_I":0.01803742812561059}
-    ]
-  },
-  "designer_fR": {
-    "source_run": 32907619613,
-    "artifact_id": 9585579947,
-    "artifact_zip_sha256": "bc2145365d14939473c73f36c0ee2ca41920d7be8eb50a31a1858c6f66aed942",
-    "source_head": "a575a2e78b21eab36b88db8622e14509a30cae5a",
-    "source_scale": "EFTCAMB diagnostic Compton scale as defined in Exp049C",
-    "models": [
-      {"B0":0.00015,"k_compton_frozen_z_h_mpc":[0.0573746866846495,0.07468472272249204,0.09332511424606955,0.11860492091411067,0.1701086025226811,0.19734661231347245,0.363497951484064],"chi_I":0.2701418997236175},
-      {"B0":0.0002,"k_compton_frozen_z_h_mpc":[0.04968805547593071,0.06467904952361865,0.08082168312351055,0.10271465101604189,0.14731941104238922,0.1709090821856181,0.314799800018144],"chi_I":0.2572299853986217},
-      {"B0":0.0003,"k_compton_frozen_z_h_mpc":[0.04057032218492984,0.05281077949313445,0.06599114476462022,0.08386687861058422,0.1202872960527301,0.13954805286438274,0.2570358169339512],"chi_I":0.23735055721334924},
-      {"B0":0.0005,"k_compton_frozen_z_h_mpc":[0.03142593817783471,0.04090651296869618,0.0511167322182964,0.06496503683417617,0.09317459735335659,0.10809526907126025,0.1991032267505088],"chi_I":0.21048367445574387},
-      {"B0":0.0007,"k_compton_frozen_z_h_mpc":[0.026560020377845033,0.03457400430435303,0.04320260847028383,0.054905801716439674,0.07874871140892893,0.0913590302163497,0.16827611939422947],"chi_I":0.19235647112802767}
-    ]
+  "contextual_artifact_metrics": {
+    "gdm": {
+      "source_run": 32904158849,
+      "artifact_id": 9584180621,
+      "artifact_zip_sha256": "892db89ea5e530af6b8c1aae5404ef75c0fc84448e671e780ce02d91b4711a8a",
+      "source_head": "30e2157c77e29d18dbf40d7438f34b0dce84cf4c",
+      "scale_definition": "k_v_QS=sqrt(9/8)*Hconf/sqrt(cv2), dynamic-shear quasi-steady proxy",
+      "delta_log_span_min": 0.18298237241299997,
+      "delta_log_span_max": 0.18298237241300042,
+      "chi_I_min": 0.01803742812561059,
+      "chi_I_max": 0.03761007716509149,
+      "original_status": "PASS_GDM_WINDOW_CROSSING_VALIDATION_V0_1"
+    },
+    "designer_fR": {
+      "source_run": 32907619613,
+      "artifact_id": 9585579947,
+      "artifact_zip_sha256": "bc2145365d14939473c73f36c0ee2ca41920d7be8eb50a31a1858c6f66aed942",
+      "source_head": "a575a2e78b21eab36b88db8622e14509a30cae5a",
+      "scale_definition": "EFTCAMB diagnostic Compton scale as defined in Exp049C",
+      "delta_log_span_min": 1.846171817725503,
+      "delta_log_span_max": 1.8461982444061142,
+      "chi_I_min": 0.19235647112802767,
+      "chi_I_max": 0.2701418997236175,
+      "original_status": "PASS_FR_WINDOW_CROSSING_VALIDATION_V0_1"
+    }
   },
   "boundaries": [
     "The moving-scale ansatz is an explanatory local model, not a universal dark-sector law.",
-    "All mechanism comparisons in this snapshot are retrospective; Exp049B/C and Exp050A/B retain their original prospective/withheld classifications only.",
+    "The new WDM matrix test is retrospective; Exp049B/C and Exp050A/B retain their original prospective/withheld classifications only.",
     "WDM uses a high-k response block whereas GDM and designer-f(R) use the frozen low-k block; no universal chi_I calibration across domains is inferred.",
     "GDM k_v_QS is a quasi-steady proxy, not an exact eigenmode scale.",
     "No G7/G8/G9, covariance, nuisance quotient, survey significance, or physical-support gate is changed."
@@ -110,8 +94,6 @@
       {"m_keV":2.0,"chi_I_recomputed":2.5825694808339083e-10,"delta_log_span":3.250093309259405e-05,"interaction_pc1_energy":0.9999897995420277,"abs_cos_temporal_mode_vs_cutoff_drift":0.999586510950899,"abs_cos_scale_mode_vs_centered_profile_derivative":0.916374549624987,"abs_frobenius_cos_first_order_outer_template":0.9159824679142455},
       {"m_keV":3.0,"chi_I_recomputed":2.2080731267211654e-10,"delta_log_span":2.7821143881112675e-05,"interaction_pc1_energy":0.999916638703417,"abs_cos_temporal_mode_vs_cutoff_drift":0.9993552473963425,"abs_cos_scale_mode_vs_centered_profile_derivative":0.9200973627967678,"abs_frobenius_cos_first_order_outer_template":0.9194490465532347},
       {"m_keV":5.0,"chi_I_recomputed":2.2916098385192145e-10,"delta_log_span":1.8118051399618196e-05,"interaction_pc1_energy":0.9990054358497861,"abs_cos_temporal_mode_vs_cutoff_drift":0.9984102611161367,"abs_cos_scale_mode_vs_centered_profile_derivative":0.9183335771402454,"abs_frobenius_cos_first_order_outer_template":0.916562462708892}
-    ],
-    "gdm": {"delta_log_span_min":0.18298237241299997,"delta_log_span_max":0.18298237241300042,"chi_I_min":0.01803742812561059,"chi_I_max":0.03761007716509149},
-    "designer_fR": {"delta_log_span_min":1.846171817725503,"delta_log_span_max":1.8461982444061142,"chi_I_min":0.19235647112802767,"chi_I_max":0.2701418997236175}
+    ]
   }
 }
