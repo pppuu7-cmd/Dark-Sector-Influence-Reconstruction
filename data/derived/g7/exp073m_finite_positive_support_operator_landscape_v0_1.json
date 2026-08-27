@@ -1,0 +1,55 @@
+{
+  "experiment": "Exp073M",
+  "date": "2026-08-27",
+  "status": "FINITE_POSITIVE_SUPPORT_OPERATOR_CANDIDATE_FOUND_EXP073M",
+  "parent_state": {
+    "Exp073J_KiDS": "FAIL_EXP073J_KIDS_COMPONENT_REPRODUCTION_OR_NUMERICAL_COMPLETENESS",
+    "Exp073K": "INDETERMINATE_ABSOLUTE_RESPONSE_ASYMPTOTICS_EXP073K",
+    "Exp073L": "EXTENDED_LADDER_SUPPORTS_NONNORMALIZABLE_ABSOLUTE_RESPONSE_EXP073L",
+    "Exp073J_threshold": 0.05,
+    "BOSS_mm_retained": "54/240"
+  },
+  "selected_pair": {
+    "Wm": "DES_Y3_harmonic_galaxy_galaxy_lensing",
+    "WW": "DES_Y1_harmonic_cosmic_shear",
+    "mm": "BOSS_finite_matrix_component_unchanged"
+  },
+  "operator_source": {
+    "repository": "hocamachoc/3x2hs_measurements",
+    "commit": "21e589a3cfc3e30f1b06a4636ccc2da8aceda5ab",
+    "bindings": {
+      "csh.py": "4b81b23e0074d7e4bb8c1e1cb9c8b916c5549787",
+      "cshtest.py": "33c4d3ae40098dec70a7a90f7115b16a7083aed4",
+      "etc/y1mcal_csh.yml": "6cfb2291ab6f64116ed7a7df203fa0488bd45e81",
+      "etc/binNicola2020.txt": "4230a1a3b10cc631e98a03d0ed6e288b35ed6cd4",
+      "ggltest.py": "3b52360549230e5805252bfb2c5fdbaae885a01c"
+    }
+  },
+  "tests": {
+    "M1_public_immutable_provenance": true,
+    "M2_finite_positive_normalization_by_construction": true,
+    "M3_no_model_or_downstream_weighting": true,
+    "M4_Wm_signed_semantics": true,
+    "M5_WW_independent_semantics": true,
+    "M6_redshift_operator_information": true,
+    "M7_later_5pct_audit_possible": true,
+    "M8_no_downstream_leakage": true
+  },
+  "rejected_or_partial": {
+    "DES_Y3_harmonic_cosmic_shear_WW": "M1_BLOCKED_MEASUREMENT_CODE_AVAILABLE_ONLY_ON_REQUEST"
+  },
+  "controls": {
+    "support_fraction_evaluated": false,
+    "covariance_read_for_selection": false,
+    "nuisance_SVD_read": false,
+    "relation_null_read": false,
+    "G8_read": false,
+    "threshold_changed": false
+  },
+  "next_admissible_step": "Exp073N prospectively frozen exact DES harmonic Wm+WW physical-support audit with exact public input checksums before any support output",
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
