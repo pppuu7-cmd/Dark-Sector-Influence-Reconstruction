@@ -26,6 +26,24 @@ Core overlap: gravity constrains total observable influence rather than a unique
 
 DSIR-I difference: it operationalizes a heterogeneous response atlas and asks which explicit channels, scale-time structures and observational operators split or preserve equivalence classes. Kunz is foundational and must be cited as such.
 
+### Dark kinetics and perturbation “fingerprinting”
+
+**S. Bashinsky, “Mapping Cosmological Observables to the Dark Kinetics,” arXiv:0707.0692 (2007).**
+
+**D. Sapone and M. Kunz, “Fingerprinting dark energy,” Phys. Rev. D 80, 083519 (2009), arXiv:0909.0007.**
+
+**D. Sapone, M. Kunz and L. Amendola, “Fingerprinting dark energy. II. Weak lensing and galaxy clustering tests,” Phys. Rev. D 82, 103535 (2010), arXiv:1007.2188.**
+
+**D. Sapone and E. Majerotto, “Fingerprinting dark energy. III. Distinctive marks of viscosity,” Phys. Rev. D 85, 123529 (2012), arXiv:1203.2157.**
+
+Core overlap: these works explicitly map sound speed, anisotropic stress/viscosity, clustering and propagation properties to observable perturbation signatures and use multiple gravitational/large-scale-structure channels to distinguish models that can share similar background behavior. The Sapone series already uses the term “fingerprinting.” Bashinsky also stresses that nonstandard growth or a potential ratio is not, by itself, a unique modified-gravity identifier.
+
+DSIR-I consequence: **the general idea `microphysics -> observable fingerprint` is prior art**. DSIR must not claim invention of fingerprinting, of sound-speed/viscosity-to-observable mapping, or of the qualitative statement that an independent metric/velocity-sensitive channel can break a fluid-parameter degeneracy. The C3 pressure/viscosity example remains useful only as a frozen quantitative channel-conditional-equivalence case embedded in a broader heterogeneous atlas and provenance chain.
+
+A current high-overlap example is **J. Rebouças, G. Brando, F. T. Falciano and V. Miranda, “The sound of dynamical dark energy and modified gravity,” arXiv:2606.00411 (2026)**, which uses an effective sound-speed coordinate to compare perturbative behavior in GR and modified-gravity scenarios with contemporary multi-probe data. This further forbids a priority claim for perturbation-based DE/MG discrimination.
+
+The safer DSIR-I distinction is therefore not “fingerprinting,” but the conjunction of block-aware cross-mechanism response geometry, irreducible scale-time morphology, finite-amplitude trajectory geometry, operator-induced equivalence classes, prospective cross-mechanism failure tests, and fail-closed provider/realized-operator eligibility.
+
 ### Modern pairwise dark-degeneracy breaking
 
 **V. Petri, V. Marra, R. von Marttens, “Dark Degeneracy in DESI DR2: Interacting or Evolving Dark Energy?”, Phys. Rev. D 113, 023504 (2026), arXiv:2508.17955.**
@@ -97,12 +115,12 @@ DSIR-I difference: DSIR compares multiple existing mechanism families and studie
 
 ## Where DSIR-I appears genuinely differentiated
 
-The strongest publication-level novelty is **not** “model-independent dark sector,” “PCA,” or “response space” in isolation. The most defensible differentiators are:
+The strongest publication-level novelty is **not** “model-independent dark sector,” “PCA,” “response space,” “fingerprinting,” or “microphysics-to-observable mapping” in isolation. The most defensible differentiators are:
 
-- **Cross-mechanism atlas** under one comparison protocol.
+- **Cross-mechanism atlas** under one comparison protocol, including explicit masked-domain versus physical-null semantics.
 - **Explicit quotient equivalence:** `A_B=Q_BW_BK_B`, with equivalence induced by the selected physical/observational channel.
 - **Scale-time nonseparability:** the additive `mu+T(k)+tau(z)` core is falsified on the tested atlas and `chi_I` yields a robust descriptive hierarchy.
-- **Mechanism-localized degeneracy breaking:** matter lookalikes split in slip; scale-mode lookalikes split in temporal/full response.
+- **Quantified channel-conditional degeneracy breaking:** frozen response angles and localization measures show how the same pair changes separability across blocks; the broad physical idea of multi-channel perturbation discrimination is acknowledged as prior art.
 - **Curved response manifolds:** one microscopic parameter does not imply one linear representation mode.
 - **Prospective failure as evidence:** the withheld IDM-DR common-centroid law fails and remains failed.
 - **Provider/reproduction FAIL preservation:** later corrected providers or replacement operators do not rewrite earlier failed contracts.
@@ -168,4 +186,4 @@ MNRAS is a credible route if the article leans more strongly into cosmological o
 
 ## Novelty warning
 
-A fresh literature search is mandatory immediately before arXiv/journal submission. In particular, re-check recent work on dark degeneracy, Stage-IV model-agnostic gravity, nonlinear GDM, pseudo-`C_ell`/NaMaster survey operators, BNT/nulling, theory-space geometry, support/localization measures and reproducibility-aware cosmological inference.
+A fresh literature search is mandatory immediately before arXiv/journal submission. In particular, re-check recent work on dark degeneracy, dark-kinetics/fingerprinting terminology, Stage-IV model-agnostic gravity, nonlinear GDM, pseudo-`C_ell`/NaMaster survey operators, BNT/nulling, theory-space geometry, support/localization measures and reproducibility-aware cosmological inference.
