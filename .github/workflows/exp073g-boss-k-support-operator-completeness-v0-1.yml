@@ -1,0 +1,68 @@
+name: Exp073G BOSS k-support operator completeness v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073g-boss-k-support-operator-completeness-v0-1.yml'
+      - 'ci/exp073g_boss_k_support_operator_completeness_v0_1.py'
+      - 'data/derived/g7/exp073g_kids_boss_bnt_operator_binding_v0_1.json'
+      - 'experiments/073g_kids_boss_bnt_exact_physical_support_prereg_v0_1.md'
+      - 'experiments/073g_boss_k_support_operator_completeness_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  operator-completeness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone exact frozen KiDS release source
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/KiDS-WL/Cat_to_Obs_K1000_P1.git external/kids
+          git -C external/kids checkout 36676da44471979dacb779155d7e6e7212ae1f4f
+          test "$(git -C external/kids rev-parse HEAD)" = '36676da44471979dacb779155d7e6e7212ae1f4f'
+
+      - name: Execute pre-output BOSS k-support operator completeness audit
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073g_boss_k_support_operator_completeness_v0_1.py \
+            --kids-root external/kids \
+            --binding data/derived/g7/exp073g_kids_boss_bnt_operator_binding_v0_1.json \
+            --output data/derived/g7/exp073g_boss_k_support_operator_completeness_v0_1.json
+
+      - name: Assert frozen failure semantics
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073g_boss_k_support_operator_completeness_v0_1.json'
+          d=json.load(open(p))
+          assert d['status'] in {'FAIL_EXP073G_REPRODUCTION_OR_PROVENANCE','INCOMPLETE_EXP073G'}
+          assert d['scientific_support_fail'] is False
+          assert d['support_fraction_computed'] is False
+          assert d['retained_dimension_computed'] is False
+          assert d['controls']['covariance_values_read'] is False
+          assert d['controls']['nuisance_rank_read'] is False
+          assert d['controls']['relation_residual_read'] is False
+          assert d['controls']['G8_read'] is False
+          assert d['controls']['frozen_5pct_threshold_changed'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          if d['status']=='FAIL_EXP073G_REPRODUCTION_OR_PROVENANCE':
+              assert d['trustworthy_operator_no_go'] is True
+              assert d['analytic_operator_no_go']['positive_operator_only_all_k_normalizer_finite'] is False
+              assert d['analytic_operator_no_go']['solver_neutral_support_fraction_well_defined'] is False
+          print('EXP073G_RESULT',d['status'])
+          PY
+
+      - name: Upload immutable operator-completeness record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073g-boss-k-support-operator-completeness-${{ github.sha }}
+          path: data/derived/g7/exp073g_boss_k_support_operator_completeness_v0_1.json
+          if-no-files-found: warn
