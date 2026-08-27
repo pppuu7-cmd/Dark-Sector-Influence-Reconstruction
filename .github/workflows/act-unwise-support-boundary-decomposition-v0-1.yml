@@ -1,0 +1,165 @@
+name: ACT x unWISE support boundary decomposition v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/act-unwise-support-boundary-decomposition-v0-1.yml'
+      - 'ci/act_unwise_support_boundary_decomposition_v0_1.py'
+      - 'ci/act_unwise_angular_support_leakage_mask_v0_1.py'
+      - 'experiments/072b_exp072a_support_boundary_decomposition_prereg_v0_1.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  boundary-decomposition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install numerical and CAMB build dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran git python3-dev
+          python3 -m pip install --user numpy scipy cython setuptools wheel packaging pyyaml healpy
+          python3 -m py_compile ci/act_unwise_support_boundary_decomposition_v0_1.py
+          gh --version
+
+      - name: Bind exact immutable Exp072A parent artifact
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp072a_parent
+          gh api repos/${GITHUB_REPOSITORY}/actions/artifacts/9629763833 > external/exp072a_parent_meta.json
+          python3 - <<'PY'
+          import json
+          p='external/exp072a_parent_meta.json'
+          d=json.load(open(p))
+          assert d['id']==9629763833
+          assert d['digest']=='sha256:9ecf7d61b4db5e091392a23f508cd5dd3d04dafe32a4a66d1256a70d9947701d'
+          assert d['workflow_run']['id']==33029362485
+          assert d['workflow_run']['head_sha']=='553f6867f1cf71d4661a9f7b1f739a970648d05d'
+          PY
+          gh run download 33029362485 \
+            -n 'exp072a-act-unwise-angular-support-leakage-d25431771dcfbd863c37057b3e9b3e13184e3bc7' \
+            -D external/exp072a_parent
+          PARENT_JSON="$(find external/exp072a_parent -name 'exp072a_act_unwise_angular_support_leakage_mask_v0_1.json' -print -quit)"
+          test -n "$PARENT_JSON"
+          echo '56b96c096830bf8399ef18df41251a14ded00101a1f206b4419ccb6b5730abe3  '"$PARENT_JSON" | sha256sum -c -
+          cp "$PARENT_JSON" external/exp072a_parent.json
+
+      - name: Fetch and install pinned CAMB
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          git clone https://github.com/cmbant/CAMB.git external/CAMB
+          git -C external/CAMB checkout fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          test "$(git -C external/CAMB rev-parse HEAD)" = 'fa3f097343fbbe427cc04b4f5f0041c22c6ec764'
+          python3 -m pip install --user ./external/CAMB
+
+      - name: Fetch pinned ACT x unWISE upstream source
+        run: |
+          set -euxo pipefail
+          git clone --no-checkout https://github.com/ACTCollaboration/unWISExLens_lklh.git external/unWISExLens_lklh
+          git -C external/unWISExLens_lklh checkout 6302c30d9e70f8e4ff2d4a84a9977b4471705179
+          test "$(git -C external/unWISExLens_lklh rev-parse HEAD)" = '6302c30d9e70f8e4ff2d4a84a9977b4471705179'
+
+      - name: Restore immutable official data archive cache
+        id: archive-cache
+        uses: actions/cache@v4
+        with:
+          path: external/data_unWISExLens.tar.gz
+          key: act-unwise-data-1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570
+
+      - name: Fetch official ACT x unWISE archive on cache miss
+        if: steps.archive-cache.outputs.cache-hit != 'true'
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          if ! curl --fail --location --retry 3 --retry-delay 3 \
+            'https://lambda.gsfc.nasa.gov/data/suborbital/ACT/act_x_unWISE/data_unWISExLens.tar.gz' \
+            -o external/data_unWISExLens.tar.gz; then
+            rm -f external/data_unWISExLens.tar.gz
+            curl --fail --location --retry 4 --retry-delay 3 \
+              'https://portal.nersc.gov/project/act/act_x_unWISE_xcorr+3x2pt/data_unWISExLens.tar.gz' \
+              -o external/data_unWISExLens.tar.gz
+          fi
+
+      - name: Verify and extract immutable official data archive
+        run: |
+          set -euxo pipefail
+          echo '1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570  external/data_unWISExLens.tar.gz' | sha256sum -c -
+          mkdir -p external/unwise_data
+          tar -xzf external/data_unWISExLens.tar.gz -C external/unwise_data
+
+      - name: Execute frozen Exp072B boundary decomposition
+        run: |
+          set -euxo pipefail
+          python3 ci/act_unwise_support_boundary_decomposition_v0_1.py \
+            --upstream-repo external/unWISExLens_lklh \
+            --camb-repo external/CAMB \
+            --extracted-root external/unwise_data \
+            --archive external/data_unWISExLens.tar.gz \
+            --parent-json external/exp072a_parent.json \
+            --parent-meta external/exp072a_parent_meta.json \
+            --output data/derived/g7/exp072b_exp072a_support_boundary_decomposition_v0_1.json
+
+      - name: Assert frozen Exp072B classification semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp072b_exp072a_support_boundary_decomposition_v0_1.json'
+          d=json.load(open(p))
+          assert d['experiment']=='Exp072B'
+          assert d['status'] in {
+              'DIAGNOSTIC_K_ONLY_TARGET_FOUND_EXP072B',
+              'DIAGNOSTIC_K_ONLY_TARGET_NOT_FOUND_EXP072B',
+              'FAIL_EXP072B_REPRODUCTION_OR_PROVENANCE',
+          }
+          assert d['parent_Exp072A_preserved']=='FAIL_ACT_UNWISE_ANGULAR_SUPPORT_LEAKAGE_MASK_V0_1'
+          assert d['frozen_parent_support']['threshold']==0.05
+          assert d['frozen_parent_support']['candidate_coordinates']==26
+          assert d['frozen_parent_support']['applicable_coordinate_block_pairs']==64
+          assert len(d['coordinates'])==26
+          assert len(d['coordinate_block_pairs'])==64
+          assert d['controls']['covariance_read'] is False
+          assert d['controls']['nuisance_SVD_or_rank_read'] is False
+          assert d['controls']['G7_relation_or_null_read'] is False
+          assert d['controls']['G8_response_read'] is False
+          assert d['controls']['physical_provider_extended'] is False
+          assert d['controls']['Exp072A_reclassified'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          if d['status']=='FAIL_EXP072B_REPRODUCTION_OR_PROVENANCE':
+              assert any(v is False for v in d['hard_controls'].values())
+          else:
+              assert all(v is True for v in d['hard_controls'].values())
+          if d['status']=='DIAGNOSTIC_K_ONLY_TARGET_FOUND_EXP072B':
+              assert d['K_target_route_Mpc^-1'] is not None
+              assert d['route_snapshot_at_target']['retained_dimension'] >= 15
+              for s in ('Blue_ACT','Green_ACT'):
+                  assert d['route_snapshot_at_target']['by_sample_channel'][s]['gg'] >= 1
+                  assert d['route_snapshot_at_target']['by_sample_channel'][s]['kg'] >= 1
+          else:
+              if d['status']=='DIAGNOSTIC_K_ONLY_TARGET_NOT_FOUND_EXP072B':
+                  assert d['K_target_route_Mpc^-1'] is None
+          print('EXP072B_RESULT',d['status'])
+          print('ATTRIBUTION',d['attribution_summary'])
+          print('K_TARGET_ROUTE',d['K_target_route_Mpc^-1'])
+          if d['route_snapshot_at_target'] is not None:
+              print('ROUTE_AT_TARGET',d['route_snapshot_at_target'])
+          PY
+
+      - name: Upload immutable Exp072B diagnostic record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp072b-support-boundary-decomposition-${{ github.sha }}
+          path: data/derived/g7/exp072b_exp072a_support_boundary_decomposition_v0_1.json
+          if-no-files-found: warn
