@@ -1,0 +1,123 @@
+name: ACT x unWISE angular support leakage mask v0.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/act-unwise-angular-support-leakage-mask-v0-1.yml'
+      - 'ci/act_unwise_angular_support_leakage_mask_v0_1.py'
+      - 'ci/act_unwise_physical_forward_reproduction_v0_1.py'
+      - 'experiments/072a_act_unwise_angular_support_leakage_mask_prereg_v0_1.md'
+      - 'experiments/072a_act_unwise_angular_support_leakage_execution_binding_v0_1.md'
+      - 'src/dsir/act_unwise_projection.py'
+
+jobs:
+  angular-support-leakage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install numerical and CAMB build dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran git python3-dev
+          python3 -m pip install --user numpy scipy cython setuptools wheel packaging pyyaml healpy
+
+      - name: Fetch and install pinned CAMB
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          git clone https://github.com/cmbant/CAMB.git external/CAMB
+          git -C external/CAMB checkout fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          test "$(git -C external/CAMB rev-parse HEAD)" = 'fa3f097343fbbe427cc04b4f5f0041c22c6ec764'
+          python3 -m pip install --user ./external/CAMB
+
+      - name: Fetch pinned ACT x unWISE upstream source
+        run: |
+          set -euxo pipefail
+          git clone --no-checkout https://github.com/ACTCollaboration/unWISExLens_lklh.git external/unWISExLens_lklh
+          git -C external/unWISExLens_lklh checkout 6302c30d9e70f8e4ff2d4a84a9977b4471705179
+          test "$(git -C external/unWISExLens_lklh rev-parse HEAD)" = '6302c30d9e70f8e4ff2d4a84a9977b4471705179'
+
+      - name: Restore immutable official data archive cache
+        id: archive-cache
+        uses: actions/cache@v4
+        with:
+          path: external/data_unWISExLens.tar.gz
+          key: act-unwise-data-1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570
+
+      - name: Fetch official ACT x unWISE archive on cache miss
+        if: steps.archive-cache.outputs.cache-hit != 'true'
+        run: |
+          set -euxo pipefail
+          mkdir -p external
+          if ! curl --fail --location --retry 3 --retry-delay 3 \
+            'https://lambda.gsfc.nasa.gov/data/suborbital/ACT/act_x_unWISE/data_unWISExLens.tar.gz' \
+            -o external/data_unWISExLens.tar.gz; then
+            rm -f external/data_unWISExLens.tar.gz
+            curl --fail --location --retry 4 --retry-delay 3 \
+              'https://portal.nersc.gov/project/act/act_x_unWISE_xcorr+3x2pt/data_unWISExLens.tar.gz' \
+              -o external/data_unWISExLens.tar.gz
+          fi
+
+      - name: Verify and extract immutable official data archive
+        run: |
+          set -euxo pipefail
+          echo '1b2d1563c5eb548ca6488ed8d60c5260d9e110b743a2e3a84620cfe46fbb6570  external/data_unWISExLens.tar.gz' | sha256sum -c -
+          mkdir -p external/unwise_data
+          tar -xzf external/data_unWISExLens.tar.gz -C external/unwise_data
+
+      - name: Execute frozen Exp072A support leakage evaluation
+        run: |
+          set -euxo pipefail
+          python3 ci/act_unwise_angular_support_leakage_mask_v0_1.py \
+            --upstream-repo external/unWISExLens_lklh \
+            --camb-repo external/CAMB \
+            --extracted-root external/unwise_data \
+            --archive external/data_unWISExLens.tar.gz \
+            --output data/derived/g7/exp072a_act_unwise_angular_support_leakage_mask_v0_1.json
+
+      - name: Assert frozen Exp072A semantics without converting scientific FAIL
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp072a_act_unwise_angular_support_leakage_mask_v0_1.json'
+          d=json.load(open(p))
+          assert d['status'] in {
+              'PASS_ACT_UNWISE_ANGULAR_SUPPORT_LEAKAGE_MASK_V0_1',
+              'FAIL_ACT_UNWISE_ANGULAR_SUPPORT_LEAKAGE_MASK_V0_1',
+          }
+          assert d['frozen_threshold_invalid_support_fraction'] == 0.05
+          assert d['Exp071A_support_binding']['run'] == 33027562195
+          assert d['Exp071A_support_binding']['artifact'] == 9629064009
+          assert d['Exp071A_support_binding']['artifact_digest'] == 'sha256:4955a3a917992ad38423d9fe2dda3682822c7b86614950467faf5a46a7426675'
+          assert d['Exp071A_support_binding']['retained_cells'] == 495
+          assert d['geometry']['N_integration'] == 96
+          assert d['geometry']['ell_first'] == 0
+          assert d['geometry']['ell_last'] == 6143
+          assert d['geometry']['ell_count'] == 6144
+          assert d['geometry']['pixel_window_nside'] == 2048
+          assert d['counts']['candidate_dimension'] == 26
+          assert d['controls']['covariance_read'] is False
+          assert d['controls']['nuisance_SVD_or_rank_read'] is False
+          assert d['controls']['G7_relation_or_null_read'] is False
+          assert d['controls']['G8_response_read'] is False
+          assert d['gate_state'] == {'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP072A_RESULT', d['status'])
+          print('NOMINAL_RETAINED', d['counts']['nominal_retained_dimension'])
+          print('TIGHTENED_RETAINED', d['counts']['tightened_retained_dimension'])
+          print('CRITERIA', d['criteria'])
+          for c in d['coordinates']:
+              print(c['index'], c['sample'], c['channel'], c['ell_midpoint'], c['leakage_V0'], c['retain_M0'], c['leakage_V1'], c['retain_M1'])
+          PY
+
+      - name: Upload immutable Exp072A record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp072a-act-unwise-angular-support-leakage-${{ github.sha }}
+          path: data/derived/g7/exp072a_act_unwise_angular_support_leakage_mask_v0_1.json
+          if-no-files-found: warn
