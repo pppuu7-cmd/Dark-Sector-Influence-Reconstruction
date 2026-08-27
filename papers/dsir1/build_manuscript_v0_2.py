@@ -87,6 +87,11 @@ def read(path: Path) -> str:
     return path.read_text(encoding="utf-8").strip()
 
 
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise RuntimeError(message)
+
+
 def require_once(text: str, marker: str) -> None:
     n = text.count(marker)
     if n != 1:
@@ -202,6 +207,12 @@ def main() -> None:
         "72.29",
         "Figure 7 summarizes",
         "## 8.1 Closest neighboring approaches",
+        "Bashinsky2007DarkKinetics",
+        "SaponeKunz2009Fingerprinting",
+        "SaponeKunzAmendola2010Fingerprinting",
+        "SaponeMajerotto2012Fingerprinting",
+        "ReboucasEtAl2026Sound",
+        "does **not** claim invention of dark-sector fingerprinting",
         "HojjatiEtAl2012",
         "PetriMarraVonMarttens2026",
         "KoppSkordisThomas2016",
