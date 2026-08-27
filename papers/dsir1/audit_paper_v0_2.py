@@ -148,15 +148,25 @@ def check_mechanism_diversity() -> None:
     require("PASS" in str(wdm_cut.get("status", "")), "Exp050B status is not PASS")
     require("PASS" in str(dcdm.get("status", "")), "Exp053A status is not PASS")
 
-    # Use textual serialization because the exact nested schema is frozen by the experiment,
-    # while the paper only depends on these reported numerical facts.
+    # The WDM product predates a compact stable table schema, so these paper
+    # values are verified against the immutable serialization.
     wdm_text = json.dumps(wdm_cut)
     for value in ["8.386", "12.192", "14.230", "16.473"]:
         require(value in wdm_text, f"WDM cutoff evidence {value} missing")
 
-    dcdm_text = json.dumps(dcdm)
-    for value in ["0.630457", "0.634383", "0.641961", "0.656240"]:
-        require(value in dcdm_text, f"DCDM temporal-centroid evidence {value} missing")
+    # DCDM has an explicit frozen numeric sequence: verify it numerically rather
+    # than by rounded string matching, and re-evaluate the preregistered motion
+    # condition (>1e-3 for every consecutive Gamma/H0 step).
+    expected_zr = [
+        0.6304573019112576,
+        0.6343829813154673,
+        0.6419613202245631,
+        0.6562403431099975,
+    ]
+    zr = dcdm["z_R_sequence"]
+    require(len(zr) == len(expected_zr), "Unexpected DCDM z_R sequence length")
+    require(all(close(x, y) for x, y in zip(zr, expected_zr)), "DCDM z_R sequence changed")
+    require(all((float(b) - float(a)) > 1e-3 for a, b in zip(zr[:-1], zr[1:])), "DCDM preregistered centroid-motion gate no longer passes")
 
 
 def check_failures_preserved() -> None:
