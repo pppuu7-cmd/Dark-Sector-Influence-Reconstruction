@@ -1,0 +1,42 @@
+name: Exp073R1 one-shot launcher after R0 PASS v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073r1-launch-after-r0-pass-v0-1.yml'
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  authorize-and-dispatch:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      R0_RUN_ID: '33103083736'
+      R1_WORKFLOW: 'exp073r1-desy1-full-onepass-weak-lensing-mask-v0-1.yml'
+    steps:
+      - name: Verify immutable R0 execution state
+        run: |
+          set -euxo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${R0_RUN_ID}" > /tmp/r0.json
+          python3 - <<'PY'
+          import json, os
+          d=json.load(open('/tmp/r0.json'))
+          assert str(d['id']) == os.environ['R0_RUN_ID']
+          assert d['status'] == 'completed'
+          assert d['conclusion'] == 'success'
+          assert d['head_sha'] == '94b05d307295d5e9263646983ece9514f9fa2e88'
+          assert d['path'] == '.github/workflows/exp073r0-desy1-raw-row-healpix-equivalence-v0-1.yml'
+          PY
+
+      - name: Dispatch already-frozen Exp073R1 with exact parent run
+        run: |
+          set -euxo pipefail
+          gh workflow run "${R1_WORKFLOW}" --repo "${GITHUB_REPOSITORY}" --ref main -f r0_run_id="${R0_RUN_ID}"
+
+      - name: Record launcher boundary
+        run: |
+          echo 'Launcher performs no support scoring, covariance access, nuisance/SVD, relation/null, or G8 computation.'
