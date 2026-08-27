@@ -26,19 +26,42 @@ Working title:
 
 Publication rule: list the author as an independent researcher; do not display an institutional affiliation unless the author explicitly changes this instruction.
 
+## Reproducible v0.2 baseline
+
+The first complete end-to-end paper build has passed.
+
+- baseline source commit: `3ec77ea804db6198e072a5da5461b4db59e558ac`
+- workflow: `DSIR-I paper build v0.2`
+- workflow run: `33032395387`
+- job: `98387650580`
+- result: `SUCCESS`
+- build artifact id: `9630730946`
+- artifact digest: `sha256:7c98b5933346e2b3ee1feaab6f7f9651c7b03a1fb03413ceb4631a09b1fe42c7`
+
+The deterministic manuscript audit, Figures 1–6, output checksum generation, and artifact upload all passed. The build package contains the generated v0.2 manuscript, metadata/claims/provenance files, figure captions, all six figures in PDF/PNG/SVG, per-figure provenance JSON, SHA256 output manifest, and build-environment record.
+
+Canonical baseline record: `papers/dsir1/BUILD_BASELINE_V0_2.md`.
+
+This is a reproducibility baseline, not closure of G7/G8/G9.
+
 ## Authoritative paper files
 
 - `papers/dsir1/manuscript.md` — base manuscript draft v0.1.
 - `papers/dsir1/build_manuscript_v0_2.py` — deterministic v0.2 assembler; injects current author metadata and new sections without overwriting v0.1.
+- `papers/dsir1/audit_paper_v0_2.py` — deterministic scientific/build audit.
+- `papers/dsir1/BUILD_BASELINE_V0_2.md` — first complete successful v0.2 build record.
 - `papers/dsir1/AUTHOR_METADATA.yml` — canonical author metadata for publication preparation.
 - `papers/dsir1/CLAIMS_LEDGER.md` — hard boundary between supported claims and prohibited overclaims.
 - `papers/dsir1/PROVENANCE_MATRIX.md` — manuscript claim -> experiment -> run -> artifact -> digest -> frozen criterion traceability.
-- `papers/dsir1/FIGURE_MANIFEST.md` — publication figure sources and caption boundaries.
+- `papers/dsir1/FIGURE_MANIFEST.md` — publication figure sources, build status, and caption boundaries.
+- `papers/dsir1/FIGURE_CAPTIONS.md` — publication-ready captions for Figures 1–6.
+- `papers/dsir1/figures/fig01_operator_architecture.py` through `fig06_failure_resistant_science.py` — reproducible main-figure builders.
 - `papers/dsir1/references.bib` — initial bibliography.
 - `papers/dsir1/README.md` — figure/table roadmap and reproducibility tasks.
 - `papers/dsir1/LITERATURE_POSITIONING.md` — prior-art comparison and journal/publication assessment.
 - `papers/dsir1/sections/prospective_falsification.md` — prospective universalization failure text for v0.2.
 - `papers/dsir1/sections/data_code_reproducibility.md` — reproducibility section for v0.2.
+- `.github/workflows/paper-dsir1-build-v0-2.yml` — fail-closed paper build, audit, Figures 1–6, checksums, and artifact upload.
 
 ## Central mathematical statement
 
@@ -119,20 +142,31 @@ The defensible novelty is the **combination** of cross-mechanism atlas + channel
 
 ## Publication assessment checkpoint
 
-Current state: **promising but not submission-ready**.
+Current state: **scientifically mature draft with reproducible v0.2 build, but not yet submission-final**.
 
 Natural targets: JCAP, Physical Review D, MNRAS.
 
+Completed before submission preparation:
+
+1. claim -> experiment -> run -> artifact -> digest provenance matrix;
+2. deterministic v0.2 manuscript assembly and audit;
+3. all six principal figures generated from frozen evidence with per-figure provenance JSON;
+4. publication-ready captions for Figures 1–6;
+5. prospective F27 falsification included rather than hidden;
+6. explicit Data/Code/Reproducibility section;
+7. author metadata and no-institution rule embedded in build/audit;
+8. first complete reproducible GitHub Actions build artifact.
+
 Highest-value remaining tasks before submission:
 
-1. publication-quality figures generated from immutable artifacts;
-2. observation-space closure for at least one flagship degeneracy-breaking example if feasible;
-3. expanded prior-art comparison in Introduction/Discussion;
-4. adversarial robustness tests under alternative norms/domains/solver settings where justified;
-5. final notation audit and journal/arXiv LaTeX conversion.
-
-Already completed in the paper branch: claim -> experiment -> run -> artifact -> digest provenance matrix, figure manifest, prospective-falsification section, reproducibility section, and the first reproducible Figure 3 plotting script.
+1. insert/cross-reference Figures 1–6 at the final manuscript locations and freeze numbering;
+2. expand/verify literature metadata and sharpen Introduction/Discussion comparison with nearest prior work;
+3. add one concise known-sector specificity control if it improves the argument without turning DSIR-I into the later operator paper;
+4. observation-space closure for at least one flagship degeneracy-breaking example if feasible without scope creep;
+5. final notation/units/gauge/solver-version audit and numerical-method appendix;
+6. convert the stable manuscript to journal/arXiv LaTeX and compile a submission PDF;
+7. final adversarial referee-style audit of Abstract, Results, Discussion, Conclusions, captions, and bibliography.
 
 ## Resume instruction
 
-On recovery, first read this checkpoint, then `papers/dsir1/AUTHOR_METADATA.yml`, `papers/dsir1/CLAIMS_LEDGER.md`, `papers/dsir1/PROVENANCE_MATRIX.md`, `papers/dsir1/manuscript.md`, `papers/dsir1/build_manuscript_v0_2.py`, and `papers/dsir1/LITERATURE_POSITIONING.md`. Do not reconstruct the paper from chat memory if these files are available.
+On recovery, first read this checkpoint, then `papers/dsir1/BUILD_BASELINE_V0_2.md`, `papers/dsir1/AUTHOR_METADATA.yml`, `papers/dsir1/CLAIMS_LEDGER.md`, `papers/dsir1/PROVENANCE_MATRIX.md`, `papers/dsir1/FIGURE_MANIFEST.md`, `papers/dsir1/FIGURE_CAPTIONS.md`, `papers/dsir1/manuscript.md`, `papers/dsir1/build_manuscript_v0_2.py`, and `papers/dsir1/LITERATURE_POSITIONING.md`. Do not reconstruct the paper from chat memory if these files are available.
