@@ -1,16 +1,19 @@
 # DSIR-I JCAP submission checklist
 
 **Checked against current JCAP author guidance on 2026-08-27.**  
-This checklist is operational and should be rechecked immediately before submission because journal requirements can change.
+This checklist is operational and must be rechecked immediately before submission because journal requirements can change.
 
 ## A. Manuscript format
 
 - [ ] Convert stable manuscript to TeX/LaTeX.
-- [ ] Prefer the current JCAP template / `jcappub` class.
+- [ ] Use `\documentclass[11pt,a4paper]{article}` with `\usepackage{jcappub}` for the JCAP-style source.
+- [ ] If PDF/PNG/JPG figures are used, place `\pdfoutput=1` immediately after the `\documentclass` line.
 - [ ] Ensure the complete archive compiles without network access or hidden local dependencies.
 - [ ] Include the `.bbl` file if BibTeX is used; include `.bib` as additional reproducibility aid.
 - [ ] Include all Figures 1--7 in accepted publication formats, preferably PDF for vector figures and PNG only where appropriate.
 - [ ] Keep the master `.tex` file at the archive root and record its exact filename for submission.
+- [ ] Ensure filenames contain no spaces and preserve exact case.
+- [ ] Keep the upload archive below the current JCAP 10 MB submission limit; supplementary material may be uploaded separately.
 - [ ] Keep the article comfortably below the journal's normal ~50-page ceiling after supplement decisions.
 
 ## B. Front matter
@@ -19,8 +22,10 @@ This checklist is operational and should be rechecked immediately before submiss
 - [x] Affiliation draft: Independent Researcher, Moscow, Russia.
 - [x] Corresponding email recorded.
 - [x] ORCID recorded in manuscript workspace/submission metadata.
-- [x] JCAP-ready abstract candidate prepared without formulae or references.
-- [ ] Verify the abstract fits on the first page in the actual JCAP class.
+- [x] Canonical JCAP-ready abstract prepared without formulae or references in `JCAP_FRONT_MATTER_DRAFT.md`.
+- [x] Abstract scope trimmed so the detailed Exp073M--R1 chronology remains outside the headline first-paper narrative.
+- [x] Sentence-level Abstract/Conclusions evidence map prepared in `ABSTRACT_CONCLUSIONS_CLAIM_AUDIT.md`.
+- [ ] Verify the abstract fits on the first page in the actual JCAP style.
 - [ ] Freeze 2--4 official JCAP keywords after final scope review.
 - [ ] Insert arXiv identifier.
 - [ ] Confirm the JCAP submission and arXiv versions are identical at submission time.
@@ -34,20 +39,22 @@ Official JCAP keyword candidates:
 3. `Cosmological perturbation theory in GR and beyond`
 4. `power spectrum`
 
-Before submission, check whether replacing `power spectrum` by `dark matter theory` better reflects the final balance of the manuscript. Keyword selection affects editor assignment and cannot be changed after submission.
+Before submission, decide whether replacing `power spectrum` by the equally official `dark matter theory` better reflects the final balance of DSIR-I. Keyword selection affects editor assignment and cannot be changed after submission.
 
 ## D. Abstract claim gate
 
 Every quantitative abstract statement must remain traceable to frozen evidence:
 
+- [x] additive scale-plus-time representation described as insufficient only on the frozen tested atlas;
 - [x] non-overlapping finite-amplitude `chi_I` hierarchy;
 - [x] 12/12 deterministic single-node deletion preservation;
 - [x] GDM pressure/viscosity matter angle `0.3226 deg`;
 - [x] metric-slip separation `137.94 deg`;
+- [x] finite-amplitude trajectory/dimension distinction;
 - [x] prospective withheld common-scalar-law falsification;
 - [x] observational quotient stated as conditional, not completed;
-- [x] ACTxunWISE/KiDS negative eligibility results described as prerequisite failures, not survey null detections;
-- [x] DES Y1 route described only as provenance/reproduction progress before physical-support scoring.
+- [x] support and normalizability failures described as eligibility failures, not survey detections;
+- [x] detailed DES replacement/reproduction chronology removed from the JCAP abstract and left to Results/Supplement.
 
 Forbidden in final abstract unless later frozen evidence changes the state:
 
@@ -61,22 +68,23 @@ Forbidden in final abstract unless later frozen evidence changes the state:
 
 Current JCAP guidance requires disclosure of AI-assisted technology used during manuscript preparation.
 
-- [x] Disclosure candidate written in `JCAP_FRONT_MATTER_DRAFT.md`.
-- [ ] Place the final disclosure in Methods/Data-and-code or Acknowledgments.
-- [ ] Check wording against the final actual use before submission.
+- [x] Canonical disclosure written in `ACKNOWLEDGMENTS_AND_DISCLOSURES.md`.
+- [x] JCAP candidate builder sources the disclosure from that canonical file rather than duplicating it in front matter.
+- [ ] Confirm the final compiled JCAP manuscript contains the disclosure in Methods/Data-and-code or Acknowledgments.
+- [ ] Recheck wording against the final actual use before submission.
 - [ ] Do not cite AI output as scientific evidence.
 
 ## F. Data/software/code availability
 
-JCAP encourages/requests a Data/Software/Code Availability Statement.
+JCAP requests a Data/Software/Code Availability Statement to improve discoverability.
 
-- [x] Draft statement prepared.
+- [x] Draft statement prepared in `JCAP_FRONT_MATTER_DRAFT.md`.
 - [x] Public GitHub repository contains source, provenance ledgers and CI.
 - [x] Central quantitative claims have run/artifact/commit bindings.
 - [ ] Create immutable submission tag.
 - [ ] Archive the exact tagged repository snapshot in Zenodo or another persistent repository.
-- [ ] Insert resulting DOI in the availability statement and bibliography/repository citation where appropriate.
-- [ ] Verify that large external survey inputs are cited through their official releases rather than redistributed improperly.
+- [ ] Insert resulting DOI in the availability statement and repository citation where appropriate.
+- [ ] Verify that large external survey inputs are cited through official releases rather than redistributed improperly.
 
 ## G. Scientific scope and structure
 
@@ -100,7 +108,7 @@ Detailed Exp073M--R1 chronology belongs in supplement/provenance tables unless a
 - [x] Referee adversarial audit exists.
 - [ ] Decide final placement of Tables 1--7 between main text and supplement.
 - [ ] Remove redundant prose after tables are inserted.
-- [ ] Perform page-count and first-page front-matter test in JCAP class.
+- [ ] Perform page-count and first-page front-matter test in JCAP style.
 
 ## H. References and literature
 
@@ -113,13 +121,13 @@ Detailed Exp073M--R1 chronology belongs in supplement/provenance tables unless a
 
 ## I. Reproducibility freeze before arXiv
 
-- [ ] Stop scientific content changes at a named release candidate commit.
+- [ ] Stop scientific content changes at a named release-candidate commit.
 - [ ] Run the complete fail-closed paper CI on that exact commit.
 - [ ] Record workflow run, job, build artifact and SHA256 digest.
 - [ ] Confirm Figures 1--7 hashes.
-- [ ] Confirm manuscript hash.
+- [ ] Confirm manuscript and JCAP-candidate hashes.
 - [ ] Confirm claim ledgers and evidence JSON hashes.
-- [ ] Create git tag, e.g. `dsir1-arxiv-v1` only after all previous checks pass.
+- [ ] Create git tag such as `dsir1-arxiv-v1` only after all previous checks pass.
 - [ ] Archive the tagged release and record DOI.
 
 ## J. Gate state at current snapshot
@@ -144,16 +152,18 @@ If R1 ends in timeout/transport failure, apply only the already-recorded transpo
 
 - [ ] Register/log in as the submitting/corresponding author.
 - [ ] Upload/select the exact arXiv version required by JCAP.
-- [ ] Choose 2--4 final keywords carefully; they affect editor assignment.
+- [ ] Choose 2--4 final keywords carefully; they affect editor assignment and cannot be changed after submission.
 - [ ] Verify title, author metadata and abstract against arXiv metadata.
-- [ ] Do not include an unnecessary cover letter inside the manuscript archive.
+- [ ] Ensure the master `.tex` file is in the root of the upload archive.
+- [ ] If multiple `.tex` files exist, specify the master filename explicitly in the submission form.
+- [ ] Do not include the manuscript PDF in the source archive unless separately requested; include source/figures/bibliography/style dependencies only.
 - [ ] Preserve a local/exported copy of the exact submitted archive and its SHA256 digest.
 
 ## Final go/no-go
 
 Submit only when all of the following are simultaneously true:
 
-- JCAP-class compilation succeeds from a clean archive;
+- JCAP-style compilation succeeds from a clean archive;
 - abstract/front matter fit the first page and contain no formulae/references;
 - all headline claims pass the final adversarial provenance audit;
 - references and software/data citations are verified;
