@@ -40,12 +40,10 @@ All four adjacent slopes had the opposite sign to the calibration,
 {\cal C}=\{-1.3856,-0.6685,-0.2191,-0.07157\},
 \]
 
-and therefore failed the frozen interval. The scientific classification is
-
-`FAIL_IDM_DR_COMMON_SOURCE_RESPONSE_SLOPE_V0_1`.
+and therefore failed the frozen interval. This is a **prospective scientific FAIL** of the proposed common source-response-slope law.
 
 This failure is not repaired by widening the interval, reversing the expected sign, or redefining the withheld response coordinate. Post-gate diagnostics show why the candidate operator failed: as the IDM--DR coupling increases, the raw \(R^2\) localization becomes dominated by the upper boundary of the finite \(k\)-window, while the same C7 responses are almost perfectly scale-time separable on the frozen domain. A full-response power centroid that tracks a transition for nonseparable C3/C5 responses therefore need not track the source-native scale for an almost scale-only mechanism.
 
 The result constrains, rather than undermines, the main DSIR-I conclusion. Observable influence geometry is mechanism and operator dependent, and a single scalar coordinate should not be universalized without a fresh prospective test. The broader use of response localization as a descriptive organizing language remains viable, but this specific C3/C5/C7 common law is falsified and G7/G8 remain open.
 
-**Provenance:** Exp054C/F27, run `32920776596`, artifact `9589768992`, SHA256 `fa61a7ae5d53550fd9bf057a4354f8f343e74c18f93a4ce23d5ed964f6dc4c2a`.
+Exact workflow, artifact and SHA256 provenance for this failed law is retained in the canonical Paper-I provenance matrix (row P12) and supplementary records rather than printed as an unbreakable machine string in the journal narrative.
