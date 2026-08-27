@@ -24,6 +24,8 @@ PROVENANCE = HERE / "PROVENANCE_MATRIX.md"
 MANUSCRIPT_BASE = HERE / "manuscript.md"
 MANUSCRIPT_V02 = HERE / "manuscript_v0_2.md"
 BUILD = HERE / "build_manuscript_v0_2.py"
+SUPPORT_SNAPSHOT = HERE / "evidence" / "observation_space_support_chain_v0_1.json"
+SUPPORT_SECTION = HERE / "sections" / "observation_space_support_closure.md"
 
 EXP045A = REPO / "data/derived/comparison_readiness/experiment_045a_core_G_T_tau_additive_projection_v0_1.json"
 EXP046 = REPO / "data/derived/comparison_readiness/experiment_046_scale_time_interaction_morphology_v0_1.json"
@@ -68,6 +70,8 @@ def check_required_files() -> None:
         PROVENANCE,
         MANUSCRIPT_BASE,
         BUILD,
+        SUPPORT_SNAPSHOT,
+        SUPPORT_SECTION,
         EXP045A,
         EXP046,
         EXP047A,
@@ -101,6 +105,9 @@ def check_claim_boundary() -> None:
         "No claim that G7, G8, or G9 is closed.",
         "No claim of a universal dark-sector no-hair theorem.",
         "No zero-imputation of undefined/masked theory-channel cells.",
+        "No covariance-whitened or nuisance-quotiented C3/C5 ACTxunWISE survey distance",
+        "No interpretation of the Exp072C Pareto frontier as an already certified C3/C5 physical provider domain.",
+        "No scientific interpretation of the first Exp073B workflow failure",
     ]:
         require_contains(claims, token, "CLAIMS_LEDGER.md")
 
@@ -148,15 +155,10 @@ def check_mechanism_diversity() -> None:
     require("PASS" in str(wdm_cut.get("status", "")), "Exp050B status is not PASS")
     require("PASS" in str(dcdm.get("status", "")), "Exp053A status is not PASS")
 
-    # The WDM product predates a compact stable table schema, so these paper
-    # values are verified against the immutable serialization.
     wdm_text = json.dumps(wdm_cut)
     for value in ["8.386", "12.192", "14.230", "16.473"]:
         require(value in wdm_text, f"WDM cutoff evidence {value} missing")
 
-    # DCDM has an explicit frozen numeric sequence: verify it numerically rather
-    # than by rounded string matching, and re-evaluate the preregistered motion
-    # condition (>1e-3 for every consecutive Gamma/H0 step).
     expected_zr = [
         0.6304573019112576,
         0.6343829813154673,
@@ -196,7 +198,7 @@ def check_formal_operator() -> None:
 
 def check_provenance_matrix() -> None:
     text = read(PROVENANCE)
-    for pid in [f"P{i}" for i in range(1, 15)]:
+    for pid in [f"P{i}" for i in range(1, 20)]:
         require_contains(text, f"| {pid} |", "PROVENANCE_MATRIX.md")
     for run in [
         "32883280742",
@@ -214,8 +216,25 @@ def check_provenance_matrix() -> None:
         "33012245685",
         "33023027901",
         "33024638764",
+        "33024722072",
+        "33029362485",
+        "33030657898",
+        "33031427090",
+        "33032781761",
     ]:
         require_contains(text, run, "PROVENANCE_MATRIX.md")
+
+
+def check_support_snapshot_boundary() -> None:
+    d = load(SUPPORT_SNAPSHOT)
+    e = d["experiments"]
+    require(e["Exp072A"]["nominal_retained_dimension"] == 0, "Exp072A support closure changed")
+    require(e["Exp072C"]["retained_dimension"] == 15, "Exp072C planning frontier dimension changed")
+    require(e["Exp072C"]["frontier_is_planning_geometry_only"], "Exp072C planning-only boundary removed")
+    require(e["Exp073A"]["pair_count_primary_pass"] == 7, "Exp073A primary eligibility changed")
+    require(not e["Exp073A"]["linear_no_CLEFT_route_eligible"], "Exp073A linear route was improperly promoted")
+    require(not d["Exp073B"]["included_in_science_claims"], "Exp073B infrastructure failure was promoted to science")
+    require(all(d["boundary"][g] == "OPEN" for g in ("G7", "G8", "G9")), "G7/G8/G9 support-chain boundary changed")
 
 
 def build_and_check_manuscript() -> None:
@@ -231,6 +250,9 @@ def build_and_check_manuscript() -> None:
         "# 12. Outlook",
         "# 13. Conclusions",
         "FAIL_IDM_DR_COMMON_SOURCE_RESPONSE_SLOPE_V0_1",
+        "## 7.1 Observation-space support closure and perturbativity",
+        "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
+        "Figure 7 summarizes",
         "A_B=Q_BW_BK_B",
     ]:
         require_contains(text, token, "manuscript_v0_2.md")
@@ -238,9 +260,9 @@ def build_and_check_manuscript() -> None:
     require("P.N. Lebedev" not in text, "Lebedev affiliation must not appear in v0.2 manuscript")
     require("Lebedev Physical Institute" not in text, "Lebedev affiliation must not appear in v0.2 manuscript")
 
-    # Scope guards: the manuscript must explicitly deny overclaiming.
     require_contains(text, "does **not** claim a universal dark-sector law", "manuscript_v0_2.md")
     require_contains(text, "no claim of new fundamental physics", "manuscript_v0_2.md")
+    require_contains(text, "Consequently DSIR does **not** compute or quote", "manuscript_v0_2.md")
 
 
 def main() -> None:
@@ -253,7 +275,8 @@ def main() -> None:
         ("mechanism diversity", check_mechanism_diversity),
         ("failure preservation", check_failures_preserved),
         ("formal quotient operator", check_formal_operator),
-        ("provenance matrix", check_provenance_matrix),
+        ("provenance matrix P1-P19", check_provenance_matrix),
+        ("support-chain scope boundary", check_support_snapshot_boundary),
         ("v0.2 manuscript build", build_and_check_manuscript),
     ]
 
