@@ -1,0 +1,88 @@
+{
+  "experiment": "Exp069H",
+  "date": "2026-08-27",
+  "status": "COMPLETE_C5_Q3_UNMODIFIED_UPSTREAM_PROVIDER_CERTIFICATION_V0_1",
+  "scientific_classification": "PASS_C5_Q3_UNMODIFIED_UPSTREAM_PHYSICAL_PROVIDER_V0_1",
+  "implementation_merge": "26162b0f2472dc1862eeb60b564a3563eaae12f9",
+  "workflow_run_id": 33024638764,
+  "artifact_id": 9628053962,
+  "artifact_sha256": "fa61b504d31edeba2afcbed0f4b14bda688df82a96d2cba55eac034682b5382f",
+  "solver": "EFTCAMB/EFTCAMB",
+  "solver_sha": "16d9c4e9f85751e30efd0a53b177941713078904",
+  "frozen": {
+    "q": 3.0,
+    "B0": [0.0, 1e-12, 1e-10, 1e-8, 1e-6],
+    "target_and_raw_closure_limit": 5e-6,
+    "production_signal_min": 1e-3,
+    "independent_zero_repeatability_max": 1e-12,
+    "target_k_Mpc^-1": [0.003, 0.01, 0.03, 0.1, 0.2],
+    "z": [0.0, 0.295, 0.51, 0.934, 1.491, 2.33, 3.0],
+    "blocks": ["mm", "Wm", "WW"]
+  },
+  "hard_checks": {
+    "C1_exact_zero_closure": {
+      "pass": true,
+      "M0_target": 1.7011186858522977e-6,
+      "R0_raw": 2.8421302380756537e-6
+    },
+    "C2_tiny_positive_continuity": {
+      "pass": true,
+      "B0_1e-12_target": 0.0,
+      "B0_1e-12_raw": 0.0,
+      "B0_1e-10_target": 0.0,
+      "B0_1e-10_raw": 0.0,
+      "B0_1e-8_target": 0.0,
+      "B0_1e-8_raw": 0.0
+    },
+    "C3_nontrivial_production_signal": {
+      "pass": true,
+      "S_prod_target": 0.013249122882007408,
+      "S_prod_raw_descriptive": 0.027566146352511606
+    },
+    "C4_signed_cross_and_accessor_semantics": {
+      "pass": true,
+      "Wm_target_sign_counts_all_cases": {
+        "negative": 35,
+        "zero": 0,
+        "positive": 0
+      }
+    },
+    "C5_repeatability_state_integrity": {
+      "pass": true,
+      "D_repeat_target": 0.0,
+      "D_repeat_raw": 0.0
+    },
+    "C6_no_retrospective_correction": {"pass": true},
+    "C7_literal_public_zero_provider": {"pass": true}
+  },
+  "controls": {
+    "all_case_processes_success": true,
+    "all_case_analysis_success": true,
+    "pinned_solver_before_and_after": true,
+    "all_nonlinear_none": true,
+    "all_accuracy_readback": true,
+    "all_designer_readback": true,
+    "all_accessor_repeatability": true,
+    "upstream_source_modified": false,
+    "floor_subtraction_or_renormalization": false
+  },
+  "post_run_provenance_note": {
+    "raw_k_field_name_in_exp069h_artifact": "raw_k_Mpc^-1",
+    "raw_accessor_call_omitted_explicit_k_hunit": true,
+    "pinned_upstream_default_k_hunit": true,
+    "field_name_is_unit_ambiguous_or_mislabeled": true,
+    "impact_on_target_grid_C1": "none: target interpolator explicitly used k_hunit=False",
+    "impact_on_raw_same_node_ratio": "none expected from unit relabeling alone because GR/designer raw grids are identical and residuals are same-node dimensionless ratios",
+    "support_mask_use": "blocked pending prospective Exp069I unit/provenance audit"
+  },
+  "historical_semantics": {
+    "Exp069B": "PERMANENT_FAIL_UNCHANGED",
+    "Exp069F": "GENERAL_ACCURACY_RECOVERS_FROZEN_GR_LIMIT",
+    "C5_provider_certified": true,
+    "support_mask_preregistration_authorized_by_Exp069H": true,
+    "support_mask_applied": false,
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
