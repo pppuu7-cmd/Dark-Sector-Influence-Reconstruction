@@ -1,0 +1,44 @@
+name: Exp073P2 remaining DES Y1 checksum binding v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073p2-remaining-desy1-checksums-v0-1.yml'
+      - 'ci/exp073p2_remaining_desy1_checksums_v0_1.py'
+      - 'experiments/073p2_remaining_desy1_release_checksum_binding_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  remaining-des-checksums:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stream and bind remaining frozen DES Y1 release objects
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p2_remaining_desy1_checksums_v0_1.py \
+            --output data/derived/g7/exp073p2_remaining_desy1_checksums_v0_1.json
+      - name: Assert provenance-only contract
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073p2_remaining_desy1_checksums_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_REMAINING_DESY1_RELEASE_CHECKSUM_BINDING_EXP073P2'
+          assert len(d['objects'])==4
+          assert all(x['status']=='PASS_FULL_OBJECT_SHA256_BINDING' for x in d['objects'])
+          assert d['science_gate_scored'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print(json.dumps(d, indent=2, sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073p2-remaining-des-checksums-${{ github.sha }}
+          path: data/derived/g7/exp073p2_remaining_desy1_checksums_v0_1.json
+          if-no-files-found: warn
