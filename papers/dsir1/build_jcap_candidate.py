@@ -69,7 +69,7 @@ def main() -> None:
     out = out.replace(OUTLOOK_START, disclosure + OUTLOOK_START, 1)
 
     for token in (
-        "has not yet been scored for physical support",
+        "Completed audits reject current routes at the support and normalizability stages",
         "not a universal dark-sector law",
         "claim of new fundamental physics",
         "AI-assisted technology disclosure",
@@ -78,9 +78,6 @@ def main() -> None:
     ):
         require(token in out, f"JCAP candidate lost required boundary: {token}")
 
-    # Gate boundary may be written compactly or in journal prose. Require all
-    # three gates to be explicitly open without depending on one punctuation
-    # style.
     gate_boundary_ok = (
         all(f"{g}=OPEN" in out for g in ("G7", "G8", "G9"))
         or "G7, G8, and G9 remain open" in out
