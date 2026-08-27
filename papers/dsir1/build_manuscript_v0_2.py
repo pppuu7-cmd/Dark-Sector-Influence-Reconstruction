@@ -19,6 +19,7 @@ BASE = HERE / "manuscript.md"
 MECHANISM_RESPONSE = HERE / "sections" / "mechanism_response_map.md"
 FALSIFICATION = HERE / "sections" / "prospective_falsification.md"
 SUPPORT_CLOSURE = HERE / "sections" / "observation_space_support_closure.md"
+SUPPORT_SUPPLEMENT = HERE / "supplement" / "observation_route_detailed.md"
 RELATED_WORK = HERE / "sections" / "related_work_positioning.md"
 KNOWN_SECTOR = HERE / "sections" / "known_sector_nonoverclaim.md"
 REPRO = HERE / "sections" / "data_code_reproducibility.md"
@@ -111,9 +112,22 @@ def main() -> None:
     mechanism_response = read(MECHANISM_RESPONSE)
     falsification = read(FALSIFICATION)
     support_closure = read(SUPPORT_CLOSURE)
+    support_supplement = read(SUPPORT_SUPPLEMENT)
     related_work = read(RELATED_WORK)
     known_sector = read(KNOWN_SECTOR)
     repro = read(REPRO)
+
+    # Machine classifications remain available in the supplement/provenance
+    # layer even though journal prose uses human-readable status language.
+    for token in (
+        "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
+        "GAP_EXISTING_STACK_NONLINEAR_MATTER_WEYL_ROUTE_EXP073B",
+        "C3_COMPLETION_ENSEMBLE_NOT_FEASIBLE_EXP073E",
+        "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
+        "PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0",
+        "science_gate_scored=false",
+    ):
+        require(token in support_supplement, f"Supplement lost canonical machine status: {token}")
 
     require_once(base, AUTHOR_PLACEHOLDER)
     base = base.replace(AUTHOR_PLACEHOLDER, AUTHOR_BLOCK, 1)
@@ -171,8 +185,6 @@ def main() -> None:
         )
     base = insert_before(base, PRIOR_ART_MARKER, support_closure)
 
-    # Keep current prior-art prose in the immutable base and add the closest
-    # modern neighboring approaches immediately before Interpretation.
     require(related_work.startswith("## 8.1 Closest neighboring approaches"), "related-work section heading changed")
     base = insert_before(base, INTERPRETATION_MARKER, related_work)
 
@@ -215,10 +227,10 @@ def main() -> None:
         "prospective WITHHELD FAIL",
         "K2 baryon-fraction control",
         "moving characteristic scale does **not** imply a large `chi_I`",
-        "FAIL_IDM_DR_COMMON_SOURCE_RESPONSE_SLOPE_V0_1",
+        "prospective scientific FAIL",
         "## 7.1 Observation-space support closure and perturbativity",
-        "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
-        "PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0",
+        "tested linear route is therefore physically ineligible",
+        "reproduction prerequisites only",
         "4.81826",
         "72.29",
         "Figure 7 summarizes",
@@ -251,6 +263,17 @@ def main() -> None:
     for item in checks:
         if item not in assembled:
             raise RuntimeError(f"Required v0.2 content missing: {item}")
+
+    # Journal narrative must remain readable; exact machine identifiers belong
+    # in provenance/supplement rather than unbreakable body text.
+    for forbidden in (
+        "INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A",
+        "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
+        "PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0",
+        "paper/dsir-i-observable-response-geometry",
+        "fa61a7ae5d53550fd9bf057a4354f8f343e74c18f93a4ce23d5ed964f6dc4c2a",
+    ):
+        require(forbidden not in assembled, f"Machine-only token leaked into journal narrative: {forbidden}")
 
     for figure_number in range(1, 8):
         token = f"Figure {figure_number}"
