@@ -1,0 +1,72 @@
+{
+  "experiment": "Exp073F",
+  "date": "2026-08-27",
+  "classification": "PERTURBATIVE_OBSERVATIONAL_ROUTE_CANDIDATE_FOUND_EXP073F",
+  "frozen_support": {
+    "z_min": 0.295,
+    "z_max": 2.33,
+    "k_min_Mpc^-1": 0.000704833374744468,
+    "k_max_Mpc^-1": 0.06664762008318016,
+    "max_positive_weight_invalid_fraction": 0.05
+  },
+  "primary_candidate": {
+    "name": "KiDS-1000 + BOSS 3x2pt with prospective BNT physical-scale localization",
+    "label": "PROMISING_FOR_EXACT_SUPPORT_AUDIT",
+    "tests": {
+      "F1_public_reproducibility": "PLAUSIBLE_PASS",
+      "F2_redshift_support": "PLAUSIBLE_PASS_REQUIRES_EXACT_AUDIT",
+      "F3_k_support": "PLAUSIBLE_PASS_REQUIRES_EXACT_AUDIT",
+      "F4_matter_weyl_complementarity": "PASS_STRUCTURAL",
+      "F5_independent_cross_semantics": "PASS_IN_PRINCIPLE",
+      "F6_linear_domain_consistency": "PLAUSIBLE_PASS_REQUIRES_EXACT_AUDIT",
+      "F7_minimum_information_architecture": "PLAUSIBLE_PASS_NO_COVARIANCE_READ",
+      "F8_no_downstream_selection": "PASS"
+    },
+    "channels": {
+      "P_mm": "BOSS galaxy clustering",
+      "P_Wm_signed": "galaxy-galaxy lensing",
+      "P_WW": "cosmic shear"
+    },
+    "support_localization": "BNT linear tomographic transform plus prospectively frozen physical k cuts",
+    "support_pass_claimed": false
+  },
+  "other_candidates": [
+    {
+      "name": "DESI DR1 spectroscopic clustering",
+      "label": "PARTIAL_MATTER_ONLY"
+    },
+    {
+      "name": "ACT DR6 CMB lensing",
+      "label": "PARTIAL_WEYL_ONLY"
+    },
+    {
+      "name": "DESI density + ACT DR6 CMB lensing auto/cross",
+      "label": "UNCLEAR",
+      "reason": "broad untomographic CMB-lensing line-of-sight support not yet shown to satisfy frozen z leakage"
+    }
+  ],
+  "evidence": [
+    "https://kids.strw.leidenuniv.nl/DR4/KiDS-1000_3x2pt_Cosmology.php",
+    "https://kids.strw.leidenuniv.nl/DR4/KiDS-1000_cosmicshear.php",
+    "https://journals.aps.org/prd/abstract/10.1103/PhysRevD.105.043537",
+    "https://journals.aps.org/prd/abstract/10.1103/PhysRevD.111.083530",
+    "https://journals.aps.org/prd/abstract/10.1103/y7c6-t42s",
+    "https://doi.org/10.48550/arXiv.2607.04384",
+    "https://data.desi.lbl.gov/doc/releases/dr1/",
+    "https://act.princeton.edu/act-dr6-data-products",
+    "https://lambda.gsfc.nasa.gov/product/act/actadv_prod_table.html"
+  ],
+  "controls": {
+    "covariance_values_read_or_used": false,
+    "nuisance_rank_read_or_used": false,
+    "G7_relation_residual_read_or_used": false,
+    "G8_or_heldout_performance_read_or_used": false,
+    "frozen_threshold_modified": false
+  },
+  "next_authorized_step": "prospectively preregister exact KiDS-1000+BOSS/BNT physical operator-support audit",
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
