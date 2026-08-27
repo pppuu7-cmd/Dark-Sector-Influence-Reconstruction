@@ -45,8 +45,6 @@ def main() -> None:
     )
 
     n = word_count(abstract)
-    # Internal editorial target, deliberately stricter than the generic journal
-    # requirement that the abstract be brief and fit on the first page.
     require(n <= 250, f"JCAP abstract exceeds internal 250-word target: {n}")
     require(n >= 150, f"JCAP abstract is unexpectedly short: {n}")
 
@@ -55,19 +53,21 @@ def main() -> None:
 
     for token in (
         "Dark-Sector Influence Reconstruction (DSIR)",
-        "all 12 single-node deletion tests",
+        "additive scale-plus-time representation is insufficient",
+        "all 12 deterministic single-node deletion tests",
         "0.3226 degrees",
         "137.94 degrees",
+        "Finite-amplitude response trajectories",
         "prospectively frozen withheld test",
-        "physical projection, covariance whitening, and nuisance quotient",
-        "exact real-data operator is reproducible",
-        "has not yet been scored for physical support",
+        "physical projection, covariance whitening, and nuisance quotienting",
+        "positive support measure must be finite",
+        "realized operator reproducible",
+        "theory domain physically justified",
+        "without promoting those failures to survey detections",
         "not a universal dark-sector law",
     ):
         require(token in abstract, f"required conservative abstract claim missing: {token}")
 
-    # Accept either grammatical form while preserving the same scientific
-    # boundary; do not make the audit depend on one exact English construction.
     require(
         "claim of new fundamental physics" in abstract
         and ("not" in abstract.split("claim of new fundamental physics", 1)[0][-80:] or "or a claim of new fundamental physics" in abstract),
@@ -81,8 +81,11 @@ def main() -> None:
         "survey detection significance",
         "physical-support PASS",
         "discovery of new fundamental physics",
+        "DES Y1 harmonic replacement passes",
+        "Exp073R0",
+        "Exp073R1",
     ):
-        require(forbidden not in abstract, f"forbidden overclaim in JCAP abstract: {forbidden}")
+        require(forbidden not in abstract, f"forbidden overclaim/scope leak in JCAP abstract: {forbidden}")
 
     official_keyword_candidates = (
         "dark energy theory",
@@ -118,7 +121,7 @@ def main() -> None:
 
     print(f"PASS: JCAP abstract editorial audit ({n} words)")
     print("PASS: no formulae/citations/figure-table references in abstract")
-    print("PASS: conservative science boundary retained")
+    print("PASS: DSIR-I scope and conservative science boundary retained")
     print("PASS: keyword, arXiv and availability fields present")
     print("PASS: canonical AI disclosure and headline-claim audit present")
 
