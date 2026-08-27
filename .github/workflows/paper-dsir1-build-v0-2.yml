@@ -124,6 +124,8 @@ jobs:
             papers/dsir1/manuscript_jcap_candidate.md
             papers/dsir1/JCAP_FRONT_MATTER_DRAFT.md
             papers/dsir1/JCAP_SUBMISSION_CHECKLIST.md
+            papers/dsir1/ACKNOWLEDGMENTS_AND_DISCLOSURES.md
+            papers/dsir1/ABSTRACT_CONCLUSIONS_CLAIM_AUDIT.md
             papers/dsir1/PROVENANCE_MATRIX.md
             papers/dsir1/SUPPORT_OPERATOR_PROVENANCE.md
             papers/dsir1/OBSERVATION_ROUTE_LEDGER.md
