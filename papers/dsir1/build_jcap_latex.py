@@ -29,16 +29,23 @@ FIGURES = {
     7: ("fig:support", "../figures/generated/fig07_observation_space_support_closure.pdf"),
 }
 
+# Main-manuscript tables are deliberately enumerated rather than accepted
+# generically. Adding/removing/reordering a table therefore requires an
+# explicit publication-layout change here and cannot silently alter numbering.
 TABLE_META = {
     1: (
         "tab:atlas",
         "Theory-family atlas and the representative response character used in DSIR-I.",
     ),
     2: (
+        "tab:mechanism-response",
+        "Evidence-graded mechanism-to-response map. Equation-level cues identify which response blocks are informative; the mapping is many-to-many and is not a unique inversion to microphysics.",
+    ),
+    3: (
         "tab:chiI",
         "Representative irreducible scale-time interaction fractions on the frozen low-wavenumber response atlas.",
     ),
-    3: (
+    4: (
         "tab:chiI-envelopes",
         "Finite-amplitude sampled interaction-fraction envelopes on the frozen response families.",
     ),
@@ -244,8 +251,10 @@ def convert_body(markdown: str) -> str:
 
         if line.startswith("|"):
             close_lists()
-            require(i + 1 < len(lines) and is_table_separator(lines[i + 1].rstrip()),
-                    f"table header lacks valid separator at source line {i + 1}")
+            require(
+                i + 1 < len(lines) and is_table_separator(lines[i + 1].rstrip()),
+                f"table header lacks valid separator at source line {i + 1}",
+            )
             header = parse_table_row(line)
             sep = parse_table_row(lines[i + 1].rstrip())
             require(len(sep) == len(header), "table separator width differs from header")
@@ -319,7 +328,7 @@ def convert_body(markdown: str) -> str:
     close_lists()
     require(not in_math, "unclosed display math block")
     require(inserted_figures == set(range(1, 8)), f"not all seven figures inserted: {sorted(inserted_figures)}")
-    require(table_count == 3, f"expected exactly three main-manuscript Markdown tables, found {table_count}")
+    require(table_count == 4, f"expected exactly four main-manuscript Markdown tables, found {table_count}")
     return "\n".join(out).strip()
 
 
@@ -385,6 +394,7 @@ def main() -> None:
         r"\label{fig:failure}",
         r"\label{fig:support}",
         r"\label{tab:atlas}",
+        r"\label{tab:mechanism-response}",
         r"\label{tab:chiI}",
         r"\label{tab:chiI-envelopes}",
     ):
