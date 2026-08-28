@@ -29,9 +29,9 @@ TANGENT_CHI_HEADER = "| Direction | \\(\\chi_I\\) |"
 MECHANISM_RESPONSE_HEADER = "| Family / control | Equation cue and block to inspect | Frozen response pattern / evidence boundary |"
 ENVELOPE_HEADER = "| Family | sampled \\(\\chi_I\\) range |"
 
-# Presentation-only replacements motivated by the compiled JCAP log. They are
-# exact-count guarded so a scientific-source change cannot be silently masked by
-# this release renderer.
+# Presentation-only replacements motivated by the compiled JCAP log and the
+# final referee-facing claim-boundary audit. They are exact-count guarded so a
+# scientific-source change cannot be silently masked by this release renderer.
 LAYOUT_POLISH = (
     (
         "## 6.2 Scale-only similarity between GDM and designer-\\(f(R)\\) is broken by time evolution",
@@ -56,6 +56,14 @@ LAYOUT_POLISH = (
     (
         "Publication figures are generated deterministically from repository products by manuscript-scoped plotting scripts. The figure manifest records exact input products, scientific selection rules, and caption boundaries. Plotting scripts may change presentation details, but they may not silently change the scientific domain, mask, normalization, response orientation, or frozen threshold. Final figure outputs are accompanied by checksums in the build artifact.",
         "Publication figures are generated deterministically from frozen repository products. Manuscript-scoped scripts record the exact inputs, scientific selection rules, and caption boundaries. They may change presentation details but not the scientific domain, mask, normalization, response orientation, or frozen threshold. Final figure outputs carry checksums in the build artifact.",
+    ),
+    (
+        "The hierarchy does not establish that the dark sector possesses a universal coordinate \\(I\\), nor that there are four fundamental influence ``hairs''. The values are conditional on response definition, scale/redshift domain, solver-certified providers, and masking. A future observation-space projection can change statistical distances even when the underlying theory-response morphology is unchanged.",
+        "The hierarchy does not establish that the dark sector possesses a universal coordinate \\(I\\), nor that there are four fundamental influence ``hairs''. The values are conditional on response definition, scale/redshift domain, solver-certified providers, masking, and the frozen norm/weighting used by the additive projection. The reported raw response angles and \\(\\chi_I\\) values are therefore not invariants under arbitrary reweighting of the sampled coordinates. A future observation-space projection can change statistical distances even when the underlying theory-response morphology is unchanged.",
+    ),
+    (
+        "First, much of the numerical atlas is a **theory-response** comparison. Although DSIR has already validated data-layer ingredients and observational operators in separate stages, the final common support mask, covariance restriction/whitening, nuisance tangent SVD, and quotient-space relation test are not yet complete for the full cross-family comparison. Theory-space angles must therefore not be read as survey detection significances.",
+        "First, much of the numerical atlas is a **theory-response** comparison. Although DSIR has already validated data-layer ingredients and observational operators in separate stages, the final common support mask, covariance restriction/whitening, nuisance tangent SVD, and quotient-space relation test are not yet complete for the full cross-family comparison. Theory-space angles must therefore not be read as survey detection significances. The exact kernel statements in Section 4 apply to the stated linear operator with a fixed covariance and retained nuisance tangent subspace; parameter-dependent covariances or genuinely nonlinear nuisance manifolds would require a local re-linearization or redefinition of \\(A_B\\).",
     ),
 )
 
@@ -186,6 +194,9 @@ def main() -> None:
         "No model-independent residual law has yet passed a fresh withheld-family test",
         "Publication figures are generated deterministically from frozen repository products",
         "Examples include viscous and Compton-like transitions",
+        "frozen norm/weighting used by the additive projection",
+        "not invariants under arbitrary reweighting of the sampled coordinates",
+        "parameter-dependent covariances or genuinely nonlinear nuisance manifolds",
         "## 6.2 Scale-only similarity between GDM and designer-f(R) is broken by time evolution",
         "## 6.5 Irreducible scale-time structure in GDM--f(R) separation",
     ):
