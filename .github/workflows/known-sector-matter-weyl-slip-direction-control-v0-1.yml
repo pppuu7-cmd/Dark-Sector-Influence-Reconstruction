@@ -1,0 +1,120 @@
+name: Exp071F known-sector matter-Weyl-slip direction control v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp071f_known_sector_matter_weyl_slip_direction.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  three-channel-direction-control:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EXP071C_RUN: '33020201997'
+      GDM_METRIC_RUN: '32774198185'
+      EXP071E_RUN: '33177588360'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install runtime
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --user numpy
+          python3 -m py_compile ci/known_sector_matter_weyl_slip_direction_control_v0_1.py
+
+      - name: Download immutable parent artifacts
+        run: |
+          set -euxo pipefail
+          mkdir -p inputs/exp071c inputs/gdm inputs/exp071e
+          EXP071C_ART="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${EXP071C_RUN}/artifacts" --jq '.artifacts[] | select(.name | startswith("exp071c-known-sector-f30-specificity-")) | .name')"
+          GDM_ART="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GDM_METRIC_RUN}/artifacts" --jq '.artifacts[] | select(.name | startswith("gdm-weyl-slip-")) | .name')"
+          EXP071E_ART="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${EXP071E_RUN}/artifacts" --jq '.artifacts[] | select(.name | startswith("exp071e-known-sector-joint-direction-")) | .name')"
+          test -n "${EXP071C_ART}" && test -n "${GDM_ART}" && test -n "${EXP071E_ART}"
+          gh run download "${EXP071C_RUN}" -n "${EXP071C_ART}" -D inputs/exp071c
+          gh run download "${GDM_METRIC_RUN}" -n "${GDM_ART}" -D inputs/gdm
+          gh run download "${EXP071E_RUN}" -n "${EXP071E_ART}" -D inputs/exp071e
+          EXP071E_JSON="$(find inputs/exp071e -name 'exp071e_known_sector_joint_metric_direction_control_v0_1.json' -print -quit)"
+          test -n "${EXP071E_JSON}"
+          export EXP071E_JSON
+          python3 - <<'PY'
+          import json, os
+          e=json.load(open(os.environ['EXP071E_JSON']))
+          assert e['status']=='COMPLETE_K2_JOINT_METRIC_DIRECTION_CONTROL_V0_1'
+          assert e['classification']=='K2_DIRECTION_OVERLAPS_AT_LEAST_ONE_GDM_AXIS_EXP071E'
+          assert e['primary_angles_deg']['K2_bar1_vs_GDM_cs2']==18.925666634781507
+          assert e['primary_angles_deg']['K2_bar1_vs_GDM_cv2']==58.912673573574864
+          PY
+          echo "EXP071E_JSON=${EXP071E_JSON}" >> "${GITHUB_ENV}"
+
+      - name: Execute frozen Exp071F control
+        run: |
+          set -euxo pipefail
+          python3 ci/known_sector_matter_weyl_slip_direction_control_v0_1.py \
+            --known-root inputs/exp071c \
+            --gdm-root inputs/gdm \
+            --exp071e "${EXP071E_JSON}" \
+            --json exp071f_known_sector_matter_weyl_slip_direction_control_v0_1.json
+
+      - name: Assert preregistered Exp071F semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json, math
+          d=json.load(open('exp071f_known_sector_matter_weyl_slip_direction_control_v0_1.json'))
+          assert d['experiment']=='Exp071F'
+          assert d['status']=='COMPLETE_K2_MATTER_WEYL_SLIP_DIRECTION_CONTROL_V0_1'
+          assert d['preregistered_threshold_deg']==45.0
+          assert d['primary_k2_point']=='bar1'
+          assert d['frozen_k_h_mpc']==[0.001,0.003,0.01,0.03,0.1]
+          assert d['frozen_z']==[0.295,0.51,0.706,0.934,1.317,1.491,2.33]
+          assert d['classification'] in {
+            'K2_3CHANNEL_DIRECTION_SEPARATED_FROM_BOTH_GDM_AXES_EXP071F',
+            'K2_3CHANNEL_DIRECTION_OVERLAPS_AT_LEAST_ONE_GDM_AXIS_EXP071F',
+          }
+          a=d['three_channel_primary_angles_deg']
+          expect=(a['K2_bar1_vs_GDM_cs2']>=45.0 and a['K2_bar1_vs_GDM_cv2']>=45.0)
+          assert d['primary_pass'] is expect
+          assert d['classification']==(
+            'K2_3CHANNEL_DIRECTION_SEPARATED_FROM_BOTH_GDM_AXES_EXP071F' if expect else
+            'K2_3CHANNEL_DIRECTION_OVERLAPS_AT_LEAST_ONE_GDM_AXIS_EXP071F'
+          )
+          t=d['two_channel_integrity_angles_deg']
+          assert abs(t['K2_bar1_vs_GDM_cs2']-18.925666634781507)<1e-8
+          assert abs(t['K2_bar1_vs_GDM_cv2']-58.912673573574864)<1e-8
+          assert all(math.isfinite(x) for x in list(a.values())+list(d['matter_only_primary_angles_deg'].values()))
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP071F',d['classification'])
+          print('MATTER_ONLY',d['matter_only_primary_angles_deg'])
+          print('THREE_CHANNEL',a)
+          print('ROBUSTNESS',d['robustness_nonclassifying'])
+          PY
+
+      - name: Record immutable provenance
+        if: always()
+        run: |
+          {
+            echo 'Exp071F preregistration commit: 85daeca416ce8ed1e691008fd4178fd6bbf94d15'
+            echo 'No new solver spectra were generated: Exp071F binds immutable Exp071C, GDM metric, and Exp071E artifacts.'
+            echo 'Primary K2 tangent is bar1; larger steps are non-classifying robustness diagnostics.'
+            echo 'Matter, Weyl, and slip channel scales are set only by immutable GDM cs2/cv2 1e-7 tangent norms.'
+            echo 'Separator threshold remains 45 degrees; no post-result retuning.'
+            echo 'G7/G8/G9 remain OPEN irrespective of outcome.'
+            echo "DSIR head: ${GITHUB_SHA}"
+          } > exp071f_environment.txt
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp071f-known-sector-three-channel-${{ github.sha }}
+          path: |
+            exp071f_known_sector_matter_weyl_slip_direction_control_v0_1.json
+            exp071f_environment.txt
+          if-no-files-found: warn
+          retention-days: 90
