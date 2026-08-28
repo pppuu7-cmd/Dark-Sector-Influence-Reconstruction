@@ -1,0 +1,1 @@
+Launch Exp071D exactly as frozen in experiments/071d_k2_known_sector_metric_slip_control_prereg_v0_1.md
