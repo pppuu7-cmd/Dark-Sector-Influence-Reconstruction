@@ -1,0 +1,233 @@
+name: DSIR-I offline submission archive v0.1
+
+on:
+  push:
+    branches:
+      - paper/dsir-i-observable-response-geometry
+    paths:
+      - 'papers/dsir1/manuscript.md'
+      - 'papers/dsir1/sections/**'
+      - 'papers/dsir1/supplement/**'
+      - 'papers/dsir1/build_manuscript_v0_2.py'
+      - 'papers/dsir1/audit_paper_v0_2.py'
+      - 'papers/dsir1/build_jcap_candidate.py'
+      - 'papers/dsir1/build_jcap_latex.py'
+      - 'papers/dsir1/build_submission_archive.py'
+      - 'papers/dsir1/audit_bibliography_integrity.py'
+      - 'papers/dsir1/JCAP_FRONT_MATTER_DRAFT.md'
+      - 'papers/dsir1/ACKNOWLEDGMENTS_AND_DISCLOSURES.md'
+      - 'papers/dsir1/FIGURE_CAPTIONS.md'
+      - 'papers/dsir1/references.bib'
+      - 'papers/dsir1/figures/*.py'
+      - '.github/workflows/paper-dsir1-offline-submission-archive-v0-1.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: dsir1-offline-submission-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  offline-archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout paper branch
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy matplotlib
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            poppler-utils \
+            unzip \
+            strace
+
+      - name: Build and audit publication source
+        run: |
+          set -euo pipefail
+          python papers/dsir1/audit_paper_v0_2.py
+          python papers/dsir1/audit_jcap_front_matter.py
+          python papers/dsir1/build_jcap_candidate.py
+          python papers/dsir1/audit_bibliography_integrity.py
+          python papers/dsir1/build_jcap_latex.py
+
+          python papers/dsir1/figures/fig01_operator_architecture.py
+          python papers/dsir1/figures/fig02_additive_core_failure.py
+          python papers/dsir1/figures/fig03_chiI_hierarchy.py
+          python papers/dsir1/figures/fig04_channel_conditional_degeneracy.py
+          python papers/dsir1/figures/fig05_curvature_and_localization.py
+          python papers/dsir1/figures/fig06_failure_resistant_science.py
+          python papers/dsir1/figures/fig07_observation_space_support_closure.py
+
+      - name: Fetch and bind pinned JCAP style inputs before packaging
+        run: |
+          set -euo pipefail
+          mkdir -p papers/dsir1/jcap
+          curl --fail --location --silent --show-error \
+            'https://raw.githubusercontent.com/LSSTDESC/LSS_DC1_paper/8979efd021be92214ce6048f315b40e2dadf6937/texmf/styles/jcappub.sty' \
+            --output papers/dsir1/jcap/jcappub.sty
+          curl --fail --location --silent --show-error \
+            'https://raw.githubusercontent.com/LSSTDESC/LSS_DC1_paper/8979efd021be92214ce6048f315b40e2dadf6937/texmf/bib/JHEP.bst' \
+            --output papers/dsir1/jcap/JHEP.bst
+
+          test "$(git hash-object papers/dsir1/jcap/jcappub.sty)" = '6d7508b34b5f0069d3d590186c97ba84c608b89e'
+          test "$(git hash-object papers/dsir1/jcap/JHEP.bst)" = '7b9b88cfed16dc5c7249cb5265288416bf842d86'
+
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('papers/dsir1/jcap/JHEP.bst')
+          s = p.read_text(encoding='utf-8')
+          fixes = {
+              'MACRO {apj} {ApJ}': 'MACRO {apj} {"ApJ"}',
+              'MACRO {aa} {A\\&A}': 'MACRO {aa} {"A\\&A"}',
+          }
+          for old, new in fixes.items():
+              if s.count(old) != 1:
+                  raise SystemExit(f'expected exactly one pinned JHEP macro to patch: {old!r}')
+              s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+          grep -F 'MACRO {apj} {"ApJ"}' papers/dsir1/jcap/JHEP.bst
+          grep -F 'MACRO {aa} {"A\&A"}' papers/dsir1/jcap/JHEP.bst
+
+      - name: Assemble initial self-contained source package
+        run: |
+          set -euo pipefail
+          python papers/dsir1/build_submission_archive.py | tee papers/dsir1/release/INITIAL_ARCHIVE_STATUS.txt
+          test -s papers/dsir1/release/dsir1_submission.zip
+          test -s papers/dsir1/release/dsir1_submission/dsir1_jcap.tex
+          test -s papers/dsir1/release/dsir1_submission/jcappub.sty
+          test -s papers/dsir1/release/dsir1_submission/JHEP.bst
+          test -s papers/dsir1/release/dsir1_submission/references.bib
+          test "$(find papers/dsir1/release/dsir1_submission/figures -maxdepth 1 -name '*.pdf' | wc -l)" -eq 7
+          ! grep -F '../' papers/dsir1/release/dsir1_submission/dsir1_jcap.tex
+
+      - name: Verify package compile without dependency fetches
+        run: |
+          set -euo pipefail
+          rm -rf papers/dsir1/release/offline_verify
+          cp -a papers/dsir1/release/dsir1_submission papers/dsir1/release/offline_verify
+          cd papers/dsir1/release/offline_verify
+
+          export TEXINPUTS='.: '
+          export BIBINPUTS='.: '
+          export BSTINPUTS='.: '
+
+          strace -f -e trace=network -o NETWORK_PDFLATEX_1.txt \
+            pdflatex -interaction=nonstopmode -halt-on-error dsir1_jcap.tex
+          strace -f -e trace=network -o NETWORK_BIBTEX.txt bibtex dsir1_jcap
+          strace -f -e trace=network -o NETWORK_PDFLATEX_2.txt \
+            pdflatex -interaction=nonstopmode -halt-on-error dsir1_jcap.tex
+          strace -f -e trace=network -o NETWORK_PDFLATEX_3.txt \
+            pdflatex -interaction=nonstopmode -halt-on-error dsir1_jcap.tex
+
+          cat NETWORK_*.txt > NETWORK_TRACE_ALL.txt
+          if grep -E 'AF_INET6?|sockaddr_in|sockaddr_in6' NETWORK_TRACE_ALL.txt; then
+            echo 'Internet-network syscall detected during archive compile.' >&2
+            exit 1
+          fi
+
+          test -s dsir1_jcap.pdf
+          test -s dsir1_jcap.bbl
+          if grep -E 'LaTeX Warning: (Citation|Reference).*undefined|There were undefined references|Package natbib Warning: Citation .* undefined' dsir1_jcap.log; then
+            echo 'Unresolved citations/references in package compile.' >&2
+            exit 1
+          fi
+
+          pdfinfo dsir1_jcap.pdf > PDFINFO_OFFLINE.txt
+          pages="$(awk '/^Pages:/ {print $2}' PDFINFO_OFFLINE.txt)"
+          test -n "$pages"
+          test "$pages" -le 50
+          pdftotext -f 1 -l 1 dsir1_jcap.pdf FIRST_PAGE_OFFLINE.txt
+          grep -F 'Abstract.' FIRST_PAGE_OFFLINE.txt
+          grep -F 'Keywords:' FIRST_PAGE_OFFLINE.txt
+          grep -F 'Aleksey Buyanov' FIRST_PAGE_OFFLINE.txt
+          echo "pages=$pages" > OFFLINE_COMPILE_STATUS.txt
+          echo 'network_fetch_during_compile=NONE_OBSERVED_BY_STRACE' >> OFFLINE_COMPILE_STATUS.txt
+          echo 'unresolved_references=0' >> OFFLINE_COMPILE_STATUS.txt
+          echo 'first_page_abstract=PASS' >> OFFLINE_COMPILE_STATUS.txt
+
+      - name: Finalize source archive with verified bbl
+        run: |
+          set -euo pipefail
+          python papers/dsir1/build_submission_archive.py \
+            --finalize-bbl-from papers/dsir1/release/offline_verify/dsir1_jcap.bbl \
+            | tee papers/dsir1/release/FINAL_ARCHIVE_STATUS.txt
+
+          rm -rf papers/dsir1/release/zip_verify
+          mkdir -p papers/dsir1/release/zip_verify
+          unzip -q papers/dsir1/release/dsir1_submission.zip -d papers/dsir1/release/zip_verify
+          test -s papers/dsir1/release/zip_verify/dsir1_jcap.bbl
+          test -s papers/dsir1/release/zip_verify/SUBMISSION_MANIFEST_SHA256.txt
+          ! grep -F '../' papers/dsir1/release/zip_verify/dsir1_jcap.tex
+
+          cd papers/dsir1/release/zip_verify
+          sha256sum -c SUBMISSION_MANIFEST_SHA256.txt
+          pdflatex -interaction=nonstopmode -halt-on-error dsir1_jcap.tex
+          bibtex dsir1_jcap
+          pdflatex -interaction=nonstopmode -halt-on-error dsir1_jcap.tex
+          pdflatex -interaction=nonstopmode -halt-on-error dsir1_jcap.tex
+          test -s dsir1_jcap.pdf
+
+      - name: Record final archive proof
+        run: |
+          set -euo pipefail
+          cd papers/dsir1/release
+          zip_bytes="$(stat -c%s dsir1_submission.zip)"
+          test "$zip_bytes" -lt 10485760
+          zip_sha="$(sha256sum dsir1_submission.zip | awk '{print $1}')"
+          pdf_sha="$(sha256sum zip_verify/dsir1_jcap.pdf | awk '{print $1}')"
+          tex_sha="$(sha256sum zip_verify/dsir1_jcap.tex | awk '{print $1}')"
+          manifest_sha="$(sha256sum zip_verify/SUBMISSION_MANIFEST_SHA256.txt | awk '{print $1}')"
+          pages="$(pdfinfo zip_verify/dsir1_jcap.pdf | awk '/^Pages:/ {print $2}')"
+
+          {
+            echo 'status=PASS_SELF_CONTAINED_SUBMISSION_ARCHIVE_V0_1'
+            echo "commit=${GITHUB_SHA}"
+            echo "zip_sha256=$zip_sha"
+            echo "zip_bytes=$zip_bytes"
+            echo "verified_pdf_sha256=$pdf_sha"
+            echo "master_tex_sha256=$tex_sha"
+            echo "manifest_sha256=$manifest_sha"
+            echo "pages=$pages"
+            echo 'main_tex_at_archive_root=PASS'
+            echo 'all_7_figure_pdfs_local=PASS'
+            echo 'local_jcappub_style=PASS'
+            echo 'local_patched_JHEP_bst=PASS'
+            echo 'bib_and_generated_bbl_local=PASS'
+            echo 'parent_directory_dependencies=0'
+            echo 'network_fetch_during_first_archive_compile=NONE_OBSERVED_BY_STRACE'
+            echo 'final_unpacked_zip_compile=PASS'
+            echo 'unresolved_references=0'
+          } | tee OFFLINE_SUBMISSION_ARCHIVE_PROOF.txt
+
+      - name: Upload self-contained submission archive and proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir1-self-contained-submission-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 90
+          path: |
+            papers/dsir1/release/dsir1_submission.zip
+            papers/dsir1/release/OFFLINE_SUBMISSION_ARCHIVE_PROOF.txt
+            papers/dsir1/release/FINAL_ARCHIVE_STATUS.txt
+            papers/dsir1/release/offline_verify/OFFLINE_COMPILE_STATUS.txt
+            papers/dsir1/release/offline_verify/NETWORK_TRACE_ALL.txt
+            papers/dsir1/release/zip_verify/dsir1_jcap.pdf
+            papers/dsir1/release/zip_verify/SUBMISSION_MANIFEST_SHA256.txt
