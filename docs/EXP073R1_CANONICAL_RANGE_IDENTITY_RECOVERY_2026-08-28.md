@@ -13,7 +13,7 @@ The source SHA had been transcribed incorrectly in later R1 files as `491f4bb742
 
 A second issue remained even after correcting that string: the old microshard code computed SHA256 for every consumed byte range, but those range hashes were not cryptographically linked to the previously whole-file-hashed object. A range `Content-Range` header and byte count prove position and length, not byte identity. SHA256 digests of independent ranges cannot be algebraically recombined into a whole-file SHA256.
 
-For that reason PR #158 placed a fail-closed sentinel in the automatic v0.3 launcher before the still-running v0.2 parent could trigger it.
+For that reason PR #158 placed a fail-closed sentinel in the automatic v0.3 launcher before the then-running v0.2 parent could trigger it.
 
 ## Corrected cryptographic bridge
 
@@ -70,11 +70,67 @@ A PASS from this stage is only `PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073
 
 ## Implementation files
 
-The prospective corrected implementation is:
+The corrected implementation is:
 
 - `ci/exp073r1_fullstream_range_manifest_v0_1.py` — same-stream full-object and exact 32-range SHA256 manifest;
 - `ci/exp073r1_desy1_shard_v0_3.py` — range transport, frozen decoding/selection/HEALPix mapping, and exact equality to the canonical range digest;
 - `ci/exp073r1_desy1_merge_v0_4.py` — complete 32-shard coverage, canonical digest equality, merged record verification, mask reconstruction and independent repeatability reconstruction;
 - `.github/workflows/exp073r1-desy1-canonical-microshards-v0-4.yml` — authoritative prior checksum/R0 preflight, canonical streams, low-concurrency microshards, and merge.
 
-The older v0.3 auto-launch remains blocked until the corrected implementation is independently reviewed and explicitly pinned. No automatic scientific support scoring is enabled by this document.
+PR #159 merged the canonical byte-binding repair. PR #160 installed the duplicate-safe one-shot launcher that waited for the old v0.2 run to become terminal and then dispatched the canonical v0.4 implementation. No scientific acceptance criterion was changed by either PR.
+
+## Runtime evidence added in this recovery iteration
+
+### Old v0.2 is terminal but scientifically unclassified for support
+
+Run `33135622749` is now `completed/failure`, head `70be4d35199d4132a2ca9da912689519e40bcc84`, attempt 2. The correct classification is reproduction/transport **INCOMPLETE**, not a physical-support FAIL.
+
+Shard 0 (`98761777728`) reached `PASS_DESY1_R1_SHARD`; shard 1 (`98761778039`) is verified transport-incomplete after a read timeout; shard 2 (`98761777874`) is verified transport-incomplete after HTTP 502. The other failed shard jobs were not individually exception-audited in this recovery iteration. No `f_invalid` was produced anywhere in this run.
+
+### Canonical v0.4 is the active authoritative R1 attempt
+
+The authoritative run is `33160570463`:
+
+- workflow `.github/workflows/exp073r1-desy1-canonical-microshards-v0-4.yml`;
+- event `workflow_dispatch`;
+- head SHA `e61c61a370cdc4cee5da2aa26cc677a6ad373c70`;
+- attempt 1;
+- status at this checkpoint: `in_progress`.
+
+The source canonical-manifest job `98813812482` is a verified PASS. Its same-stream result is `PASS_CANONICAL_WHOLE_AND_MICROSHARD_RANGE_SHA256_BINDING_EXP073R1M`, with exact byte count `2738626560`, exact whole SHA256 `491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5`, 32 exact row ranges, and exact once-only coverage of all parent rows.
+
+Its immutable artifact is:
+
+- ID `9681454384`;
+- `exp073r1-canonical-source-e61c61a370cdc4cee5da2aa26cc677a6ad373c70`;
+- ZIP digest `sha256:58d74d7c6ae9a12150c8b0979e66e75d654e7dbfe83cfe9711e7c5ca836abebe`;
+- size `3052` bytes.
+
+The metacal canonical-manifest job `98813812443` is still in progress on the 84,075,649,920-byte whole-object stream. No metacal canonical-root PASS is claimed until its exact whole SHA and artifact contract finish successfully.
+
+The prior internal/messaging association of another run ID with canonical v0.4 is superseded. Recovery must use **run `33160570463`** and exact head `e61c61a370cdc4cee5da2aa26cc677a6ad373c70`.
+
+## Recovery decision tree from this point
+
+1. Do not duplicate run `33160570463` while it is queued/running.
+2. If the metacal canonical manifest is transport-incomplete, preserve that as infrastructure/reproduction INCOMPLETE; do not score support and do not change any scientific threshold.
+3. If both canonical manifests pass, allow the frozen 32 microshards to run; each consumed source and metacal interval must match the canonical same-stream digest.
+4. Only if all 32 shards pass exact byte identity, row-universe completeness, mapper controls, and deterministic merge may R1 be recorded as `PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1`.
+5. Even then, R1 is reproduction only. Exp073P remains the first stage permitted to calculate the frozen positive support leakage `f_invalid`.
+6. Covariance restriction/whitening remains CLOSED until Exp073P itself passes physical support.
+
+## Frozen Exp073P downstream criteria — unchanged
+
+- physical redshift rectangle: `0.295 <= z <= 2.33`;
+- physical wavenumber ceiling: `k <= 0.06664762008318016 Mpc^-1`;
+- positive invalid-support threshold: `f_invalid <= 0.05`;
+- minimum retained full-coordinate dimension: `15`;
+- no crop-before-normalization;
+- no fiducial-P weighting;
+- no effective-ell replacement;
+- no ad-hoc k/ell cutoff;
+- support envelope uses the positive absolute final response;
+- signed Wm production response remains signed;
+- covariance/SVD/relation/held-out data remain excluded from support selection.
+
+Gate state remains G7/G8/G9 OPEN; covariance/whitening remains CLOSED pending Exp073P support PASS.
