@@ -1,0 +1,31 @@
+{
+  "experiment": "Exp071M",
+  "preregistration_commit": "e3c0c7315ccb78d0a292db765eda172113f664bd",
+  "run": 33185652795,
+  "job": 98897856253,
+  "artifact_id": 9691596312,
+  "artifact_sha256": "d0878a71adb7bbf97d7b00a67e306c0ae9c86b8b2e705cbafd00b354ede23b21",
+  "status": "INVALID_FOR_SCIENCE_EXP071M",
+  "invalid_reason": "zero/nonfinite response vector plus1_ t_tot",
+  "frozen_parameter_points": {
+    "reference_n_s": 0.965,
+    "plus_n_s": 0.970,
+    "minus_n_s": 0.960,
+    "step_abs_n_s": 0.005
+  },
+  "completed_before_failure": {
+    "immutable_Exp071C_binding": true,
+    "immutable_Exp071I_binding": true,
+    "pinned_CLASS_source_contract": true,
+    "pinned_CLASS_build": true,
+    "fresh_reference_run": true,
+    "fresh_plus_K1_run": true,
+    "fresh_minus_K1_run": true,
+    "all_expected_pk_files": true,
+    "all_expected_tk_files": true
+  },
+  "classification_scored": false,
+  "scientific_boundary": "The preregistered transfer-only t_tot representation has zero K1 response when only primordial scalar tilt n_s is changed. Therefore K1 is not a resolvable nuisance direction in this transfer-only representation and no K1/GDM angle is scientifically defined there.",
+  "followup_rule": "Any follow-up must be preregistered as a new representation that includes primordial-spectrum response for all compared families; Exp071M must remain invalid-for-science and must not be reclassified by relaxing the nonzero-vector integrity gate.",
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
