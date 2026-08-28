@@ -1,4 +1,4 @@
-name: Exp073R1 low-concurrency deterministic microshards v0.3
+name: Exp073R1 low-concurrency deterministic microshards v0.3p1
 on:
   workflow_dispatch:
 permissions:
@@ -13,12 +13,21 @@ jobs:
       R0_RUN_ID: '33103083736'
     steps:
       - uses: actions/checkout@v4
-      - name: Bind genuine R0 PASS and frozen DES input identity before transport
+      - name: Bind genuine R0 PASS and authoritative frozen DES input identity before transport
         run: |
           set -euxo pipefail
           grep -q 'PASS_REMAINING_DESY1_RELEASE_CHECKSUM_BINDING_EXP073P2' docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md
-          grep -q '491f4bb742762fefe3aaab6d53d4342b6ff4a65401bc7b588d2918fdce3ee6fd' docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md
+          grep -q '491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5' docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md
           grep -q '39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8' docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md
+          python3 - <<'PY'
+          from pathlib import Path
+          text=Path('docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md').read_text()
+          good='491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5'
+          bad='491f4bb742762fefe3aaab6d53d4342b6ff4a65401bc7b588d2918fdce3ee6fd'
+          assert f'SHA256 `{good}`' in text
+          assert 'provenance correction' in text.lower()
+          assert bad in text, 'expected correction note documenting obsolete transcription'
+          PY
           mkdir -p external/r0
           gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${R0_RUN_ID}" > external/r0_run.json
           python3 - <<'PY'
@@ -108,8 +117,8 @@ jobs:
         run: |
           set -euxo pipefail
           python3 -m pip install --disable-pip-version-check --no-cache-dir 'numpy<2.4' healpy
-          python3 -m py_compile ci/exp073r1_desy1_merge_v0_3.py
-          python3 ci/exp073r1_desy1_merge_v0_3.py \
+          python3 -m py_compile ci/exp073r1_desy1_merge_v0_3.py ci/exp073r1_desy1_merge_v0_3p1.py
+          python3 ci/exp073r1_desy1_merge_v0_3p1.py \
             --root external/shards \
             --out data/derived/g7/exp073r1_desy1_full_onepass_weak_lensing_mask_v0_3.json \
             --checksum-record docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md \
@@ -126,6 +135,8 @@ jobs:
           assert d['status']=='PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1'
           assert d['rows_read_source']==136930995 and d['rows_read_metacal']==136930995
           assert d['microshard_count']==32
+          assert d['input_identity_binding']['source_sha256']=='491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5'
+          assert d['input_identity_binding']['metacal_sha256']=='39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8'
           assert d['science_gate_scored'] is False and d['f_invalid_computed'] is False
           assert d['covariance_read'] is False and d['G8_read'] is False
           assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
