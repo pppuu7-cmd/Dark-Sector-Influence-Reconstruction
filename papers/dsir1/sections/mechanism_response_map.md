@@ -10,7 +10,7 @@ The family list above states where each benchmark is active; the more useful cro
 | C3 GDM viscosity | anisotropic-stress/shear closure; matter + Weyl/slip | matter pressure/viscosity angle `0.3226 deg`, metric-slip angle `137.94 deg`; finite-amplitude bending — HARD-ATLAS, theory-response not survey significance |
 | C4 thermal WDM | collisionless free-streaming cutoff; high-k transfer + cutoff drift | strong high-k suppression but nearly time-separable; withheld masses move `k_0.1` monotonically — HARD-ATLAS + WITHHELD interpolation |
 | C5 designer `f(R)` | scalar/Compton-like transition; matter + Weyl/slip + temporal response | strongest current low-k `k x z` interaction; curved finite-amplitude trajectory; exact GR boundary in pinned theory — HARD-ATLAS, no Paper-I detectability claim |
-| C6 DCDM -> dark radiation | finite lifetime/epoch source; temporal localization + matter/sign structure | temporal centroid moves with `Gamma/H0`; scale-sign pivot remains descriptive — WITHHELD mechanism for centroid direction |
+| C6 DCDM to dark radiation | finite lifetime/epoch source; temporal localization + matter/sign structure | temporal centroid moves with `Gamma/H0`; scale-sign pivot remains descriptive — WITHHELD mechanism for centroid direction |
 | C7 IDM-DR | drag/interaction dynamics; scale/time localization | preregistered C3/C5-derived positive common centroid-slope rule fails with opposite-sign withheld slopes — prospective WITHHELD FAIL |
 | K2 baryon-fraction control | ordinary known-sector transfer; matter-response geometry | almost one-dimensional matter path can strongly backtrack (`~169.69 deg`) — DESCRIPTIVE known-sector specificity control |
 
