@@ -1,0 +1,2 @@
+Launch Exp071G exactly as frozen in experiments/071g_k2_finite_bin_growth_direction_control_prereg_v0_1.md
+Preregistration commit: f492188887d374d41be25e6a6aa8b7d8c5fb5639
