@@ -1,0 +1,48 @@
+{
+  "schema": "dsir.exp071f_terminal_summary.v0.1",
+  "experiment": "Exp071F",
+  "date": "2026-08-28",
+  "preregistration_commit": "85daeca416ce8ed1e691008fd4178fd6bbf94d15",
+  "run_id": 33178154667,
+  "job_id": 98872091411,
+  "artifact_id": 9688506671,
+  "artifact_sha256": "e03e72251ab8ed9e0fa820bdae31342dc718349d78713db5fcac06bf00cc6779",
+  "execution_conclusion": "success",
+  "science_status": "COMPLETE_K2_MATTER_WEYL_SLIP_DIRECTION_CONTROL_V0_1",
+  "classification": "K2_3CHANNEL_DIRECTION_OVERLAPS_AT_LEAST_ONE_GDM_AXIS_EXP071F",
+  "primary_pass": false,
+  "threshold_deg": 45.0,
+  "primary_k2_point": "bar1",
+  "matter_only_primary_angles_deg": {
+    "K2_bar1_vs_GDM_cs2": 19.223081503733017,
+    "K2_bar1_vs_GDM_cv2": 19.037102938963482
+  },
+  "three_channel_primary_angles_deg": {
+    "K2_bar1_vs_GDM_cs2": 19.07487721786906,
+    "K2_bar1_vs_GDM_cv2": 50.16673498586107
+  },
+  "robustness_nonclassifying": {
+    "max_three_channel_angle_to_bar1_deg": 0.11693610730710657,
+    "three_channel_family_centered_svd_variance_fraction": [
+      0.9672058919229451,
+      0.03277420926597323,
+      0.000019569420637855878,
+      3.2939044369777053e-7,
+      2.381550567595385e-28
+    ]
+  },
+  "interpretation": {
+    "supported": "Adding the frozen matter-response direction to Weyl plus slip leaves the K2 known-sector tangent close to the tested GDM cs2-like direction while retaining separation from the GDM cv2-like direction.",
+    "mechanistic_implication": "The residual ambiguity behaves as a pressure/sound-speed-like local response degeneracy rather than a degeneracy removable by simply concatenating correlated matter and metric channels on this support.",
+    "not_supported": [
+      "generic dark-sector uniqueness from matter plus Weyl plus slip",
+      "microscopic model identification",
+      "observational evidence or preference"
+    ]
+  },
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
