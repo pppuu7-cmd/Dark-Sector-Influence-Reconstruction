@@ -24,7 +24,7 @@ The article should not be framed as a dark-sector detection paper. Its publishab
 | A2-C8 | ✅ | The unique frozen joint support frontier lies at approximately `z_min=0.0087345858`, `k_max=4.8182610974 Mpc^-1`, but the simple linear GR-reference route remains ineligible through `Delta^2 <= 2`. | Exp072C + Exp073A. | “The Pareto frontier is a usable linear science region.” |
 | A2-C9 | ✅ negative boundary | The current public/provider stack does not supply the independent nonlinear C3/C5 signed `mm/Wm/WW` completion required to rescue that route; phenomenological C3 continuation is not identifiable under the frozen completion tests. | Exp073B-E. | “A chosen phenomenological extrapolation is equivalent to a physical nonlinear provider.” |
 | A2-C10 | ✅ | Finite observational operators change the admissibility diagnosis: a finite BOSS true-k matrix can be bound and yields a non-empty component (54/240 rows), while the examined KiDS finite-theta absolute-response route is non-normalizable under its frozen absolute criterion. | Exp073I/J/K/L. | “Any nominal survey window automatically supplies a valid finite physical-support operator.” |
-| A2-C11 | 🟡 prospective | The next specificity test is directional rather than scalar: compare the full common-grid K2 tangent vectors with GDM `cs2` and `cv2` in the same equalized joint `r_W + Delta_slip` geometry. | Motivated by Exp071D; must be preregistered before cross-family angles are evaluated. | No cross-family direction claim until the prospective angle control is complete. |
+| A2-C11 | ✅ falsification | Full equalized joint `(r_W, Delta_slip)` direction **still does not generically separate** the K2 known-sector mimic from both tested GDM axes. The preregistered K2-bar1 tangent is only **18.9257°** from GDM `cs2` but **58.9127°** from GDM `cv2`, against the frozen 45° threshold. This is stable across the five K2 steps: the largest joint drift from bar1 is only **0.1240°**. | Exp071E prereg commit `220e73f6cd5b52746498731073bf7392f6917dd9`; run `33177588360`; artifact `9688299959`; classification `K2_DIRECTION_OVERLAPS_AT_LEAST_ONE_GDM_AXIS_EXP071E`. | “Adding Weyl+slip guarantees unique dark-sector identification” or “K2 is degenerate with both GDM axes.” |
 
 ## Core narrative implied by the matrix
 
@@ -32,31 +32,32 @@ The strongest Article-2 narrative is a **hierarchy of specificity** rather than 
 
 1. matter response geometry compresses mechanism families usefully;
 2. matter-only morphological specificity fails a direct known-sector falsification control;
-3. independent metric/slip information adds genuinely new separating directions, but a scalar slip-to-Weyl norm ratio is itself not universally mechanism-specific;
-4. full directional joint-channel geometry is therefore the appropriate next specificity object;
-5. any such direction must still survive certified physical support and finite observational operators before observational inference is allowed.
+3. independent metric/slip information adds genuinely new separating directions, but neither a scalar slip-to-Weyl norm ratio nor the present two-channel joint direction is universally mechanism-specific;
+4. Exp071E localizes the remaining ambiguity: the K2 known-sector tangent remains close to the GDM sound-speed-like direction while being separated from the viscosity-like direction, so additional independent channels/observables are required for generic specificity;
+5. any richer directional construction must still survive certified physical support and finite observational operators before observational inference is allowed.
 
 In compact form:
 
-`matter morphology -> known-sector falsification -> joint directional matter/Weyl/slip geometry -> physical-support intersection -> finite operator admissibility`.
+`matter morphology -> known-sector falsification -> joint directional matter/Weyl/slip geometry -> residual mechanism degeneracy -> additional independent channels -> physical-support intersection -> finite operator admissibility`.
 
-This is stronger and safer than claiming that one matter-only feature or one scalar slip statistic is itself a dark-sector signature.
+This is stronger and safer than claiming that one matter-only feature, one scalar slip statistic, or the present two-channel direction is itself a unique dark-sector signature.
 
 ## Suggested paper figures/tables
 
 1. **Figure 1 — Specificity hierarchy:** schematic from matter-only response through known-sector falsification to joint metric/slip geometry and observational support.
 2. **Figure 2 — Known-sector falsification:** F30 gate outcome for dark-sector families, K1 tilt controls and K2 baryon/CDM controls.
-3. **Figure 3 — Metric/slip hierarchy:** GDM `cs2` vs `cv2` channel angles together with the Exp071D K2 `q_slip/W` control.
-4. **Figure 4 — Physical/observational support boundary:** Exp071A 495/495 provider cells vs Exp072A zero admissible observational dimension, then Exp072B/C boundary localization.
-5. **Figure 5 — Finite-operator route inventory:** BOSS finite-matrix success/non-classifying component contrasted with KiDS finite-theta absolute-response failure.
-6. **Table 1 — Claim matrix:** shortened version of this document with run IDs and classifications.
-7. **Table 2 — Negative-result ledger:** every scientific FAIL/falsification kept as a boundary result, separated from infrastructure failures.
+3. **Figure 3 — Metric/slip hierarchy:** GDM `cs2` vs `cv2` channel angles, Exp071D scalar control, and Exp071E joint-direction angles `18.93° / 58.91°`.
+4. **Figure 4 — K2 finite-step robustness:** joint direction drift stays below `0.125°` across bar1–bar5 while the primary cs2 overlap remains far below the 45° separator.
+5. **Figure 5 — Physical/observational support boundary:** Exp071A 495/495 provider cells vs Exp072A zero admissible observational dimension, then Exp072B/C boundary localization.
+6. **Figure 6 — Finite-operator route inventory:** BOSS finite-matrix success/non-classifying component contrasted with KiDS finite-theta absolute-response failure.
+7. **Table 1 — Claim matrix:** shortened version of this document with run IDs and classifications.
+8. **Table 2 — Negative-result ledger:** every scientific FAIL/falsification kept as a boundary result, separated from infrastructure failures.
 
 ## Result language for the abstract/discussion
 
 Safe language:
 
-> Matter-response morphology is informative but not generically mechanism-specific: a fixed-total-matter baryon/CDM control reproduces the preregistered F30 criterion. Metric-slip responses add independent information, but a prospectively tested scalar slip-to-Weyl ratio still overlaps a known-sector matter-space mimic along the GDM sound-speed scale. This motivates joint directional response geometry rather than single-channel or scalar fingerprint claims, with observational use further restricted by physical-support and finite-window admissibility.
+> Matter-response morphology is informative but not generically mechanism-specific: a fixed-total-matter baryon/CDM control reproduces the preregistered F30 criterion. Metric-slip responses add independent information, yet prospectively frozen scalar and full-direction tests both retain a sound-speed-like known-sector degeneracy while separating the viscosity-like direction. This identifies the need for additional independent response channels rather than a single universal fingerprint, with observational use further restricted by physical-support and finite-window admissibility.
 
 Do not use language equivalent to “dark-sector detection”, “unique fingerprint”, “proof of modified gravity”, or “observational preference” in Article 2 unless a future independent observational gate explicitly authorizes it.
 
