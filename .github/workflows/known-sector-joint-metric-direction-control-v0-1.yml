@@ -1,0 +1,201 @@
+name: Exp071E known-sector joint metric-direction control v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp071e_known_sector_joint_metric_direction.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  known-sector-joint-direction-control:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EXP071C_RUN: '33020201997'
+      GDM_METRIC_RUN: '32774198185'
+      EXP071D_RUN: '33176559280'
+      CLASS_SHA: 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+          python3 -m py_compile ci/known_sector_joint_metric_direction_control_v0_1.py
+
+      - name: Bind immutable parent artifacts
+        run: |
+          set -euxo pipefail
+          mkdir -p inputs/exp071c inputs/gdm inputs/exp071d
+          EXP071C_ART="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${EXP071C_RUN}/artifacts" --jq '.artifacts[] | select(.name | startswith("exp071c-known-sector-f30-specificity-")) | .name')"
+          GDM_ART="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GDM_METRIC_RUN}/artifacts" --jq '.artifacts[] | select(.name | startswith("gdm-weyl-slip-")) | .name')"
+          EXP071D_ART="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${EXP071D_RUN}/artifacts" --jq '.artifacts[] | select(.name | startswith("exp071d-known-sector-metric-slip-")) | .name')"
+          test -n "${EXP071C_ART}" && test -n "${GDM_ART}" && test -n "${EXP071D_ART}"
+          gh run download "${EXP071C_RUN}" -n "${EXP071C_ART}" -D inputs/exp071c
+          gh run download "${GDM_METRIC_RUN}" -n "${GDM_ART}" -D inputs/gdm
+          gh run download "${EXP071D_RUN}" -n "${EXP071D_ART}" -D inputs/exp071d
+          KNOWN_JSON="$(find inputs/exp071c -name 'exp071c_known_sector_f30_specificity_control_v0_1.json' -print -quit)"
+          GDM_DISC="$(find inputs/gdm -name 'gdm_weyl_slip_discriminant.json' -print -quit)"
+          GDM_GATE="$(find inputs/gdm -name 'gdm_weyl_slip_hard_gate.json' -print -quit)"
+          EXP071D_JSON="$(find inputs/exp071d -name 'exp071d_known_sector_metric_slip_control_v0_1.json' -print -quit)"
+          test -n "${KNOWN_JSON}" && test -n "${GDM_DISC}" && test -n "${GDM_GATE}" && test -n "${EXP071D_JSON}"
+          export KNOWN_JSON GDM_DISC GDM_GATE EXP071D_JSON
+          python3 - <<'PY'
+          import json, os
+          c=json.load(open(os.environ['KNOWN_JSON']))
+          assert c['status']=='COMPLETE_KNOWN_SECTOR_F30_SPECIFICITY_CONTROL_V0_1'
+          assert c['primary_specificity_classification']=='F30_DARK_SPECIFICITY_WEAKENED_BY_KNOWN_SECTOR_CONTROL'
+          assert c['K2_baryon_fraction_fixed_omega_m']['pass_full_and_all_leave_one_z'] is True
+          g=json.load(open(os.environ['GDM_GATE']))
+          assert g['status']=='PASS_GDM_SLIP_BREAKS_LOW_K_DEGENERACY' and g['pass'] is True
+          d=json.load(open(os.environ['EXP071D_JSON']))
+          assert d['status']=='COMPLETE_K2_KNOWN_SECTOR_METRIC_SLIP_CONTROL_V0_1'
+          assert d['classification']=='K2_SLIP_TO_WEYL_RATIO_OVERLAPS_GDM_AXES_EXP071D'
+          PY
+          {
+            echo "KNOWN_JSON=${KNOWN_JSON}"
+            echo "GDM_DISC=${GDM_DISC}"
+            echo "GDM_GATE=${GDM_GATE}"
+            echo "EXP071D_JSON=${EXP071D_JSON}"
+          } >> "${GITHUB_ENV}"
+
+      - name: Clone and build pinned official CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/lesgourg/class_public.git class_public
+          git -C class_public checkout "${CLASS_SHA}"
+          test "$(git -C class_public rev-parse HEAD)" = "${CLASS_SHA}"
+          make -C class_public -j2 class
+          git -C class_public rev-parse HEAD > exp071e_class_upstream_sha.txt
+
+      - name: Materialize frozen reference and K2 configs
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          mkdir -p outputs
+          python3 - <<'PY'
+          from pathlib import Path
+          COMMON='''h = 0.67
+          T_cmb = 2.7255
+          Omega_k = 0.
+          N_ur = 3.046
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          output = mPk,mTk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 1.0
+          primordial_P_k_max_h/Mpc = 1.0
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          '''
+          def write(name,ob,oc):
+              Path(f'dsir_{name}.ini').write_text(
+                  f'root = outputs/{name}_\nomega_b = {ob:.17g}\nomega_cdm = {oc:.17g}\n'+COMMON
+              )
+          write('ref',0.0224,0.1200)
+          obs=[0.0228,0.0232,0.0236,0.0240,0.0244]
+          ocs=[0.1196,0.1192,0.1188,0.1184,0.1180]
+          for i,(ob,oc) in enumerate(zip(obs,ocs),1):
+              assert abs((ob+oc)-0.1424)<2e-15
+              write(f'bar{i}',ob,oc)
+          PY
+
+      - name: Generate fresh K2 transfer functions
+        working-directory: class_public
+        run: |
+          set -euxo pipefail
+          ./class dsir_ref.ini 2>&1 | tee ../exp071e_ref.log
+          for name in bar1 bar2 bar3 bar4 bar5; do
+            ./class "dsir_${name}.ini" 2>&1 | tee "../exp071e_${name}.log"
+          done
+          for prefix in ref_ bar1_ bar2_ bar3_ bar4_ bar5_; do
+            test "$(find outputs -maxdepth 1 -type f -name "${prefix}*tk.dat" | wc -l)" -eq 7
+          done
+          test "$(git rev-parse HEAD)" = "${CLASS_SHA}"
+
+      - name: Execute frozen Exp071E control
+        run: |
+          set -euxo pipefail
+          python3 ci/known_sector_joint_metric_direction_control_v0_1.py \
+            --directory class_public/outputs \
+            --known-control "${KNOWN_JSON}" \
+            --gdm-discriminant "${GDM_DISC}" \
+            --gdm-hard-gate "${GDM_GATE}" \
+            --exp071d "${EXP071D_JSON}" \
+            --json exp071e_known_sector_joint_metric_direction_control_v0_1.json
+
+      - name: Assert preregistered Exp071E semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json, math
+          d=json.load(open('exp071e_known_sector_joint_metric_direction_control_v0_1.json'))
+          assert d['experiment']=='Exp071E'
+          assert d['status']=='COMPLETE_K2_JOINT_METRIC_DIRECTION_CONTROL_V0_1'
+          assert d['preregistered_threshold_deg']==45.0
+          assert d['primary_k2_point']=='bar1'
+          assert d['frozen_k_h_mpc']==[0.001,0.003,0.01,0.03,0.1]
+          assert d['classification'] in {
+              'K2_DIRECTION_SEPARATED_FROM_BOTH_GDM_AXES_EXP071E',
+              'K2_DIRECTION_OVERLAPS_AT_LEAST_ONE_GDM_AXIS_EXP071E',
+          }
+          a=d['primary_angles_deg']
+          expect=(a['K2_bar1_vs_GDM_cs2']>=45.0 and a['K2_bar1_vs_GDM_cv2']>=45.0)
+          assert d['primary_pass'] is expect
+          assert d['classification']==(
+              'K2_DIRECTION_SEPARATED_FROM_BOTH_GDM_AXES_EXP071E' if expect else
+              'K2_DIRECTION_OVERLAPS_AT_LEAST_ONE_GDM_AXIS_EXP071E'
+          )
+          assert len(d['K2_models'])==5
+          assert all(math.isfinite(x) for x in a.values())
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP071E',d['classification'])
+          print('PRIMARY_ANGLES_DEG',a)
+          print('ROBUSTNESS',d['robustness_nonclassifying'])
+          PY
+
+      - name: Record immutable provenance
+        if: always()
+        run: |
+          {
+            echo 'Exp071E preregistration commit: 220e73f6cd5b52746498731073bf7392f6917dd9'
+            echo 'Primary K2 tangent: bar1 only.'
+            echo 'Threshold: 45 degrees inherited unchanged from prior GDM combined-metric hard gate.'
+            echo 'GDM equalization scales are set only by immutable 1e-7 cs2/cv2 tangents; K2 cannot tune them.'
+            echo 'Larger K2 steps are non-classifying robustness diagnostics.'
+            echo 'G7/G8/G9 remain OPEN irrespective of outcome.'
+            echo "DSIR head: ${GITHUB_SHA}"
+            echo -n 'CLASS upstream: '; cat exp071e_class_upstream_sha.txt 2>/dev/null || true
+          } > exp071e_environment.txt
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp071e-known-sector-joint-direction-${{ github.sha }}
+          path: |
+            exp071e_known_sector_joint_metric_direction_control_v0_1.json
+            exp071e_environment.txt
+            exp071e_class_upstream_sha.txt
+            exp071e_*.log
+            class_public/dsir_*.ini
+            class_public/outputs/*tk.dat
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 6
