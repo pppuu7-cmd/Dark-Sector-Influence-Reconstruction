@@ -17,7 +17,13 @@ jobs:
       EXPECTED_PARENT_PATH: '.github/workflows/exp073r1-desy1-sharded-mask-v0-2.yml'
       TARGET_WORKFLOW: 'exp073r1-desy1-low-concurrency-microshards-v0-3.yml'
       TARGET_WORKFLOW_BLOB: '12e15177bd389d603af04c89ec815ba6c94c749c'
-      TARGET_MERGER_BLOB: '0fb99998ad1a15acaa4223ea7d6d47fbd8d93080'
+      # Deliberate fail-closed interlock. The immutable full-object checksum artifact
+      # for run 33081571259 proves the source SHA256 is 491f623d... rather than
+      # the transcribed 491f4bb7... currently embedded in v0.3. In addition,
+      # per-range hashes must be cryptographically tied to a whole-object hash.
+      # Replace this sentinel only after that corrected provenance contract is
+      # implemented, independently audited, and the new exact blob SHA is pinned.
+      TARGET_MERGER_BLOB: 'BLOCKED_PENDING_CORRECTED_RANGE_IDENTITY_BINDING'
     steps:
       - name: Verify terminal parent and immutable v0.3 implementation
         run: |
