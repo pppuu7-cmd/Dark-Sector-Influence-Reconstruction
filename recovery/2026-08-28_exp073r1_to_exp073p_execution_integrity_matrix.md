@@ -29,12 +29,12 @@ Preserve a prospective execution-integrity audit while Exp073R1 is still running
 
 ## Post-R1 admissibility checklist
 
-If and only if run `33108733415` completes successfully and its immutable artifact is present:
+If and only if a canonical Exp073R1 execution completes successfully and its immutable artifact is present:
 
 1. Verify workflow identity and successful conclusion; do not infer PASS from Actions success alone.
-2. Download the single unexpired Exp073R1 artifact and verify the JSON classification is exactly `PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1`.
+2. Download the single authoritative Exp073R1 artifact and verify the JSON classification is exactly `PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1`.
 3. Recheck exact source/metacal row counts `136930995` each.
-4. Recheck source SHA256 `491f4bb742762fefe3aaab6d53d4342b6ff4a65401bc7b588d2918fdce3ee6fd` and metacal SHA256 `39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8`.
+4. Recheck authoritative source SHA256 `491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5` and metacal SHA256 `39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8`. The previously transcribed source value `491f4bb742762fefe3aaab6d53d4342b6ff4a65401bc7b588d2918fdce3ee6fd` is obsolete/wrong per the dedicated provenance-fix checkpoint and MUST NOT be accepted.
 5. Require every R1 hard control true and preserve mask hashes, selected-row counts and immutable provenance.
 6. Require `science_gate_scored == false`, `f_invalid_computed == false`, `covariance_read == false`, `G8_read == false`.
 7. Bind the already frozen Exp073P preregistration without modifying rectangle, threshold, dimension floor, `nside=4096`, bin edges or classification labels.
