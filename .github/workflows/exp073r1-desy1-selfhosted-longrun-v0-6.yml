@@ -13,75 +13,17 @@ permissions:
   actions: read
 
 env:
-  SOURCE_URL: https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_source_redshift_binning_v1.fits
   METACAL_URL: https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/shear_catalogs/mcal-y1a1-combined-riz-unblind-v4-matched.fits
   R0_RUN_ID: '33103083736'
+  SOURCE_STAGEA_RUN_ID: '33175886694'
+  SOURCE_STAGEA_HEAD_SHA: '2926f1866fed4f0767ce3d1ec797f6e6ed4f4f2c'
+  SOURCE_STAGEA_ARTIFACT_ID: '9688707039'
+  SOURCE_STAGEA_ARTIFACT_NAME: exp073r1-v05-source-index-2926f1866fed4f0767ce3d1ec797f6e6ed4f4f2c
+  SOURCE_STAGEA_ARTIFACT_DIGEST: sha256:366aad6468046e6964edc9cd2bfd299960d5dadf1856a30ec608e9ae191c1582
+  SOURCE_INDEX_SHA256: dbb362b10c68825e775e7398b18eb77d37fe725ce80cfd5c07faec5cb5755628
 
 jobs:
-  source-index:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 100
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install source-index runtime
-        run: |
-          set -euxo pipefail
-          python3 -m pip install --user numpy
-          python3 -m py_compile ci/exp073r1_sequential_wholestream_v0_5.py
-
-      - name: Stream authoritative source object once and derive exact row-aligned zbin index
-        run: |
-          set -euxo pipefail
-          rm -rf v06_source
-          mkdir -p v06_source
-          ok=0
-          for attempt in 1 2; do
-            rm -f v06_source/source-zbin-be-i2.bin v06_source/source-summary.json
-            if python3 ci/exp073r1_sequential_wholestream_v0_5.py source-index \
-              --url "${SOURCE_URL}" \
-              --index v06_source/source-zbin-be-i2.bin \
-              --out v06_source/source-summary.json; then
-              ok=1
-              break
-            fi
-            sleep $((attempt*20))
-          done
-          test "$ok" = 1
-
-      - name: Assert unchanged Stage-A frozen no-Range identity contract
-        run: |
-          set -euxo pipefail
-          python3 - <<'PY'
-          import json
-          d=json.load(open('v06_source/source-summary.json'))
-          assert d['experiment']=='Exp073R1'
-          assert d['status']=='PASS_EXP073R1_V05_SOURCE_WHOLE_STREAM_INDEX_BINDING'
-          assert d['transport']=={'http_range_requests':0,'whole_object_get':True,'accept_encoding':'identity'}
-          assert d['observed_bytes']==d['expected_bytes']==2738626560
-          assert d['whole_sha256']==d['expected_whole_sha256']=='491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5'
-          assert d['nrows']==136930995
-          assert d['source_index']['bytes']==273861990
-          assert len(d['source_index']['sha256'])==64
-          assert d['selection_applied'] is False
-          assert d['science_gate_scored'] is False and d['f_invalid_computed'] is False
-          assert d['covariance_read'] is False and d['G8_read'] is False
-          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
-          print('V06_SOURCE_INDEX_BINDING_PASS',d['source_index']['sha256'])
-          PY
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: exp073r1-v06-source-index-${{ github.sha }}
-          path: |
-            v06_source/source-zbin-be-i2.bin
-            v06_source/source-summary.json
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 9
-
   metacal-map:
-    needs: source-index
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 1440
     env:
@@ -95,10 +37,65 @@ jobs:
           python3 -m pip install --user numpy healpy
           python3 -m py_compile ci/exp073r1_sequential_wholestream_v0_5.py
 
-      - uses: actions/download-artifact@v4
-        with:
-          name: exp073r1-v06-source-index-${{ github.sha }}
-          path: external/source
+      - name: Bind and download immutable v0.5 Stage-A source-index artifact
+        run: |
+          set -euxo pipefail
+          rm -rf external/source
+          mkdir -p external/source
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_STAGEA_RUN_ID}" > external/source_stagea_run.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_STAGEA_RUN_ID}/artifacts" > external/source_stagea_artifacts.json
+          python3 - <<'PY'
+          import json, os
+          run=json.load(open('external/source_stagea_run.json'))
+          assert str(run['id'])==os.environ['SOURCE_STAGEA_RUN_ID']
+          assert run['status']=='completed' and run['conclusion']=='success'
+          assert run['head_sha']==os.environ['SOURCE_STAGEA_HEAD_SHA']
+          arts=json.load(open('external/source_stagea_artifacts.json'))['artifacts']
+          matches=[a for a in arts if str(a['id'])==os.environ['SOURCE_STAGEA_ARTIFACT_ID']]
+          assert len(matches)==1, matches
+          a=matches[0]
+          assert a['name']==os.environ['SOURCE_STAGEA_ARTIFACT_NAME']
+          assert a['expired'] is False
+          assert a.get('digest')==os.environ['SOURCE_STAGEA_ARTIFACT_DIGEST']
+          print('IMMUTABLE_STAGEA_ARTIFACT_BOUND',a['id'],a['digest'])
+          PY
+          gh run download "${SOURCE_STAGEA_RUN_ID}" -n "${SOURCE_STAGEA_ARTIFACT_NAME}" -D external/source
+          SOURCE_INDEX="$(find external/source -name 'source-zbin-be-i2.bin' -print -quit)"
+          SOURCE_SUMMARY="$(find external/source -name 'source-summary.json' -print -quit)"
+          test -n "${SOURCE_INDEX}"
+          test -n "${SOURCE_SUMMARY}"
+          echo "SOURCE_INDEX=${SOURCE_INDEX}" >> "${GITHUB_ENV}"
+          echo "SOURCE_SUMMARY=${SOURCE_SUMMARY}" >> "${GITHUB_ENV}"
+
+      - name: Assert exact frozen Stage-A payload identity
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import hashlib, json, os
+          idx=os.environ['SOURCE_INDEX']
+          sm=os.environ['SOURCE_SUMMARY']
+          h=hashlib.sha256()
+          n=0
+          with open(idx,'rb') as f:
+            for block in iter(lambda:f.read(8*1024*1024), b''):
+              n += len(block); h.update(block)
+          assert n==273861990
+          assert h.hexdigest()==os.environ['SOURCE_INDEX_SHA256']
+          d=json.load(open(sm))
+          assert d['experiment']=='Exp073R1'
+          assert d['status']=='PASS_EXP073R1_V05_SOURCE_WHOLE_STREAM_INDEX_BINDING'
+          assert d['transport']=={'http_range_requests':0,'whole_object_get':True,'accept_encoding':'identity'}
+          assert d['observed_bytes']==d['expected_bytes']==2738626560
+          assert d['whole_sha256']==d['expected_whole_sha256']=='491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5'
+          assert d['nrows']==136930995
+          assert d['source_index']['bytes']==273861990
+          assert d['source_index']['sha256']==os.environ['SOURCE_INDEX_SHA256']
+          assert d['selection_applied'] is False
+          assert d['science_gate_scored'] is False and d['f_invalid_computed'] is False
+          assert d['covariance_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('IMMUTABLE_STAGEA_PAYLOAD_PASS',h.hexdigest())
+          PY
 
       - name: Bind immutable Exp073R0 parent PASS
         run: |
@@ -125,10 +122,6 @@ jobs:
           set -euxo pipefail
           rm -rf v06_work data/derived/g7/exp073r1_v05_records data/derived/g7/exp073r1_v05_masks
           mkdir -p v06_work data/derived/g7
-          SOURCE_INDEX="$(find external/source -name 'source-zbin-be-i2.bin' -print -quit)"
-          SOURCE_SUMMARY="$(find external/source -name 'source-summary.json' -print -quit)"
-          test -n "${SOURCE_INDEX}"
-          test -n "${SOURCE_SUMMARY}"
           python3 ci/exp073r1_sequential_wholestream_v0_5.py metacal-map \
             --url "${METACAL_URL}" \
             --source-index "${SOURCE_INDEX}" \
@@ -141,7 +134,7 @@ jobs:
         run: |
           set -euxo pipefail
           python3 - <<'PY'
-          import json
+          import json, os
           p='data/derived/g7/exp073r1_desy1_selfhosted_longrun_v0_6_summary.json'
           d=json.load(open(p))
           assert d['experiment']=='Exp073R1'
@@ -151,6 +144,7 @@ jobs:
           assert d['metacal_sha256']==d['expected_metacal_sha256']=='39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8'
           assert d['source_identity_binding']['source_whole_sha256']=='491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5'
           assert d['source_identity_binding']['source_index_bytes']==273861990
+          assert d['source_identity_binding']['source_index_sha256']==os.environ['SOURCE_INDEX_SHA256']
           assert d['rows_read_source_index']==d['rows_read_metacal']==136930995
           assert d['selection']=='zbin_mcal == t AND dec >= -90 AND dec <= -35 AND flags_select == 0'
           assert d['mapper']=={'nside':4096,'ordering':'RING','coords':'C','lonlat':True}
@@ -167,12 +161,13 @@ jobs:
           PY
 
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: exp073r1-v06-reconstruction-${{ github.sha }}
           path: |
             data/derived/g7/exp073r1_desy1_selfhosted_longrun_v0_6_summary.json
             data/derived/g7/exp073r1_v05_records/*.bin
             data/derived/g7/exp073r1_v05_masks/*.bin
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 90
           compression-level: 6
