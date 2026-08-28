@@ -1,4 +1,4 @@
-name: Exp073R1 v0.6 deduplicate run2
+name: Exp073R1 v0.6 cancel non-authoritative queued runs
 
 on:
   push:
@@ -11,17 +11,19 @@ permissions:
   contents: read
 
 jobs:
-  cancel-duplicate:
+  cancel-non-authoritative:
     runs-on: ubuntu-24.04
     steps:
-      - name: Cancel duplicate queued run only
+      - name: Cancel superseded queued or running v0.6 attempts
         env:
           GH_TOKEN: ${{ github.token }}
-          DUP_RUN: '33212050260'
+          RUNS: '33212050260 33212040452 33212522053'
         run: |
           set -euxo pipefail
-          state="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${DUP_RUN}" --jq '.status')"
-          if [ "$state" = queued ] || [ "$state" = in_progress ] || [ "$state" = waiting ] || [ "$state" = pending ]; then
-            gh api --method POST "repos/${GITHUB_REPOSITORY}/actions/runs/${DUP_RUN}/cancel"
-          fi
-          echo "duplicate_run=${DUP_RUN} prior_state=${state}"
+          for run in ${RUNS}; do
+            state="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${run}" --jq '.status')"
+            if [ "$state" = queued ] || [ "$state" = in_progress ] || [ "$state" = waiting ] || [ "$state" = pending ]; then
+              gh api --method POST "repos/${GITHUB_REPOSITORY}/actions/runs/${run}/cancel"
+            fi
+            echo "run=${run} prior_state=${state}"
+          done
