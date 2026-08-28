@@ -109,6 +109,7 @@ jobs:
       - name: Assemble initial self-contained source package
         run: |
           set -euo pipefail
+          mkdir -p papers/dsir1/release
           python papers/dsir1/build_submission_archive.py | tee papers/dsir1/release/INITIAL_ARCHIVE_STATUS.txt
           test -s papers/dsir1/release/dsir1_submission.zip
           test -s papers/dsir1/release/dsir1_submission/dsir1_jcap.tex
@@ -125,8 +126,6 @@ jobs:
           cp -a papers/dsir1/release/dsir1_submission papers/dsir1/release/offline_verify
           cd papers/dsir1/release/offline_verify
 
-          # Search local package first while retaining the installed TeX base
-          # tree.  No network fetch command occurs in this compile step.
           export TEXINPUTS=.:
           export BIBINPUTS=.:
           export BSTINPUTS=.:
