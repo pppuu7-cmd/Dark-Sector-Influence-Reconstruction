@@ -1,0 +1,194 @@
+name: Exp071M two-sided K1 velocity-shape nuisance v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp071m_two_sided_k1_velocity_shape_nuisance.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  two-sided-k1-velocity-shape:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CLASS_SHA: e85808324f51fc694d12e3ed7439552a3c3f9540
+      EXP071C_RUN: '33020201997'
+      EXP071C_ID: '9626235928'
+      EXP071C_NAME: exp071c-known-sector-f30-specificity-da74d592fbcc2bba9cd223e924b245a3e52437e1
+      EXP071C_DIGEST: sha256:ed486effa593a409640577f8cdde614d5fddfc95653eb4ca78c56ae69a234e5e
+      PARENT_RUN: '33181895623'
+      PARENT_ID: '9690064470'
+      PARENT_NAME: exp071i-k2-gdm-total-velocity-49996b5053b6b15428a2ff936efb4fd21fac266c
+      PARENT_DIGEST: sha256:ba41e25e6bcdfd2c23c4c9c8bc48bf9ddd85d7776a2e5bb7976e2e061d531e14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install runtime
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+          python3 -m py_compile ci/k2_gdm_total_velocity_direction_control_v0_1.py ci/exp071m_two_sided_k1_velocity_shape_nuisance_v0_1.py
+
+      - name: Bind immutable Exp071C K1 provenance and Exp071I velocity parent
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json,os,subprocess
+          repo=os.environ['GITHUB_REPOSITORY']
+          for tag,run,idv,name,digest in [
+              ('EXP071C',os.environ['EXP071C_RUN'],os.environ['EXP071C_ID'],os.environ['EXP071C_NAME'],os.environ['EXP071C_DIGEST']),
+              ('EXP071I',os.environ['PARENT_RUN'],os.environ['PARENT_ID'],os.environ['PARENT_NAME'],os.environ['PARENT_DIGEST'])]:
+              d=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}/artifacts'],text=True))
+              m=[x for x in d['artifacts'] if x['name']==name]
+              assert len(m)==1, (tag,m)
+              x=m[0]
+              assert str(x['id'])==idv, (tag,x['id'])
+              assert x['digest']==digest, (tag,x['digest'])
+              assert x['expired'] is False
+              print('BOUND_'+tag,x['id'],x['digest'])
+          PY
+
+      - name: Download immutable Exp071I artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 33181895623
+          name: exp071i-k2-gdm-total-velocity-49996b5053b6b15428a2ff936efb4fd21fac266c
+          path: inputs/exp071i
+
+      - name: Clone and audit pinned CLASS
+        run: |
+          set -euxo pipefail
+          git clone https://github.com/lesgourg/class_public.git solvers/class_m
+          git -C solvers/class_m checkout "${CLASS_SHA}"
+          test "$(git -C solvers/class_m rev-parse HEAD)" = "${CLASS_SHA}"
+          python3 - <<'PY'
+          from pathlib import Path
+          inp=Path('solvers/class_m/source/input.c').read_text(errors='replace')
+          per=Path('solvers/class_m/source/perturbations.c').read_text(errors='replace')
+          assert '"vTk"' in inp and 'has_velocity_transfers' in inp
+          assert '"t_tot"' in per and 'index_tp_theta_tot' in per and 'rho_plus_p_theta' in per and 'rho_plus_p_tot' in per
+          print('CLASS_SOURCE_CONTRACT_PASS')
+          PY
+
+      - name: Build pinned CLASS
+        run: |
+          set -euxo pipefail
+          make -C solvers/class_m -j2 class
+          test "$(git -C solvers/class_m rev-parse HEAD)" = "${CLASS_SHA}"
+
+      - name: Materialize frozen reference and two-sided K1 configs
+        run: |
+          set -euxo pipefail
+          mkdir -p fresh/k1m
+          python3 - <<'PY'
+          from pathlib import Path
+          COMMON='''h = 0.67
+          T_cmb = 2.7255
+          Omega_k = 0.
+          N_ur = 3.046
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          output = mPk,mTk,vTk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          alpha_s = 0.
+          P_k_max_h/Mpc = 1.0
+          primordial_P_k_max_h/Mpc = 1.0
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          '''
+          for name,ns in [('ref',0.965),('plus1',0.970),('minus1',0.960)]:
+              text=(f'root = fresh/k1m/{name}_\n'
+                    f'omega_b = 0.0224\nomega_cdm = 0.1200\nn_s = {ns:.17g}\n'+COMMON)
+              Path(f'solvers/class_m/dsir_{name}.ini').write_text(text)
+          PY
+
+      - name: Run fresh reference and two-sided K1
+        run: |
+          set -euxo pipefail
+          solvers/class_m/class solvers/class_m/dsir_ref.ini 2>&1 | tee exp071m_ref.log
+          solvers/class_m/class solvers/class_m/dsir_plus1.ini 2>&1 | tee exp071m_plus1.log
+          solvers/class_m/class solvers/class_m/dsir_minus1.ini 2>&1 | tee exp071m_minus1.log
+          for prefix in ref_ plus1_ minus1_; do
+            test "$(find fresh/k1m -maxdepth 1 -type f -name "${prefix}*pk.dat" | wc -l)" -eq 7
+            test "$(find fresh/k1m -maxdepth 1 -type f -name "${prefix}*tk.dat" | wc -l)" -eq 7
+          done
+          grep -h -m1 't_tot' fresh/k1m/ref_*tk.dat
+
+      - name: Execute frozen Exp071M classification
+        run: |
+          set -euxo pipefail
+          python3 ci/exp071m_two_sided_k1_velocity_shape_nuisance_v0_1.py \
+            --fresh-k1 fresh/k1m --parent-root inputs/exp071i \
+            --json exp071m_two_sided_k1_velocity_shape_nuisance_v0_1.json
+
+      - name: Assert preregistered semantics
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('exp071m_two_sided_k1_velocity_shape_nuisance_v0_1.json'))
+          assert d['experiment']=='Exp071M'
+          assert d['preregistration_commit']=='e3c0c7315ccb78d0a292db765eda172113f664bd'
+          assert d['status']=='COMPLETE_EXP071M'
+          assert d['fresh_reference_integrity']['matter_power']['pass'] is True
+          assert d['fresh_reference_integrity']['t_tot']['pass'] is True
+          assert d['threshold_deg']==45.0
+          assert len(d['primary_angles_deg'])==4
+          assert d['frozen_parameter_points']=={'reference_n_s':0.965,'plus_n_s':0.97,'minus_n_s':0.96,'step_abs_n_s':0.005}
+          assert d['classification'] in {'K1_TWO_SIDED_VELOCITY_SHAPE_SEPARATED_FROM_BOTH_GDM_AXES_EXP071M','K1_TWO_SIDED_VELOCITY_SHAPE_OVERLAPS_GDM_EXP071M'}
+          assert d['primary_pass'] is all(v>=45.0 for v in d['primary_angles_deg'].values())
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP071M',d['classification'])
+          print('PRIMARY',d['primary_angles_deg'])
+          print('MIN',d['primary_min_angle_deg'])
+          print('ANTI',d['K1_nonlinear_antisymmetry_error'])
+          print('LINE_VALIDATION',d['line_angle_prediction_validation'])
+          PY
+
+      - name: Record provenance
+        if: always()
+        run: |
+          {
+            echo 'Exp071M prereg commit: e3c0c7315ccb78d0a292db765eda172113f664bd'
+            echo 'K1 +0.005 step inherited from immutable Exp071C; symmetric fresh K1 -0.005 added prospectively.'
+            echo 'Reference n_s=0.965; plus=0.970; minus=0.960.'
+            echo 'Actual displacement orientation preserved by division by positive |Delta n_s| only.'
+            echo 'Primary: all +/-K1 versus positive GDM cs2/cv2 velocity-shape angles >=45 deg.'
+            echo 'G7/G8/G9 remain OPEN.'
+            echo "DSIR head: ${GITHUB_SHA}"
+            echo "CLASS: ${CLASS_SHA}"
+          } > exp071m_environment.txt
+
+      - name: Upload Exp071M record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp071m-two-sided-k1-velocity-shape-${{ github.sha }}
+          path: |
+            exp071m_two_sided_k1_velocity_shape_nuisance_v0_1.json
+            exp071m_environment.txt
+            exp071m_ref.log
+            exp071m_plus1.log
+            exp071m_minus1.log
+            solvers/class_m/dsir_ref.ini
+            solvers/class_m/dsir_plus1.ini
+            solvers/class_m/dsir_minus1.ini
+            fresh/k1m/*pk.dat
+            fresh/k1m/*tk.dat
+          if-no-files-found: warn
+          retention-days: 90
