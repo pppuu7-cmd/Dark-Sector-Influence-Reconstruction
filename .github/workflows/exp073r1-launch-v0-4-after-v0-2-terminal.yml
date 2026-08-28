@@ -1,0 +1,68 @@
+name: Exp073R1 one-shot v0.4 launcher after v0.2 terminal
+on:
+  workflow_run:
+    workflows: ["Exp073R1 sharded deterministic full weak-lensing mask v0.2"]
+    types: [completed]
+permissions:
+  contents: read
+  actions: write
+jobs:
+  dispatch:
+    if: ${{ github.event.workflow_run.id == 33135622749 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EXPECTED_PARENT_RUN: '33135622749'
+      EXPECTED_PARENT_PATH: '.github/workflows/exp073r1-desy1-sharded-mask-v0-2.yml'
+      EXPECTED_PARENT_HEAD: '70be4d35199d4132a2ca9da912689519e40bcc84'
+      TARGET_WORKFLOW: 'exp073r1-desy1-canonical-microshards-v0-4.yml'
+      TARGET_WORKFLOW_BLOB: 'c935ef88284906ccf54b84181f77e0f812bc3688'
+      TARGET_MANIFEST_BLOB: '8381492100960736d2ba40e77edb391c74d307e6'
+      TARGET_SHARD_BLOB: 'b589924b3dfd38970c728ec494eda6f1f116bbd3'
+      TARGET_MERGER_BLOB: 'eb66b93010d79a91005c831e8dd087f5e104f4b5'
+    steps:
+      - name: Verify exact terminal parent and immutable canonical implementation
+        run: |
+          set -euxo pipefail
+          test "${{ github.event.workflow_run.id }}" = "${EXPECTED_PARENT_RUN}"
+          test "${{ github.event.workflow_run.status }}" = "completed"
+          test "${{ github.event.workflow_run.path }}" = "${EXPECTED_PARENT_PATH}"
+          test "${{ github.event.workflow_run.head_sha }}" = "${EXPECTED_PARENT_HEAD}"
+
+          gh api "repos/${GITHUB_REPOSITORY}/contents/.github/workflows/${TARGET_WORKFLOW}?ref=main" > /tmp/wf.json
+          gh api "repos/${GITHUB_REPOSITORY}/contents/ci/exp073r1_fullstream_range_manifest_v0_1.py?ref=main" > /tmp/manifest.json
+          gh api "repos/${GITHUB_REPOSITORY}/contents/ci/exp073r1_desy1_shard_v0_3.py?ref=main" > /tmp/shard.json
+          gh api "repos/${GITHUB_REPOSITORY}/contents/ci/exp073r1_desy1_merge_v0_4.py?ref=main" > /tmp/merge.json
+          python3 - <<'PY'
+          import json, os
+          pairs=[
+              ('/tmp/wf.json','TARGET_WORKFLOW_BLOB'),
+              ('/tmp/manifest.json','TARGET_MANIFEST_BLOB'),
+              ('/tmp/shard.json','TARGET_SHARD_BLOB'),
+              ('/tmp/merge.json','TARGET_MERGER_BLOB'),
+          ]
+          for path, env in pairs:
+              d=json.load(open(path))
+              assert d['sha']==os.environ[env], (path,d['sha'],os.environ[env])
+          PY
+
+      - name: Refuse duplicate canonical v0.4 dispatch
+        run: |
+          set -euxo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/${TARGET_WORKFLOW}/runs?event=workflow_dispatch&per_page=100" > /tmp/v04runs.json
+          python3 - <<'PY'
+          import json
+          runs=json.load(open('/tmp/v04runs.json')).get('workflow_runs',[])
+          assert len(runs)==0, f'canonical v0.4 already dispatched: {[r["id"] for r in runs]}'
+          PY
+
+      - name: Dispatch canonical whole-stream bound v0.4 exactly once
+        run: |
+          set -euxo pipefail
+          gh workflow run "${TARGET_WORKFLOW}" --repo "${GITHUB_REPOSITORY}" --ref main
+
+      - name: Record strict boundary
+        run: |
+          echo 'Only Exp073R1 transport/reproduction is authorized.'
+          echo 'No f_invalid, support classification, covariance, whitening, nuisance SVD, relation/null, G8 or G9 quantity is read or scored by this launcher.'
