@@ -1,0 +1,81 @@
+{
+  "experiment": "Exp071J",
+  "schema": "dsir.article2.total_velocity_shape_projection.v0.1",
+  "status": "COMPLETE_EXP071J",
+  "preregistration_commit": "306c19a4286ffc459fc2886097a8b70fa6df89e9",
+  "attempt1_invalid_recovery_commit": "306cdc1d2e5d60eaa5193367073656bbbe9ec99b",
+  "attempt2_routing_repair_commit": "f1b80167b5f8baa668aebbfba0270ab060008ed7",
+  "workflow_run": 33182705074,
+  "job": 98887703171,
+  "artifact_id": 9690361647,
+  "artifact_zip_sha256": "e77409ac72f1a28ad0808afcb6b4f6fdcc983501b452b9ab286aa049380bd805",
+  "immutable_parent": {
+    "experiment": "Exp071I",
+    "run": 33181895623,
+    "artifact_id": 9690064470,
+    "artifact_sha256": "ba41e25e6bcdfd2c23c4c9c8bc48bf9ddd85d7776a2e5bb7976e2e061d531e14"
+  },
+  "threshold_deg": 45.0,
+  "projection": "per-redshift equal-weight constant-in-k subtraction",
+  "raw_exp071i_reproduction_deg": {
+    "K2_bar1_vs_GDM_cs2": 165.94549400175384,
+    "K2_bar1_vs_GDM_cv2": 164.7113289163152
+  },
+  "retained_shape_norm_fraction": {
+    "K2_bar1": 0.8318697314462702,
+    "GDM_cs2": 0.8271831838994256,
+    "GDM_cv2": 0.8372386500341654
+  },
+  "primary_angles_deg": {
+    "K2_bar1_vs_GDM_cs2_shape": 166.43869440595827,
+    "K2_bar1_vs_GDM_cv2_shape": 164.92709673022526
+  },
+  "primary_pass": true,
+  "classification": "K2_VELOCITY_SHAPE_SEPARATED_FROM_BOTH_GDM_AXES_EXP071J",
+  "gdm_shape_mutual_angle_deg": 2.5153074439669076,
+  "robustness_nonclassifying": {
+    "K2_shape_angle_to_bar1_deg": {
+      "bar1": 0.0,
+      "bar2": 0.04608131451486242,
+      "bar3": 0.09071550760744801,
+      "bar4": 0.13321630007622112,
+      "bar5": 0.14294777824791585
+    },
+    "max_K2_shape_angle_to_bar1_deg": 0.14294777824791585,
+    "K2_shape_centered_svd_variance_fraction": [
+      0.9596965881209994,
+      0.03976523321667248,
+      0.0005379811334559587,
+      1.9752887211428932e-7,
+      1.7514281228109118e-27
+    ]
+  },
+  "global_mean_projection_nonclassifying": {
+    "K2_vs_cs2_deg": 163.2376001842635,
+    "K2_vs_cv2_deg": 162.00594754725725
+  },
+  "per_k_temporal_projection_nonclassifying": {
+    "K2_vs_cs2_deg": 158.94537093166804,
+    "K2_vs_cv2_deg": 156.2727530162396
+  },
+  "t_b_shape_sensitivity_nonclassifying": {
+    "K2_vs_cs2_deg": 130.25425028726556,
+    "K2_vs_cv2_deg": 129.9815656995893,
+    "GDM_cs2_vs_cv2_deg": 0.5320421089521089
+  },
+  "interpretation": [
+    "The strong Exp071I K2/GDM total-velocity separation survives removal of the entire scale-independent constant-in-k response independently at every frozen redshift.",
+    "The projected residual retains about 83 percent of each raw response norm, so the result is not a numerically unresolved remainder.",
+    "Alternative non-classifying amplitude projections also preserve strong separation: global-mean removal gives about 162-163 degrees and per-k temporal-mean removal gives about 156-159 degrees.",
+    "The common baryon-velocity transfer provides an independent projected sensitivity result of about 130 degrees to both GDM axes.",
+    "The two GDM projected velocity-shape directions remain mutually close, about 2.52 degrees, so their mutual separation is not what drives the K2 result."
+  ],
+  "not_a_claim": [
+    "not tracer RSD",
+    "not observational nuisance quotient",
+    "not covariance whitening",
+    "not survey distinguishability",
+    "not unique microscopic identification"
+  ],
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
