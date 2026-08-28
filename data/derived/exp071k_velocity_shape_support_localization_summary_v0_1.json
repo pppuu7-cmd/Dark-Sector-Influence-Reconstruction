@@ -1,0 +1,45 @@
+{
+  "experiment": "Exp071K",
+  "preregistration_commit": "3910605e9b8f586ec8dcb8be045c37e83e5afdd3",
+  "run": 33183729426,
+  "job": 98891216832,
+  "artifact_id": 9690784568,
+  "artifact_sha256": "9ddf4c31219cad7b97f3aec569fcd50724b141404de8672daca7ab2606265948",
+  "status": "COMPLETE_EXP071K",
+  "classification": "K2_VELOCITY_SHAPE_BROAD_SUPPORT_PASS_EXP071K",
+  "threshold_deg": 45.0,
+  "primary_angle_count": 24,
+  "primary_pass": true,
+  "full_support_exp071j_deg": {
+    "K2_vs_cs2": 166.43869440595827,
+    "K2_vs_cv2": 164.92709673022526
+  },
+  "leave_one_k": {
+    "cs2_min_deg": 158.10040892560735,
+    "cs2_min_deletion": "k=0.1",
+    "cv2_min_deg": 157.8212319078262,
+    "cv2_min_deletion": "k=0.1"
+  },
+  "leave_one_z": {
+    "cs2_min_deg": 165.42604311996763,
+    "cs2_min_deletion": "z=0.706",
+    "cv2_min_deg": 163.85258791727642,
+    "cv2_min_deletion": "z=0.706"
+  },
+  "global_min_primary_angle_deg": 157.8212319078262,
+  "global_max_primary_angle_deg": 169.55252925882485,
+  "largest_abs_shift_from_full_deg": {
+    "cs2": 8.338285480350919,
+    "cv2": 7.10586482239907,
+    "deletion": "k=0.1"
+  },
+  "finite_step_nonclassifying": {
+    "bar2_min_deg": 157.82270634692296,
+    "bar3_min_deg": 157.82366991749575,
+    "bar4_min_deg": 157.8246599834363,
+    "bar5_min_deg": 157.82535729040606,
+    "all_above_45": true
+  },
+  "gate_state": {"G7":"OPEN","G8":"OPEN","G9":"OPEN"},
+  "interpretation_boundary": "Broad support is established for the preregistered oriented positive-K2 velocity-shape direction. This result alone does not test a two-sided known-sector nuisance line or a negative K2 displacement."
+}
