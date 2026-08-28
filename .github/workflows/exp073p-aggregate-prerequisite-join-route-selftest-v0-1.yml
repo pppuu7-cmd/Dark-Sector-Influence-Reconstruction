@@ -1,0 +1,67 @@
+name: Exp073P aggregate prerequisite join route selftest v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-1.yml'
+      - '.github/workflows/exp073p-aggregate-prerequisite-join-route-selftest-v0-1.yml'
+      - 'ci/exp073p_actions_metadata_bundle_v0_1.py'
+      - 'ci/exp073p_aggregate_prerequisite_join_v0_1.py'
+      - 'ci/exp073p_r1_admissibility_interlock_v0_1.py'
+      - 'experiments/073p_actual_aggregate_join_execution_route_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-route-selftest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Execute synthetic live-API route mutation suite
+        run: |
+          set -euxo pipefail
+          python3 -m py_compile \
+            ci/exp073p_actions_metadata_bundle_v0_1.py \
+            ci/exp073p_aggregate_prerequisite_join_v0_1.py \
+            ci/exp073p_r1_admissibility_interlock_v0_1.py
+          python3 ci/exp073p_actions_metadata_bundle_v0_1.py \
+            --selftest \
+            --workflow .github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-1.yml \
+            --out data/derived/g7/exp073p_actions_metadata_route_synthetic_selftest_v0_1.json
+
+      - name: Assert synthetic route cannot authorize physical support
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073p_actions_metadata_route_synthetic_selftest_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073P_ACTIONS_METADATA_ROUTE_SYNTHETIC_SELFTEST_V0_1'
+          assert d['synthetic'] is True
+          assert d['scientific_classification'] is None
+          assert d['support_executor_authorized'] is False
+          assert d['real_join_status_emitted'] is False
+          assert d['real_pass_label_reserved'] is True
+          assert d['parent_count']==10
+          assert d['failclosed_mutations']>=10
+          for key in (
+              'support_fraction_evaluated','f_invalid_computed',
+              'retained_dimension_evaluated','covariance_read','whitening_read',
+              'nuisance_svd_read','relation_null_read','heldout_read','G8_read',
+          ):
+              assert d[key] is False,key
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('PASS_EXP073P_ACTIONS_METADATA_ROUTE_NONAUTHORIZATION_ASSERTIONS_V0_1')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073p-actions-metadata-route-synthetic-selftest-${{ github.sha }}
+          path: data/derived/g7/exp073p_actions_metadata_route_synthetic_selftest_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
