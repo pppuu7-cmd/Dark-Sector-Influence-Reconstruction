@@ -14,10 +14,16 @@ The four smaller DES Y1 release objects prospectively frozen by Exp073P2 were fo
 
 Together with the previously bound objects
 
-- `y1_source_redshift_binning_v1.fits`: 2,738,626,560 bytes, SHA256 `491f4bb742762fefe3aaab6d53d4342b6ff4a65401bc7b588d2918fdce3ee6fd`;
+- `y1_source_redshift_binning_v1.fits`: 2,738,626,560 bytes, SHA256 `491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5`;
 - `mcal-y1a1-combined-riz-unblind-v4-matched.fits`: 84,075,649,920 bytes, SHA256 `39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8`;
 
 this completes checksum identity binding for every DES Y1 release object explicitly frozen in Exp073P section 2.
+
+## 2026-08-28 provenance correction
+
+The source-object SHA256 in the first version of this note was transcribed incorrectly as `491f4bb742762fefe3aaab6d53d4342b6ff4a65401bc7b588d2918fdce3ee6fd`. The authoritative value above is taken directly from immutable GitHub Actions run `33081571259`, job `98549908746`, artifact `9650284556` (`exp073p-source-bin-full-sha256-372997bf1240a224c2a915fd0d1a5ae50476ba7a`). That artifact records `observed_bytes=2738626560`, `status=PASS_FULL_OBJECT_STREAMING_SHA256_BINDING`, and SHA256 `491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5`. The metacalibration SHA256 was already transcribed correctly.
+
+This correction is provenance-only. It does not evaluate support leakage, retained dimension, covariance, nuisance directions, relation/null quantities, or G8/G9.
 
 **P2 status:** CLOSED / PASS.  
 **G7:** OPEN.  
