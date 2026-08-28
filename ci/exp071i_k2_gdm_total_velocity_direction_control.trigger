@@ -1,0 +1,6 @@
+Exp071I first execution trigger.
+Original prereg: 30797f97f9ee4d295dcaf1905d3647230b6fa1cc
+Pre-execution vTk amendment: 55ea3d6435767ecf570702b55d411a12eddd59b4
+Evaluator: 2858ec8c97111c02b140d86925343d7e4b603094
+Workflow: 2951fa4b4a487dac75bea60d87e89346dd6b9ac5
+No Exp071I spectra or statistic were inspected before this trigger.
