@@ -1,0 +1,6 @@
+Exp071K first execution trigger.
+Prereg: 3910605e9b8f586ec8dcb8be045c37e83e5afdd3
+Evaluator: 6c03b4328d52af9f2a5efca43c0a1a40389f8c8f
+Workflow: 2791ac1e22262c62c7c2e89b6675eb701593f53e
+Immutable parent: Exp071I artifact 9690064470 sha256:ba41e25e6bcdfd2c23c4c9c8bc48bf9ddd85d7776a2e5bb7976e2e061d531e14.
+No Exp071K ablation angle was inspected before this trigger.
