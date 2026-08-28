@@ -1,15 +1,34 @@
-# DSIR-I internal-review readiness — v0.1
+# DSIR-I internal-review readiness — v0.2
 
 **Date:** 2026-08-28  
-**Purpose:** distinguish scientific closure from publication/readability readiness before asking an external colleague or referee to read the paper.
+**Purpose:** distinguish scientific closure, manuscript readiness, and release/submission readiness.
 
 ## Current verdict
 
-`READY_FOR_FINAL_EDITORIAL_CLEANUP_NOT_YET_RELEASE_CANDIDATE_V0_1`
+`SCIENTIFIC_CORE_CLOSED__GREEN_JCAP_CANDIDATE__FINAL_RELEASE_GATES_OPEN_V0_2`
 
-The Paper-I scientific core is closed for its declared scope, the novelty boundary has been narrowed against identified prior art, the numerical/units/gauge audit has passed, and a full JCAP PDF now compiles reproducibly. The manuscript is **not yet a release candidate** because layout/prose compression, final bibliography metadata verification, self-contained offline archive assembly, and final literature refresh remain open.
+The Paper-I scientific core is closed for its declared scope. The compact two-table JCAP candidate has passed the full deterministic paper audit and the complete JCAP compile/PDF audit. The article is therefore no longer in a drafting-science phase; it is in **final publication preparation**.
 
-## 1. Scientific readiness
+It is **not yet a release candidate** because final layout polish, authoritative bibliography metadata verification, a fresh literature/citation-forward check, and a self-contained offline submission archive remain open. These are publication-quality/release gates, not missing central science.
+
+## 1. Readiness estimate
+
+The percentage below is a project-management estimate, not a scientific statistic.
+
+| Layer | Current readiness | Interpretation |
+|---|---:|---|
+| scientific core for declared Paper-I scope | `~100%` | central Paper-I claims are frozen; no new science is required to make the declared paper internally coherent |
+| manuscript argument / claim boundaries | `~97%` | full English manuscript exists, claim ledger and adversarial audits are in place, moving-scale bridge integrated |
+| figures and main/supplement tables | `~96%` | Figures 1--7 build; two-table main-text freeze implemented; six supplementary numerical tables exist |
+| deterministic JCAP build | `~95%` | latest audited compact candidate compiles to a valid PDF; current post-polish commit must re-pass the same gate |
+| literature / bibliography | `~88%` | citation-key integrity is green; authoritative metadata verification and final 2026 refresh remain |
+| release/submission package | `~75%` | exact build provenance exists, but self-contained offline archive, release-candidate freeze/tag and final archive identity remain |
+
+**Overall publication readiness estimate:** `~90%`.
+
+This estimate should only move upward when a named release gate closes. A newer research result does not automatically increase Paper-I readiness.
+
+## 2. Scientific readiness
 
 | Item | Status | Basis |
 |---|---|---|
@@ -23,13 +42,14 @@ The Paper-I scientific core is closed for its declared scope, the novelty bounda
 | WDM/DCDM mechanism diversity | FROZEN WITHHELD-SCOPE | P9-P11 |
 | prospective common-scalar-law failure | FROZEN FAIL | P12 |
 | known-sector non-specificity control | DESCRIPTIVE / RETROSPECTIVE | P15 |
+| moving-scale/nonseparability bridge | ANALYTIC + RETROSPECTIVE CONSISTENCY | local translated-feature lemma plus immutable Exp050A WDM integrity check |
 | provider failure-preservation examples | FROZEN | P13-P14 |
 | support/admissibility before covariance | FROZEN METHOD + NEGATIVE ELIGIBILITY | P16 onward |
 | G7 | OPEN | intentionally outside Paper-I closure |
 | G8 | OPEN | intentionally outside Paper-I closure |
 | G9 | OPEN | intentionally outside Paper-I closure |
 
-## 2. Novelty readiness
+## 3. Novelty readiness
 
 ### PASS with narrowing
 
@@ -44,144 +64,126 @@ The safe DSIR-I novelty claim is the **conjunction** of:
 5. operator-conditioned exact equivalence;
 6. prospective cross-mechanism falsification with the failed law preserved;
 7. provider and realized-operator provenance as pre-statistical scientific eligibility;
-8. refusal to quote survey-level distances before the realized operator has admissible support.
+8. refusal to quote survey-level distances before the realized operator has admissible support;
+9. an analytic local bridge showing why a moving scale can generate low-rank scale-time interaction without implying a universal scalar law.
 
 ### Remaining novelty task
 
-Run a final fresh literature and citation-forward search immediately before the release-candidate freeze. No priority language should be strengthened without that search.
+Run a final fresh literature and citation-forward search immediately before release-candidate freeze. No priority language may be strengthened without that search.
 
-## 3. JCAP build readiness
+## 4. Latest green compact JCAP baseline
 
-### First successful compiled-PDF gate
+The current compact/two-main-table baseline is:
 
-- commit: `0103439d24a499c00352275062350efd6a27b977`
-- workflow: `DSIR-I JCAP compile v0.1`
-- run: `33118926652`
-- job: `98680607479`
-- result: `SUCCESS`
-- artifact: `9665694572`
-- artifact ZIP digest: `sha256:5c4e1d07a7e443dfd2f808be4d5fc967cee099e6d28450f7ae464baf8e935473`
-- final compiled PDF: `28` pages
+- commit: `5e74a304e8e3b6b5a4fd09144f2c00b224ea7818`
+- deterministic paper build run: `33120663553` — SUCCESS
+- JCAP compile run: `33120663569` — SUCCESS
+- compile job: `98686427864` — SUCCESS
+- artifact: `9666357842`
+- artifact ZIP SHA256: `494a0d1e3ff47001556b12a075ed8f7d1d8f135b1bb47dc64ff3251bed4470df`
+- final compiled PDF: `26` pages
 - first-page Abstract: PASS
 - first-page Keywords: PASS
 - unresolved citations/references after final pass: `0`
 - abstract audit: `239` words
-- bibliography integrity at that baseline: `22` unique cited keys, `31` citation occurrences, `29` unique BibTeX entries, no missing or duplicate cited keys.
+- main-table count: `2`
+- bibliography integrity: `22` unique cited keys / `31` citation occurrences / `29` unique BibTeX entries / no missing or duplicate cited keys
+- publication figures: Figures 1--7 generated successfully.
 
-### TeX/BibTeX provenance
+TeX/BibTeX provenance:
 
-- pdfTeX: `3.141592653-2.6-1.40.25`, TeX Live 2023/Debian
-- BibTeX: `0.99d`, TeX Live 2023/Debian
-- pinned SISSA style source checked by Git blob identity;
-- pinned `JHEP.bst` upstream preserved separately;
-- deterministic compatibility patch only quotes the two malformed upstream macro payloads `apj` and `aa`;
-- patched and upstream bibliography-style files are both retained in the artifact.
+- pdfTeX `3.141592653-2.6-1.40.25`, TeX Live 2023/Debian;
+- BibTeX `0.99d`, TeX Live 2023/Debian;
+- pinned JCAP style source verified by Git blob identity;
+- upstream `JHEP.bst` retained separately;
+- deterministic compatibility patch changes only the two malformed macro payloads `apj` and `aa`.
 
-This is a technical build PASS, not a scientific result.
+This is a technical publication-build PASS, not a new scientific result.
 
-## 4. Editorial scope readiness
+## 5. Editorial scope state
 
-`TABLE_PLACEMENT_FREEZE.md` now freezes the target composition:
+The frozen Paper-I composition is now implemented rather than merely proposed:
 
 - seven main figures;
-- two main tables by default;
-- six supplementary tables;
-- one compact observation-route admissibility subsection in the main text;
-- detailed M/N/O/P2/S0/R0 chronology and exact run/artifact/digest records outside the main narrative.
+- two main tables:
+  1. evidence-graded mechanism-to-response map;
+  2. finite-amplitude `chi_I` hierarchy;
+- six supplementary numerical tables;
+- compact observation-route admissibility subsection in the main text;
+- detailed M/N/O/P2/S0/R0 chronology and exact machine provenance outside the journal narrative.
 
-This directly addresses the referee risks that the paper could become two papers or carry too many headline claims.
+Long machine-status strings have been removed from the main narrative and remain mandatory in supplement/provenance. Figure-7's Python escape warning has also been removed without changing scientific content.
 
-## 5. Current PDF defects that still block release-candidate status
+## 6. Remaining layout/editorial defects
 
-The successful compile proves correctness of the source chain but also exposes presentation defects that should be removed before internal review/release candidate.
+The latest green 26-page compile still reports nonfatal layout warnings. The severe earlier machine-ID overfull boxes are gone, but several publication-visible lines remain to be polished.
 
-### A. Long machine-status/provenance strings in narrative prose
+Important remaining examples from the green baseline include:
 
-Current overfull examples include:
+- moving-scale WDM sentence: about `15.2 pt` overfull;
+- observation-support conclusion: about `12.9 pt` overfull;
+- discovery-gate limitation sentence: about `10.5 pt` overfull;
+- reproducibility sentence: about `13.5 pt` overfull;
+- mechanism-list sentence: about `10.7 pt` overfull;
+- many underfull boxes inside the dense mechanism-to-response table;
+- PDF-string/hyperref warnings from math-bearing headings.
 
-- full Exp054C/F27 SHA/run/artifact provenance line: about `329 pt` overfull;
-- `FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE`: about `111 pt` overfull;
-- `PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0`: about `64 pt` overfull;
-- `INELIGIBLE_GR_REFERENCE_LINEAR_ROUTE_EXP073A`: about `42 pt` overfull;
-- full paper branch path in reproducibility prose: about `103 pt` overfull.
+The first two high-impact prose overfull cases are being shortened at the current post-baseline head without changing any number or claim boundary. The current head must pass the same deterministic paper and JCAP gates before this cleanup is accepted.
 
-**Required editorial fix:** use human-readable status language in the narrative and move exact machine identifiers to provenance/supplement tables. This does not weaken traceability because `PROVENANCE_MATRIX.md` remains canonical.
-
-### B. Mechanism-to-response table density
-
-The main mechanism table compiles but produces many underfull boxes. Its scientific content should remain, but the final LaTeX table needs publication-oriented column sizing / line-breaking, likely a wider flexible-column table or landscape/supplement split if needed.
-
-### C. Hyperref heading warnings
-
-Math-bearing section-title tokens produce PDF-string warnings. Use text-only heading forms or explicit PDF-safe alternatives in the journal renderer without changing mathematical body content.
-
-### D. Figure-7 Python string warning
-
-`fig07_observation_space_support_closure.py` emits a Python `SyntaxWarning` for an invalid escape around `\,`. Convert the affected string to a raw string or escape the backslash explicitly; numerical/visual content must remain unchanged.
-
-## 6. Bibliography readiness
+## 7. Bibliography readiness
 
 ### Already passed
 
 - all manuscript citation keys exist;
 - no duplicate BibTeX keys;
 - final JCAP compile resolves numerical citations;
-- N1B prior-art sources are cited in the manuscript.
+- N1B prior-art sources are cited;
+- 22 unique works are cited in the current manuscript.
 
 ### Still required
 
-- authoritative metadata verification for every cited entry: authors, title, journal, year, volume/issue, pages/article number, DOI, arXiv identifier;
-- review seven currently uncited records and either give each a concrete manuscript purpose or remove it from the final bibliography;
-- add persistent identifiers for software/data releases where available;
-- final fresh 2026 literature refresh before arXiv freeze.
+1. verify every **cited** bibliographic record against authoritative metadata: authors, title, journal, year, volume/issue, article/page number, DOI and arXiv identifier where applicable;
+2. review the seven currently uncited BibTeX entries and either cite them for a concrete purpose or remove them from the submission bibliography;
+3. add persistent identifiers for software/data releases where appropriate;
+4. run a final fresh literature search with special attention to 2026 work and citation-forward neighbors immediately before arXiv freeze.
 
-## 7. Reproducibility/release readiness
+## 8. DSIR4 / current-main intake rule
 
-Still required before `dsir1-arxiv-v1`:
+Paper I does **not** wait for ongoing Exp073R1 work unless a completed frozen output changes an explicit Paper-I limitation.
 
-1. implement final main/supplement table placement;
-2. remove release-visible overfull provenance/status strings;
-3. rebuild and visually inspect the JCAP PDF;
-4. assemble a self-contained source archive containing pinned style/BST/BibTeX/figures and compile it without network fetching;
-5. record exact source/PDF/figure hashes;
-6. freeze a release-candidate commit;
-7. run all fail-closed paper audits on that exact commit;
-8. run final literature refresh;
-9. create git tag;
-10. archive the tag with a persistent DOI;
-11. insert DOI and arXiv identifier into the final availability/front matter.
+At the 2026-08-28 intake snapshot, current `main` is running canonical Exp073R1 v0.4 whole-stream-bound microshard/provenance work. The launcher is reproduction/provenance scoped: it does not authorize reading `f_invalid`, support classification, covariance, whitening, nuisance SVD, relation/null, G8 or G9 quantities. Therefore the current R1 work is not a new Paper-I headline result.
 
-## 8. Exp073R1 and later research
+Default intake classification remains:
 
-Paper I no longer waits for Exp073R1. Any future completed result is admitted only through `SUBMISSION_SCOPE_FREEZE.md`.
+- reproduction / input identity / transport prerequisite -> supplement or provenance only;
+- completed physical-support result that directly changes a Paper-I limitation -> evaluate under `SUBMISSION_SCOPE_FREEZE.md` before inclusion;
+- covariance / whitening / nuisance / relation-null progression -> Paper II by default;
+- G7/G8/G9 or new-fundamental-physics progression -> later papers;
+- infrastructure-only or incomplete run -> excluded from scientific claims.
 
-Default treatment:
+This prevents active DSIR4 research from indefinitely delaying Paper I.
 
-- reproduction/prerequisite only -> supplement/provenance;
-- physical-support/covariance/nuisance progression -> defer to Paper II unless it changes a Paper-I limitation;
-- G7/G8/G9/new-physics progression -> later papers;
-- infrastructure-incomplete -> exclude from scientific claims.
+## 9. Release/submission gates still open
 
-## 9. Internal-review go/no-go rule
+Before declaring `READY_FOR_PUBLICATION`, all of the following must be simultaneously true on one frozen release-candidate commit:
 
-### Ready for focused editorial cleanup now
+1. final prose/layout cleanup completed; no severe publication-visible overfull text remains;
+2. authoritative metadata verified for every cited source;
+3. final 2026 literature/citation-forward refresh completed and novelty wording re-audited;
+4. self-contained source archive assembled with local pinned style/BST/BibTeX/figures;
+5. that exact archive compiles **offline**, with no network fetch required;
+6. final claim/evidence, numerical, units/gauge and bibliography audits all remain green;
+7. final PDF visually inspected and its source/PDF/figure hashes recorded;
+8. release-candidate commit frozen and tagged;
+9. exact submission archive retained with SHA256 identity;
+10. no active DSIR4 result has been imported merely because it is newer.
 
-Yes.
+A persistent archive DOI is strongly preferred for the release snapshot but is not allowed to substitute for any scientific or compile gate.
 
-### Ready to send as a release-candidate manuscript now
+## 10. When to say “the article is ready for publication”
 
-No.
+The phrase **READY FOR PUBLICATION** is reserved for the first commit satisfying every gate in section 9. Until then, the correct status is:
 
-### Promote to `READY_FOR_INTERNAL_SCIENTIFIC_REVIEW`
+`~90% READY — SCIENCE CLOSED, GREEN JCAP CANDIDATE, FINAL RELEASE GATES OPEN`.
 
-Only after:
-
-- machine identifiers are removed from narrative prose;
-- main/supplement table split is implemented;
-- compiled PDF has no severe overfull text boxes;
-- citation metadata for all cited sources is verified;
-- full claim/evidence and units/gauge audits remain green after those edits.
-
-### Promote to arXiv/JCAP release candidate
-
-Only after the additional offline-archive, final-literature, tag/archive/DOI and exact-source-identity gates close.
+At that point the remaining act is submission/upload, not scientific development.
