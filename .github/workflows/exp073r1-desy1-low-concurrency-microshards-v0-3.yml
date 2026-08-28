@@ -5,7 +5,54 @@ permissions:
   contents: read
   actions: read
 jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      R0_RUN_ID: '33103083736'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bind genuine R0 PASS and frozen DES input identity before transport
+        run: |
+          set -euxo pipefail
+          grep -q 'PASS_REMAINING_DESY1_RELEASE_CHECKSUM_BINDING_EXP073P2' docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md
+          grep -q '491f4bb742762fefe3aaab6d53d4342b6ff4a65401bc7b588d2918fdce3ee6fd' docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md
+          grep -q '39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8' docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md
+          mkdir -p external/r0
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${R0_RUN_ID}" > external/r0_run.json
+          python3 - <<'PY'
+          import json, os
+          d=json.load(open('external/r0_run.json'))
+          assert str(d['id']) == os.environ['R0_RUN_ID']
+          assert d['status'] == 'completed' and d['conclusion'] == 'success'
+          assert d['path'] == '.github/workflows/exp073r0-desy1-raw-row-healpix-equivalence-v0-1.yml'
+          PY
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${R0_RUN_ID}/artifacts" > external/r0_artifacts.json
+          python3 - <<'PY' > external/r0_artifact_name.txt
+          import json
+          d=json.load(open('external/r0_artifacts.json'))
+          a=[x for x in d['artifacts'] if x['name'].startswith('exp073r0-row-healpix-equivalence-') and not x['expired']]
+          assert len(a)==1, a
+          print(a[0]['name'])
+          PY
+          gh run download "${R0_RUN_ID}" -n "$(cat external/r0_artifact_name.txt)" -D external/r0
+          R0_JSON="$(find external/r0 -name 'exp073r0_raw_row_healpix_equivalence_v0_1.json' -print -quit)"
+          test -n "$R0_JSON"
+          python3 - "$R0_JSON" <<'PY'
+          import json, sys
+          d=json.load(open(sys.argv[1]))
+          assert d['status']=='PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0'
+          assert d['bins_with_selected_rows']==[0,1,2,3]
+          assert all(d['source_field_exact'].values())
+          assert all(d['metacal_field_exact'].values())
+          assert all(v['pixel_indices_exact'] is True for v in d['per_bin'].values())
+          assert d['science_gate_scored'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+
   shard:
+    needs: preflight
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -35,10 +82,61 @@ jobs:
           assert d['covariance_read'] is False and d['G8_read'] is False
           assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
           assert d['nshards']==32
+          assert d['out_of_range_pixel_count']==0
           PY
       - uses: actions/upload-artifact@v4
         with:
           name: exp073r1m-shard-${{ matrix.shard }}
           path: shard-${{ matrix.shard }}/
+          retention-days: 90
+          compression-level: 6
+
+  merge:
+    needs: shard
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      R0_RUN_ID: '33103083736'
+      TRANSPORT_PREREG_COMMIT: '55241d714ddeb96c27dedc4672494721fa096b70'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: exp073r1m-shard-*
+          path: external/shards
+      - name: Merge complete row universe and reconstruct masks twice
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --disable-pip-version-check --no-cache-dir 'numpy<2.4' healpy
+          python3 -m py_compile ci/exp073r1_desy1_merge_v0_3.py
+          python3 ci/exp073r1_desy1_merge_v0_3.py \
+            --root external/shards \
+            --out data/derived/g7/exp073r1_desy1_full_onepass_weak_lensing_mask_v0_3.json \
+            --checksum-record docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md \
+            --expected-shards 32 \
+            --r0-run-id "${R0_RUN_ID}" \
+            --transport-prereg-commit "${TRANSPORT_PREREG_COMMIT}" \
+            --implementation-head "${GITHUB_SHA}"
+      - name: Assert frozen non-science Exp073R1 reproduction PASS
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073r1_desy1_full_onepass_weak_lensing_mask_v0_3.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1'
+          assert d['rows_read_source']==136930995 and d['rows_read_metacal']==136930995
+          assert d['microshard_count']==32
+          assert d['science_gate_scored'] is False and d['f_invalid_computed'] is False
+          assert d['covariance_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert all(all(v.values()) for v in d['repeatability_from_merged_records'].values())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073r1-desy1-full-mask-microsharded-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073r1_desy1_full_onepass_weak_lensing_mask_v0_3.json
+            data/derived/g7/exp073r1_masks/
+            data/derived/g7/exp073r1_records/
           retention-days: 90
           compression-level: 6
