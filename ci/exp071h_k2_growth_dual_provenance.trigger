@@ -1,0 +1,2 @@
+Launch Exp071H exactly as frozen in experiments/071h_k2_finite_bin_growth_dual_provenance_control_prereg_v0_1.md
+Preregistration commit: 93bd51867d90fa346ce644deebe228e6d0d45697
