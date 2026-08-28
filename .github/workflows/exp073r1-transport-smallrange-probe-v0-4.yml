@@ -1,0 +1,47 @@
+name: Exp073R1 transport small-range probe v0.4
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ci/exp073r1_transport_probe_v0_4.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile transport probe
+        run: python3 -m py_compile ci/exp073r1_transport_probe_smallrange_v0_4.py
+      - name: Probe previously failing metacal parent range as four strict subranges
+        run: |
+          python3 ci/exp073r1_transport_probe_smallrange_v0_4.py \
+            --metacal-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/shear_catalogs/mcal-y1a1-combined-riz-unblind-v4-matched.fits \
+            --out data/derived/g7/exp073r1_transport_smallrange_probe_v0_4.json
+      - name: Assert transport-only PASS contract
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073r1_transport_smallrange_probe_v0_4.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073R1_TRANSPORT_SMALLRANGE_PROBE_V0_4'
+          assert d['failed_parent_run_id']==33135622749
+          assert d['failed_parent_job_id']==98820218455
+          assert d['failed_parent_range']=={'start':73566193960,'end':73727150375,'bytes':160956416}
+          assert d['subrange_bytes']==40239104 and len(d['subranges'])==4
+          assert all(x['bytes']==40239104 for x in d['subranges'])
+          assert d['first_subrange_repeat_exact'] is True
+          assert d['science_gate_scored'] is False and d['f_invalid_computed'] is False
+          assert d['covariance_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073r1-transport-smallrange-probe-v0-4-${{ github.sha }}
+          path: data/derived/g7/exp073r1_transport_smallrange_probe_v0_4.json
+          retention-days: 90
