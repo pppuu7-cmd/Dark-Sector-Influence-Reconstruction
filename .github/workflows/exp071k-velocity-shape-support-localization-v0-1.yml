@@ -1,0 +1,99 @@
+name: Exp071K velocity-shape support localization v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp071k_velocity_shape_support_localization.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  velocity-shape-support-localization:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PARENT_RUN: '33181895623'
+      PARENT_ID: '9690064470'
+      PARENT_NAME: exp071i-k2-gdm-total-velocity-49996b5053b6b15428a2ff936efb4fd21fac266c
+      PARENT_DIGEST: sha256:ba41e25e6bcdfd2c23c4c9c8bc48bf9ddd85d7776a2e5bb7976e2e061d531e14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install evaluator runtime
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --user numpy
+          python3 -m py_compile ci/k2_gdm_total_velocity_direction_control_v0_1.py ci/exp071k_velocity_shape_support_localization_v0_1.py
+      - name: Bind immutable Exp071I artifact
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json,os,subprocess
+          repo=os.environ['GITHUB_REPOSITORY']; run=os.environ['PARENT_RUN']
+          d=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}/artifacts'],text=True))
+          m=[x for x in d['artifacts'] if x['name']==os.environ['PARENT_NAME']]
+          assert len(m)==1
+          x=m[0]
+          assert str(x['id'])==os.environ['PARENT_ID']
+          assert x['digest']==os.environ['PARENT_DIGEST']
+          assert x['expired'] is False
+          print('BOUND_EXP071I',x['id'],x['digest'])
+          PY
+      - name: Download immutable Exp071I artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 33181895623
+          name: exp071i-k2-gdm-total-velocity-49996b5053b6b15428a2ff936efb4fd21fac266c
+          path: inputs/exp071i
+      - name: Execute frozen Exp071K support ablations
+        run: |
+          set -euxo pipefail
+          python3 ci/exp071k_velocity_shape_support_localization_v0_1.py --artifact-root inputs/exp071i --json exp071k_velocity_shape_support_localization_v0_1.json
+      - name: Assert preregistered semantics
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('exp071k_velocity_shape_support_localization_v0_1.json'))
+          assert d['experiment']=='Exp071K'
+          assert d['status']=='COMPLETE_EXP071K'
+          assert d['threshold_deg']==45.0
+          assert d['primary_angle_count']==24
+          assert d['classification'] in {'K2_VELOCITY_SHAPE_BROAD_SUPPORT_PASS_EXP071K','K2_VELOCITY_SHAPE_SINGLE_SUPPORT_DEPENDENCE_EXP071K'}
+          vals=[]
+          for r in d['leave_one_k']+d['leave_one_z']:
+              vals += [r['K2_vs_cs2_deg'],r['K2_vs_cv2_deg']]
+          assert len(vals)==24
+          assert d['primary_pass'] is all(v>=45.0 for v in vals)
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP071K',d['classification'])
+          print('GLOBAL_MIN',d['summary']['global_min_primary_angle_deg'])
+          print('LOK',d['summary']['leave_one_k'])
+          print('LOZ',d['summary']['leave_one_z'])
+          PY
+      - name: Record provenance
+        if: always()
+        run: |
+          {
+            echo 'Exp071K prereg commit: 3910605e9b8f586ec8dcb8be045c37e83e5afdd3'
+            echo 'Pre-execution routing repair commit: 6c03b4328d52af9f2a5efca43c0a1a40389f8c8f'
+            echo 'Primary: all 24 leave-one-k/leave-one-z projected angles must be >=45 deg.'
+            echo 'No new solver run; immutable Exp071I artifact only.'
+            echo 'G7/G8/G9 remain OPEN.'
+            echo "DSIR head: ${GITHUB_SHA}"
+          } > exp071k_environment.txt
+      - name: Upload Exp071K result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp071k-velocity-shape-support-${{ github.sha }}
+          path: |
+            exp071k_velocity_shape_support_localization_v0_1.json
+            exp071k_environment.txt
+          if-no-files-found: warn
+          retention-days: 90
