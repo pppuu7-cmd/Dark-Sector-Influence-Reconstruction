@@ -1,24 +1,28 @@
 #!/usr/bin/env python3
 """Build a deterministic self-contained DSIR-I JCAP/arXiv source archive.
 
-This script is deliberately release-facing rather than a scientific builder.
-It assumes the audited JCAP source, pinned local JCAP style/BST, bibliography,
-and publication-figure PDFs already exist.  It copies only the files required
-for a clean submission-source compile, rewrites repository-relative paths to
-archive-local paths, writes an exact SHA256 manifest, and creates a deterministic
-ZIP.  Scientific content, thresholds, figures, and bibliography records are not
-modified here.
+This script is release-facing rather than scientific. In normal mode it assumes
+the audited JCAP source, pinned local JCAP style/BST, bibliography, and
+publication-figure PDFs already exist. It copies only source inputs required for
+a clean submission compile, rewrites repository-relative paths to archive-local
+paths, writes an exact SHA256 manifest, and creates a deterministic ZIP.
+
+With ``--finalize-bbl-from PATH`` it copies a BibTeX-generated .bbl from a clean
+archive verification compile back into the source package, rewrites the manifest,
+and rebuilds the deterministic ZIP without importing auxiliary/log/PDF files.
+Scientific content, thresholds, figures, and bibliography records are never
+modified by this script.
 """
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import shutil
 import zipfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-REPO = HERE.parents[1]
 JCAP = HERE / "jcap"
 FIGDIR = HERE / "figures" / "generated"
 RELEASE = HERE / "release"
@@ -87,7 +91,27 @@ def deterministic_zip() -> None:
             zf.writestr(info, path.read_bytes(), compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
 
 
-def main() -> None:
+def verify_package_contract(require_bbl: bool) -> None:
+    required = [
+        PKG / "dsir1_jcap.tex",
+        PKG / "jcappub.sty",
+        PKG / "JHEP.bst",
+        PKG / "references.bib",
+        *[PKG / "figures" / p.name for p in FIGURES],
+    ]
+    if require_bbl:
+        required.append(PKG / "dsir1_jcap.bbl")
+    for path in required:
+        require(path.is_file() and path.stat().st_size > 0, f"release package file missing/empty: {path}")
+
+    tex = (PKG / "dsir1_jcap.tex").read_text(encoding="utf-8")
+    require("../" not in tex, "parent-directory dependency remains in release TeX")
+    require(r"\bibliography{references}" in tex, "archive-local bibliography binding missing")
+    for fig in FIGURES:
+        require(f"figures/{fig.name}" in tex, f"archive-local figure binding missing: {fig.name}")
+
+
+def build_initial_package() -> None:
     for path in [MASTER, STYLE, BST, BIB, *FIGURES]:
         require(path.is_file() and path.stat().st_size > 0, f"release input missing/empty: {path}")
 
@@ -113,20 +137,47 @@ def main() -> None:
     for fig in FIGURES:
         copy_required(fig, PKG / "figures" / fig.name)
 
-    # Keep release source minimal.  Generated PDF/log/aux/bbl are created by
-    # the archive compile gate; the source ZIP is built again after the gate if
-    # a generated .bbl is intentionally added by the workflow.
+    verify_package_contract(require_bbl=False)
     write_manifest()
     deterministic_zip()
 
-    require(ZIP.stat().st_size < 10 * 1024 * 1024, "submission ZIP exceeds 10 MiB")
 
+def finalize_with_bbl(source_bbl: Path) -> None:
+    require(PKG.is_dir(), "submission package does not exist; run initial build first")
+    copy_required(source_bbl, PKG / "dsir1_jcap.bbl")
+    verify_package_contract(require_bbl=True)
+    write_manifest()
+    deterministic_zip()
+
+
+def report(label: str) -> None:
+    require(ZIP.is_file() and ZIP.stat().st_size > 0, "submission ZIP missing/empty")
+    require(ZIP.stat().st_size < 10 * 1024 * 1024, "submission ZIP exceeds 10 MiB")
+    print(f"mode={label}")
     print(f"package_dir={PKG}")
     print(f"zip={ZIP}")
     print(f"zip_sha256={sha256(ZIP)}")
     print(f"zip_bytes={ZIP.stat().st_size}")
-    print(f"source_files={len(list(PKG.rglob('*.*')))}")
+    print(f"source_files={len([p for p in PKG.rglob('*') if p.is_file()])}")
     print("PASS: self-contained DSIR-I submission source package assembled")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--finalize-bbl-from",
+        type=Path,
+        default=None,
+        help="copy only this verified generated .bbl into the source package and rebuild manifest/ZIP",
+    )
+    args = parser.parse_args()
+
+    if args.finalize_bbl_from is None:
+        build_initial_package()
+        report("initial")
+    else:
+        finalize_with_bbl(args.finalize_bbl_from)
+        report("finalized-with-bbl")
 
 
 if __name__ == "__main__":
