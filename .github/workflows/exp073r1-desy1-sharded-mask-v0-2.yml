@@ -1,0 +1,98 @@
+name: Exp073R1 sharded deterministic full weak-lensing mask v0.2
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073r1_desy1_shard_v0_2.py'
+      - 'ci/exp073r1_desy1_merge_v0_2.py'
+      - '.github/workflows/exp073r1-desy1-sharded-mask-v0-2.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  shard:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install mapper runtime
+        run: |
+          python3 -m pip install --disable-pip-version-check --no-cache-dir 'numpy<2.4' healpy
+          python3 -m py_compile ci/exp073r1_desy1_shard_v0_2.py
+      - name: Execute deterministic disjoint shard
+        run: |
+          python3 ci/exp073r1_desy1_shard_v0_2.py \
+            --source-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_source_redshift_binning_v1.fits \
+            --metacal-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/shear_catalogs/mcal-y1a1-combined-riz-unblind-v4-matched.fits \
+            --shard '${{ matrix.shard }}' --nshards 8 --outdir 'shard-${{ matrix.shard }}'
+      - name: Assert shard is non-science and upload
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=next(Path('.').glob('shard-*/shard.json')); d=json.loads(p.read_text())
+          assert d['science_gate_scored'] is False and d['f_invalid_computed'] is False
+          assert d['covariance_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073r1s-shard-${{ matrix.shard }}
+          path: shard-${{ matrix.shard }}/
+          retention-days: 90
+          compression-level: 6
+  merge:
+    needs: shard
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      GH_TOKEN: ${{ github.token }}
+      R0_RUN_ID: '33103083736'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bind genuine R0 PASS and frozen full-stream checksum PASS
+        run: |
+          set -euxo pipefail
+          grep -q 'PASS_REMAINING_DESY1_RELEASE_CHECKSUM_BINDING_EXP073P2' docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md
+          grep -q '491f4bb742762fefe3aaab6d53d4342b6ff4a65401bc7b588d2918fdce3ee6fd' docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md
+          grep -q '39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8' docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${R0_RUN_ID}" > /tmp/r0.json
+          python3 - <<'PY'
+          import json,os
+          d=json.load(open('/tmp/r0.json')); assert d['status']=='completed' and d['conclusion']=='success'
+          assert d['path']=='.github/workflows/exp073r0-desy1-raw-row-healpix-equivalence-v0-1.yml'
+          assert str(d['id'])==os.environ['R0_RUN_ID']
+          PY
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: exp073r1s-shard-*
+          path: external/shards
+      - name: Merge exact row-order records and reconstruct masks twice
+        run: |
+          python3 -m pip install --disable-pip-version-check --no-cache-dir 'numpy<2.4' healpy
+          python3 -m py_compile ci/exp073r1_desy1_merge_v0_2.py
+          python3 ci/exp073r1_desy1_merge_v0_2.py --root external/shards --out data/derived/g7/exp073r1_desy1_full_onepass_weak_lensing_mask_v0_2.json --checksum-record docs/EXP073P2_REMAINING_DESY1_CHECKSUM_RESULT_2026-08-27.md
+      - name: Assert frozen non-science R1 contract
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073r1_desy1_full_onepass_weak_lensing_mask_v0_2.json'; d=json.load(open(p))
+          assert d['status']=='PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1'
+          assert d['science_gate_scored'] is False and d['f_invalid_computed'] is False
+          assert d['covariance_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073r1-desy1-full-mask-sharded-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073r1_desy1_full_onepass_weak_lensing_mask_v0_2.json
+            data/derived/g7/exp073r1_masks/
+            data/derived/g7/exp073r1_records/
+          retention-days: 90
+          compression-level: 6
