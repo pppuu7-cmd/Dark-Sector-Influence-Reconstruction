@@ -7,7 +7,7 @@ on:
       - article2-manuscript-start-2026-08-28
     paths:
       - '.github/workflows/article2-publication-qa-v0-1.yml'
-      - 'scripts/publications/make_dsir2_figures_v0_2.py'
+      - 'scripts/publications/make_dsir2_figures_v0_3.py'
       - 'docs/publications/DSIR2_FIGURE_NUMERIC_MANIFEST_V0_1.json'
       - 'docs/publications/DSIR2_REFERENCES_VERIFIED_V0_1.bib'
       - 'docs/publications/latex/article2/**'
@@ -15,7 +15,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/article2-publication-qa-v0-1.yml'
-      - 'scripts/publications/make_dsir2_figures_v0_2.py'
+      - 'scripts/publications/make_dsir2_figures_v0_3.py'
       - 'docs/publications/DSIR2_FIGURE_NUMERIC_MANIFEST_V0_1.json'
       - 'docs/publications/DSIR2_REFERENCES_VERIFIED_V0_1.bib'
       - 'docs/publications/latex/article2/**'
@@ -39,30 +39,39 @@ jobs:
       - name: Install figure dependencies
         run: python -m pip install --upgrade numpy matplotlib
 
-      - name: Generate frozen DSIR-2 Figures 1-4
+      - name: Generate frozen DSIR-2 Figures 1-4 v0.3
         run: |
           set -euxo pipefail
-          python scripts/publications/make_dsir2_figures_v0_2.py
+          python scripts/publications/make_dsir2_figures_v0_3.py
 
-      - name: Verify figure inventory and file integrity
+      - name: Verify v0.3 figure inventory and file integrity
         run: |
           set -euxo pipefail
           python - <<'PY'
           from pathlib import Path
           root=Path('artifacts/publications/article2/figures')
           expected=[
-            'dsir2_figure1_k2_specificity_hierarchy_v0_2',
-            'dsir2_figure2_k1_representation_kernel_v0_2',
-            'dsir2_figure3_support_admissibility_v0_2',
-            'dsir2_figure4_fail_closed_hierarchy_v0_2',
+            'dsir2_figure1_k2_specificity_hierarchy_v0_3',
+            'dsir2_figure2_k1_representation_kernel_v0_3',
+            'dsir2_figure3_support_admissibility_v0_3',
+            'dsir2_figure4_fail_closed_hierarchy_v0_3',
           ]
           for stem in expected:
               for ext in ('pdf','svg'):
                   p=root/f'{stem}.{ext}'
                   assert p.is_file(), f'missing {p}'
                   assert p.stat().st_size>1000, f'suspiciously small {p}: {p.stat().st_size}'
-          print('FIGURE_QA_PASS', len(expected), 'figures x PDF/SVG')
+          print('FIGURE_V03_QA_PASS', len(expected), 'figures x PDF/SVG')
           PY
+
+      - name: Create temporary LaTeX compatibility aliases
+        run: |
+          set -euxo pipefail
+          d='artifacts/publications/article2/figures'
+          cp "$d/dsir2_figure1_k2_specificity_hierarchy_v0_3.pdf" "$d/dsir2_figure1_k2_specificity_hierarchy_v0_2.pdf"
+          cp "$d/dsir2_figure2_k1_representation_kernel_v0_3.pdf" "$d/dsir2_figure2_k1_representation_kernel_v0_2.pdf"
+          cp "$d/dsir2_figure3_support_admissibility_v0_3.pdf" "$d/dsir2_figure3_support_admissibility_v0_2.pdf"
+          cp "$d/dsir2_figure4_fail_closed_hierarchy_v0_3.pdf" "$d/dsir2_figure4_fail_closed_hierarchy_v0_2.pdf"
 
       - name: Install journal-neutral LaTeX toolchain
         run: |
@@ -97,11 +106,12 @@ jobs:
           {
             sha256sum docs/publications/DSIR2_FIGURE_NUMERIC_MANIFEST_V0_1.json
             sha256sum docs/publications/DSIR2_REFERENCES_VERIFIED_V0_1.bib
+            sha256sum scripts/publications/make_dsir2_figures_v0_3.py
             sha256sum docs/publications/latex/article2/dsir2_journal_neutral_v0_1.tex
             sha256sum docs/publications/latex/article2/table1_terminal_comparison.tex
             sha256sum docs/publications/latex/article2/table2_provenance.tex
-            sha256sum artifacts/publications/article2/figures/*.pdf
-            sha256sum artifacts/publications/article2/figures/*.svg
+            sha256sum artifacts/publications/article2/figures/*_v0_3.pdf
+            sha256sum artifacts/publications/article2/figures/*_v0_3.svg
             sha256sum docs/publications/latex/article2/dsir2_journal_neutral_v0_1.pdf
           } > artifacts/publications/article2/qa/sha256sums.txt
           cat artifacts/publications/article2/qa/sha256sums.txt
@@ -116,8 +126,9 @@ jobs:
       - name: Upload immutable publication QA bundle
         uses: actions/upload-artifact@v4
         with:
-          name: dsir2-publication-qa-${{ github.sha }}
+          name: dsir2-publication-qa-v03-${{ github.sha }}
           path: |
-            artifacts/publications/article2/figures/
+            artifacts/publications/article2/figures/*_v0_3.pdf
+            artifacts/publications/article2/figures/*_v0_3.svg
             artifacts/publications/article2/qa/
           if-no-files-found: error
