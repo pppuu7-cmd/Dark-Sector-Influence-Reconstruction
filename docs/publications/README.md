@@ -24,7 +24,9 @@ Read in this order:
 13. `DSIR2_TABLE1_TERMINAL_COMPARISON_MATRIX_V0_1.md`
 14. `DSIR2_TABLE2_PROVENANCE_LEDGER_V0_1.md`
 15. `DSIR2_FIGURE_CAPTIONS_V0_1.md`
-16. machine-readable Exp071E–N summaries under `data/derived/`.
+16. `DSIR2_FIGURE_NUMERIC_MANIFEST_V0_1.json`
+17. `../../scripts/publications/make_dsir2_figures_v0_1.py`
+18. machine-readable Exp071E–N summaries under `data/derived/`.
 
 Historical v0.1–v0.5 manuscript/recovery/literature files remain audit snapshots and must not be deleted.
 
@@ -72,11 +74,25 @@ Important historical correction: CLASS II is arXiv `1104.2933`, DOI `10.1088/147
 - terminal comparison Table 1;
 - provenance Table 2 with explicit non-guessed gaps;
 - final captions for Figures 1–4;
+- frozen figure numeric manifest with canonical-source provenance;
+- reproducible matplotlib generator for four separate PDF/SVG figures;
 - recovery checkpoint v0.6.
+
+## Figure generation
+
+Run from repository root:
+
+`python scripts/publications/make_dsir2_figures_v0_1.py`
+
+Default outputs:
+
+`artifacts/publications/article2/figures/`
+
+The plotting script reads only `docs/publications/DSIR2_FIGURE_NUMERIC_MANIFEST_V0_1.json`. The manifest records canonical main-branch evidence paths and blob SHAs for Exp071M/N rather than duplicating the primary scientific artifacts into the manuscript branch.
 
 ## Remaining release-candidate work
 
-1. render Figures 1–4 from immutable source data;
+1. execute and visually audit Figures 1–4 against the canonical final figure/table specification;
 2. integrate Related Work and final figure/table cross-references into the next manuscript revision;
 3. recover remaining exact Exp071A/071C and Exp072/073 provenance tuples where available;
 4. sentence-level claim-to-evidence audit;
