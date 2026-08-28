@@ -18,30 +18,53 @@ This directory is a manuscript-engineering layer over the scientific record. It 
 
 For a fresh chat/session continuing Article 2, read in this order:
 
-1. `DSIR2_RECOVERY_AND_CONTINUATION_V0_3_2026-08-28.md`
-2. `DSIR2_MANUSCRIPT_V0_3.md`
-3. `../ARTICLE2_CLAIM_MATRIX_V0_3.md`
-4. `DSIR2_TABLE_T2_ANGLE_HIERARCHY_V0_1.md`
-5. `DSIR2_METHODS_RESULTS_EXP071H_L_DRAFT_V0_1.md`
-6. `DSIR2_DISCUSSION_DRAFT_V0_1.md`
-7. `DSIR2_FIGURE_SOURCE_MANIFEST_V0_1.md`
-8. `DSIR2_LITERATURE_SCAFFOLD_V0_1.md`
-9. `ARTICLE2_READINESS_UPDATE_2026-08-28.md`
-10. `../ARTICLE2_TOTAL_VELOCITY_PROVIDER_CONTRACT_2026-08-28.md`
+1. `DSIR2_RECOVERY_AND_CONTINUATION_V0_4_2026-08-28.md`
+2. `DSIR2_MANUSCRIPT_V0_4.md`
+3. `../ARTICLE2_CLAIM_MATRIX_CURRENT.md` on `main`
+4. `../ARTICLE2_CLAIM_MATRIX_V0_3_K1_REPRESENTATION_CONSOLIDATION.md` on `main`
+5. `../ARTICLE2_FINAL_SCIENCE_CLOSURE_AUDIT_2026-08-28.md` on `main`
+6. `../ARTICLE2_FINAL_FIGURE_TABLE_SPEC_V0_1.md` on `main`
+7. `../DSIR_RAY_LINE_SUBSPACE_EQUIVALENCE_GEOMETRY_V0_1.md` on `main`
+8. `DSIR2_TABLE_T2_ANGLE_HIERARCHY_V0_1.md` — historical K2-oriented/line table retained for audit.
+9. `DSIR2_FIGURE_SOURCE_MANIFEST_V0_1.md` — earlier figure/provenance source map.
+10. `DSIR2_LITERATURE_SCAFFOLD_V0_1.md` — bibliography/novelty starting point.
 
-Historical Article-2 v0.1 and v0.2 files are deliberately retained. They record the evolution from an initially stronger dynamic-separation interpretation, through Exp071L's two-sided falsification, to v0.3's explicit distinction between preregistered oriented classifications and retrospective nuisance-line principal-angle diagnostics.
+Historical Article-2 v0.1–v0.3 files are deliberately retained. They record the evolution from an initially stronger dynamic-separation interpretation, through Exp071L's two-sided K2 falsification, to Exp071M/N's representation-resolvability boundary and independent K1 nuisance-line falsification.
 
 ### DSIR-2 active title
 
 *Dark-Sector Influence Reconstruction II: Falsifying Channel-Conditioned Specificity Across Static, Temporal, and Velocity Response Spaces*
 
-### DSIR-2 current drafting boundary
+### DSIR-2 current scientific status
 
-DSIR-2 is `READY_FOR_DRAFTING`, not ready for submission. The central paper is a falsification hierarchy: known-sector matter morphology defeats a dark-specific F30 interpretation; richer static channels retain a sound-speed-like ambiguity; positive/oriented temporal and velocity responses strongly separate; positive velocity separation survives amplitude/support controls; but a one-dimensional line interpretation maps the same large oriented velocity angles to small principal angles, and a fresh negative K2 displacement prospectively validates that nuisance-line overlap. The temporal positive result remains a preregistered oriented PASS, while its retrospective line angles (`41.90/42.90 deg`) motivate—but do not replace—a fresh negative-K2 temporal finite-displacement test.
+Canonical main-branch verdict:
 
-No dark-sector detection, unique fingerprint, tracer-RSD claim, survey distinguishability claim, retroactive experiment reclassification, or G7/G8/G9 promotion is permitted.
+`ARTICLE2_SCIENTIFIC_EVIDENCE_CHAIN_CLOSED_FOR_DECLARED_SCOPE_V0_1`.
 
-The highest-value open Article-2 specificity control is the prospectively frozen **negative-K2 temporal analogue of Exp071H**. Its purpose is to test finite-displacement antisymmetry/curvature, not merely to recompute a sign flip algebraically.
+No additional K1/K2 or near-duplicate response-angle experiment is scientifically required before writing under the declared Article-2 scope unless a concrete audit defect is found.
+
+This is a repository-for-writing closure, not submission readiness. Remaining work is manuscript assembly, verified bibliography/novelty audit, figures, provenance tables, sentence-level claim audit and exact release-candidate reproducibility audit.
+
+### DSIR-2 current scientific boundary
+
+The paper is a falsification hierarchy:
+
+- K2 falsifies a dark-specific F30 matter-morphology interpretation;
+- static Weyl/slip and matter+Weyl+slip add information but retain a GDM sound-speed-like ambiguity;
+- positive K2 temporal/velocity rays are strongly separated under their preregistered oriented tests;
+- positive K2 velocity separation survives amplitude and support controls;
+- Exp071L restores K2 overlap when the physically two-sided nuisance line is used;
+- Exp071M shows that K1 primordial tilt is exactly unresolved in transfer-only `t_tot`, so no angle exists there;
+- Exp071N restores the missing primordial-power response and makes K1 resolvable, but its two-sided velocity-power nuisance line still overlaps both tested GDM directions at `36.06/37.85 deg`;
+- theory/provider response geometry remains distinct from observational admissibility and covariance/nuisance quotienting.
+
+The final hierarchy is:
+
+`representation -> resolvability -> ray/line/subspace -> channel-conditioned equivalence -> physical support -> observational quotient`.
+
+No dark-sector detection, unique fingerprint, tracer-RSD claim, survey distinguishability claim, covariance-whitened/nuisance-marginalized claim, or G7/G8/G9 promotion is permitted.
+
+The previously suggested negative-K2 temporal analogue of Exp071H is now optional extension work, not a mandatory Article-2 science gate. Exp071H remains an oriented-ray result exactly as preregistered.
 
 ## Manuscript location convention
 
