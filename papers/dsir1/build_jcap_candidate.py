@@ -34,6 +34,10 @@ ENVELOPE_HEADER = "| Family | sampled \\(\\chi_I\\) range |"
 # this release renderer.
 LAYOUT_POLISH = (
     (
+        "## 6.2 Scale-only similarity between GDM and designer-\\(f(R)\\) is broken by time evolution",
+        "## 6.2 Scale-only similarity between GDM and designer-f(R) is broken by time evolution",
+    ),
+    (
         "## 6.5 Irreducible scale-time structure carries GDM--\\(f(R)\\) separation",
         "## 6.5 Irreducible scale-time structure in GDM--f(R) separation",
     ),
@@ -182,6 +186,7 @@ def main() -> None:
         "No model-independent residual law has yet passed a fresh withheld-family test",
         "Publication figures are generated deterministically from frozen repository products",
         "Examples include viscous and Compton-like transitions",
+        "## 6.2 Scale-only similarity between GDM and designer-f(R) is broken by time evolution",
         "## 6.5 Irreducible scale-time structure in GDM--f(R) separation",
     ):
         require(token in out, f"JCAP candidate lost required boundary: {token}")
