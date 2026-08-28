@@ -5,10 +5,10 @@ The script does not edit manuscript.md in place. It injects the frozen author
 metadata, inserts prospectively/retrospectively classified result components,
 surfaces the support-eligibility results in Abstract/Introduction/Conclusions,
 adds the moving-scale explanatory bridge, evidence-graded mechanism-to-response
-map and compact related-work positioning, adds deterministic Figure 1--7
-textual references at frozen narrative anchors, inserts the reproducibility
-section before Outlook, renumbers the final headings, and writes
-manuscript_v0_2.md.
+map, final cross-model translator/withheld-validation section and compact
+related-work positioning, adds deterministic Figure 1--7 textual references at
+frozen narrative anchors, inserts the reproducibility section before Outlook,
+renumbers the final headings, and writes manuscript_v0_2.md.
 """
 
 from __future__ import annotations
@@ -20,6 +20,7 @@ BASE = HERE / "manuscript.md"
 MOVING_SCALE = HERE / "sections" / "moving_scale_bridge.md"
 MECHANISM_RESPONSE = HERE / "sections" / "mechanism_response_map.md"
 FALSIFICATION = HERE / "sections" / "prospective_falsification.md"
+TRANSLATOR_VALIDATION = HERE / "sections" / "translator_and_prospective_validation.md"
 SUPPORT_CLOSURE = HERE / "sections" / "observation_space_support_closure.md"
 SUPPORT_SUPPLEMENT = HERE / "supplement" / "observation_route_detailed.md"
 RELATED_WORK = HERE / "sections" / "related_work_positioning.md"
@@ -35,7 +36,7 @@ INTERPRETATION_MARKER = "# 9. Interpretation"
 LIMITATIONS_MARKER = "# 10. Limitations and claim boundary"
 OUTLOOK_MARKER = "# 11. Outlook"
 CONCLUSION_MARKER = "# 12. Conclusions"
-AUTHOR_PLACEHOLDER = 'author:\n  - "[authors to be finalized]"'
+AUTHOR_PLACEHOLDER = 'author:\n  - "[authors to be finalized]'+'"'
 AUTHOR_BLOCK = '''author:\n  - "Aleksey Buyanov"\naffiliation: "Independent Researcher"\nlocation: "Moscow, Russia"\nemail: "pppuu7@gmail.com"\norcid: "0009-0001-2621-9305"'''
 
 ABSTRACT_FINAL_MARKER = (
@@ -115,6 +116,7 @@ def main() -> None:
     moving_scale = read(MOVING_SCALE)
     mechanism_response = read(MECHANISM_RESPONSE)
     falsification = read(FALSIFICATION)
+    translator_validation = read(TRANSLATOR_VALIDATION)
     support_closure = read(SUPPORT_CLOSURE)
     support_supplement = read(SUPPORT_SUPPLEMENT)
     related_work = read(RELATED_WORK)
@@ -185,6 +187,17 @@ def main() -> None:
         )
     base = insert_before(base, RESULTS_INSERT_MARKER, falsification)
 
+    require(
+        translator_validation.startswith("## Cross-model translation robustness and mixed prospective validation"),
+        "translator/withheld-validation section heading changed",
+    )
+    translator_validation = translator_validation.replace(
+        "## Cross-model translation robustness and mixed prospective validation",
+        "## 6.10 Cross-model translation robustness and mixed prospective validation",
+        1,
+    )
+    base = insert_before(base, RESULTS_INSERT_MARKER, translator_validation)
+
     base = insert_before(base, PRIOR_ART_MARKER, FIGURE6_REFERENCE)
     if support_closure.startswith("## Observation-space support closure"):
         support_closure = support_closure.replace(
@@ -241,6 +254,13 @@ def main() -> None:
         "K2 baryon-fraction control",
         "moving characteristic scale does **not** imply a large `chi_I`",
         "prospective scientific FAIL",
+        "## 6.10 Cross-model translation robustness and mixed prospective validation",
+        "all **9/9** full-coordinate variants",
+        "exactly **2/5** sampled amplitudes",
+        "hard prospective FAIL",
+        "hard prospective PASS",
+        "all seven** leave-one-redshift operator rebuilds independently pass",
+        "G7, G8, and G9 remain open",
         "## 7.1 Observation-space support closure and perturbativity",
         "tested linear route is therefore physically ineligible",
         "reproduction prerequisites only",
