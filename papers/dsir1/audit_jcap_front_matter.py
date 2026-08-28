@@ -3,7 +3,7 @@
 
 This audit contains no scientific acceptance threshold. It checks only the
 journal-facing presentation contract: self-contained abstract, no formulae or
-citations, conservative claim wording, official-keyword candidates, arXiv
+citations, conservative claim wording, frozen official JCAP keywords, arXiv
 placeholder, availability statement, and the canonical AI-assistance disclosure.
 """
 
@@ -87,15 +87,21 @@ def main() -> None:
     ):
         require(forbidden not in abstract, f"forbidden overclaim/scope leak in JCAP abstract: {forbidden}")
 
+    keyword_section = extract_between(text, "## Candidate JCAP keywords", "## ArXiv field")
     official_keyword_candidates = (
         "dark energy theory",
+        "dark matter theory",
         "modified gravity",
         "Cosmological perturbation theory in GR and beyond",
-        "power spectrum",
     )
     for keyword in official_keyword_candidates:
-        require(keyword in text, f"JCAP keyword candidate missing: {keyword}")
-    require("dark matter theory" in text, "documented alternative official keyword missing")
+        require(keyword in keyword_section, f"frozen JCAP keyword missing: {keyword}")
+    require("Final Paper-I selection" in keyword_section, "keyword section is not marked as frozen selection")
+    require("**power spectrum**" not in keyword_section, "superseded power-spectrum keyword remains selected")
+    require(keyword_section.count("\n1. **") == 1, "keyword list start malformed")
+    require(keyword_section.count("\n2. **") == 1, "keyword list item 2 malformed")
+    require(keyword_section.count("\n3. **") == 1, "keyword list item 3 malformed")
+    require(keyword_section.count("\n4. **") == 1, "keyword list item 4 malformed")
 
     require("arXiv: [TO BE ASSIGNED BEFORE JCAP SUBMISSION]" in text, "arXiv placeholder missing")
     require("Data, software and code availability" in text, "data/software/code availability candidate missing")
@@ -122,7 +128,7 @@ def main() -> None:
     print(f"PASS: JCAP abstract editorial audit ({n} words)")
     print("PASS: no formulae/citations/figure-table references in abstract")
     print("PASS: DSIR-I scope and conservative science boundary retained")
-    print("PASS: keyword, arXiv and availability fields present")
+    print("PASS: frozen 4-keyword JCAP selection, arXiv and availability fields present")
     print("PASS: canonical AI disclosure and headline-claim audit present")
 
 

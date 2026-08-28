@@ -1,6 +1,6 @@
 # DSIR-I JCAP front matter draft
 
-**Status:** submission-preparation draft, 2026-08-27.  
+**Status:** release-candidate submission preparation, 2026-08-28.  
 **Purpose:** canonical JCAP-facing title/author/abstract/keywords source. Scientific claims remain bound to `manuscript_v0_2.md` and the provenance ledgers.
 
 ## Title
@@ -20,14 +20,14 @@ Cosmological models of dark energy, interacting sectors, generalized dark matter
 
 ## Candidate JCAP keywords
 
-Choose 2--4 from the official JCAP list at submission. Current recommended set:
+Final Paper-I selection, verified against the official JCAP keyword list on 2026-08-28. JCAP requests 2--4 keywords and uses them in editor assignment, so this set is frozen for the release candidate:
 
 1. **dark energy theory**
-2. **modified gravity**
-3. **Cosmological perturbation theory in GR and beyond**
-4. **power spectrum**
+2. **dark matter theory**
+3. **modified gravity**
+4. **Cosmological perturbation theory in GR and beyond**
 
-Before submission, make one final scope decision on whether `power spectrum` should be replaced by the equally official keyword `dark matter theory`. Do not change keywords after submission; JCAP uses them for editor assignment.
+This set describes the cross-family scientific object more directly than an observable-specific `power spectrum` tag: the paper compares dark-energy, dark-matter, and modified-gravity mechanisms through a common perturbative response geometry rather than presenting a dedicated power-spectrum measurement paper.
 
 ## ArXiv field
 
@@ -51,7 +51,7 @@ The canonical acknowledgments and AI-assisted-technology disclosure are stored i
 \affiliation[a]{Independent Researcher,\\ Moscow, Russia}
 \emailAdd{pppuu7@gmail.com}
 \abstract{<insert the JCAP-ready abstract above>}
-\keywords{dark energy theory, modified gravity, Cosmological perturbation theory in GR and beyond, power spectrum}
+\keywords{dark energy theory, dark matter theory, modified gravity, Cosmological perturbation theory in GR and beyond}
 \arxivnumber{<assigned arXiv id>}
 ```
 
@@ -62,6 +62,6 @@ The canonical acknowledgments and AI-assisted-technology disclosure are stored i
 - Define DSIR on first use.
 - Keep the abstract self-contained and on the first page in the JCAP class.
 - Use ASCII-safe metadata where required by the submission system.
-- Select 2--4 official JCAP keywords only after the final scope is frozen.
+- Use exactly the four frozen official JCAP keywords above for the release candidate.
 - Insert the real arXiv identifier before JCAP submission.
 - Do not claim that Exp073P physical support, covariance whitening, nuisance quotienting, G7, G8 or G9 is complete unless later prospectively frozen evidence independently closes it.

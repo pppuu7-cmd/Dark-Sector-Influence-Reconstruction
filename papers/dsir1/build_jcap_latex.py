@@ -340,7 +340,7 @@ def main() -> None:
     abstract = extract_between(front, "## JCAP-ready abstract candidate", "## Candidate JCAP keywords")
 
     title = "Dark-Sector Influence Reconstruction I: Observable-response geometry, channel-conditional equivalence, and failure-resistant model comparison"
-    keywords = "dark energy theory, modified gravity, Cosmological perturbation theory in GR and beyond, power spectrum"
+    keywords = "dark energy theory, dark matter theory, modified gravity, Cosmological perturbation theory in GR and beyond"
 
     tex_body = convert_body(body)
 
