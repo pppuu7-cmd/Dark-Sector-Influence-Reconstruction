@@ -1,0 +1,112 @@
+name: Exp071G known-sector finite-bin growth direction control v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp071g_known_sector_finite_bin_growth.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  finite-bin-growth-direction-control:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EXP071C_RUN: '33020201997'
+      GDM_METRIC_RUN: '32774198185'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install runtime
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --user numpy
+          python3 -m py_compile ci/known_sector_finite_bin_growth_direction_control_v0_1.py
+
+      - name: Download immutable parent spectra
+        run: |
+          set -euxo pipefail
+          mkdir -p inputs/exp071c inputs/gdm
+          EXP071C_ART="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${EXP071C_RUN}/artifacts" --jq '.artifacts[] | select(.name | startswith("exp071c-known-sector-f30-specificity-")) | .name')"
+          GDM_ART="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GDM_METRIC_RUN}/artifacts" --jq '.artifacts[] | select(.name | startswith("gdm-weyl-slip-")) | .name')"
+          test -n "${EXP071C_ART}" && test -n "${GDM_ART}"
+          gh run download "${EXP071C_RUN}" -n "${EXP071C_ART}" -D inputs/exp071c
+          gh run download "${GDM_METRIC_RUN}" -n "${GDM_ART}" -D inputs/gdm
+          test -f data/derived/comparison_readiness/experiment_040_finite_bin_growth_response_v0_1.json
+          test -f data/derived/exp071f_known_sector_matter_weyl_slip_direction_summary_v0_1.json
+
+      - name: Execute frozen Exp071G control
+        run: |
+          set -euxo pipefail
+          python3 ci/known_sector_finite_bin_growth_direction_control_v0_1.py \
+            --known-root inputs/exp071c \
+            --gdm-root inputs/gdm \
+            --exp040 data/derived/comparison_readiness/experiment_040_finite_bin_growth_response_v0_1.json \
+            --exp071f data/derived/exp071f_known_sector_matter_weyl_slip_direction_summary_v0_1.json \
+            --json exp071g_known_sector_finite_bin_growth_direction_control_v0_1.json
+
+      - name: Assert preregistered Exp071G semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json, math
+          d=json.load(open('exp071g_known_sector_finite_bin_growth_direction_control_v0_1.json'))
+          assert d['experiment']=='Exp071G'
+          assert d['status']=='COMPLETE_K2_FINITE_BIN_GROWTH_DIRECTION_CONTROL_V0_1'
+          assert d['preregistered_threshold_deg']==45.0
+          assert d['primary_k2_point']=='bar1'
+          assert d['frozen_z']==[0.295,0.51,0.706,0.934,1.317,1.491,2.33]
+          assert d['frozen_k_h_mpc']==[0.001,0.003,0.01,0.03,0.1]
+          assert d['classification'] in {
+            'K2_FINITE_BIN_GROWTH_SEPARATED_FROM_BOTH_GDM_AXES_EXP071G',
+            'K2_FINITE_BIN_GROWTH_OVERLAPS_AT_LEAST_ONE_GDM_AXIS_EXP071G',
+          }
+          a=d['primary_growth_angles_deg']
+          expect=(a['K2_bar1_vs_GDM_cs2']>=45.0 and a['K2_bar1_vs_GDM_cv2']>=45.0)
+          assert d['primary_pass'] is expect
+          assert d['classification']==(
+            'K2_FINITE_BIN_GROWTH_SEPARATED_FROM_BOTH_GDM_AXES_EXP071G' if expect else
+            'K2_FINITE_BIN_GROWTH_OVERLAPS_AT_LEAST_ONE_GDM_AXIS_EXP071G'
+          )
+          i=d['integrity']
+          assert abs(i['recomputed_gdm_cs2_cv2_growth_acute_deg']-1.3340128035605052)<1e-8
+          assert abs(i['raw_matter_primary_angles_deg']['K2_bar1_vs_GDM_cs2']-19.223081503733017)<1e-8
+          assert abs(i['raw_matter_primary_angles_deg']['K2_bar1_vs_GDM_cv2']-19.037102938963482)<1e-8
+          assert i['max_endpoint_reconstruction_abs']<=1e-12
+          assert i['constant_mode_max_abs']<=1e-14
+          assert i['linearity_max_abs']<=1e-12
+          assert all(math.isfinite(x) for x in a.values())
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP071G',d['classification'])
+          print('PRIMARY_GROWTH',a)
+          print('INTEGRITY',i)
+          print('ROBUSTNESS',d['robustness_nonclassifying'])
+          PY
+
+      - name: Record immutable provenance
+        if: always()
+        run: |
+          {
+            echo 'Exp071G preregistration commit: f492188887d374d41be25e6a6aa8b7d8c5fb5639'
+            echo 'Finite-bin temporal operator inherited unchanged from Exp040.'
+            echo '45 degree directional separator inherited unchanged from Exp071E/F.'
+            echo 'Primary K2 point bar1 only; bar2-bar5 are non-classifying robustness diagnostics.'
+            echo 'No tracer RSD or f-sigma8 interpretation is authorized.'
+            echo 'G7/G8/G9 remain OPEN irrespective of outcome.'
+            echo "DSIR head: ${GITHUB_SHA}"
+          } > exp071g_environment.txt
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp071g-known-sector-finite-bin-growth-${{ github.sha }}
+          path: |
+            exp071g_known_sector_finite_bin_growth_direction_control_v0_1.json
+            exp071g_environment.txt
+          if-no-files-found: warn
+          retention-days: 90
