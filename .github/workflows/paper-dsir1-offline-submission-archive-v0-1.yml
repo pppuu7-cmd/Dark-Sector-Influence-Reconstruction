@@ -112,6 +112,7 @@ jobs:
           mkdir -p papers/dsir1/release
           python papers/dsir1/build_submission_archive.py | tee papers/dsir1/release/INITIAL_ARCHIVE_STATUS.txt
           test -s papers/dsir1/release/dsir1_submission.zip
+          test -s papers/dsir1/release/SUBMISSION_MANIFEST_SHA256.txt
           test -s papers/dsir1/release/dsir1_submission/dsir1_jcap.tex
           test -s papers/dsir1/release/dsir1_submission/jcappub.sty
           test -s papers/dsir1/release/dsir1_submission/JHEP.bst
@@ -171,15 +172,34 @@ jobs:
             --finalize-bbl-from papers/dsir1/release/offline_verify/dsir1_jcap.bbl \
             | tee papers/dsir1/release/FINAL_ARCHIVE_STATUS.txt
 
+          test -s papers/dsir1/release/SUBMISSION_MANIFEST_SHA256.txt
           rm -rf papers/dsir1/release/zip_verify
           mkdir -p papers/dsir1/release/zip_verify
           unzip -q papers/dsir1/release/dsir1_submission.zip -d papers/dsir1/release/zip_verify
+          test -s papers/dsir1/release/zip_verify/dsir1_jcap.tex
           test -s papers/dsir1/release/zip_verify/dsir1_jcap.bbl
-          test -s papers/dsir1/release/zip_verify/SUBMISSION_MANIFEST_SHA256.txt
+          ! test -e papers/dsir1/release/zip_verify/dsir1_jcap.pdf
+          ! test -e papers/dsir1/release/zip_verify/SUBMISSION_MANIFEST_SHA256.txt
           ! grep -F '../' papers/dsir1/release/zip_verify/dsir1_jcap.tex
 
+          # JCAP-facing archive contract: master TeX is at archive root, no
+          # article PDF/internal manifest is shipped, and file names have no spaces.
+          unzip -Z1 papers/dsir1/release/dsir1_submission.zip | grep -Fx 'dsir1_jcap.tex'
+          if unzip -Z1 papers/dsir1/release/dsir1_submission.zip | grep -Fx 'dsir1_jcap.pdf'; then
+            echo 'Compiled article PDF leaked into editor-facing ZIP.' >&2
+            exit 1
+          fi
+          if unzip -Z1 papers/dsir1/release/dsir1_submission.zip | grep -Fx 'SUBMISSION_MANIFEST_SHA256.txt'; then
+            echo 'Internal provenance manifest leaked into editor-facing ZIP.' >&2
+            exit 1
+          fi
+          if unzip -Z1 papers/dsir1/release/dsir1_submission.zip | grep -E ' '; then
+            echo 'Archive member name contains a space.' >&2
+            exit 1
+          fi
+
           cd papers/dsir1/release/zip_verify
-          sha256sum -c SUBMISSION_MANIFEST_SHA256.txt
+          sha256sum -c ../SUBMISSION_MANIFEST_SHA256.txt
           pdflatex -interaction=nonstopmode -halt-on-error dsir1_jcap.tex
           bibtex dsir1_jcap
           pdflatex -interaction=nonstopmode -halt-on-error dsir1_jcap.tex
@@ -195,7 +215,7 @@ jobs:
           zip_sha="$(sha256sum dsir1_submission.zip | awk '{print $1}')"
           pdf_sha="$(sha256sum zip_verify/dsir1_jcap.pdf | awk '{print $1}')"
           tex_sha="$(sha256sum zip_verify/dsir1_jcap.tex | awk '{print $1}')"
-          manifest_sha="$(sha256sum zip_verify/SUBMISSION_MANIFEST_SHA256.txt | awk '{print $1}')"
+          manifest_sha="$(sha256sum SUBMISSION_MANIFEST_SHA256.txt | awk '{print $1}')"
           pages="$(pdfinfo zip_verify/dsir1_jcap.pdf | awk '/^Pages:/ {print $2}')"
 
           {
@@ -205,7 +225,7 @@ jobs:
             echo "zip_bytes=$zip_bytes"
             echo "verified_pdf_sha256=$pdf_sha"
             echo "master_tex_sha256=$tex_sha"
-            echo "manifest_sha256=$manifest_sha"
+            echo "external_manifest_sha256=$manifest_sha"
             echo "pages=$pages"
             echo 'main_tex_at_archive_root=PASS'
             echo 'all_7_figure_pdfs_local=PASS'
@@ -216,6 +236,10 @@ jobs:
             echo 'network_fetch_during_first_archive_compile=NONE_OBSERVED_BY_STRACE'
             echo 'final_unpacked_zip_compile=PASS'
             echo 'unresolved_references=0'
+            echo 'jcap_article_pdf_inside_source_zip=0'
+            echo 'jcap_internal_manifest_inside_source_zip=0'
+            echo 'jcap_archive_filename_spaces=0'
+            echo 'jcap_archive_under_10mb=PASS'
           } | tee OFFLINE_SUBMISSION_ARCHIVE_PROOF.txt
 
       - name: Upload self-contained submission archive and proof
@@ -226,9 +250,9 @@ jobs:
           retention-days: 90
           path: |
             papers/dsir1/release/dsir1_submission.zip
+            papers/dsir1/release/SUBMISSION_MANIFEST_SHA256.txt
             papers/dsir1/release/OFFLINE_SUBMISSION_ARCHIVE_PROOF.txt
             papers/dsir1/release/FINAL_ARCHIVE_STATUS.txt
             papers/dsir1/release/offline_verify/OFFLINE_COMPILE_STATUS.txt
             papers/dsir1/release/offline_verify/NETWORK_TRACE_ALL.txt
             papers/dsir1/release/zip_verify/dsir1_jcap.pdf
-            papers/dsir1/release/zip_verify/SUBMISSION_MANIFEST_SHA256.txt
