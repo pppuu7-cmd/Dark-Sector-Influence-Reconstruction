@@ -1,0 +1,44 @@
+name: Exp073R1 low-concurrency deterministic microshards v0.3
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  shard:
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        shard: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install mapper runtime
+        run: |
+          python3 -m pip install --disable-pip-version-check --no-cache-dir 'numpy<2.4' healpy
+          python3 -m py_compile ci/exp073r1_desy1_shard_v0_2.py
+      - name: Execute frozen deterministic microshard
+        run: |
+          python3 ci/exp073r1_desy1_shard_v0_2.py \
+            --source-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_source_redshift_binning_v1.fits \
+            --metacal-url https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/shear_catalogs/mcal-y1a1-combined-riz-unblind-v4-matched.fits \
+            --shard '${{ matrix.shard }}' --nshards 32 --outdir 'shard-${{ matrix.shard }}'
+      - name: Assert non-science transport artifact
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=next(Path('.').glob('shard-*/shard.json')); d=json.loads(p.read_text())
+          assert d['science_gate_scored'] is False and d['f_invalid_computed'] is False
+          assert d['covariance_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['nshards']==32
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073r1m-shard-${{ matrix.shard }}
+          path: shard-${{ matrix.shard }}/
+          retention-days: 90
+          compression-level: 6
