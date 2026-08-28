@@ -1,0 +1,44 @@
+name: article3-antileakage-alias-hardening-v0-2
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/article3_antileakage_alias_hardening_v0_2.py'
+      - '.github/workflows/article3-antileakage-alias-hardening-v0-2.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  alias-hardening-selftest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute Article3 anti-leakage alias hardening selftest
+        run: |
+          set -euo pipefail
+          python ci/article3_antileakage_alias_hardening_v0_2.py | tee article3_antileakage_alias_hardening_v0_2.json
+      - name: Assert synthetic-only PASS and no downstream authorization
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          r=json.load(open('article3_antileakage_alias_hardening_v0_2.json'))
+          assert r['status']=='PASS_ARTICLE3_ANTILEAKAGE_ALIAS_HARDENING_V0_2'
+          assert r['scope']=='SYNTHETIC_ONLY_EXECUTION_HARDENING'
+          assert r['scientific_acceptance_criteria_changed'] is False
+          assert r['real_science_gate_scored'] is False
+          assert r['covariance_restriction_authorized'] is False
+          assert r['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert all(t['pass'] for t in r['tests'])
+          print('PASS: Article3 anti-leakage alias hardening; G7/G8/G9 remain OPEN')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: article3-antileakage-alias-hardening-${{ github.sha }}
+          path: article3_antileakage_alias_hardening_v0_2.json
+          if-no-files-found: error
+          retention-days: 30
