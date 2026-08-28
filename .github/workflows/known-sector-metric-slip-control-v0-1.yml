@@ -43,9 +43,7 @@ jobs:
           GDM_DISC="$(find inputs/gdm -name 'gdm_weyl_slip_discriminant.json' -print -quit)"
           GDM_GATE="$(find inputs/gdm -name 'gdm_weyl_slip_hard_gate.json' -print -quit)"
           test -n "${KNOWN_JSON}" && test -n "${GDM_DISC}" && test -n "${GDM_GATE}"
-          echo "KNOWN_JSON=${KNOWN_JSON}" >> "${GITHUB_ENV}"
-          echo "GDM_DISC=${GDM_DISC}" >> "${GITHUB_ENV}"
-          echo "GDM_GATE=${GDM_GATE}" >> "${GITHUB_ENV}"
+          export KNOWN_JSON GDM_DISC GDM_GATE
           python3 - <<'PY'
           import json, os
           k=json.load(open(os.environ['KNOWN_JSON']))
@@ -55,6 +53,9 @@ jobs:
           g=json.load(open(os.environ['GDM_GATE']))
           assert g['status']=='PASS_GDM_SLIP_BREAKS_LOW_K_DEGENERACY' and g['pass'] is True
           PY
+          echo "KNOWN_JSON=${KNOWN_JSON}" >> "${GITHUB_ENV}"
+          echo "GDM_DISC=${GDM_DISC}" >> "${GITHUB_ENV}"
+          echo "GDM_GATE=${GDM_GATE}" >> "${GITHUB_ENV}"
 
       - name: Clone and build pinned official CLASS
         run: |
