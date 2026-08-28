@@ -125,9 +125,11 @@ jobs:
           cp -a papers/dsir1/release/dsir1_submission papers/dsir1/release/offline_verify
           cd papers/dsir1/release/offline_verify
 
-          export TEXINPUTS='.: '
-          export BIBINPUTS='.: '
-          export BSTINPUTS='.: '
+          # Search local package first while retaining the installed TeX base
+          # tree.  No network fetch command occurs in this compile step.
+          export TEXINPUTS=.:
+          export BIBINPUTS=.:
+          export BSTINPUTS=.:
 
           strace -f -e trace=network -o NETWORK_PDFLATEX_1.txt \
             pdflatex -interaction=nonstopmode -halt-on-error dsir1_jcap.tex
