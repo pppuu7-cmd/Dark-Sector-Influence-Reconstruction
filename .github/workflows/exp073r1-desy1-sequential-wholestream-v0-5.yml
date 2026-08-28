@@ -1,0 +1,178 @@
+name: Exp073R1 DESY1 sequential whole-stream reconstruction v0.5
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073r1_v0_5_sequential_wholestream.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  SOURCE_URL: https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_source_redshift_binning_v1.fits
+  METACAL_URL: https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/shear_catalogs/mcal-y1a1-combined-riz-unblind-v4-matched.fits
+  R0_RUN_ID: '33103083736'
+
+jobs:
+  source-index:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install source-index runtime
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --user numpy
+          python3 -m py_compile ci/exp073r1_sequential_wholestream_v0_5.py
+
+      - name: Stream authoritative source object once and derive exact row-aligned zbin index
+        run: |
+          set -euxo pipefail
+          rm -rf v05_source
+          mkdir -p v05_source
+          ok=0
+          for attempt in 1 2; do
+            rm -f v05_source/source-zbin-be-i2.bin v05_source/source-summary.json
+            if python3 ci/exp073r1_sequential_wholestream_v0_5.py source-index \
+              --url "${SOURCE_URL}" \
+              --index v05_source/source-zbin-be-i2.bin \
+              --out v05_source/source-summary.json; then
+              ok=1
+              break
+            fi
+            sleep $((attempt*20))
+          done
+          test "$ok" = 1
+
+      - name: Assert Stage-A frozen no-Range identity contract
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('v05_source/source-summary.json'))
+          assert d['experiment']=='Exp073R1'
+          assert d['status']=='PASS_EXP073R1_V05_SOURCE_WHOLE_STREAM_INDEX_BINDING'
+          assert d['transport']=={'http_range_requests':0,'whole_object_get':True,'accept_encoding':'identity'}
+          assert d['observed_bytes']==d['expected_bytes']==2738626560
+          assert d['whole_sha256']==d['expected_whole_sha256']=='491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5'
+          assert d['nrows']==136930995
+          assert d['source_index']['bytes']==273861990
+          assert len(d['source_index']['sha256'])==64
+          assert d['selection_applied'] is False
+          assert d['science_gate_scored'] is False and d['f_invalid_computed'] is False
+          assert d['covariance_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('V05_SOURCE_INDEX_PASS',d['source_index']['sha256'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073r1-v05-source-index-${{ github.sha }}
+          path: |
+            v05_source/source-zbin-be-i2.bin
+            v05_source/source-summary.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9
+
+  metacal-map:
+    needs: source-index
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install frozen mapper runtime
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y python3-dev
+          python3 -m pip install --user numpy healpy
+          python3 -m py_compile ci/exp073r1_sequential_wholestream_v0_5.py
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v05-source-index-${{ github.sha }}
+          path: external/source
+
+      - name: Bind immutable Exp073R0 parent PASS
+        run: |
+          set -euxo pipefail
+          mkdir -p external/r0
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${R0_RUN_ID}" > external/r0_run.json
+          python3 - <<'PY'
+          import json, os
+          d=json.load(open('external/r0_run.json'))
+          assert str(d['id'])==os.environ['R0_RUN_ID']
+          assert d['status']=='completed' and d['conclusion']=='success'
+          assert d['path']=='.github/workflows/exp073r0-desy1-raw-row-healpix-equivalence-v0-1.yml'
+          assert d['head_sha']=='94b05d307295d5e9263646983ece9514f9fa2e88'
+          PY
+          R0_ARTIFACT="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${R0_RUN_ID}/artifacts" --jq '.artifacts[] | select(.name | startswith("exp073r0-row-healpix-equivalence-")) | .name')"
+          test -n "${R0_ARTIFACT}"
+          gh run download "${R0_RUN_ID}" -n "${R0_ARTIFACT}" -D external/r0
+          R0_JSON="$(find external/r0 -name 'exp073r0_raw_row_healpix_equivalence_v0_1.json' -print -quit)"
+          test -n "${R0_JSON}"
+          echo "R0_JSON=${R0_JSON}" >> "${GITHUB_ENV}"
+
+      - name: Sequentially stream authoritative metacal object and execute frozen mapper
+        run: |
+          set -euxo pipefail
+          mkdir -p v05_work data/derived/g7
+          SOURCE_INDEX="$(find external/source -name 'source-zbin-be-i2.bin' -print -quit)"
+          SOURCE_SUMMARY="$(find external/source -name 'source-summary.json' -print -quit)"
+          test -n "${SOURCE_INDEX}"
+          test -n "${SOURCE_SUMMARY}"
+          python3 ci/exp073r1_sequential_wholestream_v0_5.py metacal-map \
+            --url "${METACAL_URL}" \
+            --source-index "${SOURCE_INDEX}" \
+            --source-summary "${SOURCE_SUMMARY}" \
+            --parent-json "${R0_JSON}" \
+            --workdir v05_work \
+            --out data/derived/g7/exp073r1_desy1_sequential_wholestream_v0_5_summary.json
+
+      - name: Assert true Exp073R1 reproduction PASS and parent-gated semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073r1_desy1_sequential_wholestream_v0_5_summary.json'
+          d=json.load(open(p))
+          assert d['experiment']=='Exp073R1'
+          assert d['status']=='PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1'
+          assert d['transport']=={'http_range_requests':0,'whole_object_get':True,'accept_encoding':'identity'}
+          assert d['observed_bytes_metacal']==d['expected_bytes_metacal']==84075649920
+          assert d['metacal_sha256']==d['expected_metacal_sha256']=='39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8'
+          assert d['source_identity_binding']['source_whole_sha256']=='491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5'
+          assert d['source_identity_binding']['source_index_bytes']==273861990
+          assert d['rows_read_source_index']==d['rows_read_metacal']==136930995
+          assert d['selection']=='zbin_mcal == t AND dec >= -90 AND dec <= -35 AND flags_select == 0'
+          assert d['mapper']=={'nside':4096,'ordering':'RING','coords':'C','lonlat':True}
+          assert d['out_of_range_pixel_count']==0
+          assert set(d['selected_rows_per_bin'])=={'0','1','2','3'}
+          assert all(v>0 for v in d['selected_rows_per_bin'].values())
+          assert all(all(x is True for x in v.values()) for v in d['repeatability_from_pixel_records'].values())
+          assert all(d['parent_r0']['checks'].values())
+          assert d['science_gate_scored'] is False and d['f_invalid_computed'] is False
+          assert d['covariance_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073R1_V05_PASS',d['selected_rows_per_bin'])
+          print('MASK_SHA256',{k:v['sha256'] for k,v in d['masks'].items()})
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073r1-v05-reconstruction-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073r1_desy1_sequential_wholestream_v0_5_summary.json
+            data/derived/g7/exp073r1_v05_records/*.bin
+            data/derived/g7/exp073r1_v05_masks/*.bin
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
