@@ -1,0 +1,92 @@
+{
+  "experiment": "Exp071I",
+  "schema": "dsir.article2.k2_gdm_total_velocity_direction_control.v0.1",
+  "status": "COMPLETE_K2_GDM_TOTAL_VELOCITY_DIRECTION_CONTROL_V0_1",
+  "integrity_pass": true,
+  "preregistration_original_commit": "30797f97f9ee4d295dcaf1905d3647230b6fa1cc",
+  "preregistration_pre_execution_io_amendment_commit": "55ea3d6435767ecf570702b55d411a12eddd59b4",
+  "workflow_run": 33181895623,
+  "job": 98884913088,
+  "artifact_id": 9690064470,
+  "artifact_zip_sha256": "ba41e25e6bcdfd2c23c4c9c8bc48bf9ddd85d7776a2e5bb7976e2e061d531e14",
+  "solver_pins": {
+    "official_CLASS": "lesgourg/class_public@e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "GDM_CLASS": "s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829"
+  },
+  "parent_binding": {
+    "K2": {
+      "run": 33020201997,
+      "artifact_id": 9626235928,
+      "artifact_digest": "sha256:ed486effa593a409640577f8cdde614d5fddfc95653eb4ca78c56ae69a234e5e"
+    },
+    "GDM": {
+      "run": 32774198185,
+      "artifact_id": 9537340616,
+      "artifact_digest": "sha256:1d8f5b8d3b31df45256daaf3b1a8071534e63518f0a56d77ddd56ed44f2a7eff"
+    }
+  },
+  "matter_power_reproduction_integrity": {
+    "threshold_max_abs_relative": 1e-10,
+    "K2_max_abs_relative_P_difference": 0.0,
+    "GDM_max_abs_relative_P_difference": 0.0,
+    "K2_pass": true,
+    "GDM_pass": true
+  },
+  "observable": "r_ttot = ln(abs(t_tot_model/t_tot_ref))",
+  "z_nodes": [0.295, 0.51, 0.706, 0.934, 1.317, 1.491, 2.33],
+  "k_h_mpc": [0.001, 0.003, 0.01, 0.03, 0.1],
+  "threshold_deg": 45.0,
+  "primary_k2_point": "bar1",
+  "primary_angles_deg": {
+    "K2_bar1_vs_GDM_cs2_1e7_ttot": 165.9454940017539,
+    "K2_bar1_vs_GDM_cv2_1e7_ttot": 164.7113289163152
+  },
+  "primary_pass": true,
+  "classification": "K2_TOTAL_VELOCITY_SEPARATED_FROM_BOTH_GDM_AXES_EXP071I",
+  "gdm_cs2_vs_cv2_ttot_angle_deg": 2.3682514521619247,
+  "robustness_nonclassifying": {
+    "K2_ttot_angle_to_bar1_deg": {
+      "bar1": 0.0,
+      "bar2": 0.04142887639944468,
+      "bar3": 0.08149379285403074,
+      "bar4": 0.1196475844469121,
+      "bar5": 0.1284227542524331
+    },
+    "max_K2_ttot_angle_to_bar1_deg": 0.1284227542524331,
+    "K2_ttot_centered_svd_variance_fraction": [
+      0.9745586187428259,
+      0.025031677770231492,
+      0.00040955364830262556,
+      1.4983864008365452e-7,
+      4.688928478420315e-28
+    ]
+  },
+  "t_b_sensitivity_nonclassifying": {
+    "K2_bar1_vs_GDM_cs2_1e7_tb_deg": 80.99328606018462,
+    "K2_bar1_vs_GDM_cv2_1e7_tb_deg": 76.22544627544649,
+    "GDM_cs2_vs_cv2_tb_deg": 4.94422161170172
+  },
+  "transfer_integrity": {
+    "K2_ttot_min_abs_reference": 5.593919351276434e-7,
+    "GDM_ttot_min_abs_reference": 5.593864942177331e-7,
+    "K2_tb_min_abs_reference": 1.9995987221806275e-10,
+    "GDM_tb_min_abs_reference": 2.0020558855860343e-10,
+    "all_sampled_signs_preserved": true,
+    "nodes_per_response": 35
+  },
+  "interpretation": [
+    "K2 is strongly separated from both tested GDM axes in the same-definition CLASS total-velocity-transfer response channel.",
+    "The two GDM total-velocity directions themselves remain close (2.368 deg), so the K2 separation is not caused by cs2/cv2 mutual separation.",
+    "The result is stable across the five K2 finite steps (maximum angular drift 0.128 deg).",
+    "The independent common t_b sensitivity also separates K2 bar1 from both GDM axes (>76 deg).",
+    "This supports channel-conditioned response specificity and independently corroborates the Exp071H temporal-response separation."
+  ],
+  "not_a_claim": [
+    "not tracer RSD",
+    "not f_sigma8",
+    "not a likelihood or survey distinguishability result",
+    "not covariance whitening",
+    "not unique microscopic identification"
+  ],
+  "gate_state": {"G7": "OPEN", "G8": "OPEN", "G9": "OPEN"}
+}
