@@ -1,0 +1,85 @@
+name: TEMP Exp073R1 v0.4 canonical static self-test
+on:
+  push:
+    branches:
+      - research/exp073r1-v03-canonical-range-binding
+    paths:
+      - '.github/workflows/exp073r1-v04-static-selftest-temp.yml'
+      - '.github/workflows/exp073r1-desy1-canonical-microshards-v0-4.yml'
+      - 'ci/exp073r1_fullstream_range_manifest_v0_1.py'
+      - 'ci/exp073r1_desy1_shard_v0_3.py'
+      - 'ci/exp073r1_desy1_merge_v0_4.py'
+permissions:
+  contents: read
+jobs:
+  static-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile Python implementations and parse workflow YAML
+        run: |
+          set -euxo pipefail
+          python3 -m py_compile \
+            ci/exp073r1_fullstream_range_manifest_v0_1.py \
+            ci/exp073r1_desy1_shard_v0_3.py \
+            ci/exp073r1_desy1_merge_v0_4.py
+          python3 -m pip install --disable-pip-version-check --no-cache-dir pyyaml
+          python3 - <<'PY'
+          import yaml
+          p='.github/workflows/exp073r1-desy1-canonical-microshards-v0-4.yml'
+          d=yaml.safe_load(open(p))
+          assert isinstance(d, dict)
+          assert 'jobs' in d and set(d['jobs'])=={'preflight','canonical_manifest','shard','merge'}
+          PY
+      - name: Assert exact 32-way byte partition mathematics and provenance constants
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          N=136_930_995
+          for total,start,row_bytes,tail in [
+              (2_738_626_560,5_760,20,900),
+              (84_075_649_920,17_280,614,1710),
+          ]:
+              intervals=[]
+              for i in range(32):
+                  lo=(N*i)//32; hi=(N*(i+1))//32
+                  intervals.append((start+lo*row_bytes,start+hi*row_bytes,hi-lo))
+              assert intervals[0][0]==start
+              assert intervals[-1][1]==start+N*row_bytes==total-tail
+              assert sum(b-a for a,b,_ in intervals)==N*row_bytes
+              assert all(a2==b1 for (_,b1,_),(a2,_,_) in zip(intervals,intervals[1:]))
+              sizes=[nr for _,_,nr in intervals]
+              assert max(sizes)-min(sizes)<=1
+
+          files=[
+              Path('ci/exp073r1_fullstream_range_manifest_v0_1.py'),
+              Path('ci/exp073r1_desy1_shard_v0_3.py'),
+              Path('ci/exp073r1_desy1_merge_v0_4.py'),
+              Path('.github/workflows/exp073r1-desy1-canonical-microshards-v0-4.yml'),
+          ]
+          text='\n'.join(p.read_text() for p in files)
+          correct='491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5'
+          wrong='491f4bb742762fefe3aaab6d53d4342b6ff4a65401bc7b588d2918fdce3ee6fd'
+          metacal='39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8'
+          assert correct in text and metacal in text
+          assert wrong not in text
+          assert 'PASS_CANONICAL_WHOLE_AND_MICROSHARD_RANGE_SHA256_BINDING_EXP073R1M' in text
+          assert 'range_hashes_computed_in_same_stream_as_whole_sha256' in text
+          assert 'source_range_matches' in text and 'metacal_range_matches' in text
+          PY
+      - name: Assert non-science boundary remains explicit
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for p in [
+              'ci/exp073r1_fullstream_range_manifest_v0_1.py',
+              'ci/exp073r1_desy1_shard_v0_3.py',
+              'ci/exp073r1_desy1_merge_v0_4.py',
+          ]:
+              s=Path(p).read_text()
+              assert "'science_gate_scored': False" in s
+              assert "'f_invalid_computed': False" in s
+              assert "'covariance_read': False" in s
+              assert "'G8_read': False" in s
+          PY
