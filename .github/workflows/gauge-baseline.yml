@@ -1,0 +1,107 @@
+name: Matter-power gauge audit on pinned GDM_CLASS
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/gauge-baseline.yml'
+      - 'ci/physics_window_metrics.py'
+      - 'ci/gdm_calibration_trigger.txt'
+
+jobs:
+  gauge-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout DSIR
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Clone and build pinned GDM_CLASS
+        run: |
+          git clone https://github.com/s-ilic/gdm_class_public.git external_gdm
+          cd external_gdm
+          git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          git rev-parse HEAD | tee ../gdm_upstream_sha.txt
+          make -j2 class
+
+      - name: Write identical CDM cosmologies in two gauges
+        run: |
+          mkdir -p external_gdm/dsir_gauge_outputs
+          cat > external_gdm/newt.ini <<'EOF'
+          h = 0.67
+          omega_b = 0.0224
+          omega_cdm = 0.1200
+          omega_gdm = 0.0
+          Omega_Lambda = 0.684
+          A_s = 2.10e-9
+          n_s = 0.965
+          tau_reio = 0.054
+          gauge = newtonian
+          output = mPk
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0,1
+          write background = yes
+          root = dsir_gauge_outputs/newt_
+          EOF
+          cat > external_gdm/sync.ini <<'EOF'
+          h = 0.67
+          omega_b = 0.0224
+          omega_cdm = 0.1200
+          omega_gdm = 0.0
+          Omega_Lambda = 0.684
+          A_s = 2.10e-9
+          n_s = 0.965
+          tau_reio = 0.054
+          gauge = synchronous
+          output = mPk
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0,1
+          write background = yes
+          root = dsir_gauge_outputs/sync_
+          EOF
+
+      - name: Run gauge-matched baselines
+        working-directory: external_gdm
+        run: |
+          ./class newt.ini 2>&1 | tee dsir_gauge_outputs/newt.log
+          ./class sync.ini 2>&1 | tee dsir_gauge_outputs/sync.log
+
+      - name: Measure raw mPk gauge dependence
+        run: |
+          python3 ci/physics_window_metrics.py \
+            --directory external_gdm/dsir_gauge_outputs \
+            --root-a newt_ \
+            --root-b sync_ \
+            --json external_gdm/dsir_gauge_outputs/gauge_metrics.json
+
+      - name: Record provenance
+        run: |
+          {
+            echo "DSIR raw matter-power gauge audit"
+            echo "question: can solver mPk be used as a common Newtonian/synchronous coordinate on frozen v0.1 scales?"
+            echo "no PASS/FAIL tolerance is imposed in this first audit"
+            echo "DSIR commit: $GITHUB_SHA"
+            echo -n "GDM upstream: "
+            cat gdm_upstream_sha.txt
+            uname -a
+            python3 --version
+            gcc --version | head -1
+          } > external_gdm/dsir_gauge_outputs/environment.txt
+
+      - name: Upload gauge-audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gauge-audit-${{ github.sha }}
+          path: |
+            external_gdm/dsir_gauge_outputs/
+            external_gdm/newt.ini
+            external_gdm/sync.ini
+            gdm_upstream_sha.txt
+          if-no-files-found: error
