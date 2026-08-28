@@ -1,0 +1,88 @@
+name: Exp071H K2 finite-bin growth dual-provenance control v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp071h_k2_growth_dual_provenance.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  growth-dual-provenance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EXP071C_RUN: '33020201997'
+      GDM_METRIC_RUN: '32774198185'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install runtime
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --user numpy
+          python3 -m py_compile ci/known_sector_finite_bin_growth_dual_provenance_control_v0_1.py
+      - name: Download immutable parent spectra
+        run: |
+          set -euxo pipefail
+          mkdir -p inputs/exp071c inputs/gdm
+          C_ART="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${EXP071C_RUN}/artifacts" --jq '.artifacts[] | select(.name | startswith("exp071c-known-sector-f30-specificity-")) | .name')"
+          G_ART="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GDM_METRIC_RUN}/artifacts" --jq '.artifacts[] | select(.name | startswith("gdm-weyl-slip-")) | .name')"
+          test -n "$C_ART" && test -n "$G_ART"
+          gh run download "$EXP071C_RUN" -n "$C_ART" -D inputs/exp071c
+          gh run download "$GDM_METRIC_RUN" -n "$G_ART" -D inputs/gdm
+      - name: Execute frozen Exp071H
+        run: |
+          set -euxo pipefail
+          python3 ci/known_sector_finite_bin_growth_dual_provenance_control_v0_1.py \
+            --known-root inputs/exp071c \
+            --gdm-root inputs/gdm \
+            --atlas data/derived/comparison_readiness/local_response_tangents_v0_1.json \
+            --exp040 data/derived/comparison_readiness/experiment_040_finite_bin_growth_response_v0_1.json \
+            --exp071f data/derived/exp071f_known_sector_matter_weyl_slip_direction_summary_v0_1.json \
+            --json exp071h_k2_finite_bin_growth_dual_provenance_v0_1.json
+      - name: Assert frozen semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json,math
+          d=json.load(open('exp071h_k2_finite_bin_growth_dual_provenance_v0_1.json'))
+          assert d['experiment']=='Exp071H'
+          assert d['status']=='COMPLETE_K2_FINITE_BIN_GROWTH_DUAL_PROVENANCE_CONTROL_V0_1'
+          assert d['threshold_deg']==45.0
+          assert d['classification'] in {'K2_FINITE_BIN_GROWTH_SEPARATED_FROM_BOTH_GDM_1E7_AXES_EXP071H','K2_FINITE_BIN_GROWTH_OVERLAPS_AT_LEAST_ONE_GDM_1E7_AXIS_EXP071H'}
+          a=d['primary_angles_deg'];expect=a['K2_bar1_vs_GDM_cs2_1e7']>=45 and a['K2_bar1_vs_GDM_cv2_1e7']>=45
+          assert d['primary_pass'] is expect
+          assert abs(d['sensitivity_nonclassifying']['exp040_averaged_gdm_cs2_cv2_acute_deg']-1.3340128035605052)<1e-8
+          assert abs(d['integrity']['raw_matter_angles_deg']['cs2']-19.223081503733017)<1e-8
+          assert abs(d['integrity']['raw_matter_angles_deg']['cv2']-19.037102938963482)<1e-8
+          assert d['integrity']['max_endpoint_reconstruction_abs']<=1e-12
+          assert d['integrity']['constant_mode_max_abs']<=1e-14
+          assert d['integrity']['linearity_max_abs']<=1e-12
+          assert all(math.isfinite(v) for v in a.values())
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP071H',d['classification']);print('PRIMARY',a);print('SENSITIVITY',d['sensitivity_nonclassifying']);print('ROBUSTNESS',d['robustness_nonclassifying'])
+          PY
+      - name: Record provenance
+        if: always()
+        run: |
+          {
+            echo 'Exp071H preregistration commit: 93bd51867d90fa346ce644deebe228e6d0d45697'
+            echo 'Primary uses single-step 1e-7 GDM parents; Exp040 averaged C3 parents are sensitivity-only.'
+            echo 'Exp071G v0.1 retired without science classification due parent-binding mismatch.'
+            echo 'G7/G8/G9 remain OPEN.'
+            echo "DSIR head: ${GITHUB_SHA}"
+          } > exp071h_environment.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp071h-k2-growth-dual-provenance-${{ github.sha }}
+          path: |
+            exp071h_k2_finite_bin_growth_dual_provenance_v0_1.json
+            exp071h_environment.txt
+          if-no-files-found: warn
+          retention-days: 90
