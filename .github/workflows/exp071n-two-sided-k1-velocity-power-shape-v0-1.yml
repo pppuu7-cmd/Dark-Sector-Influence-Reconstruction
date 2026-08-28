@@ -1,0 +1,125 @@
+name: Exp071N two-sided K1 velocity-power-shape v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp071n_two_sided_k1_velocity_power_shape.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  two-sided-k1-velocity-power-shape:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      M_RUN: '33185652795'
+      M_ID: '9691596312'
+      M_NAME: exp071m-two-sided-k1-velocity-shape-e79c2f5852a325154c704d65c48893b23cb6d300
+      M_DIGEST: sha256:d0878a71adb7bbf97d7b00a67e306c0ae9c86b8b2e705cbafd00b354ede23b21
+      I_RUN: '33181895623'
+      I_ID: '9690064470'
+      I_NAME: exp071i-k2-gdm-total-velocity-49996b5053b6b15428a2ff936efb4fd21fac266c
+      I_DIGEST: sha256:ba41e25e6bcdfd2c23c4c9c8bc48bf9ddd85d7776a2e5bb7976e2e061d531e14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install evaluator runtime
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --user numpy
+          python3 -m py_compile ci/k2_gdm_total_velocity_direction_control_v0_1.py ci/exp071n_two_sided_k1_velocity_power_shape_v0_1.py
+
+      - name: Bind immutable Exp071M and Exp071I artifacts
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json,os,subprocess
+          repo=os.environ['GITHUB_REPOSITORY']
+          for tag,run,idv,name,digest in [
+              ('EXP071M',os.environ['M_RUN'],os.environ['M_ID'],os.environ['M_NAME'],os.environ['M_DIGEST']),
+              ('EXP071I',os.environ['I_RUN'],os.environ['I_ID'],os.environ['I_NAME'],os.environ['I_DIGEST'])]:
+              d=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}/artifacts'],text=True))
+              m=[x for x in d['artifacts'] if x['name']==name]
+              assert len(m)==1, (tag,m)
+              x=m[0]
+              assert str(x['id'])==idv
+              assert x['digest']==digest
+              assert x['expired'] is False
+              print('BOUND_'+tag,x['id'],x['digest'])
+          PY
+
+      - name: Download immutable Exp071M fresh K1 artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 33185652795
+          name: exp071m-two-sided-k1-velocity-shape-e79c2f5852a325154c704d65c48893b23cb6d300
+          path: inputs/exp071m
+
+      - name: Download immutable Exp071I GDM artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 33181895623
+          name: exp071i-k2-gdm-total-velocity-49996b5053b6b15428a2ff936efb4fd21fac266c
+          path: inputs/exp071i
+
+      - name: Execute frozen Exp071N velocity-power classification
+        run: |
+          set -euxo pipefail
+          python3 ci/exp071n_two_sided_k1_velocity_power_shape_v0_1.py \
+            --exp071m-root inputs/exp071m --exp071i-root inputs/exp071i \
+            --json exp071n_two_sided_k1_velocity_power_shape_v0_1.json
+
+      - name: Assert preregistered semantics
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('exp071n_two_sided_k1_velocity_power_shape_v0_1.json'))
+          assert d['experiment']=='Exp071N'
+          assert d['preregistration_commit']=='cfaf9d14fa734e155cab5dca028bc1a14d0afd46'
+          assert d['status']=='COMPLETE_EXP071N'
+          assert d['representation']=='linear_velocity_power_shape'
+          assert d['fresh_reference_integrity']['matter_power']['pass'] is True
+          assert d['fresh_reference_integrity']['t_tot']['pass'] is True
+          assert d['threshold_deg']==45.0
+          assert len(d['primary_angles_deg'])==4
+          assert d['classification'] in {'K1_TWO_SIDED_VELOCITY_POWER_SHAPE_SEPARATED_FROM_BOTH_GDM_AXES_EXP071N','K1_TWO_SIDED_VELOCITY_POWER_SHAPE_OVERLAPS_GDM_EXP071N'}
+          assert d['primary_pass'] is all(v>=45.0 for v in d['primary_angles_deg'].values())
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP071N',d['classification'])
+          print('PRIMARY',d['primary_angles_deg'])
+          print('MIN',d['primary_min_angle_deg'])
+          print('TRANSFER_NULL',d['transfer_only_null_diagnostic'])
+          print('LINE_VALIDATION',d['line_angle_prediction_validation'])
+          PY
+
+      - name: Record provenance
+        if: always()
+        run: |
+          {
+            echo 'Exp071N prereg commit: cfaf9d14fa734e155cab5dca028bc1a14d0afd46'
+            echo 'Exp071M remains INVALID_FOR_SCIENCE; no transfer-only integrity gate was relaxed.'
+            echo 'Representation: Delta ln P_R + 2 Delta ln |t_tot|, then per-z constant-in-k quotient.'
+            echo 'K1 n_s: 0.965 ref, 0.970 plus, 0.960 minus; |step|=0.005.'
+            echo 'G7/G8/G9 remain OPEN.'
+            echo "DSIR head: ${GITHUB_SHA}"
+          } > exp071n_environment.txt
+
+      - name: Upload Exp071N result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp071n-k1-velocity-power-shape-${{ github.sha }}
+          path: |
+            exp071n_two_sided_k1_velocity_power_shape_v0_1.json
+            exp071n_environment.txt
+          if-no-files-found: warn
+          retention-days: 90
