@@ -1,12 +1,6 @@
 name: Exp073R1 sharded deterministic full weak-lensing mask v0.2
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'ci/exp073r1_desy1_shard_v0_2.py'
-      - 'ci/exp073r1_desy1_merge_v0_2.py'
-      - '.github/workflows/exp073r1-desy1-sharded-mask-v0-2.yml'
 permissions:
   contents: read
   actions: read
