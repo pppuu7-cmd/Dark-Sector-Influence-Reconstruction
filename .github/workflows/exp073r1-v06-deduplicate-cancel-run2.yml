@@ -1,4 +1,4 @@
-name: Exp073R1 v0.6 cancel non-authoritative queued runs
+name: Exp073R1 cancel all superseded heavy routes
 
 on:
   push:
@@ -14,10 +14,34 @@ jobs:
   cancel-non-authoritative:
     runs-on: ubuntu-24.04
     steps:
-      - name: Cancel superseded queued or running v0.6 attempts
+      - name: Bind the sole canonical v0.6 Stage-B authority
         env:
           GH_TOKEN: ${{ github.token }}
-          RUNS: '33212050260 33212040452 33212522053 33213021914'
+          CANONICAL_RUN: '33212521957'
+          CANONICAL_HEAD: '79abf2a9694e57e7a2ba1fbb563a0f6413e891f9'
+          CANONICAL_PATH: '.github/workflows/exp073r1-desy1-selfhosted-longrun-stageb-v0-6.yml'
+        run: |
+          set -euxo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${CANONICAL_RUN}" > canonical.json
+          python3 - <<'PY'
+          import json, os
+          d=json.load(open('canonical.json'))
+          assert str(d['id']) == os.environ['CANONICAL_RUN']
+          assert d['head_sha'] == os.environ['CANONICAL_HEAD']
+          assert d['path'] == os.environ['CANONICAL_PATH']
+          assert d['name'] == 'Exp073R1 DESY1 self-hosted long-run Stage-B v0.6'
+          assert d['status'] in {'queued','in_progress','completed'}
+          if d['status'] == 'completed':
+              assert d['conclusion'] in {'success','failure','cancelled','timed_out'}
+          print('CANONICAL_EXP073R1_V06_AUTHORITY_BOUND', d['id'], d['status'])
+          PY
+
+      - name: Cancel superseded queued or running attempts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # v0.4 canonical-microshard route was superseded after its transport
+          # collapse; the four additional IDs are non-authoritative v0.6 routes.
+          RUNS: '33160570463 33212050260 33212040452 33212522053 33213021914'
         run: |
           set -euxo pipefail
           for run in ${RUNS}; do
