@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Exp071K: leave-one-k / leave-one-z support localization for Exp071J velocity-shape result."""
 from __future__ import annotations
-import argparse, json, math, sys
+import argparse, json, sys
 from pathlib import Path
 import numpy as np
 
@@ -17,14 +17,18 @@ EXPJ_CS=166.43869440595827
 EXPJ_CV=164.92709673022526
 
 
-def tangents(root: Path, field: str='t_tot'):
-    ks=[]
+def k2_tangents(root: Path, field: str='t_tot'):
+    out=[]
     for n,s in e71i.K2_STEPS.items():
         r,_=e71i.response_vector(root,n+'_','ref_',field)
-        ks.append((r/s).reshape(len(e71i.Z),len(e71i.K)))
+        out.append((r/s).reshape(len(e71i.Z),len(e71i.K)))
+    return out
+
+
+def gdm_tangents(root: Path, field: str='t_tot'):
     cs,_=e71i.response_vector(root,'cs1em7_','gdm0_',field)
     cv,_=e71i.response_vector(root,'cv1em7_','gdm0_',field)
-    return ks,(cs/e71i.GDM_STEP).reshape(len(e71i.Z),len(e71i.K)),(cv/e71i.GDM_STEP).reshape(len(e71i.Z),len(e71i.K))
+    return (cs/e71i.GDM_STEP).reshape(len(e71i.Z),len(e71i.K)),(cv/e71i.GDM_STEP).reshape(len(e71i.Z),len(e71i.K))
 
 
 def shape(x: np.ndarray) -> np.ndarray:
@@ -74,10 +78,8 @@ def main():
     try:
         term=json.loads((root/'exp071i_k2_gdm_total_velocity_direction_control_v0_1.json').read_text())
         assert term['classification']=='K2_TOTAL_VELOCITY_SEPARATED_FROM_BOTH_GDM_AXES_EXP071I'
-        ks,cs,cv=tangents(root/'fresh/k2','t_tot')
-        # GDM files live under a different root; reconstruct them there only.
-        _,gcs,gcv=tangents(root/'fresh/gdm','t_tot')
-        cs,cv=gcs,gcv
+        ks=k2_tangents(root/'fresh/k2','t_tot')
+        cs,cv=gdm_tangents(root/'fresh/gdm','t_tot')
         full=score_triplet(ks[0],cs,cv)
         assert abs(full['K2_vs_cs2_deg']-EXPJ_CS)<1e-8, full
         assert abs(full['K2_vs_cv2_deg']-EXPJ_CV)<1e-8, full
@@ -102,16 +104,15 @@ def main():
         assert len(primary_angles)==24
         broad=all(v>=TH for v in primary_angles)
 
-        # Non-classifying finite-step family support stability.
         finite={}
         for i,name in enumerate(e71i.K2_STEPS):
             if i==0: continue
             vals=[]
-            for ik,kval in enumerate(e71i.K):
+            for ik in range(len(e71i.K)):
                 keep=[j for j in range(len(e71i.K)) if j!=ik]
                 s=score_triplet(ks[i][:,keep],cs[:,keep],cv[:,keep])
                 vals.extend([s['K2_vs_cs2_deg'],s['K2_vs_cv2_deg']])
-            for iz,zval in enumerate(e71i.Z):
+            for iz in range(len(e71i.Z)):
                 keep=[j for j in range(len(e71i.Z)) if j!=iz]
                 s=score_triplet(ks[i][keep,:],cs[keep,:],cv[keep,:])
                 vals.extend([s['K2_vs_cs2_deg'],s['K2_vs_cv2_deg']])
