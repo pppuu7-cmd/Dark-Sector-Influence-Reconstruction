@@ -1,0 +1,93 @@
+{
+  "experiment": "Exp073P-aggregate-join-parent-compatibility-audit-v0.1",
+  "date": "2026-08-29",
+  "status": "PASS_EXISTING_PARENT_SCHEMA_COMPATIBILITY_AUDIT_EXP073P",
+  "scientific_classification": null,
+  "preregistration_commit": "c947a30cdcc1457c72e2501c6030f003ca9f037d",
+  "implementation_commit": "6d32ce32d16c33d3731031d543776e2045eb8115",
+  "implementation_sha256": "9dc0b5a0ea82b8fb69d82e06b566b08d61c1982bd5e13ecd8db6752253bc0e46",
+  "synthetic_ci": {
+    "run": 33217294341,
+    "job": 99003665458,
+    "status": "completed",
+    "conclusion": "success",
+    "artifact_id": 9703832682,
+    "artifact_name": "exp073p-aggregate-join-synthetic-selftest-6d32ce32d16c33d3731031d543776e2045eb8115",
+    "artifact_digest": "sha256:6d4779be4a5e9dce1a582ed1e742b3c9f5766c551d7ee487c325f842cc1eddfe",
+    "internal_status": "PASS_EXP073P_AGGREGATE_JOIN_SYNTHETIC_SELFTEST_V0_1",
+    "support_executor_authorized": false
+  },
+  "real_parent_compatibility": {
+    "cosmotheka_preflight": {
+      "record": "data/derived/g7/exp073p_des_public_input_checksum_preflight_v0_1.json",
+      "record_sha256": "e3429fff6786437aef68d2c5930341fd2b1752c193fd99f1c917e636859636f1",
+      "validator_pass": true
+    },
+    "large_source": {
+      "run": 33081571259,
+      "artifact_id": 9650284556,
+      "artifact_digest": "sha256:0eb1fdc7bc2d9f5816e0a003418a41b540cd7281af1f5ceb24a37af82187f5d4",
+      "observed_bytes": 2738626560,
+      "sha256": "491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5",
+      "validator_pass": true
+    },
+    "large_metacal": {
+      "run": 33081571259,
+      "artifact_id": 9650627630,
+      "artifact_digest": "sha256:5a80c70568a6ed114e4e32990c5399bc8109df10f4d2910abd73441edb122a2b",
+      "observed_bytes": 84075649920,
+      "sha256": "39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8",
+      "validator_pass": true
+    },
+    "remaining_des_p2": {
+      "run": 33086291753,
+      "artifact_id": 9652278804,
+      "artifact_digest": "sha256:3eaed2f182b885c360a73ad3a6bfefac088a000acd05bef07bdfe5a852a246b9",
+      "object_count": 4,
+      "validator_pass": true
+    },
+    "redmagic_mask_nz_s0": {
+      "record": "data/derived/g7/exp073s0_redmagic_mask_nz_v0_1_key_metrics.json",
+      "record_sha256": "abc41cfb16daece655e61b2fb8c592b2a09c9384943184272d59d63703eaef49",
+      "validator_pass": true
+    },
+    "boss_mm_j": {
+      "record": "data/derived/g7/exp073j_boss_finite_matrix_component_support_v0_1_key_metrics.json",
+      "record_sha256": "dfe8861cd62e82297d9ce733d79585f7c5eca93d9bdbcef445b9f578105b2029",
+      "retained": 54,
+      "total": 240,
+      "validator_pass": true
+    },
+    "local_contract_files": {
+      "count": 5,
+      "all_sha256_exact": true
+    }
+  },
+  "regression_tests": {
+    "pytest_passed": 44,
+    "pytest_failed": 0,
+    "python_compileall_pass": true
+  },
+  "not_yet_available": {
+    "canonical_r1_summary": true,
+    "canonical_r1_artifact_digest": true,
+    "real_actions_metadata_bundle": true,
+    "real_aggregate_join_receipt": true
+  },
+  "interpretation": "All already-existing real parent record schemas accepted by the preregistered evaluator. This is a compatibility audit, not the real aggregate join and not physical-support evidence.",
+  "support_executor_authorized": false,
+  "support_fraction_evaluated": false,
+  "f_invalid_computed": false,
+  "retained_dimension_evaluated": false,
+  "covariance_read": false,
+  "whitening_read": false,
+  "nuisance_svd_read": false,
+  "relation_null_read": false,
+  "heldout_read": false,
+  "G8_read": false,
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}

@@ -49,3 +49,18 @@ A direct audit used the same pinned GDM_CLASS code, identical LambdaCDM paramete
 
 ## 2026-08-24 — G1 conservation/gauge contract
 Added `docs/CONSERVATION_GAUGE_V0_1.md`. Internal interacting-sector bookkeeping is frozen as `nabla_mu T_i^{mu nu}=Q_i^nu`, `sum_i Q_i^nu=0`, hence `nabla_mu T_tot^{mu nu}=0`; exact Bianchi/conservation identities are projected before rank discovery. Perturbations are treated covariantly through `delta T -> delta T - L_xi Tbar`, so raw gauge-specific density, velocity and metric variables are prohibited as common coordinates without an invariant mapping. A transfer-level Newtonian/synchronous audit has been launched to test a comoving/gauge-invariant matter-density extractor for response-basis v0.1.1.
+
+## 2026-08-29 — Exp073P aggregate prerequisite join readiness
+
+Repository/history recovery established canonical Exp073R1 v0.6 Stage-B run
+`33212521957` as the sole admissible heavy route.  Superseded v0.4 run
+`33160570463` was cancelled by successful cleanup run `33216480776`; no partial
+v0.4 output is admissible.  Before inspecting any canonical R1 output, commit
+`c947a30` froze an executable aggregate prerequisite-join contract.  Commit
+`6d32ce3` implemented the fail-closed evaluator and synthetic mutation suite.
+CI run `33217294341` passed and emitted artifact `9703832682`, while retaining
+`support_executor_authorized=false`.  Real archived preflight, large-DES, P2,
+S0 and BOSS parent schemas all passed compatibility validation; 44 repository
+tests passed.  R1 remains queued, so no real join, support fraction, retained
+dimension, covariance, nuisance or G8 quantity was evaluated.  G7/G8/G9 remain
+OPEN.

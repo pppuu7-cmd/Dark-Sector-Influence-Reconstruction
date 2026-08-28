@@ -1,87 +1,104 @@
 # DSIR RECOVERY LATEST — live pointer
 
-**Date:** 2026-08-27  
-**Stable historical manual:** `docs/RECOVERY_MANUAL.md`  
-**Prior late-stage overlay:** `docs/RECOVERY_POST_EXP067E_2026-08-26.md`  
-**C5 publication-era overlay:** `docs/RECOVERY_POST_EXP069F_PUBLICATION_2026-08-27.md`  
-**Current active experiment:** `experiments/073o_public_realdata_finite_harmonic_wm_replacement_prereg_v0_1.md`
+**Updated:** 2026-08-29 (EEST)
+**Stable historical manual:** `docs/RECOVERY_MANUAL.md`
+**Current detailed checkpoint:** `recovery/2026-08-29_exp073p_aggregate_join_ready_r1_v06_queued_checkpoint.md`
+**Active execution:** Exp073R1 v0.6 Stage-B run `33212521957`
 
-DSIR is independent of RTK. Preserve negative results, preregistration chronology and missing-domain masks. No RTK PASS can close a DSIR gate and no DSIR PASS can close an RTK gate.
+DSIR remains independent of RTK.  Preserve all negative results,
+preregistration chronology, missing-domain masks and the distinction between
+infrastructure outcomes, reproduction results and scientific classifications.
 
-## Current G7 scientific state
+## Current frontier
 
-- C3 physical provider: certified by Exp070C.
-- C5 physical provider: certified by Exp069H; raw-k provenance corrected/closed by Exp069I.
-- Exp071A common physical provider support: PASS.
-- The original ACT×unWISE observational route did not yield an admissible complete low-z/high-k linear route; later audits established the need for a different finite-support observational realization.
-- BOSS finite true-k matrix mm component: 54/240 coordinates retained in the non-classifying component audit.
-- KiDS configuration-space transformed Wm/WW route: absolute-response asymptotics supported non-normalizability in Exp073L.
-- Exp073M identified a finite harmonic operator class candidate.
-- Exp073N = `FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE`; no support fraction was computed.
-- Exp073O is prospectively frozen and **ACTIVE / UNCLASSIFIED**.
-- G7 OPEN.
-- G8 OPEN.
-- G9 OPEN.
+The G7 chain is blocked immediately before real Exp073P physical-support
+evaluation:
 
-## Exp073O current candidate audit
+`validated physical providers -> R1 exact weak-lensing-mask reproduction -> Exp073P aggregate prerequisite join -> Exp073P physical support -> covariance/whitening -> nuisance SVD/rank -> quotient/relation/null -> fresh G8`.
 
-The preferred DES Y1 real-data harmonic GGL lineage was audited at
+Current state:
 
-`hocamachoc/3x2hs_measurements@21e589a3cfc3e30f1b06a4636ccc2da8aceda5ab`.
+- C3 physical provider: certified;
+- C5 physical provider: certified with raw-k provenance corrected;
+- BOSS finite mm component: frozen `54/240`, `27/120` per cap, `9/40` in each P0/P2/P4 block;
+- DES public-input, large-object, P2 and S0 parents: immutable and validator-compatible;
+- Exp073R0 raw-row/HEALPix equivalence: PASS;
+- canonical Exp073R1 v0.6 run `33212521957`: **QUEUED**, no result artifact yet;
+- Exp073P aggregate evaluator: implemented and synthetic CI PASS, but real join BLOCKED on R1;
+- Exp073P physical support: BLOCKED;
+- covariance/whitening and every later stage: BLOCKED;
+- G7: OPEN;
+- G8: OPEN;
+- G9: OPEN.
 
-Candidate-level outcome:
+## Canonical R1 authority
 
-`REJECT_DES_Y1_CANDIDATE_ON_O3_EXACT_PUBLIC_INPUT_BINDING`
+Use only:
 
-What is established:
+- run `33212521957`;
+- job `98988824629`, `metacal-map-longrun`;
+- head `79abf2a9694e57e7a2ba1fbb563a0f6413e891f9`;
+- workflow `.github/workflows/exp073r1-desy1-selfhosted-longrun-stageb-v0-6.yml`;
+- preregistration commit `7e801ce0352faf3a5b8ac232a0cd6e965d22762a`;
+- frozen evaluator blob `46fe1271d97ddd9e2164d24e7d79cf27bfda805d`.
 
-- an explicit `y1metacal` real-data galaxy-shear path exists in the pinned source;
-- it uses finite NaMaster ell bins, finite mode-coupling workspaces and `get_bandpower_windows()`;
-- the Wm measurement remains signed through the direct galaxy-density × shear cross measurement;
-- no GR closure or model/covariance weighting is required to make the angular operator finite.
+The old v0.4 run `33160570463` and noncanonical v0.6 attempts are cancelled and
+must not supply artifacts.  Actions `success` alone is insufficient: require
+internal `PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1` plus every frozen
+hash, row-count, mapper, bin, repeatability, parent and no-leakage control.
 
-Decisive blocker:
+## Exp073P aggregate-join readiness
 
-- the real-data Y1 branch reads site-local derived redMaGiC products `wcountsmap_zbin{i}.fits` and `maskmap.fits`;
-- the audited pinned source contains readers but no public deterministic producer that reproduces those exact maps with frozen catalogue cuts, weights, mask semantics and pixelization;
-- the exact source redshift-binning realization also must be prospectively checksum-bound.
+- evaluator preregistration: `c947a30cdcc1457c72e2501c6030f003ca9f037d`;
+- implementation: `6d32ce32d16c33d3731031d543776e2045eb8115`;
+- synthetic CI run: `33217294341`, success;
+- artifact: `9703832682`, digest
+  `sha256:6d4779be4a5e9dce1a582ed1e742b3c9f5766c551d7ee487c325f842cc1eddfe`;
+- synthetic status:
+  `PASS_EXP073P_AGGREGATE_JOIN_SYNTHETIC_SELFTEST_V0_1`;
+- real-parent compatibility audit: PASS;
+- real prerequisite PASS: not evaluated;
+- `support_executor_authorized=false` until the real R1-bound join passes.
 
-Therefore O3 fails for this candidate. Public availability of the underlying catalogues is not sufficient under the frozen Exp073O contract.
+## Frozen scientific boundaries
 
-This candidate rejection is **not** the global Exp073O classification. Do not declare `NO_PUBLIC_REALDATA...` until the frozen landscape search is completed sufficiently to support that statement.
+Never modify post hoc:
 
-Detailed record: `docs/EXP073O_DES_Y1_REALDATA_WM_SOURCE_AUDIT_2026-08-27.md`  
-Machine-readable record: `data/derived/g7/exp073o_des_y1_realdata_wm_source_audit_v0_1.json`
+- `0.295 <= z <= 2.33`;
+- `k <= 0.06664762008318016 Mpc^-1`;
+- `f_invalid <= 0.05` inclusive;
+- minimum retained full-coordinate dimension `15`;
+- classifying `nside=4096`;
+- support uses the positive absolute final-response envelope;
+- production Wm remains signed;
+- all radial tails outside the rectangle remain invalid;
+- no crop-before-normalization, effective ell, fiducial-P/model weighting or post-hoc cuts;
+- no covariance, nuisance SVD/rank, quotient/relation/null, held-out or G8 leakage into support selection.
 
-## Frozen boundaries that remain unchanged
+## Exact next actions
 
-- common physical rectangle: `0.295 <= z <= 2.33`, `k <= 0.06664762008318016 Mpc^-1`;
-- future physical-support threshold: `f_invalid <= 0.05`;
-- future minimum retained dimension: `15`;
-- Exp073N reproduction/provenance FAIL remains permanent;
-- no support fractions may be computed inside Exp073O;
-- covariance restriction/whitening is still closed;
-- nuisance SVD/rank is still closed;
-- quotient/relation/null is still closed;
-- fresh G8 is still closed.
-
-## Exact continuation order
-
-1. Continue the already-frozen Exp073O public operator landscape search.
-2. First priority: find a publicly immutable checksum-bindable realization or deterministic generator for the exact DES Y1 redMaGiC lens count/mask products and source redshift-bin inputs.
-3. In parallel, audit another public real-data harmonic/pseudo-`C_ell` galaxy-shear release with finite bandpower windows/workspaces and exact public masks/binning/n(z).
-4. For any candidate, apply O1–O8 exactly as frozen; reject candidate-level failures without changing thresholds.
-5. Only if one candidate passes all O1–O8 may Exp073O be classified FOUND and a new support experiment be preregistered.
-6. Only that later support experiment may compute `f_invalid` in the unchanged common rectangle.
-7. Covariance/whitening remains forbidden until a full physical-support PASS.
-8. Nuisance tangent rank/SVD, quotient/relation/null and then fresh G8 follow only in the established G7 order.
+1. Bring the configured self-hosted Linux runner online; do not duplicate or
+   edit canonical run `33212521957`.
+2. If it completes, audit its internal R1 receipt and immutable artifact.
+3. If it is interrupted, classify only `INCOMPLETE_EXP073R1`; preserve no
+   partial mask as authority.
+4. After genuine R1 PASS, freeze the returned artifact ID/digest into the
+   actual aggregate-join workflow and execute the already-preregistered join.
+5. Require `PASS_EXP073P_PREREQUISITE_BINDING_V0_1` before the physical-support
+   executor may start.
+6. Require
+   `PASS_COSMOTHEKA_DESY1_BOSS_COMMON_PHYSICAL_SUPPORT_EXP073P` before opening
+   covariance/whitening.
+7. Preserve downstream order: nuisance SVD/rank -> quotient/relation/null ->
+   fresh G8 withheld family.
 
 ## Recovery read order
 
 1. `docs/RECOVERY_MANUAL.md`
-2. `docs/RECOVERY_POST_EXP067E_2026-08-26.md`
-3. `docs/RECOVERY_POST_EXP069F_PUBLICATION_2026-08-27.md`
-4. `docs/RECOVERY_LATEST.md`
-5. `experiments/073o_public_realdata_finite_harmonic_wm_replacement_prereg_v0_1.md`
-6. `docs/EXP073O_DES_Y1_REALDATA_WM_SOURCE_AUDIT_2026-08-27.md`
-7. `data/derived/g7/exp073o_des_y1_realdata_wm_source_audit_v0_1.json`
+2. `docs/RECOVERY_LATEST.md`
+3. `recovery/2026-08-29_exp073p_aggregate_join_ready_r1_v06_queued_checkpoint.md`
+4. `experiments/073r1_v0_6_selfhosted_longrun_stageb_prereg.md`
+5. `experiments/073p_aggregate_prerequisite_join_evaluator_prereg_v0_1.md`
+6. `data/derived/g7/exp073p_aggregate_join_parent_compatibility_audit_v0_1.json`
+7. `recovery/2026-08-28_exp073r1_to_exp073p_execution_integrity_matrix.md`
+8. `experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md`
