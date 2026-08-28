@@ -1,0 +1,312 @@
+name: Exp071I K2/GDM total-velocity direction control v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp071i_k2_gdm_total_velocity_direction_control.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  total-velocity-direction-control:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CLASS_SHA: e85808324f51fc694d12e3ed7439552a3c3f9540
+      GDM_SHA: 4c87916aab5ca124a68f1dd16f31846fc13d1829
+      K2_PARENT_RUN: '33020201997'
+      K2_PARENT_ARTIFACT: exp071c-known-sector-f30-specificity-da74d592fbcc2bba9cd223e924b245a3e52437e1
+      K2_PARENT_ID: '9626235928'
+      K2_PARENT_DIGEST: sha256:ed486effa593a409640577f8cdde614d5fddfc95653eb4ca78c56ae69a234e5e
+      GDM_PARENT_RUN: '32774198185'
+      GDM_PARENT_ARTIFACT: gdm-weyl-slip-876f02fc87891f31f4021a59db3588aff694a841
+      GDM_PARENT_ID: '9537340616'
+      GDM_PARENT_DIGEST: sha256:1d8f5b8d3b31df45256daaf3b1a8071534e63518f0a56d77ddd56ed44f2a7eff
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install runtime and toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+          python3 -m py_compile ci/k2_gdm_total_velocity_direction_control_v0_1.py
+
+      - name: Bind immutable parent artifacts
+        run: |
+          set -euxo pipefail
+          mkdir -p parents/k2 parents/gdm
+          python3 - <<'PY'
+          import json, os, subprocess
+          repo=os.environ['GITHUB_REPOSITORY']
+          checks=[
+            ('K2_PARENT_RUN','K2_PARENT_ARTIFACT','K2_PARENT_ID','K2_PARENT_DIGEST'),
+            ('GDM_PARENT_RUN','GDM_PARENT_ARTIFACT','GDM_PARENT_ID','GDM_PARENT_DIGEST'),
+          ]
+          for runk,namek,idk,digk in checks:
+              raw=subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{os.environ[runk]}/artifacts'],text=True)
+              arts=json.loads(raw)['artifacts']
+              match=[a for a in arts if a['name']==os.environ[namek]]
+              assert len(match)==1, (runk, [a['name'] for a in arts])
+              a=match[0]
+              assert str(a['id'])==os.environ[idk], (a['id'],os.environ[idk])
+              assert a.get('digest')==os.environ[digk], (a.get('digest'),os.environ[digk])
+              assert a.get('expired') is False
+              print('PARENT_BOUND',a['id'],a['name'],a['digest'])
+          PY
+          gh run download "${K2_PARENT_RUN}" -n "${K2_PARENT_ARTIFACT}" -D parents/k2
+          gh run download "${GDM_PARENT_RUN}" -n "${GDM_PARENT_ARTIFACT}" -D parents/gdm
+          test "$(find parents/k2 -type f -name '*pk.dat' | wc -l)" -ge 42
+          test "$(find parents/gdm -type f -name '*pk.dat' | wc -l)" -ge 21
+
+      - name: Clone pinned CLASS solvers
+        run: |
+          set -euxo pipefail
+          mkdir -p solvers
+          git clone https://github.com/lesgourg/class_public.git solvers/class
+          git -C solvers/class checkout "${CLASS_SHA}"
+          test "$(git -C solvers/class rev-parse HEAD)" = "${CLASS_SHA}"
+          git clone https://github.com/s-ilic/gdm_class_public.git solvers/gdm
+          git -C solvers/gdm checkout "${GDM_SHA}"
+          test "$(git -C solvers/gdm rev-parse HEAD)" = "${GDM_SHA}"
+          printf '%s\n' "${CLASS_SHA}" > exp071i_class_sha.txt
+          printf '%s\n' "${GDM_SHA}" > exp071i_gdm_sha.txt
+
+      - name: Assert frozen cross-solver velocity source contract
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          roots=[Path('solvers/class'),Path('solvers/gdm')]
+          record=[]
+          for root in roots:
+              inp=(root/'source/input.c').read_text(errors='replace')
+              per=(root/'source/perturbations.c').read_text(errors='replace')
+              assert '"vTk"' in inp
+              assert 'has_velocity_transfers=_TRUE_' in inp or 'has_velocity_transfers = _TRUE_' in inp
+              assert re.search(r'class_store_columntitle\s*\(\s*titles\s*,\s*"t_tot"\s*,\s*_TRUE_\s*\)',per)
+              assert 'index_tp_theta_tot' in per
+              assert 'rho_plus_p_theta' in per
+              assert 'rho_plus_p_tot' in per
+              assert 'theta_shift' in per
+              assert re.search(r'index_tp_theta_tot[^;]{0,500}rho_plus_p_theta[^;]{0,500}rho_plus_p_tot[^;]{0,500}theta_shift',per,re.S) or \
+                     re.search(r'index_tp_theta_tot[^;]{0,500}rho_plus_p_theta[^;]{0,500}theta_shift',per,re.S)
+              record.append(str(root))
+          Path('exp071i_source_contract.txt').write_text(
+              'PASS same-definition t_tot contract on pinned source trees\n' + '\n'.join(record) + '\n'
+          )
+          PY
+
+      - name: Build pinned solvers
+        run: |
+          set -euxo pipefail
+          make -C solvers/class -j2 class
+          make -C solvers/gdm -j2 class
+          test "$(git -C solvers/class rev-parse HEAD)" = "${CLASS_SHA}"
+          test "$(git -C solvers/gdm rev-parse HEAD)" = "${GDM_SHA}"
+
+      - name: Materialize exact K2 configs with vTk I/O extension
+        run: |
+          set -euxo pipefail
+          mkdir -p fresh/k2
+          python3 - <<'PY'
+          from pathlib import Path
+          COMMON='''h = 0.67
+          T_cmb = 2.7255
+          Omega_k = 0.
+          N_ur = 3.046
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          output = mPk,mTk,vTk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 1.0
+          primordial_P_k_max_h/Mpc = 1.0
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          '''
+          vals=[('ref',0.0224,0.1200),('bar1',0.0228,0.1196),('bar2',0.0232,0.1192),('bar3',0.0236,0.1188),('bar4',0.0240,0.1184),('bar5',0.0244,0.1180)]
+          for name,ob,oc in vals:
+              assert abs(ob+oc-0.1424)<2e-15
+              Path(f'solvers/class/dsir_{name}.ini').write_text(
+                  f'root = fresh/k2/{name}_\nomega_b = {ob:.17g}\nomega_cdm = {oc:.17g}\n'+COMMON
+              )
+          PY
+
+      - name: Run fresh K2 mPk,mTk,vTk outputs
+        run: |
+          set -euxo pipefail
+          for name in ref bar1 bar2 bar3 bar4 bar5; do
+            solvers/class/class "solvers/class/dsir_${name}.ini" 2>&1 | tee "exp071i_k2_${name}.log"
+          done
+          for prefix in ref_ bar1_ bar2_ bar3_ bar4_ bar5_; do
+            test "$(find fresh/k2 -maxdepth 1 -type f -name "${prefix}*pk.dat" | wc -l)" -eq 7
+            test "$(find fresh/k2 -maxdepth 1 -type f -name "${prefix}*tk.dat" | wc -l)" -eq 7
+          done
+          grep -h -m1 't_tot' fresh/k2/ref_*tk.dat
+
+      - name: Materialize exact GDM configs and frozen p8 with vTk I/O extension
+        run: |
+          set -euxo pipefail
+          mkdir -p fresh/gdm
+          cat > solvers/gdm/dsir_p8.pre <<'EOF'
+          k_step_sub = 0.0010
+          k_step_super = 0.000003
+          k_step_super_reduction = 0.1
+          start_small_k_at_tau_c_over_tau_h = 1e-6
+          start_large_k_at_tau_h_over_tau_k = 0.05
+          tight_coupling_trigger_tau_c_over_tau_h = 0.005
+          tight_coupling_trigger_tau_c_over_tau_k = 0.008
+          start_sources_at_tau_c_over_tau_h = 0.006
+          tol_perturb_integration = 3e-10
+          perturb_sampling_stepsize = 0.00035
+          radiation_streaming_approximation = 2
+          radiation_streaming_trigger_tau_over_tau_k = 240.
+          radiation_streaming_trigger_tau_c_over_tau = 100.
+          ur_fluid_approximation = 2
+          ur_fluid_trigger_tau_over_tau_k = 50.
+          EOF
+          python3 - <<'PY'
+          from pathlib import Path
+          BASE='''h = 0.67
+          T_cmb = 2.7255
+          omega_b = 0.0224
+          omega_cdm = 0.0
+          omega_gdm = 0.1200
+          Omega_Lambda = 0.684
+          N_ur = 3.046
+          N_ncdm = 0
+          Omega_k = 0.
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          type_gdm = time_only_bins
+          smooth_bins_gdm = yes
+          time_transition_width_gdm = 8.
+          time_values_gdm = 0.00001, 0.0001, 0.001, 0.01, 0.1
+          w_values_gdm = 0., 0., 0., 0., 0., 0.
+          dynamic_shear_gdm = yes
+          output = mPk,mTk,vTk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.10e-9
+          n_s = 0.965
+          alpha_s = 0.
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0.295,0.51,0.706,0.934,1.317,1.491,2.33
+          headers = yes
+          write background = yes
+          '''
+          zero='0., 0., 0., 0., 0., 0.'
+          one='1e-7, 1e-7, 1e-7, 1e-7, 1e-7, 1e-7'
+          specs=[('gdm0',zero,zero),('cs1em7',one,zero),('cv1em7',zero,one)]
+          for name,cs,cv in specs:
+              Path(f'solvers/gdm/{name}.ini').write_text(
+                  f'root = fresh/gdm/{name}_\ncs2_values_gdm = {cs}\ncv2_values_gdm = {cv}\n'+BASE
+              )
+          PY
+
+      - name: Run fresh GDM mPk,mTk,vTk outputs
+        run: |
+          set -euxo pipefail
+          for name in gdm0 cs1em7 cv1em7; do
+            solvers/gdm/class "solvers/gdm/${name}.ini" solvers/gdm/dsir_p8.pre 2>&1 | tee "exp071i_gdm_${name}.log"
+          done
+          for prefix in gdm0_ cs1em7_ cv1em7_; do
+            test "$(find fresh/gdm -maxdepth 1 -type f -name "${prefix}*pk.dat" | wc -l)" -eq 7
+            test "$(find fresh/gdm -maxdepth 1 -type f -name "${prefix}*tk.dat" | wc -l)" -eq 7
+          done
+          grep -h -m1 't_tot' fresh/gdm/gdm0_*tk.dat
+
+      - name: Execute frozen Exp071I reproduction gate and velocity classification
+        run: |
+          set -euxo pipefail
+          python3 ci/k2_gdm_total_velocity_direction_control_v0_1.py \
+            --fresh-k2 fresh/k2 \
+            --parent-k2 parents/k2 \
+            --fresh-gdm fresh/gdm \
+            --parent-gdm parents/gdm \
+            --json exp071i_k2_gdm_total_velocity_direction_control_v0_1.json
+
+      - name: Assert frozen Exp071I semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json, math
+          d=json.load(open('exp071i_k2_gdm_total_velocity_direction_control_v0_1.json'))
+          assert d['experiment']=='Exp071I'
+          assert d['status']=='COMPLETE_K2_GDM_TOTAL_VELOCITY_DIRECTION_CONTROL_V0_1'
+          assert d['integrity_pass'] is True
+          assert d['matter_power_reproduction_integrity']['K2']['pass'] is True
+          assert d['matter_power_reproduction_integrity']['GDM']['pass'] is True
+          assert d['threshold_deg']==45.0
+          assert d['primary_k2_point']=='bar1'
+          assert d['classification'] in {
+            'K2_TOTAL_VELOCITY_SEPARATED_FROM_BOTH_GDM_AXES_EXP071I',
+            'K2_TOTAL_VELOCITY_OVERLAPS_AT_LEAST_ONE_GDM_AXIS_EXP071I'}
+          a=d['primary_angles_deg']
+          expected=all(v>=45.0 for v in a.values())
+          assert d['primary_pass'] is expected
+          assert all(math.isfinite(v) for v in a.values())
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP071I',d['classification'])
+          print('PRIMARY',a)
+          print('GDM_TTOT',d['gdm_cs2_vs_cv2_ttot_angle_deg'])
+          print('MAX_K2_DRIFT',d['robustness_nonclassifying']['max_K2_ttot_angle_to_bar1_deg'])
+          PY
+
+      - name: Record provenance
+        if: always()
+        run: |
+          {
+            echo 'Exp071I original prereg commit: 30797f97f9ee4d295dcaf1905d3647230b6fa1cc'
+            echo 'Exp071I pre-execution vTk amendment commit: 55ea3d6435767ecf570702b55d411a12eddd59b4'
+            echo 'Scientific observable/45-degree threshold/bar1 primary were unchanged by the I/O amendment.'
+            echo 'Fresh solver outputs add vTk only; parent matter-power reproduction must pass before classification.'
+            echo 'This is not tracer RSD or f_sigma8.'
+            echo 'G7/G8/G9 remain OPEN.'
+            echo "DSIR head: ${GITHUB_SHA}"
+            echo "CLASS: ${CLASS_SHA}"
+            echo "GDM_CLASS: ${GDM_SHA}"
+          } > exp071i_environment.txt
+
+      - name: Upload immutable Exp071I record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp071i-k2-gdm-total-velocity-${{ github.sha }}
+          path: |
+            exp071i_k2_gdm_total_velocity_direction_control_v0_1.json
+            exp071i_environment.txt
+            exp071i_source_contract.txt
+            exp071i_class_sha.txt
+            exp071i_gdm_sha.txt
+            exp071i_k2_*.log
+            exp071i_gdm_*.log
+            solvers/class/dsir_*.ini
+            solvers/gdm/*.ini
+            solvers/gdm/dsir_p8.pre
+            fresh/k2/*pk.dat
+            fresh/k2/*tk.dat
+            fresh/gdm/*pk.dat
+            fresh/gdm/*tk.dat
+          if-no-files-found: warn
+          retention-days: 90
