@@ -1,0 +1,46 @@
+name: article3-physical-support-synthetic-v0-1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/article3_physical_support_synthetic_v0_1.py'
+      - 'docs/ARTICLE3_PHYSICAL_SUPPORT_GATE_CONTRACT_2026-08-28.md'
+      - '.github/workflows/article3-physical-support-synthetic-v0-1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-support-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute synthetic-only Article-3 physical-support QA
+        run: |
+          set -euo pipefail
+          python ci/article3_physical_support_synthetic_v0_1.py | tee article3_physical_support_synthetic_v0_1.json
+      - name: Assert synthetic-only PASS token and no real gate authorization
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('article3_physical_support_synthetic_v0_1.json')
+          r=json.loads(p.read_text())
+          assert r['status']=='PASS_ARTICLE3_PHYSICAL_SUPPORT_SYNTHETIC_QA_V0_1'
+          assert r['scope']=='SYNTHETIC_ONLY_NO_DES_ARTIFACT_ACCESS'
+          assert r['real_science_gate_scored'] is False
+          assert r['covariance_restriction_authorized_by_this_QA'] is False
+          assert r['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert all(t['pass'] for t in r['tests'])
+          print('PASS: synthetic physical-support contract QA; real downstream gates remain unauthorized')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: article3-physical-support-synthetic-${{ github.sha }}
+          path: article3_physical_support_synthetic_v0_1.json
+          if-no-files-found: error
+          retention-days: 30
