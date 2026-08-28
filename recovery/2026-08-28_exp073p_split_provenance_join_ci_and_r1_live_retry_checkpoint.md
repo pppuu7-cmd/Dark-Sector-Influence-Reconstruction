@@ -35,6 +35,8 @@ and additionally asserts that:
 
 First CI run: `33166411136`.
 
+Result: `success`, including compile, contract execution, and the explicit non-science/R1-mandatory binding assertion. This is a **reproducibility-contract PASS only**; it is not a physical-support PASS.
+
 ## Gate order preserved
 
 The admissible order remains:
