@@ -1,0 +1,123 @@
+name: Article 2 publication QA v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - article2-manuscript-start-2026-08-28
+    paths:
+      - '.github/workflows/article2-publication-qa-v0-1.yml'
+      - 'scripts/publications/make_dsir2_figures_v0_2.py'
+      - 'docs/publications/DSIR2_FIGURE_NUMERIC_MANIFEST_V0_1.json'
+      - 'docs/publications/DSIR2_REFERENCES_VERIFIED_V0_1.bib'
+      - 'docs/publications/latex/article2/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/article2-publication-qa-v0-1.yml'
+      - 'scripts/publications/make_dsir2_figures_v0_2.py'
+      - 'docs/publications/DSIR2_FIGURE_NUMERIC_MANIFEST_V0_1.json'
+      - 'docs/publications/DSIR2_REFERENCES_VERIFIED_V0_1.bib'
+      - 'docs/publications/latex/article2/**'
+
+permissions:
+  contents: read
+
+jobs:
+  publication-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout manuscript branch
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install figure dependencies
+        run: python -m pip install --upgrade numpy matplotlib
+
+      - name: Generate frozen DSIR-2 Figures 1-4
+        run: |
+          set -euxo pipefail
+          python scripts/publications/make_dsir2_figures_v0_2.py
+
+      - name: Verify figure inventory and file integrity
+        run: |
+          set -euxo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          root=Path('artifacts/publications/article2/figures')
+          expected=[
+            'dsir2_figure1_k2_specificity_hierarchy_v0_2',
+            'dsir2_figure2_k1_representation_kernel_v0_2',
+            'dsir2_figure3_support_admissibility_v0_2',
+            'dsir2_figure4_fail_closed_hierarchy_v0_2',
+          ]
+          for stem in expected:
+              for ext in ('pdf','svg'):
+                  p=root/f'{stem}.{ext}'
+                  assert p.is_file(), f'missing {p}'
+                  assert p.stat().st_size>1000, f'suspiciously small {p}: {p.stat().st_size}'
+          print('FIGURE_QA_PASS', len(expected), 'figures x PDF/SVG')
+          PY
+
+      - name: Install journal-neutral LaTeX toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y latexmk texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
+
+      - name: Compile journal-neutral manuscript with BibTeX
+        working-directory: docs/publications/latex/article2
+        run: |
+          set -euxo pipefail
+          latexmk -pdf -bibtex -interaction=nonstopmode -halt-on-error dsir2_journal_neutral_v0_1.tex
+          test -s dsir2_journal_neutral_v0_1.pdf
+
+      - name: Reject unresolved citations or references
+        working-directory: docs/publications/latex/article2
+        run: |
+          set -euxo pipefail
+          log='dsir2_journal_neutral_v0_1.log'
+          test -s "$log"
+          if grep -Eiq 'Citation .* undefined|Reference .* undefined|There were undefined references|There were undefined citations' "$log"; then
+            echo 'Unresolved citation/reference detected'
+            grep -Ein 'Citation .* undefined|Reference .* undefined|There were undefined references|There were undefined citations' "$log" || true
+            exit 1
+          fi
+          echo 'LATEX_REFERENCE_QA_PASS'
+
+      - name: Record release-QA hashes
+        run: |
+          set -euxo pipefail
+          mkdir -p artifacts/publications/article2/qa
+          {
+            sha256sum docs/publications/DSIR2_FIGURE_NUMERIC_MANIFEST_V0_1.json
+            sha256sum docs/publications/DSIR2_REFERENCES_VERIFIED_V0_1.bib
+            sha256sum docs/publications/latex/article2/dsir2_journal_neutral_v0_1.tex
+            sha256sum docs/publications/latex/article2/table1_terminal_comparison.tex
+            sha256sum docs/publications/latex/article2/table2_provenance.tex
+            sha256sum artifacts/publications/article2/figures/*.pdf
+            sha256sum artifacts/publications/article2/figures/*.svg
+            sha256sum docs/publications/latex/article2/dsir2_journal_neutral_v0_1.pdf
+          } > artifacts/publications/article2/qa/sha256sums.txt
+          cat artifacts/publications/article2/qa/sha256sums.txt
+
+      - name: Collect publication QA bundle
+        run: |
+          set -euxo pipefail
+          mkdir -p artifacts/publications/article2/qa/manuscript
+          cp docs/publications/latex/article2/dsir2_journal_neutral_v0_1.pdf artifacts/publications/article2/qa/manuscript/
+          cp docs/publications/latex/article2/dsir2_journal_neutral_v0_1.log artifacts/publications/article2/qa/manuscript/
+
+      - name: Upload immutable publication QA bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir2-publication-qa-${{ github.sha }}
+          path: |
+            artifacts/publications/article2/figures/
+            artifacts/publications/article2/qa/
+          if-no-files-found: error
