@@ -1,0 +1,4 @@
+This file intentionally triggers the clean-room interacting-vacuum zero-coupling regression when changed in a calibration PR.
+Do not encode scientific results here.
+Calibration run: IDE-ZL-linear-core-002, 2026-08-24.
+Scope: background + mPk through 0.25 h/Mpc using pinned class_iv with recorded compile/toolchain compatibility adaptations.
