@@ -2,14 +2,14 @@
 
 **Date:** 2026-08-28  
 **Supersedes for active publication work:** `DSIR2_TABLE2_PROVENANCE_LEDGER_V0_1.md`  
-**Rule:** only immutable identifiers recovered from repository records or GitHub Actions are listed. Unknown fields remain explicit.
+**Rule:** only immutable identifiers recovered from repository records or GitHub Actions are listed.
 
 ## A. Core response/falsification chain
 
 | Exp. | Role | Preregistration / binding | Run | Job | Artifact | SHA256 / digest | Status |
 |---|---|---|---:|---:|---:|---|---|
-| 071A | common certified C3/C5 signed `mm/Wm/WW`; 495/495 cells | prereg `e670bff76868efb469f129a95b9dd6ba548ac82d`; execution binding `276655e876bcfefa7a9351b372fa3adc040a8318`; output-path repair `f55c69015628ace2c030cdaadd5f61a26e720376` | run-1 `33027159066` completed evaluator but packaging failed; final rerun tuple not yet re-extracted | — | — | — | scientific PASS is canonical; run-1 is infrastructure packaging failure after unchanged evaluator reported 495/495. Final immutable rerun tuple still needs exact recovery. |
-| 071C | known-sector F30 falsification | prereg `4180661fe3187c710c363cdbafac12de2dc70d41`; result merge `da74d592fbcc2bba9cd223e924b245a3e52437e1` | `33020201997` | `98348450038` | `9626235928` | artifact digest `ed486effa593a409640577f8cdde614d5fddfc95653eb4ca78c56ae69a234e5e` | exact artifact recovery; classification `F30_DARK_SPECIFICITY_WEAKENED_BY_KNOWN_SECTOR_CONTROL` |
+| 071A | common certified C3/C5 signed `mm/Wm/WW`; 495/495 cells | prereg `e670bff76868efb469f129a95b9dd6ba548ac82d`; execution binding `276655e876bcfefa7a9351b372fa3adc040a8318`; output-path repair `f55c69015628ace2c030cdaadd5f61a26e720376` | `33027562195` | `98372366778` | `9629064009` | `4955a3a917992ad38423d9fe2dda3682822c7b86614950467faf5a46a7426675` | exact final rerun; `PASS_COMMON_PHYSICAL_SUPPORT_MASK_V0_1`, 495/495 retained |
+| 071C | known-sector F30 falsification | prereg `4180661fe3187c710c363cdbafac12de2dc70d41`; result merge `da74d592fbcc2bba9cd223e924b245a3e52437e1` | `33020201997` | `98348450038` | `9626235928` | `ed486effa593a409640577f8cdde614d5fddfc95653eb4ca78c56ae69a234e5e` | exact artifact recovery; `F30_DARK_SPECIFICITY_WEAKENED_BY_KNOWN_SECTOR_CONTROL` |
 | 071E | static Weyl+slip control | `220e73f6cd5b52746498731073bf7392f6917dd9` | `33177588360` | `98870121386` | `9688299959` | `8547908fdb215a444d29abbb797c3175ef5e51064e02dd7f59cec3903584581c` | exact terminal summary |
 | 071F | static matter+Weyl+slip control | `85daeca416ce8ed1e691008fd4178fd6bbf94d15` | `33178154667` | `98872091411` | `9688506671` | `e03e72251ab8ed9e0fa820bdae31342dc718349d78713db5fcac06bf00cc6779` | exact terminal summary |
 | 071H | finite-bin temporal K2+ control | `93bd51867d90fa346ce644deebe228e6d0d45697` | `33179056348` | `98875221176` | `9688888346` | `60d582b9f0249329c323066f248cbdc33f3c149966eb30317ecb2f3f22cda0a5` | exact terminal summary |
@@ -20,9 +20,9 @@
 | 071M | K1 transfer-only representation-null control | `e3c0c7315ccb78d0a292db765eda172113f664bd` | `33185652795` | `98897856253` | `9691596312` | `d0878a71adb7bbf97d7b00a67e306c0ae9c86b8b2e705cbafd00b354ede23b21` | exact terminal summary; `INVALID_FOR_SCIENCE_EXP071M` |
 | 071N | K1 velocity-power recovery / two-sided line falsification | `cfaf9d14fa734e155cab5dca028bc1a14d0afd46` | `33186048775` | `98899204160` | `9691720131` | `19ce8623c64faf2e9ebd1d38ce2db5eb394d0a941457b18a8b59508d558d00eb` | exact terminal summary |
 
-### Exp071A caution
+### Exp071A infrastructure history
 
-The first Exp071A workflow run `33027159066` completed the frozen evaluator and printed `PASS_COMMON_PHYSICAL_SUPPORT_MASK_V0_1`, candidate/retained `495/495`, but the relative output path caused the subsequent assert/upload stage to miss the summary JSON. This is explicitly recorded as `INFRASTRUCTURE_PACKAGING_FAILURE_AFTER_COMPLETED_EVALUATOR`. The workflow was repaired without changing scientific criteria. Article 2 may use the canonical 495/495 provider-space PASS, but the final successful rerun's run/job/artifact tuple must be recovered before release-candidate provenance freeze rather than inferred from run 1.
+The earlier Exp071A run `33027159066` completed the unchanged frozen evaluator and printed the same 495/495 PASS, but a relative output path caused the subsequent packaging/assert stage to miss the summary JSON. It remains permanently recorded as `INFRASTRUCTURE_PACKAGING_FAILURE_AFTER_COMPLETED_EVALUATOR`. The only repair was the absolute workspace output path. The final successful rerun above (`33027562195`) completed the evaluator, assert and immutable artifact upload successfully. The run-1 artifact must never be substituted for the final scientific artifact.
 
 ## B. Observation-support / finite-operator boundary
 
@@ -54,10 +54,11 @@ Exp071I binds the velocity chain to:
 
 The I/O-only extension reproduces immutable parent matter spectra with maximum relative difference `0.0` against `1e-10`.
 
-## D. Direct machine-readable evidence
+## D. Direct evidence records
 
 Core response chain:
 
+- `recovery/2026-08-28_exp071c_known_sector_f30_exact_result_recovery.md`
 - `data/derived/exp071e_known_sector_joint_metric_direction_summary_v0_1.json`
 - `data/derived/exp071f_known_sector_matter_weyl_slip_direction_summary_v0_1.json`
 - `data/derived/exp071h_k2_finite_bin_growth_dual_provenance_summary_v0_1.json`
@@ -68,23 +69,14 @@ Core response chain:
 - `data/derived/exp071m_two_sided_k1_transfer_null_summary_v0_1.json`
 - `data/derived/exp071n_two_sided_k1_velocity_power_shape_summary_v0_1.json`
 
-Recovered/support records include:
+Applicability/support records include the Exp072A hard-fail result, Exp072C frontier result, Exp073A perturbativity result, `data/derived/g7/exp073i_finite_true_k_window_matrix_binding_result_v0_1.json`, `data/derived/g7/exp073j_boss_finite_matrix_component_support_v0_1_key_metrics.json`, `data/derived/g7/exp073j_kids_bnt_component_support_v0_1_key_metrics.json`, and `experiments/073l_kids_absolute_response_extended_asymptotic_result_v0_1.md`.
 
-- `recovery/2026-08-28_exp071c_known_sector_f30_exact_result_recovery.md`
-- Exp072A scientific hard-fail result/recovery records on `main`;
-- Exp072C joint-frontier result on `main`;
-- Exp073A perturbativity result on `main`;
-- `data/derived/g7/exp073i_finite_true_k_window_matrix_binding_result_v0_1.json`;
-- `data/derived/g7/exp073j_boss_finite_matrix_component_support_v0_1_key_metrics.json`;
-- `data/derived/g7/exp073j_kids_bnt_component_support_v0_1_key_metrics.json`;
-- `experiments/073l_kids_absolute_response_extended_asymptotic_result_v0_1.md`.
+## E. Provenance closure state
 
-## E. Remaining exact-provenance gap
+All manuscript-critical Table-2 rows now have recovered immutable run/job/artifact provenance. The historical Exp071A run-1 packaging failure remains explicitly separate from the final successful rerun.
 
-Only one manuscript-relevant row remains materially incomplete in this ledger:
-
-- **Exp071A final successful rerun** — recover final run/job/artifact/digest after the frozen absolute-output-path repair. Do not use run-1 packaging artifact as the final immutable scientific artifact.
+`ARTICLE2_MANUSCRIPT_CRITICAL_PROVENANCE_RECOVERED_V0_2`
 
 ## Caption draft
 
-**Table 2.** Immutable provenance for the central DSIR-2 falsification and applicability chain. Run, job, artifact and cryptographic digests are reported only when recovered from GitHub Actions or committed immutable result records. Exp071A is deliberately marked incomplete at the final-artifact level because its first run completed the unchanged evaluator but failed output packaging; the final successful rerun identifiers are not reconstructed from memory. The table also distinguishes source-binding PASS, non-classifying component results, numerical-completeness failures and terminal scientific negative results.
+**Table 2.** Immutable provenance for the central DSIR-2 falsification and applicability chain. Run, job, artifact and cryptographic digests are reported from GitHub Actions or committed immutable result records. The ledger explicitly separates the first Exp071A infrastructure-packaging failure from its later successful frozen rerun, and distinguishes source-binding PASS, non-classifying component results, numerical-completeness failures and terminal scientific negative results.
