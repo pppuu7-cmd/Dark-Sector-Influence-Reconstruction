@@ -1,0 +1,71 @@
+name: Exp073P aggregate prerequisite join synthetic selftest v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073p-aggregate-prerequisite-join-selftest-v0-1.yml'
+      - 'ci/exp073p_aggregate_prerequisite_join_v0_1.py'
+      - 'ci/exp073p_frozen_contract_selftest_v0_1.py'
+      - 'ci/exp073p_r1_admissibility_interlock_v0_1.py'
+      - 'ci/exp073p_split_provenance_join_contract_selftest_v0_1.py'
+      - 'ci/exp073r1_v0_6_protocol_guard.py'
+      - 'experiments/073p_aggregate_prerequisite_join_evaluator_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-failclosed-selftest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Execute preregistered aggregate-join mutation suite
+        run: |
+          set -euxo pipefail
+          python3 -m py_compile \
+            ci/exp073p_aggregate_prerequisite_join_v0_1.py \
+            ci/exp073p_r1_admissibility_interlock_v0_1.py
+          python3 ci/exp073p_aggregate_prerequisite_join_v0_1.py \
+            --selftest \
+            --out data/derived/g7/exp073p_aggregate_prerequisite_join_synthetic_selftest_v0_1.json
+
+      - name: Assert synthetic result cannot authorize real Exp073P execution
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073p_aggregate_prerequisite_join_synthetic_selftest_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073P_AGGREGATE_JOIN_SYNTHETIC_SELFTEST_V0_1'
+          assert d['synthetic'] is True
+          assert d['scientific_classification'] is None
+          assert d['support_executor_authorized'] is False
+          for key in (
+              'support_fraction_evaluated', 'f_invalid_computed',
+              'retained_dimension_evaluated', 'covariance_read',
+              'whitening_read', 'nuisance_svd_read', 'relation_null_read',
+              'heldout_read', 'G8_read',
+          ):
+              assert d[key] is False, key
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['frozen_support_contract']=={
+              'z_min':0.295,
+              'z_max':2.33,
+              'k_max_Mpc^-1':0.06664762008318016,
+              'f_invalid_max':0.05,
+              'minimum_retained_dimension':15,
+              'nside_classifying':4096,
+          }
+          print('PASS_SYNTHETIC_JOIN_NONAUTHORIZATION_ASSERTIONS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073p-aggregate-join-synthetic-selftest-${{ github.sha }}
+          path: data/derived/g7/exp073p_aggregate_prerequisite_join_synthetic_selftest_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
