@@ -1,0 +1,54 @@
+name: Exp073P split-provenance join contract self-test v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073p_split_provenance_join_contract_selftest_v0_1.py'
+      - '.github/workflows/exp073p-split-provenance-join-contract-selftest-v0-1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  split-provenance-join-contract-selftest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile
+        run: python3 -m py_compile ci/exp073p_split_provenance_join_contract_selftest_v0_1.py
+      - name: Execute non-science split-provenance join contract tests
+        run: python3 ci/exp073p_split_provenance_join_contract_selftest_v0_1.py
+      - name: Assert gate remains non-science and R1 remains mandatory
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('ci/exp073p_split_provenance_join_contract_selftest_v0_1.py').read_text()
+          required = [
+              'scientific_classification',
+              'weak_lensing_mask_reproduction_r1',
+              'PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1',
+              'PASS_SPLIT_PROVENANCE_JOIN_PREREG_SELFTEST_EXP073P',
+              'f_invalid_max',
+              '0.05',
+              'minimum_retained_dimension',
+              '15',
+              'nside_classifying',
+              '4096',
+          ]
+          missing = [x for x in required if x not in p]
+          assert not missing, missing
+          # This workflow is forbidden to become a physical-support evaluator.
+          forbidden = [
+              'numpy.linalg',
+              'scipy.linalg',
+              'healpy.read_map',
+              'compute_covariance',
+              'whiten(',
+          ]
+          present = [x for x in forbidden if x in p]
+          assert not present, present
+          print('PASS_EXP073P_SPLIT_PROVENANCE_JOIN_NONSCIENCE_CI_BINDING_V0_1')
+          PY
