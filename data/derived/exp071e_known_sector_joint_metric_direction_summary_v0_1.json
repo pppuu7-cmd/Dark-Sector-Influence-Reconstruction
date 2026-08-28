@@ -1,0 +1,49 @@
+{
+  "schema": "dsir.exp071e_terminal_summary.v0.1",
+  "experiment": "Exp071E",
+  "date": "2026-08-28",
+  "preregistration_commit": "220e73f6cd5b52746498731073bf7392f6917dd9",
+  "run_id": 33177588360,
+  "job_id": 98870121386,
+  "artifact_id": 9688299959,
+  "artifact_sha256": "8547908fdb215a444d29abbb797c3175ef5e51064e02dd7f59cec3903584581c",
+  "execution_conclusion": "success",
+  "science_status": "COMPLETE_K2_JOINT_METRIC_DIRECTION_CONTROL_V0_1",
+  "classification": "K2_DIRECTION_OVERLAPS_AT_LEAST_ONE_GDM_AXIS_EXP071E",
+  "primary_pass": false,
+  "threshold_deg": 45.0,
+  "primary_k2_point": "bar1",
+  "primary_angles_deg": {
+    "K2_bar1_vs_GDM_cs2": 18.925666634781507,
+    "K2_bar1_vs_GDM_cv2": 58.912673573574864
+  },
+  "gdm_equalization_scales": {
+    "s_W": 93154.86206623897,
+    "s_S": 4.629102142662035
+  },
+  "robustness_nonclassifying": {
+    "max_joint_angle_to_bar1_deg": 0.12401310532776276,
+    "max_r_W_angle_to_bar1_deg": 0.12400617443585882,
+    "max_delta_slip_angle_to_bar1_deg": 2.533442408490233,
+    "joint_family_centered_svd_variance_fraction": [
+      0.9658869369610682,
+      0.03409734882382958,
+      0.000015679605494582194,
+      3.4609607726328185e-08,
+      1.9768288382931996e-28
+    ]
+  },
+  "interpretation": {
+    "supported": "The tested K2 known-sector tangent remains close to the GDM cs2-like joint response direction but is separated from the GDM cv2-like direction under the preregistered equalized two-channel metric.",
+    "not_supported": [
+      "universal dark-sector specificity from matter plus Weyl/slip alone",
+      "microscopic model uniqueness",
+      "observational evidence or preference"
+    ]
+  },
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
