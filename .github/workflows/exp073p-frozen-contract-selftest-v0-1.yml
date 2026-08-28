@@ -1,0 +1,44 @@
+name: Exp073P frozen contract self-test v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073p_frozen_contract_selftest_v0_1.py'
+      - '.github/workflows/exp073p-frozen-contract-selftest-v0-1.yml'
+      - 'experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  frozen-contract-selftest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile
+        run: python3 -m py_compile ci/exp073p_frozen_contract_selftest_v0_1.py
+      - name: Execute frozen threshold/unit/taxonomy tests
+        run: python3 ci/exp073p_frozen_contract_selftest_v0_1.py
+      - name: Assert preregistration remains textually bound
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md').read_text()
+          required=[
+            '0.295 <= z <= 2.33',
+            'k <= 0.06664762008318016 Mpc^-1',
+            'f_invalid <= 0.05',
+            'minimum retained full-coordinate dimension exactly `15`',
+            '`nside=4096`',
+            'FAIL_COMMON_PHYSICAL_SUPPORT_DIMENSION_EXP073P',
+            'FAIL_EXP073P_REPRODUCTION_OR_NUMERICAL_COMPLETENESS',
+            '`INCOMPLETE_EXP073P`',
+            'Only `PASS_COSMOTHEKA_DESY1_BOSS_COMMON_PHYSICAL_SUPPORT_EXP073P` authorizes covariance restriction/whitening.'
+          ]
+          missing=[x for x in required if x not in p]
+          assert not missing, missing
+          print('PASS_EXP073P_PREREG_TEXT_BINDING_V0_1')
+          PY
