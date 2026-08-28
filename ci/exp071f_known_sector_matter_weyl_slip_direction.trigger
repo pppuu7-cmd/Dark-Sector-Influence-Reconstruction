@@ -1,0 +1,2 @@
+Launch Exp071F exactly as frozen in experiments/071f_k2_matter_weyl_slip_direction_control_prereg_v0_1.md
+Preregistration commit: 85daeca416ce8ed1e691008fd4178fd6bbf94d15
