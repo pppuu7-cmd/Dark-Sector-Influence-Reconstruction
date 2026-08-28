@@ -1,0 +1,50 @@
+name: Exp073R1 one-shot launcher v0.3 after v0.2 terminal
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073r1-launch-v0-3-after-v0-2-terminal.yml'
+permissions:
+  contents: read
+  actions: write
+jobs:
+  launch:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PARENT_RUN_ID: '33135622749'
+      PARENT_HEAD_SHA: '70be4d35199d4132a2ca9da912689519e40bcc84'
+      PARENT_PATH: '.github/workflows/exp073r1-desy1-sharded-mask-v0-2.yml'
+      TARGET_PATH: '.github/workflows/exp073r1-desy1-low-concurrency-microshards-v0-3.yml'
+      TARGET_BLOB: '12e15177bd389d603af04c89ec815ba6c94c749c'
+      MERGER_PATH: 'ci/exp073r1_desy1_merge_v0_3.py'
+      MERGER_BLOB: '0fb99998ad1a15acaa4223ea7d6d47fbd8d93080'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify audited terminal parent and immutable target implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${PARENT_RUN_ID}" > parent.json
+          python3 - <<'PY'
+          import json, os
+          d=json.load(open('parent.json'))
+          assert str(d['id']) == os.environ['PARENT_RUN_ID']
+          assert d['status'] == 'completed'
+          assert d['path'] == os.environ['PARENT_PATH']
+          assert d['head_sha'] == os.environ['PARENT_HEAD_SHA']
+          # v0.2 never produced a full-universe Exp073R1 PASS because merge was skipped.
+          assert d['conclusion'] != 'success'
+          PY
+          target_blob="$(gh api "repos/${GITHUB_REPOSITORY}/contents/${TARGET_PATH}?ref=main" --jq .sha)"
+          merger_blob="$(gh api "repos/${GITHUB_REPOSITORY}/contents/${MERGER_PATH}?ref=main" --jq .sha)"
+          test "$target_blob" = "$TARGET_BLOB"
+          test "$merger_blob" = "$MERGER_BLOB"
+      - name: Refuse duplicate v0.3 workflow_dispatch and dispatch exactly once
+        shell: bash
+        run: |
+          set -euo pipefail
+          count="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/exp073r1-desy1-low-concurrency-microshards-v0-3.yml/runs?event=workflow_dispatch&per_page=100" --jq '.workflow_runs | length')"
+          test "$count" = "0"
+          gh workflow run exp073r1-desy1-low-concurrency-microshards-v0-3.yml --ref main
