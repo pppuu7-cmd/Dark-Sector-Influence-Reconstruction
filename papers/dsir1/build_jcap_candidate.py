@@ -3,9 +3,10 @@
 
 The scientific body remains the audited v0.2 assembly. This builder changes
 only presentation required for JCAP preparation: formula-free abstract,
-canonical AI disclosure, and the frozen compact main-table policy. Detailed
-removed table content remains in supplement/numerical_tables.md. No scientific
-result, threshold, gate state, figure, or provenance binding is altered.
+canonical AI disclosure, the frozen compact main-table policy, and a small
+fail-closed set of journal-layout prose/heading edits. Detailed removed table
+content remains in supplement/numerical_tables.md. No scientific result,
+threshold, gate state, figure, or provenance binding is altered.
 """
 
 from __future__ import annotations
@@ -27,6 +28,32 @@ FAMILY_ATLAS_HEADER = "| Class | Representative mechanism | Main response charac
 TANGENT_CHI_HEADER = "| Direction | \\(\\chi_I\\) |"
 MECHANISM_RESPONSE_HEADER = "| Family / control | Equation cue and block to inspect | Frozen response pattern / evidence boundary |"
 ENVELOPE_HEADER = "| Family | sampled \\(\\chi_I\\) range |"
+
+# Presentation-only replacements motivated by the compiled JCAP log. They are
+# exact-count guarded so a scientific-source change cannot be silently masked by
+# this release renderer.
+LAYOUT_POLISH = (
+    (
+        "## 6.5 Irreducible scale-time structure carries GDM--\\(f(R)\\) separation",
+        "## 6.5 Irreducible scale-time structure in GDM--f(R) separation",
+    ),
+    (
+        "Figure 5 compares response-manifold curvature with the distinct WDM scale-localization and DCDM time-localization controls.",
+        "Figure 5 compares response-manifold curvature with WDM scale localization and DCDM time localization.",
+    ),
+    (
+        "Finally, DSIR has not passed its discovery gates. There is no completed model-independent residual law with a fresh withheld-family prediction, and no reconstructed underlying dynamics/action. We therefore make no claim of new fundamental physics in this paper.",
+        "Finally, DSIR has not passed its discovery gates. No model-independent residual law has yet passed a fresh withheld-family test, and the underlying dynamics have not been reconstructed. We therefore make no claim of new fundamental physics in this paper.",
+    ),
+    (
+        "A parallel goal is to determine whether mechanism-native localization coordinates---viscous transitions, Compton-like transitions, free-streaming cutoffs, decay epochs, and others---can be mapped into a common observable coordinate without erasing the physical distinctions that make the atlas informative. The present results justify asking that question, but do not prejudge the answer.",
+        "A parallel goal is to determine whether mechanism-native localization coordinates can be mapped into a common observable coordinate without erasing the distinctions that make the atlas informative. Examples include viscous and Compton-like transitions, free-streaming cutoffs, and decay epochs. The present results justify asking that question, but do not prejudge the answer.",
+    ),
+    (
+        "Publication figures are generated deterministically from repository products by manuscript-scoped plotting scripts. The figure manifest records exact input products, scientific selection rules, and caption boundaries. Plotting scripts may change presentation details, but they may not silently change the scientific domain, mask, normalization, response orientation, or frozen threshold. Final figure outputs are accompanied by checksums in the build artifact.",
+        "Publication figures are generated deterministically from frozen repository products. Manuscript-scoped scripts record the exact inputs, scientific selection rules, and caption boundaries. They may change presentation details but not the scientific domain, mask, normalization, response orientation, or frozen threshold. Final figure outputs carry checksums in the build artifact.",
+    ),
+)
 
 
 def require(cond: bool, message: str) -> None:
@@ -60,6 +87,15 @@ def table_count(text: str) -> int:
         if lines[i].lstrip().startswith("|") and lines[i + 1].lstrip().startswith("|---"):
             count += 1
     return count
+
+
+def apply_layout_polish(text: str) -> str:
+    out = text
+    for old, new in LAYOUT_POLISH:
+        n = out.count(old)
+        require(n == 1, f"expected exactly one JCAP layout-polish source string, found {n}: {old[:80]!r}")
+        out = out.replace(old, new, 1)
+    return out
 
 
 def main() -> None:
@@ -126,6 +162,8 @@ def main() -> None:
         "Exact direction-by-direction tangent interaction fractions are retained in Supplementary Table S1b. The main-text quantitative comparison below focuses on the finite-amplitude class envelopes and their deterministic node robustness.",
     )
 
+    out = apply_layout_polish(out)
+
     require(FAMILY_ATLAS_HEADER not in out, "broad family atlas table leaked into JCAP main text")
     require(TANGENT_CHI_HEADER not in out, "tangent chi_I table leaked into JCAP main text")
     require(MECHANISM_RESPONSE_HEADER in out, "mechanism-to-response main table missing")
@@ -141,6 +179,10 @@ def main() -> None:
         "takes full responsibility for the content of the manuscript",
         "Supplementary Table S1a",
         "Supplementary Table S1b",
+        "No model-independent residual law has yet passed a fresh withheld-family test",
+        "Publication figures are generated deterministically from frozen repository products",
+        "Examples include viscous and Compton-like transitions",
+        "## 6.5 Irreducible scale-time structure in GDM--f(R) separation",
     ):
         require(token in out, f"JCAP candidate lost required boundary: {token}")
 
@@ -165,6 +207,7 @@ def main() -> None:
     OUT.write_text(out.rstrip() + "\n", encoding="utf-8")
     print(f"wrote {OUT}")
     print("PASS: frozen JCAP main-table policy = 2 tables")
+    print(f"PASS: JCAP presentation-only layout polish rules = {len(LAYOUT_POLISH)}")
 
 
 if __name__ == "__main__":
