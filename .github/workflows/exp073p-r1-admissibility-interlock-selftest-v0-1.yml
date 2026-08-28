@@ -1,0 +1,25 @@
+name: Exp073P R1 admissibility interlock selftest v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073p_r1_admissibility_interlock_v0_1.py'
+      - '.github/workflows/exp073p-r1-admissibility-interlock-selftest-v0-1.yml'
+      - 'experiments/073r1_v0_6_selfhosted_longrun_stageb_prereg.md'
+      - 'recovery/2026-08-28_exp073r1_to_exp073p_execution_integrity_matrix.md'
+
+permissions:
+  contents: read
+
+jobs:
+  selftest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exercise fail-closed R1-to-P mutations
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_r1_admissibility_interlock_v0_1.py --selftest
