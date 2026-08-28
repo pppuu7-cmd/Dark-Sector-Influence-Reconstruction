@@ -1,0 +1,92 @@
+name: Article 3 pre-gate numerical QA v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/article3_covariance_whitening_synthetic_v0_1.py'
+      - 'ci/article3_signed_nuisance_subspace_synthetic_v0_1.py'
+      - 'docs/ARTICLE3_COVARIANCE_WHITENING_FAILCLOSED_CONTRACT_V0_1.md'
+      - 'docs/ARTICLE3_SIGNED_NUISANCE_SUBSPACE_CONTRACT_V0_1.md'
+      - '.github/workflows/article3-pregate-numerical-qa-v0-1.yml'
+      - 'ci/article3_pregate_numerical_qa.trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-only-numerics:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install frozen synthetic runtime
+        run: python -m pip install --disable-pip-version-check 'numpy>=2.0,<3'
+
+      - name: Run covariance whitening synthetic QA
+        run: |
+          set -euo pipefail
+          python ci/article3_covariance_whitening_synthetic_v0_1.py | tee article3_covariance_whitening_synthetic_v0_1.jsonlog
+          grep -q 'ARTICLE3_COVARIANCE_WHITENING_SYNTHETIC_QA_PASS_V0_1' article3_covariance_whitening_synthetic_v0_1.jsonlog
+
+      - name: Run signed nuisance-subspace synthetic QA
+        run: |
+          set -euo pipefail
+          python ci/article3_signed_nuisance_subspace_synthetic_v0_1.py | tee article3_signed_nuisance_subspace_synthetic_v0_1.json
+          grep -q 'ARTICLE3_SIGNED_NUISANCE_SUBSPACE_SYNTHETIC_QA_PASS_V0_1' article3_signed_nuisance_subspace_synthetic_v0_1.json
+
+      - name: Enforce pre-gate firewall
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          forbidden = ['des_y1', 'metacal', 'covariance.npy', 'G7_evaluated": true', 'G8_evaluated": true', 'G9_evaluated": true']
+          paths = [
+              Path('ci/article3_covariance_whitening_synthetic_v0_1.py'),
+              Path('ci/article3_signed_nuisance_subspace_synthetic_v0_1.py'),
+          ]
+          text = '\n'.join(p.read_text().lower() for p in paths)
+          # File-name/text firewall is intentionally simple and conservative: these QA scripts
+          # must remain synthetic-only and must not bind any live survey parent.
+          assert 'exp073r1' not in text
+          assert 'actions/download-artifact' not in text
+          print('ARTICLE3_PREGATE_FIREWALL_PASS_V0_1')
+          PY
+
+      - name: Record immutable QA manifest
+        run: |
+          set -euo pipefail
+          {
+            echo "schema=dsir.article3.pregate_numerical_qa.v0.1"
+            echo "status=PASS_ARTICLE3_PREGATE_SYNTHETIC_NUMERICAL_QA_V0_1"
+            echo "head_sha=$GITHUB_SHA"
+            echo "real_survey_data_consumed=false"
+            echo "real_covariance_consumed=false"
+            echo "G7_evaluated=false"
+            echo "G8_evaluated=false"
+            echo "G9_evaluated=false"
+            sha256sum \
+              ci/article3_covariance_whitening_synthetic_v0_1.py \
+              ci/article3_signed_nuisance_subspace_synthetic_v0_1.py \
+              docs/ARTICLE3_COVARIANCE_WHITENING_FAILCLOSED_CONTRACT_V0_1.md \
+              docs/ARTICLE3_SIGNED_NUISANCE_SUBSPACE_CONTRACT_V0_1.md
+          } > article3_pregate_numerical_qa_manifest_v0_1.txt
+          cat article3_pregate_numerical_qa_manifest_v0_1.txt
+
+      - name: Upload immutable synthetic QA bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: article3-pregate-numerical-qa-${{ github.sha }}
+          path: |
+            article3_covariance_whitening_synthetic_v0_1.jsonlog
+            article3_signed_nuisance_subspace_synthetic_v0_1.json
+            article3_pregate_numerical_qa_manifest_v0_1.txt
+          if-no-files-found: error
+          compression-level: 6
