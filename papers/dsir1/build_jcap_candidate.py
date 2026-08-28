@@ -13,6 +13,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+# RC preflight trigger: editor-facing packaging contract frozen 2026-08-28.
+# This comment is deliberately content-neutral; it exists so all three paper
+# workflows certify the same prospective release-candidate commit.
+
 HERE = Path(__file__).resolve().parent
 SOURCE = HERE / "manuscript_v0_2.md"
 FRONT = HERE / "JCAP_FRONT_MATTER_DRAFT.md"
