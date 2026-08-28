@@ -26,6 +26,7 @@ The article should not be framed as a dark-sector detection paper. Its publishab
 | A2-C10 | ✅ | Finite observational operators change the admissibility diagnosis: a finite BOSS true-k matrix can be bound and yields a non-empty component (54/240 rows), while the examined KiDS finite-theta absolute-response route is non-normalizable under its frozen absolute criterion. | Exp073I/J/K/L. | “Any nominal survey window automatically supplies a valid finite physical-support operator.” |
 | A2-C11 | ✅ falsification | Full equalized joint `(r_W, Delta_slip)` direction **still does not generically separate** the K2 known-sector mimic from both tested GDM axes. The preregistered K2-bar1 tangent is only **18.9257°** from GDM `cs2` but **58.9127°** from GDM `cv2`, against the frozen 45° threshold. This is stable across the five K2 steps: the largest joint drift from bar1 is only **0.1240°**. | Exp071E prereg commit `220e73f6cd5b52746498731073bf7392f6917dd9`; run `33177588360`; artifact `9688299959`; classification `K2_DIRECTION_OVERLAPS_AT_LEAST_ONE_GDM_AXIS_EXP071E`. | “Adding Weyl+slip guarantees unique dark-sector identification” or “K2 is degenerate with both GDM axes.” |
 | A2-C12 | ✅ falsification | Adding the matter-power tangent to the same frozen Weyl+slip geometry **does not remove the residual sound-speed-like ambiguity**. Matter-only K2-bar1 lies at **19.2231°** from GDM `cs2` and **19.0371°** from GDM `cv2`; after GDM-only equalization of the three-channel `(r_P,r_W,Delta_slip)` vector, the angles are **19.0749°** to `cs2` and **50.1667°** to `cv2`. The primary 45° two-axis separator therefore fails only on the `cs2`-like direction. Finite-step stability is strong: maximum three-channel K2 drift from bar1 is **0.11694°**. | Exp071F prereg commit `85daeca416ce8ed1e691008fd4178fd6bbf94d15`; run `33178154667`; job `98872091411`; artifact `9688506671`, SHA256 `e03e72251ab8ed9e0fa820bdae31342dc718349d78713db5fcac06bf00cc6779`; classification `K2_3CHANNEL_DIRECTION_OVERLAPS_AT_LEAST_ONE_GDM_AXIS_EXP071F`. | “More correlated matter/metric channels automatically guarantee specificity” or “K2 is indistinguishable from viscosity-like GDM.” |
+| A2-C13 | ✅ | A qualitatively independent **finite-bin temporal derivative of the same matter response** resolves the static K2↔GDM ambiguity under the frozen directional test. K2-bar1 is **138.1006°** from the GDM `cs2(1e-7)` temporal direction and **137.0973°** from `cv2(1e-7)`, despite the corresponding static matter angles being only **19.2231° / 19.0371°**. The result is insensitive to the GDM tangent convention: replacing the `1e-7` parents by the Exp040 averaged parents shifts the K2 angles by only **+0.0101° / −0.0262°**. | Exp071H prereg commit `93bd51867d90fa346ce644deebe228e6d0d45697`; run `33179056348`; job `98875221176`; artifact `9688888346`, ZIP SHA256 `60d582b9f0249329c323066f248cbdc33f3c149966eb30317ecb2f3f22cda0a5`; classification `K2_FINITE_BIN_GROWTH_SEPARATED_FROM_BOTH_GDM_1E7_AXES_EXP071H`. Exp071G v0.1 is retained as invalid-for-science because its integrity check mixed the two parent-tangent constructions. | “This is tracer RSD”, “this is observational distinguishability”, “temporal separation uniquely identifies microscopic physics”, or “static degeneracy implies full physical equivalence.” |
 
 ## Core narrative implied by the matrix
 
@@ -36,35 +37,37 @@ The strongest Article-2 narrative is a **hierarchy of specificity** rather than 
 3. metric/slip information adds a genuinely new direction that separates sound-speed-like from viscosity-like GDM perturbations, but neither a scalar slip statistic nor the full two-channel direction is universally mechanism-specific;
 4. Exp071E localizes the known-sector ambiguity to the GDM sound-speed-like direction;
 5. Exp071F shows that simply concatenating the matter-power direction with Weyl+slip does **not** cure that ambiguity: the K2↔`cs2` angle remains near 19°, while the K2↔`cv2` angle stays safely above the 45° separator;
-6. therefore the next informative discriminator must be qualitatively independent of the already-correlated matter/Weyl/slip block — e.g. a growth/velocity/RSD-like response if the existing provider outputs permit a fail-closed common construction;
-7. any richer construction must still survive certified physical support and finite observational operators before observational inference is allowed.
+6. Exp071H then shows that a **temporal transform of the same matter response is not redundant with the static matter block**: the K2↔GDM angles jump from ~19° in static matter space to ~137–138° in finite-bin temporal-response space, robustly under two GDM parent-tangent conventions;
+7. the scientific boundary is therefore channel-conditioned: static similarity does not imply temporal-response equivalence, and the informative discriminator is evolution rather than simply concatenating more correlated static coordinates;
+8. any observational interpretation still requires a same-convention velocity/RSD provider, certified physical support, finite operator admissibility and the Article-3 covariance/nuisance chain.
 
 In compact form:
 
-`matter morphology -> known-sector falsification -> Weyl/slip separation -> residual K2~cs2 degeneracy -> matter+Weyl+slip falsification -> qualitatively independent growth/velocity channel -> physical-support intersection -> finite operator admissibility`.
+`matter morphology -> known-sector falsification -> Weyl/slip separation -> residual K2~cs2 static degeneracy -> matter+Weyl+slip non-cure -> finite-bin temporal separation -> provider/physical-support boundary -> finite operator admissibility`.
 
-The publishable result is not a “unique fingerprint”. It is a controlled demonstration of which response directions add independent discriminating power, which apparently richer combinations remain redundant, and where the remaining mechanism ambiguity lives.
+The publishable result is not a “unique fingerprint”. It is a controlled demonstration that response specificity is **coordinate- and channel-conditioned**: apparently degenerate static response directions can be sharply separated by their temporal evolution.
 
 ## Suggested paper figures/tables
 
-1. **Figure 1 — Specificity hierarchy:** matter-only response through known-sector falsification, Weyl/slip augmentation, three-channel falsification, and physical support.
+1. **Figure 1 — Specificity hierarchy:** matter-only response through known-sector falsification, Weyl/slip augmentation, three-channel falsification, temporal separation, and physical support.
 2. **Figure 2 — Known-sector F30 falsification:** dark-sector families, K1 tilt controls and K2 baryon/CDM controls.
 3. **Figure 3 — Metric/slip hierarchy:** GDM `cs2` vs `cv2` channel angles, Exp071D scalar control, and Exp071E joint-direction angles `18.93° / 58.91°`.
-4. **Figure 4 — Three-channel non-cure:** Exp071F matter-only `19.22° / 19.04°` versus three-channel `19.07° / 50.17°`, showing that the new matter block separates the viscosity-like axis but leaves the sound-speed-like ambiguity.
-5. **Figure 5 — K2 finite-step robustness:** joint direction drift below `0.125°` in Exp071E and below `0.117°` in Exp071F.
-6. **Figure 6 — Physical/observational support boundary:** Exp071A 495/495 provider cells vs Exp072A zero admissible observational dimension, then Exp072B/C boundary localization.
-7. **Figure 7 — Finite-operator route inventory:** BOSS finite-matrix success/non-classifying component contrasted with KiDS finite-theta absolute-response failure.
-8. **Table 1 — Claim matrix:** shortened version of this document with run IDs and classifications.
-9. **Table 2 — Negative-result ledger:** scientific FAIL/falsification results separated from infrastructure failures.
+4. **Figure 4 — Static three-channel non-cure:** Exp071F matter-only `19.22° / 19.04°` versus three-channel `19.07° / 50.17°`.
+5. **Figure 5 — Static-to-temporal reversal:** the same K2 matter response compared with GDM axes in static `r_P` space (~19°) and finite-bin temporal-response space (~137–138°), including both GDM parent conventions.
+6. **Figure 6 — K2 finite-step robustness:** Exp071E/F static joint drifts below `0.125°`, and Exp071H temporal-direction drift below `0.420°`.
+7. **Figure 7 — Physical/observational support boundary:** Exp071A 495/495 provider cells vs Exp072A zero admissible observational dimension, then Exp072B/C boundary localization.
+8. **Figure 8 — Finite-operator route inventory:** BOSS finite-matrix success/non-classifying component contrasted with KiDS finite-theta absolute-response failure.
+9. **Table 1 — Claim matrix:** shortened version of this document with run IDs and classifications.
+10. **Table 2 — Negative-result / integrity ledger:** scientific falsifications separated from infrastructure failures and invalid-for-science provenance mismatches such as Exp071G v0.1.
 
 ## Result language for the abstract/discussion
 
 Safe language:
 
-> Matter-response morphology is informative but not generically mechanism-specific: a fixed-total-matter baryon/CDM control reproduces the preregistered F30 criterion. Metric-slip responses add independent information and separate a viscosity-like local GDM direction, yet prospectively frozen scalar, two-channel, and three-channel tests all retain a sound-speed-like known-sector degeneracy. In particular, adding the matter-power tangent to Weyl and slip shifts the K2-versus-sound-speed angle only from about 18.93° to 19.07°, while the viscosity-like angle remains above 50°. The residual ambiguity therefore motivates qualitatively independent growth/velocity information rather than additional correlated matter/metric coordinates, with observational use further restricted by physical-support and finite-window admissibility.
+> Matter-response morphology is informative but not generically mechanism-specific: a fixed-total-matter baryon/CDM control reproduces the preregistered F30 criterion. Metric-slip responses add independent information, yet frozen scalar, two-channel and three-channel static tests retain a sound-speed-like known-sector degeneracy near 19°. A preregistered finite-bin temporal derivative of the same matter response breaks that static degeneracy, placing the K2 direction about 137–138° from both tested GDM axes with negligible sensitivity to the local-tangent convention. Response equivalence is therefore channel-conditioned: similarity in static matter/metric coordinates need not survive temporal evolution. Observational use remains restricted by physical-support, finite-window, same-convention velocity/RSD and downstream covariance/nuisance requirements.
 
-Do not use language equivalent to “dark-sector detection”, “unique fingerprint”, “proof of modified gravity”, or “observational preference” in Article 2 unless a future independent observational gate explicitly authorizes it.
+Do not use language equivalent to “dark-sector detection”, “unique fingerprint”, “proof of modified gravity”, “RSD detection”, or “observational preference” in Article 2 unless a future independent observational gate explicitly authorizes it.
 
 ## Separation from Article 3
 
-Article 2 may use provider-space and finite-operator **applicability** results. It must not import unfinished Article-3 covariance whitening, nuisance quotient, G7 relation/null, G8 or G9 results. Those remain downstream and independently gated.
+Article 2 may use provider-space and finite-operator **applicability** results and the theory-space temporal operator. It must not import unfinished Article-3 covariance whitening, nuisance quotient, G7 relation/null, G8 or G9 results. Those remain downstream and independently gated.
