@@ -6,7 +6,7 @@ import healpy as hp
 import numpy as np
 
 NROWS=136_930_995; NSIDE=4096; NPIX=hp.nside2npix(NSIDE); CHUNK=262_144
-SOURCE={'total_bytes':2738626560,'data_start':5760,'row_bytes':20,'sha256':'491f4bb742762fefe3aaab6d53d4342b6ff4a65401bc7b588d2918fdce3ee6fd'}
+SOURCE={'total_bytes':2738626560,'data_start':5760,'row_bytes':20,'sha256':'491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5'}
 METACAL={'total_bytes':84075649920,'data_start':17280,'row_bytes':614,'sha256':'39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8'}
 
 def fetch(url,start,size,total):
