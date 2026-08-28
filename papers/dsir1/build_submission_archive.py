@@ -5,13 +5,14 @@ This script is release-facing rather than scientific. In normal mode it assumes
 the audited JCAP source, pinned local JCAP style/BST, bibliography, and
 publication-figure PDFs already exist. It copies only source inputs required for
 a clean submission compile, rewrites repository-relative paths to archive-local
-paths, writes an exact SHA256 manifest, and creates a deterministic ZIP.
+paths, writes an exact SHA256 manifest beside (not inside) the journal ZIP, and
+creates a deterministic ZIP.
 
 With ``--finalize-bbl-from PATH`` it copies a BibTeX-generated .bbl from a clean
-archive verification compile back into the source package, rewrites the manifest,
-and rebuilds the deterministic ZIP without importing auxiliary/log/PDF files.
-Scientific content, thresholds, figures, and bibliography records are never
-modified by this script.
+archive verification compile back into the source package, rewrites the external
+manifest, and rebuilds the deterministic ZIP without importing auxiliary/log/PDF
+files. Scientific content, thresholds, figures, and bibliography records are
+never modified by this script.
 """
 
 from __future__ import annotations
@@ -28,7 +29,8 @@ FIGDIR = HERE / "figures" / "generated"
 RELEASE = HERE / "release"
 PKG = RELEASE / "dsir1_submission"
 ZIP = RELEASE / "dsir1_submission.zip"
-MANIFEST = PKG / "SUBMISSION_MANIFEST_SHA256.txt"
+# Provenance evidence is intentionally kept outside the editor-facing ZIP.
+MANIFEST = RELEASE / "SUBMISSION_MANIFEST_SHA256.txt"
 
 MASTER = JCAP / "dsir1_jcap.tex"
 STYLE = JCAP / "jcappub.sty"
@@ -67,10 +69,11 @@ def copy_required(src: Path, dst: Path) -> None:
 
 
 def archive_files() -> list[Path]:
-    return sorted(p for p in PKG.rglob("*") if p.is_file() and p != MANIFEST)
+    return sorted(p for p in PKG.rglob("*") if p.is_file())
 
 
 def write_manifest() -> None:
+    RELEASE.mkdir(parents=True, exist_ok=True)
     lines = []
     for path in archive_files():
         rel = path.relative_to(PKG).as_posix()
@@ -81,7 +84,7 @@ def write_manifest() -> None:
 def deterministic_zip() -> None:
     if ZIP.exists():
         ZIP.unlink()
-    files = sorted(p for p in PKG.rglob("*") if p.is_file())
+    files = archive_files()
     with zipfile.ZipFile(ZIP, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
         for path in files:
             rel = path.relative_to(PKG).as_posix()
@@ -110,6 +113,13 @@ def verify_package_contract(require_bbl: bool) -> None:
     for fig in FIGURES:
         require(f"figures/{fig.name}" in tex, f"archive-local figure binding missing: {fig.name}")
 
+    # Editor-facing package must contain only source inputs and figures, not a
+    # compiled article PDF or internal provenance/checksum helper files.
+    rels = [p.relative_to(PKG).as_posix() for p in archive_files()]
+    require("dsir1_jcap.pdf" not in rels, "compiled article PDF leaked into source package")
+    require("SUBMISSION_MANIFEST_SHA256.txt" not in rels, "provenance manifest leaked into journal package")
+    require(all(" " not in rel for rel in rels), "archive member name contains a space")
+
 
 def build_initial_package() -> None:
     for path in [MASTER, STYLE, BST, BIB, *FIGURES]:
@@ -117,6 +127,9 @@ def build_initial_package() -> None:
 
     if PKG.exists():
         shutil.rmtree(PKG)
+    RELEASE.mkdir(parents=True, exist_ok=True)
+    if MANIFEST.exists():
+        MANIFEST.unlink()
     PKG.mkdir(parents=True, exist_ok=True)
     (PKG / "figures").mkdir(parents=True, exist_ok=True)
 
@@ -152,14 +165,24 @@ def finalize_with_bbl(source_bbl: Path) -> None:
 
 def report(label: str) -> None:
     require(ZIP.is_file() and ZIP.stat().st_size > 0, "submission ZIP missing/empty")
+    require(MANIFEST.is_file() and MANIFEST.stat().st_size > 0, "external submission manifest missing/empty")
     require(ZIP.stat().st_size < 10 * 1024 * 1024, "submission ZIP exceeds 10 MiB")
+    with zipfile.ZipFile(ZIP, "r") as zf:
+        names = zf.namelist()
+    require("dsir1_jcap.tex" in names, "master TeX is not at archive root")
+    require("dsir1_jcap.pdf" not in names, "compiled article PDF is present in journal ZIP")
+    require("SUBMISSION_MANIFEST_SHA256.txt" not in names, "external manifest is present in journal ZIP")
+    require(all(" " not in name for name in names), "journal ZIP contains member name with spaces")
     print(f"mode={label}")
     print(f"package_dir={PKG}")
     print(f"zip={ZIP}")
+    print(f"manifest={MANIFEST}")
     print(f"zip_sha256={sha256(ZIP)}")
     print(f"zip_bytes={ZIP.stat().st_size}")
-    print(f"source_files={len([p for p in PKG.rglob('*') if p.is_file()])}")
+    print(f"source_files={len(archive_files())}")
     print("PASS: self-contained DSIR-I submission source package assembled")
+    print("PASS: editor-facing ZIP excludes article PDF and provenance manifest")
+    print("PASS: master TeX at archive root; archive member names contain no spaces")
 
 
 def main() -> None:
@@ -168,7 +191,7 @@ def main() -> None:
         "--finalize-bbl-from",
         type=Path,
         default=None,
-        help="copy only this verified generated .bbl into the source package and rebuild manifest/ZIP",
+        help="copy only this verified generated .bbl into the source package and rebuild external manifest/ZIP",
     )
     args = parser.parse_args()
 
