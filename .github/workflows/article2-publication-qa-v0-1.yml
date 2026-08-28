@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/article2-publication-qa-v0-1.yml'
       - 'scripts/publications/make_dsir2_figures_v0_3.py'
+      - 'scripts/publications/make_dsir2_figures_v0_4.py'
       - 'docs/publications/DSIR2_FIGURE_NUMERIC_MANIFEST_V0_1.json'
       - 'docs/publications/DSIR2_REFERENCES_VERIFIED_V0_1.bib'
       - 'docs/publications/latex/article2/**'
@@ -16,6 +17,7 @@ on:
     paths:
       - '.github/workflows/article2-publication-qa-v0-1.yml'
       - 'scripts/publications/make_dsir2_figures_v0_3.py'
+      - 'scripts/publications/make_dsir2_figures_v0_4.py'
       - 'docs/publications/DSIR2_FIGURE_NUMERIC_MANIFEST_V0_1.json'
       - 'docs/publications/DSIR2_REFERENCES_VERIFIED_V0_1.bib'
       - 'docs/publications/latex/article2/**'
@@ -27,41 +29,56 @@ jobs:
   publication-qa:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      SOURCE_DATE_EPOCH: '1787875200'
+      FORCE_SOURCE_DATE: '1'
+      PYTHONHASHSEED: '0'
     steps:
       - name: Checkout manuscript branch
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up pinned Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.12.14'
 
-      - name: Install figure dependencies
-        run: python -m pip install --upgrade numpy matplotlib
+      - name: Install pinned figure dependencies
+        run: python -m pip install 'numpy==2.5.2' 'matplotlib==3.11.1'
 
-      - name: Generate frozen DSIR-2 Figures 1-4 v0.3
+      - name: Generate deterministic DSIR-2 Figures 1-4 v0.4 twice
         run: |
           set -euxo pipefail
-          python scripts/publications/make_dsir2_figures_v0_3.py
+          rm -rf /tmp/dsir2-figures-repeat
+          python scripts/publications/make_dsir2_figures_v0_4.py
+          python scripts/publications/make_dsir2_figures_v0_4.py --outdir /tmp/dsir2-figures-repeat
 
-      - name: Verify v0.3 figure inventory and file integrity
+      - name: Verify v0.4 figure inventory and bitwise reproducibility
         run: |
           set -euxo pipefail
           python - <<'PY'
           from pathlib import Path
+          import hashlib
+
           root=Path('artifacts/publications/article2/figures')
+          repeat=Path('/tmp/dsir2-figures-repeat')
           expected=[
-            'dsir2_figure1_k2_specificity_hierarchy_v0_3',
-            'dsir2_figure2_k1_representation_kernel_v0_3',
-            'dsir2_figure3_support_admissibility_v0_3',
-            'dsir2_figure4_fail_closed_hierarchy_v0_3',
+            'dsir2_figure1_k2_specificity_hierarchy_v0_4',
+            'dsir2_figure2_k1_representation_kernel_v0_4',
+            'dsir2_figure3_support_admissibility_v0_4',
+            'dsir2_figure4_fail_closed_hierarchy_v0_4',
           ]
           for stem in expected:
               for ext in ('pdf','svg'):
                   p=root/f'{stem}.{ext}'
+                  q=repeat/f'{stem}.{ext}'
                   assert p.is_file(), f'missing {p}'
+                  assert q.is_file(), f'missing repeat {q}'
                   assert p.stat().st_size>1000, f'suspiciously small {p}: {p.stat().st_size}'
-          print('FIGURE_V03_QA_PASS', len(expected), 'figures x PDF/SVG')
+                  hp=hashlib.sha256(p.read_bytes()).hexdigest()
+                  hq=hashlib.sha256(q.read_bytes()).hexdigest()
+                  assert hp == hq, f'non-deterministic {stem}.{ext}: {hp} != {hq}'
+                  print(stem, ext, hp)
+          print('FIGURE_V04_BITWISE_REPRODUCIBILITY_PASS', len(expected), 'figures x PDF/SVG')
           PY
 
       - name: Install journal-neutral LaTeX toolchain
@@ -70,25 +87,35 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y latexmk texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
 
-      - name: Compile direct-path journal-neutral manuscript with BibTeX
+      - name: Compile journal-neutral manuscript twice with BibTeX
         working-directory: docs/publications/latex/article2
         run: |
           set -euxo pipefail
-          latexmk -pdf -bibtex -interaction=nonstopmode -halt-on-error dsir2_journal_neutral_v0_2.tex
-          test -s dsir2_journal_neutral_v0_2.pdf
+          latexmk -pdf -bibtex -interaction=nonstopmode -halt-on-error dsir2_journal_neutral_v0_3.tex
+          test -s dsir2_journal_neutral_v0_3.pdf
+          cp dsir2_journal_neutral_v0_3.pdf /tmp/dsir2_journal_neutral_v0_3_first.pdf
+          latexmk -C dsir2_journal_neutral_v0_3.tex
+          latexmk -pdf -bibtex -interaction=nonstopmode -halt-on-error dsir2_journal_neutral_v0_3.tex
+          cmp /tmp/dsir2_journal_neutral_v0_3_first.pdf dsir2_journal_neutral_v0_3.pdf
+          echo 'LATEX_PDF_BITWISE_REPRODUCIBILITY_PASS'
 
-      - name: Reject unresolved citations or references
+      - name: Reject unresolved references and overfull boxes
         working-directory: docs/publications/latex/article2
         run: |
           set -euxo pipefail
-          log='dsir2_journal_neutral_v0_2.log'
+          log='dsir2_journal_neutral_v0_3.log'
           test -s "$log"
           if grep -Eiq 'Citation .* undefined|Reference .* undefined|There were undefined references|There were undefined citations' "$log"; then
             echo 'Unresolved citation/reference detected'
             grep -Ein 'Citation .* undefined|Reference .* undefined|There were undefined references|There were undefined citations' "$log" || true
             exit 1
           fi
-          echo 'LATEX_REFERENCE_QA_PASS'
+          if grep -Eiq 'Overfull \\hbox|Overfull \\vbox' "$log"; then
+            echo 'Overfull TeX box detected'
+            grep -Ein 'Overfull \\hbox|Overfull \\vbox' "$log" || true
+            exit 1
+          fi
+          echo 'LATEX_REFERENCE_AND_WIDTH_QA_PASS'
 
       - name: Record release-QA hashes
         run: |
@@ -98,12 +125,13 @@ jobs:
             sha256sum docs/publications/DSIR2_FIGURE_NUMERIC_MANIFEST_V0_1.json
             sha256sum docs/publications/DSIR2_REFERENCES_VERIFIED_V0_1.bib
             sha256sum scripts/publications/make_dsir2_figures_v0_3.py
-            sha256sum docs/publications/latex/article2/dsir2_journal_neutral_v0_2.tex
+            sha256sum scripts/publications/make_dsir2_figures_v0_4.py
+            sha256sum docs/publications/latex/article2/dsir2_journal_neutral_v0_3.tex
             sha256sum docs/publications/latex/article2/table1_terminal_comparison.tex
             sha256sum docs/publications/latex/article2/table2_provenance.tex
-            sha256sum artifacts/publications/article2/figures/*_v0_3.pdf
-            sha256sum artifacts/publications/article2/figures/*_v0_3.svg
-            sha256sum docs/publications/latex/article2/dsir2_journal_neutral_v0_2.pdf
+            sha256sum artifacts/publications/article2/figures/*_v0_4.pdf
+            sha256sum artifacts/publications/article2/figures/*_v0_4.svg
+            sha256sum docs/publications/latex/article2/dsir2_journal_neutral_v0_3.pdf
           } > artifacts/publications/article2/qa/sha256sums.txt
           cat artifacts/publications/article2/qa/sha256sums.txt
 
@@ -111,15 +139,15 @@ jobs:
         run: |
           set -euxo pipefail
           mkdir -p artifacts/publications/article2/qa/manuscript
-          cp docs/publications/latex/article2/dsir2_journal_neutral_v0_2.pdf artifacts/publications/article2/qa/manuscript/
-          cp docs/publications/latex/article2/dsir2_journal_neutral_v0_2.log artifacts/publications/article2/qa/manuscript/
+          cp docs/publications/latex/article2/dsir2_journal_neutral_v0_3.pdf artifacts/publications/article2/qa/manuscript/
+          cp docs/publications/latex/article2/dsir2_journal_neutral_v0_3.log artifacts/publications/article2/qa/manuscript/
 
       - name: Upload immutable publication QA bundle
         uses: actions/upload-artifact@v4
         with:
-          name: dsir2-publication-qa-direct-v03-${{ github.sha }}
+          name: dsir2-publication-qa-release-v04-${{ github.sha }}
           path: |
-            artifacts/publications/article2/figures/*_v0_3.pdf
-            artifacts/publications/article2/figures/*_v0_3.svg
+            artifacts/publications/article2/figures/*_v0_4.pdf
+            artifacts/publications/article2/figures/*_v0_4.svg
             artifacts/publications/article2/qa/
           if-no-files-found: error
