@@ -1,0 +1,77 @@
+{
+  "experiment": "Exp073P-actual-aggregate-join-route-readiness-v0.1",
+  "date": "2026-08-29",
+  "status": "PASS_EXP073P_ACTUAL_JOIN_ROUTE_READINESS_AUDIT_V0_1",
+  "scientific_classification": null,
+  "chronology": {
+    "route_preregistration_commit": "df9a9b06b01d1c81bbc64e58495772676872c6f1",
+    "route_implementation_commit": "0f9173eaf67925eeabceee9c27b6120f301aeec9",
+    "preregistered_before_implementation": true,
+    "preregistered_before_r1_terminal_output": true
+  },
+  "frozen_files": {
+    "experiments/073p_actual_aggregate_join_execution_route_prereg_v0_1.md": "159407c5f5143e859114dc70d6d9c2284a0321c5be61fbae61ca275e9d066fa1",
+    "ci/exp073p_actions_metadata_bundle_v0_1.py": "cda5cb20c2d4f9be8a3068dacfead4db25e5dfbd867815005b754ab8cde955f3",
+    ".github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-1.yml": "eb3e7fd8662ff85a8aabda4ed77cc0d1900682245ad0a003f4efb39a13f8251f",
+    ".github/workflows/exp073p-aggregate-prerequisite-join-route-selftest-v0-1.yml": "d5b7582c4e1abca1c4c75cebb6503d0a2d265167daa0eba6789e88c3589c80f5",
+    "ci/exp073p_aggregate_prerequisite_join_v0_1.py": "9dc0b5a0ea82b8fb69d82e06b566b08d61c1982bd5e13ecd8db6752253bc0e46"
+  },
+  "synthetic_ci": {
+    "run": 33220212976,
+    "job": 99012479309,
+    "status": "completed",
+    "conclusion": "success",
+    "artifact_id": 9704867271,
+    "artifact_name": "exp073p-actions-metadata-route-synthetic-selftest-0f9173eaf67925eeabceee9c27b6120f301aeec9",
+    "artifact_digest": "sha256:25f242b3385842a8506b6d80985c033559297ee15820b8d0df1ce7b84c46fa64",
+    "artifact_digest_independently_verified": true,
+    "internal_status": "PASS_EXP073P_ACTIONS_METADATA_ROUTE_SYNTHETIC_SELFTEST_V0_1",
+    "parent_count": 10,
+    "failclosed_mutations": 10,
+    "support_executor_authorized": false
+  },
+  "regression_tests": {
+    "pytest_passed": 44,
+    "pytest_failed": 0,
+    "python_compileall_pass": true,
+    "yaml_parse_pass": true,
+    "git_diff_check_pass": true
+  },
+  "production_route": {
+    "workflow": ".github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-1.yml",
+    "manual_dispatch_only": true,
+    "push_trigger": false,
+    "schedule_trigger": false,
+    "permissions": {
+      "contents": "read",
+      "actions": "read"
+    },
+    "requires_r1_artifact_id": true,
+    "requires_r1_artifact_digest": true,
+    "live_actions_metadata_parent_count": 10,
+    "truncated_pagination_rejected": true,
+    "real_join_dispatched": false
+  },
+  "canonical_r1_at_audit": {
+    "run": 33212521957,
+    "job": 98988824629,
+    "status": "queued",
+    "artifact_present": false
+  },
+  "interpretation": "The real aggregate prerequisite join now has a prospectively frozen, executable, fail-closed Actions route. This is infrastructure readiness only; R1 and the real prerequisite join remain unevaluated.",
+  "support_executor_authorized": false,
+  "support_fraction_evaluated": false,
+  "f_invalid_computed": false,
+  "retained_dimension_evaluated": false,
+  "covariance_read": false,
+  "whitening_read": false,
+  "nuisance_svd_read": false,
+  "relation_null_read": false,
+  "heldout_read": false,
+  "G8_read": false,
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}

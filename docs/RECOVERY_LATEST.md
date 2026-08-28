@@ -2,7 +2,7 @@
 
 **Updated:** 2026-08-29 (EEST)
 **Stable historical manual:** `docs/RECOVERY_MANUAL.md`
-**Current detailed checkpoint:** `recovery/2026-08-29_exp073p_aggregate_join_ready_r1_v06_queued_checkpoint.md`
+**Current detailed checkpoint:** `recovery/2026-08-29_exp073p_actual_join_route_ready_r1_queued_checkpoint.md`
 **Active execution:** Exp073R1 v0.6 Stage-B run `33212521957`
 
 DSIR remains independent of RTK.  Preserve all negative results,
@@ -24,7 +24,8 @@ Current state:
 - DES public-input, large-object, P2 and S0 parents: immutable and validator-compatible;
 - Exp073R0 raw-row/HEALPix equivalence: PASS;
 - canonical Exp073R1 v0.6 run `33212521957`: **QUEUED**, no result artifact yet;
-- Exp073P aggregate evaluator: implemented and synthetic CI PASS, but real join BLOCKED on R1;
+- Exp073P aggregate evaluator: implemented and synthetic CI PASS;
+- actual aggregate-join Actions route: preregistered, implemented and synthetic CI PASS, but real join BLOCKED on R1;
 - Exp073P physical support: BLOCKED;
 - covariance/whitening and every later stage: BLOCKED;
 - G7: OPEN;
@@ -57,6 +58,14 @@ hash, row-count, mapper, bin, repeatability, parent and no-leakage control.
 - synthetic status:
   `PASS_EXP073P_AGGREGATE_JOIN_SYNTHETIC_SELFTEST_V0_1`;
 - real-parent compatibility audit: PASS;
+- actual execution-route preregistration: `df9a9b06b01d1c81bbc64e58495772676872c6f1`;
+- actual route implementation: `0f9173eaf67925eeabceee9c27b6120f301aeec9`;
+- route self-test run `33220212976`, job `99012479309`: success;
+- route self-test artifact `9704867271`, digest
+  `sha256:25f242b3385842a8506b6d80985c033559297ee15820b8d0df1ce7b84c46fa64`;
+- route synthetic status:
+  `PASS_EXP073P_ACTIONS_METADATA_ROUTE_SYNTHETIC_SELFTEST_V0_1`;
+- real production workflow is manual-dispatch only and has not run;
 - real prerequisite PASS: not evaluated;
 - `support_executor_authorized=false` until the real R1-bound join passes.
 
@@ -82,8 +91,8 @@ Never modify post hoc:
 2. If it completes, audit its internal R1 receipt and immutable artifact.
 3. If it is interrupted, classify only `INCOMPLETE_EXP073R1`; preserve no
    partial mask as authority.
-4. After genuine R1 PASS, freeze the returned artifact ID/digest into the
-   actual aggregate-join workflow and execute the already-preregistered join.
+4. After genuine R1 PASS, freeze the returned artifact ID/digest as inputs to
+   the already-implemented manual actual aggregate-join workflow and execute it.
 5. Require `PASS_EXP073P_PREREQUISITE_BINDING_V0_1` before the physical-support
    executor may start.
 6. Require
@@ -96,9 +105,13 @@ Never modify post hoc:
 
 1. `docs/RECOVERY_MANUAL.md`
 2. `docs/RECOVERY_LATEST.md`
-3. `recovery/2026-08-29_exp073p_aggregate_join_ready_r1_v06_queued_checkpoint.md`
+3. `recovery/2026-08-29_exp073p_actual_join_route_ready_r1_queued_checkpoint.md`
 4. `experiments/073r1_v0_6_selfhosted_longrun_stageb_prereg.md`
 5. `experiments/073p_aggregate_prerequisite_join_evaluator_prereg_v0_1.md`
-6. `data/derived/g7/exp073p_aggregate_join_parent_compatibility_audit_v0_1.json`
-7. `recovery/2026-08-28_exp073r1_to_exp073p_execution_integrity_matrix.md`
-8. `experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md`
+6. `experiments/073p_actual_aggregate_join_execution_route_prereg_v0_1.md`
+7. `ci/exp073p_actions_metadata_bundle_v0_1.py`
+8. `.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-1.yml`
+9. `data/derived/g7/exp073p_actual_join_route_readiness_audit_v0_1.json`
+10. `data/derived/g7/exp073p_aggregate_join_parent_compatibility_audit_v0_1.json`
+11. `recovery/2026-08-28_exp073r1_to_exp073p_execution_integrity_matrix.md`
+12. `experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md`

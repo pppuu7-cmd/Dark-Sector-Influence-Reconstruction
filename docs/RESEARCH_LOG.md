@@ -64,3 +64,19 @@ S0 and BOSS parent schemas all passed compatibility validation; 44 repository
 tests passed.  R1 remains queued, so no real join, support fraction, retained
 dimension, covariance, nuisance or G8 quantity was evaluated.  G7/G8/G9 remain
 OPEN.
+
+## 2026-08-29 — actual Exp073P aggregate-join route readiness
+
+Before any terminal canonical R1 output, commit `df9a9b0` preregistered the
+manual real aggregate-join execution route.  Commit `0f9173e` then implemented
+a live GitHub Actions metadata collector, a manual-only read-only production
+workflow and a separate synthetic route self-test.  CI run `33220212976`, job
+`99012479309`, completed successfully; artifact `9704867271` has digest
+`sha256:25f242b3385842a8506b6d80985c033559297ee15820b8d0df1ce7b84c46fa64`
+and internal status
+`PASS_EXP073P_ACTIONS_METADATA_ROUTE_SYNTHETIC_SELFTEST_V0_1`.  Ten frozen
+parents and ten fail-closed metadata mutations were exercised while retaining
+`support_executor_authorized=false`; 44 repository tests also passed.  The real
+workflow has not run because canonical R1 `33212521957` remains queued without
+an artifact.  This is infrastructure readiness only: no support, covariance,
+nuisance, relation/null or G8 quantity was evaluated, and G7/G8/G9 remain OPEN.
