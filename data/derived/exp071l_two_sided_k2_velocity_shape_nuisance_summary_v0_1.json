@@ -1,0 +1,35 @@
+{
+  "experiment": "Exp071L",
+  "preregistration_commit": "9927f46caefbcd991b2c2e7691f4923c6f7552f6",
+  "run": 33184079909,
+  "job": 98892438220,
+  "artifact_id": 9690954372,
+  "artifact_sha256": "6ec9cc4dfa7a94ecec8e4540cbecf034b19bfdc7b0c85b30ac92331b205f71d4",
+  "status": "COMPLETE_EXP071L",
+  "classification": "K2_TWO_SIDED_VELOCITY_SHAPE_OVERLAPS_GDM_EXP071L",
+  "threshold_deg": 45.0,
+  "fresh_reference_integrity": {
+    "max_abs_relative_P_difference": 0.0,
+    "max_abs_relative_ttot_difference": 0.0,
+    "threshold": 1e-10,
+    "pass": true
+  },
+  "primary_angles_deg": {
+    "K2_plus_vs_GDM_cs2": 166.43869440595827,
+    "K2_plus_vs_GDM_cv2": 164.92709673022526,
+    "K2_minus_vs_GDM_cs2": 13.550260274305414,
+    "K2_minus_vs_GDM_cv2": 15.070884431347679
+  },
+  "primary_min_angle_deg": 13.550260274305414,
+  "primary_pass": false,
+  "K2_minus_vs_plus_mutual_angle_deg": 179.9078020829102,
+  "K2_nonlinear_antisymmetry_error": 0.002992249341414612,
+  "retained_shape_norm_fraction": {
+    "K2_plus": 0.8318697314462702,
+    "K2_minus": 0.8315952475869537,
+    "GDM_cs2": 0.8271831838994256,
+    "GDM_cv2": 0.8372386500341654
+  },
+  "gate_state": {"G7":"OPEN","G8":"OPEN","G9":"OPEN"},
+  "paper_boundary": "The strong Exp071I/J/K separation applies to the oriented positive K2 displacement. It does not establish specificity against a physically two-sided K2 nuisance line: the fresh negative displacement overlaps both positive GDM axes well below the frozen 45-degree separator."
+}
