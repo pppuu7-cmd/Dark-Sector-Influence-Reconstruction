@@ -1,0 +1,2 @@
+Launch Exp071E exactly as frozen in experiments/071e_k2_joint_metric_direction_control_prereg_v0_1.md
+Preregistration commit: 220e73f6cd5b52746498731073bf7392f6917dd9
