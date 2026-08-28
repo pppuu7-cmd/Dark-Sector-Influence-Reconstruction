@@ -1,0 +1,61 @@
+{
+  "schema": "dsir.exp071h_terminal_summary.v0.1",
+  "experiment": "Exp071H",
+  "date": "2026-08-28",
+  "preregistration_commit": "93bd51867d90fa346ce644deebe228e6d0d45697",
+  "run_id": 33179056348,
+  "job_id": 98875221176,
+  "artifact_id": 9688888346,
+  "artifact_sha256": "60d582b9f0249329c323066f248cbdc33f3c149966eb30317ecb2f3f22cda0a5",
+  "execution_conclusion": "success",
+  "science_status": "COMPLETE_K2_FINITE_BIN_GROWTH_DUAL_PROVENANCE_CONTROL_V0_1",
+  "classification": "K2_FINITE_BIN_GROWTH_SEPARATED_FROM_BOTH_GDM_1E7_AXES_EXP071H",
+  "primary_pass": true,
+  "threshold_deg": 45.0,
+  "primary_parent": "single-step 1e-7 GDM local axes, continuous with Exp071E/F",
+  "primary_angles_deg": {
+    "K2_bar1_vs_GDM_cs2_1e7": 138.10058532621147,
+    "K2_bar1_vs_GDM_cv2_1e7": 137.0972592611391
+  },
+  "sensitivity_nonclassifying": {
+    "exp040_averaged_parent_angles_deg": {
+      "K2_bar1_vs_avg_cs2": 138.11067377964937,
+      "K2_bar1_vs_avg_cv2": 137.071079544195
+    },
+    "primary_gdm_cs2_cv2_acute_deg": 1.2926742378147884,
+    "exp040_averaged_gdm_cs2_cv2_acute_deg": 1.334012803561052,
+    "delta_K2_cs_deg": 0.01008845343790199,
+    "delta_K2_cv_deg": -0.026179716944113807
+  },
+  "robustness_nonclassifying": {
+    "max_growth_angle_to_bar1_deg": 0.4195723137751324,
+    "growth_family_centered_svd_variance_fraction": [
+      0.9999902495030846,
+      0.000009745019915480298,
+      4.59449440799978e-9,
+      8.825056460994856e-10,
+      3.297622479366614e-33
+    ]
+  },
+  "interpretation": {
+    "supported": "The finite-bin temporal derivative of the common matter response robustly separates the tested K2 known-sector tangent from both local GDM axes even though their raw matter directions are close.",
+    "mechanistic_implication": "Static matter-response morphology and temporal response orientation carry nonredundant mechanism information. The residual raw K2/GDM sound-speed-like degeneracy is broken by evolution on the frozen theory-space support.",
+    "not_supported": [
+      "tracer RSD distinguishability",
+      "f sigma8 equivalence",
+      "observational preference",
+      "generic dark-sector uniqueness",
+      "microscopic model identification"
+    ]
+  },
+  "retired_predecessor": {
+    "experiment": "Exp071G v0.1",
+    "status": "INVALID_FOR_SCIENCE__PREREG_INTERNAL_PARENT_BINDING_MISMATCH",
+    "reason": "it incorrectly required equality of single-step 1e-7 GDM tangents and Exp040 averaged-local C3 tangents"
+  },
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
