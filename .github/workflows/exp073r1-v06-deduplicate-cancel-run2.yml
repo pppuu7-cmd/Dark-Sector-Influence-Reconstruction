@@ -17,7 +17,7 @@ jobs:
       - name: Cancel superseded queued or running v0.6 attempts
         env:
           GH_TOKEN: ${{ github.token }}
-          RUNS: '33212050260 33212040452 33212522053'
+          RUNS: '33212050260 33212040452 33212522053 33213021914'
         run: |
           set -euxo pipefail
           for run in ${RUNS}; do
