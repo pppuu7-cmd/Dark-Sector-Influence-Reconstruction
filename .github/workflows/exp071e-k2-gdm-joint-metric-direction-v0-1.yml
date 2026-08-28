@@ -1,0 +1,82 @@
+name: Exp071E K2 vs GDM joint metric direction v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp071e_k2_gdm_joint_metric_direction.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  exp071e:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EXP071D_RUN: '33176559280'
+      GDM_RUN: '32774198185'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install runtime
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --user numpy
+          python3 -m py_compile ci/exp071e_k2_gdm_joint_metric_direction_v0_1.py
+
+      - name: Download immutable parent artifacts
+        run: |
+          set -euxo pipefail
+          mkdir -p inputs/exp071d inputs/gdm
+          EXP071D_ART="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${EXP071D_RUN}/artifacts" --jq '.artifacts[] | select(.id==9687861012) | .name')"
+          GDM_ART="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GDM_RUN}/artifacts" --jq '.artifacts[] | select(.id==9537340616) | .name')"
+          test -n "${EXP071D_ART}" && test -n "${GDM_ART}"
+          gh run download "${EXP071D_RUN}" -n "${EXP071D_ART}" -D inputs/exp071d
+          gh run download "${GDM_RUN}" -n "${GDM_ART}" -D inputs/gdm
+          test -f inputs/exp071d/exp071d_known_sector_metric_slip_control_v0_1.json
+          test -f inputs/gdm/gdm_weyl_slip_discriminant.json
+          test -f inputs/gdm/gdm_weyl_slip_hard_gate.json
+
+      - name: Execute frozen Exp071E artifact-only control
+        run: |
+          set -euxo pipefail
+          python3 ci/exp071e_k2_gdm_joint_metric_direction_v0_1.py \
+            --exp071d inputs/exp071d/exp071d_known_sector_metric_slip_control_v0_1.json \
+            --gdm-discriminant inputs/gdm/gdm_weyl_slip_discriminant.json \
+            --gdm-hard-gate inputs/gdm/gdm_weyl_slip_hard_gate.json \
+            --json exp071e_k2_gdm_joint_metric_direction_v0_1.json
+
+      - name: Assert frozen prospective semantics
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('exp071e_k2_gdm_joint_metric_direction_v0_1.json'))
+          assert d['experiment']=='Exp071E'
+          assert d['status']=='COMPLETE_K2_GDM_JOINT_METRIC_DIRECTION_CONTROL_V0_1'
+          assert d['classification'] in {
+            'K2_JOINT_DIRECTION_SEPARATED_FROM_BOTH_GDM_AXES_EXP071E',
+            'K2_JOINT_DIRECTION_OVERLAPS_CS2_ONLY_EXP071E',
+            'K2_JOINT_DIRECTION_OVERLAPS_CV2_ONLY_EXP071E',
+            'K2_JOINT_DIRECTION_OVERLAPS_BOTH_GDM_AXES_EXP071E',
+          }
+          assert d['threshold_deg']==45.0
+          assert d['frozen_z']==[0.295,0.51,0.706,0.934,1.317,1.491,2.33]
+          assert d['frozen_k_h_mpc']==[0.001,0.003,0.01,0.03,0.1]
+          assert len(d['K2_models'])==5
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP071E',d['classification'])
+          print('MIN_CS2_DEG',d['min_theta_to_cs2_deg'])
+          print('MIN_CV2_DEG',d['min_theta_to_cv2_deg'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp071e-k2-gdm-joint-direction-${{ github.sha }}
+          path: exp071e_k2_gdm_joint_metric_direction_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
