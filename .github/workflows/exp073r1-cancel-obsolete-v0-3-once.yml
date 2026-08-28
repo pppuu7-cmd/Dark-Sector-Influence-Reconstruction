@@ -1,0 +1,42 @@
+name: Exp073R1 cancel obsolete duplicate v0.3 once
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073r1-cancel-obsolete-v0-3-once.yml'
+permissions:
+  contents: read
+  actions: write
+jobs:
+  cancel:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OBSOLETE_RUN: '33170314475'
+      CANONICAL_RUN: '33160570463'
+    steps:
+      - name: Verify canonical v0.4 exists and cancel only obsolete v0.3
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${CANONICAL_RUN}" > canonical.json
+          python3 - <<'PY'
+          import json, os
+          d=json.load(open('canonical.json'))
+          assert str(d['id']) == os.environ['CANONICAL_RUN']
+          assert d['path'] == '.github/workflows/exp073r1-desy1-canonical-microshards-v0-4.yml'
+          assert d['event'] == 'workflow_dispatch'
+          assert d['status'] in {'queued','in_progress','completed'}
+          PY
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${OBSOLETE_RUN}" > obsolete.json
+          python3 - <<'PY'
+          import json, os
+          d=json.load(open('obsolete.json'))
+          assert str(d['id']) == os.environ['OBSOLETE_RUN']
+          assert d['path'] == '.github/workflows/exp073r1-desy1-low-concurrency-microshards-v0-3.yml'
+          assert d['event'] == 'workflow_dispatch'
+          PY
+          status="$(python3 -c "import json; print(json.load(open('obsolete.json'))['status'])")"
+          if [ "$status" != completed ]; then
+            gh api -X POST "repos/${GITHUB_REPOSITORY}/actions/runs/${OBSOLETE_RUN}/cancel"
+          fi
