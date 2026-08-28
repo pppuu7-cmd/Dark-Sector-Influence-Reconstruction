@@ -42,7 +42,13 @@ Added:
 
 The hardening canonicalizes key names by lowercasing and removing non-alphanumeric separators before forbidden downstream-token matching. Synthetic tests explicitly cover aliases including `p_value`, `p-value`, `P VALUE`, `chi_squared`, `chi-squared`, `inverse_covariance`, `inverse-covariance`, nested nuisance/whitening/relation keys, and G7/G8 aliases, while clean physical-support payloads remain accepted.
 
-This CI is strictly `SYNTHETIC_ONLY_EXECUTION_HARDENING`; it cannot score the real science gate or authorize covariance restriction. Initial workflow run: https://github.com/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/runs/33207505723
+This CI is strictly `SYNTHETIC_ONLY_EXECUTION_HARDENING`; it cannot score the real science gate or authorize covariance restriction.
+
+Initial workflow run: https://github.com/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/runs/33207505723
+
+Terminal result: `completed / success`.
+
+Thus the alias-hardening execution QA is PASS, while the real physical-support gate remains unscored and all downstream G7 stages remain blocked.
 
 ## Required order remains frozen
 
