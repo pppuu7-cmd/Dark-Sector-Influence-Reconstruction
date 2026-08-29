@@ -1,0 +1,44 @@
+name: Article3 dual-support non-equivalence synthetic v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/article3_operator_vs_point_support_counterexample_v0_1.py'
+      - '.github/workflows/article3-dual-support-non-equivalence-synthetic-v0-1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-counterexample:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute preregistered non-equivalence counterexample
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test -f experiments/article3_operator_vs_point_support_counterexample_prereg_v0_1.md
+          python3 ci/article3_operator_vs_point_support_counterexample_v0_1.py | tee article3_dual_support_non_equivalence_v0_1.json
+          grep -q 'PASS_ARTICLE3_DUAL_SUPPORT_NON_EQUIVALENCE_SYNTHETIC_V0_1' article3_dual_support_non_equivalence_v0_1.json
+      - name: Enforce synthetic-only firewall
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('article3_dual_support_non_equivalence_v0_1.json'))
+          assert d['scope']=='SYNTHETIC_ONLY_NO_REAL_SURVEY_DATA'
+          assert d['scientific_credit'] is False
+          assert d['downstream_authorized'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert all(v['pass'] for v in d['tests'].values())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: article3-dual-support-non-equivalence-${{ github.sha }}
+          path: article3_dual_support_non_equivalence_v0_1.json
+          if-no-files-found: error
+          retention-days: 30
