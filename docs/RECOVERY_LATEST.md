@@ -1,14 +1,19 @@
 # DSIR RECOVERY LATEST — live pointer
 
-**Updated:** 2026-08-29 10:32 UTC
+**Updated:** 2026-08-29 14:27 UTC
 
 **Stable historical manual:** `docs/RECOVERY_MANUAL.md`
 
 **Current detailed checkpoint:**
-`recovery/2026-08-29_exp073p_v03_v07_attempt2_authority_ready.md`
+`recovery/2026-08-29_exp073p_v03_production_route_main_guard_integration.md`
 
 **Active execution:** Exp073R1 v0.7 run `33240490287`, attempt 2, job
-`99080934021` (`queued` at `2026-08-29T10:30:49Z`; no artifacts)
+`99080934021` (`queued` at `2026-08-29T14:27:27Z`; no artifacts)
+
+**Recovered main:** `72c02784a0d67226a2533a6868628c4812e65b83`
+
+**Integration branch:** PR #166, merged with current main; fresh hosted
+integration self-test required before merge to main.
 
 DSIR remains independent of RTK.  Preserve all negative and infrastructure
 results, preregistration chronology, missing-domain masks, and the distinction
@@ -39,8 +44,9 @@ Current state:
 - v0.7 exact rerun attempt 2/job `99080934021`: queued, sole heavy candidate;
 - Exp073P aggregate join v0.1 and v0.2: immutable and permanently fail-closed
   for their frozen failed R1 authorities;
-- Exp073P aggregate join v0.3: prospectively frozen to v0.7 attempt 2, fully
-  implemented and hosted-selftested on PR #166, but not run on real evidence;
+- Exp073P aggregate join v0.3: canonical main preregistration is frozen to
+  v0.7 attempt 2; the PR #166 production route is integrated with main's
+  authority, live-metadata and archive guards, but has not run on real evidence;
 - Exp073P physical support and every later stage: BLOCKED;
 - `support_executor_authorized=false`;
 - G7/G8/G9: OPEN.
@@ -86,7 +92,7 @@ Classification:
 - attempt 1/job `99068879596`: runner loss while acquisition step was reported
   in progress, no cleanup/upload artifact;
 - exact rerun attempt 2/job `99080934021`: still queued at
-  `2026-08-29T10:30:49Z`; the run artifact list is empty.
+  `2026-08-29T14:27:27Z`; the run artifact list is empty.
 
 v0.7 changes transport staging only: each remote attempt restarts a no-Range
 whole-object GET from byte zero; exact size `84075649920` and SHA256
@@ -111,12 +117,16 @@ authorize another heavy run or any scientific stage.
 The hosted synthetic audit self-test, run `33245678070`, completed with
 `success`; it reproduced the committed audit and its no-leakage assertions.
 
-Before any attempt-2 output existed, PR #166 commit `940fbca` froze a new
-Exp073P v0.3 authority for the exact run attempt/job and commit `6f46375`
-implemented its attempt-specific metadata, acquisition-provenance and complete
-payload firewalls.  This does not modify the active v0.7 snapshot or remove the
-delivery risk; it makes partial, duplicate or later-attempt evidence
-inadmissible downstream.
+Before any attempt-2 output existed, main commit `e58bddf` froze the canonical
+Exp073P v0.3 authority for the exact run attempt/job/branch/event/workflow.
+Its preregistration SHA256 is
+`e27761b2db4a81283bb9fbac1decb95f62fadb785c40cb3e3f676f8651711f40`.
+Main then added independently hosted authority, live-metadata-set and
+archive-member guards through `72c0278`.  PR #166 has been reconciled with
+those canonical bytes and extends them into the actual route with exact raw-ZIP
+ID/digest download and full 11-member archive validation.  The earlier
+PR-branch preregistration commit `940fbca` remains historical but is not the
+canonical byte authority.
 
 ## Exp073P aggregate-join state
 
@@ -137,11 +147,20 @@ Real joins remain closed:
 - v0.3 requires the unique artifact ID/digest, job/run success, full-from-zero
   acquisition provenance and the complete summary/runtime/acquisition plus four
   records and four masks with byte/hash cross-binding;
+- the integrated production route downloads the raw artifact ZIP by numeric ID,
+  verifies its server-recorded digest before extraction, requires the exact
+  11-member archive set, and never forwards the GitHub bearer token to the
+  signed redirect;
 - hosted v0.3 self-test run `33248034308`, job `99088793819`, succeeded;
   artifact `9713466820` has digest
   `sha256:d53b87eec234c3533fd9d167bfdae7433db27e4aa106a614c2dd5812a9f6019e`;
 - synthetic v0.3 PASS retains `support_executor_authorized=false`; the manual
   real workflow has not run and cannot be dispatched from the PR branch.
+- current-main supplemental hosted guards also passed: authority run
+  `33250019007`, metadata-set run `33252122146`, and archive-member run
+  `33254539043`; these are implementation-validation PASS results only;
+- a fresh hosted self-test of the current main-integrated PR branch is still
+  required before PR #166 may merge.
 
 ## Frozen scientific boundaries
 
@@ -172,9 +191,10 @@ Never modify post hoc:
 4. Require genuine internal
    `PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1`; Actions success or an
    upload alone is insufficient.
-5. Use only prospectively frozen v0.3 for this exact attempt; merge PR #166
-   before any manual real dispatch because its production workflow requires
-   `refs/heads/main`.  Never repoint or run v0.1/v0.2.
+5. Use only canonical v0.3 for this exact attempt.  Verify the preregistration
+   SHA256 `e27761...1711f40` and require the fresh hosted integration check;
+   then merge PR #166 before any manual real dispatch because its production
+   workflow requires `refs/heads/main`.  Never repoint or run v0.1/v0.2.
 6. If attempt/job/head/artifact multiplicity differs, reject v0.3 and freeze a
    new version before another candidate.  Never edit v0.3 post hoc.
 7. Require aggregate prerequisite PASS, then physical-support PASS, before
@@ -186,21 +206,26 @@ Never modify post hoc:
 
 1. `docs/RECOVERY_MANUAL.md`
 2. `docs/RECOVERY_LATEST.md`
-3. `recovery/2026-08-29_exp073p_v03_v07_attempt2_authority_ready.md`
+3. `recovery/2026-08-29_exp073p_v03_production_route_main_guard_integration.md`
 4. `experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md`
-5. `ci/exp073p_aggregate_prerequisite_join_v0_3.py`
-6. `ci/exp073p_actions_metadata_bundle_v0_3.py`
-7. `ci/exp073p_v07_r1_payload_bundle_v0_3.py`
-8. `.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-3.yml`
-9. `recovery/2026-08-29_exp073r1_v07_attempt2_queued_artifact_delivery_firewall.md`
-10. `recovery/2026-08-29_exp073r1_v07_runner_loss_attempt1_exact_rerun_attempt2.md`
-11. `recovery/2026-08-29_exp073r1_v07_live_acquisition_firewall_audit.md`
-12. `experiments/073r1_v0_7_transport_stabilized_exact_byte_replay_prereg.md`
-13. `ci/exp073r1_v0_7_whole_object_acquire.py`
-14. `.github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml`
-15. `data/derived/g7/exp073r1_v06_repeated_remote_eof_artifact_audit_v0_1.json`
-16. `ci/exp073r1_v0_7_artifact_delivery_audit.py`
-17. `data/derived/g7/exp073r1_v07_artifact_delivery_risk_audit_v0_1.json`
-18. `experiments/073p_aggregate_prerequisite_join_superseding_r1_authority_prereg_v0_2.md`
-19. `recovery/2026-08-28_exp073r1_to_exp073p_execution_integrity_matrix.md`
-20. `experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md`
+5. `recovery/2026-08-29_exp073p_v03_v07_authority_prereg_and_attempt_aware_selftest.md`
+6. `recovery/2026-08-29_exp073p_v03_live_metadata_set_guard_and_r1_v07_queue_checkpoint.md`
+7. `recovery/2026-08-29_exp073p_v03_archive_member_guard_pass_and_r1_v07_queue_checkpoint.md`
+8. `ci/exp073p_aggregate_prerequisite_join_v0_3.py`
+9. `ci/exp073p_actions_metadata_bundle_v0_3.py`
+10. `ci/exp073p_v03_artifact_zip_download_v0_1.py`
+11. `ci/exp073p_v07_r1_payload_bundle_v0_3.py`
+12. `.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-3.yml`
+13. `recovery/2026-08-29_exp073p_v03_v07_attempt2_authority_ready.md`
+14. `recovery/2026-08-29_exp073r1_v07_attempt2_queued_artifact_delivery_firewall.md`
+15. `recovery/2026-08-29_exp073r1_v07_runner_loss_attempt1_exact_rerun_attempt2.md`
+16. `recovery/2026-08-29_exp073r1_v07_live_acquisition_firewall_audit.md`
+17. `experiments/073r1_v0_7_transport_stabilized_exact_byte_replay_prereg.md`
+18. `ci/exp073r1_v0_7_whole_object_acquire.py`
+19. `.github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml`
+20. `data/derived/g7/exp073r1_v06_repeated_remote_eof_artifact_audit_v0_1.json`
+21. `ci/exp073r1_v0_7_artifact_delivery_audit.py`
+22. `data/derived/g7/exp073r1_v07_artifact_delivery_risk_audit_v0_1.json`
+23. `experiments/073p_aggregate_prerequisite_join_superseding_r1_authority_prereg_v0_2.md`
+24. `recovery/2026-08-28_exp073r1_to_exp073p_execution_integrity_matrix.md`
+25. `experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md`

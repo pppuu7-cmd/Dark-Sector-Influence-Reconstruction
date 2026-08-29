@@ -23,10 +23,11 @@ concurrency:
 env:
   AGGREGATE_EVALUATOR_V01_SHA256: 9dc0b5a0ea82b8fb69d82e06b566b08d61c1982bd5e13ecd8db6752253bc0e46
   METADATA_COLLECTOR_V01_SHA256: cda5cb20c2d4f9be8a3068dacfead4db25e5dfbd867815005b754ab8cde955f3
-  AGGREGATE_EVALUATOR_V03_SHA256: d5953f447ea1b189599bf26a3f7ffe0c9b879439b5af2ffa1b702b83f27e8d41
-  METADATA_COLLECTOR_V03_SHA256: fc74c64c096528eac5179202f32ad1de275416b754b76ed19ba5d7be9da8bb43
-  PAYLOAD_VALIDATOR_V03_SHA256: a1825a45c9683797e0faf5f232eafad2f81cf12b69bd758f0a2c8768c0b28a3c
-  AUTHORITY_PREREG_V03_SHA256: f33b4d761173e43809b209d4bc1f2059ba022f9d4dc71e8b21b84b40fe4a6a25
+  AGGREGATE_EVALUATOR_V03_SHA256: bb7b485a8249790ee9ed3586a1d65ac3255ecc67aafede806e0e472fa2118114
+  METADATA_COLLECTOR_V03_SHA256: 3bb52c9c7245e46b8a7308e9be501468784d1e03607d714e7370fd2df1b4b0f1
+  PAYLOAD_VALIDATOR_V03_SHA256: 7083d15db6f8ab0b89d756b53349731ed70efc4b70c8569cb18c6c3fb2d0ee67
+  ARTIFACT_DOWNLOADER_V01_SHA256: 3d9b40602661d339504ad1cebadaef41cbe6bf3743e1008a12dae7dd6885186b
+  AUTHORITY_PREREG_V03_SHA256: e27761b2db4a81283bb9fbac1decb95f62fadb785c40cb3e3f676f8651711f40
   R1_V07_WORKFLOW_SHA256: 8ef3fb2305fe2789e6198547f5095969cfc107df1f0e17853b20a7aa5c601328
   R1_V07_ACQUISITION_SHA256: 18ca2ed0dbf0ae9ab534ffff9f10bc9bb4b3e388e6ee6a03daa353fa1692c15b
   R1_RUN_ID: '33240490287'
@@ -57,6 +58,7 @@ jobs:
           test "$(sha256sum ci/exp073p_aggregate_prerequisite_join_v0_3.py | cut -d' ' -f1)" = "${AGGREGATE_EVALUATOR_V03_SHA256}"
           test "$(sha256sum ci/exp073p_actions_metadata_bundle_v0_3.py | cut -d' ' -f1)" = "${METADATA_COLLECTOR_V03_SHA256}"
           test "$(sha256sum ci/exp073p_v07_r1_payload_bundle_v0_3.py | cut -d' ' -f1)" = "${PAYLOAD_VALIDATOR_V03_SHA256}"
+          test "$(sha256sum ci/exp073p_v03_artifact_zip_download_v0_1.py | cut -d' ' -f1)" = "${ARTIFACT_DOWNLOADER_V01_SHA256}"
           test "$(sha256sum experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md | cut -d' ' -f1)" = "${AUTHORITY_PREREG_V03_SHA256}"
           test "$(sha256sum .github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml | cut -d' ' -f1)" = "${R1_V07_WORKFLOW_SHA256}"
           test "$(sha256sum ci/exp073r1_v0_7_whole_object_acquire.py | cut -d' ' -f1)" = "${R1_V07_ACQUISITION_SHA256}"
@@ -66,6 +68,7 @@ jobs:
             ci/exp073p_aggregate_prerequisite_join_v0_1.py \
             ci/exp073p_aggregate_prerequisite_join_v0_3.py \
             ci/exp073p_v07_r1_payload_bundle_v0_3.py \
+            ci/exp073p_v03_artifact_zip_download_v0_1.py \
             ci/exp073p_r1_admissibility_interlock_v0_1.py
           python3 - <<'PY'
           import os,re
@@ -123,12 +126,14 @@ jobs:
       - name: Download sole v0.7 attempt-2 R1 result artifact
         if: ${{ steps.metadata.outcome == 'success' }}
         continue-on-error: true
-        uses: actions/download-artifact@v4
-        with:
-          name: exp073r1-v07-transport-stabilized-9a4606fb37d5aaa071aa57322ebb7c05eca905d7
-          path: join_inputs/r1_download
-          github-token: ${{ github.token }}
-          run-id: 33240490287
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_v03_artifact_zip_download_v0_1.py \
+            --repository "${GITHUB_REPOSITORY}" \
+            --artifact-id "${R1_ARTIFACT_ID}" \
+            --expected-digest "${R1_ARTIFACT_DIGEST}" \
+            --out join_inputs/r1_artifact_v0_3.zip
 
       - name: Normalize unchanged small parent records
         if: ${{ steps.metadata.outcome == 'success' }}
@@ -161,7 +166,7 @@ jobs:
         run: |
           set -euxo pipefail
           python3 ci/exp073p_v07_r1_payload_bundle_v0_3.py \
-            --root join_inputs/r1_download \
+            --zip join_inputs/r1_artifact_v0_3.zip \
             --out-dir join_inputs/normalized_r1_v0_3 \
             --manifest-out join_inputs/r1_payload_manifest_v0_3.json
 

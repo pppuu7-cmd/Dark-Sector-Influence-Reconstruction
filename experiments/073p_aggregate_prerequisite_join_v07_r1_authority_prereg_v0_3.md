@@ -1,167 +1,115 @@
-# Exp073P aggregate prerequisite join — v0.7 R1 authority preregistration v0.3
+# Exp073P aggregate prerequisite join — Exp073R1 v0.7 authority preregistration v0.3
 
-**Frozen:** 2026-08-29 10:15 UTC, while Exp073R1 v0.7 run
-`33240490287`, attempt `2`, job `99080934021` was still `queued` and its
-Actions artifact list was empty.  No terminal mapper result, acquisition
-provenance, selected-row count, record/mask hash or downstream science value
-was available or inspected.
+**Frozen:** 2026-08-29, while Exp073R1 v0.7 run `33240490287`, attempt `2`, was still `queued`, before any attempt-2 execution result or terminal artifact existed.
 
-## Scope and supersession rule
+## Purpose and non-retroactivity
 
-This contract prospectively binds a new aggregate prerequisite join only to
-the already-running v0.7 transport-stabilized Exp073R1 candidate.  It changes
-no physical-support coordinate, threshold, dataset, selection, mapper,
-semantic validator, classification boundary or downstream gate order.
+This preregistration creates a new prospective authority route for a possible genuine Exp073R1 v0.7 reproduction PASS. It does **not** modify, reinterpret, or repoint Exp073P aggregate join v0.1 or v0.2.
 
-Aggregate joins v0.1 and v0.2 are immutable historical records.  They remain
-permanently bound to their failed v0.6 R1 authorities and may not be repointed
-post hoc.  Implementation must use new v0.3 files.
+The v0.2 authority is permanently bound to Exp073R1 v0.6 run `33222848695`, attempt `1`, job `99020389131`, workflow `.github/workflows/exp073r1-desy1-selfhosted-longrun-stageb-v0-6.yml`. That execution did not produce an admissible genuine R1 PASS. Therefore v0.2 must remain an immutable historical fail-closed route and must never accept a v0.7 artifact.
 
-## Sole admitted R1 execution authority
+No scientific support coordinate, threshold, parent dataset, physical-validity definition, acceptance criterion, or downstream gate ordering is changed here.
 
-Aggregate join v0.3 may admit only:
+## Sole admitted v0.7 R1 authority
 
-- repository `pppuu7-cmd/Dark-Sector-Influence-Reconstruction`;
-- run `33240490287`, run attempt `2`;
-- job `99080934021`, name `transport-stabilized-replay`;
-- head/trigger commit `9a4606fb37d5aaa071aa57322ebb7c05eca905d7`;
-- workflow path
-  `.github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml`;
-- workflow name
-  `Exp073R1 DESY1 transport-stabilized exact-byte replay v0.7`;
-- artifact name
-  `exp073r1-v07-transport-stabilized-9a4606fb37d5aaa071aa57322ebb7c05eca905d7`;
-- workflow Git blob `99ce26540f15620c9c6a7acd9198b9d5fe81ecb6`;
-- workflow SHA256
-  `8ef3fb2305fe2789e6198547f5095969cfc107df1f0e17853b20a7aa5c601328`;
-- unchanged evaluator Git blob
-  `46fe1271d97ddd9e2164d24e7d79cf27bfda805d`;
-- unchanged evaluator SHA256
-  `5d4fcd8eebe0ae3a45b173a9f5ad261f014586ec81c5587e8720f3290254483e`;
-- acquisition helper commit
-  `50ce6d2f430dbbeff973358f75348adbb768885a`;
-- workflow commit `17aea62e7addb6d5c12326afaeab7a2065b58585`;
-- transport preregistration commit
-  `401b6bc6f28fcef369d83dd0bc893bb35f9c722e`.
+A future Exp073P aggregate prerequisite join v0.3 may admit R1 evidence only from all of the following exact authority coordinates:
 
-Attempt 1/job `99068879596` lost its self-hosted runner during acquisition and
-produced no artifact.  It is infrastructure evidence only and is not admitted
-by v0.3.  Any later run attempt, replacement job, new head, new workflow blob
-or differently named artifact is also outside this authority.  If a later
-attempt creates a second same-name artifact, the exact-one-artifact rule must
-reject the route rather than choose one post hoc.
+- repository: `pppuu7-cmd/Dark-Sector-Influence-Reconstruction`;
+- run ID: `33240490287`;
+- run attempt: `2`;
+- job ID: `99080934021`;
+- job name: `transport-stabilized-replay`;
+- head branch: `main`;
+- head SHA: `9a4606fb37d5aaa071aa57322ebb7c05eca905d7`;
+- event: `push`;
+- workflow path: `.github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml`;
+- workflow name: `Exp073R1 DESY1 transport-stabilized exact-byte replay v0.7`;
+- workflow ID: `345172058`;
+- workflow Git blob SHA1 at the execution head: `99ce26540f15620c9c6a7acd9198b9d5fe81ecb6`;
+- unchanged frozen evaluator path: `ci/exp073r1_sequential_wholestream_v0_5.py`;
+- unchanged frozen evaluator Git blob SHA1: `46fe1271d97ddd9e2164d24e7d79cf27bfda805d`;
+- expected artifact name: `exp073r1-v07-transport-stabilized-9a4606fb37d5aaa071aa57322ebb7c05eca905d7`;
+- required terminal summary member: `exp073r1_desy1_transport_stabilized_replay_v0_7_summary.json`;
+- required acquisition provenance member: `exp073r1_v0_7_remote_acquisition_provenance.json`;
+- required runtime provenance member: `exp073r1_v0_7_runtime_provenance.txt`.
 
-## Required Actions and artifact identity
+At freeze time the run metadata reported `run_attempt=2`, `status=queued`, `conclusion=null`; no attempt-2 terminal result was available and no scientific or support quantity from that attempt was observed or used to define this contract.
 
-The real collector must fetch live GitHub Actions metadata with complete
-pagination and require all of the following:
+## Fail-closed live Actions metadata requirements
 
-- the frozen run is `completed/success`, has `run_attempt=2`, the exact
-  head/workflow path/name above, and no identity drift;
-- exactly one job exists in the frozen job registry and job `99080934021` is
-  `completed/success` with the exact name above;
-- exactly one non-expired artifact with the frozen name belongs to the frozen
-  run across all attempts;
-- the caller supplies that artifact's numeric ID and server digest, and both
-  agree exactly with independently collected metadata;
-- no v0.6 artifact, attempt-1 job, later-attempt job, duplicate artifact,
-  expired artifact or partial diagnostic upload is selected.
+Actions `success` by itself is insufficient. A future v0.3 metadata collector/interlock must independently verify, using live GitHub Actions metadata with complete pagination, at minimum:
 
-Actions `success` or an upload by itself is insufficient.  Missing,
-interrupted, unsuccessful, duplicate, expired, mismatched or incomplete
-evidence must fail closed.
+1. exact repository, run ID, workflow ID/path/name, head SHA, head branch and event above;
+2. `run_attempt == 2` exactly — attempt 1 is inadmissible even though it shares the same run ID;
+3. run terminal `status == completed` and `conclusion == success`;
+4. exactly the frozen attempt-2 job identity above is terminal `completed/success`;
+5. no ambiguity between jobs from different attempts; job metadata must be tied to attempt 2 rather than selected merely by run ID/name;
+6. exactly one non-expired artifact with the frozen artifact name is admitted;
+7. artifact ID and GitHub-reported digest must be supplied to the join and independently match the live artifact record;
+8. missing, duplicate, expired, cancelled, skipped, neutral, stale-attempt, wrong-head, wrong-workflow, wrong-job, wrong-name, wrong-ID or wrong-digest evidence fails closed.
 
-## Required complete v0.7 payload
+This explicit `run_attempt` binding is required because a GitHub Actions rerun preserves the same run ID while changing execution attempt and job identity. A join that checks only run ID is not sufficient authority for this route.
 
-The unique admitted artifact must contain exactly one nonempty copy of each
-terminal control file:
+## Required internal v0.7 reproduction evidence
 
-- `exp073r1_desy1_transport_stabilized_replay_v0_7_summary.json`;
-- `exp073r1_v0_7_remote_acquisition_provenance.json`;
-- `exp073r1_v0_7_runtime_provenance.txt`;
-- four nonempty pixel-record files, one for each source bin `0..3`;
-- four nonempty bit-packed mask files, one for each source bin `0..3`.
+The admitted artifact is authoritative only if its internal evidence independently proves every frozen Exp073R1 reproduction condition, including:
 
-The payload normalizer must reject duplicate basenames, missing bins, extra
-bin identities, empty files and any record/mask whose bytes or SHA256 do not
-match the terminal summary.  Partial products from `if: always()` upload are
-not R1 authority.
+- summary status exactly `PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1`;
+- exact metacal object size `84075649920` and SHA256 `39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8`;
+- acquisition provenance has `authorized_for_replay=true`, `http_range_requests=0`, `whole_object_attempts_from_zero=true`, every attempt starts at byte zero and sends no Range header;
+- exact source whole SHA256 `491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5` and source-index SHA256 `dbb362b10c68825e775e7398b18eb77d37fe725ce80cfd5c07faec5cb5755628`;
+- source/metacal row counts both `136930995`;
+- exact selection `zbin_mcal == t AND dec >= -90 AND dec <= -35 AND flags_select == 0`;
+- mapper exactly `nside=4096`, RING, celestial `C`, `lonlat=True`;
+- zero out-of-range pixels, four non-empty selected bins, repeatability controls true, and every frozen Exp073R0 parent check true;
+- `science_gate_scored=false`, `f_invalid_computed=false`, `covariance_read=false`, `G8_read=false` and `gate_state={G7: OPEN, G8: OPEN, G9: OPEN}`.
 
-## Acquisition-provenance interlock
+The v0.7 transport-staging contract in `experiments/073r1_v0_7_transport_stabilized_exact_byte_replay_prereg.md` remains independently binding. No incomplete acquisition record, partial mask/pixel record, or infrastructure-failure artifact is admissible.
 
-The new v0.3 semantic wrapper must additionally require the exact v0.7
-acquisition contract:
+## Remaining nine parent authorities
 
-- route `v0.7_transport_stabilized_exact_byte_replay` and the authoritative
-  DES Y1 metacal URL;
-- `http_range_requests=0`, `whole_object_attempts_from_zero=true` and one or
-  more recorded attempts;
-- every attempt starts at byte zero, sends no Range header and never reports a
-  `Content-Range` response;
-- every nonterminal attempt is classified only as
-  `INFRASTRUCTURE_TRANSPORT_FAILURE`;
-- the last attempt has HTTP 200, outcome `PASS_EXACT_OBJECT_IDENTITY`, exact
-  byte count `84,075,649,920` and SHA256
-  `39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8`;
-- `authorized_for_replay=true`, terminal status
-  `PASS_EXACT_OBJECT_IDENTITY_FOR_REPLAY`, and final bytes/hash agree with the
-  last attempt and the R1 terminal summary;
-- no identity-failed complete object is accepted;
-- no science gate, `f_invalid`, covariance or G8 quantity was evaluated, and
-  `gate_state={G7: OPEN, G8: OPEN, G9: OPEN}`.
+All non-R1 prerequisite parents and their frozen semantic/byte checks remain exactly those already preregistered for Exp073P aggregate prerequisite join v0.1/v0.2. v0.3 is permitted to supersede **only** the R1 authority coordinate; it must not weaken, replace, or recompute any other prerequisite parent.
 
-## Unchanged R1 semantic and parent interlocks
+## Required v0.3 implementation properties
 
-The v0.3 evaluator must byte-freeze and privately reuse the v0.1 aggregate
-validator:
+Implementation must use new v0.3 files. Historical v0.1 and v0.2 evaluator, metadata collector, workflow and preregistration files remain byte-immutable.
 
-- `ci/exp073p_aggregate_prerequisite_join_v0_1.py`, SHA256
-  `9dc0b5a0ea82b8fb69d82e06b566b08d61c1982bd5e13ecd8db6752253bc0e46`;
-- `ci/exp073p_actions_metadata_bundle_v0_1.py`, SHA256
-  `cda5cb20c2d4f9be8a3068dacfead4db25e5dfbd867815005b754ab8cde955f3`.
+The v0.3 implementation must:
 
-Only the exact R1 execution registry and the additional attempt/acquisition/
-payload-completeness interlocks may be added.  The existing validator must
-still require the internal status
-`PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1`, exact source identity,
-84,075,649,920 metacal bytes and frozen SHA256, `136930995` source/metacal
-rows, exact selection, all four nonempty bins, finite coordinates,
-`nside=4096` RING celestial-C `lonlat=True`, zero out-of-range pixels, all
-independent mask-repeatability checks, every Exp073R0 parent check and all
-nine unchanged non-R1 parents.
+- reuse the existing aggregate prerequisite semantic checks for the nine unchanged parents;
+- add an attempt-aware v0.7 R1 admissibility interlock;
+- reject attempt 1 and any run/job/artifact coordinate not exactly frozen above;
+- validate the v0.7 acquisition provenance as part of R1 admissibility;
+- use an immutable byte/hash firewall for the new v0.3 route and evaluator before real execution;
+- provide synthetic mutation tests for at least wrong `run_attempt`, wrong job ID, wrong head SHA, wrong workflow path, wrong artifact ID/digest, missing acquisition provenance, non-authorized acquisition, nonzero Range count, wrong final byte count/SHA256, and non-PASS internal R1 status;
+- never authorize the physical-support executor from synthetic evidence.
 
-No partial pixel record, mask or acquisition log is authority.  No support,
-covariance, whitening, nuisance, relation/null, held-out or G8 value may be
-read to classify this prerequisite.
+## Receipt taxonomy and authorization boundary
 
-## Receipt taxonomy and synthetic firewall
-
-The only real v0.3 receipt states are:
+The only real v0.3 aggregate receipt states may be:
 
 - `PASS_EXP073P_PREREQUISITE_BINDING_V0_3`;
 - `REJECTED_EXP073P_PREREQUISITE_BINDING_V0_3`;
 - `INCOMPLETE_EXP073P_PREREQUISITE_BINDING_V0_3`.
 
-Only a genuine real v0.3 PASS may set `support_executor_authorized=true`, and
-it authorizes only the separately frozen physical-support executor.  Synthetic
-self-tests must use a distinct synthetic PASS label, mutate run attempt,
-attempt-1/later job, artifact multiplicity and all acquisition/payload
-interlocks, and always retain `support_executor_authorized=false`.
+Only a genuine real v0.3 PASS may set `support_executor_authorized=true`. Such PASS authorizes only the already-preregistered Exp073P physical support-validity mask executor. It does not authorize covariance, whitening, nuisance SVD/rank, quotient/relation/null work, or G8.
 
-## Frozen scientific firewall
+A v0.7 infrastructure failure, reproduction identity failure, or reproduction failure is **not** a G7 scientific FAIL and must remain separately classified.
 
-No implementation or result may change post hoc:
+## Frozen scientific firewall and order
+
+The existing scientific contract remains unchanged, including:
 
 - `0.295 <= z <= 2.33`;
 - `k <= 0.06664762008318016 Mpc^-1`;
 - `f_invalid <= 0.05` inclusive;
 - minimum retained full-coordinate dimension `15`;
-- positive absolute final-response support envelope while production Wm stays
-  signed;
+- positive absolute final-response support envelope while production `Wm` remains signed;
 - invalid radial tails outside the rectangle;
-- no crop-before-normalization, effective ell, fiducial-P/model weighting or
-  post-hoc cuts;
-- order: prerequisite join -> physical support -> covariance/whitening ->
-  nuisance SVD/rank -> quotient/relation/null -> fresh G8 withheld family.
+- no crop-before-normalization, effective-ell, fiducial-P/model weighting or post-hoc cuts.
 
-At freeze time `support_executor_authorized=false`; G7, G8 and G9 are OPEN.
+Required sequence remains exactly:
+
+validated physical forward/power-input bridges -> prerequisite authority join -> preregistered physical support-validity mask -> covariance restriction/whitening -> nuisance tangent rank/SVD -> quotient/relation/null control -> only then fresh G8 withheld family.
+
+At this freeze, `support_executor_authorized=false`; G7, G8 and G9 remain OPEN.

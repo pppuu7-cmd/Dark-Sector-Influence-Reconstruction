@@ -167,3 +167,31 @@ At `2026-08-29T10:30:49Z` the heavy job remained queued with no artifact; the
 real v0.3 join was not dispatched.  No support fraction, `f_invalid`, retained
 dimension, covariance, nuisance, relation/null or G8 quantity was read, and
 G7/G8/G9 remain OPEN.
+
+## 2026-08-29 — canonical Exp073P v0.3 guards integrated into production route
+
+A fresh history comparison found that `main` had advanced independently to
+`72c0278` while PR #166 was in development. Main already contained the
+canonical prospective v0.3 preregistration (`e58bddf`, SHA256
+`e27761b2db4a81283bb9fbac1decb95f62fadb785c40cb3e3f676f8651711f40`)
+and hosted authority, live-metadata-set, and archive-member fail-closed guards.
+The PR was merged with current main rather than merged blindly or duplicated;
+the canonical preregistration bytes were preserved exactly. The earlier
+independent PR preregistration remains historical chronology, not current byte
+authority.
+
+The actual manual-only v0.3 route now validates exact attempt/job branch,
+event, workflow ID and job-level attempt; downloads the raw artifact ZIP by
+numeric ID; verifies its canonical SHA256 before extraction; rejects token
+forwarding to the signed redirect; and requires the exact 11-file archive set
+before existing acquisition, payload, R1, and unchanged-parent semantic
+validation. Synthetic suites rejected 23 evaluator, 9 route, 4 downloader, 4
+payload and 3 integrated archive mutations. All three main supplemental guards
+passed locally and `44` repository tests passed. A fresh hosted integration
+check remains required before PR #166 may merge.
+
+At `2026-08-29T14:27:27Z`, Exp073R1 v0.7 run `33240490287`, attempt 2/job
+`99080934021`, remained queued with no artifacts. No duplicate heavy run and no
+real aggregate join were dispatched. No support fraction, `f_invalid`,
+retained dimension, covariance, nuisance, relation/null, held-out, or G8 value
+was read. `support_executor_authorized=false`; G7/G8/G9 remain OPEN.

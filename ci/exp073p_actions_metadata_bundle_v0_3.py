@@ -68,12 +68,30 @@ write_json = _base.write_json
 def normalize_run(run: dict[str, Any]) -> dict[str, Any]:
     out = _base.__dict__["_v03_original_normalize_run"](run)
     if run.get("id") == evaluator.EXPECTED_R1_RUN_ID:
-        out["run_attempt"] = run.get("run_attempt")
+        out.update(
+            {
+                "run_attempt": run.get("run_attempt"),
+                "head_branch": run.get("head_branch"),
+                "event": run.get("event"),
+                "workflow_id": run.get("workflow_id"),
+            }
+        )
     return out
 
 
 _base.__dict__["_v03_original_normalize_run"] = _base.normalize_run
 _base.normalize_run = normalize_run
+
+
+def normalize_job(job: dict[str, Any]) -> dict[str, Any]:
+    out = _base.__dict__["_v03_original_normalize_job"](job)
+    if job.get("id") == evaluator.EXPECTED_R1_JOB_ID:
+        out["run_attempt"] = job.get("run_attempt")
+    return out
+
+
+_base.__dict__["_v03_original_normalize_job"] = _base.normalize_job
+_base.normalize_job = normalize_job
 
 
 def build_metadata(
@@ -124,6 +142,9 @@ def base_boundary(status: str, *, synthetic: bool, error: str | None = None) -> 
         "run_attempt": evaluator.EXPECTED_RUN_ATTEMPT,
         "job_id": evaluator.EXPECTED_R1_JOB_ID,
         "head_sha": evaluator.EXPECTED_R1_HEAD,
+        "head_branch": evaluator.EXPECTED_R1_HEAD_BRANCH,
+        "event": evaluator.EXPECTED_R1_EVENT,
+        "workflow_id": evaluator.EXPECTED_R1_WORKFLOW_ID,
         "artifact_name": R1_ARTIFACT_NAME,
     }
     return out
@@ -153,6 +174,10 @@ def validate_workflow_firewall(path: Path) -> None:
         "ci/exp073p_aggregate_prerequisite_join_v0_3.py",
         "ci/exp073p_actions_metadata_bundle_v0_3.py",
         "ci/exp073p_v07_r1_payload_bundle_v0_3.py",
+        "ci/exp073p_v03_artifact_zip_download_v0_1.py",
+        "--artifact-id",
+        "--expected-digest",
+        "--zip join_inputs/r1_artifact_v0_3.zip",
         "--r1-acquisition",
         "--r1-payload-manifest",
         "--classifying",
@@ -186,10 +211,14 @@ def selftest(workflow: Path) -> dict[str, Any]:
     run_path = f"actions/runs/{evaluator.EXPECTED_R1_RUN_ID}"
     mutations = [
         lambda api: api[run_path].__setitem__("run_attempt", 1),
+        lambda api: api[run_path].__setitem__("head_branch", "other"),
+        lambda api: api[run_path].__setitem__("event", "workflow_dispatch"),
+        lambda api: api[run_path].__setitem__("workflow_id", 1),
         lambda api: api[ATTEMPT_JOBS_PATH].__setitem__("jobs", []),
         lambda api: api[ATTEMPT_JOBS_PATH].__setitem__("total_count", 2),
         lambda api: api[ATTEMPT_JOBS_PATH]["jobs"][0].__setitem__("id", 99_068_879_596),
         lambda api: api[ATTEMPT_JOBS_PATH]["jobs"][0].__setitem__("name", "metacal-map-longrun"),
+        lambda api: api[ATTEMPT_JOBS_PATH]["jobs"][0].__setitem__("run_attempt", 1),
     ]
     for mutation in mutations:
         must_fail(mutation)

@@ -7,6 +7,7 @@ on:
       - 'ci/exp073p_aggregate_prerequisite_join_v0_3.py'
       - 'ci/exp073p_actions_metadata_bundle_v0_3.py'
       - 'ci/exp073p_v07_r1_payload_bundle_v0_3.py'
+      - 'ci/exp073p_v03_artifact_zip_download_v0_1.py'
       - '.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-3.yml'
       - '.github/workflows/exp073p-aggregate-prerequisite-join-v0-3-selftest.yml'
       - 'experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md'
@@ -15,6 +16,7 @@ on:
       - 'ci/exp073p_aggregate_prerequisite_join_v0_3.py'
       - 'ci/exp073p_actions_metadata_bundle_v0_3.py'
       - 'ci/exp073p_v07_r1_payload_bundle_v0_3.py'
+      - 'ci/exp073p_v03_artifact_zip_download_v0_1.py'
       - '.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-3.yml'
       - '.github/workflows/exp073p-aggregate-prerequisite-join-v0-3-selftest.yml'
       - 'experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md'
@@ -35,18 +37,20 @@ jobs:
           set -euxo pipefail
           test "$(sha256sum ci/exp073p_aggregate_prerequisite_join_v0_1.py | cut -d' ' -f1)" = '9dc0b5a0ea82b8fb69d82e06b566b08d61c1982bd5e13ecd8db6752253bc0e46'
           test "$(sha256sum ci/exp073p_actions_metadata_bundle_v0_1.py | cut -d' ' -f1)" = 'cda5cb20c2d4f9be8a3068dacfead4db25e5dfbd867815005b754ab8cde955f3'
-          test "$(sha256sum ci/exp073p_aggregate_prerequisite_join_v0_3.py | cut -d' ' -f1)" = 'd5953f447ea1b189599bf26a3f7ffe0c9b879439b5af2ffa1b702b83f27e8d41'
-          test "$(sha256sum ci/exp073p_actions_metadata_bundle_v0_3.py | cut -d' ' -f1)" = 'fc74c64c096528eac5179202f32ad1de275416b754b76ed19ba5d7be9da8bb43'
-          test "$(sha256sum ci/exp073p_v07_r1_payload_bundle_v0_3.py | cut -d' ' -f1)" = 'a1825a45c9683797e0faf5f232eafad2f81cf12b69bd758f0a2c8768c0b28a3c'
-          test "$(sha256sum experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md | cut -d' ' -f1)" = 'f33b4d761173e43809b209d4bc1f2059ba022f9d4dc71e8b21b84b40fe4a6a25'
-          test "$(sha256sum .github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-3.yml | cut -d' ' -f1)" = '4afd3b990f4741156e3dda853c704d62e7cc6224dbe51f514b7eaf60de369a87'
+          test "$(sha256sum ci/exp073p_aggregate_prerequisite_join_v0_3.py | cut -d' ' -f1)" = 'bb7b485a8249790ee9ed3586a1d65ac3255ecc67aafede806e0e472fa2118114'
+          test "$(sha256sum ci/exp073p_actions_metadata_bundle_v0_3.py | cut -d' ' -f1)" = '3bb52c9c7245e46b8a7308e9be501468784d1e03607d714e7370fd2df1b4b0f1'
+          test "$(sha256sum ci/exp073p_v07_r1_payload_bundle_v0_3.py | cut -d' ' -f1)" = '7083d15db6f8ab0b89d756b53349731ed70efc4b70c8569cb18c6c3fb2d0ee67'
+          test "$(sha256sum ci/exp073p_v03_artifact_zip_download_v0_1.py | cut -d' ' -f1)" = '3d9b40602661d339504ad1cebadaef41cbe6bf3743e1008a12dae7dd6885186b'
+          test "$(sha256sum experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md | cut -d' ' -f1)" = 'e27761b2db4a81283bb9fbac1decb95f62fadb785c40cb3e3f676f8651711f40'
+          test "$(sha256sum .github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-3.yml | cut -d' ' -f1)" = 'dd372979822eaa512352ae2689c580e18ee92c0e7a3fbd5e3ea6a5c0ba993b9a'
           test "$(sha256sum .github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml | cut -d' ' -f1)" = '8ef3fb2305fe2789e6198547f5095969cfc107df1f0e17853b20a7aa5c601328'
           python3 -m py_compile \
             ci/exp073p_aggregate_prerequisite_join_v0_1.py \
             ci/exp073p_aggregate_prerequisite_join_v0_3.py \
             ci/exp073p_actions_metadata_bundle_v0_1.py \
             ci/exp073p_actions_metadata_bundle_v0_3.py \
-            ci/exp073p_v07_r1_payload_bundle_v0_3.py
+            ci/exp073p_v07_r1_payload_bundle_v0_3.py \
+            ci/exp073p_v03_artifact_zip_download_v0_1.py
 
       - name: Execute attempt-specific aggregate evaluator mutation suite
         shell: bash
@@ -73,6 +77,14 @@ jobs:
             --selftest \
             --manifest-out data/derived/g7/exp073p_v07_r1_payload_synthetic_selftest_v0_3.json
 
+      - name: Execute exact-artifact ZIP download mutation suite
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_v03_artifact_zip_download_v0_1.py \
+            --selftest \
+            --out data/derived/g7/exp073p_v03_artifact_zip_download_synthetic_selftest_v0_1.json
+
       - name: Assert synthetic-only v0.3 receipts
         shell: bash
         run: |
@@ -84,16 +96,20 @@ jobs:
           evaluator=json.loads((root/'exp073p_aggregate_prerequisite_join_synthetic_selftest_v0_3.json').read_text())
           route=json.loads((root/'exp073p_actions_metadata_route_synthetic_selftest_v0_3.json').read_text())
           payload=json.loads((root/'exp073p_v07_r1_payload_synthetic_selftest_v0_3.json').read_text())
+          downloader=json.loads((root/'exp073p_v03_artifact_zip_download_synthetic_selftest_v0_1.json').read_text())
           assert evaluator['status']=='PASS_EXP073P_AGGREGATE_JOIN_SYNTHETIC_SELFTEST_V0_3'
           assert route['status']=='PASS_EXP073P_ACTIONS_METADATA_ROUTE_SYNTHETIC_SELFTEST_V0_3'
           assert payload['status']=='PASS_EXP073P_V07_R1_PAYLOAD_SYNTHETIC_SELFTEST_V0_3'
-          assert evaluator['v03_failclosed_mutations']==19
-          assert route['v03_attempt_failclosed_mutations']==5
+          assert downloader['status']=='PASS_EXP073P_V03_ARTIFACT_ZIP_DOWNLOAD_SYNTHETIC_SELFTEST'
+          assert evaluator['v03_failclosed_mutations']==23
+          assert route['v03_attempt_failclosed_mutations']==9
           assert payload['failclosed_mutations']==4
+          assert payload['archive_failclosed_mutations']==3
+          assert downloader['failclosed_mutations']==4
           assert evaluator['r1_authority']['run_id']==route['r1_authority']['run_id']==33240490287
           assert evaluator['r1_authority']['run_attempt']==route['r1_authority']['run_attempt']==2
           assert evaluator['r1_authority']['job_id']==route['r1_authority']['job_id']==99080934021
-          for data in (evaluator,route,payload):
+          for data in (evaluator,route,payload,downloader):
               assert data['synthetic'] is True
               assert data['support_executor_authorized'] is False
               for key in (
@@ -113,5 +129,6 @@ jobs:
             data/derived/g7/exp073p_aggregate_prerequisite_join_synthetic_selftest_v0_3.json
             data/derived/g7/exp073p_actions_metadata_route_synthetic_selftest_v0_3.json
             data/derived/g7/exp073p_v07_r1_payload_synthetic_selftest_v0_3.json
+            data/derived/g7/exp073p_v03_artifact_zip_download_synthetic_selftest_v0_1.json
           if-no-files-found: error
           retention-days: 90

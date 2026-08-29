@@ -1,0 +1,54 @@
+name: Exp073P v0.3 live-metadata set fail-closed selftest
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073p-v03-live-metadata-set-failclosed-selftest.yml'
+      - 'ci/exp073p_v03_live_metadata_set_failclosed_selftest.py'
+
+permissions:
+  contents: read
+
+jobs:
+  live-metadata-set-selftest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assert supplemental guard is byte-frozen
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git hash-object ci/exp073p_v03_live_metadata_set_failclosed_selftest.py)" = '778e602db02e4a2d827f1fd0fe85495c33da0c15'
+          python3 -m py_compile ci/exp073p_v03_live_metadata_set_failclosed_selftest.py
+
+      - name: Execute set-level fail-closed mutations
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_v03_live_metadata_set_failclosed_selftest.py \
+            --out data/derived/g7/exp073p_v03_live_metadata_set_failclosed_selftest.json
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073p_v03_live_metadata_set_failclosed_selftest.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073P_V03_LIVE_METADATA_SET_FAILCLOSED_SELFTEST'
+          assert d['synthetic'] is True
+          assert d['failclosed_mutations'] >= 15
+          assert d['stale_attempt_same_name_job_not_selected'] is True
+          assert d['support_executor_authorized'] is False
+          for key in ('support_fraction_evaluated','f_invalid_computed','covariance_read','whitening_read','nuisance_svd_read','relation_null_read','G8_read'):
+              assert d[key] is False,key
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('PASS_EXP073P_V03_LIVE_METADATA_SET_FAILCLOSED_CI')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073p-v03-live-metadata-set-selftest-${{ github.sha }}
+          path: data/derived/g7/exp073p_v03_live_metadata_set_failclosed_selftest.json
+          if-no-files-found: error
+          retention-days: 90

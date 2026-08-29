@@ -45,6 +45,9 @@ EXPECTED_RUN_ATTEMPT = 2
 EXPECTED_R1_RUN_ID = 33_240_490_287
 EXPECTED_R1_JOB_ID = 99_080_934_021
 EXPECTED_R1_HEAD = "9a4606fb37d5aaa071aa57322ebb7c05eca905d7"
+EXPECTED_R1_HEAD_BRANCH = "main"
+EXPECTED_R1_EVENT = "push"
+EXPECTED_R1_WORKFLOW_ID = 345_172_058
 EXPECTED_METACAL_URL = (
     "https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/"
     "shear_catalogs/mcal-y1a1-combined-riz-unblind-v4-matched.fits"
@@ -85,7 +88,7 @@ _base.LOCAL_CONTRACT_SHA256.update(
         ".github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml":
             "8ef3fb2305fe2789e6198547f5095969cfc107df1f0e17853b20a7aa5c601328",
         "experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md":
-            "f33b4d761173e43809b209d4bc1f2059ba022f9d4dc71e8b21b84b40fe4a6a25",
+            "e27761b2db4a81283bb9fbac1decb95f62fadb785c40cb3e3f676f8651711f40",
     }
 )
 
@@ -112,7 +115,21 @@ def validate_metadata(meta: dict[str, Any]) -> dict[str, Any]:
     bound = _base.validate_metadata(meta)
     run = meta.get("parents", {}).get("r1", {}).get("run", {})
     need(run.get("run_attempt") == EXPECTED_RUN_ATTEMPT, "r1: run attempt drift")
-    bound["r1"]["run_attempt"] = EXPECTED_RUN_ATTEMPT
+    need(run.get("head_branch") == EXPECTED_R1_HEAD_BRANCH, "r1: head branch drift")
+    need(run.get("event") == EXPECTED_R1_EVENT, "r1: event drift")
+    need(run.get("workflow_id") == EXPECTED_R1_WORKFLOW_ID, "r1: workflow id drift")
+    jobs = meta.get("parents", {}).get("r1", {}).get("jobs", [])
+    need(isinstance(jobs, list), "r1: jobs missing")
+    need({job.get("id") for job in jobs if isinstance(job, dict)} == {EXPECTED_R1_JOB_ID}, "r1: exact job set drift")
+    need(jobs[0].get("run_attempt") == EXPECTED_RUN_ATTEMPT, "r1: job run attempt drift")
+    bound["r1"].update(
+        {
+            "run_attempt": EXPECTED_RUN_ATTEMPT,
+            "head_branch": EXPECTED_R1_HEAD_BRANCH,
+            "event": EXPECTED_R1_EVENT,
+            "workflow_id": EXPECTED_R1_WORKFLOW_ID,
+        }
+    )
     return bound
 
 
@@ -286,6 +303,9 @@ def _v03_receipt(out: dict[str, Any]) -> dict[str, Any]:
         "run_attempt": EXPECTED_RUN_ATTEMPT,
         "job_id": EXPECTED_R1_JOB_ID,
         "head_sha": EXPECTED_R1_HEAD,
+        "head_branch": EXPECTED_R1_HEAD_BRANCH,
+        "event": EXPECTED_R1_EVENT,
+        "workflow_id": EXPECTED_R1_WORKFLOW_ID,
         "artifact_name": R1_ARTIFACT_NAME,
     }
     return out
@@ -324,7 +344,15 @@ def validate_join(
 
 def valid_metadata_fixture() -> dict[str, Any]:
     metadata = _base.valid_metadata_fixture()
-    metadata["parents"]["r1"]["run"]["run_attempt"] = EXPECTED_RUN_ATTEMPT
+    metadata["parents"]["r1"]["run"].update(
+        {
+            "run_attempt": EXPECTED_RUN_ATTEMPT,
+            "head_branch": EXPECTED_R1_HEAD_BRANCH,
+            "event": EXPECTED_R1_EVENT,
+            "workflow_id": EXPECTED_R1_WORKFLOW_ID,
+        }
+    )
+    metadata["parents"]["r1"]["jobs"][0]["run_attempt"] = EXPECTED_RUN_ATTEMPT
     return metadata
 
 
@@ -466,8 +494,12 @@ def selftest() -> dict[str, Any]:
 
     mutations: list[Callable[[dict[str, Any], dict[str, tuple[dict[str, Any], str]]], None]] = [
         lambda m, r: m["parents"]["r1"]["run"].__setitem__("run_attempt", 1),
+        lambda m, r: m["parents"]["r1"]["run"].__setitem__("head_branch", "other"),
+        lambda m, r: m["parents"]["r1"]["run"].__setitem__("event", "workflow_dispatch"),
+        lambda m, r: m["parents"]["r1"]["run"].__setitem__("workflow_id", 1),
         lambda m, r: m["parents"]["r1"]["run"].__setitem__("id", 33_222_848_695),
         lambda m, r: m["parents"]["r1"]["jobs"][0].__setitem__("id", 99_068_879_596),
+        lambda m, r: m["parents"]["r1"]["jobs"][0].__setitem__("run_attempt", 1),
         lambda m, r: m["parents"]["r1"]["artifacts"][0].__setitem__("name", "exp073r1-v06-invalid"),
         lambda m, r: r["r1_acquisition"][0].__setitem__("http_range_requests", 1),
         lambda m, r: r["r1_acquisition"][0].__setitem__("whole_object_attempts_from_zero", False),

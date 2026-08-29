@@ -1,0 +1,62 @@
+name: Exp073P v0.3 v0.7 authority contract selftest
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073p-v03-v07-authority-contract-selftest.yml'
+      - 'ci/exp073p_v03_v07_authority_contract_selftest.py'
+      - 'ci/exp073p_v03_v07_authority_contract.trigger'
+      - 'experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md'
+
+permissions:
+  contents: read
+
+jobs:
+  authority-contract-selftest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assert prospective authority inputs are byte-frozen
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git hash-object ci/exp073p_v03_v07_authority_contract_selftest.py)" = '9ac818dc3c788dee2b64a32acd70cc4d62417fde'
+          test "$(git hash-object experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md)" = '6dd4ba0df9ed2be321b7f69966d7636d940e40d1'
+          python3 -m py_compile ci/exp073p_v03_v07_authority_contract_selftest.py
+
+      - name: Execute synthetic fail-closed authority mutations
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_v03_v07_authority_contract_selftest.py \
+            --out data/derived/g7/exp073p_v03_v07_authority_contract_selftest.json
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073p_v03_v07_authority_contract_selftest.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073P_V03_V07_AUTHORITY_CONTRACT_SYNTHETIC_SELFTEST'
+          assert d['synthetic'] is True
+          assert d['failclosed_mutations'] >= 15
+          assert d['run_authority']=={
+              'run_id':33240490287,
+              'run_attempt':2,
+              'job_id':99080934021,
+              'head_sha':'9a4606fb37d5aaa071aa57322ebb7c05eca905d7',
+          }
+          assert d['support_executor_authorized'] is False
+          for key in ('support_fraction_evaluated','f_invalid_computed','covariance_read','whitening_read','nuisance_svd_read','relation_null_read','G8_read'):
+              assert d[key] is False,key
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('PASS_EXP073P_V03_V07_AUTHORITY_CONTRACT_CI')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073p-v03-v07-authority-contract-selftest-${{ github.sha }}
+          path: data/derived/g7/exp073p_v03_v07_authority_contract_selftest.json
+          if-no-files-found: error
+          retention-days: 90
