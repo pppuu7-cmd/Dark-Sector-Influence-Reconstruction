@@ -63,8 +63,22 @@ Local validation at this checkpoint:
 - repository regression: `44 passed`;
 - `git diff --check`: PASS.
 
-Hosted synthetic CI is pending the implementation push.  No real join was
-dispatched and `support_executor_authorized=false`.
+Hosted synthetic CI completed after implementation commit `fb2efe4`:
+
+- run `33234248213`;
+- job `99052307444`, `synthetic-v02-selftest`;
+- artifact `9709418334`;
+- digest
+  `sha256:84a6a8c2740ad539c6a48a59e47b876122f6fd5bf4b5665e9653ecfc7c1debfc`,
+  independently verified against the downloaded ZIP;
+- evaluator status
+  `PASS_EXP073P_AGGREGATE_JOIN_SYNTHETIC_SELFTEST_V0_2`;
+- metadata-route status
+  `PASS_EXP073P_ACTIONS_METADATA_ROUTE_SYNTHETIC_SELFTEST_V0_2`.
+
+No real join was dispatched and `support_executor_authorized=false`.
+Machine-readable readiness audit:
+`data/derived/g7/exp073p_aggregate_join_v0_2_readiness_audit.json`.
 
 ## Exact continuation
 

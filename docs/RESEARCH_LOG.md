@@ -104,7 +104,9 @@ superseding aggregate prerequisite join.  New v0.2 adapters reuse and
 hash-check every byte-frozen v0.1 semantic validator, changing only the R1
 Actions identity and receipt version.  The failed v0.1 run/job/artifact are
 explicitly rejected.  Evaluator and live-metadata mutation suites, manual-only
-production-trigger firewall, YAML parsing and 44 repository tests pass
-locally.  The real join was not dispatched; no support, covariance, nuisance,
-relation/null or G8 quantity was read, and
-`support_executor_authorized=false`.
+production-trigger firewall, YAML parsing and 44 repository tests pass.
+Hosted self-test run `33234248213`, job `99052307444`, succeeded; artifact
+`9709418334` has independently verified digest
+`sha256:84a6a8c2740ad539c6a48a59e47b876122f6fd5bf4b5665e9653ecfc7c1debfc`.
+The real join was not dispatched; no support, covariance, nuisance,
+relation/null or G8 quantity was read, and `support_executor_authorized=false`.

@@ -30,7 +30,7 @@ Current state:
 - Exp073P aggregate evaluator: implemented and synthetic CI PASS;
 - failed-R1 aggregate join v0.1: immutable and permanently fail-closed;
 - replacement-R1 aggregate join v0.2: prospectively preregistered and locally
-  validated; hosted synthetic CI pending, real join BLOCKED on R1;
+  validated; hosted synthetic CI PASS, real join BLOCKED on R1;
 - Exp073P physical support: BLOCKED;
 - covariance/whitening and every later stage: BLOCKED;
 - G7: OPEN;
@@ -94,8 +94,11 @@ hash, row-count, mapper, bin, repeatability, parent and no-leakage control.
 - superseding R1 authority preregistration: `0f85b7c5bf15cc5f6e49d474613f539db1ffca8a`;
 - v0.2 binds only replacement run `33222848695`, job `99020389131`, while
   retaining every non-R1 parent and v0.1 semantic/byte check;
-- v0.2 evaluator and actual manual route: implemented, local synthetic
-  mutation suites PASS, hosted CI pending;
+- v0.2 evaluator and actual manual route: implemented; local and hosted
+  synthetic mutation suites PASS;
+- v0.2 hosted self-test run `33234248213`, job `99052307444`: success;
+- v0.2 self-test artifact `9709418334`, digest
+  `sha256:84a6a8c2740ad539c6a48a59e47b876122f6fd5bf4b5665e9653ecfc7c1debfc`;
 - real prerequisite PASS: not evaluated;
 - `support_executor_authorized=false` until the real R1-bound join passes.
 
@@ -142,6 +145,7 @@ Never modify post hoc:
 6. `ci/exp073p_aggregate_prerequisite_join_v0_2.py`
 7. `ci/exp073p_actions_metadata_bundle_v0_2.py`
 8. `.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-2.yml`
-9. `experiments/073p_aggregate_prerequisite_join_evaluator_prereg_v0_1.md`
-10. `recovery/2026-08-28_exp073r1_to_exp073p_execution_integrity_matrix.md`
-11. `experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md`
+9. `data/derived/g7/exp073p_aggregate_join_v0_2_readiness_audit.json`
+10. `experiments/073p_aggregate_prerequisite_join_evaluator_prereg_v0_1.md`
+11. `recovery/2026-08-28_exp073r1_to_exp073p_execution_integrity_matrix.md`
+12. `experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md`

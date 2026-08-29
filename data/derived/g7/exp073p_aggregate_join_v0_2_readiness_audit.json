@@ -1,0 +1,73 @@
+{
+  "schema": "dsir.exp073p.aggregate-join-readiness.v0.2",
+  "recorded_at_utc": "2026-08-29T04:38:32Z",
+  "status": "PASS_EXP073P_AGGREGATE_JOIN_V0_2_READINESS_AUDIT",
+  "scientific_classification": null,
+  "chronology": {
+    "r1_replacement_terminal_output_available_at_preregistration": false,
+    "r1_replacement_artifact_available_at_preregistration": false,
+    "authority_preregistration_commit": "0f85b7c5bf15cc5f6e49d474613f539db1ffca8a",
+    "implementation_commit": "fb2efe454618938d2b1288c6820ac4d7771bc9dd",
+    "preregistered_before_implementation": true,
+    "preregistered_before_r1_terminal_output": true
+  },
+  "r1_authority": {
+    "run_id": 33222848695,
+    "run_attempt": 1,
+    "job_id": 99020389131,
+    "job_name": "metacal-map-longrun",
+    "head_sha": "98c4b8783a95932949947d9e214706c4ec7eaf8c",
+    "workflow_path": ".github/workflows/exp073r1-desy1-selfhosted-longrun-stageb-v0-6.yml",
+    "workflow_blob": "2cdcb0c60f464c0c65c3bafdde23daec7732215e",
+    "evaluator_blob": "46fe1271d97ddd9e2164d24e7d79cf27bfda805d",
+    "state_at_audit": "in_progress",
+    "active_step": "Sequentially stream authoritative 84GB metacal object and execute unchanged frozen mapper",
+    "artifact_present": false
+  },
+  "frozen_files": {
+    "experiments/073p_aggregate_prerequisite_join_superseding_r1_authority_prereg_v0_2.md": "601f904200d72ebf5d483c973a92261eebd38b065a909220ccd8c6b86c46ad76",
+    "ci/exp073p_aggregate_prerequisite_join_v0_2.py": "5a17f622a4025eec82541688bded4bfedd3b6b96bc511f7d1a3327e886161cfd",
+    "ci/exp073p_actions_metadata_bundle_v0_2.py": "aec7215a3b8cce8b1383f4cd8e49c37b22388ac6318088a3df794c8ecbd77810",
+    ".github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-2.yml": "e29eec8f9459cd361c707265ae858f843f6cf5537d32ac9c5a7a0c9652996307",
+    ".github/workflows/exp073p-aggregate-prerequisite-join-v0-2-selftest.yml": "ec2fc394c584d2b0a0bafe944651e187630d89378eff8963d3ac068d626bb90d",
+    "ci/exp073p_aggregate_prerequisite_join_v0_1.py": "9dc0b5a0ea82b8fb69d82e06b566b08d61c1982bd5e13ecd8db6752253bc0e46",
+    "ci/exp073p_actions_metadata_bundle_v0_1.py": "cda5cb20c2d4f9be8a3068dacfead4db25e5dfbd867815005b754ab8cde955f3"
+  },
+  "synthetic_ci": {
+    "run_id": 33234248213,
+    "job_id": 99052307444,
+    "status": "completed",
+    "conclusion": "success",
+    "artifact_id": 9709418334,
+    "artifact_name": "exp073p-aggregate-join-v0-2-synthetic-selftest-fb2efe454618938d2b1288c6820ac4d7771bc9dd",
+    "artifact_digest": "sha256:84a6a8c2740ad539c6a48a59e47b876122f6fd5bf4b5665e9653ecfc7c1debfc",
+    "artifact_digest_independently_verified": true,
+    "evaluator_status": "PASS_EXP073P_AGGREGATE_JOIN_SYNTHETIC_SELFTEST_V0_2",
+    "route_status": "PASS_EXP073P_ACTIONS_METADATA_ROUTE_SYNTHETIC_SELFTEST_V0_2",
+    "superseded_r1_evaluator_mutations_rejected": 3,
+    "metadata_route_failclosed_mutations": 11
+  },
+  "local_regression": {
+    "pytest_passed": 44,
+    "pytest_failed": 0,
+    "compileall_pass": true,
+    "yaml_parse_pass": true,
+    "git_diff_check_pass": true
+  },
+  "real_join_dispatched": false,
+  "support_executor_authorized": false,
+  "support_fraction_evaluated": false,
+  "f_invalid_computed": false,
+  "retained_dimension_evaluated": false,
+  "covariance_read": false,
+  "whitening_read": false,
+  "nuisance_svd_read": false,
+  "relation_null_read": false,
+  "heldout_read": false,
+  "G8_read": false,
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
