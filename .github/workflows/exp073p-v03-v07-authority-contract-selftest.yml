@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/exp073p-v03-v07-authority-contract-selftest.yml'
       - 'ci/exp073p_v03_v07_authority_contract_selftest.py'
+      - 'ci/exp073p_v03_v07_authority_contract.trigger'
       - 'experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md'
 
 permissions:
