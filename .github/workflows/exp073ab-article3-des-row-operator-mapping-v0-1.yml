@@ -1,0 +1,105 @@
+name: Exp073AB Article3 DES row-operator mapping v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ab_article3_des_row_operator_mapping_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  row-operator-mapping:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      T_RUN: '33272691162'
+      U_RUN: '33274852199'
+      Z2_RUN: '33279208949'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce prospective freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073ab_article3_des_row_operator_mapping_v0_1_prereg.md)" = '5b6021c3f95eff95d9deb6d84d7eece454c3ad8b'
+          test "$(git log -1 --format=%H -- ci/exp073ab_article3_des_row_operator_mapping_v0_1.py)" = 'f5b02831f15607ad208e7927cacc7785f9073f25'
+          test -f experiments/073ab_article3_des_row_operator_mapping_v0_1_workflow_freeze.md
+          SELF="$(git log -1 --format=%H -- .github/workflows/exp073ab-article3-des-row-operator-mapping-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF}\`" experiments/073ab_article3_des_row_operator_mapping_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073ab_article3_des_row_operator_mapping_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073ab_article3_des_row_operator_mapping_v0_1.py
+      - name: Bind exact parent artifact metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json, os, subprocess
+          parents={
+            33272691162:{9720563095:('exp073t-static-inventory-6efc41b005393deaf6651e90e902e1bf11c64250','sha256:4332ffa9d6b4385a48d3022a8afcedf0bf00a742cee8444fd6ca83842bf1e642')},
+            33274852199:{9721184683:('exp073u-article3-presupport-coordinate-skeleton-26dcfdc0d83b10f90b877408364e844fc40a0bbf','sha256:d44e628e9312fb5a919a6681b69d9e06e18418cdd299de641e6465e60dadfd68')},
+            33279208949:{9722468056:('exp073z2-des-radial-stable-530da3c2c9aef9e8308086df24c10abb3e06ed4f','sha256:3eb8b025711e8df6d5452a3a57002f36c9d7de2b9116734b71d15d6822dd20be')},
+          }
+          repo=os.environ['GITHUB_REPOSITORY']
+          for run,want in parents.items():
+              raw=subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run}/artifacts?per_page=100'],text=True)
+              data=json.loads(raw)['artifacts']
+              got={a['id']:(a['name'],a['digest']) for a in data if a['id'] in want}
+              assert got==want,(run,got,want)
+              assert all(not a['expired'] for a in data if a['id'] in want)
+          print('EXP073AB_PARENT_ARTIFACT_METADATA_PASS')
+          PY
+      - name: Download exact non-science parents
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/t external/u external/z2
+          gh run download "${T_RUN}" -n 'exp073t-static-inventory-6efc41b005393deaf6651e90e902e1bf11c64250' -D external/t
+          gh run download "${U_RUN}" -n 'exp073u-article3-presupport-coordinate-skeleton-26dcfdc0d83b10f90b877408364e844fc40a0bbf' -D external/u
+          gh run download "${Z2_RUN}" -n 'exp073z2-des-radial-stable-530da3c2c9aef9e8308086df24c10abb3e06ed4f' -D external/z2
+          echo '55f55d21eedd3779a729af387205ec7db360617c5e026406d21b3b542f355309  external/t/exp073t_cosmotheka_inventory_v0_1.json' | sha256sum -c -
+          echo 'a6b9eaa697edd63d5b5ca698341c35578d395201ff3e0e0bcffff7f5ba94f534  external/u/exp073u_article3_presupport_coordinate_skeleton_v0_1.json' | sha256sum -c -
+          echo '3cb25beed23193a94e10d590296349713d1d83f92771215b72c10ea2e6f82c1a  external/z2/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.json' | sha256sum -c -
+      - name: Build immutable non-classifying DES row map
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073ab_article3_des_row_operator_mapping_v0_1.py \
+            --inventory external/t/exp073t_cosmotheka_inventory_v0_1.json \
+            --skeleton external/u/exp073u_article3_presupport_coordinate_skeleton_v0_1.json \
+            --radial external/z2/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.json \
+            --out data/derived/g7/exp073ab_article3_des_row_operator_mapping_v0_1.json
+      - name: Enforce firewall and frozen mapping hash
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073ab_article3_des_row_operator_mapping_v0_1.json'))
+          assert d['status']=='PASS_EXP073AB_DES_ROW_OPERATOR_MAPPING_V0_1'
+          assert d['mapping_sha256']=='092bb2e83a0ad0d7ad5359110465eccfe2c6096e593c60c459c52c9a2b7e4319'
+          assert d['counts']=={'DES':1170,'Wm':780,'WW':390,'Wm_radial':20,'WW_radial':10,'angular_tasks':14}
+          assert d['angular_window_values_read'] is False
+          assert d['physical_k_computed'] is False and d['physical_support_evaluated'] is False
+          assert d['retained_coordinates_evaluated'] is False and d['science_gate_scored'] is False
+          assert d['covariance_read'] is False and d['nuisance_geometry_read'] is False and d['relation_null_read'] is False and d['G8_read'] is False
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073AB_FIREWALL_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ab-des-row-operator-map-${{ github.sha }}
+          path: data/derived/g7/exp073ab_article3_des_row_operator_mapping_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
