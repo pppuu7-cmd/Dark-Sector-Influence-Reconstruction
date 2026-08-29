@@ -110,3 +110,100 @@ Hosted self-test run `33234248213`, job `99052307444`, succeeded; artifact
 `sha256:84a6a8c2740ad539c6a48a59e47b876122f6fd5bf4b5665e9653ecfc7c1debfc`.
 The real join was not dispatched; no support, covariance, nuisance,
 relation/null or G8 quantity was read, and `support_executor_authorized=false`.
+
+## 2026-08-29 — repeated Exp073R1 remote EOF and transport-stabilized v0.7
+
+Replacement run `33222848695` failed twice inside the unchanged frozen
+whole-object reader after all evaluator and parent-integrity checks passed.
+Attempt 1/job `99020389131` reached a last reported `37,748,736` rows before a
+premature EOF; exact rerun attempt 2/job `99062223326` failed in its first row
+chunk with `10839192/40239104` requested bytes received.  Both are classified
+as repeated remote-transport infrastructure failures, not scientific FAILs.
+Their independently verified uploads (`9709998972` and `9710626213`) are
+inadmissible: neither contains a terminal summary or masks.  GitHub preserved
+both under the same head-only artifact name despite `overwrite: false`; the
+second ZIP contains only four zero-byte records.  Exp073P join v0.2 remains
+fail-closed because its frozen R1 job failed and its byte-frozen collector
+requires exactly one canonical-name artifact while two exist.  No partial map
+or downstream quantity was evaluated.
+
+Before another execution, commits `401b6bc`..`9a4606f` preregistered and
+launched a transport-stabilized v0.7 route: independent whole-object attempts
+restart at byte zero with no Range/resume; only the exact 84,075,649,920-byte
+object with frozen SHA256 may be loopback-replayed to the unchanged evaluator.
+Run `33240490287` attempt 1 lost the self-hosted runner during acquisition and
+produced no artifact, an infrastructure outcome.  One exact rerun, attempt 2
+job `99080934021`, is queued as the sole heavy candidate.
+
+An executable audit of the frozen v0.7 snapshot records a prospective artifact
+delivery risk: its single `always()` upload mixes diagnostic/result paths and
+uses a SHA-only name without run-attempt identity.  This risk has not
+materialized in the active run and does not alter it.  Any later new execution
+after a failed upload must first freeze attempt-specific result/diagnostic
+delivery.  No support fraction, `f_invalid`, retained dimension, covariance,
+nuisance, relation/null or G8 quantity was read; G7/G8/G9 remain OPEN.
+Hosted audit self-test run `33245678070` completed successfully and reproduced
+the committed fail-closed/no-leakage record without launching a heavy mapper.
+
+## 2026-08-29 — prospective Exp073P v0.3 authority for v0.7 attempt 2
+
+At `2026-08-29T10:15:42Z`, while Exp073R1 v0.7 run `33240490287`, attempt 2,
+job `99080934021` was still queued and its artifact list was empty, PR #166
+commit `940fbca` froze a new aggregate prerequisite authority.  It admits only
+that exact attempt/job/head/workflow and never repoints historical joins v0.1
+or v0.2.  Commit `6f46375` implemented a manual-only v0.3 route that reuses the
+byte-frozen v0.1 parent/R1 validators and adds run-attempt validation, the
+attempt-specific jobs endpoint, unique artifact ID/digest binding, full-from-
+zero acquisition-provenance checks and byte/hash validation of the complete
+summary/acquisition/runtime plus four record and four mask files.  Partial,
+duplicate, later-attempt, empty or cross-inconsistent evidence fails closed.
+
+Local inherited and new mutation suites, JSON/YAML/compile checks and all 44
+repository tests passed.  Hosted v0.3 self-test run `33248034308`, job
+`99088793819`, completed successfully; artifact `9713466820` has digest
+`sha256:d53b87eec234c3533fd9d167bfdae7433db27e4aa106a614c2dd5812a9f6019e`.
+All receipts were synthetic and retained `support_executor_authorized=false`.
+At `2026-08-29T10:30:49Z` the heavy job remained queued with no artifact; the
+real v0.3 join was not dispatched.  No support fraction, `f_invalid`, retained
+dimension, covariance, nuisance, relation/null or G8 quantity was read, and
+G7/G8/G9 remain OPEN.
+
+## 2026-08-29 — canonical Exp073P v0.3 guards integrated into production route
+
+A fresh history comparison found that `main` had advanced independently to
+`72c0278` while PR #166 was in development. Main already contained the
+canonical prospective v0.3 preregistration (`e58bddf`, SHA256
+`e27761b2db4a81283bb9fbac1decb95f62fadb785c40cb3e3f676f8651711f40`)
+and hosted authority, live-metadata-set, and archive-member fail-closed guards.
+The PR was merged with current main rather than merged blindly or duplicated;
+the canonical preregistration bytes were preserved exactly. The earlier
+independent PR preregistration remains historical chronology, not current byte
+authority.
+
+The actual manual-only v0.3 route now validates exact attempt/job branch,
+event, workflow ID and job-level attempt; downloads the raw artifact ZIP by
+numeric ID; verifies its canonical SHA256 before extraction; rejects token
+forwarding to the signed redirect; and requires the exact 11-file archive set
+before existing acquisition, payload, R1, and unchanged-parent semantic
+validation. Synthetic suites rejected 23 evaluator, 9 route, 4 downloader, 4
+payload and 3 integrated archive mutations. All three main supplemental guards
+passed locally and `44` repository tests passed. Hosted integration run
+`33257888770`, job `99114673638`, then completed successfully on the exact
+two-parent integration tree. Its artifact `9716362579` has digest
+`sha256:f78ed9f12c54bd585c9f5b8022e8fcb468dee7583e842c0c76363af2dfde7b33`.
+
+At `2026-08-29T14:27:27Z`, Exp073R1 v0.7 run `33240490287`, attempt 2/job
+`99080934021`, remained queued with no artifacts. No duplicate heavy run and no
+real aggregate join were dispatched. No support fraction, `f_invalid`,
+retained dimension, covariance, nuisance, relation/null, held-out, or G8 value
+was read. `support_executor_authorized=false`; G7/G8/G9 remain OPEN.
+
+During final synchronization, `main` advanced again to `f2d1043` with an
+independent cross-member consistency guard. That guard's hosted run
+`33257187305` had already rejected 19 summary/acquisition/runtime/row-accounting
+mutations. Its unchanged files were merged into PR #166 and the suite passed
+locally. This is additive implementation validation and does not alter the
+canonical preregistration or any scientific boundary. The second two-parent
+merge is `e188558`; exact-head hosted run `33258226377`, job `99115545426`,
+completed successfully. Artifact `9716462575` has digest
+`sha256:710b94bcfc7b471e5879cc65836dbab48ff203c2f2f55edb1937ad5ce371cff5`.
