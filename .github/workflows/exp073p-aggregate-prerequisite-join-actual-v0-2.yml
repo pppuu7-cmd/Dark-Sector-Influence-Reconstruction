@@ -1,0 +1,210 @@
+name: Exp073P aggregate prerequisite join actual v0.2
+
+on:
+  workflow_dispatch:
+    inputs:
+      r1_artifact_id:
+        description: Exact replacement R1 artifact ID after terminal completion
+        required: true
+        type: string
+      r1_artifact_digest:
+        description: Exact replacement R1 artifact sha256 digest after terminal completion
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: exp073p-aggregate-prerequisite-join-actual-v0-2
+  cancel-in-progress: false
+
+env:
+  AGGREGATE_EVALUATOR_V01_SHA256: 9dc0b5a0ea82b8fb69d82e06b566b08d61c1982bd5e13ecd8db6752253bc0e46
+  METADATA_COLLECTOR_V01_SHA256: cda5cb20c2d4f9be8a3068dacfead4db25e5dfbd867815005b754ab8cde955f3
+  AGGREGATE_EVALUATOR_V02_SHA256: 5a17f622a4025eec82541688bded4bfedd3b6b96bc511f7d1a3327e886161cfd
+  METADATA_COLLECTOR_V02_SHA256: aec7215a3b8cce8b1383f4cd8e49c37b22388ac6318088a3df794c8ecbd77810
+  AUTHORITY_PREREG_V02_SHA256: 601f904200d72ebf5d483c973a92261eebd38b065a909220ccd8c6b86c46ad76
+  R1_RUN_ID: '33222848695'
+  R1_JOB_ID: '99020389131'
+  R1_ARTIFACT_NAME: exp073r1-v06-selfhosted-longrun-98c4b8783a95932949947d9e214706c4ec7eaf8c
+
+jobs:
+  real-prerequisite-join-v02:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      R1_ARTIFACT_ID: ${{ inputs.r1_artifact_id }}
+      R1_ARTIFACT_DIGEST: ${{ inputs.r1_artifact_digest }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assert prospectively frozen v0.2 route firewall
+        id: firewall
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "${GITHUB_REPOSITORY}" = 'pppuu7-cmd/Dark-Sector-Influence-Reconstruction'
+          test "${GITHUB_REF}" = 'refs/heads/main'
+          test "$(sha256sum ci/exp073p_aggregate_prerequisite_join_v0_1.py | cut -d' ' -f1)" = "${AGGREGATE_EVALUATOR_V01_SHA256}"
+          test "$(sha256sum ci/exp073p_actions_metadata_bundle_v0_1.py | cut -d' ' -f1)" = "${METADATA_COLLECTOR_V01_SHA256}"
+          test "$(sha256sum ci/exp073p_aggregate_prerequisite_join_v0_2.py | cut -d' ' -f1)" = "${AGGREGATE_EVALUATOR_V02_SHA256}"
+          test "$(sha256sum ci/exp073p_actions_metadata_bundle_v0_2.py | cut -d' ' -f1)" = "${METADATA_COLLECTOR_V02_SHA256}"
+          test "$(sha256sum experiments/073p_aggregate_prerequisite_join_superseding_r1_authority_prereg_v0_2.md | cut -d' ' -f1)" = "${AUTHORITY_PREREG_V02_SHA256}"
+          python3 -m py_compile \
+            ci/exp073p_actions_metadata_bundle_v0_1.py \
+            ci/exp073p_actions_metadata_bundle_v0_2.py \
+            ci/exp073p_aggregate_prerequisite_join_v0_1.py \
+            ci/exp073p_aggregate_prerequisite_join_v0_2.py \
+            ci/exp073p_r1_admissibility_interlock_v0_1.py
+          python3 - <<'PY'
+          import os, re
+          assert os.environ['R1_RUN_ID']=='33222848695'
+          assert os.environ['R1_JOB_ID']=='99020389131'
+          assert re.fullmatch(r'[1-9][0-9]*',os.environ['R1_ARTIFACT_ID'])
+          assert re.fullmatch(r'sha256:[0-9a-f]{64}',os.environ['R1_ARTIFACT_DIGEST'])
+          print('PASS_EXP073P_ACTUAL_JOIN_ROUTE_FIREWALL_V0_2')
+          PY
+
+      - name: Collect and validate live metadata for all ten frozen parents
+        id: metadata
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_actions_metadata_bundle_v0_2.py \
+            --repository "${GITHUB_REPOSITORY}" \
+            --r1-artifact-id "${R1_ARTIFACT_ID}" \
+            --r1-artifact-digest "${R1_ARTIFACT_DIGEST}" \
+            --out join_inputs/actions_metadata_v0_2.json \
+            --error-out join_inputs/actions_metadata_collection_failure_v0_2.json
+
+      - name: Download exact large-source identity record
+        if: ${{ always() && steps.firewall.outcome == 'success' }}
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073p-source-bin-full-sha256-372997bf1240a224c2a915fd0d1a5ae50476ba7a
+          path: join_inputs/large_source
+          github-token: ${{ github.token }}
+          run-id: 33081571259
+
+      - name: Download exact large-metacal identity record
+        if: ${{ always() && steps.firewall.outcome == 'success' }}
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073p-metacal-full-sha256-372997bf1240a224c2a915fd0d1a5ae50476ba7a
+          path: join_inputs/large_metacal
+          github-token: ${{ github.token }}
+          run-id: 33081571259
+
+      - name: Download exact remaining-object P2 record
+        if: ${{ always() && steps.firewall.outcome == 'success' }}
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073p2-remaining-des-checksums-fbcd8eb0a46a566b2510081f7f90714b534e7252
+          path: join_inputs/p2
+          github-token: ${{ github.token }}
+          run-id: 33086291753
+
+      - name: Download sole replacement R1 result artifact
+        if: ${{ always() && steps.firewall.outcome == 'success' }}
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v06-selfhosted-longrun-98c4b8783a95932949947d9e214706c4ec7eaf8c
+          path: join_inputs/r1
+          github-token: ${{ github.token }}
+          run-id: 33222848695
+
+      - name: Normalize exact downloaded record paths without changing bytes
+        if: ${{ always() && steps.firewall.outcome == 'success' }}
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import shutil
+          from pathlib import Path
+
+          expected={
+              'large_source':(Path('join_inputs/large_source'),'exp073p_y1_source_redshift_binning_v1_streaming_sha256_v0_1.json'),
+              'large_metacal':(Path('join_inputs/large_metacal'),'exp073p_mcal_y1a1_streaming_sha256_v0_1.json'),
+              'p2':(Path('join_inputs/p2'),'exp073p2_remaining_desy1_checksums_v0_1.json'),
+              'r1':(Path('join_inputs/r1'),'exp073r1_desy1_selfhosted_longrun_stageb_v0_6_summary.json'),
+          }
+          out=Path('join_inputs/normalized')
+          out.mkdir(parents=True,exist_ok=True)
+          for key,(root,name) in expected.items():
+              matches=list(root.rglob(name))
+              assert len(matches)==1,(key,matches)
+              shutil.copyfile(matches[0],out/f'{key}.json')
+          print('PASS_EXP073P_EXACT_RECORD_PATH_NORMALIZATION_V0_2')
+          PY
+
+      - name: Execute real fail-closed aggregate prerequisite join v0.2
+        id: join
+        if: ${{ always() && steps.firewall.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_aggregate_prerequisite_join_v0_2.py \
+            --classifying \
+            --metadata join_inputs/actions_metadata_v0_2.json \
+            --preflight data/derived/g7/exp073p_des_public_input_checksum_preflight_v0_1.json \
+            --large-source join_inputs/normalized/large_source.json \
+            --large-metacal join_inputs/normalized/large_metacal.json \
+            --p2 join_inputs/normalized/p2.json \
+            --s0 data/derived/g7/exp073s0_redmagic_mask_nz_v0_1_key_metrics.json \
+            --r1 join_inputs/normalized/r1.json \
+            --boss data/derived/g7/exp073j_boss_finite_matrix_component_support_v0_1_key_metrics.json \
+            --out data/derived/g7/exp073p_aggregate_prerequisite_join_actual_v0_2.json
+
+      - name: Assert v0.2 receipt firewall and authorization boundary
+        if: ${{ always() && steps.firewall.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          p=Path('data/derived/g7/exp073p_aggregate_prerequisite_join_actual_v0_2.json')
+          assert p.is_file()
+          d=json.loads(p.read_text())
+          allowed={
+              'PASS_EXP073P_PREREQUISITE_BINDING_V0_2',
+              'REJECTED_EXP073P_PREREQUISITE_BINDING_V0_2',
+              'INCOMPLETE_EXP073P_PREREQUISITE_BINDING_V0_2',
+          }
+          assert d['status'] in allowed
+          assert d['synthetic'] is False
+          assert d['scientific_classification'] is None
+          assert d['r1_authority']['run_id']==33222848695
+          assert d['r1_authority']['job_id']==99020389131
+          assert d['support_executor_authorized'] is (d['status']=='PASS_EXP073P_PREREQUISITE_BINDING_V0_2')
+          for key in (
+              'support_fraction_evaluated','f_invalid_computed',
+              'retained_dimension_evaluated','covariance_read','whitening_read',
+              'nuisance_svd_read','relation_null_read','heldout_read','G8_read',
+          ):
+              assert d[key] is False,key
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073P_ACTUAL_AGGREGATE_JOIN_RECEIPT_V0_2',d['status'])
+          PY
+
+      - name: Upload immutable v0.2 join evidence or fail-closed receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073p-aggregate-prerequisite-join-actual-v0-2-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            data/derived/g7/exp073p_aggregate_prerequisite_join_actual_v0_2.json
+            join_inputs/actions_metadata_v0_2.json
+            join_inputs/actions_metadata_collection_failure_v0_2.json
+          if-no-files-found: error
+          retention-days: 90

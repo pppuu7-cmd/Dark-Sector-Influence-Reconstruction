@@ -83,14 +83,15 @@ acknowledge PEP 668 for the dependency-install command.  It must retain:
 - every no-support/no-covariance/no-G8 firewall;
 - all frozen Exp073P thresholds and downstream ordering.
 
-The preferred repair is a new v0.7 workflow with
-`PIP_BREAK_SYSTEM_PACKAGES=1` scoped only to the pip installation step.  This
-is the programmatic form of the override explicitly named by pip's PEP 668
-diagnostic.  It does not alter evaluator bytes or scientific acceptance
-criteria.  It avoids a persistent user-wide pip configuration and therefore
-does not affect the separate RTK runner sharing the WSL user account.
+## Implemented recovery update
 
-Before launching v0.7, reserve the one DSIR runner, queue the new route, record
-its exact run/job/head identifiers in a superseding preregistration, and only
-then release the runner.  If reservation or execution is interrupted, retain
-only infrastructure `INCOMPLETE`.
+The earlier candidate plan to use a PEP 668 override was not executed.  Commit
+`5f773b3600defd5c5a2e94b8ef9489bb9ba32787` instead introduced the cleaner
+isolated-venv repair, avoiding both the externally managed interpreter and any
+persistent user-wide configuration that could affect the separate RTK runner.
+
+Replacement run `33222848695`, job `99020389131`, uses the unchanged evaluator
+and had entered the 84 GB whole-object mapper at the next audit.  Its exact
+downstream authority was prospectively frozen in aggregate join v0.2 before a
+terminal result or artifact existed.  If replacement execution is interrupted,
+retain only infrastructure `INCOMPLETE`.

@@ -92,6 +92,19 @@ GET never started, zero metacal rows were read, no mask or result artifact was
 created, and no support/covariance/nuisance/relation/held-out quantity was
 evaluated.  The outcome is `INCOMPLETE_EXP073R1`, not scientific FAIL.
 Aggregate join v0.1 remains permanently fail-closed for that exact job.  A
-read-only DSIR-runner reservation route was added so a v0.7 PEP 668-scoped
-replacement can be queued and exactly bound in a superseding preregistration
-before any replacement output is inspected.  G7/G8/G9 remain OPEN.
+runtime-only isolated-venv repair retained the unchanged evaluator and launched
+replacement run `33222848695`, job `99020389131`.  G7/G8/G9 remain OPEN.
+
+## 2026-08-29 — replacement R1 authority and aggregate join v0.2
+
+While replacement R1 run `33222848695` was still inside the whole-object
+84 GB mapper, before its terminal assertion and before any artifact existed,
+commit `0f85b7c` froze the exact run/job/head/workflow/artifact authority for a
+superseding aggregate prerequisite join.  New v0.2 adapters reuse and
+hash-check every byte-frozen v0.1 semantic validator, changing only the R1
+Actions identity and receipt version.  The failed v0.1 run/job/artifact are
+explicitly rejected.  Evaluator and live-metadata mutation suites, manual-only
+production-trigger firewall, YAML parsing and 44 repository tests pass
+locally.  The real join was not dispatched; no support, covariance, nuisance,
+relation/null or G8 quantity was read, and
+`support_executor_authorized=false`.

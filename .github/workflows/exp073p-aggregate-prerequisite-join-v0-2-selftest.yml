@@ -1,0 +1,92 @@
+name: Exp073P aggregate prerequisite join v0.2 selftest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073p_aggregate_prerequisite_join_v0_2.py'
+      - 'ci/exp073p_actions_metadata_bundle_v0_2.py'
+      - '.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-2.yml'
+      - '.github/workflows/exp073p-aggregate-prerequisite-join-v0-2-selftest.yml'
+      - 'experiments/073p_aggregate_prerequisite_join_superseding_r1_authority_prereg_v0_2.md'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-v02-selftest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assert frozen v0.2 implementation lineage
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(sha256sum ci/exp073p_aggregate_prerequisite_join_v0_1.py | cut -d' ' -f1)" = '9dc0b5a0ea82b8fb69d82e06b566b08d61c1982bd5e13ecd8db6752253bc0e46'
+          test "$(sha256sum ci/exp073p_actions_metadata_bundle_v0_1.py | cut -d' ' -f1)" = 'cda5cb20c2d4f9be8a3068dacfead4db25e5dfbd867815005b754ab8cde955f3'
+          test "$(sha256sum ci/exp073p_aggregate_prerequisite_join_v0_2.py | cut -d' ' -f1)" = '5a17f622a4025eec82541688bded4bfedd3b6b96bc511f7d1a3327e886161cfd'
+          test "$(sha256sum ci/exp073p_actions_metadata_bundle_v0_2.py | cut -d' ' -f1)" = 'aec7215a3b8cce8b1383f4cd8e49c37b22388ac6318088a3df794c8ecbd77810'
+          test "$(sha256sum experiments/073p_aggregate_prerequisite_join_superseding_r1_authority_prereg_v0_2.md | cut -d' ' -f1)" = '601f904200d72ebf5d483c973a92261eebd38b065a909220ccd8c6b86c46ad76'
+          python3 -m py_compile \
+            ci/exp073p_aggregate_prerequisite_join_v0_1.py \
+            ci/exp073p_aggregate_prerequisite_join_v0_2.py \
+            ci/exp073p_actions_metadata_bundle_v0_1.py \
+            ci/exp073p_actions_metadata_bundle_v0_2.py
+
+      - name: Execute superseding aggregate evaluator mutation suite
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_aggregate_prerequisite_join_v0_2.py \
+            --selftest \
+            --out data/derived/g7/exp073p_aggregate_prerequisite_join_synthetic_selftest_v0_2.json
+
+      - name: Execute superseding live-metadata route mutation suite
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_actions_metadata_bundle_v0_2.py \
+            --selftest \
+            --workflow .github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-2.yml \
+            --out data/derived/g7/exp073p_actions_metadata_route_synthetic_selftest_v0_2.json
+
+      - name: Assert synthetic-only v0.2 receipts
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          evaluator=json.loads(Path('data/derived/g7/exp073p_aggregate_prerequisite_join_synthetic_selftest_v0_2.json').read_text())
+          route=json.loads(Path('data/derived/g7/exp073p_actions_metadata_route_synthetic_selftest_v0_2.json').read_text())
+          assert evaluator['status']=='PASS_EXP073P_AGGREGATE_JOIN_SYNTHETIC_SELFTEST_V0_2'
+          assert route['status']=='PASS_EXP073P_ACTIONS_METADATA_ROUTE_SYNTHETIC_SELFTEST_V0_2'
+          assert evaluator['superseded_r1_mutations_rejected']==3
+          assert route['superseded_r1_run_rejected'] is True
+          assert evaluator['r1_authority']['run_id']==route['r1_authority']['run_id']==33222848695
+          assert evaluator['r1_authority']['job_id']==route['r1_authority']['job_id']==99020389131
+          for d in (evaluator,route):
+              assert d['synthetic'] is True
+              assert d['scientific_classification'] is None
+              assert d['support_executor_authorized'] is False
+              for key in (
+                  'support_fraction_evaluated','f_invalid_computed',
+                  'retained_dimension_evaluated','covariance_read','whitening_read',
+                  'nuisance_svd_read','relation_null_read','heldout_read','G8_read',
+              ):
+                  assert d[key] is False,key
+              assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('PASS_EXP073P_AGGREGATE_JOIN_AND_ROUTE_SYNTHETIC_SELFTEST_V0_2')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073p-aggregate-join-v0-2-synthetic-selftest-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073p_aggregate_prerequisite_join_synthetic_selftest_v0_2.json
+            data/derived/g7/exp073p_actions_metadata_route_synthetic_selftest_v0_2.json
+          if-no-files-found: error
+          retention-days: 90
