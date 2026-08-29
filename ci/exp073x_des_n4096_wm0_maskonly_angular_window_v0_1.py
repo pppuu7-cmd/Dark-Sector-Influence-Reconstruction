@@ -76,8 +76,6 @@ def source_count_map(pixel_record: Path) -> tuple[np.ndarray, dict]:
     pix = np.memmap(pixel_record, mode='r', dtype='<u4', shape=(SOURCE_SELECTED,))
     if int(np.max(pix)) >= NPIX:
         raise AssertionError('source pixel outside NSIDE=4096')
-    # Exact float64 equivalent of count-map accumulation.  np.add.at avoids a
-    # second full int64 NPIX array that np.bincount would allocate.
     counts = np.zeros(NPIX, dtype=np.float64)
     chunk = 1_000_000
     for lo in range(0, SOURCE_SELECTED, chunk):
@@ -108,7 +106,7 @@ def lens_mask(path: Path) -> tuple[np.ndarray, dict]:
     digest = sha_file(path)
     if digest != LENS_SHA:
         raise AssertionError(f'lens SHA mismatch {digest}')
-    m = np.asarray(hp.read_map(path, field=0, dtype=np.float64, nest=False, verbose=False), dtype=np.float64)
+    m = np.asarray(hp.read_map(path, field=0, dtype=np.float64, nest=False), dtype=np.float64)
     if m.shape != (NPIX,):
         raise AssertionError(f'lens mask shape mismatch {m.shape}')
     m[m == hp.UNSEEN] = 0.0
@@ -192,10 +190,11 @@ def main() -> None:
 
     te1, meta1 = get_te_window(lens, source)
     hash1 = meta1['te_window_authority']['sha256']
-    # Prospectively required independent workspace recomputation from copied
-    # physical masks. Copies are created before the second NaMaster call.
-    lens2 = lens.copy()
-    source2 = source.copy()
+
+    # Independent second call from copied physical masks, while keeping peak
+    # memory lower by deleting originals before NaMaster is invoked again.
+    source2 = source.copy(); del source; gc.collect()
+    lens2 = lens.copy(); del lens; gc.collect()
     te2, meta2 = get_te_window(lens2, source2)
     hash2 = meta2['te_window_authority']['sha256']
     if hash1 != hash2 or not np.array_equal(te1, te2):
