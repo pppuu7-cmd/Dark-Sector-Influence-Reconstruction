@@ -1,0 +1,65 @@
+name: Exp073P v0.2 route byte-freeze guard v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-2.yml'
+      - 'ci/exp073p_aggregate_prerequisite_join_v0_2.py'
+      - 'ci/exp073p_actions_metadata_bundle_v0_2.py'
+      - 'experiments/073p_aggregate_prerequisite_join_superseding_r1_authority_prereg_v0_2.md'
+      - 'ci/exp073p_v02_route_bytefreeze_guard_v0_1.py'
+      - '.github/workflows/exp073p-v02-route-bytefreeze-guard-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bytefreeze-guard:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile guard
+        run: python3 -m py_compile ci/exp073p_v02_route_bytefreeze_guard_v0_1.py
+      - name: Assert exact frozen production-route bytes
+        run: |
+          python3 ci/exp073p_v02_route_bytefreeze_guard_v0_1.py \
+            --out data/derived/g7/exp073p_v02_route_bytefreeze_guard_actual_v0_1.json
+      - name: Run independent mutation selftest
+        run: |
+          python3 ci/exp073p_v02_route_bytefreeze_guard_v0_1.py \
+            --selftest \
+            --out data/derived/g7/exp073p_v02_route_bytefreeze_guard_selftest_v0_1.json
+      - name: Assert no downstream scientific authorization
+        run: |
+          python3 - <<'PY'
+          import json
+          for p in (
+              'data/derived/g7/exp073p_v02_route_bytefreeze_guard_actual_v0_1.json',
+              'data/derived/g7/exp073p_v02_route_bytefreeze_guard_selftest_v0_1.json',
+          ):
+              d=json.load(open(p))
+              assert d['scientific_classification'] is None
+              assert d['support_executor_authorized'] is False
+              assert d['support_fraction_evaluated'] is False
+              assert d['f_invalid_computed'] is False
+              assert d['covariance_read'] is False
+              assert d['whitening_read'] is False
+              assert d['nuisance_svd_read'] is False
+              assert d['relation_null_read'] is False
+              assert d['heldout_read'] is False
+              assert d['G8_read'] is False
+              assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('PASS_EXP073P_V02_ROUTE_BYTEFREEZE_NO_DOWNSTREAM_LEAKAGE')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073p-v02-route-bytefreeze-guard-v0-1-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073p_v02_route_bytefreeze_guard_actual_v0_1.json
+            data/derived/g7/exp073p_v02_route_bytefreeze_guard_selftest_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
