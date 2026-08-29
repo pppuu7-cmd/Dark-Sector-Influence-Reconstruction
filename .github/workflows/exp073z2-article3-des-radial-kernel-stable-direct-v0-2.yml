@@ -1,0 +1,97 @@
+name: Exp073Z2 Article3 DES radial-kernel stable-direct v0.2
+
+on:
+  push:
+    paths:
+      - 'ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  des-radial-kernel-stable-direct:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce prospective repair freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py)" = '92a204e96f5008683684b849c85fdeeaf14c4e70'
+          test "$(git log -1 --format=%H -- experiments/073z2_article3_des_radial_kernel_stable_direct_v0_2_prereg.md)" = '1bca74786885ec6f4af3496f5446cfc2bf4c5ced'
+          test -f experiments/073z2_article3_des_radial_kernel_stable_direct_v0_2_workflow_freeze.md
+          SELF="$(git log -1 --format=%H -- .github/workflows/exp073z2-article3-des-radial-kernel-stable-direct-v0-2.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF}\`" experiments/073z2_article3_des_radial_kernel_stable_direct_v0_2_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.trigger'
+          fi
+      - name: Install numerical stack
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y gfortran
+          python3 -m pip install --upgrade pip wheel
+          python3 -m pip install 'numpy<2.4' scipy astropy
+      - name: Checkout exact frozen CAMB
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/camb
+          git -C external/camb init
+          git -C external/camb remote add origin https://github.com/cmbant/CAMB.git
+          git -C external/camb fetch --depth 1 origin fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          git -C external/camb checkout --detach FETCH_HEAD
+          test "$(git -C external/camb rev-parse HEAD)" = 'fa3f097343fbbe427cc04b4f5f0041c22c6ec764'
+          python3 -m pip install ./external/camb
+      - name: Download exact DES radial inputs
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/des_nz
+          curl --fail --location --retry 3 -o external/des_nz/source.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_redshift_distributions_v1.fits'
+          curl --fail --location --retry 3 -o external/des_nz/lens.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/chains/2pt_NG_mcal_1110.fits'
+          echo 'b5d87138c35ae8bb4ecd02491972f544648398e606b3617039e6e54cb8ea943b  external/des_nz/source.fits' | sha256sum -c -
+          echo '114035179b5a8e41090751e9a6478536d185128581d37b5a510eff5722f417ca  external/des_nz/lens.fits' | sha256sum -c -
+      - name: Build stable radial authority only
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py \
+            --source external/des_nz/source.fits \
+            --lens external/des_nz/lens.fits \
+            --camb-root external/camb \
+            --output-json data/derived/g7/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.json \
+            --output-npz data/derived/g7/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.npz
+      - name: Enforce non-classifying firewall
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.json'))
+          assert d['status']=='PASS_EXP073Z2_DES_RADIAL_KERNEL_STABLE_DIRECT_V0_2'
+          assert d['repair_of']['run']==33277788565 and d['repair_of']['job']==99167465260
+          assert d['repair_of']['classification']=='NUMERICAL_IMPLEMENTATION_FAILURE_NOT_SCIENCE'
+          assert d['stable_source_efficiency']['no_negative_clipping'] is True
+          assert d['stable_source_efficiency']['fine_min_g']>=0.0
+          assert len(d['kernel_order']['Wm'])==20 and len(d['kernel_order']['WW'])==10
+          assert d['normalization_convergence']['Wm_max_relative_delta']<=5e-4
+          assert d['normalization_convergence']['WW_max_relative_delta']<=5e-4
+          assert d['physical_k_computed'] is False and d['angular_window_read'] is False
+          assert d['physical_support_evaluated'] is False and d['retained_coordinates_evaluated'] is False and d['science_gate_scored'] is False
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073Z2_FIREWALL_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073z2-des-radial-stable-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.json
+            data/derived/g7/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.npz
+          if-no-files-found: error
+          retention-days: 90
