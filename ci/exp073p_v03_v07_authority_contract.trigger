@@ -1,0 +1,3 @@
+triggered_utc=2026-08-29T11:28:00Z
+purpose=synthetic_failclosed_authority_validation_only
+science_scoring=false
