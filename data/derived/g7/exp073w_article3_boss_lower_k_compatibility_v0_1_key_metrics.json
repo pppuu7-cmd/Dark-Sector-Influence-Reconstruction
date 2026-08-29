@@ -1,0 +1,63 @@
+{
+  "experiment": "Exp073W",
+  "classification": "PASS_EXP073W_BOSS_LOWER_K_COMPATIBILITY_V0_1",
+  "workflow_run": 33277001376,
+  "workflow_job": 99165356858,
+  "head_sha": "0d086b8e5d8b871356c35dfcdc2080c7efd723b7",
+  "artifact_id": 9721800577,
+  "artifact_digest": "sha256:b4d6207bda8f7fd9f446609faecfba9adb8fe1783f0e84ec3814be06f3fcac8b",
+  "artifact_internal_json_sha256": "ab4fcd8436600d3b251741eb58930b480cb57b3a67cdf82d70d4561464db0d7f",
+  "candidate_count": 240,
+  "legacy_rule": {
+    "k_min_inclusive_Mpc^-1": 0.000704833374744468,
+    "k_max_inclusive_Mpc^-1": 0.06664762008318016,
+    "retained_count": 54,
+    "retained_id_sha256": "29f7f0a724f7f4ff6b1b4b8933e43d9b08545a4056fdeb65e1c5fe831deda084"
+  },
+  "current_article3_rule": {
+    "k_strictly_positive": true,
+    "k_max_inclusive_Mpc^-1": 0.06664762008318016,
+    "retained_count": 54,
+    "retained_id_sha256": "29f7f0a724f7f4ff6b1b4b8933e43d9b08545a4056fdeb65e1c5fe831deda084"
+  },
+  "compatibility": {
+    "mask_identical": true,
+    "changed_row_count": 0,
+    "max_abs_delta_f_invalid": 1.3047960692575376e-06,
+    "max_lowk_positive_envelope_fraction": 1.3047960692576666e-06,
+    "nearest_threshold_row": {
+      "coordinate_id": "BOSS|SGC|P0|matrix_row=008",
+      "legacy_f_invalid": 0.049795391309554016,
+      "current_f_invalid": 0.04979539130751013,
+      "distance_to_threshold": 0.00020460869044598706,
+      "lowk_fraction": 2.0438878026421304e-12
+    }
+  },
+  "radial_support": {
+    "sample": "BOSS_DR12_z3",
+    "selection": "0.5<z<0.75",
+    "entire_selection_inside_article3_domain": true,
+    "effective_z_used": false
+  },
+  "canonical_array_sha256": {
+    "row_ptr": "d1832d52efac26089be2334c0133a178482b2ecbcb57515e5719c81cfb3f758b",
+    "k_phys_Mpc^-1": "696060541e326bb54ad0bba42c3a0067639c9e75fc21e5323e4c110b7797a2ee",
+    "operator_abs_weight": "cb0cade0af21b97b1bf0a63509791af4f9cbcd1f03aad4a04b5e628de85ee2ed",
+    "ordinal": "f99ea19f4ffe2b2d1fe9441659069234715a4f21926f06dfb197569f5eacef12",
+    "retained_mask_legacy": "249f4d6facd52e640ba170898a91191a6c918a58ab5cb04870687bf5a8c9ac32",
+    "retained_mask_current": "249f4d6facd52e640ba170898a91191a6c918a58ab5cb04870687bf5a8c9ac32",
+    "f_invalid_legacy": "4d35fabdf6fe87c2c18b70df5f3e4ea82c99150be382dc0a9593f26557dc1c34",
+    "f_invalid_current": "4e561cac60c76af3ccc4a858cd7510a7e0c7196e1f71aaba261e3b97715bfff7",
+    "lowk_fraction": "72b330999eddd8777e84c7f9d2f61080b97632f3d189ba13265a3b0137ca2c37"
+  },
+  "scientific_accounting": {
+    "article3_scientific_readiness_percent": 52,
+    "full_1410_manifest_closed": false,
+    "global_layer_a_classified": false,
+    "layer_b_classified": false,
+    "covariance_authorized": false,
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}
