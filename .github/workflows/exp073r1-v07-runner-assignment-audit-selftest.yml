@@ -1,0 +1,68 @@
+name: Exp073R1 v0.7 runner-assignment audit self-test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073r1-v07-runner-assignment-audit-selftest.yml'
+      - 'ci/exp073r1_v0_7_runner_assignment_audit.py'
+      - 'data/derived/g7/exp073r1_v07_runner_assignment_snapshot_v0_1.json'
+      - 'data/derived/g7/exp073r1_v07_runner_assignment_audit_v0_1.json'
+  pull_request:
+    paths:
+      - '.github/workflows/exp073r1-v07-runner-assignment-audit-selftest.yml'
+      - 'ci/exp073r1_v0_7_runner_assignment_audit.py'
+      - 'data/derived/g7/exp073r1_v07_runner_assignment_snapshot_v0_1.json'
+      - 'data/derived/g7/exp073r1_v07_runner_assignment_audit_v0_1.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runner-assignment-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reproduce immutable runner-assignment audit
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073r1_v0_7_runner_assignment_audit.py \
+            --snapshot data/derived/g7/exp073r1_v07_runner_assignment_snapshot_v0_1.json \
+            --out /tmp/exp073r1_v07_runner_assignment_audit_v0_1.json
+          cmp /tmp/exp073r1_v07_runner_assignment_audit_v0_1.json \
+            data/derived/g7/exp073r1_v07_runner_assignment_audit_v0_1.json
+
+      - name: Assert infrastructure-only fail-closed boundary
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+
+          path='data/derived/g7/exp073r1_v07_runner_assignment_audit_v0_1.json'
+          with open(path,encoding='utf-8') as handle:
+              d=json.load(handle)
+          assert d['status']=='PASS_EXP073R1_V07_RUNNER_ASSIGNMENT_AUDIT'
+          assert d['infrastructure_classification']=='BLOCKED_EXP073R1_SELF_HOSTED_RUNNER_UNASSIGNED'
+          assert d['scientific_classification'] is None
+          assert d['observed_assignment']['prior_exact_labels_accepted_by_dsir_home_pc'] is True
+          assert d['observed_assignment']['attempt_2_queued_unassigned'] is True
+          assert d['inference_scope']['offline_vs_busy_vs_service_failure_distinguished'] is False
+          assert d['mutation_check_count']==7
+          assert d['active_run_modified'] is False
+          assert d['new_heavy_run_authorized'] is False
+          assert d['result_artifact_authorized'] is False
+          assert d['support_executor_authorized'] is False
+          for key in (
+              'support_fraction_evaluated','f_invalid_computed',
+              'retained_dimension_evaluated','covariance_read','whitening_read',
+              'nuisance_svd_read','relation_null_read','heldout_read','G8_read',
+          ):
+              assert d[key] is False,key
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('PASS_EXP073R1_V07_RUNNER_ASSIGNMENT_AUDIT_NO_LEAKAGE')
+          PY

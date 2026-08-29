@@ -1,0 +1,64 @@
+{
+  "artifact_count": 0,
+  "artifacts": [],
+  "attempt_1_job": {
+    "completed_at": "2026-08-29T08:47:31Z",
+    "conclusion": "failure",
+    "created_at": "2026-08-29T07:17:26Z",
+    "head_sha": "9a4606fb37d5aaa071aa57322ebb7c05eca905d7",
+    "id": 99068879596,
+    "labels": [
+      "self-hosted",
+      "linux"
+    ],
+    "name": "transport-stabilized-replay",
+    "run_attempt": 1,
+    "run_id": 33240490287,
+    "runner_group_id": 1,
+    "runner_group_name": "Default",
+    "runner_id": 21,
+    "runner_name": "DSIR-HOME-PC",
+    "started_at": "2026-08-29T07:17:28Z",
+    "status": "completed",
+    "terminal_assertion_started": false
+  },
+  "attempt_2_job": {
+    "completed_at": null,
+    "conclusion": null,
+    "created_at": "2026-08-29T09:14:51Z",
+    "head_sha": "9a4606fb37d5aaa071aa57322ebb7c05eca905d7",
+    "id": 99080934021,
+    "labels": [
+      "self-hosted",
+      "linux"
+    ],
+    "name": "transport-stabilized-replay",
+    "run_attempt": 2,
+    "run_id": 33240490287,
+    "runner_group_id": 0,
+    "runner_group_name": "",
+    "runner_id": 0,
+    "runner_name": "",
+    "started_at": "2026-08-29T09:14:51Z",
+    "status": "queued",
+    "steps": []
+  },
+  "captured_at": "2026-08-29T15:14:27Z",
+  "run": {
+    "conclusion": null,
+    "head_sha": "9a4606fb37d5aaa071aa57322ebb7c05eca905d7",
+    "id": 33240490287,
+    "path": ".github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml",
+    "run_attempt": 2,
+    "status": "queued",
+    "updated_at": "2026-08-29T09:14:51Z",
+    "workflow_id": 345172058
+  },
+  "schema": "dsir.exp073r1.v07-runner-assignment-snapshot.v0.1",
+  "source_urls": {
+    "artifacts": "https://api.github.com/repos/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/runs/33240490287/artifacts",
+    "attempt_1_jobs": "https://api.github.com/repos/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/runs/33240490287/attempts/1/jobs?per_page=100",
+    "attempt_2_jobs": "https://api.github.com/repos/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/runs/33240490287/attempts/2/jobs?per_page=100",
+    "run": "https://api.github.com/repos/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/runs/33240490287"
+  }
+}
