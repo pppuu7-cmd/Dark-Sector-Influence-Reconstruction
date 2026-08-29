@@ -1,0 +1,121 @@
+name: Exp073P v0.5 hosted R1 v0.8 prerequisite authority join
+
+on:
+  workflow_run:
+    workflows: ["Exp073R1 DESY1 GitHub-hosted rate-qualified whole-stream retry v0.8"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  hosted-prerequisite-join:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RUN_ID: '33270843577'
+      JOB_ID: '99148916507'
+      R1_HEAD: ef783ca941fb9b9b5f5eae537986c56ff06e6536
+      ARTIFACT_NAME: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify preregistered hosted join implementation
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test -f experiments/073p_v0_5_hosted_r1_v0_8_prerequisite_join_prereg.md
+          python3 -m py_compile ci/exp073p_v0_5_hosted_r1_authority_join.py
+          python3 - <<'PY'
+          from pathlib import Path
+          t=Path('experiments/073p_v0_5_hosted_r1_v0_8_prerequisite_join_prereg.md').read_text()
+          assert '`33270843577`' in t
+          assert '`99148916507`' in t
+          assert '`ef783ca941fb9b9b5f5eae537986c56ff06e6536`' in t
+          assert '`PASS_EXP073P_PREREQUISITE_BINDING_V0_5_HOSTED`' in t
+          print('EXP073P_V05_HOSTED_JOIN_PREREG_FIREWALL_PASS')
+          PY
+
+      - name: Require exact workflow-run identity when automatically triggered
+        if: github.event_name == 'workflow_run'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test '${{ github.event.workflow_run.id }}' = "${RUN_ID}"
+          test '${{ github.event.workflow_run.head_sha }}' = "${R1_HEAD}"
+          test '${{ github.event.workflow_run.event }}' = 'push'
+
+      - name: Fetch exact bound run job and artifact metadata
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/meta external/v08 data/derived/g7
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}" > external/meta/run.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs?filter=latest&per_page=100" > external/meta/jobs.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/artifacts?per_page=100" > external/meta/artifacts.json
+
+      - name: Download exact v0.8 artifact if terminal success produced it
+        shell: bash
+        run: |
+          set -euxo pipefail
+          CONCLUSION="$(python3 -c "import json; print(json.load(open('external/meta/run.json')).get('conclusion') or '')")"
+          if test "${CONCLUSION}" = 'success'; then
+            gh run download "${RUN_ID}" -n "${ARTIFACT_NAME}" -D external/v08 || true
+          fi
+
+      - name: Evaluate frozen hosted prerequisite receipt
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 ci/exp073p_v0_5_hosted_r1_authority_join.py \
+            --run-json external/meta/run.json \
+            --jobs-json external/meta/jobs.json \
+            --artifacts-json external/meta/artifacts.json \
+            --artifact-root external/v08 \
+            --out data/derived/g7/exp073p_v0_5_hosted_r1_prerequisite_receipt.json
+
+      - name: Enforce receipt firewall and downstream boundary
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073p_v0_5_hosted_r1_prerequisite_receipt.json'
+          d=json.load(open(p))
+          assert d['synthetic'] is False
+          assert d['scientific_classification'] is None
+          assert d['science_gate_scored'] is False
+          assert d['f_invalid_computed'] is False
+          assert d['covariance_read'] is False
+          assert d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['bound']['run_id']==33270843577
+          assert d['bound']['job_id']==99148916507
+          assert d['bound']['head_sha']=='ef783ca941fb9b9b5f5eae537986c56ff06e6536'
+          if d['status']=='PASS_EXP073P_PREREQUISITE_BINDING_V0_5_HOSTED':
+              assert d['support_executor_authorized'] is True
+              assert d['artifact']['name']=='exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536'
+              assert d['artifact']['digest'].startswith('sha256:')
+              assert d['transport_pass_token']=='PASS_EXP073R1_V08_HOSTED_RATE_QUALIFIED_WHOLESTREAM'
+              assert d['mapper_pass_token']=='PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1'
+              print('PASS_EXP073P_PREREQUISITE_BINDING_V0_5_HOSTED')
+          else:
+              assert d['support_executor_authorized'] is False
+              assert d['status'] in {
+                  'INCOMPLETE_EXP073P_PREREQUISITE_BINDING_V0_5_HOSTED',
+                  'INVALID_FOR_SCIENCE_EXP073P_PREREQUISITE_BINDING_V0_5_HOSTED',
+              }
+              print(d['status'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073p-v05-hosted-r1-prerequisite-${{ github.sha }}
+          path: data/derived/g7/exp073p_v0_5_hosted_r1_prerequisite_receipt.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
