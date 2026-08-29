@@ -1,6 +1,6 @@
 # DSIR RECOVERY LATEST — live pointer
 
-**Updated:** 2026-08-29 14:41 UTC
+**Updated:** 2026-08-29 14:46 UTC
 
 **Stable historical manual:** `docs/RECOVERY_MANUAL.md`
 
@@ -10,10 +10,10 @@
 **Active execution:** Exp073R1 v0.7 run `33240490287`, attempt 2, job
 `99080934021` (`queued` at `2026-08-29T14:27:27Z`; no artifacts)
 
-**Recovered main:** `f2d1043577b3e0cc1280992c1df9e0d1c3991dd9`
+**Recovered main:** `e3eaa47dea29a20bf6bb8330ac77607197097f81`
 
-**Integration branch:** PR #166, second main merge `e188558`; exact-head hosted
-integration run `33258226377` completed successfully.
+**Merged production route:** PR #166 merged to main as `e3eaa47`; main push
+self-test `33258423809` completed successfully.
 
 DSIR remains independent of RTK.  Preserve all negative and infrastructure
 results, preregistration chronology, missing-domain masks, and the distinction
@@ -44,9 +44,9 @@ Current state:
 - v0.7 exact rerun attempt 2/job `99080934021`: queued, sole heavy candidate;
 - Exp073P aggregate join v0.1 and v0.2: immutable and permanently fail-closed
   for their frozen failed R1 authorities;
-- Exp073P aggregate join v0.3: canonical main preregistration is frozen to
-  v0.7 attempt 2; the PR #166 production route is integrated with main's
-  authority, live-metadata and archive guards, but has not run on real evidence;
+- Exp073P aggregate join v0.3: canonical main preregistration and production
+  route are merged, with authority, live-metadata, archive and cross-member
+  guards; the real route has not run because no admissible R1 evidence exists;
 - Exp073P physical support and every later stage: BLOCKED;
 - `support_executor_authorized=false`;
 - G7/G8/G9: OPEN.
@@ -164,6 +164,9 @@ Real joins remain closed:
 - current-main-integrated hosted self-test run `33257888770`, job
   `99114673638`, succeeded; artifact `9716362579` has digest
   `sha256:f78ed9f12c54bd585c9f5b8022e8fcb468dee7583e842c0c76363af2dfde7b33`.
+- merged-main push self-test run `33258423809`, job `99116067842`, succeeded;
+  artifact `9716520508` has digest
+  `sha256:e9ff6bfbbe33b092dde5b19493dba00e1fce89fa4e0fd0069a89b3ac8a875907`.
 
 ## Frozen scientific boundaries
 
@@ -195,9 +198,9 @@ Never modify post hoc:
    `PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1`; Actions success or an
    upload alone is insufficient.
 5. Use only canonical v0.3 for this exact attempt.  Verify the preregistration
-   SHA256 `e27761...1711f40` and hosted integration run `33257888770`; then
-   merge PR #166 before any manual real dispatch because its production
-   workflow requires `refs/heads/main`.  Never repoint or run v0.1/v0.2.
+   SHA256 `e27761...1711f40`, merged main commit `e3eaa47`, and main push run
+   `33258423809`.  PR #166 is merged; do not dispatch the manual real route
+   until R1 supplies admissible evidence.  Never repoint or run v0.1/v0.2.
 6. If attempt/job/head/artifact multiplicity differs, reject v0.3 and freeze a
    new version before another candidate.  Never edit v0.3 post hoc.
 7. Require aggregate prerequisite PASS, then physical-support PASS, before

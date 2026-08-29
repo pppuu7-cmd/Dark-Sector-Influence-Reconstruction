@@ -207,3 +207,12 @@ canonical preregistration or any scientific boundary. The second two-parent
 merge is `e188558`; exact-head hosted run `33258226377`, job `99115545426`,
 completed successfully. Artifact `9716462575` has digest
 `sha256:710b94bcfc7b471e5879cc65836dbab48ff203c2f2f55edb1937ad5ce371cff5`.
+
+After current-main reconciliation and hosted validation, PR #166 was merged
+without squashing as main commit `e3eaa47`, preserving the authority and
+recovery chronology. Main push run `33258423809`, job `99116067842`, completed
+successfully; artifact `9716520508` has digest
+`sha256:e9ff6bfbbe33b092dde5b19493dba00e1fce89fa4e0fd0069a89b3ac8a875907`.
+This closes the production-route integration blocker only. Exp073R1 v0.7
+attempt 2 remains queued with no artifact, so the real join was not dispatched
+and `support_executor_authorized=false`; G7/G8/G9 remain OPEN.

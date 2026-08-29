@@ -232,6 +232,27 @@ Thus both the executable integration and the later current-main guard merge
 have hosted receipts. Neither receipt is a scientific or real prerequisite
 PASS.
 
+### Merge-to-main receipt
+
+After all current-base reconciliation and exact-head checks passed, PR #166 was
+merged normally (not squashed) so the preregistration and recovery chronology
+remained reachable. The main merge commit is
+`e3eaa47dea29a20bf6bb8330ac77607197097f81`; its tree remains
+`2ab15e59abca5b4a9c73b7a48b6d6165fe66dc1f`, the validated final PR tree.
+
+The main push self-test completed successfully:
+
+- run `33258423809`;
+- job `99116067842`, `completed/success`;
+- all v0.3 lineage, evaluator, metadata, payload/archive, downloader,
+  no-leakage, and upload steps: success;
+- artifact `9716520508`, size `6,343` bytes, `expired=false`;
+- digest
+  `sha256:e9ff6bfbbe33b092dde5b19493dba00e1fce89fa4e0fd0069a89b3ac8a875907`.
+
+PR merge and hosted success remove the code-integration blocker only. They do
+not authorize the real join without genuine admissible R1 attempt-2 evidence.
+
 ## Exact recovery and continuation method
 
 1. Read `docs/RECOVERY_MANUAL.md`, `docs/RECOVERY_LATEST.md`, then this file.
@@ -254,9 +275,9 @@ PASS.
    uv run --with pytest pytest -q
    ```
 
-5. Confirm exact-current-head hosted v0.3 run `33258226377` and job
-   `99115545426` remain `completed/success`. If executable bytes change on a
-   later head, require a new hosted self-test; do not rely on this receipt for
+5. Confirm merged-main commit `e3eaa47` and push run `33258423809`, job
+   `99116067842`, remain available and successful. If executable bytes change
+   later, require a new hosted self-test; do not rely on this receipt for
    changed code.
 6. If R1 attempt 2 ends in runner, transport, acquisition, workflow, or
    artifact failure, preserve the exact evidence as infrastructure and do not
@@ -265,9 +286,9 @@ PASS.
    frozen-name artifact, exact ID/digest, complete 11-member ZIP, exact
    acquisition identity, every payload byte/hash cross-binding, and internal
    `PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1`.
-8. Only after PR #166 is merged to main may the production workflow be manually
-   dispatched with the independently copied artifact ID and digest. Never run
-   or repoint v0.1/v0.2.
+8. PR #166 is merged. Only after genuine R1 PASS may the production workflow be
+   manually dispatched with the independently copied artifact ID and digest.
+   Never run or repoint v0.1/v0.2.
 9. Only a genuine real receipt
    `PASS_EXP073P_PREREQUISITE_BINDING_V0_3` may set
    `support_executor_authorized=true`. A synthetic PASS never authorizes it.
