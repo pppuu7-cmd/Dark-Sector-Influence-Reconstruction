@@ -1,0 +1,66 @@
+name: Exp073Y Article3 DES n(z) authority inventory v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073y_article3_des_nz_authority_inventory_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  des-nz-inventory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce prospective freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- ci/exp073y_article3_des_nz_authority_inventory_v0_1.py)" = '28caaa3c1cf62f31e2fb7d933cbf3bf14bfc6731'
+          test "$(git log -1 --format=%H -- experiments/073y_article3_des_nz_authority_inventory_v0_1_prereg.md)" = '973d146606184e06a1d099d9b03856c3260da18d'
+          test -f experiments/073y_article3_des_nz_authority_inventory_v0_1_workflow_freeze.md
+          SELF="$(git log -1 --format=%H -- .github/workflows/exp073y-article3-des-nz-authority-inventory-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF}\`" experiments/073y_article3_des_nz_authority_inventory_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073y_article3_des_nz_authority_inventory_v0_1.trigger'
+          fi
+      - name: Install parser
+        run: python3 -m pip install 'numpy<2.4' astropy
+      - name: Download exact radial inputs
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/des_nz
+          curl --fail --location --retry 3 -o external/des_nz/source.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_redshift_distributions_v1.fits'
+          curl --fail --location --retry 3 -o external/des_nz/lens.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/chains/2pt_NG_mcal_1110.fits'
+          test "$(stat -c %s external/des_nz/source.fits)" = '109440'
+          test "$(stat -c %s external/des_nz/lens.fits)" = '6600960'
+          echo 'b5d87138c35ae8bb4ecd02491972f544648398e606b3617039e6e54cb8ea943b  external/des_nz/source.fits' | sha256sum -c -
+          echo '114035179b5a8e41090751e9a6478536d185128581d37b5a510eff5722f417ca  external/des_nz/lens.fits' | sha256sum -c -
+      - name: Inventory raw n(z) only
+        run: |
+          mkdir -p data/derived/g7
+          python3 ci/exp073y_article3_des_nz_authority_inventory_v0_1.py --source external/des_nz/source.fits --lens external/des_nz/lens.fits --output data/derived/g7/exp073y_article3_des_nz_authority_inventory_v0_1.json
+      - name: Enforce non-classifying firewall
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073y_article3_des_nz_authority_inventory_v0_1.json'))
+          assert d['status']=='PASS_EXP073Y_DES_NZ_AUTHORITY_INVENTORY_V0_1'
+          assert d['physical_support_evaluated'] is False and d['science_gate_scored'] is False
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['source']['modified_arrays_emitted'] is False and d['lens']['modified_arrays_emitted'] is False
+          print('EXP073Y_FIREWALL_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073y-des-nz-inventory-${{ github.sha }}
+          path: data/derived/g7/exp073y_article3_des_nz_authority_inventory_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
