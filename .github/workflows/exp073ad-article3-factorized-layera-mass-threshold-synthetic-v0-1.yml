@@ -1,0 +1,66 @@
+name: Exp073AD Article3 factorized Layer-A mass-threshold synthetic v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ad_article3_factorized_layera_mass_threshold_synthetic_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exact-mass-threshold-synthetic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce prospective freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073ad_article3_factorized_layera_mass_threshold_synthetic_v0_1_prereg.md)" = '469a08d3fcdb8ea04de021572823d11bcf9f8e5b'
+          test "$(git log -1 --format=%H -- ci/exp073ad_article3_factorized_layera_mass_threshold_synthetic_v0_1.py)" = '947fd7295bcf8886de5abbc1aa83a2570b46212f'
+          test "$(git log -1 --format=%H -- docs/ARTICLE3_LAYERA_EXACT_5PCT_MASS_COMPARISON_AMENDMENT_2026-08-30.md)" = '1c4d1536a624df042869bd122c67dfbd487ec091'
+          test -f experiments/073ad_article3_factorized_layera_mass_threshold_synthetic_v0_1_workflow_freeze.md
+          SELF="$(git log -1 --format=%H -- .github/workflows/exp073ad-article3-factorized-layera-mass-threshold-synthetic-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF}\`" experiments/073ad_article3_factorized_layera_mass_threshold_synthetic_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073ad_article3_factorized_layera_mass_threshold_synthetic_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073ad_article3_factorized_layera_mass_threshold_synthetic_v0_1.py
+      - name: Run standard-library-only exact-threshold QA
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073ad_article3_factorized_layera_mass_threshold_synthetic_v0_1.py \
+            --out data/derived/g7/exp073ad_article3_factorized_layera_mass_threshold_synthetic_v0_1.json
+      - name: Enforce non-classifying firewall
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073ad_article3_factorized_layera_mass_threshold_synthetic_v0_1.json'))
+          assert d['status']=='PASS_EXP073AD_FACTORIZED_LAYERA_MASS_THRESHOLD_SYNTHETIC_V0_1'
+          assert d['test_count']==15 and all(x['pass'] for x in d['tests'].values())
+          assert d['threshold']==0.05
+          assert d['tests']['02_exact_005_mass_boundary']['result']['state']=='retained'
+          assert d['tests']['02_exact_005_mass_boundary']['result']['f_invalid']==0.05
+          assert d['tests']['14_disagreement_is_unresolved']['result']['state']=='numerically_unresolved'
+          assert d['real_angular_window_read'] is False and d['real_radial_kernel_read'] is False
+          assert d['physical_support_realdata_evaluated'] is False
+          assert d['science_gate_scored'] is False and d['scientific_readiness_credit'] is False
+          assert d['covariance_read'] is False and d['nuisance_geometry_read'] is False and d['relation_null_read'] is False and d['G8_read'] is False
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073AD_FIREWALL_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ad-mass-threshold-synthetic-${{ github.sha }}
+          path: data/derived/g7/exp073ad_article3_factorized_layera_mass_threshold_synthetic_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
