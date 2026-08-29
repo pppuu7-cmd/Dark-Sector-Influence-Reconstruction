@@ -1,0 +1,151 @@
+name: Exp073T pinned Cosmotheka inventory and NaMaster 2.7 order v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073t_cosmotheka_inventory_component_v0_1.trigger'
+
+permissions:
+  contents: read
+
+env:
+  COSMOTHEKA_COMMIT: 7bde066626f66cd7bbe79cc46224d2342840e463
+  PREREG_BLOB: 36720204574c19a0fcfef097d9beb2a40d60dc48
+  INVENTORY_BLOB: 3ce6027c88eaeee7b362bd6e5404a2f8f79abea2
+  COMPONENT_BLOB: 68c43910a343988733e11446a9c8aab2a90e6b91
+
+jobs:
+  static-inventory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Enforce Exp073T authority freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          AUTHORITY_COMMIT="$(sed -n 's/^authority_commit=//p' ci/exp073t_cosmotheka_inventory_component_v0_1.trigger)"
+          test -n "${AUTHORITY_COMMIT}"
+          test "$(git rev-parse HEAD^)" = "${AUTHORITY_COMMIT}"
+          test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073t_cosmotheka_inventory_component_v0_1.trigger'
+          test "$(git hash-object experiments/073t_cosmotheka_observation_inventory_component_order_v0_1_prereg.md)" = "${PREREG_BLOB}"
+          test "$(git hash-object ci/exp073t_cosmotheka_inventory_v0_1.py)" = "${INVENTORY_BLOB}"
+          test "$(git hash-object ci/exp073t_namaster_2p7_component_order_v0_1.py)" = "${COMPONENT_BLOB}"
+          git cat-file -e "${AUTHORITY_COMMIT}:docs/EXP073T_INVENTORY_COMPONENT_AUTHORITY_FREEZE_2026-08-29.md"
+          python3 -m py_compile ci/exp073t_cosmotheka_inventory_v0_1.py
+
+      - name: Fetch and bind pinned Cosmotheka source lineage
+        shell: bash
+        run: |
+          set -euxo pipefail
+          git clone --filter=blob:none https://github.com/Cosmotheka/Cosmotheka.git upstream
+          git -C upstream checkout "${COSMOTHEKA_COMMIT}"
+          test "$(git -C upstream rev-parse HEAD)" = "${COSMOTHEKA_COMMIT}"
+          test "$(git -C upstream hash-object input/DESY1_eBOSS_P18CMBK.yml)" = dd26bc74067bbe6da8274c60afcb2e6971e9c1f1
+          test "$(git -C upstream hash-object environment.yml)" = e438a6c12697d92ba3a761cc5327ccd3f28f183b
+          test "$(git -C upstream hash-object cosmotheka/cls/data.py)" = 88827346e4c906359413efdb374fee7a369100cf
+          test "$(git -C upstream hash-object cosmotheka/cls/cl.py)" = 9767e6256f7e57c309f5d177c2bb20142842dd47
+          test "$(git -C upstream hash-object cosmotheka/mappers/mapper_DESY1wl.py)" = d0b466f3cc740c5ef025d8029f0fb5340d0d58db
+          test "$(git -C upstream hash-object cosmotheka/mappers/utils.py)" = 0f7d104422ed3c7c9b8e5962faa2968d36aa9aec
+
+      - name: Execute pinned static observation inventory
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+          mkdir -p data/derived/g7
+          python3 ci/exp073t_cosmotheka_inventory_v0_1.py \
+            --upstream upstream \
+            --out data/derived/g7/exp073t_cosmotheka_inventory_v0_1.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073t_cosmotheka_inventory_v0_1.json'))
+          assert d['status']=='PASS_EXP073T_PINNED_COSMOTHEKA_INVENTORY_V0_1'
+          assert d['Wm_pair_count']==20 and d['WW_pair_count']==10
+          assert d['bandpowers_per_pair']==39
+          assert d['Wm_scalar_coordinate_count']==780
+          assert d['WW_scalar_coordinate_count']==390
+          assert d['DES_scalar_coordinate_count']==1170
+          assert d['DES_plus_BOSS_pre_support_inventory_count']==1410
+          assert d['physical_support_evaluated'] is False and d['science_gate_scored'] is False
+          assert d['covariance_read'] is False and d['nuisance_geometry_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073T_STATIC_FIREWALL_PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073t-static-inventory-${{ github.sha }}
+          path: data/derived/g7/exp073t_cosmotheka_inventory_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+
+  namaster-2p7-component-order:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Enforce Exp073T authority freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          AUTHORITY_COMMIT="$(sed -n 's/^authority_commit=//p' ci/exp073t_cosmotheka_inventory_component_v0_1.trigger)"
+          test -n "${AUTHORITY_COMMIT}"
+          test "$(git rev-parse HEAD^)" = "${AUTHORITY_COMMIT}"
+          test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073t_cosmotheka_inventory_component_v0_1.trigger'
+          test "$(git hash-object experiments/073t_cosmotheka_observation_inventory_component_order_v0_1_prereg.md)" = "${PREREG_BLOB}"
+          test "$(git hash-object ci/exp073t_cosmotheka_inventory_v0_1.py)" = "${INVENTORY_BLOB}"
+          test "$(git hash-object ci/exp073t_namaster_2p7_component_order_v0_1.py)" = "${COMPONENT_BLOB}"
+          git cat-file -e "${AUTHORITY_COMMIT}:docs/EXP073T_INVENTORY_COMPONENT_AUTHORITY_FREEZE_2026-08-29.md"
+          python3 -m py_compile ci/exp073t_namaster_2p7_component_order_v0_1.py
+
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euxo pipefail
+          if command -v conda >/dev/null 2>&1; then
+            conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy
+            echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+          else
+            sudo apt-get update
+            sudo apt-get install -y libgsl-dev libfftw3-dev libcfitsio-dev build-essential
+            python3 -m venv "${RUNNER_TEMP}/nmt27"
+            "${RUNNER_TEMP}/nmt27/bin/python" -m pip install --upgrade pip wheel 'numpy<2.4'
+            "${RUNNER_TEMP}/nmt27/bin/python" -m pip install 'pymaster==2.7' healpy
+            echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Execute deterministic NaMaster 2.7 component-order test
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          "${NMT_PY}" ci/exp073t_namaster_2p7_component_order_v0_1.py \
+            --out data/derived/g7/exp073t_namaster_2p7_component_order_v0_1.json
+          "${NMT_PY}" - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073t_namaster_2p7_component_order_v0_1.json'))
+          assert d['status']=='PASS_EXP073T_NAMASTER_2P7_COMPONENT_ORDER_V0_1'
+          assert d['verified_component_order']['spin0_x_spin2']==['TE','TB']
+          assert d['verified_component_order']['spin2_x_spin2']==['EE','EB','BE','BB']
+          assert d['physical_support_evaluated'] is False and d['science_gate_scored'] is False
+          assert d['covariance_read'] is False and d['nuisance_geometry_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073T_NAMASTER_FIREWALL_PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073t-namaster-order-${{ github.sha }}
+          path: data/derived/g7/exp073t_namaster_2p7_component_order_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
