@@ -80,3 +80,18 @@ parents and ten fail-closed metadata mutations were exercised while retaining
 workflow has not run because canonical R1 `33212521957` remains queued without
 an artifact.  This is infrastructure readiness only: no support, covariance,
 nuisance, relation/null or G8 quantity was evaluated, and G7/G8/G9 remain OPEN.
+
+## 2026-08-29 — Exp073R1 v0.6 attempt 1 infrastructure incomplete
+
+Canonical run `33212521957`, attempt 1, executed on the correctly isolated
+`DSIR-HOME-PC` runner.  Checkout, the unchanged evaluator-blob firewall and
+both immutable parent metadata bindings passed.  Job `98988824629` then failed
+before artifact download on pip's PEP 668 `externally-managed-environment`
+guard while executing `python3 -m pip install --user numpy healpy`.  The 84 GB
+GET never started, zero metacal rows were read, no mask or result artifact was
+created, and no support/covariance/nuisance/relation/held-out quantity was
+evaluated.  The outcome is `INCOMPLETE_EXP073R1`, not scientific FAIL.
+Aggregate join v0.1 remains permanently fail-closed for that exact job.  A
+read-only DSIR-runner reservation route was added so a v0.7 PEP 668-scoped
+replacement can be queued and exactly bound in a superseding preregistration
+before any replacement output is inspected.  G7/G8/G9 remain OPEN.

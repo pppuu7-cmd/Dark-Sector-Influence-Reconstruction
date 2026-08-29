@@ -1,0 +1,75 @@
+{
+  "schema": "dsir.exp073r1.infrastructure-incomplete.v0.1",
+  "experiment": "Exp073R1",
+  "route_version": "v0.6",
+  "recorded_at_utc": "2026-08-29T04:15:04Z",
+  "classification": "INCOMPLETE_EXP073R1",
+  "scientific_classification": null,
+  "repository": "pppuu7-cmd/Dark-Sector-Influence-Reconstruction",
+  "workflow": {
+    "run_id": 33212521957,
+    "run_attempt": 1,
+    "job_id": 98988824629,
+    "job_name": "metacal-map-longrun",
+    "head_sha": "79abf2a9694e57e7a2ba1fbb563a0f6413e891f9",
+    "path": ".github/workflows/exp073r1-desy1-selfhosted-longrun-stageb-v0-6.yml",
+    "started_at": "2026-08-29T00:07:25Z",
+    "completed_at": "2026-08-29T00:07:43Z",
+    "status": "completed",
+    "conclusion": "failure"
+  },
+  "runner": {
+    "name": "DSIR-HOME-PC",
+    "group": "Default",
+    "machine": "win-ws338",
+    "version": "2.336.0",
+    "labels": [
+      "self-hosted",
+      "linux"
+    ]
+  },
+  "verified_successful_pre_failure_controls": [
+    "actions/checkout@v4",
+    "unchanged evaluator git-blob SHA1 46fe1271d97ddd9e2164d24e7d79cf27bfda805d",
+    "evaluator Python bytecode compilation",
+    "v0.6 preregistration presence",
+    "immutable Stage-A Actions metadata",
+    "immutable Exp073R0 Actions metadata",
+    "V06_IMMUTABLE_PARENT_METADATA_PASS"
+  ],
+  "failed_step": {
+    "number": 5,
+    "name": "Install frozen mapper runtime on long-lived runner",
+    "command": "python3 -m pip install --user numpy healpy",
+    "error": "externally-managed-environment",
+    "standard": "PEP 668",
+    "exit_code": 1
+  },
+  "not_started": {
+    "source_artifact_download": true,
+    "r0_artifact_download": true,
+    "authoritative_84gb_metacal_get": true,
+    "metacal_rows_read": 0,
+    "mask_reconstruction": true,
+    "terminal_r1_interlock": true
+  },
+  "artifact_count": 0,
+  "partial_output_authoritative": false,
+  "science_gate_scored": false,
+  "support_fraction_evaluated": false,
+  "f_invalid_computed": false,
+  "retained_dimension_evaluated": false,
+  "covariance_read": false,
+  "whitening_read": false,
+  "nuisance_svd_read": false,
+  "relation_null_read": false,
+  "heldout_read": false,
+  "G8_read": false,
+  "support_executor_authorized": false,
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  },
+  "recovery_rule": "Do not reuse partial output. Prospectively freeze a replacement execution before inspecting replacement output; retain the unchanged v0.5 evaluator and every frozen scientific boundary."
+}
