@@ -1,0 +1,127 @@
+name: Exp073S DESY1 source count-mask reconstruction v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073s_desy1_source_countmask_reconstruction_v0_1.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  R1_RUN_ID: '33270843577'
+  R1_JOB_ID: '99148916507'
+  R1_HEAD: ef783ca941fb9b9b5f5eae537986c56ff06e6536
+  R1_ARTIFACT_ID: '9743987175'
+  R1_ARTIFACT_NAME: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+  R1_ARTIFACT_DIGEST: sha256:702151cb02abd291e96060887a0da3ce86b908d352997515d48897022b0387ba
+  PREREG_BLOB_SHA1: 61809ee4430321d4533523ef7834d7155ac9dcc3
+  EVALUATOR_BLOB_SHA1: 4d22d596b39f07f0bcb3af390e99ead607c517f5
+
+jobs:
+  reconstruct-source-countmask:
+    name: source-bin-${{ matrix.bin }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        bin: [0, 1, 2, 3]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Enforce authority freeze and immutable implementation
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test -f ci/exp073s_desy1_source_countmask_reconstruction_v0_1.trigger
+          AUTHORITY_COMMIT="$(sed -n 's/^authority_commit=//p' ci/exp073s_desy1_source_countmask_reconstruction_v0_1.trigger)"
+          test -n "${AUTHORITY_COMMIT}"
+          test "$(git rev-parse HEAD^)" = "${AUTHORITY_COMMIT}"
+          test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073s_desy1_source_countmask_reconstruction_v0_1.trigger'
+          test "$(git hash-object experiments/073s_desy1_source_countmask_reconstruction_v0_1_prereg.md)" = "${PREREG_BLOB_SHA1}"
+          test "$(git hash-object ci/exp073s_desy1_source_countmask_reconstruction_v0_1.py)" = "${EVALUATOR_BLOB_SHA1}"
+          git cat-file -e "${AUTHORITY_COMMIT}:docs/EXP073S_SOURCE_COUNTMASK_AUTHORITY_FREEZE_2026-08-29.md"
+          python3 -m py_compile ci/exp073s_desy1_source_countmask_reconstruction_v0_1.py
+
+      - name: Bind exact genuine R1 artifact metadata
+        shell: bash
+        run: |
+          set -euxo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${R1_RUN_ID}" > r1-run.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${R1_RUN_ID}/jobs?filter=latest&per_page=100" > r1-jobs.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${R1_RUN_ID}/artifacts?per_page=100" > r1-artifacts.json
+          python3 - <<'PY'
+          import json, os
+          run=json.load(open('r1-run.json'))
+          jobs=json.load(open('r1-jobs.json'))['jobs']
+          arts=json.load(open('r1-artifacts.json'))['artifacts']
+          assert run['id']==int(os.environ['R1_RUN_ID'])
+          assert run['status']=='completed' and run['conclusion']=='success'
+          assert run['head_sha']==os.environ['R1_HEAD']
+          assert run['path']=='.github/workflows/exp073r1-desy1-github-hosted-wholestream-retry-v0-8.yml'
+          jj=[j for j in jobs if j['id']==int(os.environ['R1_JOB_ID'])]
+          assert len(jj)==1 and jj[0]['status']=='completed' and jj[0]['conclusion']=='success'
+          aa=[a for a in arts if a['id']==int(os.environ['R1_ARTIFACT_ID'])]
+          assert len(aa)==1
+          a=aa[0]
+          assert a['name']==os.environ['R1_ARTIFACT_NAME']
+          assert a['digest']==os.environ['R1_ARTIFACT_DIGEST']
+          assert a['expired'] is False
+          print('EXP073S_R1_ARTIFACT_METADATA_PASS')
+          PY
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.R1_ARTIFACT_NAME }}
+          path: external/r1
+          github-token: ${{ github.token }}
+          run-id: ${{ env.R1_RUN_ID }}
+
+      - name: Install minimal numerical runtime
+        run: python3 -m pip install --disable-pip-version-check 'numpy==2.5.2'
+
+      - name: Reconstruct exact source count-mask semantics for bin
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073s_desy1_source_countmask_reconstruction_v0_1.py \
+            --bin '${{ matrix.bin }}' \
+            --artifact-root external/r1 \
+            --out "data/derived/g7/exp073s_source_bin${{ matrix.bin }}_countmask_v0_1.json"
+
+      - name: Enforce no-science boundary
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          b='${{ matrix.bin }}'
+          d=json.load(open(f'data/derived/g7/exp073s_source_bin{b}_countmask_v0_1.json'))
+          assert d['status']=='PASS_EXP073S_DESY1_SOURCE_COUNTMASK_RECONSTRUCTION_V0_1'
+          assert d['source_bin']==int(b)
+          assert d['binary_occupancy_reproduction']['matches_r1_summary'] is True
+          assert d['physical_support_evaluated'] is False
+          assert d['science_gate_scored'] is False
+          assert d['f_invalid_computed'] is False
+          assert d['covariance_read'] is False
+          assert d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073S_BIN_FIREWALL_PASS', b)
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073s-source-countmask-bin${{ matrix.bin }}-${{ github.sha }}
+          path: data/derived/g7/exp073s_source_bin${{ matrix.bin }}_countmask_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
