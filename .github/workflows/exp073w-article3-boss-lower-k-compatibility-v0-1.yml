@@ -1,0 +1,100 @@
+name: Exp073W Article3 BOSS lower-k compatibility v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ci/exp073w_article3_boss_lower_k_compatibility_v0_1.trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  boss-lower-k-compatibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce frozen implementation and preregistration
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- ci/exp073w_article3_boss_lower_k_compatibility_v0_1.py)" = 'aa2c1165a7c9ab4291bddfc016005d807716c3c1'
+          test "$(git log -1 --format=%H -- experiments/073w_article3_boss_broadrow_layera_authority_v0_1_prereg.md)" = '389cfb4e027f2e28298f686cd7149beeda659aaf'
+          test -f experiments/073w_article3_boss_lower_k_compatibility_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073w-article3-boss-lower-k-compatibility-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073w_article3_boss_lower_k_compatibility_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073w_article3_boss_lower_k_compatibility_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073w_article3_boss_lower_k_compatibility_v0_1.py
+
+      - name: Install numerical dependency
+        run: python3 -m pip install --user numpy
+
+      - name: Download exact frozen BOSS z3 matrices
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/exp073w_boss
+          base='https://fbeutler.github.io/hub'
+          curl --fail --location --retry 3 -o external/exp073w_boss/W_NGC_z3.gz "$base/W_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073w_boss/W_SGC_z3.gz "$base/W_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073w_boss/M_NGC_z3.gz "$base/M_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073w_boss/M_SGC_z3.gz "$base/M_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          for f in external/exp073w_boss/*.gz; do
+            gzip -t "$f"
+            gzip -dc "$f" > "${f%.gz}"
+          done
+
+      - name: Run dual lower-k compatibility audit
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073w_article3_boss_lower_k_compatibility_v0_1.py \
+            --root external/exp073w_boss \
+            --output-json data/derived/g7/exp073w_article3_boss_lower_k_compatibility_v0_1.json \
+            --output-npz data/derived/g7/exp073w_article3_boss_broadrow_layera_arrays_v0_1.npz
+
+      - name: Enforce valid PASS-or-FAIL scientific accounting
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073w_article3_boss_lower_k_compatibility_v0_1.json'
+          d=json.load(open(p))
+          assert d['classification'] in {
+              'PASS_EXP073W_BOSS_LOWER_K_COMPATIBILITY_V0_1',
+              'FAIL_EXP073W_BOSS_LOWER_K_COMPATIBILITY_V0_1',
+          }
+          assert d['controls']['legacy_authority_reproduced'] is True
+          assert d['legacy']['retained_count']==54
+          assert d['candidate_count']==240
+          assert d['ordered_coordinate_id_sha256']=='7315944adea1a36c0bdb162d57c567330151018dd2058f80e2cb6cb20c153ea0'
+          assert d['radial_support']['entire_selection_inside_domain'] is True
+          assert d['radial_support']['effective_z_used'] is False
+          assert d['k_rules']['effective_k_used'] is False
+          assert d['science_boundary']['article3_scientific_readiness_percent']==52
+          assert d['science_boundary']['full_1410_manifest_closed'] is False
+          assert d['science_boundary']['global_layer_a_classified'] is False
+          assert d['science_boundary']['covariance_authorized'] is False
+          assert d['science_boundary']['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073W_VALID_SCIENTIFIC_ACCOUNTING', d['classification'])
+          PY
+
+      - name: Upload Exp073W authority record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073w-boss-lower-k-compatibility-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073w_article3_boss_lower_k_compatibility_v0_1.json
+            data/derived/g7/exp073w_article3_boss_broadrow_layera_arrays_v0_1.npz
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 6
