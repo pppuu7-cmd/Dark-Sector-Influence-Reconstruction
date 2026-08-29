@@ -1,19 +1,23 @@
 # DSIR RECOVERY LATEST — live pointer
 
-**Updated:** 2026-08-29 14:46 UTC
+**Updated:** 2026-08-29 15:14 UTC
 
 **Stable historical manual:** `docs/RECOVERY_MANUAL.md`
 
 **Current detailed checkpoint:**
-`recovery/2026-08-29_exp073p_v03_production_route_main_guard_integration.md`
+`recovery/2026-08-29_exp073r1_v07_attempt2_runner_assignment_audit.md`
 
 **Active execution:** Exp073R1 v0.7 run `33240490287`, attempt 2, job
-`99080934021` (`queued` at `2026-08-29T14:27:27Z`; no artifacts)
+`99080934021` (`queued` and unassigned at `2026-08-29T15:14:27Z`; no
+artifacts)
 
-**Recovered main:** `e3eaa47dea29a20bf6bb8330ac77607197097f81`
+**Recovered main:** `fcd771a286301d811ec4f4dd9aa759df746d5371`
 
 **Merged production route:** PR #166 merged to main as `e3eaa47`; main push
 self-test `33258423809` completed successfully.
+
+**Production-route byte freeze:** main `fcd771a`; hosted guard run
+`33259873639`, job `99119863197`, completed successfully.
 
 DSIR remains independent of RTK.  Preserve all negative and infrastructure
 results, preregistration chronology, missing-domain masks, and the distinction
@@ -41,7 +45,8 @@ Current state:
   remote whole-object EOF infrastructure failures, no admissible R1 result;
 - v0.7 transport-stabilized run `33240490287`, attempt 1: terminal runner loss
   during acquisition, no artifact;
-- v0.7 exact rerun attempt 2/job `99080934021`: queued, sole heavy candidate;
+- v0.7 exact rerun attempt 2/job `99080934021`: queued with `runner_id=0`
+  and no runner name, sole heavy candidate;
 - Exp073P aggregate join v0.1 and v0.2: immutable and permanently fail-closed
   for their frozen failed R1 authorities;
 - Exp073P aggregate join v0.3: canonical main preregistration and production
@@ -91,14 +96,29 @@ Classification:
 - run `33240490287`;
 - attempt 1/job `99068879596`: runner loss while acquisition step was reported
   in progress, no cleanup/upload artifact;
-- exact rerun attempt 2/job `99080934021`: still queued at
-  `2026-08-29T14:27:27Z`; the run artifact list is empty.
+- exact rerun attempt 2/job `99080934021`: still queued and unassigned at
+  `2026-08-29T15:14:27Z`; `runner_id=0`, runner name/group are empty, and the
+  run artifact list is empty.
 
 v0.7 changes transport staging only: each remote attempt restarts a no-Range
 whole-object GET from byte zero; exact size `84075649920` and SHA256
 `39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8`
 are required before loopback replay to the unchanged evaluator.  The queued
 job is the only authorized heavy candidate.  Do not dispatch a duplicate.
+
+### Attempt-2 runner-assignment diagnosis
+
+Attempt 1 of this exact run used the same `[self-hosted, linux]` labels and was
+assigned to runner `DSIR-HOME-PC` (runner ID `21`, group `Default`).  Attempt 2
+has identical authority and labels but no assigned runner.  Thus the label
+contract is compatible; the current infrastructure blocker is an unassigned
+self-hosted runner, classified
+`BLOCKED_EXP073R1_SELF_HOSTED_RUNNER_UNASSIGNED`.
+
+The public job response cannot distinguish offline from busy or a transient
+Actions service failure.  Start or restart the existing listener with
+`cd ~/actions-runner-dsir && ./run.sh`; do not reconfigure it, change workflow
+labels, cancel the queued attempt or dispatch a duplicate.
 
 ## Artifact-delivery firewall observation
 
@@ -155,7 +175,8 @@ Real joins remain closed:
   artifact `9713466820` has digest
   `sha256:d53b87eec234c3533fd9d167bfdae7433db27e4aa106a614c2dd5812a9f6019e`;
 - synthetic v0.3 PASS retains `support_executor_authorized=false`; the manual
-  real workflow has not run and cannot be dispatched from the PR branch.
+  real workflow has not run and must not be dispatched until exact admissible
+  R1 evidence exists.
 - current-main supplemental hosted guards also passed: authority run
   `33250019007`, metadata-set run `33252122146`, and archive-member run
   `33254539043`; these are implementation-validation PASS results only;
@@ -167,6 +188,10 @@ Real joins remain closed:
 - merged-main push self-test run `33258423809`, job `99116067842`, succeeded;
   artifact `9716520508` has digest
   `sha256:e9ff6bfbbe33b092dde5b19493dba00e1fce89fa4e0fd0069a89b3ac8a875907`.
+- additive production-route byte-freeze guard run `33259873639`, job
+  `99119863197`, succeeded; it freezes the actual v0.3 workflow blob
+  `2950750312c153f75fe79c2c16fca6f74c7df5dc` and the canonical preregistration
+  without modifying either file or authorizing support.
 
 ## Frozen scientific boundaries
 
@@ -188,7 +213,8 @@ Never modify post hoc:
 ## Exact next actions
 
 1. Keep run `33240490287`, attempt 2/job `99080934021`, as the sole heavy R1
-   candidate; wait for a compatible self-hosted runner and do not duplicate.
+   candidate.  Start or restart the already registered listener with
+   `cd ~/actions-runner-dsir && ./run.sh`, keep it alive, and do not duplicate.
 2. If it starts, retain the frozen no-Range, full-from-zero, exact-size/SHA and
    unchanged-evaluator route.
 3. On termination, record exact attempt/job/step boundary, acquisition
@@ -199,8 +225,10 @@ Never modify post hoc:
    upload alone is insufficient.
 5. Use only canonical v0.3 for this exact attempt.  Verify the preregistration
    SHA256 `e27761...1711f40`, merged main commit `e3eaa47`, and main push run
-   `33258423809`.  PR #166 is merged; do not dispatch the manual real route
-   until R1 supplies admissible evidence.  Never repoint or run v0.1/v0.2.
+   `33258423809`, then require the production-route byte-freeze guard from
+   main `fcd771a` / hosted run `33259873639`.  PR #166 is merged; do not
+   dispatch the manual real route until R1 supplies admissible evidence.
+   Never repoint or run v0.1/v0.2.
 6. If attempt/job/head/artifact multiplicity differs, reject v0.3 and freeze a
    new version before another candidate.  Never edit v0.3 post hoc.
 7. Require aggregate prerequisite PASS, then physical-support PASS, before
@@ -212,28 +240,34 @@ Never modify post hoc:
 
 1. `docs/RECOVERY_MANUAL.md`
 2. `docs/RECOVERY_LATEST.md`
-3. `recovery/2026-08-29_exp073p_v03_production_route_main_guard_integration.md`
-4. `experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md`
-5. `recovery/2026-08-29_exp073p_v03_v07_authority_prereg_and_attempt_aware_selftest.md`
-6. `recovery/2026-08-29_exp073p_v03_live_metadata_set_guard_and_r1_v07_queue_checkpoint.md`
-7. `recovery/2026-08-29_exp073p_v03_archive_member_guard_pass_and_r1_v07_queue_checkpoint.md`
-8. `recovery/2026-08-29_exp073p_v03_cross_member_consistency_guard_pass_r1_v07_queued.md`
-9. `ci/exp073p_aggregate_prerequisite_join_v0_3.py`
-10. `ci/exp073p_actions_metadata_bundle_v0_3.py`
-11. `ci/exp073p_v03_artifact_zip_download_v0_1.py`
-12. `ci/exp073p_v07_r1_payload_bundle_v0_3.py`
-13. `ci/exp073p_v03_cross_member_consistency_failclosed_selftest.py`
-14. `.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-3.yml`
-15. `recovery/2026-08-29_exp073p_v03_v07_attempt2_authority_ready.md`
-16. `recovery/2026-08-29_exp073r1_v07_attempt2_queued_artifact_delivery_firewall.md`
-17. `recovery/2026-08-29_exp073r1_v07_runner_loss_attempt1_exact_rerun_attempt2.md`
-18. `recovery/2026-08-29_exp073r1_v07_live_acquisition_firewall_audit.md`
-19. `experiments/073r1_v0_7_transport_stabilized_exact_byte_replay_prereg.md`
-20. `ci/exp073r1_v0_7_whole_object_acquire.py`
-21. `.github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml`
-22. `data/derived/g7/exp073r1_v06_repeated_remote_eof_artifact_audit_v0_1.json`
-23. `ci/exp073r1_v0_7_artifact_delivery_audit.py`
-24. `data/derived/g7/exp073r1_v07_artifact_delivery_risk_audit_v0_1.json`
-25. `experiments/073p_aggregate_prerequisite_join_superseding_r1_authority_prereg_v0_2.md`
-26. `recovery/2026-08-28_exp073r1_to_exp073p_execution_integrity_matrix.md`
-27. `experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md`
+3. `recovery/2026-08-29_exp073r1_v07_attempt2_runner_assignment_audit.md`
+4. `recovery/2026-08-29_exp073p_v03_production_route_main_guard_integration.md`
+5. `experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md`
+6. `recovery/2026-08-29_exp073p_v03_production_route_byte_freeze_guard.md`
+7. `ci/exp073p_v03_production_route_byte_freeze_v0_1.py`
+8. `ci/exp073r1_v0_7_runner_assignment_audit.py`
+9. `data/derived/g7/exp073r1_v07_runner_assignment_snapshot_v0_1.json`
+10. `data/derived/g7/exp073r1_v07_runner_assignment_audit_v0_1.json`
+11. `recovery/2026-08-29_exp073p_v03_v07_authority_prereg_and_attempt_aware_selftest.md`
+12. `recovery/2026-08-29_exp073p_v03_live_metadata_set_guard_and_r1_v07_queue_checkpoint.md`
+13. `recovery/2026-08-29_exp073p_v03_archive_member_guard_pass_and_r1_v07_queue_checkpoint.md`
+14. `recovery/2026-08-29_exp073p_v03_cross_member_consistency_guard_pass_r1_v07_queued.md`
+15. `ci/exp073p_aggregate_prerequisite_join_v0_3.py`
+16. `ci/exp073p_actions_metadata_bundle_v0_3.py`
+17. `ci/exp073p_v03_artifact_zip_download_v0_1.py`
+18. `ci/exp073p_v07_r1_payload_bundle_v0_3.py`
+19. `ci/exp073p_v03_cross_member_consistency_failclosed_selftest.py`
+20. `.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-3.yml`
+21. `recovery/2026-08-29_exp073p_v03_v07_attempt2_authority_ready.md`
+22. `recovery/2026-08-29_exp073r1_v07_attempt2_queued_artifact_delivery_firewall.md`
+23. `recovery/2026-08-29_exp073r1_v07_runner_loss_attempt1_exact_rerun_attempt2.md`
+24. `recovery/2026-08-29_exp073r1_v07_live_acquisition_firewall_audit.md`
+25. `experiments/073r1_v0_7_transport_stabilized_exact_byte_replay_prereg.md`
+26. `ci/exp073r1_v0_7_whole_object_acquire.py`
+27. `.github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml`
+28. `data/derived/g7/exp073r1_v06_repeated_remote_eof_artifact_audit_v0_1.json`
+29. `ci/exp073r1_v0_7_artifact_delivery_audit.py`
+30. `data/derived/g7/exp073r1_v07_artifact_delivery_risk_audit_v0_1.json`
+31. `experiments/073p_aggregate_prerequisite_join_superseding_r1_authority_prereg_v0_2.md`
+32. `recovery/2026-08-28_exp073r1_to_exp073p_execution_integrity_matrix.md`
+33. `experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md`

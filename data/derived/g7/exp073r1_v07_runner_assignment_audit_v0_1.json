@@ -1,0 +1,73 @@
+{
+  "G8_read": false,
+  "active_run_modified": false,
+  "authority": {
+    "head_sha": "9a4606fb37d5aaa071aa57322ebb7c05eca905d7",
+    "job_id": 99080934021,
+    "run_attempt": 2,
+    "run_id": 33240490287,
+    "workflow_id": 345172058
+  },
+  "captured_at": "2026-08-29T15:14:27Z",
+  "covariance_read": false,
+  "f_invalid_computed": false,
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  },
+  "heldout_read": false,
+  "inference_scope": {
+    "label_incompatibility_ruled_out_for_recorded_runner": true,
+    "offline_vs_busy_vs_service_failure_distinguished": false,
+    "runner_busy_state_determined": false,
+    "runner_endpoint_queried": false,
+    "runner_online_state_determined": false
+  },
+  "infrastructure_classification": "BLOCKED_EXP073R1_SELF_HOSTED_RUNNER_UNASSIGNED",
+  "interpretation": "Attempt 1 proves that DSIR-HOME-PC in the Default group accepted the same [self-hosted, linux] labels for the same run, workflow and head. Attempt 2 is queued with runner_id=0 and no runner name, so it was unassigned at capture time. Public job metadata cannot distinguish an offline runner from a busy runner or a transient Actions service failure.",
+  "mutation_check_count": 7,
+  "mutation_checks": [
+    "attempt_2_label_change",
+    "attempt_2_assigned_runner",
+    "attempt_1_runner_change",
+    "artifact_appears",
+    "authority_head_change",
+    "authority_job_change",
+    "attempt_2_terminal"
+  ],
+  "new_heavy_run_authorized": false,
+  "nuisance_svd_read": false,
+  "observed_assignment": {
+    "attempt_1_runner_group": "Default",
+    "attempt_1_runner_id": 21,
+    "attempt_1_runner_name": "DSIR-HOME-PC",
+    "attempt_2_queued_unassigned": true,
+    "attempt_2_runner_group": "",
+    "attempt_2_runner_id": 0,
+    "attempt_2_runner_name": "",
+    "labels_identical_between_attempts": true,
+    "prior_exact_labels_accepted_by_dsir_home_pc": true,
+    "required_labels": [
+      "self-hosted",
+      "linux"
+    ],
+    "run_artifact_count": 0
+  },
+  "operational_recovery": [
+    "Start or restart ./run.sh in ~/actions-runner-dsir and keep that process alive.",
+    "Confirm it reports Connected to GitHub and Listening for Jobs.",
+    "Do not reconfigure the runner, change workflow labels, cancel the queued job, or dispatch another heavy run."
+  ],
+  "relation_null_read": false,
+  "result_artifact_authorized": false,
+  "retained_dimension_evaluated": false,
+  "schema": "dsir.exp073r1.v07-runner-assignment-audit.v0.1",
+  "scientific_classification": null,
+  "snapshot": "data/derived/g7/exp073r1_v07_runner_assignment_snapshot_v0_1.json",
+  "snapshot_sha256": "0d51868e9c29440d94fd5f8917ef42c172ddc84745e0b2a738e7ef943a5e78ac",
+  "status": "PASS_EXP073R1_V07_RUNNER_ASSIGNMENT_AUDIT",
+  "support_executor_authorized": false,
+  "support_fraction_evaluated": false,
+  "whitening_read": false
+}

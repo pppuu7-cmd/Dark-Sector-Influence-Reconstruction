@@ -216,3 +216,32 @@ successfully; artifact `9716520508` has digest
 This closes the production-route integration blocker only. Exp073R1 v0.7
 attempt 2 remains queued with no artifact, so the real join was not dispatched
 and `support_executor_authorized=false`; G7/G8/G9 remain OPEN.
+
+## 2026-08-29 — Exp073R1 v0.7 attempt-2 runner-assignment audit
+
+At `2026-08-29T15:14:27Z`, run `33240490287`, attempt 2/job `99080934021`,
+remained queued with an empty artifact set. Attempt-aware job metadata resolves
+the runner-label question without changing the active workflow: attempt 1 of
+the same run, workflow and head used the identical `[self-hosted, linux]`
+labels and was assigned to runner ID `21`, `DSIR-HOME-PC`, group `Default`.
+Attempt 2 instead had `runner_id=0`, empty runner name/group and no steps.
+Thus the recorded label contract is compatible and the current state is
+`BLOCKED_EXP073R1_SELF_HOSTED_RUNNER_UNASSIGNED`, not a label mismatch and not
+a scientific FAIL. Public job metadata cannot distinguish offline from busy or
+a transient Actions service failure.
+
+An immutable reduced API snapshot, executable fail-closed audit, committed
+receipt and hosted self-test route were added. Seven mutations cover labels,
+assignment, runner identity, artifact appearance, run head, job identity and
+termination. The operational recovery is to start or restart the existing
+`~/actions-runner-dsir/run.sh` listener and preserve the sole queued attempt;
+no reconfiguration, cancellation, duplicate heavy run or real Exp073P join was
+authorized. No support, `f_invalid`, retained dimension, covariance,
+whitening, nuisance, relation/null, held-out or G8 quantity was read;
+`support_executor_authorized=false`, and G7/G8/G9 remain OPEN.
+
+Before finalizing this checkpoint, concurrent `main` commits `8005e03`..
+`fcd771a` were incorporated unchanged. They add the independent Exp073P v0.3
+production-route byte-freeze guard and hosted success `33259873639`; they do
+not change the runner-assignment classification or any frozen scientific
+criterion.
