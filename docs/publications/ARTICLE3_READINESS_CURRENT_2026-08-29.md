@@ -6,11 +6,11 @@ Date: 2026-08-29
 
 **Scientific repository readiness for preparing Article 3: 52%.**
 
-This is deliberately a strict scientific-readiness score. Synthetic QA, CI hardening, provenance firewalls, preregistration-only work and manuscript scaffolding do not increase this headline percentage unless they close a real preregistered scientific milestone.
+This is deliberately a strict scientific-readiness score. Synthetic QA, CI hardening, provenance firewalls, preregistration-only work and coordinate-skeleton work do not increase this headline percentage unless they close a real preregistered scientific milestone.
 
 Secondary planning indicators, kept separate from the scientific score:
 
-- method / technical / provenance readiness: approximately **76%**;
+- method / technical / provenance readiness: approximately **78%**;
 - manuscript / editorial packaging readiness: approximately **35%**.
 
 These secondary indicators must not be quoted as the scientific readiness of Article 3.
@@ -39,10 +39,12 @@ These secondary indicators must not be quoted as the scientific readiness of Art
 - exact hosted Exp073P v0.5 prerequisite receipt PASS: workflow run `33271876425`, job `99151650192`, receipt artifact `9720339539`, digest `sha256:dc63797a8bfe12a91c264eb5204182164e15d9f6441886ef79ab25f55b3040fc`, with `support_executor_authorized=true`;
 - corrected Exp073S v0.2 reproduced all four DES-Y1 source-bin count-mask semantics against the genuine R1 authority in run `33272641756`; all four independent jobs passed without reading covariance or scoring support;
 - Exp073T v0.1 independently froze the pinned Cosmotheka observation inventory and verified NaMaster 2.7 component ordering in run `33272691162`;
-- the current pre-support scalar inventory is independently reconstructed as 780 DES Wm + 390 DES WW + 240 frozen BOSS rows = **1410 candidate coordinates**, before any support classification;
+- Exp073U v0.1 prospectively froze and then reproduced the complete non-classifying 1410-coordinate identity/order skeleton in run `33274852199`, job `99159670108`;
+- Exp073U authority artifact `9721184683`, digest `sha256:d44e628e9312fb5a919a6681b69d9e06e18418cdd299de641e6465e60dadfd68`, contains exact block order `Wm[780] -> WW[390] -> BOSS[240]` and ordered-ID SHA256 `bfaf582518cdbfd34b1e8392da83dac6b0885948bc31f2c29d4e48247c23af75`;
+- Exp073U explicitly records the legacy hard-coded Exp073S R1 artifact-id/digest mismatch as a metadata-only provenance defect and rebinds later authority to exact GitHub/hosted-receipt metadata, without altering any science result;
 - home/self-hosted internet-dependent execution is not an operational dependency for the current hosted Article-3 route.
 
-These foundations explain why technical/provenance readiness is high. Exp073S and Exp073T are deliberately non-classifying inputs: they improve provenance and make the next real stage executable, but they do not themselves constitute a support PASS.
+These foundations explain why technical/provenance readiness is high. Exp073S, Exp073T and Exp073U are deliberately non-classifying inputs: they make the real Layer-A construction deterministic, but they do not themselves constitute a support PASS or a completed full finite-response operator.
 
 ## Open scientific milestones
 
@@ -50,7 +52,7 @@ These foundations explain why technical/provenance readiness is high. Exp073S an
 |---|---|---|
 | Genuine Exp073R1 exact DES-Y1 reproduction | **CLOSED / PASS** | run `33270843577` reached genuine frozen PASS with exact parent and whole-stream checks |
 | Real hosted prerequisite authority receipt | **CLOSED / PASS** | Exp073P v0.5 receipt bound exact run/job/head/artifact/digest and set `support_executor_authorized=true` |
-| Full pre-support finite observation-operator candidate manifest | OPEN / inputs now authority-bound | must freeze complete 1410-coordinate component/order manifest before support classification and remain covariance/nuisance/G7/G8 blind |
+| Full pre-support finite observation-operator candidate manifest | **OPEN / coordinate skeleton CLOSED** | identity/order is frozen for all 1410 rows, but the real finite operator / broad physical support representation is still missing; no effective scalar `(z,k)` shortcut is allowed for DES bandpowers |
 | Layer A broad operator-support leakage | OPEN | real Wm/WW broad window/kernel support plus frozen BOSS mm component; only unchanged 5% criterion and >=15 complete coordinates |
 | Layer B Article-3 coordinate/common-response validity | OPEN | evaluate only the Layer-A-retained set with the later coordinate-count/envelope contract; unchanged 5% and >=15 criteria |
 | Covariance restriction / whitening on final retained support | OPEN | only after both support layers PASS; no clipping/jitter/shrinkage rescue |
@@ -67,8 +69,8 @@ G7, G8 and G9 remain OPEN.
 The following values are planning checkpoints, not arbitrary progress bars. The headline score may increase only when the named real milestones are evidenced in immutable repository artifacts.
 
 - **44%** — architecture, contracts and fail-closed provenance were mature, but the real Article-3 inference chain had not crossed its first reproduction milestone.
-- **52% now** — genuine Exp073R1 PASS plus exact hosted prerequisite authority receipt are both evidenced by immutable real artifacts.
-- **about 55–57%** — immutable full pre-support finite-operator candidate manifest with frozen component/coordinate order.
+- **52% now** — genuine Exp073R1 PASS plus exact hosted prerequisite authority receipt are both evidenced by immutable real artifacts; Exp073U has additionally frozen candidate identity/order but intentionally earns no scientific credit by itself.
+- **about 55–57%** — immutable full pre-support finite-operator candidate manifest with the real broad operator representation bound, not merely coordinate IDs.
 - **about 61–63%** — real broad operator-support leakage PASS on Wm/WW plus the frozen BOSS component.
 - **about 65–67%** — real Article-3 coordinate/common-response support PASS; dual physical-support stage is then complete.
 - **about 72–74%** — real covariance restriction and Cholesky whitening pass on exactly that final retained support.
@@ -82,7 +84,7 @@ A real frozen-criterion scientific FAIL does not mean that the repository become
 
 The current scientific order is:
 
-`full pre-support finite observation operator + immutable candidate manifest`
+`bind the real broad finite observation operator to the frozen Exp073U 1410-row skeleton`
 
 `-> Layer A broad operator-support leakage audit`
 
@@ -104,17 +106,19 @@ No later stage may be used to choose support coordinates or alter an earlier thr
 
 ## Current operational blocker
 
-The former R1/hosted-receipt blocker is closed.
+The R1/hosted-receipt blocker is closed and the coordinate-order ambiguity is now closed by Exp073U.
 
-The first unresolved dependency is now the **full pre-support finite observation-operator candidate manifest**. Its inventory is already independently constrained to 1410 coordinates:
+The first unresolved dependency is the **real broad finite observation-operator representation** on the exact Exp073U skeleton. The immutable candidate order is:
 
-- frozen BOSS component: 240 observed even-multipole rows;
-- DES Wm: 20 lens-source pairs x 39 bandpowers = 780 scalar `TE` coordinates;
-- DES WW: 10 source-source pairs x 39 bandpowers = 390 scalar `EE` coordinates.
+- DES Wm: 780 scalar `TE` coordinates, ordinals 0..779;
+- DES WW: 390 scalar `EE` coordinates, ordinals 780..1169;
+- frozen BOSS component: 240 observed even-multipole rows, ordinals 1170..1409.
 
-The DES coordinate lists and order hashes are supplied by Exp073T; NaMaster 2.7 component order was independently verified; source-bin count-mask identities are supplied by four successful Exp073S v0.2 artifacts. The BOSS row geometry was frozen before its legacy component support output.
+For DES Wm/WW, a measured pseudo-C_ell bandpower has broad `(ell,z,k)` support. Therefore the next producer must bind the complete positive bandpower/window envelope and exact lens/source kernels prospectively; it must not invent an effective scalar `k` or `z` to satisfy the later Layer-B schema.
 
-The next implementation must bind these authorities into one immutable pre-support manifest **without using any support result, covariance value, nuisance rank, relation/null result or G8 output to select or order coordinates**. Only after that manifest is frozen may Layer A be scored.
+The Layer-A producer may use the already-frozen Cosmotheka/NaMaster operator definitions, exact source-bin count-mask identities, redshift kernels and frozen BOSS `C=W@M` geometry. It may not read covariance, nuisance geometry, relation/null results or G8, and it may not use legacy retained masks to choose the 1410 candidates.
+
+Only after the real broad finite operator is immutably bound can the 55–57% checkpoint close and Layer A be scored.
 
 ## Reporting convention
 
