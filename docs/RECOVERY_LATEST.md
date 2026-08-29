@@ -1,6 +1,6 @@
 # DSIR RECOVERY LATEST — live pointer
 
-**Updated:** 2026-08-29 14:34 UTC
+**Updated:** 2026-08-29 14:41 UTC
 
 **Stable historical manual:** `docs/RECOVERY_MANUAL.md`
 
@@ -12,9 +12,8 @@
 
 **Recovered main:** `f2d1043577b3e0cc1280992c1df9e0d1c3991dd9`
 
-**Integration branch:** PR #166. The first main integration passed hosted run
-`33257888770`; main then advanced with a cross-member guard, now merged into
-the branch and awaiting the new exact-head hosted check.
+**Integration branch:** PR #166, second main merge `e188558`; exact-head hosted
+integration run `33258226377` completed successfully.
 
 DSIR remains independent of RTK.  Preserve all negative and infrastructure
 results, preregistration chronology, missing-domain masks, and the distinction

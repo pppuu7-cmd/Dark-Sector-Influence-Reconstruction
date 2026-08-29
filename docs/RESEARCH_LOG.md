@@ -203,5 +203,7 @@ independent cross-member consistency guard. That guard's hosted run
 `33257187305` had already rejected 19 summary/acquisition/runtime/row-accounting
 mutations. Its unchanged files were merged into PR #166 and the suite passed
 locally. This is additive implementation validation and does not alter the
-canonical preregistration or any scientific boundary. A new exact-head hosted
-check is required after this second main merge.
+canonical preregistration or any scientific boundary. The second two-parent
+merge is `e188558`; exact-head hosted run `33258226377`, job `99115545426`,
+completed successfully. Artifact `9716462575` has digest
+`sha256:710b94bcfc7b471e5879cc65836dbab48ff203c2f2f55edb1937ad5ce371cff5`.

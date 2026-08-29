@@ -208,6 +208,30 @@ The immutable synthetic artifact is:
 This is hosted implementation validation only. It is not a real prerequisite
 receipt and cannot authorize physical support.
 
+### Second main synchronization and exact-head hosted receipt
+
+After the first hosted integration receipt, main advanced to
+`f2d1043577b3e0cc1280992c1df9e0d1c3991dd9` with the cross-member guard above.
+The PR branch was synchronized again rather than merged from stale base. The
+second remote merge commit is
+`e18855856b43a518a26ea613b732a7439d6c50cc`, with parents documentary PR head
+`3398307711ef5d95c94007f0a64c04464de178d0` and current main `f2d1043`. Its
+tree is `c66001521314e54ca7b5e006626f057624864d60`.
+
+The new exact-head v0.3 self-test also passed:
+
+- run `33258226377`;
+- job `99115545426`, `completed/success`;
+- every lineage, evaluator, metadata, payload/archive, downloader,
+  no-leakage, and upload step: success;
+- artifact `9716462575`, size `6,343` bytes, `expired=false`;
+- digest
+  `sha256:710b94bcfc7b471e5879cc65836dbab48ff203c2f2f55edb1937ad5ce371cff5`.
+
+Thus both the executable integration and the later current-main guard merge
+have hosted receipts. Neither receipt is a scientific or real prerequisite
+PASS.
+
 ## Exact recovery and continuation method
 
 1. Read `docs/RECOVERY_MANUAL.md`, `docs/RECOVERY_LATEST.md`, then this file.
@@ -230,9 +254,10 @@ receipt and cannot authorize physical support.
    uv run --with pytest pytest -q
    ```
 
-5. Confirm hosted v0.3 run `33257888770` and job `99114673638` remain
-   `completed/success`. If executable bytes change on a later head, require a
-   new hosted self-test; do not rely on this older receipt for changed code.
+5. Confirm exact-current-head hosted v0.3 run `33258226377` and job
+   `99115545426` remain `completed/success`. If executable bytes change on a
+   later head, require a new hosted self-test; do not rely on this receipt for
+   changed code.
 6. If R1 attempt 2 ends in runner, transport, acquisition, workflow, or
    artifact failure, preserve the exact evidence as infrastructure and do not
    dispatch the real aggregate join.
