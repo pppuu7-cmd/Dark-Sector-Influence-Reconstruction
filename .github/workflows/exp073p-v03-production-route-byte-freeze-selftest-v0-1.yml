@@ -1,0 +1,27 @@
+name: Exp073P v0.3 production-route byte-freeze selftest v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073p_v03_production_route_byte_freeze_v0_1.py'
+      - '.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-3.yml'
+      - 'experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md'
+      - '.github/workflows/exp073p-v03-production-route-byte-freeze-selftest-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  byte-freeze-selftest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact frozen production-route identity
+        run: python3 ci/exp073p_v03_production_route_byte_freeze_v0_1.py --mutation-selftest
+      - name: Assert downstream remains unauthorized
+        run: |
+          printf '%s\n' 'support_executor_authorized=false'
+          printf '%s\n' 'G7=OPEN G8=OPEN G9=OPEN'
