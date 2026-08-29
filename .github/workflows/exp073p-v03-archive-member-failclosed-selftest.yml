@@ -1,0 +1,64 @@
+name: Exp073P v0.3 archive-member fail-closed selftest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073p_v03_archive_member_failclosed_selftest.py'
+      - '.github/workflows/exp073p-v03-archive-member-failclosed-selftest.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  archive-member-selftest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Assert frozen selftest Git blob
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git hash-object ci/exp073p_v03_archive_member_failclosed_selftest.py)"
+          expected="48290409285da83ff274f894d12e2b3535c51678"
+          test "$actual" = "$expected"
+          printf 'selftest_blob=%s\n' "$actual"
+
+      - name: Compile
+        run: python -m py_compile ci/exp073p_v03_archive_member_failclosed_selftest.py
+
+      - name: Run 13 fail-closed archive mutations
+        run: python ci/exp073p_v03_archive_member_failclosed_selftest.py | tee exp073p_v03_archive_member_selftest_receipt.json
+
+      - name: Assert authorization firewall
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          with open('exp073p_v03_archive_member_selftest_receipt.json', encoding='utf-8') as f:
+              r = json.load(f)
+          assert r['status'] == 'PASS_EXP073P_V03_ARCHIVE_MEMBER_FAILCLOSED_SELFTEST'
+          assert r['mutations_rejected'] == 13
+          assert r['support_executor_authorized'] is False
+          assert r['support_fraction_evaluated'] is False
+          assert r['f_invalid_computed'] is False
+          assert r['covariance_read'] is False
+          assert r['whitening_read'] is False
+          assert r['nuisance_svd_read'] is False
+          assert r['relation_null_read'] is False
+          assert r['G8_read'] is False
+          assert r['gate_state'] == {'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+
+      - name: Upload synthetic validation receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073p-v03-archive-member-failclosed-selftest-${{ github.sha }}
+          path: exp073p_v03_archive_member_selftest_receipt.json
+          if-no-files-found: error
