@@ -1,0 +1,44 @@
+{
+  "G8_read": false,
+  "active_run_modified": false,
+  "covariance_read": false,
+  "f_invalid_computed": false,
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  },
+  "heldout_read": false,
+  "interpretation": "The active run remains governed by its frozen snapshot.  Before any later new run after a failed artifact upload, result and diagnostic artifacts must receive distinct run-id/run-attempt identities and complete results must be gated on the terminal reproduction assertion.",
+  "new_heavy_run_authorized": false,
+  "nuisance_svd_read": false,
+  "observed_structure": {
+    "artifact_name": "exp073r1-v07-transport-stabilized-${{ github.sha }}",
+    "artifact_name_has_run_attempt": false,
+    "artifact_name_has_run_id": false,
+    "future_rerun_duplicate_name_risk": true,
+    "missing_files_warn_only": true,
+    "overwrite_false_explicit": false,
+    "result_and_diagnostic_paths_share_one_upload": true,
+    "upload_runs_on_failure": true,
+    "upload_step_count": 1
+  },
+  "relation_null_read": false,
+  "result_artifact_authorized": false,
+  "retained_dimension_evaluated": false,
+  "schema": "dsir.exp073r1.v07-artifact-delivery-audit.v0.1",
+  "scientific_classification": null,
+  "sensitivity_check_count": 3,
+  "sensitivity_checks": [
+    "attempt_specific_name",
+    "success_gated_upload",
+    "strict_missing_files"
+  ],
+  "status": "PASS_EXP073R1_V07_ARTIFACT_DELIVERY_RISK_AUDIT",
+  "support_executor_authorized": false,
+  "support_fraction_evaluated": false,
+  "whitening_read": false,
+  "workflow": ".github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml",
+  "workflow_blob_sha1": "99ce26540f15620c9c6a7acd9198b9d5fe81ecb6",
+  "workflow_sha256": "8ef3fb2305fe2789e6198547f5095969cfc107df1f0e17853b20a7aa5c601328"
+}
