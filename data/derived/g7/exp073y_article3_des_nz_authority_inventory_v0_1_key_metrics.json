@@ -1,0 +1,49 @@
+{
+  "experiment": "Exp073Y",
+  "status": "PASS_EXP073Y_DES_NZ_AUTHORITY_INVENTORY_V0_1",
+  "workflow_run": 33277620469,
+  "workflow_job": 99167009794,
+  "head_sha": "b580935935c6a1a1baa8d0733a3f5ac7be2b9bc9",
+  "artifact_id": 9721988957,
+  "artifact_digest": "sha256:93f444feb01d00cc36088daeb246719e0cb24c6fcc97e2005c1c66401fc3f3cc",
+  "artifact_internal_json_sha256": "83e33e7b05f6974fbcad5e6224b9919616130b8ecb998b4627db82dfac04b1a3",
+  "common_z_grid": {
+    "row_count": 400,
+    "z_min": 0.0051,
+    "z_max": 3.9951000000000003,
+    "spacing": 0.01,
+    "z_array_sha256": "b93b65adb24b98fd76a41486a1352978459af2836f533d0adadd0ca390dca89b"
+  },
+  "source": {
+    "file_sha256": "b5d87138c35ae8bb4ecd02491972f544648398e606b3617039e6e54cb8ea943b",
+    "logical_table_sha256": "7382e8086ea7898f8a44ae338ef2c6644a497c2e269d04c300de294d3de66f3b",
+    "negative_counts": [0,0,0,0],
+    "raw_trapezoid_integrals": [0.9999467310703114,0.9999831512049072,0.9999811746719104,0.9999657969687723],
+    "last_nonzero_z": [3.5051,3.5051,3.5051,3.5051],
+    "bin_sha256": [
+      "fb9620f1f0eba1c699c655ff0b11fab4a880ec74f53d8338d490799338d03308",
+      "0043e56954523399b7252deea7ade441d63ed2c901487078485f424e86314b62",
+      "ef43b61ece807761168dca302979ad999f698607a5de6def233de5dea6d51a0d",
+      "ed73b44d548108fd69aea751d8360546d6f216ad8d0d6e81f90c7a7ec4bbd7be"
+    ]
+  },
+  "lens": {
+    "file_sha256": "114035179b5a8e41090751e9a6478536d185128581d37b5a510eff5722f417ca",
+    "logical_table_sha256": "99380a17563ea7372f61b4e59ccb8d3396d55cb52595a6ebb72e1dd50ed47374",
+    "negative_counts": [0,0,0,0,0],
+    "raw_trapezoid_integrals": [1.0000000000000002,1.0000000000000002,1.0000000000000002,1.0000000000000002,1.0],
+    "nonzero_z_ranges": [[0.1151,0.3851],[0.1851,0.5451],[0.3451,0.7151],[0.1951,1.0151],[0.5451,1.1051]],
+    "bin_sha256": [
+      "acb57434bc114bcb0a106ab478a39a763025777c697cc1313e08c3f5dd3d1780",
+      "c4e7daee8b410ad186e1449df4b387e0739f4216595a027e0b0451ab614836f1",
+      "6c1b1d4acf7658ed807223ad3db2e24ee81b20f6cc1c91e7cfc5e0c762c007dc",
+      "0d88c7a944524034bd12970be1572a91e396b7e146299ef2a1674c30ee7af927",
+      "6c2f7c794eb01c5a3abcd4210c8cd70d43ac0aa0035994f1e7489b3e827df29f"
+    ]
+  },
+  "physical_support_evaluated": false,
+  "article3_scientific_readiness_percent": 52,
+  "G7": "OPEN",
+  "G8": "OPEN",
+  "G9": "OPEN"
+}
