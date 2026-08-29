@@ -1,239 +1,121 @@
 # DSIR RECOVERY LATEST — live pointer
 
-**Updated:** 2026-08-29 14:46 UTC
+**Updated:** 2026-08-29 21:00 UTC
 
 **Stable historical manual:** `docs/RECOVERY_MANUAL.md`
 
 **Current detailed checkpoint:**
-`recovery/2026-08-29_exp073p_v03_production_route_main_guard_integration.md`
+`recovery/2026-08-29_article3_r1_receipt_exp073u_coordinate_skeleton_pass.md`
 
-**Active execution:** Exp073R1 v0.7 run `33240490287`, attempt 2, job
-`99080934021` (`queued` at `2026-08-29T14:27:27Z`; no artifacts)
+## Current headline state
 
-**Recovered main:** `e3eaa47dea29a20bf6bb8330ac77607197097f81`
+- Article 3 strict scientific repository readiness: **52%**.
+- Genuine hosted Exp073R1 v0.8 reproduction: **PASS**.
+- Exact hosted Exp073P v0.5 prerequisite receipt: **PASS**, `support_executor_authorized=true`.
+- Exp073S v0.2 four-bin source count-mask reproduction: **PASS / non-classifying**.
+- Exp073T v0.1 Cosmotheka inventory + NaMaster component order: **PASS / non-classifying**.
+- Exp073U v0.1 immutable 1410-coordinate skeleton: **PASS / non-classifying**.
+- Layer A broad operator-support leakage: **OPEN**.
+- Layer B coordinate/common-response validity: **OPEN**.
+- Covariance/whitening: **BLOCKED**.
+- G7/G8/G9: **OPEN**.
 
-**Merged production route:** PR #166 merged to main as `e3eaa47`; main push
-self-test `33258423809` completed successfully.
+The old self-hosted v0.6/v0.7 transport failures remain preserved infrastructure history and are no longer the active blocker.
 
-DSIR remains independent of RTK.  Preserve all negative and infrastructure
-results, preregistration chronology, missing-domain masks, and the distinction
-between reproduction, prerequisite and scientific classifications.
+## Exact current authorities
 
-## Current frontier
+### Exp073R1 v0.8
 
-The G7 chain remains blocked immediately before the real Exp073P
-physical-support evaluation:
+- run `33270843577`
+- job `99148916507`
+- head `ef783ca941fb9b9b5f5eae537986c56ff06e6536`
+- artifact `9720335366`
+- digest `sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd`
 
-`validated physical providers -> genuine R1 reproduction -> aggregate prerequisite join -> physical support -> covariance/whitening -> nuisance SVD/rank -> quotient/relation/null -> fresh G8`
+### Exp073P v0.5 hosted receipt
 
-Current state:
+- run `33271876425`
+- job `99151650192`
+- artifact `9720339539`
+- digest `sha256:dc63797a8bfe12a91c264eb5204182164e15d9f6441886ef79ab25f55b3040fc`
+- status `PASS_EXP073P_PREREQUISITE_BINDING_V0_5_HOSTED`
 
-- C3 physical provider: certified;
-- C5 physical provider: certified with corrected raw-k provenance;
-- BOSS finite mm component: frozen `54/240`, `27/120` per cap, `9/40` in each
-  P0/P2/P4 block;
-- DES public-input, large-object, P2 and S0 parents: immutable and
-  validator-compatible;
-- Exp073R0 raw-row/HEALPix equivalence: PASS;
-- original v0.6 run `33212521957`: `INCOMPLETE_EXP073R1` at the PEP 668
-  runtime boundary, before data;
-- replacement v0.6 run `33222848695`, attempts 1 and 2: terminal repeated
-  remote whole-object EOF infrastructure failures, no admissible R1 result;
-- v0.7 transport-stabilized run `33240490287`, attempt 1: terminal runner loss
-  during acquisition, no artifact;
-- v0.7 exact rerun attempt 2/job `99080934021`: queued, sole heavy candidate;
-- Exp073P aggregate join v0.1 and v0.2: immutable and permanently fail-closed
-  for their frozen failed R1 authorities;
-- Exp073P aggregate join v0.3: canonical main preregistration and production
-  route are merged, with authority, live-metadata, archive and cross-member
-  guards; the real route has not run because no admissible R1 evidence exists;
-- Exp073P physical support and every later stage: BLOCKED;
-- `support_executor_authorized=false`;
-- G7/G8/G9: OPEN.
+### Exp073U v0.1 coordinate skeleton
 
-## R1 authority and classifications
+- run `33274852199`
+- job `99159670108`
+- trigger/head `26dcfdc0d83b10f90b877408364e844fc40a0bbf`
+- artifact `9721184683`
+- artifact digest `sha256:d44e628e9312fb5a919a6681b69d9e06e18418cdd299de641e6465e60dadfd68`
+- internal JSON SHA256 `a6b9eaa697edd63d5b5ca698341c35578d395201ff3e0e0bcffff7f5ba94f534`
+- full ordered-ID SHA256 `bfaf582518cdbfd34b1e8392da83dac6b0885948bc31f2c29d4e48247c23af75`
+- block order `Wm[780] -> WW[390] -> BOSS[240]`
 
-### v0.6 runtime-boundary authority
+Exp073U deliberately does not build the full finite-response operator and does not evaluate `f_invalid`; it therefore earns no Article-3 scientific-readiness credit by itself.
 
-Run `33212521957`, job `98988824629`, head
-`79abf2a9694e57e7a2ba1fbb563a0f6413e891f9` passed evaluator and parent
-metadata checks, then failed on pip's PEP 668 guard before download.  Zero
-metacal rows were read and no artifact exists.  It is infrastructure
-`INCOMPLETE_EXP073R1`, not scientific FAIL.
+## Provenance correction frozen before support scoring
 
-### v0.6 direct-stream replacement
+The unchanged Exp073S evaluator contains obsolete hard-coded internal R1 artifact id/digest values. Current exact GitHub metadata plus the hosted prerequisite receipt bind R1 to artifact `9720335366`, digest `sha256:ff87d8...`.
 
-Run `33222848695`, head
-`98c4b8783a95932949947d9e214706c4ec7eaf8c`, workflow blob
-`2cdcb0c60f464c0c65c3bafdde23daec7732215e`, unchanged evaluator blob
-`46fe1271d97ddd9e2164d24e7d79cf27bfda805d`:
-
-- attempt 1/job `99020389131`: mapper EOF after the last reported
-  `37,748,736` rows; partial artifact `9709998972`, digest
-  `sha256:d770bbfdda55788661b2676d4768e1da38d2e7310cbf96d2bfe52f41a3616351`;
-- attempt 2/job `99062223326`: mapper EOF in the first row chunk; empty-record
-  artifact `9710626213`, digest
-  `sha256:453259db5d09c6f65c15d470216ab1b6cd631f0018cc63e3f8199f35428b4a9a`.
-
-Both artifacts use the same canonical name, contain no terminal summary or
-masks, and are inadmissible.  The two same-name artifact IDs are preserved as
-infrastructure evidence; no partial map statistic may be used.
-
-Classification:
-`INFRASTRUCTURE_TRANSPORT_FAILURE_REMOTE_WHOLE_OBJECT_EOF_REPEATED`.
-
-### Active v0.7 transport-stabilized route
-
-- preregistration: `401b6bc6f28fcef369d83dd0bc893bb35f9c722e`;
-- acquisition helper: `50ce6d2f430dbbeff973358f75348adbb768885a`;
-- workflow: `17aea62e7addb6d5c12326afaeab7a2065b58585`;
-- trigger/head: `9a4606fb37d5aaa071aa57322ebb7c05eca905d7`;
-- run `33240490287`;
-- attempt 1/job `99068879596`: runner loss while acquisition step was reported
-  in progress, no cleanup/upload artifact;
-- exact rerun attempt 2/job `99080934021`: still queued at
-  `2026-08-29T14:27:27Z`; the run artifact list is empty.
-
-v0.7 changes transport staging only: each remote attempt restarts a no-Range
-whole-object GET from byte zero; exact size `84075649920` and SHA256
-`39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8`
-are required before loopback replay to the unchanged evaluator.  The queued
-job is the only authorized heavy candidate.  Do not dispatch a duplicate.
-
-## Artifact-delivery firewall observation
-
-The frozen active v0.7 workflow blob
-`99ce26540f15620c9c6a7acd9198b9d5fe81ecb6` has one `always()` artifact upload
-named only by `github.sha`; it mixes diagnostics and possible complete results
-and lacks run-attempt identity.  This has not materialized in the active run
-because attempt 1 produced no artifact and attempt 2 is not terminal.  The
-active snapshot is not modified.
-
-Before any later new execution after a failed v0.7 artifact upload, freeze a
-delivery-only repair with distinct result/diagnostic names containing run ID
-and attempt, strict files, and terminal-PASS gating.  This observation does not
-authorize another heavy run or any scientific stage.
-
-The hosted synthetic audit self-test, run `33245678070`, completed with
-`success`; it reproduced the committed audit and its no-leakage assertions.
-
-Before any attempt-2 output existed, main commit `e58bddf` froze the canonical
-Exp073P v0.3 authority for the exact run attempt/job/branch/event/workflow.
-Its preregistration SHA256 is
-`e27761b2db4a81283bb9fbac1decb95f62fadb785c40cb3e3f676f8651711f40`.
-Main then added independently hosted authority, live-metadata-set and
-archive-member guards through `72c0278`.  PR #166 has been reconciled with
-those canonical bytes and extends them into the actual route with exact raw-ZIP
-ID/digest download and full 11-member archive validation.  The earlier
-PR-branch preregistration commit `940fbca` remains historical but is not the
-canonical byte authority.
-
-## Exp073P aggregate-join state
-
-Synthetic evaluator/route readiness remains PASS, including hosted v0.2
-self-test run `33234248213`, job `99052307444`, artifact `9709418334`, digest
-`sha256:84a6a8c2740ad539c6a48a59e47b876122f6fd5bf4b5665e9653ecfc7c1debfc`.
-
-Real joins remain closed:
-
-- v0.1 is frozen to the original PEP-668-failed R1 authority;
-- v0.2 is frozen to run `33222848695`, job `99020389131`, which failed;
-- v0.2 also requires exactly one canonical-name R1 artifact, while that run
-  now has two same-name inadmissible artifacts;
-- neither route may be repointed to attempt 2 or v0.7;
-- v0.3 is frozen only to run `33240490287`, attempt `2`, job `99080934021` and
-  the exact v0.7 artifact name; any later attempt/job or duplicate same-name
-  artifact fails closed;
-- v0.3 requires the unique artifact ID/digest, job/run success, full-from-zero
-  acquisition provenance and the complete summary/runtime/acquisition plus four
-  records and four masks with byte/hash cross-binding;
-- the integrated production route downloads the raw artifact ZIP by numeric ID,
-  verifies its server-recorded digest before extraction, requires the exact
-  11-member archive set, and never forwards the GitHub bearer token to the
-  signed redirect;
-- hosted v0.3 self-test run `33248034308`, job `99088793819`, succeeded;
-  artifact `9713466820` has digest
-  `sha256:d53b87eec234c3533fd9d167bfdae7433db27e4aa106a614c2dd5812a9f6019e`;
-- synthetic v0.3 PASS retains `support_executor_authorized=false`; the manual
-  real workflow has not run and cannot be dispatched from the PR branch.
-- current-main supplemental hosted guards also passed: authority run
-  `33250019007`, metadata-set run `33252122146`, and archive-member run
-  `33254539043`; these are implementation-validation PASS results only;
-- cross-member consistency guard run `33257187305` also passed 19 negative
-  mutations and is preserved from current main `f2d1043`;
-- current-main-integrated hosted self-test run `33257888770`, job
-  `99114673638`, succeeded; artifact `9716362579` has digest
-  `sha256:f78ed9f12c54bd585c9f5b8022e8fcb468dee7583e842c0c76363af2dfde7b33`.
-- merged-main push self-test run `33258423809`, job `99116067842`, succeeded;
-  artifact `9716520508` has digest
-  `sha256:e9ff6bfbbe33b092dde5b19493dba00e1fce89fa4e0fd0069a89b3ac8a875907`.
+This is a metadata-only provenance defect. Later authority must use GitHub/receipt identity, not the stale internal Exp073S artifact-id/digest fields. Source-bin row counts, pixel hashes, mask hashes and sparse-count fingerprints remain valid.
 
 ## Frozen scientific boundaries
 
-Never modify post hoc:
+Never change post hoc:
 
 - `0.295 <= z <= 2.33`;
 - `k <= 0.06664762008318016 Mpc^-1`;
-- `f_invalid <= 0.05` inclusive;
-- minimum retained full-coordinate dimension `15`;
-- classifying `nside=4096`;
-- support uses the positive absolute final-response envelope;
-- production Wm remains signed;
-- all radial tails outside the rectangle remain invalid;
-- no crop-before-normalization, effective ell, fiducial-P/model weighting or
-  post-hoc cuts;
-- no covariance, nuisance SVD/rank, quotient/relation/null, held-out or G8
-  leakage into support selection.
+- Layer-A `operator_f_invalid <= 0.05` inclusive;
+- minimum retained complete coordinate dimension `15`;
+- classifying DES route `nside=4096`;
+- positive absolute operator/window envelope only for support bookkeeping; measured Wm remains signed;
+- no effective-ell/effective-k shortcut;
+- no fiducial-P weighting;
+- no covariance, whitening, nuisance SVD/rank, quotient/relation/null or G8 information in support selection.
 
-## Exact next actions
+## Current frontier
 
-1. Keep run `33240490287`, attempt 2/job `99080934021`, as the sole heavy R1
-   candidate; wait for a compatible self-hosted runner and do not duplicate.
-2. If it starts, retain the frozen no-Range, full-from-zero, exact-size/SHA and
-   unchanged-evaluator route.
-3. On termination, record exact attempt/job/step boundary, acquisition
-   provenance, runtime, artifact ID/digest and internal assertion.  A transport
-   or runner failure is infrastructure only.
-4. Require genuine internal
-   `PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1`; Actions success or an
-   upload alone is insufficient.
-5. Use only canonical v0.3 for this exact attempt.  Verify the preregistration
-   SHA256 `e27761...1711f40`, merged main commit `e3eaa47`, and main push run
-   `33258423809`.  PR #166 is merged; do not dispatch the manual real route
-   until R1 supplies admissible evidence.  Never repoint or run v0.1/v0.2.
-6. If attempt/job/head/artifact multiplicity differs, reject v0.3 and freeze a
-   new version before another candidate.  Never edit v0.3 post hoc.
-7. Require aggregate prerequisite PASS, then physical-support PASS, before
-   covariance/whitening.
-8. Preserve downstream order: nuisance SVD/rank -> quotient/relation/null ->
-   fresh G8.
+The old coordinate-order ambiguity is closed. The active blocker is the **real broad finite observation operator** on the immutable Exp073U candidate skeleton.
+
+Authorized order:
+
+`exact R1 authority + hosted receipt`
+
+`-> Exp073U immutable 1410-row order`
+
+`-> bind full Wm/WW broad NaMaster-window + redshift-kernel representation and frozen BOSS C=W@M geometry`
+
+`-> freeze full pre-support broad-operator manifest`
+
+`-> Layer A broad operator-support leakage`
+
+`-> freeze S_op in inherited Exp073U order`
+
+`-> Layer B coordinate/common-response validity`
+
+`-> retained finite operator`
+
+`-> covariance restriction/Cholesky whitening`
+
+`-> nuisance tangent SVD/rank`
+
+`-> signed quotient/relation/null`
+
+`-> fresh G8`.
+
+No scalar `(z,k)` proxy may be invented for broad DES pseudo-C_ell rows merely to satisfy the later Layer-B schema.
 
 ## Recovery read order
 
 1. `docs/RECOVERY_MANUAL.md`
 2. `docs/RECOVERY_LATEST.md`
-3. `recovery/2026-08-29_exp073p_v03_production_route_main_guard_integration.md`
-4. `experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_3.md`
-5. `recovery/2026-08-29_exp073p_v03_v07_authority_prereg_and_attempt_aware_selftest.md`
-6. `recovery/2026-08-29_exp073p_v03_live_metadata_set_guard_and_r1_v07_queue_checkpoint.md`
-7. `recovery/2026-08-29_exp073p_v03_archive_member_guard_pass_and_r1_v07_queue_checkpoint.md`
-8. `recovery/2026-08-29_exp073p_v03_cross_member_consistency_guard_pass_r1_v07_queued.md`
-9. `ci/exp073p_aggregate_prerequisite_join_v0_3.py`
-10. `ci/exp073p_actions_metadata_bundle_v0_3.py`
-11. `ci/exp073p_v03_artifact_zip_download_v0_1.py`
-12. `ci/exp073p_v07_r1_payload_bundle_v0_3.py`
-13. `ci/exp073p_v03_cross_member_consistency_failclosed_selftest.py`
-14. `.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-3.yml`
-15. `recovery/2026-08-29_exp073p_v03_v07_attempt2_authority_ready.md`
-16. `recovery/2026-08-29_exp073r1_v07_attempt2_queued_artifact_delivery_firewall.md`
-17. `recovery/2026-08-29_exp073r1_v07_runner_loss_attempt1_exact_rerun_attempt2.md`
-18. `recovery/2026-08-29_exp073r1_v07_live_acquisition_firewall_audit.md`
-19. `experiments/073r1_v0_7_transport_stabilized_exact_byte_replay_prereg.md`
-20. `ci/exp073r1_v0_7_whole_object_acquire.py`
-21. `.github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml`
-22. `data/derived/g7/exp073r1_v06_repeated_remote_eof_artifact_audit_v0_1.json`
-23. `ci/exp073r1_v0_7_artifact_delivery_audit.py`
-24. `data/derived/g7/exp073r1_v07_artifact_delivery_risk_audit_v0_1.json`
-25. `experiments/073p_aggregate_prerequisite_join_superseding_r1_authority_prereg_v0_2.md`
-26. `recovery/2026-08-28_exp073r1_to_exp073p_execution_integrity_matrix.md`
-27. `experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md`
+3. `recovery/2026-08-29_article3_r1_receipt_exp073u_coordinate_skeleton_pass.md`
+4. `docs/publications/ARTICLE3_READINESS_CURRENT_2026-08-29.md`
+5. `docs/ARTICLE3_DUAL_SUPPORT_HIERARCHY_AMENDMENT_2026-08-29.md`
+6. `docs/ARTICLE3_PRE_SUPPORT_FINITE_OPERATOR_ORDERING_AMENDMENT_2026-08-29.md`
+7. `experiments/073u_article3_presupport_coordinate_skeleton_v0_1_prereg.md`
+8. `ci/exp073u_article3_presupport_coordinate_skeleton_v0_1.py`
+9. `.github/workflows/exp073u-article3-presupport-coordinate-skeleton-v0-1.yml`
+10. `experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md`
+
+DSIR remains independent of RTK and RQIR. Preserve negative scientific results, infrastructure failures, invalid-for-science provenance failures and successful gates as distinct classes.
