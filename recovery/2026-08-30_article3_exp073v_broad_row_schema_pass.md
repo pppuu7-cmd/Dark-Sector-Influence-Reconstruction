@@ -1,6 +1,6 @@
 # DSIR recovery checkpoint — Article 3 Exp073V broad-row schema PASS
 
-**Checkpoint:** 2026-08-30 UTC
+**Checkpoint:** 2026-08-30 Helsinki local date; Exp073V hosted authority completed 2026-08-29 21:12:56 UTC.
 
 ## State transition
 
