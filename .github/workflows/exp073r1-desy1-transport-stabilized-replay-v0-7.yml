@@ -1,0 +1,235 @@
+name: Exp073R1 DESY1 transport-stabilized exact-byte replay v0.7
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073r1_v0_7_transport_stabilized.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  METACAL_URL: https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/shear_catalogs/mcal-y1a1-combined-riz-unblind-v4-matched.fits
+  METACAL_BYTES: '84075649920'
+  METACAL_SHA256: 39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8
+  SOURCE_RUN_ID: '33175886694'
+  SOURCE_RUN_HEAD: '2926f1866fed4f0767ce3d1ec797f6e6ed4f4f2c'
+  SOURCE_ARTIFACT_NAME: exp073r1-v05-source-index-2926f1866fed4f0767ce3d1ec797f6e6ed4f4f2c
+  SOURCE_WHOLE_SHA256: 491f623d9370d3e5657db67d410e7cfd0e89475827046e6cd82ef6b3dd88c7a5
+  SOURCE_INDEX_SHA256: dbb362b10c68825e775e7398b18eb77d37fe725ce80cfd5c07faec5cb5755628
+  R0_RUN_ID: '33103083736'
+  R0_RUN_HEAD: '94b05d307295d5e9263646983ece9514f9fa2e88'
+  R0_ARTIFACT_NAME: exp073r0-row-healpix-equivalence-94b05d307295d5e9263646983ece9514f9fa2e88
+  EVALUATOR_GIT_BLOB_SHA1: 46fe1271d97ddd9e2164d24e7d79cf27bfda805d
+
+jobs:
+  transport-stabilized-replay:
+    runs-on: [self-hosted, linux]
+    timeout-minutes: 2880
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Freeze firewall and verify implementation syntax
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git hash-object ci/exp073r1_sequential_wholestream_v0_5.py)" = "${EVALUATOR_GIT_BLOB_SHA1}"
+          test -f experiments/073r1_v0_7_transport_stabilized_exact_byte_replay_prereg.md
+          python3 -m py_compile ci/exp073r1_sequential_wholestream_v0_5.py ci/exp073r1_v0_7_whole_object_acquire.py
+          ! grep -nE 'Range|continue-at|--range|-C[[:space:]]' ci/exp073r1_v0_7_whole_object_acquire.py | grep -vE 'Range/resume|Range is forbidden|range_header_sent|Content-Range|http_range_requests' || exit 1
+
+      - name: Require local capacity for exact object plus working products
+        shell: bash
+        run: |
+          set -euxo pipefail
+          CACHE_DIR="${RUNNER_TEMP}/exp073r1-v07-cache"
+          mkdir -p "${CACHE_DIR}"
+          AVAIL=$(df -PB1 "${CACHE_DIR}" | awk 'NR==2{print $4}')
+          echo "AVAILABLE_BYTES=${AVAIL}"
+          test "${AVAIL}" -ge 100000000000
+
+      - name: Install pinned mapper runtime and capture provenance
+        shell: bash
+        run: |
+          set -euxo pipefail
+          VENV="${RUNNER_TEMP}/exp073r1-v07-venv"
+          rm -rf "${VENV}"
+          python3 -m venv "${VENV}"
+          "${VENV}/bin/python" -m pip install --disable-pip-version-check 'numpy==2.5.2' 'healpy==1.20.0'
+          mkdir -p data/derived/g7
+          {
+            "${VENV}/bin/python" --version
+            "${VENV}/bin/python" -m pip --version
+            "${VENV}/bin/python" -m pip freeze
+          } | tee data/derived/g7/exp073r1_v0_7_runtime_provenance.txt
+          echo "${VENV}/bin" >> "${GITHUB_PATH}"
+
+      - name: Re-bind immutable Stage-A and Exp073R0 metadata
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json, os, urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; token=os.environ['GITHUB_TOKEN']
+          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'DSIR-Exp073R1-v0.7-preflight'}
+          def api(path):
+              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/{path}',headers=headers)
+              with urllib.request.urlopen(req,timeout=60) as r: return json.load(r)
+          sr=api(f"actions/runs/{os.environ['SOURCE_RUN_ID']}")
+          assert str(sr['id'])==os.environ['SOURCE_RUN_ID'] and sr['status']=='completed'
+          assert sr['head_sha']==os.environ['SOURCE_RUN_HEAD']
+          assert sr['path']=='.github/workflows/exp073r1-desy1-sequential-wholestream-v0-5.yml'
+          rr=api(f"actions/runs/{os.environ['R0_RUN_ID']}")
+          assert str(rr['id'])==os.environ['R0_RUN_ID'] and rr['status']=='completed' and rr['conclusion']=='success'
+          assert rr['head_sha']==os.environ['R0_RUN_HEAD']
+          assert rr['path']=='.github/workflows/exp073r0-desy1-raw-row-healpix-equivalence-v0-1.yml'
+          print('V07_IMMUTABLE_PARENT_METADATA_PASS')
+          PY
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SOURCE_ARTIFACT_NAME }}
+          path: external/source
+          github-token: ${{ github.token }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.R0_ARTIFACT_NAME }}
+          path: external/r0
+          github-token: ${{ github.token }}
+          run-id: ${{ env.R0_RUN_ID }}
+
+      - name: Re-bind downloaded parent internal contracts
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          def sha(p):
+              h=hashlib.sha256()
+              with open(p,'rb') as f:
+                  for b in iter(lambda:f.read(8<<20),b''): h.update(b)
+              return h.hexdigest()
+          s_path=next(Path('external/source').rglob('source-summary.json'))
+          i_path=next(Path('external/source').rglob('source-zbin-be-i2.bin'))
+          s=json.loads(s_path.read_text())
+          assert s['status']=='PASS_EXP073R1_V05_SOURCE_WHOLE_STREAM_INDEX_BINDING'
+          assert s['whole_sha256']==s['expected_whole_sha256']==os.environ['SOURCE_WHOLE_SHA256']
+          assert s['nrows']==136930995
+          assert s['source_index']['bytes']==273861990==i_path.stat().st_size
+          assert s['source_index']['sha256']==os.environ['SOURCE_INDEX_SHA256']==sha(i_path)
+          assert s['science_gate_scored'] is False and s['f_invalid_computed'] is False
+          assert s['covariance_read'] is False and s['G8_read'] is False
+          assert s['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          r_path=next(Path('external/r0').rglob('exp073r0_raw_row_healpix_equivalence_v0_1.json'))
+          d=json.loads(r_path.read_text())
+          assert d['status']=='PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0'
+          assert d['bins_with_selected_rows']==[0,1,2,3]
+          assert d['source_field_exact'] and all(d['source_field_exact'].values())
+          assert d['metacal_field_exact'] and all(d['metacal_field_exact'].values())
+          assert d['per_bin'] and all(v.get('pixel_indices_exact') is True for v in d['per_bin'].values())
+          assert d['science_gate_scored'] is False and d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('V07_DOWNLOADED_PARENT_INTERNAL_PASS')
+          PY
+
+      - name: Acquire authoritative object by full-from-zero no-Range retries
+        shell: bash
+        run: |
+          set -euxo pipefail
+          CACHE_DIR="${RUNNER_TEMP}/exp073r1-v07-cache"
+          mkdir -p "${CACHE_DIR}" data/derived/g7
+          python3 ci/exp073r1_v0_7_whole_object_acquire.py \
+            --url "${METACAL_URL}" \
+            --dest "${CACHE_DIR}/mcal-y1a1-combined-riz-unblind-v4-matched.fits" \
+            --provenance data/derived/g7/exp073r1_v0_7_remote_acquisition_provenance.json \
+            --max-attempts 12 --retry-sleep 30
+
+      - name: Start loopback exact-byte HTTP replay endpoint
+        shell: bash
+        run: |
+          set -euxo pipefail
+          CACHE_DIR="${RUNNER_TEMP}/exp073r1-v07-cache"
+          FILE="${CACHE_DIR}/mcal-y1a1-combined-riz-unblind-v4-matched.fits"
+          test "$(stat -c%s "${FILE}")" = "${METACAL_BYTES}"
+          test "$(sha256sum "${FILE}" | awk '{print $1}')" = "${METACAL_SHA256}"
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory "${CACHE_DIR}" >"${RUNNER_TEMP}/exp073r1-v07-http.log" 2>&1 &
+          echo $! > "${RUNNER_TEMP}/exp073r1-v07-http.pid"
+          sleep 2
+          kill -0 "$(cat "${RUNNER_TEMP}/exp073r1-v07-http.pid")"
+
+      - name: Execute unchanged frozen mapper against authorized exact-byte replay
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p v07_work data/derived/g7
+          SOURCE_INDEX="$(find external/source -name 'source-zbin-be-i2.bin' -print -quit)"
+          SOURCE_SUMMARY="$(find external/source -name 'source-summary.json' -print -quit)"
+          R0_JSON="$(find external/r0 -name 'exp073r0_raw_row_healpix_equivalence_v0_1.json' -print -quit)"
+          python3 ci/exp073r1_sequential_wholestream_v0_5.py metacal-map \
+            --url 'http://127.0.0.1:8765/mcal-y1a1-combined-riz-unblind-v4-matched.fits' \
+            --source-index "${SOURCE_INDEX}" \
+            --source-summary "${SOURCE_SUMMARY}" \
+            --parent-json "${R0_JSON}" \
+            --workdir v07_work \
+            --out data/derived/g7/exp073r1_desy1_transport_stabilized_replay_v0_7_summary.json
+
+      - name: Assert genuine Exp073R1 reproduction PASS and acquisition firewall
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json,os
+          a=json.load(open('data/derived/g7/exp073r1_v0_7_remote_acquisition_provenance.json'))
+          assert a['authorized_for_replay'] is True
+          assert a['http_range_requests']==0 and a['whole_object_attempts_from_zero'] is True
+          assert a['final_bytes']==84075649920
+          assert a['final_sha256']==os.environ['METACAL_SHA256']
+          assert all(x['started_from_byte']==0 and x['range_header_sent'] is False for x in a['attempts'])
+          d=json.load(open('data/derived/g7/exp073r1_desy1_transport_stabilized_replay_v0_7_summary.json'))
+          assert d['experiment']=='Exp073R1'
+          assert d['status']=='PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1'
+          assert d['transport']=={'http_range_requests':0,'whole_object_get':True,'accept_encoding':'identity'}
+          assert d['observed_bytes_metacal']==d['expected_bytes_metacal']==84075649920
+          assert d['metacal_sha256']==d['expected_metacal_sha256']==os.environ['METACAL_SHA256']
+          assert d['source_identity_binding']['source_whole_sha256']==os.environ['SOURCE_WHOLE_SHA256']
+          assert d['source_identity_binding']['source_index_sha256']==os.environ['SOURCE_INDEX_SHA256']
+          assert d['rows_read_source_index']==d['rows_read_metacal']==136930995
+          assert d['selection']=='zbin_mcal == t AND dec >= -90 AND dec <= -35 AND flags_select == 0'
+          assert d['mapper']=={'nside':4096,'ordering':'RING','coords':'C','lonlat':True}
+          assert d['out_of_range_pixel_count']==0
+          assert all(v>0 for v in d['selected_rows_per_bin'].values())
+          assert all(all(x is True for x in v.values()) for v in d['repeatability_from_pixel_records'].values())
+          assert all(d['parent_r0']['checks'].values())
+          assert d['science_gate_scored'] is False and d['f_invalid_computed'] is False
+          assert d['covariance_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1_V07_TRANSPORT_STABILIZED')
+          PY
+
+      - name: Stop loopback endpoint
+        if: always()
+        shell: bash
+        run: |
+          PIDFILE="${RUNNER_TEMP}/exp073r1-v07-http.pid"
+          if test -f "${PIDFILE}"; then kill "$(cat "${PIDFILE}")" || true; fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073r1-v07-transport-stabilized-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073r1_v0_7_remote_acquisition_provenance.json
+            data/derived/g7/exp073r1_v0_7_runtime_provenance.txt
+            data/derived/g7/exp073r1_desy1_transport_stabilized_replay_v0_7_summary.json
+            data/derived/g7/exp073r1_v05_records/*.bin
+            data/derived/g7/exp073r1_v05_masks/*.bin
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 6
