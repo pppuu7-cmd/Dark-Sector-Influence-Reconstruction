@@ -1,0 +1,5 @@
+Exp073R1 v0.7 authoritative transport-stabilized exact-byte replay trigger
+preregistration_commit=401b6bc6f28fcef369d83dd0bc893bb35f9c722e
+acquisition_guard_commit=50ce6d2f430dbbeff973358f75348adbb768885a
+workflow_commit=17aea62e7addb6d5c12326afaeab7a2065b58585
+triggered_utc=2026-08-29T07:15:00Z
