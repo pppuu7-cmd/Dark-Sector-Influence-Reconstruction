@@ -105,6 +105,9 @@ delivery-only repair with distinct result/diagnostic names containing run ID
 and attempt, strict files, and terminal-PASS gating.  This observation does not
 authorize another heavy run or any scientific stage.
 
+The hosted synthetic audit self-test, run `33245678070`, completed with
+`success`; it reproduced the committed audit and its no-leakage assertions.
+
 ## Exp073P aggregate-join state
 
 Synthetic evaluator/route readiness remains PASS, including hosted v0.2

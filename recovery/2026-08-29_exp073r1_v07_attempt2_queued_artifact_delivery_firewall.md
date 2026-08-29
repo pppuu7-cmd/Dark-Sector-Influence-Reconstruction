@@ -141,6 +141,7 @@ held-out or G8 quantity.  G7/G8/G9 remain OPEN.
 - both v0.6 ZIP SHA256 digests and attempt-2 member hashes independently
   verified;
 - static artifact-delivery audit PASS, including three sensitivity checks;
+- hosted audit self-test run `33245678070`: `success`;
 - committed-audit byte reproduction, both new JSON syntax checks, BaseLoader
   parsing of the active and self-test workflows, `compileall`, and
   `git diff --check`: PASS;

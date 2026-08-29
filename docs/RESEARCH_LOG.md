@@ -142,3 +142,5 @@ materialized in the active run and does not alter it.  Any later new execution
 after a failed upload must first freeze attempt-specific result/diagnostic
 delivery.  No support fraction, `f_invalid`, retained dimension, covariance,
 nuisance, relation/null or G8 quantity was read; G7/G8/G9 remain OPEN.
+Hosted audit self-test run `33245678070` completed successfully and reproduced
+the committed fail-closed/no-leakage record without launching a heavy mapper.
