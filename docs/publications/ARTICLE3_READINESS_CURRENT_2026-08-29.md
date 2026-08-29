@@ -10,7 +10,7 @@ This is deliberately a strict scientific-readiness score. Synthetic QA, CI harde
 
 Secondary planning indicators, kept separate from the scientific score:
 
-- method / technical / provenance readiness: approximately **65%**;
+- method / technical / provenance readiness: approximately **67%**;
 - manuscript / editorial packaging readiness: approximately **35%**.
 
 These secondary indicators must not be quoted as the scientific readiness of Article 3.
@@ -30,8 +30,11 @@ These secondary indicators must not be quoted as the scientific readiness of Art
 - synthetic signed nuisance-subspace numerical QA;
 - anti-leakage alias hardening;
 - fail-closed Exp073P prerequisite authority architecture;
-- prospective Exp073P v0.4 authority route bound before observing the terminal Exp073R1 attempt-3 result;
-- Article-3 support authority amendment bound prospectively to a future genuine Exp073P v0.4 PASS without changing the scientific thresholds.
+- Article-3 / legacy Exp073P support-statistic semantics explicitly separated;
+- GitHub-hosted Exp073R1 v0.8 whole-stream retry preregistered before implementation/output;
+- v0.8 transport wrapper and workflow cryptographically frozen before launch;
+- direct-child trigger authority firewall passed on the active hosted run;
+- home/self-hosted internet-dependent execution removed as an operational dependency without relabelling the infrastructure issue as science FAIL.
 
 These foundations explain why readiness is already substantial, but synthetic and infrastructure-only PASS results do not count as closure of the real inference chain.
 
@@ -39,8 +42,8 @@ These foundations explain why readiness is already substantial, but synthetic an
 
 | Milestone | Current state | Scientific credit rule |
 |---|---|---|
-| Genuine Exp073R1 exact DES-Y1 reproduction | OPEN / attempt 3 pending | must reach genuine frozen PASS; infrastructure failure earns no PASS/FAIL science credit |
-| Real Exp073P v0.4 prerequisite join | OPEN | must produce real `PASS_EXP073P_PREREQUISITE_BINDING_V0_4` with `support_executor_authorized=true` |
+| Genuine Exp073R1 exact DES-Y1 reproduction | OPEN / GitHub-hosted v0.8 active | must reach genuine frozen PASS; infrastructure failure earns no PASS/FAIL science credit |
+| Real hosted prerequisite authority receipt | OPEN | after v0.8 PASS must bind exact run/job/head/artifact/digest before support execution |
 | Real Article-3 physical-support execution | OPEN | must use unchanged frozen predicates and classify PASS/FAIL/INVALID_FOR_SCIENCE |
 | Covariance restriction / whitening on retained support | OPEN | only after physical-support PASS; no clipping/jitter/shrinkage rescue |
 | Signed nuisance tangent rank/SVD and quotient | OPEN | must operate on the same whitened retained coordinates |
@@ -56,7 +59,7 @@ G7, G8 and G9 remain OPEN.
 The following values are planning checkpoints, not arbitrary progress bars. The headline score may increase only when the named real milestones are evidenced in immutable repository artifacts.
 
 - **44% now** — contracts, synthetic QA, preregistration and authority architecture are mature, but the real Article-3 inference chain has not crossed its first pending reproduction/support bottleneck.
-- **about 50–52%** — genuine Exp073R1 PASS plus real Exp073P v0.4 prerequisite PASS.
+- **about 50–52%** — genuine Exp073R1 PASS plus exact hosted prerequisite authority receipt.
 - **about 60%** — real frozen-criterion physical-support PASS and exact retained-coordinate artifact.
 - **about 68%** — real covariance restriction and Cholesky whitening pass on that retained support.
 - **about 78–82%** — nuisance tangent rank/SVD, signed quotient and relation/null controls completed on the same bound data space.
@@ -69,13 +72,17 @@ A real frozen-criterion scientific FAIL does not mean that the repository become
 
 The only current scientific order is:
 
-`genuine Exp073R1 PASS -> real Exp073P v0.4 prerequisite join -> real physical support-validity mask -> covariance restriction/whitening -> nuisance tangent rank/SVD -> quotient/relation/null control -> fresh G8 withheld family -> Article-3 claim/figure/manuscript finalization`
+`genuine GitHub-hosted Exp073R1 PASS -> exact hosted prerequisite authority receipt -> real Article-3 physical support-validity mask -> covariance restriction/whitening -> nuisance tangent rank/SVD -> quotient/relation/null control -> fresh G8 withheld family -> Article-3 claim/figure/manuscript finalization`
 
 No later stage may be used to choose support coordinates or alter an earlier threshold.
 
 ## Current operational blocker
 
-The first unresolved dependency is the self-hosted Exp073R1 v0.7 attempt-3 execution. Until its frozen whole-object acquisition and mapper complete genuinely, the real v0.4 prerequisite join and real Article-3 support gate remain unauthorized.
+The first unresolved dependency is GitHub Actions run `33270843577`, job `99148916507`, executing the preregistered Exp073R1 v0.8 GitHub-hosted rate-qualified whole-stream route. The user's home/self-hosted runner is not an operational dependency for this route.
+
+The active run has already passed the frozen implementation/preregistration firewall, direct-child trigger authority check, pinned runtime installation, immutable parent metadata binding and parent artifact internal-contract checks. It is currently inside the heavy frozen mapper/whole-stream execution step.
+
+Until a genuine v0.8 terminal PASS exists and its exact artifact is bound into a new hosted prerequisite receipt, the real Article-3 support gate remains unauthorized.
 
 ## Reporting convention
 
