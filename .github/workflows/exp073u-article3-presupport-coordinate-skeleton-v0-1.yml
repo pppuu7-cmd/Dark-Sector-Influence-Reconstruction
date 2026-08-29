@@ -1,0 +1,130 @@
+name: Exp073U Article3 pre-support coordinate skeleton v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073u_article3_presupport_coordinate_skeleton_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  coordinate-skeleton:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      P_RUN: '33271876425'
+      S_RUN: '33272641756'
+      T_RUN: '33272691162'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Enforce preregistered implementation and trigger boundary
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git hash-object ci/exp073u_article3_presupport_coordinate_skeleton_v0_1.py)" = '5084e11ad905183510b7133a45a6353ce434c90c'
+          test "$(git hash-object experiments/073u_article3_presupport_coordinate_skeleton_v0_1_prereg.md)" = '6a35239a8b7865c73215145d0defdc7aaf02aca3'
+          test -f experiments/073u_article3_presupport_coordinate_skeleton_v0_1_workflow_freeze.md
+          SELF_BLOB="$(git hash-object .github/workflows/exp073u-article3-presupport-coordinate-skeleton-v0-1.yml)"
+          grep -F "workflow_git_blob_sha1: \`${SELF_BLOB}\`" experiments/073u_article3_presupport_coordinate_skeleton_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073u_article3_presupport_coordinate_skeleton_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073u_article3_presupport_coordinate_skeleton_v0_1.py
+
+      - name: Bind exact upstream artifact metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/meta
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${P_RUN}/artifacts?per_page=100" > external/meta/p.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${S_RUN}/artifacts?per_page=100" > external/meta/s.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${T_RUN}/artifacts?per_page=100" > external/meta/t.json
+          python3 - <<'PY'
+          import json
+          expected = {
+            'p.json': {
+              9720339539: ('exp073p-v05-hosted-r1-prerequisite-966d31687b409aa06b64def28af7bf9bc98c5a01', 'sha256:dc63797a8bfe12a91c264eb5204182164e15d9f6441886ef79ab25f55b3040fc'),
+            },
+            's.json': {
+              9720550961: ('exp073s-v02-source-countmask-bin0-19676712b7f9eeb285aedec7ea259b8e3c3727b0', 'sha256:2dcb16a310b8dad52dc2f93c5901734fe8996f6d546e1440d9baab5781399ef9'),
+              9720550790: ('exp073s-v02-source-countmask-bin1-19676712b7f9eeb285aedec7ea259b8e3c3727b0', 'sha256:b0fab060d5c6c314854bab09c1f49b56feb6293129e768f1f323ee61d0a5a5f7'),
+              9720550823: ('exp073s-v02-source-countmask-bin2-19676712b7f9eeb285aedec7ea259b8e3c3727b0', 'sha256:8714d4503879fcf7f21669f3a94020c098fff35c110ed6821ec8a39ceeb2e1b1'),
+              9720551316: ('exp073s-v02-source-countmask-bin3-19676712b7f9eeb285aedec7ea259b8e3c3727b0', 'sha256:0962775868f49891c522fa44966d680e58377eb08bdad46bc2b5af94b212d86a'),
+            },
+            't.json': {
+              9720563095: ('exp073t-static-inventory-6efc41b005393deaf6651e90e902e1bf11c64250', 'sha256:4332ffa9d6b4385a48d3022a8afcedf0bf00a742cee8444fd6ca83842bf1e642'),
+              9720576202: ('exp073t-namaster-order-6efc41b005393deaf6651e90e902e1bf11c64250', 'sha256:0ed052aabc6ba908094396207031417ab076612e23b6211f1e08801e95b3388a'),
+            },
+          }
+          for fn, want in expected.items():
+              data=json.load(open('external/meta/'+fn))['artifacts']
+              got={a['id']:(a['name'],a['digest']) for a in data if a['id'] in want}
+              assert got == want, (fn, got, want)
+              assert all(not a['expired'] for a in data if a['id'] in want)
+          print('EXP073U_EXACT_UPSTREAM_ARTIFACT_METADATA_PASS')
+          PY
+
+      - name: Download exact non-science authority artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/p external/s0 external/s1 external/s2 external/s3 external/tinv external/tnm
+          gh run download "${P_RUN}" -n 'exp073p-v05-hosted-r1-prerequisite-966d31687b409aa06b64def28af7bf9bc98c5a01' -D external/p
+          gh run download "${S_RUN}" -n 'exp073s-v02-source-countmask-bin0-19676712b7f9eeb285aedec7ea259b8e3c3727b0' -D external/s0
+          gh run download "${S_RUN}" -n 'exp073s-v02-source-countmask-bin1-19676712b7f9eeb285aedec7ea259b8e3c3727b0' -D external/s1
+          gh run download "${S_RUN}" -n 'exp073s-v02-source-countmask-bin2-19676712b7f9eeb285aedec7ea259b8e3c3727b0' -D external/s2
+          gh run download "${S_RUN}" -n 'exp073s-v02-source-countmask-bin3-19676712b7f9eeb285aedec7ea259b8e3c3727b0' -D external/s3
+          gh run download "${T_RUN}" -n 'exp073t-static-inventory-6efc41b005393deaf6651e90e902e1bf11c64250' -D external/tinv
+          gh run download "${T_RUN}" -n 'exp073t-namaster-order-6efc41b005393deaf6651e90e902e1bf11c64250' -D external/tnm
+
+      - name: Build frozen 1410-coordinate non-classifying skeleton
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073u_article3_presupport_coordinate_skeleton_v0_1.py \
+            --receipt external/p/exp073p_v0_5_hosted_r1_prerequisite_receipt.json \
+            --inventory external/tinv/exp073t_cosmotheka_inventory_v0_1.json \
+            --namaster external/tnm/exp073t_namaster_2p7_component_order_v0_1.json \
+            --s0 external/s0/exp073s_v02_source_bin0_countmask.json \
+            --s1 external/s1/exp073s_v02_source_bin1_countmask.json \
+            --s2 external/s2/exp073s_v02_source_bin2_countmask.json \
+            --s3 external/s3/exp073s_v02_source_bin3_countmask.json \
+            --out data/derived/g7/exp073u_article3_presupport_coordinate_skeleton_v0_1.json
+
+      - name: Enforce non-classifying science firewall
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073u_article3_presupport_coordinate_skeleton_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073U_ARTICLE3_PRESUPPORT_COORDINATE_SKELETON_V0_1'
+          assert d['candidate_count']==1410
+          assert d['ordered_coordinate_id_sha256']=='bfaf582518cdbfd34b1e8392da83dac6b0885948bc31f2c29d4e48247c23af75'
+          assert d['blocks']['BOSS']['ordered_id_sha256']=='7315944adea1a36c0bdb162d57c567330151018dd2058f80e2cb6cb20c153ea0'
+          s=d['science_boundary']
+          for k in ('full_finite_operator_built','z_k_bound','final_response_abs_values_bound','physical_support_evaluated','science_gate_scored','f_invalid_computed','covariance_read','nuisance_geometry_read','relation_null_read','G8_read','readiness_credit_authorized'):
+              assert s[k] is False, k
+          assert s['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073U_NONCLASSIFYING_FIREWALL_PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073u-article3-presupport-coordinate-skeleton-${{ github.sha }}
+          path: data/derived/g7/exp073u_article3_presupport_coordinate_skeleton_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
