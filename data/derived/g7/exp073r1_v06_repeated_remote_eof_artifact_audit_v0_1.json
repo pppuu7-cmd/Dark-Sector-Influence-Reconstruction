@@ -1,0 +1,154 @@
+{
+  "schema": "dsir.exp073r1.v06-repeated-remote-eof-artifact-audit.v0.1",
+  "recorded_at_utc": "2026-08-29T09:21:58Z",
+  "status": "INCOMPLETE_EXP073R1_V06_REPEATED_REMOTE_EOF",
+  "infrastructure_classification": "INFRASTRUCTURE_TRANSPORT_FAILURE_REMOTE_WHOLE_OBJECT_EOF_REPEATED",
+  "scientific_classification": null,
+  "authority": {
+    "repository": "pppuu7-cmd/Dark-Sector-Influence-Reconstruction",
+    "run_id": 33222848695,
+    "head_sha": "98c4b8783a95932949947d9e214706c4ec7eaf8c",
+    "workflow_path": ".github/workflows/exp073r1-desy1-selfhosted-longrun-stageb-v0-6.yml",
+    "workflow_blob_sha1": "2cdcb0c60f464c0c65c3bafdde23daec7732215e",
+    "evaluator_path": "ci/exp073r1_sequential_wholestream_v0_5.py",
+    "evaluator_blob_sha1": "46fe1271d97ddd9e2164d24e7d79cf27bfda805d"
+  },
+  "runtime_observed_both_attempts": {
+    "runner_version": "2.336.0",
+    "runner_name": "DSIR-HOME-PC",
+    "machine_name": "win-ws338",
+    "python_wheel_abi": "cp314",
+    "platform_family": "Linux x86_64",
+    "numpy": "2.5.2",
+    "healpy": "1.20.0",
+    "astropy": "8.0.1",
+    "pyerfa": "2.0.1.5",
+    "PyYAML": "6.0.3",
+    "packaging": "26.3",
+    "astropy_iers_data": "0.2026.8.24.0.24.29"
+  },
+  "frozen_transport_target": {
+    "expected_metacal_bytes": 84075649920,
+    "expected_metacal_sha256": "39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8",
+    "required_rows": 136930995,
+    "chunk_rows": 65536,
+    "chunk_bytes": 40239104,
+    "http_range_requests": 0,
+    "whole_object_get": true,
+    "accept_encoding": "identity"
+  },
+  "attempts": [
+    {
+      "run_attempt": 1,
+      "job_id": 99020389131,
+      "job_conclusion": "failure",
+      "whole_object_mapper": "failure",
+      "terminal_reproduction_assertion": "skipped",
+      "last_reported_complete_rows": 37748736,
+      "last_reported_complete_rows_is_terminal_count": false,
+      "exception_type": "EOFError",
+      "exception_message": "whole stream ended after 18479432 of requested 40239104 bytes",
+      "artifact": {
+        "id": 9709998972,
+        "name": "exp073r1-v06-selfhosted-longrun-98c4b8783a95932949947d9e214706c4ec7eaf8c",
+        "digest": "sha256:d770bbfdda55788661b2676d4768e1da38d2e7310cbf96d2bfe52f41a3616351",
+        "zip_bytes": 9891219,
+        "zip_digest_independently_verified": true,
+        "terminal_summary_present": false,
+        "mask_files_present": false,
+        "admissible_as_r1_result": false,
+        "members": [
+          {
+            "path": "exp073r1_v05_records/exp073r1_v05_bin0_pixel_indices_le_u32.bin",
+            "bytes": 4766548,
+            "uint32_entries": 1191637,
+            "sha256": "4facbbe8b25c67f425bdb4efb30953042cef806ba2d3bb33e7af7fb488fd3b45"
+          },
+          {
+            "path": "exp073r1_v05_records/exp073r1_v05_bin1_pixel_indices_le_u32.bin",
+            "bytes": 5016192,
+            "uint32_entries": 1254048,
+            "sha256": "3e77e4a60f43fd91fb88216b5ec8f47d3ab4d8c7179b476cc90cc34538f6db98"
+          },
+          {
+            "path": "exp073r1_v05_records/exp073r1_v05_bin2_pixel_indices_le_u32.bin",
+            "bytes": 5278852,
+            "uint32_entries": 1319713,
+            "sha256": "633557e88381fd7bc4b21e40972dd9cee52625564361504b7f3b4903f1f797b1"
+          },
+          {
+            "path": "exp073r1_v05_records/exp073r1_v05_bin3_pixel_indices_le_u32.bin",
+            "bytes": 2697576,
+            "uint32_entries": 674394,
+            "sha256": "8bb945091fcd266b78ff8cdfb3de208a79a809fdf9054185f909eeed4f5d03a1"
+          }
+        ]
+      }
+    },
+    {
+      "run_attempt": 2,
+      "job_id": 99062223326,
+      "job_conclusion": "failure",
+      "mapper_started_utc": "2026-08-29T06:14:46Z",
+      "eof_reported_utc": "2026-08-29T06:26:21Z",
+      "whole_object_mapper": "failure",
+      "terminal_reproduction_assertion": "skipped",
+      "complete_chunks_processed": 0,
+      "rows_processed_by_evaluator": 0,
+      "prefix_bytes_received": 17280,
+      "partial_first_chunk_bytes_received": 10839192,
+      "total_response_bytes_received_before_eof": 10856472,
+      "exception_type": "EOFError",
+      "exception_message": "whole stream ended after 10839192 of requested 40239104 bytes",
+      "artifact": {
+        "id": 9710626213,
+        "name": "exp073r1-v06-selfhosted-longrun-98c4b8783a95932949947d9e214706c4ec7eaf8c",
+        "digest": "sha256:453259db5d09c6f65c15d470216ab1b6cd631f0018cc63e3f8199f35428b4a9a",
+        "zip_bytes": 902,
+        "zip_digest_independently_verified": true,
+        "member_count": 4,
+        "uncompressed_member_bytes": 0,
+        "empty_member_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "terminal_summary_present": false,
+        "mask_files_present": false,
+        "admissible_as_r1_result": false
+      }
+    }
+  ],
+  "same_name_artifact_observation": {
+    "artifact_name_contains_run_attempt": false,
+    "artifact_name_match_count": 2,
+    "overwrite_was_false": true,
+    "preterminal_documentation_based_upload_failure_prediction_matched_observation": false,
+    "observed_behavior": "GitHub Actions preserved attempt 1 and created a second artifact with the same name for attempt 2.",
+    "both_artifacts_admissible": false
+  },
+  "aggregate_join_v0_2_effect": {
+    "bound_run_id": 33222848695,
+    "bound_job_id": 99020389131,
+    "bound_job_conclusion": "failure",
+    "metadata_route_v0_2_blob_sha1": "c3cc5247bc37c576634c13c830605c2797678ca9",
+    "byte_frozen_unique_name_check_source_blob_sha1": "36ad742d7005c1189b040b34e85248d7b13707ac",
+    "canonical_name_match_count": 2,
+    "requires_exactly_one_name_match": true,
+    "real_join_authorized": false,
+    "support_executor_authorized": false,
+    "classification": "FAIL_CLOSED_INCOMPLETE_PREREQUISITE"
+  },
+  "result_artifact_authorized": false,
+  "support_executor_authorized": false,
+  "support_fraction_evaluated": false,
+  "f_invalid_computed": false,
+  "retained_dimension_evaluated": false,
+  "covariance_read": false,
+  "whitening_read": false,
+  "nuisance_svd_read": false,
+  "relation_null_read": false,
+  "heldout_read": false,
+  "G8_read": false,
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  }
+}

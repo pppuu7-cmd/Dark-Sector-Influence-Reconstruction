@@ -110,3 +110,35 @@ Hosted self-test run `33234248213`, job `99052307444`, succeeded; artifact
 `sha256:84a6a8c2740ad539c6a48a59e47b876122f6fd5bf4b5665e9653ecfc7c1debfc`.
 The real join was not dispatched; no support, covariance, nuisance,
 relation/null or G8 quantity was read, and `support_executor_authorized=false`.
+
+## 2026-08-29 — repeated Exp073R1 remote EOF and transport-stabilized v0.7
+
+Replacement run `33222848695` failed twice inside the unchanged frozen
+whole-object reader after all evaluator and parent-integrity checks passed.
+Attempt 1/job `99020389131` reached a last reported `37,748,736` rows before a
+premature EOF; exact rerun attempt 2/job `99062223326` failed in its first row
+chunk with `10839192/40239104` requested bytes received.  Both are classified
+as repeated remote-transport infrastructure failures, not scientific FAILs.
+Their independently verified uploads (`9709998972` and `9710626213`) are
+inadmissible: neither contains a terminal summary or masks.  GitHub preserved
+both under the same head-only artifact name despite `overwrite: false`; the
+second ZIP contains only four zero-byte records.  Exp073P join v0.2 remains
+fail-closed because its frozen R1 job failed and its byte-frozen collector
+requires exactly one canonical-name artifact while two exist.  No partial map
+or downstream quantity was evaluated.
+
+Before another execution, commits `401b6bc`..`9a4606f` preregistered and
+launched a transport-stabilized v0.7 route: independent whole-object attempts
+restart at byte zero with no Range/resume; only the exact 84,075,649,920-byte
+object with frozen SHA256 may be loopback-replayed to the unchanged evaluator.
+Run `33240490287` attempt 1 lost the self-hosted runner during acquisition and
+produced no artifact, an infrastructure outcome.  One exact rerun, attempt 2
+job `99080934021`, is queued as the sole heavy candidate.
+
+An executable audit of the frozen v0.7 snapshot records a prospective artifact
+delivery risk: its single `always()` upload mixes diagnostic/result paths and
+uses a SHA-only name without run-attempt identity.  This risk has not
+materialized in the active run and does not alter it.  Any later new execution
+after a failed upload must first freeze attempt-specific result/diagnostic
+delivery.  No support fraction, `f_invalid`, retained dimension, covariance,
+nuisance, relation/null or G8 quantity was read; G7/G8/G9 remain OPEN.
