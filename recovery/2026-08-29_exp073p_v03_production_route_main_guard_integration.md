@@ -8,14 +8,15 @@
 
 ## Recovery headline
 
-Repository state was fetched again before this iteration was recorded. While
-PR #166 was being developed, `main` advanced independently from `3ebcd03` to
-`72c02784a0d67226a2533a6868628c4812e65b83`. The new main history already
-contained a stricter prospective Exp073P v0.3 preregistration and three hosted
-supplemental fail-closed guards. PR #166 was therefore not merged blindly and
-no duplicate PR was opened. Instead, the branch was merged with current main
-and the actual v0.3 production route was conformed to the canonical main
-authority.
+Repository state was fetched repeatedly before this iteration was recorded.
+While PR #166 was being developed, `main` first advanced independently from
+`3ebcd03` to `72c02784a0d67226a2533a6868628c4812e65b83`, then advanced again
+during integration to `f2d1043577b3e0cc1280992c1df9e0d1c3991dd9`. The new
+main history already contained a stricter prospective Exp073P v0.3
+preregistration and four hosted supplemental fail-closed guards. PR #166 was
+therefore not merged blindly and no duplicate PR was opened. Instead, the
+branch was merged with each current main head and the actual v0.3 production
+route was conformed to the canonical main authority.
 
 At `2026-08-29T14:27:27Z`, the sole heavy candidate was still Exp073R1 v0.7
 run `33240490287`, attempt `2`, job `99080934021`: `queued`,
@@ -79,7 +80,19 @@ Their recovery records are preserved unchanged:
 - `recovery/2026-08-29_exp073p_v03_live_metadata_set_guard_and_r1_v07_queue_checkpoint.md`;
 - `recovery/2026-08-29_exp073p_v03_archive_member_guard_pass_and_r1_v07_queue_checkpoint.md`.
 
-All three are synthetic/provenance PASS results only and retain
+Current main then added the cross-member consistency guard:
+
+- hosted run `33257187305`: success, 19 negative mutations rejected;
+- `ci/exp073p_v03_cross_member_consistency_failclosed_selftest.py`;
+- `recovery/2026-08-29_exp073p_v03_cross_member_consistency_guard_pass_r1_v07_queued.md`.
+
+It independently requires summary/acquisition agreement on the exact metacal
+bytes and SHA256, frozen source identities, exact row accounting, acquisition
+authorization/from-zero/no-Range semantics, nonempty runtime provenance, and
+no downstream leakage. These requirements are consistent with the actual
+route's existing acquisition cross-binding and payload/runtime checks.
+
+All four are synthetic/provenance PASS results only and retain
 `support_executor_authorized=false`.
 
 ## Actual production route completed
@@ -160,6 +173,7 @@ The integrated prospective route passed:
 - canonical main authority guard: PASS, 15 mutations;
 - canonical main live metadata-set guard: PASS, 15 mutations;
 - canonical main archive-member guard: PASS, 13 mutations;
+- canonical main cross-member guard: PASS, 19 mutations;
 - integrated no-leakage assertions: PASS;
 - repository tests: `44 passed`.
 
@@ -212,6 +226,7 @@ receipt and cannot authorize physical support.
    python3 ci/exp073p_v03_v07_authority_contract_selftest.py --out /tmp/exp073p-authority.json
    python3 ci/exp073p_v03_live_metadata_set_failclosed_selftest.py --out /tmp/exp073p-metadata-set.json
    python3 -W ignore::UserWarning ci/exp073p_v03_archive_member_failclosed_selftest.py
+   python3 ci/exp073p_v03_cross_member_consistency_failclosed_selftest.py
    uv run --with pytest pytest -q
    ```
 

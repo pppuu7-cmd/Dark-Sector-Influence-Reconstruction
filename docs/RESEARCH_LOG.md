@@ -197,3 +197,11 @@ At `2026-08-29T14:27:27Z`, Exp073R1 v0.7 run `33240490287`, attempt 2/job
 real aggregate join were dispatched. No support fraction, `f_invalid`,
 retained dimension, covariance, nuisance, relation/null, held-out, or G8 value
 was read. `support_executor_authorized=false`; G7/G8/G9 remain OPEN.
+
+During final synchronization, `main` advanced again to `f2d1043` with an
+independent cross-member consistency guard. That guard's hosted run
+`33257187305` had already rejected 19 summary/acquisition/runtime/row-accounting
+mutations. Its unchanged files were merged into PR #166 and the suite passed
+locally. This is additive implementation validation and does not alter the
+canonical preregistration or any scientific boundary. A new exact-head hosted
+check is required after this second main merge.

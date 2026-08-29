@@ -1,0 +1,21 @@
+name: Exp073P v0.3 cross-member consistency selftest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073p_v03_cross_member_consistency_failclosed_selftest.py'
+      - '.github/workflows/exp073p-v03-cross-member-consistency-selftest.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run fail-closed cross-member consistency selftest
+        run: python ci/exp073p_v03_cross_member_consistency_failclosed_selftest.py

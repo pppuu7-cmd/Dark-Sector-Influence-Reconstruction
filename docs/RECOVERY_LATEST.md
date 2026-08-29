@@ -10,10 +10,11 @@
 **Active execution:** Exp073R1 v0.7 run `33240490287`, attempt 2, job
 `99080934021` (`queued` at `2026-08-29T14:27:27Z`; no artifacts)
 
-**Recovered main:** `72c02784a0d67226a2533a6868628c4812e65b83`
+**Recovered main:** `f2d1043577b3e0cc1280992c1df9e0d1c3991dd9`
 
-**Integration branch:** PR #166, remote merge commit `17a4551`; hosted
-integration self-test `33257888770` completed successfully.
+**Integration branch:** PR #166. The first main integration passed hosted run
+`33257888770`; main then advanced with a cross-member guard, now merged into
+the branch and awaiting the new exact-head hosted check.
 
 DSIR remains independent of RTK.  Preserve all negative and infrastructure
 results, preregistration chronology, missing-domain masks, and the distinction
@@ -159,6 +160,8 @@ Real joins remain closed:
 - current-main supplemental hosted guards also passed: authority run
   `33250019007`, metadata-set run `33252122146`, and archive-member run
   `33254539043`; these are implementation-validation PASS results only;
+- cross-member consistency guard run `33257187305` also passed 19 negative
+  mutations and is preserved from current main `f2d1043`;
 - current-main-integrated hosted self-test run `33257888770`, job
   `99114673638`, succeeded; artifact `9716362579` has digest
   `sha256:f78ed9f12c54bd585c9f5b8022e8fcb468dee7583e842c0c76363af2dfde7b33`.
@@ -212,21 +215,23 @@ Never modify post hoc:
 5. `recovery/2026-08-29_exp073p_v03_v07_authority_prereg_and_attempt_aware_selftest.md`
 6. `recovery/2026-08-29_exp073p_v03_live_metadata_set_guard_and_r1_v07_queue_checkpoint.md`
 7. `recovery/2026-08-29_exp073p_v03_archive_member_guard_pass_and_r1_v07_queue_checkpoint.md`
-8. `ci/exp073p_aggregate_prerequisite_join_v0_3.py`
-9. `ci/exp073p_actions_metadata_bundle_v0_3.py`
-10. `ci/exp073p_v03_artifact_zip_download_v0_1.py`
-11. `ci/exp073p_v07_r1_payload_bundle_v0_3.py`
-12. `.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-3.yml`
-13. `recovery/2026-08-29_exp073p_v03_v07_attempt2_authority_ready.md`
-14. `recovery/2026-08-29_exp073r1_v07_attempt2_queued_artifact_delivery_firewall.md`
-15. `recovery/2026-08-29_exp073r1_v07_runner_loss_attempt1_exact_rerun_attempt2.md`
-16. `recovery/2026-08-29_exp073r1_v07_live_acquisition_firewall_audit.md`
-17. `experiments/073r1_v0_7_transport_stabilized_exact_byte_replay_prereg.md`
-18. `ci/exp073r1_v0_7_whole_object_acquire.py`
-19. `.github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml`
-20. `data/derived/g7/exp073r1_v06_repeated_remote_eof_artifact_audit_v0_1.json`
-21. `ci/exp073r1_v0_7_artifact_delivery_audit.py`
-22. `data/derived/g7/exp073r1_v07_artifact_delivery_risk_audit_v0_1.json`
-23. `experiments/073p_aggregate_prerequisite_join_superseding_r1_authority_prereg_v0_2.md`
-24. `recovery/2026-08-28_exp073r1_to_exp073p_execution_integrity_matrix.md`
-25. `experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md`
+8. `recovery/2026-08-29_exp073p_v03_cross_member_consistency_guard_pass_r1_v07_queued.md`
+9. `ci/exp073p_aggregate_prerequisite_join_v0_3.py`
+10. `ci/exp073p_actions_metadata_bundle_v0_3.py`
+11. `ci/exp073p_v03_artifact_zip_download_v0_1.py`
+12. `ci/exp073p_v07_r1_payload_bundle_v0_3.py`
+13. `ci/exp073p_v03_cross_member_consistency_failclosed_selftest.py`
+14. `.github/workflows/exp073p-aggregate-prerequisite-join-actual-v0-3.yml`
+15. `recovery/2026-08-29_exp073p_v03_v07_attempt2_authority_ready.md`
+16. `recovery/2026-08-29_exp073r1_v07_attempt2_queued_artifact_delivery_firewall.md`
+17. `recovery/2026-08-29_exp073r1_v07_runner_loss_attempt1_exact_rerun_attempt2.md`
+18. `recovery/2026-08-29_exp073r1_v07_live_acquisition_firewall_audit.md`
+19. `experiments/073r1_v0_7_transport_stabilized_exact_byte_replay_prereg.md`
+20. `ci/exp073r1_v0_7_whole_object_acquire.py`
+21. `.github/workflows/exp073r1-desy1-transport-stabilized-replay-v0-7.yml`
+22. `data/derived/g7/exp073r1_v06_repeated_remote_eof_artifact_audit_v0_1.json`
+23. `ci/exp073r1_v0_7_artifact_delivery_audit.py`
+24. `data/derived/g7/exp073r1_v07_artifact_delivery_risk_audit_v0_1.json`
+25. `experiments/073p_aggregate_prerequisite_join_superseding_r1_authority_prereg_v0_2.md`
+26. `recovery/2026-08-28_exp073r1_to_exp073p_execution_integrity_matrix.md`
+27. `experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md`
