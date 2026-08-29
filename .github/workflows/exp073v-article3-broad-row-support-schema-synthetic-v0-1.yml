@@ -1,0 +1,73 @@
+name: Exp073V Article3 broad-row support schema synthetic v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073v_article3_broad_row_support_schema_synthetic_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  broad-row-schema-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective freeze boundary
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- ci/exp073v_article3_broad_row_support_schema_synthetic_v0_1.py)" = '3f574bfd52b29ad2e5ed1813a1487af2bfc18c5c'
+          test "$(git log -1 --format=%H -- docs/ARTICLE3_BROAD_ROW_LAYERB_SCHEMA_AMENDMENT_2026-08-30.md)" = '1bfc556ec16ea9c55cd47e60742890e435270a31'
+          test "$(git log -1 --format=%H -- experiments/073v_article3_broad_row_support_schema_synthetic_v0_1_prereg.md)" = 'f8ff9dba44685d00ab3b3803e60dfa6d66b7b135'
+          test -f experiments/073v_article3_broad_row_support_schema_synthetic_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073v-article3-broad-row-support-schema-synthetic-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073v_article3_broad_row_support_schema_synthetic_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073v_article3_broad_row_support_schema_synthetic_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073v_article3_broad_row_support_schema_synthetic_v0_1.py
+
+      - name: Run synthetic broad-row dual-support schema QA
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073v_article3_broad_row_support_schema_synthetic_v0_1.py \
+            --output data/derived/g7/exp073v_article3_broad_row_support_schema_synthetic_v0_1.json
+
+      - name: Enforce non-classifying science firewall
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073v_article3_broad_row_support_schema_synthetic_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073V_ARTICLE3_BROAD_ROW_SUPPORT_SCHEMA_SYNTHETIC_V0_1'
+          assert d['scope']=='SYNTHETIC_ARCHITECTURE_QA_ONLY_NO_REAL_SURVEY_SUPPORT_SCORE'
+          assert d['frozen_exp073u_order_sha256']=='bfaf582518cdbfd34b1e8392da83dac6b0885948bc31f2c29d4e48247c23af75'
+          assert len(d['tests'])==19
+          assert all(t['pass'] for t in d['tests'])
+          assert d['representation']['observation_row_has_scalar_z'] is False
+          assert d['representation']['observation_row_has_scalar_k'] is False
+          assert d['representation']['physical_domain_is_evaluated_on_support_atoms'] is True
+          assert d['science_gate_scored'] is False
+          assert d['scientific_readiness_credit'] is False
+          assert d['real_covariance_authorized'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073V_SYNTHETIC_FIREWALL_PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073v-broad-row-schema-synthetic-${{ github.sha }}
+          path: data/derived/g7/exp073v_article3_broad_row_support_schema_synthetic_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
