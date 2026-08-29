@@ -1,0 +1,129 @@
+name: Exp073X Article3 DES n4096 Wm0 mask-only angular window v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073x_des_n4096_wm0_maskonly_angular_window_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  exact-wm0-angular-window:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective Exp073X freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- ci/exp073x_des_n4096_wm0_maskonly_angular_window_v0_1.py)" = 'dd645f0060731e75737a569ad9ea50c9cdb9e15f'
+          test "$(git log -1 --format=%H -- experiments/073x_article3_des_nside4096_wm0_angular_window_pilot_v0_1_prereg.md)" = 'bb1755205f0944a0be5fcf714be705e8e76d356e'
+          test -f experiments/073x_article3_des_n4096_wm0_maskonly_angular_window_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073x-article3-des-n4096-wm0-maskonly-angular-window-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073x_article3_des_n4096_wm0_maskonly_angular_window_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073x_des_n4096_wm0_maskonly_angular_window_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073x_des_n4096_wm0_maskonly_angular_window_v0_1.py
+
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euxo pipefail
+          if command -v conda >/dev/null 2>&1; then
+            conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+            echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+          else
+            sudo apt-get update
+            sudo apt-get install -y libgsl-dev libfftw3-dev libcfitsio-dev build-essential
+            python3 -m venv "${RUNNER_TEMP}/nmt27"
+            "${RUNNER_TEMP}/nmt27/bin/python" -m pip install --upgrade pip wheel 'numpy<2.4'
+            "${RUNNER_TEMP}/nmt27/bin/python" -m pip install 'pymaster==2.7' healpy astropy
+            echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Download exact hosted R1 authority artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+          path: external/r1
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33270843577
+
+      - name: Download and bind exact DES Y1 lens mask
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/des
+          curl --fail --location --retry 3 \
+            -o external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits \
+            'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits'
+          test "$(stat -c %s external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits)" = '104595840'
+          echo 'a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55  external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits' | sha256sum -c -
+
+      - name: Inventory runner memory before exact workspace
+        shell: bash
+        run: |
+          set -euxo pipefail
+          free -h
+          df -h .
+          ulimit -a
+
+      - name: Compute exact nside4096 Wm source-bin-0 TE window twice
+        shell: bash
+        env:
+          OMP_NUM_THREADS: '2'
+          OPENBLAS_NUM_THREADS: '1'
+          MKL_NUM_THREADS: '1'
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          /usr/bin/time -v "${NMT_PY}" ci/exp073x_des_n4096_wm0_maskonly_angular_window_v0_1.py \
+            --r1-root external/r1 \
+            --r1-artifact-digest 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd' \
+            --lens-mask external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits \
+            --output-json data/derived/g7/exp073x_des_n4096_wm0_maskonly_angular_window_v0_1.json \
+            --output-npz data/derived/g7/exp073x_des_n4096_wm0_maskonly_angular_window_v0_1.npz
+
+      - name: Enforce non-classifying science firewall
+        shell: bash
+        run: |
+          set -euxo pipefail
+          "${NMT_PY}" - <<'PY'
+          import json
+          p='data/derived/g7/exp073x_des_n4096_wm0_maskonly_angular_window_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073X_DES_N4096_WM0_MASK_ONLY_ANGULAR_WINDOW_V0_1'
+          assert d['nside']==4096 and d['bandpower_count']==39
+          assert d['ell_axis']=={'first':0,'last':12287,'count':12288}
+          assert d['workspace_1']['te_window_shape']==[39,12288]
+          assert d['workspace_1']['te_window_authority']['sha256']==d['workspace_2']['te_window_authority']['sha256']
+          assert d['repeatability']=={'canonical_sha256_identical':True,'array_equal':True}
+          assert d['direct_signal_catalog_read_for_workspace'] is False
+          assert d['physical_support_evaluated'] is False
+          assert d['science_gate_scored'] is False
+          assert d['retained_coordinates_evaluated'] is False
+          assert d['covariance_read'] is False and d['nuisance_geometry_read'] is False and d['relation_null_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['article3_scientific_readiness_percent']==52
+          print('EXP073X_FIREWALL_PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073x-des-n4096-wm0-angular-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073x_des_n4096_wm0_maskonly_angular_window_v0_1.json
+            data/derived/g7/exp073x_des_n4096_wm0_maskonly_angular_window_v0_1.npz
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 6
