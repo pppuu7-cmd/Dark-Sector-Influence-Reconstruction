@@ -165,8 +165,34 @@ The integrated prospective route passed:
 
 The synthetic receipts all retain `support_executor_authorized=false`, no
 physical-support quantity was evaluated, and the gate state remains
-`{G7: OPEN, G8: OPEN, G9: OPEN}`. A fresh hosted PR run is required after the
-merge commit before PR #166 is eligible for merge.
+`{G7: OPEN, G8: OPEN, G9: OPEN}`.
+
+## Hosted integration verification
+
+The exact remote merge commit is
+`17a4551290e2a1a97979215fb71d69c7a8352290`, with parents PR head
+`614a2b6956e9fdd273f182e3fa2265d46f0ff493` and current main
+`72c02784a0d67226a2533a6868628c4812e65b83`. Its tree
+`805034b2b5d04716970db888a26d65b37888f76f` matches the locally validated
+integration tree exactly.
+
+Hosted PR self-test run `33257888770`, job `99114673638`, completed
+`success`. Every step passed, including lineage hashes, evaluator mutations,
+attempt-specific metadata mutations, full payload/archive mutations, exact ZIP
+download mutations, synthetic no-leakage assertions, and artifact upload.
+
+The immutable synthetic artifact is:
+
+- ID `9716362579`;
+- name
+  `exp073p-aggregate-join-v0-3-synthetic-selftest-869d097d0ac732e7e4873508c50b05cb45e81bed`;
+- digest
+  `sha256:f78ed9f12c54bd585c9f5b8022e8fcb468dee7583e842c0c76363af2dfde7b33`;
+- size `6,343` bytes;
+- `expired=false` at verification time.
+
+This is hosted implementation validation only. It is not a real prerequisite
+receipt and cannot authorize physical support.
 
 ## Exact recovery and continuation method
 
@@ -189,8 +215,9 @@ merge commit before PR #166 is eligible for merge.
    uv run --with pytest pytest -q
    ```
 
-5. Require the hosted v0.3 PR self-test to succeed on the integrated branch.
-   Do not merge PR #166 on a failed or absent integration check.
+5. Confirm hosted v0.3 run `33257888770` and job `99114673638` remain
+   `completed/success`. If executable bytes change on a later head, require a
+   new hosted self-test; do not rely on this older receipt for changed code.
 6. If R1 attempt 2 ends in runner, transport, acquisition, workflow, or
    artifact failure, preserve the exact evidence as infrastructure and do not
    dispatch the real aggregate join.

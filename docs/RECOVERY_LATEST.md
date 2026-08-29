@@ -1,6 +1,6 @@
 # DSIR RECOVERY LATEST — live pointer
 
-**Updated:** 2026-08-29 14:27 UTC
+**Updated:** 2026-08-29 14:34 UTC
 
 **Stable historical manual:** `docs/RECOVERY_MANUAL.md`
 
@@ -12,8 +12,8 @@
 
 **Recovered main:** `72c02784a0d67226a2533a6868628c4812e65b83`
 
-**Integration branch:** PR #166, merged with current main; fresh hosted
-integration self-test required before merge to main.
+**Integration branch:** PR #166, remote merge commit `17a4551`; hosted
+integration self-test `33257888770` completed successfully.
 
 DSIR remains independent of RTK.  Preserve all negative and infrastructure
 results, preregistration chronology, missing-domain masks, and the distinction
@@ -159,8 +159,9 @@ Real joins remain closed:
 - current-main supplemental hosted guards also passed: authority run
   `33250019007`, metadata-set run `33252122146`, and archive-member run
   `33254539043`; these are implementation-validation PASS results only;
-- a fresh hosted self-test of the current main-integrated PR branch is still
-  required before PR #166 may merge.
+- current-main-integrated hosted self-test run `33257888770`, job
+  `99114673638`, succeeded; artifact `9716362579` has digest
+  `sha256:f78ed9f12c54bd585c9f5b8022e8fcb468dee7583e842c0c76363af2dfde7b33`.
 
 ## Frozen scientific boundaries
 
@@ -192,8 +193,8 @@ Never modify post hoc:
    `PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1`; Actions success or an
    upload alone is insufficient.
 5. Use only canonical v0.3 for this exact attempt.  Verify the preregistration
-   SHA256 `e27761...1711f40` and require the fresh hosted integration check;
-   then merge PR #166 before any manual real dispatch because its production
+   SHA256 `e27761...1711f40` and hosted integration run `33257888770`; then
+   merge PR #166 before any manual real dispatch because its production
    workflow requires `refs/heads/main`.  Never repoint or run v0.1/v0.2.
 6. If attempt/job/head/artifact multiplicity differs, reject v0.3 and freeze a
    new version before another candidate.  Never edit v0.3 post hoc.

@@ -187,8 +187,10 @@ forwarding to the signed redirect; and requires the exact 11-file archive set
 before existing acquisition, payload, R1, and unchanged-parent semantic
 validation. Synthetic suites rejected 23 evaluator, 9 route, 4 downloader, 4
 payload and 3 integrated archive mutations. All three main supplemental guards
-passed locally and `44` repository tests passed. A fresh hosted integration
-check remains required before PR #166 may merge.
+passed locally and `44` repository tests passed. Hosted integration run
+`33257888770`, job `99114673638`, then completed successfully on the exact
+two-parent integration tree. Its artifact `9716362579` has digest
+`sha256:f78ed9f12c54bd585c9f5b8022e8fcb468dee7583e842c0c76363af2dfde7b33`.
 
 At `2026-08-29T14:27:27Z`, Exp073R1 v0.7 run `33240490287`, attempt 2/job
 `99080934021`, remained queued with no artifacts. No duplicate heavy run and no
