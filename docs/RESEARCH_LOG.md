@@ -144,3 +144,26 @@ delivery.  No support fraction, `f_invalid`, retained dimension, covariance,
 nuisance, relation/null or G8 quantity was read; G7/G8/G9 remain OPEN.
 Hosted audit self-test run `33245678070` completed successfully and reproduced
 the committed fail-closed/no-leakage record without launching a heavy mapper.
+
+## 2026-08-29 — prospective Exp073P v0.3 authority for v0.7 attempt 2
+
+At `2026-08-29T10:15:42Z`, while Exp073R1 v0.7 run `33240490287`, attempt 2,
+job `99080934021` was still queued and its artifact list was empty, PR #166
+commit `940fbca` froze a new aggregate prerequisite authority.  It admits only
+that exact attempt/job/head/workflow and never repoints historical joins v0.1
+or v0.2.  Commit `6f46375` implemented a manual-only v0.3 route that reuses the
+byte-frozen v0.1 parent/R1 validators and adds run-attempt validation, the
+attempt-specific jobs endpoint, unique artifact ID/digest binding, full-from-
+zero acquisition-provenance checks and byte/hash validation of the complete
+summary/acquisition/runtime plus four record and four mask files.  Partial,
+duplicate, later-attempt, empty or cross-inconsistent evidence fails closed.
+
+Local inherited and new mutation suites, JSON/YAML/compile checks and all 44
+repository tests passed.  Hosted v0.3 self-test run `33248034308`, job
+`99088793819`, completed successfully; artifact `9713466820` has digest
+`sha256:d53b87eec234c3533fd9d167bfdae7433db27e4aa106a614c2dd5812a9f6019e`.
+All receipts were synthetic and retained `support_executor_authorized=false`.
+At `2026-08-29T10:30:49Z` the heavy job remained queued with no artifact; the
+real v0.3 join was not dispatched.  No support fraction, `f_invalid`, retained
+dimension, covariance, nuisance, relation/null or G8 quantity was read, and
+G7/G8/G9 remain OPEN.
