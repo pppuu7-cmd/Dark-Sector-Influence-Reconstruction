@@ -4,13 +4,13 @@ Date: 2026-08-29
 
 ## Headline readiness
 
-**Scientific repository readiness for preparing Article 3: 44%.**
+**Scientific repository readiness for preparing Article 3: 52%.**
 
 This is deliberately a strict scientific-readiness score. Synthetic QA, CI hardening, provenance firewalls, preregistration-only work and manuscript scaffolding do not increase this headline percentage unless they close a real preregistered scientific milestone.
 
 Secondary planning indicators, kept separate from the scientific score:
 
-- method / technical / provenance readiness: approximately **70%**;
+- method / technical / provenance readiness: approximately **76%**;
 - manuscript / editorial packaging readiness: approximately **35%**.
 
 These secondary indicators must not be quoted as the scientific readiness of Article 3.
@@ -32,22 +32,25 @@ These secondary indicators must not be quoted as the scientific readiness of Art
 - synthetic covariance/whitening numerical QA;
 - synthetic signed nuisance-subspace numerical QA;
 - anti-leakage alias hardening;
-- GitHub-hosted Exp073R1 v0.8 whole-stream retry preregistered before implementation/output;
-- v0.8 transport wrapper and workflow cryptographically frozen before launch;
-- direct-child trigger authority firewall passed on the active hosted run;
-- hosted Exp073P v0.5 prerequisite join preregistered and implementation-frozen while R1 v0.8 remained non-terminal;
-- hosted Article-3 authority amendment frozen before the R1 v0.8 outcome;
-- home/self-hosted internet-dependent execution removed as an operational dependency without relabelling the infrastructure issue as science FAIL.
+- GitHub-hosted Exp073R1 v0.8 whole-stream retry preregistered, implementation-frozen and authority-bound before output;
+- genuine Exp073R1 v0.8 exact DES-Y1 reproduction PASS: run `33270843577`, job `99148916507`, head `ef783ca941fb9b9b5f5eae537986c56ff06e6536`;
+- exact Exp073R1 artifact bound: `exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536`, artifact `9720335366`, digest `sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd`;
+- hosted Exp073P v0.5 prerequisite join was preregistered and implementation-frozen while R1 v0.8 was non-terminal;
+- exact hosted Exp073P v0.5 prerequisite receipt PASS: workflow run `33271876425`, job `99151650192`, receipt artifact `9720339539`, digest `sha256:dc63797a8bfe12a91c264eb5204182164e15d9f6441886ef79ab25f55b3040fc`, with `support_executor_authorized=true`;
+- corrected Exp073S v0.2 reproduced all four DES-Y1 source-bin count-mask semantics against the genuine R1 authority in run `33272641756`; all four independent jobs passed without reading covariance or scoring support;
+- Exp073T v0.1 independently froze the pinned Cosmotheka observation inventory and verified NaMaster 2.7 component ordering in run `33272691162`;
+- the current pre-support scalar inventory is independently reconstructed as 780 DES Wm + 390 DES WW + 240 frozen BOSS rows = **1410 candidate coordinates**, before any support classification;
+- home/self-hosted internet-dependent execution is not an operational dependency for the current hosted Article-3 route.
 
-These foundations explain why technical/provenance readiness is high, but synthetic and infrastructure-only PASS results do not count as closure of the real inference chain.
+These foundations explain why technical/provenance readiness is high. Exp073S and Exp073T are deliberately non-classifying inputs: they improve provenance and make the next real stage executable, but they do not themselves constitute a support PASS.
 
 ## Open scientific milestones
 
 | Milestone | Current state | Scientific credit rule |
 |---|---|---|
-| Genuine Exp073R1 exact DES-Y1 reproduction | OPEN / GitHub-hosted v0.8 active | must reach genuine frozen PASS; infrastructure failure earns no PASS/FAIL science credit |
-| Real hosted prerequisite authority receipt | OPEN / implementation frozen | must bind exact run/job/head/artifact/digest and set `support_executor_authorized=true` only on genuine R1 PASS |
-| Full pre-support finite observation-operator candidate manifest | OPEN | must freeze complete coordinate/component order before any support classification and remain covariance/nuisance/G7/G8 blind |
+| Genuine Exp073R1 exact DES-Y1 reproduction | **CLOSED / PASS** | run `33270843577` reached genuine frozen PASS with exact parent and whole-stream checks |
+| Real hosted prerequisite authority receipt | **CLOSED / PASS** | Exp073P v0.5 receipt bound exact run/job/head/artifact/digest and set `support_executor_authorized=true` |
+| Full pre-support finite observation-operator candidate manifest | OPEN / inputs now authority-bound | must freeze complete 1410-coordinate component/order manifest before support classification and remain covariance/nuisance/G7/G8 blind |
 | Layer A broad operator-support leakage | OPEN | real Wm/WW broad window/kernel support plus frozen BOSS mm component; only unchanged 5% criterion and >=15 complete coordinates |
 | Layer B Article-3 coordinate/common-response validity | OPEN | evaluate only the Layer-A-retained set with the later coordinate-count/envelope contract; unchanged 5% and >=15 criteria |
 | Covariance restriction / whitening on final retained support | OPEN | only after both support layers PASS; no clipping/jitter/shrinkage rescue |
@@ -63,8 +66,8 @@ G7, G8 and G9 remain OPEN.
 
 The following values are planning checkpoints, not arbitrary progress bars. The headline score may increase only when the named real milestones are evidenced in immutable repository artifacts.
 
-- **44% now** — architecture, contracts and fail-closed provenance are mature, but the real Article-3 inference chain has not crossed its first reproduction milestone.
-- **about 50–52%** — genuine Exp073R1 PASS plus exact hosted prerequisite authority receipt.
+- **44%** — architecture, contracts and fail-closed provenance were mature, but the real Article-3 inference chain had not crossed its first reproduction milestone.
+- **52% now** — genuine Exp073R1 PASS plus exact hosted prerequisite authority receipt are both evidenced by immutable real artifacts.
 - **about 55–57%** — immutable full pre-support finite-operator candidate manifest with frozen component/coordinate order.
 - **about 61–63%** — real broad operator-support leakage PASS on Wm/WW plus the frozen BOSS component.
 - **about 65–67%** — real Article-3 coordinate/common-response support PASS; dual physical-support stage is then complete.
@@ -79,11 +82,7 @@ A real frozen-criterion scientific FAIL does not mean that the repository become
 
 The current scientific order is:
 
-`genuine GitHub-hosted Exp073R1 PASS`
-
-`-> exact hosted prerequisite authority receipt`
-
-`-> full pre-support finite observation operator + immutable candidate manifest`
+`full pre-support finite observation operator + immutable candidate manifest`
 
 `-> Layer A broad operator-support leakage audit`
 
@@ -105,14 +104,18 @@ No later stage may be used to choose support coordinates or alter an earlier thr
 
 ## Current operational blocker
 
-The first unresolved dependency is GitHub Actions run `33270843577`, job `99148916507`, executing the preregistered Exp073R1 v0.8 GitHub-hosted rate-qualified whole-stream route. The user's home/self-hosted runner is not an operational dependency for this route.
+The former R1/hosted-receipt blocker is closed.
 
-The active run has already passed the frozen implementation/preregistration firewall, direct-child trigger authority check, pinned runtime installation, immutable parent metadata binding and parent artifact internal-contract checks. It is currently inside the heavy frozen mapper/whole-stream execution step.
+The first unresolved dependency is now the **full pre-support finite observation-operator candidate manifest**. Its inventory is already independently constrained to 1410 coordinates:
 
-The exact hosted prerequisite join has already been preregistered and implementation-frozen against this run while it is non-terminal. Thus a terminal result can be classified without selecting a replacement run post hoc.
+- frozen BOSS component: 240 observed even-multipole rows;
+- DES Wm: 20 lens-source pairs x 39 bandpowers = 780 scalar `TE` coordinates;
+- DES WW: 10 source-source pairs x 39 bandpowers = 390 scalar `EE` coordinates.
 
-Until a genuine v0.8 terminal PASS exists and its exact artifact is bound into the hosted prerequisite receipt, neither real support layer is authorized.
+The DES coordinate lists and order hashes are supplied by Exp073T; NaMaster 2.7 component order was independently verified; source-bin count-mask identities are supplied by four successful Exp073S v0.2 artifacts. The BOSS row geometry was frozen before its legacy component support output.
+
+The next implementation must bind these authorities into one immutable pre-support manifest **without using any support result, covariance value, nuisance rank, relation/null result or G8 output to select or order coordinates**. Only after that manifest is frozen may Layer A be scored.
 
 ## Reporting convention
 
-When research updates mention “Article 3 readiness” without another qualifier, they must report the **44% scientific readiness** value from this ledger until an immutable real milestone above closes. Technical or editorial percentages must always be labeled separately.
+When research updates mention “Article 3 readiness” without another qualifier, they must report the **52% scientific readiness** value from this ledger until the next immutable real milestone above closes. Technical or editorial percentages must always be labeled separately.
