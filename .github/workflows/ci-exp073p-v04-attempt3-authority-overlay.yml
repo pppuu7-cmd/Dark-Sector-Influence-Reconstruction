@@ -1,0 +1,64 @@
+name: Exp073P v0.4 attempt3 authority overlay guard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073p_attempt3_authority_overlay_v0_4.py'
+      - 'experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_4.md'
+      - '.github/workflows/ci-exp073p-v04-attempt3-authority-overlay.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-failclosed-guard:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assert prospective byte identities and unchanged R1 authority base
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git hash-object experiments/073p_aggregate_prerequisite_join_v07_r1_authority_prereg_v0_4.md)" = '2f371c8be6c8b33585b8ab99f7cb59e5cc65abe6'
+          test "$(git hash-object ci/exp073p_attempt3_authority_overlay_v0_4.py)" = '8493ef0ac3aef21f26f5960356811c3a8abe0c11'
+          test "$(git hash-object ci/exp073p_aggregate_prerequisite_join_v0_3.py)" = '078130d456a905f70f24316ac55aea322e9bcee8'
+          test "$(git hash-object ci/exp073p_actions_metadata_bundle_v0_3.py)" = 'c66883ed78eb5edb0beda8acc2e300b480bfcefb'
+          test "$(git hash-object ci/exp073r1_sequential_wholestream_v0_5.py)" = '46fe1271d97ddd9e2164d24e7d79cf27bfda805d'
+          python3 -m py_compile ci/exp073p_attempt3_authority_overlay_v0_4.py
+
+      - name: Run synthetic attempt3/stale-attempt fail-closed selftest
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073p_attempt3_authority_overlay_v0_4.py \
+            --selftest \
+            --out data/derived/g7/exp073p_v0_4_attempt3_authority_overlay_selftest.json
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073p_v0_4_attempt3_authority_overlay_selftest.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073P_ATTEMPT3_AUTHORITY_OVERLAY_V0_4'
+          assert d['r1_authority']['run_id']==33240490287
+          assert d['r1_authority']['run_attempt']==3
+          assert d['r1_authority']['job_id']==99142692261
+          assert d['stale_attempt2_rejected'] is True
+          assert d['attempt3_metadata_fixture_pass'] is True
+          assert d['frozen_acceptance_criteria_changed'] is False
+          assert d['support_executor_authorized'] is False
+          assert d['support_fraction_evaluated'] is False
+          assert d['f_invalid_computed'] is False
+          assert d['covariance_read'] is False and d['G8_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('PASS_EXP073P_V04_HOSTED_GUARD')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073p-v04-attempt3-authority-overlay-selftest-${{ github.sha }}
+          path: data/derived/g7/exp073p_v0_4_attempt3_authority_overlay_selftest.json
+          retention-days: 90
