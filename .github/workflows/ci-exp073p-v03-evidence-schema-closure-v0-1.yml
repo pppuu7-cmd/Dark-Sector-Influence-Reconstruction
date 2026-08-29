@@ -1,0 +1,28 @@
+name: CI Exp073P v0.3 evidence schema closure v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073p_v03_evidence_schema_closure_guard_v0_1.py'
+      - '.github/workflows/ci-exp073p-v03-evidence-schema-closure-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  schema-closure-selftest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prospective fail-closed evidence schema closure selftest
+        run: python3 ci/exp073p_v03_evidence_schema_closure_guard_v0_1.py
+      - name: Assert downstream remains unauthorized
+        run: |
+          out="$(python3 ci/exp073p_v03_evidence_schema_closure_guard_v0_1.py)"
+          printf '%s\n' "$out"
+          grep -Fx 'support_executor_authorized=false' <<<"$out"
+          grep -Fx 'gate_state=G7:OPEN,G8:OPEN,G9:OPEN' <<<"$out"
+          grep -Fx 'frozen_acceptance_criteria_changed=false' <<<"$out"
