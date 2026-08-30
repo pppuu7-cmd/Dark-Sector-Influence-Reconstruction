@@ -1,0 +1,58 @@
+name: Exp073AK Article3 AI completion authority classifier v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ak_article3_ai_completion_authority_classifier_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-completion-classifier:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce prospective Exp073AK freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073ak_article3_ai_completion_authority_classifier_v0_1_prereg.md)" = 'ffb20ffcea7b0acd9687a34bc38c506b0750a5f6'
+          test "$(git log -1 --format=%H -- ci/exp073ak_article3_ai_completion_authority_classifier_v0_1.py)" = '597f64387ef164944cce2296f66d8f82b10a0cdb'
+          test -f experiments/073ak_article3_ai_completion_authority_classifier_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073ak-article3-ai-completion-authority-classifier-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073ak_article3_ai_completion_authority_classifier_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073ak_article3_ai_completion_authority_classifier_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073ak_article3_ai_completion_authority_classifier_v0_1.py
+      - name: Run frozen synthetic completion-state matrix
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073ak_article3_ai_completion_authority_classifier_v0_1.py --self-test --output-json data/derived/g7/exp073ak_article3_ai_completion_authority_classifier_v0_1.json
+      - name: Enforce non-scientific accounting
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073ak_article3_ai_completion_authority_classifier_v0_1.json'))
+          assert d['status']=='PASS_EXP073AK_AI_COMPLETION_AUTHORITY_CLASSIFIER_SYNTHETIC_V0_1'
+          assert d['synthetic_only'] is True and d['tests_passed']>=8
+          assert d['real_ai_receipt_read'] is False
+          assert d['readiness_increment']==0 and d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['science_gate_scored'] is False and d['production_release'] is False
+          print('EXP073AK_SYNTHETIC_COMPLETION_CLASSIFIER_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ak-ai-completion-authority-classifier-${{ github.sha }}
+          path: data/derived/g7/exp073ak_article3_ai_completion_authority_classifier_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
