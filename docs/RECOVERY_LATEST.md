@@ -2,7 +2,7 @@
 
 **Updated:** 2026-08-31.  
 **Strict Article-3 scientific repository readiness:** **52%**.  
-**Article-2 repository-for-writing readiness:** **100%** for declared scope; not G7/G8/G9 closure.
+**Article-2 repository-for-writing readiness:** **100%** for declared scope only; not G7/G8/G9 closure.
 
 Repository/hosted authority outranks chat wording. RTK/RQIR are excluded from DSIR authority/readiness.
 
@@ -10,189 +10,139 @@ Repository/hosted authority outranks chat wording. RTK/RQIR are excluded from DS
 
 1. `docs/RECOVERY_MANUAL.md`
 2. `docs/RECOVERY_MANUAL_LIVE_2026-08-30.md`
-3. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-4. `docs/LOCAL_COMPUTE_BENCHMARK_2026-08-31.md`
-5. `recovery/2026-08-31_exp073ay_runtime_budget_prereg_aq_active_forecast.md`
-6. `experiments/073ay_article3_controlled_twin_runtime_budget_policy_v0_1_prereg.md`
-7. `docs/ARTICLE3_52_PERCENT_BARRIER_FORECAST_2026-08-31.md` — historical planning record only; its success-conditioned dates are superseded by Exp073AQ FAIL.
+3. `recovery/2026-08-31_exp073az_low_memory_qualification_active_ba_frozen.md`
+4. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+5. `experiments/073az_article3_low_memory_general_coupling_authority_v0_1_prereg.md`
+6. `experiments/073ba_article3_low_memory_wm_s1_production_v0_1_prereg.md`
+7. `docs/LOCAL_COMPUTE_BENCHMARK_2026-08-31.md`
 8. `docs/DSIR_ALL_CHAT_REPOSITORY_RECONCILIATION_2026-08-30.md`
 9. `docs/RECOVERY_MANUAL_ADDENDUM_EXP065B_EXP067E_2026-08-30.md`
-10. `docs/DSIR_CROSS_CHAT_AUTHORITY_CONSOLIDATION_2026-08-30.md`
-11. Exp073AT/AU/AV/AW/AX addenda as needed.
+10. Exp073AT/AU/AV/AW/AX addenda as needed.
 
 ## Current scientific state
 
-- strict Article-3 readiness: `52%`;
-- Layer A: OPEN;
-- Layer B: OPEN;
-- covariance/whitening: BLOCKED;
-- G7: OPEN;
-- G8: OPEN;
-- G9: OPEN.
+- strict Article-3 readiness = `52%`;
+- Layer A = OPEN;
+- Layer B = OPEN;
+- covariance/whitening = BLOCKED;
+- G7 = OPEN;
+- G8 = OPEN;
+- G9 = OPEN.
 
-Synthetic, infrastructure, provenance, governance, numerical-QA, forecasting and root-cause diagnostic work add `+0` readiness.
+Synthetic, infrastructure, provenance, numerical-QA, route-qualification and individual angular-authority work add `+0` readiness.
 
-## Exp073AQ — terminal hosted Wm_S1 authority
+## Exp073AQ — permanent hosted repeatability FAIL
 
-Frozen run:
+Frozen run `33327372191` completed with authority:
 
-`33327372191`
+`SCIENTIFIC_REPEATABILITY_FAIL_EXP073AQ_WM_S1_CONTROLLED_TWIN_EXACT_V0_1`.
 
-Source head:
+Comparator authority artifact `9739725913`, digest `sha256:5184bb3034bd2c1bd497ad30db3dbd4e1550d09a0c25af328cdee553385fef03`.
 
-`fe89b6c64ee0cee5dbc40080973ec2af2ae683e0`
+Frozen facts:
 
-Run completed `2026-08-30T22:08:45Z` with workflow conclusion `success`; this means the preregistered comparator executed successfully, not that the scientific gate passed.
+- `array_equal=false`;
+- SHA equality=false;
+- A selected-window SHA `979c61faea99cf60146078ccdd5a9c75547dcc5a689ee48c4c5f309cf6a10b69`;
+- B selected-window SHA `5b02a691607dd21ede7601f081767ac3713e300abd5a9e358e4593a6ec486225`;
+- differing entries `472997/479232`;
+- differing bands `39/39`;
+- max absolute difference `2.0816681711721685e-17`.
 
-Jobs:
+The numerical smallness is irrelevant. No tolerance/ULP/rounding/preferred-replica/majority-vote rescue exists. Exp073AQ is never erased or reclassified.
 
-- replica A `99299799192`: completed/success;
-- replica B `99299799338`: completed/success;
-- comparator `99329163628`: completed/success.
+The previous `controlled_single_thread_exact_v1` Wm_S1 route is blocked and may not launch Wm_S2.
 
-Artifacts:
+## Low-memory execution discovery
 
-- replica A `9739721339`, digest `sha256:ec6ab1e6a602bd37f7a781a5e8030b09171905e5800b0cfeeba6fabe06e195a1`;
-- replica B `9739045909`, digest `sha256:4069f4deb3c608f6fb2c1fa686181746901befbe945cc07374c7d32346778e2f`;
-- comparator authority `9739725913`, digest `sha256:5184bb3034bd2c1bd497ad30db3dbd4e1550d09a0c25af328cdee553385fef03`.
+The model execution container has an exact 4-GiB cgroup ceiling. A stock NaMaster `NSIDE=4096` WW workspace hit OOM; classification is `LOCAL_INFRASTRUCTURE_OOM_BENCHMARK_ONLY`, not scientific FAIL.
 
-Hosted terminal status:
+A new algebraic route was validated nonclassifying:
 
-`SCIENTIFIC_REPEATABILITY_FAIL_EXP073AQ_WM_S1_CONTROLLED_TWIN_EXACT_V0_1`
+- use public PyMaster/NaMaster 2.7 scalar `get_general_coupling_matrix`;
+- retain at most one `[12288,12288]` scalar matrix (~1.125 GiB float64) at a time;
+- deterministically reduce each heavy matrix by fixed-order summation to `[39,12288]`;
+- Wm requires one `(0,2;0,2)` matrix;
+- WW requires sequential `(2,2;2,2)` and `(2,-2;2,-2)` matrices followed by parity plus/minus reconstruction;
+- solve only the compact binned MASTER system after heavy matrices are released.
 
-Frozen comparator facts:
+Small-resolution stock-NaMaster diagnostics reproduced selected windows at ~machine precision, and repeated identical-input general matrices were bitwise exact. These diagnostics are not tolerance authority and give +0 readiness.
 
-- `array_equal = false`;
-- canonical SHA equality = false;
-- replica A selected-window SHA `979c61faea99cf60146078ccdd5a9c75547dcc5a689ee48c4c5f309cf6a10b69`;
-- replica B selected-window SHA `5b02a691607dd21ede7601f081767ac3713e300abd5a9e358e4593a6ec486225`;
-- differing bands `39 / 39`;
-- differing entries `472997 / 479232`;
-- maximum absolute difference `2.0816681711721685e-17`;
-- mean absolute difference `2.5248672723363528e-20`;
-- frozen metadata identical = true;
-- controlled single-thread requirements verified = true.
+## Exp073AZ — active successor-route qualification
 
-The numerical smallness of the discrepancy cannot alter classification. The frozen contract requires exact canonical SHA equality and `numpy.array_equal == True`; no tolerance, ULP, rounding, preferred-replica, majority-vote or historical-result rescue exists.
+Candidate authority class:
 
-Consequences:
+`low_memory_general_coupling_deterministic_v1`.
 
-- Wm_S1 is not admitted;
-- **do not launch Wm_S2**;
-- current angular successor chain is blocked;
-- no Exp073AR aggregate or Exp073AS candidate manifest may be built from the failed route;
-- readiness remains `52%` and the FAIL earns `+0` readiness.
+Prereg commit `279e09696263432def4ce20c15752b4832bba298`.
+Implementation commit `d77b7ba88801f6788f3d386e72b445c7859c7153`.
+Workflow commit `7ba874e48a7c3e6509d114745a301e63a06229a2`.
+Workflow-freeze commit `f49b9ab07b5d59eb0c6f275d8fa862bc4daeb089`.
+Trigger/head `0a9581e19f7f010e13bf9aa88307b1940d0105de`.
+Hosted run `33339663991`.
 
-Durable authority checkpoint:
+Latest checkpoint state:
 
-`recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+- selftest job `99332875031`: completed/success;
+- PCL replica A `99332874913`: IN_PROGRESS on real NSIDE=4096 Wm_S1 mask-PCL;
+- PCL replica B `99332875116`: IN_PROGRESS on the same stage;
+- selftest artifact `9740152065`, digest `sha256:16a15e517adafb4d968b14362a5b7a14b4fbe36c9deb7b981d032e912c2d7465`;
+- no classifying PCL comparator result yet.
 
-## Post-authority diagnostic only
+Valid AZ PCL terminal classes:
 
-Inspection of the already-frozen replica artifacts found that nearly all selected-window entries differ at very small floating-point scale. Replica environment receipts also identify different GitHub-hosted AMD CPU models:
+- `PASS_EXP073AZ_WM_S1_MASK_PCL_EXACT_V0_1`;
+- `SCIENTIFIC_REPEATABILITY_FAIL_EXP073AZ_WM_S1_MASK_PCL_EXACT_V0_1`.
 
-- A: AMD EPYC 7763;
-- B: AMD EPYC 9V74.
+Only exact SHA + `numpy.array_equal` PASS admits a canonical Wm_S1 PCL to the next stage. No tolerance rule exists.
 
-This is a candidate environmental source of nondeterminism, not a proven cause. It does not reclassify Exp073AQ and does not authorize any tolerance rescue.
+## Exp073BA — fully frozen, NOT triggered
 
-Any recovery from this blocked route requires a separately numbered **prospectively frozen authority succession/root-cause protocol**. Exp073AQ remains permanently FAIL.
+Exp073BA was preregistered and its production workflow frozen before the AZ PCL result was known.
 
-## Exp073AY runtime-budget policy
+- prereg commit `b445066a36c838b18e4cea2ca56f2f6abee56406`;
+- exact comparator commit `a0b5bd8065c590e20c648215b8d993452fb7339c`;
+- workflow commit `fc0ca8b4c0e31673c1470418060a95ac507b3759`;
+- workflow-freeze commit `f9f19f80ed62090b22d69e6a667ea96fc7cf1f82`.
 
-Exp073AY was prospectively frozen before AQ output at commit
+No BA trigger exists.
 
-`3aeffe02afd44c5474cc15cc53007f9beec2b160`.
+If and only if AZ PCL exact PASSes, first create an immutable AZ binding receipt with run/job/artifact/digest and canonical PCL SHA, then trigger BA.
 
-Its 360-minute budget was conditional infrastructure policy for separately preregistered exact successors/recovery. Because Exp073AQ reached a valid repeatability FAIL, Exp073AY does **not** authorize Wm_S2 and cannot convert AQ into infrastructure-INCOMPLETE.
+BA frozen classifying sequence:
 
-The existing exact requirements remain historical/current-contract facts:
+1. two independent low-memory Wm_S1 compact coupling replicas;
+2. exact compact SHA + `array_equal` comparator;
+3. only on compact PASS, two fresh finalizer jobs;
+4. exact selected-window SHA + `array_equal` comparator;
+5. final PASS token `PASS_EXP073BA_WM_S1_LOW_MEMORY_GENERAL_COUPLING_EXACT_V0_1`;
+6. authority class `low_memory_general_coupling_deterministic_v1`.
 
-- PyMaster/NaMaster 2.7 lineage;
-- fresh independent replicas;
-- exact single-thread controls;
-- exact canonical SHA equality and `numpy.array_equal == True`;
-- no tolerance/rounding/ULP/majority-vote/preferred-replica rescue;
-- no partial-output reuse.
+Even BA PASS gives +0 readiness. Wm_S2 remains forbidden until full BA Wm_S1 PASS.
 
-## Local compute benchmark — completed
-
-Durable record:
-
-`docs/LOCAL_COMPUTE_BENCHMARK_2026-08-31.md`
-
-Latest benchmark result commit:
-
-`90c77f92e273a526803a2a1f20e2efeffbe87ef4`.
-
-Observed local capability:
-
-- 5 Xeon Platinum 8370C vCPU exposed;
-- actual cgroup hard memory limit exactly 4 GiB;
-- immutable Exp073R1 artifact `9720335366` materialized locally;
-- exact S1 NSIDE=4096 source-count map reproduced frozen occupancy SHA;
-- true local NSIDE=4096 NaMaster `WW_S1_S1` coupling test was killed at the 4 GiB cgroup ceiling.
-
-Classification remains:
-
-`LOCAL_INFRASTRUCTURE_OOM_BENCHMARK_ONLY`
-
-It is not a scientific/numerical FAIL and earns `+0` readiness.
-
-## 52% barrier state
-
-The earlier `docs/ARTICLE3_52_PERCENT_BARRIER_FORECAST_2026-08-31.md` was explicitly conditional on exact-twin success. Exp073AQ failed that condition, so the previous calendar forecast is no longer operative.
-
-There is currently **no authorized calendar path above 52%** under the failed controlled-route chain.
-
-Before successor angular production can resume, a separately numbered prospective authority-succession protocol must be frozen and validated without erasing or rescuing Exp073AQ.
-
-## Controlled exact authority contract preserved
-
-Historical controlled Wm_S0 anchor:
-
-`8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`
-
-Authority class:
-
-`controlled_single_thread_exact_v1`
-
-Required controls:
-
-- `OMP_NUM_THREADS=1`
-- `OPENBLAS_NUM_THREADS=1`
-- `MKL_NUM_THREADS=1`
-- `NUMEXPR_NUM_THREADS=1`
-- `VECLIB_MAXIMUM_THREADS=1`
-- `BLIS_NUM_THREADS=1`
-- `OMP_DYNAMIC=FALSE`
-
-No tolerance/ULP/rounding equivalence contract exists.
-
-## Frozen Article-3 support boundaries
-
-Never alter post hoc:
+## Frozen Article-3 boundaries — unchanged
 
 - `0.295 <= z <= 2.33` inclusive;
 - `0 < k <= 0.06664762008318016 Mpc^-1`;
 - Layer-A `operator_f_invalid <= 0.05` inclusive;
-- Layer-B invalid observation-row fraction `<= 0.05` inclusive;
-- minimum final retained observation dimension `15`;
-- DES classifying route `NSIDE=4096`;
-- 39 frozen bandpowers, true ell `0..12287`;
-- Wm `TE <- TE`; WW `EE <- EE`;
-- selected window `<f8 [39,12288]`;
+- Layer-B invalid row fraction `<=0.05` inclusive;
+- final retained observation dimension `>=15`;
+- DES `NSIDE=4096`;
+- true ell `0..12287`, 39 frozen bands;
+- Wm `TE <- TE`, WW `EE <- EE`;
+- canonical selected window `<f8 [39,12288]`;
 - positive absolute operator/window envelope only for support bookkeeping; measured Wm remains signed;
-- no effective ell/z/k shortcut;
-- no fiducial-P weighting;
-- no covariance/whitening/nuisance/quotient/relation/null/G8 information during support selection;
+- no effective ell/z/k or fiducial-P shortcut;
+- no covariance/whitening/nuisance/quotient/relation/null/G8 leakage before its authorized stage;
 - exact threshold ambiguity remains `numerically_unresolved`.
 
-## Resume order from this authority state
+## Current authorized order
 
-1. preserve Exp073AQ as permanent hosted repeatability FAIL;
-2. do not launch Wm_S2 or later angular tasks under the failed route;
-3. perform only nonclassifying root-cause/provenance diagnostics unless/until a separately numbered prospective authority succession is frozen;
-4. any successor protocol must preserve all thresholds/firewalls and cannot use tolerance or a preferred AQ replica;
-5. only after a new prospectively authorized execution route establishes its own required authority may the angular chain restart;
-6. Exp073AR -> Exp073AS -> Layer A -> Layer B -> covariance/whitening -> nuisance quotient -> G7 -> frozen relation -> fresh G8 remain downstream and blocked until then.
+1. resolve Exp073AZ Wm_S1 exact mask-PCL gate;
+2. if AZ PASS: freeze binding receipt and trigger already-frozen Exp073BA;
+3. if BA exact PASS: Wm_S1 is admitted under the new low-memory authority class, then prospectively freeze/run Wm_S2;
+4. continue `Wm_S2 -> Wm_S3 -> WW_S0_S0 -> WW_S0_S1 -> WW_S0_S2 -> WW_S0_S3 -> WW_S1_S1 -> WW_S1_S2 -> WW_S1_S3 -> WW_S2_S2 -> WW_S2_S3 -> WW_S3_S3`, each with its own exact classifying authority;
+5. assemble real Exp073AR 14-window aggregate;
+6. build real Exp073AS complete immutable 1410-row pre-support candidate manifest;
+7. only then may the 52% readiness barrier be reconsidered under the frozen accounting contract;
+8. downstream remains real Layer A -> Layer B -> covariance/whitening -> nuisance quotient -> G7 -> immutable relation freeze -> fresh G8.
