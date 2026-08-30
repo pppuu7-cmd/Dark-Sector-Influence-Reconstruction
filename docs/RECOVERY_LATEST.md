@@ -1,6 +1,6 @@
 # DSIR RECOVERY LATEST — live pointer
 
-**Updated:** 2026-08-30.  
+**Updated:** 2026-08-31.  
 **Strict Article-3 scientific repository readiness:** **52%**.  
 **Article-2 repository-for-writing readiness:** **100%** for declared scope; not G7/G8/G9 closure.
 
@@ -8,165 +8,224 @@
 
 1. `docs/RECOVERY_MANUAL.md`
 2. `docs/RECOVERY_MANUAL_LIVE_2026-08-30.md`
-3. `docs/DSIR_ALL_CHAT_REPOSITORY_RECONCILIATION_2026-08-30.md`
-4. `docs/RECOVERY_MANUAL_ADDENDUM_EXP065B_EXP067E_2026-08-30.md`
-5. `docs/DSIR_CROSS_CHAT_AUTHORITY_CONSOLIDATION_2026-08-30.md`
-6. `recovery/2026-08-30_all_chat_reconciliation_extended_through_exp067e_aq_still_running.md`
-7. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AT_2026-08-30.md`
-8. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AU_2026-08-30.md`
-9. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AV_2026-08-30.md`
-10. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AW_2026-08-30.md`
-11. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AX_2026-08-30.md`
+3. `recovery/2026-08-31_exp073ay_runtime_budget_prereg_aq_active_forecast.md`
+4. `experiments/073ay_article3_controlled_twin_runtime_budget_policy_v0_1_prereg.md`
+5. `docs/ARTICLE3_52_PERCENT_BARRIER_FORECAST_2026-08-31.md`
+6. `docs/DSIR_ALL_CHAT_REPOSITORY_RECONCILIATION_2026-08-30.md`
+7. `docs/RECOVERY_MANUAL_ADDENDUM_EXP065B_EXP067E_2026-08-30.md`
+8. `docs/DSIR_CROSS_CHAT_AUTHORITY_CONSOLIDATION_2026-08-30.md`
+9. Exp073AT/AU/AV/AW/AX recovery addenda as needed.
 
 Repository/hosted authority outranks chat wording. RTK/RQIR remain excluded from DSIR authority/readiness.
 
-## All-chat reconciliation — completed and extended
+## Current Article-3 scientific state
 
-The recoverable DSIR chat eras were audited against repository and hosted authority. No major scientifically consequential DSIR result was found that remains only in chat without repository backing.
+- strict readiness: `52%`;
+- Layer A: OPEN;
+- Layer B: OPEN;
+- covariance/whitening: BLOCKED;
+- G7: OPEN;
+- G8: OPEN;
+- G9: OPEN.
 
-The audit did recover/strengthen top-level indexing for:
+Synthetic, infrastructure, provenance, governance, numerical-QA and forecasting work adds `+0` readiness.
 
-- F27/Exp054C prospective C7 hard falsification of the quantitative `R^2`-centroid common-slope law;
-- F28/Exp055A positive retrospective half-transition candidate — **not** a negative control and **not** withheld evidence;
-- F29/Exp056B prospective C8 IDM-photon hard FAIL;
-- F30/Exp061A prospective withheld C9 two-coordinate path PASS, without universal-law/G7 closure;
-- F31/Exp064A covariance-null rejection of the ShapeFit common-plane candidate;
-- Exp065B→Exp067E observational/operator/convention chain;
-- Exp068A permanent FAIL versus separate corrected Exp068B PASS;
-- Exp071C known-sector K2 control weakening dark-specific F30 rhetoric;
-- Exp071L/M/N representation/resolvability/line-subspace supersession.
+## Current real heavy gate — Exp073AQ Wm_S1
 
-A second chat-memory error was corrected: Exp067B–E is **not** primarily a nuisance-SVD repair sequence. Repository authority gives the exact lineage:
+Frozen run:
 
-`Exp065B covariance eligibility PASS`
+`33327372191`.
 
-`-> Exp066B selected-bandpower FAIL`
+Latest inspection on 2026-08-31:
 
-`-> Exp066C exact shot-noise-template corrective PASS`
+- replica A job `99299799192`: `IN_PROGRESS` in `Compute exact controlled Wm_S1 replica`;
+- replica B job `99299799338`: `IN_PROGRESS` in the same exact compute step;
+- no replica artifact/comparator authority existed at the latest inspection.
 
-`-> Exp067A direct covariance-whitening PASS`
+The run started `2026-08-30T18:12:00Z` (`21:12` Europe/Helsinki). Current replica workflow timeout is 240 minutes, so current AQ has infrastructure budget only until about `2026-08-30T22:12Z` / `2026-08-31 01:12 Europe/Helsinki` unless the compute completes first.
 
-`-> Exp067B CAMB<->CLASS convention HARD FAIL`
+Do not launch Wm_S2 while AQ is active.
 
-`-> Exp067C native-CAMB coherence localization`
-
-`-> Exp067D float32-first causal diagnosis`
-
-`-> Exp067E preregistered out-of-sample physical convention PASS`.
-
-Exp066B and Exp067B remain immutable frozen FAILs. Later PASSes do not reclassify them.
-
-No reconciliation action changes readiness or gate state.
-
-## Current Article-3 authority state
-
-- Historical primary P Wm_S0 exact SHA `6ec29f6dbbcf0c29d7af9d6eb98d271bcd06e00d28cebe658b5e266f7ef18d0f` remains historical-route authority only.
-- Historical Q remains immutable `SCIENTIFIC_REPEATABILITY_FAIL`; computational repeatability, not dark-sector model physics.
-- Exp073AM controlled single-thread exact PASS: run `33321661835`, artifact `9735051043`, canonical Wm_S0 SHA `8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`, exact A/B equality, +0 readiness.
-- Exp073AN: `DETERMINISTIC_SINGLE_THREAD_ROUTE_BUT_EXACT_AUTHORITY_SHIFT_FROM_PRIMARY_P`.
-- Exp073AO/AP authorize only `controlled_single_thread_exact_v1`; no tolerance/ULP/rounding/majority-vote rescue exists.
-- Exp073AR = successor 14-window aggregate schema.
-- Exp073AS = successor complete 1410-row pre-support join schema.
-- Exp073AT = candidate -> Layer-A admission.
-- Exp073AU = real Layer-A PASS -> Layer-B admission.
-- Exp073AV = same-authority real Layer-A PASS + real Layer-B PASS -> covariance-read admission.
-- Exp073AW = target-independent nuisance SVD numerical-rank/final-representation resolution rule.
-- Exp073AX = G7 relation/statistic/null/fit protocol-admission firewall; it does not define or fit a physical relation.
-
-Hosted successor synthetic prerequisites remain +0 readiness:
-
-- AR run `33327870470`, artifact `9736757853`, 24/24 PASS;
-- AS run `33330144734`, artifact `9737392901`, 24/24 PASS;
-- AT run `33331600899`, artifact `9737797541`, 24/24 PASS;
-- AU run `33332508516`, artifact `9738046768`, 26/26 PASS;
-- AV run `33332732811`, job `99314123379`, artifact `9738105208`, digest `sha256:96d708a11f2b631aa4e75b121ab2fc3b8aab4fd724b6df3b0d834ce637ff3933`, 26/26 PASS;
-- AW run `33332915782`, job `99314619888`, artifact `9738157877`, digest `sha256:ad9c924f582d07bcb5ac72791a70f762f2a7e9e36acddff117eeda770c0b6de2`, 20/20 PASS;
-- AX run `33333749461`, job `99316853350`, artifact `9738393252`, digest `sha256:4693fe35cf7666530167d164b3b194be07948083fbadded3e10e96ee1e514af0`, 29/29 PASS.
-
-## Exp073AQ — active real Wm_S1 gate
-
-Frozen run `33327372191` remains the only authorized heavy production until a fresh status check says otherwise.
-
-Latest reconciliation status before this pointer update:
-
-- replica A job `99299799192`: `IN_PROGRESS` in exact Wm_S1 compute;
-- replica B job `99299799338`: `IN_PROGRESS` in exact Wm_S1 compute;
-- no valid AQ comparator authority artifact had appeared.
-
-Only valid comparator terminal classes:
+Valid comparator terminal classes remain only:
 
 - `PASS_EXP073AQ_WM_S1_CONTROLLED_TWIN_EXACT_V0_1`;
 - `SCIENTIFIC_REPEATABILITY_FAIL_EXP073AQ_WM_S1_CONTROLLED_TWIN_EXACT_V0_1`.
 
-Failure before valid comparator authority is infrastructure-INCOMPLETE. Exact PASS admits Wm_S1 only, +0 readiness. **Do not launch Wm_S2 before an exact AQ PASS.**
+Failure/cancellation/timeout before valid comparator authority remains infrastructure-INCOMPLETE and is not repeatability FAIL.
 
-## Exact successor angular contract
+## Exp073AY — prospective runtime-budget policy
 
-Controlled Wm_S0 anchor:
+Preregistered while AQ was still active and before any AQ output:
+
+`experiments/073ay_article3_controlled_twin_runtime_budget_policy_v0_1_prereg.md`
+
+commit:
+
+`3aeffe02afd44c5474cc15cc53007f9beec2b160`.
+
+Frozen infrastructure-only rule:
+
+- future separately preregistered controlled-twin angular replica jobs use `timeout-minutes: 360` on unchanged `ubuntu-24.04` standard GitHub-hosted route;
+- NaMaster/PyMaster 2.7 lineage unchanged;
+- physical runner remains `ci/exp073aa_article3_des_angular_task_runner_v0_1.py@45ed8d8d1e90cdaf314e0384b6f3cdfef369925b` unless separately prospectively superseded;
+- exact single-thread controls unchanged;
+- two independent fresh replicas;
+- exact SHA equality and `numpy.array_equal == True` unchanged;
+- no tolerance/rounding/majority-vote/preferred-replica rescue;
+- no partial-output reuse;
+- no scientific-readiness increment.
+
+If current AQ reaches valid comparator PASS/FAIL, no Wm_S1 recovery is needed. If it ends before comparator specifically as infrastructure-INCOMPLETE, a separately frozen fresh Wm_S1 twin recovery may use 360 minutes while preserving all scientific/numerical criteria. If a standard hosted replica cannot finish within 360 minutes, no silent runner/hardware/algorithm change is allowed; a new execution-authority succession must be prospectively qualified.
+
+## 52% barrier forecast
+
+Planning-only forecast is recorded in:
+
+`docs/ARTICLE3_52_PERCENT_BARRIER_FORECAST_2026-08-31.md`
+
+commit:
+
+`3740812af4398ed13b193ff3c9bfcc8bce374725`.
+
+Under the strict current serial authority order and assuming active continuation with minimal idle gaps:
+
+- earliest plausible move to a >52%-eligible real candidate manifest: `1-2 September 2026`;
+- central/realistic estimate: `2-4 September 2026`;
+- infrastructure-risk case: `4-8 September 2026 or later`.
+
+These dates are operational estimates only.
+
+## Why individual angular PASSes do not move readiness
+
+The minimum authorized chain to the next readiness opportunity is:
+
+`Wm_S1 exact twin admission`
+
+`-> Wm_S2`
+
+`-> Wm_S3`
+
+`-> WW_S0_S0`
+
+`-> WW_S0_S1`
+
+`-> WW_S0_S2`
+
+`-> WW_S0_S3`
+
+`-> WW_S1_S1`
+
+`-> WW_S1_S2`
+
+`-> WW_S1_S3`
+
+`-> WW_S2_S2`
+
+`-> WW_S2_S3`
+
+`-> WW_S3_S3`
+
+`-> real Exp073AR execution-qualified 14-window aggregate`
+
+`-> real Exp073AS complete immutable 1410-row pre-support finite-operator candidate manifest`.
+
+Only then is an increase above the 52% plateau eligible under frozen accounting. Individual angular authorities remain +0 readiness.
+
+## Controlled single-thread successor authority
+
+Historical primary P exact Wm_S0 SHA
+
+`6ec29f6dbbcf0c29d7af9d6eb98d271bcd06e00d28cebe658b5e266f7ef18d0f`
+
+remains historical-route authority only.
+
+Historical Q remains immutable `SCIENTIFIC_REPEATABILITY_FAIL`.
+
+Controlled successor Wm_S0 anchor from Exp073AM:
 
 `8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`.
 
-Every remaining angular task requires two independent hosted replicas with exactly:
+Exp073AO/AP authorize authority class:
 
-`OMP_NUM_THREADS=1`, `OPENBLAS_NUM_THREADS=1`, `MKL_NUM_THREADS=1`, `NUMEXPR_NUM_THREADS=1`, `VECLIB_MAXIMUM_THREADS=1`, `BLIS_NUM_THREADS=1`, `OMP_DYNAMIC=FALSE`.
+`controlled_single_thread_exact_v1`.
 
-Admission requires exact canonical SHA equality and `numpy.array_equal == True`. No tolerance, rounding, preferred replica, majority vote or closeness-to-historical-P rescue.
+Required thread controls:
 
-Remaining order:
+- `OMP_NUM_THREADS=1`
+- `OPENBLAS_NUM_THREADS=1`
+- `MKL_NUM_THREADS=1`
+- `NUMEXPR_NUM_THREADS=1`
+- `VECLIB_MAXIMUM_THREADS=1`
+- `BLIS_NUM_THREADS=1`
+- `OMP_DYNAMIC=FALSE`
 
-`Wm_S1, Wm_S2, Wm_S3, WW_S0_S0, WW_S0_S1, WW_S0_S2, WW_S0_S3, WW_S1_S1, WW_S1_S2, WW_S1_S3, WW_S2_S2, WW_S2_S3, WW_S3_S3`.
+No tolerance/ULP/rounding equivalence contract exists.
 
-## Frozen downstream numerical/statistical firewalls
+## Downstream successor prerequisites already frozen
 
-Exp073AW nuisance numerical-rank rule for future whitened `N_w` shape `(d,m)`:
+All remain hosted synthetic/non-scientific and +0 readiness:
+
+- Exp073AR — future execution-qualified 14-window aggregate schema;
+- Exp073AS — future complete 1410-row pre-support join schema;
+- Exp073AT — candidate -> Layer-A admission;
+- Exp073AU — Layer-A PASS -> Layer-B admission;
+- Exp073AV — same-authority A+B PASS -> covariance read admission;
+- Exp073AW — target-independent nuisance SVD numerical-rank/resolvability rule;
+- Exp073AX — G7 relation/statistic/null/fit protocol-admission firewall.
+
+Exp073AW rank rule remains:
 
 `tau_rank = eps64 * max(d,m) * sigma_max`.
 
-Retain a singular mode only if `sigma_i > tau_rank`; exact equality is `NUMERICALLY_UNRESOLVED_NUISANCE_RANK_BOUNDARY`. SVD is required; inversion of `N_w^T N_w` for rank is forbidden.
+Retain a singular mode only for `sigma_i > tau_rank`; equality is numerically unresolved and blocks quotient/G7. SVD is required; normal-equation inversion for rank is forbidden.
 
-Exp073AX requires a future **separate concrete G7 protocol** to be content-hash frozen before fit, including exact training manifest with no withheld family, relation form, scalar statistic, decision/equality rule, null/control construction, deterministic fit rule and exact real-quotient authority requirement.
+Exp073AX still requires a separate concrete G7 relation/statistic/decision/null/fit protocol to be content-hash frozen before fitting, with no withheld/G8 reads during discovery/fit.
 
-Before/during G7 fitting:
-
-`withheld_family_selected=false`, `withheld_reads=[]`, `G8_reads=[]`.
-
-The fitted G7 relation and null/discovery output must be frozen in a hosted immutable artifact before selecting/exposing a fresh G8 family.
-
-## Frozen Article-3 scientific boundaries
+## Frozen Article-3 support boundaries
 
 - `0.295 <= z <= 2.33` inclusive;
 - `0 < k <= 0.06664762008318016 Mpc^-1`;
 - Layer-A `operator_f_invalid <= 0.05` inclusive;
-- Layer-B invalid observation-row fraction `<=0.05` inclusive;
-- final retained dimension `>=15`;
-- exact-threshold ambiguity remains `numerically_unresolved`;
-- positive absolute operator/window envelope only for support bookkeeping; measured Wm remains signed;
+- Layer-B invalid observation-row fraction `<= 0.05` inclusive;
+- minimum final retained observation dimension `15`;
+- DES classifying route `NSIDE=4096`;
+- 39 frozen bandpowers, true ell `0..12287`;
+- Wm `TE <- TE`; WW `EE <- EE`;
+- selected window `<f8 [39,12288]`;
+- positive absolute window/operator envelope only for support bookkeeping; measured Wm remains signed;
 - no effective ell/z/k shortcut;
 - no fiducial-P weighting;
-- no covariance/whitening/nuisance/quotient/relation/null/G8 leakage before its authorized stage.
+- no covariance/whitening/nuisance/quotient/relation/null/G8 information during support selection;
+- exact threshold ambiguity remains `numerically_unresolved`.
 
-## Current authorized order
+## Important historical negative/supersession records
 
-`resolve Exp073AQ Wm_S1`
+The all-chat reconciliation remains authoritative for recovery:
 
-`-> if exact PASS, prospectively freeze/run Wm_S2 controlled twins`
+- F27/Exp054C prospective C7 quantitative-law FAIL;
+- F28 retrospective only;
+- F29 prospective C8 FAIL;
+- F30 withheld C9 multicoordinate PASS without universal-law closure;
+- F31 covariance-null rejection of common-plane relation;
+- Exp066B permanent selected-bandpower FAIL;
+- Exp066C separate corrective PASS;
+- Exp067B permanent CAMB<->CLASS convention HARD FAIL;
+- Exp067C/D numerical-floor localization/causal diagnosis;
+- Exp067E separate out-of-sample convention PASS;
+- Exp068A permanent FAIL separate from Exp068B corrected PASS;
+- Exp071C known-sector specificity weakening;
+- Exp071L/M/N later representation/resolvability/line-subspace supersession.
 
-`-> remaining angular tasks by independent exact-twin admission`
+Later PASSes never erase earlier frozen FAILs.
 
-`-> Exp073AM Wm_S0 + 13 admitted tasks -> real Exp073AR 14-window authority`
+## Resume order
 
-`-> real Exp073AS complete immutable 1410-row candidate manifest`
-
-`-> Exp073AT -> real Layer A`
-
-`-> Exp073AU -> real Layer B`
-
-`-> Exp073AV -> real covariance restriction + unrescued Cholesky whitening`
-
-`-> Exp073AW rank/resolution -> signed nuisance SVD/projector -> real quotient`
-
-`-> freeze a concrete Exp073AX-compliant G7 relation/statistic/decision/null/fit protocol -> execute G7 -> immutable hosted relation freeze`
-
-`-> only then select/expose fresh withheld G8`.
-
-Strict Article-3 readiness remains **52%**. Synthetic/provenance/numerical/methodological/reconciliation work does not increase readiness.
+1. re-check Exp073AQ run `33327372191` and artifacts;
+2. if valid AQ comparator PASS: admit Wm_S1 +0, then prospectively freeze/run Wm_S2 with Exp073AY 360-minute infrastructure budget;
+3. if valid AQ comparator repeatability FAIL: preserve FAIL and block successor progression;
+4. if AQ ends before comparator as infrastructure-INCOMPLETE: use only a separately frozen fresh Wm_S1 recovery compliant with Exp073AY; no partial reuse;
+5. continue remaining angular tasks one-by-one in frozen order;
+6. build real Exp073AR aggregate;
+7. build real Exp073AS complete 1410-row candidate manifest;
+8. only then consider the first legitimate readiness increase above 52%;
+9. then real Layer A -> Layer B -> covariance/whitening -> nuisance quotient -> G7 -> frozen relation -> fresh G8.
