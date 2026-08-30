@@ -9,78 +9,43 @@
 1. `docs/RECOVERY_MANUAL.md`
 2. `docs/RECOVERY_MANUAL_LIVE_2026-08-30.md`
 3. `docs/DSIR_CROSS_CHAT_AUTHORITY_CONSOLIDATION_2026-08-30.md`
-4. `recovery/2026-08-30_exp073al_hosted_pass_ai_still_running.md`
+4. `recovery/2026-08-30_exp073am_pass_exp073an_real_cross_route_shift.md`
 
 Repository/hosted authority outranks chat wording. RTK/RQIR remain excluded from DSIR authority/readiness.
 
-## Current state
+## Current headline state
 
-- Exp073R1/U/V/W/Y/Z2/AB: established real/non-classifying prerequisites/authorities.
-- Exp073Z v0.1: `NUMERICAL IMPLEMENTATION FAILURE, NOT SCIENCE`.
-- Exp073AD/AE/AF/AG: hosted synthetic/governance PASSes, each +0 readiness.
-- Exp073X: `INCOMPLETE_INFRASTRUCTURE_RESOURCE_CANCELLED_NO_AUTHORITY_REUSE`.
-- Exp073X2R primary P: hosted exact repeatability PASS / +0 readiness; canonical Wm_S0 SHA `6ec29f6dbbcf0c29d7af9d6eb98d271bcd06e00d28cebe658b5e266f7ef18d0f`.
-- Exp073X2 Q: immutable `SCIENTIFIC_REPEATABILITY_FAIL` for exact operator repeatability; not dark-sector model-physics failure.
-- Exp073AH2: hosted forensic PASS / +0 readiness, `WORKSPACE_OUTPUT_ONLY_NUMERICAL_DIVERGENCE`; no detected frozen input/contract drift.
+- Historical Exp073X2R primary P: exact repeatability PASS, canonical Wm_S0 SHA `6ec29f6dbbcf0c29d7af9d6eb98d271bcd06e00d28cebe658b5e266f7ef18d0f`, +0 readiness.
+- Historical Exp073X2 Q: immutable `SCIENTIFIC_REPEATABILITY_FAIL` for exact operator repeatability; not a dark-sector model-physics failure.
+- Exp073AH2 forensic localization: Q-A equals P exactly; Q-B SHA `8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`; no frozen input/contract drift detected.
 - Historical Exp073AF route remains `P PASS + Q SCIENTIFIC_REPEATABILITY_FAIL -> BLOCK_PRODUCTION`.
-- Exp073AI run `33310888983` remains **IN PROGRESS**; latest jobs A `99255607805`, B `99255607640` are still in `Compute exact single-thread replica`; no duplicate AI or Exp073AA production was launched.
-- Exp073AJ v0.1: implementation failure before classification; no real AI receipt read.
-- Exp073AJ2: hosted synthetic environment-provenance classifier PASS / +0 readiness, run `33313584914`, artifact `9732737233`.
-- Exp073AK v0.1: `IMPLEMENTATION_FAILURE_SYNTHETIC_HARNESS_MISSING_FIXTURE_ARGUMENT_BEFORE_CLASSIFICATION_NOT_SCIENCE`, run `33316169150`.
-- Exp073AK2: hosted synthetic completion-classifier PASS / +0 readiness, run `33316242357`, artifact `9733523834`.
-- Exp073AL: **HOSTED SYNTHETIC AI-vs-primary exact-stability classifier PASS / +0 readiness**, run `33319102300`, job `99277802521`, artifact `9734352248`, digest `sha256:a9ed4f0be6ed4dd25924658697b76b5f0b016d0b7cdc09feafe3aa0441278aa1`.
+- Original Exp073AI run `33310888983`: both single-thread replica jobs completed successfully, but original aggregator failed before comparison because it used a non-existent nested environment-receipt path. Permanent control-plane classification: `INCOMPLETE_INFRASTRUCTURE_AGGREGATOR_ENV_PATH_ERROR_BEFORE_REPEATABILITY_CLASSIFICATION`.
+- Exp073AM aggregator-only repair reused immutable AI artifacts and the unchanged frozen comparator. Hosted run `33321661835`, job `99284585530`, artifact `9735051043`, digest `sha256:167c82d36266efc3b7bd058f0cc307ec636b6c8efdb6b39b6e88f52d6edb3d66`.
+- Exp073AM result: `PASS_EXP073AI_SINGLE_THREAD_EXACT_REPRODUCIBILITY_V0_1`; A/B canonical SHA both `8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`; `0/479232` differing entries, `0/39` differing bands, max/mean absolute difference `0.0`.
+- Therefore controlled single-thread route is internally bitwise deterministic but does **not** reproduce historical primary-P exact SHA.
+- Exp073AN bound that real hosted result to the already-frozen Exp073AL classifier. Hosted run `33321762778`, job `99284850109`, artifact `9735076794`, digest `sha256:c93e50f2ac6b8f932d8dd9e2cc94b4a2304398549eb1ae033d195b989e8c780b`.
+- Real Exp073AL classification: `DETERMINISTIC_SINGLE_THREAD_ROUTE_BUT_EXACT_AUTHORITY_SHIFT_FROM_PRIMARY_P`.
+- Production remains blocked. No new canonical production authority has been selected.
 - Layer A/B = OPEN; covariance/whitening = BLOCKED; G7/G8/G9 = OPEN.
 
-## Exp073AI exact route
+## Interpretation boundary
 
-The scientific/angular contract remains unchanged: real DES Y1, genuine weighted redMaGiC mask, `NSIDE=4096`, PyMaster 2.7, 39 frozen bandpowers, true ell `0..12287`, spin-0 x spin-2, selected `TE <- TE`, canonical `<f8 [39,12288]`, no effective ell/z/k and no radial/support/fiducial-P/covariance/nuisance/quotient/relation/null/G8 information.
+Established:
 
-Both replicas force:
+1. historical exact workspace authority is not globally bitwise stable across hosted execution routes;
+2. frozen single-thread controls make the AI route internally bitwise reproducible across two independent hosted runners;
+3. that deterministic route converges to exact SHA `8ac59fc0...9220`;
+4. historical primary P remains exact SHA `6ec29f6d...18d0f`;
+5. hence exact operator authority is execution-route-sensitive at the bit level.
 
-`OMP_NUM_THREADS=1`, `OPENBLAS_NUM_THREADS=1`, `MKL_NUM_THREADS=1`, `NUMEXPR_NUM_THREADS=1`, `VECLIB_MAXIMUM_THREADS=1`, `BLIS_NUM_THREADS=1`, `OMP_DYNAMIC=FALSE`.
+Not established:
 
-No tolerance, rounding, ULP allowance or majority voting.
-
-Valid final AI numerical tokens only:
-
-- `PASS_EXP073AI_SINGLE_THREAD_EXACT_REPRODUCIBILITY_V0_1` iff exact SHA equality and `numpy.array_equal(A,B)==True`;
-- `SCIENTIFIC_REPEATABILITY_FAIL_EXP073AI_SINGLE_THREAD_EXACT_V0_1` iff both complete authorities reach valid comparison and disagree under the exact criterion.
-
-AI itself remains +0 readiness and cannot reclassify historical Q.
-
-## Exp073AK2 completion firewall
-
-Before interpreting AI numerically, classify terminal control-plane state with Exp073AK2. Only complete replica authorities + successful aggregate + valid frozen final token produce `VALID_HOSTED_EXP073AI_CLASSIFICATION`. Timeout/cancellation/artifact loss/aggregator failure remain infrastructure-INCOMPLETE and may never be promoted to repeatability FAIL.
-
-## Exp073AJ2 provenance firewall
-
-When complete AI environment receipts exist, AJ2 may independently label environment provenance. Its label may not inspect or alter the AI numerical result, select a preferred replica, introduce tolerance, or release production.
-
-## Exp073AL exact cross-route stability firewall
-
-Exp073AL was frozen and hosted-tested while AI was still in progress and before any real AI output existed.
-
-Frozen chain:
-
-- prereg `cf3e4062f3068badc7e4453cb816de72168ffbc9`;
-- implementation `a0ee0c5f37533093931c0495b4edd5967ce5a00c`;
-- workflow `223951730f7193adc8690bf99538a8e2a313cb38`;
-- freeze `642263e96f545d8f3035af73adecf0af8449e7b8`;
-- trigger/head `2bd07bfdc850bc83897c6d67d9b13b583003aed9`;
-- run `33319102300`, job `99277802521` = success;
-- artifact `9734352248`, digest `sha256:a9ed4f0be6ed4dd25924658697b76b5f0b016d0b7cdc09feafe3aa0441278aa1`;
-- token `PASS_EXP073AL_AI_VS_PRIMARY_EXACT_STABILITY_CLASSIFIER_SYNTHETIC_V0_1`.
-
-Hosted-tested future semantics:
-
-- AI not validly classified -> `NO_CROSS_ROUTE_STABILITY_CLASSIFICATION_AI_NOT_VALID`;
-- valid AI internal repeatability FAIL -> `CROSS_ROUTE_STABILITY_BLOCKED_AI_INTERNAL_REPEATABILITY_FAIL`;
-- valid AI PASS + canonical SHA exactly equal to primary-P SHA `6ec29f6d...18d0f` -> `EXACT_CROSS_ROUTE_STABILITY_AI_EQUALS_PRIMARY_P`;
-- valid AI PASS + different canonical SHA -> `DETERMINISTIC_SINGLE_THREAD_ROUTE_BUT_EXACT_AUTHORITY_SHIFT_FROM_PRIMARY_P`.
-
-Thus an internal AI PASS is not automatically evidence that the exact authority is stable across execution routes. Exp073AL compares exact hashes only after a valid AI PASS and cannot use AJ2 environment labels, angular values, support, covariance, nuisance geometry or G8.
-
-Exp073AL does not authorize production and adds +0 readiness.
+- no tolerance-based physical equivalence rule has been authorized;
+- no historical Q failure is erased;
+- no controlled-route result automatically supersedes primary P;
+- no Exp073AA production release exists;
+- no Layer-A support result exists;
+- no scientific dark-sector inference follows from this reproducibility result.
 
 ## Frozen Article-3 boundaries
 
@@ -100,4 +65,4 @@ Never alter post hoc:
 
 ## Resume instruction
 
-First inspect Exp073AI run `33310888983`, jobs `99255607805` / `99255607640`, and artifacts. Do not launch another AI or the 13 Exp073AA production tasks while AI is active. When AI becomes terminal: apply Exp073AK2 first; only a valid final hosted AI token is numerical authority. Then AJ2 may independently label environment provenance. If AI validly PASSes, apply Exp073AL to test exact identity against canonical primary P. None of AI/AJ2/AK2/AL automatically authorizes production or raises readiness; any future succession requires a separate prospective amendment after real results exist.
+Do not launch another AI and do not launch the remaining 13 Exp073AA tasks. The next scientifically admissible gate must be a **new prospectively frozen authority-succession decision protocol** that preserves historical P/Q/AI/AM results and decides before any further angular production whether production authority must require exact bitwise stability across execution routes or whether a separately justified numerical-equivalence contract is scientifically admissible. Any such future protocol must not retroactively convert historical Q FAIL or the real Exp073AL authority-shift classification into PASS and must keep Article-3 readiness at 52% until a real immutable complete pre-support operator manifest exists.
