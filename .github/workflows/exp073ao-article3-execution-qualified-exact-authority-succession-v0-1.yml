@@ -1,0 +1,66 @@
+name: Exp073AO Article3 execution-qualified exact authority succession v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ao_article3_execution_qualified_exact_authority_succession_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-succession-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce prospective Exp073AO freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073ao_article3_execution_qualified_exact_authority_succession_v0_1_prereg.md)" = 'b5b7bffa2567e081367580e10c7e9eca276c8d86'
+          test "$(git log -1 --format=%H -- ci/exp073ao_article3_execution_qualified_exact_authority_succession_v0_1.py)" = 'd0156bef98d1a920e286abccef482f9239f55e23'
+          test -f experiments/073ao_article3_execution_qualified_exact_authority_succession_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073ao-article3-execution-qualified-exact-authority-succession-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073ao_article3_execution_qualified_exact_authority_succession_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073ao_article3_execution_qualified_exact_authority_succession_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073ao_article3_execution_qualified_exact_authority_succession_v0_1.py
+      - name: Run frozen synthetic succession matrix
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073ao_article3_execution_qualified_exact_authority_succession_v0_1.py \
+            --self-test \
+            --output-json data/derived/g7/exp073ao_execution_qualified_exact_authority_succession_synthetic_v0_1.json
+      - name: Enforce non-scientific accounting
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073ao_execution_qualified_exact_authority_succession_synthetic_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073AO_EXECUTION_QUALIFIED_EXACT_SUCCESSION_SYNTHETIC_V0_1'
+          assert d['synthetic_only'] is True
+          assert d['tests_passed']==17
+          assert d['real_succession_decision_bound'] is False
+          assert d['production_outputs_created'] is False
+          assert d['readiness_increment']==0
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['science_gate_scored'] is False
+          assert d['scientific_model_pass_claimed'] is False
+          print('EXP073AO_SYNTHETIC_SUCCESSION_QA_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ao-execution-qualified-exact-succession-${{ github.sha }}
+          path: data/derived/g7/exp073ao_execution_qualified_exact_authority_succession_synthetic_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
