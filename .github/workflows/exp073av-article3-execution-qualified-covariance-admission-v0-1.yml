@@ -1,0 +1,49 @@
+name: Exp073AV Article3 execution-qualified covariance admission v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073av_article3_execution_qualified_covariance_admission_v0_1.trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-covariance-admission:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce prospective Exp073AV freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f experiments/073av_article3_execution_qualified_covariance_admission_v0_1_prereg.md
+          test -f experiments/073av_article3_execution_qualified_covariance_admission_v0_1_workflow_freeze.md
+          test -f ci/exp073av_article3_execution_qualified_covariance_admission_v0_1.py
+      - name: Run frozen synthetic covariance admission matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          python ci/exp073av_article3_execution_qualified_covariance_admission_v0_1.py > data/derived/g7/exp073av_covariance_admission_synthetic_v0_1.json
+      - name: Enforce non-scientific accounting and no real covariance read
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          p='data/derived/g7/exp073av_covariance_admission_synthetic_v0_1.json'
+          d=json.load(open(p))
+          assert d['token']=='PASS_EXP073AV_EXECUTION_QUALIFIED_COVARIANCE_ADMISSION_SYNTHETIC_V0_1'
+          assert d['classification']=='HOSTED_SYNTHETIC_PASS_NON_SCIENTIFIC_PLUS_0_READINESS'
+          assert d['tests_passed']==26
+          assert d['article3_scientific_readiness_percent']==52 and d['readiness_increment']==0
+          assert d['real_covariance_read'] is False and d['scientific_pass_claimed'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073av-covariance-admission-${{ github.sha }}
+          path: data/derived/g7/exp073av_covariance_admission_synthetic_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
