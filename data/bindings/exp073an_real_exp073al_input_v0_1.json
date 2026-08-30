@@ -1,0 +1,27 @@
+{
+  "schema": "DSIR_EXP073AL_AI_VS_PRIMARY_EXACT_STABILITY_INPUT_V0_1",
+  "primary_p": {
+    "canonical_sha256": "6ec29f6dbbcf0c29d7af9d6eb98d271bcd06e00d28cebe658b5e266f7ef18d0f"
+  },
+  "ai": {
+    "completion_class": "VALID_HOSTED_EXP073AI_CLASSIFICATION",
+    "numerical_token": "PASS_EXP073AI_SINGLE_THREAD_EXACT_REPRODUCIBILITY_V0_1",
+    "canonical_sha256": "8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220"
+  },
+  "science_firewall": {
+    "angular_values_read": false,
+    "environment_label_read": false,
+    "radial_kernel_read": false,
+    "physical_support_evaluated": false,
+    "retained_coordinates_evaluated": false,
+    "fiducial_P_weighting_used": false,
+    "covariance_read": false,
+    "whitening_performed": false,
+    "nuisance_geometry_read": false,
+    "nuisance_svd_performed": false,
+    "relation_null_read": false,
+    "G8_read": false,
+    "production_released": false,
+    "scientific_model_pass_claimed": false
+  }
+}
