@@ -1,31 +1,43 @@
 # DSIR RECOVERY LATEST — live pointer
 
 **Updated:** 2026-08-31.  
-**Strict Article-3 scientific repository readiness:** **52%**.  
+**Article-3 scientific authority readiness:** **52.0%**.  
+**Article-3 draft/data readiness:** **53.7%** (`53.714285714285715%` exact ledger value).  
 **Article-2 repository-for-writing readiness:** **100%** for declared scope only; not G7/G8/G9 closure.
 
+Dashboard shorthand:
+
+`Verified: 52.0% | Draft/data: 53.7%`
+
 Repository/hosted authority outranks chat wording. RTK/RQIR are excluded from DSIR authority/readiness.
+
+The two Article-3 percentages are deliberately different metrics. `Scientific authority` is Track A only. `Draft/data` is an operational manuscript/data completion metric under the prospectively frozen rules in `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`; it is not evidence strength or a probability of correctness.
 
 ## Read first
 
 1. `docs/RECOVERY_MANUAL.md`
 2. `docs/RECOVERY_MANUAL_LIVE_2026-08-30.md`
-3. `recovery/2026-08-31_exp073bb_provisional_dual_track_policy_az_active.md`
-4. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073BB_2026-08-31.md`
-5. `experiments/073bb_article3_provisional_dual_track_evidence_policy_v0_1_prereg.md`
-6. `docs/ARTICLE3_PROVISIONAL_RECOMPUTE_LEDGER_2026-08-31.md`
-7. `recovery/2026-08-31_exp073az_low_memory_qualification_active_ba_frozen.md`
-8. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-9. `experiments/073az_article3_low_memory_general_coupling_authority_v0_1_prereg.md`
-10. `experiments/073ba_article3_low_memory_wm_s1_production_v0_1_prereg.md`
-11. `docs/LOCAL_COMPUTE_BENCHMARK_2026-08-31.md`
-12. `docs/DSIR_ALL_CHAT_REPOSITORY_RECONCILIATION_2026-08-30.md`
-13. `docs/RECOVERY_MANUAL_ADDENDUM_EXP065B_EXP067E_2026-08-30.md`
-14. Exp073AT/AU/AV/AW/AX addenda as needed.
+3. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+4. `docs/RECOVERY_MANUAL_ADDENDUM_DUAL_READINESS_2026-08-31.md`
+5. `recovery/2026-08-31_dual_readiness_accounting_frozen.md`
+6. `recovery/2026-08-31_exp073bb_provisional_dual_track_policy_az_active.md`
+7. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073BB_2026-08-31.md`
+8. `experiments/073bb_article3_provisional_dual_track_evidence_policy_v0_1_prereg.md`
+9. `docs/ARTICLE3_PROVISIONAL_RECOMPUTE_LEDGER_2026-08-31.md`
+10. `recovery/2026-08-31_exp073bc_az_to_ba_binding_schema_preregistered.md`
+11. `recovery/2026-08-31_exp073az_low_memory_qualification_active_ba_frozen.md` (historical active checkpoint; see terminal update below)
+12. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+13. `experiments/073az_article3_low_memory_general_coupling_authority_v0_1_prereg.md`
+14. `experiments/073ba_article3_low_memory_wm_s1_production_v0_1_prereg.md`
+15. `docs/LOCAL_COMPUTE_BENCHMARK_2026-08-31.md`
+16. `docs/DSIR_ALL_CHAT_REPOSITORY_RECONCILIATION_2026-08-30.md`
+17. `docs/RECOVERY_MANUAL_ADDENDUM_EXP065B_EXP067E_2026-08-30.md`
+18. Exp073AT/AU/AV/AW/AX addenda as needed.
 
 ## Current scientific state
 
-- strict Article-3 readiness = `52%`;
+- strict Article-3 scientific authority readiness = `52.0%`;
+- Article-3 draft/data readiness = `53.714285714285715%` (display `53.7%`);
 - Layer A = OPEN;
 - Layer B = OPEN;
 - covariance/whitening = BLOCKED;
@@ -33,28 +45,39 @@ Repository/hosted authority outranks chat wording. RTK/RQIR are excluded from DS
 - G8 = OPEN;
 - G9 = OPEN.
 
-Synthetic, infrastructure, provenance, numerical-QA, route-qualification, provisional/manuscript and individual angular-authority work add `+0` readiness.
+Synthetic, infrastructure, provenance, numerical-QA, route-qualification, provisional/manuscript and individual angular-authority work add `+0` scientific readiness.
 
-## New two-track operating policy — Exp073BB
+### Current dual-readiness calculation
 
-DSIR now proceeds in two explicitly separated tracks.
+The fixed draft/data metric starts from the frozen 52-point baseline and allocates the remaining 48 points across the concrete downstream Article-3 production path.
+
+The 14-window angular stage is worth 12 points. At present two complete angular data objects are usable for draft-data continuation:
+
+1. Wm_S0 — complete controlled exact object from Exp073AM;
+2. Wm_S1 — complete AQ A/B pair eligible for Track-P downstream sensitivity propagation while AQ remains an immutable exact repeatability FAIL.
+
+Therefore current angular draft credit is `12 * 2/14 = 1.7142857142857142`, giving `52 + 1.7142857142857142 = 53.714285714285715%`.
+
+No Layer-A/B/covariance/nuisance/G7/G8/G9 draft-stage credit is currently awarded. Synthetic QA and merely written workflow/governance code receive no draft-data points.
+
+## Exp073BB — two-track operating policy
+
+DSIR proceeds in two explicitly separated tracks.
 
 ### Track A — scientific authority
 
-Unchanged frozen scientific authority. Only Track A can satisfy real prerequisites, create scientific PASS, or change readiness. Historical scientific/computational FAILs remain immutable.
+Unchanged frozen scientific authority. Only Track A can satisfy real prerequisites, create scientific PASS, or change scientific authority readiness. Historical scientific/computational FAILs remain immutable.
 
 ### Track P — provisional research/manuscript
 
 Complete numerically non-identical replicas may be propagated downstream for exploration, sensitivity analysis, prioritization and working Article-3 drafting.
-
-Track P never changes Track A.
 
 Every provisional object must have:
 
 - `authority=false`;
 - `provisional=true`;
 - `scientific_pass_claimed=false`;
-- `readiness_increment=0`;
+- `readiness_increment=0` for scientific readiness;
 - `recompute_before_final_submission=true` until later Track-A supersession;
 - all complete replicas propagated;
 - no preferred-replica selection.
@@ -75,13 +98,13 @@ Hosted Exp073BB governance QA:
 - digest `sha256:e5224a91110f9a0cf73e4254837a9cfca6f4f7fc3115d065207d6239fd219c2a`;
 - token `PASS_EXP073BB_PROVISIONAL_DUAL_TRACK_POLICY_SYNTHETIC_V0_1`;
 - `16/16` frozen tests PASS;
-- +0 readiness.
+- +0 scientific readiness.
 
 Durable provisional/exact-recompute ledger:
 
 `docs/ARTICLE3_PROVISIONAL_RECOMPUTE_LEDGER_2026-08-31.md`.
 
-## Exp073AQ — permanent hosted repeatability FAIL, but provisional branches preserved
+## Exp073AQ — permanent hosted repeatability FAIL, provisional branches preserved
 
 Frozen run `33327372191` authority remains:
 
@@ -101,7 +124,7 @@ Frozen exact facts:
 
 No tolerance/ULP/rounding/preferred-replica/majority-vote rescue exists. AQ is never erased or reclassified.
 
-For Track P only, both complete A/B arrays may now be propagated together. Input-level diagnostics:
+For Track P only, both complete A/B arrays may be propagated together. Input-level diagnostics:
 
 - `max|W| = 0.04906169081530385`;
 - `max|delta|/max|W| = 4.2429605188470844e-16`;
@@ -110,84 +133,45 @@ For Track P only, both complete A/B arrays may now be propagated together. Input
 - zero/nonzero mismatches = `0`;
 - max relative difference in per-band `sum(abs(W)) = 4.130423023448714e-16`.
 
-Current Track-P label is only
+Current Track-P label is only:
 
 `PROVISIONAL_WM_S1_BRANCH_PAIR_ELIGIBLE_FOR_DOWNSTREAM_SENSITIVITY_PROPAGATION`.
 
 It does not pre-award Layer-A/support PASS; both branches must independently cross every frozen downstream rule.
 
-## Low-memory execution discovery
+## Exp073AZ — terminal exact mask-PCL PASS, +0 readiness
 
-The model execution container has an exact 4-GiB cgroup ceiling. A stock NaMaster `NSIDE=4096` WW workspace hit OOM; classification is `LOCAL_INFRASTRUCTURE_OOM_BENCHMARK_ONLY`, not scientific FAIL.
+Hosted run `33339663991` is now completed/success.
 
-A new algebraic route was validated nonclassifying:
+- PCL replica A job `99332874913`: completed/success;
+- PCL replica B job `99332875116`: completed/success;
+- comparator job `99338088877`: completed/success;
+- authority artifact `9740703849`;
+- artifact digest `sha256:3cecacff76169dd968e458db0ae70563cf8c3cb0b30d0dff4038a2c792dd3d75`;
+- terminal token `PASS_EXP073AZ_WM_S1_MASK_PCL_EXACT_V0_1`;
+- `array_equal=true`;
+- A/B PCL SHA `2a990b06defbe9922f82b4b85ae26df09bc7881508a85b003648cb23907a5888`;
+- canonical shape `[12288]`, dtype `<f8` under the frozen contract;
+- scientific readiness remains `52.0%`, increment `+0`.
 
-- use public PyMaster/NaMaster 2.7 scalar `get_general_coupling_matrix`;
-- retain at most one `[12288,12288]` scalar matrix (~1.125 GiB float64) at a time;
-- deterministically reduce each heavy matrix by fixed-order summation to `[39,12288]`;
-- Wm requires one `(0,2;0,2)` matrix;
-- WW requires sequential `(2,2;2,2)` and `(2,-2;2,-2)` matrices followed by parity plus/minus reconstruction;
-- solve only the compact binned MASTER system after heavy matrices are released.
+Exp073AQ remains permanent FAIL. AZ validates only the exact mask-PCL predecessor needed by the prospective low-memory successor route; it does not retroactively repair AQ.
 
-Small-resolution stock-NaMaster diagnostics reproduced selected windows at ~machine precision, and repeated identical-input general matrices were bitwise exact. These diagnostics are not tolerance authority and give +0 readiness.
+The successful AZ PCL does not increase current draft/data readiness because Wm_S1 was already counted once as a complete usable draft-data object; double-counting is forbidden.
 
-A full `L=12288` scalar general-coupling benchmark has also been observed running inside the 4-GiB cgroup at ~1.29 GiB process RSS for >20 minutes without OOM. This establishes memory feasibility only; it is not authority.
+## Exp073BC / Exp073BA next Track-A step
 
-## Exp073AZ — active Track-A successor-route qualification
+Exp073BC binding schema was prospectively preregistered in commit `feb0e070ee4b2e766ec7d98d964ca71c7929b7dd` before the terminal AZ metadata were filled.
 
-Candidate authority class:
+A future immutable BC receipt may now bind the hosted AZ PASS metadata to the already-frozen Exp073BA production route. It is a nonclassifying prerequisite and gives +0 readiness.
 
-`low_memory_general_coupling_deterministic_v1`.
-
-Prereg commit `279e09696263432def4ce20c15752b4832bba298`.
-Implementation commit `d77b7ba88801f6788f3d386e72b445c7859c7153`.
-Workflow commit `7ba874e48a7c3e6509d114745a301e63a06229a2`.
-Workflow-freeze commit `f49b9ab07b5d59eb0c6f275d8fa862bc4daeb089`.
-Trigger/head `0a9581e19f7f010e13bf9aa88307b1940d0105de`.
-Hosted run `33339663991`.
-
-Latest checkpoint state:
-
-- selftest job `99332875031`: completed/success;
-- PCL replica A `99332874913`: IN_PROGRESS on real NSIDE=4096 Wm_S1 mask-PCL;
-- PCL replica B `99332875116`: IN_PROGRESS on the same stage;
-- selftest artifact `9740152065`, digest `sha256:16a15e517adafb4d968b14362a5b7a14b4fbe36c9deb7b981d032e912c2d7465`;
-- no classifying PCL comparator result yet.
-
-Valid AZ PCL terminal classes:
-
-- `PASS_EXP073AZ_WM_S1_MASK_PCL_EXACT_V0_1`;
-- `SCIENTIFIC_REPEATABILITY_FAIL_EXP073AZ_WM_S1_MASK_PCL_EXACT_V0_1`.
-
-Only exact SHA + `numpy.array_equal` PASS admits a canonical Wm_S1 PCL to Track-A BA. No tolerance rule exists.
-
-If AZ PCL itself is non-identical but both outputs are complete, they may enter Track P under Exp073BB for sensitivity propagation while Track A remains blocked.
-
-## Exp073BA — fully frozen Track-A production, NOT triggered
-
-Exp073BA was preregistered and its production workflow frozen before the AZ PCL result was known.
+Exp073BA remains the frozen Wm_S1 low-memory production route:
 
 - prereg commit `b445066a36c838b18e4cea2ca56f2f6abee56406`;
 - exact comparator commit `a0b5bd8065c590e20c648215b8d993452fb7339c`;
 - workflow commit `fc0ca8b4c0e31673c1470418060a95ac507b3759`;
 - workflow-freeze commit `f9f19f80ed62090b22d69e6a667ea96fc7cf1f82`.
 
-No BA trigger exists.
-
-If and only if AZ PCL exact PASSes, first create an immutable AZ binding receipt with run/job/artifact/digest and canonical PCL SHA, then trigger BA.
-
-BA frozen classifying sequence:
-
-1. two independent low-memory Wm_S1 compact coupling replicas;
-2. exact compact SHA + `array_equal` comparator;
-3. only on compact PASS, two fresh finalizer jobs;
-4. exact selected-window SHA + `array_equal` comparator;
-5. final PASS token `PASS_EXP073BA_WM_S1_LOW_MEMORY_GENERAL_COUPLING_EXACT_V0_1`;
-6. authority class `low_memory_general_coupling_deterministic_v1`.
-
-Even BA PASS gives +0 readiness. Wm_S2 remains forbidden in Track A until full BA Wm_S1 PASS.
-
-Track P may explore subsequent calculations earlier, but every provisional result must preserve branch envelopes and remains barred from AR/AS/AT authority prerequisites.
+BA may be triggered only after a valid immutable BC binding receipt. BA PASS would still add +0 readiness and would admit Wm_S1 under `low_memory_general_coupling_deterministic_v1`; only then may Track A proceed prospectively to Wm_S2.
 
 ## Frozen Article-3 boundaries — unchanged in both tracks
 
@@ -209,13 +193,13 @@ Track P may explore subsequent calculations earlier, but every provisional resul
 
 ### Track A
 
-1. resolve Exp073AZ Wm_S1 exact mask-PCL gate;
-2. if AZ PASS: freeze binding receipt and trigger already-frozen Exp073BA;
+1. create/freeze the valid Exp073BC hosted AZ-to-BA binding receipt using terminal AZ PASS metadata;
+2. trigger the already-frozen Exp073BA Wm_S1 low-memory production;
 3. if BA exact PASS: admit Wm_S1 under the new low-memory authority class, then prospectively freeze/run Wm_S2;
 4. continue `Wm_S2 -> Wm_S3 -> WW_S0_S0 -> WW_S0_S1 -> WW_S0_S2 -> WW_S0_S3 -> WW_S1_S1 -> WW_S1_S2 -> WW_S1_S3 -> WW_S2_S2 -> WW_S2_S3 -> WW_S3_S3`, each with its own exact classifying authority;
 5. assemble real Exp073AR 14-window aggregate;
 6. build real Exp073AS complete immutable 1410-row pre-support candidate manifest;
-7. only then may the 52% readiness barrier be reconsidered under the frozen accounting contract;
+7. only then may the 52% scientific readiness barrier be reconsidered under the frozen accounting contract;
 8. downstream remains real Layer A -> Layer B -> covariance/whitening -> nuisance quotient -> G7 -> immutable relation freeze -> fresh G8.
 
 ### Track P
@@ -227,4 +211,12 @@ Track P may explore subsequent calculations earlier, but every provisional resul
 5. place every Track-P dependency in the exact-recompute ledger;
 6. when Track A later becomes available, replace/verify provisional values without deleting the historical provisional record.
 
-Track P is designed to keep scientific exploration moving while Track A establishes exact reproducibility. Track P never raises the 52% scientific readiness.
+## Mandatory progress reporting
+
+After every substantive Article-3 computation/data step report both:
+
+`Verified: XX.X% | Draft/data: YY.Y%`
+
+Update `Verified` only under the frozen scientific authority accounting. Update `Draft/data` only under `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`.
+
+Track P is designed to keep scientific exploration and manuscript preparation moving while Track A establishes exact reproducibility. It never raises scientific authority readiness by itself.
