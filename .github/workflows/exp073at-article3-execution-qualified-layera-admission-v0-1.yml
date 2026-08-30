@@ -1,0 +1,71 @@
+name: Exp073AT Article3 execution-qualified Layer-A admission v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073at_article3_execution_qualified_layera_admission_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-layera-admission:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective Exp073AT freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073at_article3_execution_qualified_layera_admission_v0_1_prereg.md)" = '507c210419223e20f77dd0c5a9ffc6f8d150b41b'
+          test "$(git log -1 --format=%H -- ci/exp073at_article3_execution_qualified_layera_admission_v0_1.py)" = '931bb2334e901044fbbaaa6a7ddf8a6b326daf62'
+          test -f experiments/073at_article3_execution_qualified_layera_admission_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073at-article3-execution-qualified-layera-admission-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073at_article3_execution_qualified_layera_admission_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073at_article3_execution_qualified_layera_admission_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073at_article3_execution_qualified_layera_admission_v0_1.py
+
+      - name: Run frozen synthetic Layer-A admission matrix
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073at_article3_execution_qualified_layera_admission_v0_1.py \
+            --self-test \
+            --output-json data/derived/g7/exp073at_article3_execution_qualified_layera_admission_v0_1.json
+
+      - name: Enforce non-scientific accounting and no real candidate read
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073at_article3_execution_qualified_layera_admission_v0_1.json'))
+          assert d['status']=='PASS_EXP073AT_EXECUTION_QUALIFIED_LAYERA_ADMISSION_SYNTHETIC_V0_1'
+          assert d['synthetic_only'] is True
+          assert d['tests_passed']==24
+          assert d['real_candidate_read'] is False
+          assert d['real_layera_released'] is False
+          assert d['readiness_increment']==0
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['science_gate_scored'] is False
+          assert d['scientific_pass_claimed'] is False
+          assert d['physical_support_evaluated'] is False
+          assert d['G8_read'] is False
+          print('EXP073AT_HOSTED_SYNTHETIC_LAYERA_ADMISSION_PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073at-layera-admission-${{ github.sha }}
+          path: data/derived/g7/exp073at_article3_execution_qualified_layera_admission_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
