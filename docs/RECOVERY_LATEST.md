@@ -9,7 +9,7 @@
 1. `docs/RECOVERY_MANUAL.md`
 2. `docs/RECOVERY_MANUAL_LIVE_2026-08-30.md`
 3. `docs/DSIR_CROSS_CHAT_AUTHORITY_CONSOLIDATION_2026-08-30.md`
-4. `recovery/2026-08-30_exp073ar_execution_qualified_14window_schema_hosted_pass_aq_still_running.md`
+4. `recovery/2026-08-30_exp073as_execution_qualified_presupport_join_hosted_pass_aq_still_running.md`
 
 Repository/hosted authority outranks chat wording. RTK/RQIR remain excluded from DSIR authority/readiness.
 
@@ -21,7 +21,8 @@ Repository/hosted authority outranks chat wording. RTK/RQIR remain excluded from
 - Exp073AN: `DETERMINISTIC_SINGLE_THREAD_ROUTE_BUT_EXACT_AUTHORITY_SHIFT_FROM_PRIMARY_P`; +0 readiness.
 - Exp073AO prospectively defines `controlled_single_thread_exact_v1`; no tolerance/ULP/rounding equivalence contract is authorized.
 - Exp073AP real hosted decision: `AUTHORIZE_EXECUTION_QUALIFIED_EXACT_SUCCESSOR_ROUTE`; run `33324664267`, artifact `9735869454`, +0 readiness.
-- Exp073AR now supersedes historical Exp073AG **only for the future execution-qualified 14-window aggregate schema**; historical AG/P/Q records are preserved.
+- Exp073AR supersedes historical Exp073AG only for the future execution-qualified 14-window aggregate schema; historical AG/P/Q records are preserved.
+- Exp073AS supersedes historical Exp073AE only for the future execution-qualified pre-support join schema; historical AE remains preserved.
 
 ## Successor exact contract
 
@@ -57,7 +58,7 @@ Frozen chain:
 - trigger/head `fe89b6c64ee0cee5dbc40080973ec2af2ae683e0`;
 - run `33327372191`, started `2026-08-30T18:12:00Z`.
 
-Latest inspected state after Exp073AR hosted completion:
+Latest inspection after Exp073AS hosted completion:
 
 - replica A job `99299799192`: **IN PROGRESS**, exact controlled Wm_S1 computation;
 - replica B job `99299799338`: **IN PROGRESS**, exact controlled Wm_S1 computation;
@@ -72,34 +73,42 @@ Any failure before comparator classification remains infrastructure-INCOMPLETE. 
 
 ## Exp073AR — execution-qualified 14-window aggregate succession
 
-A duplicate audit showed AQ was already the active heavy workflow, so no heavy duplicate or Wm_S2 was launched. Instead the stale future-aggregate authority schema was repaired prospectively before any AQ result existed.
-
-Frozen chain:
+Hosted synthetic PASS:
 
 - prereg `ec6031118430c0e1db797e26bea4ba66102c9e7b`;
-- validator/self-test `db5f4c93c46b9674c04c9a7f42e917d79c50babd`;
+- validator `db5f4c93c46b9674c04c9a7f42e917d79c50babd`;
 - workflow `729d331c231391ac31e28eb978a491ab61f2a549`;
 - workflow freeze `c862cb04f7e8e31803a84c6f2296f26acd82239b`;
 - trigger/head `b4b14950ee0831b902cedd527d3797e991107195`;
-- hosted run `33327870470`, job `99301112192`;
-- run completed success `2026-08-30T18:22:26Z`;
-- artifact `9736757853`;
+- run `33327870470`, job `99301112192`, artifact `9736757853`;
 - digest `sha256:b3d2a1195299d9daedd469dee1fb394bcfba4499abfdbd04159330566d8c76e9`;
-- token `PASS_EXP073AR_EXECUTION_QUALIFIED_14WINDOW_AGGREGATE_SUCCESSION_SYNTHETIC_V0_1`.
+- token `PASS_EXP073AR_EXECUTION_QUALIFIED_14WINDOW_AGGREGATE_SUCCESSION_SYNTHETIC_V0_1`;
+- 24/24 frozen synthetic cases passed; +0 readiness.
 
-Classification: **HOSTED SYNTHETIC PASS / non-scientific / +0 readiness**.
+Future aggregate must use Exp073AM Wm_S0 plus 13 exact controlled-twin hosted authorities, all class `controlled_single_thread_exact_v1`. Old `canonical_exp073x2` / `exp073aa` future classes are rejected.
 
-The hosted 24-case matrix verifies that the future aggregate:
+## Exp073AS — execution-qualified pre-support join succession
 
-- uses Exp073AM exact Wm_S0 anchor only;
-- rejects historical primary-P Wm_S0 as successor anchor;
-- uses `controlled_single_thread_exact_v1` for all 14 windows;
-- rejects old `canonical_exp073x2` / `exp073aa` future authority classes;
-- requires exact twin SHA equality, `array_equal=true`, verified controlled execution and hosted comparator provenance for every successor task;
-- rejects duplicate/missing/reordered tasks, duplicate task-window hashes, duplicate successor experiment identities, malformed provenance, dtype/shape drift, unknown fields, firewall activation, readiness drift and gate-state drift;
-- computes deterministic aggregate metadata SHA independently of dictionary insertion order.
+Historical Exp073AE was frozen before the authority-route shift and required `canonical_exp073x2 + exp073aa`. Exp073AS repairs only the future successor-route boundary, prospectively while AQ is still running and before any AQ authority exists.
 
-Exp073AR did not read/download AQ output and did not build a real aggregate or read support/covariance/nuisance/G8.
+Frozen chain:
+
+- prereg `9957a097d8fd8532708bac3685c3a70683c4a263`;
+- validator/self-test `66a34a390342984f4de2b01fc10df263243fb168`;
+- workflow `f7137643f0652062d5390d36ea1ee673dfdfc56c`;
+- workflow freeze `61612b3f8e35615ce47ef59fe63bf068daf398a6`;
+- trigger/head `a79e4151f9413a931a9bcfd9b3ed256483640a99`;
+- hosted run `33330144734`, job `99307146685`;
+- artifact `9737392901`;
+- digest `sha256:1542be1b0982916b921d4c908a2ce9d58e4a9e17c34784dc9d9b5ba4273919ff`;
+- token `PASS_EXP073AS_EXECUTION_QUALIFIED_PRESUPPORT_JOIN_SUCCESSION_SYNTHETIC_V0_1`;
+- 24/24 frozen synthetic cases passed.
+
+Classification: **HOSTED SYNTHETIC PASS / schema-provenance QA / non-scientific / +0 readiness**.
+
+The future real pre-support join must bind unchanged Exp073U/Z2/AB/W authorities to exactly one real Exp073AR-validated `controlled_single_thread_exact_v1` 14-window aggregate. It rejects historical X2/Exp073AA successor classes, historical primary-P Wm_S0 as successor anchor, single-replica admission, tolerance/ULP/rounding, majority vote and preferred-replica rescue.
+
+Exp073AS did not read AQ output, did not build the real 1410-row candidate manifest, and did not evaluate support/covariance/nuisance/G8.
 
 ## Frozen Article-3 science boundaries
 
@@ -130,7 +139,7 @@ Unchanged:
 
 `-> real ordered 14-window authority validated under Exp073AR`
 
-`-> real strict pre-support join under Exp073AE`
+`-> real strict pre-support join validated under Exp073AS`
 
 `-> immutable complete 1410-row finite-operator candidate manifest`
 
