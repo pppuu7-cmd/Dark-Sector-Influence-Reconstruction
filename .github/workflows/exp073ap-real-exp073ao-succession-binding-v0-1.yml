@@ -1,0 +1,79 @@
+name: Exp073AP real Exp073AO succession binding v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ap_real_exp073ao_succession_binding_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-succession-binding:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce real-binding freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073ap_article3_real_exp073ao_succession_binding_v0_1.md)" = '2e75494f6983c1b2459a704e7d50c7ef490ded0e'
+          test "$(git log -1 --format=%H -- data/bindings/exp073ap_real_exp073ao_input_v0_1.json)" = '59e13bc1f67e4510dee06b7f5b7db1f3359321d6'
+          test "$(git log -1 --format=%H -- ci/exp073ao_article3_execution_qualified_exact_authority_succession_v0_1.py)" = 'd0156bef98d1a920e286abccef482f9239f55e23'
+          test -f experiments/073ap_article3_real_exp073ao_succession_binding_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073ap-real-exp073ao-succession-binding-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073ap_article3_real_exp073ao_succession_binding_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073ap_real_exp073ao_succession_binding_v0_1.trigger'
+          fi
+      - name: Apply unchanged frozen Exp073AO classifier to real authority state
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073ao_article3_execution_qualified_exact_authority_succession_v0_1.py \
+            --input-json data/bindings/exp073ap_real_exp073ao_input_v0_1.json \
+            --output-json data/derived/g7/exp073ap_real_exp073ao_succession_decision_v0_1.json
+      - name: Enforce real governance decision and accounting
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073ap_real_exp073ao_succession_decision_v0_1.json'
+          d=json.load(open(p))
+          assert d['decision']=='AUTHORIZE_EXECUTION_QUALIFIED_EXACT_SUCCESSOR_ROUTE'
+          assert d['authority_scope']=='FUTURE_REMAINING_13_TASKS_ONLY'
+          assert d['future_authority_class']=='controlled_single_thread_exact_v1'
+          assert d['anchor_wm_s0_sha256']=='8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220'
+          assert d['historical_primary_p_sha256']=='6ec29f6dbbcf0c29d7af9d6eb98d271bcd06e00d28cebe658b5e266f7ef18d0f'
+          assert d['historical_q_state']=='SCIENTIFIC_REPEATABILITY_FAIL'
+          assert d['historical_q_preserved'] is True
+          assert d['historical_primary_p_preserved'] is True
+          assert d['cross_route_exact_equality_claimed'] is False
+          assert d['numerical_equivalence_contract']=='ABSENT_NOT_AUTHORIZED'
+          assert d['remaining_task_count']==13
+          assert d['per_task_replica_count']==2
+          assert d['require_exact_sha_equality'] is True
+          assert d['require_numpy_array_equal'] is True
+          assert d['allow_tolerance'] is False
+          assert d['production_outputs_created'] is False
+          assert d['production_released_by_this_gate'] is False
+          assert d['readiness_increment']==0
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['layer_a']=='OPEN' and d['layer_b']=='OPEN'
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['science_gate_scored'] is False
+          assert d['scientific_model_pass_claimed'] is False
+          print(d['decision'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ap-real-exp073ao-succession-${{ github.sha }}
+          path: data/derived/g7/exp073ap_real_exp073ao_succession_decision_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
