@@ -1,0 +1,148 @@
+name: Exp073BD Article3 provisional Wm_S2 data v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073bd_article3_provisional_wm_s2_data_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  branch:
+    strategy:
+      fail-fast: false
+      matrix: {replica: [A, B]}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce frozen Track-P prereg and implementation
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bd_article3_provisional_wm_s2_data_v0_1_prereg.md)" = '43990ce167eee642c7039ee10ef46db2a31dce02'
+          test "$(git log -1 --format=%H -- ci/exp073az_article3_low_memory_general_coupling_v0_1.py)" = 'd77b7ba88801f6788f3d386e72b445c7859c7153'
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+          path: external/r1
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33270843577
+      - name: Download exact DES Y1 lens mask
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/des
+          curl --fail --location --retry 3 -o external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits'
+          test "$(stat -c %s external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits)" = '104595840'
+          echo 'a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55  external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits' | sha256sum -c -
+      - name: Compute independent Wm_S2 provisional branch
+        shell: bash
+        env: {REPLICA: '${{ matrix.replica }}'}
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          lower="$(printf '%s' "${REPLICA}" | tr '[:upper:]' '[:lower:]')"
+          /usr/bin/time -v "${NMT_PY}" ci/exp073az_article3_low_memory_general_coupling_v0_1.py pcl \
+            --task Wm_S2 --r1-root external/r1 \
+            --lens-mask external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits \
+            --out-npy "data/derived/g7/exp073bd_wm_s2_pcl_${lower}_v0_1.npy" \
+            --out-json "data/derived/g7/exp073bd_wm_s2_pcl_${lower}_v0_1.json"
+          /usr/bin/time -v "${NMT_PY}" ci/exp073az_article3_low_memory_general_coupling_v0_1.py compact \
+            --task Wm_S2 --pcl-npy "data/derived/g7/exp073bd_wm_s2_pcl_${lower}_v0_1.npy" \
+            --out-npz "data/derived/g7/exp073bd_wm_s2_compact_${lower}_v0_1.npz" \
+            --out-json "data/derived/g7/exp073bd_wm_s2_compact_${lower}_v0_1.json"
+          /usr/bin/time -v "${NMT_PY}" ci/exp073az_article3_low_memory_general_coupling_v0_1.py finalize \
+            --task Wm_S2 --compact-npz "data/derived/g7/exp073bd_wm_s2_compact_${lower}_v0_1.npz" \
+            --out-npz "data/derived/g7/exp073bd_wm_s2_final_${lower}_v0_1.npz" \
+            --out-json "data/derived/g7/exp073bd_wm_s2_final_${lower}_v0_1.json"
+          uname -a > "data/derived/g7/exp073bd_env_${lower}_v0_1.txt"
+          lscpu >> "data/derived/g7/exp073bd_env_${lower}_v0_1.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073bd-wm-s2-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073bd_*
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
+
+  compare:
+    needs: branch
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install 'numpy==2.1.3'
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073bd-wm-s2-A-${{ github.sha }}', path: external/a}
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073bd-wm-s2-B-${{ github.sha }}', path: external/b}
+      - name: Freeze complete provisional branch-pair diagnostics
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob,hashlib,json,numpy as np,pathlib
+          fa=glob.glob('external/a/**/*final_a_v0_1.npz',recursive=True)
+          fb=glob.glob('external/b/**/*final_b_v0_1.npz',recursive=True)
+          assert len(fa)==len(fb)==1,(fa,fb)
+          a=np.ascontiguousarray(np.load(fa[0],allow_pickle=False)['window'],dtype='<f8')
+          b=np.ascontiguousarray(np.load(fb[0],allow_pickle=False)['window'],dtype='<f8')
+          assert a.shape==b.shape==(39,12288)
+          assert np.isfinite(a).all() and np.isfinite(b).all()
+          na=np.sum(np.abs(a),axis=1); nb=np.sum(np.abs(b),axis=1)
+          assert np.all(na>0) and np.all(nb>0)
+          def h(x): return hashlib.sha256(x.tobytes()).hexdigest()
+          d=a-b; nz=(a!=b); band=np.any(nz,axis=1)
+          rmsd=float(np.sqrt(np.mean(d*d))); rmsa=float(np.sqrt(np.mean(a*a)))
+          den=np.maximum(na,nb); relnorm=np.divide(np.abs(na-nb),den,out=np.zeros_like(den),where=den>0)
+          out={
+            'experiment':'Exp073BD','track':'P','task':'Wm_S2','authority':False,'provisional':True,
+            'scientific_pass_claimed':False,'readiness_increment':0,'article3_scientific_readiness_percent':52.0,
+            'recompute_before_final_submission':True,
+            'status':'PROVISIONAL_WM_S2_BRANCH_PAIR_ELIGIBLE_FOR_DOWNSTREAM_SENSITIVITY_PROPAGATION',
+            'shape':[39,12288],'dtype':'<f8','array_equal':bool(np.array_equal(a,b)),
+            'sha_a':h(a),'sha_b':h(b),'differing_entries':int(np.count_nonzero(nz)),
+            'differing_bands':int(np.count_nonzero(band)),'max_abs_diff':float(np.max(np.abs(d))),
+            'mean_abs_diff':float(np.mean(np.abs(d))),'rms_delta_over_rms_a':float(rmsd/rmsa) if rmsa>0 else None,
+            'sign_bit_mismatches':int(np.count_nonzero(np.signbit(a)!=np.signbit(b))),
+            'zero_nonzero_mismatches':int(np.count_nonzero((a==0)!=(b==0))),
+            'max_relative_band_absnorm_difference':float(np.max(relnorm)),
+            'min_band_absnorm_a':float(np.min(na)),'min_band_absnorm_b':float(np.min(nb)),
+            'draft_data_readiness_percent_if_admitted':54.57142857142857,
+            'downstream_claim_classification':'NOT_YET_EVALUATED'
+          }
+          pathlib.Path('data/derived/g7/exp073bd_wm_s2_provisional_branch_pair_v0_1.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['status'])
+          print('array_equal=',out['array_equal'],'max_abs_diff=',out['max_abs_diff'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bd-wm-s2-provisional-pair-${{ github.sha }}
+          path: data/derived/g7/exp073bd_wm_s2_provisional_branch_pair_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
