@@ -1,0 +1,66 @@
+name: Exp073AN real Exp073AL binding v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073an_real_exp073al_binding_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-exp073al-binding:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce real-binding freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073an_article3_real_exp073al_binding_v0_1.md)" = '9e0f586107e0b458d2e7f1a4a9378af2b7ed5257'
+          test "$(git log -1 --format=%H -- data/bindings/exp073an_real_exp073al_input_v0_1.json)" = '0cd75c9566b37c0042d73e6a021c473ace896933'
+          test "$(git log -1 --format=%H -- ci/exp073al_article3_ai_vs_primary_exact_stability_classifier_v0_1.py)" = 'a0ee0c5f37533093931c0495b4edd5967ce5a00c'
+          test -f experiments/073an_article3_real_exp073al_binding_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073an-real-exp073al-binding-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073an_article3_real_exp073al_binding_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073an_real_exp073al_binding_v0_1.trigger'
+          fi
+      - name: Apply unchanged frozen Exp073AL classifier to real hosted binding
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073al_article3_ai_vs_primary_exact_stability_classifier_v0_1.py \
+            --input-json data/bindings/exp073an_real_exp073al_input_v0_1.json \
+            --output-json data/derived/g7/exp073an_real_exp073al_classification_v0_1.json
+      - name: Enforce expected fail-closed accounting only
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073an_real_exp073al_classification_v0_1.json'
+          d=json.load(open(p))
+          assert d['classification']=='DETERMINISTIC_SINGLE_THREAD_ROUTE_BUT_EXACT_AUTHORITY_SHIFT_FROM_PRIMARY_P'
+          assert d['primary_p_canonical_sha256']=='6ec29f6dbbcf0c29d7af9d6eb98d271bcd06e00d28cebe658b5e266f7ef18d0f'
+          assert d['ai_canonical_sha256']=='8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220'
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['readiness_increment']==0
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['layer_a']=='OPEN' and d['layer_b']=='OPEN'
+          assert d['science_gate_scored'] is False
+          assert d['production_released'] is False
+          assert d['scientific_model_pass_claimed'] is False
+          print(d['classification'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073an-real-exp073al-binding-${{ github.sha }}
+          path: data/derived/g7/exp073an_real_exp073al_classification_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
