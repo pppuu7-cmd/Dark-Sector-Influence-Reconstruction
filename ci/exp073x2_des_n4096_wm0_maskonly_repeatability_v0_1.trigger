@@ -1,0 +1,6 @@
+Exp073X2 frozen hosted execution trigger v0.1
+prereg=efe8a4e17638dfd9568fa710e24f56cd10526c6a
+replica=df2eecd73ed0d8de080348ba155a2f1a3e84d7e1
+aggregator=8ec6f94ea9ddf3cc0a4c98e5af696d28d995b2b3
+workflow=a14047090d46e024965d1bd76b60830ef21616e9
+freeze=5bd0ba084b00d963c670db6d04b1db6ea53e8f36
