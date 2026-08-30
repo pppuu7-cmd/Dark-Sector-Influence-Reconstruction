@@ -1,0 +1,206 @@
+name: Exp073BA Article3 low-memory Wm_S1 production v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ba_article3_low_memory_wm_s1_production_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  compact-replica:
+    strategy:
+      fail-fast: false
+      matrix: {replica: [A, B]}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce prospective freeze and AZ binding receipt
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073ba_article3_low_memory_wm_s1_production_v0_1_prereg.md)" = 'b445066a36c838b18e4cea2ca56f2f6abee56406'
+          test "$(git log -1 --format=%H -- ci/exp073az_article3_low_memory_general_coupling_v0_1.py)" = 'd77b7ba88801f6788f3d386e72b445c7859c7153'
+          test "$(git log -1 --format=%H -- ci/exp073ba_compare_low_memory_wm_s1_v0_1.py)" = 'a0b5bd8065c590e20c648215b8d993452fb7339c'
+          test -f experiments/073ba_article3_low_memory_wm_s1_az_binding_v0_1.json
+          python - <<'PY'
+          import json
+          d=json.load(open('experiments/073ba_article3_low_memory_wm_s1_az_binding_v0_1.json'))
+          assert d['az_run_id']==33339663991
+          assert d['az_head_sha']=='0a9581e19f7f010e13bf9aa88307b1940d0105de'
+          assert d['az_status']=='PASS_EXP073AZ_WM_S1_MASK_PCL_EXACT_V0_1'
+          assert d['canonical_pcl_shape']==[12288]
+          assert len(d['canonical_pcl_sha256'])==64
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['Exp073AQ_preserved_as_FAIL'] is True
+          PY
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073az-wm-s1-pcl-authority-0a9581e19f7f010e13bf9aa88307b1940d0105de
+          path: external/az
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33339663991
+      - name: Bind exact admitted AZ PCL
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python - <<'PY'
+          import glob,hashlib,json,numpy as np
+          r=json.load(open('experiments/073ba_article3_low_memory_wm_s1_az_binding_v0_1.json'))
+          js=glob.glob('external/az/**/*authority*.json',recursive=True); npys=glob.glob('external/az/**/*canonical*pcl*.npy',recursive=True)
+          assert len(js)==len(npys)==1,(js,npys)
+          a=json.load(open(js[0])); x=np.ascontiguousarray(np.load(npys[0],allow_pickle=False),dtype='<f8')
+          h=hashlib.sha256(x.tobytes()).hexdigest()
+          assert a['status']=='PASS_EXP073AZ_WM_S1_MASK_PCL_EXACT_V0_1'
+          assert x.shape==(12288,) and a['sha_a']==a['sha_b']==h==r['canonical_pcl_sha256']
+          PY
+      - name: Compute low-memory compact Wm_S1 replica
+        shell: bash
+        env: {REPLICA: '${{ matrix.replica }}'}
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          lower="$(printf '%s' "${REPLICA}" | tr '[:upper:]' '[:lower:]')"
+          pcl="$(find external/az -name '*canonical*pcl*.npy' -type f -print -quit)"
+          /usr/bin/time -v "${NMT_PY}" ci/exp073az_article3_low_memory_general_coupling_v0_1.py compact \
+            --task Wm_S1 --pcl-npy "${pcl}" \
+            --out-npz "data/derived/g7/exp073ba_wm_s1_compact_${lower}_v0_1.npz" \
+            --out-json "data/derived/g7/exp073ba_wm_s1_compact_${lower}_v0_1.json"
+          uname -a > "data/derived/g7/exp073ba_env_${lower}_v0_1.txt"
+          lscpu >> "data/derived/g7/exp073ba_env_${lower}_v0_1.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073ba-compact-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073ba_*
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
+
+  compare-compact:
+    needs: compact-replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      exact_pass: ${{ steps.cmp.outputs.exact_pass }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install 'numpy==2.1.3'
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073ba-compact-A-${{ github.sha }}', path: external/a}
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073ba-compact-B-${{ github.sha }}', path: external/b}
+      - id: cmp
+        name: Compare compact replicas exactly
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          A="$(find external/a -name '*compact_a_v0_1.npz' -type f -print -quit)"
+          B="$(find external/b -name '*compact_b_v0_1.npz' -type f -print -quit)"
+          python ci/exp073ba_compare_low_memory_wm_s1_v0_1.py --stage compact --a-npz "${A}" --b-npz "${B}" \
+            --output-json data/derived/g7/exp073ba_wm_s1_compact_exact_authority_v0_1.json \
+            --output-npz data/derived/g7/exp073ba_wm_s1_canonical_compact_v0_1.npz
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          d=json.load(open('data/derived/g7/exp073ba_wm_s1_compact_exact_authority_v0_1.json'))
+          print('exact_pass='+('true' if d['status']=='PASS_EXP073BA_WM_S1_COMPACT_EXACT_V0_1' else 'false'))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ba-compact-authority-${{ github.sha }}
+          path: data/derived/g7/exp073ba_wm_s1_*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  finalizer:
+    needs: compare-compact
+    if: needs.compare-compact.outputs.exact_pass == 'true'
+    strategy:
+      fail-fast: false
+      matrix: {replica: [A, B]}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073ba-compact-authority-${{ github.sha }}', path: external/compact}
+      - name: Finalize selected Wm_S1 window
+        shell: bash
+        env: {REPLICA: '${{ matrix.replica }}'}
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          lower="$(printf '%s' "${REPLICA}" | tr '[:upper:]' '[:lower:]')"
+          c="$(find external/compact -name '*canonical_compact*.npz' -type f -print -quit)"
+          "${NMT_PY}" ci/exp073az_article3_low_memory_general_coupling_v0_1.py finalize \
+            --task Wm_S1 --compact-npz "${c}" \
+            --out-npz "data/derived/g7/exp073ba_wm_s1_final_${lower}_v0_1.npz" \
+            --out-json "data/derived/g7/exp073ba_wm_s1_final_${lower}_v0_1.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ba-final-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073ba_wm_s1_final_*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  compare-final:
+    needs: [compare-compact, finalizer]
+    if: needs.compare-compact.outputs.exact_pass == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install 'numpy==2.1.3'
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073ba-final-A-${{ github.sha }}', path: external/a}
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073ba-final-B-${{ github.sha }}', path: external/b}
+      - name: Compare final windows exactly
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          A="$(find external/a -name '*final_a_v0_1.npz' -type f -print -quit)"
+          B="$(find external/b -name '*final_b_v0_1.npz' -type f -print -quit)"
+          python ci/exp073ba_compare_low_memory_wm_s1_v0_1.py --stage final --a-npz "${A}" --b-npz "${B}" \
+            --output-json data/derived/g7/exp073ba_wm_s1_low_memory_authority_v0_1.json \
+            --output-npz data/derived/g7/exp073ba_wm_s1_canonical_window_v0_1.npz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ba-wm-s1-authority-${{ github.sha }}
+          path: data/derived/g7/exp073ba_wm_s1_*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
