@@ -1,0 +1,38 @@
+name: Exp073AJ2 Article3 AI environment provenance classifier v0.2
+on:
+  push:
+    paths: ['ci/exp073aj2_article3_ai_environment_provenance_classifier_v0_2.trigger']
+permissions:
+  contents: read
+jobs:
+  synthetic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce prospective freeze
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073aj2_article3_ai_environment_provenance_classifier_v0_2_prereg.md)" = '33796a506ed375060a61c8ac22d7fdc1ee10bf5f'
+          test "$(git log -1 --format=%H -- ci/exp073aj2_article3_ai_environment_provenance_classifier_v0_2.py)" = 'd2ebf1769c2d0a86c8a0c3e2235e2da8ace074b5'
+          SELF="$(git log -1 --format=%H -- .github/workflows/exp073aj2-article3-ai-environment-provenance-classifier-v0-2.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF}\`" experiments/073aj2_article3_ai_environment_provenance_classifier_v0_2_workflow_freeze.md
+      - name: Run synthetic matrix
+        run: python3 ci/exp073aj2_article3_ai_environment_provenance_classifier_v0_2.py --self-test --output data/derived/g7/exp073aj2_ai_environment_provenance_classifier_v0_2.json
+      - name: Enforce accounting
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073aj2_ai_environment_provenance_classifier_v0_2.json'))
+          assert d['status']=='PASS_EXP073AJ2_AI_ENVIRONMENT_PROVENANCE_CLASSIFIER_SYNTHETIC_V0_2'
+          assert d['synthetic_only'] and d['tests_passed']==6
+          assert d['readiness_increment']==0 and d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['production_release'] is False and d['real_ai_receipts_read'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073aj2-ai-environment-provenance-${{ github.sha }}
+          path: data/derived/g7/exp073aj2_ai_environment_provenance_classifier_v0_2.json
+          retention-days: 90
