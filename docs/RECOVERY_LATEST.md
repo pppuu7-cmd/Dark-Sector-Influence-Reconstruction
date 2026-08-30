@@ -9,60 +9,121 @@
 1. `docs/RECOVERY_MANUAL.md`
 2. `docs/RECOVERY_MANUAL_LIVE_2026-08-30.md`
 3. `docs/DSIR_CROSS_CHAT_AUTHORITY_CONSOLIDATION_2026-08-30.md`
-4. `recovery/2026-08-30_exp073am_pass_exp073an_real_cross_route_shift.md`
+4. `recovery/2026-08-30_exp073ao_exp073ap_execution_qualified_exact_succession.md`
 
 Repository/hosted authority outranks chat wording. RTK/RQIR remain excluded from DSIR authority/readiness.
 
-## Current headline state
+## Current authority state
 
-- Historical Exp073X2R primary P: exact repeatability PASS, canonical Wm_S0 SHA `6ec29f6dbbcf0c29d7af9d6eb98d271bcd06e00d28cebe658b5e266f7ef18d0f`, +0 readiness.
-- Historical Exp073X2 Q: immutable `SCIENTIFIC_REPEATABILITY_FAIL` for exact operator repeatability; not a dark-sector model-physics failure.
-- Exp073AH2 forensic localization: Q-A equals P exactly; Q-B SHA `8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`; no frozen input/contract drift detected.
-- Historical Exp073AF route remains `P PASS + Q SCIENTIFIC_REPEATABILITY_FAIL -> BLOCK_PRODUCTION`.
-- Original Exp073AI run `33310888983`: both single-thread replica jobs completed successfully, but original aggregator failed before comparison because it used a non-existent nested environment-receipt path. Permanent control-plane classification: `INCOMPLETE_INFRASTRUCTURE_AGGREGATOR_ENV_PATH_ERROR_BEFORE_REPEATABILITY_CLASSIFICATION`.
-- Exp073AM aggregator-only repair reused immutable AI artifacts and the unchanged frozen comparator. Hosted run `33321661835`, job `99284585530`, artifact `9735051043`, digest `sha256:167c82d36266efc3b7bd058f0cc307ec636b6c8efdb6b39b6e88f52d6edb3d66`.
-- Exp073AM result: `PASS_EXP073AI_SINGLE_THREAD_EXACT_REPRODUCIBILITY_V0_1`; A/B canonical SHA both `8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`; `0/479232` differing entries, `0/39` differing bands, max/mean absolute difference `0.0`.
-- Therefore controlled single-thread route is internally bitwise deterministic but does **not** reproduce historical primary-P exact SHA.
-- Exp073AN bound that real hosted result to the already-frozen Exp073AL classifier. Hosted run `33321762778`, job `99284850109`, artifact `9735076794`, digest `sha256:c93e50f2ac6b8f932d8dd9e2cc94b4a2304398549eb1ae033d195b989e8c780b`.
-- Real Exp073AL classification: `DETERMINISTIC_SINGLE_THREAD_ROUTE_BUT_EXACT_AUTHORITY_SHIFT_FROM_PRIMARY_P`.
-- Production remains blocked. No new canonical production authority has been selected.
-- Layer A/B = OPEN; covariance/whitening = BLOCKED; G7/G8/G9 = OPEN.
+- Historical primary P exact Wm_S0 SHA: `6ec29f6dbbcf0c29d7af9d6eb98d271bcd06e00d28cebe658b5e266f7ef18d0f`; retained as historical-route authority.
+- Historical Q remains immutable `SCIENTIFIC_REPEATABILITY_FAIL`; not dark-sector model physics.
+- Exp073AM controlled single-thread exact repeatability PASS: run `33321661835`, artifact `9735051043`, canonical SHA `8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`, exact A/B equality, +0 readiness.
+- Exp073AN real cross-route class: `DETERMINISTIC_SINGLE_THREAD_ROUTE_BUT_EXACT_AUTHORITY_SHIFT_FROM_PRIMARY_P`; run `33321762778`, artifact `9735076794`, +0 readiness.
+- Therefore global bitwise authority is execution-route-sensitive, while the controlled single-thread route is internally bitwise deterministic.
 
-## Interpretation boundary
+## Exp073AO — frozen succession protocol
 
-Established:
+No tolerance/ULP/rounding numerical-equivalence contract is authorized. No independent pre-result error budget existed, so deriving a tolerance from already-observed P/Q/AI differences would be post-hoc.
 
-1. historical exact workspace authority is not globally bitwise stable across hosted execution routes;
-2. frozen single-thread controls make the AI route internally bitwise reproducible across two independent hosted runners;
-3. that deterministic route converges to exact SHA `8ac59fc0...9220`;
-4. historical primary P remains exact SHA `6ec29f6d...18d0f`;
-5. hence exact operator authority is execution-route-sensitive at the bit level.
+Exp073AO instead defines a new **execution-qualified exact authority class**:
 
-Not established:
+`controlled_single_thread_exact_v1`.
 
-- no tolerance-based physical equivalence rule has been authorized;
-- no historical Q failure is erased;
-- no controlled-route result automatically supersedes primary P;
-- no Exp073AA production release exists;
-- no Layer-A support result exists;
-- no scientific dark-sector inference follows from this reproducibility result.
+Hosted synthetic QA:
 
-## Frozen Article-3 boundaries
+- prereg `b5b7bffa2567e081367580e10c7e9eca276c8d86`;
+- classifier `d0156bef98d1a920e286abccef482f9239f55e23`;
+- workflow `66d1af7b2537750fd62f660a1c11f969bec26a46`;
+- freeze `4336eeb31e1cd19074c8d7b9d63ca8ba7f649b89`;
+- trigger/head `a139a530b71a92c981a2be502c42ecac366dbda9`;
+- run `33324599593`, job `99292396367`;
+- artifact `9735851479`;
+- digest `sha256:05b932b7f3a5b76cc1b4ef5d9409c3a33ca718bac6898a1fbf901b048dde8aa9`;
+- token `PASS_EXP073AO_EXECUTION_QUALIFIED_EXACT_SUCCESSION_SYNTHETIC_V0_1`.
 
-Never alter post hoc:
+Classification: hosted synthetic governance PASS / +0 readiness.
+
+## Exp073AP — real hosted succession decision
+
+The unchanged frozen Exp073AO classifier was applied to the real immutable P/Q/AM/AN state.
+
+- binding note `2e75494f6983c1b2459a704e7d50c7ef490ded0e`;
+- input binding `59e13bc1f67e4510dee06b7f5b7db1f3359321d6`;
+- workflow `5527782c8c6887138ada1ca72c3735358678c519`;
+- freeze `c18e818c5b03d1035e211ae3e526e2f6c945182a`;
+- trigger/head `0c338e45136bb7ddc5ddb74460f9cc507a7e2006`;
+- run `33324664267`, job `99292571445`, conclusion `success`;
+- artifact `9735869454`;
+- digest `sha256:8c60618717777a3c913053bcd5437c0ab548e294e98b72b9c5c869dcc52caacf`.
+
+Real hosted decision:
+
+`AUTHORIZE_EXECUTION_QUALIFIED_EXACT_SUCCESSOR_ROUTE`.
+
+This is governance/reproducibility authority only. It is **not** a scientific model PASS and adds **0** readiness.
+
+## Successor-route exact contract
+
+Controlled Wm_S0 anchor:
+
+`8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`.
+
+Frozen thread controls for every future replica:
+
+- `OMP_NUM_THREADS=1`
+- `OPENBLAS_NUM_THREADS=1`
+- `MKL_NUM_THREADS=1`
+- `NUMEXPR_NUM_THREADS=1`
+- `VECLIB_MAXIMUM_THREADS=1`
+- `BLIS_NUM_THREADS=1`
+- `OMP_DYNAMIC=FALSE`
+
+Remaining tasks exactly:
+
+`Wm_S1, Wm_S2, Wm_S3, WW_S0_S0, WW_S0_S1, WW_S0_S2, WW_S0_S3, WW_S1_S1, WW_S1_S2, WW_S1_S3, WW_S2_S2, WW_S2_S3, WW_S3_S3`.
+
+For **each task independently**:
+
+1. two independent hosted replicas are mandatory;
+2. same controlled single-thread route;
+3. exact canonical SHA equality mandatory;
+4. `numpy.array_equal` mandatory;
+5. no tolerance/rounding/majority/preferred-replica rescue;
+6. exact mismatch -> new task-specific repeatability FAIL;
+7. infrastructure failure remains infrastructure-INCOMPLETE.
+
+The physical/angular contract remains genuine DES Y1, `NSIDE=4096`, PyMaster 2.7, true ell `0..12287`, 39 bandpowers, Wm `TE<-TE`, WW `EE<-EE`, canonical `<f8 [39,12288]`, with no effective ell/z/k and no support/covariance/nuisance/G8 leakage.
+
+## Frozen scientific boundaries
+
+Unchanged:
 
 - `0.295 <= z <= 2.33` inclusive;
 - `0 < k <= 0.06664762008318016 Mpc^-1`;
 - Layer-A `operator_f_invalid <= 0.05` inclusive;
 - Layer-B invalid row fraction `<=0.05` inclusive;
 - final retained dimension `>=15`;
-- DES classifying route `NSIDE=4096`;
 - positive absolute operator/window envelope only for support bookkeeping; measured Wm remains signed;
-- no effective ell/z/k shortcut;
 - no fiducial-P weighting;
 - no covariance/whitening, nuisance SVD/rank, quotient/relation/null or G8 during support selection;
 - exact-threshold ambiguity remains unresolved.
 
-## Resume instruction
+## Current authorized order
 
-Do not launch another AI and do not launch the remaining 13 Exp073AA tasks. The next scientifically admissible gate must be a **new prospectively frozen authority-succession decision protocol** that preserves historical P/Q/AI/AM results and decides before any further angular production whether production authority must require exact bitwise stability across execution routes or whether a separately justified numerical-equivalence contract is scientifically admissible. Any such future protocol must not retroactively convert historical Q FAIL or the real Exp073AL authority-shift classification into PASS and must keep Article-3 readiness at 52% until a real immutable complete pre-support operator manifest exists.
+`prospectively freeze controlled-single-thread twin-replica production for 13 tasks`
+
+`-> run each task as two independent hosted replicas`
+
+`-> admit only exact-equal pairs`
+
+`-> combine Exp073AM Wm_S0 anchor + 13 admitted tasks into ordered 14-window authority`
+
+`-> real strict pre-support join under Exp073AE`
+
+`-> immutable complete 1410-row finite-operator candidate manifest`
+
+`-> real Layer A`
+
+`-> Layer B -> covariance/whitening -> nuisance/quotient/relation/null -> fresh G8`.
+
+Strict Article-3 readiness remains **52%** until the real complete pre-support operator manifest exists.
