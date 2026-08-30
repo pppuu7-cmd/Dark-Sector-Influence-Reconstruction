@@ -1,0 +1,207 @@
+name: Exp073X2 Article3 DES n4096 Wm0 replica authority v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073x2_des_n4096_wm0_replica_authority_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  replica:
+    name: exact-wm0-replica-${{ matrix.replica }}
+    strategy:
+      fail-fast: false
+      matrix:
+        replica: [a, b]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective Exp073X2 freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- ci/exp073x2_des_n4096_wm0_replica_authority_v0_1.py)" = '09e9cdb5b9e50531ca3e6ecb8bdda48a520161d8'
+          test "$(git log -1 --format=%H -- experiments/073x2_article3_des_n4096_wm0_replica_authority_v0_1_prereg.md)" = '29740bea67bb02e7e8f4ae80d8e6ebc633754cf5'
+          test -f experiments/073x2_article3_des_n4096_wm0_replica_authority_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073x2-article3-des-n4096-wm0-replica-authority-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073x2_article3_des_n4096_wm0_replica_authority_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073x2_des_n4096_wm0_replica_authority_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073x2_des_n4096_wm0_replica_authority_v0_1.py
+
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euxo pipefail
+          if command -v conda >/dev/null 2>&1; then
+            conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+            echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+          else
+            sudo apt-get update
+            sudo apt-get install -y libgsl-dev libfftw3-dev libcfitsio-dev build-essential
+            python3 -m venv "${RUNNER_TEMP}/nmt27"
+            "${RUNNER_TEMP}/nmt27/bin/python" -m pip install --upgrade pip wheel 'numpy<2.4'
+            "${RUNNER_TEMP}/nmt27/bin/python" -m pip install 'pymaster==2.7' healpy astropy
+            echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Download exact hosted R1 authority artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+          path: external/r1
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33270843577
+
+      - name: Download and bind exact DES Y1 lens mask
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/des
+          curl --fail --location --retry 3 \
+            -o external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits \
+            'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits'
+          test "$(stat -c %s external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits)" = '104595840'
+          echo 'a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55  external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits' | sha256sum -c -
+
+      - name: Inventory runner before exact workspace
+        shell: bash
+        run: |
+          set -euxo pipefail
+          free -h
+          df -h .
+          ulimit -a
+
+      - name: Compute one exact nside4096 Wm0 TE workspace replica
+        shell: bash
+        env:
+          OMP_NUM_THREADS: '2'
+          OPENBLAS_NUM_THREADS: '1'
+          MKL_NUM_THREADS: '1'
+        run: |
+          set -euxo pipefail
+          OUT="data/derived/g7/exp073x2/replica_${{ matrix.replica }}"
+          mkdir -p "${OUT}"
+          /usr/bin/time -v "${NMT_PY}" ci/exp073x2_des_n4096_wm0_replica_authority_v0_1.py replica \
+            --replica '${{ matrix.replica }}' \
+            --r1-root external/r1 \
+            --r1-artifact-digest 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd' \
+            --lens-mask external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits \
+            --output-json "${OUT}/metadata.json" \
+            --output-npz "${OUT}/wm0_te_window.npz"
+          "${NMT_PY}" - <<'PY'
+          import json, os
+          r=os.environ.get('MATRIX_REPLICA')
+          p=f'data/derived/g7/exp073x2/replica_{r}/metadata.json'
+          d=json.load(open(p))
+          assert d['status']=='COMPLETE_EXP073X2_DES_N4096_WM0_REPLICA_V0_1'
+          assert d['replica']==r
+          assert d['contract']['nside']==4096
+          assert d['contract']['bandpower_count']==39
+          assert d['workspace']['te_window_shape']==[39,12288]
+          assert d['physical_support_evaluated'] is False
+          assert d['science_gate_scored'] is False
+          assert d['covariance_read'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['article3_scientific_readiness_percent']==52
+          print('EXP073X2_REPLICA_FIREWALL_PASS', r)
+          PY
+        env:
+          MATRIX_REPLICA: ${{ matrix.replica }}
+          OMP_NUM_THREADS: '2'
+          OPENBLAS_NUM_THREADS: '1'
+          MKL_NUM_THREADS: '1'
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073x2-replica-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073x2/replica_${{ matrix.replica }}
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 6
+
+  aggregate:
+    name: exact-wm0-cross-replica-authority
+    needs: replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective Exp073X2 freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- ci/exp073x2_des_n4096_wm0_replica_authority_v0_1.py)" = '09e9cdb5b9e50531ca3e6ecb8bdda48a520161d8'
+          test "$(git log -1 --format=%H -- experiments/073x2_article3_des_n4096_wm0_replica_authority_v0_1_prereg.md)" = '29740bea67bb02e7e8f4ae80d8e6ebc633754cf5'
+          test -f experiments/073x2_article3_des_n4096_wm0_replica_authority_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073x2-article3-des-n4096-wm0-replica-authority-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073x2_article3_des_n4096_wm0_replica_authority_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073x2_des_n4096_wm0_replica_authority_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073x2_des_n4096_wm0_replica_authority_v0_1.py
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073x2-replica-a-${{ github.sha }}
+          path: replicas/a
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073x2-replica-b-${{ github.sha }}
+          path: replicas/b
+
+      - name: Install lightweight aggregator dependency
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 -m pip install --user 'numpy<2.4'
+
+      - name: Require exact cross-replica authority equality
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7/exp073x2/final
+          python3 ci/exp073x2_des_n4096_wm0_replica_authority_v0_1.py aggregate \
+            --replica-a-json replicas/a/metadata.json \
+            --replica-a-npz replicas/a/wm0_te_window.npz \
+            --replica-b-json replicas/b/metadata.json \
+            --replica-b-npz replicas/b/wm0_te_window.npz \
+            --output-json data/derived/g7/exp073x2/final/exp073x2_des_n4096_wm0_replica_authority_v0_1.json
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073x2/final/exp073x2_des_n4096_wm0_replica_authority_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073X2_DES_N4096_WM0_REPLICA_AUTHORITY_V0_1'
+          assert d['te_window_authority']['shape']==[39,12288]
+          assert d['cross_replica_equalities']['canonical_hash'] is True
+          assert d['cross_replica_equalities']['array_equal'] is True
+          assert all(d['cross_replica_equalities'].values())
+          assert all(d['science_firewall'].values())
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['article3_scientific_readiness_percent']==52
+          print('EXP073X2_FINAL_FIREWALL_PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073x2-final-authority-${{ github.sha }}
+          path: data/derived/g7/exp073x2/final
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 6
