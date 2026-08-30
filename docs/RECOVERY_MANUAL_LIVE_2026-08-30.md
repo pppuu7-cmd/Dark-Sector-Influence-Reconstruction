@@ -22,7 +22,7 @@ Never alter post hoc:
 - Layer-B invalid row fraction `<=0.05` inclusive;
 - minimum final retained dimension `15`;
 - DES classifying route `NSIDE=4096`;
-- genuine DES Y1 angular authorities, PyMaster 2.7 lineage, true ell `0..12287`, 39 frozen bandpowers;
+- genuine DES Y1 angular authorities, PyMaster/NaMaster 2.7 lineage, true ell `0..12287`, 39 frozen bandpowers;
 - Wm selected component `TE<-TE`; WW selected component `EE<-EE`;
 - canonical selected window `<f8 [39,12288]`;
 - positive absolute operator/window envelopes only for support bookkeeping; measured Wm remains signed;
@@ -38,6 +38,7 @@ Never alter post hoc:
 - historical Exp073X2 Q: immutable `SCIENTIFIC_REPEATABILITY_FAIL`; computational repeatability, not dark-sector model physics.
 - Exp073AH2: `WORKSPACE_OUTPUT_ONLY_NUMERICAL_DIVERGENCE`; no frozen input/contract drift detected.
 - historical Exp073AF route remains blocked by `P PASS + Q SCIENTIFIC_REPEATABILITY_FAIL`.
+- Exp073AG hosted synthetic PASS remains a valid historical schema-QA result for the pre-AO/AP route; it is not deleted or reclassified.
 
 Historical records are not erased by the successor route.
 
@@ -56,7 +57,7 @@ Exp073AM prospectively repaired only aggregation while reusing immutable replica
 - exact A/B SHA `8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`;
 - `numpy.array_equal=true`, differing entries `0/479232`, differing bands `0/39`.
 
-Exp073AN then established:
+Exp073AN established:
 
 `DETERMINISTIC_SINGLE_THREAD_ROUTE_BUT_EXACT_AUTHORITY_SHIFT_FROM_PRIMARY_P`.
 
@@ -64,7 +65,7 @@ Therefore global bitwise identity is execution-route-sensitive, but the controll
 
 ## Exp073AO/AP authority succession
 
-No tolerance/ULP/rounding equivalence contract is authorized because no independent error budget existed before observing the route differences. Exp073AO instead prospectively defines:
+No tolerance/ULP/rounding equivalence contract is authorized because no independent error budget existed before observing the route differences. Exp073AO prospectively defines:
 
 `controlled_single_thread_exact_v1`.
 
@@ -97,9 +98,9 @@ Remaining task order:
 
 Each task independently requires two hosted replicas, exact canonical SHA equality, and `numpy.array_equal=true`. No tolerance, rounding, majority vote, preferred-replica choice, or closeness-to-P rescue. Exact mismatch is task-specific repeatability FAIL; failure before comparator authority is infrastructure-INCOMPLETE.
 
-## Exp073AQ — first real successor production gate
+## Exp073AQ — active first real successor production gate
 
-After checking recent commits, Actions and recovery, no heavy workflow or remaining-task production existed after Exp073AP. The first remaining task `Wm_S1` was prospectively frozen and launched alone as a two-replica real production gate.
+After duplicate audit, the first remaining task `Wm_S1` was prospectively frozen and launched alone as a two-replica real production gate.
 
 Frozen chain:
 
@@ -108,11 +109,10 @@ Frozen chain:
 - comparator `8772ff5550351d53dfa47aeb05cd83bd6f673750`;
 - workflow `42b6241dc90a253cc4d4e8f8dbf72a6a71b46c18`;
 - workflow freeze `a60c7a2020843e2ea800e361e54cb13ac6c39ac4`;
-- trigger/head `fe89b6c64ee0cee5dbc40080973ec2af2ae683e0`.
+- trigger/head `fe89b6c64ee0cee5dbc40080973ec2af2ae683e0`;
+- hosted run `33327372191`, started `2026-08-30T18:12:00Z`.
 
-Hosted run `33327372191` started `2026-08-30T18:12:00Z`.
-
-Latest inspected state:
+Latest inspected state after Exp073AR hosted completion:
 
 - Wm_S1 replica A job `99299799192`: IN PROGRESS;
 - Wm_S1 replica B job `99299799338`: IN PROGRESS;
@@ -125,24 +125,55 @@ After both valid replicas reach the comparator, allowed classes are only:
 - `PASS_EXP073AQ_WM_S1_CONTROLLED_TWIN_EXACT_V0_1`, or
 - `SCIENTIFIC_REPEATABILITY_FAIL_EXP073AQ_WM_S1_CONTROLLED_TWIN_EXACT_V0_1`.
 
-Any earlier failure remains infrastructure-INCOMPLETE.
+Any earlier failure remains infrastructure-INCOMPLETE. A PASS admits only Wm_S1 and changes readiness by 0.
 
-A PASS admits only Wm_S1 to the future controlled-route 14-window authority and changes readiness by 0.
+## Exp073AR — future 14-window aggregate succession
+
+The original Exp073AG aggregate schema was frozen before the later empirical authority-route shift and expected old future authority classes (`canonical_exp073x2` for Wm_S0 and `exp073aa` for the other 13). After AO/AP, using that schema unchanged would mix historical and execution-qualified authorities.
+
+Exp073AR was therefore prospectively frozen **while AQ was still running and before any AQ output existed**.
+
+Frozen chain:
+
+- prereg `ec6031118430c0e1db797e26bea4ba66102c9e7b`;
+- validator/self-test `db5f4c93c46b9674c04c9a7f42e917d79c50babd`;
+- workflow `729d331c231391ac31e28eb978a491ab61f2a549`;
+- workflow freeze `c862cb04f7e8e31803a84c6f2296f26acd82239b`;
+- trigger/head `b4b14950ee0831b902cedd527d3797e991107195`;
+- hosted run `33327870470`, job `99301112192`;
+- artifact `9736757853`;
+- digest `sha256:b3d2a1195299d9daedd469dee1fb394bcfba4499abfdbd04159330566d8c76e9`;
+- token `PASS_EXP073AR_EXECUTION_QUALIFIED_14WINDOW_AGGREGATE_SUCCESSION_SYNTHETIC_V0_1`.
+
+Hosted result: **SYNTHETIC PASS / non-scientific / +0 readiness**. All 24 frozen checks passed.
+
+For the future real aggregate, Exp073AR requires:
+
+1. Wm_S0 exactly from Exp073AM, canonical SHA `8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`;
+2. authority class `controlled_single_thread_exact_v1` for all 14 entries;
+3. the historical primary-P Wm_S0 SHA is rejected as successor anchor while remaining historical authority;
+4. each of the remaining 13 tasks must bind a real hosted comparator authority with positive run/job/artifact provenance, valid artifact digest, exact twin SHA equality, `array_equal=true`, verified single-thread controls, and selected canonical `<f8 [39,12288]` SHA identical to both replicas;
+5. no tolerance, rounding, ULP allowance, majority vote, preferred replica or single-replica admission;
+6. unique ordered tasks, unique successor experiment identities and unique selected-window hashes across task identities;
+7. deterministic aggregate metadata SHA independent of dictionary insertion order;
+8. readiness remains 52 and the complete anti-leakage firewall remains false.
+
+Exp073AR supersedes Exp073AG only for the future AO/AP execution-qualified aggregate schema. Historical AG remains preserved.
 
 ## Existing downstream firewalls remain binding
 
 - Exp073AE: strict real pre-support authority-join schema; no support/covariance/nuisance/G8 leakage.
-- Exp073AG: ordered 14-window authority aggregation schema.
 - Exp073AD: exact 5% boundary ambiguity firewall.
 - AJ2: environment provenance cannot alter numerical PASS/FAIL or choose preferred replicas.
 - AK2: infrastructure failure cannot be promoted to repeatability FAIL.
+- Exp073AR: execution-qualified aggregate cannot mix historical authority classes/routes.
 
 ## Current authorized route
 
 1. resolve Exp073AQ Wm_S1; do not duplicate while run `33327372191` is active;
 2. if exact PASS, prospectively freeze/run Wm_S2 as the next controlled twin gate;
 3. continue remaining tasks only by independent exact twin admission;
-4. combine Exp073AM Wm_S0 anchor + 13 admitted tasks into the ordered 14-window authority;
+4. combine Exp073AM Wm_S0 anchor + 13 admitted controlled-twin tasks into the ordered 14-window authority under Exp073AR;
 5. perform the strict real pre-support join under Exp073AE;
 6. freeze the immutable complete 1410-row finite-operator candidate manifest;
 7. only then run real Layer A;
@@ -156,6 +187,7 @@ Until the real complete pre-support operator manifest exists, strict Article-3 r
 2. `docs/RECOVERY_MANUAL_LIVE_2026-08-30.md`
 3. `docs/RECOVERY_LATEST.md`
 4. `docs/DSIR_CROSS_CHAT_AUTHORITY_CONSOLIDATION_2026-08-30.md`
-5. `recovery/2026-08-30_exp073aq_controlled_twin_wm_s1_launched.md`
+5. `recovery/2026-08-30_exp073ar_execution_qualified_14window_schema_hosted_pass_aq_still_running.md`
 6. `experiments/073aq_article3_controlled_twin_wm_s1_production_v0_1_prereg.md`
-7. `experiments/073ao_article3_execution_qualified_exact_authority_succession_v0_1_prereg.md`.
+7. `experiments/073ao_article3_execution_qualified_exact_authority_succession_v0_1_prereg.md`
+8. `experiments/073ar_article3_execution_qualified_14window_aggregate_succession_v0_1_prereg.md`.
