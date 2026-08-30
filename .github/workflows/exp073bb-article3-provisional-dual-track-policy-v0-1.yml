@@ -1,0 +1,49 @@
+name: Exp073BB Article3 provisional dual-track policy v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073bb_article3_provisional_dual_track_policy_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-policy-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce prospective freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bb_article3_provisional_dual_track_evidence_policy_v0_1_prereg.md)" = 'd4824c1f0e111b25abe0da7e1747a8687a77a175'
+          test "$(git log -1 --format=%H -- ci/exp073bb_article3_provisional_dual_track_policy_v0_1.py)" = '813acd62f3ea9d9009fcbfcc2c10582c15fc40d1'
+          SELF="$(git log -1 --format=%H -- .github/workflows/exp073bb-article3-provisional-dual-track-policy-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF}\`" experiments/073bb_article3_provisional_dual_track_policy_v0_1_workflow_freeze.md
+          python3 -m py_compile ci/exp073bb_article3_provisional_dual_track_policy_v0_1.py
+      - name: Run frozen synthetic firewall QA
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073bb_article3_provisional_dual_track_policy_v0_1.py | tee data/derived/g7/exp073bb_provisional_dual_track_policy_v0_1.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073bb_provisional_dual_track_policy_v0_1.json'))
+          assert d['status']=='PASS_EXP073BB_PROVISIONAL_DUAL_TRACK_POLICY_SYNTHETIC_V0_1'
+          assert d['tests_passed']==d['tests_total']
+          assert d['readiness_increment']==0
+          assert d['scientific_pass_claimed'] is False
+          assert d['article3_scientific_readiness_percent']==52
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bb-provisional-dual-track-policy-${{ github.sha }}
+          path: data/derived/g7/exp073bb_provisional_dual_track_policy_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
