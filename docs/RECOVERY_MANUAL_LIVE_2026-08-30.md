@@ -7,8 +7,9 @@ Read it together with:
 1. `docs/RECOVERY_LATEST.md`;
 2. `docs/DSIR_CROSS_CHAT_AUTHORITY_CONSOLIDATION_2026-08-30.md`;
 3. `docs/DSIR_ALL_CHAT_REPOSITORY_RECONCILIATION_2026-08-30.md`;
-4. the newest recovery checkpoint;
-5. the Exp073AT/AU/AV/AW/AX addenda where exact gate details are needed.
+4. `docs/RECOVERY_MANUAL_ADDENDUM_EXP065B_EXP067E_2026-08-30.md`;
+5. the newest recovery checkpoint;
+6. the Exp073AT/AU/AV/AW/AX addenda where exact gate details are needed.
 
 Repository/hosted authority outranks chat wording. RTK and RQIR are excluded from DSIR authority.
 
@@ -26,7 +27,7 @@ Repository/hosted authority outranks chat wording. RTK and RQIR are excluded fro
 
 The next possible Article-3 scientific-readiness increase still requires the **real complete pre-support finite-operator candidate manifest** and its authorized accounting route.
 
-## 2. Historical scientific negatives that must not be erased
+## 2. Historical scientific negatives and corrected chains that must not be erased
 
 The all-chat reconciliation re-confirmed several older results that are easy to lose in top-level summaries:
 
@@ -35,12 +36,13 @@ The all-chat reconciliation re-confirmed several older results that are easy to 
 - F29 / Exp056B: prospective C8 IDM–photon hard scientific FAIL of the F28 half-transition sign relation. All 35 crossings existed, but two of four adjacent `C50` slopes were negative; failure survived leave-one-redshift checks.
 - F30 / Exp061A: genuine withheld C9 IDM–baryon hard prospective PASS for a pre-frozen two-coordinate localization+shape/orientation path representation. It does not erase F27/F29 and does not close G7/G8/G9.
 - F31 / Exp064A: DESI ShapeFit AP/growth/shape common-plane candidate failed the frozen covariance-null nontriviality criterion (`p_lambda≈0.26534`, `p_LOO≈0.36123`); result `NO_NONTRIVIAL_COMMON_PLANE_RELATION_V0_1`.
+- Exp065B→Exp067E is now explicitly recovered as an observational/operator-validation chain: selected-covariance PASS → Exp066B frozen selected-bandpower FAIL → Exp066C separately corrected exact shot-noise-template PASS → Exp067A direct whitening PASS → Exp067B frozen CAMB↔CLASS convention HARD FAIL → Exp067C native-CAMB localization → Exp067D float32-first causal diagnosis → Exp067E preregistered out-of-sample convention PASS. Exp066B and Exp067B remain immutable FAILs.
 - Exp068A: permanent frozen scientific FAIL due to incorrect PCA-column semantics, despite exact upstream raw-forward equivalence. Never overwrite it with Exp068B.
 - Exp068B: separate corrected literal-PCA PASS for the declared raw physical forward bridge only.
 - Exp071C: known-sector K2 baryon/CDM redistribution at fixed total matter passed the matter-only F30 path, yielding `F30_DARK_SPECIFICITY_WEAKENED_BY_KNOWN_SECTOR_CONTROL`. Do not retrain F30 to reject K2.
 - Exp071L/M/N: later representation/resolvability and ray/line/subspace corrections supersede any early “unique fingerprint” interpretation.
 
-For exact provenance and numbers, read `docs/DSIR_ALL_CHAT_REPOSITORY_RECONCILIATION_2026-08-30.md`.
+For exact provenance and numbers, read `docs/DSIR_ALL_CHAT_REPOSITORY_RECONCILIATION_2026-08-30.md` and `docs/RECOVERY_MANUAL_ADDENDUM_EXP065B_EXP067E_2026-08-30.md`.
 
 ## 3. Frozen Article-3 scientific/support boundaries
 
@@ -246,10 +248,12 @@ No downstream information may choose an upstream support set, threshold, nuisanc
 
 The 2026-08-30 audit across DSIR chat eras found no material scientific result that is both scientifically consequential and still lacks repository backing.
 
-It did find:
+It did find and repair:
 
 - underrepresented F27–F31 and Exp071C history, now indexed in `docs/DSIR_ALL_CHAT_REPOSITORY_RECONCILIATION_2026-08-30.md`;
+- underrepresented Exp065B→Exp067E operator/convention history, now preserved in `docs/RECOVERY_MANUAL_ADDENDUM_EXP065B_EXP067E_2026-08-30.md`;
 - a chat-memory misdescription of Exp055A/F28, corrected in favor of repository authority;
+- a chat-memory conflation of Exp067B–E with later nuisance-SVD work, corrected in favor of the repository-authoritative CAMB↔CLASS coherence/convention lineage;
 - this live manual lagging behind `RECOVERY_LATEST` through AS–AX, now repaired.
 
 Any future chat-only recollection without repository/hosted backing is `CHAT_DERIVED_NON_AUTHORITATIVE` and cannot change gates/readiness.
@@ -260,11 +264,12 @@ Any future chat-only recollection without repository/hosted backing is `CHAT_DER
 2. `docs/RECOVERY_MANUAL_LIVE_2026-08-30.md`
 3. `docs/RECOVERY_LATEST.md`
 4. `docs/DSIR_ALL_CHAT_REPOSITORY_RECONCILIATION_2026-08-30.md`
-5. `docs/DSIR_CROSS_CHAT_AUTHORITY_CONSOLIDATION_2026-08-30.md`
-6. newest file under `recovery/` referenced by `RECOVERY_LATEST`
-7. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AT_2026-08-30.md`
-8. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AU_2026-08-30.md`
-9. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AV_2026-08-30.md`
-10. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AW_2026-08-30.md`
-11. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AX_2026-08-30.md`
-12. the frozen experiment preregistration for the next authorized gate.
+5. `docs/RECOVERY_MANUAL_ADDENDUM_EXP065B_EXP067E_2026-08-30.md`
+6. `docs/DSIR_CROSS_CHAT_AUTHORITY_CONSOLIDATION_2026-08-30.md`
+7. newest file under `recovery/` referenced by `RECOVERY_LATEST`
+8. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AT_2026-08-30.md`
+9. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AU_2026-08-30.md`
+10. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AV_2026-08-30.md`
+11. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AW_2026-08-30.md`
+12. `docs/RECOVERY_MANUAL_ADDENDUM_EXP073AX_2026-08-30.md`
+13. the frozen experiment preregistration for the next authorized gate.
