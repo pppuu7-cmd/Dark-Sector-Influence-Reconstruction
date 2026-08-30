@@ -1,0 +1,106 @@
+name: Exp073AH Article3 Q repeatability mismatch forensic v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ah_article3_q_repeatability_mismatch_forensic_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  q-mismatch-forensic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective Exp073AH freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073ah_article3_q_repeatability_mismatch_forensic_v0_1_prereg.md)" = '2396c23b250138b5a69a91bfebbf70562a15d741'
+          test "$(git log -1 --format=%H -- ci/exp073ah_article3_q_repeatability_mismatch_forensic_v0_1.py)" = '9b76342146a0ec9b887e7125b8e983a9756ef95c'
+          test -f experiments/073ah_article3_q_repeatability_mismatch_forensic_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073ah-article3-q-repeatability-mismatch-forensic-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073ah_article3_q_repeatability_mismatch_forensic_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073ah_article3_q_repeatability_mismatch_forensic_v0_1.trigger'
+          fi
+          python3 -m pip install --disable-pip-version-check --no-input 'numpy==2.1.3'
+          python3 -m py_compile ci/exp073ah_article3_q_repeatability_mismatch_forensic_v0_1.py
+
+      - name: Verify immutable Q artifact metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json,os,urllib.request
+          req=urllib.request.Request('https://api.github.com/repos/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/runs/33301058260/artifacts?per_page=100',headers={'Authorization':f'Bearer {os.environ["GH_TOKEN"]}','Accept':'application/vnd.github+json'})
+          with urllib.request.urlopen(req) as r:d=json.load(r)
+          by={int(a['id']):a for a in d['artifacts']}
+          exp={
+            9730452251:('exp073x2-replica-a-730ae4951ab8cd8e1dd2c392e991c3120345678a','sha256:6fab306a14d76b6819820454eb2d56035c2ce74b126d2ac1a70eb94cbb5dac27'),
+            9730346824:('exp073x2-replica-b-730ae4951ab8cd8e1dd2c392e991c3120345678a','sha256:a969aa3d04b2d2278d16e84e14ec2fbc046fc79c5bd1c63615e01c783592ce95')}
+          for aid,(name,digest) in exp.items():
+            a=by[aid]; assert a['name']==name; assert a['digest']==digest; assert not a['expired']; assert int(a['workflow_run']['id'])==33301058260; assert a['workflow_run']['head_sha']=='730ae4951ab8cd8e1dd2c392e991c3120345678a'
+          print('Q_IMMUTABLE_ARTIFACT_METADATA_BOUND')
+          PY
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073x2-replica-a-730ae4951ab8cd8e1dd2c392e991c3120345678a
+          path: external/q-a
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33301058260
+          github-token: ${{ github.token }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073x2-replica-b-730ae4951ab8cd8e1dd2c392e991c3120345678a
+          path: external/q-b
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33301058260
+          github-token: ${{ github.token }}
+
+      - name: Reproduce frozen mismatch forensics
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073ah_article3_q_repeatability_mismatch_forensic_v0_1.py --a-root external/q-a --b-root external/q-b --output-json data/derived/g7/exp073ah_q_repeatability_mismatch_forensic_v0_1.json
+
+      - name: Enforce failure preservation and accounting firewall
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073ah_q_repeatability_mismatch_forensic_v0_1.json'))
+          assert d['status']=='PASS_EXP073AH_Q_REPEATABILITY_MISMATCH_FORENSIC_V0_1'
+          assert d['classification_preserved']=='SCIENTIFIC_REPEATABILITY_FAIL'
+          assert d['production_release'] is False
+          assert d['forensic_classification']=='WORKSPACE_OUTPUT_ONLY_NUMERICAL_DIVERGENCE'
+          assert d['array_equal'] is False
+          assert d['input_provenance_drift_detected'] is False
+          assert d['root_cause_proven'] is False
+          assert d['readiness_increment']==0 and d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['science_gate_scored'] is False and d['scientific_pass_claimed'] is False
+          assert d['physical_support_evaluated'] is False and d['covariance_read'] is False and d['nuisance_geometry_read'] is False and d['G8_read'] is False
+          print('EXP073AH_FAILURE_PRESERVED_FORENSIC_PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ah-q-repeatability-mismatch-forensic-${{ github.sha }}
+          path: data/derived/g7/exp073ah_q_repeatability_mismatch_forensic_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
