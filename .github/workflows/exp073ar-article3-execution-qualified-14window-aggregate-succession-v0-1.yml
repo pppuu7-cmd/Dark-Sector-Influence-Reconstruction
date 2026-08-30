@@ -1,0 +1,75 @@
+name: Exp073AR Article3 execution-qualified 14-window aggregate succession v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ar_article3_execution_qualified_14window_aggregate_succession_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-aggregate-succession:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective Exp073AR freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073ar_article3_execution_qualified_14window_aggregate_succession_v0_1_prereg.md)" = 'ec6031118430c0e1db797e26bea4ba66102c9e7b'
+          test "$(git log -1 --format=%H -- ci/exp073ar_article3_execution_qualified_14window_aggregate_succession_v0_1.py)" = 'db5f4c93c46b9674c04c9a7f42e917d79c50babd'
+          test -f experiments/073ar_article3_execution_qualified_14window_aggregate_succession_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073ar-article3-execution-qualified-14window-aggregate-succession-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073ar_article3_execution_qualified_14window_aggregate_succession_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073ar_article3_execution_qualified_14window_aggregate_succession_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073ar_article3_execution_qualified_14window_aggregate_succession_v0_1.py
+
+      - name: Run frozen synthetic succession matrix
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073ar_article3_execution_qualified_14window_aggregate_succession_v0_1.py \
+            --self-test \
+            --output-json data/derived/g7/exp073ar_article3_execution_qualified_14window_aggregate_succession_v0_1.json
+
+      - name: Enforce non-scientific accounting and no-real-AQ-read
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073ar_article3_execution_qualified_14window_aggregate_succession_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073AR_EXECUTION_QUALIFIED_14WINDOW_AGGREGATE_SUCCESSION_SYNTHETIC_V0_1'
+          assert d['synthetic_only'] is True
+          assert d['tests_passed']==24
+          assert d['real_exp073aq_output_read'] is False
+          assert d['real_14window_aggregate_built'] is False
+          assert d['readiness_increment']==0
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['science_gate_scored'] is False
+          assert d['physical_support_evaluated'] is False
+          assert d['covariance_read'] is False
+          assert d['nuisance_geometry_read'] is False
+          assert d['G8_read'] is False
+          assert d['scientific_pass_claimed'] is False
+          print('EXP073AR_HOSTED_SYNTHETIC_SUCCESSION_PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ar-execution-qualified-14window-succession-${{ github.sha }}
+          path: data/derived/g7/exp073ar_article3_execution_qualified_14window_aggregate_succession_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
