@@ -26,7 +26,7 @@ This is the active overlay to `docs/RECOVERY_MANUAL.md`. Read it with `docs/RECO
 - no covariance/whitening, nuisance SVD/rank, quotient/relation/null or G8 during support selection;
 - exact-threshold ambiguity remains `numerically_unresolved`.
 
-## Established historical authority chain
+## Historical authority/negative record
 
 Preserve categories distinctly:
 
@@ -34,42 +34,30 @@ Preserve categories distinctly:
 - Exp073Z v0.1: numerical implementation failure, not science.
 - Exp073AD/AE/AF/AG: hosted synthetic/governance PASSes, +0 readiness.
 - Exp073X: `INCOMPLETE_INFRASTRUCTURE_RESOURCE_CANCELLED_NO_AUTHORITY_REUSE`.
-- Exp073X2 original P aggregate: `INCOMPLETE_INFRASTRUCTURE_MISSING_NUMPY_BEFORE_REPEATABILITY_CLASSIFICATION`.
 - Exp073X2R primary P: hosted exact repeatability PASS / +0 readiness, canonical Wm_S0 SHA `6ec29f6dbbcf0c29d7af9d6eb98d271bcd06e00d28cebe658b5e266f7ef18d0f`.
-- Exp073X2 Q: immutable `SCIENTIFIC_REPEATABILITY_FAIL`; this is a failure of the exact operator-repeatability criterion, not a dark-sector model-physics failure.
-- Exp073AH v0.1: forensic transcription implementation failure, not science.
-- Exp073AH2: hosted forensic PASS / +0 readiness, class `WORKSPACE_OUTPUT_ONLY_NUMERICAL_DIVERGENCE`.
-
-Q-A canonical SHA equals P exactly. Q-B SHA is `8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`. AH2 found `472922/479232` differing entries across all 39 bands with max absolute difference `2.0816681711721685e-17`; no frozen input/contract drift was detected. Tiny magnitude does not override the frozen exact criterion; Q remains FAIL.
+- Exp073X2 Q: immutable `SCIENTIFIC_REPEATABILITY_FAIL` for exact operator repeatability, not dark-sector model physics.
+- Exp073AH2: hosted forensic PASS / +0 readiness, class `WORKSPACE_OUTPUT_ONLY_NUMERICAL_DIVERGENCE`; Q-A equals P exactly, Q-B SHA `8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`, with `472922/479232` differing entries and max absolute difference `2.0816681711721685e-17`; no frozen input/contract drift detected.
 
 Historical production route remains blocked by Exp073AF:
 
 `P PASS + Q SCIENTIFIC_REPEATABILITY_FAIL -> BLOCK_PRODUCTION`.
 
-Therefore do not launch the remaining 13 Exp073AA tasks under that route.
+Do not launch the remaining 13 Exp073AA tasks under that route.
 
 ## Exp073AI — active prospective deterministic exact reproducibility route
 
-Exp073AI was frozen only after the Q FAIL and AH2 forensic localization. It is a new route, not a Q rescue, and cannot reclassify historical Q.
+Run `33310888983`, head `fdfb0eae9ea799b4a185a059a0d1b9dfca17b31d` is the only active heavy route.
 
-Frozen scientific/angular contract remains unchanged:
+Replica jobs:
 
-- real DES Y1 Exp073R1 source-mask authority;
-- genuine DES Y1 redMaGiC lens mask with original positive weights retained iff `mask>0.5`;
-- `NSIDE=4096`, RING/C;
-- NaMaster/PyMaster 2.7 lineage;
-- 39 frozen bandpowers;
-- true ell `0..12287`;
-- spin-0 x spin-2;
-- selected `TE <- TE` response;
-- canonical `<f8 [39,12288]` window;
-- no effective ell/z/k, radial/support/fiducial-P/covariance/nuisance/quotient/relation/null/G8 information.
+- A `99255607805`;
+- B `99255607640`.
 
-Exact replica implementation is reused unchanged from commit `df2eecd73ed0d8de080348ba155a2f1a3e84d7e1`.
+Latest inspection: both remain inside `Compute exact single-thread replica`; latest run artifact count is `0`. Do not duplicate AI.
 
-### Frozen deterministic execution controls
+Frozen physical/angular contract is unchanged: real DES Y1, genuine weighted redMaGiC lens mask, `NSIDE=4096`, RING/C, PyMaster 2.7, 39 frozen bandpowers, true ell `0..12287`, spin-0 x spin-2, selected `TE <- TE`, canonical `<f8 [39,12288]`, no effective ell/z/k, radial/support/fiducial-P/covariance/nuisance/quotient/relation/null/G8 information.
 
-Both replicas use:
+Both replicas prospectively force one-thread controls:
 
 - `OMP_NUM_THREADS=1`
 - `OPENBLAS_NUM_THREADS=1`
@@ -79,88 +67,77 @@ Both replicas use:
 - `BLIS_NUM_THREADS=1`
 - `OMP_DYNAMIC=FALSE`
 
-No tolerance, rounding, ULP allowance or majority voting is allowed.
+No tolerance, rounding, ULP allowance or majority voting.
 
-### Environment capture
+Frozen replica job timeout is `240` minutes; aggregate timeout `20` minutes.
 
-Before workspace construction each replica persists OS/image labels, `uname`, `lscpu`, processor count, memory/filesystem/ulimit, all thread variables, Python/PyMaster/NumPy/Healpy/Astropy versions and NumPy build configuration. These receipts are provenance only; they cannot choose a preferred numerical output.
+Valid AI numerical outcome semantics only after valid comparison:
 
-### Prospective identity
+- exact SHA equality + `numpy.array_equal(A,B)==True` -> `PASS_EXP073AI_SINGLE_THREAD_EXACT_REPRODUCIBILITY_V0_1`;
+- complete authorities reaching comparison but exact disagreement -> `SCIENTIFIC_REPEATABILITY_FAIL_EXP073AI_SINGLE_THREAD_EXACT_V0_1`.
 
-- prereg `033d8502a9bfb3e44f4a8adc20a9e08457032277`;
-- comparator `98e1518c34e30b0a7e59724ae60b7586f8c52f9c`;
-- workflow `a0135ba38290d30e8c98e06882aafe3044bba8f4`;
-- workflow freeze `63877ad51da61eb28a1b2385c046a6b19d132202`;
-- trigger/head `fdfb0eae9ea799b4a185a059a0d1b9dfca17b31d`;
-- hosted run `33310888983`;
-- replica A job `99255607805`;
-- replica B job `99255607640`.
+AI PASS/FAIL contributes +0 readiness and never reclassifies historical Q. Even AI PASS does not automatically authorize Exp073AA production; a future succession amendment must be separately prospective.
 
-Latest inspection: both replica jobs are still inside `Compute exact single-thread replica`; no authority artifact exists yet.
+## Exp073AJ2 — environment provenance firewall
 
-### Frozen AI outcome semantics
+Exp073AJ v0.1 failed synthetically before reading real AI because of an `unhashable dict` implementation error. Preserve that as implementation failure, not science.
 
-If both replicas reach comparison:
+Exp073AJ2 narrow repair obtained hosted synthetic PASS:
 
-- exact SHA equality and `numpy.array_equal(A,B)==True` -> `PASS_EXP073AI_SINGLE_THREAD_EXACT_REPRODUCIBILITY_V0_1`;
-- otherwise -> `SCIENTIFIC_REPEATABILITY_FAIL_EXP073AI_SINGLE_THREAD_EXACT_V0_1`.
-
-If comparison is never reached, classify only the appropriate infrastructure-INCOMPLETE state. AI PASS/FAIL is nonclassifying for dark-sector physics and adds +0 readiness.
-
-Even a future AI PASS does not automatically authorize Exp073AA production. A separate prospective succession/authority-selection amendment may be created only after the AI hosted outcome exists.
-
-## Exp073AJ — prospective environment-provenance classifier v0.1
-
-AJ was frozen while AI was still computing so later explanations of AI PASS/FAIL cannot cherry-pick environment differences.
-
-Frozen AJ chain:
-
-- prereg `361b86c7bb6215ea700e6a5c16578c059628987c`;
-- implementation `4bea0c22c452916db0a6c20caef0782a1f3801f8`;
-- workflow `bd8f98bac96d665db5c4cc44187610d83a792650`;
-- freeze `39b666b9c214c873dab01f53dd7df512ed35f226`;
-- trigger/head `eb423aa97fbc03635328ee2fff4519c9929ea041`;
-- hosted run `33313517040`, job `99262678309`.
-
-The run passed freeze enforcement but failed in the synthetic matrix with `TypeError: unhashable type: 'dict'` because the serializer attempted to use receipt dictionaries as dictionary keys. No real AI receipt or numerical output was read.
-
-Preserve classification:
-
-`IMPLEMENTATION_FAILURE_UNHASHABLE_DICT_BEFORE_CLASSIFICATION_NOT_SCIENCE`.
-
-## Exp073AJ2 — narrow repaired environment-provenance classifier v0.2
-
-AJ2 preserves every AJ classifier branch and changes only resource-SHA serialization to stable string keys `A` and `B`.
-
-Frozen chain:
-
-- prereg `33796a506ed375060a61c8ac22d7fdc1ee10bf5f`;
-- implementation `d2ebf1769c2d0a86c8a0c3e2235e2da8ace074b5`;
-- workflow `7a98eb2d763c8fa570f13dd22da839bde593b488`;
-- workflow freeze `6e8733d656868eee615f4fcbe7dc631025312b15`;
-- trigger/head `bcd287c8b648ab30568c7232d309dcffb4a7667f`;
-- hosted run `33313584914` = success;
+- run `33313584914`;
 - artifact `9732737233`;
 - digest `sha256:087ae5f1e01feac476317afcf4cfea3c8f4ee491c4edc0127b338c8ba7ffb49a`;
 - token `PASS_EXP073AJ2_AI_ENVIRONMENT_PROVENANCE_CLASSIFIER_SYNTHETIC_V0_2`.
 
-Classification: `HOSTED_SYNTHETIC_PROVENANCE_QA_PASS_NON_SCIENTIFIC_PLUS_0_READINESS`.
+AJ2 can later label environment provenance only (`CONTROL_DRIFT`, `SOFTWARE_BUILD_DRIFT`, `CONTROLLED_SOFTWARE_AND_HOST_MATCH`, `CONTROLLED_SOFTWARE_MATCH_HOST_RUNTIME_DIVERGENCE`). It cannot inspect the AI numerical outcome while producing the label, change AI PASS/FAIL, select a preferred replica, introduce tolerance, release production or read support/covariance/nuisance/G8.
 
-Future AJ2 labels, produced without reading the AI numerical result:
+## Exp073AK / Exp073AK2 — completion authority firewall
 
-- malformed receipt/accounting/firewall -> invalid;
-- thread-control mismatch -> `CONTROL_DRIFT`;
-- software/NumPy-build mismatch -> `SOFTWARE_BUILD_DRIFT`;
-- controls/software equal and host fields equal -> `CONTROLLED_SOFTWARE_AND_HOST_MATCH`;
-- controls/software equal but host fields differ -> `CONTROLLED_SOFTWARE_MATCH_HOST_RUNTIME_DIVERGENCE`.
+### AK v0.1 retained implementation failure
 
-Volatile memory/filesystem/ulimit fields are SHA-recorded for provenance but cannot determine numerical reproducibility. AJ2 cannot alter AI PASS/FAIL, introduce tolerance, select a preferred replica, release production, or read support/covariance/nuisance/G8.
+Frozen chain reached hosted run `33316169150`, job `99269912588`. Prospective freeze passed; synthetic matrix failed because several test-harness `check(...)` calls omitted the fixture argument. No real AI receipt/token was read.
+
+Permanent classification:
+
+`IMPLEMENTATION_FAILURE_SYNTHETIC_HARNESS_MISSING_FIXTURE_ARGUMENT_BEFORE_CLASSIFICATION_NOT_SCIENCE`.
+
+### AK2 v0.2 narrow repair
+
+Only self-test call sites were repaired; classifier semantics were unchanged.
+
+Frozen chain:
+
+- prereg `61b725cc3e98acb6374b9165acbbb77deba10284`;
+- implementation `6ca671ad6145ae5b78977958999ec5bdae380fbb`;
+- workflow `14f5c3ebafe663479b454c7944d95cb9277207cf`;
+- workflow freeze `d82ed284e80d2157f55418b205bb7b00f7fa87c2`;
+- trigger/head `8f2d7a2d5b909c475dcd1940f82d9332129462ce`;
+- hosted run `33316242357`, job `99270113118` = success;
+- artifact `9733523834`;
+- digest `sha256:f08e772acab3a0c08269fa637d8dc8fe6a4839a73630e04048d86680e8ab94bb`;
+- token `PASS_EXP073AK2_AI_COMPLETION_AUTHORITY_CLASSIFIER_SYNTHETIC_V0_2`.
+
+Classification: `HOSTED_SYNTHETIC_COMPLETION_CLASSIFIER_PASS_NON_SCIENTIFIC_PLUS_0_READINESS`.
+
+Hosted-tested state semantics:
+
+- queued/in-progress -> `PENDING_EXP073AI`;
+- both complete replica authorities + successful aggregate + valid frozen final token -> `VALID_HOSTED_EXP073AI_CLASSIFICATION`, preserving the exact AI token;
+- replica non-success before complete authority -> `INCOMPLETE_INFRASTRUCTURE_EXP073AI_REPLICA_EXECUTION`;
+- replica success but incomplete/missing artifact -> `INCOMPLETE_INFRASTRUCTURE_EXP073AI_REPLICA_ARTIFACT`;
+- complete replicas but aggregate job non-success -> `INCOMPLETE_INFRASTRUCTURE_EXP073AI_AGGREGATOR_EXECUTION`;
+- aggregate success but final artifact/token missing or malformed -> `INCOMPLETE_INFRASTRUCTURE_EXP073AI_AGGREGATE_AUTHORITY`;
+- unknown/conflicting control-plane state -> `INVALID_CONTROL_PLANE_STATE_NO_SCIENCE_CLASSIFICATION`.
+
+Therefore timeout, cancellation, artifact loss or aggregator failure can never be silently promoted to repeatability FAIL. A repeatability FAIL may be recorded only if the frozen AI comparator actually emits its frozen FAIL token in a valid final hosted authority.
+
+AK2 reads no angular values/support/covariance/nuisance/G8, cannot release production and adds +0 readiness.
 
 ## Current authorized route
 
-`Exp073AI deterministic exact reproducibility -> immutable hosted AI outcome -> real AJ2 environment-provenance label when both receipts exist -> only then consider a separate prospectively frozen succession rule`.
+`Exp073AI active -> Exp073AK2 terminal/control-plane classification -> immutable hosted AI token only if valid -> AJ2 independent environment-provenance label when both receipts exist -> only then consider a separately prospectively frozen succession rule`.
 
-Do not duplicate AI while run `33310888983` is active. Do not launch the remaining 13 Exp073AA tasks until a future explicit succession authority exists.
+Do not duplicate AI and do not launch the remaining 13 Exp073AA tasks while AI is active or absent a future explicit succession authority.
 
 ## Recovery read order
 
@@ -168,10 +145,11 @@ Do not duplicate AI while run `33310888983` is active. Do not launch the remaini
 2. `docs/RECOVERY_MANUAL_LIVE_2026-08-30.md`
 3. `docs/RECOVERY_LATEST.md`
 4. `docs/DSIR_CROSS_CHAT_AUTHORITY_CONSOLIDATION_2026-08-30.md`
-5. `recovery/2026-08-30_exp073aj_failure_exp073aj2_hosted_pass_ai_still_running.md`
+5. `recovery/2026-08-30_exp073ak_failure_exp073ak2_hosted_pass_ai_still_running.md`
 6. `experiments/073ai_article3_single_thread_exact_reproducibility_v0_1_prereg.md`
 7. `experiments/073aj2_article3_ai_environment_provenance_classifier_v0_2_prereg.md`
-8. `experiments/073ah2_article3_q_repeatability_forensic_binding_v0_2_prereg.md`
-9. `experiments/073af_article3_x2_to_exp073aa_release_control_v0_1_prereg.md`
-10. `experiments/073ag_article3_exact_14window_authority_aggregator_schema_v0_1_prereg.md`
-11. `experiments/073ae_article3_presupport_authority_join_schema_v0_1_prereg.md`.
+8. `experiments/073ak2_article3_ai_completion_authority_classifier_v0_2_prereg.md`
+9. `experiments/073ah2_article3_q_repeatability_forensic_binding_v0_2_prereg.md`
+10. `experiments/073af_article3_x2_to_exp073aa_release_control_v0_1_prereg.md`
+11. `experiments/073ag_article3_exact_14window_authority_aggregator_schema_v0_1_prereg.md`
+12. `experiments/073ae_article3_presupport_authority_join_schema_v0_1_prereg.md`.
