@@ -85,15 +85,16 @@ jobs:
       - name: Compute one exact nside4096 Wm0 TE workspace replica
         shell: bash
         env:
+          MATRIX_REPLICA: ${{ matrix.replica }}
           OMP_NUM_THREADS: '2'
           OPENBLAS_NUM_THREADS: '1'
           MKL_NUM_THREADS: '1'
         run: |
           set -euxo pipefail
-          OUT="data/derived/g7/exp073x2/replica_${{ matrix.replica }}"
+          OUT="data/derived/g7/exp073x2/replica_${MATRIX_REPLICA}"
           mkdir -p "${OUT}"
           /usr/bin/time -v "${NMT_PY}" ci/exp073x2_des_n4096_wm0_replica_authority_v0_1.py replica \
-            --replica '${{ matrix.replica }}' \
+            --replica "${MATRIX_REPLICA}" \
             --r1-root external/r1 \
             --r1-artifact-digest 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd' \
             --lens-mask external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits \
@@ -101,7 +102,7 @@ jobs:
             --output-npz "${OUT}/wm0_te_window.npz"
           "${NMT_PY}" - <<'PY'
           import json, os
-          r=os.environ.get('MATRIX_REPLICA')
+          r=os.environ['MATRIX_REPLICA']
           p=f'data/derived/g7/exp073x2/replica_{r}/metadata.json'
           d=json.load(open(p))
           assert d['status']=='COMPLETE_EXP073X2_DES_N4096_WM0_REPLICA_V0_1'
@@ -116,11 +117,6 @@ jobs:
           assert d['article3_scientific_readiness_percent']==52
           print('EXP073X2_REPLICA_FIREWALL_PASS', r)
           PY
-        env:
-          MATRIX_REPLICA: ${{ matrix.replica }}
-          OMP_NUM_THREADS: '2'
-          OPENBLAS_NUM_THREADS: '1'
-          MKL_NUM_THREADS: '1'
 
       - uses: actions/upload-artifact@v4
         if: always()
