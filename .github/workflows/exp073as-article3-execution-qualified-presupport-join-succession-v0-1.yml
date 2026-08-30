@@ -1,0 +1,60 @@
+name: Exp073AS Article3 execution-qualified pre-support join succession v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073as_article3_execution_qualified_presupport_join_succession_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  synthetic-presupport-succession:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce prospective Exp073AS freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073as_article3_execution_qualified_presupport_join_succession_v0_1_prereg.md)" = '9957a097d8fd8532708bac3685c3a70683c4a263'
+          test "$(git log -1 --format=%H -- ci/exp073as_execution_qualified_presupport_join_schema_v0_1.py)" = '66a34a390342984f4de2b01fc10df263243fb168'
+          test -f experiments/073as_article3_execution_qualified_presupport_join_succession_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073as-article3-execution-qualified-presupport-join-succession-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073as_article3_execution_qualified_presupport_join_succession_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073as_article3_execution_qualified_presupport_join_succession_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073as_execution_qualified_presupport_join_schema_v0_1.py
+      - name: Run frozen synthetic succession matrix
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073as_execution_qualified_presupport_join_schema_v0_1.py | tee data/derived/g7/exp073as_execution_qualified_presupport_join_schema_v0_1.json
+          grep -F 'PASS_EXP073AS_EXECUTION_QUALIFIED_PRESUPPORT_JOIN_SUCCESSION_SYNTHETIC_V0_1' data/derived/g7/exp073as_execution_qualified_presupport_join_schema_v0_1.json
+      - name: Enforce non-scientific accounting and no-real-AQ-read
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073as_execution_qualified_presupport_join_schema_v0_1.json'))
+          assert d['synthetic_cases_passed']==24
+          assert d['real_aq_output_read'] is False
+          assert d['real_candidate_manifest_built'] is False
+          assert d['readiness_increment']==0
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['scientific_pass_claimed'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073as-execution-qualified-presupport-succession-${{ github.sha }}
+          path: data/derived/g7/exp073as_execution_qualified_presupport_join_schema_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
