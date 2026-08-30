@@ -1,0 +1,167 @@
+name: Exp073AI Article3 single-thread exact reproducibility v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ai_article3_single_thread_exact_reproducibility_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  exact-single-thread-replica:
+    strategy:
+      fail-fast: false
+      matrix:
+        replica: [A, B]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective Exp073AI freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073ai_article3_single_thread_exact_reproducibility_v0_1_prereg.md)" = '033d8502a9bfb3e44f4a8adc20a9e08457032277'
+          test "$(git log -1 --format=%H -- ci/exp073x2_des_n4096_wm0_maskonly_angular_replica_v0_1.py)" = 'df2eecd73ed0d8de080348ba155a2f1a3e84d7e1'
+          test "$(git log -1 --format=%H -- ci/exp073ai_compare_single_thread_replicas_v0_1.py)" = '98e1518c34e30b0a7e59724ae60b7586f8c52f9c'
+          test -f experiments/073ai_article3_single_thread_exact_reproducibility_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073ai-article3-single-thread-exact-reproducibility-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073ai_article3_single_thread_exact_reproducibility_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073ai_article3_single_thread_exact_reproducibility_v0_1.trigger'
+          fi
+
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euxo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+
+      - name: Capture runtime and hardware environment
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          lower="$(printf '%s' "${REPLICA}" | tr '[:upper:]' '[:lower:]')"
+          uname -a > "${RUNNER_TEMP}/uname.txt"
+          lscpu > "${RUNNER_TEMP}/lscpu.txt"
+          (ulimit -a || true) > "${RUNNER_TEMP}/ulimit.txt"
+          free -h > "${RUNNER_TEMP}/free.txt"
+          df -h . > "${RUNNER_TEMP}/df.txt"
+          "${NMT_PY}" - <<'PY' > "${RUNNER_TEMP}/versions.txt"
+          import sys,importlib.metadata,numpy as np
+          print('python',sys.version)
+          for p in ['pymaster','numpy','healpy','astropy']:
+              print(p,importlib.metadata.version(p))
+          np.show_config()
+          PY
+          "${NMT_PY}" - "${REPLICA}" "data/derived/g7/exp073ai_env_${lower}_v0_1.json" <<'PY'
+          import json,os,sys,platform,subprocess,pathlib
+          r,p=sys.argv[1:]
+          keys=['OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS','VECLIB_MAXIMUM_THREADS','BLIS_NUM_THREADS','OMP_DYNAMIC']
+          out={'experiment':'Exp073AI','replica':r,'thread_env':{k:os.environ.get(k) for k in keys},'github':{'run_id':os.environ.get('GITHUB_RUN_ID'),'job':os.environ.get('GITHUB_JOB'),'runner_os':os.environ.get('RUNNER_OS'),'runner_arch':os.environ.get('RUNNER_ARCH'),'image_os':os.environ.get('ImageOS'),'image_version':os.environ.get('ImageVersion')},'platform':platform.platform(),'machine':platform.machine(),'processor':platform.processor(),'nproc':os.cpu_count(),'uname':pathlib.Path(os.environ['RUNNER_TEMP']+'/uname.txt').read_text(),'lscpu':pathlib.Path(os.environ['RUNNER_TEMP']+'/lscpu.txt').read_text(),'ulimit':pathlib.Path(os.environ['RUNNER_TEMP']+'/ulimit.txt').read_text(),'memory':pathlib.Path(os.environ['RUNNER_TEMP']+'/free.txt').read_text(),'filesystem':pathlib.Path(os.environ['RUNNER_TEMP']+'/df.txt').read_text(),'versions_and_numpy_config':pathlib.Path(os.environ['RUNNER_TEMP']+'/versions.txt').read_text(),'article3_scientific_readiness_percent':52,'gate_state':{'G7':'OPEN','G8':'OPEN','G9':'OPEN'},'science_gate_scored':False,'production_release':False}
+          pathlib.Path(p).write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Download exact hosted R1 authority artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+          path: external/r1
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33270843577
+
+      - name: Download and bind exact DES Y1 lens mask
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/des
+          curl --fail --location --retry 3 -o external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits'
+          test "$(stat -c %s external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits)" = '104595840'
+          echo 'a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55  external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits' | sha256sum -c -
+
+      - name: Compute exact single-thread replica
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          lower="$(printf '%s' "${REPLICA}" | tr '[:upper:]' '[:lower:]')"
+          /usr/bin/time -v "${NMT_PY}" ci/exp073x2_des_n4096_wm0_maskonly_angular_replica_v0_1.py --replica "${REPLICA}" --r1-root external/r1 --r1-artifact-digest 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd' --lens-mask external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits --output-json "data/derived/g7/exp073x2_replica_${lower}_v0_1.json" --output-npz "data/derived/g7/exp073x2_replica_${lower}_v0_1.npz"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073ai-single-thread-replica-${{ matrix.replica }}-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073x2_replica_*.json
+            data/derived/g7/exp073x2_replica_*.npz
+            data/derived/g7/exp073ai_env_*.json
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 6
+
+  aggregate-exact-reproducibility:
+    needs: exact-single-thread-replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen aggregator dependency
+        run: python -m pip install 'numpy==2.1.3'
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073ai-single-thread-replica-A-${{ github.sha }}
+          path: external/a
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073ai-single-thread-replica-B-${{ github.sha }}
+          path: external/b
+      - name: Compare exact controlled replicas
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python ci/exp073ai_compare_single_thread_replicas_v0_1.py --replica-a-root external/a --replica-b-root external/b --env-a external/a/data/derived/g7/exp073ai_env_a_v0_1.json --env-b external/b/data/derived/g7/exp073ai_env_b_v0_1.json --output-json data/derived/g7/exp073ai_single_thread_exact_reproducibility_v0_1.json
+      - name: Enforce nonclassifying accounting
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073ai_single_thread_exact_reproducibility_v0_1.json'))
+          assert d['status'] in {'PASS_EXP073AI_SINGLE_THREAD_EXACT_REPRODUCIBILITY_V0_1','SCIENTIFIC_REPEATABILITY_FAIL_EXP073AI_SINGLE_THREAD_EXACT_V0_1'}
+          assert d['production_release'] is False and d['requires_future_successor_amendment_even_if_pass'] is True
+          assert d['readiness_increment']==0 and d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['science_gate_scored'] is False and d['scientific_pass_claimed'] is False
+          print(d['status'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ai-single-thread-exact-reproducibility-${{ github.sha }}
+          path: data/derived/g7/exp073ai_single_thread_exact_reproducibility_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
