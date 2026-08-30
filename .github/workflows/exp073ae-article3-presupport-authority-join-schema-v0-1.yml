@@ -1,0 +1,74 @@
+name: Exp073AE Article3 pre-support authority join schema v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ae_article3_presupport_authority_join_schema_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-schema-firewall:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective Exp073AE freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073ae_article3_presupport_authority_join_schema_v0_1_prereg.md)" = '6d554f96e5fb331c2fcc7920e172af7e35289886'
+          test "$(git log -1 --format=%H -- ci/exp073ae_article3_presupport_authority_join_schema_v0_1.py)" = '122d80712d631349a3bfd60590bfbf42edf8321a'
+          test -f experiments/073ae_article3_presupport_authority_join_schema_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073ae-article3-presupport-authority-join-schema-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073ae_article3_presupport_authority_join_schema_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073ae_article3_presupport_authority_join_schema_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073ae_article3_presupport_authority_join_schema_v0_1.py
+
+      - name: Run preregistered strict synthetic matrix
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073ae_article3_presupport_authority_join_schema_v0_1.py \
+            --self-test \
+            --output-json data/derived/g7/exp073ae_article3_presupport_authority_join_schema_v0_1.json
+
+      - name: Enforce non-scientific accounting and firewall
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073ae_article3_presupport_authority_join_schema_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073AE_ARTICLE3_PRESUPPORT_AUTHORITY_JOIN_SCHEMA_SYNTHETIC_V0_1'
+          assert d['synthetic_only'] is True
+          assert d['tests_passed']==19
+          assert d['real_authority_join_performed'] is False
+          assert d['physical_support_evaluated'] is False
+          assert d['science_gate_scored'] is False
+          assert d['covariance_read'] is False
+          assert d['nuisance_geometry_read'] is False
+          assert d['G8_read'] is False
+          assert d['scientific_pass_claimed'] is False
+          assert d['readiness_increment_from_exp073ae']==0
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073AE_HOSTED_SYNTHETIC_FIREWALL_PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ae-presupport-authority-join-schema-${{ github.sha }}
+          path: data/derived/g7/exp073ae_article3_presupport_authority_join_schema_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
