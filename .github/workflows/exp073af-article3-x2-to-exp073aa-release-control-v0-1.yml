@@ -1,0 +1,74 @@
+name: Exp073AF Article3 X2 to Exp073AA release control v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073af_article3_x2_to_exp073aa_release_control_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-release-control:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective Exp073AF freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073af_article3_x2_to_exp073aa_release_control_v0_1_prereg.md)" = '91e9f3f25fa34cab3a33d927d47afa10e5f1cc29'
+          test "$(git log -1 --format=%H -- ci/exp073af_article3_x2_to_exp073aa_release_control_v0_1.py)" = '2d772bff1971f81b8cdc94e5e2ca0d52290bfa8d'
+          test -f experiments/073af_article3_x2_to_exp073aa_release_control_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073af-article3-x2-to-exp073aa-release-control-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073af_article3_x2_to_exp073aa_release_control_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073af_article3_x2_to_exp073aa_release_control_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073af_article3_x2_to_exp073aa_release_control_v0_1.py
+
+      - name: Run frozen synthetic X2 release state matrix
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073af_article3_x2_to_exp073aa_release_control_v0_1.py \
+            --self-test \
+            --output-json data/derived/g7/exp073af_article3_x2_to_exp073aa_release_control_v0_1.json
+
+      - name: Enforce non-scientific accounting
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073af_article3_x2_to_exp073aa_release_control_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073AF_X2_TO_EXP073AA_RELEASE_CONTROL_SYNTHETIC_V0_1'
+          assert d['synthetic_only'] is True
+          assert d['tests_passed']==18
+          assert d['real_x2_receipts_read'] is False
+          assert d['real_production_released'] is False
+          assert d['readiness_increment']==0
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['science_gate_scored'] is False
+          assert d['physical_support_evaluated'] is False
+          assert d['covariance_read'] is False
+          assert d['G8_read'] is False
+          assert d['scientific_pass_claimed'] is False
+          print('EXP073AF_HOSTED_SYNTHETIC_RELEASE_CONTROL_PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073af-x2-to-exp073aa-release-control-${{ github.sha }}
+          path: data/derived/g7/exp073af_article3_x2_to_exp073aa_release_control_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
