@@ -1,0 +1,55 @@
+name: Exp073AX Article3 G7 relation-null protocol admission v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ax_article3_g7_relation_null_protocol_admission_v0_1.trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-g7-protocol-admission:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Enforce prospective Exp073AX freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f experiments/073ax_article3_g7_relation_null_protocol_admission_v0_1_prereg.md
+          test -f experiments/073ax_article3_g7_relation_null_protocol_admission_v0_1_workflow_freeze.md
+          test -f ci/exp073ax_article3_g7_relation_null_protocol_admission_v0_1.py
+      - name: Run frozen synthetic G7 protocol admission matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          python ci/exp073ax_article3_g7_relation_null_protocol_admission_v0_1.py > data/derived/g7/exp073ax_g7_relation_null_protocol_admission_synthetic_v0_1.json
+      - name: Enforce non-scientific accounting and withheld firewall
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          p='data/derived/g7/exp073ax_g7_relation_null_protocol_admission_synthetic_v0_1.json'
+          d=json.load(open(p))
+          assert d['token']=='PASS_EXP073AX_G7_RELATION_NULL_PROTOCOL_ADMISSION_SYNTHETIC_V0_1'
+          assert d['classification']=='HOSTED_SYNTHETIC_PASS_NON_SCIENTIFIC_PLUS_0_READINESS'
+          assert d['tests_passed']==29
+          assert d['article3_scientific_readiness_percent']==52 and d['readiness_increment']==0
+          assert d['scientific_pass_claimed'] is False
+          assert d['real_quotient_read'] is False and d['G7_fit_executed'] is False
+          assert d['G8_read'] is False and d['withheld_family_selected'] is False
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ax-g7-protocol-admission-${{ github.sha }}
+          path: data/derived/g7/exp073ax_g7_relation_null_protocol_admission_synthetic_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
