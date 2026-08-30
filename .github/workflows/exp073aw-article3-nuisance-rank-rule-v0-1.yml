@@ -21,7 +21,10 @@ jobs:
       - name: Install numerical dependency
         run: python -m pip install numpy
       - name: Run frozen synthetic nuisance rank matrix
-        run: python ci/exp073aw_article3_nuisance_rank_rule_synthetic_v0_1.py | tee exp073aw.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          python ci/exp073aw_article3_nuisance_rank_rule_synthetic_v0_1.py | tee exp073aw.json
       - name: Enforce non-scientific accounting and no real downstream read
         run: |
           grep -q 'PASS_EXP073AW_NUISANCE_RANK_RULE_SYNTHETIC_V0_1' exp073aw.json
