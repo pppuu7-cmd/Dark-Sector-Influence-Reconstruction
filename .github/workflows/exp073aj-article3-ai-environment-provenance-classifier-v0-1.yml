@@ -1,0 +1,38 @@
+name: Exp073AJ Article3 AI environment provenance classifier v0.1
+on:
+  push:
+    paths: ['ci/exp073aj_article3_ai_environment_provenance_classifier_v0_1.trigger']
+permissions:
+  contents: read
+jobs:
+  synthetic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce prospective freeze
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073aj_article3_ai_environment_provenance_classifier_v0_1_prereg.md)" = '361b86c7bb6215ea700e6a5c16578c059628987c'
+          test "$(git log -1 --format=%H -- ci/exp073aj_article3_ai_environment_provenance_classifier_v0_1.py)" = '4bea0c22c452916db0a6c20caef0782a1f3801f8'
+          SELF="$(git log -1 --format=%H -- .github/workflows/exp073aj-article3-ai-environment-provenance-classifier-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF}\`" experiments/073aj_article3_ai_environment_provenance_classifier_v0_1_workflow_freeze.md
+      - name: Run synthetic matrix
+        run: python3 ci/exp073aj_article3_ai_environment_provenance_classifier_v0_1.py --self-test --output data/derived/g7/exp073aj_ai_environment_provenance_classifier_v0_1.json
+      - name: Enforce accounting
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073aj_ai_environment_provenance_classifier_v0_1.json'))
+          assert d['status']=='PASS_EXP073AJ_AI_ENVIRONMENT_PROVENANCE_CLASSIFIER_SYNTHETIC_V0_1'
+          assert d['synthetic_only'] and d['tests_passed']==5
+          assert d['readiness_increment']==0 and d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['production_release'] is False and d['real_ai_receipts_read'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073aj-ai-environment-provenance-${{ github.sha }}
+          path: data/derived/g7/exp073aj_ai_environment_provenance_classifier_v0_1.json
+          retention-days: 90
