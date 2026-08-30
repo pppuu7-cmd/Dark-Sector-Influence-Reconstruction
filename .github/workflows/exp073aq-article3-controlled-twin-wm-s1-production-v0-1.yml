@@ -1,0 +1,190 @@
+name: Exp073AQ Article3 controlled twin Wm_S1 production v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073aq_article3_controlled_twin_wm_s1_production_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  wm-s1-replica:
+    strategy:
+      fail-fast: false
+      matrix:
+        replica: [A, B]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective Exp073AQ freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073aq_article3_controlled_twin_wm_s1_production_v0_1_prereg.md)" = '2794ed0a48e8e7f8019584461296661d1a83ae08'
+          test "$(git log -1 --format=%H -- ci/exp073aa_article3_des_angular_task_runner_v0_1.py)" = '45ed8d8d1e90cdaf314e0384b6f3cdfef369925b'
+          test "$(git log -1 --format=%H -- ci/exp073aq_compare_wm_s1_controlled_twin_v0_2.py)" = '8772ff5550351d53dfa47aeb05cd83bd6f673750'
+          test -f experiments/073aq_article3_controlled_twin_wm_s1_production_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073aq-article3-controlled-twin-wm-s1-production-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073aq_article3_controlled_twin_wm_s1_production_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073aq_article3_controlled_twin_wm_s1_production_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073aq_compare_wm_s1_controlled_twin_v0_2.py
+
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euxo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+
+      - name: Capture controlled environment receipt
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          lower="$(printf '%s' "${REPLICA}" | tr '[:upper:]' '[:lower:]')"
+          uname -a > "${RUNNER_TEMP}/uname.txt"
+          lscpu > "${RUNNER_TEMP}/lscpu.txt"
+          "${NMT_PY}" - <<'PY' > "${RUNNER_TEMP}/versions.txt"
+          import sys,importlib.metadata,numpy as np
+          print('python',sys.version)
+          for p in ['pymaster','numpy','healpy','astropy']:
+              print(p,importlib.metadata.version(p))
+          np.show_config()
+          PY
+          "${NMT_PY}" - "${REPLICA}" "data/derived/g7/exp073aq_env_${lower}_v0_1.json" <<'PY'
+          import json,os,sys,platform,pathlib
+          r,p=sys.argv[1:]
+          keys=['OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS','VECLIB_MAXIMUM_THREADS','BLIS_NUM_THREADS','OMP_DYNAMIC']
+          out={'experiment':'Exp073AQ','task':'Wm_S1','replica':r,'authority_class':'controlled_single_thread_exact_v1','thread_env':{k:os.environ.get(k) for k in keys},'github':{'run_id':os.environ.get('GITHUB_RUN_ID'),'job':os.environ.get('GITHUB_JOB'),'runner_os':os.environ.get('RUNNER_OS'),'runner_arch':os.environ.get('RUNNER_ARCH'),'image_os':os.environ.get('ImageOS'),'image_version':os.environ.get('ImageVersion')},'platform':platform.platform(),'machine':platform.machine(),'processor':platform.processor(),'nproc':os.cpu_count(),'uname':pathlib.Path(os.environ['RUNNER_TEMP']+'/uname.txt').read_text(),'lscpu':pathlib.Path(os.environ['RUNNER_TEMP']+'/lscpu.txt').read_text(),'versions_and_numpy_config':pathlib.Path(os.environ['RUNNER_TEMP']+'/versions.txt').read_text(),'article3_scientific_readiness_percent':52,'gate_state':{'G7':'OPEN','G8':'OPEN','G9':'OPEN'},'science_gate_scored':False,'physical_support_evaluated':False,'covariance_read':False,'G8_read':False}
+          pathlib.Path(p).write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Download exact hosted R1 authority artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+          path: external/r1
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33270843577
+
+      - name: Download and bind exact DES Y1 lens mask
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/des
+          curl --fail --location --retry 3 -o external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits'
+          test "$(stat -c %s external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits)" = '104595840'
+          echo 'a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55  external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits' | sha256sum -c -
+
+      - name: Compute exact controlled Wm_S1 replica
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          lower="$(printf '%s' "${REPLICA}" | tr '[:upper:]' '[:lower:]')"
+          /usr/bin/time -v "${NMT_PY}" ci/exp073aa_article3_des_angular_task_runner_v0_1.py \
+            --task Wm_S1 \
+            --r1-root external/r1 \
+            --r1-artifact-digest 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd' \
+            --lens-mask external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits \
+            --output-json "data/derived/g7/exp073aq_wm_s1_${lower}_v0_1.json" \
+            --output-npz "data/derived/g7/exp073aq_wm_s1_${lower}_v0_1.npz"
+
+      - name: Enforce replica nonclassifying firewall
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euxo pipefail
+          lower="$(printf '%s' "${REPLICA}" | tr '[:upper:]' '[:lower:]')"
+          "${NMT_PY}" - "data/derived/g7/exp073aq_wm_s1_${lower}_v0_1.json" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          assert d['task']=='Wm_S1' and d['status']=='PASS_EXP073AA_DES_ANGULAR_TASK_V0_1'
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          for k in ['radial_kernel_read','physical_k_computed','physical_support_evaluated','retained_coordinates_evaluated','fiducial_P_weighting_used','science_gate_scored','covariance_read','nuisance_geometry_read','relation_null_read','G8_read']:
+              assert d[k] is False,k
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073aq-wm-s1-replica-${{ matrix.replica }}-${{ github.sha }}
+          path: |
+            data/derived/g7/exp073aq_wm_s1_*.json
+            data/derived/g7/exp073aq_wm_s1_*.npz
+            data/derived/g7/exp073aq_env_*.json
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 6
+
+  aggregate-wm-s1-exact:
+    needs: wm-s1-replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen comparator dependency
+        run: python -m pip install 'numpy==2.1.3'
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073aq-wm-s1-replica-A-${{ github.sha }}
+          path: external/a
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073aq-wm-s1-replica-B-${{ github.sha }}
+          path: external/b
+      - name: Compare exact Wm_S1 controlled twins
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python ci/exp073aq_compare_wm_s1_controlled_twin_v0_2.py \
+            --a-root external/a --b-root external/b \
+            --output-json data/derived/g7/exp073aq_wm_s1_controlled_twin_authority_v0_1.json
+      - name: Enforce accounting
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073aq_wm_s1_controlled_twin_authority_v0_1.json'))
+          assert d['status'] in {'PASS_EXP073AQ_WM_S1_CONTROLLED_TWIN_EXACT_V0_1','SCIENTIFIC_REPEATABILITY_FAIL_EXP073AQ_WM_S1_CONTROLLED_TWIN_EXACT_V0_1'}
+          assert d['readiness_increment']==0 and d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          assert d['science_gate_scored'] is False and d['scientific_pass_claimed'] is False
+          assert d['production_release_for_other_tasks'] is False
+          print(d['status'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073aq-wm-s1-controlled-twin-authority-${{ github.sha }}
+          path: data/derived/g7/exp073aq_wm_s1_controlled_twin_authority_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
