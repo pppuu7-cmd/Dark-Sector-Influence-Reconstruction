@@ -1,0 +1,7 @@
+Exp073AX hosted synthetic trigger v0.1
+Frozen prereg: dc96e73c3ef1046a93a87de5acd662f2fdf54185
+Frozen validator: 535ed6ff574505a52d7256c39a971910337c5214
+Frozen workflow: c54326f7634edea1feb3b85f3b709e4e6d44cc7d
+Workflow freeze: 284e8f4a20e86e459e41b286e7c8859b8bb27fe1
+Scientific readiness increment: 0
+G7/G8/G9 remain OPEN
