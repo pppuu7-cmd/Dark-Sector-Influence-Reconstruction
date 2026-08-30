@@ -1,0 +1,5 @@
+Exp073X2 frozen trigger-only commit.
+prereg=29740bea67bb02e7e8f4ae80d8e6ebc633754cf5
+implementation=09e9cdb5b9e50531ca3e6ecb8bdda48a520161d8
+workflow=c8deb4f4489f13416a613aa96711ee35207fa84f
+freeze=599d7ca509a716a1f7ad29c07bdc5d8bf4da74ae
