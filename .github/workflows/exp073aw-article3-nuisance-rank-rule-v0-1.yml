@@ -1,0 +1,35 @@
+name: Exp073AW Article3 nuisance rank rule v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073aw-article3-nuisance-rank-rule-v0-1.yml'
+      - 'ci/exp073aw_article3_nuisance_rank_rule_synthetic_v0_1.py'
+      - 'experiments/073aw_article3_nuisance_rank_rule_v0_1_prereg.md'
+      - 'ci/exp073aw_trigger.txt'
+  workflow_dispatch:
+
+jobs:
+  synthetic-nuisance-rank-rule:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce prospective Exp073AW freeze
+        run: |
+          test -f experiments/073aw_article3_nuisance_rank_rule_v0_1_prereg.md
+          test -f ci/exp073aw_article3_nuisance_rank_rule_synthetic_v0_1.py
+      - name: Run frozen synthetic nuisance rank matrix
+        run: python ci/exp073aw_article3_nuisance_rank_rule_synthetic_v0_1.py | tee exp073aw.json
+      - name: Enforce non-scientific accounting and no real downstream read
+        run: |
+          grep -q 'PASS_EXP073AW_NUISANCE_RANK_RULE_SYNTHETIC_V0_1' exp073aw.json
+          grep -q '"science_gate_scored": false' exp073aw.json
+          grep -q '"scientific_readiness_credit": false' exp073aw.json
+          grep -q '"readiness": 52' exp073aw.json
+          grep -q '"real_covariance_read": false' exp073aw.json
+          grep -q '"real_nuisance_read": false' exp073aw.json
+          grep -q '"target_quotient_read": false' exp073aw.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073aw-nuisance-rank-${{ github.sha }}
+          path: exp073aw.json
