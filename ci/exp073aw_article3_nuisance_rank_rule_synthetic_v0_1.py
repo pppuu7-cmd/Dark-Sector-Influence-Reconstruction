@@ -38,8 +38,8 @@ def main():
     def ck(name,cond): checks.append((name,bool(cond))); assert cond,name
     a=classify(e[0],-e[0]); ck('baseline_resolved',a['state']=='RESOLVED')
     ck('exact_null',classify(e[0],e[0])['state']=='EXACT_NULL')
-    tiny=1000*EPS*d*2.0
-    ck('roundoff_unresolved',classify((tiny/2)*e[0],np.zeros(d))['state']=='NUMERICALLY_UNRESOLVED')
+    cancel=5000*EPS*d
+    ck('roundoff_unresolved',classify(e[0]+cancel*e[1],e[0])['state']=='NUMERICALLY_UNRESOLVED')
     r=rank_rule([resolved_vec(e[0]),resolved_vec(e[1]),resolved_vec(e[2])],d); ck('independent_rank3',r['state']=='RESOLVED' and r['rank']==3)
     r=rank_rule([resolved_vec(e[0]),resolved_vec(e[0])],d); ck('duplicate_rank1',r['state']=='RESOLVED' and r['rank']==1)
     r=rank_rule([resolved_vec(e[0]),resolved_vec(-e[0])],d); ck('opposite_rank1',r['state']=='RESOLVED' and r['rank']==1)
@@ -52,13 +52,12 @@ def main():
     V=np.column_stack(base)@A
     V=[V[:,i]/np.linalg.norm(V[:,i]) for i in range(3)]
     ck('basis_change_invariant',rank_rule(V,d)['rank']==3)
-    # construct singular pair inside frozen ambiguity band
     tau0=1000*EPS*d
     v1=e[0].copy(); v2=e[0]+tau0*e[1]; v2/=np.linalg.norm(v2)
     rr=rank_rule([v1,v2],d); ck('ambiguity_fail_closed',rr['state']=='NUMERICALLY_UNRESOLVED_NUISANCE_RANK')
     ck('rank0_no_columns',rank_rule([],d)['rank']==0)
     ck('invalid_nonfinite',classify(np.full(d,np.nan),np.zeros(d))['state']=='INVALID')
-    out={'token':TOKEN,'checks_passed':len(checks),'checks_total':len(checks),'science_gate_scored':False,'scientific_readiness_credit':False,'readiness':52,'G7':'OPEN','G8':'OPEN','G9':'OPEN','real_covariance_read':False,'real_nuisance_read':False,'target_quotient_read':False}
+    out={'token':TOKEN,'checks_passed':len(checks),'checks_total':len(checks),'science_gate_scored':False,'scientific_readiness_credit':False,'readiness':52,'G7':'OPEN','G8':'OPEN','G9':'OPEN','real_covariance_read':False,'real_nuisance_read':False,'target_quotient_read':False,'numpy_version':np.__version__}
     print(json.dumps(out,sort_keys=True))
 
 if __name__=='__main__': main()
