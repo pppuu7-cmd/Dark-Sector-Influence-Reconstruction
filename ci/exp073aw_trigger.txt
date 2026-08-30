@@ -1,0 +1,6 @@
+Exp073AW hosted synthetic trigger.
+Prereg commit: 4e256a57dc9d3bac15ecc3e24910e277268ba6c5
+Validator commit: 1abfbdf88973c992d254dbfc4445b2e21ba42928
+Workflow commit: ad2bdab20ecbeff844c45c66cf91f812af256ecf
+Frozen before any real successor covariance/nuisance/target quotient/G7/G8 read.
+Scientific readiness credit: 0.
