@@ -1,0 +1,73 @@
+name: Exp073AG Article3 exact 14-window authority aggregator schema v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ag_article3_exact_14window_authority_aggregator_schema_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-14window-schema:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective Exp073AG freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073ag_article3_exact_14window_authority_aggregator_schema_v0_1_prereg.md)" = '2af44c322e03ce40882891a64c12e39b1e0a3564'
+          test "$(git log -1 --format=%H -- ci/exp073ag_article3_exact_14window_authority_aggregator_schema_v0_1.py)" = 'd49c8f43aa3ae3c6547864278fb9380720e61475'
+          test -f experiments/073ag_article3_exact_14window_authority_aggregator_schema_v0_1_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073ag-article3-exact-14window-authority-aggregator-schema-v0-1.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073ag_article3_exact_14window_authority_aggregator_schema_v0_1_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073ag_article3_exact_14window_authority_aggregator_schema_v0_1.trigger'
+          fi
+          python3 -m py_compile ci/exp073ag_article3_exact_14window_authority_aggregator_schema_v0_1.py
+
+      - name: Run frozen synthetic 14-window schema matrix
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073ag_article3_exact_14window_authority_aggregator_schema_v0_1.py \
+            --self-test \
+            --output-json data/derived/g7/exp073ag_article3_exact_14window_authority_aggregator_schema_v0_1.json
+
+      - name: Enforce non-scientific accounting
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073ag_article3_exact_14window_authority_aggregator_schema_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073AG_EXACT_14WINDOW_AUTHORITY_AGGREGATOR_SCHEMA_SYNTHETIC_V0_1'
+          assert d['synthetic_only'] is True
+          assert d['tests_passed']==18
+          assert d['real_angular_artifacts_read'] is False
+          assert d['real_14window_authority_built'] is False
+          assert d['physical_support_evaluated'] is False
+          assert d['covariance_read'] is False
+          assert d['G8_read'] is False
+          assert d['scientific_pass_claimed'] is False
+          assert d['readiness_increment']==0
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073AG_HOSTED_SYNTHETIC_14WINDOW_SCHEMA_PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ag-exact-14window-authority-schema-${{ github.sha }}
+          path: data/derived/g7/exp073ag_article3_exact_14window_authority_aggregator_schema_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
