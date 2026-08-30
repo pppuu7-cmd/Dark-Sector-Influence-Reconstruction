@@ -1,0 +1,47 @@
+name: DSIR local benchmark NaMaster 2.7 env export
+
+on:
+  push:
+    paths:
+      - '.github/workflows/dsir-local-benchmark-nmt27-env-export.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export-env:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Create exact benchmark environment
+        shell: bash
+        run: |
+          set -euxo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27bench" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy conda-pack
+          "${RUNNER_TEMP}/nmt27bench/bin/python" - <<'PY'
+          import importlib.metadata, sys
+          import pymaster, healpy, numpy
+          print(sys.version)
+          print('pymaster', importlib.metadata.version('pymaster'))
+          print('healpy', healpy.__version__)
+          print('numpy', numpy.__version__)
+          v=importlib.metadata.version('pymaster')
+          assert v=='2.7' or v.startswith('2.7.')
+          PY
+      - name: Pack relocatable environment
+        shell: bash
+        run: |
+          set -euxo pipefail
+          "${RUNNER_TEMP}/nmt27bench/bin/conda-pack" -p "${RUNNER_TEMP}/nmt27bench" -o "${RUNNER_TEMP}/nmt27bench.tar.gz"
+          sha256sum "${RUNNER_TEMP}/nmt27bench.tar.gz" > "${RUNNER_TEMP}/nmt27bench.tar.gz.sha256"
+          ls -lh "${RUNNER_TEMP}/nmt27bench.tar.gz"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dsir-local-benchmark-nmt27-env-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/nmt27bench.tar.gz
+            ${{ runner.temp }}/nmt27bench.tar.gz.sha256
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
