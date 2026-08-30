@@ -1,0 +1,74 @@
+name: Exp073AH2 Article3 Q repeatability forensic binding v0.2
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ah2_article3_q_repeatability_forensic_binding_v0_2.trigger'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  forensic-binding:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce freeze and runtime
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073ah2_article3_q_repeatability_forensic_binding_v0_2_prereg.md)" = '73a9002b08fbca9bbb038f6d8ce1cf098aebfe2b'
+          test "$(git log -1 --format=%H -- ci/exp073ah2_article3_q_repeatability_forensic_binding_v0_2.py)" = 'd8c57af83e7d421076e2f6b40c8538e69b396ec1'
+          test -f experiments/073ah2_article3_q_repeatability_forensic_binding_v0_2_workflow_freeze.md
+          SELF_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073ah2-article3-q-repeatability-forensic-binding-v0-2.yml)"
+          grep -F "workflow_last_modifying_commit: \`${SELF_COMMIT}\`" experiments/073ah2_article3_q_repeatability_forensic_binding_v0_2_workflow_freeze.md
+          if test "${GITHUB_EVENT_NAME}" = push; then test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073ah2_article3_q_repeatability_forensic_binding_v0_2.trigger'; fi
+          python3 -m pip install --disable-pip-version-check --no-input 'numpy==2.1.3'
+      - name: Verify Q artifacts
+        env: {GH_TOKEN: "${{ github.token }}"}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json,os,urllib.request
+          req=urllib.request.Request('https://api.github.com/repos/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/runs/33301058260/artifacts?per_page=100',headers={'Authorization':f'Bearer {os.environ["GH_TOKEN"]}','Accept':'application/vnd.github+json'})
+          with urllib.request.urlopen(req) as r:d=json.load(r)
+          by={int(x['id']):x for x in d['artifacts']}
+          e={9730452251:('exp073x2-replica-a-730ae4951ab8cd8e1dd2c392e991c3120345678a','sha256:6fab306a14d76b6819820454eb2d56035c2ce74b126d2ac1a70eb94cbb5dac27'),9730346824:('exp073x2-replica-b-730ae4951ab8cd8e1dd2c392e991c3120345678a','sha256:a969aa3d04b2d2278d16e84e14ec2fbc046fc79c5bd1c63615e01c783592ce95')}
+          for i,(n,h) in e.items(): x=by[i]; assert x['name']==n and x['digest']==h and not x['expired'] and int(x['workflow_run']['id'])==33301058260 and x['workflow_run']['head_sha']=='730ae4951ab8cd8e1dd2c392e991c3120345678a'
+          PY
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073x2-replica-a-730ae4951ab8cd8e1dd2c392e991c3120345678a
+          path: external/q-a
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33301058260
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073x2-replica-b-730ae4951ab8cd8e1dd2c392e991c3120345678a
+          path: external/q-b
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33301058260
+          github-token: ${{ github.token }}
+      - name: Bind forensic result
+        shell: bash
+        run: |
+          mkdir -p data/derived/g7
+          python3 ci/exp073ah2_article3_q_repeatability_forensic_binding_v0_2.py --a-root external/q-a --b-root external/q-b --output-json data/derived/g7/exp073ah2_q_repeatability_forensic_binding_v0_2.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073ah2_q_repeatability_forensic_binding_v0_2.json'))
+          assert d['status']=='PASS_EXP073AH2_Q_REPEATABILITY_FORENSIC_BINDING_V0_2'
+          assert d['q_classification_preserved']=='SCIENTIFIC_REPEATABILITY_FAIL' and d['production_release'] is False
+          assert d['forensic_classification']=='WORKSPACE_OUTPUT_ONLY_NUMERICAL_DIVERGENCE'
+          assert d['readiness_increment']==0 and d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ah2-q-forensic-binding-${{ github.sha }}
+          path: data/derived/g7/exp073ah2_q_repeatability_forensic_binding_v0_2.json
+          if-no-files-found: error
+          retention-days: 90
