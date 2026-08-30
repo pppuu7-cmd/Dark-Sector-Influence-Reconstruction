@@ -9,7 +9,7 @@
 1. `docs/RECOVERY_MANUAL.md`
 2. `docs/RECOVERY_MANUAL_LIVE_2026-08-30.md`
 3. `docs/DSIR_CROSS_CHAT_AUTHORITY_CONSOLIDATION_2026-08-30.md`
-4. `recovery/2026-08-30_exp073ak_failure_exp073ak2_hosted_pass_ai_still_running.md`
+4. `recovery/2026-08-30_exp073al_hosted_pass_ai_still_running.md`
 
 Repository/hosted authority outranks chat wording. RTK/RQIR remain excluded from DSIR authority/readiness.
 
@@ -23,18 +23,19 @@ Repository/hosted authority outranks chat wording. RTK/RQIR remain excluded from
 - Exp073X2 Q: immutable `SCIENTIFIC_REPEATABILITY_FAIL` for exact operator repeatability; not dark-sector model-physics failure.
 - Exp073AH2: hosted forensic PASS / +0 readiness, `WORKSPACE_OUTPUT_ONLY_NUMERICAL_DIVERGENCE`; no detected frozen input/contract drift.
 - Historical Exp073AF route remains `P PASS + Q SCIENTIFIC_REPEATABILITY_FAIL -> BLOCK_PRODUCTION`.
-- Exp073AI run `33310888983` remains **IN PROGRESS**; latest jobs A `99255607805`, B `99255607640` are still in `Compute exact single-thread replica`; latest artifact count is `0`.
+- Exp073AI run `33310888983` remains **IN PROGRESS**; latest jobs A `99255607805`, B `99255607640` are still in `Compute exact single-thread replica`; no duplicate AI or Exp073AA production was launched.
 - Exp073AJ v0.1: implementation failure before classification; no real AI receipt read.
 - Exp073AJ2: hosted synthetic environment-provenance classifier PASS / +0 readiness, run `33313584914`, artifact `9732737233`.
 - Exp073AK v0.1: `IMPLEMENTATION_FAILURE_SYNTHETIC_HARNESS_MISSING_FIXTURE_ARGUMENT_BEFORE_CLASSIFICATION_NOT_SCIENCE`, run `33316169150`.
-- Exp073AK2: **HOSTED SYNTHETIC COMPLETION CLASSIFIER PASS / +0 readiness**, run `33316242357`, job `99270113118`, artifact `9733523834`, digest `sha256:f08e772acab3a0c08269fa637d8dc8fe6a4839a73630e04048d86680e8ab94bb`.
+- Exp073AK2: hosted synthetic completion-classifier PASS / +0 readiness, run `33316242357`, artifact `9733523834`.
+- Exp073AL: **HOSTED SYNTHETIC AI-vs-primary exact-stability classifier PASS / +0 readiness**, run `33319102300`, job `99277802521`, artifact `9734352248`, digest `sha256:a9ed4f0be6ed4dd25924658697b76b5f0b016d0b7cdc09feafe3aa0441278aa1`.
 - Layer A/B = OPEN; covariance/whitening = BLOCKED; G7/G8/G9 = OPEN.
 
 ## Exp073AI exact route
 
 The scientific/angular contract remains unchanged: real DES Y1, genuine weighted redMaGiC mask, `NSIDE=4096`, PyMaster 2.7, 39 frozen bandpowers, true ell `0..12287`, spin-0 x spin-2, selected `TE <- TE`, canonical `<f8 [39,12288]`, no effective ell/z/k and no radial/support/fiducial-P/covariance/nuisance/quotient/relation/null/G8 information.
 
-Both replicas prospectively force:
+Both replicas force:
 
 `OMP_NUM_THREADS=1`, `OPENBLAS_NUM_THREADS=1`, `MKL_NUM_THREADS=1`, `NUMEXPR_NUM_THREADS=1`, `VECLIB_MAXIMUM_THREADS=1`, `BLIS_NUM_THREADS=1`, `OMP_DYNAMIC=FALSE`.
 
@@ -45,34 +46,41 @@ Valid final AI numerical tokens only:
 - `PASS_EXP073AI_SINGLE_THREAD_EXACT_REPRODUCIBILITY_V0_1` iff exact SHA equality and `numpy.array_equal(A,B)==True`;
 - `SCIENTIFIC_REPEATABILITY_FAIL_EXP073AI_SINGLE_THREAD_EXACT_V0_1` iff both complete authorities reach valid comparison and disagree under the exact criterion.
 
+AI itself remains +0 readiness and cannot reclassify historical Q.
+
 ## Exp073AK2 completion firewall
 
-Exp073AK2 was prospectively frozen while AI remained active. It machine-tests the rule that infrastructure failure cannot be confused with repeatability FAIL.
+Before interpreting AI numerically, classify terminal control-plane state with Exp073AK2. Only complete replica authorities + successful aggregate + valid frozen final token produce `VALID_HOSTED_EXP073AI_CLASSIFICATION`. Timeout/cancellation/artifact loss/aggregator failure remain infrastructure-INCOMPLETE and may never be promoted to repeatability FAIL.
+
+## Exp073AJ2 provenance firewall
+
+When complete AI environment receipts exist, AJ2 may independently label environment provenance. Its label may not inspect or alter the AI numerical result, select a preferred replica, introduce tolerance, or release production.
+
+## Exp073AL exact cross-route stability firewall
+
+Exp073AL was frozen and hosted-tested while AI was still in progress and before any real AI output existed.
 
 Frozen chain:
 
-- prereg `61b725cc3e98acb6374b9165acbbb77deba10284`;
-- implementation `6ca671ad6145ae5b78977958999ec5bdae380fbb`;
-- workflow `14f5c3ebafe663479b454c7944d95cb9277207cf`;
-- freeze `d82ed284e80d2157f55418b205bb7b00f7fa87c2`;
-- trigger/head `8f2d7a2d5b909c475dcd1940f82d9332129462ce`;
-- run `33316242357`, job `99270113118` = success;
-- artifact `9733523834`, digest `sha256:f08e772acab3a0c08269fa637d8dc8fe6a4839a73630e04048d86680e8ab94bb`;
-- token `PASS_EXP073AK2_AI_COMPLETION_AUTHORITY_CLASSIFIER_SYNTHETIC_V0_2`.
+- prereg `cf3e4062f3068badc7e4453cb816de72168ffbc9`;
+- implementation `a0ee0c5f37533093931c0495b4edd5967ce5a00c`;
+- workflow `223951730f7193adc8690bf99538a8e2a313cb38`;
+- freeze `642263e96f545d8f3035af73adecf0af8449e7b8`;
+- trigger/head `2bd07bfdc850bc83897c6d67d9b13b583003aed9`;
+- run `33319102300`, job `99277802521` = success;
+- artifact `9734352248`, digest `sha256:a9ed4f0be6ed4dd25924658697b76b5f0b016d0b7cdc09feafe3aa0441278aa1`;
+- token `PASS_EXP073AL_AI_VS_PRIMARY_EXACT_STABILITY_CLASSIFIER_SYNTHETIC_V0_1`.
 
-Hosted-tested completion classes:
+Hosted-tested future semantics:
 
-- active execution -> `PENDING_EXP073AI`;
-- complete replica authorities + successful aggregate + valid frozen final token -> `VALID_HOSTED_EXP073AI_CLASSIFICATION` preserving the AI token verbatim;
-- failed/cancelled/timed-out replica before complete authority -> `INCOMPLETE_INFRASTRUCTURE_EXP073AI_REPLICA_EXECUTION`;
-- replica success with missing/incomplete artifact -> `INCOMPLETE_INFRASTRUCTURE_EXP073AI_REPLICA_ARTIFACT`;
-- complete replicas but aggregator non-success -> `INCOMPLETE_INFRASTRUCTURE_EXP073AI_AGGREGATOR_EXECUTION`;
-- aggregate success but missing/malformed final authority/token -> `INCOMPLETE_INFRASTRUCTURE_EXP073AI_AGGREGATE_AUTHORITY`;
-- contradictory/unknown state -> `INVALID_CONTROL_PLANE_STATE_NO_SCIENCE_CLASSIFICATION`.
+- AI not validly classified -> `NO_CROSS_ROUTE_STABILITY_CLASSIFICATION_AI_NOT_VALID`;
+- valid AI internal repeatability FAIL -> `CROSS_ROUTE_STABILITY_BLOCKED_AI_INTERNAL_REPEATABILITY_FAIL`;
+- valid AI PASS + canonical SHA exactly equal to primary-P SHA `6ec29f6d...18d0f` -> `EXACT_CROSS_ROUTE_STABILITY_AI_EQUALS_PRIMARY_P`;
+- valid AI PASS + different canonical SHA -> `DETERMINISTIC_SINGLE_THREAD_ROUTE_BUT_EXACT_AUTHORITY_SHIFT_FROM_PRIMARY_P`.
 
-Thus an AI repeatability FAIL can be recorded only when the frozen comparator really emits its frozen FAIL token. Timeout/cancel/artifact/aggregator failure never implies repeatability FAIL.
+Thus an internal AI PASS is not automatically evidence that the exact authority is stable across execution routes. Exp073AL compares exact hashes only after a valid AI PASS and cannot use AJ2 environment labels, angular values, support, covariance, nuisance geometry or G8.
 
-Exp073AK2 does not inspect angular values, support, covariance, nuisance geometry or G8, cannot release production, and adds +0 readiness.
+Exp073AL does not authorize production and adds +0 readiness.
 
 ## Frozen Article-3 boundaries
 
@@ -92,4 +100,4 @@ Never alter post hoc:
 
 ## Resume instruction
 
-First inspect Exp073AI run `33310888983`, jobs `99255607805` / `99255607640`, and artifacts. Do not launch another AI or the 13 Exp073AA production tasks while AI is active. When AI becomes terminal, classify its control-plane completion under Exp073AK2 before interpreting numerical repeatability. Only a valid final hosted AI token is an AI PASS/FAIL authority. AJ2 may later add an independent environment-provenance label and may not reclassify the AI numerical result. Even AI PASS remains +0 readiness and does not automatically authorize production; a future succession amendment must be separately prospective.
+First inspect Exp073AI run `33310888983`, jobs `99255607805` / `99255607640`, and artifacts. Do not launch another AI or the 13 Exp073AA production tasks while AI is active. When AI becomes terminal: apply Exp073AK2 first; only a valid final hosted AI token is numerical authority. Then AJ2 may independently label environment provenance. If AI validly PASSes, apply Exp073AL to test exact identity against canonical primary P. None of AI/AJ2/AK2/AL automatically authorizes production or raises readiness; any future succession requires a separate prospective amendment after real results exist.
