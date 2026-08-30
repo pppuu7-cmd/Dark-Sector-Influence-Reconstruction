@@ -1,0 +1,156 @@
+name: Exp073AZ Article3 low-memory general-coupling qualification v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073az_article3_low_memory_general_coupling_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  selftest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce frozen prereg and implementation
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073az_article3_low_memory_general_coupling_authority_v0_1_prereg.md)" = '279e09696263432def4ce20c15752b4832bba298'
+          test "$(git log -1 --format=%H -- ci/exp073az_article3_low_memory_general_coupling_v0_1.py)" = 'd77b7ba88801f6788f3d386e72b445c7859c7153'
+      - name: Install NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+      - name: Run nonclassifying algebraic self-test
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          "${NMT_PY}" ci/exp073az_article3_low_memory_general_coupling_v0_1.py selftest | tee data/derived/g7/exp073az_selftest_v0_1.json
+          "${NMT_PY}" - <<'PY'
+          import json
+          d=json.load(open('data/derived/g7/exp073az_selftest_v0_1.json'))
+          assert d['status']=='PASS_EXP073AZ_SELFTEST_V0_1'
+          assert d['same_input_general_matrix_exact_repeat'] is True
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073az-selftest-${{ github.sha }}
+          path: data/derived/g7/exp073az_selftest_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+
+  pcl-replica:
+    strategy:
+      fail-fast: false
+      matrix: {replica: [A, B]}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce frozen prereg and implementation
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073az_article3_low_memory_general_coupling_authority_v0_1_prereg.md)" = '279e09696263432def4ce20c15752b4832bba298'
+          test "$(git log -1 --format=%H -- ci/exp073az_article3_low_memory_general_coupling_v0_1.py)" = 'd77b7ba88801f6788f3d386e72b445c7859c7153'
+      - name: Install NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+          path: external/r1
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33270843577
+      - name: Download exact DES Y1 lens mask
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p external/des
+          curl --fail --location --retry 3 -o external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits'
+          test "$(stat -c %s external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits)" = '104595840'
+          echo 'a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55  external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits' | sha256sum -c -
+      - name: Compute Wm_S1 mask-PCL replica
+        shell: bash
+        env: {REPLICA: '${{ matrix.replica }}'}
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          lower="$(printf '%s' "${REPLICA}" | tr '[:upper:]' '[:lower:]')"
+          /usr/bin/time -v "${NMT_PY}" ci/exp073az_article3_low_memory_general_coupling_v0_1.py pcl \
+            --task Wm_S1 --r1-root external/r1 \
+            --lens-mask external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits \
+            --out-npy "data/derived/g7/exp073az_wm_s1_pcl_${lower}_v0_1.npy" \
+            --out-json "data/derived/g7/exp073az_wm_s1_pcl_${lower}_v0_1.json"
+          uname -a > "data/derived/g7/exp073az_env_${lower}_v0_1.txt"
+          lscpu >> "data/derived/g7/exp073az_env_${lower}_v0_1.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073az-pcl-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073az_*
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
+
+  compare-pcl:
+    needs: [selftest, pcl-replica]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install 'numpy==2.1.3'
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073az-pcl-A-${{ github.sha }}', path: external/a}
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073az-pcl-B-${{ github.sha }}', path: external/b}
+      - name: Exact compare and freeze canonical PCL only on equality
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob,hashlib,json,numpy as np, pathlib, shutil
+          fa=glob.glob('external/a/**/*.npy',recursive=True); fb=glob.glob('external/b/**/*.npy',recursive=True)
+          assert len(fa)==len(fb)==1,(fa,fb)
+          a=np.load(fa[0],allow_pickle=False); b=np.load(fb[0],allow_pickle=False)
+          def h(x):
+              y=np.ascontiguousarray(x,dtype='<f8'); return hashlib.sha256(y.tobytes()).hexdigest()
+          eq=bool(np.array_equal(a,b)); ha,hb=h(a),h(b)
+          out={'experiment':'Exp073AZ','stage':'mask_pcl_exact_gate','task':'Wm_S1','array_equal':eq,'sha_a':ha,'sha_b':hb,'shape':list(a.shape),'article3_scientific_readiness_percent':52,'readiness_increment':0,'scientific_pass_claimed':False,'Exp073AQ_preserved_as_FAIL':True}
+          out['status']='PASS_EXP073AZ_WM_S1_MASK_PCL_EXACT_V0_1' if eq and ha==hb else 'SCIENTIFIC_REPEATABILITY_FAIL_EXP073AZ_WM_S1_MASK_PCL_EXACT_V0_1'
+          pathlib.Path('data/derived/g7/exp073az_wm_s1_pcl_exact_authority_v0_1.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          if eq and ha==hb:
+              np.save('data/derived/g7/exp073az_wm_s1_canonical_pcl_v0_1.npy',np.ascontiguousarray(a,dtype='<f8'),allow_pickle=False)
+          print(out['status'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073az-wm-s1-pcl-authority-${{ github.sha }}
+          path: data/derived/g7/exp073az_wm_s1_*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
