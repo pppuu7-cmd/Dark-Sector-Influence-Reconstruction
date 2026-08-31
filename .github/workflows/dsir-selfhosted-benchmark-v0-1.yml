@@ -1,0 +1,87 @@
+name: DSIR Self-hosted CPU benchmark v0.1
+
+on:
+  push:
+    paths:
+      - 'experiments/selfhosted_benchmark_trigger_v0_1.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  benchmark:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Capture WSL CPU and memory inventory
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p benchmark
+          date -u +%FT%TZ | tee benchmark/date_utc.txt
+          uname -a | tee benchmark/uname.txt
+          cat /proc/version | tee benchmark/proc_version.txt
+          nproc | tee benchmark/nproc.txt
+          lscpu | tee benchmark/lscpu.txt
+          free -b | tee benchmark/free_bytes.txt
+          grep -E 'MemTotal|MemAvailable|SwapTotal|SwapFree' /proc/meminfo | tee benchmark/meminfo.txt
+          grep -m1 'model name' /proc/cpuinfo | tee benchmark/cpu_model.txt
+
+      - name: Compile native OpenMP benchmark
+        shell: bash
+        run: |
+          set -euxo pipefail
+          gcc --version | tee benchmark/gcc_version.txt
+          gcc -O3 -march=native -fopenmp -fno-fast-math \
+            ci/dsir_selfhosted_cpu_benchmark_v0_1.c -lm \
+            -o benchmark/dsir_selfhosted_cpu_benchmark_v0_1
+
+      - name: Run 1-to-max thread scaling benchmark
+        shell: bash
+        run: |
+          set -euxo pipefail
+          ./benchmark/dsir_selfhosted_cpu_benchmark_v0_1 benchmark/result.json 2>&1 | tee benchmark/benchmark_console.txt
+          cat benchmark/result.json
+
+      - name: Generate compact recommendation summary
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+          p=pathlib.Path('benchmark/result.json')
+          d=json.loads(p.read_text())
+          rows=d['results']
+          best=max(rows,key=lambda r:r['compute_msteps_s'])
+          one=rows[0]
+          # Prefer the fastest point; also expose the smallest point within 97% of peak.
+          threshold=0.97*best['compute_msteps_s']
+          efficient=min((r for r in rows if r['compute_msteps_s']>=threshold),key=lambda r:r['threads'])
+          out={
+            'logical_cpus_visible':d['logical_cpus_visible'],
+            'single_thread_compute_msteps_s':one['compute_msteps_s'],
+            'peak_threads':best['threads'],
+            'peak_compute_msteps_s':best['compute_msteps_s'],
+            'peak_speedup_vs_1':best['compute_speedup'],
+            'recommended_threads_97pct_peak':efficient['threads'],
+            'recommended_compute_msteps_s':efficient['compute_msteps_s'],
+            'max_observed_memory_gb_s':max(r['memory_gb_s'] for r in rows),
+            'note':'Benchmark only; this does not classify DSIR science.'
+          }
+          pathlib.Path('benchmark/summary.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-selfhosted-benchmark-v0-1-${{ github.sha }}
+          path: benchmark/*
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
