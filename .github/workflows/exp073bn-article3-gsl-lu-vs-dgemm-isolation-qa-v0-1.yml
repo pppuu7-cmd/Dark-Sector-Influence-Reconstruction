@@ -1,0 +1,139 @@
+name: Exp073BN Article3 GSL LU versus dgemm isolation QA v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073bn_article3_gsl_lu_vs_dgemm_isolation_qa_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  replica:
+    strategy:
+      fail-fast: false
+      matrix: {replica: [A, B, C, D, E, F, G, H]}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce Exp073BN prospective freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bn_article3_gsl_lu_vs_dgemm_isolation_qa_v0_1_prereg.md)" = '2f81267c54b7a1a1954412ad82a25f1a20e4dcb8'
+          test "$(git log -1 --format=%H -- ci/exp073bn_gsl_lu_vs_dgemm_isolation_v0_1.c)" = 'b4f0a54d7c81e241bbe4166673cbf436b54c22de'
+          test "$(git log -1 --format=%H -- ci/exp073bm_prepare_gsl_inputs_v0_1.py)" = '9805156029c64346086c90392e87c54f66a1b5ea'
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          conda create -y -p "${RUNNER_TEMP}/bn" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "BN=${RUNNER_TEMP}/bn" >> "${GITHUB_ENV}"
+          echo "BN_PY=${RUNNER_TEMP}/bn/bin/python" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073bd-wm-s2-B-70745b9eee87e3c196c4bb435a6770cf986ffe6b
+          path: external/bd
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33342265114
+      - name: Prepare identical K and A
+        shell: bash
+        env: {REPLICA: '${{ matrix.replica }}'}
+        run: |
+          set -euxo pipefail
+          od="data/derived/g7/exp073bn_${REPLICA}"
+          mkdir -p "${od}"
+          A="$(find external/bd -name '*compact_b_v0_1.npz' -type f -print -quit)"
+          "${BN_PY}" ci/exp073bm_prepare_gsl_inputs_v0_1.py --input "${A}" --outdir "${od}"
+          test "$(sha256sum "${od}/A.bin" | cut -d' ' -f1)" = 'a1b438c365108573fa6c6295c7f414e913cbc5fbad9d1695203ca3f52917fa0e'
+          test "$(sha256sum "${od}/K.bin" | cut -d' ' -f1)" = 'cba43cfe070758476606dff90e7618b4cc6c80b1426d5d5fa07c086948374c37'
+      - name: Compile frozen isolation binary
+        shell: bash
+        run: |
+          set -euxo pipefail
+          gcc -O0 -ffp-contract=off -fno-fast-math -I"${BN}/include" ci/exp073bn_gsl_lu_vs_dgemm_isolation_v0_1.c -L"${BN}/lib" -Wl,-rpath,"${BN}/lib" -lgsl -lgslcblas -lm -o "${RUNNER_TEMP}/exp073bn"
+      - name: Run default and forced-Haswell child processes
+        shell: bash
+        env: {REPLICA: '${{ matrix.replica }}'}
+        run: |
+          set -euxo pipefail
+          od="data/derived/g7/exp073bn_${REPLICA}"
+          env -u OPENBLAS_CORETYPE "${RUNNER_TEMP}/exp073bn" "${od}/K.bin" "${od}/A.bin" "${od}/invK_default.bin" "${od}/W_dgemm_default.bin" "${od}/W_scalar_default.bin"
+          OPENBLAS_CORETYPE=Haswell "${RUNNER_TEMP}/exp073bn" "${od}/K.bin" "${od}/A.bin" "${od}/invK_haswell.bin" "${od}/W_dgemm_haswell.bin" "${od}/W_scalar_haswell.bin"
+          sha256sum "${od}"/*.bin > "${od}/sha256.txt"
+          lscpu > "${od}/lscpu.txt"
+          "${BN_PY}" - "${od}" "${REPLICA}" <<'PY'
+          import hashlib,json,pathlib,sys,numpy as np,importlib.metadata
+          od=pathlib.Path(sys.argv[1]); r=sys.argv[2]
+          def sh(n): return hashlib.sha256((od/n).read_bytes()).hexdigest()
+          try:
+              from numpy._core._multiarray_umath import __cpu_features__
+              feats={k:bool(v) for k,v in __cpu_features__.items()}
+          except Exception as e: feats={'error':repr(e)}
+          cpu=next((x.split(':',1)[1].strip() for x in pathlib.Path('/proc/cpuinfo').read_text(errors='ignore').splitlines() if x.lower().startswith('model name')),'unknown')
+          out={'experiment':'Exp073BN','replica':r,'cpu_model':cpu,'cpu_features':feats,'numpy_version':np.__version__,'pymaster_version':importlib.metadata.version('pymaster'),'hashes':{n:sh(n) for n in ['A.bin','K.bin','invK_default.bin','W_dgemm_default.bin','W_scalar_default.bin','invK_haswell.bin','W_dgemm_haswell.bin','W_scalar_haswell.bin']},'authority':False,'scientific_pass_claimed':False,'scientific_readiness_increment':0,'draft_data_readiness_increment':0,'Exp073AQ_preserved_as_FAIL':True}
+          (od/f'exp073bn_replica_{r}.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bn-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073bn_${{ matrix.replica }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  compare:
+    needs: replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {pattern: 'exp073bn-*-${{ github.sha }}', path: external, merge-multiple: false}
+      - name: Compare stage hashes across eight hosts
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob,json,pathlib
+          reps=list('ABCDEFGH'); m={}
+          for r in reps:
+              js=glob.glob(f'external/exp073bn-{r}-*/exp073bn_replica_{r}.json'); assert len(js)==1,(r,js); m[r]=json.load(open(js[0]))
+          names=['invK_default.bin','W_dgemm_default.bin','W_scalar_default.bin','invK_haswell.bin','W_dgemm_haswell.bin','W_scalar_haswell.bin']
+          stages={}
+          for n in names:
+              vals=[m[r]['hashes'][n] for r in reps]
+              stages[n]={'unique_sha_count':len(set(vals)),'sha256':vals,'exact_crosshost_equal':len(set(vals))==1}
+          inv_equal=stages['invK_default.bin']['exact_crosshost_equal']
+          scalar_equal=stages['W_scalar_default.bin']['exact_crosshost_equal']
+          dg_equal=stages['W_dgemm_default.bin']['exact_crosshost_equal']
+          forced_equal=stages['W_dgemm_haswell.bin']['exact_crosshost_equal']
+          if (not inv_equal): diagnosis='BN_D1_DIVERGENCE_ENTERS_GSL_LU_OR_INVERT'
+          elif scalar_equal and (not dg_equal) and forced_equal: diagnosis='BN_D2_DGEMM_RUNTIME_DISPATCH_ISOLATED_AND_FORCED_HASWELL_REPAIRS_QA'
+          elif scalar_equal and (not dg_equal): diagnosis='BN_D3_DGEMM_DIVERGENCE_ISOLATED_FORCED_HASWELL_NOT_UNIVERSAL'
+          elif inv_equal and scalar_equal and dg_equal: diagnosis='BN_D4_NO_DEFAULT_DIVERGENCE_IN_SAMPLE'
+          else: diagnosis='BN_D5_MIXED_OR_SCALAR_DIVERGENCE_REQUIRES_FURTHER_ISOLATION'
+          out={'experiment':'Exp073BN','diagnosis':diagnosis,'classification':'NONCLASSIFYING_NUMERICAL_ROOTCAUSE_QA','stages':stages,'cpu_models':{r:m[r]['cpu_model'] for r in reps},'cpu_features':{r:m[r]['cpu_features'] for r in reps},'authority':False,'scientific_pass_claimed':False,'scientific_readiness_increment':0,'draft_data_readiness_increment':0,'Exp073AQ_preserved_as_FAIL':True}
+          pathlib.Path('data/derived/g7/exp073bn_isolation_result_v0_1.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bn-isolation-comparator-${{ github.sha }}
+          path: data/derived/g7/exp073bn_isolation_result_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
