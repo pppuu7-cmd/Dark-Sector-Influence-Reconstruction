@@ -9,14 +9,15 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 
 ## Read first
 
-1. `recovery/2026-08-31_exp073bi_q1_exp073bj_track_a_active.md`
-2. `experiments/073bj_article3_wm_s1_two_thread_track_a_successor_v0_1_prereg.md`
-3. `experiments/073bj_article3_two_thread_wm_s1_binding_v0_1.json`
-4. `experiments/073bi_article3_wm_s1_parallel_execution_successor_v0_1_prereg.md`
-5. `recovery/2026-08-31_exp073bh_d2_timeout_class_evidenced.md`
-6. `recovery/2026-08-31_exp073ba_cancelled_execution_incomplete_bd_p3.md`
-7. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
-8. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+1. `recovery/2026-08-31_exp073bj_binding_provenance_audit_compute_active.md`
+2. `recovery/2026-08-31_exp073bi_q1_exp073bj_track_a_active.md`
+3. `experiments/073bj_article3_wm_s1_two_thread_track_a_successor_v0_1_prereg.md`
+4. `experiments/073bj_article3_two_thread_wm_s1_binding_v0_1.json`
+5. `experiments/073bi_article3_wm_s1_parallel_execution_successor_v0_1_prereg.md`
+6. `recovery/2026-08-31_exp073bh_d2_timeout_class_evidenced.md`
+7. `recovery/2026-08-31_exp073ba_cancelled_execution_incomplete_bd_p3.md`
+8. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+9. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
 
 ## Current authority state
 
@@ -26,12 +27,14 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 - Exp073BA run `33345968620` remains terminal infrastructure/execution incomplete with no scientific classification.
 - Exp073BH run `33370998182` remains `BH_D2_TIMEOUT_OR_EXTERNAL_CANCELLATION_EVIDENCED`: both BA compact jobs reached the frozen 360-minute execution boundary. This is not scientific PASS/FAIL and is not stronger causal evidence for OOM/manual cancellation/runner loss.
 - Exp073BD `33342265114` remains `P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE`, `+0/+0`; no branch salvage.
-- Exp073BI run `33375467713` is now terminal **`BI_Q1_PARALLEL_EXACT_QA_PASS`**. Artifact `9751718353`, digest `sha256:c857b24fdcc0a49b749fbfd538451a8e53bf98f4da9abd92cefce3c4a9df2752`; independent two-thread QA outputs were exactly equal with identical SHA `5e00c7377d50a71d88c98a324d53ef403617022c8dadd4a390eebbe7be4612ba`. BI is synthetic/infrastructure only, `+0/+0`.
-- Exp073BJ is the prospectively frozen full-scale two-thread Track-A Wm_S1 successor. Hosted run **`33379013167`** is active from trigger/head `0fd096e38bf047b8106b80409bb0a2c8538c2c3e`; fresh compact replica jobs A `99446854065` and B `99446854363` are active at the latest checkpoint.
+- Exp073BI run `33375467713` is terminal **`BI_Q1_PARALLEL_EXACT_QA_PASS`**. Artifact `9751718353`, digest `sha256:c857b24fdcc0a49b749fbfd538451a8e53bf98f4da9abd92cefce3c4a9df2752`; independent two-thread QA outputs were exactly equal with identical SHA `5e00c7377d50a71d88c98a324d53ef403617022c8dadd4a390eebbe7be4612ba`. BI is synthetic/infrastructure only, `+0/+0`.
+- Exp073BJ is the prospectively frozen full-scale two-thread Track-A Wm_S1 successor. Hosted run **`33379013167`** is active from trigger/head `0fd096e38bf047b8106b80409bb0a2c8538c2c3e`. Compact jobs A `99446854065` and B `99446854363` have both passed prospective freeze, exact NaMaster lineage, exact BI Q1 binding and exact Exp073AZ canonical PCL binding; both are now in `Compute two-thread compact Wm_S1 replica`. No BJ artifacts exist yet, so no compact classification exists.
 
-## Exp073BJ immutable route
+## Exp073BJ immutable route and provenance audit
 
-Preregistration `199fc3188808a30d0f364005f9b584a92a262acb`; BJ comparator adapter `66f9727acf7fc94294b6031eaeb34283e1a78058`; inherited exact BA comparator `a0b5bd8065c590e20c648215b8d993452fb7339c`; inherited heavy implementation `d77b7ba88801f6788f3d386e72b445c7859c7153`; workflow `416b4d4717989f9c228c47614d1e9e48f9bc93e4`; binding receipt `cbe5f57f9ae04eb335ad9f9b6e4984bdd82247c0`.
+Preregistration `199fc3188808a30d0f364005f9b584a92a262acb`; BJ comparator adapter `66f9727acf7fc94294b6031eaeb34283e1a78058`; inherited exact BA comparator `a0b5bd8065c590e20c648215b8d993452fb7339c`; inherited heavy implementation `d77b7ba88801f6788f3d386e72b445c7859c7153`; workflow `416b4d4717989f9c228c47614d1e9e48f9bc93e4`; binding receipt `cbe5f57f9ae04eb335ad9f9b6e4984bdd82247c0`; trigger/head `0fd096e38bf047b8106b80409bb0a2c8538c2c3e`.
+
+Independent static audit while BJ computes found a narrow harness/provenance-enforcement omission: the workflow checks many binding JSON values but does not explicitly assert the binding receipt's own last-change commit SHA and does not explicitly assert the JSON field `bj_workflow_commit`. For this already-triggered immutable run, external Git history closes the provenance link without modifying the workflow: at run head `0fd096e...`, the binding receipt's last-change commit is exactly `cbe5f57...`, whose parent is workflow commit `416b4d47...`; the workflow file's last-change commit at the same run head is exactly `416b4d47...`; and the binding JSON records that same workflow commit. This audit is `+0/+0`, changes no scientific criterion, and must not be used as post-hoc rescue. Future successor workflow revisions should add those explicit assertions prospectively.
 
 The only intended execution change from BA is the prospectively validated BI two-thread policy (`OMP/OpenBLAS/MKL/NUMEXPR/BLIS=2`, `OMP_DYNAMIC=FALSE`); historical `VECLIB_MAXIMUM_THREADS=1` and compact timeout `360` min remain unchanged. Scientific math, AZ PCL authority, NSIDE/ell/bands/component/shapes and exact comparator criteria remain unchanged.
 
@@ -49,7 +52,7 @@ G8 may not be selected/exposed before actual G7 authorization.
 
 ## Exact next operating gate
 
-Inspect Exp073BJ run `33379013167` without starting a duplicate. Verify both compact jobs pass the prospective freeze, exact BI Q1 binding and exact AZ PCL binding, then consume terminal compact artifacts/comparator. Only an exact compact PASS may admit the two finalizers. Consume final authority strictly under the frozen BJ classes. If BJ remains heavy/in-progress, use the next automated iteration for independent prerequisite/audit work rather than duplicate compute.
+Do not start a duplicate Exp073BJ run. Re-inspect jobs `99446854065` and `99446854363`. When both compact jobs are terminal, consume immutable compact A/B artifacts and the frozen exact comparator output. Only an exact compact PASS may admit the two finalizers. Consume final authority strictly under the frozen BJ decision classes. If BJ remains heavy/in-progress, continue only independent prerequisite/provenance/code-equivalence/recovery audits.
 
 ## Current shorthand
 
@@ -60,7 +63,8 @@ Inspect Exp073BJ run `33379013167` without starting a duplicate. Verify both com
 - ✅ Exp073BH: D2 execution-boundary evidence, `+0/+0`.
 - ✅ Exp073BD: P3 provisional incomplete, no downstream use.
 - ✅ Exp073BI: `BI_Q1_PARALLEL_EXACT_QA_PASS`, `+0/+0`.
-- 🟡 Exp073BJ run `33379013167`: full-scale two-thread Track-A compact A/B active.
+- ✅ Exp073BJ binding-provenance audit: run-head Git history closes two missing explicit workflow assertions for this immutable run; `+0/+0`.
+- 🟡 Exp073BJ run `33379013167`: full-scale two-thread Track-A compact A/B active after exact BI/AZ binding PASS.
 - ❌ Exp073AQ: permanent exact-repeatability scientific FAIL.
 - ❌ Layer A/B, covariance/whitening, G7, G8, G9: not authorized; G8 jump forbidden.
 
