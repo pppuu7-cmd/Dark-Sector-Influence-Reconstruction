@@ -9,15 +9,16 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 
 ## Read first
 
-1. `recovery/2026-08-31_exp073bh_d2_timeout_class_evidenced.md`
-2. `experiments/073bh_article3_ba_fullscale_execution_rootcause_v0_1_prereg.md`
-3. `recovery/2026-08-31_exp073ba_cancelled_execution_incomplete_bd_p3.md`
-4. `docs/EXP073BA_BD_TERMINAL_OUTCOME_DECISION_TABLE_2026-08-31.md`
-5. `experiments/073bg_article3_active_ba_bd_terminal_outcome_policy_v0_1_prereg.md`
-6. `docs/RECOVERY_MANUAL_LIVE_2026-08-30.md`
-7. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
-8. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-9. `recovery/2026-08-31_exp073bd_p3_incomplete_ba_active.md` and `recovery/2026-08-31_exp073be_ba_harness_rerun_wms2_active.md` for historical chronology.
+1. `recovery/2026-08-31_exp073bi_parallel_execution_qa_active.md`
+2. `experiments/073bi_article3_wm_s1_parallel_execution_successor_v0_1_prereg.md`
+3. `recovery/2026-08-31_exp073bh_d2_timeout_class_evidenced.md`
+4. `experiments/073bh_article3_ba_fullscale_execution_rootcause_v0_1_prereg.md`
+5. `recovery/2026-08-31_exp073ba_cancelled_execution_incomplete_bd_p3.md`
+6. `docs/EXP073BA_BD_TERMINAL_OUTCOME_DECISION_TABLE_2026-08-31.md`
+7. `docs/RECOVERY_MANUAL_LIVE_2026-08-30.md`
+8. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+9. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+10. `recovery/2026-08-31_exp073be_ba_harness_rerun_wms2_active.md` for historical chronology.
 
 ## Current authority state
 
@@ -26,10 +27,11 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 - Exp073BC/BE provenance binding route is closed with `+0` scientific readiness.
 - Exp073BF hosted small-scale Wm stock-equivalence QA passed, synthetic/infrastructure only, `+0` readiness.
 - Exp073BA clean rerun `33345968620` is terminal infrastructure/execution incomplete, with no scientific classification. Both compact A/B jobs passed freeze, exact NaMaster 2.7 lineage, immutable AZ artifact download and exact PCL binding, then were cancelled inside full-scale compact compute; downstream comparator/finalizer jobs were skipped.
-- Exp073BH hosted diagnostic run `33370998182` is terminal success with immutable artifact `9750041348`, digest `sha256:d3abc316f9dbdc33fbcef4c17de3861ebde912bca88f99a645a957f66da14b77`, and frozen infrastructure class **`BH_D2_TIMEOUT_OR_EXTERNAL_CANCELLATION_EVIDENCED`**. The BA workflow has `timeout-minutes: 360`; compact A and B each ran **21617 s** from job start to completion and were cancelled at that configured execution boundary. Archived job-log text was not retrieved, so do not narrow D2 further than the hosted metadata supports. BH is `+0/+0` and is not scientific authority.
+- Exp073BH hosted diagnostic run `33370998182` is terminal infrastructure class **`BH_D2_TIMEOUT_OR_EXTERNAL_CANCELLATION_EVIDENCED`**. Both BA compact jobs reached the frozen 360-minute execution boundary. BH is `+0/+0` and is not scientific authority.
 - Exp073BD `33342265114` remains terminal **`P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE`**, `+0/+0`; branch B is not preferred or downstream-usable.
+- Exp073BI prospective two-thread execution-feasibility gate is now frozen. Hosted run `33375467713` is active. It is synthetic/infrastructure QA only and can yield only `BI_Q1`, `BI_Q2`, or `BI_Q3`, all `+0/+0`.
 
-Do not reinterpret BH_D2 as scientific FAIL/PASS, OOM, dependency failure, runner loss, or proven manual cancellation. It establishes the timeout/external-cancellation infrastructure class from direct hosted metadata.
+Do not reinterpret BH_D2 as scientific FAIL/PASS, OOM, dependency failure, runner loss, or proven manual cancellation. Exp073BI cannot repair or reclassify Exp073AQ.
 
 ## Frozen scientific boundaries
 
@@ -43,7 +45,7 @@ G8 may not be selected/exposed before actual G7 authorization.
 
 ## Exact next operating gate
 
-Freeze a **new Track-A Wm_S1 execution successor after Exp073BH_D2**, before launching another classifying heavy run. It must inherit every BA scientific criterion unchanged and may alter only execution engineering necessary to avoid the evidenced hosted execution-boundary failure. Checkpointable/blockwise engineering is admissible only after mathematical-equivalence validation. Any classifying successor still requires two complete immutable compact replicas, frozen exact compact comparison, both finalizers, frozen final exact comparison, and immutable hosted final authority before scientific PASS can exist.
+Consume terminal hosted Exp073BI run `33375467713` and immutable artifact. Only `BI_Q1_PARALLEL_EXACT_QA_PASS` permits consideration of a separately preregistered full-scale two-thread Track-A successor. BI is not itself classifying science. Any later classifying successor must inherit every BA scientific criterion unchanged and still requires two complete immutable compact replicas, frozen exact compact comparison, both finalizers, frozen exact final comparison and immutable hosted final authority before scientific PASS can exist.
 
 No tolerance/ULP/rounding/averaging/preferred-replica rescue; no incomplete BA reuse; no BD branch-B salvage; no G8 jump.
 
@@ -54,8 +56,9 @@ No tolerance/ULP/rounding/averaging/preferred-replica rescue; no incomplete BA r
 - ✅ Exp073BF Wm algorithm QA: PASS, synthetic/infrastructure only, `+0`.
 - ✅ Exp073BG terminal policy: frozen, `+0/+0`.
 - ✅ Exp073BA `33345968620`: terminal infrastructure/execution incomplete, `+0/+0`; no scientific classification.
-- ✅ Exp073BH `33370998182`: terminal **BH_D2 timeout/external-cancellation infrastructure evidence**, `+0/+0`; no scientific classification.
+- ✅ Exp073BH `33370998182`: terminal BH_D2 execution-boundary evidence, `+0/+0`; no scientific classification.
 - ✅ Exp073BD `33342265114`: terminal P3 provisional incomplete, `+0/+0`; no downstream use.
+- 🟡 Exp073BI `33375467713`: hosted two-thread Wm execution-feasibility QA active, `+0/+0`.
 - ❌ Exp073AQ: permanent exact-repeatability scientific FAIL.
 - ❌ Layer A/B, covariance/whitening, G7, G8, G9: not authorized; G8 jump forbidden.
 
