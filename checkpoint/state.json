@@ -1,10 +1,11 @@
 {
   "completed_bands": [
-    0
+    0,
+    1
   ],
-  "completed_count": 1,
+  "completed_count": 2,
   "contract_fingerprint": "bf8ac6ef2b276054004ad32ea3c07cc179d72212f0e1c9c1425c37a2098f2c8b",
   "format": "DSIR_REMOTE_BAND_CHECKPOINT_V0_1",
-  "next_band": 1,
+  "next_band": 2,
   "total_bands": 3
 }
