@@ -3,7 +3,7 @@ name: Exp073BR Article3 NaMaster27 Wigner linkage failure-capturing v0.1
 on:
   push:
     paths:
-      - 'triggers/exp073br_run.txt'
+      - 'experiments/073br_hosted_trigger_v0_1.md'
   workflow_dispatch:
 
 jobs:
