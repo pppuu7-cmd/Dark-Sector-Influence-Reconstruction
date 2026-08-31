@@ -1,0 +1,124 @@
+name: Exp073BM Article3 GSL stock-finalizer cross-host QA v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073bm_article3_gsl_stock_finalizer_crosshost_qa_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  replica:
+    strategy:
+      fail-fast: false
+      matrix: {replica: [A, B, C, D, E, F, G, H]}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce Exp073BM prospective freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bm_article3_gsl_stock_finalizer_crosshost_qa_v0_1_prereg.md)" = '5d24734115730ec17bf67553d6894c0fda6ff677'
+          test "$(git log -1 --format=%H -- ci/exp073bm_prepare_gsl_inputs_v0_1.py)" = '9805156029c64346086c90392e87c54f66a1b5ea'
+          test "$(git log -1 --format=%H -- ci/exp073bm_gsl_stock_finalizer_v0_1.c)" = 'd6e15d88145d09a1a4e5b5fbc7d89b96ceb21d5b'
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          conda create -y -p "${RUNNER_TEMP}/bm" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "BM=${RUNNER_TEMP}/bm" >> "${GITHUB_ENV}"
+          echo "BM_PY=${RUNNER_TEMP}/bm/bin/python" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073bd-wm-s2-B-70745b9eee87e3c196c4bb435a6770cf986ffe6b
+          path: external/bd
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33342265114
+      - name: Prepare exact K and A
+        shell: bash
+        env: {REPLICA: '${{ matrix.replica }}'}
+        run: |
+          set -euxo pipefail
+          mkdir -p "data/derived/g7/exp073bm_${REPLICA}"
+          A="$(find external/bd -name '*compact_b_v0_1.npz' -type f -print -quit)"
+          "${BM_PY}" ci/exp073bm_prepare_gsl_inputs_v0_1.py --input "${A}" --outdir "data/derived/g7/exp073bm_${REPLICA}"
+      - name: Compile and run exact GSL sequence
+        shell: bash
+        env: {REPLICA: '${{ matrix.replica }}'}
+        run: |
+          set -euxo pipefail
+          od="data/derived/g7/exp073bm_${REPLICA}"
+          gcc -O2 -I"${BM}/include" ci/exp073bm_gsl_stock_finalizer_v0_1.c -L"${BM}/lib" -Wl,-rpath,"${BM}/lib" -lgsl -lgslcblas -lm -o "${RUNNER_TEMP}/exp073bm_gsl"
+          "${RUNNER_TEMP}/exp073bm_gsl" "${od}/K.bin" "${od}/A.bin" "${od}/W.bin"
+          sha256sum "${od}/A.bin" "${od}/K.bin" "${od}/W.bin" > "${od}/sha256.txt"
+          lscpu > "${od}/lscpu.txt"
+          uname -a > "${od}/uname.txt"
+          ldd "$(realpath "${BM}/lib/libgsl.so")" > "${od}/ldd_libgsl.txt" || true
+          if test -e "${BM}/lib/libgslcblas.so"; then ldd "$(realpath "${BM}/lib/libgslcblas.so")" > "${od}/ldd_libgslcblas.txt" || true; fi
+          nmtso="$(find "${BM}" -name '_nmtlib*.so' -type f -print -quit)"; if test -n "${nmtso}"; then ldd "${nmtso}" > "${od}/ldd_nmtlib.txt" || true; fi
+          "${BM_PY}" - "${od}" "${REPLICA}" <<'PY'
+          import hashlib,json,os,pathlib,platform,sys,numpy as np,importlib.metadata
+          od=pathlib.Path(sys.argv[1]); r=sys.argv[2]
+          def sh(p): return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
+          try:
+              from numpy._core._multiarray_umath import __cpu_features__
+              feats={k:bool(v) for k,v in __cpu_features__.items()}
+          except Exception as e: feats={'error':repr(e)}
+          out={'experiment':'Exp073BM','replica':r,'cpu_model':next((x.split(':',1)[1].strip() for x in pathlib.Path('/proc/cpuinfo').read_text(errors='ignore').splitlines() if x.lower().startswith('model name')),'unknown'),'numpy_version':np.__version__,'pymaster_version':importlib.metadata.version('pymaster'),'cpu_features':feats,'a_sha256':sh(od/'A.bin'),'k_sha256':sh(od/'K.bin'),'w_sha256':sh(od/'W.bin'),'authority':False,'scientific_pass_claimed':False,'scientific_readiness_increment':0,'draft_data_readiness_increment':0,'Exp073AQ_preserved_as_FAIL':True}
+          (od/f'exp073bm_replica_{r}.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bm-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073bm_${{ matrix.replica }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  compare:
+    needs: replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {pattern: 'exp073bm-*-${{ github.sha }}', path: external, merge-multiple: false}
+      - name: Exact GSL cross-host comparator
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob,hashlib,json,pathlib
+          reps=list('ABCDEFGH'); meta={}; w=[]
+          for r in reps:
+              js=glob.glob(f'external/exp073bm-{r}-*/exp073bm_replica_{r}.json'); wb=glob.glob(f'external/exp073bm-{r}-*/W.bin')
+              assert len(js)==len(wb)==1,(r,js,wb)
+              meta[r]=json.load(open(js[0])); w.append(pathlib.Path(wb[0]).read_bytes())
+          sh=[hashlib.sha256(x).hexdigest() for x in w]; eq=all(w[0]==x for x in w[1:])
+          status='BM_Q1_GSL_EXACT_CROSSHOST_PASS' if eq and len(set(sh))==1 else 'BM_Q2_GSL_EXACT_CROSSHOST_FAIL'
+          out={'experiment':'Exp073BM','status':status,'classification':'NONCLASSIFYING_NUMERICAL_ROOTCAUSE_QA','authority':False,'scientific_pass_claimed':False,'scientific_readiness_increment':0,'draft_data_readiness_increment':0,'Exp073AQ_preserved_as_FAIL':True,'byte_equal_all':eq,'sha256':sh,'unique_sha_count':len(set(sh)),'cpu_models':{r:meta[r]['cpu_model'] for r in reps},'cpu_features':{r:meta[r]['cpu_features'] for r in reps},'a_sha256':{r:meta[r]['a_sha256'] for r in reps},'k_sha256':{r:meta[r]['k_sha256'] for r in reps}}
+          pathlib.Path('data/derived/g7/exp073bm_crosshost_result_v0_1.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bm-crosshost-comparator-${{ github.sha }}
+          path: data/derived/g7/exp073bm_crosshost_result_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
