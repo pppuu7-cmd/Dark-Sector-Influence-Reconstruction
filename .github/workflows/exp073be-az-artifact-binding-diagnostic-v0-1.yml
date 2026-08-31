@@ -1,0 +1,59 @@
+name: Exp073BE AZ artifact binding diagnostic v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073be_az_artifact_binding_diagnostic_v0_1.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'numpy==2.1.3'
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073az-wm-s1-pcl-authority-0a9581e19f7f010e13bf9aa88307b1940d0105de
+          path: external/az
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33339663991
+      - name: Diagnose exact artifact members and binding values
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob,hashlib,json,numpy as np,pathlib
+          files=sorted(str(p) for p in pathlib.Path('external/az').rglob('*') if p.is_file())
+          js=glob.glob('external/az/**/*.json',recursive=True)
+          npys=glob.glob('external/az/**/*.npy',recursive=True)
+          out={'experiment':'Exp073BE','classification':'NONCLASSIFYING_PROVENANCE_DIAGNOSTIC','authority':False,'scientific_pass_claimed':False,'readiness_increment':0,'article3_scientific_readiness_percent':52,'files':files,'json_files':js,'npy_files':npys}
+          if len(js)==1:
+              a=json.load(open(js[0])); out['authority_json']=a
+          if len(npys)==1:
+              raw=np.load(npys[0],allow_pickle=False)
+              x=np.ascontiguousarray(raw,dtype='<f8')
+              out['npy_shape']=list(raw.shape)
+              out['npy_dtype_native']=str(raw.dtype)
+              out['npy_payload_sha256']=hashlib.sha256(x.tobytes()).hexdigest()
+              out['npy_file_sha256']=hashlib.sha256(pathlib.Path(npys[0]).read_bytes()).hexdigest()
+          r=json.load(open('experiments/073ba_article3_low_memory_wm_s1_az_binding_v0_1.json'))
+          out['receipt']=r
+          pathlib.Path('data/derived/g7/exp073be_az_artifact_binding_diagnostic_v0_1.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073be-az-artifact-binding-diagnostic-${{ github.sha }}
+          path: data/derived/g7/exp073be_az_artifact_binding_diagnostic_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
