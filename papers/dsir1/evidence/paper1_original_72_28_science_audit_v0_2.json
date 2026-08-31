@@ -1,0 +1,95 @@
+{
+  "audit": "DSIR-I original 72/28 scientific-plan readiness",
+  "version": "v0.2",
+  "date": "2026-08-28",
+  "supersedes_for_current_readiness": "papers/dsir1/evidence/paper1_original_72_28_science_audit_v0_1.json",
+  "historical_baseline": {
+    "paper1_readiness_fraction": 0.72,
+    "remaining_fraction": 0.28,
+    "note": "Historical chat-derived estimate predating staged publication architecture; exact per-block historical weights were not repository-archived."
+  },
+  "interpretation_change_from_v0_1": [
+    "The translator has now received an explicit frozen-summary metric/scaling/coordinate-ablation robustness audit.",
+    "The Paper-I withheld-validation requirement is distinguished from the later observational G7->fresh-G8 program.",
+    "The frozen article-series roadmap assigns completed G7 observational reconstruction to DSIR-3 and genuinely fresh G8 testing to DSIR-4, so those gates are no longer charged as unfinished Paper-I science."
+  ],
+  "rubric": {
+    "CLOSED": 1.0,
+    "weighting": "equal across the six historically named Paper-I blocks because no historical per-block weights were archived"
+  },
+  "blocks": [
+    {
+      "id": "H1",
+      "name": "unified_response_map",
+      "paper1_status": "CLOSED",
+      "score": 1.0
+    },
+    {
+      "id": "H2",
+      "name": "amplitude_zero_transition_atlas",
+      "paper1_status": "CLOSED",
+      "score": 1.0
+    },
+    {
+      "id": "H3",
+      "name": "cross_model_translator",
+      "paper1_status": "CLOSED",
+      "score": 1.0,
+      "new_evidence": [
+        "papers/dsir1/CROSS_MODEL_TRANSLATOR_ROBUSTNESS_AUDIT_2026-08-28.md",
+        "papers/dsir1/evidence/cross_model_translator_robustness_audit_v0_1.json"
+      ],
+      "closure_boundary": "closed as a retrospective channel-conditional local non-bijective response-space construction; prospective observational translator precision is later-paper science"
+    },
+    {
+      "id": "H4",
+      "name": "withheld_family_validation",
+      "paper1_status": "CLOSED",
+      "score": 1.0,
+      "evidence": [
+        "WDM withheld cutoff interpolation PASS",
+        "genuinely withheld DCDM temporal-localization PASS",
+        "C8 IDM-photon hard prospective scientific FAIL robust to every leave-one-redshift deletion",
+        "genuinely withheld C9 IDM-baryon multicoordinate prospective PASS with all seven leave-one-redshift rebuilds passing"
+      ],
+      "closure_boundary": "Paper-I validation requires preserved positive and negative withheld/prospective theory-response tests; observational G7->fresh-G8 is assigned to DSIR-3/4 by the frozen publication roadmap"
+    },
+    {
+      "id": "H5",
+      "name": "central_scientific_narrative",
+      "paper1_status": "CLOSED",
+      "score": 1.0
+    },
+    {
+      "id": "H6",
+      "name": "compact_figures_tables",
+      "paper1_status": "CLOSED",
+      "score": 1.0,
+      "boundary": "scientific-data closure; final layout remains publication engineering"
+    }
+  ],
+  "paper1_science_score": {
+    "historical_six_block_equal_weight": 1.0,
+    "closed_blocks": 6,
+    "total_blocks": 6,
+    "status": "ORIGINAL_PAPER1_NAMED_SCIENCE_BLOCKS_CLOSED_FOR_ARTICLE_SCOPE_V0_2"
+  },
+  "later_program_science_not_charged_to_paper1": [
+    "realized common physical support followed by covariance restriction/whitening",
+    "preregistered nuisance tangent SVD/rank and quotient-space survey reconstruction",
+    "completed observational G7 relation/null",
+    "genuinely fresh post-G7 G8 family test",
+    "G9 reconstruction/new-physics interpretation"
+  ],
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  },
+  "non_claims": [
+    "100% here means closure of the six historically named scientific blocks for the first article, not completion of the whole DSIR program.",
+    "This does not turn retrospective translator robustness into prospective validation.",
+    "This does not promote G7/G8/G9.",
+    "Publication/editorial readiness remains a separate ledger."
+  ]
+}

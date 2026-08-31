@@ -1,0 +1,234 @@
+{
+  "snapshot": "DSIR-I support-operator eligibility evidence v0.2",
+  "date": "2026-08-27",
+  "source_repository": "pppuu7-cmd/Dark-Sector-Influence-Reconstruction",
+  "source_branch": "main",
+  "source_main_seen_at": "4b466f1c27019438c76a92dd7830ac6a2cc3fe7d",
+  "experiments": {
+    "Exp073G": {
+      "status": "FAIL_EXP073G_REPRODUCTION_OR_PROVENANCE",
+      "workflow_run": 33036220112,
+      "workflow_job": 98399367147,
+      "artifact_id": 9632090063,
+      "artifact_digest": "sha256:b0d65987c6007489cfbdbb1719963d2b4c65f089b1f5827cf5a5a3d2bf92ed53",
+      "trustworthy_operator_no_go": true,
+      "scientific_support_fail": false,
+      "support_fraction_computed": false,
+      "analytic_operator_no_go": {
+        "fourier_bessel_kernel": "K_l(k;s) proportional to k^2 j_l(k s)",
+        "large_k_asymptotic": "j_l(k s)=O(1/k), so absolute response is generically O(k)",
+        "positive_operator_only_all_k_normalizer_finite": false,
+        "solver_neutral_support_fraction_well_defined": false
+      },
+      "article_use": "methodological corroboration only; not a scientific support FAIL"
+    },
+    "Exp073L": {
+      "status": "EXTENDED_LADDER_SUPPORTS_NONNORMALIZABLE_ABSOLUTE_RESPONSE_EXP073L",
+      "workflow_run": 33049366874,
+      "artifact_id": 9637070322,
+      "artifact_digest": "sha256:03a8f63155c40180c81b6472828210408b472463aec244fff8c442ad7cd7c684",
+      "artifact_json_sha256": "000d45efd38c4e7b0b1bc2d5b9b1656809d60e73adb0d42bc76220161daedb78",
+      "execution_head_sha": "1c7064bf88afb868af7691eb33520c165ac3a245",
+      "cutoffs_ell": [120000.0, 240000.0, 480000.0],
+      "classification_counts": {
+        "nonnormalizable_Wm": 8,
+        "nonnormalizable_WW": 8,
+        "finite_Wm": 0,
+        "finite_WW": 0
+      },
+      "final_local_exponent_ranges": {
+        "Wm_min": 1.494436186498393,
+        "Wm_max": 1.5180289384656347,
+        "WW_min": 1.4926719968750453,
+        "WW_max": 1.5157034376093044
+      },
+      "final_shell_fraction_ranges": {
+        "Wm_min": 0.6450804834657029,
+        "Wm_max": 0.6508373706724494,
+        "WW_min": 0.6446462071250555,
+        "WW_max": 0.6502740965627261
+      },
+      "halfstep_max_relative_difference": 1.9427949887478046e-06,
+      "halfstep_frozen_tolerance": 0.005,
+      "authorizes_posthoc_ell_cut": false,
+      "authorizes_fiducial_power_weighting": false,
+      "covariance_restriction_authorized": false
+    },
+    "Exp073M": {
+      "status": "FINITE_POSITIVE_SUPPORT_OPERATOR_CANDIDATE_FOUND_EXP073M",
+      "result_commit": "3834695fd9c494062d287c90107b8823454e7745",
+      "selected_pair": {
+        "Wm": "DES_Y3_harmonic_galaxy_galaxy_lensing",
+        "WW": "DES_Y1_harmonic_cosmic_shear",
+        "mm": "BOSS_finite_matrix_component_unchanged"
+      },
+      "tests": {
+        "M1_public_immutable_provenance": true,
+        "M2_finite_positive_normalization_by_construction": true,
+        "M3_no_model_or_downstream_weighting": true,
+        "M4_Wm_signed_semantics": true,
+        "M5_WW_independent_semantics": true,
+        "M6_redshift_operator_information": true,
+        "M7_later_5pct_audit_possible": true,
+        "M8_no_downstream_leakage": true
+      },
+      "support_fraction_evaluated": false,
+      "covariance_read_for_selection": false,
+      "threshold_changed": false,
+      "later_exact_realdata_provenance_status": "rejected_by_Exp073N_for_exact_frozen_realdata_realization"
+    },
+    "Exp073N": {
+      "status": "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
+      "implementation_merge": "6868ed9113e2697675756f23fae8d350a9239bf6",
+      "workflow_run": 33062650033,
+      "workflow_job": 98484967582,
+      "artifact_id": 9642372335,
+      "artifact_digest": "sha256:914d23e9d708a7b8cb9e097a69845e2630ec265b5ccc489ce9a8d389d4e198db",
+      "artifact_json_sha256": "e4eb6cd10ac964030e84596ee352f22c5c2d4fae91e917a68db567cef2b6adeb",
+      "operator_repository_reproduced": true,
+      "exact_DES_Y3_realdata_Wm_realization_reproducible": false,
+      "reasons": [
+        "frozen public pin contains only Y3 flask configurations, not a real-data Y3 GGL configuration",
+        "frozen ggltest.py executes only type=flask and raises NotImplementedError otherwise",
+        "the exact published Y3 real-data Wm NaMaster workspace/input realization is therefore not reproducible from the frozen public source binding"
+      ],
+      "support_fraction_evaluated": false,
+      "scientific_support_fail": false,
+      "common_rectangle": "0.295 <= z <= 2.33; k <= 0.06664762008318016 Mpc^-1",
+      "future_f_invalid_threshold": 0.05,
+      "future_minimum_retained_dimension": 15
+    },
+    "Exp073O": {
+      "status": "PUBLIC_REALDATA_FINITE_HARMONIC_WM_REPLACEMENT_FOUND_EXP073O",
+      "result_commit": "3f16dabdbfe9842b928d2fd0e00e481194637583",
+      "candidate": "COSMOTHEKA_DESY1_GC_X_WL_PSEUDO_CL",
+      "source_repository": "Cosmotheka/Cosmotheka",
+      "source_commit": "7bde066626f66cd7bbe79cc46224d2342840e463",
+      "tests": {
+        "O1_public_immutable_realdata_provenance": true,
+        "O2_finite_operator": true,
+        "O3_exact_public_inputs_bindable": true,
+        "O4_signed_Wm": true,
+        "O5_no_GR_closure": true,
+        "O6_no_model_or_downstream_weighting": true,
+        "O7_exact_support_audit_possible": true,
+        "O8_provenance_completeness": true
+      },
+      "frozen_bpw_edge_count": 39,
+      "harmonic_lmax_bounded_by": "3*nside",
+      "support_fraction_evaluated": false,
+      "covariance_read_for_candidate_selection": false,
+      "nuisance_read": false,
+      "relation_null_read": false,
+      "G8_read": false,
+      "parent_Exp073N_preserved": "FAIL_EXP073N_REPRODUCTION_OR_PROVENANCE",
+      "future_f_invalid_threshold": 0.05,
+      "future_minimum_retained_dimension": 15
+    },
+    "Exp073P2": {
+      "status": "PASS_REMAINING_DESY1_RELEASE_CHECKSUM_BINDING_EXP073P2",
+      "result_commit": "ba91cdaf43f3a7c08471bbd25e82408c064904ab",
+      "all_frozen_DESY1_release_objects_checksum_bound": true,
+      "large_objects": {
+        "y1_source_redshift_binning_v1.fits": {
+          "bytes": 2738626560,
+          "sha256": "491f4bb742762fefe3aaab6d53d4342b6ff4a65401bc7b588d2918fdce3ee6fd"
+        },
+        "mcal-y1a1-combined-riz-unblind-v4-matched.fits": {
+          "bytes": 84075649920,
+          "sha256": "39a7fe03e54d96b85cee2fb523ea108c2a548ba1584368203f0464ed6241ebc8"
+        }
+      },
+      "support_fraction_evaluated": false,
+      "G7": "OPEN"
+    },
+    "Exp073S0": {
+      "status": "PASS_DESY1_REDMAGIC_MASK_NZ_REPRODUCTION_EXP073S0",
+      "workflow_run": 33086762750,
+      "workflow_job": 98568401949,
+      "execution_sha": "82c5804b1fcbbdc100f09a9878643ddc51975d8e",
+      "artifact_id": 9652504743,
+      "artifact_digest": "sha256:c6f84c35e7ade17a6054ad77d4117b64a6c69fbbefe0d0f89e6491bbe88b358e",
+      "mask": {
+        "input_nside": 4096,
+        "npix": 201326592,
+        "same_nside_ud_grade_exact_identity": true,
+        "retained_pixels_gt_0p5": 6536725,
+        "retained_fraction_sky": 0.03246826430161794,
+        "mean_retained": 0.985935010460131,
+        "min_retained": 0.8125,
+        "max_retained": 1.0
+      },
+      "lens_nz": {
+        "rows": 400,
+        "z_min": 0.0051,
+        "z_max": 3.9951000000000003,
+        "bins": 5
+      },
+      "source_nz": {
+        "rows": 400,
+        "z_min": 0.0051,
+        "z_max": 3.9951000000000003,
+        "bins": 4
+      },
+      "closes_only_small_input_P3_prerequisite": true,
+      "support_fraction_computed": false,
+      "covariance_read": false,
+      "nuisance_or_SVD_read": false
+    },
+    "Exp073R0": {
+      "status": "PASS_RAW_ROW_HEALPIX_EQUIVALENCE_EXP073R0",
+      "workflow_run": 33103083736,
+      "execution_sha": "94b05d307295d5e9263646983ece9514f9fa2e88",
+      "artifact_id": 9661445512,
+      "artifact_digest": "sha256:bfa97a88218cda6e6e6c58d915e8e5b21500fa677a484205691f2f01662ed4d0",
+      "completed_utc": "2026-08-27T19:26:21.080756+00:00",
+      "sample_rows": 131072,
+      "nrows_parent": 136930995,
+      "n_windows": 16,
+      "window_rows": 8192,
+      "nside": 4096,
+      "coords": "C",
+      "source_fields_exact": true,
+      "metacal_fields_exact": true,
+      "bins_with_selected_rows": [0, 1, 2, 3],
+      "per_bin": {
+        "0": {"selected_rows": 7674, "unique_pixels": 4300, "pixel_indices_exact": true},
+        "1": {"selected_rows": 7667, "unique_pixels": 4277, "pixel_indices_exact": true},
+        "2": {"selected_rows": 7272, "unique_pixels": 4178, "pixel_indices_exact": true},
+        "3": {"selected_rows": 3618, "unique_pixels": 2650, "pixel_indices_exact": true}
+      },
+      "science_gate_scored": false,
+      "support_fraction_computed": false,
+      "article_use": "reproduction/equivalence prerequisite PASS only; not the physical-support gate"
+    }
+  },
+  "pending_or_excluded": {
+    "Exp073R1": {
+      "science_claim_included": false,
+      "state": "preregistered and gated implementation merged; no completed R1 scientific output observed in the article snapshot",
+      "preregistration_commit": "71d61efc17535f45a81f45d1a037abfdb8aaaeeb",
+      "gated_implementation_merge": "4b466f1c27019438c76a92dd7830ac6a2cc3fe7d"
+    }
+  },
+  "boundary": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN",
+    "claims": [
+      "A support fraction requires a prospectively defined finite positive normalizer; it is not meaningful when the chosen absolute-response measure is nonnormalizable.",
+      "Exp073L is a completed normalizability result, not a support-fraction result.",
+      "Exp073M established an operator-class candidate, but Exp073N independently rejected its exact frozen DES Y3 real-data realization at the mandatory provenance gate before any support output.",
+      "Exp073O prospectively replaced the rejected Wm realization with a public finite DES Y1 pseudo-C_ell operator satisfying O1-O8 while leaving the 5% support threshold and minimum retained dimension unchanged.",
+      "Exp073P2, Exp073S0 and Exp073R0 close increasingly deep public-input/reproduction prerequisites only; none evaluates the physical support fraction or authorizes covariance, nuisance quotienting, or G7 closure."
+    ],
+    "forbidden": [
+      "Do not impose a post-hoc high-ell cutoff or fiducial power weighting to convert Exp073L into a finite support fraction.",
+      "Do not reinterpret Exp073N as a physical-support FAIL; no support fraction was evaluated.",
+      "Do not erase Exp073N after Exp073O; the provenance failure remains part of the scientific record.",
+      "Do not interpret Exp073O as an eligible support mask before the frozen Exp073P physical-support audit is executed.",
+      "Do not interpret Exp073P2, Exp073S0 or Exp073R0 as a survey-level DSIR model comparison.",
+      "Do not interpret the preregistered/gated Exp073R1 implementation as a scientific result before a completed output exists."
+    ]
+  }
+}

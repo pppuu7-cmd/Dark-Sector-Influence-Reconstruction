@@ -1,0 +1,111 @@
+{
+  "audit": "DSIR-I cross-model translator robustness",
+  "version": "v0.1",
+  "date": "2026-08-28",
+  "status": "PASS_RETROSPECTIVE_TRANSLATOR_METRIC_AND_COORDINATE_ROBUSTNESS_V0_1",
+  "classification": "RETROSPECTIVE_ROBUSTNESS_ON_IMMUTABLE_FROZEN_SUMMARIES",
+  "inputs": [
+    {
+      "path": "data/derived/comparison_readiness/experiment_047a_finite_amplitude_interaction_curvature_v0_1_summary.json",
+      "blob_sha": "e7a68d85f93686e6c4bf880912ea28bd08457214",
+      "use": "high-precision chi_I finite-ray sequences and curvature summary"
+    },
+    {
+      "path": "data/derived/comparison_readiness/experiment_048b_finite_amplitude_localization_flow_v0_1_summary.json",
+      "blob_sha": "9dd3aa6a9ac185372fecd1a2ea6b7ba8d76d174b",
+      "use": "finite-ray k_geo and z_centroid sequences"
+    },
+    {
+      "path": "docs/CROSS_MODEL_TRANSLATOR_LIGHTWEIGHT_AUDIT_2026-08-27.md",
+      "blob_sha": "77f7e99f535513018202384e456d8446a650470c",
+      "use": "prior translator architecture and one-coordinate controls"
+    }
+  ],
+  "families": {
+    "C3_GDM_cv2": [1e-8, 1e-7, 1e-6, 1e-5, 1e-4],
+    "C5_designer_fR_B0": [1e-6, 1e-5, 1e-4, 1e-3]
+  },
+  "coordinate": ["ln_k_geo", "z_centroid", "ln_chi_I"],
+  "robustness_family": {
+    "scalings": ["pooled_zscore", "pooled_minmax", "pooled_median_MAD"],
+    "norms": ["L1", "L2", "Linf"],
+    "full_coordinate_variant_count": 9
+  },
+  "full_coordinate_results": {
+    "cycle_closure_count_C3_of_5": 2,
+    "cycle_closure_fraction": 0.4,
+    "same_cycle_count_in_all_9_variants": true,
+    "modal_C3_to_C5_mapping_B0": [1e-6, 1e-6, 1e-6, 1e-6, 1e-3],
+    "modal_mapping_variant_count": 8,
+    "exception": {
+      "scaling": "pooled_minmax",
+      "norm": "Linf",
+      "C3_to_C5_mapping_B0": [1e-4, 1e-4, 1e-4, 1e-4, 1e-3]
+    },
+    "large_amplitude_endpoint": {
+      "C3_cv2": 1e-4,
+      "C5_B0": 1e-3,
+      "stable_in_variants": 9,
+      "total_variants": 9
+    }
+  },
+  "coordinate_ablation": {
+    "ln_k_geo_plus_z_centroid": {
+      "cycle_closure_C3_of_5": 2,
+      "same_cycle_count_in_all_9_variants": true,
+      "C3_to_C5_mapping_B0": [1e-6, 1e-6, 1e-6, 1e-6, 1e-3],
+      "same_mapping_in_all_9_variants": true
+    },
+    "z_centroid_plus_ln_chi_I": {
+      "cycle_closure_C3_of_5": 1,
+      "same_cycle_count_in_all_9_variants": true,
+      "C3_to_C5_mapping_B0": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
+      "same_mapping_in_all_9_variants": true,
+      "interpretation": "removing scale localization collapses the sampled cross-family map"
+    },
+    "ln_k_geo_plus_ln_chi_I": {
+      "cycle_closure_distribution": {
+        "2_of_5": 7,
+        "3_of_5": 2
+      },
+      "mapping_metric_dependent": true
+    }
+  },
+  "single_coordinate_controls": {
+    "ln_k_geo": {
+      "C3_to_C5_mapping_B0": [1e-6, 1e-6, 1e-5, 1e-5, 1e-3],
+      "cycle_closure_C3_of_5": 3
+    },
+    "z_centroid": {
+      "C3_to_C5_mapping_B0": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
+      "cycle_closure_C3_of_5": 1
+    },
+    "ln_chi_I": {
+      "C3_to_C5_mapping_B0": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
+      "cycle_closure_C3_of_5": 1
+    }
+  },
+  "independent_geometry_support": {
+    "GDM_cv2_max_response_turn_deg": 7.17651292978534,
+    "GDM_cv2_max_interaction_turn_deg": 12.191552877838552,
+    "designer_fR_max_response_turn_deg": 12.136658935563,
+    "designer_fR_max_interaction_turn_deg": 12.99689688618451,
+    "temporal_flow_difference": "GDM cv2 moves nearly monotonically to higher z_centroid while designer f(R) is nonmonotonic"
+  },
+  "paper1_supported_statements": [
+    "cross-model equivalence is response-subspace conditional",
+    "finite-grid non-bijectivity is robust to the tested diagonal scalings and Lp norms",
+    "scale localization carries essential discrimination for the sampled C3/C5 pair",
+    "the large-amplitude endpoint mapping is stable across all tested full-coordinate variants",
+    "a local multicoordinate translator is scientifically more appropriate than a global microscopic-parameter identity"
+  ],
+  "precision_boundary": "k_geo and z_centroid are read from rounded repository summaries; report discrete nearest-neighbour identities and closure counts, not new distance precision",
+  "non_claims": [
+    "not a unique one-to-one cv2-to-B0 identity",
+    "not a universal scalar translator",
+    "not a prospective translator validation",
+    "not an observational likelihood or Fisher result",
+    "not covariance/nuisance-quotiented equivalence",
+    "not G7, G8 or G9"
+  ]
+}
