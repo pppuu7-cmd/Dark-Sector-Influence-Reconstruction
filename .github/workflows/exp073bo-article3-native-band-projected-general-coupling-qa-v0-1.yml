@@ -1,0 +1,162 @@
+name: Exp073BO Article3 native band-projected general-coupling QA v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073bo_article3_native_band_projected_general_coupling_qa_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  replica:
+    strategy:
+      fail-fast: false
+      matrix: {replica: [A, B, C, D]}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Enforce Exp073BO prospective freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bo_article3_native_band_projected_general_coupling_qa_v0_1_prereg.md)" = '0b1be1ce0f17d0c8899a9be674f99eb0a2d89138'
+          test "$(git log -1 --format=%H -- ci/exp073bo_native_band_projected_general_coupling_v0_1.c)" = '9feabd483075ea6c5191bd9521956d76643f492e'
+          test "$(git log -1 --format=%H -- ci/exp073bo_native_band_projected_general_coupling_qa_v0_1.py)" = '06f19e947a9a9ddb7b569856a50aca39b220c657'
+
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euxo pipefail
+          conda create -y -p "${RUNNER_TEMP}/bo" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "BO_PY=${RUNNER_TEMP}/bo/bin/python" >> "${GITHUB_ENV}"
+
+      - name: Compile native projected kernel
+        shell: bash
+        run: |
+          set -euxo pipefail
+          gcc -O2 -std=gnu11 -shared -fPIC ci/exp073bo_native_band_projected_general_coupling_v0_1.c -lm -o "${RUNNER_TEMP}/libexp073bo.so"
+
+      - name: Run stock and native scales
+        shell: bash
+        env:
+          REPLICA: '${{ matrix.replica }}'
+        run: |
+          set -euxo pipefail
+          od="data/derived/g7/exp073bo_${REPLICA}"
+          mkdir -p "${od}"
+          for lm in 95 255 511; do
+            /usr/bin/time -f '%e %M' -o "${od}/resource_stock_${lm}.txt" \
+              "${BO_PY}" ci/exp073bo_native_band_projected_general_coupling_qa_v0_1.py stock \
+              --lmax "${lm}" --out-npz "${od}/stock_${lm}.npz" --out-json "${od}/stock_${lm}.json"
+            /usr/bin/time -f '%e %M' -o "${od}/resource_native_${lm}.txt" \
+              "${BO_PY}" ci/exp073bo_native_band_projected_general_coupling_qa_v0_1.py native \
+              --lmax "${lm}" --so "${RUNNER_TEMP}/libexp073bo.so" \
+              --out-npz "${od}/native_${lm}.npz" --out-json "${od}/native_${lm}.json"
+            "${BO_PY}" ci/exp073bo_native_band_projected_general_coupling_qa_v0_1.py compare \
+              --stock-npz "${od}/stock_${lm}.npz" --native-npz "${od}/native_${lm}.npz" \
+              --stock-json "${od}/stock_${lm}.json" --native-json "${od}/native_${lm}.json" \
+              --out-json "${od}/compare_${lm}.json"
+          done
+
+      - name: Build replica receipt and provenance
+        shell: bash
+        env:
+          REPLICA: '${{ matrix.replica }}'
+        run: |
+          set -euxo pipefail
+          od="data/derived/g7/exp073bo_${REPLICA}"
+          lscpu > "${od}/lscpu.txt"
+          "${BO_PY}" - "${od}" "${REPLICA}" <<'PY'
+          import importlib.metadata,json,pathlib,sys,numpy as np
+          od=pathlib.Path(sys.argv[1]); r=sys.argv[2]
+          try:
+              from numpy._core._multiarray_umath import __cpu_features__
+              feats={k:bool(v) for k,v in __cpu_features__.items()}
+          except Exception as e:
+              feats={'error':repr(e)}
+          cpu=next((x.split(':',1)[1].strip() for x in pathlib.Path('/proc/cpuinfo').read_text(errors='ignore').splitlines() if x.lower().startswith('model name')),'unknown')
+          scales={}
+          for lm in [95,255,511]:
+              c=json.loads((od/f'compare_{lm}.json').read_text())
+              sw,srss=(od/f'resource_stock_{lm}.txt').read_text().strip().split()
+              nw,nrss=(od/f'resource_native_{lm}.txt').read_text().strip().split()
+              c['stock_wall_seconds']=float(sw); c['stock_max_rss_kb']=int(srss)
+              c['native_wall_seconds']=float(nw); c['native_max_rss_kb']=int(nrss)
+              scales[str(lm)]=c
+          out={'experiment':'Exp073BO','replica':r,'cpu_model':cpu,'cpu_features':feats,'pymaster_version':importlib.metadata.version('pymaster'),'scales':scales,'classification':'NONCLASSIFYING_SOURCE_EQUIVALENCE_QA','authority':False,'scientific_pass_claimed':False,'scientific_readiness_increment':0,'draft_data_readiness_increment':0,'Exp073AQ_preserved_as_FAIL':True}
+          (od/f'exp073bo_replica_{r}.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bo-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073bo_${{ matrix.replica }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  compare:
+    needs: replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: 'exp073bo-*-${{ github.sha }}'
+          path: external
+          merge-multiple: false
+      - name: Frozen cross-host exact comparator
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob,json,pathlib
+          reps=list('ABCD'); rec={}
+          for r in reps:
+              f=glob.glob(f'external/exp073bo-{r}-*/exp073bo_replica_{r}.json')
+              assert len(f)==1,(r,f)
+              rec[r]=json.load(open(f[0]))
+          scales={}; all_pass=True
+          for lm in ['95','255','511']:
+              rs=[rec[r]['scales'][lm] for r in reps]
+              within=all(x['array_equal'] and x['sha_equal'] for x in rs)
+              nsh=[x['native_sha256'] for x in rs]
+              ssh=[x['stock_sha256'] for x in rs]
+              cross_native=len(set(nsh))==1
+              scales[lm]={
+                  'within_exact_all':within,
+                  'native_crosshost_exact':cross_native,
+                  'native_sha256':nsh,
+                  'stock_sha256':ssh,
+                  'native_unique_sha_count':len(set(nsh)),
+                  'stock_unique_sha_count':len(set(ssh)),
+                  'resource':{r:{'stock_wall_seconds':rec[r]['scales'][lm]['stock_wall_seconds'],'native_wall_seconds':rec[r]['scales'][lm]['native_wall_seconds'],'stock_max_rss_kb':rec[r]['scales'][lm]['stock_max_rss_kb'],'native_max_rss_kb':rec[r]['scales'][lm]['native_max_rss_kb']} for r in reps}
+              }
+              all_pass &= within and cross_native
+          status='BO_Q1_NATIVE_PROJECTED_EXACT_EQUIVALENCE_PASS' if all_pass else 'BO_Q2_NATIVE_PROJECTED_EXACT_EQUIVALENCE_FAIL'
+          out={'experiment':'Exp073BO','status':status,'classification':'NONCLASSIFYING_SOURCE_EQUIVALENCE_QA','scales':scales,'cpu_models':{r:rec[r]['cpu_model'] for r in reps},'cpu_features':{r:rec[r]['cpu_features'] for r in reps},'authority':False,'scientific_pass_claimed':False,'scientific_readiness_increment':0,'draft_data_readiness_increment':0,'Exp073AQ_preserved_as_FAIL':True}
+          pathlib.Path('data/derived/g7/exp073bo_crosshost_result_v0_1.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bo-crosshost-comparator-${{ github.sha }}
+          path: data/derived/g7/exp073bo_crosshost_result_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
