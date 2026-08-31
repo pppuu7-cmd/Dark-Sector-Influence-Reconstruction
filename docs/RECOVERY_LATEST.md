@@ -9,16 +9,14 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 
 ## Read first
 
-1. `recovery/2026-08-31_exp073bo_bp_hosted_incomplete_after_bj_authority.md`
-2. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
-3. `recovery/2026-08-31_streaming_band_projection_equivalence_audit_bj_active.md`
-4. `recovery/2026-08-31_general_coupling_elision_audit_bj_active.md`
-5. `recovery/2026-08-31_local_numerical_structure_audit_bj_active.md`
-6. `recovery/2026-08-31_exp073bj_binding_provenance_audit_compute_active.md`
-7. `experiments/073bj_article3_wm_s1_two_thread_track_a_successor_v0_1_prereg.md`
-8. `experiments/073bj_article3_two_thread_wm_s1_binding_v0_1.json`
-9. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
-10. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+1. `experiments/073bq_article3_namaster27_wigner_linkage_diagnostic_v0_1_prereg.md`
+2. `recovery/2026-08-31_exp073bo_bp_hosted_incomplete_after_bj_authority.md`
+3. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
+4. `recovery/2026-08-31_local_numerical_structure_audit_bj_active.md`
+5. `experiments/073bj_article3_wm_s1_two_thread_track_a_successor_v0_1_prereg.md`
+6. `experiments/073bj_article3_two_thread_wm_s1_binding_v0_1.json`
+7. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+8. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
 
 ## Current authority state
 
@@ -66,7 +64,18 @@ Exp073BO prospective native band-projected source-equivalence QA run `3338877538
 
 Exp073BP triangular-reciprocity QA run `33389213821` is likewise terminal `failure`: all four replicas passed freeze/install/compile, failed in `Run stock and triangular scales`, produced no valid comparator inputs, and its comparator was skipped. It is infrastructure/QA incomplete only.
 
-A code audit identifies but does not prove a concrete BO failure hypothesis: the native driver dynamically resolves `drc3jj` from packaged `pymaster._nmtlib`; a non-exported symbol would fail before native output. Hosted metadata does not expose the exception, so do not claim this as the cause until a narrow linkage/export diagnostic records direct evidence. BO/BP remain `+0/+0` regardless.
+Code audit isolated the concrete BO hypothesis: `ci/exp073bo_native_band_projected_general_coupling_qa_v0_1.py` dynamically loads packaged `pymaster._nmtlib` and requests `drc3jj` via `ctypes`. Hosted BO metadata did not expose the exception, so this hypothesis was not promoted to fact.
+
+## Exp073BQ — prospectively frozen linkage diagnostic
+
+A new narrow nonclassifying gate is frozen to resolve that hypothesis directly under exact NaMaster 2.7:
+
+- preregistration commit `7c6b15e99ec0691e1e2b3064b2668ef574d8d73f`;
+- diagnostic implementation commit `c46123466aad96449a94893b199b686afadcfda9`;
+- hosted workflow commit `03485b7d5c3886d9a39d38e08c3d1d591b2deaa0`;
+- trigger commit `c4f4a8c1fd262acaf582426ee3c1dbd009fbc608`.
+
+Frozen outcomes distinguish: direct `_nmtlib` export; direct linked-dependency export; no runtime export but installed textual source/header reference; or no runtime export/source reference in the packaged environment. Installation/inspection failure remains infrastructure incomplete. Exp073BQ is `+0/+0` under every outcome and cannot alter BJ/AQ or any G7/G8 authorization.
 
 ## Dual-readiness accounting
 
@@ -86,7 +95,7 @@ G8 may not be selected or exposed before actual G7 authorization.
 
 ## Exact next operating gate
 
-Do not rerun Exp073BJ. Do not rerun Exp073BO or Exp073BP unchanged. The exact nonclassifying execution gate is a prospectively frozen narrow NaMaster-2.7 native Wigner symbol/source-linkage diagnostic: establish with direct hosted evidence whether the packaged extension exposes/can safely call the exact `drc3jj` implementation, or identify the exact callable/link target needed by a source-equivalent projected kernel. This gate is `+0/+0` and cannot change BJ/AQ classification. Only after it may a corrected streaming/source-equivalence successor be prospectively frozen. The scientific G7 path remains the validated physical forward/power-input bridges first; no G8 jump.
+Do not rerun Exp073BJ, BO or BP unchanged. Consume the terminal hosted Exp073BQ result when available and preserve its frozen linkage classification. If BQ identifies a callable exact runtime/source target, only then prospectively freeze a corrected source-equivalence streaming successor. If it shows the packaged runtime strategy is unsupported, perform source-level NaMaster-2.7 linkage design before any successor. All such work remains `+0/+0`. The scientific G7 path remains validated physical forward/power-input bridges first; no G8 jump.
 
 ## Current shorthand
 
@@ -96,7 +105,8 @@ Do not rerun Exp073BJ. Do not rerun Exp073BO or Exp073BP unchanged. The exact no
 - ✅ Exp073BI: `BI_Q1_PARALLEL_EXACT_QA_PASS`, `+0/+0`.
 - ✅ Exp073BA/BH infrastructure diagnosis: preserved, no scientific classification.
 - ✅ Exp073BD: P3 provisional incomplete, no downstream use.
-- 🟡 Native streaming architecture: BO/BP hosted QA incomplete; direct linkage root-cause gate required before any corrected successor.
+- 🟡 Exp073BQ: frozen Wigner linkage diagnostic triggered; terminal hosted classification pending.
+- 🟡 Native streaming architecture: BO/BP hosted QA incomplete; BQ is the direct linkage root-cause gate.
 - ❌ Exp073AQ: permanent historical exact-repeatability scientific FAIL.
 - ❌ Layer A/B, covariance/whitening, nuisance SVD, quotient/relation/null, G7, G8, G9: not authorized; G8 jump forbidden.
 
