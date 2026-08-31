@@ -1,0 +1,56 @@
+name: Exp073BH Article3 BA execution root-cause v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073bh_article3_ba_execution_rootcause_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce prospective BH freeze and no science promotion
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bh_article3_ba_fullscale_execution_rootcause_v0_1_prereg.md)" = '48e39a3063b3c525feefd99d2821f7fcf77a8941'
+          test -f .github/workflows/exp073ba-article3-low-memory-wm-s1-production-v0-1.yml
+          grep -Eq '^    timeout-minutes: 360$' .github/workflows/exp073ba-article3-low-memory-wm-s1-production-v0-1.yml
+          ! grep -R -E 'covariance|whitening|nuisance|G8|withheld' ci/exp073bh_article3_ba_execution_rootcause_v0_1.py
+      - name: Diagnose immutable BA hosted execution metadata
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python ci/exp073bh_article3_ba_execution_rootcause_v0_1.py
+      - name: Enforce frozen diagnostic class and zero readiness
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python - <<'PY'
+          import json
+          d=json.load(open('exp073bh_ba_execution_rootcause_v0_1.json'))
+          assert d['status'] in {
+            'BH_D1_RESOURCE_LIMIT_EVIDENCED',
+            'BH_D2_TIMEOUT_OR_EXTERNAL_CANCELLATION_EVIDENCED',
+            'BH_D3_STAGE_FAILURE_EVIDENCED',
+            'BH_D4_FULL_DIAGNOSTIC_COMPLETION_NO_CLASSIFYING_SCIENCE',
+            'BH_D5_INCONCLUSIVE',
+          }
+          assert d['scientific_classification'] is None
+          assert d['verified_readiness_increment']==0
+          assert d['draft_data_readiness_increment']==0
+          assert d['Exp073AQ_preserved_as_permanent_FAIL'] is True
+          assert d['anti_leakage_downstream_science_reads']==[]
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bh-ba-execution-rootcause-${{ github.sha }}
+          path: exp073bh_ba_execution_rootcause_v0_1.json
+          if-no-files-found: error
