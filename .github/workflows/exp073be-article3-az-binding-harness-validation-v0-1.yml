@@ -1,0 +1,90 @@
+name: Exp073BE Article3 AZ binding harness validation v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073be_article3_az_binding_harness_validation_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  validate-binding:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce prospective preregistration
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073be_article3_az_binding_harness_validation_v0_1_prereg.md)" = '11b42b3b0eba946dc428a70a7b3fa5ea0212fc2e'
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install 'numpy==2.1.3'
+      - name: Download exact frozen Exp073AZ authority artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073az-wm-s1-pcl-authority-0a9581e19f7f010e13bf9aa88307b1940d0105de
+          path: external/az
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33339663991
+      - name: Validate exact-basename binding and immutable AZ facts
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob, hashlib, json, pathlib, numpy as np
+          root='external/az'
+          auth=glob.glob(root+'/**/exp073az_wm_s1_pcl_exact_authority_v0_1.json',recursive=True)
+          pcl=glob.glob(root+'/**/exp073az_wm_s1_pcl_canonical_v0_1.npy',recursive=True)
+          old=glob.glob(root+'/**/*canonical*pcl*.npy',recursive=True)
+          assert len(auth)==1, auth
+          assert len(pcl)==1, pcl
+          assert len(old)==0, old
+          d=json.loads(pathlib.Path(auth[0]).read_text())
+          assert d['status']=='PASS_EXP073AZ_WM_S1_MASK_PCL_EXACT_V0_1', d.get('status')
+          assert d['array_equal'] is True
+          assert d['shape']==[12288], d.get('shape')
+          assert d['dtype']=='<f8', d.get('dtype')
+          expected='2a990b06defbe9922f82b4b85ae26df09bc7881508a85b003648cb23907a5888'
+          sha_fields=[d.get(k) for k in ('sha_a','sha_b','canonical_sha','sha') if d.get(k)]
+          assert expected in sha_fields, sha_fields
+          a=np.ascontiguousarray(np.load(pcl[0],allow_pickle=False),dtype='<f8')
+          assert a.shape==(12288,)
+          assert a.dtype.str=='<f8'
+          assert np.isfinite(a).all()
+          got=hashlib.sha256(a.tobytes()).hexdigest()
+          assert got==expected,(got,expected)
+          out={
+            'experiment':'Exp073BE',
+            'track':'A-infrastructure',
+            'authority':False,
+            'scientific_pass_claimed':False,
+            'scientific_readiness_increment':0,
+            'draft_data_readiness_increment':0,
+            'article3_scientific_readiness_percent':52.0,
+            'article3_draft_data_readiness_percent':53.714285714285715,
+            'source_run_id':33339663991,
+            'source_head_sha':'0a9581e19f7f010e13bf9aa88307b1940d0105de',
+            'source_artifact_id':9740703849,
+            'source_artifact_digest':'sha256:3cecacff76169dd968e458db0ae70563cf8c3cb0b30d0dff4038a2c792dd3d75',
+            'canonical_filename':pathlib.Path(pcl[0]).name,
+            'canonical_sha256':got,
+            'old_ba_glob_match_count':len(old),
+            'status':'PASS_EXP073BE_AZ_BINDING_HARNESS_VALIDATION_V0_1'
+          }
+          pathlib.Path('data/derived/g7/exp073be_az_binding_harness_validation_v0_1.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073be-az-binding-validation-${{ github.sha }}
+          path: data/derived/g7/exp073be_az_binding_harness_validation_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
