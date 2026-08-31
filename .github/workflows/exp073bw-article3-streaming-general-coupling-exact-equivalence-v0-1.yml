@@ -65,7 +65,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: exp073bv-namaster27-source-lineage-v0-1
+          name: exp073bv-namaster27-exact-source-lineage-v0-1
           path: external/bv
           github-token: ${{ github.token }}
           repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
