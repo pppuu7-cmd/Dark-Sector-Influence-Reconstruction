@@ -1,0 +1,94 @@
+name: Exp073BF Article3 Wm low-memory stock equivalence QA v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073bf_article3_wm_stock_equivalence_v0_1.trigger'
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce prereg freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bf_article3_wm_low_memory_smallscale_stock_equivalence_v0_1_prereg.md)" = '99db0c8b7444ade7eb65df7626398a034bf16fda'
+          test "$(git log -1 --format=%H -- ci/exp073az_article3_low_memory_general_coupling_v0_1.py)" = 'd77b7ba88801f6788f3d386e72b445c7859c7153'
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+      - name: Run frozen Wm stock-equivalence QA
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          "${NMT_PY}" - <<'PY'
+          import hashlib,json,importlib.metadata
+          import numpy as np
+          import healpy as hp
+          import pymaster as nmt
+          ver=importlib.metadata.version('pymaster')
+          assert ver=='2.7' or ver.startswith('2.7.')
+          nside=16; L=3*nside
+          edges=np.array([0,4,8,16,24,32,48],dtype=np.int64)
+          npix=12*nside*nside
+          th,ph=hp.pix2ang(nside,np.arange(npix))
+          m0=((th<2.35)&(ph>0.20)&(ph<5.75)).astype(np.float64)
+          m2=((th>0.45)&(th<2.50)&(ph>0.35)&(ph<5.55)).astype(np.float64)
+          f0=nmt.NmtField(m0,None,spin=0,lmax=L-1,lmax_mask=L-1)
+          f2=nmt.NmtField(m2,None,spin=2,lmax=L-1,lmax_mask=L-1)
+          b=nmt.NmtBin.from_edges(edges[:-1],edges[1:])
+          w=nmt.NmtWorkspace(); w.compute_coupling_matrix(f0,f2,b)
+          bpw=w.get_bandpower_windows()
+          stock=np.ascontiguousarray(bpw[0,:,0,:],dtype='<f8')
+          pcl=hp.alm2cl(f0.get_mask_alms(),f2.get_mask_alms(),lmax=L-1)
+          pcl=np.ascontiguousarray(pcl,dtype='<f8')
+          G1=nmt.get_general_coupling_matrix(pcl,0,2,0,2)
+          G2=nmt.get_general_coupling_matrix(pcl,0,2,0,2)
+          exact_general=bool(np.array_equal(G1,G2))
+          A=np.empty((len(edges)-1,L),dtype=np.float64)
+          for ib,(lo,hi) in enumerate(zip(edges[:-1],edges[1:])):
+              acc=np.zeros(L,dtype=np.float64)
+              for ell in range(int(lo),int(hi)): acc += G1[ell]
+              A[ib]=acc/float(hi-lo)
+          K=np.empty((len(edges)-1,len(edges)-1),dtype=np.float64)
+          for ib,(lo,hi) in enumerate(zip(edges[:-1],edges[1:])):
+              acc=np.zeros(len(edges)-1,dtype=np.float64)
+              for ell in range(int(lo),int(hi)): acc += A[:,ell]
+              K[:,ib]=acc
+          recon=np.ascontiguousarray(np.linalg.solve(K,A),dtype='<f8')
+          maxd=float(np.max(np.abs(stock-recon)))
+          finite=bool(np.all(np.isfinite(stock)) and np.all(np.isfinite(recon)))
+          same_shape=stock.shape==recon.shape
+          status='PASS_EXP073BF_WM_STOCK_EQUIVALENCE_QA_V0_1' if (same_shape and finite and maxd<1e-12 and exact_general) else 'INFRASTRUCTURE_NUMERICAL_QA_FAIL_EXP073BF_WM_STOCK_EQUIVALENCE_V0_1'
+          def sha(x): return hashlib.sha256(np.ascontiguousarray(x,dtype='<f8').tobytes()).hexdigest()
+          out={'experiment':'Exp073BF','status':status,'classification':'synthetic numerical/infrastructure QA only','scientific_pass_claimed':False,'scientific_readiness_increment':0,'draft_data_readiness_increment':0,'pymaster_version':ver,'stock_shape':list(stock.shape),'reconstructed_shape':list(recon.shape),'stock_sha256':sha(stock),'reconstructed_sha256':sha(recon),'max_abs_difference':maxd,'same_input_general_matrix_exact_repeat':exact_general,'all_finite':finite,'forbidden_downstream_reads':False,'Exp073AQ_preserved_as_FAIL':True}
+          open('data/derived/g7/exp073bf_wm_stock_equivalence_qa_v0_1.json','w').write(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          if not status.startswith('PASS_'): raise SystemExit(2)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073bf-wm-stock-equivalence-qa-${{ github.sha }}
+          path: data/derived/g7/exp073bf_wm_stock_equivalence_qa_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
