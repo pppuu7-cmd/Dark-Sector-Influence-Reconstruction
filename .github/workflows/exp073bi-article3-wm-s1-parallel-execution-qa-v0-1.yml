@@ -1,0 +1,49 @@
+name: Exp073BI Article3 Wm_S1 parallel execution QA v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073bi_article3_wm_s1_parallel_execution_qa_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '2'
+  OPENBLAS_NUM_THREADS: '2'
+  MKL_NUM_THREADS: '2'
+  NUMEXPR_NUM_THREADS: '2'
+  BLIS_NUM_THREADS: '2'
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce Exp073BI prospective freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bi_article3_wm_s1_parallel_execution_successor_v0_1_prereg.md)" = '00893e3e41ce6062d42e9c61cd5357eb54a41333'
+          test "$(git log -1 --format=%H -- ci/exp073bi_article3_wm_s1_parallel_execution_qa_v0_1.py)" = 'b5b82e30fd0e02995281121d5776ec687f0fb829'
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+      - name: Run frozen two-thread Wm QA
+        shell: bash
+        run: |
+          set -euxo pipefail
+          "${NMT_PY}" ci/exp073bi_article3_wm_s1_parallel_execution_qa_v0_1.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073bi-parallel-execution-qa-${{ github.sha }}
+          path: data/derived/g7/exp073bi_parallel_execution_qa_v0_1.json
+          if-no-files-found: warn
+          retention-days: 90
