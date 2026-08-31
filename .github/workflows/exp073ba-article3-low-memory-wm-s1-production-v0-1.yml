@@ -64,7 +64,7 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          python - <<'PY'
+          "${NMT_PY}" - <<'PY'
           import glob,hashlib,json,numpy as np
           r=json.load(open('experiments/073ba_article3_low_memory_wm_s1_az_binding_v0_1.json'))
           js=glob.glob('external/az/**/*authority*.json',recursive=True); npys=glob.glob('external/az/**/*canonical*pcl*.npy',recursive=True)
