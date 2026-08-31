@@ -1,0 +1,5 @@
+Exp073BF frozen hosted trigger 2026-08-31
+prereg=99db0c8b7444ade7eb65df7626398a034bf16fda
+workflow=bbb4ecb14c01d2d7bafe37f0ae01377b2d81223b
+scientific_readiness_increment=0
+draft_data_readiness_increment=0
