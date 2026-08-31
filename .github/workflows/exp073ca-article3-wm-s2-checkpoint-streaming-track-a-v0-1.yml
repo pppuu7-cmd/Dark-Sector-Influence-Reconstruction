@@ -38,6 +38,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git log -1 --format=%H -- experiments/073ca_article3_wm_s2_checkpoint_streaming_track_a_v0_1_prereg.md)" = '564a8d48f2af26d4394521f3fb55d51d80bcafe9'
+          test "$(git log -1 --format=%H -- experiments/073ca_attempt2_python3_infrastructure_fix_v0_1_prereg.md)" = '2b8da936926e04bc4a6e9a8dc7db40930902c115'
           test "$(git log -1 --format=%H -- ci/exp073ca_stream_general_coupling_range_v0_1.c)" = 'fa971eb4ef8c47e81eb0bb4e13eeb76f7cf42e22'
           test "$(git log -1 --format=%H -- ci/exp073ca_checkpoint_streaming_wm_s2_v0_1.py)" = '583c34420d5f02a1ac8e77efb9625bbc3ab73de8'
           test "$(git log -1 --format=%H -- ci/exp073bw_stream_general_coupling_v0_1.c)" = '9fb0ecb79986cf5f542760377533a685745b31e2'
@@ -49,13 +50,14 @@ jobs:
           binding_commit="$(git log -1 --format=%H -- experiments/073ca_article3_wm_s2_checkpoint_streaming_track_a_v0_1_binding.json)"
           trigger_binding="$(tr -d '[:space:]' < ci/exp073ca_article3_wm_s2_checkpoint_streaming_track_a_v0_1.trigger)"
           test "${binding_commit}" = "${trigger_binding}"
-          python - <<'PY'
+          python3 - <<'PY'
           import json,subprocess
           p='experiments/073ca_article3_wm_s2_checkpoint_streaming_track_a_v0_1_binding.json'
           d=json.load(open(p))
           assert d['experiment']=='Exp073CA'
           assert d['task']=='Wm_S2'
           assert d['prereg_commit']=='564a8d48f2af26d4394521f3fb55d51d80bcafe9'
+          assert d['attempt2_fix_prereg_commit']=='2b8da936926e04bc4a6e9a8dc7db40930902c115'
           assert d['range_helper_commit']=='fa971eb4ef8c47e81eb0bb4e13eeb76f7cf42e22'
           assert d['stream_driver_commit']=='583c34420d5f02a1ac8e77efb9625bbc3ab73de8'
           assert d['bw_helper_commit']=='9fb0ecb79986cf5f542760377533a685745b31e2'
