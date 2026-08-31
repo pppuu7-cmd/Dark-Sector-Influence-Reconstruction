@@ -1,0 +1,65 @@
+name: Exp073BS Article3 NaMaster27 Wigner linkage full-history v0.1
+
+on:
+  push:
+    paths:
+      - 'experiments/073bs_hosted_trigger_v0_1.md'
+  workflow_dispatch:
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce Exp073BS prospective freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bs_article3_namaster27_wigner_linkage_full_history_successor_v0_1_prereg.md)" = "284bca8a32cd390781ab7349fc2bcd14f94461ca"
+          test "$(git log -1 --format=%H -- ci/exp073br_namaster27_wigner_linkage_failure_capturing_v0_1.py)" = "8a70892c9533206e4011eee041914ca89bae2290"
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==2.1.3' 'pymaster==2.7'
+          python - <<'PY'
+          import importlib.metadata
+          v=importlib.metadata.version('pymaster')
+          assert v == '2.7' or v.startswith('2.7.'), v
+          print(v)
+          PY
+      - name: Run inherited failure-capturing linkage diagnostic
+        continue-on-error: true
+        shell: bash
+        run: python ci/exp073br_namaster27_wigner_linkage_failure_capturing_v0_1.py
+      - name: Convert inherited receipt to frozen BS label
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          src=pathlib.Path('data/derived/g7/exp073br_wigner_linkage_failure_capturing_result_v0_1.json')
+          dst=pathlib.Path('data/derived/g7/exp073bs_wigner_linkage_full_history_result_v0_1.json')
+          dst.parent.mkdir(parents=True,exist_ok=True)
+          if src.exists():
+              d=json.loads(src.read_text())
+              d['experiment']='Exp073BS'
+              s=str(d.get('status','BR_Q5_PARTIAL_DIAGNOSTIC_INCOMPLETE'))
+              d['status']='BS_'+s[3:] if s.startswith('BR_') else 'BS_Q5_PARTIAL_DIAGNOSTIC_INCOMPLETE'
+              d['inherited_br_harness_commit']='8a70892c9533206e4011eee041914ca89bae2290'
+          else:
+              d={'experiment':'Exp073BS','classification':'NONCLASSIFYING_INFRASTRUCTURE_SOURCE_LINKAGE_DIAGNOSTIC','authority':False,'scientific_pass_claimed':False,'scientific_readiness_increment':0,'draft_data_readiness_increment':0,'Exp073AQ_preserved_as_FAIL':True,'Exp073BJ_preserved_as_PASS':True,'status':'BS_Q5_PARTIAL_DIAGNOSTIC_INCOMPLETE','workflow_fallback_receipt':True,'error':'inherited diagnostic produced no receipt'}
+          dst.write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          print(dst.read_text())
+          PY
+      - name: Upload Exp073BS diagnostic receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073bs-wigner-linkage-full-history-v0-1
+          path: data/derived/g7/exp073bs_wigner_linkage_full_history_result_v0_1.json
+          if-no-files-found: error
