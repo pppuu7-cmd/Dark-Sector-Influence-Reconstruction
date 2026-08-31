@@ -9,16 +9,17 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 
 ## Read first
 
-1. `recovery/2026-08-31_local_numerical_structure_audit_bj_active.md`
-2. `recovery/2026-08-31_exp073bj_binding_provenance_audit_compute_active.md`
-3. `recovery/2026-08-31_exp073bi_q1_exp073bj_track_a_active.md`
-4. `experiments/073bj_article3_wm_s1_two_thread_track_a_successor_v0_1_prereg.md`
-5. `experiments/073bj_article3_two_thread_wm_s1_binding_v0_1.json`
-6. `experiments/073bi_article3_wm_s1_parallel_execution_successor_v0_1_prereg.md`
-7. `recovery/2026-08-31_exp073bh_d2_timeout_class_evidenced.md`
-8. `recovery/2026-08-31_exp073ba_cancelled_execution_incomplete_bd_p3.md`
-9. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
-10. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+1. `recovery/2026-08-31_general_coupling_elision_audit_bj_active.md`
+2. `recovery/2026-08-31_local_numerical_structure_audit_bj_active.md`
+3. `recovery/2026-08-31_exp073bj_binding_provenance_audit_compute_active.md`
+4. `recovery/2026-08-31_exp073bi_q1_exp073bj_track_a_active.md`
+5. `experiments/073bj_article3_wm_s1_two_thread_track_a_successor_v0_1_prereg.md`
+6. `experiments/073bj_article3_two_thread_wm_s1_binding_v0_1.json`
+7. `experiments/073bi_article3_wm_s1_parallel_execution_successor_v0_1_prereg.md`
+8. `recovery/2026-08-31_exp073bh_d2_timeout_class_evidenced.md`
+9. `recovery/2026-08-31_exp073ba_cancelled_execution_incomplete_bd_p3.md`
+10. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+11. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
 
 ## Current authority state
 
@@ -29,8 +30,9 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 - Exp073BH run `33370998182` remains `BH_D2_TIMEOUT_OR_EXTERNAL_CANCELLATION_EVIDENCED`: both BA compact jobs reached the frozen 360-minute execution boundary. This is not scientific PASS/FAIL and is not stronger causal evidence for OOM/manual cancellation/runner loss.
 - Exp073BD `33342265114` remains `P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE`, `+0/+0`; no branch salvage.
 - Exp073BI run `33375467713` is terminal **`BI_Q1_PARALLEL_EXACT_QA_PASS`**. Artifact `9751718353`, digest `sha256:c857b24fdcc0a49b749fbfd538451a8e53bf98f4da9abd92cefce3c4a9df2752`; independent two-thread QA outputs were exactly equal with identical SHA `5e00c7377d50a71d88c98a324d53ef403617022c8dadd4a390eebbe7be4612ba`. BI is synthetic/infrastructure only, `+0/+0`.
-- Exp073BJ is the prospectively frozen full-scale two-thread Track-A Wm_S1 successor. Hosted run **`33379013167`** is active from trigger/head `0fd096e38bf047b8106b80409bb0a2c8538c2c3e`. Compact jobs A `99446854065` and B `99446854363` have both passed prospective freeze, exact NaMaster lineage, exact BI Q1 binding and exact Exp073AZ canonical PCL binding; both are now in `Compute two-thread compact Wm_S1 replica`. No BJ artifacts exist yet, so no compact classification exists.
+- Exp073BJ is the prospectively frozen full-scale two-thread Track-A Wm_S1 successor. Hosted run **`33379013167`** is active from trigger/head `0fd096e38bf047b8106b80409bb0a2c8538c2c3e`. Compact jobs A `99446854065` and B `99446854363` have both passed prospective freeze, exact NaMaster lineage, exact BI Q1 binding and exact Exp073AZ canonical PCL binding; both are now in `Compute two-thread compact Wm_S1 replica`. No BJ artifacts exist at the latest audit snapshot, so no compact classification exists.
 - Local numerical structure audit is frozen separately as nonclassifying `+0/+0`; it may not alter any BJ decision rule.
+- General-coupling elision audit is frozen separately as nonclassifying `+0/+0`; it changes no active BJ code or classification rule.
 
 ## Exp073BJ immutable route and provenance audit
 
@@ -51,6 +53,16 @@ Historical Exp073AQ Wm_S1 A/B windows both give `max(abs(WQ-I)) = 6.816769371198
 Real DES-derived provisional Exp073BD Wm_S2 branch-B artifact `9746250767` gives `cond_2(K)=2.1928888836909883`, `sigma_min(K)=0.01669516419847395`, `max(abs(WQ-I))=9.992007221626409e-16`, and `||KW-A||/||A||=3.2380349152387473e-16`. This provisional task has a very well-conditioned 39x39 finalizer, supporting the diagnosis that the multi-hour execution bottleneck is the full general-coupling construction rather than the final `solve(K,A)`. Wm_S1 conditioning remains unknown until BJ yields a valid compact artifact.
 
 Full audit: `docs/ARTICLE3_LOCAL_NUMERICAL_STRUCTURE_AUDIT_2026-08-31.md`. Recovery checkpoint: `recovery/2026-08-31_local_numerical_structure_audit_bj_active.md`. All results are `+0/+0` and cannot alter frozen BJ criteria.
+
+## General-coupling elision audit — nonclassifying
+
+Full audit: `docs/ARTICLE3_GENERAL_COUPLING_ELISION_AUDIT_2026-08-31.md`, commit `fe251ac43870efa79e578af9f07d5ba7bff78d55`. Recovery checkpoint: `recovery/2026-08-31_general_coupling_elision_audit_bj_active.md`, commit `796e7c7c124a364aa70286630ea3636b575074f7`.
+
+For frozen `nl=12288`, one scalar dense float64 `12288 x 12288` matrix is `150,994,944` doubles = `1,207,959,552` bytes = exactly `1.125 GiB` before overhead. The useful `[39,12288]` compact projected payload is about `3.66 MiB`, roughly 315x smaller by retained storage.
+
+Public-API audit gives a negative result: slicing/chunking after documented `get_general_coupling_matrix` cannot elide the full dense construction because materialization has already occurred, while documented `NmtWorkspace.couple_cell` operates through an already constructed workspace and is not a block/row construction iterator. No documented public streaming interface for partial `get_general_coupling_matrix` construction was identified.
+
+A future direct band-projected/native accumulator is therefore only a plausible unqualified execution hypothesis. Before classifying use it requires prospective source-level provenance plus deterministic exact code-equivalence and independent-process repeatability qualification. Changing accumulation order can change floating-point bits. Storage reduction alone also does not prove runtime reduction if all native coupling elements are still evaluated. This audit changes no active BJ workflow and yields `+0/+0`.
 
 ## Frozen scientific boundaries
 
@@ -77,6 +89,7 @@ Do not start a duplicate Exp073BJ run. Re-inspect jobs `99446854065` and `994468
 - ✅ Exp073BI: `BI_Q1_PARALLEL_EXACT_QA_PASS`, `+0/+0`.
 - ✅ Exp073BJ binding-provenance audit: run-head Git history closes two missing explicit workflow assertions for this immutable run; `+0/+0`.
 - ✅ local numerical structure audit: WQ identity frozen; provisional Wm_S2 `cond_2(K)=2.19`; `+0/+0`.
+- ✅ general-coupling elision audit: public post-return chunking/couple_cell routes rejected; projected/native accumulator remains unqualified future hypothesis; `+0/+0`.
 - 🟡 Exp073BJ run `33379013167`: full-scale two-thread Track-A compact A/B active after exact BI/AZ binding PASS.
 - ❌ Exp073AQ: permanent exact-repeatability scientific FAIL.
 - ❌ Layer A/B, covariance/whitening, G7, G8, G9: not authorized; G8 jump forbidden.
