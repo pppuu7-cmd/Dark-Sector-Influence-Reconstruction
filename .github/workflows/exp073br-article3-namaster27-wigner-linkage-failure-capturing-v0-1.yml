@@ -1,0 +1,73 @@
+name: Exp073BR Article3 NaMaster27 Wigner linkage failure-capturing v0.1
+
+on:
+  push:
+    paths:
+      - 'triggers/exp073br_run.txt'
+  workflow_dispatch:
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce Exp073BR prospective freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- experiments/073br_article3_namaster27_wigner_linkage_failure_capturing_v0_1_prereg.md)" = "ec4b4eb977dc762b20add68190790e85796608fc"
+          test "$(git log -1 --format=%H -- ci/exp073br_namaster27_wigner_linkage_failure_capturing_v0_1.py)" = "8a70892c9533206e4011eee041914ca89bae2290"
+          grep -Fq 'Exp073AQ remains permanently' experiments/073br_article3_namaster27_wigner_linkage_failure_capturing_v0_1_prereg.md
+          grep -Fq 'Exp073BJ run `33379013167` remains terminal Track-A exact authority PASS' experiments/073br_article3_namaster27_wigner_linkage_failure_capturing_v0_1_prereg.md
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==2.1.3' 'pymaster==2.7'
+          python - <<'PY'
+          import importlib.metadata
+          v=importlib.metadata.version('pymaster')
+          assert v == '2.7' or v.startswith('2.7.'), v
+          print(v)
+          PY
+      - name: Run failure-capturing Wigner linkage diagnostic
+        id: diagnostic
+        continue-on-error: true
+        shell: bash
+        run: |
+          python ci/exp073br_namaster27_wigner_linkage_failure_capturing_v0_1.py
+      - name: Guarantee receipt exists
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          test -f data/derived/g7/exp073br_wigner_linkage_failure_capturing_result_v0_1.json
+          rc=$?
+          if [ $rc -ne 0 ]; then
+            mkdir -p data/derived/g7
+            cat > data/derived/g7/exp073br_wigner_linkage_failure_capturing_result_v0_1.json <<'JSON'
+          {
+            "experiment": "Exp073BR",
+            "classification": "NONCLASSIFYING_INFRASTRUCTURE_SOURCE_LINKAGE_DIAGNOSTIC",
+            "authority": false,
+            "scientific_pass_claimed": false,
+            "scientific_readiness_increment": 0,
+            "draft_data_readiness_increment": 0,
+            "Exp073AQ_preserved_as_FAIL": true,
+            "Exp073BJ_preserved_as_PASS": true,
+            "status": "BR_Q5_PARTIAL_DIAGNOSTIC_INCOMPLETE",
+            "workflow_fallback_receipt": true,
+            "error": "diagnostic process failed before writing receipt"
+          }
+          JSON
+          fi
+          cat data/derived/g7/exp073br_wigner_linkage_failure_capturing_result_v0_1.json
+      - name: Upload Exp073BR diagnostic receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073br-wigner-linkage-failure-capturing-v0-1
+          path: data/derived/g7/exp073br_wigner_linkage_failure_capturing_result_v0_1.json
+          if-no-files-found: error
