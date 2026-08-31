@@ -1,0 +1,43 @@
+name: Exp073BQ NaMaster 2.7 Wigner linkage diagnostic v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073bq_namaster27_wigner_linkage_diagnostic_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce prospective freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bq_article3_namaster27_wigner_linkage_diagnostic_v0_1_prereg.md)" = '7c6b15e99ec0691e1e2b3064b2668ef574d8d73f'
+          test "$(git log -1 --format=%H -- ci/exp073bq_namaster27_wigner_linkage_diagnostic_v0_1.py)" = 'c46123466aad96449a94893b199b686afadcfda9'
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euxo pipefail
+          conda create -y -p "${RUNNER_TEMP}/bq" -c conda-forge python=3.11 namaster=2.7 numpy
+          echo "BQ_PY=${RUNNER_TEMP}/bq/bin/python" >> "${GITHUB_ENV}"
+          echo "CONDA_PREFIX=${RUNNER_TEMP}/bq" >> "${GITHUB_ENV}"
+      - name: Inspect runtime Wigner linkage
+        shell: bash
+        run: |
+          set -euxo pipefail
+          "${BQ_PY}" ci/exp073bq_namaster27_wigner_linkage_diagnostic_v0_1.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bq-wigner-linkage-${{ github.sha }}
+          path: data/derived/g7/exp073bq_wigner_linkage_result_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
