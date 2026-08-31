@@ -9,17 +9,18 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 
 ## Read first
 
-1. `recovery/2026-08-31_general_coupling_elision_audit_bj_active.md`
-2. `recovery/2026-08-31_local_numerical_structure_audit_bj_active.md`
-3. `recovery/2026-08-31_exp073bj_binding_provenance_audit_compute_active.md`
-4. `recovery/2026-08-31_exp073bi_q1_exp073bj_track_a_active.md`
-5. `experiments/073bj_article3_wm_s1_two_thread_track_a_successor_v0_1_prereg.md`
-6. `experiments/073bj_article3_two_thread_wm_s1_binding_v0_1.json`
-7. `experiments/073bi_article3_wm_s1_parallel_execution_successor_v0_1_prereg.md`
-8. `recovery/2026-08-31_exp073bh_d2_timeout_class_evidenced.md`
-9. `recovery/2026-08-31_exp073ba_cancelled_execution_incomplete_bd_p3.md`
-10. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
-11. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+1. `recovery/2026-08-31_streaming_band_projection_equivalence_audit_bj_active.md`
+2. `recovery/2026-08-31_general_coupling_elision_audit_bj_active.md`
+3. `recovery/2026-08-31_local_numerical_structure_audit_bj_active.md`
+4. `recovery/2026-08-31_exp073bj_binding_provenance_audit_compute_active.md`
+5. `recovery/2026-08-31_exp073bi_q1_exp073bj_track_a_active.md`
+6. `experiments/073bj_article3_wm_s1_two_thread_track_a_successor_v0_1_prereg.md`
+7. `experiments/073bj_article3_two_thread_wm_s1_binding_v0_1.json`
+8. `experiments/073bi_article3_wm_s1_parallel_execution_successor_v0_1_prereg.md`
+9. `recovery/2026-08-31_exp073bh_d2_timeout_class_evidenced.md`
+10. `recovery/2026-08-31_exp073ba_cancelled_execution_incomplete_bd_p3.md`
+11. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+12. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
 
 ## Current authority state
 
@@ -33,6 +34,7 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 - Exp073BJ is the prospectively frozen full-scale two-thread Track-A Wm_S1 successor. Hosted run **`33379013167`** is active from trigger/head `0fd096e38bf047b8106b80409bb0a2c8538c2c3e`. Compact jobs A `99446854065` and B `99446854363` have both passed prospective freeze, exact NaMaster lineage, exact BI Q1 binding and exact Exp073AZ canonical PCL binding; both are now in `Compute two-thread compact Wm_S1 replica`. No BJ artifacts exist at the latest audit snapshot, so no compact classification exists.
 - Local numerical structure audit is frozen separately as nonclassifying `+0/+0`; it may not alter any BJ decision rule.
 - General-coupling elision audit is frozen separately as nonclassifying `+0/+0`; it changes no active BJ code or classification rule.
+- Streaming band-projection equivalence audit is frozen separately as nonclassifying `+0/+0`; it defines an exact prospective equivalence contract for any future row-streaming/native accumulator and does not alter active BJ.
 
 ## Exp073BJ immutable route and provenance audit
 
@@ -64,6 +66,14 @@ Public-API audit gives a negative result: slicing/chunking after documented `get
 
 A future direct band-projected/native accumulator is therefore only a plausible unqualified execution hypothesis. Before classifying use it requires prospective source-level provenance plus deterministic exact code-equivalence and independent-process repeatability qualification. Changing accumulation order can change floating-point bits. Storage reduction alone also does not prove runtime reduction if all native coupling elements are still evaluated. This audit changes no active BJ workflow and yields `+0/+0`.
 
+## Streaming band-projection equivalence audit — nonclassifying
+
+Full audit: `docs/ARTICLE3_STREAMING_BAND_PROJECTION_EQUIVALENCE_CONTRACT_2026-08-31.md`, commit `99ea22f8e1221cef1da49397d4e43789f467477c`. Recovery checkpoint: `recovery/2026-08-31_streaming_band_projection_equivalence_audit_bj_active.md`, commit `2fce5b04ef120c60aaa23988677c0b6ce51671ce`.
+
+For the frozen implementation, each compact band row is a strict increasing-`ell`, left-to-right binary64 sum of dense rows followed by one division by the integer band width. Therefore algebraic `A=BG` equivalence is insufficient for Track-A code-equivalence: a future true row-streaming/native accumulator must reproduce each dense reference row bitwise and preserve the same accumulation order/dtype/division point, then demonstrate exact compact `numpy.array_equal` against the dense reference and exact independent-process repeatability.
+
+If exact rows can genuinely be emitted without first allocating full `G`, retained storage can fall from `O(L^2)` to `O(39L+L)`. This is only a memory argument, not evidence of runtime gain, and no claim is made that NaMaster 2.7 already exposes such a row generator. Active BJ is unchanged; this audit is `+0/+0`.
+
 ## Frozen scientific boundaries
 
 Never alter post hoc: `0.295 <= z <= 2.33`; `0 < k <= 0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid <= 0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES `NSIDE=4096`; true ell `0..12287`; 39 bands; Wm `TE <- TE`; WW `EE <- EE`; canonical selected window `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity is `numerically_unresolved`; no covariance/whitening/nuisance/quotient/relation/null/G8 leakage into earlier support selection.
@@ -90,6 +100,7 @@ Do not start a duplicate Exp073BJ run. Re-inspect jobs `99446854065` and `994468
 - ✅ Exp073BJ binding-provenance audit: run-head Git history closes two missing explicit workflow assertions for this immutable run; `+0/+0`.
 - ✅ local numerical structure audit: WQ identity frozen; provisional Wm_S2 `cond_2(K)=2.19`; `+0/+0`.
 - ✅ general-coupling elision audit: public post-return chunking/couple_cell routes rejected; projected/native accumulator remains unqualified future hypothesis; `+0/+0`.
+- ✅ streaming projection equivalence audit: exact row/order/dtype/division contract frozen for any future source-level accumulator; `+0/+0`.
 - 🟡 Exp073BJ run `33379013167`: full-scale two-thread Track-A compact A/B active after exact BI/AZ binding PASS.
 - ❌ Exp073AQ: permanent exact-repeatability scientific FAIL.
 - ❌ Layer A/B, covariance/whitening, G7, G8, G9: not authorized; G8 jump forbidden.
