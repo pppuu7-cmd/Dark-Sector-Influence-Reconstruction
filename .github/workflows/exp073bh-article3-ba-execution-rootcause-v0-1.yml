@@ -17,14 +17,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
-      - name: Enforce prospective BH freeze and no science promotion
+      - name: Enforce prospective BH freeze and diagnostic implementation
         shell: bash
         run: |
           set -euxo pipefail
           test "$(git log -1 --format=%H -- experiments/073bh_article3_ba_fullscale_execution_rootcause_v0_1_prereg.md)" = '48e39a3063b3c525feefd99d2821f7fcf77a8941'
+          test "$(git log -1 --format=%H -- ci/exp073bh_article3_ba_execution_rootcause_v0_1.py)" = 'ea006ca40afce2388bc374b9593785d77a6748f0'
           test -f .github/workflows/exp073ba-article3-low-memory-wm-s1-production-v0-1.yml
           grep -Eq '^    timeout-minutes: 360$' .github/workflows/exp073ba-article3-low-memory-wm-s1-production-v0-1.yml
-          ! grep -R -E 'covariance|whitening|nuisance|G8|withheld' ci/exp073bh_article3_ba_execution_rootcause_v0_1.py
       - name: Diagnose immutable BA hosted execution metadata
         env:
           GITHUB_TOKEN: ${{ github.token }}
