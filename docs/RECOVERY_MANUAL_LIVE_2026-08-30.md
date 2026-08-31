@@ -7,28 +7,30 @@ Repository/hosted authority outranks chat wording. RTK and RQIR are excluded fro
 ## Read order
 
 1. `docs/RECOVERY_LATEST.md`
-2. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-3. `docs/LOCAL_COMPUTE_BENCHMARK_2026-08-31.md`
-4. `recovery/2026-08-31_exp073ay_runtime_budget_prereg_aq_active_forecast.md`
-5. `experiments/073ay_article3_controlled_twin_runtime_budget_policy_v0_1_prereg.md`
-6. `docs/DSIR_ALL_CHAT_REPOSITORY_RECONCILIATION_2026-08-30.md`
-7. `docs/RECOVERY_MANUAL_ADDENDUM_EXP065B_EXP067E_2026-08-30.md`
-8. `docs/DSIR_CROSS_CHAT_AUTHORITY_CONSOLIDATION_2026-08-30.md`
-9. Exp073AT/AU/AV/AW/AX recovery addenda where exact downstream rules are needed.
+2. `recovery/2026-08-31_exp073bd_p3_incomplete_ba_active.md`
+3. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+4. `docs/EXP073BA_BD_TERMINAL_OUTCOME_DECISION_TABLE_2026-08-31.md`
+5. `experiments/073bg_article3_active_ba_bd_terminal_outcome_policy_v0_1_prereg.md`
+6. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+7. `docs/LOCAL_COMPUTE_BENCHMARK_2026-08-31.md`
+8. `docs/DSIR_ALL_CHAT_REPOSITORY_RECONCILIATION_2026-08-30.md`
+9. `docs/RECOVERY_MANUAL_ADDENDUM_EXP065B_EXP067E_2026-08-30.md`
+10. Exp073AZ/BC/BA/BF recovery/preregistration records as needed.
 
 ## Active scientific state
 
 - Article-2 repository-for-writing readiness: **100%** for declared manuscript scope only.
-- Strict Article-3 scientific repository readiness: **52%**.
-- Layer A: OPEN.
-- Layer B: OPEN.
+- Strict Article-3 scientific authority readiness: **52.0%**.
+- Article-3 draft/data readiness: **53.714285714285715%** (display **53.7%**).
+- Exp073BA clean rerun `33345968620`: active Track-A Wm_S1 authority-succession computation; no comparator authority yet at the current checkpoint.
+- Exp073BD run `33342265114`: terminal **`P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE`** under the prospectively frozen Exp073BG policy; `+0` Verified, `+0` Draft/data.
+- Layer A: OPEN / not yet authorized.
+- Layer B: OPEN / not yet authorized.
 - covariance/whitening: BLOCKED.
 - G7: OPEN.
-- G8: OPEN.
+- G8: OPEN and forbidden to jump.
 - G9: OPEN.
-- synthetic/infrastructure/governance/provenance/numerical-QA/root-cause work: `+0` readiness.
-
-The previous success-conditioned route to a real complete pre-support finite-operator candidate manifest is currently blocked by Exp073AQ.
+- synthetic/infrastructure/governance/provenance/numerical-QA/root-cause work: `+0` scientific readiness.
 
 ## Historical negative/supersession states that must never be erased
 
@@ -49,7 +51,8 @@ The previous success-conditioned route to a real complete pre-support finite-ope
 - historical Exp073X: infrastructure-INCOMPLETE; no partial reuse.
 - historical Exp073X2 Q: immutable computational `SCIENTIFIC_REPEATABILITY_FAIL`.
 - Exp073AQ: hosted controlled single-thread exact Wm_S1 `SCIENTIFIC_REPEATABILITY_FAIL`; permanent and not rescued by numerical closeness.
-- later authority succession, if any, must never erase historical P/Q/AQ route records.
+- Exp073BD: terminal Track-P provisional incomplete P3; not a scientific FAIL and not downstream-usable.
+- later authority succession never erases historical P/Q/AQ/BD route records.
 
 ## Frozen Article-3 support boundaries
 
@@ -71,114 +74,50 @@ Never alter post hoc:
 - no covariance/whitening/nuisance SVD/rank/quotient/relation/null/G8 information during support selection;
 - exact-threshold ambiguity is `numerically_unresolved`, never rounded to PASS/FAIL.
 
-## Controlled single-thread exact authority contract
+## Exp073AQ — permanent terminal hosted Wm_S1 repeatability FAIL
 
-Historical Exp073AM controlled Wm_S0 anchor:
-
-`8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`
-
-Authority class:
-
-`controlled_single_thread_exact_v1`
-
-Every successor under this contract required two independent hosted replicas and exact:
-
-- `OMP_NUM_THREADS=1`
-- `OPENBLAS_NUM_THREADS=1`
-- `MKL_NUM_THREADS=1`
-- `NUMEXPR_NUM_THREADS=1`
-- `VECLIB_MAXIMUM_THREADS=1`
-- `BLIS_NUM_THREADS=1`
-- `OMP_DYNAMIC=FALSE`
-- canonical SHA equality
-- `numpy.array_equal == True`.
-
-No tolerance, ULP, rounding, majority vote, preferred replica or closeness-to-historical-output rescue exists.
-
-## Exp073AQ — terminal hosted Wm_S1 repeatability FAIL
-
-Frozen run:
-
-`33327372191`
-
-Frozen source head:
-
-`fe89b6c64ee0cee5dbc40080973ec2af2ae683e0`
-
-Completed `2026-08-30T22:08:45Z`.
-
-Jobs:
-
-- A `99299799192`: success;
-- B `99299799338`: success;
-- comparator `99329163628`: success.
-
-Comparator authority artifact:
-
-`9739725913`
-
-digest:
-
-`sha256:5184bb3034bd2c1bd497ad30db3dbd4e1550d09a0c25af328cdee553385fef03`
+Frozen run `33327372191`; comparator artifact `9739725913`, digest `sha256:5184bb3034bd2c1bd497ad30db3dbd4e1550d09a0c25af328cdee553385fef03`.
 
 Terminal status:
 
 `SCIENTIFIC_REPEATABILITY_FAIL_EXP073AQ_WM_S1_CONTROLLED_TWIN_EXACT_V0_1`
 
-Exact facts:
+Exact facts include `numpy.array_equal=false`, unequal canonical SHA, `472997 / 479232` differing entries, max absolute difference `2.0816681711721685e-17`. The discrepancy magnitude is non-operative under the frozen exact contract. Exp073AQ remains a genuine hosted scientific repeatability FAIL and is never converted to PASS by later work.
 
-- `numpy.array_equal = false`;
-- canonical SHA equality = false;
-- A selected-window SHA `979c61faea99cf60146078ccdd5a9c75547dcc5a689ee48c4c5f309cf6a10b69`;
-- B selected-window SHA `5b02a691607dd21ede7601f081767ac3713e300abd5a9e358e4593a6ec486225`;
-- `472997 / 479232` entries differ across all 39 bands;
-- max absolute difference `2.0816681711721685e-17`;
-- mean absolute difference `2.5248672723363528e-20`;
-- metadata identical and single-thread controls verified.
+## Authority succession after Exp073AQ
 
-The discrepancy is tiny in magnitude but that fact is scientifically non-operative under the frozen exact contract. Exp073AQ is a genuine hosted repeatability FAIL, not infrastructure-INCOMPLETE.
+Later work is a separately governed route and does not rescue AQ.
 
-Consequences:
+- Exp073AZ established exact mask-PCL predecessor authority only.
+- Exp073BC froze AZ->BA binding.
+- Exp073BE closed the provenance/harness diagnostic with `+0` scientific readiness.
+- Exp073BF hosted small-scale Wm low-memory stock-equivalence QA passed; it is synthetic/infrastructure QA only and contributes `+0` readiness.
+- Exp073BG prospectively froze BA/BD terminal classification while both heavy runs were still active.
+- Exp073BA `33345968620` is the active clean Track-A Wm_S1 low-memory authority-succession run. At the current checkpoint both compact A/B jobs had passed exact AZ binding and were computing. BA scientific PASS requires the entire frozen chain: compact exact PASS -> both finalizers -> final exact PASS -> immutable hosted authority artifact.
 
-- Wm_S1 is not admitted;
-- Wm_S2 is blocked;
-- ten WW successors are blocked;
-- Exp073AR/AS are blocked;
-- readiness stays **52%**;
-- no current authorized calendar path above 52% exists.
+No tolerance, ULP, rounding, averaging, majority vote, preferred replica or numerical-closeness rescue is allowed for BA exact scientific comparators.
 
-## Root-cause diagnostic firewall
+A timeout/OOM/runner/dependency/harness/resource failure before two complete valid frozen comparator inputs is infrastructure/resource failure, not scientific FAIL. If two complete valid Track-A replicas reach the frozen comparator and exact equality fails, that stage is a scientific exact-repeatability FAIL regardless of numerical magnitude.
 
-Post-authority QA may inspect immutable A/B payloads but cannot alter the frozen classification.
+## Exp073BD — terminal P3 provisional incomplete
 
-Observed environment difference:
+Run `33342265114`, frozen source head `2990c51ec1ec263eb883398b21356770401ee83a`, terminal `cancelled` at `2026-08-31T05:33:05Z`.
 
-- A ran on AMD EPYC 7763;
-- B ran on AMD EPYC 9V74.
+Branch A job `99339920252` was cancelled during scientific compute. Artifact `9746718704`, digest `sha256:e7ab0b3859070441532d8778f51faf9c3d7e7a0d6afe8af2546995067b5e15e5`, preserved only PCL `<f8 [12288]` with SHA `16e00d60e8298f94ab6e5d223db823231b84df3b7b588a017acbb208a1dbdb64`.
 
-This is only a candidate source of floating-point nondeterminism. Do not claim causality without a new prospective diagnostic protocol.
+Branch B job `99339920262` succeeded. Artifact `9746250767`, digest `sha256:3bd4850d9f768fd36cad34788394b913507d71ec828dee7a68544b44ce6f7481`, contains full provisional `<f8 [39,12288]` with SHA `10d12a10965b49c9dbba4638c91bd81c0b40cc35bd0d464c8ca837b5231dcb26` and `science_use=FORBIDDEN`.
 
-A future recovery must be a separately numbered, prospectively frozen authority succession. It must not:
+Pair diagnostic job `99339920344` was skipped. The prospectively frozen Exp073BG rule therefore yields exactly:
 
-- convert Exp073AQ to PASS;
-- introduce a tolerance/rounding/ULP equivalence after seeing AQ;
-- choose A or B as a preferred target;
-- reuse partial failed outputs as authority;
-- alter any frozen physical support threshold or anti-leakage rule.
+`P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE`
 
-## Exp073AY — status after AQ
-
-Exp073AY runtime policy was frozen prospectively at commit:
-
-`3aeffe02afd44c5474cc15cc53007f9beec2b160`
-
-Its 360-minute budget does not authorize Wm_S2 after a valid AQ repeatability FAIL and does not reclassify AQ as infrastructure failure. It remains a historical/prospective infrastructure policy only.
+This is not scientific FAIL. Branch B is not preferred, does not earn standalone Wm_S2 draft/data credit, and cannot be propagated downstream. Both inspected BD JSON metadata payloads also say `experiment="Exp073AZ"` despite `contract_version="exp073bd_v0_1"`; preserve this as a metadata/provenance defect only, not as a claimed cause of cancellation and not as a post-hoc repair opportunity.
 
 ## Local compute benchmark
 
-Local 4-GiB cgroup testing remains `LOCAL_INFRASTRUCTURE_OOM_BENCHMARK_ONLY`. It neither explains AQ nor changes readiness. A low-memory/blockwise implementation may be investigated only as a non-authoritative engineering route unless separately prospectively promoted to a new authority class.
+Local 4-GiB cgroup testing remains `LOCAL_INFRASTRUCTURE_OOM_BENCHMARK_ONLY`. It neither explains AQ nor changes readiness. A low-memory/blockwise implementation may be investigated only under its separately frozen authority-succession rules; synthetic or local engineering success never becomes hosted scientific authority by itself.
 
-## Downstream successor firewalls already frozen
+## Downstream firewalls
 
 - Exp073AR: execution-qualified 14-window aggregate schema.
 - Exp073AS: complete 1410-row pre-support join schema.
@@ -188,25 +127,22 @@ Local 4-GiB cgroup testing remains `LOCAL_INFRASTRUCTURE_OOM_BENCHMARK_ONLY`. It
 - Exp073AW: target-independent nuisance numerical-rank/resolvability rule.
 - Exp073AX: G7 relation/statistic/null/fit protocol-admission firewall.
 
-These remain valid downstream firewalls but are blocked upstream.
+Exp073AW rank threshold remains `tau_rank = eps64 * max(d,m) * sigma_max`; retain singular mode only if `sigma_i > tau_rank`, with equality numerically unresolved. SVD is required; normal-equation inversion for rank is forbidden.
 
-Exp073AW rank threshold remains:
-
-`tau_rank = eps64 * max(d,m) * sigma_max`.
-
-Retain singular mode only if `sigma_i > tau_rank`; equality is numerically unresolved. SVD required; normal-equation inversion for rank forbidden.
-
-Exp073AX requires a future concrete content-hash-frozen G7 protocol before fitting. During discovery/fit:
-
-`withheld_family_selected=false`, `withheld_reads=[]`, `G8_reads=[]`.
-
-A fitted relation/null result must be frozen immutably before a fresh G8 family is selected/exposed.
+During G7 discovery/fit: `withheld_family_selected=false`, `withheld_reads=[]`, `G8_reads=[]`. A fitted relation/null result must be frozen immutably before a fresh G8 family is selected/exposed.
 
 ## Current authorized order
 
 1. preserve Exp073AQ permanently as hosted repeatability FAIL;
-2. do not launch Wm_S2 under the failed route;
-3. perform only independent, nonclassifying root-cause/provenance/engineering validation work;
-4. if continuation is warranted, first freeze a separately numbered prospective authority-succession protocol that does not rescue AQ;
-5. only after that new route establishes its own preregistered authority may angular production restart;
-6. the downstream order remains angular authority -> Exp073AR -> Exp073AS -> Layer A -> Layer B -> covariance/whitening -> nuisance quotient -> G7 -> frozen relation -> fresh G8.
+2. consume Exp073BA only through its prospectively frozen exact Track-A chain; do not declare PASS before immutable hosted authority;
+3. preserve Exp073BD as terminal P3 incomplete; do not prefer/salvage branch B and do not grant Wm_S2 credit;
+4. only after genuine upstream angular authority continue angular production and the real 14-window aggregate;
+5. then validated physical forward/power-input bridges;
+6. then preregistered physical support-validity mask;
+7. then Layer A / Layer B prerequisites;
+8. then covariance restriction/whitening;
+9. then nuisance tangent rank/SVD;
+10. then quotient/relation/null control and actual G7 authorization;
+11. only then select/expose a fresh G8 withheld family.
+
+`Verified: 52.0% | Draft/data: 53.7%`
