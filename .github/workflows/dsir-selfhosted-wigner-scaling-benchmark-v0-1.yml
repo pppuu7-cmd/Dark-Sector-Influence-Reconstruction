@@ -1,0 +1,80 @@
+name: DSIR Self-hosted Wigner scaling benchmark v0.1
+
+on:
+  push:
+    paths:
+      - 'experiments/selfhosted_wigner_benchmark_trigger_v0_1.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  OMP_DYNAMIC: 'FALSE'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+
+jobs:
+  benchmark:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bind frozen BW Q1 implementation
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- ci/exp073bw_stream_general_coupling_v0_1.c)" = '9fb0ecb79986cf5f542760377533a685745b31e2'
+
+      - name: Install NaMaster 2.7 lineage if needed
+        shell: bash
+        run: |
+          set -euxo pipefail
+          ENV="$HOME/.cache/dsir-nmt27"
+          if ! test -x "$ENV/bin/python"; then
+            conda create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          fi
+          "$ENV/bin/python" - <<'PY'
+          import importlib.metadata
+          v=importlib.metadata.version('pymaster')
+          assert v=='2.7' or v.startswith('2.7.'),v
+          print('pymaster',v)
+          PY
+          NMTLIB="$($ENV/bin/python - <<'PY'
+          import _nmtlib
+          print(_nmtlib.__file__)
+          PY
+          )"
+          echo "NMT_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+          echo "NMTLIB_PATH=$NMTLIB" >> "$GITHUB_ENV"
+
+      - name: Run real DSIR Wigner streaming scaling 1 2 4 6 8 10
+        shell: bash
+        run: |
+          set -euxo pipefail
+          rm -rf benchmark_wigner
+          "$NMT_PY" ci/dsir_selfhosted_wigner_scaling_benchmark_v0_1.py
+
+      - name: Capture system state
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p benchmark_wigner
+          lscpu > benchmark_wigner/lscpu.txt
+          free -b > benchmark_wigner/free_bytes.txt
+          nproc > benchmark_wigner/nproc.txt
+
+      - name: Upload DSIR-specific benchmark
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-selfhosted-wigner-scaling-v0-1-${{ github.sha }}
+          path: benchmark_wigner/*
+          if-no-files-found: warn
+          retention-days: 30
+          compression-level: 0
