@@ -1,0 +1,131 @@
+name: Exp073BP Article3 Wm triangular reciprocity QA v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073bp_article3_wm_triangular_reciprocity_qa_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  replica:
+    strategy:
+      fail-fast: false
+      matrix: {replica: [A, B, C, D]}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce Exp073BP prospective freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bp_article3_wm_triangular_reciprocity_qa_v0_1_prereg.md)" = 'be4c1aaffbfb789bc1854f7ebe36e9ca04ab2157'
+          test "$(git log -1 --format=%H -- ci/exp073bp_wm_triangular_reciprocity_v0_1.c)" = 'b6c7492820ec40986f7997285acd7ece13953e23'
+          test "$(git log -1 --format=%H -- ci/exp073bp_wm_triangular_reciprocity_qa_v0_1.py)" = '4ae0a1a3b404968f23180990d7e7f4aa50401e13'
+          test "$(git log -1 --format=%H -- ci/exp073bo_native_band_projected_general_coupling_qa_v0_1.py)" = '06f19e947a9a9ddb7b569856a50aca39b220c657'
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          conda create -y -p "${RUNNER_TEMP}/bp" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "BP_PY=${RUNNER_TEMP}/bp/bin/python" >> "${GITHUB_ENV}"
+      - name: Compile triangular native kernel
+        shell: bash
+        run: |
+          gcc -O2 -std=gnu11 -shared -fPIC ci/exp073bp_wm_triangular_reciprocity_v0_1.c -lm -o "${RUNNER_TEMP}/libexp073bp.so"
+      - name: Run stock and triangular scales
+        shell: bash
+        env: {REPLICA: '${{ matrix.replica }}'}
+        run: |
+          set -euxo pipefail
+          od="data/derived/g7/exp073bp_${REPLICA}"; mkdir -p "${od}"
+          for lm in 95 255 511; do
+            /usr/bin/time -f '%e %M' -o "${od}/resource_stock_${lm}.txt" \
+              "${BP_PY}" ci/exp073bo_native_band_projected_general_coupling_qa_v0_1.py stock \
+              --lmax "${lm}" --out-npz "${od}/stock_${lm}.npz" --out-json "${od}/stock_${lm}.json"
+            /usr/bin/time -f '%e %M' -o "${od}/resource_tri_${lm}.txt" \
+              "${BP_PY}" ci/exp073bp_wm_triangular_reciprocity_qa_v0_1.py native \
+              --lmax "${lm}" --so "${RUNNER_TEMP}/libexp073bp.so" \
+              --out-npz "${od}/tri_${lm}.npz" --out-json "${od}/tri_${lm}.json"
+            "${BP_PY}" ci/exp073bp_wm_triangular_reciprocity_qa_v0_1.py compare \
+              --stock-npz "${od}/stock_${lm}.npz" --native-npz "${od}/tri_${lm}.npz" \
+              --stock-json "${od}/stock_${lm}.json" --native-json "${od}/tri_${lm}.json" \
+              --out-json "${od}/compare_${lm}.json"
+          done
+      - name: Build BP replica receipt
+        shell: bash
+        env: {REPLICA: '${{ matrix.replica }}'}
+        run: |
+          od="data/derived/g7/exp073bp_${REPLICA}"
+          lscpu > "${od}/lscpu.txt"
+          "${BP_PY}" - "${od}" "${REPLICA}" <<'PY'
+          import importlib.metadata,json,pathlib,sys,numpy as np
+          od=pathlib.Path(sys.argv[1]); r=sys.argv[2]
+          try:
+              from numpy._core._multiarray_umath import __cpu_features__
+              feats={k:bool(v) for k,v in __cpu_features__.items()}
+          except Exception as e: feats={'error':repr(e)}
+          cpu=next((x.split(':',1)[1].strip() for x in pathlib.Path('/proc/cpuinfo').read_text(errors='ignore').splitlines() if x.lower().startswith('model name')),'unknown')
+          scales={}
+          for lm in [95,255,511]:
+              c=json.loads((od/f'compare_{lm}.json').read_text())
+              sw,srss=(od/f'resource_stock_{lm}.txt').read_text().strip().split(); tw,trss=(od/f'resource_tri_{lm}.txt').read_text().strip().split()
+              c.update({'stock_wall_seconds':float(sw),'stock_max_rss_kb':int(srss),'tri_wall_seconds':float(tw),'tri_max_rss_kb':int(trss)})
+              scales[str(lm)]=c
+          out={'experiment':'Exp073BP','replica':r,'cpu_model':cpu,'cpu_features':feats,'pymaster_version':importlib.metadata.version('pymaster'),'scales':scales,'classification':'NONCLASSIFYING_MATH_SOURCE_EQUIVALENCE_QA','authority':False,'scientific_pass_claimed':False,'scientific_readiness_increment':0,'draft_data_readiness_increment':0,'Exp073AQ_preserved_as_FAIL':True}
+          (od/f'exp073bp_replica_{r}.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bp-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073bp_${{ matrix.replica }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  compare:
+    needs: replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {pattern: 'exp073bp-*-${{ github.sha }}', path: external, merge-multiple: false}
+      - name: Frozen BP cross-host exact comparator
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob,json,pathlib
+          reps=list('ABCD'); rec={}
+          for r in reps:
+              f=glob.glob(f'external/exp073bp-{r}-*/exp073bp_replica_{r}.json'); assert len(f)==1,(r,f); rec[r]=json.load(open(f[0]))
+          scales={}; ok=True
+          for lm in ['95','255','511']:
+              xs=[rec[r]['scales'][lm] for r in reps]
+              within=all(x['array_equal'] and x['sha_equal'] for x in xs)
+              nsh=[x['native_sha256'] for x in xs]; cross=len(set(nsh))==1
+              scales[lm]={'within_exact_all':within,'tri_crosshost_exact':cross,'tri_sha256':nsh,'stock_sha256':[x['stock_sha256'] for x in xs],'tri_unique_sha_count':len(set(nsh)),'resource':{r:{'stock_wall_seconds':rec[r]['scales'][lm]['stock_wall_seconds'],'tri_wall_seconds':rec[r]['scales'][lm]['tri_wall_seconds'],'stock_max_rss_kb':rec[r]['scales'][lm]['stock_max_rss_kb'],'tri_max_rss_kb':rec[r]['scales'][lm]['tri_max_rss_kb']} for r in reps}}
+              ok &= within and cross
+          status='BP_Q1_TRIANGULAR_RECIPROCITY_EXACT_PASS' if ok else 'BP_Q2_TRIANGULAR_RECIPROCITY_EXACT_FAIL'
+          out={'experiment':'Exp073BP','status':status,'classification':'NONCLASSIFYING_MATH_SOURCE_EQUIVALENCE_QA','scales':scales,'cpu_models':{r:rec[r]['cpu_model'] for r in reps},'cpu_features':{r:rec[r]['cpu_features'] for r in reps},'authority':False,'scientific_pass_claimed':False,'scientific_readiness_increment':0,'draft_data_readiness_increment':0,'Exp073AQ_preserved_as_FAIL':True}
+          pathlib.Path('data/derived/g7/exp073bp_crosshost_result_v0_1.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bp-crosshost-comparator-${{ github.sha }}
+          path: data/derived/g7/exp073bp_crosshost_result_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
