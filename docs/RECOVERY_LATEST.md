@@ -8,15 +8,16 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 
 ## Read first
 
-1. `recovery/2026-08-31_exp073bq_wigner_linkage_terminal_incomplete.md`
-2. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
-3. `recovery/2026-08-31_exp073bo_bp_hosted_incomplete_after_bj_authority.md`
-4. `recovery/2026-08-31_local_numerical_structure_audit_bj_active.md`
-5. `experiments/073bj_article3_wm_s1_two_thread_track_a_successor_v0_1_prereg.md`
-6. `experiments/073bj_article3_two_thread_wm_s1_binding_v0_1.json`
-7. `experiments/073bq_article3_namaster27_wigner_linkage_diagnostic_v0_1_prereg.md`
-8. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
-9. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+1. `recovery/2026-08-31_exp073br_failure_capturing_linkage_active.md`
+2. `recovery/2026-08-31_exp073bq_wigner_linkage_terminal_incomplete.md`
+3. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
+4. `recovery/2026-08-31_exp073bo_bp_hosted_incomplete_after_bj_authority.md`
+5. `recovery/2026-08-31_local_numerical_structure_audit_bj_active.md`
+6. `experiments/073bj_article3_wm_s1_two_thread_track_a_successor_v0_1_prereg.md`
+7. `experiments/073bj_article3_two_thread_wm_s1_binding_v0_1.json`
+8. `experiments/073br_article3_namaster27_wigner_linkage_failure_capturing_v0_1_prereg.md`
+9. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+10. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
 
 ## Current authority state
 
@@ -30,13 +31,22 @@ Historical states remain unchanged: Exp073AQ permanent hosted exact-repeatabilit
 
 Exp073BO run `33388775380` and Exp073BP run `33389213821` remain terminal infrastructure/QA incomplete: their comparator inputs were never validly produced. They are not scientific FAILs and must not be rerun unchanged.
 
-The BO code path dynamically loads packaged `pymaster._nmtlib` and requests `drc3jj` through `ctypes`. Prior BO metadata did not expose the exception, so non-export of that symbol remained only a hypothesis.
+Exp073BQ run `33411940994`, job `99553364178`, remains terminal `BQ_Q5_INFRASTRUCTURE_INCOMPLETE`. Prospective freeze and exact NaMaster 2.7 install passed, but the linkage inspection step failed before a JSON receipt artifact was produced. Therefore BQ supplies no direct evidence for or against runtime export of `drc3jj`; no root cause may be inferred from BQ alone.
 
-### Exp073BQ terminal outcome
+### Exp073BR active failure-capturing successor
 
-Prospective BQ freeze: prereg commit `7c6b15e99ec0691e1e2b3064b2668ef574d8d73f`; diagnostic commit `c46123466aad96449a94893b199b686afadcfda9`; workflow commit `03485b7d5c3886d9a39d38e08c3d1d591b2deaa0`; trigger commit `c4f4a8c1fd262acaf582426ee3c1dbd009fbc608`.
+Exp073BR repairs only the BQ evidence-capture defect. It is prospectively frozen as NONCLASSIFYING infrastructure/source-linkage QA and gives `+0/+0` for every outcome.
 
-Hosted BQ run `33411940994`, job `99553364178`, is terminal `failure`. Prospective freeze passed and exact NaMaster 2.7 installation passed. The `Inspect runtime Wigner linkage` step failed; artifact upload was skipped and no diagnostic receipt exists. Therefore the only frozen admissible class is **`BQ_Q5_INFRASTRUCTURE_INCOMPLETE`**. This is **not** evidence that `_nmtlib` lacks `drc3jj`, not source-equivalence FAIL, and not scientific FAIL. Do not infer a root cause beyond direct hosted evidence. BQ contributes `+0 Verified / +0 Draft-data`.
+Frozen provenance:
+
+- preregistration commit `ec4b4eb977dc762b20add68190790e85796608fc`;
+- failure-capturing harness commit `8a70892c9533206e4011eee041914ca89bae2290`;
+- hosted workflow commit lineage `75bfa98bf81e69c468d96242660847b91248d654` -> trigger-path-only update `b73214bc9194b6dd11749b4bfbe128a7358b2b1c`;
+- trigger receipt commit/head `aeaf68ed48da941d5b50f592d969b9382eb37fd8`.
+
+Hosted run `33417344643`, job `99571067032`, was queued at the current checkpoint. Do not start another BR while it is active. The harness independently captures version/import, extension `ctypes`, `nm`, `readelf`, `ldd`, dependency symbol probes and bounded installed-text search, then guarantees a partial JSON receipt and `if: always()` artifact upload.
+
+Frozen BR labels: `BR_Q1_EXTENSION_EXPORTS_DRC3JJ`, `BR_Q2_LINKED_DEPENDENCY_EXPORTS_DRC3JJ`, `BR_Q3_DYNAMIC_SYMBOL_ABSENT_SOURCE_REFERENCE_FOUND`, `BR_Q4_DYNAMIC_SYMBOL_AND_INSTALLED_SOURCE_REFERENCE_ABSENT`, or `BR_Q5_PARTIAL_DIAGNOSTIC_INCOMPLETE`. None is a scientific PASS/FAIL or source-equivalence authority.
 
 ## Frozen Article-3 boundaries
 
@@ -46,7 +56,7 @@ Required G7 order remains: `validated physical forward/power-input bridges -> pr
 
 ## Exact next gate
 
-Do not rerun BJ/BO/BP/BQ unchanged. The next nonclassifying gate is a prospectively frozen **failure-capturing linkage harness successor** that guarantees a partial JSON receipt and artifact even when individual probes (`ctypes`, `nm`, `readelf`, `ldd`, installed-source search) fail. Its sole purpose is to obtain direct evidence for the BQ root cause and determine whether a callable/source link target exists. Only after such evidence may a corrected streaming/source-equivalence successor be prospectively frozen. Scientific G7 order remains unchanged; no G8 jump.
+Consume terminal Exp073BR run `33417344643` and its immutable failure-capturing JSON artifact. Preserve the frozen BR classification exactly. Only after direct hosted linkage evidence exists may a corrected streaming/source-equivalence successor be prospectively frozen; that future successor must still prove exact equivalence/repeatability before any Track-A use. Do not rerun BJ/BO/BP/BQ/BR unchanged. No G8 jump.
 
 ## Shorthand
 
@@ -57,7 +67,7 @@ Do not rerun BJ/BO/BP/BQ unchanged. The next nonclassifying gate is a prospectiv
 - ✅ Exp073BA/BH infrastructure state preserved; no scientific classification.
 - ✅ Exp073BD P3 provisional incomplete; no downstream use.
 - ✅ Exp073BQ terminal `BQ_Q5_INFRASTRUCTURE_INCOMPLETE`, `+0/+0`.
-- 🟡 Native streaming architecture: direct linkage root cause still unresolved.
+- 🟡 Exp073BR failure-capturing linkage diagnostic active, `+0/+0`.
 - ❌ Exp073AQ permanent historical exact-repeatability scientific FAIL.
 - ❌ Layer A/B, covariance/whitening, nuisance SVD, quotient/relation/null, G7, G8, G9 unauthorized; G8 jump forbidden.
 
