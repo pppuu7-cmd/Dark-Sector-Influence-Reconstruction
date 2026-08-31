@@ -5,12 +5,13 @@ Repository/hosted authority outranks chat wording. Historical PASS/FAIL/INCOMPLE
 ## Read order
 
 1. `docs/RECOVERY_LATEST.md`
-2. `recovery/2026-08-31_exp073ba_cancelled_execution_incomplete_bd_p3.md`
+2. `recovery/2026-08-31_exp073bh_d2_timeout_class_evidenced.md`
 3. `experiments/073bh_article3_ba_fullscale_execution_rootcause_v0_1_prereg.md`
-4. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-5. `docs/EXP073BA_BD_TERMINAL_OUTCOME_DECISION_TABLE_2026-08-31.md`
-6. `experiments/073bg_article3_active_ba_bd_terminal_outcome_policy_v0_1_prereg.md`
-7. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+4. `recovery/2026-08-31_exp073ba_cancelled_execution_incomplete_bd_p3.md`
+5. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+6. `docs/EXP073BA_BD_TERMINAL_OUTCOME_DECISION_TABLE_2026-08-31.md`
+7. `experiments/073bg_article3_active_ba_bd_terminal_outcome_policy_v0_1_prereg.md`
+8. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
 
 ## Current Article-3 state
 
@@ -20,9 +21,9 @@ Repository/hosted authority outranks chat wording. Historical PASS/FAIL/INCOMPLE
 - Exp073AZ: exact mask-PCL predecessor PASS only.
 - Exp073BC/BE: frozen provenance/binding route closed, `+0` scientific readiness.
 - Exp073BF: hosted small-scale Wm stock-equivalence QA PASS, synthetic/infrastructure only, `+0`.
-- Exp073BA clean rerun `33345968620`: terminal **infrastructure/execution incomplete**, not scientific PASS/FAIL. Both compact replicas passed freeze/software/AZ binding and were cancelled inside full-scale compact compute; compact comparator, finalizers and final comparator skipped; no hosted artifacts.
+- Exp073BA clean rerun `33345968620`: terminal **infrastructure/execution incomplete**, not scientific PASS/FAIL. Both compact replicas passed freeze/software/AZ binding and were cancelled inside full-scale compact compute; compact comparator, finalizers and final comparator skipped.
+- Exp073BH hosted run `33370998182`: terminal **`BH_D2_TIMEOUT_OR_EXTERNAL_CANCELLATION_EVIDENCED`**, artifact `9750041348`, digest `sha256:d3abc316f9dbdc33fbcef4c17de3861ebde912bca88f99a645a957f66da14b77`, `+0/+0`. Both BA compact jobs lasted 21617 s against prospectively configured `timeout-minutes: 360` and were cancelled at the configured boundary. Hosted archived log text was unavailable to BH, so preserve the combined D2 class rather than asserting a narrower cancellation mechanism.
 - Exp073BD `33342265114`: terminal **P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE**, `+0/+0`; branch B is not preferred or downstream-usable.
-- Exp073BH: prospective infrastructure/root-cause contract frozen; only observability/checkpointability/resource diagnostics may change, `+0/+0`.
 - Layer A/B OPEN/not authorized; covariance/whitening BLOCKED; G7 OPEN; G8 OPEN and forbidden to jump; G9 OPEN.
 
 ## Historical negative states
@@ -37,30 +38,28 @@ Run `33327372191` remains `SCIENTIFIC_REPEATABILITY_FAIL_EXP073AQ_WM_S1_CONTROLL
 
 Run `33345968620`, source head `e921f556885b4432efd0556b661711d7835fd4c0`, terminal update `2026-08-31T06:55:11Z`.
 
-- compact B `99350035503`: prerequisite/binding steps PASS; full-scale compute CANCELLED.
-- compact A `99350035615`: prerequisite/binding steps PASS; full-scale compute CANCELLED.
+- compact B `99350035503`: prerequisite/binding steps PASS; full-scale compute CANCELLED; job duration `21617 s`.
+- compact A `99350035615`: prerequisite/binding steps PASS; full-scale compute CANCELLED; job duration `21617 s`.
 - compact comparator `99407047330`: SKIPPED.
 - finalizer `99407047869`: SKIPPED.
 - final comparator `99407047796`: SKIPPED.
-- hosted artifact list: empty.
+- BA hosted artifact list: empty.
 
-Frozen Exp073BG classification: `INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073BA`. No scientific FAIL because the exact comparator never received two complete valid Track-A inputs; no PASS either. Do not assert OOM/timeout/runner/manual-cancel cause without direct evidence.
+Frozen Exp073BG classification remains `INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073BA`. No scientific FAIL because the exact comparator never received two complete valid Track-A inputs; no PASS either.
 
-Exp073BF synthetic stock-equivalence PASS does not convert Exp073BA full-scale execution-incomplete into scientific evidence.
+## Exp073BH terminal root-cause rule
+
+Preregistration `experiments/073bh_article3_ba_fullscale_execution_rootcause_v0_1_prereg.md` was frozen in commit `48e39a3063b3c525feefd99d2821f7fcf77a8941` before BH diagnostic results.
+
+Hosted run `33370998182`, head `f6c6cfd83828fef12ee2685fa6aa527b449d0e9a`, terminal success `2026-08-31T08:02:28Z` produced artifact `9750041348` with digest `sha256:d3abc316f9dbdc33fbcef4c17de3861ebde912bca88f99a645a957f66da14b77`.
+
+Frozen result: **`BH_D2_TIMEOUT_OR_EXTERNAL_CANCELLATION_EVIDENCED`**. Direct hosted metadata shows the BA workflow configured `timeout-minutes: 360`; each independent compact job ran `21617 s`, concluded `cancelled`, and its full-scale compute step concluded `cancelled`. This is infrastructure timeout/external-cancellation-class evidence only. BH could not retrieve the archived raw job-log text (`explicit_timeout_phrase=false`, log fetch error), so do not strengthen D2 into a claim of proven OOM, dependency failure, runner loss, or manual cancellation.
+
+BH evaluates no Wm scientific equality, reads no downstream covariance/nuisance/G8 inputs, and earns **`+0 Verified / +0 Draft-data`**.
 
 ## Exp073BD terminal rule
 
 Preserve `P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE`. Branch A incomplete, branch B full provisional but no pair diagnostic. No Wm_S2 credit, preference or downstream propagation. Preserve metadata label mismatch as provenance defect only, not causal evidence.
-
-## Exp073BH prospective root-cause route
-
-Preregistration: `experiments/073bh_article3_ba_fullscale_execution_rootcause_v0_1_prereg.md`.
-
-Allowed changes are infrastructure-only: deterministic stage timers/resource telemetry, checkpoint markers, runner CPU/RAM/software/thread provenance, fail-fast anti-leakage validation, non-classifying diagnostic probes, and separately validated checkpointable/blockwise engineering. Forbidden: any scientific threshold/component change, incomplete-BA scientific reuse, BD branch preference, covariance/nuisance/G8 reads, or readiness credit.
-
-BH terminal outcomes are infrastructure classes only: D1 resource-limit evidenced, D2 timeout/external cancellation evidenced, D3 reproducible stage failure evidenced, D4 diagnostic completion/non-classifying, D5 inconclusive. Every BH outcome is `+0 Verified / +0 Draft-data`.
-
-A future classifying Track-A successor must be separately preregistered after BH evidence, inherit all BA exact scientific criteria, and compare only complete immutable replicas.
 
 ## Frozen Article-3 support boundaries
 
@@ -74,6 +73,8 @@ G8 cannot be selected/exposed before actual G7 authorization.
 
 ## Exact next gate
 
-Implement/run the frozen Exp073BH diagnostic route first. Capture direct hosted stage/resource/cancellation evidence without changing the classifying science contract. Do not launch a new classifying heavy BA successor until BH evidence is recorded and a separate successor preregistration is frozen.
+Freeze a new **Track-A Wm_S1 execution successor after BH_D2** before any new classifying heavy launch. It must inherit every BA scientific criterion unchanged. Only execution engineering may change to avoid the evidenced hosted execution-boundary failure; checkpointable/blockwise changes require separate mathematical-equivalence validation before classifying use. The successor still requires two complete immutable compact replicas, exact compact comparison, both frozen finalizers, exact final comparison, and immutable hosted final authority before scientific PASS can exist.
+
+Do not rerun unchanged BA, do not salvage incomplete BA data, do not prefer Exp073BD branch B, and do not jump to G8.
 
 `Verified: 52.0% | Draft/data: 53.7%`
