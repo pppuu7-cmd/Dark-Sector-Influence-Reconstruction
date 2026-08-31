@@ -19,7 +19,7 @@ env:
 jobs:
   benchmark:
     runs-on: [self-hosted, Linux, X64]
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,13 +31,21 @@ jobs:
           set -euxo pipefail
           test "$(git log -1 --format=%H -- ci/exp073bw_stream_general_coupling_v0_1.c)" = '9fb0ecb79986cf5f542760377533a685745b31e2'
 
-      - name: Install NaMaster 2.7 lineage if needed
+      - name: Bootstrap local Miniforge and NaMaster 2.7 lineage if needed
         shell: bash
         run: |
           set -euxo pipefail
+          MF="$HOME/.cache/dsir-miniforge"
           ENV="$HOME/.cache/dsir-nmt27"
+          if ! test -x "$MF/bin/conda"; then
+            mkdir -p "$HOME/.cache"
+            curl -fL --retry 5 --retry-delay 2 \
+              https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh \
+              -o "$RUNNER_TEMP/miniforge.sh"
+            bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"
+          fi
           if ! test -x "$ENV/bin/python"; then
-            conda create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+            "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
           fi
           "$ENV/bin/python" - <<'PY'
           import importlib.metadata
