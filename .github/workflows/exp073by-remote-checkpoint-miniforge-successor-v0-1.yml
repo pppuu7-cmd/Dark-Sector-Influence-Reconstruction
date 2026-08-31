@@ -1,0 +1,107 @@
+name: Exp073BY remote checkpoint Miniforge successor v0.1
+
+on:
+  push:
+    paths:
+      - 'experiments/073by_hosted_trigger_v0_1.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  home-checkpoint-writer:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce frozen Exp073BY lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- experiments/073by_remote_checkpoint_miniforge_successor_v0_1_prereg.md)" = "76ce33d975adaf713d9a7a655deeba97f4d9a4cb"
+          test "$(git log -1 --format=%H -- ci/dsir_remote_band_checkpoint_v0_1.py)" = "0b0324afb69acb16cbea97bb924b9be48f303dde"
+          test "$(git log -1 --format=%H -- ci/dsir_checkpoint_git_sync_v0_1.sh)" = "96886916b41dce7f0a40807622928c841ef5fc58"
+          test "$(git log -1 --format=%H -- ci/exp073bx_remote_checkpoint_failover_qa_v0_1.py)" = "15809928dbeea082c0bb6921d581085a89ea6e45"
+
+      - name: Reuse or bootstrap proven DSIR Miniforge environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$HOME/.cache/dsir-miniforge"
+          ENV="$HOME/.cache/dsir-nmt27"
+          if ! test -x "$MF/bin/conda"; then
+            mkdir -p "$HOME/.cache"
+            curl -fL --retry 5 --retry-delay 2 \
+              https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh \
+              -o "$RUNNER_TEMP/miniforge.sh"
+            bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"
+          fi
+          if ! test -x "$ENV/bin/python"; then
+            "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          fi
+          "$ENV/bin/python" - <<'PY'
+          import numpy
+          print('numpy', numpy.__version__)
+          PY
+          echo "DSIR_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+
+      - name: Create and remotely persist band checkpoints with live progress
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$DSIR_PY" ci/exp073bx_remote_checkpoint_failover_qa_v0_1.py home
+
+      - name: Upload home checkpoint receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073by-home-checkpoint-receipt-v0-1
+          path: exp073bx_home_receipt.json
+          if-no-files-found: error
+          retention-days: 30
+
+  hosted-failover-reader:
+    needs: home-checkpoint-writer
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce frozen Exp073BY lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- experiments/073by_remote_checkpoint_miniforge_successor_v0_1_prereg.md)" = "76ce33d975adaf713d9a7a655deeba97f4d9a4cb"
+          test "$(git log -1 --format=%H -- ci/dsir_remote_band_checkpoint_v0_1.py)" = "0b0324afb69acb16cbea97bb924b9be48f303dde"
+          test "$(git log -1 --format=%H -- ci/dsir_checkpoint_git_sync_v0_1.sh)" = "96886916b41dce7f0a40807622928c841ef5fc58"
+          test "$(git log -1 --format=%H -- ci/exp073bx_remote_checkpoint_failover_qa_v0_1.py)" = "15809928dbeea082c0bb6921d581085a89ea6e45"
+
+      - name: Create isolated hosted Python environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/by-py"
+          "$RUNNER_TEMP/by-py/bin/pip" install --disable-pip-version-check numpy
+          echo "DSIR_PY=$RUNNER_TEMP/by-py/bin/python" >> "$GITHUB_ENV"
+
+      - name: Restore checkpoint remotely and validate exact bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$DSIR_PY" ci/exp073bx_remote_checkpoint_failover_qa_v0_1.py hosted
+
+      - name: Upload immutable failover QA receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073by-remote-checkpoint-failover-result-v0-1
+          path: exp073bx_result.json
+          if-no-files-found: error
+          retention-days: 90
