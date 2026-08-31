@@ -1,0 +1,114 @@
+name: Exp073BL Article3 fixed-LU cross-host finalizer QA v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073bl_article3_fixed_lu_crosshost_finalizer_qa_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  replica:
+    strategy:
+      fail-fast: false
+      matrix: {replica: [A, B, C, D]}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce Exp073BL prospective freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bl_article3_fixed_lu_crosshost_finalizer_qa_v0_1_prereg.md)" = 'e64353c6931a46ab952d7fe3df84196275b5c999'
+          test "$(git log -1 --format=%H -- ci/exp073bl_fixed_lu_crosshost_finalizer_qa_v0_1.py)" = '0241f1ff5f0ced07b65b887479ee869e2ba6a222'
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install 'numpy==2.4.6'
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073bd-wm-s2-B-70745b9eee87e3c196c4bb435a6770cf986ffe6b
+          path: external/bd
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33342265114
+      - name: Run fixed-operation LU finalizer
+        shell: bash
+        env: {REPLICA: '${{ matrix.replica }}'}
+        run: |
+          set -euxo pipefail
+          mkdir -p "data/derived/g7/exp073bl_${REPLICA}"
+          A="$(find external/bd -name '*compact_b_v0_1.npz' -type f -print -quit)"
+          python ci/exp073bl_fixed_lu_crosshost_finalizer_qa_v0_1.py --input "${A}" --outdir "data/derived/g7/exp073bl_${REPLICA}" --replica "${REPLICA}"
+          lscpu > "data/derived/g7/exp073bl_${REPLICA}/lscpu.txt"
+          python - <<'PY' > "data/derived/g7/exp073bl_${REPLICA}/numpy_config.txt"
+          import numpy as np
+          np.show_config()
+          try:
+              from numpy._core._multiarray_umath import __cpu_features__
+              print('cpu_features',__cpu_features__)
+          except Exception as e:
+              print('cpu_features_unavailable',repr(e))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bl-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073bl_${{ matrix.replica }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  compare:
+    needs: replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install 'numpy==2.4.6'
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073bl-A-${{ github.sha }}', path: external/A}
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073bl-B-${{ github.sha }}', path: external/B}
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073bl-C-${{ github.sha }}', path: external/C}
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073bl-D-${{ github.sha }}', path: external/D}
+      - name: Exact fixed-LU cross-host comparator
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob,hashlib,json,pathlib,numpy as np
+          reps=['A','B','C','D']; xs=[]; ms={}
+          for r in reps:
+              jf=glob.glob(f'external/{r}/exp073bl_replica_{r}.json'); wf=glob.glob(f'external/{r}/W_{r}.npy')
+              assert len(jf)==len(wf)==1,(r,jf,wf)
+              ms[r]=json.load(open(jf[0])); xs.append(np.ascontiguousarray(np.load(wf[0],allow_pickle=False),dtype='<f8'))
+          def ch(x): return hashlib.sha256(x.tobytes(order='C')).hexdigest()
+          sh=[ch(x) for x in xs]; eq=all(np.array_equal(xs[0],x) for x in xs[1:])
+          status='BL_Q1_FIXED_LU_EXACT_CROSSHOST_PASS' if eq and len(set(sh))==1 else 'BL_Q2_FIXED_LU_EXACT_CROSSHOST_FAIL'
+          out={'experiment':'Exp073BL','status':status,'classification':'NONCLASSIFYING_NUMERICAL_INFRASTRUCTURE_QA','authority':False,'scientific_pass_claimed':False,'scientific_readiness_increment':0,'draft_data_readiness_increment':0,'Exp073AQ_preserved_as_FAIL':True,'array_equal_all':eq,'sha256':sh,'unique_sha_count':len(set(sh)),'cpu_models':{r:ms[r]['cpu_model'] for r in reps},'pivot_permutations':{r:ms[r]['pivot_permutation'] for r in reps},'wq_identity_max_abs':{r:ms[r]['wq_identity_max_abs'] for r in reps},'probe_residual':{r:ms[r]['probe_residual'] for r in reps}}
+          pathlib.Path('data/derived/g7/exp073bl_crosshost_result_v0_1.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bl-crosshost-comparator-${{ github.sha }}
+          path: data/derived/g7/exp073bl_crosshost_result_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
