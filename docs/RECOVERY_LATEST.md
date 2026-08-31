@@ -9,15 +9,16 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 
 ## Read first
 
-1. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
-2. `recovery/2026-08-31_streaming_band_projection_equivalence_audit_bj_active.md`
-3. `recovery/2026-08-31_general_coupling_elision_audit_bj_active.md`
-4. `recovery/2026-08-31_local_numerical_structure_audit_bj_active.md`
-5. `recovery/2026-08-31_exp073bj_binding_provenance_audit_compute_active.md`
-6. `experiments/073bj_article3_wm_s1_two_thread_track_a_successor_v0_1_prereg.md`
-7. `experiments/073bj_article3_two_thread_wm_s1_binding_v0_1.json`
-8. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
-9. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+1. `recovery/2026-08-31_exp073bo_bp_hosted_incomplete_after_bj_authority.md`
+2. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
+3. `recovery/2026-08-31_streaming_band_projection_equivalence_audit_bj_active.md`
+4. `recovery/2026-08-31_general_coupling_elision_audit_bj_active.md`
+5. `recovery/2026-08-31_local_numerical_structure_audit_bj_active.md`
+6. `recovery/2026-08-31_exp073bj_binding_provenance_audit_compute_active.md`
+7. `experiments/073bj_article3_wm_s1_two_thread_track_a_successor_v0_1_prereg.md`
+8. `experiments/073bj_article3_two_thread_wm_s1_binding_v0_1.json`
+9. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+10. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
 
 ## Current authority state
 
@@ -28,6 +29,7 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 - Only after compact exact PASS, finalizers A `99495858598` and B `99495858554` ran and succeeded.
 - Final artifacts: A `9758830321`, digest `sha256:46c48302550f2e35b33bd06af1df6267fd1704b0906516d56cc92f585e3abcfd`; B `9758826333`, digest `sha256:e6eee1e0500d70dd3b5c756fee87be4bb40491aef2edc0255cabb9ed376f7f65`.
 - Frozen final comparator job `99496306351` emitted `PASS_EXP073BJ_WM_S1_TWO_THREAD_LOW_MEMORY_GENERAL_COUPLING_EXACT_V0_1`. Final immutable authority artifact `9758841785`, digest `sha256:a7d5b30e0a8ba4ce6d8437db82982f69f41c01ac6a58c6cb121d4cbbb2c4f008`.
+- Frozen BJ preregistration commit `199fc3188808a30d0f364005f9b584a92a262acb`; frozen BI-to-AZ binding receipt commit `cbe5f57f9ae04eb335ad9f9b6e4984bdd82247c0`.
 - No tolerance, ULP, rounding, averaging, majority vote or preferred-replica rescue was used.
 
 Historical states remain preserved:
@@ -58,6 +60,14 @@ Canonical array-byte hashes:
 
 This is `+0/+0` and cannot alter BJ acceptance. Together with provisional BD Wm_S2 `cond_2(K)=2.1928888836909883`, it supports the narrow execution conclusion that the 39x39 finalizer solve is well-conditioned and was not the historical multi-hour bottleneck; the expensive stage remains the dense general-coupling construction.
 
+## Native streaming QA audit after BJ
+
+Exp073BO prospective native band-projected source-equivalence QA run `33388775380` is terminal `failure`. All four replicas passed frozen prereg enforcement, exact NaMaster 2.7 install and native-kernel compilation, then failed in `Run stock and native scales`; no replica receipt/artifact exists and the cross-host exact comparator was skipped. Therefore the only admissible class is infrastructure/harness incomplete (`BO_Q3`), not exact-equivalence FAIL and not a scientific FAIL.
+
+Exp073BP triangular-reciprocity QA run `33389213821` is likewise terminal `failure`: all four replicas passed freeze/install/compile, failed in `Run stock and triangular scales`, produced no valid comparator inputs, and its comparator was skipped. It is infrastructure/QA incomplete only.
+
+A code audit identifies but does not prove a concrete BO failure hypothesis: the native driver dynamically resolves `drc3jj` from packaged `pymaster._nmtlib`; a non-exported symbol would fail before native output. Hosted metadata does not expose the exception, so do not claim this as the cause until a narrow linkage/export diagnostic records direct evidence. BO/BP remain `+0/+0` regardless.
+
 ## Dual-readiness accounting
 
 `Verified: 52.0% | Draft/data: 53.7%`
@@ -76,7 +86,7 @@ G8 may not be selected or exposed before actual G7 authorization.
 
 ## Exact next operating gate
 
-Exp073BJ is closed; do not rerun it. Inspect the frozen Article-3 angular/prerequisite inventory and choose the next missing nonduplicative physical forward/power-input bridge or angular operator consistent with the existing ledgers and G7 order. Before any new heavy successor, preserve prospective preregistration and exact provenance/binding. No G8 jump.
+Do not rerun Exp073BJ. Do not rerun Exp073BO or Exp073BP unchanged. The exact nonclassifying execution gate is a prospectively frozen narrow NaMaster-2.7 native Wigner symbol/source-linkage diagnostic: establish with direct hosted evidence whether the packaged extension exposes/can safely call the exact `drc3jj` implementation, or identify the exact callable/link target needed by a source-equivalent projected kernel. This gate is `+0/+0` and cannot change BJ/AQ classification. Only after it may a corrected streaming/source-equivalence successor be prospectively frozen. The scientific G7 path remains the validated physical forward/power-input bridges first; no G8 jump.
 
 ## Current shorthand
 
@@ -86,6 +96,7 @@ Exp073BJ is closed; do not rerun it. Inspect the frozen Article-3 angular/prereq
 - ✅ Exp073BI: `BI_Q1_PARALLEL_EXACT_QA_PASS`, `+0/+0`.
 - ✅ Exp073BA/BH infrastructure diagnosis: preserved, no scientific classification.
 - ✅ Exp073BD: P3 provisional incomplete, no downstream use.
+- 🟡 Native streaming architecture: BO/BP hosted QA incomplete; direct linkage root-cause gate required before any corrected successor.
 - ❌ Exp073AQ: permanent historical exact-repeatability scientific FAIL.
 - ❌ Layer A/B, covariance/whitening, nuisance SVD, quotient/relation/null, G7, G8, G9: not authorized; G8 jump forbidden.
 
