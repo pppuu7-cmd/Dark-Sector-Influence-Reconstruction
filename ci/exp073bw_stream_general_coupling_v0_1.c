@@ -31,10 +31,6 @@ static int max_int(int a,int b)
   return a>b ? a:b;
 }
 
-/*
- * Full exact-order replica of NaMaster v2.7 nmt_compute_general_coupling_matrix.
- * out must have (lmax+1)^2 doubles. It is zeroed here exactly before use.
- */
 int exp073bw_full(const char *nmtlib_path,
                   const double *pcl_mask,
                   int lmax,int s1,int s2,int n1,int n2,
@@ -73,14 +69,11 @@ int exp073bw_full(const char *nmtlib_path,
       }
     }
     else {
-      int ll;
-      for(ll=0;ll<=lmax;ll++)
+      for(int ll=0;ll<=lmax;ll++)
         wl_mask[ll]=pcl_mask[ll]*(2*ll+1)/(4*M_PI);
 
 #pragma omp for schedule(dynamic)
       for(int ll2=lstart;ll2<=lmax;ll2++) {
-        if(error_code!=0)
-          continue;
         for(int ll3=lstart;ll3<=lmax;ll3++) {
           int lmin_here=abs(ll2-ll3);
           int lmax_here=ll2+ll3;
@@ -128,12 +121,6 @@ int exp073bw_full(const char *nmtlib_path,
   return error_code;
 }
 
-/*
- * Streaming row-compression replica of DSIR compress_general(stock_matrix).
- * Each band owns one independent accumulator. Within each band, ll2 rows are
- * accumulated strictly in increasing order, and each matrix element preserves
- * the upstream increasing-l1 operation order.
- */
 int exp073bw_stream_compress(const char *nmtlib_path,
                              const double *pcl_mask,
                              int lmax,int s1,int s2,int n1,int n2,
@@ -189,8 +176,6 @@ int exp073bw_stream_compress(const char *nmtlib_path,
 
 #pragma omp for schedule(dynamic)
       for(int ib=0;ib<nb;ib++) {
-        if(error_code!=0)
-          continue;
         int lo=edges[ib];
         int hi=edges[ib+1];
         double *acc=out+(size_t)ib*(size_t)nls;
