@@ -1,0 +1,71 @@
+name: Exp073BV Article3 NaMaster27 exact source lineage v0.1
+
+on:
+  push:
+    paths:
+      - 'experiments/073bv_hosted_trigger_v0_1.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout DSIR full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce Exp073BV prospective freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bv_article3_namaster27_exact_source_lineage_v0_1_prereg.md)" = "d71f8715c9b680c2cf80226853366b9803853a7e"
+          test "$(git log -1 --format=%H -- ci/exp073bv_namaster27_exact_source_lineage_v0_1.py)" = "89b0790ff82610da6635dd91731dd185d5e74ffd"
+          test "$(git log -1 --format=%H -- experiments/073bu_article3_namaster27_wigner_linkage_yaml_successor_v0_1_prereg.md)" = "8dffb59a960d3871d20f1cca1f2442455d15b6fe"
+
+      - name: Checkout immutable official NaMaster v2.7 source snapshot
+        uses: actions/checkout@v4
+        with:
+          repository: LSSTDESC/NaMaster
+          ref: 24365fa59a38c15732f4f37e8b29265b75c442d5
+          path: upstream_namaster_v27
+          fetch-depth: 1
+
+      - name: Verify exact upstream source snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C upstream_namaster_v27 rev-parse HEAD)" = "24365fa59a38c15732f4f37e8b29265b75c442d5"
+
+      - name: Install exact hosted-successful Exp073BJ NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+          "${RUNNER_TEMP}/nmt27/bin/python" - <<'PY'
+          import importlib.metadata
+          v=importlib.metadata.version('pymaster')
+          assert v == '2.7' or v.startswith('2.7.'), v
+          print(v)
+          PY
+
+      - name: Run frozen exact source-lineage diagnostic
+        shell: bash
+        env:
+          NAMASTER_V27_SOURCE: ${{ github.workspace }}/upstream_namaster_v27
+        run: |
+          "${NMT_PY}" ci/exp073bv_namaster27_exact_source_lineage_v0_1.py
+
+      - name: Upload Exp073BV source-lineage receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073bv-namaster27-exact-source-lineage-v0-1
+          path: data/derived/g7/exp073bv_namaster27_exact_source_lineage_result_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
