@@ -1,0 +1,86 @@
+name: Exp073BX remote checkpoint failover QA v0.1
+
+on:
+  push:
+    paths:
+      - 'experiments/073bx_hosted_trigger_v0_1.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  home-checkpoint-writer:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce frozen Exp073BX lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bx_remote_checkpoint_failover_qa_v0_1_prereg.md)" = "5cee2e0d8ec4cc5a3e9649e7bfaa9cedce39f2b7"
+          test "$(git log -1 --format=%H -- ci/dsir_remote_band_checkpoint_v0_1.py)" = "0b0324afb69acb16cbea97bb924b9be48f303dde"
+          test "$(git log -1 --format=%H -- ci/dsir_checkpoint_git_sync_v0_1.sh)" = "96886916b41dce7f0a40807622928c841ef5fc58"
+          test "$(git log -1 --format=%H -- ci/exp073bx_remote_checkpoint_failover_qa_v0_1.py)" = "15809928dbeea082c0bb6921d581085a89ea6e45"
+
+      - name: Verify Python/numpy
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import numpy
+          print('numpy', numpy.__version__)
+          PY
+
+      - name: Create and remotely persist band checkpoints with live progress
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/exp073bx_remote_checkpoint_failover_qa_v0_1.py home
+
+      - name: Upload home checkpoint receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073bx-home-checkpoint-receipt-v0-1
+          path: exp073bx_home_receipt.json
+          if-no-files-found: error
+          retention-days: 30
+
+  hosted-failover-reader:
+    needs: home-checkpoint-writer
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce frozen Exp073BX lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bx_remote_checkpoint_failover_qa_v0_1_prereg.md)" = "5cee2e0d8ec4cc5a3e9649e7bfaa9cedce39f2b7"
+          test "$(git log -1 --format=%H -- ci/dsir_remote_band_checkpoint_v0_1.py)" = "0b0324afb69acb16cbea97bb924b9be48f303dde"
+          test "$(git log -1 --format=%H -- ci/dsir_checkpoint_git_sync_v0_1.sh)" = "96886916b41dce7f0a40807622928c841ef5fc58"
+          test "$(git log -1 --format=%H -- ci/exp073bx_remote_checkpoint_failover_qa_v0_1.py)" = "15809928dbeea082c0bb6921d581085a89ea6e45"
+
+      - name: Restore checkpoint remotely and validate exact bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/exp073bx_remote_checkpoint_failover_qa_v0_1.py hosted
+
+      - name: Upload immutable failover QA receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073bx-remote-checkpoint-failover-result-v0-1
+          path: exp073bx_result.json
+          if-no-files-found: error
+          retention-days: 90
