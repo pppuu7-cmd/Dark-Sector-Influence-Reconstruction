@@ -1,6 +1,6 @@
 # DSIR RECOVERY LATEST — authoritative live pointer
 
-**Updated:** 2026-08-31  
+**Updated:** 2026-09-01  
 **Scope:** DSIR only; RTK/RQIR excluded.  
 **Article-3 readiness:** **Verified 52.0% | Draft/data 53.7%**.
 
@@ -8,8 +8,8 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 
 ## Read first
 
-1. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
-2. `recovery/2026-08-31_exp073bv_q1_exact_source_lineage_terminal.md`
+1. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
+2. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
 3. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
 4. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
 5. `experiments/073bw_article3_streaming_general_coupling_exact_equivalence_v0_1_prereg.md`
@@ -21,7 +21,7 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 - **Exp073AQ** remains the permanent historical hosted exact-repeatability scientific FAIL.
 - Exp073BA remains infrastructure/execution incomplete.
 - Exp073BD remains `P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE` and is forbidden downstream.
-- No frozen scientific readiness increment is authorized by BV/BW or performance QA.
+- No frozen scientific readiness increment is authorized by BV/BW/BZ or performance QA.
 
 ## Exp073BV terminal exact source lineage
 
@@ -47,6 +47,21 @@ Frozen label:
 
 All 18 frozen cases passed exact full-matrix vs stock equality, exact streaming-compressed vs stock-compressed equality, and exact 1-thread/2-thread/repeat equality. Cases cover the Wm signature `(0,2,0,2)`, both WW signatures `(2,2,2,2)` and `(2,-2,2,-2)`, `lmax=24,63,127`, and both frozen dyadic PCL families. Classifying comparisons use exact array and canonical `<f8` SHA equality only; all recorded `max_abs_diff` values are `0.0`. BW is nonclassifying `+0/+0`.
 
+## Exp073BZ terminal remote-checkpoint durability QA
+
+Hosted run `33441962503`, head `d263ae64ba4423af6380e91d52d8901c1df435b3` completed successfully.
+
+Jobs:
+
+- home checkpoint writer `99652059232`: success;
+- hosted failover reader `99652226100`: success.
+
+Home receipt artifact `9776581747`, digest `sha256:809b24b9e1c76158ba50af9883048eff537a15a2d075cd7f7792ae59901f43e2`, records branch `checkpoints/exp073bx-v0-1`, completed bands `[0,1,2]` and matrix SHA `1d42b89e8719cd75850103041edba0e8d2f038e384a711a31b6512ceaff0cb1e`.
+
+Hosted failover artifact `9776592370`, digest `sha256:2b5cbb49bbf0ca16679f63bd6aee8150e06cf617054b1afe8936dac10b778dd8`, restored all 3/3 bands and returned `array_equal=true`, `sha_equal=true`, with identical expected/restored matrix SHA. Frozen inherited status: `BX_Q1_REMOTE_CHECKPOINT_FAILOVER_PASS`.
+
+BZ is NONCLASSIFYING infrastructure/durability QA only, `+0/+0`. It establishes that a future long streaming successor can prospectively persist completed bands remotely and recover exact bytes after runner loss. Checkpointing may not alter arithmetic order, scientific comparator semantics, or acceptance criteria.
+
 ## Independent performance QA
 
 Self-hosted Wigner scaling run `33437417184` completed successfully; artifact `9775001946`, digest `sha256:a2132539a8c5dd144fdb513415e538d25ee71deb3c90351c47b1c04fdb4ea520`.
@@ -65,11 +80,14 @@ No G8 jump.
 
 ## Exact next gate
 
-Prospectively preregister a separate **full-scale execution-feasibility / Track-A successor architecture gate** bound to immutable BV Q1 and BW Q1 artifacts, the exact BW helper/code lineage and frozen compilation flags. It may use full DES geometry (`NSIDE=4096`, true ell `0..12287`, 39 bands), but Exp073BD cannot be used as comparator or authority. Independent replicas and exact repeatability classification must be frozen before execution, with infrastructure timeout/incomplete distinguished from complete exact scientific mismatch. No tolerance, ULP, rounding, averaging, majority vote or preferred-replica rescue.
+Prospectively preregister a separate **full-scale checkpoint-capable streaming Track-A execution/authority successor** bound to immutable BV Q1, BW Q1 and BZ checkpoint/failover QA lineage, the exact BW helper/code lineage and frozen compilation flags. It may use full DES geometry (`NSIDE=4096`, true ell `0..12287`, 39 bands), but Exp073BD cannot be used as comparator or authority.
+
+The successor must freeze before execution: independent replicas; exact compact comparator; exact finalizer path; canonical `<f8 [39,12288]` payload; checkpoint-boundary arithmetic invariance; infrastructure timeout/cancellation/incomplete before two valid comparator inputs distinguished from complete exact scientific mismatch. No tolerance, ULP, rounding, averaging, majority vote or preferred-replica rescue.
 
 - ✅ Exp073BJ exact Track-A Wm_S1 authority PASS preserved.
 - ✅ Exp073BV terminal `BV_Q1_EXACT_SOURCE_LINEAGE_CONFIRMED`.
 - ✅ Exp073BW terminal `BW_Q1_FULL_AND_STREAM_COMPRESSED_EXACT_EQUIVALENCE_PASS`.
+- ✅ Exp073BZ remote checkpoint/failover exact-byte QA PASS, `+0/+0`.
 - ✅ independent self-hosted performance QA completed, `+0/+0`.
 - ❌ Exp073AQ permanent historical scientific FAIL preserved.
 - ❌ Exp073BD remains provisional and forbidden downstream.
