@@ -1,0 +1,5 @@
+Exp073BH hosted diagnostic trigger
+source_ba_run_id=33345968620
+prereg_commit=48e39a3063b3c525feefd99d2821f7fcf77a8941
+implementation_commit=ea006ca40afce2388bc374b9593785d77a6748f0
+workflow_commit=b44a87318a84a79a1d04c8a8e36295413c2be03e
