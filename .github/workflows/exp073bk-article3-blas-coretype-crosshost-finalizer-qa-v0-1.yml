@@ -1,0 +1,116 @@
+name: Exp073BK Article3 BLAS coretype cross-host finalizer QA v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073bk_article3_blas_coretype_crosshost_finalizer_qa_v0_1.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  replica:
+    strategy:
+      fail-fast: false
+      matrix: {replica: [A, B, C, D]}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Enforce Exp073BK prospective freeze
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bk_article3_blas_coretype_crosshost_finalizer_qa_v0_1_prereg.md)" = '96a9c3747571f56f41ab88a1b08f195486ac0033'
+          test "$(git log -1 --format=%H -- ci/exp073bk_blas_coretype_crosshost_finalizer_qa_v0_1.py)" = '1a4886b49d2638e07d447be946ff82033eac3419'
+      - name: Install pinned NumPy OpenBLAS lineage
+        shell: bash
+        run: |
+          conda create -y -p "${RUNNER_TEMP}/bk" -c conda-forge python=3.11 numpy=2.4.6 'libblas=*=*openblas'
+          echo "BK_PY=${RUNNER_TEMP}/bk/bin/python" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073bd-wm-s2-B-70745b9eee87e3c196c4bb435a6770cf986ffe6b
+          path: external/bd
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33342265114
+      - name: Run four frozen finalizer policies
+        shell: bash
+        env: {REPLICA: '${{ matrix.replica }}'}
+        run: |
+          set -euxo pipefail
+          mkdir -p "data/derived/g7/exp073bk_${REPLICA}"
+          A="$(find external/bd -name '*compact_b_v0_1.npz' -type f -print -quit)"
+          "${BK_PY}" ci/exp073bk_blas_coretype_crosshost_finalizer_qa_v0_1.py \
+            --input "${A}" --outdir "data/derived/g7/exp073bk_${REPLICA}" --replica "${REPLICA}"
+          lscpu > "data/derived/g7/exp073bk_${REPLICA}/lscpu.txt"
+          "${BK_PY}" - <<'PY' > "data/derived/g7/exp073bk_${REPLICA}/numpy_config.txt"
+          import numpy as np
+          np.show_config()
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bk-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073bk_${{ matrix.replica }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  compare:
+    needs: replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install 'numpy==2.4.6'
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073bk-A-${{ github.sha }}', path: external/A}
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073bk-B-${{ github.sha }}', path: external/B}
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073bk-C-${{ github.sha }}', path: external/C}
+      - uses: actions/download-artifact@v4
+        with: {name: 'exp073bk-D-${{ github.sha }}', path: external/D}
+      - name: Exact cross-host comparator
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob,hashlib,json,pathlib,numpy as np
+          reps=['A','B','C','D']; policies=['default_t1','haswell_t1','default_t2','haswell_t2']
+          meta={}
+          for r in reps:
+              jp=glob.glob(f'external/{r}/exp073bk_replica_{r}.json')
+              assert len(jp)==1,jp
+              meta[r]=json.load(open(jp[0]))
+          out={'experiment':'Exp073BK','classification':'NONCLASSIFYING_NUMERICAL_INFRASTRUCTURE_QA','authority':False,'scientific_pass_claimed':False,'scientific_readiness_increment':0,'draft_data_readiness_increment':0,'Exp073AQ_preserved_as_FAIL':True,'cpu_models':{r:meta[r]['cpu_model'] for r in reps},'policies':{}}
+          def ch(x):
+              y=np.ascontiguousarray(x,dtype='<f8'); return hashlib.sha256(y.tobytes()).hexdigest()
+          for p in policies:
+              xs=[]
+              for r in reps:
+                  f=glob.glob(f'external/{r}/W_{p}.npy'); assert len(f)==1,f
+                  x=np.ascontiguousarray(np.load(f[0],allow_pickle=False),dtype='<f8'); assert x.shape==(39,12288)
+                  xs.append(x)
+              eq=all(np.array_equal(xs[0],x) for x in xs[1:])
+              sh=[ch(x) for x in xs]
+              out['policies'][p]={'status':'EXACT_CROSSHOST_EQUAL' if eq and len(set(sh))==1 else 'EXACT_CROSSHOST_MISMATCH','array_equal_all':eq,'sha256':sh,'unique_sha_count':len(set(sh))}
+          pathlib.Path('data/derived/g7/exp073bk_crosshost_authority_v0_1.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bk-crosshost-comparator-${{ github.sha }}
+          path: data/derived/g7/exp073bk_crosshost_authority_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
