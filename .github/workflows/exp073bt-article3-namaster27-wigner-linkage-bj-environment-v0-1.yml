@@ -1,0 +1,101 @@
+name: Exp073BT Article3 NaMaster27 Wigner linkage BJ-environment v0.1
+
+on:
+  push:
+    paths:
+      - 'experiments/073bt_hosted_trigger_v0_1.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce Exp073BT prospective freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bt_article3_namaster27_wigner_linkage_bj_environment_successor_v0_1_prereg.md)" = "07c17496597306ff410633264d1d050f833728b9"
+          test "$(git log -1 --format=%H -- experiments/073bs_article3_namaster27_wigner_linkage_full_history_successor_v0_1_prereg.md)" = "284bca8a32cd390781ab7349fc2bcd14f94461ca"
+          test "$(git log -1 --format=%H -- ci/exp073br_namaster27_wigner_linkage_failure_capturing_v0_1.py)" = "8a70892c9533206e4011eee041914ca89bae2290"
+          test "$(git log -1 --format=%H -- .github/workflows/exp073bj-article3-two-thread-wm-s1-track-a-v0-1.yml)" = "416b4d4717989f9c228c47614d1e9e48f9bc93e4"
+
+      - id: install
+        name: Install exact hosted-successful Exp073BJ NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+          "${RUNNER_TEMP}/nmt27/bin/python" - <<'PY'
+          import importlib.metadata
+          v=importlib.metadata.version('pymaster')
+          assert v == '2.7' or v.startswith('2.7.'), v
+          print(v)
+          PY
+
+      - name: Run inherited failure-capturing linkage diagnostic unchanged
+        if: steps.install.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: "${NMT_PY}" ci/exp073br_namaster27_wigner_linkage_failure_capturing_v0_1.py
+
+      - name: Convert inherited receipt to frozen BT label
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          src=pathlib.Path('data/derived/g7/exp073br_wigner_linkage_failure_capturing_result_v0_1.json')
+          dst=pathlib.Path('data/derived/g7/exp073bt_wigner_linkage_bj_environment_result_v0_1.json')
+          dst.parent.mkdir(parents=True, exist_ok=True)
+          if src.exists():
+              d=json.loads(src.read_text())
+              d['experiment']='Exp073BT'
+              s=str(d.get('status','BR_Q5_PARTIAL_DIAGNOSTIC_INCOMPLETE'))
+              d['status']='BT_'+s[3:] if s.startswith('BR_') else 'BT_Q5_PARTIAL_DIAGNOSTIC_INCOMPLETE'
+              d['inherited_br_harness_commit']='8a70892c9533206e4011eee041914ca89bae2290'
+              d['bt_prereg_commit']='07c17496597306ff410633264d1d050f833728b9'
+              d['environment_lineage']='Exp073BJ conda-forge python=3.11 namaster=2.7 healpy astropy numpy on ubuntu-24.04'
+          else:
+              d={
+                  'experiment':'Exp073BT',
+                  'classification':'NONCLASSIFYING_INFRASTRUCTURE_SOURCE_LINKAGE_DIAGNOSTIC',
+                  'authority':False,
+                  'scientific_pass_claimed':False,
+                  'scientific_readiness_increment':0,
+                  'draft_data_readiness_increment':0,
+                  'Exp073AQ_preserved_as_FAIL':True,
+                  'Exp073BJ_preserved_as_PASS':True,
+                  'status':'BT_Q5_PARTIAL_DIAGNOSTIC_INCOMPLETE',
+                  'workflow_fallback_receipt':True,
+                  'error':'inherited diagnostic produced no receipt; setup or execution incomplete',
+                  'inherited_br_harness_commit':'8a70892c9533206e4011eee041914ca89bae2290',
+                  'bt_prereg_commit':'07c17496597306ff410633264d1d050f833728b9',
+                  'environment_lineage':'Exp073BJ conda-forge python=3.11 namaster=2.7 healpy astropy numpy on ubuntu-24.04'
+              }
+          d['authority']=False
+          d['scientific_pass_claimed']=False
+          d['scientific_readiness_increment']=0
+          d['draft_data_readiness_increment']=0
+          d['Exp073AQ_preserved_as_FAIL']=True
+          d['Exp073BJ_preserved_as_PASS']=True
+          dst.write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          print(dst.read_text())
+          PY
+
+      - name: Upload Exp073BT diagnostic receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073bt-wigner-linkage-bj-environment-v0-1
+          path: data/derived/g7/exp073bt_wigner_linkage_bj_environment_result_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
