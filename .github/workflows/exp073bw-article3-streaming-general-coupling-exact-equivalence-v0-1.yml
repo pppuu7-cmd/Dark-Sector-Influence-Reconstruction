@@ -1,0 +1,155 @@
+name: Exp073BW Article3 streaming general-coupling exact equivalence v0.1
+
+on:
+  push:
+    paths:
+      - 'experiments/073bw_hosted_trigger_v0_1.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_DYNAMIC: 'FALSE'
+
+jobs:
+  exact-equivalence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce Exp073BW prospective freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- experiments/073bw_article3_streaming_general_coupling_exact_equivalence_v0_1_prereg.md)" = "ba4b28ec9aeca2a465202374e390ba9b43bb3952"
+          test "$(git log -1 --format=%H -- ci/exp073bw_stream_general_coupling_v0_1.c)" = "9fb0ecb79986cf5f542760377533a685745b31e2"
+          test "$(git log -1 --format=%H -- ci/exp073bw_stream_general_coupling_exact_equivalence_v0_1.py)" = "0c3f1290a30e9f437577fbe557559b722c20b4e3"
+          test "$(git log -1 --format=%H -- experiments/073bw_article3_streaming_general_coupling_binding_v0_1.json)" = "ba31ac3f7e610fe9ed56bdb5c02e0367d47ab5b5"
+          python - <<'PY'
+          import json
+          d=json.load(open('experiments/073bw_article3_streaming_general_coupling_binding_v0_1.json'))
+          assert d['bw_prereg_commit']=='ba4b28ec9aeca2a465202374e390ba9b43bb3952'
+          assert d['bw_c_helper_commit']=='9fb0ecb79986cf5f542760377533a685745b31e2'
+          assert d['bw_python_harness_commit']=='0c3f1290a30e9f437577fbe557559b722c20b4e3'
+          assert d['bv_run_id']==33420824723
+          assert d['bv_artifact_id']==9768866582
+          assert d['bv_status']=='BV_Q1_EXACT_SOURCE_LINEAGE_CONFIRMED'
+          assert d['official_namaster_v27_commit']=='24365fa59a38c15732f4f37e8b29265b75c442d5'
+          assert d['wrapper_sha256']=='3c82b229231debf224b1e2206e6e7490d1e274b1d7df3803a17f2ce3fb3a4c6d'
+          assert d['pass_token']=='BW_Q1_FULL_AND_STREAM_COMPRESSED_EXACT_EQUIVALENCE_PASS'
+          assert d['scientific_readiness_increment']==0
+          assert d['draft_data_readiness_increment']==0
+          assert d['Exp073AQ_preserved_as_FAIL'] is True
+          assert d['Exp073BJ_preserved_as_PASS'] is True
+          assert d['Exp073BD_provisional_forbidden_downstream'] is True
+          PY
+
+      - id: install
+        name: Install exact hosted-successful NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+          "${RUNNER_TEMP}/nmt27/bin/python" - <<'PY'
+          import importlib.metadata
+          v=importlib.metadata.version('pymaster')
+          assert v == '2.7' or v.startswith('2.7.'), v
+          print(v)
+          PY
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073bv-namaster27-source-lineage-v0-1
+          path: external/bv
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33420824723
+
+      - id: bind
+        name: Bind immutable Exp073BV source-lineage prerequisite
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${NMT_PY}" - <<'PY'
+          import glob,json
+          fs=glob.glob('external/bv/**/*.json',recursive=True)
+          assert len(fs)==1,fs
+          d=json.load(open(fs[0]))
+          assert d['status']=='BV_Q1_EXACT_SOURCE_LINEAGE_CONFIRMED',d.get('status')
+          assert d['scientific_readiness_increment']==0
+          assert d['draft_data_readiness_increment']==0
+          assert d['Exp073AQ_preserved_as_FAIL'] is True
+          assert d['Exp073BJ_preserved_as_PASS'] is True
+          print(fs[0])
+          PY
+
+      - id: qa
+        name: Run frozen exact full-and-stream equivalence matrix
+        if: steps.bind.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${NMT_PY}" ci/exp073bw_stream_general_coupling_exact_equivalence_v0_1.py
+
+      - name: Ensure frozen Exp073BW receipt exists
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('data/derived/g7/exp073bw_stream_general_coupling_exact_equivalence_result_v0_1.json')
+          if not p.exists():
+              d={
+                'experiment':'Exp073BW',
+                'classification':'NONCLASSIFYING_NUMERICAL_IMPLEMENTATION_EQUIVALENCE_QA',
+                'authority':False,
+                'scientific_pass_claimed':False,
+                'scientific_readiness_increment':0,
+                'draft_data_readiness_increment':0,
+                'Exp073AQ_preserved_as_FAIL':True,
+                'Exp073BJ_preserved_as_PASS':True,
+                'Exp073BD_provisional_forbidden_downstream':True,
+                'prereg_commit':'ba4b28ec9aeca2a465202374e390ba9b43bb3952',
+                'helper_commit':'9fb0ecb79986cf5f542760377533a685745b31e2',
+                'python_harness_commit':'0c3f1290a30e9f437577fbe557559b722c20b4e3',
+                'bv_artifact_id':9768866582,
+                'bv_artifact_digest':'sha256:33f013a8c7c06ce2f5f68e62a324b80f2b1911ff2a3cd3ff89a6af4add179cc5',
+                'status':'BW_Q5_INFRASTRUCTURE_OR_DIAGNOSTIC_INCOMPLETE',
+                'workflow_fallback_receipt':True,
+                'error':'frozen BW harness did not produce a receipt; inspect prior setup/binding/execution steps'
+              }
+              p.parent.mkdir(parents=True,exist_ok=True)
+              p.write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          d=json.load(open(p))
+          allowed={
+            'BW_Q1_FULL_AND_STREAM_COMPRESSED_EXACT_EQUIVALENCE_PASS',
+            'BW_Q2_FULL_MATRIX_EXACT_MISMATCH',
+            'BW_Q3_STREAM_COMPRESSED_EXACT_MISMATCH_AFTER_FULL_PASS',
+            'BW_Q4_THREAD_REPEATABILITY_EXACT_MISMATCH',
+            'BW_Q5_INFRASTRUCTURE_OR_DIAGNOSTIC_INCOMPLETE'
+          }
+          assert d['status'] in allowed,d['status']
+          assert d['scientific_readiness_increment']==0
+          assert d['draft_data_readiness_increment']==0
+          assert d['Exp073AQ_preserved_as_FAIL'] is True
+          assert d['Exp073BJ_preserved_as_PASS'] is True
+          print(p.read_text())
+          PY
+
+      - name: Upload Exp073BW exact-equivalence receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073bw-streaming-general-coupling-exact-equivalence-v0-1
+          path: data/derived/g7/exp073bw_stream_general_coupling_exact_equivalence_result_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
