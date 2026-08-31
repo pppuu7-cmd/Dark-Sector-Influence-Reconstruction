@@ -8,47 +8,62 @@ Repository state and immutable hosted artifacts outrank chat wording. Synthetic/
 
 ## Read first
 
-1. `recovery/2026-08-31_exp073bs_terminal_exp073bt_preexecution_exp073bu_active.md`
+1. `recovery/2026-08-31_exp073bu_q5_exp073bv_source_lineage_active.md`
 2. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
 3. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-4. `experiments/073bu_article3_namaster27_wigner_linkage_yaml_successor_v0_1_prereg.md`
-5. `experiments/073bt_article3_namaster27_wigner_linkage_bj_environment_successor_v0_1_prereg.md`
-6. `experiments/073bs_article3_namaster27_wigner_linkage_full_history_successor_v0_1_prereg.md`
-7. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+4. `experiments/073bv_article3_namaster27_exact_source_lineage_v0_1_prereg.md`
+5. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
 
 ## Scientific authority state
 
 **Exp073BJ remains terminal Track-A exact authority PASS.** Hosted run `33379013167`; final authority artifact `9758841785`, digest `sha256:a7d5b30e0a8ba4ce6d8437db82982f69f41c01ac6a58c6cb121d4cbbb2c4f008`. Exact final A/B equality remains frozen and authoritative.
 
-Exp073AQ remains the permanent historical hosted exact-repeatability scientific FAIL. Exp073BA remains infrastructure/execution incomplete with no scientific classification. Exp073BD remains `P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE`. Exp073BI remains execution-feasibility QA only.
+Exp073AQ remains the permanent historical hosted exact-repeatability scientific FAIL. Exp073BA remains infrastructure/execution incomplete. Exp073BD remains `P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE`. Exp073BI remains execution-feasibility QA only.
 
-## Wigner/source-linkage state
+## Source-linkage / source-lineage state
 
-### Exp073BS terminal
+### Exp073BU terminal Q5
 
-Run `33417511410`, job `99571616144`, artifact `9767580175`: terminal `BS_Q5_PARTIAL_DIAGNOSTIC_INCOMPLETE`. Full-history freeze passed, but the system-Python/PyPI setup failed before the inherited `drc3jj` probe. BS therefore provides no Q1–Q4 linkage evidence and remains `+0/+0`.
+Run `33420089328`, job `99580060141`, artifact `9768579019`, digest `sha256:4f181aef054b8447503a94459d66f70fa0b2f9c75bee16572118a5426597f9dc`, head `557881b008aded44cb3895650c575ea289c47dce`.
 
-### Exp073BT terminal pre-execution incomplete
+Immutable frozen outcome: `BU_Q5_PARTIAL_DIAGNOSTIC_INCOMPLETE`.
 
-Preregistration commit `07c17496597306ff410633264d1d050f833728b9`; workflow creation commit `16ecd4cb75a68a8878f539b301ae76d3f044b4e0`; trigger/head `5d145ce6093c7dac007277e6528b36de5504e353`; run `33419946707`.
+Receipt evidence:
 
-The run terminated at workflow parsing/evaluation with **zero jobs** because the interpreter invocation was represented by an invalid single-line YAML scalar. No runner/probe/result existed. This is pre-execution infrastructure failure only, `+0/+0`.
+- `pymaster_version=2.7`;
+- bounded installed-text search completed and found no `drc3jj` reference inside the frozen installed conda-prefix text scope;
+- `pymaster._nmtlib` import failed because that module path does not exist;
+- therefore the preregistered BR/BU scheme correctly remains Q5 rather than inferring Q4.
 
-### Exp073BU active
+### Official NaMaster v2.7 source topology established prospectively after BU
 
-BU changes only that YAML representation, using a valid block scalar. The inherited diagnostic implementation, BJ conda-forge environment lineage, Q1–Q5 branches, firewalls and accounting remain unchanged.
+Official `LSSTDESC/NaMaster` tag `v2.7` resolves to immutable commit `24365fa59a38c15732f4f37e8b29265b75c442d5`.
+
+At that exact snapshot, source inspection shows:
+
+- `pymaster/field.py`: `from pymaster import nmtlib as lib`;
+- `pymaster/nmtlib.py`: top-level `import _nmtlib`;
+- `setup.py`: builds `Extension("_nmtlib", ...)` and links `./_deps/lib/libnmt.a`;
+- `Makefile.am`: includes `src/utils.c` in `libnmt_la_SOURCES`;
+- `src/utils.c`: defines `int drc3jj(...)`.
+
+This explains the BU path mismatch but does not retroactively change BU Q5.
+
+### Exp073BV active
+
+Purpose: bind the hosted-successful BJ conda-forge NaMaster-2.7 runtime layout to exact official v2.7 source topology before any extracted/streaming numerical-equivalence QA.
 
 Frozen provenance:
 
-- preregistration commit `8dffb59a960d3871d20f1cca1f2442455d15b6fe`;
-- inherited BR diagnostic commit `8a70892c9533206e4011eee041914ca89bae2290`;
-- workflow creation commit `79e71ab9c0128488a5c07ff9f6c64071a0a69903`;
-- trigger/head commit `557881b008aded44cb3895650c575ea289c47dce`;
-- hosted run `33420089328`, job `99580060141`.
+- preregistration commit `d71f8715c9b680c2cf80226853366b9803853a7e`;
+- diagnostic implementation commit `89b0790ff82610da6635dd91731dd185d5e74ffd`;
+- workflow creation commit `a36450aef353f6a21a28b79797ae198e3822af76`;
+- trigger/head commit `6010f094782a277017cbf0bb2a9af63331bb3282`;
+- hosted run `33420824723`, job `99582473539`.
 
-At the latest checkpoint the job had completed setup, full-history checkout and prospective-freeze enforcement and was installing the hosted-successful Exp073BJ NaMaster-2.7 lineage (`ubuntu-24.04`, conda-forge `python=3.11 namaster=2.7 healpy astropy numpy`). **Do not start a duplicate BU run while `33420089328` is active.**
+At the latest checkpoint BV had passed hosted setup, DSIR full-history checkout and prospective-freeze enforcement and was checking out exact upstream NaMaster commit `24365fa59a38c15732f4f37e8b29265b75c442d5`. **Do not start a duplicate BV run while `33420824723` is active.**
 
-Frozen BU labels: `BU_Q1_EXTENSION_EXPORTS_DRC3JJ`, `BU_Q2_LINKED_DEPENDENCY_EXPORTS_DRC3JJ`, `BU_Q3_DYNAMIC_SYMBOL_ABSENT_SOURCE_REFERENCE_FOUND`, `BU_Q4_DYNAMIC_SYMBOL_AND_INSTALLED_SOURCE_REFERENCE_ABSENT`, `BU_Q5_PARTIAL_DIAGNOSTIC_INCOMPLETE`. Every outcome is nonclassifying source/linkage evidence and `+0/+0`.
+Frozen labels: `BV_Q1_EXACT_SOURCE_LINEAGE_CONFIRMED`, `BV_Q2_SOURCE_TOPOLOGY_CONFIRMED_WRAPPER_BYTES_DIFFER`, `BV_Q3_RUNTIME_LAYOUT_INCOMPLETE`, `BV_Q4_UPSTREAM_TOPOLOGY_MISMATCH`, `BV_Q5_DIAGNOSTIC_INCOMPLETE`. Every BV outcome is nonclassifying provenance/source-lineage evidence and `+0/+0`.
 
 ## Frozen Article-3 boundaries and G7 order
 
@@ -58,13 +73,13 @@ Required order remains: `validated physical forward/power-input bridges -> prere
 
 ## Exact next gate
 
-Consume terminal Exp073BU run `33420089328`, job `99580060141`, logs and immutable receipt. Apply only the preregistered BU Q1–Q5 branch. Do not modify the inherited probe or rescue an outcome. Only after genuine source/linkage resolution may a separately preregistered exact source-equivalence/streaming successor be considered.
+Consume terminal Exp073BV run `33420824723`, job `99582473539`, logs and immutable artifact. Apply exactly one frozen BV Q1–Q5 label. If and only if Q1 confirms exact source lineage, prospectively preregister a separate numerical-equivalence QA for the identified `drc3jj` implementation before any low-memory/streaming Wm_S2 Track-A successor is allowed.
 
 - ✅ Exp073BJ exact Track-A authority PASS preserved.
-- ✅ Exp073BS correctly terminalized as pre-probe Q5.
-- ✅ Exp073BT isolated as zero-job pre-execution workflow failure.
-- 🟡 Exp073BU executable linkage diagnostic active, `+0/+0`.
+- ✅ Exp073BU terminalized exactly as Q5; no retroactive rescue.
+- 🟡 Exp073BV exact source-lineage diagnostic active, `+0/+0`.
 - ❌ Exp073AQ permanent historical scientific FAIL preserved.
+- ❌ Exp073BD remains provisional and forbidden downstream.
 - ❌ Layer A/B, covariance/whitening, nuisance SVD, quotient/relation/null, G7/G8/G9 unauthorized.
 
 **Verified: 52.0% | Draft/data: 53.7%**
