@@ -1,0 +1,106 @@
+name: Exp073CD Article3 first-mask-ALM spill reload exact equivalence RSS v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073cd_first_mask_alm_spill_reload_exact_equivalence_rss_v0_1.trigger'
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  hosted-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce prospective freeze and binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- experiments/073cd_article3_first_mask_alm_spill_reload_exact_equivalence_rss_v0_1_prereg.md)" = '1017d46081c030427dc111d42bc0a7e89ddd4b3f'
+          test "$(git log -1 --format=%H -- ci/exp073cd_first_mask_alm_spill_reload_exact_equivalence_rss_v0_1.py)" = 'bdcd1d8be90c0e47377cd49d823d2f9cf31b4ef1'
+          test -f experiments/073cd_article3_first_mask_alm_spill_reload_exact_equivalence_rss_v0_1_binding.json
+          binding_commit="$(git log -1 --format=%H -- experiments/073cd_article3_first_mask_alm_spill_reload_exact_equivalence_rss_v0_1_binding.json)"
+          trigger_binding="$(tr -d '[:space:]' < ci/exp073cd_first_mask_alm_spill_reload_exact_equivalence_rss_v0_1.trigger)"
+          test "$binding_commit" = "$trigger_binding"
+          python3 - <<'PY'
+          import json,subprocess
+          d=json.load(open('experiments/073cd_article3_first_mask_alm_spill_reload_exact_equivalence_rss_v0_1_binding.json'))
+          assert d['experiment']=='Exp073CD'
+          assert d['prereg_commit']=='1017d46081c030427dc111d42bc0a7e89ddd4b3f'
+          assert d['helper_commit']=='bdcd1d8be90c0e47377cd49d823d2f9cf31b4ef1'
+          got=subprocess.check_output(['git','log','-1','--format=%H','--','.github/workflows/exp073cd-article3-first-mask-alm-spill-reload-exact-equivalence-rss-v0-1.yml'],text=True).strip()
+          assert got==d['workflow_commit'],(got,d['workflow_commit'])
+          assert d['hosted_only'] is True and d['science_gate_scored'] is False
+          PY
+      - name: Provision frozen NaMaster 2.7 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$RUNNER_TEMP/miniforge"
+          curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"
+          bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"
+          "$MF/bin/conda" create -y -p "$RUNNER_TEMP/exp073cd-env" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          PY="$RUNNER_TEMP/exp073cd-env/bin/python"
+          "$PY" - <<'PY'
+          import importlib.metadata,numpy,healpy
+          v=importlib.metadata.version('pymaster')
+          assert v=='2.7' or v.startswith('2.7.'),v
+          print('pymaster',v,'numpy',numpy.__version__,'healpy',healpy.__version__)
+          PY
+          echo "NMT_PY=$PY" >> "$GITHUB_ENV"
+      - name: Run frozen oracle and spill cases with independent RSS
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073cd/spill
+          for n in 64 128 256; do
+            /usr/bin/time -v -o "data/derived/exp073cd/time_oracle_${n}.txt" \
+              "$NMT_PY" ci/exp073cd_first_mask_alm_spill_reload_exact_equivalence_rss_v0_1.py run --mode oracle --nside "$n" --out "data/derived/exp073cd/oracle_${n}.npy" --meta "data/derived/exp073cd/oracle_meta_${n}.json" --spill-dir data/derived/exp073cd/spill
+            /usr/bin/time -v -o "data/derived/exp073cd/time_spill_${n}.txt" \
+              "$NMT_PY" ci/exp073cd_first_mask_alm_spill_reload_exact_equivalence_rss_v0_1.py run --mode spill --nside "$n" --out "data/derived/exp073cd/spill_${n}.npy" --meta "data/derived/exp073cd/spill_meta_${n}.json" --spill-dir data/derived/exp073cd/spill
+          done
+      - name: Frozen exact comparator and RSS receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          "$NMT_PY" ci/exp073cd_first_mask_alm_spill_reload_exact_equivalence_rss_v0_1.py compare --root data/derived/exp073cd --out-json data/derived/exp073cd/exp073cd_exact_comparator.json
+          rc=$?
+          set -e
+          "$NMT_PY" - <<'PY'
+          import json,re,pathlib
+          root=pathlib.Path('data/derived/exp073cd')
+          d=json.load(open(root/'exp073cd_exact_comparator.json'))
+          rss=[]
+          for n in (64,128,256):
+              def get(p):
+                  t=(root/p).read_text(); m=re.search(r'Maximum resident set size \(kbytes\):\s*(\d+)',t); assert m,t; return int(m.group(1))
+              a=get(f'time_oracle_{n}.txt'); b=get(f'time_spill_{n}.txt')
+              rss.append({'nside':n,'oracle_max_rss_kib':a,'spill_max_rss_kib':b,'spill_over_oracle':b/a})
+          d['rss']=rss
+          (root/'exp073cd_receipt.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(d,indent=2,sort_keys=True))
+          PY
+          exit "$rc"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073cd-hosted-first-mask-alm-spill-reload-${{ github.sha }}
+          path: data/derived/exp073cd
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
