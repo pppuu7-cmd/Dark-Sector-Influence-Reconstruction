@@ -1,0 +1,339 @@
+name: Exp073CF fullscale memory-stable Wm_S2 successor v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.trigger'
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '8'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  compact-replica:
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        replica: [A, B]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce Exp073CF prospective freeze and activation binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- preregistration/2026-09-01_exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.md)" = 'e0c92ebaba576a5aa5dfd06d1d972bfa3b025d36'
+          test "$(git log -1 --format=%H -- ci/exp073cf_memory_stable_wm_s2_pcl_v0_1.py)" = '5423976c09d5ee338d1a7894ce143faf1bb88225'
+          test "$(git log -1 --format=%H -- ci/exp073cf_fullscale_memory_stable_wm_s2_successor_authority_tail_v0_1.disabled.yml)" = '80c273d89f20cd91065b18236b50060328d33ae8'
+          test "$(git log -1 --format=%H -- ci/exp073az_article3_low_memory_general_coupling_v0_1.py)" = 'd77b7ba88801f6788f3d386e72b445c7859c7153'
+          test "$(git log -1 --format=%H -- ci/dsir_action_heartbeat_v0_1.sh)" = '43031abd60ad65cacea1ede38c09061eb747d3f8'
+          test "$(git log -1 --format=%H -- ci/exp073ca_stream_general_coupling_range_v0_1.c)" = 'fa971eb4ef8c47e81eb0bb4e13eeb76f7cf42e22'
+          test "$(git log -1 --format=%H -- ci/exp073ca_checkpoint_streaming_wm_s2_v0_1.py)" = '583c34420d5f02a1ac8e77efb9625bbc3ab73de8'
+          test "$(git log -1 --format=%H -- ci/exp073bw_stream_general_coupling_v0_1.c)" = '9fb0ecb79986cf5f542760377533a685745b31e2'
+          test "$(git log -1 --format=%H -- ci/dsir_remote_band_checkpoint_v0_1.py)" = '0b0324afb69acb16cbea97bb924b9be48f303dde'
+          test "$(git log -1 --format=%H -- ci/dsir_checkpoint_git_sync_v0_1.sh)" = '96886916b41dce7f0a40807622928c841ef5fc58'
+          test -f experiments/073cf_fullscale_memory_stable_wm_s2_successor_v0_1_binding.json
+          test -f experiments/073cf_fullscale_memory_stable_wm_s2_successor_v0_1_activation_binding.json
+          test -f ci/exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.trigger
+          ACTUAL_WORKFLOW_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073cf-fullscale-memory-stable-wm-s2-successor-v0-1.yml)"
+          ACTUAL_BINDING_COMMIT="$(git log -1 --format=%H -- experiments/073cf_fullscale_memory_stable_wm_s2_successor_v0_1_activation_binding.json)"
+          export ACTUAL_WORKFLOW_COMMIT ACTUAL_BINDING_COMMIT
+          python3 - <<'PY'
+          import json, os
+          prep=json.load(open('experiments/073cf_fullscale_memory_stable_wm_s2_successor_v0_1_binding.json'))
+          act=json.load(open('experiments/073cf_fullscale_memory_stable_wm_s2_successor_v0_1_activation_binding.json'))
+          trig=json.load(open('ci/exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.trigger'))
+          assert prep['experiment']=='Exp073CF' and prep['task']=='Wm_S2'
+          assert prep['prereg_commit']=='e0c92ebaba576a5aa5dfd06d1d972bfa3b025d36'
+          assert prep['pcl_helper_commit']=='5423976c09d5ee338d1a7894ce143faf1bb88225'
+          assert prep['scientific_contract_changed'] is False
+          assert prep['threads']==8 and prep['chunk_bands']==4
+          assert prep['min_spill_free_bytes']==2684354560
+          assert act['experiment']=='Exp073CF' and act['task']=='Wm_S2'
+          assert act['activation_authorized'] is True
+          assert act['scientific_contract_changed'] is False
+          assert act['corrected_authority_tail_commit']=='80c273d89f20cd91065b18236b50060328d33ae8'
+          assert act['activated_workflow_commit']==os.environ['ACTUAL_WORKFLOW_COMMIT']
+          assert act['trigger_seed_commit']=='fc4db4477c64c5e3119b99deed629b43fc3acbab'
+          assert trig['experiment']=='Exp073CF'
+          assert trig['state']=='ACTIVATE_FRESH_FULLSCALE'
+          assert trig['activation_binding_commit']==os.environ['ACTUAL_BINDING_COMMIT']
+          assert trig['activated_workflow_commit']==os.environ['ACTUAL_WORKFLOW_COMMIT']
+          assert trig['trigger_seed_commit']=='fc4db4477c64c5e3119b99deed629b43fc3acbab'
+          PY
+
+      - name: Reuse or bootstrap proven NaMaster 2.7 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$HOME/.cache/dsir-miniforge"
+          ENV="$HOME/.cache/dsir-nmt27"
+          if ! test -x "$MF/bin/conda"; then
+            mkdir -p "$HOME/.cache"
+            curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"
+            bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"
+          fi
+          if ! test -x "$ENV/bin/python"; then
+            "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          fi
+          "$ENV/bin/python" - <<'PY'
+          import importlib.metadata
+          v=importlib.metadata.version('pymaster')
+          assert v=='2.7' or v.startswith('2.7.'),v
+          PY
+          echo "NMT_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+          path: external/r1
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33270843577
+
+      - name: Download and bind exact DES Y1 lens mask
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/des
+          curl --fail --location --retry 5 -o external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits'
+          test "$(stat -c %s external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits)" = '104595840'
+          echo 'a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55  external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits' | sha256sum -c -
+
+      - name: Fail-closed local spill capacity preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/exp073cf-spill"
+          free_bytes="$(df -PB1 "$RUNNER_TEMP/exp073cf-spill" | awk 'NR==2 {print $4}')"
+          test "$free_bytes" -ge 2684354560
+          printf 'spill_free_bytes=%s\nspill_required_bytes=2684354560\n' "$free_bytes" | tee "$RUNNER_TEMP/exp073cf-spill-preflight.txt"
+
+      - name: Build fresh independent memory-stable Wm_S2 mask PCL
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          lower="$(printf '%s' "$REPLICA" | tr '[:upper:]' '[:lower:]')"
+          bash ci/dsir_action_heartbeat_v0_1.sh "Exp073CF PCL replica=${REPLICA}" 60 0 8 - -- \
+            /usr/bin/time -v "$NMT_PY" ci/exp073cf_memory_stable_wm_s2_pcl_v0_1.py \
+            --task Wm_S2 --r1-root external/r1 \
+            --lens-mask external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits \
+            --spill-root "$RUNNER_TEMP/exp073cf-spill" \
+            --out-npy "data/derived/g7/exp073cf_wm_s2_pcl_${lower}_v0_1.npy" \
+            --out-json "data/derived/g7/exp073cf_wm_s2_pcl_${lower}_v0_1.json"
+
+      - name: Compile frozen BW and checkpoint-range helpers
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build data/derived/g7
+          flags=(-O2 -shared -fPIC -fopenmp -fno-fast-math -fno-associative-math -ffp-contract=off -fno-tree-vectorize)
+          gcc "${flags[@]}" ci/exp073bw_stream_general_coupling_v0_1.c -o build/exp073bw.so -ldl -lm
+          gcc "${flags[@]}" ci/exp073ca_stream_general_coupling_range_v0_1.c -o build/exp073ca.so -ldl -lm
+
+      - name: Mandatory checkpoint-boundary exact preflight
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euo pipefail
+          lower="$(printf '%s' "$REPLICA" | tr '[:upper:]' '[:lower:]')"
+          PYTHONPATH="$GITHUB_WORKSPACE/ci" "$NMT_PY" ci/exp073ca_checkpoint_streaming_wm_s2_v0_1.py preflight --bw-so build/exp073bw.so --ca-so build/exp073ca.so --out-json "data/derived/g7/exp073cf_preflight_${lower}_v0_1.json"
+
+      - name: Restore fresh Exp073CF durable remote checkpoint namespace
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euo pipefail
+          lower="$(printf '%s' "$REPLICA" | tr '[:upper:]' '[:lower:]')"
+          branch="checkpoints/exp073cf-wm-s2-${lower}-v0-1"
+          dir="$RUNNER_TEMP/exp073cf-checkpoint-${lower}"
+          bash ci/dsir_checkpoint_git_sync_v0_1.sh restore "$dir" "$branch"
+          echo "EXP073CF_CHECKPOINT_BRANCH=$branch" >> "$GITHUB_ENV"
+          echo "EXP073CF_CHECKPOINT_DIR=$dir" >> "$GITHUB_ENV"
+
+      - name: Heavy full-scale checkpoint streaming Wm_S2 compact
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euo pipefail
+          lower="$(printf '%s' "$REPLICA" | tr '[:upper:]' '[:lower:]')"
+          pcl="data/derived/g7/exp073cf_wm_s2_pcl_${lower}_v0_1.npy"
+          bash ci/dsir_action_heartbeat_v0_1.sh "Exp073CF Wm_S2 compact replica=${REPLICA}" 60 39 8 "$EXP073CF_CHECKPOINT_DIR" -- \
+            /usr/bin/time -v env PYTHONPATH="$GITHUB_WORKSPACE/ci" "$NMT_PY" ci/exp073ca_checkpoint_streaming_wm_s2_v0_1.py run \
+            --pcl-npy "$pcl" --ca-so build/exp073ca.so \
+            --checkpoint-dir "$EXP073CF_CHECKPOINT_DIR" --checkpoint-branch "$EXP073CF_CHECKPOINT_BRANCH" \
+            --replica "$REPLICA" \
+            --out-npz "data/derived/g7/exp073cf_wm_s2_compact_${lower}_v0_1.npz" \
+            --out-json "data/derived/g7/exp073cf_wm_s2_compact_${lower}_v0_1.json"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073cf-compact-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073cf_*
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
+
+  compare-compact:
+    needs: compact-replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      exact_pass: ${{ steps.cmp.outputs.exact_pass }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'numpy==2.1.3'
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073cf-compact-A-${{ github.sha }}
+          path: external/a
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073cf-compact-B-${{ github.sha }}
+          path: external/b
+      - id: cmp
+        name: Frozen exact compact comparator
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob,hashlib,json,numpy as np,os,pathlib
+          fa=glob.glob('external/a/**/*compact_a_v0_1.npz',recursive=True)
+          fb=glob.glob('external/b/**/*compact_b_v0_1.npz',recursive=True)
+          ja=glob.glob('external/a/**/*compact_a_v0_1.json',recursive=True)
+          jb=glob.glob('external/b/**/*compact_b_v0_1.json',recursive=True)
+          assert len(fa)==len(fb)==len(ja)==len(jb)==1,(fa,fb,ja,jb)
+          ma=json.load(open(ja[0])); mb=json.load(open(jb[0]))
+          assert ma['status']==mb['status']=='COMPLETE_VALID_COMPARATOR_INPUT_EXP073CA_WM_S2_COMPACT_V0_1'
+          a=np.ascontiguousarray(np.load(fa[0],allow_pickle=False)['A'],dtype='<f8')
+          b=np.ascontiguousarray(np.load(fb[0],allow_pickle=False)['A'],dtype='<f8')
+          assert a.shape==b.shape==(39,12288)
+          assert np.isfinite(a).all() and np.isfinite(b).all()
+          h=lambda x: hashlib.sha256(memoryview(x).cast('B')).hexdigest()
+          eq=bool(np.array_equal(a,b)); ha=h(a); hb=h(b)
+          passed=eq and ha==hb
+          rec={'experiment':'Exp073CF','stage':'compact_exact_comparator','task':'Wm_S2','shape':[39,12288],'array_equal':eq,'sha_a':ha,'sha_b':hb,'sha_equal':ha==hb,'pcl_sha_a':ma['pcl_sha256'],'pcl_sha_b':mb['pcl_sha256'],'status':'PASS_EXP073CF_WM_S2_COMPACT_EXACT_V0_1' if passed else 'SCIENTIFIC_REPEATABILITY_FAIL_EXP073CF_WM_S2_COMPACT_EXACT_V0_1','no_tolerance_used':True}
+          pathlib.Path('data/derived/g7/exp073cf_wm_s2_compact_exact_result_v0_1.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f: f.write('exact_pass='+('true' if passed else 'false')+'\n')
+          print(json.dumps(rec,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073cf-compact-authority-${{ github.sha }}
+          path: data/derived/g7/exp073cf_wm_s2_compact_exact_result_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+
+  finalizer:
+    needs: compare-compact
+    if: needs.compare-compact.outputs.exact_pass == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        replica: [A, B]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact NaMaster 2.7 finalizer environment
+        shell: bash
+        run: |
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "$GITHUB_ENV"
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073cf-compact-${{ matrix.replica }}-${{ github.sha }}
+          path: external/current
+      - name: Frozen independent finalizer
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          lower="$(printf '%s' "$REPLICA" | tr '[:upper:]' '[:lower:]')"
+          compact="$(find external/current -name "*compact_${lower}_v0_1.npz" -type f -print -quit)"
+          test -n "$compact"
+          "$NMT_PY" ci/exp073az_article3_low_memory_general_coupling_v0_1.py finalize \
+            --task Wm_S2 --compact-npz "$compact" \
+            --out-npz "data/derived/g7/exp073cf_wm_s2_final_${lower}_v0_1.npz" \
+            --out-json "data/derived/g7/exp073cf_wm_s2_final_${lower}_v0_1.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073cf-final-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073cf_wm_s2_final_*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  compare-final:
+    needs: finalizer
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'numpy==2.1.3'
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073cf-final-A-${{ github.sha }}
+          path: external/a
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073cf-final-B-${{ github.sha }}
+          path: external/b
+      - name: Frozen exact final authority comparator
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob,hashlib,json,numpy as np,pathlib
+          fa=glob.glob('external/a/**/*final_a_v0_1.npz',recursive=True)
+          fb=glob.glob('external/b/**/*final_b_v0_1.npz',recursive=True)
+          assert len(fa)==len(fb)==1,(fa,fb)
+          a=np.ascontiguousarray(np.load(fa[0],allow_pickle=False)['window'],dtype='<f8')
+          b=np.ascontiguousarray(np.load(fb[0],allow_pickle=False)['window'],dtype='<f8')
+          valid=a.shape==b.shape==(39,12288) and np.isfinite(a).all() and np.isfinite(b).all() and np.all(np.sum(np.abs(a),axis=1)>0) and np.all(np.sum(np.abs(b),axis=1)>0)
+          h=lambda x: hashlib.sha256(memoryview(x).cast('B')).hexdigest()
+          eq=bool(np.array_equal(a,b)) if valid else False
+          ha=h(a) if a.shape==(39,12288) else None; hb=h(b) if b.shape==(39,12288) else None
+          passed=bool(valid and eq and ha==hb)
+          rec={'experiment':'Exp073CF','track':'A','task':'Wm_S2','authority':passed,'scientific_pass_claimed':passed,'shape':[39,12288] if valid else None,'array_equal':eq,'sha_a':ha,'sha_b':hb,'sha_equal':ha==hb if ha and hb else False,'status':'PASS_EXP073CF_WM_S2_MEMORY_STABLE_CHECKPOINT_STREAMING_TRACK_A_EXACT_V0_1' if passed else 'SCIENTIFIC_REPEATABILITY_FAIL_EXP073CF_WM_S2_FINALIZER_EXACT_V0_1','Exp073AQ_preserved_as_FAIL':True,'Exp073BD_forbidden':True,'no_tolerance_used':True,'readiness_increment_requires_separate_ledger_update':True}
+          pathlib.Path('data/derived/g7/exp073cf_wm_s2_final_authority_v0_1.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(rec,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073cf-final-authority-${{ github.sha }}
+          path: data/derived/g7/exp073cf_wm_s2_final_authority_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
