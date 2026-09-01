@@ -33,7 +33,7 @@ def sha_file(path: Path, chunk: int = 8 << 20) -> str:
 
 def canonical_f8_sha(x: np.ndarray) -> str:
     a = np.ascontiguousarray(x, dtype='<f8')
-    return hashlib.sha256(a.tobytes(order='C')).hexdigest()
+    return hashlib.sha256(memoryview(a).cast('B')).hexdigest()
 
 
 def preflight_spill(root: Path) -> dict:
@@ -57,7 +57,7 @@ def atomic_spill_c16(arr: np.ndarray, final_path: Path) -> dict:
         raise AssertionError(('first_alm_ndim', canonical.ndim))
     if canonical.nbytes != EXPECTED_FIRST_ALM_BYTES:
         raise AssertionError(('first_alm_bytes', canonical.nbytes, EXPECTED_FIRST_ALM_BYTES))
-    expected_sha = hashlib.sha256(canonical.tobytes(order='C')).hexdigest()
+    expected_sha = hashlib.sha256(memoryview(canonical).cast('B')).hexdigest()
 
     fd, tmp_name = tempfile.mkstemp(prefix=final_path.name + '.tmp.', dir=str(final_path.parent))
     tmp_path = Path(tmp_name)
@@ -126,7 +126,7 @@ def build_wm_s2_pcl(r1_root: Path, lens_mask: Path, spill_root: Path) -> tuple[n
             raise AssertionError(('spill_shape', tuple(mm.shape), expected_shape))
         if int(mm.nbytes) != spill['nbytes']:
             raise AssertionError(('spill_nbytes', int(mm.nbytes), spill['nbytes']))
-        reloaded_sha = hashlib.sha256(np.ascontiguousarray(mm, dtype='<c16').tobytes(order='C')).hexdigest()
+        reloaded_sha = sha_file(spill_path)
         if reloaded_sha != spill['sha256']:
             raise AssertionError(('spill_reload_sha', reloaded_sha, spill['sha256']))
 
