@@ -1,0 +1,14 @@
+{
+  "band": 18,
+  "complete": true,
+  "contract_fingerprint": "b73283035e46a3a49a72bb46dff5fedc3f99239dc9188de1d7762560926674f0",
+  "dtype": "<f8",
+  "ell_hi_exclusive": 967,
+  "ell_lo": 852,
+  "format": "DSIR_REMOTE_BAND_CHECKPOINT_V0_1",
+  "sha256": "2822088000ee260866a1e681df41a7d5a5c3ff52f763070c31fb8236f3d54855",
+  "shape": [
+    12288
+  ],
+  "wall_seconds": 17.962007414749678
+}
