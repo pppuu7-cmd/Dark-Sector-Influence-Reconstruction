@@ -1,0 +1,191 @@
+# DISABLED SPECIFICATION ONLY — NOT A GITHUB ACTIONS WORKFLOW WHILE OVERNIGHT LOCK IS ACTIVE.
+# Activation is forbidden until the user explicitly re-enables the home runner.
+# A post-lock activation commit may copy this file into .github/workflows only after
+# re-checking all queued/in_progress DSIR jobs and freezing a new activation binding.
+
+name: Exp073CF fullscale memory-stable Wm_S2 successor v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.trigger'
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '8'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  compact-replica:
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        replica: [A, B]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce Exp073CF prospective freeze and post-lock activation binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          # These preparation commits are frozen overnight. A separate post-lock activation
+          # binding must additionally pin the activated workflow commit and trigger binding.
+          test "$(git log -1 --format=%H -- preregistration/2026-09-01_exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.md)" = 'e0c92ebaba576a5aa5dfd06d1d972bfa3b025d36'
+          test "$(git log -1 --format=%H -- ci/exp073cf_memory_stable_wm_s2_pcl_v0_1.py)" = '5423976c09d5ee338d1a7894ce143faf1bb88225'
+          test "$(git log -1 --format=%H -- ci/exp073az_article3_low_memory_general_coupling_v0_1.py)" = 'd77b7ba88801f6788f3d386e72b445c7859c7153'
+          test "$(git log -1 --format=%H -- ci/dsir_action_heartbeat_v0_1.sh)" = '43031abd60ad65cacea1ede38c09061eb747d3f8'
+          test "$(git log -1 --format=%H -- ci/exp073ca_stream_general_coupling_range_v0_1.c)" = 'fa971eb4ef8c47e81eb0bb4e13eeb76f7cf42e22'
+          test "$(git log -1 --format=%H -- ci/exp073ca_checkpoint_streaming_wm_s2_v0_1.py)" = '583c34420d5f02a1ac8e77efb9625bbc3ab73de8'
+          test "$(git log -1 --format=%H -- ci/exp073bw_stream_general_coupling_v0_1.c)" = '9fb0ecb79986cf5f542760377533a685745b31e2'
+          test "$(git log -1 --format=%H -- ci/dsir_remote_band_checkpoint_v0_1.py)" = '0b0324afb69acb16cbea97bb924b9be48f303dde'
+          test "$(git log -1 --format=%H -- ci/dsir_checkpoint_git_sync_v0_1.sh)" = '96886916b41dce7f0a40807622928c841ef5fc58'
+          test -f experiments/073cf_fullscale_memory_stable_wm_s2_successor_v0_1_binding.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('experiments/073cf_fullscale_memory_stable_wm_s2_successor_v0_1_binding.json'))
+          assert d['experiment']=='Exp073CF'
+          assert d['task']=='Wm_S2'
+          assert d['prereg_commit']=='e0c92ebaba576a5aa5dfd06d1d972bfa3b025d36'
+          assert d['pcl_helper_commit']=='5423976c09d5ee338d1a7894ce143faf1bb88225'
+          assert d['scientific_contract_changed'] is False
+          assert d['threads']==8 and d['chunk_bands']==4
+          assert d['min_spill_free_bytes']==2684354560
+          assert d['overnight_activation_forbidden'] is True
+          PY
+
+      - name: Reuse or bootstrap proven NaMaster 2.7 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$HOME/.cache/dsir-miniforge"
+          ENV="$HOME/.cache/dsir-nmt27"
+          if ! test -x "$MF/bin/conda"; then
+            mkdir -p "$HOME/.cache"
+            curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"
+            bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"
+          fi
+          if ! test -x "$ENV/bin/python"; then
+            "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          fi
+          "$ENV/bin/python" - <<'PY'
+          import importlib.metadata
+          v=importlib.metadata.version('pymaster')
+          assert v=='2.7' or v.startswith('2.7.'),v
+          PY
+          echo "NMT_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+          path: external/r1
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33270843577
+
+      - name: Download and bind exact DES Y1 lens mask
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/des
+          curl --fail --location --retry 5 -o external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits'
+          test "$(stat -c %s external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits)" = '104595840'
+          echo 'a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55  external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits' | sha256sum -c -
+
+      - name: Fail-closed local spill capacity preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/exp073cf-spill"
+          free_bytes="$(df -PB1 "$RUNNER_TEMP/exp073cf-spill" | awk 'NR==2 {print $4}')"
+          test "$free_bytes" -ge 2684354560
+          printf 'spill_free_bytes=%s\nspill_required_bytes=2684354560\n' "$free_bytes" | tee "$RUNNER_TEMP/exp073cf-spill-preflight.txt"
+
+      - name: Build fresh independent memory-stable Wm_S2 mask PCL
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          lower="$(printf '%s' "$REPLICA" | tr '[:upper:]' '[:lower:]')"
+          bash ci/dsir_action_heartbeat_v0_1.sh "Exp073CF PCL replica=${REPLICA}" 60 0 8 - -- \
+            /usr/bin/time -v "$NMT_PY" ci/exp073cf_memory_stable_wm_s2_pcl_v0_1.py \
+            --task Wm_S2 --r1-root external/r1 \
+            --lens-mask external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits \
+            --spill-root "$RUNNER_TEMP/exp073cf-spill" \
+            --out-npy "data/derived/g7/exp073cf_wm_s2_pcl_${lower}_v0_1.npy" \
+            --out-json "data/derived/g7/exp073cf_wm_s2_pcl_${lower}_v0_1.json"
+
+      - name: Compile frozen BW and checkpoint-range helpers
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build data/derived/g7
+          flags=(-O2 -shared -fPIC -fopenmp -fno-fast-math -fno-associative-math -ffp-contract=off -fno-tree-vectorize)
+          gcc "${flags[@]}" ci/exp073bw_stream_general_coupling_v0_1.c -o build/exp073bw.so -ldl -lm
+          gcc "${flags[@]}" ci/exp073ca_stream_general_coupling_range_v0_1.c -o build/exp073ca.so -ldl -lm
+
+      - name: Mandatory checkpoint-boundary exact preflight
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euo pipefail
+          lower="$(printf '%s' "$REPLICA" | tr '[:upper:]' '[:lower:]')"
+          PYTHONPATH="$GITHUB_WORKSPACE/ci" "$NMT_PY" ci/exp073ca_checkpoint_streaming_wm_s2_v0_1.py preflight --bw-so build/exp073bw.so --ca-so build/exp073ca.so --out-json "data/derived/g7/exp073cf_preflight_${lower}_v0_1.json"
+
+      - name: Restore fresh Exp073CF durable remote checkpoint namespace
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euo pipefail
+          lower="$(printf '%s' "$REPLICA" | tr '[:upper:]' '[:lower:]')"
+          branch="checkpoints/exp073cf-wm-s2-${lower}-v0-1"
+          dir="$RUNNER_TEMP/exp073cf-checkpoint-${lower}"
+          bash ci/dsir_checkpoint_git_sync_v0_1.sh restore "$dir" "$branch"
+          echo "EXP073CF_CHECKPOINT_BRANCH=$branch" >> "$GITHUB_ENV"
+          echo "EXP073CF_CHECKPOINT_DIR=$dir" >> "$GITHUB_ENV"
+
+      - name: Heavy full-scale checkpoint streaming Wm_S2 compact
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euo pipefail
+          lower="$(printf '%s' "$REPLICA" | tr '[:upper:]' '[:lower:]')"
+          pcl="data/derived/g7/exp073cf_wm_s2_pcl_${lower}_v0_1.npy"
+          bash ci/dsir_action_heartbeat_v0_1.sh "Exp073CF Wm_S2 compact replica=${REPLICA}" 60 39 8 "$EXP073CF_CHECKPOINT_DIR" -- \
+            /usr/bin/time -v env PYTHONPATH="$GITHUB_WORKSPACE/ci" "$NMT_PY" ci/exp073ca_checkpoint_streaming_wm_s2_v0_1.py run \
+            --pcl-npy "$pcl" --ca-so build/exp073ca.so \
+            --checkpoint-dir "$EXP073CF_CHECKPOINT_DIR" --checkpoint-branch "$EXP073CF_CHECKPOINT_BRANCH" \
+            --replica "$REPLICA" \
+            --out-npz "data/derived/g7/exp073cf_wm_s2_compact_${lower}_v0_1.npz" \
+            --out-json "data/derived/g7/exp073cf_wm_s2_compact_${lower}_v0_1.json"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073cf-compact-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073cf_*
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
+
+  # Post-lock activation must copy the Exp073CA exact compact comparator/finalizer logic
+  # byte-for-byte in semantics, changing only Exp073CF file/artifact prefixes and fresh
+  # checkpoint namespace. No tolerance/ULP/rounding/majority/preferred-replica rescue.
