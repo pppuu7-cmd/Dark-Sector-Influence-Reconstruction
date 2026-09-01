@@ -8,45 +8,47 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 ## Read first
 
-1. `recovery/2026-09-01_exp073cf_pre_activation_static_audit.md`
-2. `experiments/073cf_fullscale_memory_stable_wm_s2_pre_activation_static_audit_binding_v0_1.json`
-3. `recovery/2026-09-01_exp073cf_disabled_fullscale_successor_package_prepared.md`
-4. `preregistration/2026-09-01_exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.md`
-5. `recovery/2026-09-01_exp073ce_future_fullscale_integration_audit.md`
-6. `recovery/2026-09-01_exp073ce_terminal.md`
-7. `recovery/2026-09-01_exp073cd_q1_spill_reload_exact_equivalence_pass.md`
-8. `recovery/2026-09-01_exp073cc_q1_corrected_lifetime_exact_equivalence_pass.md`
-9. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
-10. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
-11. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
-12. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-13. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+1. `recovery/2026-09-01_exp073cf_seed_trigger_interface_audit.md`
+2. `experiments/073cf_pre_activation_seed_and_interface_audit_binding_v0_2.json`
+3. `recovery/2026-09-01_exp073cf_pre_activation_static_audit.md`
+4. `experiments/073cf_fullscale_memory_stable_wm_s2_pre_activation_static_audit_binding_v0_1.json`
+5. `recovery/2026-09-01_exp073cf_disabled_fullscale_successor_package_prepared.md`
+6. `preregistration/2026-09-01_exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.md`
+7. `recovery/2026-09-01_exp073ce_future_fullscale_integration_audit.md`
+8. `recovery/2026-09-01_exp073ce_terminal.md`
+9. `recovery/2026-09-01_exp073cd_q1_spill_reload_exact_equivalence_pass.md`
+10. `recovery/2026-09-01_exp073cc_q1_corrected_lifetime_exact_equivalence_pass.md`
+11. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
+12. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
+13. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
+14. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+15. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
 
 ## Current frontier
 
-- The user returned and briefly reconnected `DSIR-HOME-PC` at `2026-09-01 18:45:47Z`.
-- The runner immediately picked up stale Exp073CA attempt3 replica B job `99673921530`; the user stopped it with Ctrl+C at `18:47:24Z` before PCL. GitHub records its PCL/compile/preflight/heavy steps skipped.
-- Exp073CA attempt3 run `33448843621` is therefore terminal with no valid A/B comparator inputs. Replica A job `99673921219` remains prior infrastructure failure; replica B is also unusable as authority.
+- Exp073CA attempt3 run `33448843621` is terminal with no valid A/B comparator inputs. Replica A job `99673921219` remains prior infrastructure failure; replica B job `99673921530` was stopped before PCL and is unusable as authority.
 - Exp073CA classification remains `INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073CA`, `+0/+0`, not scientific FAIL.
-- Home runner is currently **STOPPED / PRE-ACTIVATION LOCKED** until the Exp073CF activation package and home memory preflight are explicitly completed.
+- Current GitHub Actions coordination state after the latest audit: **0 queued, 0 in_progress** DSIR runs.
+- Commit `fc4db4477c64c5e3119b99deed629b43fc3acbab` added only a seed trigger for Exp073CF with state `SEED_NO_EXECUTION`; there is still no active Exp073CF `.github/workflows` workflow and no execution authorization.
+- Home runner is **OFFLINE / PRE-ACTIVATION LOCKED**. Do not create, trigger, rerun or revive any `[self-hosted, Linux, X64]` workload until the user explicitly permits home-runner use again.
 
-## Exp073CF pre-activation static audit
+## Exp073CF seed/interface audit
 
-Exp073CF remains disabled and untriggered. The static audit completed and found one important inherited wiring defect before activation.
+The seed/interface audit completed as `PRE_ACTIVATION_SEED_AND_INTERFACE_AUDIT_PASS_NO_EXECUTION_AUTHORIZED`, `+0/+0`.
 
-The original disabled authority-tail specification had a matrix finalizer `[A,B]` but both rows downloaded compact replica A and both searched `compact_a`. A nominal final A/B comparator would therefore have compared two finalizations of A, not independent A and B finalizers.
+New binding commit:
 
-This was corrected prospectively before any Exp073CF run:
+- `c379f7cc8ce2be2aef82f7ce9f6532c11c65a911` — `experiments/073cf_pre_activation_seed_and_interface_audit_binding_v0_2.json`.
 
-- corrected authority-tail commit: `80c273d89f20cd91065b18236b50060328d33ae8`;
-- static-audit binding commit: `82e70d38fba65ddf667e4866f92abfa18b0c0122`;
-- recovery audit commit: `8dd9bcc075cf2ba247b3a060a5b9b7bde7597187`.
+Recovery commit:
 
-The corrected finalizer now downloads `exp073cf-compact-${{ matrix.replica }}-${{ github.sha }}` and selects the replica-specific `compact_${lower}` input. No scientific arithmetic, input, acceptance threshold, reduction order, thread policy or comparator tolerance was changed.
+- `c6b9dace21d9a5b814332e6f41cd07599d765d75` — `recovery/2026-09-01_exp073cf_seed_trigger_interface_audit.md`.
 
-The memory helper remains at `5423976c09d5ee338d1a7894ce143faf1bb88225`. Static inspection confirms the earlier mmap verification regression is absent: spill SHA is streamed in 8 MiB chunks, in-memory hashes use `memoryview`, spill reload is read-only `np.memmap`, temp publication is flush/fsync + atomic `os.replace`, and cleanup paths remove temporary spill state. No additional full-size array copy used solely for SHA verification was found.
+The audit confirms compatibility between the frozen Exp073CA streaming driver and the corrected Exp073CF authority tail: compact NPZ key `A`, shape `[39,12288]`, `pcl_sha256`, frozen complete-input status token `COMPLETE_VALID_COMPARATOR_INPUT_EXP073CA_WM_S2_COMPACT_V0_1`, threads `8`, chunk size `4`, exact A/B comparator semantics and independent replica finalizers after correction commit `80c273d89f20cd91065b18236b50060328d33ae8`.
 
-Full-scale memory safety remains unproven. The user's machine has ~7.7 GB physical RAM and current WSL config `memory=6GB`, `swap=8GB`. Exp073CA previously reached severe memory pressure. Exp073CF requires >=2.5 GiB free spill disk, but full-scale `NmtField`/SHT workspace plus mmap/source-side residency must still be measured empirically.
+The older preparation binding remains immutable and still states `trigger_file_exists=false`; that field is now historical rather than operational because the later seed commit created a non-executable trigger. Do not retroactively rewrite the old binding.
+
+No new full-size SHA-verification copy was found. The remaining `canon(...).tobytes()` hashes in the frozen streaming driver act only on the 12288-element PCL or the 39x12288 compact matrix, not the ~1.125 GiB ALM spill. Full-scale `NmtField`/SHT workspace and mmap residency remain empirically uncertified under the 6 GiB WSL cap.
 
 ## Preserved scientific authority
 
@@ -57,6 +59,7 @@ Full-scale memory safety remains unproven. The user's machine has ~7.7 GB physic
 - **Exp073BW**: exact streaming-equivalence PASS, artifact `9774112002`.
 - **Exp073BZ**: remote checkpoint/failover exact-byte PASS, artifact `9776592370`.
 - **Exp073CC/CD/CE**: synthetic/nonclassifying exact-equivalence PASS evidence only, all `+0/+0`.
+- **Exp073CF**: prepared/static-audited only, no scientific execution, `+0/+0`.
 
 ## Frozen Article-3 boundaries and order
 
@@ -70,20 +73,21 @@ No G8 jump.
 
 ## Exact next gate
 
-1. Keep `./run.sh` stopped.
-2. Complete home memory/infrastructure preflight for the current ~7.7 GB machine and 6 GB WSL cap; do not assume the cap is safe merely from hosted small-geometry QA.
-3. Create a separate prospective Exp073CF activation binding that pins the actual active `.github/workflows` commit and isolated trigger commit, incorporating corrected authority-tail commit `80c273d89f20cd91065b18236b50060328d33ae8`.
-4. Only then start a fresh Exp073CF replica A. If PCL reaches a valid memory-stable terminal result, continue to preflight/heavy checkpoint streaming; B remains sequential via `max-parallel: 1`.
-5. Require exact A/B compact comparator and replica-isolated exact finalizer comparator. No tolerance rescue.
+1. Keep the home runner offline and do not activate Exp073CF while the overnight lock remains.
+2. Continue repository-side/read-only preparation only; do not manufacture synthetic gate activity.
+3. When the user explicitly permits home-runner use again, first perform the home memory/infrastructure preflight for the ~7.7 GB machine and 6 GB WSL cap.
+4. Only after that, create the actual active `.github/workflows` Exp073CF workflow and a separate prospective activation binding pinning the active workflow commit, corrected authority-tail commit `80c273d89f20cd91065b18236b50060328d33ae8`, and isolated trigger activation commit.
+5. Start a fresh replica A only. If its memory-stable PCL becomes valid and the heavy stage completes, replica B remains sequential via `max-parallel: 1`.
+6. Require exact A/B compact comparator and replica-isolated exact finalizer comparator. No tolerance rescue.
 
-- ✅ stale Exp073CA replica B safely terminated before PCL; no authority created.
-- ✅ Exp073CF static audit completed and inherited finalizer-isolation bug fixed prospectively.
+- ✅ Exp073CA stale frontier is terminal with no scientific classification or authority.
+- ✅ Exp073CF static + seed/interface audits completed; finalizer-isolation bug fixed prospectively.
 - ✅ Exp073CF memory helper has no known full-size SHA-verification copy.
 - ✅ Exp073CE/CC/CD methodology evidence preserved.
 - ✅ Exp073BJ and Exp073BV/BW/BZ authority preserved.
-- 🟡 Exp073CF awaits home memory preflight + active workflow/trigger binding.
+- 🟡 Exp073CF awaits explicit home-runner re-enable, memory preflight and active workflow/activation binding.
 - ❌ Exp073AQ permanent scientific FAIL preserved.
 - ❌ Exp073BD remains provisional and forbidden downstream.
 - ❌ Layer A/B, covariance/whitening, nuisance SVD, quotient/relation/null, G7/G8/G9 unauthorized.
 
-**Home runner = STOPPED / PRE-ACTIVATION LOCKED. Verified: 52.0% | Draft/data: 53.7%**
+**Home runner = OFFLINE / LOCKED. Verified: 52.0% | Draft/data: 53.7%**
