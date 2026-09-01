@@ -1,0 +1,50 @@
+{
+  "experiment": "Exp073CF",
+  "task": "Wm_S2",
+  "classification": "POST_LOCK_ACTIVATION_BINDING_FRESH_FULLSCALE_AUTHORIZED",
+  "activation_authorized": true,
+  "scientific_contract_changed": false,
+  "activated_workflow_path": ".github/workflows/exp073cf-fullscale-memory-stable-wm-s2-successor-v0-1.yml",
+  "activated_workflow_commit": "e91e3660ef91c120215dcdce1be8ee6e3a2eb95f",
+  "trigger_path": "ci/exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.trigger",
+  "trigger_seed_commit": "fc4db4477c64c5e3119b99deed629b43fc3acbab",
+  "prereg_commit": "e0c92ebaba576a5aa5dfd06d1d972bfa3b025d36",
+  "pcl_helper_commit": "5423976c09d5ee338d1a7894ce143faf1bb88225",
+  "corrected_authority_tail_commit": "80c273d89f20cd91065b18236b50060328d33ae8",
+  "production_helper_commit": "d77b7ba88801f6788f3d386e72b445c7859c7153",
+  "heartbeat_helper_commit": "43031abd60ad65cacea1ede38c09061eb747d3f8",
+  "range_helper_commit": "fa971eb4ef8c47e81eb0bb4e13eeb76f7cf42e22",
+  "stream_driver_commit": "583c34420d5f02a1ac8e77efb9625bbc3ab73de8",
+  "bw_helper_commit": "9fb0ecb79986cf5f542760377533a685745b31e2",
+  "checkpoint_utility_commit": "0b0324afb69acb16cbea97bb924b9be48f303dde",
+  "checkpoint_sync_commit": "96886916b41dce7f0a40807622928c841ef5fc58",
+  "old_exp073ca_run_id": 33448843621,
+  "old_exp073ca_replica_a_job": 99673921219,
+  "old_exp073ca_replica_b_job": 99673921530,
+  "old_exp073ca_scientific_authority_reuse_forbidden": true,
+  "queue_snapshot_before_activation": {
+    "queued_runs": 0,
+    "in_progress_runs": 0
+  },
+  "home_wsl_observed_configuration": {
+    "physical_ram_gb_approx": 7.7,
+    "wsl_memory_gb": 6,
+    "wsl_processors": 8,
+    "wsl_swap_gb": 16,
+    "linux_mem_total_gib_observed": 5.8,
+    "linux_swap_gib_observed": 16,
+    "linux_root_avail_gib_observed": 949
+  },
+  "min_spill_free_bytes": 2684354560,
+  "threads": 8,
+  "chunk_bands": 4,
+  "max_parallel": 1,
+  "heartbeat_seconds_max": 60,
+  "static_audit_correction": "Finalizer matrix was corrected before activation so replica A consumes compact-A and replica B consumes compact-B; no scientific run used the defective disabled-tail draft.",
+  "fullscale_memory_safety_preclassified": false,
+  "fail_closed_on_spill_space": true,
+  "readiness_delta_before_terminal_authority": {
+    "verified": 0.0,
+    "draft_data": 0.0
+  }
+}
