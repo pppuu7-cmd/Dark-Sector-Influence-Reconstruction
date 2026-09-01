@@ -1,52 +1,76 @@
 # DSIR RECOVERY LATEST — authoritative live pointer
 
-**Updated:** 2026-09-01  
+**Updated:** 2026-09-02  
 **Scope:** DSIR only; RTK/RQIR excluded.  
 **Article-3 readiness:** **Verified 52.0% | Draft/data 53.7%**.
 
-Repository state and immutable GitHub Actions artifacts outrank chat wording. Synthetic/infrastructure/provenance/numerical/performance QA gives `+0/+0` unless a frozen ledger explicitly states otherwise. The active user-level overnight lock outranks repository metadata that labels itself post-lock or activation-authorized.
+Repository state and immutable GitHub Actions artifacts outrank chat wording. Synthetic/infrastructure/provenance/numerical/performance QA gives `+0/+0` unless a frozen ledger explicitly states otherwise.
 
 ## Read first
 
-1. `recovery/2026-09-01_exp073cf_overnight_lock_race_guard.md`
-2. `recovery/2026-09-01_exp073cf_seed_trigger_interface_audit.md`
-3. `experiments/073cf_pre_activation_seed_and_interface_audit_binding_v0_2.json`
-4. `recovery/2026-09-01_exp073cf_pre_activation_static_audit.md`
-5. `experiments/073cf_fullscale_memory_stable_wm_s2_pre_activation_static_audit_binding_v0_1.json`
-6. `recovery/2026-09-01_exp073cf_disabled_fullscale_successor_package_prepared.md`
-7. `preregistration/2026-09-01_exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.md`
-8. `recovery/2026-09-01_exp073ce_future_fullscale_integration_audit.md`
-9. `recovery/2026-09-01_exp073ce_terminal.md`
-10. `recovery/2026-09-01_exp073cd_q1_spill_reload_exact_equivalence_pass.md`
-11. `recovery/2026-09-01_exp073cc_q1_corrected_lifetime_exact_equivalence_pass.md`
-12. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
-13. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
-14. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
-15. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-16. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+1. `recovery/2026-09-02_exp073cf_attempt2_terminal_infrastructure_incomplete.md`
+2. `preregistration/2026-09-01_exp073cf_attempt2_network_hardened_des_download_v0_1.md`
+3. `experiments/073cf_attempt2_network_hardened_v0_1_binding.json`
+4. `preregistration/2026-09-01_exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.md`
+5. `recovery/2026-09-01_exp073cf_seed_trigger_interface_audit.md`
+6. `recovery/2026-09-01_exp073cf_pre_activation_static_audit.md`
+7. `recovery/2026-09-01_exp073ce_terminal.md`
+8. `recovery/2026-09-01_exp073cd_q1_spill_reload_exact_equivalence_pass.md`
+9. `recovery/2026-09-01_exp073cc_q1_corrected_lifetime_exact_equivalence_pass.md`
+10. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
+11. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
+12. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
+13. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+14. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
 
 ## Current frontier
 
-- Exp073CA attempt3 run `33448843621` is terminal with no valid A/B comparator inputs. Replica A job `99673921219` remains prior infrastructure failure; replica B job `99673921530` was stopped before PCL and is unusable as authority.
-- Exp073CA classification remains `INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073CA`, `+0/+0`, not scientific FAIL.
-- A concurrent repository mutation created an active Exp073CF workflow and trigger despite the still-active overnight home-runner lock:
-  - workflow-shell commit `e91e3660ef91c120215dcdce1be8ee6e3a2eb95f`;
-  - activation-binding commit `42bd85c889462b9cb9d95123a37c325143aeeeaf`;
-  - trigger commit `28cd199b1b41450623fa3dba44ed1ac1ebf187b6`.
-- GitHub Actions run `33546929256` is currently **queued**, not running. Jobs `99986640839` (A) and `99986641160` (B) are both queued. Current in-progress DSIR runs: **0**.
-- Because the controlling user instruction has not explicitly re-enabled the home runner, run `33546929256` has **no execution authority and no scientific classification**. It must remain queued/unexecuted while the home runner is offline.
-- The current GitHub connector surface exposes no workflow-run cancel operation. Do not start `./run.sh`; do not touch the Exp073CF trigger path because another trigger write could create another forbidden self-hosted run.
-- Home runner is **OFFLINE / LOCKED**.
+Exp073CF attempt2 run `33548649445` is terminal `completed/failure` at head `f9cb1eec582276776ddac3b1207686b1e01d3b6a`.
 
-## Exp073CF coordination and interface findings
+Frozen classification:
 
-The earlier seed/interface audit remains valid as an interface audit: frozen Exp073CA streaming output and corrected Exp073CF comparator/finalizer wiring are compatible on NPZ key `A`, shape `[39,12288]`, metadata `pcl_sha256`, complete-input status token `COMPLETE_VALID_COMPARATOR_INPUT_EXP073CA_WM_S2_COMPACT_V0_1`, threads `8`, chunk size `4`, exact compact comparator, and independent replica finalizers after correction commit `80c273d89f20cd91065b18236b50060328d33ae8`.
+`INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073CF_ATTEMPT2`, `+0/+0`.
 
-The concurrent activation binding claims `POST_LOCK_ACTIVATION_BINDING_FRESH_FULLSCALE_AUTHORIZED`, but that claim cannot override the current user-level overnight lock. It also records a different observed home configuration (`processors=8`, `swap=16GB`) from the controlling instruction (`memory=6GB`, `processors=10`, `swap=8GB`, ~7.7GB physical RAM). Treat it only as provenance of the concurrent mutation until the user explicitly re-enables the home runner and the infrastructure state is reconciled.
+This is **not** scientific repeatability FAIL. Both replica jobs failed before producing complete valid 39-band compact comparator inputs; `compare-compact`, `finalizer`, and `compare-final` were skipped.
 
-No new full-size SHA-verification copy was found. Remaining `canon(...).tobytes()` hashing in the frozen streaming driver acts only on the 12288-element PCL or 39x12288 compact matrix, not the ~1.125 GiB ALM spill. Full-scale `NmtField`/SHT workspace and final mmap residency remain empirically uncertified under the controlling 6 GiB WSL cap.
+Current DSIR Actions coordination state after terminal transition:
 
-Race-guard recovery commit: `208414c7d3574ab78324fcb897331aae7a8251a9`.
+- queued runs: `0`;
+- in-progress runs: `0`.
+
+Attempt2 no longer holds an active execution lock, but this terminal state does **not** authorize a new self-hosted scientific run.
+
+## Exp073CF attempt2 immutable result
+
+### Replica A — job `99992335128`
+
+Successfully crossed binding, exact R1, exact network-hardened DES size/SHA, spill preflight, memory-stable full-scale PCL, helper compile, exact checkpoint preflight, and entered 39-band heavy streaming.
+
+PCL infrastructure observation: wall `40:32.94`, peak RSS `5652720 KiB`, exit `0`, reported swaps `0`.
+
+Durable checkpoint authority: **32/39**, bands `0..31`, branch `checkpoints/exp073cf-wm-s2-a-v0-1`, head `5c7ccddb54afe1ad286d08abc6f7372aa5a11103`.
+
+Bands `32..35` were computed locally but are non-authoritative because durability push failed with GnuTLS handshake termination.
+
+Immutable diagnostic artifact: `9821303723`, digest `sha256:eace797a21daf69783b8cc2cad4a81c8b1dfc5652083d7cb803019d5d947c12b`, size `100960` bytes. It is partial/diagnostic only, not a complete comparator input.
+
+### Replica B — job `99992335190`
+
+Successfully crossed the same pre-heavy stages and completed full-scale PCL.
+
+PCL infrastructure observation: wall `40:38.28`, peak RSS `5606320 KiB`, exit `0`, reported swaps `0`.
+
+Durable checkpoint authority: **28/39**, bands `0..27`, branch `checkpoints/exp073cf-wm-s2-b-v0-1`, head `ce9189a1ccaabc62708f753897b9cab5f51cb9f4`.
+
+Bands `28..31` were computed locally but are non-authoritative because checkpoint sync failed before push with `fatal: a branch named 'checkpoints/exp073cf-wm-s2-b-v0-1' already exists`.
+
+Immutable diagnostic artifact: `9823905988`, digest `sha256:df4ef10a6caed390e6ec40aecf8e0be2ed46c1876c154ffd0856f0e594619e04`, size `100960` bytes. It is partial/diagnostic only, not a complete comparator input.
+
+## New infrastructure finding
+
+Frozen checkpoint git sync helper `ci/dsir_checkpoint_git_sync_v0_1.sh` at commit `96886916b41dce7f0a40807622928c841ef5fc58` has a fail-closed branch-state vulnerability exposed by replica B. The initial absent-remote path creates a shared local orphan branch of the checkpoint name. A later transient/nonzero `git ls-remote` result can incorrectly route back into the absent-remote path, where `checkout --orphan "$branch"` collides with that existing local branch. Remote transport uncertainty must never be interpreted as verified branch absence.
+
+Replica A independently exposed checkpoint push TLS fragility. Any successor repair must be prospective and infrastructure-only: retry/fail-close remote existence queries and pushes, avoid shared local branch-name collision, and never claim durability until a verified remote push succeeds.
 
 ## Preserved scientific authority
 
@@ -57,7 +81,8 @@ Race-guard recovery commit: `208414c7d3574ab78324fcb897331aae7a8251a9`.
 - **Exp073BW**: exact streaming-equivalence PASS, artifact `9774112002`.
 - **Exp073BZ**: remote checkpoint/failover exact-byte PASS, artifact `9776592370`.
 - **Exp073CC/CD/CE**: synthetic/nonclassifying exact-equivalence PASS evidence only, all `+0/+0`.
-- **Exp073CF**: queued-only premature activation state, no scientific execution, `+0/+0`.
+- **Exp073CF attempt1**: infrastructure incomplete, `+0/+0`.
+- **Exp073CF attempt2**: infrastructure incomplete, `+0/+0`.
 
 ## Frozen Article-3 boundaries and order
 
@@ -71,20 +96,24 @@ No G8 jump.
 
 ## Exact next gate
 
-1. Keep the home runner offline; do not start or revive queued Exp073CF run `33546929256`.
-2. Hosted/read-only audits may continue only if independent of that queued frontier and must not modify the Exp073CF trigger.
-3. When the user explicitly permits home-runner use again, first re-read all queued/in-progress jobs and reconcile the stale queued activation state before any runner start.
-4. Re-confirm the actual home configuration and perform a fresh memory/infrastructure preflight; do not rely on the conflicting activation-binding snapshot.
-5. Only after reconciliation may a scientifically valid fresh Exp073CF successor be authorized. Require fresh replica A first, sequential B via `max-parallel: 1`, exact A/B compact comparator, replica-isolated exact finalizer comparator, and no tolerance rescue.
+Repository-side prospective **checkpoint durability/sync repair audit + preregistration** only.
 
-- ✅ Exp073CA stale frontier is terminal with no scientific classification or authority.
-- ✅ Exp073CF static + seed/interface audits completed; finalizer-isolation bug fixed prospectively.
-- ✅ Concurrent premature activation detected before any self-hosted job started.
-- ✅ Exp073CE/CC/CD methodology evidence preserved.
+A permissible successor design must:
+
+1. distinguish verified remote branch absence from network/query failure and retry/fail closed;
+2. eliminate shared local checkpoint-branch-name collisions without changing checkpoint bytes;
+3. retry TLS/network push failure while withholding durability authority until verified success;
+4. restore and SHA/contract-revalidate only the durable A `32/39` and B `28/39` checkpoints;
+5. preserve frozen scientific arithmetic, thresholds, PCL semantics, `OMP_NUM_THREADS=8`, chunk size 4, exact comparator/finalizer lineage, and no-rescue rules;
+6. receive a fresh prospective infrastructure-only preregistration/binding before any new self-hosted trigger.
+
+- ✅ Exp073CF attempt2 terminally classified infrastructure incomplete, not scientific FAIL.
+- ✅ Both full-scale memory-stable PCL replicas completed under the observed environment.
+- ✅ Durable checkpoint authority preserved exactly: A `32/39`, B `28/39`.
 - ✅ Exp073BJ and Exp073BV/BW/BZ authority preserved.
-- 🟡 Exp073CF run `33546929256` is queued under hard lock; A job `99986640839`, B job `99986641160`.
+- ❌ No complete A/B comparator inputs; no repeatability classification for Wm_S2.
 - ❌ Exp073AQ permanent scientific FAIL preserved.
 - ❌ Exp073BD remains provisional and forbidden downstream.
 - ❌ Layer A/B, covariance/whitening, nuisance SVD, quotient/relation/null, G7/G8/G9 unauthorized.
 
-**Home runner = OFFLINE / LOCKED. Verified: 52.0% | Draft/data: 53.7%**
+**Home runner = NOT ACTIVE / no new self-hosted frontier authorized. Verified: 52.0% | Draft/data: 53.7%**
