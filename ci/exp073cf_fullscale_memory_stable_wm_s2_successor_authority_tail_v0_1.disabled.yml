@@ -1,0 +1,148 @@
+# DISABLED COMPANION SPECIFICATION ONLY.
+# This file is not under .github/workflows and cannot run overnight.
+# It is the Exp073CF-adapted authority tail corresponding to the frozen Exp073CA
+# comparator/finalizer semantics. Activation requires a separate post-lock binding.
+
+  compare-compact:
+    needs: compact-replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      exact_pass: ${{ steps.cmp.outputs.exact_pass }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'numpy==2.1.3'
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073cf-compact-A-${{ github.sha }}
+          path: external/a
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073cf-compact-B-${{ github.sha }}
+          path: external/b
+      - id: cmp
+        name: Frozen exact compact comparator
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob,hashlib,json,numpy as np,os,pathlib
+          fa=glob.glob('external/a/**/*compact_a_v0_1.npz',recursive=True)
+          fb=glob.glob('external/b/**/*compact_b_v0_1.npz',recursive=True)
+          ja=glob.glob('external/a/**/*compact_a_v0_1.json',recursive=True)
+          jb=glob.glob('external/b/**/*compact_b_v0_1.json',recursive=True)
+          assert len(fa)==len(fb)==len(ja)==len(jb)==1,(fa,fb,ja,jb)
+          ma=json.load(open(ja[0])); mb=json.load(open(jb[0]))
+          # The streaming driver remains frozen Exp073CA code, so its complete-input
+          # status token remains the frozen Exp073CA token even under fresh CF filenames.
+          assert ma['status']==mb['status']=='COMPLETE_VALID_COMPARATOR_INPUT_EXP073CA_WM_S2_COMPACT_V0_1'
+          a=np.ascontiguousarray(np.load(fa[0],allow_pickle=False)['A'],dtype='<f8')
+          b=np.ascontiguousarray(np.load(fb[0],allow_pickle=False)['A'],dtype='<f8')
+          assert a.shape==b.shape==(39,12288)
+          assert np.isfinite(a).all() and np.isfinite(b).all()
+          h=lambda x: hashlib.sha256(memoryview(x).cast('B')).hexdigest()
+          eq=bool(np.array_equal(a,b)); ha=h(a); hb=h(b)
+          passed=eq and ha==hb
+          rec={'experiment':'Exp073CF','stage':'compact_exact_comparator','task':'Wm_S2','shape':[39,12288],'array_equal':eq,'sha_a':ha,'sha_b':hb,'sha_equal':ha==hb,'pcl_sha_a':ma['pcl_sha256'],'pcl_sha_b':mb['pcl_sha256'],'status':'PASS_EXP073CF_WM_S2_COMPACT_EXACT_V0_1' if passed else 'SCIENTIFIC_REPEATABILITY_FAIL_EXP073CF_WM_S2_COMPACT_EXACT_V0_1','no_tolerance_used':True}
+          pathlib.Path('data/derived/g7/exp073cf_wm_s2_compact_exact_result_v0_1.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f: f.write('exact_pass='+('true' if passed else 'false')+'\n')
+          print(json.dumps(rec,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073cf-compact-authority-${{ github.sha }}
+          path: data/derived/g7/exp073cf_wm_s2_compact_exact_result_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
+
+  finalizer:
+    needs: compare-compact
+    if: needs.compare-compact.outputs.exact_pass == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        replica: [A, B]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact NaMaster 2.7 finalizer environment
+        shell: bash
+        run: |
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "$GITHUB_ENV"
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073cf-compact-A-${{ github.sha }}
+          path: external/a
+      - name: Frozen independent finalizer
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          lower="$(printf '%s' "$REPLICA" | tr '[:upper:]' '[:lower:]')"
+          compact="$(find external/a -name '*compact_a_v0_1.npz' -type f -print -quit)"
+          test -n "$compact"
+          "$NMT_PY" ci/exp073az_article3_low_memory_general_coupling_v0_1.py finalize \
+            --task Wm_S2 --compact-npz "$compact" \
+            --out-npz "data/derived/g7/exp073cf_wm_s2_final_${lower}_v0_1.npz" \
+            --out-json "data/derived/g7/exp073cf_wm_s2_final_${lower}_v0_1.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073cf-final-${{ matrix.replica }}-${{ github.sha }}
+          path: data/derived/g7/exp073cf_wm_s2_final_*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  compare-final:
+    needs: finalizer
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'numpy==2.1.3'
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073cf-final-A-${{ github.sha }}
+          path: external/a
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073cf-final-B-${{ github.sha }}
+          path: external/b
+      - name: Frozen exact final authority comparator
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          python - <<'PY'
+          import glob,hashlib,json,numpy as np,pathlib
+          fa=glob.glob('external/a/**/*final_a_v0_1.npz',recursive=True)
+          fb=glob.glob('external/b/**/*final_b_v0_1.npz',recursive=True)
+          assert len(fa)==len(fb)==1,(fa,fb)
+          a=np.ascontiguousarray(np.load(fa[0],allow_pickle=False)['window'],dtype='<f8')
+          b=np.ascontiguousarray(np.load(fb[0],allow_pickle=False)['window'],dtype='<f8')
+          valid=a.shape==b.shape==(39,12288) and np.isfinite(a).all() and np.isfinite(b).all() and np.all(np.sum(np.abs(a),axis=1)>0) and np.all(np.sum(np.abs(b),axis=1)>0)
+          h=lambda x: hashlib.sha256(memoryview(x).cast('B')).hexdigest()
+          eq=bool(np.array_equal(a,b)) if valid else False
+          ha=h(a) if a.shape==(39,12288) else None; hb=h(b) if b.shape==(39,12288) else None
+          passed=bool(valid and eq and ha==hb)
+          rec={'experiment':'Exp073CF','track':'A','task':'Wm_S2','authority':passed,'scientific_pass_claimed':passed,'shape':[39,12288] if valid else None,'array_equal':eq,'sha_a':ha,'sha_b':hb,'sha_equal':ha==hb if ha and hb else False,'status':'PASS_EXP073CF_WM_S2_MEMORY_STABLE_CHECKPOINT_STREAMING_TRACK_A_EXACT_V0_1' if passed else 'SCIENTIFIC_REPEATABILITY_FAIL_EXP073CF_WM_S2_FINALIZER_EXACT_V0_1','Exp073AQ_preserved_as_FAIL':True,'Exp073BD_forbidden':True,'no_tolerance_used':True,'readiness_increment_requires_separate_ledger_update':True}
+          pathlib.Path('data/derived/g7/exp073cf_wm_s2_final_authority_v0_1.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(rec,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073cf-final-authority-${{ github.sha }}
+          path: data/derived/g7/exp073cf_wm_s2_final_authority_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
