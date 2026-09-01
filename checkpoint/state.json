@@ -7,11 +7,15 @@
     4,
     5,
     6,
-    7
+    7,
+    8,
+    9,
+    10,
+    11
   ],
-  "completed_count": 8,
+  "completed_count": 12,
   "contract_fingerprint": "6d60e99a72b2c03e6dcf4e46afea89c8e9a97bdb021f3b9f9f4536c30f4a3fc4",
   "format": "DSIR_REMOTE_BAND_CHECKPOINT_V0_1",
-  "next_band": 8,
+  "next_band": 12,
   "total_bands": 39
 }
