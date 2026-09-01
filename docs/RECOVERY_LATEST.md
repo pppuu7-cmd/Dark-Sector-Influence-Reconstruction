@@ -8,49 +8,45 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 ## Read first
 
-1. `recovery/2026-09-01_exp073cf_disabled_fullscale_successor_package_prepared.md`
-2. `preregistration/2026-09-01_exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.md`
-3. `recovery/2026-09-01_exp073ce_future_fullscale_integration_audit.md`
-4. `recovery/2026-09-01_exp073ce_terminal.md`
-5. `preregistration/2026-09-01_exp073ce_memory_stable_wm_s2_successor_package_v0_1.md`
-6. `recovery/2026-09-01_exp073ca_memory_stable_successor_semantic_binding_audit.md`
-7. `recovery/2026-09-01_exp073cd_production_spill_integration_audit.md`
-8. `recovery/2026-09-01_exp073cd_q1_spill_reload_exact_equivalence_pass.md`
-9. `recovery/2026-09-01_exp073cc_fullscale_memory_budget_audit.md`
-10. `recovery/2026-09-01_exp073cc_q1_corrected_lifetime_exact_equivalence_pass.md`
-11. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
-12. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
-13. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
-14. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-15. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+1. `recovery/2026-09-01_exp073cf_pre_activation_static_audit.md`
+2. `experiments/073cf_fullscale_memory_stable_wm_s2_pre_activation_static_audit_binding_v0_1.json`
+3. `recovery/2026-09-01_exp073cf_disabled_fullscale_successor_package_prepared.md`
+4. `preregistration/2026-09-01_exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.md`
+5. `recovery/2026-09-01_exp073ce_future_fullscale_integration_audit.md`
+6. `recovery/2026-09-01_exp073ce_terminal.md`
+7. `recovery/2026-09-01_exp073cd_q1_spill_reload_exact_equivalence_pass.md`
+8. `recovery/2026-09-01_exp073cc_q1_corrected_lifetime_exact_equivalence_pass.md`
+9. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
+10. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
+11. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
+12. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+13. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
 
-## Current overnight frontier
+## Current frontier
 
-- Home runner is **OFFLINE/LOCKED** until the user explicitly re-enables it.
-- Exp073CA attempt3 run `33448843621`: replica A job `99673921219` terminal infrastructure failure during fresh Wm_S2 PCL; replica B job `99673921530` remains queued self-hosted and must not be revived overnight.
+- The user returned and briefly reconnected `DSIR-HOME-PC` at `2026-09-01 18:45:47Z`.
+- The runner immediately picked up stale Exp073CA attempt3 replica B job `99673921530`; the user stopped it with Ctrl+C at `18:47:24Z` before PCL. GitHub records its PCL/compile/preflight/heavy steps skipped.
+- Exp073CA attempt3 run `33448843621` is therefore terminal with no valid A/B comparator inputs. Replica A job `99673921219` remains prior infrastructure failure; replica B is also unusable as authority.
 - Exp073CA classification remains `INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073CA`, `+0/+0`, not scientific FAIL.
-- Latest coordination check immediately before this sync found exactly one queued DSIR run (Exp073CA attempt3) and zero `in_progress` DSIR runs.
+- Home runner is currently **STOPPED / PRE-ACTIVATION LOCKED** until the Exp073CF activation package and home memory preflight are explicitly completed.
 
-## Exp073CF disabled successor preparation
+## Exp073CF pre-activation static audit
 
-Exp073CF is now prospectively prepared but deliberately **non-executable** overnight. No file was created under `.github/workflows`, no Exp073CF trigger exists, and no self-hosted run was started.
+Exp073CF remains disabled and untriggered. The static audit completed and found one important inherited wiring defect before activation.
 
-Frozen preparation lineage:
+The original disabled authority-tail specification had a matrix finalizer `[A,B]` but both rows downloaded compact replica A and both searched `compact_a`. A nominal final A/B comparator would therefore have compared two finalizations of A, not independent A and B finalizers.
 
-- preregistration `e0c92ebaba576a5aa5dfd06d1d972bfa3b025d36`;
-- corrected memory-stable PCL helper `5423976c09d5ee338d1a7894ce143faf1bb88225`;
-- disabled main workflow specification `d0a52ef4669c177732935bff28be7282208c4fcb`;
-- disabled exact comparator/finalizer authority tail `9654ca78514495da5c788ca0418ffe3eca9f2ad8`;
-- preparation binding `f8da5f35d2ead65b9db24ee19649846243a7f606`;
-- recovery record `3c0b8cfcfe8cafc393165f60df134c76d5d77616`.
+This was corrected prospectively before any Exp073CF run:
 
-A memory regression was caught before binding: the first helper draft would have hashed the reloaded mmap through `np.ascontiguousarray(...).tobytes()`, potentially materializing another ~1.12509 GiB copy. The bound helper instead hashes the canonical in-memory ALM through a buffer view and verifies temp/final/reloaded spill files with streaming 8 MiB SHA-256 reads. It therefore does not intentionally create a full-size verification copy.
+- corrected authority-tail commit: `80c273d89f20cd91065b18236b50060328d33ae8`;
+- static-audit binding commit: `82e70d38fba65ddf667e4866f92abfa18b0c0122`;
+- recovery audit commit: `8dd9bcc075cf2ba247b3a060a5b9b7bde7597187`.
 
-The helper preserves production semantics: exact lens/source authority, `nmt.NmtField(a,None,spin=0)`, `nmt.NmtField(b,None,spin=2)`, runtime `pcl_lmax=int(fa.ainfo_mask.lmax)` with full-scale fail-closed receipt `12287`, exact canonical `<c16>` spill, same-filesystem temp -> flush/fsync -> atomic `os.replace`, read-only mmap reload, unchanged `hp.alm2cl(...,lmax=pcl_lmax)`, and canonical finite `<f8 [12288]>` PCL.
+The corrected finalizer now downloads `exp073cf-compact-${{ matrix.replica }}-${{ github.sha }}` and selects the replica-specific `compact_${lower}` input. No scientific arithmetic, input, acceptance threshold, reduction order, thread policy or comparator tolerance was changed.
 
-The disabled workflow specs preserve `OMP_NUM_THREADS=8`, BLAS-style pools=1, `max-parallel: 1`, <=60 s heartbeat, compiler flags, checkpoint preflight/authority, heavy 39-band compact streaming, exact A/B compact comparator and exact finalizer comparator. Local spill is disposable infrastructure state and never checkpoint authority.
+The memory helper remains at `5423976c09d5ee338d1a7894ce143faf1bb88225`. Static inspection confirms the earlier mmap verification regression is absent: spill SHA is streamed in 8 MiB chunks, in-memory hashes use `memoryview`, spill reload is read-only `np.memmap`, temp publication is flush/fsync + atomic `os.replace`, and cleanup paths remove temporary spill state. No additional full-size array copy used solely for SHA verification was found.
 
-Full-scale memory safety is still unproven. Require >=2.5 GiB free local spill space. The current 6 GiB WSL cap is **not certified safe** because full-scale SHT workspace and final mmap residency remain unknown.
+Full-scale memory safety remains unproven. The user's machine has ~7.7 GB physical RAM and current WSL config `memory=6GB`, `swap=8GB`. Exp073CA previously reached severe memory pressure. Exp073CF requires >=2.5 GiB free spill disk, but full-scale `NmtField`/SHT workspace plus mmap/source-side residency must still be measured empirically.
 
 ## Preserved scientific authority
 
@@ -74,16 +70,20 @@ No G8 jump.
 
 ## Exact next gate
 
-While home runner remains locked, the next permitted work is a **repository-side static audit of the disabled Exp073CF package**. Audit activation-time binding completeness, compatibility of status/output tokens with the frozen Exp073CA streaming driver, cleanup/failure paths, and search for any remaining hidden full-size memory copies. No `.github/workflows` activation, trigger creation, rerun, or self-hosted execution is permitted.
+1. Keep `./run.sh` stopped.
+2. Complete home memory/infrastructure preflight for the current ~7.7 GB machine and 6 GB WSL cap; do not assume the cap is safe merely from hosted small-geometry QA.
+3. Create a separate prospective Exp073CF activation binding that pins the actual active `.github/workflows` commit and isolated trigger commit, incorporating corrected authority-tail commit `80c273d89f20cd91065b18236b50060328d33ae8`.
+4. Only then start a fresh Exp073CF replica A. If PCL reaches a valid memory-stable terminal result, continue to preflight/heavy checkpoint streaming; B remains sequential via `max-parallel: 1`.
+5. Require exact A/B compact comparator and replica-isolated exact finalizer comparator. No tolerance rescue.
 
-After the user explicitly re-enables the home runner, the next actual scientific frontier is a **fresh full-scale Exp073CF Wm_S2 successor**, but only after a new prospective activation binding pins the actual activated workflow/trigger and an infrastructure preflight passes. Do not rerun or reuse stale Exp073CA replica B as scientific authority.
-
-- ✅ Exp073CF disabled package prepared; `+0/+0`; no run created.
+- ✅ stale Exp073CA replica B safely terminated before PCL; no authority created.
+- ✅ Exp073CF static audit completed and inherited finalizer-isolation bug fixed prospectively.
+- ✅ Exp073CF memory helper has no known full-size SHA-verification copy.
 - ✅ Exp073CE/CC/CD methodology evidence preserved.
 - ✅ Exp073BJ and Exp073BV/BW/BZ authority preserved.
-- 🟡 Exp073CA remains infrastructure incomplete; self-hosted replica B queued but locked out.
+- 🟡 Exp073CF awaits home memory preflight + active workflow/trigger binding.
 - ❌ Exp073AQ permanent scientific FAIL preserved.
 - ❌ Exp073BD remains provisional and forbidden downstream.
 - ❌ Layer A/B, covariance/whitening, nuisance SVD, quotient/relation/null, G7/G8/G9 unauthorized.
 
-**Home runner = OFFLINE/LOCKED. Verified: 52.0% | Draft/data: 53.7%**
+**Home runner = STOPPED / PRE-ACTIVATION LOCKED. Verified: 52.0% | Draft/data: 53.7%**
