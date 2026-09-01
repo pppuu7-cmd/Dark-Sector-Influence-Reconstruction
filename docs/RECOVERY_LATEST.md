@@ -8,13 +8,14 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 ## Read first
 
-1. `recovery/2026-09-01_exp073cb_helper_rss_semantics_audit.md`
-2. `recovery/2026-09-01_exp073ca_attempt3_infra_incomplete_exp073cb_hosted_memory_qa_active.md`
-3. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
-4. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
-5. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
-6. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-7. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+1. `recovery/2026-09-01_exp073cc_q1_corrected_lifetime_exact_equivalence_pass.md`
+2. `recovery/2026-09-01_exp073cb_helper_rss_semantics_audit.md`
+3. `recovery/2026-09-01_exp073ca_attempt3_infra_incomplete_exp073cb_hosted_memory_qa_active.md`
+4. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
+5. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
+6. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
+7. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+8. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
 
 ## Current overnight frontier
 
@@ -22,35 +23,46 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 - Exp073CA attempt3 run `33448843621`: replica A job `99673921219` terminal infrastructure failure during fresh Wm_S2 PCL; replica B job `99673921530` remains queued self-hosted and must not be revived overnight.
 - Frozen Exp073CA classification remains `INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073CA`, `+0/+0`.
 - Compile, checkpoint preflight/restore, heavy 39-band streaming, exact compact comparator and finalizer did not run in replica A.
+- At the Exp073CC terminal recording checkpoint there were zero `in_progress` DSIR runs and Exp073CA attempt3 was the sole queued run.
+
+## Exp073CC terminal corrected-lifetime exact-equivalence QA
+
+Prospectively frozen hosted-only, synthetic/nonclassifying QA. Frozen lineage:
+- prereg `f451a272bfa060441a523334c48edae20ffa8603`;
+- helper `583770e3607edb9f0d8168f68e89015c7913205d`;
+- workflow `c1c44deca56423caa54f61cd8ea70575ea23f02f`;
+- binding `377bb66f79fe598c8f0b10248bda3c1fb7104a45`;
+- trigger/head `1622efc76f02876de1871123938d07936fe40cb6`.
+
+Hosted run `33475627726`, job `99754170638` is terminal success. Immutable artifact `9788075152`, digest `sha256:08b0e29e93e9eddaabe7f23de618a7a68b152b2115eb0e1727d7f3d0af8de5d9`.
+
+Frozen classification: **`CC_Q1_EXACT_EQUIVALENCE_PASS`**.
+
+All frozen NSIDE 64/128/256 cases were complete and finite and passed both `np.array_equal` and canonical `<f8` SHA-256 equality. Exact shared SHAs were respectively:
+- NSIDE 64: `451f7ca38df2e533468d17b1cf7cecb449f58cc9713652d605393a5359a745d5`;
+- NSIDE 128: `eeb8e5041d42e39bffe4d807421623c4f963d7058a1140cbb7d27518f8c7b47e`;
+- NSIDE 256: `7989e075acea10cd62abc3ec26530fa4b006c77212121c058ee51c3344f9c707`.
+
+Independent-process peak RSS simultaneous -> corrected sequential was:
+- NSIDE 64: 117652 -> 116392 KiB;
+- NSIDE 128: 130908 -> 125888 KiB;
+- NSIDE 256: 183124 -> 164204 KiB.
+
+RSS is diagnostic/nonclassifying; largest observed reduction was about 10.33% at NSIDE=256. Do not extrapolate these small/medium hosted measurements into a claim that full DES NSIDE=4096 fits under the 6 GiB WSL cap. Full-scale SHT workspace remains unmeasured.
+
+Exp073CC is `+0/+0` and closes no real-survey/scientific gate. It only establishes exact implementation-equivalence for the corrected one-target-at-a-time lifetime on the frozen hosted geometries, removing that implementation-equivalence objection to a future prospectively frozen infrastructure successor.
 
 ## Memory-stability audit
 
 For DES `NSIDE=4096`, `NPIX=201,326,592`: one float64 real-space map is 1.500 GiB; one complex128 mask-alm payload through ell=12287 is about 1.12509 GiB. The current simultaneous Exp073AZ Wm PCL lifetime retains two source maps, two NaMaster field-owned float64 masks, and two mask alms, already about 8.25 GiB before SHT workspace and process overhead. A 6 GiB WSL memory cap is therefore structurally unsafe for that lifetime pattern.
 
-A sequential lifetime-only construction is the current infrastructure repair hypothesis. It must preserve the same transforms and exact PCL bytes and may not change scientific criteria.
+A sequential lifetime-only construction is now supported by Exp073CC exact-equivalence QA on NSIDE 64/128/256, but full-scale memory safety is not yet demonstrated.
 
-## Exp073CB hosted synthetic exact-equivalence/RSS QA
+## Exp073CB terminal and helper audit
 
-Prospectively frozen NONCLASSIFYING hosted-only QA; no self-hosted runner use.
+Exp073CB run `33464547851`, job `99721585397` remains **`CB_Q3_INFRASTRUCTURE_INCOMPLETE`**: prospective freeze/binding passed, but setup failed because PyPI exposed no `pymaster==2.7`; numerical/comparator/RSS stages never ran. `+0/+0`.
 
-Frozen lineage:
-- prereg `5b63330f5273fc9186bc9921f5d4702aaecb7c3a`;
-- helper `c6d792f7b57fa38ca9017e6335046919bb33d94f`;
-- workflow `7deadbeeafac479a059708efbfaa69e70f356470`;
-- binding `1bb95adc8205aa74c78b91c46a5765f811effbaa`;
-- trigger/head `07242a550fc856a6bd4621ba887866d735b96334`.
-
-Hosted run `33464547851`, job `99721585397` is terminal failure. Prospective freeze/binding passed; environment setup failed because PyPI currently exposes no `pymaster==2.7` release. Frozen numerical cases, exact comparator and RSS stages never ran; no valid comparator inputs/artifact payload exist.
-
-Frozen classification: **`CB_Q3_INFRASTRUCTURE_INCOMPLETE`**. This is `+0/+0`, not mismatch evidence and not a scientific result.
-
-### Subsequent helper-semantics audit
-
-The exact frozen CB helper cannot be reused unchanged for the intended RSS claim. Its `masks(nside)` routine allocates both masks on every call, while `sequential(nside)` uses `a,_=masks(nside)` and later `_,b=masks(nside)`. In Python `_` remains a normal live reference, so each supposedly discarded companion mask remains resident. Therefore CB's frozen `sequential` mode does not implement the intended one-target-mask-at-a-time lifetime.
-
-This does **not** alter CB attempt1's terminal `CB_Q3_INFRASTRUCTURE_INCOMPLETE` classification because the numerical/RSS cases never ran. It does invalidate the previously proposed plan to make a conda-only successor while reusing the frozen helper unchanged for RSS evidence.
-
-A new prospective hosted-only experiment must use single-target mask generation (e.g. separate lens/source generators or equivalent) while freezing the same transforms, one-thread policy, `hp.alm2cl`, independent-process RSS measurement, `np.array_equal`, and canonical `<f8` SHA-256 exact comparator. This remains synthetic/nonclassifying `+0/+0` QA.
+The frozen CB helper cannot be reused for RSS evidence because its `a,_=masks(nside)` / `_,b=masks(nside)` pattern keeps the unwanted companion mask live through `_`. Exp073CC prospectively corrected this by generating only the requested target mask at each sequential stage.
 
 ## Preserved scientific authority
 
@@ -75,15 +87,14 @@ No G8 jump.
 
 ## Exact next gate
 
-While home runner remains locked: prospectively freeze a **new hosted-only corrected-lifetime PCL QA**. It must generate only the requested target mask at each sequential stage, provision NaMaster 2.7 via the proven conda-forge route, preserve one-thread execution, use independent processes for RSS, and require exact `np.array_equal` plus canonical `<f8` SHA equality. Complete exact mismatch is an implementation-equivalence FAIL for this prerequisite; setup/execution failure before valid comparator inputs is infrastructure incomplete. Every outcome remains `+0/+0` and cannot close a real-survey gate.
+While home runner remains locked, do not touch or revive Exp073CA replica B. The next scientifically permitted work is **hosted/read-only full-scale memory-budget/source-lifetime analysis**, especially conservative accounting or synthetic scaling of NaMaster/healpy SHT workspace for the exact production path. Any hosted scaling probe must be prospectively frozen and remains `+0/+0`; it may refine infrastructure planning but cannot close the real-survey Wm_S2 gate.
 
-Before any trigger, re-check all queued/in-progress Actions. Do not touch or revive Exp073CA replica B overnight. A future home-runner repair/full-scale successor is not permitted until the user explicitly re-enables the home runner.
+Only after the user explicitly re-enables the home runner may a separately prospectively frozen Exp073CA infrastructure successor use the Exp073CC-supported sequential lifetime repair. Such a successor must preserve frozen scientific inputs/comparators/thread policy/checkpoint semantics and the <=60 s nonclassifying heartbeat rule.
 
+- ✅ Exp073CC = `CC_Q1_EXACT_EQUIVALENCE_PASS`; immutable artifact `9788075152`.
 - ✅ Exp073BJ exact Track-A Wm_S1 authority PASS preserved.
 - ✅ Exp073BV/BW/BZ prerequisite authority preserved.
 - 🟡 Exp073CA remains infrastructure incomplete; self-hosted replica B queued but locked out.
-- ❌ Exp073CB attempt1 = `CB_Q3_INFRASTRUCTURE_INCOMPLETE` due missing PyPI 2.7 distribution.
-- ❌ Frozen CB helper is unsuitable for the intended one-target-at-a-time RSS claim; no conda-only reuse for RSS evidence.
 - ❌ Exp073AQ permanent historical scientific FAIL preserved.
 - ❌ Exp073BD remains provisional and forbidden downstream.
 - ❌ Layer A/B, covariance/whitening, nuisance SVD, quotient/relation/null, G7/G8/G9 unauthorized.
