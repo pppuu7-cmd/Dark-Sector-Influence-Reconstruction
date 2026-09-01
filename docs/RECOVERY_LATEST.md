@@ -8,12 +8,13 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 ## Read first
 
-1. `recovery/2026-09-01_exp073ca_attempt3_infra_incomplete_exp073cb_hosted_memory_qa_active.md`
-2. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
-3. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
-4. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
-5. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-6. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+1. `recovery/2026-09-01_exp073cb_helper_rss_semantics_audit.md`
+2. `recovery/2026-09-01_exp073ca_attempt3_infra_incomplete_exp073cb_hosted_memory_qa_active.md`
+3. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
+4. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
+5. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
+6. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+7. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
 
 ## Current overnight frontier
 
@@ -43,7 +44,13 @@ Hosted run `33464547851`, job `99721585397` is terminal failure. Prospective fre
 
 Frozen classification: **`CB_Q3_INFRASTRUCTURE_INCOMPLETE`**. This is `+0/+0`, not mismatch evidence and not a scientific result.
 
-The separately preregistered infrastructure-only successor, if created, may change only NaMaster-2.7 provisioning (proven repository precedent: conda-forge `namaster=2.7`) while reusing the frozen CB helper, nside `{64,128,256}`, one-thread policy, exact `np.array_equal` + canonical `<f8` SHA comparator, RSS measurement and interpretation unchanged.
+### Subsequent helper-semantics audit
+
+The exact frozen CB helper cannot be reused unchanged for the intended RSS claim. Its `masks(nside)` routine allocates both masks on every call, while `sequential(nside)` uses `a,_=masks(nside)` and later `_,b=masks(nside)`. In Python `_` remains a normal live reference, so each supposedly discarded companion mask remains resident. Therefore CB's frozen `sequential` mode does not implement the intended one-target-mask-at-a-time lifetime.
+
+This does **not** alter CB attempt1's terminal `CB_Q3_INFRASTRUCTURE_INCOMPLETE` classification because the numerical/RSS cases never ran. It does invalidate the previously proposed plan to make a conda-only successor while reusing the frozen helper unchanged for RSS evidence.
+
+A new prospective hosted-only experiment must use single-target mask generation (e.g. separate lens/source generators or equivalent) while freezing the same transforms, one-thread policy, `hp.alm2cl`, independent-process RSS measurement, `np.array_equal`, and canonical `<f8` SHA-256 exact comparator. This remains synthetic/nonclassifying `+0/+0` QA.
 
 ## Preserved scientific authority
 
@@ -68,14 +75,15 @@ No G8 jump.
 
 ## Exact next gate
 
-While home runner remains locked: prospectively freeze a **hosted infrastructure-only Exp073CB successor** that changes only environment provisioning to the already-proven conda-forge NaMaster 2.7 route. Preserve the exact CB helper and exact comparator. If it reaches complete valid outputs, classify exactly as exact-equivalence PASS or complete exact mismatch; if setup/execution fails first, infrastructure incomplete. Any outcome remains `+0/+0`.
+While home runner remains locked: prospectively freeze a **new hosted-only corrected-lifetime PCL QA**. It must generate only the requested target mask at each sequential stage, provision NaMaster 2.7 via the proven conda-forge route, preserve one-thread execution, use independent processes for RSS, and require exact `np.array_equal` plus canonical `<f8` SHA equality. Complete exact mismatch is an implementation-equivalence FAIL for this prerequisite; setup/execution failure before valid comparator inputs is infrastructure incomplete. Every outcome remains `+0/+0` and cannot close a real-survey gate.
 
-Do not touch or revive Exp073CA replica B overnight. A future home-runner repair/full-scale successor is not permitted until the user explicitly re-enables the home runner.
+Before any trigger, re-check all queued/in-progress Actions. Do not touch or revive Exp073CA replica B overnight. A future home-runner repair/full-scale successor is not permitted until the user explicitly re-enables the home runner.
 
 - ✅ Exp073BJ exact Track-A Wm_S1 authority PASS preserved.
 - ✅ Exp073BV/BW/BZ prerequisite authority preserved.
 - 🟡 Exp073CA remains infrastructure incomplete; self-hosted replica B queued but locked out.
 - ❌ Exp073CB attempt1 = `CB_Q3_INFRASTRUCTURE_INCOMPLETE` due missing PyPI 2.7 distribution.
+- ❌ Frozen CB helper is unsuitable for the intended one-target-at-a-time RSS claim; no conda-only reuse for RSS evidence.
 - ❌ Exp073AQ permanent historical scientific FAIL preserved.
 - ❌ Exp073BD remains provisional and forbidden downstream.
 - ❌ Layer A/B, covariance/whitening, nuisance SVD, quotient/relation/null, G7/G8/G9 unauthorized.
