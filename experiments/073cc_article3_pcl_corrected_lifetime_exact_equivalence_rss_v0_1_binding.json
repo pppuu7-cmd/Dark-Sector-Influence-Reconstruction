@@ -1,0 +1,16 @@
+{
+  "experiment": "Exp073CC",
+  "hosted_only": true,
+  "science_gate_scored": false,
+  "verified_delta": 0.0,
+  "draft_data_delta": 0.0,
+  "prereg_commit": "f451a272bfa060441a523334c48edae20ffa8603",
+  "helper_commit": "583770e3607edb9f0d8168f68e89015c7913205d",
+  "workflow_commit": "c1c44deca56423caa54f61cd8ea70575ea23f02f",
+  "environment": "github-hosted ubuntu-24.04; conda-forge python=3.11 namaster=2.7 healpy astropy numpy",
+  "thread_policy": 1,
+  "cases_nside": [64, 128, 256],
+  "comparator": "np.array_equal plus canonical <f8 C-order SHA-256",
+  "rss_semantics": "independent process /usr/bin/time -v; descriptive only; no threshold",
+  "home_runner_allowed": false
+}
