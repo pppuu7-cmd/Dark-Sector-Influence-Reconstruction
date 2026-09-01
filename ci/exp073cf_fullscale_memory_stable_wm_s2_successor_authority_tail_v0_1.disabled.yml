@@ -77,8 +77,8 @@
           echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "$GITHUB_ENV"
       - uses: actions/download-artifact@v4
         with:
-          name: exp073cf-compact-A-${{ github.sha }}
-          path: external/a
+          name: exp073cf-compact-${{ matrix.replica }}-${{ github.sha }}
+          path: external/current
       - name: Frozen independent finalizer
         shell: bash
         env:
@@ -87,7 +87,7 @@
           set -euo pipefail
           mkdir -p data/derived/g7
           lower="$(printf '%s' "$REPLICA" | tr '[:upper:]' '[:lower:]')"
-          compact="$(find external/a -name '*compact_a_v0_1.npz' -type f -print -quit)"
+          compact="$(find external/current -name "*compact_${lower}_v0_1.npz" -type f -print -quit)"
           test -n "$compact"
           "$NMT_PY" ci/exp073az_article3_low_memory_general_coupling_v0_1.py finalize \
             --task Wm_S2 --compact-npz "$compact" \
