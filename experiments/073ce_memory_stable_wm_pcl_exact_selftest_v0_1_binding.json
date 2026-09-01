@@ -1,0 +1,18 @@
+{
+  "experiment": "Exp073CE",
+  "prereg_commit": "54c46425349bedfce0ecf4bdca33ea214766d27c",
+  "helper_commit": "07ed390e08a68b7ae17f8a58ad4fa882bb082f09",
+  "workflow_commit": "219b0db48113ef00f872ff753ed42cf5cf51b54f",
+  "hosted_only": true,
+  "science_gate_scored": false,
+  "verified_delta": 0.0,
+  "draft_data_delta": 0.0,
+  "home_runner_must_remain_offline_locked": true,
+  "exp073ca_attempt3_run": 33448843621,
+  "frozen_classification_branches": [
+    "CE_Q1_MEMORY_STABLE_EXACT_EQUIVALENCE_PASS",
+    "CE_Q2_COMPLETE_EXACT_MISMATCH_FAIL",
+    "CE_Q3_INFRASTRUCTURE_INCOMPLETE"
+  ],
+  "notes": "Binding authorizes only the path-specific GitHub-hosted exact selftest. It does not authorize self-hosted Wm_S2 execution or any readiness change."
+}
