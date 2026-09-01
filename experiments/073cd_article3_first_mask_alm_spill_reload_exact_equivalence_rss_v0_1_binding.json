@@ -1,0 +1,11 @@
+{
+  "experiment": "Exp073CD",
+  "prereg_commit": "1017d46081c030427dc111d42bc0a7e89ddd4b3f",
+  "helper_commit": "bdcd1d8be90c0e47377cd49d823d2f9cf31b4ef1",
+  "workflow_commit": "c6a44c295409a5f2a5d1e16390a62af0299dd22f",
+  "hosted_only": true,
+  "science_gate_scored": false,
+  "verified_delta": 0.0,
+  "draft_data_delta": 0.0,
+  "notes": "Synthetic hosted-only memory/reproducibility QA. Exact-only saved/reloaded first-ALM identity and final PCL equality; RSS diagnostic only. Does not authorize home runner or real-survey gate closure."
+}
