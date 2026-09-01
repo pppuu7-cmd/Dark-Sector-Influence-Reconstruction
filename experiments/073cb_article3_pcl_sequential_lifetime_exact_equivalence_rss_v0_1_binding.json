@@ -1,0 +1,15 @@
+{
+  "experiment": "Exp073CB",
+  "version": "v0.1",
+  "prereg_commit": "5b63330f5273fc9186bc9921f5d4702aaecb7c3a",
+  "helper_commit": "c6d792f7b57fa38ca9017e6335046919bb33d94f",
+  "workflow_commit": "7deadbeeafac479a059708efbfaa69e70f356470",
+  "hosted_only": true,
+  "science_gate_scored": false,
+  "verified_delta": 0.0,
+  "draft_data_delta": 0.0,
+  "home_runner_use_forbidden": true,
+  "frozen_cases_nside": [64, 128, 256],
+  "thread_policy": 1,
+  "exact_only": true
+}
