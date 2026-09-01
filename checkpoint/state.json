@@ -23,11 +23,15 @@
     20,
     21,
     22,
-    23
+    23,
+    24,
+    25,
+    26,
+    27
   ],
-  "completed_count": 24,
+  "completed_count": 28,
   "contract_fingerprint": "b73283035e46a3a49a72bb46dff5fedc3f99239dc9188de1d7762560926674f0",
   "format": "DSIR_REMOTE_BAND_CHECKPOINT_V0_1",
-  "next_band": 24,
+  "next_band": 28,
   "total_bands": 39
 }
