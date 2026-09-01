@@ -1,0 +1,106 @@
+name: Exp073CC Article3 PCL corrected lifetime exact equivalence RSS v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073cc_article3_pcl_corrected_lifetime_exact_equivalence_rss_v0_1.trigger'
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  hosted-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce prospective freeze and binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- experiments/073cc_article3_pcl_corrected_lifetime_exact_equivalence_rss_v0_1_prereg.md)" = 'f451a272bfa060441a523334c48edae20ffa8603'
+          test "$(git log -1 --format=%H -- ci/exp073cc_pcl_corrected_lifetime_exact_equivalence_rss_v0_1.py)" = '583770e3607edb9f0d8168f68e89015c7913205d'
+          test -f experiments/073cc_article3_pcl_corrected_lifetime_exact_equivalence_rss_v0_1_binding.json
+          binding_commit="$(git log -1 --format=%H -- experiments/073cc_article3_pcl_corrected_lifetime_exact_equivalence_rss_v0_1_binding.json)"
+          trigger_binding="$(tr -d '[:space:]' < ci/exp073cc_article3_pcl_corrected_lifetime_exact_equivalence_rss_v0_1.trigger)"
+          test "$binding_commit" = "$trigger_binding"
+          python3 - <<'PY'
+          import json,subprocess
+          d=json.load(open('experiments/073cc_article3_pcl_corrected_lifetime_exact_equivalence_rss_v0_1_binding.json'))
+          assert d['experiment']=='Exp073CC'
+          assert d['prereg_commit']=='f451a272bfa060441a523334c48edae20ffa8603'
+          assert d['helper_commit']=='583770e3607edb9f0d8168f68e89015c7913205d'
+          got=subprocess.check_output(['git','log','-1','--format=%H','--','.github/workflows/exp073cc-article3-pcl-corrected-lifetime-exact-equivalence-rss-v0-1.yml'],text=True).strip()
+          assert got==d['workflow_commit'],(got,d['workflow_commit'])
+          assert d['hosted_only'] is True and d['science_gate_scored'] is False
+          PY
+      - name: Provision frozen NaMaster 2.7 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$RUNNER_TEMP/miniforge"
+          curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"
+          bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"
+          "$MF/bin/conda" create -y -p "$RUNNER_TEMP/exp073cc-env" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          PY="$RUNNER_TEMP/exp073cc-env/bin/python"
+          "$PY" - <<'PY'
+          import importlib.metadata,numpy,pymaster,healpy
+          v=importlib.metadata.version('pymaster')
+          assert v=='2.7' or v.startswith('2.7.'),v
+          print('pymaster',v,'numpy',numpy.__version__,'healpy',healpy.__version__)
+          PY
+          echo "NMT_PY=$PY" >> "$GITHUB_ENV"
+      - name: Run frozen simultaneous and corrected sequential cases with independent RSS
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073cc
+          for n in 64 128 256; do
+            /usr/bin/time -v -o "data/derived/exp073cc/time_sim_${n}.txt" \
+              "$NMT_PY" ci/exp073cc_pcl_corrected_lifetime_exact_equivalence_rss_v0_1.py run --mode simultaneous --nside "$n" --out "data/derived/exp073cc/sim_${n}.npy"
+            /usr/bin/time -v -o "data/derived/exp073cc/time_seq_${n}.txt" \
+              "$NMT_PY" ci/exp073cc_pcl_corrected_lifetime_exact_equivalence_rss_v0_1.py run --mode sequential --nside "$n" --out "data/derived/exp073cc/seq_${n}.npy"
+          done
+      - name: Frozen exact comparator and RSS receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          "$NMT_PY" ci/exp073cc_pcl_corrected_lifetime_exact_equivalence_rss_v0_1.py compare --root data/derived/exp073cc --out-json data/derived/exp073cc/exp073cc_exact_comparator.json
+          rc=$?
+          set -e
+          "$NMT_PY" - <<'PY'
+          import json,re,pathlib
+          root=pathlib.Path('data/derived/exp073cc')
+          d=json.load(open(root/'exp073cc_exact_comparator.json'))
+          rss=[]
+          for n in (64,128,256):
+              def get(p):
+                  t=(root/p).read_text(); m=re.search(r'Maximum resident set size \(kbytes\):\s*(\d+)',t); assert m,t; return int(m.group(1))
+              a=get(f'time_sim_{n}.txt'); b=get(f'time_seq_{n}.txt')
+              rss.append({'nside':n,'simultaneous_max_rss_kib':a,'sequential_max_rss_kib':b,'sequential_over_simultaneous':b/a})
+          d['rss']=rss
+          (root/'exp073cc_receipt.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(d,indent=2,sort_keys=True))
+          PY
+          exit "$rc"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073cc-hosted-pcl-corrected-lifetime-${{ github.sha }}
+          path: data/derived/exp073cc
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
