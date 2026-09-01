@@ -1,0 +1,104 @@
+name: Exp073CB Article3 PCL sequential lifetime exact equivalence RSS v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073cb_article3_pcl_lifetime_exact_equivalence_rss_v0_1.trigger'
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  hosted-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce prospective freeze and binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- experiments/073cb_article3_pcl_sequential_lifetime_exact_equivalence_rss_v0_1_prereg.md)" = '5b63330f5273fc9186bc9921f5d4702aaecb7c3a'
+          test "$(git log -1 --format=%H -- ci/exp073cb_pcl_lifetime_exact_equivalence_rss_v0_1.py)" = 'c6d792f7b57fa38ca9017e6335046919bb33d94f'
+          test -f experiments/073cb_article3_pcl_sequential_lifetime_exact_equivalence_rss_v0_1_binding.json
+          binding_commit="$(git log -1 --format=%H -- experiments/073cb_article3_pcl_sequential_lifetime_exact_equivalence_rss_v0_1_binding.json)"
+          trigger_binding="$(tr -d '[:space:]' < ci/exp073cb_article3_pcl_lifetime_exact_equivalence_rss_v0_1.trigger)"
+          test "$binding_commit" = "$trigger_binding"
+          python3 - <<'PY'
+          import json,subprocess
+          d=json.load(open('experiments/073cb_article3_pcl_sequential_lifetime_exact_equivalence_rss_v0_1_binding.json'))
+          assert d['experiment']=='Exp073CB'
+          assert d['prereg_commit']=='5b63330f5273fc9186bc9921f5d4702aaecb7c3a'
+          assert d['helper_commit']=='c6d792f7b57fa38ca9017e6335046919bb33d94f'
+          got=subprocess.check_output(['git','log','-1','--format=%H','--','.github/workflows/exp073cb-article3-pcl-sequential-lifetime-exact-equivalence-rss-v0-1.yml'],text=True).strip()
+          assert got==d['workflow_commit'],(got,d['workflow_commit'])
+          assert d['hosted_only'] is True and d['science_gate_scored'] is False
+          PY
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install exact QA environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy<3' healpy astropy
+          sudo apt-get update
+          sudo apt-get install -y libgsl-dev libfftw3-dev libcfitsio-dev
+          python -m pip install 'pymaster==2.7'
+          python - <<'PY'
+          import importlib.metadata
+          v=importlib.metadata.version('pymaster')
+          assert v=='2.7' or v.startswith('2.7.'),v
+          print('pymaster',v)
+          PY
+      - name: Run frozen simultaneous and sequential cases with RSS
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073cb
+          for n in 64 128 256; do
+            /usr/bin/time -v -o "data/derived/exp073cb/time_sim_${n}.txt" \
+              python ci/exp073cb_pcl_lifetime_exact_equivalence_rss_v0_1.py run --mode simultaneous --nside "$n" --out "data/derived/exp073cb/sim_${n}.npy"
+            /usr/bin/time -v -o "data/derived/exp073cb/time_seq_${n}.txt" \
+              python ci/exp073cb_pcl_lifetime_exact_equivalence_rss_v0_1.py run --mode sequential --nside "$n" --out "data/derived/exp073cb/seq_${n}.npy"
+          done
+      - name: Frozen exact comparator and RSS receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python ci/exp073cb_pcl_lifetime_exact_equivalence_rss_v0_1.py compare --root data/derived/exp073cb --out-json data/derived/exp073cb/exp073cb_exact_comparator.json
+          python - <<'PY'
+          import json,re,pathlib
+          root=pathlib.Path('data/derived/exp073cb')
+          d=json.load(open(root/'exp073cb_exact_comparator.json'))
+          rss=[]
+          for n in (64,128,256):
+              def get(p):
+                  t=(root/p).read_text(); m=re.search(r'Maximum resident set size \(kbytes\):\s*(\d+)',t); assert m,t; return int(m.group(1))
+              a=get(f'time_sim_{n}.txt'); b=get(f'time_seq_{n}.txt')
+              rss.append({'nside':n,'simultaneous_max_rss_kib':a,'sequential_max_rss_kib':b,'sequential_over_simultaneous':b/a})
+          d['rss']=rss
+          (root/'exp073cb_receipt.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(d,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073cb-hosted-pcl-lifetime-${{ github.sha }}
+          path: data/derived/exp073cb
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
