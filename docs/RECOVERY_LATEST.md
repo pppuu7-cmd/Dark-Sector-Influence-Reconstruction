@@ -8,16 +8,16 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 ## Read first
 
-1. `recovery/2026-09-01_exp073ce_future_fullscale_integration_audit.md`
-2. `recovery/2026-09-01_exp073ce_terminal.md`
-3. `preregistration/2026-09-01_exp073ce_memory_stable_wm_s2_successor_package_v0_1.md`
-4. `recovery/2026-09-01_exp073ca_memory_stable_successor_semantic_binding_audit.md`
-5. `recovery/2026-09-01_exp073cd_production_spill_integration_audit.md`
-6. `recovery/2026-09-01_exp073cd_q1_spill_reload_exact_equivalence_pass.md`
-7. `recovery/2026-09-01_exp073cc_fullscale_memory_budget_audit.md`
-8. `recovery/2026-09-01_exp073cc_q1_corrected_lifetime_exact_equivalence_pass.md`
-9. `recovery/2026-09-01_exp073cb_helper_rss_semantics_audit.md`
-10. `recovery/2026-09-01_exp073ca_attempt3_infra_incomplete_exp073cb_hosted_memory_qa_active.md`
+1. `recovery/2026-09-01_exp073cf_disabled_fullscale_successor_package_prepared.md`
+2. `preregistration/2026-09-01_exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.md`
+3. `recovery/2026-09-01_exp073ce_future_fullscale_integration_audit.md`
+4. `recovery/2026-09-01_exp073ce_terminal.md`
+5. `preregistration/2026-09-01_exp073ce_memory_stable_wm_s2_successor_package_v0_1.md`
+6. `recovery/2026-09-01_exp073ca_memory_stable_successor_semantic_binding_audit.md`
+7. `recovery/2026-09-01_exp073cd_production_spill_integration_audit.md`
+8. `recovery/2026-09-01_exp073cd_q1_spill_reload_exact_equivalence_pass.md`
+9. `recovery/2026-09-01_exp073cc_fullscale_memory_budget_audit.md`
+10. `recovery/2026-09-01_exp073cc_q1_corrected_lifetime_exact_equivalence_pass.md`
 11. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
 12. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
 13. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
@@ -28,63 +28,39 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 - Home runner is **OFFLINE/LOCKED** until the user explicitly re-enables it.
 - Exp073CA attempt3 run `33448843621`: replica A job `99673921219` terminal infrastructure failure during fresh Wm_S2 PCL; replica B job `99673921530` remains queued self-hosted and must not be revived overnight.
-- Frozen Exp073CA classification remains `INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073CA`, `+0/+0`, not scientific FAIL.
-- Compile, checkpoint preflight/restore, heavy 39-band streaming, exact compact comparator and finalizer did not run in replica A.
+- Exp073CA classification remains `INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073CA`, `+0/+0`, not scientific FAIL.
 - Latest coordination check immediately before this sync found exactly one queued DSIR run (Exp073CA attempt3) and zero `in_progress` DSIR runs.
 
-## CE -> future full-scale integration audit
+## Exp073CF disabled successor preparation
 
-Repository audit `recovery/2026-09-01_exp073ce_future_fullscale_integration_audit.md` is terminal **`PASS_INFRASTRUCTURE_SEMANTIC_INTEGRATION_SPECIFIED_EXP073CE_TO_FUTURE_FULLSCALE`**, `+0/+0`.
+Exp073CF is now prospectively prepared but deliberately **non-executable** overnight. No file was created under `.github/workflows`, no Exp073CF trigger exists, and no self-hosted run was started.
 
-The audit binds the prospectively frozen Exp073CE memory-stable lifetime/spill method to the actual Exp073CA production wiring. No additional scientific-semantic transformation is required. A future successor may change only PCL object lifetime and local exact spill storage while preserving:
+Frozen preparation lineage:
 
-- the exact lens/source scientific inputs and source-lineage validation;
-- `nmt.NmtField(a, None, spin=0)` and `nmt.NmtField(b, None, spin=2)` constructor semantics, with no added `lmax`, `lmax_mask`, purification, beam, templates, weighting or smoothing;
-- runtime capture `pcl_lmax=int(fa.ainfo_mask.lmax)` before lens-field release, with fail-closed full-scale receipt `pcl_lmax==12287`;
-- exact canonical `<c16>` first-ALM spill identity, atomic temp -> fsync -> `os.replace`, exact file-size/shape/dtype/SHA verification, then read-only mmap reload and re-verification;
-- unchanged `hp.alm2cl(first_mask_alm, second_mask_alm, lmax=pcl_lmax)` and canonical finite `<f8 [12288]>` PCL;
-- unchanged compile flags, checkpoint preflight/restore/authority, heavy 39-band compact arithmetic, A/B exact compact comparator and finalizer.
+- preregistration `e0c92ebaba576a5aa5dfd06d1d972bfa3b025d36`;
+- corrected memory-stable PCL helper `5423976c09d5ee338d1a7894ce143faf1bb88225`;
+- disabled main workflow specification `d0a52ef4669c177732935bff28be7282208c4fcb`;
+- disabled exact comparator/finalizer authority tail `9654ca78514495da5c788ca0418ffe3eca9f2ad8`;
+- preparation binding `f8da5f35d2ead65b9db24ee19649846243a7f606`;
+- recovery record `3c0b8cfcfe8cafc393165f60df134c76d5d77616`.
 
-Local ALM spill scratch is disposable PCL-stage infrastructure state and must never become remote scientific checkpoint authority.
+A memory regression was caught before binding: the first helper draft would have hashed the reloaded mmap through `np.ascontiguousarray(...).tobytes()`, potentially materializing another ~1.12509 GiB copy. The bound helper instead hashes the canonical in-memory ALM through a buffer view and verifies temp/final/reloaded spill files with streaming 8 MiB SHA-256 reads. It therefore does not intentionally create a full-size verification copy.
 
-A newly explicit infrastructure guardrail is the **frozen thread policy**: the current Exp073CA attempt3 workflow sets `OMP_NUM_THREADS=8`, the listed BLAS-style thread pools to 1, and heartbeat `threads=8`. Because Exp073CE freezes thread policy, a future scientific successor may not silently reduce OMP threads as an ad-hoc memory rescue. Any thread-count change would require a separate prospective methodology/infrastructure decision and exact-equivalence evidence.
+The helper preserves production semantics: exact lens/source authority, `nmt.NmtField(a,None,spin=0)`, `nmt.NmtField(b,None,spin=2)`, runtime `pcl_lmax=int(fa.ainfo_mask.lmax)` with full-scale fail-closed receipt `12287`, exact canonical `<c16>` spill, same-filesystem temp -> flush/fsync -> atomic `os.replace`, read-only mmap reload, unchanged `hp.alm2cl(...,lmax=pcl_lmax)`, and canonical finite `<f8 [12288]>` PCL.
 
-The current Exp073CA workflow is push-filtered only on `ci/exp073ca_attempt3_article3_wm_s2_checkpoint_streaming_track_a_v0_1.trigger`, so recovery/documentation writes do not satisfy its trigger path.
+The disabled workflow specs preserve `OMP_NUM_THREADS=8`, BLAS-style pools=1, `max-parallel: 1`, <=60 s heartbeat, compiler flags, checkpoint preflight/authority, heavy 39-band compact streaming, exact A/B compact comparator and exact finalizer comparator. Local spill is disposable infrastructure state and never checkpoint authority.
 
-## Exp073CE terminal hosted QA
-
-Exp073CE hosted run `33523714876`, job `99909080713`, head `3f07c0d0450d49641dcad3319184d89562d3d72f`, immutable artifact `9806792097`, digest `sha256:b8403d7997b2f1705f1163c9882be04558fd7272904de00f5a29e6d4cdefc857`, is terminal **`CE_Q1_MEMORY_STABLE_EXACT_EQUIVALENCE_PASS`**.
-
-The prospectively frozen production-semantic package preserved runtime `NmtField.ainfo_mask.lmax` derivation and tested sequential first-mask-ALM spill/reload at frozen synthetic `NSIDE={64,128,256}`. Every case completed with exact oracle/spill runtime lmax identity (`191`, `383`, `767`), exact saved/reloaded canonical `<c16>` ALM SHA identity, read-only reload mapping, exact `np.array_equal` final PCL equality, and exact canonical `<f8>` final-PCL SHA identity. No tolerance/ULP/rounding/smoothing/averaging/preferred-replica rescue was used.
-
-The immutable receipt reports `science_gate_scored=false`, `verified_delta=0.0`, `draft_data_delta=0.0`. `/usr/bin/time -v` reported hosted maximum RSS `172380 KiB`, no swaps, exit 0. This is synthetic/nonclassifying methodology evidence only and is not extrapolated to DES `NSIDE=4096` or the current 6 GiB WSL cap.
-
-Frozen Exp073CE lineage:
-
-- preregistration `54c46425349bedfce0ecf4bdca33ea214766d27c`;
-- helper `07ed390e08a68b7ae17f8a58ad4fa882bb082f09`;
-- hosted workflow `219b0db48113ef00f872ff753ed42cf5cf51b54f`;
-- binding `9b6d1470e669405dd85e41583f38df89a8eabf30`;
-- trigger/head `3f07c0d0450d49641dcad3319184d89562d3d72f`.
-
-## Memory-stable successor evidence and full-scale boundary
-
-Exp073CD hosted run `33495127089`, job `99815424166`, immutable artifact `9795414546`, digest `sha256:9c88bb95c796e4a0220856f93574e14aa1873dbcd00b714c2e37693edfa5c069` is terminal **`CD_Q1_SPILL_RELOAD_EXACT_EQUIVALENCE_PASS`**. Exp073CC hosted run `33475627726`, job `99754170638`, artifact `9788075152`, digest `sha256:08b0e29e93e9eddaabe7f23de618a7a68b152b2115eb0e1727d7f3d0af8de5d9` is terminal **`CC_Q1_EXACT_EQUIVALENCE_PASS`**. Both are synthetic/nonclassifying `+0/+0` evidence.
-
-At DES `NSIDE=4096`, one float64 map is 1.500 GiB and one complex128 mask ALM is about 1.12509 GiB. Current simultaneous lifetime is about **8.25018 GiB** persistent payload before SHT workspace/process overhead. Corrected sequential lifetime lowers worst deterministic persistent baseline to about **4.12509 GiB**. The spill design gives a prospective deterministic second-SHT baseline near **2.62509 GiB plus SHT workspace/process overhead**. This remains an engineering estimate, not proof that the current 6 GiB WSL cap is safe.
-
-A future preflight requires at least **2.5 GiB free local spill space per active replica**, same-filesystem temp -> flush/fsync -> atomic rename -> exact verification, with matrix `max-parallel: 1`. Final `alm2cl` may residentize mmap pages, so full-scale RSS remains unproven.
-
-For the user's ~7.7 GB physical-RAM host, the software lifetime/spill repair is the primary planned mitigation. Raising the WSL cap is not assumed safe. Any computer/WSL tuning remains user-controlled and is not performed during overnight lock.
+Full-scale memory safety is still unproven. Require >=2.5 GiB free local spill space. The current 6 GiB WSL cap is **not certified safe** because full-scale SHT workspace and final mmap residency remain unknown.
 
 ## Preserved scientific authority
 
 - **Exp073BJ** run `33379013167`: terminal Track-A exact Wm_S1 authority PASS; artifact `9758841785`, digest `sha256:a7d5b30e0a8ba4ce6d8437db82982f69f41c01ac6a58c6cb121d4cbbb2c4f008`.
 - **Exp073AQ**: permanent historical hosted exact-repeatability scientific FAIL.
 - **Exp073BD**: `P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE`, forbidden downstream.
-- **Exp073BV**: `BV_Q1_EXACT_SOURCE_LINEAGE_CONFIRMED`, artifact `9768866582`.
-- **Exp073BW**: `BW_Q1_FULL_AND_STREAM_COMPRESSED_EXACT_EQUIVALENCE_PASS`, artifact `9774112002`.
+- **Exp073BV**: source-lineage PASS, artifact `9768866582`.
+- **Exp073BW**: exact streaming-equivalence PASS, artifact `9774112002`.
 - **Exp073BZ**: remote checkpoint/failover exact-byte PASS, artifact `9776592370`.
+- **Exp073CC/CD/CE**: synthetic/nonclassifying exact-equivalence PASS evidence only, all `+0/+0`.
 
 ## Frozen Article-3 boundaries and order
 
@@ -98,23 +74,16 @@ No G8 jump.
 
 ## Exact next gate
 
-While the home runner remains locked, do not touch or revive Exp073CA replica B and do not create/trigger any `[self-hosted, Linux, X64]` successor.
+While home runner remains locked, the next permitted work is a **repository-side static audit of the disabled Exp073CF package**. Audit activation-time binding completeness, compatibility of status/output tokens with the frozen Exp073CA streaming driver, cleanup/failure paths, and search for any remaining hidden full-size memory copies. No `.github/workflows` activation, trigger creation, rerun, or self-hosted execution is permitted.
 
-The next permitted work is **repository-side preparation of a fresh full-scale memory-stable Wm_S2 successor implementation package without triggering it**. It must implement only the already-audited PCL lifetime/local spill change, include fail-closed >=2.5 GiB local-spill preflight, preserve runtime `pcl_lmax` receipt/assertion, frozen thread policy, <=60 s side-band heartbeat, compact/checkpoint/comparator/finalizer authority, and use an isolated future trigger that remains untouched overnight.
+After the user explicitly re-enables the home runner, the next actual scientific frontier is a **fresh full-scale Exp073CF Wm_S2 successor**, but only after a new prospective activation binding pins the actual activated workflow/trigger and an infrastructure preflight passes. Do not rerun or reuse stale Exp073CA replica B as scientific authority.
 
-No additional hosted numerical run is currently justified solely to manufacture activity: the remaining material uncertainty is full-scale SHT/RSS/host behavior under real production geometry.
-
-The next actual scientific frontier remains a **fresh full-scale Wm_S2 successor only after the user explicitly re-enables the home runner and infrastructure preflight passes**. No rerun of Exp073CA attempt3 and no reuse of stale replica B.
-
-- ✅ CE -> future-fullscale integration audit PASS; `+0/+0`.
-- ✅ Exp073CE = `CE_Q1_MEMORY_STABLE_EXACT_EQUIVALENCE_PASS`; immutable artifact `9806792097`; `+0/+0`.
-- ✅ Exp073CD = `CD_Q1_SPILL_RELOAD_EXACT_EQUIVALENCE_PASS`; immutable artifact `9795414546`.
-- ✅ Exp073CC = `CC_Q1_EXACT_EQUIVALENCE_PASS`; immutable artifact `9788075152`.
-- ✅ Exp073BJ exact Track-A Wm_S1 authority PASS preserved.
-- ✅ Exp073BV/BW/BZ prerequisite authority preserved.
+- ✅ Exp073CF disabled package prepared; `+0/+0`; no run created.
+- ✅ Exp073CE/CC/CD methodology evidence preserved.
+- ✅ Exp073BJ and Exp073BV/BW/BZ authority preserved.
 - 🟡 Exp073CA remains infrastructure incomplete; self-hosted replica B queued but locked out.
-- ❌ Exp073AQ permanent historical scientific FAIL preserved.
+- ❌ Exp073AQ permanent scientific FAIL preserved.
 - ❌ Exp073BD remains provisional and forbidden downstream.
 - ❌ Layer A/B, covariance/whitening, nuisance SVD, quotient/relation/null, G7/G8/G9 unauthorized.
 
-**Verified: 52.0% | Draft/data: 53.7%**
+**Home runner = OFFLINE/LOCKED. Verified: 52.0% | Draft/data: 53.7%**
