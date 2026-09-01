@@ -1,0 +1,46 @@
+{
+  "experiment": "Exp073CF",
+  "task": "Wm_S2",
+  "classification": "PRE_ACTIVATION_SEED_AND_INTERFACE_AUDIT_PASS_NO_EXECUTION_AUTHORIZED",
+  "science_gate_scored": false,
+  "verified_delta": 0.0,
+  "draft_data_delta": 0.0,
+  "prereg_commit": "e0c92ebaba576a5aa5dfd06d1d972bfa3b025d36",
+  "pcl_helper_commit": "5423976c09d5ee338d1a7894ce143faf1bb88225",
+  "disabled_workflow_spec_commit": "d0a52ef4669c177732935bff28be7282208c4fcb",
+  "disabled_authority_tail_corrected_commit": "80c273d89f20cd91065b18236b50060328d33ae8",
+  "stream_driver_commit": "583c34420d5f02a1ac8e77efb9625bbc3ab73de8",
+  "seed_trigger_commit": "fc4db4477c64c5e3119b99deed629b43fc3acbab",
+  "seed_trigger_state": "SEED_NO_EXECUTION",
+  "active_workflow_created": false,
+  "execution_authorized": false,
+  "queued_runs_at_audit": 0,
+  "in_progress_runs_at_audit": 0,
+  "interface_findings": {
+    "stream_driver_complete_status_token": "COMPLETE_VALID_COMPARATOR_INPUT_EXP073CA_WM_S2_COMPACT_V0_1",
+    "cf_compact_comparator_requires_same_frozen_status_token": true,
+    "compact_output_shape": [39, 12288],
+    "compact_array_key": "A",
+    "pcl_sha_field": "pcl_sha256",
+    "thread_policy": 8,
+    "chunk_bands": 4,
+    "checkpoint_source_commit_uses_github_sha": true,
+    "checkpoint_namespace_is_cf_replica_isolated": true,
+    "replica_finalizers_are_independent_after_fix": true,
+    "full_size_sha_verification_copy_known_present": false,
+    "seed_trigger_changes_authority": false
+  },
+  "historical_binding_note": "experiments/073cf_fullscale_memory_stable_wm_s2_successor_v0_1_binding.json remains an immutable preparation record and therefore still says trigger_file_exists=false; the later seed commit supersedes that field operationally without authorizing execution.",
+  "activation_requirements": [
+    "home runner remains locked until explicit user permission",
+    "perform home memory/infrastructure preflight",
+    "create actual .github/workflows workflow only after lock removal",
+    "create a separate activation binding pinning active workflow commit, corrected authority-tail commit, and trigger activation commit",
+    "change seed trigger from SEED_NO_EXECUTION only in the isolated post-lock activation commit",
+    "start with fresh replica A; do not reuse Exp073CA artifacts as authority"
+  ],
+  "readiness": {
+    "verified_percent": 52.0,
+    "draft_data_percent": 53.7
+  }
+}
