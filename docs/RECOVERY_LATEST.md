@@ -8,14 +8,15 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 ## Read first
 
-1. `recovery/2026-09-01_exp073cc_q1_corrected_lifetime_exact_equivalence_pass.md`
-2. `recovery/2026-09-01_exp073cb_helper_rss_semantics_audit.md`
-3. `recovery/2026-09-01_exp073ca_attempt3_infra_incomplete_exp073cb_hosted_memory_qa_active.md`
-4. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
-5. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
-6. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
-7. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-8. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+1. `recovery/2026-09-01_exp073cc_fullscale_memory_budget_audit.md`
+2. `recovery/2026-09-01_exp073cc_q1_corrected_lifetime_exact_equivalence_pass.md`
+3. `recovery/2026-09-01_exp073cb_helper_rss_semantics_audit.md`
+4. `recovery/2026-09-01_exp073ca_attempt3_infra_incomplete_exp073cb_hosted_memory_qa_active.md`
+5. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
+6. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
+7. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
+8. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+9. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
 
 ## Current overnight frontier
 
@@ -23,7 +24,7 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 - Exp073CA attempt3 run `33448843621`: replica A job `99673921219` terminal infrastructure failure during fresh Wm_S2 PCL; replica B job `99673921530` remains queued self-hosted and must not be revived overnight.
 - Frozen Exp073CA classification remains `INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073CA`, `+0/+0`.
 - Compile, checkpoint preflight/restore, heavy 39-band streaming, exact compact comparator and finalizer did not run in replica A.
-- At the Exp073CC terminal recording checkpoint there were zero `in_progress` DSIR runs and Exp073CA attempt3 was the sole queued run.
+- At the latest overnight audit there were zero `in_progress` DSIR runs and Exp073CA attempt3 was the sole queued run.
 
 ## Exp073CC terminal corrected-lifetime exact-equivalence QA
 
@@ -52,11 +53,15 @@ RSS is diagnostic/nonclassifying; largest observed reduction was about 10.33% at
 
 Exp073CC is `+0/+0` and closes no real-survey/scientific gate. It only establishes exact implementation-equivalence for the corrected one-target-at-a-time lifetime on the frozen hosted geometries, removing that implementation-equivalence objection to a future prospectively frozen infrastructure successor.
 
-## Memory-stability audit
+## Full-scale memory-stability audit
 
-For DES `NSIDE=4096`, `NPIX=201,326,592`: one float64 real-space map is 1.500 GiB; one complex128 mask-alm payload through ell=12287 is about 1.12509 GiB. The current simultaneous Exp073AZ Wm PCL lifetime retains two source maps, two NaMaster field-owned float64 masks, and two mask alms, already about 8.25 GiB before SHT workspace and process overhead. A 6 GiB WSL memory cap is therefore structurally unsafe for that lifetime pattern.
+For DES `NSIDE=4096`, `NPIX=201,326,592`: one float64 real-space map is 1.500 GiB; one complex128 mask-alm payload through ell=12287 is about 1.12509 GiB. The current simultaneous Exp073AZ Wm PCL lifetime retains two caller maps, two NaMaster field-owned float64 masks, and two mask alms, already about **8.25018 GiB** before SHT workspace and process overhead. A 6 GiB WSL memory cap is therefore structurally unsafe for that lifetime pattern.
 
-A sequential lifetime-only construction is now supported by Exp073CC exact-equivalence QA on NSIDE 64/128/256, but full-scale memory safety is not yet demonstrated.
+A production-compatible corrected sequential lifetime, supported by Exp073CC exact-equivalence QA on NSIDE 64/128/256, lowers the worst deterministic persistent baseline to about **4.12509 GiB** before SHT workspace. Under a 6 GiB cap that leaves only about **1.875 GiB** for transform workspace plus interpreter/native/OS-resident overhead, so full-scale safety is still not established.
+
+A stronger prospective memory-only design is now identified: spill the first ~1.12509 GiB mask alm to immutable local storage after exact SHA recording, release it before the second SHT, then reopen it read-only for the unchanged `hp.alm2cl`. This can remove the retained first-alm payload from the second-SHT phase, reducing its deterministic in-RAM baseline to about **2.62509 GiB** plus resident pages/workspace. This spill design is not production-authorized until its own prospectively frozen hosted exact-equivalence/RSS QA proves saved/reloaded alm byte identity and exact final PCL equality with the corrected-sequential oracle.
+
+See `recovery/2026-09-01_exp073cc_fullscale_memory_budget_audit.md` for the detailed accounting and tomorrow repair plan.
 
 ## Exp073CB terminal and helper audit
 
@@ -87,11 +92,12 @@ No G8 jump.
 
 ## Exact next gate
 
-While home runner remains locked, do not touch or revive Exp073CA replica B. The next scientifically permitted work is **hosted/read-only full-scale memory-budget/source-lifetime analysis**, especially conservative accounting or synthetic scaling of NaMaster/healpy SHT workspace for the exact production path. Any hosted scaling probe must be prospectively frozen and remains `+0/+0`; it may refine infrastructure planning but cannot close the real-survey Wm_S2 gate.
+While home runner remains locked, do not touch or revive Exp073CA replica B. The highest-value next permitted gate is **hosted-only prospective exact-equivalence and RSS QA of first-mask-alm spill/reload** against the already-supported corrected-sequential oracle. It must verify canonical saved/reloaded alm byte SHA identity and exact final PCL equality using `np.array_equal` plus canonical `<f8` SHA only. It is synthetic/nonclassifying `+0/+0` and cannot close the real-survey Wm_S2 gate.
 
-Only after the user explicitly re-enables the home runner may a separately prospectively frozen Exp073CA infrastructure successor use the Exp073CC-supported sequential lifetime repair. Such a successor must preserve frozen scientific inputs/comparators/thread policy/checkpoint semantics and the <=60 s nonclassifying heartbeat rule.
+Only after the user explicitly re-enables the home runner may a separately prospectively frozen Exp073CA infrastructure successor use the Exp073CC-supported sequential lifetime repair, optionally augmented by a separately QA-passed alm spill/reload path. Such a successor must preserve frozen scientific inputs/comparators/thread policy/checkpoint semantics and the <=60 s nonclassifying heartbeat rule.
 
 - ✅ Exp073CC = `CC_Q1_EXACT_EQUIVALENCE_PASS`; immutable artifact `9788075152`.
+- ✅ Full-scale memory audit records 8.25018 GiB simultaneous baseline, 4.12509 GiB corrected-sequential baseline, and a prospective 2.62509 GiB second-SHT spill baseline before workspace/overhead.
 - ✅ Exp073BJ exact Track-A Wm_S1 authority PASS preserved.
 - ✅ Exp073BV/BW/BZ prerequisite authority preserved.
 - 🟡 Exp073CA remains infrastructure incomplete; self-hosted replica B queued but locked out.
