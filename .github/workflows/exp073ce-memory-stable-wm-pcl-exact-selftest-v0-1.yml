@@ -1,0 +1,93 @@
+name: Exp073CE memory-stable Wm PCL exact selftest v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ce_memory_stable_wm_pcl_exact_selftest_v0_1.trigger'
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  hosted-exact-selftest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective freeze and hosted-only binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- preregistration/2026-09-01_exp073ce_memory_stable_wm_s2_successor_package_v0_1.md)" = '54c46425349bedfce0ecf4bdca33ea214766d27c'
+          test "$(git log -1 --format=%H -- ci/exp073ce_memory_stable_wm_pcl_exact_selftest_v0_1.py)" = '07ed390e08a68b7ae17f8a58ad4fa882bb082f09'
+          test -f experiments/073ce_memory_stable_wm_pcl_exact_selftest_v0_1_binding.json
+          binding_commit="$(git log -1 --format=%H -- experiments/073ce_memory_stable_wm_pcl_exact_selftest_v0_1_binding.json)"
+          trigger_binding="$(tr -d '[:space:]' < ci/exp073ce_memory_stable_wm_pcl_exact_selftest_v0_1.trigger)"
+          test "$binding_commit" = "$trigger_binding"
+          python3 - <<'PY'
+          import json,subprocess
+          d=json.load(open('experiments/073ce_memory_stable_wm_pcl_exact_selftest_v0_1_binding.json'))
+          assert d['experiment']=='Exp073CE'
+          assert d['prereg_commit']=='54c46425349bedfce0ecf4bdca33ea214766d27c'
+          assert d['helper_commit']=='07ed390e08a68b7ae17f8a58ad4fa882bb082f09'
+          got=subprocess.check_output(['git','log','-1','--format=%H','--','.github/workflows/exp073ce-memory-stable-wm-pcl-exact-selftest-v0-1.yml'],text=True).strip()
+          assert got==d['workflow_commit'],(got,d['workflow_commit'])
+          assert d['hosted_only'] is True
+          assert d['science_gate_scored'] is False
+          assert d['verified_delta']==0.0 and d['draft_data_delta']==0.0
+          PY
+
+      - name: Provision frozen NaMaster 2.7 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$RUNNER_TEMP/miniforge"
+          curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"
+          bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"
+          "$MF/bin/conda" create -y -p "$RUNNER_TEMP/exp073ce-env" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          PY="$RUNNER_TEMP/exp073ce-env/bin/python"
+          "$PY" - <<'PY'
+          import importlib.metadata,numpy,healpy,sys
+          v=importlib.metadata.version('pymaster')
+          assert v=='2.7' or v.startswith('2.7.'),v
+          assert sys.byteorder=='little'
+          print('pymaster',v,'numpy',numpy.__version__,'healpy',healpy.__version__,'byteorder',sys.byteorder)
+          PY
+          echo "NMT_PY=$PY" >> "$GITHUB_ENV"
+
+      - name: Run frozen production-semantic exact selftest
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073ce
+          set +e
+          /usr/bin/time -v -o data/derived/exp073ce/time_v.txt \
+            "$NMT_PY" ci/exp073ce_memory_stable_wm_pcl_exact_selftest_v0_1.py \
+              --root data/derived/exp073ce/spill \
+              --out-json data/derived/exp073ce/exp073ce_receipt.json
+          rc=$?
+          set -e
+          cat data/derived/exp073ce/exp073ce_receipt.json || true
+          exit "$rc"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073ce-hosted-memory-stable-exact-selftest-${{ github.sha }}
+          path: data/derived/exp073ce
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
