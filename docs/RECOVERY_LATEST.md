@@ -8,14 +8,27 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 ## Read first
 
-1. `recovery/2026-09-02_exp073cj_mixed_authority_14window_schema_hosted_pass.md`
-2. `preregistration/2026-09-02_exp073cj_14window_mixed_authority_aggregator_schema_v0_2.md`
-3. `experiments/073cj_article3_exact_14window_mixed_authority_schema_v0_2_binding.json`
-4. `docs/ARTICLE3_WM_S2_TRACK_A_ACCEPTANCE_2026-09-02.md`
-5. `recovery/2026-09-02_exp073ci_wm_s2_track_a_accepted_draft_readiness_54_6.md`
-6. `recovery/2026-09-02_exp073ci_fixed_nehalem_exact_pass_semantic_binding_audit.md`
-7. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
-8. `recovery/2026-09-02_exp073cf_continuation_successor_terminal_finalizer_exact_fail.md`
+1. `recovery/2026-09-02_wm_s3_exp073aa_historical_authority_gap_audit.md`
+2. `recovery/2026-09-02_exp073cj_mixed_authority_14window_schema_hosted_pass.md`
+3. `preregistration/2026-09-02_exp073cj_14window_mixed_authority_aggregator_schema_v0_2.md`
+4. `experiments/073cj_article3_exact_14window_mixed_authority_schema_v0_2_binding.json`
+5. `docs/ARTICLE3_WM_S2_TRACK_A_ACCEPTANCE_2026-09-02.md`
+6. `recovery/2026-09-02_exp073ci_wm_s2_track_a_accepted_draft_readiness_54_6.md`
+7. `recovery/2026-09-02_exp073ci_fixed_nehalem_exact_pass_semantic_binding_audit.md`
+8. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+9. `recovery/2026-09-02_exp073cf_continuation_successor_terminal_finalizer_exact_fail.md`
+
+## Wm_S3 historical authority audit closed
+
+Exp073AA was preregistered at commit `14b79794ab5dc1b8cc8a0fa769ab50cac99f45d9`; its all-14 executor at `45ed8d8d1e90cdaf314e0384b6f3cdfef369925b` explicitly includes `Wm_S3`. But the remaining 13-task production matrix was controlled by Exp073AF prereg commit `91e9f3f25fa34cab3a33d927d47afa10e5f1cc29`.
+
+Frozen Exp073AF X2 inputs resolved as:
+- P run `33300997298`: **INFRASTRUCTURE_INCOMPLETE** because aggregate job `99242068393` failed before scientific comparison on missing NumPy; replica artifacts `9730411514` (`sha256:34530157cddf594c93728d5e092ab937d16a653665623f00513f4fd58df17555`) and `9730409129` (`sha256:36358663fb1980ad75cb71f7ca7149d06d357cf7de8b29feca4273f4f88c89e5`) remain nonclassifying inputs.
+- Q run `33301058260`: **SCIENTIFIC_REPEATABILITY_FAIL** because aggregate job `99242395532` produced exact `canonical_hash=false`, `array_equal=false`; replica artifacts `9730452251` (`sha256:6fab306a14d76b6819820454eb2d56035c2ce74b126d2ac1a70eb94cbb5dac27`) and `9730346824` (`sha256:a969aa3d04b2d2278d16e84e14ec2fbc046fc79c5bd1c63615e01c783592ce95`).
+
+Exp073AF frozen rule 10 maps `P=INFRASTRUCTURE_INCOMPLETE`, `Q=SCIENTIFIC_REPEATABILITY_FAIL` to **BLOCK_PRODUCTION**. Therefore the historical Exp073AA remaining-13 route, including `Wm_S3`, was never authorized. Current default-branch and Actions provenance searches found no later valid Wm_S3 run/job/artifact/digest or recovery authority. The authoritative audit conclusion is: **no valid complete Wm_S3 angular authority is established**.
+
+This finding is provenance/governance `+0/+0`; it does not change readiness or rewrite any historical X2 classification.
 
 ## Wm_S2 v0.2 admitted Track-A numerical angular object
 
@@ -31,7 +44,7 @@ Exp073CI new-version authority: run `33646799130`, comparator job `100304043991`
 
 Historical Exp073CF finalizer v0.1 remains permanently `SCIENTIFIC_REPEATABILITY_FAIL_EXP073CF_WM_S2_FINALIZER_EXACT_V0_1`: comparator job `100261645358`, artifact `9848162380`, digest `sha256:f291447e109b2149958114baa30baf37edb6aa75efe9c2b41498d88fe4e193a1`. No tolerance/ULP/rounding/averaging/smoothing/preferred-replica/environment rescue is permitted. Exp073BD remains `P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE`.
 
-The frozen angular object-completion rule now credits three distinct tasks (Wm_S0, Wm_S1, Wm_S2): Draft/data rises by one `12/14` object increment to exact `54.57142857142857%`; Scientific Authority Readiness remains `52.0%` because individual angular tasks are +0 Verified unless separately authorized.
+The frozen angular object-completion rule credits three distinct tasks (Wm_S0, Wm_S1, Wm_S2): Draft/data exact `54.57142857142857%`; Scientific Authority Readiness remains `52.0%` because individual angular tasks are +0 Verified unless separately authorized.
 
 ## Exp073CJ prospective 14-window provenance schema successor
 
@@ -51,7 +64,7 @@ Prospective exact authority map:
 - `Wm_S2 -> exp073ci_v0_2` only;
 - the remaining 12 tasks -> `exp073aa` only.
 
-The 14-task order, positive run/job/artifact provenance, digest format, canonical `<f8 [39,12288]`, distinct selected-window SHA rule, Wm `TE <- TE`, WW `EE <- EE`, firewall, scientific readiness 52, and G7/G8/G9 OPEN state remain unchanged.
+The Wm_S3 authority-gap audit does not fabricate an `exp073aa` object; a new successor must receive its own prospectively versioned authority class/binding before any mixed-authority manifest can admit it.
 
 ## Frozen boundaries and order
 
@@ -63,6 +76,6 @@ Required order remains `validated physical forward/power-input bridges -> prereg
 
 ## Exact next gate
 
-The frozen 14-window order is `Wm_S0, Wm_S1, Wm_S2, Wm_S3, ...`; the first three are now complete/admitted for angular inventory purposes. The next candidate is therefore `Wm_S3`, but do not launch it merely from task order. First perform a read-only audit of historical Exp073AA/Wm_S3 runs/artifacts/recovery to prove no valid complete Wm_S3 authority already exists. Only if genuinely missing may a NEW prospectively frozen Wm_S3 successor be prepared. For any new self-hosted heavy workflow, first qualify wider concurrency with the authorized staged `4 -> 6 -> 8` exact-equivalence and short RSS/swap safety preflight; never alter a frozen historical workflow.
+The historical Wm_S3 authority audit is closed with a real gap. The next permitted action is to **prospectively preregister a NEW Wm_S3 successor and its resource-qualification preflight**. Before any self-hosted full-scale Wm_S3 execution, run a staged `4 -> 6 -> 8` concurrency exact-equivalence plus short RSS/swap safety benchmark under frozen Wm_S3 arithmetic/order. Freeze the highest exact-equivalent memory-safe concurrency. Do not alter/revive Exp073AA, Exp073AF or X2. Do not launch more than one heavy DSIR self-hosted job.
 
-After Exp073CJ terminal completion the repository had `0` queued and `0` in-progress DSIR runs. **Home runner = FREE. Verified 52.0% | Draft/data 54.6%.**
+At the start of the audit there were `0` queued and `0` in-progress DSIR runs. **Home runner = FREE. Verified 52.0% | Draft/data 54.6%.**
