@@ -8,20 +8,12 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 ## Read first
 
-1. `recovery/2026-09-02_exp073cf_r1_r6_continuation_integration_audit_blocked.md`
-2. `recovery/2026-09-02_exp073cf_checkpoint_sync_v0_2_hosted_qa_pass.md`
-3. `recovery/2026-09-02_exp073cf_checkpoint_sync_repair_audit.md`
-4. `preregistration/2026-09-02_exp073cf_checkpoint_durability_sync_repair_v0_1.md`
+1. `recovery/2026-09-02_exp073cf_versioned_continuation_hosted_qa_pass.md`
+2. `preregistration/2026-09-02_exp073cf_versioned_continuation_driver_v0_1.md`
+3. `recovery/2026-09-02_exp073cf_r1_r6_continuation_integration_audit_blocked.md`
+4. `recovery/2026-09-02_exp073cf_checkpoint_sync_v0_2_hosted_qa_pass.md`
 5. `recovery/2026-09-02_exp073cf_attempt2_terminal_infrastructure_incomplete.md`
-6. `preregistration/2026-09-01_exp073cf_attempt2_network_hardened_des_download_v0_1.md`
-7. `experiments/073cf_attempt2_network_hardened_v0_1_binding.json`
-8. `preregistration/2026-09-01_exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.md`
-9. `recovery/2026-09-01_exp073ce_terminal.md`
-10. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
-11. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
-12. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
-13. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-14. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+6. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
 
 ## Current frontier
 
@@ -38,55 +30,51 @@ Durable checkpoint authority remains exactly:
 
 Local-only attempt2 bands beyond those heads are non-authoritative and must be recomputed.
 
-Both replicas completed full-scale memory-stable Wm_S2 PCL under the observed home environment. A peak RSS `5652720 KiB`, B peak RSS `5606320 KiB`; both PCL exits were 0. This is infrastructure evidence only.
+Both replicas completed full-scale memory-stable Wm_S2 PCL under the observed home environment. A peak RSS `5652720 KiB`, B peak RSS `5606320 KiB`; both PCL exits were 0. Infrastructure evidence only.
 
-## Checkpoint durability/sync v0.2 QA
+## Checkpoint transport repair
 
-Prospective repair preregistration: `29a6800986aebff82dbecfe36885dfafb987d9a0`.
+Checkpoint sync v0.2 helper commit: `bc468ca73a3c4e281bd2b1ee46d6f7704bb54bb1`.
 
-Versioned helper commit: `bc468ca73a3c4e281bd2b1ee46d6f7704bb54bb1` (`ci/dsir_checkpoint_git_sync_v0_2.sh`).
+Immutable hosted QA: run `33577308398`, job `100083999324`, artifact `9827093387`, digest `sha256:b39a57c5e6caea56a803f5e0756b873910566d2215c7c675a8f12200b4fb1992`, terminal PASS, `+0/+0`.
 
-Synthetic test commit: `3b4ddf5d4542724ebfea1940c21d42d794236b95`.
+The v0.2 transport distinguishes verified ABSENT from unknown transport failure, avoids persistent local checkpoint refs, uses compare-and-push lease, independently verifies post-push exact remote head, and exact-pins restore.
 
-Hosted-only QA workflow/head: `272a9df5ad196e46079f0257a4aef1b7f7f4c3e0`.
+## Versioned continuation driver — hosted QA PASS
 
-Immutable hosted run `33577308398`, job `100083999324`, `ubuntu-latest`, completed/success. Artifact `9827093387`, digest `sha256:b39a57c5e6caea56a803f5e0756b873910566d2215c7c675a8f12200b4fb1992`.
+Prospective preregistration commit: `36853b723b172a6038c6d3023805f08f37ffac72`.
 
-Artifact-bound helper SHA-256: `254a463de7609993a465c6d9cde4a961efed0957bae85d5cd34b54c47dc96fca`.
+Continuation wrapper commit: `ce818db7ae53376ba6e5f7934c24f4c5acb3c75c` (`ci/exp073cf_continuation_wm_s2_v0_1.py`).
 
-Artifact-bound test SHA-256: `df7193a1b55b0e1b16387dc8a43fed020ec4e1839c4090575397dca7437cb9a3`.
+Synthetic compatibility test commit: `748cf7778aa9ddd441a9cb7c051a2a9491fa4262`.
 
-Terminal receipt: `CHECKPOINT_SYNC_V0_2_SYNTHETIC_NONCLASSIFYING_PASS`, readiness `+0/+0`.
+Hosted workflow/head commit: `69ffe9962c17e63c79d0fbcf80439ed73ccb4815`.
 
-Covered successfully: verified ABSENT vs query transport failure; no persistent local checkpoint ref; PRESENT continuation; compare-and-push lease; post-push exact remote verification; exact pinned restore; wrong-head/query/push/race fail-closed behavior.
+Immutable hosted run `33585095288`, job `100107489860`, `ubuntu-latest`, completed/success. Artifact `9829783026`, digest `sha256:b8324bc9305b02ad08326117d8f2f7cb6e2c78ec5fb473b03c3f23ff3d8f2f36`.
 
-This QA is synthetic/infrastructure-only and does not validate real-survey Wm_S2 science.
+Terminal status: `EXP073CF_CONTINUATION_V0_1_SYNTHETIC_COMPATIBILITY_PASS`, classification `SYNTHETIC_NONCLASSIFYING_INFRASTRUCTURE_QA`, readiness `+0/+0`.
 
-## Continuation R1-R6 integration audit — BLOCKED
+The wrapper does not duplicate scientific arithmetic. It executes the frozen historical streaming driver while prospectively changing only provenance/transport plumbing required for valid continuation:
 
-Static audit commit: `598a6c35c334a2d23ff40fb3a8230dfc30666d8b`.
+- historical payload `source_commit` remains `f9cb1eec582276776ddac3b1207686b1e01d3b6a` rather than fresh workflow `GITHUB_SHA`;
+- historical payload `extra.checkpoint_sync_commit` remains `96886916b41dce7f0a40807622928c841ef5fc58`;
+- continuation transport provenance is recorded separately;
+- subsequent checkpoint pushes route through v0.2 only;
+- frozen historical driver constants are asserted fail-closed before execution.
 
-Verdict: `BLOCKED_NEEDS_VERSIONED_CONTINUATION_DRIVER_EXP073CF`, `+0/+0`.
+Hosted synthetic QA demonstrated A/B historical-form contract restore/validation, synthetic continuation without rewriting existing row bytes/fingerprint, fail-closed changed source commit, fail-closed changed historical checkpoint-sync contract field, and wrapper v0.2-only push binding.
 
-Three exact integration blockers were found before any successor binding:
-
-1. frozen stream driver `583c34420d5f02a1ac8e77efb9625bbc3ab73de8` directly invokes `ci/dsir_checkpoint_git_sync_v0_1.sh`, so swapping only workflow restore to v0.2 would still leave heavy PUSH on v0.1;
-2. restored A/B checkpoint contracts are bound to historical `source_commit=f9cb1eec582276776ddac3b1207686b1e01d3b6a`; a fresh run's new `GITHUB_SHA` would trigger exact contract mismatch before continuation;
-3. historical payload contracts record `extra.checkpoint_sync_commit=96886916b41dce7f0a40807622928c841ef5fc58`; naively replacing that field with the v0.2 commit would change the fingerprint and invalidate every persisted row.
-
-Therefore the transport upgrade must not rewrite the historical checkpoint payload contract. A prospectively versioned continuation driver/wrapper is required: preserve the historical payload contract exactly for restore/row validation, but route subsequent remote checkpoint Git transport through v0.2 and bind that transport provenance separately in the successor preregistration/binding/receipt.
-
-No successor binding is authorized yet and no self-hosted run was triggered.
+This QA does not classify real-survey Wm_S2 repeatability.
 
 ## Preserved scientific authority
 
 - **Exp073BJ** run `33379013167`: terminal Track-A exact Wm_S1 authority PASS; artifact `9758841785`, digest `sha256:a7d5b30e0a8ba4ce6d8437db82982f69f41c01ac6a58c6cb121d4cbbb2c4f008`.
 - **Exp073AQ**: permanent historical hosted exact-repeatability scientific FAIL.
 - **Exp073BD**: `P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE`, forbidden downstream.
-- **Exp073BV**: source-lineage PASS, artifact `9768866582`.
-- **Exp073BW**: exact streaming-equivalence PASS, artifact `9774112002`.
-- **Exp073BZ**: remote checkpoint/failover exact-byte PASS, artifact `9776592370`.
-- **Exp073CC/CD/CE**: synthetic/nonclassifying exact-equivalence PASS evidence only, all `+0/+0`.
+- **Exp073BV**: source-lineage PASS.
+- **Exp073BW**: exact streaming-equivalence PASS.
+- **Exp073BZ**: remote checkpoint/failover exact-byte PASS.
+- **Exp073CC/CD/CE**: synthetic/nonclassifying evidence only, all `+0/+0`.
 - **Exp073CF attempt1/attempt2**: infrastructure incomplete, `+0/+0`.
 
 ## Frozen Article-3 boundaries and order
@@ -101,24 +89,26 @@ No G8 jump.
 
 ## Coordination state
 
-Latest repository-wide checks immediately before the audit/recovery writes showed queued runs `0` and in-progress runs `0`. No new self-hosted scientific run is authorized by the current records.
+Latest repository-wide checks before the recovery/pointer writes showed queued runs `0` and in-progress runs `0`. No self-hosted scientific successor is authorized by current records.
 
 ## Exact next gate
 
-Prospectively preregister and implement a minimal versioned Exp073CF continuation driver/wrapper. It must:
+Perform the SECOND STATIC continuation binding/integration audit. It must verify that a future successor workflow can:
 
-1. preserve all frozen arithmetic, edges/signature, chunk size 4, `OMP_NUM_THREADS=8`, output dtype/shape/status, comparator/finalizer criteria, and no-rescue policy;
-2. exact-pinned restore A=`5c7ccddb54afe1ad286d08abc6f7372aa5a11103` and B=`ce9189a1ccaabc62708f753897b9cab5f51cb9f4` via checkpoint sync v0.2;
-3. validate restored payloads immediately against the unchanged HISTORICAL contracts, including `source_commit=f9cb1eec582276776ddac3b1207686b1e01d3b6a` and historical `checkpoint_sync_commit=96886916b41dce7f0a40807622928c841ef5fc58`;
-4. route all subsequent checkpoint PUSH operations through `ci/dsir_checkpoint_git_sync_v0_2.sh` only, while recording v0.2 transport provenance outside the historical payload fingerprint;
-5. pass hosted synthetic/nonclassifying compatibility QA including exact restore/validation, synthetic continuation/push/post-push verification, and fail-closed tests for changed source commit or other historical contract field;
-6. pass a second static binding audit before any self-hosted successor is triggered.
+1. exact-pinned restore A=`5c7ccddb54afe1ad286d08abc6f7372aa5a11103` and B=`ce9189a1ccaabc62708f753897b9cab5f51cb9f4` using checkpoint sync v0.2;
+2. invoke only `ci/exp073cf_continuation_wm_s2_v0_1.py` for resumed heavy computation;
+3. preserve arithmetic, frozen edges/signature, `OMP_NUM_THREADS=8`, chunk size 4, canonical `<f8 [39,12288]>`, output status, comparator/finalizer and no-rescue semantics;
+4. bind continuation prereg/wrapper/v0.2 transport provenance separately from the historical payload fingerprint;
+5. preserve <=60 s heartbeat semantics;
+6. fail closed on restore-head, historical-contract, helper, threshold or lineage mismatch.
 
-- ✅ Exp073CF attempt2 correctly remains infrastructure incomplete, not scientific FAIL.
+Only after this audit PASS may a separate prospective successor binding be prepared. No self-hosted run is authorized yet.
+
+- ✅ Exp073CF attempt2 remains infrastructure incomplete, not scientific FAIL.
 - ✅ Durable checkpoint authority preserved exactly: A `32/39`, B `28/39`.
-- ✅ Checkpoint sync v0.2 hosted synthetic QA PASS, `+0/+0`.
-- 🟡 Continuation R1-R6 integration audit found a real contract/provenance blocker; successor binding intentionally withheld.
-- ✅ Exp073BJ/BV/BW/BZ authority preserved.
+- ✅ Checkpoint sync v0.2 hosted QA PASS, `+0/+0`.
+- ✅ Versioned continuation wrapper hosted synthetic compatibility QA PASS, `+0/+0`.
+- 🟡 Second static successor binding audit remains open.
 - ❌ No complete A/B Wm_S2 comparator inputs; no repeatability classification.
 - ❌ Exp073AQ permanent scientific FAIL preserved.
 - ❌ Exp073BD remains provisional and forbidden downstream.
