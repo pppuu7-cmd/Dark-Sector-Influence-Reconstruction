@@ -1,0 +1,17 @@
+{
+  "experiment": "Exp073CM",
+  "task": "Wm_S3",
+  "state": "AUTHORIZED_UNIVERSAL_CHECKPOINT_RESOURCE_V0_1",
+  "workflow_commit": "8572cc233659815fadf8ea96f33af1417dd9d239",
+  "binding_commit": "96eb1fdd7fcb7226248860dee2a0a475ff211710",
+  "prereg_commit": "914a57e45ee98b6ebbb8830a524ec59bfef0c78b",
+  "checkpoint_policy_commit": "f45ae0ce4d199ae381e8612d41cfd7e4c7dfc427",
+  "checkpoint_branch": "checkpoints/exp073cm-wm-s3-resource-v0-1",
+  "checkpoint_stages": ["pcl", "reference", "target", "final"],
+  "requires_zero_other_queued_or_in_progress_runs_at_authorize": true,
+  "home_runner_exclusive": true,
+  "historical_exp073cl_immutable": true,
+  "scientific_contract_changed": false,
+  "verified_delta": 0.0,
+  "draft_data_delta": 0.0
+}
