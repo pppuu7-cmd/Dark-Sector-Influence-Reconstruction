@@ -8,11 +8,11 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 ## Read first
 
-1. `recovery/2026-09-02_exp073cf_hosted_authorization_gate_static_audit_pass.md`
-2. `.github/workflows/exp073cf-continuation-successor-v0-1.yml`
-3. `experiments/073cf_continuation_successor_v0_1_binding.json`
-4. `recovery/2026-09-02_exp073cf_actual_successor_static_audit_blocked_activation_gate.md`
-5. `recovery/2026-09-02_exp073cf_second_static_continuation_binding_audit_pass.md`
+1. `recovery/2026-09-02_exp073cf_continuation_activation_final_audit_pass.md`
+2. `ci/exp073cf_continuation_successor_v0_1.activation.json`
+3. `recovery/2026-09-02_exp073cf_hosted_authorization_gate_static_audit_pass.md`
+4. `.github/workflows/exp073cf-continuation-successor-v0-1.yml`
+5. `experiments/073cf_continuation_successor_v0_1_binding.json`
 6. `recovery/2026-09-02_exp073cf_versioned_continuation_hosted_qa_pass.md`
 7. `recovery/2026-09-02_exp073cf_checkpoint_sync_v0_2_hosted_qa_pass.md`
 8. `recovery/2026-09-02_exp073cf_attempt2_terminal_infrastructure_incomplete.md`
@@ -20,11 +20,7 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 ## Current scientific frontier state
 
-Exp073CF attempt2 run `33548649445` is terminal `completed/failure` at head `f9cb1eec582276776ddac3b1207686b1e01d3b6a` and remains frozen as:
-
-`INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073CF_ATTEMPT2`, `+0/+0`.
-
-It is **not** a scientific repeatability FAIL. Complete valid A/B comparator inputs were never both produced.
+Exp073CF attempt2 run `33548649445` is terminal `completed/failure` and frozen as `INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073CF_ATTEMPT2`, `+0/+0`. It is not a scientific repeatability FAIL because complete valid A/B comparator inputs were never both produced.
 
 Durable checkpoint authority remains exactly:
 
@@ -33,45 +29,23 @@ Durable checkpoint authority remains exactly:
 
 Local-only bands beyond those heads remain non-authoritative. Both attempt2 replicas completed the full-scale memory-stable Wm_S2 PCL with exit 0; this remains infrastructure evidence only.
 
-## Frozen continuation infrastructure already validated
+## Frozen continuation infrastructure
 
-Checkpoint transport v0.2 helper commit: `bc468ca73a3c4e281bd2b1ee46d6f7704bb54bb1`.
+Checkpoint transport v0.2 helper commit: `bc468ca73a3c4e281bd2b1ee46d6f7704bb54bb1`. Hosted QA run `33577308398`, job `100083999324`, artifact `9827093387`, digest `sha256:b39a57c5e6caea56a803f5e0756b873910566d2215c7c675a8f12200b4fb1992`, PASS, `+0/+0`.
 
-Hosted QA: run `33577308398`, job `100083999324`, artifact `9827093387`, digest `sha256:b39a57c5e6caea56a803f5e0756b873910566d2215c7c675a8f12200b4fb1992`, PASS, `+0/+0`.
+Versioned continuation preregistration: `36853b723b172a6038c6d3023805f08f37ffac72`. Continuation wrapper: `ce818db7ae53376ba6e5f7934c24f4c5acb3c75c`. Hosted wrapper compatibility QA run `33585095288`, job `100107489860`, artifact `9829783026`, digest `sha256:b8324bc9305b02ad08326117d8f2f7cb6e2c78ec5fb473b03c3f23ff3d8f2f36`, PASS, `+0/+0`.
 
-Versioned continuation preregistration: `36853b723b172a6038c6d3023805f08f37ffac72`.
+The wrapper preserves historical payload `source_commit=f9cb1eec582276776ddac3b1207686b1e01d3b6a` and historical checkpoint-sync fingerprint `96886916b41dce7f0a40807622928c841ef5fc58`, while routing new checkpoint transport through v0.2 only.
 
-Continuation wrapper: `ce818db7ae53376ba6e5f7934c24f4c5acb3c75c`.
+## Real continuation successor — activation/final audit PASS, not yet dispatched
 
-Hosted wrapper compatibility QA: run `33585095288`, job `100107489860`, artifact `9829783026`, digest `sha256:b8324bc9305b02ad08326117d8f2f7cb6e2c78ec5fb473b03c3f23ff3d8f2f36`, PASS, `+0/+0`.
+Workflow `.github/workflows/exp073cf-continuation-successor-v0-1.yml` remains exact at path-history commit `d9ec433ae002c93f7ae49c1b2b5973b585f98a99`.
 
-The wrapper preserves historical payload `source_commit=f9cb1eec...` and historical checkpoint-sync fingerprint `96886916...`, while routing new checkpoint transport through v0.2 only.
+Binding `experiments/073cf_continuation_successor_v0_1_binding.json` remains exact at path-history commit `925a345a0c1a05ab18fa0d7f0e7332b8b85f48d9`.
 
-## Repaired real successor workflow/binding — static PASS, still NOT AUTHORIZED
+Prospective activation object `ci/exp073cf_continuation_successor_v0_1.activation.json` was created separately at commit `28281c757771352c8c0736eafd3ac49ea6b095db`, state `AUTHORIZED_CONTINUATION_SUCCESSOR_V0_1`, exact-bound to the workflow/binding commits above. No workflow dispatch occurred in the activation-creation step.
 
-Workflow:
-
-`.github/workflows/exp073cf-continuation-successor-v0-1.yml`
-
-repaired workflow commit `d9ec433ae002c93f7ae49c1b2b5973b585f98a99`.
-
-Binding:
-
-`experiments/073cf_continuation_successor_v0_1_binding.json`
-
-new binding commit `925a345a0c1a05ab18fa0d7f0e7332b8b85f48d9`.
-
-Binding state remains `PREPARED_NOT_AUTHORIZED`; `scientific_contract_changed=false`.
-
-The prior control-plane blocker is repaired prospectively: `workflow_dispatch` first schedules hosted job `authorize` on `ubuntu-24.04`; self-hosted `compact-replica` has `needs: authorize`. Therefore an absent/invalid activation cannot schedule `[self-hosted, Linux, X64]`.
-
-The hosted gate exact-validates workflow commit, binding commit, activation object, frozen helper provenance, exact A/B restore heads, threads/chunk/heartbeat contract, and repository-wide collision state. Its collision check excludes only the current hosted authorization run itself and requires all other queued/in-progress DSIR runs to be zero.
-
-The activation file `ci/exp073cf_continuation_successor_v0_1.activation.json` is still absent. No workflow run was triggered during this repair/audit.
-
-Static verdict:
-
-`STATIC_CONTROL_PLANE_QA_PASS_NONCLASSIFYING`, `+0/+0`.
+Final read-only audit PASS (`STATIC_ACTIVATION_AND_COORDINATION_AUDIT_PASS_NONCLASSIFYING`, `+0/+0`): workflow/binding path commits remain exact, activation binding is exact, hosted `authorize` still precedes self-hosted `compact-replica`, A/B remote checkpoint refs remain exact, and repository-wide Actions state after activation was `queued=0`, `in_progress=0`.
 
 ## Preserved scientific authority
 
@@ -86,25 +60,22 @@ Static verdict:
 
 Never alter post hoc: `0.295 <= z <= 2.33`; `0 < k <= 0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid <= 0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES `NSIDE=4096`; true ell `0..12287`; 39 bands; Wm `TE <- TE`; WW `EE <- EE`; canonical selected window `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity remains `numerically_unresolved`.
 
-Required order:
-
-`validated physical forward/power-input bridges -> preregistered physical support-validity mask -> Layer A/Layer B prerequisites -> covariance restriction/whitening -> nuisance tangent rank/SVD -> quotient/relation/null control -> actual G7 authorization -> fresh G8 withheld family`.
-
-No G8 jump.
+Required order: `validated physical forward/power-input bridges -> preregistered physical support-validity mask -> Layer A/Layer B prerequisites -> covariance restriction/whitening -> nuisance tangent rank/SVD -> quotient/relation/null control -> actual G7 authorization -> fresh G8 withheld family`. No G8 jump.
 
 ## Coordination state and exact next gate
 
-Repository-wide checks before and after repair showed `queued=0`, `in_progress=0`. No self-hosted successor is authorized.
+Immediately after activation/final audit, repository-wide checks showed `queued=0`, `in_progress=0`. No successor workflow has yet been dispatched.
 
-**Exact next permitted gate:** prepare a separate prospective activation/trigger authorization object bound to workflow commit `d9ec433ae002c93f7ae49c1b2b5973b585f98a99` and binding commit `925a345a0c1a05ab18fa0d7f0e7332b8b85f48d9`, then perform a final read-only collision/binding audit. Do not dispatch the workflow in the same step as activation creation. Only after that final audit is PASS may a separately authorized self-hosted continuation run be triggered.
+**Exact next permitted gate:** in a later separate iteration, re-read this pointer/recovery, recent commits, and all queued/in-progress DSIR runs. If and only if the collision state is still `queued=0`, `in_progress=0` and workflow/binding/activation/checkpoint refs remain exact, dispatch `.github/workflows/exp073cf-continuation-successor-v0-1.yml`. The hosted `authorize` job must PASS before any self-hosted scheduling. Once self-hosted `compact-replica` is queued/in-progress, `[self-hosted, Linux, X64]` / DSIR-HOME-PC is LOCKED exclusively by that successor; no competing self-hosted job may be launched. Replica A resumes exact 32/39 authority and replica B exact 28/39 authority under `max-parallel=1`.
 
 - ✅ Exp073CF attempt2 remains infrastructure incomplete, not scientific FAIL.
 - ✅ Durable authority A `32/39`, B `28/39` preserved.
 - ✅ Checkpoint sync v0.2 and continuation-wrapper hosted QA PASS, `+0/+0`.
 - ✅ Hosted pre-self-hosted authorization-gate repair static PASS, `+0/+0`.
-- 🟡 Real successor is prepared but not activated or execution-authorized.
+- ✅ Prospective activation object created; final read-only binding/collision audit PASS, `+0/+0`.
+- 🟡 Successor is authorized prospectively but not yet dispatched.
 - ❌ No complete A/B Wm_S2 comparator inputs; no repeatability classification.
 - ❌ Exp073AQ FAIL and Exp073BD no-downstream preserved.
 - ❌ Layer A/B through G7/G8 remain unauthorized.
 
-**Home runner = NOT ACTIVE / no new self-hosted frontier authorized. Verified: 52.0% | Draft/data: 53.7%**
+**Home runner = NOT ACTIVE / no successor run currently owns it. Verified: 52.0% | Draft/data: 53.7%**
