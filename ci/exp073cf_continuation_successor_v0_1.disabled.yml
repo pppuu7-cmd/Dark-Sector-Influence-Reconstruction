@@ -24,6 +24,19 @@ continuation_provenance:
   transport_path: ci/dsir_checkpoint_git_sync_v0_2.sh
   historical_payload_fingerprint_rewritten: false
 
+binding_assertions_required_before_restore:
+  - git log -1 --format=%H -- preregistration/2026-09-02_exp073cf_versioned_continuation_driver_v0_1.md == 36853b723b172a6038c6d3023805f08f37ffac72
+  - git log -1 --format=%H -- ci/exp073cf_continuation_wm_s2_v0_1.py == ce818db7ae53376ba6e5f7934c24f4c5acb3c75c
+  - git log -1 --format=%H -- ci/dsir_checkpoint_git_sync_v0_2.sh == bc468ca73a3c4e281bd2b1ee46d6f7704bb54bb1
+  - git log -1 --format=%H -- ci/exp073ca_checkpoint_streaming_wm_s2_v0_1.py == 583c34420d5f02a1ac8e77efb9625bbc3ab73de8
+  - git log -1 --format=%H -- ci/exp073ca_stream_general_coupling_range_v0_1.c == fa971eb4ef8c47e81eb0bb4e13eeb76f7cf42e22
+  - git log -1 --format=%H -- ci/exp073bw_stream_general_coupling_v0_1.c == 9fb0ecb79986cf5f542760377533a685745b31e2
+  - git log -1 --format=%H -- ci/dsir_remote_band_checkpoint_v0_1.py == 0b0324afb69acb16cbea97bb924b9be48f303dde
+  - git log -1 --format=%H -- ci/exp073az_article3_low_memory_general_coupling_v0_1.py == d77b7ba88801f6788f3d386e72b445c7859c7153
+  - git log -1 --format=%H -- ci/dsir_action_heartbeat_v0_1.sh == 43031abd60ad65cacea1ede38c09061eb747d3f8
+  - historical wrapper constants source_commit/checkpoint_sync/threads/chunk/signature/edges must equal frozen values exactly
+  - any failed assertion terminates before checkpoint restore or scientific arithmetic
+
 runtime:
   runs_on: [self-hosted, Linux, X64]
   max_parallel: 1
@@ -73,11 +86,13 @@ output_contract:
 comparison_and_finalization:
   frozen_source_workflow_commit: de881f52d2639fc16400796a33514bf69ecad1f8
   compact_comparator: exact np.array_equal plus exact SHA-256 equality; no tolerance/ULP/rounding/averaging/smoothing/majority/preferred-replica rescue
+  compact_comparator_body_requirement: copy the attempt2 comparator block without arithmetic or acceptance changes; only artifact naming/attempt provenance may change prospectively
   finalizer_helper_commit: d77b7ba88801f6788f3d386e72b445c7859c7153
   final_window_key: window
   final_dtype: <f8
   final_shape: [39, 12288]
   final_comparator: exact np.array_equal plus exact SHA-256 equality; no rescue
+  finalizer_and_final_comparator_body_requirement: copy attempt2 bodies without scientific arithmetic or acceptance changes; only artifact naming/attempt provenance may change prospectively
   readiness_increment_requires_separate_frozen_ledger_update: true
 
 activation_guard:
