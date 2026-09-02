@@ -1,0 +1,60 @@
+name: DSIR checkpoint sync v0.2 synthetic QA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/dsir-checkpoint-sync-v0-2-synthetic.yml'
+      - 'ci/dsir_checkpoint_git_sync_v0_2.sh'
+      - 'ci/test_dsir_checkpoint_git_sync_v0_2.sh'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-nonclassifying:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+
+      - name: Static shell syntax
+        run: |
+          bash -n ci/dsir_checkpoint_git_sync_v0_2.sh
+          bash -n ci/test_dsir_checkpoint_git_sync_v0_2.sh
+
+      - name: Run synthetic checkpoint transport/state tests
+        run: |
+          chmod +x ci/dsir_checkpoint_git_sync_v0_2.sh ci/test_dsir_checkpoint_git_sync_v0_2.sh
+          set -o pipefail
+          ci/test_dsir_checkpoint_git_sync_v0_2.sh | tee checkpoint_sync_v0_2_receipt.txt
+
+      - name: Bind nonclassifying receipt
+        if: always()
+        run: |
+          {
+            echo "classification=SYNTHETIC_NONCLASSIFYING_INFRASTRUCTURE_QA"
+            echo "readiness_delta=+0/+0"
+            echo "repository=${GITHUB_REPOSITORY}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "job=${GITHUB_JOB}"
+            echo "head_sha=${GITHUB_SHA}"
+            echo "runner=ubuntu-latest"
+            echo "self_hosted=false"
+            sha256sum ci/dsir_checkpoint_git_sync_v0_2.sh ci/test_dsir_checkpoint_git_sync_v0_2.sh
+          } | tee checkpoint_sync_v0_2_binding.txt
+
+      - name: Upload immutable QA receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-checkpoint-sync-v0-2-synthetic-${{ github.run_id }}
+          if-no-files-found: error
+          retention-days: 90
+          path: |
+            checkpoint_sync_v0_2_receipt.txt
+            checkpoint_sync_v0_2_binding.txt
