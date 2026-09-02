@@ -50,8 +50,9 @@ def main() -> None:
     assert 'every task executed on the user\'s self-hosted/home runner' in policy
     assert 'desdr-server' not in wf
     assert wf.count('dsir_checkpoint_git_sync_v0_2.sh push') == 4
-    assert 'dsir_checkpoint_git_sync_v0_2.sh restore' in wf
-    assert wf.index('dsir_checkpoint_git_sync_v0_2.sh restore') < wf.index('exp073cm_memory_stable_wm_s3_pcl_v0_1.py')
+    restore_idx = wf.index('dsir_checkpoint_git_sync_v0_2.sh restore')
+    pcl_exec = wf.index('"$NMT_PY" ci/exp073cm_memory_stable_wm_s3_pcl_v0_1.py', restore_idx)
+    assert restore_idx < pcl_exec
     assert "BR='checkpoints/exp073cm-wm-s3-resource-v0-1'" in wf
     assert RESOURCE_COMMIT in wf
 
@@ -64,7 +65,7 @@ def main() -> None:
         ref = np.arange((m.IB_HI-m.IB_LO)*m.L, dtype='<f8').reshape(m.IB_HI-m.IB_LO, m.L)
         target = ref.copy()
         m.store_array_stage(root, 'pcl', pcl, {'audit': True})
-        rr = m.store_array_stage(root, 'reference', ref, {
+        m.store_array_stage(root, 'reference', ref, {
             'threads': 1, 'wall_seconds': 8.0, 'process_cpu_seconds': 7.5,
             'effective_cpu_cores': 0.9375, 'cpu_fraction_of_8': None,
             'swap_used_kib_before': 0, 'swap_used_kib_after': 0, 'swap_increase_kib': 0,
@@ -82,7 +83,6 @@ def main() -> None:
         assert final['status'] == m.PASS
         assert m.load_stage(root, 'final')['status'] == m.PASS
 
-        # Dtype corruption must not be normalized away on restore.
         target_path = m.stage_dir(root, 'target') / 'payload.npy'
         original = np.load(target_path, allow_pickle=False)
         np.save(target_path, original.astype('>f8'), allow_pickle=False)
@@ -90,14 +90,12 @@ def main() -> None:
         np.save(target_path, original.astype('<f8'), allow_pickle=False)
         assert m.load_stage(root, 'target')['payload_sha256'] == tr['payload_sha256']
 
-        # Final receipt cannot override recomputed exact comparator/classification.
         fp = m.stage_dir(root, 'final') / 'receipt.json'
         bad = json.loads(fp.read_text())
         bad['status'] = m.FAIL_EXACT
         fp.write_text(json.dumps(bad, indent=2, sort_keys=True) + '\n')
         must_fail(lambda: m.load_stage(root, 'final'), 'final_status_tamper')
 
-        # Contract tamper must fail before stage use.
         cp = root / 'contract.json'
         contract = json.loads(cp.read_text())
         contract['target_threads'] = 7
@@ -113,16 +111,16 @@ def main() -> None:
         'activation_commit': ACTIVATION_COMMIT,
         'checks': {
             'four_durable_push_boundaries': True,
-            'restore_precedes_compute': True,
+            'restore_precedes_executable_pcl': True,
             'no_direct_des_server_on_home': True,
             'original_dtype_fail_closed': True,
             'payload_sha_contract_binding': True,
             'final_recomputed_on_restore': True,
-            'contract_tamper_fail_closed': True,
+            'contract_tamper_fail_closed': True
         },
         'status': PASS,
         'verified_delta': 0.0,
-        'draft_data_delta': 0.0,
+        'draft_data_delta': 0.0
     }
     Path('data/derived/g7').mkdir(parents=True, exist_ok=True)
     Path('data/derived/g7/exp073cm_checkpoint_static_audit_v0_1.json').write_text(json.dumps(rec, indent=2, sort_keys=True) + '\n')
