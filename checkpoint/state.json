@@ -31,11 +31,15 @@
     28,
     29,
     30,
-    31
+    31,
+    32,
+    33,
+    34,
+    35
   ],
-  "completed_count": 32,
+  "completed_count": 36,
   "contract_fingerprint": "6d60e99a72b2c03e6dcf4e46afea89c8e9a97bdb021f3b9f9f4536c30f4a3fc4",
   "format": "DSIR_REMOTE_BAND_CHECKPOINT_V0_1",
-  "next_band": 32,
+  "next_band": 36,
   "total_bands": 39
 }
