@@ -1,0 +1,57 @@
+{
+  "checkpointed_immediately_after_atomic_pcl": true,
+  "complete": true,
+  "contract_fingerprint": "9e10b26b57464cc70ce8cb0c5cfedbab118662619ea314beed2f854d9ed65978",
+  "dtype": "<f8",
+  "experiment": "Exp073CM",
+  "format": "DSIR_UNIVERSAL_SELF_HOSTED_CHECKPOINT_V0_1",
+  "payload_sha256": "ec34ee34311f3b02a16e118113b5b1acd1b961859caccd2c4387c0ae529cd72d",
+  "shape": [
+    12288
+  ],
+  "stage": "pcl",
+  "task": "Wm_S3",
+  "upstream_receipt": {
+    "checkpoint_stage": "pcl",
+    "coupling_signature": [
+      0,
+      2,
+      0,
+      2
+    ],
+    "draft_data_delta": 0.0,
+    "experiment": "Exp073CM",
+    "first_alm_reload_read_only": true,
+    "first_alm_reload_sha256": "17d50e48df763d83da6d33643a180950acfe7fc739a1d1a24b963d061fd2bb39",
+    "first_alm_spill": {
+      "dtype": "<c16",
+      "nbytes": 1208057856,
+      "sha256": "17d50e48df763d83da6d33643a180950acfe7fc739a1d1a24b963d061fd2bb39",
+      "shape": [
+        75503616
+      ]
+    },
+    "pcl_arithmetic_lineage": "Exp073CL frozen build()",
+    "pcl_lmax_runtime": 12287,
+    "pcl_sha256": "ec34ee34311f3b02a16e118113b5b1acd1b961859caccd2c4387c0ae529cd72d",
+    "pcl_shape": [
+      12288
+    ],
+    "prereg_commit": "914a57e45ee98b6ebbb8830a524ec59bfef0c78b",
+    "science_gate_scored": false,
+    "selected_semantics": {
+      "input": "TE",
+      "output": "TE"
+    },
+    "source_bin": 3,
+    "spill_preflight": {
+      "expected_first_alm_bytes": 1208057856,
+      "free_bytes_before": 1017425006592,
+      "required_free_bytes": 2684354560,
+      "spill_root": "/home/axioma338/actions-runner-dsir/_work/_temp/exp073cm-spill"
+    },
+    "stage": "memory_stable_mask_pcl",
+    "task": "Wm_S3",
+    "verified_delta": 0.0
+  }
+}

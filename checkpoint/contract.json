@@ -1,0 +1,35 @@
+{
+  "band_range": [
+    0,
+    8
+  ],
+  "checkpoint_boundary": "complete_stage_only",
+  "cpu_fraction_min": 0.9,
+  "dtype": "<f8",
+  "experiment": "Exp073CM",
+  "fingerprint": "9e10b26b57464cc70ce8cb0c5cfedbab118662619ea314beed2f854d9ed65978",
+  "format": "DSIR_UNIVERSAL_SELF_HOSTED_CHECKPOINT_V0_1",
+  "lmax": 12287,
+  "mask_artifact": "exp073cl-exact-des-mask-9a7b1c19aa130c5b11f68c2d9ea73ff9a2f6c105",
+  "mask_run": 33683175039,
+  "mask_sha256": "a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55",
+  "pcl_helper_commit": "8a5f9f5e0341d24ee843f3097199075c50ab2d02",
+  "policy_commit": "f45ae0ce4d199ae381e8612d41cfd7e4c7dfc427",
+  "prereg_commit": "914a57e45ee98b6ebbb8830a524ec59bfef0c78b",
+  "r1_artifact": "exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536",
+  "r1_run": 33270843577,
+  "range_helper_commit": "fa971eb4ef8c47e81eb0bb4e13eeb76f7cf42e22",
+  "reference_threads": 1,
+  "resource_helper_commit": "585999ec149cb1f5774eb909cbedcdc19f48e6b9",
+  "row_length": 12288,
+  "signature": [
+    0,
+    2,
+    0,
+    2
+  ],
+  "source_bin": 3,
+  "source_head": "7cfe84f97f51842bec803ea62e364679a89358f6",
+  "target_threads": 8,
+  "task": "Wm_S3"
+}

@@ -1,0 +1,23 @@
+	Command being timed: "/home/axioma338/.cache/dsir-nmt27/bin/python ci/exp073cm_memory_stable_wm_s3_pcl_v0_1.py --task Wm_S3 --r1-root external/r1 --lens-mask external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits --spill-root /home/axioma338/actions-runner-dsir/_work/_temp/exp073cm-spill --out-npy /home/axioma338/actions-runner-dsir/_work/_temp/exp073cm-fresh/pcl.npy --out-json /home/axioma338/actions-runner-dsir/_work/_temp/exp073cm-fresh/pcl.json"
+	User time (seconds): 9045.53
+	System time (seconds): 2499.76
+	Percent of CPU this job got: 465%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 41:21.89
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 5634292
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 4226944
+	Minor (reclaiming a frame) page faults: 24998721
+	Voluntary context switches: 3756432
+	Involuntary context switches: 553077
+	Swaps: 0
+	File system inputs: 107270088
+	File system outputs: 2359784
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
