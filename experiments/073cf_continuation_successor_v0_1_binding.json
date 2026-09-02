@@ -1,0 +1,48 @@
+{
+  "experiment": "Exp073CF",
+  "task": "Wm_S2",
+  "state": "PREPARED_NOT_AUTHORIZED",
+  "scientific_contract_changed": false,
+  "predecessor_run_id": 33548649445,
+  "predecessor_classification": "INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073CF_ATTEMPT2",
+  "workflow_path": ".github/workflows/exp073cf-continuation-successor-v0-1.yml",
+  "workflow_commit": "93ac80426c877c4769ded24fb16196fcfa2501f5",
+  "historical_source_commit": "f9cb1eec582276776ddac3b1207686b1e01d3b6a",
+  "historical_checkpoint_sync_commit": "96886916b41dce7f0a40807622928c841ef5fc58",
+  "continuation_prereg_commit": "36853b723b172a6038c6d3023805f08f37ffac72",
+  "continuation_wrapper_commit": "ce818db7ae53376ba6e5f7934c24f4c5acb3c75c",
+  "transport_helper_commit": "bc468ca73a3c4e281bd2b1ee46d6f7704bb54bb1",
+  "pcl_helper_commit": "5423976c09d5ee338d1a7894ce143faf1bb88225",
+  "stream_driver_commit": "583c34420d5f02a1ac8e77efb9625bbc3ab73de8",
+  "range_helper_commit": "fa971eb4ef8c47e81eb0bb4e13eeb76f7cf42e22",
+  "bw_helper_commit": "9fb0ecb79986cf5f542760377533a685745b31e2",
+  "checkpoint_utility_commit": "0b0324afb69acb16cbea97bb924b9be48f303dde",
+  "production_helper_commit": "d77b7ba88801f6788f3d386e72b445c7859c7153",
+  "heartbeat_helper_commit": "43031abd60ad65cacea1ede38c09061eb747d3f8",
+  "threads": 8,
+  "chunk_bands": 4,
+  "heartbeat_seconds": 60,
+  "max_parallel": 1,
+  "des_exact_size": 104595840,
+  "des_sha256": "a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55",
+  "restore": {
+    "A": {
+      "branch": "checkpoints/exp073cf-wm-s2-a-v0-1",
+      "expected_head": "5c7ccddb54afe1ad286d08abc6f7372aa5a11103",
+      "completed_bands": 32
+    },
+    "B": {
+      "branch": "checkpoints/exp073cf-wm-s2-b-v0-1",
+      "expected_head": "ce9189a1ccaabc62708f753897b9cab5f51cb9f4",
+      "completed_bands": 28
+    }
+  },
+  "activation_file_required": "ci/exp073cf_continuation_successor_v0_1.activation.json",
+  "activation_file_present_at_binding": false,
+  "manual_dispatch_without_activation_must_fail_before_restore": true,
+  "coordination_requires_queued_zero": true,
+  "coordination_requires_in_progress_zero": true,
+  "readiness_increment_authorized": false,
+  "verified_readiness_percent": 52.0,
+  "draft_data_readiness_percent": 53.7
+}
