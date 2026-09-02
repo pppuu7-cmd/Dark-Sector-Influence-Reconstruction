@@ -1,0 +1,5 @@
+trigger Exp073CJ v0.2 hosted synthetic mixed-authority schema
+prereg=50509dfd654508e3c1d3edb51b64374f1e5b205e
+helper=b2bd80750c89a707727a49bd8032d2af7d53c6cb
+workflow=10d8996edf88012a894867f6d57a742b3edd22e4
+binding=35c601751c738019feceddf81228b25add473088
