@@ -1,0 +1,14 @@
+{
+  "experiment": "Exp073CL",
+  "task": "Wm_S3",
+  "state": "AUTHORIZED_HOSTED_MASK_EIGHTBAND_DIRECT8_RESOURCE_V0_1",
+  "workflow_commit": "82e4ffe04bb4cce6fdb2abeab1b44197cb8269f4",
+  "binding_commit": "0bd81b3a788c29784b692dabfcb3fce54a75f015",
+  "prereg_commit": "41836d6e773c69bfcbcf59194ba3276a551a5f8f",
+  "resource_helper_commit": "1c2ce2477a4bd163673e9350fdc1aecba57e20a1",
+  "pcl_helper_commit": "a4caf0eb3acca2ad1a5fd21b2971cf83a0c02faf",
+  "coordination_requires_queued_zero": true,
+  "coordination_requires_in_progress_zero": true,
+  "historical_exp073ck_v0_1_reclassified": false,
+  "readiness_change_authorized": false
+}
