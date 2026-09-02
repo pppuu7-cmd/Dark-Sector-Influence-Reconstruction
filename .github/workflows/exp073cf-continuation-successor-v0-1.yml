@@ -1,7 +1,8 @@
 name: Exp073CF continuation successor Wm_S2 v0.1
 
-# Preparation-only workflow. Manual dispatch is fail-closed until a separate
-# prospective activation file exists and exact workflow/binding commits match.
+# Preparation-only workflow. Manual dispatch is fail-closed in a hosted job
+# before any self-hosted scheduling until a separate prospective activation
+# file exists and exact workflow/binding commits match.
 on:
   workflow_dispatch:
 
@@ -20,21 +21,18 @@ env:
   PYTHONUNBUFFERED: '1'
 
 jobs:
-  compact-replica:
-    strategy:
-      fail-fast: false
-      max-parallel: 1
-      matrix:
-        replica: [A, B]
-    runs-on: [self-hosted, Linux, X64]
-    timeout-minutes: 360
+  authorize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Enforce prospective continuation binding and explicit activation
+      - name: Fail-closed hosted authorization before self-hosted scheduling
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           test "$(git log -1 --format=%H -- preregistration/2026-09-02_exp073cf_versioned_continuation_driver_v0_1.md)" = '36853b723b172a6038c6d3023805f08f37ffac72'
@@ -75,6 +73,35 @@ jobs:
           assert a['coordination_requires_queued_zero'] is True
           assert a['coordination_requires_in_progress_zero'] is True
           PY
+          python3 - <<'PY'
+          import json, os, urllib.request
+          token=os.environ['GH_TOKEN']
+          current=int(os.environ['GITHUB_RUN_ID'])
+          repo=os.environ['GITHUB_REPOSITORY']
+          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          def count(status):
+              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100',headers=headers)
+              with urllib.request.urlopen(req,timeout=30) as r:
+                  data=json.load(r)
+              return sum(1 for x in data.get('workflow_runs',[]) if int(x['id']) != current)
+          q=count('queued'); p=count('in_progress')
+          print(f'other_queued={q} other_in_progress={p}')
+          assert q==0 and p==0, (q,p)
+          PY
+
+  compact-replica:
+    needs: authorize
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        replica: [A, B]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Reuse or bootstrap proven NaMaster 2.7 environment
         shell: bash
