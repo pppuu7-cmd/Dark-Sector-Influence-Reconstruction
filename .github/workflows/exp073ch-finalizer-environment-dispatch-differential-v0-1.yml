@@ -1,0 +1,157 @@
+name: Exp073CH hosted finalizer environment dispatch differential v0.1
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ch_finalizer_environment_dispatch_v0_1.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+  OPENBLAS_VERBOSE: '2'
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  authorize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fail-closed Exp073CH preregistration and binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          export ACTUAL_PREREG="$(git log -1 --format=%H -- preregistration/2026-09-02_exp073ch_finalizer_environment_dispatch_differential_v0_1.md)"
+          export ACTUAL_HELPER="$(git log -1 --format=%H -- ci/exp073ch_finalizer_environment_dispatch_v0_1.py)"
+          export ACTUAL_WORKFLOW="$(git log -1 --format=%H -- .github/workflows/exp073ch-finalizer-environment-dispatch-differential-v0-1.yml)"
+          export ACTUAL_BINDING="$(git log -1 --format=%H -- experiments/073ch_finalizer_environment_dispatch_differential_v0_1_binding.json)"
+          export ACTUAL_SOURCE="$(git log -1 --format=%H -- ci/exp073az_article3_low_memory_general_coupling_v0_1.py)"
+          python3 - <<'PY'
+          import json, os
+          b=json.load(open('experiments/073ch_finalizer_environment_dispatch_differential_v0_1_binding.json'))
+          t=json.load(open('ci/exp073ch_finalizer_environment_dispatch_v0_1.trigger'))
+          assert b['experiment']=='Exp073CH'
+          assert b['classification_class']=='DIAGNOSTIC_NONCLASSIFYING_PLUS0_PLUS0'
+          assert b['exp073cf_fail_preserved'] is True
+          assert b['prereg_commit']==os.environ['ACTUAL_PREREG']
+          assert b['helper_commit']==os.environ['ACTUAL_HELPER']
+          assert b['workflow_commit']==os.environ['ACTUAL_WORKFLOW']
+          assert b['production_source_path_commit']==os.environ['ACTUAL_SOURCE']=='d77b7ba88801f6788f3d386e72b445c7859c7153'
+          assert b['input_run_id']==33601943300
+          assert b['input_artifact_id']==9841348367
+          assert b['input_artifact_digest']=='sha256:d6703819745b22eadc9c6557c4d89d926ed9675c09bd41cb19e79d4050ef399b'
+          assert b['compact_content_sha256']=='963dfd79bd49119d2c3124de3507330b3c47637b41dcbd7b9536f617186ef7bd'
+          assert b['historical_a_w_sha256']=='fc94c71f8e004fe3340d7ab3df79a70b93d0236902e7f8d72f7387c33829de84'
+          assert b['historical_b_w_sha256']=='bed762740b625f932f016d0988be17500a2583daee08bee9a5da550de786193e'
+          assert t['experiment']=='Exp073CH' and t['state']=='ACTIVATE_HOSTED_DIAGNOSTIC_V0_1'
+          assert t['binding_commit']==os.environ['ACTUAL_BINDING']
+          assert t['workflow_commit']==os.environ['ACTUAL_WORKFLOW']
+          PY
+
+  worker:
+    needs: authorize
+    strategy:
+      fail-fast: false
+      matrix:
+        worker: [R1, R2, R3, R4]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Install historical-version numerical environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$RUNNER_TEMP/miniforge"
+          ENV="$RUNNER_TEMP/exp073ch-env"
+          curl --fail --location --retry 5 --retry-delay 2 \
+            https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh \
+            -o "$RUNNER_TEMP/miniforge.sh"
+          bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"
+          "$MF/bin/conda" create -y -p "$ENV" -c conda-forge \
+            'python=3.11.16=h8ab3286_0_cpython' \
+            'numpy=2.4.6=py311h2e04523_0' \
+            'scipy=1.17.1=py311hbe70eeb_1' \
+            'libopenblas=0.3.34=pthreads_hcf972fe_1' \
+            'namaster=2.7=py311h868057a_1' \
+            'healpy=1.20.0=py311hdff0d1d_0' astropy
+          "$ENV/bin/python" - <<'PY'
+          import importlib.metadata, numpy as np, scipy
+          assert np.__version__=='2.4.6'
+          assert scipy.__version__=='1.17.1'
+          v=importlib.metadata.version('pymaster'); assert v=='2.7' or v.startswith('2.7.')
+          np.show_runtime()
+          PY
+          "$MF/bin/conda" list -p "$ENV" --explicit > "$RUNNER_TEMP/conda-explicit.txt"
+          echo "DIAG_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073cf-continuation-compact-A-313a8b332dc982154eb14671e68ada9ebd2c10e5
+          path: external/compact
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33601943300
+      - name: Exact environment and OpenBLAS dispatch differential
+        shell: bash
+        env:
+          WORKER: ${{ matrix.worker }}
+        run: |
+          set -euo pipefail
+          out="data/derived/g7/exp073ch_${WORKER}"
+          mkdir -p "$out"
+          cp "$RUNNER_TEMP/conda-explicit.txt" "$out/conda-explicit.txt"
+          lscpu > "$out/lscpu.txt"
+          cat /proc/cpuinfo > "$out/cpuinfo.txt"
+          uname -a > "$out/uname.txt"
+          cp /etc/os-release "$out/os-release.txt"
+          PYTHONPATH="$GITHUB_WORKSPACE/ci" "$DIAG_PY" ci/exp073ch_finalizer_environment_dispatch_v0_1.py worker \
+            --compact external/compact --worker "$WORKER" --out-dir "$out"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ch-worker-${{ matrix.worker }}-${{ github.sha }}
+          path: data/derived/g7/exp073ch_${{ matrix.worker }}/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  compare:
+    needs: worker
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'numpy==2.4.6'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: exp073ch-worker-*-${{ github.sha }}
+          path: external/workers
+          merge-multiple: false
+      - name: Aggregate preregistered exact diagnostic decision tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          python ci/exp073ch_finalizer_environment_dispatch_v0_1.py compare \
+            --root external/workers \
+            --out-json data/derived/g7/exp073ch_finalizer_environment_dispatch_differential_v0_1.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ch-diagnostic-authority-${{ github.sha }}
+          path: data/derived/g7/exp073ch_finalizer_environment_dispatch_differential_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
