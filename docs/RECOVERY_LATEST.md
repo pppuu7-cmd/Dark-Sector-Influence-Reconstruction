@@ -8,13 +8,16 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 ## Read first
 
-1. `recovery/2026-09-02_exp073cf_second_static_continuation_binding_audit_pass.md`
-2. `ci/exp073cf_continuation_successor_v0_1.disabled.yml`
-3. `recovery/2026-09-02_exp073cf_versioned_continuation_hosted_qa_pass.md`
-4. `preregistration/2026-09-02_exp073cf_versioned_continuation_driver_v0_1.md`
-5. `recovery/2026-09-02_exp073cf_checkpoint_sync_v0_2_hosted_qa_pass.md`
-6. `recovery/2026-09-02_exp073cf_attempt2_terminal_infrastructure_incomplete.md`
-7. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+1. `recovery/2026-09-02_exp073cf_continuation_successor_workflow_binding_prepared.md`
+2. `.github/workflows/exp073cf-continuation-successor-v0-1.yml`
+3. `experiments/073cf_continuation_successor_v0_1_binding.json`
+4. `recovery/2026-09-02_exp073cf_second_static_continuation_binding_audit_pass.md`
+5. `ci/exp073cf_continuation_successor_v0_1.disabled.yml`
+6. `recovery/2026-09-02_exp073cf_versioned_continuation_hosted_qa_pass.md`
+7. `preregistration/2026-09-02_exp073cf_versioned_continuation_driver_v0_1.md`
+8. `recovery/2026-09-02_exp073cf_checkpoint_sync_v0_2_hosted_qa_pass.md`
+9. `recovery/2026-09-02_exp073cf_attempt2_terminal_infrastructure_incomplete.md`
+10. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
 
 ## Current frontier
 
@@ -67,7 +70,21 @@ Concrete non-executable audit object: `ci/exp073cf_continuation_successor_v0_1.d
 
 Verdict: `PASS_EXP073CF_SECOND_STATIC_CONTINUATION_BINDING_INTEGRATION_AUDIT_V0_1`, classification static/infrastructure, `+0/+0`.
 
-The audit verifies a successor design can exact-pin A/B historical restore via v0.2; invoke only the versioned continuation wrapper for resumed heavy computation; preserve threads=8, chunk=4, exact edges/signature/output contract; keep historical payload fingerprint separate from continuation transport provenance; preserve <=60 s heartbeat semantics; and retain exact comparator/finalizer no-rescue rules. The spec is outside `.github/workflows`, has no trigger, and explicitly does not authorize self-hosted execution.
+## Real continuation successor workflow/binding — PREPARED, NOT AUTHORIZED
+
+Real workflow path: `.github/workflows/exp073cf-continuation-successor-v0-1.yml`.
+
+Workflow commit: `93ac80426c877c4769ded24fb16196fcfa2501f5`.
+
+Prospective binding path: `experiments/073cf_continuation_successor_v0_1_binding.json`.
+
+Binding commit: `1a9f34f87d4e485b00b073e1a75eafd90b0cbe5c`.
+
+Binding state is `PREPARED_NOT_AUTHORIZED`; `scientific_contract_changed=false`.
+
+The workflow exact-pins A/B restore through checkpoint sync v0.2, invokes only the versioned continuation wrapper for resumed heavy computation, preserves threads=8, max-parallel=1, fresh memory-stable PCL, network-hardened exact DES size/SHA checks, frozen compile/preflight, <=60 s heartbeat, exact comparator/finalizer bodies and no-rescue semantics.
+
+The required activation file `ci/exp073cf_continuation_successor_v0_1.activation.json` is intentionally absent. Therefore the existence of the workflow/binding does **not** authorize self-hosted execution. No run was triggered by preparation.
 
 ## Preserved scientific authority
 
@@ -92,27 +109,21 @@ No G8 jump.
 
 ## Coordination state
 
-Repository-wide checks immediately before the latest writes showed queued runs `0` and in-progress runs `0`. No self-hosted scientific successor is authorized by current records.
+Repository-wide checks before and after workflow/binding preparation showed queued runs `0` and in-progress runs `0`. No self-hosted scientific successor has been activated.
 
 ## Exact next gate
 
-Prepare a separate prospective Exp073CF continuation successor binding around a real workflow definition, but do not trigger it yet. The workflow/binding preparation must preserve the passed static spec and:
+Perform a final read-only/static audit of the actual workflow commit `93ac80426c877c4769ded24fb16196fcfa2501f5` and binding commit `1a9f34f87d4e485b00b073e1a75eafd90b0cbe5c` against the passed disabled specification. Audit activation fail-closed semantics, exact A/B restore roots, historical-vs-continuation provenance separation, frozen helper lineage, DES exact binding, PCL/compile/preflight, heartbeat, comparator/finalizer bodies, artifact naming and absence of any active collision.
 
-1. remain untriggered while workflow and binding commits are frozen;
-2. use `[self-hosted, Linux, X64]` with A/B `max-parallel=1` only after later explicit activation;
-3. exact-pin A=`5c7ccddb54afe1ad286d08abc6f7372aa5a11103` and B=`ce9189a1ccaabc62708f753897b9cab5f51cb9f4` through checkpoint sync v0.2;
-4. invoke only `ci/exp073cf_continuation_wm_s2_v0_1.py` for resumed heavy computation;
-5. bind all historical/continuation commits and frozen science constants before restore;
-6. preserve network-hardened exact DES binding, memory-stable PCL, compile/preflight, <=60 s heartbeat, exact comparator/finalizer and no-rescue semantics;
-7. require a fresh repository-wide queued/in_progress collision check immediately before any eventual trigger;
-8. require a separate prospective trigger/head authorization before DSIR-HOME-PC work begins.
+Only after a PASS may a **separate prospective activation/trigger authorization** be prepared. Before that activation, repeat repository-wide `queued=0` / `in_progress=0` checks. Do not launch DSIR-HOME-PC merely because the workflow and binding exist.
 
 - ✅ Exp073CF attempt2 remains infrastructure incomplete, not scientific FAIL.
 - ✅ Durable checkpoint authority preserved exactly: A `32/39`, B `28/39`.
 - ✅ Checkpoint sync v0.2 hosted QA PASS, `+0/+0`.
 - ✅ Versioned continuation wrapper hosted synthetic compatibility QA PASS, `+0/+0`.
 - ✅ Second static continuation binding/integration audit PASS, `+0/+0`.
-- 🟡 Prospective successor workflow/binding preparation remains open; no trigger authorized.
+- ✅ Real successor workflow and prospective binding prepared, not activated, `+0/+0`.
+- 🟡 Final actual-workflow/binding static audit remains open.
 - ❌ No complete A/B Wm_S2 comparator inputs; no repeatability classification.
 - ❌ Exp073AQ permanent scientific FAIL preserved.
 - ❌ Exp073BD remains provisional and forbidden downstream.
