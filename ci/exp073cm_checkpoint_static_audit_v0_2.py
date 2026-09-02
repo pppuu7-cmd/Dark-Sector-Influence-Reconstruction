@@ -51,12 +51,11 @@ def main() -> None:
     assert 'desdr-server' not in wf
     assert wf.count('dsir_checkpoint_git_sync_v0_2.sh push') == 4
 
-    # Audit execution ordering only inside the self-hosted job.  V0.1 searched
-    # the whole YAML and was falsely tripped by the authorize job's path-pin
-    # mention of the PCL helper before the actual restore command.
+    # Audit execution ordering only inside the self-hosted job. V0.1 searched
+    # the whole YAML and was falsely tripped by an authorization path-pin.
     self_hosted = wf.split('  checkpointed-resource:', 1)[1]
     restore_token = 'dsir_checkpoint_git_sync_v0_2.sh restore'
-    pcl_exec_token = 'ci/exp073cm_memory_stable_wm_s3_pcl_v0_1.py \\\'
+    pcl_exec_token = '--task Wm_S3 --r1-root external/r1'
     assert restore_token in self_hosted
     assert pcl_exec_token in self_hosted
     assert self_hosted.index(restore_token) < self_hosted.index(pcl_exec_token)
@@ -111,7 +110,8 @@ def main() -> None:
 
         fp = m.stage_dir(root, 'final') / 'receipt.json'
         good_final = json.loads(fp.read_text())
-        bad = dict(good_final); bad['status'] = m.FAIL_EXACT
+        bad = dict(good_final)
+        bad['status'] = m.FAIL_EXACT
         fp.write_text(json.dumps(bad, indent=2, sort_keys=True) + '\n')
         must_fail(lambda: m.load_stage(root, 'final'), 'final_status_tamper')
         fp.write_text(json.dumps(good_final, indent=2, sort_keys=True) + '\n')
