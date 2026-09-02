@@ -123,6 +123,39 @@ def stage_dir(root: Path, stage: str) -> Path:
     return root / 'stages' / stage
 
 
+def exact_loaded_payload(path: Path, expected_shape: tuple[int, ...], stage: str) -> np.ndarray:
+    a = np.load(path, allow_pickle=False)
+    if a.dtype.str != '<f8':
+        raise RuntimeError(f'{stage}: checkpoint dtype mismatch {a.dtype.str}')
+    if not a.flags.c_contiguous:
+        raise RuntimeError(f'{stage}: checkpoint not C-contiguous')
+    if tuple(a.shape) != tuple(expected_shape):
+        raise RuntimeError(f'{stage}: checkpoint shape mismatch {a.shape}')
+    if not np.all(np.isfinite(a)):
+        raise RuntimeError(f'{stage}: checkpoint non-finite payload')
+    return a
+
+
+def expected_final_status(ref: np.ndarray, target: np.ndarray, target_receipt: dict) -> tuple[str, dict]:
+    href, ht = chash(ref), chash(target)
+    array_equal = bool(np.array_equal(ref, target))
+    exact = array_equal and href == ht
+    finite = bool(np.all(np.isfinite(ref)) and np.all(np.isfinite(target)))
+    swap_inc = int(target_receipt['swap_increase_kib'])
+    resource_safe = finite and swap_inc == 0
+    cpu_fraction = float(target_receipt['cpu_fraction_of_8'])
+    cpu_target = cpu_fraction >= CPU_FRACTION_MIN
+    if not exact: status = FAIL_EXACT
+    elif not resource_safe: status = FAIL_SWAP
+    elif not cpu_target: status = FAIL_CPU
+    else: status = PASS
+    return status, {
+        'href': href, 'ht': ht, 'array_equal': array_equal, 'finite': finite,
+        'swap_inc': swap_inc, 'resource_safe': resource_safe,
+        'cpu_fraction': cpu_fraction, 'cpu_target': cpu_target,
+    }
+
+
 def load_stage(root: Path, stage: str) -> dict | None:
     c = load_contract(root)
     p = stage_dir(root, stage) / 'receipt.json'
@@ -135,12 +168,33 @@ def load_stage(root: Path, stage: str) -> dict | None:
         a_path = stage_dir(root, stage) / 'payload.npy'
         if not a_path.exists():
             raise RuntimeError(f'{stage}: payload absent')
-        a = canon(np.load(a_path, allow_pickle=False))
         expected_shape = (L,) if stage == 'pcl' else (IB_HI - IB_LO, L)
-        if a.shape != expected_shape or not np.all(np.isfinite(a)):
-            raise RuntimeError(f'{stage}: payload shape/finite mismatch')
+        a = exact_loaded_payload(a_path, expected_shape, stage)
+        if r.get('dtype') != '<f8' or r.get('shape') != list(expected_shape):
+            raise RuntimeError(f'{stage}: receipt dtype/shape mismatch')
         if r.get('payload_sha256') != chash(a):
             raise RuntimeError(f'{stage}: payload SHA mismatch')
+    elif stage == 'final':
+        rr = load_stage(root, 'reference'); tr = load_stage(root, 'target')
+        if rr is None or tr is None:
+            raise RuntimeError('final: prerequisite checkpoint absent')
+        ref = exact_loaded_payload(stage_dir(root, 'reference') / 'payload.npy', (IB_HI - IB_LO, L), 'reference')
+        target = exact_loaded_payload(stage_dir(root, 'target') / 'payload.npy', (IB_HI - IB_LO, L), 'target')
+        status, x = expected_final_status(ref, target, tr)
+        checks = [
+            r.get('reference_sha256') == x['href'],
+            r.get('target_sha256') == x['ht'],
+            r.get('array_equal') is x['array_equal'],
+            r.get('sha_equal') is (x['href'] == x['ht']),
+            r.get('finite') is x['finite'],
+            int(r.get('swap_increase_target_kib', -1)) == x['swap_inc'],
+            r.get('resource_safe') is x['resource_safe'],
+            abs(float(r.get('cpu_fraction_of_8')) - x['cpu_fraction']) <= 0.0,
+            r.get('cpu_target_met') is x['cpu_target'],
+            r.get('status') == status,
+        ]
+        if not all(checks):
+            raise RuntimeError('final: restored comparator receipt does not recompute exactly')
     return r
 
 
@@ -220,9 +274,7 @@ def swap_used_kib() -> int:
 
 
 def store_pcl(root: Path, src_npy: Path, src_json: Path) -> None:
-    pcl = canon(np.load(src_npy, allow_pickle=False))
-    if pcl.shape != (L,) or not np.all(np.isfinite(pcl)):
-        raise RuntimeError('invalid PCL before checkpoint')
+    pcl = exact_loaded_payload(src_npy, (L,), 'fresh-pcl')
     upstream = json.loads(src_json.read_text(encoding='utf-8'))
     rec = store_array_stage(root, 'pcl', pcl, {
         'upstream_receipt': upstream,
@@ -237,7 +289,7 @@ def compute(root: Path, stage: str, ca_so: Path) -> None:
     pcl_rec = load_stage(root, 'pcl')
     if pcl_rec is None:
         raise RuntimeError('PCL checkpoint required before coupling')
-    pcl = canon(np.load(stage_dir(root, 'pcl') / 'payload.npy', allow_pickle=False))
+    pcl = exact_loaded_payload(stage_dir(root, 'pcl') / 'payload.npy', (L,), 'pcl')
     threads = REFERENCE_THREADS if stage == 'reference' else TARGET_THREADS
     f = load_ca(ca_so)
     swap0 = swap_used_kib(); rss0 = maxrss_kib(); c0 = cpu_seconds(); t0 = time.monotonic()
@@ -269,28 +321,19 @@ def finalize(root: Path) -> dict:
     rr = load_stage(root, 'reference'); tr = load_stage(root, 'target')
     if rr is None or tr is None:
         raise RuntimeError('reference and target checkpoints required')
-    ref = canon(np.load(stage_dir(root, 'reference') / 'payload.npy', allow_pickle=False))
-    target = canon(np.load(stage_dir(root, 'target') / 'payload.npy', allow_pickle=False))
-    href, ht = chash(ref), chash(target)
-    exact = bool(np.array_equal(ref, target)) and href == ht
-    finite = bool(np.all(np.isfinite(ref)) and np.all(np.isfinite(target)))
-    swap_inc = int(tr['swap_increase_kib'])
-    resource_safe = finite and swap_inc == 0
-    cpu_fraction = float(tr['cpu_fraction_of_8'])
-    cpu_target = cpu_fraction >= CPU_FRACTION_MIN
-    if not exact: status = FAIL_EXACT
-    elif not resource_safe: status = FAIL_SWAP
-    elif not cpu_target: status = FAIL_CPU
-    else: status = PASS
+    ref = exact_loaded_payload(stage_dir(root, 'reference') / 'payload.npy', (IB_HI - IB_LO, L), 'reference')
+    target = exact_loaded_payload(stage_dir(root, 'target') / 'payload.npy', (IB_HI - IB_LO, L), 'target')
+    status, x = expected_final_status(ref, target, tr)
     rec = {
         'format': 'DSIR_UNIVERSAL_SELF_HOSTED_CHECKPOINT_V0_1',
         'experiment': 'Exp073CM', 'task': 'Wm_S3', 'stage': 'final', 'complete': True,
-        'contract_fingerprint': c['fingerprint'], 'reference_sha256': href,
-        'target_sha256': ht, 'array_equal': bool(np.array_equal(ref, target)),
-        'sha_equal': href == ht, 'finite': finite, 'swap_increase_target_kib': swap_inc,
-        'resource_safe': resource_safe, 'cpu_fraction_of_8': cpu_fraction,
-        'cpu_fraction_min': CPU_FRACTION_MIN, 'cpu_target_met': cpu_target,
-        'reference_wall_seconds': rr['wall_seconds'], 'target_wall_seconds': tr['wall_seconds'],
+        'contract_fingerprint': c['fingerprint'], 'reference_sha256': x['href'],
+        'target_sha256': x['ht'], 'array_equal': x['array_equal'],
+        'sha_equal': x['href'] == x['ht'], 'finite': x['finite'],
+        'swap_increase_target_kib': x['swap_inc'], 'resource_safe': x['resource_safe'],
+        'cpu_fraction_of_8': x['cpu_fraction'], 'cpu_fraction_min': CPU_FRACTION_MIN,
+        'cpu_target_met': x['cpu_target'], 'reference_wall_seconds': rr['wall_seconds'],
+        'target_wall_seconds': tr['wall_seconds'],
         'speedup_diagnostic_only': (float(rr['wall_seconds']) / float(tr['wall_seconds'])) if float(tr['wall_seconds']) > 0 else None,
         'status': status, 'verified_delta': 0.0, 'draft_data_delta': 0.0,
         'no_tolerance_rescue': True,
@@ -301,12 +344,15 @@ def finalize(root: Path) -> dict:
 
 
 def export_all(root: Path, out_dir: Path) -> None:
+    for stage in ('pcl', 'reference', 'target', 'final'):
+        r = load_stage(root, stage)
+        if r is None:
+            raise RuntimeError(f'cannot export absent stage {stage}')
     out_dir.mkdir(parents=True, exist_ok=True)
     shutil.copy2(root / 'contract.json', out_dir / 'exp073cm_checkpoint_contract_v0_1.json')
     for stage in ('pcl', 'reference', 'target', 'final'):
         d = stage_dir(root, stage)
-        if (d / 'receipt.json').exists():
-            shutil.copy2(d / 'receipt.json', out_dir / f'exp073cm_{stage}_receipt_v0_1.json')
+        shutil.copy2(d / 'receipt.json', out_dir / f'exp073cm_{stage}_receipt_v0_1.json')
         if (d / 'payload.npy').exists():
             shutil.copy2(d / 'payload.npy', out_dir / f'exp073cm_{stage}_payload_v0_1.npy')
 
@@ -333,7 +379,7 @@ def main() -> None:
     elif a.cmd == 'compute': compute(root, a.stage, Path(a.ca_so))
     elif a.cmd == 'finalize':
         if load_stage(root, 'final') is None: finalize(root)
-        else: print('CHECKPOINT stage=final valid; reuse', flush=True)
+        else: print('CHECKPOINT stage=final valid and recomputed exactly; reuse', flush=True)
     elif a.cmd == 'enforce-final':
         r = load_stage(root, 'final')
         if r is None: raise RuntimeError('final checkpoint absent')
