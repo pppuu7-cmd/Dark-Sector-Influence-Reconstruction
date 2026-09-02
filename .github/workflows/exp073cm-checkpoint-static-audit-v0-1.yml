@@ -1,0 +1,51 @@
+name: Exp073CM checkpoint static audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ci/exp073cm_checkpoint_static_audit_launch_v0_1.txt'
+
+permissions:
+  contents: read
+
+env:
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Freeze exact audit chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- ci/exp073cm_checkpoint_static_audit_v0_1.py)" = 'b64f3fa127f86dc32d8a72e51605dec89fb45ab1'
+          test "$(git log -1 --format=%H -- ci/exp073cm_checkpointed_wm_s3_resource_v0_1.py)" = '585999ec149cb1f5774eb909cbedcdc19f48e6b9'
+          test "$(git log -1 --format=%H -- .github/workflows/exp073cm-wm-s3-universal-checkpoint-resource-v0-1.yml)" = '90b6d128a0a9e44cdbe4d76b9c134e31cda6cc7f'
+          test "$(git log -1 --format=%H -- experiments/073cm_wm_s3_universal_checkpoint_resource_v0_1_binding.json)" = 'ee4524903b50966163299b0a9cab4fc7f82bbaa4'
+          test "$(git log -1 --format=%H -- ci/exp073cm_wm_s3_universal_checkpoint_resource_v0_1.activation.json)" = '612aa53b48bf61d98c4e3c4a7d2acb70ad8aaba2'
+          test "$(git log -1 --format=%H -- docs/SELF_HOSTED_CHECKPOINT_POLICY.md)" = 'f45ae0ce4d199ae381e8612d41cfd7e4c7dfc427'
+      - name: Python syntax audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile \
+            ci/exp073cm_memory_stable_wm_s3_pcl_v0_1.py \
+            ci/exp073cm_checkpointed_wm_s3_resource_v0_1.py \
+            ci/exp073cm_checkpoint_static_audit_v0_1.py
+      - name: Fail-closed checkpoint static audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/exp073cm_checkpoint_static_audit_v0_1.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073cm-checkpoint-static-audit-${{ github.sha }}
+          path: data/derived/g7/exp073cm_checkpoint_static_audit_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
