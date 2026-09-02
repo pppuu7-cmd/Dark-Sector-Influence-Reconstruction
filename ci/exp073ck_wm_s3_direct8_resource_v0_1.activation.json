@@ -1,0 +1,15 @@
+{
+  "experiment": "Exp073CK",
+  "task": "Wm_S3",
+  "state": "AUTHORIZED_DIRECT8_RESOURCE_V0_1",
+  "workflow_commit": "a5744c6e04736d54315d3593e6945f99583c3588",
+  "binding_commit": "f30c4a23094f2685da62c3f69379dbda768a627f",
+  "coordination_requires_queued_zero": true,
+  "coordination_requires_in_progress_zero": true,
+  "home_runner_exclusive": true,
+  "threads": 8,
+  "reference_threads": 1,
+  "direct8_supersedes_staged_4_6_8_for_this_version": true,
+  "scientific_authority_created_by_resource_pass": false,
+  "readiness_delta": {"verified": 0.0, "draft_data": 0.0}
+}
