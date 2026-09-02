@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git log -1 --format=%H -- ci/exp073cm_checkpoint_static_audit_v0_2.py)" = '53bee017e2e276b1f42e3c96f7a936ab0ac43a15'
+          test "$(git log -1 --format=%H -- ci/exp073cm_checkpoint_static_audit_v0_2.py)" = '97d7737f6a99827e2b1b347a81bda1b05dccd036'
           test "$(git log -1 --format=%H -- ci/exp073cm_checkpointed_wm_s3_resource_v0_1.py)" = '585999ec149cb1f5774eb909cbedcdc19f48e6b9'
           test "$(git log -1 --format=%H -- .github/workflows/exp073cm-wm-s3-universal-checkpoint-resource-v0-1.yml)" = '90b6d128a0a9e44cdbe4d76b9c134e31cda6cc7f'
           test "$(git log -1 --format=%H -- experiments/073cm_wm_s3_universal_checkpoint_resource_v0_1_binding.json)" = 'ee4524903b50966163299b0a9cab4fc7f82bbaa4'
