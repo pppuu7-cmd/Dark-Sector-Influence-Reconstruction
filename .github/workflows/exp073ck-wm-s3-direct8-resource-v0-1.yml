@@ -1,0 +1,178 @@
+name: Exp073CK Wm_S3 direct-8 resource v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ci/exp073ck_wm_s3_direct8_launch_v0_1.txt'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-home-heavy-exp073ck-wm-s3-direct8
+  cancel-in-progress: false
+
+env:
+  OMP_NUM_THREADS: '8'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  authorize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fail-closed prospective authorization
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- preregistration/2026-09-02_exp073ck_wm_s3_direct8_resource_qualification_v0_1.md)" = '07d0ed42048c83681a7129bb1e6b4bee7c95d3d4'
+          test "$(git log -1 --format=%H -- ci/exp073ck_memory_stable_wm_s3_pcl_v0_1.py)" = 'b775372f50ac2317e7639d0cfb797c73c71c43fb'
+          test "$(git log -1 --format=%H -- ci/exp073ck_wm_s3_direct8_resource_preflight_v0_1.py)" = '6c46cef7f8d5280c4a582d97bcedcee68bdaade6'
+          test "$(git log -1 --format=%H -- ci/exp073az_article3_low_memory_general_coupling_v0_1.py)" = 'd77b7ba88801f6788f3d386e72b445c7859c7153'
+          test "$(git log -1 --format=%H -- ci/exp073cf_memory_stable_wm_s2_pcl_v0_1.py)" = '5423976c09d5ee338d1a7894ce143faf1bb88225'
+          test "$(git log -1 --format=%H -- ci/exp073ca_checkpoint_streaming_wm_s2_v0_1.py)" = '583c34420d5f02a1ac8e77efb9625bbc3ab73de8'
+          test "$(git log -1 --format=%H -- ci/exp073ca_stream_general_coupling_range_v0_1.c)" = 'fa971eb4ef8c47e81eb0bb4e13eeb76f7cf42e22'
+          test -f experiments/073ck_wm_s3_direct8_resource_v0_1_binding.json
+          test -f ci/exp073ck_wm_s3_direct8_resource_v0_1.activation.json
+          ACTUAL_WORKFLOW_COMMIT="$(git log -1 --format=%H -- .github/workflows/exp073ck-wm-s3-direct8-resource-v0-1.yml)"
+          ACTUAL_BINDING_COMMIT="$(git log -1 --format=%H -- experiments/073ck_wm_s3_direct8_resource_v0_1_binding.json)"
+          export ACTUAL_WORKFLOW_COMMIT ACTUAL_BINDING_COMMIT
+          python3 - <<'PY'
+          import json, os
+          b=json.load(open('experiments/073ck_wm_s3_direct8_resource_v0_1_binding.json'))
+          a=json.load(open('ci/exp073ck_wm_s3_direct8_resource_v0_1.activation.json'))
+          assert b['experiment']=='Exp073CK' and b['task']=='Wm_S3'
+          assert b['state']=='PREPARED_NOT_AUTHORIZED'
+          assert b['threads']==8 and b['reference_threads']==1
+          assert b['source_bin']==3 and b['signature']==[0,2,0,2]
+          assert b['workflow_commit']==os.environ['ACTUAL_WORKFLOW_COMMIT']
+          assert b['prereg_commit']=='07d0ed42048c83681a7129bb1e6b4bee7c95d3d4'
+          assert b['pcl_helper_commit']=='b775372f50ac2317e7639d0cfb797c73c71c43fb'
+          assert b['resource_helper_commit']=='6c46cef7f8d5280c4a582d97bcedcee68bdaade6'
+          assert b['scientific_contract_changed'] is False
+          assert a['experiment']=='Exp073CK' and a['task']=='Wm_S3'
+          assert a['state']=='AUTHORIZED_DIRECT8_RESOURCE_V0_1'
+          assert a['workflow_commit']==os.environ['ACTUAL_WORKFLOW_COMMIT']
+          assert a['binding_commit']==os.environ['ACTUAL_BINDING_COMMIT']
+          assert a['coordination_requires_queued_zero'] is True
+          assert a['coordination_requires_in_progress_zero'] is True
+          PY
+          python3 - <<'PY'
+          import json, os, urllib.request
+          token=os.environ['GH_TOKEN']; current=int(os.environ['GITHUB_RUN_ID']); repo=os.environ['GITHUB_REPOSITORY']
+          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          def count(status):
+              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100',headers=headers)
+              with urllib.request.urlopen(req,timeout=30) as r: data=json.load(r)
+              return sum(1 for x in data.get('workflow_runs',[]) if int(x['id']) != current)
+          q=count('queued'); p=count('in_progress')
+          print(f'other_queued={q} other_in_progress={p}')
+          assert q==0 and p==0, (q,p)
+          PY
+
+  direct8-resource:
+    needs: authorize
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Reuse or bootstrap proven NaMaster 2.7 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$HOME/.cache/dsir-miniforge"
+          ENV="$HOME/.cache/dsir-nmt27"
+          if ! test -x "$MF/bin/conda"; then
+            mkdir -p "$HOME/.cache"
+            curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"
+            bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"
+          fi
+          if ! test -x "$ENV/bin/python"; then
+            "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 healpy astropy numpy
+          fi
+          "$ENV/bin/python" - <<'PY'
+          import importlib.metadata
+          v=importlib.metadata.version('pymaster')
+          assert v=='2.7' or v.startswith('2.7.'),v
+          PY
+          echo "NMT_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+          path: external/r1
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33270843577
+      - name: Bind exact DES Y1 lens mask
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/des "$RUNNER_TEMP/exp073ck-des-cache"
+          target="external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits"
+          partial="$RUNNER_TEMP/exp073ck-des-cache/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits.partial"
+          url='https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits'
+          touch "$partial"
+          curl --http1.1 --fail --location --retry 10 --retry-all-errors --retry-delay 3 --connect-timeout 30 --continue-at - -o "$partial" "$url"
+          test "$(stat -c %s "$partial")" = '104595840'
+          echo "a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55  $partial" | sha256sum -c -
+          cp --reflink=auto "$partial" "$target"
+      - name: Spill-capacity preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/exp073ck-spill" data/derived/g7
+          free_bytes="$(df -PB1 "$RUNNER_TEMP/exp073ck-spill" | awk 'NR==2 {print $4}')"
+          test "$free_bytes" -ge 2684354560
+          printf 'spill_free_bytes=%s\nspill_required_bytes=2684354560\n' "$free_bytes" | tee data/derived/g7/exp073ck_spill_preflight_v0_1.txt
+      - name: Build fresh real Wm_S3 PCL
+        shell: bash
+        run: |
+          set -euo pipefail
+          /usr/bin/time -v -o data/derived/g7/exp073ck_wm_s3_pcl_time_v0_1.txt \
+            "$NMT_PY" ci/exp073ck_memory_stable_wm_s3_pcl_v0_1.py \
+            --task Wm_S3 --r1-root external/r1 \
+            --lens-mask external/des/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits \
+            --spill-root "$RUNNER_TEMP/exp073ck-spill" \
+            --out-npy data/derived/g7/exp073ck_wm_s3_pcl_v0_1.npy \
+            --out-json data/derived/g7/exp073ck_wm_s3_pcl_v0_1.json
+      - name: Compile frozen range helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          gcc -O2 -shared -fPIC -fopenmp -fno-fast-math -fno-associative-math -ffp-contract=off -fno-tree-vectorize \
+            ci/exp073ca_stream_general_coupling_range_v0_1.c -o build/exp073ca.so -ldl -lm
+      - name: Heavy real-PCL exact 1-thread versus direct-8 benchmark
+        shell: bash
+        run: |
+          set -euo pipefail
+          /usr/bin/time -v -o data/derived/g7/exp073ck_direct8_time_v0_1.txt \
+            env PYTHONPATH="$GITHUB_WORKSPACE/ci" "$NMT_PY" ci/exp073ck_wm_s3_direct8_resource_preflight_v0_1.py \
+            --pcl-npy data/derived/g7/exp073ck_wm_s3_pcl_v0_1.npy \
+            --ca-so build/exp073ca.so \
+            --out-json data/derived/g7/exp073ck_wm_s3_direct8_resource_v0_1.json \
+            --out-reference-npy data/derived/g7/exp073ck_wm_s3_band20_reference_v0_1.npy \
+            --out-target-npy data/derived/g7/exp073ck_wm_s3_band20_direct8_v0_1.npy
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073ck-wm-s3-direct8-resource-${{ github.sha }}
+          path: data/derived/g7/exp073ck_*
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
