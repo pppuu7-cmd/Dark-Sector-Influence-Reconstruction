@@ -4,16 +4,17 @@
 **Scope:** DSIR only; RTK/RQIR excluded.  
 **Article-3 readiness:** **Verified 52.0% | Draft/data 53.7%**.
 
-Repository state and immutable GitHub Actions artifacts outrank chat wording. Synthetic/infrastructure/provenance/numerical/performance QA gives `+0/+0` unless a frozen ledger explicitly states otherwise.
+Repository state and immutable GitHub Actions artifacts outrank chat wording. Synthetic/infrastructure/provenance/numerical/performance/static QA gives `+0/+0` unless a frozen ledger explicitly states otherwise.
 
 ## Read first
 
-1. `recovery/2026-09-02_exp073cf_versioned_continuation_hosted_qa_pass.md`
-2. `preregistration/2026-09-02_exp073cf_versioned_continuation_driver_v0_1.md`
-3. `recovery/2026-09-02_exp073cf_r1_r6_continuation_integration_audit_blocked.md`
-4. `recovery/2026-09-02_exp073cf_checkpoint_sync_v0_2_hosted_qa_pass.md`
-5. `recovery/2026-09-02_exp073cf_attempt2_terminal_infrastructure_incomplete.md`
-6. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+1. `recovery/2026-09-02_exp073cf_second_static_continuation_binding_audit_pass.md`
+2. `ci/exp073cf_continuation_successor_v0_1.disabled.yml`
+3. `recovery/2026-09-02_exp073cf_versioned_continuation_hosted_qa_pass.md`
+4. `preregistration/2026-09-02_exp073cf_versioned_continuation_driver_v0_1.md`
+5. `recovery/2026-09-02_exp073cf_checkpoint_sync_v0_2_hosted_qa_pass.md`
+6. `recovery/2026-09-02_exp073cf_attempt2_terminal_infrastructure_incomplete.md`
+7. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
 
 ## Current frontier
 
@@ -54,17 +55,19 @@ Immutable hosted run `33585095288`, job `100107489860`, `ubuntu-latest`, complet
 
 Terminal status: `EXP073CF_CONTINUATION_V0_1_SYNTHETIC_COMPATIBILITY_PASS`, classification `SYNTHETIC_NONCLASSIFYING_INFRASTRUCTURE_QA`, readiness `+0/+0`.
 
-The wrapper does not duplicate scientific arithmetic. It executes the frozen historical streaming driver while prospectively changing only provenance/transport plumbing required for valid continuation:
+The wrapper preserves historical payload `source_commit=f9cb1eec...` and historical `checkpoint_sync_commit=96886916...`, records continuation provenance separately, and routes subsequent checkpoint pushes through v0.2 only. Hosted synthetic QA demonstrated historical-form A/B contract restore/validation and fail-closed negative cases. It does not classify real-survey Wm_S2 repeatability.
 
-- historical payload `source_commit` remains `f9cb1eec582276776ddac3b1207686b1e01d3b6a` rather than fresh workflow `GITHUB_SHA`;
-- historical payload `extra.checkpoint_sync_commit` remains `96886916b41dce7f0a40807622928c841ef5fc58`;
-- continuation transport provenance is recorded separately;
-- subsequent checkpoint pushes route through v0.2 only;
-- frozen historical driver constants are asserted fail-closed before execution.
+## Second static continuation binding/integration audit — PASS
 
-Hosted synthetic QA demonstrated A/B historical-form contract restore/validation, synthetic continuation without rewriting existing row bytes/fingerprint, fail-closed changed source commit, fail-closed changed historical checkpoint-sync contract field, and wrapper v0.2-only push binding.
+Concrete non-executable audit object: `ci/exp073cf_continuation_successor_v0_1.disabled.yml`.
 
-This QA does not classify real-survey Wm_S2 repeatability.
+- initial spec commit: `c8659fdf49999f8db623b0088b25b56d53efa994`;
+- strengthened binding assertions commit: `05cbcecc57975187cb1dffcf5295876aee6bec61`;
+- audit recovery commit: `5798b0d76524a3b860071e5bef22273a914cf978`.
+
+Verdict: `PASS_EXP073CF_SECOND_STATIC_CONTINUATION_BINDING_INTEGRATION_AUDIT_V0_1`, classification static/infrastructure, `+0/+0`.
+
+The audit verifies a successor design can exact-pin A/B historical restore via v0.2; invoke only the versioned continuation wrapper for resumed heavy computation; preserve threads=8, chunk=4, exact edges/signature/output contract; keep historical payload fingerprint separate from continuation transport provenance; preserve <=60 s heartbeat semantics; and retain exact comparator/finalizer no-rescue rules. The spec is outside `.github/workflows`, has no trigger, and explicitly does not authorize self-hosted execution.
 
 ## Preserved scientific authority
 
@@ -89,26 +92,27 @@ No G8 jump.
 
 ## Coordination state
 
-Latest repository-wide checks before the recovery/pointer writes showed queued runs `0` and in-progress runs `0`. No self-hosted scientific successor is authorized by current records.
+Repository-wide checks immediately before the latest writes showed queued runs `0` and in-progress runs `0`. No self-hosted scientific successor is authorized by current records.
 
 ## Exact next gate
 
-Perform the SECOND STATIC continuation binding/integration audit. It must verify that a future successor workflow can:
+Prepare a separate prospective Exp073CF continuation successor binding around a real workflow definition, but do not trigger it yet. The workflow/binding preparation must preserve the passed static spec and:
 
-1. exact-pinned restore A=`5c7ccddb54afe1ad286d08abc6f7372aa5a11103` and B=`ce9189a1ccaabc62708f753897b9cab5f51cb9f4` using checkpoint sync v0.2;
-2. invoke only `ci/exp073cf_continuation_wm_s2_v0_1.py` for resumed heavy computation;
-3. preserve arithmetic, frozen edges/signature, `OMP_NUM_THREADS=8`, chunk size 4, canonical `<f8 [39,12288]>`, output status, comparator/finalizer and no-rescue semantics;
-4. bind continuation prereg/wrapper/v0.2 transport provenance separately from the historical payload fingerprint;
-5. preserve <=60 s heartbeat semantics;
-6. fail closed on restore-head, historical-contract, helper, threshold or lineage mismatch.
-
-Only after this audit PASS may a separate prospective successor binding be prepared. No self-hosted run is authorized yet.
+1. remain untriggered while workflow and binding commits are frozen;
+2. use `[self-hosted, Linux, X64]` with A/B `max-parallel=1` only after later explicit activation;
+3. exact-pin A=`5c7ccddb54afe1ad286d08abc6f7372aa5a11103` and B=`ce9189a1ccaabc62708f753897b9cab5f51cb9f4` through checkpoint sync v0.2;
+4. invoke only `ci/exp073cf_continuation_wm_s2_v0_1.py` for resumed heavy computation;
+5. bind all historical/continuation commits and frozen science constants before restore;
+6. preserve network-hardened exact DES binding, memory-stable PCL, compile/preflight, <=60 s heartbeat, exact comparator/finalizer and no-rescue semantics;
+7. require a fresh repository-wide queued/in_progress collision check immediately before any eventual trigger;
+8. require a separate prospective trigger/head authorization before DSIR-HOME-PC work begins.
 
 - ✅ Exp073CF attempt2 remains infrastructure incomplete, not scientific FAIL.
 - ✅ Durable checkpoint authority preserved exactly: A `32/39`, B `28/39`.
 - ✅ Checkpoint sync v0.2 hosted QA PASS, `+0/+0`.
 - ✅ Versioned continuation wrapper hosted synthetic compatibility QA PASS, `+0/+0`.
-- 🟡 Second static successor binding audit remains open.
+- ✅ Second static continuation binding/integration audit PASS, `+0/+0`.
+- 🟡 Prospective successor workflow/binding preparation remains open; no trigger authorized.
 - ❌ No complete A/B Wm_S2 comparator inputs; no repeatability classification.
 - ❌ Exp073AQ permanent scientific FAIL preserved.
 - ❌ Exp073BD remains provisional and forbidden downstream.
