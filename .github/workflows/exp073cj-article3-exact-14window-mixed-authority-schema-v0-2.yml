@@ -1,0 +1,87 @@
+name: Exp073CJ Article3 exact 14-window mixed-authority schema v0.2
+
+on:
+  push:
+    paths:
+      - 'ci/exp073cj_article3_exact_14window_mixed_authority_schema_v0_2.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-mixed-authority-schema:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective Exp073CJ binding
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test "$(git log -1 --format=%H -- preregistration/2026-09-02_exp073cj_14window_mixed_authority_aggregator_schema_v0_2.md)" = '50509dfd654508e3c1d3edb51b64374f1e5b205e'
+          test "$(git log -1 --format=%H -- ci/exp073cj_article3_exact_14window_mixed_authority_schema_v0_2.py)" = 'b2bd80750c89a707727a49bd8032d2af7d53c6cb'
+          python3 - <<'PY'
+          import json, subprocess
+          b=json.load(open('experiments/073cj_article3_exact_14window_mixed_authority_schema_v0_2_binding.json'))
+          wf=subprocess.check_output(['git','log','-1','--format=%H','--','.github/workflows/exp073cj-article3-exact-14window-mixed-authority-schema-v0-2.yml'],text=True).strip()
+          assert b['schema']=='DSIR_EXP073CJ_BINDING_V0_2'
+          assert b['prereg_commit']=='50509dfd654508e3c1d3edb51b64374f1e5b205e'
+          assert b['helper_commit']=='b2bd80750c89a707727a49bd8032d2af7d53c6cb'
+          assert b['workflow_commit']==wf
+          assert b['wm_s2_authority_class']=='exp073ci_v0_2'
+          assert b['wm_s2_run']==33646799130
+          assert b['wm_s2_job']==100304043991
+          assert b['wm_s2_artifact']==9853165664
+          assert b['wm_s2_artifact_digest']=='sha256:fcfccb6768948ffe34d28e9ed32da64d3b1d071704028fe6f312c1ab8b440f57'
+          assert b['wm_s2_window_sha']=='96248e7699a5a12945854db2c9af150affcfe13f4f9dc0bfcbb87b99f92ff087'
+          assert b['historical_exp073cf_v0_1_fail_preserved'] is True
+          assert b['readiness_delta']==[0,0]
+          PY
+          if test "${GITHUB_EVENT_NAME}" = push; then
+            test "$(git diff --name-only HEAD^ HEAD)" = 'ci/exp073cj_article3_exact_14window_mixed_authority_schema_v0_2.trigger'
+          fi
+          python3 -m py_compile ci/exp073cj_article3_exact_14window_mixed_authority_schema_v0_2.py
+
+      - name: Run frozen synthetic mixed-authority matrix
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data/derived/g7
+          python3 ci/exp073cj_article3_exact_14window_mixed_authority_schema_v0_2.py \
+            --self-test \
+            --output-json data/derived/g7/exp073cj_article3_exact_14window_mixed_authority_schema_v0_2.json
+
+      - name: Enforce non-scientific accounting
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import json
+          p='data/derived/g7/exp073cj_article3_exact_14window_mixed_authority_schema_v0_2.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_EXP073CJ_EXACT_14WINDOW_MIXED_AUTHORITY_SCHEMA_SYNTHETIC_V0_2'
+          assert d['synthetic_only'] is True
+          assert d['tests_passed']==20
+          assert d['real_angular_artifacts_read'] is False
+          assert d['real_14window_authority_built'] is False
+          assert d['physical_support_evaluated'] is False
+          assert d['covariance_read'] is False
+          assert d['G8_read'] is False
+          assert d['scientific_pass_claimed'] is False
+          assert d['readiness_increment']==0
+          assert d['article3_scientific_readiness_percent']==52
+          assert d['gate_state']=={'G7':'OPEN','G8':'OPEN','G9':'OPEN'}
+          print('EXP073CJ_HOSTED_SYNTHETIC_MIXED_AUTHORITY_SCHEMA_PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073cj-mixed-authority-schema-${{ github.sha }}
+          path: data/derived/g7/exp073cj_article3_exact_14window_mixed_authority_schema_v0_2.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
