@@ -8,84 +8,69 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 ## Read first
 
-1. `recovery/2026-09-02_exp073cf_checkpoint_sync_repair_audit.md`
-2. `preregistration/2026-09-02_exp073cf_checkpoint_durability_sync_repair_v0_1.md`
-3. `recovery/2026-09-02_exp073cf_attempt2_terminal_infrastructure_incomplete.md`
-4. `preregistration/2026-09-01_exp073cf_attempt2_network_hardened_des_download_v0_1.md`
-5. `experiments/073cf_attempt2_network_hardened_v0_1_binding.json`
-6. `preregistration/2026-09-01_exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.md`
-7. `recovery/2026-09-01_exp073cf_seed_trigger_interface_audit.md`
-8. `recovery/2026-09-01_exp073cf_pre_activation_static_audit.md`
-9. `recovery/2026-09-01_exp073ce_terminal.md`
-10. `recovery/2026-09-01_exp073cd_q1_spill_reload_exact_equivalence_pass.md`
-11. `recovery/2026-09-01_exp073cc_q1_corrected_lifetime_exact_equivalence_pass.md`
-12. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
-13. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
-14. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
-15. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
-16. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+1. `recovery/2026-09-02_exp073cf_checkpoint_sync_v0_2_hosted_qa_pass.md`
+2. `recovery/2026-09-02_exp073cf_checkpoint_sync_repair_audit.md`
+3. `preregistration/2026-09-02_exp073cf_checkpoint_durability_sync_repair_v0_1.md`
+4. `recovery/2026-09-02_exp073cf_attempt2_terminal_infrastructure_incomplete.md`
+5. `preregistration/2026-09-01_exp073cf_attempt2_network_hardened_des_download_v0_1.md`
+6. `experiments/073cf_attempt2_network_hardened_v0_1_binding.json`
+7. `preregistration/2026-09-01_exp073cf_fullscale_memory_stable_wm_s2_successor_v0_1.md`
+8. `recovery/2026-09-01_exp073ce_terminal.md`
+9. `recovery/2026-09-01_exp073bz_remote_checkpoint_failover_pass.md`
+10. `recovery/2026-08-31_exp073bv_q1_exp073bw_q1_streaming_equivalence_terminal.md`
+11. `recovery/2026-08-31_exp073bj_exact_authority_pass_structure_diagnostic.md`
+12. `recovery/2026-08-31_exp073aq_wm_s1_repeatability_fail_authority.md`
+13. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
 
 ## Current frontier
 
-Exp073CF attempt2 run `33548649445` is terminal `completed/failure` at head `f9cb1eec582276776ddac3b1207686b1e01d3b6a`.
-
-Frozen classification:
+Exp073CF attempt2 run `33548649445` is terminal `completed/failure` at head `f9cb1eec582276776ddac3b1207686b1e01d3b6a` and remains frozen as:
 
 `INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073CF_ATTEMPT2`, `+0/+0`.
 
-This is **not** scientific repeatability FAIL. Both replica jobs failed before producing complete valid 39-band compact comparator inputs; `compare-compact`, `finalizer`, and `compare-final` were skipped.
+This is not scientific repeatability FAIL. Complete valid A/B 39-band compact comparator inputs were never both produced; comparator/finalizer were skipped.
 
-Latest repository-wide Actions coordination checks after the repair-design writes show:
+Durable checkpoint authority remains exactly:
 
-- queued runs: `0`;
-- in-progress runs: `0`.
+- A: 32/39, bands `0..31`, branch `checkpoints/exp073cf-wm-s2-a-v0-1`, head `5c7ccddb54afe1ad286d08abc6f7372aa5a11103`;
+- B: 28/39, bands `0..27`, branch `checkpoints/exp073cf-wm-s2-b-v0-1`, head `ce9189a1ccaabc62708f753897b9cab5f51cb9f4`.
 
-Attempt2 no longer holds an active execution lock, but no new self-hosted scientific run is authorized.
+Local-only attempt2 bands beyond those heads are non-authoritative and must be recomputed.
 
-## Exp073CF attempt2 immutable result
+Both replicas completed full-scale memory-stable Wm_S2 PCL under the observed home environment. A peak RSS `5652720 KiB`, B peak RSS `5606320 KiB`; both PCL exits were 0. This is infrastructure evidence only.
 
-### Replica A — job `99992335128`
+## Checkpoint durability/sync v0.2 QA
 
-Successfully crossed binding, exact R1, exact network-hardened DES size/SHA, spill preflight, memory-stable full-scale PCL, helper compile, exact checkpoint preflight, and entered 39-band heavy streaming.
+Prospective repair preregistration: `29a6800986aebff82dbecfe36885dfafb987d9a0`.
 
-PCL infrastructure observation: wall `40:32.94`, peak RSS `5652720 KiB`, exit `0`, reported swaps `0`.
+Versioned helper commit: `bc468ca73a3c4e281bd2b1ee46d6f7704bb54bb1` (`ci/dsir_checkpoint_git_sync_v0_2.sh`).
 
-Durable checkpoint authority: **32/39**, bands `0..31`, branch `checkpoints/exp073cf-wm-s2-a-v0-1`, head `5c7ccddb54afe1ad286d08abc6f7372aa5a11103`.
+Synthetic test commit: `3b4ddf5d4542724ebfea1940c21d42d794236b95`.
 
-Bands `32..35` were computed locally but are non-authoritative because durability push failed with GnuTLS handshake termination.
+Hosted-only QA workflow/head: `272a9df5ad196e46079f0257a4aef1b7f7f4c3e0`.
 
-Immutable diagnostic artifact: `9821303723`, digest `sha256:eace797a21daf69783b8cc2cad4a81c8b1dfc5652083d7cb803019d5d947c12b`, size `100960` bytes. It is partial/diagnostic only, not a complete comparator input.
+Immutable hosted run `33577308398`, job `100083999324`, `ubuntu-latest`, completed/success. Artifact `9827093387`, digest `sha256:b39a57c5e6caea56a803f5e0756b873910566d2215c7c675a8f12200b4fb1992`.
 
-### Replica B — job `99992335190`
+Artifact-bound helper SHA-256: `254a463de7609993a465c6d9cde4a961efed0957bae85d5cd34b54c47dc96fca`.
 
-Successfully crossed the same pre-heavy stages and completed full-scale PCL.
+Artifact-bound test SHA-256: `df7193a1b55b0e1b16387dc8a43fed020ec4e1839c4090575397dca7437cb9a3`.
 
-PCL infrastructure observation: wall `40:38.28`, peak RSS `5606320 KiB`, exit `0`, reported swaps `0`.
+Terminal receipt: `CHECKPOINT_SYNC_V0_2_SYNTHETIC_NONCLASSIFYING_PASS`, readiness `+0/+0`.
 
-Durable checkpoint authority: **28/39**, bands `0..27`, branch `checkpoints/exp073cf-wm-s2-b-v0-1`, head `ce9189a1ccaabc62708f753897b9cab5f51cb9f4`.
+Covered successfully:
 
-Bands `28..31` were computed locally but are non-authoritative because checkpoint sync failed before push with `fatal: a branch named 'checkpoints/exp073cf-wm-s2-b-v0-1' already exists`.
+- verified ABSENT distinguished from query transport failure;
+- detached parentless first checkpoint commit, with no persistent local `checkpoints/...` ref;
+- PRESENT advance with exact discovered parent;
+- compare-and-push lease semantics;
+- exact independent post-push remote-head verification before durability token;
+- exact pinned restore and payload SHA preservation;
+- wrong pinned restore head fail-closed;
+- query transport UNKNOWN fail-closed;
+- rejected/failed push never durable;
+- deterministic stale lease/race fail-closed without overwriting competitor.
 
-Immutable diagnostic artifact: `9823905988`, digest `sha256:df4ef10a6caed390e6ec40aecf8e0be2ed46c1876c154ffd0856f0e594619e04`, size `100960` bytes. It is partial/diagnostic only, not a complete comparator input.
-
-## Checkpoint durability/sync repair now prospectively frozen
-
-Prospective infrastructure-only preregistration commit: `29a6800986aebff82dbecfe36885dfafb987d9a0`.
-
-Static repair audit commit: `7d1d511321e9f0197db067b690f339bb0fd9d93d`.
-
-Frozen checkpoint git sync helper `ci/dsir_checkpoint_git_sync_v0_1.sh` at commit `96886916b41dce7f0a40807622928c841ef5fc58` has two exposed infrastructure weaknesses: remote transport uncertainty can be conflated with branch absence by the binary `git ls-remote --exit-code` decision; and the absent path creates a persistent local checkpoint-branch ref that can collide in linked worktrees. Replica A independently exposed TLS push fragility.
-
-The preregistered repair requires:
-
-1. tri-state remote-head discovery: PRESENT / verified ABSENT / UNKNOWN_TRANSPORT_FAILURE, with UNKNOWN retried then fail-closed;
-2. no persistent local branch refs named `checkpoints/...`; construct checkpoint commits detached;
-3. compare-and-swap/lease push against the expected previous remote state, no merge/rebase rescue;
-4. post-push remote-head verification equal to the exact local checkpoint commit before durability authority is emitted;
-5. exact pinned restore and frozen semantic/SHA validation;
-6. for Exp073CF continuation, restore only A head `5c7ccddb54afe1ad286d08abc6f7372aa5a11103` = 32/39 and B head `ce9189a1ccaabc62708f753897b9cab5f51cb9f4` = 28/39. All local-only bands must be recomputed.
-
-A practical query mechanism is `git ls-remote --heads origin "refs/heads/$branch"` without `--exit-code`: command success + empty stdout is verified ABSENT; command success + exact ref line is PRESENT; command failure is UNKNOWN transport/protocol state. This distinction must be covered by nonclassifying tests before a successor binding.
+This QA is synthetic/infrastructure-only and does not validate real-survey Wm_S2 science.
 
 ## Preserved scientific authority
 
@@ -96,8 +81,7 @@ A practical query mechanism is `git ls-remote --heads origin "refs/heads/$branch
 - **Exp073BW**: exact streaming-equivalence PASS, artifact `9774112002`.
 - **Exp073BZ**: remote checkpoint/failover exact-byte PASS, artifact `9776592370`.
 - **Exp073CC/CD/CE**: synthetic/nonclassifying exact-equivalence PASS evidence only, all `+0/+0`.
-- **Exp073CF attempt1**: infrastructure incomplete, `+0/+0`.
-- **Exp073CF attempt2**: infrastructure incomplete, `+0/+0`.
+- **Exp073CF attempt1/attempt2**: infrastructure incomplete, `+0/+0`.
 
 ## Frozen Article-3 boundaries and order
 
@@ -109,18 +93,27 @@ Required order:
 
 No G8 jump.
 
+## Coordination state
+
+Latest repository-wide checks after the hosted QA and recovery write show queued runs `0` and in-progress runs `0`. No new self-hosted scientific run is authorized by the current records.
+
 ## Exact next gate
 
-Implement a **new versioned checkpoint-sync helper** satisfying the prospectively frozen R1-R6 repair contract, then run hosted/synthetic nonclassifying tests only. Required cases: PRESENT, verified ABSENT, query transport failure, push transport failure/retry, stale lease/race, exact post-push verification, and exact pinned restore. Verify that checkpoint payload bytes/semantic validator contract remain unchanged.
+Perform a static R1-R6 integration audit against the future Exp073CF continuation workflow/specification. Verify:
 
-Only after that evidence may a fresh infrastructure-only binding be prepared. No self-hosted scientific successor is authorized by the current records.
+1. exact restore-root binding A=`5c7ccddb54afe1ad286d08abc6f7372aa5a11103` with exactly 32 persisted bands and B=`ce9189a1ccaabc62708f753897b9cab5f51cb9f4` with exactly 28;
+2. the unchanged frozen checkpoint semantic/SHA validator runs immediately after restore before continuation;
+3. helper v0.2 is the only checkpoint Git transport implementation and no persistent local checkpoint refs are created;
+4. scientific lineage, arithmetic, chunk size 4, `OMP_NUM_THREADS=8`, comparator/finalizer criteria, and no-rescue policy remain unchanged;
+5. heavy heartbeat remains <=60 s with named stage, persisted completed/total, elapsed/ETA when estimable, threads, progress bar, and `intra_unit_progress=unknown` when exact fraction is unknowable.
 
-- ✅ Exp073CF attempt2 terminally classified infrastructure incomplete, not scientific FAIL.
-- ✅ Both full-scale memory-stable PCL replicas completed under the observed environment.
+If and only if this static audit passes, prepare a fresh infrastructure-only successor binding pinning helper v0.2 and all unchanged scientific lineage. Do not trigger self-hosted science merely from this QA.
+
+- ✅ Exp073CF attempt2 remains correctly classified infrastructure incomplete, not scientific FAIL.
 - ✅ Durable checkpoint authority preserved exactly: A `32/39`, B `28/39`.
-- ✅ Checkpoint repair contract prospectively frozen; no scientific semantics changed.
-- ✅ Exp073BJ and Exp073BV/BW/BZ authority preserved.
-- ❌ No complete A/B comparator inputs; no repeatability classification for Wm_S2.
+- ✅ Checkpoint sync v0.2 hosted synthetic QA PASS, `+0/+0`.
+- ✅ Exp073BJ/BV/BW/BZ authority preserved.
+- ❌ No complete A/B Wm_S2 comparator inputs; no repeatability classification.
 - ❌ Exp073AQ permanent scientific FAIL preserved.
 - ❌ Exp073BD remains provisional and forbidden downstream.
 - ❌ Layer A/B, covariance/whitening, nuisance SVD, quotient/relation/null, G7/G8/G9 unauthorized.
