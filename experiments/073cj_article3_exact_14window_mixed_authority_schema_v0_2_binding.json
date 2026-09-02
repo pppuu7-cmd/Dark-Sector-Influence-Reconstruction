@@ -1,0 +1,14 @@
+{
+  "schema": "DSIR_EXP073CJ_BINDING_V0_2",
+  "prereg_commit": "50509dfd654508e3c1d3edb51b64374f1e5b205e",
+  "helper_commit": "b2bd80750c89a707727a49bd8032d2af7d53c6cb",
+  "workflow_commit": "10d8996edf88012a894867f6d57a742b3edd22e4",
+  "wm_s2_authority_class": "exp073ci_v0_2",
+  "wm_s2_run": 33646799130,
+  "wm_s2_job": 100304043991,
+  "wm_s2_artifact": 9853165664,
+  "wm_s2_artifact_digest": "sha256:fcfccb6768948ffe34d28e9ed32da64d3b1d071704028fe6f312c1ab8b440f57",
+  "wm_s2_window_sha": "96248e7699a5a12945854db2c9af150affcfe13f4f9dc0bfcbb87b99f92ff087",
+  "historical_exp073cf_v0_1_fail_preserved": true,
+  "readiness_delta": [0, 0]
+}
