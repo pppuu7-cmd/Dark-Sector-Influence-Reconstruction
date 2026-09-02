@@ -1,0 +1,29 @@
+{
+  "experiment": "Exp073CF",
+  "task": "Wm_S2",
+  "state": "AUTHORIZED_CONTINUATION_SUCCESSOR_V0_1",
+  "scientific_contract_changed": false,
+  "workflow_path": ".github/workflows/exp073cf-continuation-successor-v0-1.yml",
+  "workflow_commit": "d9ec433ae002c93f7ae49c1b2b5973b585f98a99",
+  "binding_path": "experiments/073cf_continuation_successor_v0_1_binding.json",
+  "binding_commit": "925a345a0c1a05ab18fa0d7f0e7332b8b85f48d9",
+  "predecessor_run_id": 33548649445,
+  "predecessor_classification": "INFRASTRUCTURE_EXECUTION_INCOMPLETE_NO_SCIENTIFIC_CLASSIFICATION_EXP073CF_ATTEMPT2",
+  "restore_heads": {
+    "A": "5c7ccddb54afe1ad286d08abc6f7372aa5a11103",
+    "B": "ce9189a1ccaabc62708f753897b9cab5f51cb9f4"
+  },
+  "threads": 8,
+  "chunk_bands": 4,
+  "heartbeat_seconds": 60,
+  "max_parallel": 1,
+  "coordination_requires_queued_zero": true,
+  "coordination_requires_in_progress_zero": true,
+  "coordination_check_excludes_current_hosted_authorization_run": true,
+  "self_hosted_runner_labels": ["self-hosted", "Linux", "X64"],
+  "dispatch_in_same_step_as_activation_creation_forbidden": true,
+  "execution_requires_separate_final_read_only_collision_binding_audit_pass": true,
+  "readiness_increment_authorized": false,
+  "verified_readiness_percent": 52.0,
+  "draft_data_readiness_percent": 53.7
+}
