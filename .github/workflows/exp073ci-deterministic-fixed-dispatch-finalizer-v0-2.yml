@@ -1,0 +1,150 @@
+name: Exp073CI deterministic fixed-dispatch finalizer exact v0.2
+
+on:
+  push:
+    paths:
+      - 'ci/exp073ci_deterministic_fixed_dispatch_finalizer_v0_2.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OPENBLAS_CORETYPE: 'Nehalem'
+  OPENBLAS_VERBOSE: '2'
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  authorize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fail-closed prospective v0.2 authority binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          export P="$(git log -1 --format=%H -- preregistration/2026-09-02_exp073ci_deterministic_fixed_dispatch_finalizer_v0_2.md)"
+          export H="$(git log -1 --format=%H -- ci/exp073ci_deterministic_fixed_dispatch_finalizer_v0_2.py)"
+          export W="$(git log -1 --format=%H -- .github/workflows/exp073ci-deterministic-fixed-dispatch-finalizer-v0-2.yml)"
+          export B="$(git log -1 --format=%H -- experiments/073ci_deterministic_fixed_dispatch_finalizer_v0_2_binding.json)"
+          export S="$(git log -1 --format=%H -- ci/exp073az_article3_low_memory_general_coupling_v0_1.py)"
+          python3 - <<'PY'
+          import json,os
+          b=json.load(open('experiments/073ci_deterministic_fixed_dispatch_finalizer_v0_2_binding.json'))
+          t=json.load(open('ci/exp073ci_deterministic_fixed_dispatch_finalizer_v0_2.trigger'))
+          assert b['experiment']=='Exp073CI' and b['version']=='v0_2'
+          assert b['prereg_commit']==os.environ['P']
+          assert b['helper_commit']==os.environ['H']
+          assert b['workflow_commit']==os.environ['W']
+          assert b['production_source_path_commit']==os.environ['S']=='d77b7ba88801f6788f3d386e72b445c7859c7153'
+          assert b['fixed_openblas_coretype']=='Nehalem'
+          assert b['compact_a_artifact_id']==9841348367
+          assert b['compact_b_artifact_id']==9848067175
+          assert b['compact_sha256']=='963dfd79bd49119d2c3124de3507330b3c47637b41dcbd7b9536f617186ef7bd'
+          assert b['expected_k_sha256']=='c24456b19e7248cc7ad68502fc78d6f75b885665641d662b1d9c789cf473f795'
+          assert b['expected_w_sha256']=='96248e7699a5a12945854db2c9af150affcfe13f4f9dc0bfcbb87b99f92ff087'
+          assert b['exp073cf_fail_preserved'] is True and b['readiness_delta']==[0,0]
+          assert t['state']=='ACTIVATE_EXP073CI_V0_2' and t['binding_commit']==os.environ['B'] and t['workflow_commit']==os.environ['W']
+          PY
+
+  worker:
+    needs: authorize
+    strategy:
+      fail-fast: false
+      matrix:
+        worker: [R1, R2, R3, R4]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install frozen numerical environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$RUNNER_TEMP/miniforge"; ENV="$RUNNER_TEMP/exp073ci-env"
+          curl --fail --location --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"
+          bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"
+          "$MF/bin/conda" create -y -p "$ENV" -c conda-forge \
+            'python=3.11.16=h8ab3286_0_cpython' \
+            'numpy=2.4.6=py311h2e04523_0' \
+            'scipy=1.17.1=py311hbe70eeb_1' \
+            'libopenblas=0.3.34=pthreads_hcf972fe_1' \
+            'namaster=2.7=py311h868057a_1' \
+            'healpy=1.20.0=py311hdff0d1d_0' astropy
+          "$ENV/bin/python" - <<'PY'
+          import importlib.metadata,numpy as np,scipy
+          assert np.__version__=='2.4.6' and scipy.__version__=='1.17.1'
+          assert importlib.metadata.version('pymaster').startswith('2.7')
+          PY
+          echo "FINAL_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073cf-continuation-compact-A-313a8b332dc982154eb14671e68ada9ebd2c10e5
+          path: external/A
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33601943300
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073cf-continuation-compact-B-313a8b332dc982154eb14671e68ada9ebd2c10e5
+          path: external/B
+          github-token: ${{ github.token }}
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 33601943300
+      - name: Execute fixed-Nehalem exact finalizer A/B lanes
+        shell: bash
+        env:
+          WORKER: ${{ matrix.worker }}
+        run: |
+          set -euo pipefail
+          out="data/derived/g7/exp073ci_${WORKER}"
+          mkdir -p "$out"
+          lscpu > "$out/lscpu.txt"
+          cat /proc/cpuinfo > "$out/cpuinfo.txt"
+          PYTHONPATH="$GITHUB_WORKSPACE/ci" "$FINAL_PY" ci/exp073ci_deterministic_fixed_dispatch_finalizer_v0_2.py worker \
+            --compact-a external/A --compact-b external/B --worker "$WORKER" --out-dir "$out"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ci-worker-${{ matrix.worker }}-${{ github.sha }}
+          path: data/derived/g7/exp073ci_${{ matrix.worker }}/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  compare:
+    needs: worker
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'numpy==2.4.6'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: exp073ci-worker-*-${{ github.sha }}
+          path: external/workers
+      - name: Frozen exact comparator
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          python ci/exp073ci_deterministic_fixed_dispatch_finalizer_v0_2.py compare \
+            --root external/workers \
+            --out-json data/derived/g7/exp073ci_deterministic_fixed_dispatch_finalizer_exact_v0_2.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ci-finalizer-v0-2-authority-${{ github.sha }}
+          path: data/derived/g7/exp073ci_deterministic_fixed_dispatch_finalizer_exact_v0_2.json
+          if-no-files-found: error
+          retention-days: 90
