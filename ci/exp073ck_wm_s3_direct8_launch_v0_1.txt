@@ -1,0 +1,8 @@
+EXP073CK_WM_S3_DIRECT8_RESOURCE_V0_1
+activation_commit=25536dda44acb83a575296c358de8b687649c348
+binding_commit=f30c4a23094f2685da62c3f69379dbda768a627f
+workflow_commit=a5744c6e04736d54315d3593e6945f99583c3588
+threads=8
+reference_threads=1
+source_bin=3
+signature=0,2,0,2
