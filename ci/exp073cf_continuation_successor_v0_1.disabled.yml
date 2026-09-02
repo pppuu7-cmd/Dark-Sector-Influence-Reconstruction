@@ -1,0 +1,86 @@
+# NON-EXECUTABLE STATIC SPECIFICATION ONLY.
+# This file is intentionally outside .github/workflows and has no trigger.
+# It MUST NOT be used to launch DSIR-HOME-PC work without a separate prospective binding.
+
+spec: EXP073CF_CONTINUATION_SUCCESSOR_V0_1_DISABLED
+scientific_contract_changed: false
+self_hosted_authorized: false
+
+historical_authority:
+  source_commit: f9cb1eec582276776ddac3b1207686b1e01d3b6a
+  checkpoint_sync_contract_commit: 96886916b41dce7f0a40807622928c841ef5fc58
+  stream_driver_commit: 583c34420d5f02a1ac8e77efb9625bbc3ab73de8
+  range_helper_commit: fa971eb4ef8c47e81eb0bb4e13eeb76f7cf42e22
+  bw_helper_commit: 9fb0ecb79986cf5f542760377533a685745b31e2
+  checkpoint_utility_commit: 0b0324afb69acb16cbea97bb924b9be48f303dde
+  production_helper_commit: d77b7ba88801f6788f3d386e72b445c7859c7153
+  corrected_authority_tail_commit: 80c273d89f20cd91065b18236b50060328d33ae8
+
+continuation_provenance:
+  prereg_commit: 36853b723b172a6038c6d3023805f08f37ffac72
+  wrapper_commit: ce818db7ae53376ba6e5f7934c24f4c5acb3c75c
+  transport_helper_commit: bc468ca73a3c4e281bd2b1ee46d6f7704bb54bb1
+  wrapper_path: ci/exp073cf_continuation_wm_s2_v0_1.py
+  transport_path: ci/dsir_checkpoint_git_sync_v0_2.sh
+  historical_payload_fingerprint_rewritten: false
+
+runtime:
+  runs_on: [self-hosted, Linux, X64]
+  max_parallel: 1
+  omp_num_threads: 8
+  chunk_bands: 4
+  heartbeat_seconds: 60
+  heartbeat_threads: 8
+  canonical_dtype: <f8
+  canonical_shape: [39, 12288]
+  signature: [0, 2, 0, 2]
+  edges: [0, 30, 60, 90, 120, 150, 180, 210, 240, 272, 309, 351, 398, 452, 513, 582, 661, 750, 852, 967, 1098, 1247, 1416, 1608, 1826, 2073, 2354, 2673, 3035, 3446, 3914, 4444, 5047, 5731, 6508, 7390, 8392, 9529, 10821, 12288]
+
+restore:
+  A:
+    branch: checkpoints/exp073cf-wm-s2-a-v0-1
+    expected_head: 5c7ccddb54afe1ad286d08abc6f7372aa5a11103
+    expected_completed_prefix: [0, 31]
+  B:
+    branch: checkpoints/exp073cf-wm-s2-b-v0-1
+    expected_head: ce9189a1ccaabc62708f753897b9cab5f51cb9f4
+    expected_completed_prefix: [0, 27]
+  command_template: >-
+    bash ci/dsir_checkpoint_git_sync_v0_2.sh restore "$CHECKPOINT_DIR" "$CHECKPOINT_BRANCH" "$EXPECTED_HEAD"
+  post_restore_requirement: >-
+    The frozen historical BandCheckpointStore must immediately validate the exact historical contract/fingerprint;
+    any wrong head, row SHA, non-prefix state, source_commit, checkpoint_sync_contract_commit, helper, edge,
+    signature, thread, chunk, threshold or lineage mismatch fails closed before new scientific arithmetic.
+
+heavy:
+  only_driver: ci/exp073cf_continuation_wm_s2_v0_1.py
+  forbidden_driver_direct_call: ci/exp073ca_checkpoint_streaming_wm_s2_v0_1.py
+  heartbeat_command_template: >-
+    bash ci/dsir_action_heartbeat_v0_1.sh "Exp073CF continuation Wm_S2 compact replica=${REPLICA}" 60 39 8 "$CHECKPOINT_DIR" --
+    /usr/bin/time -v env PYTHONPATH="$GITHUB_WORKSPACE/ci" "$NMT_PY"
+    ci/exp073cf_continuation_wm_s2_v0_1.py --pcl-npy "$PCL" --ca-so build/exp073ca.so
+    --checkpoint-dir "$CHECKPOINT_DIR" --checkpoint-branch "$CHECKPOINT_BRANCH" --replica "$REPLICA"
+    --out-npz "$OUT_NPZ" --out-json "$OUT_JSON"
+  heartbeat_semantics: named_stage_persisted_completed_total_elapsed_eta_when_estimable_threads_progress_bar_intra_unit_progress_unknown
+
+output_contract:
+  compact_status: COMPLETE_VALID_COMPARATOR_INPUT_EXP073CA_WM_S2_COMPACT_V0_1
+  compact_key: A
+  compact_dtype: <f8
+  compact_shape: [39, 12288]
+  require_finite: true
+
+comparison_and_finalization:
+  frozen_source_workflow_commit: de881f52d2639fc16400796a33514bf69ecad1f8
+  compact_comparator: exact np.array_equal plus exact SHA-256 equality; no tolerance/ULP/rounding/averaging/smoothing/majority/preferred-replica rescue
+  finalizer_helper_commit: d77b7ba88801f6788f3d386e72b445c7859c7153
+  final_window_key: window
+  final_dtype: <f8
+  final_shape: [39, 12288]
+  final_comparator: exact np.array_equal plus exact SHA-256 equality; no rescue
+  readiness_increment_requires_separate_frozen_ledger_update: true
+
+activation_guard:
+  required_before_any_real_workflow: separate prospective successor binding with exact workflow commit and trigger/head commit
+  required_coordination_check: repository-wide queued=0 and in_progress=0 immediately before binding and trigger
+  no_implicit_authorization_from_this_file: true
