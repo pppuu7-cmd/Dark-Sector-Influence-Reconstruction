@@ -1,0 +1,45 @@
+name: Exp073CF continuation v0.1 hosted QA
+
+on:
+  push:
+    paths:
+      - 'ci/exp073cf_continuation_wm_s2_v0_1.py'
+      - 'ci/test_exp073cf_continuation_v0_1.py'
+      - '.github/workflows/exp073cf-continuation-v0-1-hosted-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install lightweight QA dependency
+        run: python -m pip install --disable-pip-version-check numpy
+      - name: Run synthetic nonclassifying continuation compatibility QA
+        env:
+          PYTHONPATH: ci
+          DSIR_QA_RECEIPT: exp073cf_continuation_v0_1_qa_receipt.json
+        run: python ci/test_exp073cf_continuation_v0_1.py
+      - name: Bind source hashes
+        run: |
+          sha256sum \
+            ci/exp073cf_continuation_wm_s2_v0_1.py \
+            ci/test_exp073cf_continuation_v0_1.py \
+            ci/dsir_checkpoint_git_sync_v0_2.sh \
+            exp073cf_continuation_v0_1_qa_receipt.json \
+            > exp073cf_continuation_v0_1_sha256.txt
+          cat exp073cf_continuation_v0_1_sha256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073cf-continuation-v0-1-hosted-qa
+          path: |
+            exp073cf_continuation_v0_1_qa_receipt.json
+            exp073cf_continuation_v0_1_sha256.txt
+          if-no-files-found: error
