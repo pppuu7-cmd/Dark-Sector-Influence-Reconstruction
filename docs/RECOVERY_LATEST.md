@@ -8,74 +8,88 @@ Repository state and immutable GitHub Actions artifacts outrank chat wording. Sy
 
 ## Read first
 
-1. `recovery/2026-09-02_exp073cf_continuation_successor_terminal_finalizer_exact_fail.md`
-2. `preregistration/2026-09-02_exp073cg_finalizer_cross_host_determinism_v0_1.md`
-3. `experiments/073cg_finalizer_cross_host_determinism_v0_1_binding.json`
-4. `ci/exp073cg_finalizer_determinism_v0_1.py`
-5. `.github/workflows/exp073cg-finalizer-cross-host-determinism-v0-1.yml`
-6. `recovery/2026-09-02_exp073cf_continuation_activation_final_audit_pass.md`
-7. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
+1. `recovery/2026-09-02_exp073ch_finalizer_environment_dispatch_historical_b_reproduced.md`
+2. `preregistration/2026-09-02_exp073ch_finalizer_environment_dispatch_differential_v0_1.md`
+3. `experiments/073ch_finalizer_environment_dispatch_differential_v0_1_binding.json`
+4. `ci/exp073ch_finalizer_environment_dispatch_v0_1.py`
+5. `.github/workflows/exp073ch-finalizer-environment-dispatch-differential-v0-1.yml`
+6. `recovery/2026-09-02_exp073cf_continuation_successor_terminal_finalizer_exact_fail.md`
+7. `recovery/2026-09-02_exp073cg_hosted_finalizer_cross_host_exact_stable_not_reproduced.md`
+8. `docs/ARTICLE3_DUAL_READINESS_ACCOUNTING_2026-08-31.md`
 
-## Current scientific frontier — Exp073CF terminal
+## Scientific authority — Exp073CF remains terminal FAIL at finalizer
 
-Exp073CF continuation successor run `33601943300`, head `313a8b332dc982154eb14671e68ada9ebd2c10e5`, reached complete A/B authority inputs.
-
-Replica A job `100157400671` and replica B job `100157400821` both completed all 39/39 bands successfully on `DSIR-HOME-PC`.
+Exp073CF continuation successor run `33601943300` reached complete A/B authority inputs; both A and B completed 39/39 bands on `DSIR-HOME-PC`.
 
 The full-scale compact A/B comparator is an exact scoped PASS:
-
-- job `100260974130`;
+- comparator job `100260974130`;
 - canonical shape `[39,12288]`;
 - `array_equal=true`;
-- PCL SHA A=B `4d5516c56aa48b2b169512bb61a0b09ded6982249b4af41677eeac49298fca84`;
-- compact SHA A=B `963dfd79bd49119d2c3124de3507330b3c47637b41dcbd7b9536f617186ef7bd`;
-- token `PASS_EXP073CF_WM_S2_COMPACT_EXACT_V0_1`;
+- compact canonical SHA A=B `963dfd79bd49119d2c3124de3507330b3c47637b41dcbd7b9536f617186ef7bd`;
 - authority artifact `9848084775`, digest `sha256:29ac6e91f703734cfffcbffd1504fda9c861aa12dcb88822b83af50842983dd2`.
 
-The frozen independent finalizer exact comparator is a scientific repeatability FAIL:
+The frozen independent finalizers failed exact repeatability:
+- final A W SHA `fc94c71f8e004fe3340d7ab3df79a70b93d0236902e7f8d72f7387c33829de84`;
+- final B W SHA `bed762740b625f932f016d0988be17500a2583daee08bee9a5da550de786193e`;
+- final comparator job `100261645358`;
+- token `SCIENTIFIC_REPEATABILITY_FAIL_EXP073CF_WM_S2_FINALIZER_EXACT_V0_1`;
+- authority artifact `9848162380`, digest `sha256:f291447e109b2149958114baa30baf37edb6aa75efe9c2b41498d88fe4e193a1`.
 
-- finalizer A job `100261101481`, final artifact `9848151035`, digest `sha256:51c89b5ebbb06138f29b51a7b871f9519aff6c9e72475825e2082610d77eef17`, window SHA `fc94c71f8e004fe3340d7ab3df79a70b93d0236902e7f8d72f7387c33829de84`;
-- finalizer B job `100261101527`, final artifact `9848148422`, digest `sha256:a124bd9c796b152cf2536f10ecdaaa2eeb67254f6f80e46aed13adb48f65a1d7`, window SHA `bed762740b625f932f016d0988be17500a2583daee08bee9a5da550de786193e`;
-- final exact comparator job `100261645358`;
-- `array_equal=false`, `sha_equal=false`, `scientific_authority=false`, no tolerance;
-- terminal token `SCIENTIFIC_REPEATABILITY_FAIL_EXP073CF_WM_S2_FINALIZER_EXACT_V0_1`;
-- final authority artifact `9848162380`, digest `sha256:f291447e109b2149958114baa30baf37edb6aa75efe9c2b41498d88fe4e193a1`.
+This FAIL is permanent historical authority. No tolerance/ULP/rounding/averaging/smoothing/preferred-replica or environment rescue may reclassify it.
 
-The green GitHub workflow conclusion does not override the scientific comparator payload. Exp073CF's finalizer exact FAIL is permanent historical authority. No tolerance/ULP/rounding/averaging/preferred-replica rescue is allowed.
+## Diagnostic authority — Exp073CG
 
-## Current diagnostic frontier — Exp073CG
+Exp073CG run `33635554899` is terminal diagnostic/nonclassifying `+0/+0`. Four independent `ubuntu-24.04` workers were exact-stable and all produced K SHA `c24456b19e7248cc7ad68502fc78d6f75b885665641d662b1d9c789cf473f795` and W SHA equal to historical A `fc94c71...`. Status: `EXP073CG_DIAG_CROSS_HOST_EXACT_STABLE_NOT_REPRODUCED`. Authority artifact `9848673390`, digest `sha256:5470b57030b42c6e9da71f3a056e84ddca783d55ca90e61a36ded4ce7a87a641`.
 
-Exp073CG is a prospectively preregistered hosted-only numerical determinism diagnostic, `+0/+0`. It cannot change Exp073CF's classification.
+## Current diagnostic result — Exp073CH isolates native BLAS dispatch
 
-Frozen components:
+Exp073CH is a prospectively preregistered hosted-only diagnostic, `scientific_authority=false`, `+0/+0`.
 
-- prereg commit `c5ae972cc66e13ff9654988fe10a57bb5019a746`;
-- helper commit `4e81313382f993b9ab7d4414fe4d650ddee83867`;
-- workflow commit `c06e91ae51832a7d30d2903be2d1baedc21e87c8`;
-- binding commit `ce04e90be14a829bc9c2b5a60b094015b56ec24b`;
-- trigger/head commit `6b6f85ee611c8fd0b8cde455ab349dd9fcd38b0c`;
-- run `33635554899`.
+Frozen provenance:
+- preregistration commit `fe66db14ed621f2018ed64f43d11a0c713fee99d`;
+- helper commit `79299e0e07f9993ef346a6d36a36dbd0bb789cac`;
+- workflow commit `debf53af671ea51ab6c429c56a91b31836285b76`;
+- binding commit `8450ee934af9bf4c43026d2a8f4fd7a290bea9d8`;
+- trigger/head commit `063ab1ee804d0a4b4d36f843a5ae29e252f2db0d`;
+- run `33645970816`.
 
-Exp073CG uses the immutable Exp073CF compact-A artifact `9841348367` and exact compact content SHA `963dfd79bd49119d2c3124de3507330b3c47637b41dcbd7b9536f617186ef7bd`. Four independent GitHub-hosted Ubuntu workers test exact K construction, repeated same-process solves, fresh-process solves and cross-host solves while capturing CPU/NumPy/OpenBLAS runtime. The home runner is not used.
+Jobs:
+- authorize `100300676816` success;
+- R1 `100300734239` success;
+- R2 `100300734241` success;
+- R3 `100300734189` success;
+- R4 `100300734176` success;
+- aggregate comparator `100301228825` success.
 
-Preregistered diagnostic outcomes distinguish:
+Aggregate diagnostic authority artifact `9852842831`, digest `sha256:49528a12126cf0c9b83828f54d6b5543f82ee56dbbe0a477d8cd218cea766136`.
 
-- K construction nondeterminism;
-- within-worker solve nondeterminism;
-- cross-host BLAS/LAPACK solve nondeterminism;
-- exact cross-host stability not reproducing the original mismatch.
+Terminal status: `EXP073CH_DIAG_HISTORICAL_B_SHA_REPRODUCED_BY_DISPATCH`.
 
-Every outcome remains diagnostic/nonclassifying `+0/+0`.
+All workers and regimes retained the exact K SHA `c24456b19e7248cc7ad68502fc78d6f75b885665641d662b1d9c789cf473f795`. Three fresh-process repeats per worker/regime were internally exact.
+
+Native OpenBLAS dispatch separated by CPU/kernel:
+- R1 AMD EPYC 7763, `Core: Zen` -> W SHA `fc94c71...` (historical A);
+- R2 AMD EPYC 9V74, `Core: Zen` -> W SHA `fc94c71...`;
+- R3 Intel Xeon Platinum 8573C, `Core: Cooperlake` -> W SHA `bed76274...` (**historical B exactly**);
+- R4 AMD EPYC 9V74, `Core: Zen` -> W SHA `fc94c71...`.
+
+Forced OpenBLAS core dispatch was cross-worker exact for each core and produced deterministic but core-dependent exact W hashes:
+- `Nehalem` -> `96248e7699a5a12945854db2c9af150affcfe13f4f9dc0bfcbb87b99f92ff087`;
+- `Sandybridge` -> `85195fade822de2218a21840835c7b950a90eb1493fd42568e33ff4f36ed2f6a`;
+- `Haswell` -> `fc94c71f8e004fe3340d7ab3df79a70b93d0236902e7f8d72f7387c33829de84`.
+
+Therefore the historical A/B finalizer bit divergence is isolated to CPU-dependent/native OpenBLAS linear-solve kernel dispatch, with identical compact input and identical K. This diagnosis does not rewrite Exp073CF; it explains why its frozen exact-repeatability contract failed.
 
 ## Preserved scientific authority
 
-- **Exp073BJ** run `33379013167`: Track-A exact Wm_S1 authority PASS; artifact `9758841785`, digest `sha256:a7d5b30e0a8ba4ce6d8437db82982f69f41c01ac6a58c6cb121d4cbbb2c4f008`.
+- **Exp073BJ**: Wm_S1 Track-A exact PASS.
 - **Exp073AQ**: permanent historical exact-repeatability scientific FAIL.
 - **Exp073BD**: `P3 PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE`, forbidden downstream.
-- **Exp073BV** source-lineage PASS; **Exp073BW** exact streaming-equivalence PASS; **Exp073BZ** checkpoint/failover PASS.
-- **Exp073CC/CD/CE**: synthetic/nonclassifying, `+0/+0`.
-- **Exp073CF attempt1/attempt2**: infrastructure incomplete, `+0/+0`.
+- **Exp073BV** source-lineage PASS; **Exp073BW** streaming-equivalence PASS; **Exp073BZ** checkpoint/failover PASS.
+- **Exp073CC/CD/CE**: synthetic/nonclassifying `+0/+0`.
+- **Exp073CF attempt1/attempt2**: infrastructure incomplete `+0/+0`.
 - **Exp073CF continuation successor**: compact exact scoped PASS; finalizer exact scientific repeatability FAIL.
+- **Exp073CG/CH**: diagnostic/nonclassifying `+0/+0`.
 
 ## Frozen Article-3 order/boundaries
 
@@ -85,15 +99,14 @@ Required order: `validated physical forward/power-input bridges -> preregistered
 
 ## Exact next gate
 
-Consume run `33635554899` when terminal. Do not rerun Exp073CF full-scale compact A/B: its exact compact repeatability is already established.
+A **NEW prospectively versioned deterministic-finalizer experiment** is now permitted. It must be preregistered before execution, freeze one explicit BLAS dispatch contract instead of native CPU dispatch, use immutable compact authority inputs, run independent hosted workers/fresh processes, and demand exact equality with no tolerance. The dispatch choice must be justified prospectively by reproducibility/architecture rather than by choosing a preferred historical replica. Any PASS applies only to the new finalizer version and can never reclassify Exp073CF.
 
-If Exp073CG isolates numerical solve nondeterminism, the next permitted scientific-engineering step is a **new prospectively versioned deterministic finalizer**, preregistered before execution and validated against the immutable compact authority. It may establish a new version's repeatability but may never rewrite Exp073CF's historical FAIL.
+No self-hosted heavy computation is required for this gate.
 
-No self-hosted heavy work is authorized for the Exp073CG diagnosis.
-
-- ✅ A/B full-scale compact exact repeatability established.
-- ❌ Exp073CF frozen finalizer exact repeatability failed.
-- 🟡 Exp073CG hosted-only determinism diagnosis active/dispatched.
+- ✅ Exp073CF full-scale compact exact repeatability established.
+- ❌ Exp073CF frozen finalizer exact repeatability permanently failed.
+- ✅ Exp073CH reproduced historical B exactly and isolated native BLAS dispatch sensitivity.
+- 🟡 New deterministic-finalizer contract not yet preregistered/executed.
 - ❌ G7/G8 remain unauthorized.
 
-**Home runner = FREE for DSIR frontier diagnosis. Verified: 52.0% | Draft/data: 53.7% | readiness delta +0/+0.**
+**Home runner = FREE. Verified: 52.0% | Draft/data: 53.7% | readiness delta +0/+0.**
