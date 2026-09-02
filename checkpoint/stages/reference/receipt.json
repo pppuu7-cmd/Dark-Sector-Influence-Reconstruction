@@ -1,0 +1,32 @@
+{
+  "band_hi_exclusive": 8,
+  "band_lo": 0,
+  "complete": true,
+  "contract_fingerprint": "9e10b26b57464cc70ce8cb0c5cfedbab118662619ea314beed2f854d9ed65978",
+  "cpu_fraction_of_8": null,
+  "dtype": "<f8",
+  "effective_cpu_cores": 0.9932291519128218,
+  "experiment": "Exp073CM",
+  "format": "DSIR_UNIVERSAL_SELF_HOSTED_CHECKPOINT_V0_1",
+  "payload_sha256": "36ee9fca9fb276a30d8ebb97cb04fddc7e95cff18fb29248c033bb364ea2d8cf",
+  "process_cpu_seconds": 12.536271,
+  "ru_maxrss_kib_after": 39240,
+  "ru_maxrss_kib_before": 34768,
+  "shape": [
+    8,
+    12288
+  ],
+  "signature": [
+    0,
+    2,
+    0,
+    2
+  ],
+  "stage": "reference",
+  "swap_increase_kib": 0,
+  "swap_used_kib_after": 250336,
+  "swap_used_kib_before": 250532,
+  "task": "Wm_S3",
+  "threads": 1,
+  "wall_seconds": 12.62173082199297
+}
