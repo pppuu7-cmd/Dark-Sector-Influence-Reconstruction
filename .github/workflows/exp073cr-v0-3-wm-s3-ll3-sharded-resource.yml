@@ -30,7 +30,8 @@ jobs:
           a=json.load(open('ci/exp073cr_v0_3_home.activation.json'))
           assert a['experiment']=='Exp073CR' and a['version']=='v0.3'
           assert a['hosted_audit_token']=='PASS_EXP073CR_V0_3_HOSTED_SEED_STATIC_BITWISE_AUDIT'
-          assert a['control_repair_token']=='PASS_EXP073CR_V0_3_R1_NPROC_CONTROL_AUDIT'
+          assert a['control_repair_token']=='PASS_EXP073CR_V0_3_R2_SPLIT_BIND_CONTROL_AUDIT'
+          assert a['home_bind_diagnostic_token']=='PASS_EXP073CR_V0_3_R2_HOME_BIND_DIAGNOSTIC'
           assert a['candidate_sha256']=='d48e46197b48a6fcdf7d3eb3b0817973a2eadb25bbb617e7b8060c8c17209462'
           assert a['queue_sha256']=='3ba315d9bc24883ef746d92e785e0a040f9b13e751f59dda9a93e825a6390db4'
           assert a['checkpoint_namespace']=='checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-3'
@@ -39,7 +40,7 @@ jobs:
           print('seed_head='+a['seed_head'])
           print('seed_fingerprint='+a['seed_fingerprint'])
           PY
-          echo PASS_EXP073CR_V0_3_R1_HOSTED_AUDIT_AUTHORIZATION
+          echo PASS_EXP073CR_V0_3_R2_HOSTED_AUDIT_AUTHORIZATION
 
   checkpointed-resource:
     needs: authorize
@@ -64,15 +65,34 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Bind v0.3 runtime
+      - name: Bind host CPU availability
         shell: bash
         run: |
           set -euo pipefail
+          echo "home_nproc=$(nproc)"
           test "$(nproc)" -ge "8"
-          echo "DRIVER_COMMIT=$(git log -1 --format=%H -- ci/exp073cr_wm_s3_ll3_sharded_resource_v0_3.py)" >> "$GITHUB_ENV"
-          echo "WORKFLOW_COMMIT=$(git log -1 --format=%H -- .github/workflows/exp073cr-v0-3-wm-s3-ll3-sharded-resource.yml)" >> "$GITHUB_ENV"
-          echo "BINDING_COMMIT=$(git log -1 --format=%H -- experiments/073cr_wm_s3_ll3_sharded_binding_v0_3.json)" >> "$GITHUB_ENV"
+      - name: Bind exact v0.3 lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          driver="$(git log -1 --format=%H -- ci/exp073cr_wm_s3_ll3_sharded_resource_v0_3.py)"
+          workflow="$(git log -1 --format=%H -- .github/workflows/exp073cr-v0-3-wm-s3-ll3-sharded-resource.yml)"
+          binding="$(git log -1 --format=%H -- experiments/073cr_wm_s3_ll3_sharded_binding_v0_3.json)"
+          echo "DRIVER_COMMIT=$driver" >> "$GITHUB_ENV"
+          echo "WORKFLOW_COMMIT=$workflow" >> "$GITHUB_ENV"
+          echo "BINDING_COMMIT=$binding" >> "$GITHUB_ENV"
+          echo "driver=$driver workflow=$workflow binding=$binding"
+      - name: Compile bound v0.3 Python sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v python3
+          python3 --version
           python3 -m py_compile ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py ci/exp073cr_wm_s3_ll3_sharded_resource_v0_2.py ci/exp073cr_wm_s3_ll3_sharded_resource_v0_3.py
+      - name: Run bound v0.3 source-order static audit
+        shell: bash
+        run: |
+          set -euo pipefail
           python3 ci/exp073cr_v0_3_static_audit.py | tee "$RUNNER_TEMP/exp073cr-v03-static.log"
           grep -Fx 'PASS_EXP073CR_V0_3_SOURCE_ORDER_STATIC_AUDIT' "$RUNNER_TEMP/exp073cr-v03-static.log"
       - name: Reuse or bootstrap NaMaster 2.7
