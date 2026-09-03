@@ -1,0 +1,64 @@
+name: Exp073CR v0.3 r2 home bind diagnostic
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073cr_v0_3_r2_bind_diagnostic.trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 15
+    env:
+      EXPECTED_SEED_HEAD: cb408d4edb2a73413db8d3181e9cb1680dc19276
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Capture host CPU availability
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "nproc=$(nproc)"
+          echo "online=$(getconf _NPROCESSORS_ONLN || true)"
+          lscpu | grep -E '^(CPU\(s\)|On-line CPU|Core\(s\) per socket|Socket\(s\)|Thread\(s\) per core):' || true
+      - name: Verify system Python availability
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v python3
+          python3 --version
+      - name: Capture bound file commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "driver=$(git log -1 --format=%H -- ci/exp073cr_wm_s3_ll3_sharded_resource_v0_3.py)"
+          echo "workflow=$(git log -1 --format=%H -- .github/workflows/exp073cr-v0-3-wm-s3-ll3-sharded-resource.yml)"
+          echo "binding=$(git log -1 --format=%H -- experiments/073cr_wm_s3_ll3_sharded_binding_v0_3.json)"
+      - name: Compile bound Python sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py ci/exp073cr_wm_s3_ll3_sharded_resource_v0_2.py ci/exp073cr_wm_s3_ll3_sharded_resource_v0_3.py
+      - name: Run bound source-order static audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/exp073cr_v0_3_static_audit.py | tee "$RUNNER_TEMP/exp073cr-v03-r2-static.log"
+          grep -Fx 'PASS_EXP073CR_V0_3_SOURCE_ORDER_STATIC_AUDIT' "$RUNNER_TEMP/exp073cr-v03-r2-static.log"
+      - name: Verify exact seed branch identity read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          got="$(git ls-remote origin refs/heads/checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-3 | awk '{print $1}')"
+          echo "seed_head=$got"
+          test "$got" = "$EXPECTED_SEED_HEAD"
+      - name: Emit diagnostic token
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo PASS_EXP073CR_V0_3_R2_HOME_BIND_DIAGNOSTIC
