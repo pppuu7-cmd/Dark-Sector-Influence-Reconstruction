@@ -1,0 +1,146 @@
+name: Exp073BU NaMaster 2.7 stock-window source audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073bu-namaster27-stock-window-source-audit-v0-1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-source-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Freeze source-audit scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073bu_support_namaster27_stock_window_source_audit_v0_1_prereg.md)" = "$(git rev-parse HEAD:experiments/073bu_support_namaster27_stock_window_source_audit_v0_1_prereg.md)"
+          echo 'EXP073BU_SUPPORT_SOURCE_AUDIT_ONLY=1'
+          echo 'EXP073BU_SCIENCE_AUTHORITY_FORBIDDEN=1'
+          echo 'UPSTREAM_NAMASTER_V27_COMMIT=24365fa59a38c15732f4f37e8b29265b75c442d5'
+
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+
+      - name: Fetch pinned upstream NaMaster v2.7 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          UP="${RUNNER_TEMP}/NaMaster-v27"
+          git init "${UP}"
+          git -C "${UP}" remote add origin https://github.com/LSSTDESC/NaMaster.git
+          git -C "${UP}" fetch --depth=1 origin 24365fa59a38c15732f4f37e8b29265b75c442d5
+          git -C "${UP}" checkout --detach FETCH_HEAD
+          test "$(git -C "${UP}" rev-parse HEAD)" = "24365fa59a38c15732f4f37e8b29265b75c442d5"
+          echo "NMT_UPSTREAM=${UP}" >> "${GITHUB_ENV}"
+
+      - name: Inspect stock wrapper and pinned downstream source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073bu
+          "${NMT_PY}" - <<'PY'
+          import hashlib, importlib.metadata, inspect, json, os, re
+          from pathlib import Path
+          import pymaster as nmt
+          import pymaster.workspaces as ws
+
+          version=importlib.metadata.version('pymaster')
+          root=Path(os.environ['NMT_UPSTREAM'])
+          expected='24365fa59a38c15732f4f37e8b29265b75c442d5'
+          if not (version=='2.7' or version.startswith('2.7.')):
+              status='S3_SOURCE_LINEAGE_MISMATCH'
+          else:
+              status=None
+
+          gw=inspect.getsource(nmt.NmtWorkspace.get_bandpower_windows)
+          cc=inspect.getsource(nmt.NmtWorkspace.compute_coupling_matrix)
+          lib_symbols=sorted(set(re.findall(r'lib\.([A-Za-z_][A-Za-z0-9_]*)',gw)))
+
+          source_files=[]
+          for p in root.rglob('*'):
+              if p.is_file() and p.suffix.lower() in {'.c','.h','.py','.i'}:
+                  try:
+                      txt=p.read_text(encoding='utf-8',errors='replace')
+                  except Exception:
+                      continue
+                  source_files.append((p,txt))
+
+          def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+          symbol_hits={}
+          cited={}
+          for sym in lib_symbols:
+              hits=[]
+              for p,txt in source_files:
+                  if sym in txt:
+                      rel=str(p.relative_to(root)); hits.append(rel); cited[rel]=sha(p)
+              symbol_hits[sym]=sorted(hits)
+
+          operation_terms=['coupling_matrix_binned','coupling_matrix_unbinned','gsl_linalg','decouple','bandpower','window']
+          term_hits={}
+          for term in operation_terms:
+              hits=[]
+              for p,txt in source_files:
+                  if term in txt:
+                      rel=str(p.relative_to(root)); hits.append(rel); cited[rel]=sha(p)
+              term_hits[term]=sorted(hits)
+
+          wrapper_file=Path(inspect.getsourcefile(nmt.NmtWorkspace.get_bandpower_windows))
+          installed_wrapper_sha=hashlib.sha256(wrapper_file.read_bytes()).hexdigest() if wrapper_file else None
+          pinned_wrapper=root/'pymaster/workspaces.py'
+          pinned_wrapper_sha=sha(pinned_wrapper)
+
+          if status is None:
+              enough_symbols=bool(lib_symbols) and all(symbol_hits[s] for s in lib_symbols)
+              has_binned=bool(term_hits['coupling_matrix_binned'])
+              has_linear=bool(term_hits['gsl_linalg']) or bool(term_hits['decouple'])
+              status='S1_STOCK_OPERATION_ROUTE_IDENTIFIED' if (enough_symbols and has_binned and has_linear) else 'S2_PARTIAL_SOURCE_ROUTE'
+
+          receipt={
+            'schema':'dsir.exp073bu.namaster27_stock_window_source_audit.v0.1',
+            'status':status,
+            'accounting':'+0/+0',
+            'science_gate_scored':False,
+            'wm_s3_authority_created':False,
+            'runtime_pymaster_version':version,
+            'upstream_repository':'LSSTDESC/NaMaster',
+            'upstream_tag':'v2.7',
+            'upstream_commit':expected,
+            'installed_workspace_source_file':str(wrapper_file),
+            'installed_workspace_source_sha256':installed_wrapper_sha,
+            'pinned_workspace_source_sha256':pinned_wrapper_sha,
+            'get_bandpower_windows_source':gw,
+            'compute_coupling_matrix_source':cc,
+            'lib_symbols_called_by_get_bandpower_windows':lib_symbols,
+            'lib_symbol_source_hits':symbol_hits,
+            'operation_term_source_hits':term_hits,
+            'cited_pinned_source_sha256':dict(sorted(cited.items())),
+            'des_or_dsir_physical_data_read':False,
+          }
+          out=Path('data/derived/exp073bu/exp073bu_namaster27_stock_window_source_audit_v0_1.json')
+          out.write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          print(status)
+          print('LIB_SYMBOLS',json.dumps(lib_symbols))
+          print('SYMBOL_HITS',json.dumps(symbol_hits,sort_keys=True))
+          print('TERM_HITS',json.dumps(term_hits,sort_keys=True))
+          print('PASS_EXP073BU_NAMASTER27_STOCK_WINDOW_SOURCE_AUDIT_EXECUTED_V0_1')
+          PY
+
+      - name: Upload source-audit receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073bu-namaster27-stock-window-source-audit-${{ github.sha }}
+          path: data/derived/exp073bu/exp073bu_namaster27_stock_window_source_audit_v0_1.json
+          if-no-files-found: warn
