@@ -1,0 +1,125 @@
+name: Exp073CO Wm_S3 full39 checkpoint resource v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'launch/exp073co_wm_s3_full39_resource_v0_1.json'
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: dsir-home-exp073co-full39-checkpoint
+  cancel-in-progress: false
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  authorize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Fail-closed frozen authorization
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test -f ci/exp073co_wm_s3_full39_resource_v0_1.activation.json
+          python3 - <<'PY'
+          import json,subprocess
+          a=json.load(open('ci/exp073co_wm_s3_full39_resource_v0_1.activation.json'))
+          assert a['experiment']=='Exp073CO' and a['state']=='AUTHORIZED_AFTER_HOSTED_STATIC_AUDIT_PASS'
+          def last(p): return subprocess.check_output(['git','log','-1','--format=%H','--',p],text=True).strip()
+          assert last('preregistration/2026-09-03_exp073co_wm_s3_8worker_full39_checkpoint_resource_v0_1.md')=='95133fc97b9cc013a58c82aed583ee79f7737979'
+          assert a['driver_commit']==last('ci/exp073co_wm_s3_full39_checkpoint_resource_v0_1.py')
+          assert a['workflow_commit']==last('.github/workflows/exp073co-wm-s3-full39-checkpoint-resource-v0-1.yml')
+          assert a['binding_commit']==last('experiments/073co_wm_s3_full39_checkpoint_resource_v0_1_binding.json')
+          assert a['audit_status']=='PASS_EXP073CO_STATIC_CHECKPOINT_CONTRACT_AUDIT_V0_1'
+          PY
+          python3 - <<'PY'
+          import json,os,urllib.request
+          h={'Authorization':f"Bearer {os.environ['GH_TOKEN']}",'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          repo=os.environ['GITHUB_REPOSITORY']; current=int(os.environ['GITHUB_RUN_ID'])
+          for status in ('queued','in_progress'):
+              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100',headers=h)
+              with urllib.request.urlopen(req,timeout=30) as r: d=json.load(r)
+              others=[x for x in d.get('workflow_runs',[]) if int(x['id'])!=current]
+              assert not others,(status,[(x['id'],x['name']) for x in others])
+          PY
+
+  checkpointed-resource:
+    needs: authorize
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Reuse or bootstrap proven NaMaster 2.7 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$HOME/.cache/dsir-miniforge"; ENV="$HOME/.cache/dsir-nmt27"
+          if ! test -x "$MF/bin/conda"; then mkdir -p "$HOME/.cache"; curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"; bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"; fi
+          if ! test -x "$ENV/bin/python"; then "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 numpy; fi
+          "$ENV/bin/python" - <<'PY'
+          import importlib.metadata
+          v=importlib.metadata.version('pymaster'); assert v=='2.7' or v.startswith('2.7.'),v
+          PY
+          echo "NMT_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+      - name: Compile frozen single-band range helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build data/derived/g7
+          gcc -O2 -shared -fPIC -fopenmp -fno-fast-math -fno-associative-math -ffp-contract=off -fno-tree-vectorize ci/exp073ca_stream_general_coupling_range_v0_1.c -o build/exp073ca.so -ldl -lm
+      - name: Restore immutable upstream and Exp073CO checkpoint first
+        shell: bash
+        run: |
+          set -euo pipefail
+          CM="$RUNNER_TEMP/exp073cm-authority"; CP="$RUNNER_TEMP/exp073co-checkpoint"
+          bash ci/dsir_checkpoint_git_sync_v0_2.sh restore "$CM" 'checkpoints/exp073cm-wm-s3-resource-v0-1' 'd405a7a934bbd8caf464cd2a4bcb6052b8d205cd'
+          bash ci/dsir_checkpoint_git_sync_v0_2.sh restore "$CP" 'checkpoints/exp073co-wm-s3-full39-resource-v0-1' ALLOW_ABSENT
+          "$NMT_PY" ci/exp073co_wm_s3_full39_checkpoint_resource_v0_1.py init --checkpoint-dir "$CP" --source-head "$GITHUB_SHA" --driver-commit '__DRIVER_COMMIT__'
+          if ! test -f "$CP/upstream/receipt.json"; then
+            "$NMT_PY" ci/exp073co_wm_s3_full39_checkpoint_resource_v0_1.py import-upstream --checkpoint-dir "$CP" --cm-dir "$CM"
+            bash ci/dsir_checkpoint_git_sync_v0_2.sh push "$CP" 'checkpoints/exp073co-wm-s3-full39-resource-v0-1' 'validated immutable upstream'
+          fi
+          "$NMT_PY" ci/exp073co_wm_s3_full39_checkpoint_resource_v0_1.py validate --checkpoint-dir "$CP" || rc=$?
+          test "${rc:-0}" = 0 || test "${rc:-0}" = 1
+      - name: Full39 eight-worker compute with per-band durability
+        shell: bash
+        run: |
+          set -euo pipefail
+          CP="$RUNNER_TEMP/exp073co-checkpoint"
+          "$NMT_PY" ci/exp073co_wm_s3_full39_checkpoint_resource_v0_1.py compute --checkpoint-dir "$CP" --ca-so build/exp073ca.so --branch 'checkpoints/exp073co-wm-s3-full39-resource-v0-1' --sync-script ci/dsir_checkpoint_git_sync_v0_2.sh
+      - name: Frozen final exact/resource classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          CP="$RUNNER_TEMP/exp073co-checkpoint"; BR='checkpoints/exp073co-wm-s3-full39-resource-v0-1'
+          set +e; "$NMT_PY" ci/exp073co_wm_s3_full39_checkpoint_resource_v0_1.py finalize --checkpoint-dir "$CP"; rc=$?; set -e
+          bash ci/dsir_checkpoint_git_sync_v0_2.sh push "$CP" "$BR" 'frozen final classification'
+          cp "$CP/contract.json" data/derived/g7/exp073co_contract_v0_1.json
+          cp "$CP/final/receipt.json" data/derived/g7/exp073co_final_receipt_v0_1.json
+          cp "$CP/telemetry/full39.json" data/derived/g7/exp073co_telemetry_v0_1.json
+          exit "$rc"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073co-wm-s3-full39-resource-${{ github.sha }}
+          path: data/derived/g7/exp073co_*.json
+          retention-days: 90
+          compression-level: 0
