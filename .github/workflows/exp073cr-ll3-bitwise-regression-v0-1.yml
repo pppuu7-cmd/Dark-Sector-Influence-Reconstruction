@@ -1,0 +1,93 @@
+name: Exp073CR research ll3 bitwise regression v0.1
+on:
+  push:
+    paths:
+      - 'research/triggers/exp073cr_ll3_bitwise_regression_v0_1.json'
+permissions:
+  contents: read
+concurrency:
+  group: dsir-exp073cr-research-ll3-bitwise-v01
+  cancel-in-progress: false
+jobs:
+  regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      OMP_DYNAMIC: 'FALSE'
+      CP_HEAD: '025629d9bb7b113bd0548ff6a32c6ee5812ae245'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Freeze research inputs and syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile research/prototypes/exp073cr_ll3_bitwise_regression_v0_0.py
+          python3 -m py_compile research/prototypes/exp073cr_64shard_scheduler_v0_1.py
+          grep -F "exp073cr_stream_compress_band_ll3_range_v0_1" research/prototypes/exp073cr_stream_band_ll3_range_v0_1.c
+          grep -F "HELPER_SYMBOL = 'exp073cr_stream_compress_band_ll3_range_v0_1'" research/prototypes/exp073cr_64shard_scheduler_v0_1.py
+      - name: Install frozen NaMaster 2.7 runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$RUNNER_TEMP/miniforge"; ENV="$RUNNER_TEMP/nmt27"
+          curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"
+          bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"
+          "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 numpy
+          echo "NMT_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+      - name: Restore immutable Exp073CP checkpoint head read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$CP_HEAD"
+          CP="$RUNNER_TEMP/exp073cp-authority"
+          git worktree add --detach "$CP" "$CP_HEAD"
+          test -f "$CP/checkpoint/contract.json"
+          "$NMT_PY" - <<'PY'
+          import json, pathlib
+          root=pathlib.Path(__import__('os').environ['RUNNER_TEMP'])/'exp073cp-authority'/'checkpoint'
+          c=json.load(open(root/'contract.json'))
+          assert c['fingerprint']=='32d15a39f1bcdcee0f9b9f88ebc8fd8f82eb850bb71eca4b51d95eb40f111efc'
+          assert c['pcl_sha256']=='ec34ee34311f3b02a16e118113b5b1acd1b961859caccd2c4387c0ae529cd72d'
+          for b in (0,7,15):
+              assert (root/f'bands/band_{b:02d}/payload.npy').is_file()
+          print('PASS_EXP073CR_RESEARCH_PARENT_AUTHORITY_BINDING_V0_1')
+          PY
+      - name: Compile exact-order ll3 research helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          gcc -O2 -shared -fPIC -fopenmp -fno-fast-math -fno-associative-math -ffp-contract=off -fno-tree-vectorize \
+            research/prototypes/exp073cr_stream_band_ll3_range_v0_1.c \
+            -o "$RUNNER_TEMP/exp073cr_ll3.so" -ldl -lm
+          nm -D "$RUNNER_TEMP/exp073cr_ll3.so" | grep -F ' exp073cr_stream_compress_band_ll3_range_v0_1'
+          "$NMT_PY" research/prototypes/exp073cr_64shard_scheduler_v0_1.py validate-candidate \
+            --candidate research/prototypes/exp073cr_64shard_balanced_candidate_v0_1.json \
+            --helper "$RUNNER_TEMP/exp073cr_ll3.so"
+      - name: Bitwise regression against immutable complete-band payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p research/results
+          "$NMT_PY" research/prototypes/exp073cr_ll3_bitwise_regression_v0_0.py \
+            --checkpoint-root "$RUNNER_TEMP/exp073cp-authority/checkpoint" \
+            --prototype-so "$RUNNER_TEMP/exp073cr_ll3.so" \
+            --bands 0,7,15 \
+            --partitions '[[2,3072,6144,9216,12288],[2,1024,4097,7777,10000,12288]]' \
+            | tee research/results/exp073cr_ll3_bitwise_regression_v0_1.jsonl
+          grep -Fx 'PASS_EXP073CR_RESEARCH_LL3_BITWISE_REGRESSION_V0_0' research/results/exp073cr_ll3_bitwise_regression_v0_1.jsonl
+          echo 'PASS_EXP073CR_HOSTED_LL3_BITWISE_REGRESSION_V0_1'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073cr-research-ll3-bitwise-${{ github.sha }}
+          path: research/results/exp073cr_ll3_bitwise_regression_v0_1.jsonl
+          retention-days: 30
+          compression-level: 0
