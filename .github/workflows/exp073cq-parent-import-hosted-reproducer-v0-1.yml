@@ -1,0 +1,38 @@
+name: Exp073CQ parent import hosted reproducer v0.1
+on:
+  push:
+    paths: ['launch/exp073cq_parent_import_hosted_reproducer_v0_1.json']
+permissions: {contents: read}
+jobs:
+  reproduce-parent-import:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      PYTHONUNBUFFERED: '1'
+      DSIR_CHECKPOINT_QUERY_ATTEMPTS: '7'
+      DSIR_CHECKPOINT_FETCH_ATTEMPTS: '7'
+      DSIR_CHECKPOINT_GIT_TIMEOUT_SECONDS: '120'
+      DSIR_WORKFLOW_COMMIT: '76be666e2cc6b8f11710a44ff7772ef708ac1e80'
+      DSIR_BINDING_COMMIT: 'f8416855c7dd28b95d30cbf18835dd2b8bb37ddd'
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Install exact minimal runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check 'numpy<3'
+      - name: Reproduce exact parent restore and import read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- ci/exp073cq_wm_s3_missing29_38_diagnostic_resume_resource_v0_1.py)" = b316354886e1b1857d6f205ffe5d0dd8f0151622
+          test "$(git log -1 --format=%H -- ci/dsir_checkpoint_git_sync_v0_3.sh)" = c20127b6762c6fc9b21875a321aecd7a4cd5f88e
+          CQ="$RUNNER_TEMP/cq"; P="$RUNNER_TEMP/cp"
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh restore "$P" checkpoints/exp073cp-wm-s3-full39-resource-v0-1 025629d9bb7b113bd0548ff6a32c6ee5812ae245
+          python3 ci/exp073cq_wm_s3_missing29_38_diagnostic_resume_resource_v0_1.py init --checkpoint-dir "$CQ" --source-head ef4f02f0ff3e23d845b6dcd1f45317a0d3811b12 --driver-commit b316354886e1b1857d6f205ffe5d0dd8f0151622
+          python3 ci/exp073cq_wm_s3_missing29_38_diagnostic_resume_resource_v0_1.py import-parent --checkpoint-dir "$CQ" --parent-dir "$P"
+          python3 ci/exp073cq_wm_s3_missing29_38_diagnostic_resume_resource_v0_1.py validate --checkpoint-dir "$CQ"
+          test "$(find "$CQ/bands" -mindepth 1 -maxdepth 1 -type d -name 'band_*' | wc -l | tr -d ' ')" = 29
+          test -f "$CQ/upstream/receipt.json"
+          echo PASS_EXP073CQ_HOSTED_PARENT_IMPORT_REPRODUCER_V0_1
