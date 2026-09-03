@@ -1,0 +1,18 @@
+{
+  "experiment": "Exp073CN",
+  "version": "v0.1",
+  "state": "AUTHORIZED_AFTER_HOSTED_STATIC_AUDIT_PASS",
+  "workflow_commit": "584b3544a4785594f3607d787368400a74709688",
+  "binding_commit": "19526b27380da048b40d55a112f27ed6bed80e97",
+  "driver_commit": "6cd0016d061df0156ef64b705fee339c55d5ed9f",
+  "audit_status": "PASS_EXP073CN_STATIC_CHECKPOINT_CONTRACT_AUDIT_V0_1",
+  "audit_run_id": 33709966197,
+  "audit_job_id": 100507141843,
+  "audit_head_sha": "fd481905e1de1d421e6806d64de79753a303346a",
+  "audit_artifact_id": 9876558706,
+  "audit_artifact_digest": "sha256:1c574f8ba54a6b1a144d8f576e692f0385d73998a40d2c34d9447ea148bad6b0",
+  "checkpoint_branch": "checkpoints/exp073cn-wm-s3-8worker-resource-v0-1",
+  "home_launch_permitted_only_if_no_other_queued_or_in_progress_dsir_run": true,
+  "verified_delta": 0.0,
+  "draft_data_delta": 0.0
+}
