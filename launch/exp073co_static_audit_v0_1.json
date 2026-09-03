@@ -1,0 +1,11 @@
+{
+  "experiment": "Exp073CO",
+  "version": "v0.1",
+  "action": "RUN_POST_IMPLEMENTATION_HOSTED_STATIC_AUDIT",
+  "prereg_commit": "95133fc97b9cc013a58c82aed583ee79f7737979",
+  "driver_commit": "0d0c6032f8af0def02f9e2c15abc3c22bfd049e0",
+  "workflow_commit": "eefb6767ab9452d2c74a1fa36f6f59a42bdb1ca9",
+  "binding_commit": "b84f4df108b6015c2909d8a00953df1fd0a43eb8",
+  "static_audit_workflow_commit": "10ea8a67f9caef843d4dfb02c9f3d9b7c01344dc",
+  "home_execution_authorized": false
+}
