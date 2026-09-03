@@ -1,0 +1,129 @@
+name: Exp073BU fresh-PCL hosted static audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073bu_fresh_wm_s3_pcl_v0_1.py'
+      - '.github/workflows/exp073bu-fresh-pcl-static-audit-v0-1.yml'
+      - 'experiments/073bu_article3_wm_s3_fresh_independent_ab_exact_repeatability_v0_1_prereg.md'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Syntax and frozen-contract audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import ast
+          import hashlib
+          import json
+          from pathlib import Path
+
+          helper = Path('ci/exp073bu_fresh_wm_s3_pcl_v0_1.py')
+          prereg = Path('experiments/073bu_article3_wm_s3_fresh_independent_ab_exact_repeatability_v0_1_prereg.md')
+          source = helper.read_text(encoding='utf-8')
+          frozen = prereg.read_text(encoding='utf-8')
+          tree = ast.parse(source, filename=str(helper))
+          compile(source, str(helper), 'exec')
+
+          imports=[]
+          for node in ast.walk(tree):
+              if isinstance(node, ast.Import):
+                  imports.extend(a.name for a in node.names)
+              elif isinstance(node, ast.ImportFrom):
+                  imports.append(node.module or '')
+
+          forbidden_modules = ['exp073' + suffix for suffix in ('cr','cq','cm','cl','az')]
+          assert not any(any(mod.startswith(f) for f in forbidden_modules) for mod in imports), imports
+
+          forbidden_numerical_literals = [
+              '9903527609',
+              'db8221278798ea56b579a3dc96565fef4497bb7f',
+              '3eb54728878e5913fcb39b9e6411480c413d6a5a6a968c67e623f1fa48e6ec29',
+              'checkpoints/exp073cr',
+              'checkpoints/exp073cq',
+              'checkpoints/exp073cm',
+              'upstream/pcl.npy',
+              'reference_bands',
+          ]
+          for token in forbidden_numerical_literals:
+              assert token not in source, token
+
+          required_source_literals = {
+              'NSIDE = 4096',
+              'LMAX = 3 * NSIDE - 1',
+              "R1_ARTIFACT_ID = 9720335366",
+              "R1_ARTIFACT_DIGEST = 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd'",
+              "S3_RECORD_SHA256 = '3996f2bacf29d46278773530058d4f5666c0d590bf6cebc06459659166bc60ec'",
+              "S3_OCCUPANCY_SHA256 = '21e3776111de305c108463b02b0e3fd5e138cc97817d37e7b05330132d058094'",
+              "LENS_SHA256 = 'a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55'",
+              "LENS_THRESHOLD = 0.5",
+              "COUPLING_SIGNATURE = [0, 2, 0, 2]",
+              "SELECTED_SEMANTICS = {'output': 'TE', 'input': 'TE'}",
+              'np.add.at(',
+              "dtype='<u4'",
+              "nmt.NmtField(lens, None, spin=0)",
+              "nmt.NmtField(source, None, spin=2)",
+              'get_mask_alms()',
+              'hp.alm2cl(mm, source_alm, lmax=LMAX)',
+              "dtype='<f8'",
+              "version == '2.7' or version.startswith('2.7.')",
+              "'historical_window_reference_used': False",
+              "'historical_pcl_imported': False",
+              "'other_replica_output_read': False",
+              "'complete': True",
+          }
+          missing=sorted(x for x in required_source_literals if x not in source)
+          assert not missing, missing
+
+          required_prereg = [
+              'fresh',
+              'A and B',
+              'numpy.array_equal',
+              'PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_V0_1',
+              'checkpoints/exp073bu-wm-s3-a-v0-1',
+              'checkpoints/exp073bu-wm-s3-b-v0-1',
+              'No tolerance',
+          ]
+          for token in required_prereg:
+              assert token in frozen, token
+
+          receipt={
+              'status':'PASS_EXP073BU_FRESH_PCL_HOSTED_STATIC_AUDIT_V0_1',
+              'scope':'STATIC_IMPLEMENTATION_AUDIT_ONLY',
+              'science_gate_scored':False,
+              'wm_s3_authority_created':False,
+              'helper_sha256':hashlib.sha256(helper.read_bytes()).hexdigest(),
+              'prereg_sha256':hashlib.sha256(prereg.read_bytes()).hexdigest(),
+              'helper_imports':sorted(imports),
+              'assertions':{
+                  'no_historical_wm_s3_numerical_import':True,
+                  'frozen_r1_s3_hashes_bound':True,
+                  'frozen_lens_hash_bound':True,
+                  'fresh_spin0_spin2_mask_alm_pcl_path_bound':True,
+                  'pymaster_2_7_bound':True,
+                  'canonical_f8_complete_stage_bound':True,
+              },
+          }
+          Path('exp073bu_fresh_pcl_static_audit_v0_1.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          print(receipt['status'])
+          print(json.dumps(receipt,indent=2,sort_keys=True))
+          PY
+
+      - name: Upload static-audit receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073bu-fresh-pcl-static-audit-${{ github.sha }}
+          path: exp073bu_fresh_pcl_static_audit_v0_1.json
+          if-no-files-found: warn
