@@ -4,105 +4,57 @@
 **Scope:** DSIR only; RTK/RQIR excluded.  
 **Article-3 readiness:** **Verified 52.0% | Draft/data 54.6%** (exact Draft/data `54.57142857142857%`).
 
-Repository state, immutable GitHub Actions artifacts/logs and durable checkpoint branches outrank chat wording. Infrastructure/provenance/numerical/performance/static/diagnostic/checkpoint QA gives `+0/+0` unless a frozen ledger explicitly states otherwise.
+Repository state, immutable recovery notes, validated GitHub Actions logs/artifacts and durable checkpoint branches outrank chat wording. Infrastructure/provenance/numerical/performance/static/diagnostic/checkpoint QA gives `+0/+0` unless a frozen ledger explicitly states otherwise. Frozen science boundaries are unchanged.
 
-## Immediate frontier — Exp073CQ v0.2 hosted-seeded resource continuation RUNNING
+## Immediate frontier — Exp073CR v0.3 ll3-sharded Wm_S3 resource gate
 
-Wm_S3 angular scientific authority remains absent. Full Wm_S3 A/B scientific production remains forbidden until a prospectively frozen Wm_S3 resource gate passes.
+Wm_S3 angular scientific authority remains absent. Full Wm_S3 A/B scientific production remains forbidden until a prospectively frozen resource gate passes. Universal self-hosted checkpoint policy remains `docs/SELF_HOSTED_CHECKPOINT_POLICY.md`, authority commit `f45ae0ce4d199ae381e8612d41cfd7e4c7dfc427`. No competing home task is permitted.
 
-Universal checkpoint policy remains `docs/SELF_HOSTED_CHECKPOINT_POLICY.md`, commit `f45ae0ce4d199ae381e8612d41cfd7e4c7dfc427`: every self-hosted DSIR task requires prospectively frozen durable checkpoint/resume. No competing home task is permitted.
+### Exp073CQ v0.2 terminal resource result
 
-### Exp073CQ v0.1 terminal forensics
+Authoritative run/job/head: `33752799918` / `100640079011` / `011852feb6d40152f4b33bde732b00520cd28f79`. Terminal durable namespace/head: `checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2` / `32bf0d1bdbcc2480f8b77f936ea6dc1f425812b0`.
 
-Run `33742582807`, head `ef4f02f0ff3e23d845b6dcd1f45317a0d3811b12`: authorize job `100607659399` SUCCESS; self-hosted job `100607697336` FAILURE. The first noncompleted step was `Exact import of immutable Exp073CP band0-28 authority`; helper compile, numerical bands `29..38`, telemetry, frozen final classification and authority artifact did not run. Successor v0.1 namespace was absent after termination. Decoded job logs still return `BlobNotFound`, therefore no narrower causal exception is inferred.
+Frozen final receipt is complete and records exact target `<f8 [39,12288]`, contract fingerprint `87b58bf120510bec50b21851d7ff21269689db6dcdd906cb3a14102e4a4f5f97`, exact first-8 array equality PASS, exact first-8 SHA equality PASS (`36ee9fca9fb276a30d8ebb97cb04fddc7e95cff18fb29248c033bb364ea2d8cf`), swap increase `0 KiB` PASS, but `cpu_fraction_of_8_compute=0.6638297425690942 < 0.90`. Frozen terminal status: `FAIL_EXP073CQ_V0_2_WM_S3_CPU_TARGET`.
 
-Classification is **`INFRASTRUCTURE_OR_SOFTWARE_INCOMPLETE_AT_PARENT_IMPORT`, `+0/+0`; NOT scientific FAIL and NOT resource/performance FAIL.** Immutable recovery note: `recovery/2026-09-03_exp073cq_parent_import_failure_and_hosted_reproducer.md`, creation commit `3f569734f061f4619d98074efcaec15901956bc2`.
+**Classification: RESOURCE/PERFORMANCE FAIL `+0/+0`; NOT a Wm_S3 scientific arithmetic FAIL.** No tolerance, arithmetic, provenance, science boundary or threshold was changed. Authority artifact `9897551836`, digest `sha256:0f10c863ee65f3d7c27177a324cafe2830e6b8b1096da054e35c638b26d6104c`.
 
-A clean hosted read-only reproducer then proved the frozen v0.1 import logic itself is reproducible: run `33752333426`, job `100638517360` SUCCESS with raw token `PASS_EXP073CQ_HOSTED_PARENT_IMPORT_REPRODUCER_V0_1`, exact parent restore `025629d9bb7b113bd0548ff6a32c6ee5812ae245`, imported bands `0..28`, missing bands `29..38`. Thus the historical home failure remains environment/transport-specific unless later logs establish a narrower cause.
+Immutable note: `recovery/2026-09-03_exp073cq_v0_2_resource_fail_and_exp073cr_v0_3_launch.md`. Documentation-only SHA correction: `recovery/2026-09-03_exp073cr_v0_3_driver_lineage_correction.md`; this correction changes no science or computation.
 
-### Immutable Exp073CP parent authority
+### Exp073CR v0.3 prospective resource architecture
 
-Parent namespace/head: `checkpoints/exp073cp-wm-s3-full39-resource-v0-1` / `025629d9bb7b113bd0548ff6a32c6ee5812ae245`; parent fingerprint `32d15a39f1bcdcee0f9b9f88ebc8fd8f82eb850bb71eca4b51d95eb40f111efc`. Exact tree contains complete `payload.npy` + `receipt.json` for bands `0..28`; bands `29..38` are absent. Bands `0..28` MUST NOT be numerically recomputed.
-
-### Exp073CQ v0.2 prospective repair authority
-
-Exp073CQ v0.2 is a new version, not a mutation/rescue of v0.1. It removes parent import from the home runner entirely: the exact parent import is created and made durable on a hosted runner, then home must restore that exact successor seed before any numerical work.
+Exp073CR v0.3 is a new prospectively frozen resource architecture, not a rescue/mutation of Exp073CQ. It preserves exact complete-band arithmetic/reference authority while representing bands `29..38` as **64 prospectively frozen source-order ll3 shards** solely to improve utilization. Frozen resource rules: exactly 8 outer workers, max 8 in flight, nested BLAS/OpenMP/MKL/OpenBLAS threads=1, durability order `store_shard -> durable_sync -> refill_submit`, exact complete-band reconstruction/reference equality, no tolerance rescue, CPU fraction `>=0.90`, swap increase `0 KiB`.
 
 Frozen lineage:
-- preregistration commit `71800bedbf8c23d7aee4538a0230bdac4bd5c6f3`;
-- driver `ci/exp073cq_v0_2_hosted_seed_missing29_38_resource.py`, commit `0bf7ea195bccbb8e6458f1269640c279668d4a1f`;
-- home workflow `.github/workflows/exp073cq-v0-2-hosted-seeded-missing29-38-resource.yml`, commit `31c57d7b3565aea7c6ff3edbdf978f51f652abcb`;
-- binding commit `f25cdc25c9e2d4a0f6d1ec673922cda9ca3019fc`;
-- checkpoint sync `ci/dsir_checkpoint_git_sync_v0_3.sh`, commit `c20127b6762c6fc9b21875a321aecd7a4cd5f88e`;
-- successor namespace `checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2`;
-- imported/read-only set exactly `0..28`; numerical compute allowlist exactly `29..38`;
-- exactly 8 outer workers / max 8 in flight; nested BLAS/OpenMP/MKL/OpenBLAS threads=1;
-- durable checkpoint after every complete newly computed band;
-- exact first-8 array/SHA equality mandatory; no tolerance/rounding/smoothing/averaging rescue;
-- frozen CPU target `cpu_fraction_of_8_compute >= 0.90`; any positive swap increase is FAIL;
-- resource PASS token `PASS_EXP073CQ_V0_2_WM_S3_MISSING29_38_8WORKER_HOSTED_SEEDED_RESOURCE`.
+- preregistration: `fb10a589ee5ac03f478160c9cfd28484169e48ca`;
+- driver: `365fd7a8527b2dafe4785f95fa104276788c11d1`;
+- self-hosted workflow: `85993d73565c3fc4d1389cc942bc69073b89d89e`;
+- hosted seed-audit workflow: `5f5a7a060b17e11b0f53453d6ca6898cda00d2fd`;
+- binding: `0e0d13a6f7736eb56689d57c3557410007ec48d2`;
+- static audit: `312a526997dde0a43a58fa64b5ce6f051d2df9d8`;
+- candidate SHA256: `d48e46197b48a6fcdf7d3eb3b0817973a2eadb25bbb617e7b8060c8c17209462`;
+- heavy-first queue SHA256: `3ba315d9bc24883ef746d92e785e0a040f9b13e751f59dda9a93e825a6390db4`;
+- namespace: `checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-3`.
 
-### Hosted seed authority PASS
+Hosted seed/static/bitwise audit authority: run `33768977707`, job `100694004982` SUCCESS. Raw tokens: `PASS_EXP073CR_V0_3_SOURCE_ORDER_STATIC_AUDIT`, `PASS_EXP073CR_HOSTED_AUTHORITATIVE_LL3_BITWISE_REGRESSION_V0_1`, `PASS_EXP073CR_V0_3_HOSTED_SEED_STATIC_BITWISE_AUDIT`. Nontrivial ll3 partition controls on immutable bands 0, 7 and 15 were exact bitwise/array-SHA equal. Durable seed head `cb408d4edb2a73413db8d3181e9cb1680dc19276`, seed fingerprint `3eb54728878e5913fcb39b9e6411480c413d6a5a6a968c67e623f1fa48e6ec29`. Hosted artifact `9898817387`, digest `sha256:6d0435cfb99e4c05c49a5e61f8944d85a786820e3bf2f0913135b263bb0c734d`. This is resource/static authority only, `+0/+0`.
 
-Hosted seed workflow run **`33752529085`**, job **`100639147404`**, head `9ab18d05e335a3cde91309b9600f56247a9a3df6` completed SUCCESS. Raw log token: **`PASS_EXP073CQ_V0_2_HOSTED_PARENT_IMPORT_SEED`**.
+### LIVE process
 
-Durable successor seed:
-- checkpoint head **`4f528424a2d2b3e32aeb4a68d73265ef9de8bd4e`**;
-- contract fingerprint **`87b58bf120510bec50b21851d7ff21269689db6dcdd906cb3a14102e4a4f5f97`**;
-- exact imported complete bands `0..28`; exact missing/compute allowlist `29..38`;
-- artifact **`9892102247`**, digest **`sha256:8af123e1102f17feae01050c456983e8547306c9f59b4a72f64ccb917b55a2ae`**.
+Immediately before activation, Actions audit showed `0 in_progress` and `0 queued`. Activation file `ci/exp073cr_v0_3_home.activation.json` was created at commit `3404eccc347d5f44f1cdc1514078d411fce1682b`, triggering exactly one workflow.
 
-Hosted seed is resource/checkpoint provenance authority only, `+0/+0`; it creates no Wm_S3 science authority.
+Current run: `33770178685`, head `3404eccc347d5f44f1cdc1514078d411fce1682b`.
+- authorize job `100698111100`: SUCCESS;
+- self-hosted `checkpointed-resource` job `100698177477`: QUEUED at last live reconciliation;
+- home runner ownership: **RESERVED EXCLUSIVELY** for run `33770178685` / job `100698177477` while queued/in_progress;
+- no competing DSIR home job may be launched.
 
-### Post-seed hosted audit PASS
+Exact next action while queued/running: do not duplicate. On terminal state, inspect raw checkpoint/final receipt/artifact, exact seed/fingerprint, all 64 shard receipts, durability-before-refill evidence, exact reconstructed complete-band equality, swap, and frozen CPU metric. A resource PASS remains `+0/+0` and may only then authorize preregistration of the scientifically permitted fresh-independent-PCL Wm_S3 A/B successor. A resource FAIL is preserved negative resource evidence; infrastructure/software failure requires first-causal diagnosis and checkpoint-preserving prospective repair.
 
-Hosted post-seed audit run **`33752695840`**, job **`100639693792`** completed SUCCESS with raw token **`PASS_EXP073CQ_V0_2_HOSTED_SEED_STATIC_AUDIT`**. It exact-restored seed head `4f528424...`, validated fingerprint `87b58bf...`, all imported receipts `0..28`, absence of `29..38`, 8-worker/nested=1 resource contract, and verified that the home workflow restores the seeded successor first and contains no direct Exp073CP parent import.
+## Preserved scientific/governance authority
 
-Audit artifact **`9892171765`**, digest **`sha256:8e9acc8142bf5bc1a441259d6884d2dc54cda8a5690a64cdef81525479c7d68b`**. Activation authority is `ci/exp073cq_v0_2_hosted_seeded.activation.json`, creation commit **`fabb0c601edcb117d7734ba1828da762b585c2db`**.
+- Wm_S1 Track-A exact PASS remains preserved.
+- admitted Wm_S2 authority remains preserved.
+- Exp073CM, Exp073CN and Exp073CQ v0.2 remain historical resource/performance results and do not become science FAILs.
+- Wm_S3 angular scientific authority remains absent.
+- frozen boundaries remain: `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid<=0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
 
-### LIVE/RUNNING Exp073CQ v0.2 execution
-
-Immediately before launch, live Actions audit showed `0 queued` and `0 in_progress` runs. Single launch marker commit: **`011852feb6d40152f4b33bde732b00520cd28f79`**.
-
-GitHub Actions run **`33752799918`**:
-- authorize job **`100640020607`** completed SUCCESS;
-- self-hosted `checkpointed-resource` job **`100640079011`** is **IN_PROGRESS**;
-- exact hosted-seed restore step completed SUCCESS;
-- frozen helper compile/restore step completed SUCCESS;
-- current step is `Compute only missing bands 29-38 with durability`;
-- latest observed durable checkpoint head is **`ad9d79d0b32a6a097669966c8b94b7424521c34e`**, commit `checkpoint: band-31-complete`, timestamp `2026-09-03T13:00:01Z`;
-- the band-31 receipt records `complete=true`, frozen fingerprint `87b58bf120510bec50b21851d7ff21269689db6dcdd906cb3a14102e4a4f5f97`, canonical `<f8 [12288]`, `outer_workers=8`, `nested_threads=1`, and payload SHA256 `8fa0d8833867150b49fb34b39e13c491f3425eac9419205fa73412cf1d6af715`;
-- imported bands `0..28` remain read-only; numerical allowlist remains exactly `29..38`;
-- **DSIR-HOME-PC is reserved exclusively for run `33752799918` / job `100640079011` while in_progress.**
-
-The durable band receipt is process/provenance evidence only. Partial numerical output is not interpreted, and no frozen gate is tuned. Live Actions audit at this pointer update shows exactly one in-progress run (Exp073CQ v0.2) and zero queued runs.
-
-### Independent Exp073CR research-only regression
-
-A concurrent DSIR-only hosted research branch produced run **`33754644074`**, job **`100646005106`**, head `b67b87168e009a263c91d52c529fb459879b8a00`, SUCCESS. The trigger explicitly declares `NON_AUTHORITATIVE_RESEARCH_TRIGGER`, scientific credit `+0/+0`, resource authority `none`, `no_home_runner=true`, and `does_not_modify_exp073cq_v0_2=true`.
-
-Raw regression logs reported exact array/SHA equality for immutable Exp073CP complete bands 0, 7 and 15 under two distinct ll3 partitions and emitted `PASS_EXP073CR_RESEARCH_LL3_BITWISE_REGRESSION_V0_0` and `PASS_EXP073CR_HOSTED_LL3_BITWISE_REGRESSION_V0_1`. Artifact **`9892971697`**, archive digest **`sha256:766184eb42ef696e3c493d55ebb78cbc6c4fab83baf7c0d17bbdb7b3cf104a72`**.
-
-Classification: independent implementation/invariance evidence only, `+0/+0`; it cannot supersede, tune, rescue, or authorize Exp073CQ and creates no Wm_S3 scientific authority. Immutable reconciliation note: `recovery/2026-09-03_exp073cq_v0_2_running_exp073cr_research_bitwise_pass.md`, creation commit `ab63340f61dec15279c8c5f165444a9b0bf2d7f4`.
-
-### Exact next permitted actions
-
-1. Do not launch any competing home task while run `33752799918` is in_progress.
-2. Continue only independent non-biasing audits/research; do not interpret partial numerical output to tune frozen criteria.
-3. Compute only bands `29..38`; preserve imported `0..28` byte-for-byte and never recompute them.
-4. Require durable receipt after each complete new band; on failure preserve all exact-valid completed units and resume only unfinished units under a prospectively audited repair.
-5. At terminal, consume checkpoint tree, telemetry, final receipt, artifact and raw token in the same iteration.
-6. On validated resource PASS, keep Exp073CQ `+0/+0` and only then preregister a fresh-independent-PCL Wm_S3 A/B scientific successor.
-7. On exact/resource FAIL, preserve the frozen negative resource result `+0/+0`; no tolerance rescue.
-
-## Preserved accepted/historical authority
-
-Wm_S1 Track-A exact PASS and admitted Wm_S2 authority remain preserved. Wm_S2 v0.2 remains admitted through `Exp073CF compact scoped exact PASS -> Exp073CI deterministic fixed-dispatch exact finalizer PASS`; historical Exp073CF finalizer v0.1 remains permanently scientific FAIL and is not rewritten.
-
-Preserve Exp073AQ historical exact-repeatability FAIL; Exp073BD P3 `PROVISIONAL_INCOMPLETE_NO_DOWNSTREAM_USE`; Exp073BV source-lineage PASS; Exp073BW streaming-equivalence PASS; Exp073BZ checkpoint/failover PASS; Exp073CC/CD/CE nonclassifying `+0/+0`; Exp073CF attempts1/2 infrastructure incomplete `+0/+0`; Exp073CF compact scoped PASS + permanent finalizer v0.1 FAIL; Exp073CG/CH diagnostics `+0/+0`; Exp073CI new-version exact PASS; Exp073CJ governance `+0/+0`; Exp073CK/CL infrastructure incomplete `+0/+0`; Exp073CM/Exp073CN resource/performance FAIL `+0/+0`; Exp073CO/CP/CQ-v0.1 infrastructure/checkpoint-control lineage `+0/+0` as recorded above.
-
-## Frozen science boundaries and order
-
-Preserve `0.295 <= z <= 2.33`; `0 < k <= 0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid <= 0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES `NSIDE=4096`; ell `0..12287`; 39 bands; Wm `TE <- TE`; WW `EE <- EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`.
-
-Required order remains `validated physical forward/power-input bridges -> preregistered physical support-validity mask -> Layer A/Layer B prerequisites -> covariance restriction/whitening -> nuisance tangent rank/SVD -> quotient/relation/null control -> actual G7 authorization -> fresh G8 withheld family`. No G8 jump. Exp073BD is forbidden downstream.
+For active process details use `docs/CURRENT_PROCESS.md`; newest validated repository/checkpoint/Actions authority supersedes this pointer if a concurrent DSIR process advances it before the next reconciliation.
