@@ -1,0 +1,45 @@
+name: Exp073CR v0.3 r2 split-bind audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073cr_v0_3_r2_split_bind_audit.trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Audit split-bind prospective repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/exp073cr_v0_3_static_audit.py | tee "$RUNNER_TEMP/base-audit.log"
+          grep -Fx 'PASS_EXP073CR_V0_3_SOURCE_ORDER_STATIC_AUDIT' "$RUNNER_TEMP/base-audit.log"
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,subprocess
+          wf=Path('.github/workflows/exp073cr-v0-3-wm-s3-ll3-sharded-resource.yml').read_text()
+          base=Path('ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py').read_text()
+          bind=json.loads(Path('experiments/073cr_wm_s3_ll3_sharded_binding_v0_3.json').read_text())
+          for name in ('Bind host CPU availability','Bind exact v0.3 lineage','Compile bound v0.3 Python sources','Run bound v0.3 source-order static audit'):
+              assert f'- name: {name}' in wf
+          assert 'test "$(nproc)" -ge "8"' in wf
+          assert "a['control_repair_token']=='PASS_EXP073CR_V0_3_R2_SPLIT_BIND_CONTROL_AUDIT'" in wf
+          assert "a['home_bind_diagnostic_token']=='PASS_EXP073CR_V0_3_R2_HOME_BIND_DIAGNOSTIC'" in wf
+          assert 'cf.ProcessPoolExecutor(max_workers=8' in base
+          assert 'CPU_MIN=.90' in base
+          assert "'durability_before_refill':True" in base
+          assert bind['driver_commit']=='365fd7a8527b2dafe4785f95fa104276788c11d1'
+          assert bind['checkpoint_namespace']=='checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-3'
+          got=subprocess.check_output(['git','ls-remote','origin','refs/heads/checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-3'],text=True).strip().split()[0]
+          assert got=='cb408d4edb2a73413db8d3181e9cb1680dc19276', got
+          print('PASS_EXP073CR_V0_3_R2_SPLIT_BIND_CONTROL_AUDIT')
+          PY
