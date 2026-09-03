@@ -1,0 +1,91 @@
+name: Exp073CQ v0.2 hosted seed static audit
+on:
+  push:
+    paths: ['launch/exp073cq_v0_2_hosted_seed_static_audit.json']
+permissions: {contents: read}
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      PYTHONUNBUFFERED: '1'
+      DSIR_CHECKPOINT_QUERY_ATTEMPTS: '7'
+      DSIR_CHECKPOINT_FETCH_ATTEMPTS: '7'
+      DSIR_CHECKPOINT_GIT_TIMEOUT_SECONDS: '120'
+      DSIR_WORKFLOW_COMMIT: '31c57d7b3565aea7c6ff3edbdf978f51f652abcb'
+      DSIR_BINDING_COMMIT: 'f25cdc25c9e2d4a0f6d1ec673922cda9ca3019fc'
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Install minimal exact runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check 'numpy<3'
+      - name: Audit frozen lineage seeded checkpoint and home restore contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          PR=71800bedbf8c23d7aee4538a0230bdac4bd5c6f3
+          DR=0bf7ea195bccbb8e6458f1269640c279668d4a1f
+          WF=31c57d7b3565aea7c6ff3edbdf978f51f652abcb
+          BI=f25cdc25c9e2d4a0f6d1ec673922cda9ca3019fc
+          SY=c20127b6762c6fc9b21875a321aecd7a4cd5f88e
+          SEED=4f528424a2d2b3e32aeb4a68d73265ef9de8bd4e
+          FP=87b58bf120510bec50b21851d7ff21269689db6dcdd906cb3a14102e4a4f5f97
+          BR=checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2
+          test "$(git log -1 --format=%H -- preregistration/2026-09-03_exp073cq_v0_2_hosted_seed_missing29_38_resource.md)" = "$PR"
+          test "$(git log -1 --format=%H -- ci/exp073cq_v0_2_hosted_seed_missing29_38_resource.py)" = "$DR"
+          test "$(git log -1 --format=%H -- .github/workflows/exp073cq-v0-2-hosted-seeded-missing29-38-resource.yml)" = "$WF"
+          test "$(git log -1 --format=%H -- experiments/073cq_v0_2_hosted_seeded_binding.json)" = "$BI"
+          test "$(git log -1 --format=%H -- ci/dsir_checkpoint_git_sync_v0_3.sh)" = "$SY"
+          CQ="$RUNNER_TEMP/cqv02"
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh restore "$CQ" "$BR" "$SEED"
+          python3 ci/exp073cq_v0_2_hosted_seed_missing29_38_resource.py validate --checkpoint-dir "$CQ"
+          python3 - "$CQ" "$FP" <<'PY'
+          import json,sys
+          from pathlib import Path
+          r=Path(sys.argv[1]); want=sys.argv[2]; c=json.load(open(r/'contract.json'))
+          assert c['fingerprint']==want
+          assert c['version']=='v0.2'
+          assert c['checkpoint_namespace']=='checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2'
+          assert c['prereg_commit']=='71800bedbf8c23d7aee4538a0230bdac4bd5c6f3'
+          assert c['hosted_parent_import_seed_required'] is True
+          assert c['imported_parent_bands']==list(range(29))
+          assert c['compute_allowlist']==list(range(29,39))
+          assert c['outer_workers']==8 and c['max_inflight_futures']==8 and c['nested_threads']==1
+          assert float(c['cpu_fraction_min'])==0.90
+          for b in range(29):
+              d=r/'bands'/f'band_{b:02d}'; assert (d/'payload.npy').is_file() and (d/'receipt.json').is_file()
+              x=json.load(open(d/'receipt.json')); assert x['complete'] is True and x['origin']=='imported_exact_parent_exp073cp' and x['contract_fingerprint']==want
+          for b in range(29,39): assert not (r/'bands'/f'band_{b:02d}'/'receipt.json').exists()
+          assert (r/'upstream'/'receipt.json').is_file()
+          PY
+          python3 - <<'PY'
+          from pathlib import Path
+          w=Path('.github/workflows/exp073cq-v0-2-hosted-seeded-missing29-38-resource.yml').read_text()
+          d=Path('ci/exp073cq_v0_2_hosted_seed_missing29_38_resource.py').read_text()
+          assert 'Restore exact hosted-seeded successor checkpoint first' in w
+          assert '"$DSIR_SEED_HEAD"' in w
+          assert 'checkpoints/exp073cp-wm-s3-full39-resource-v0-1' not in w
+          assert 'import-parent' not in w
+          assert 'runs-on: [self-hosted, Linux, X64]' in w
+          for x in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS'): assert x in w
+          assert 'compute --checkpoint-dir' in w
+          assert 'PASS_EXP073CQ_V0_2_WM_S3_MISSING29_38_8WORKER_HOSTED_SEEDED_RESOURCE' in d
+          assert "base.NAMESPACE=NAMESPACE" in d and "base.PASS=PASS" in d and "base.FAIL_CPU=FAIL_CPU" in d
+          PY
+          mkdir -p data/derived/g7
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          o={'status':'PASS_EXP073CQ_V0_2_HOSTED_SEED_STATIC_AUDIT','seed_head':'4f528424a2d2b3e32aeb4a68d73265ef9de8bd4e','contract_fingerprint':'87b58bf120510bec50b21851d7ff21269689db6dcdd906cb3a14102e4a4f5f97','verified_delta':0.0,'draft_data_delta':0.0}
+          Path('data/derived/g7/exp073cq_v0_2_seed_static_audit.json').write_text(json.dumps(o,sort_keys=True,indent=2)+'\n')
+          print(o['status'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073cq-v0-2-hosted-seed-static-audit-${{ github.sha }}
+          path: data/derived/g7/exp073cq_v0_2_seed_static_audit.json
+          retention-days: 90
+          compression-level: 0
