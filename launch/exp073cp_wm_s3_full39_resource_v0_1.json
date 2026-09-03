@@ -1,8 +1,13 @@
 {
   "experiment": "Exp073CP",
   "version": "v0.1",
-  "activation_commit": "6d75b2d456209538fdeedebd41402de2e8b62267",
+  "activation_commit": "edfe24ff2e58f2ffd881c9a857b7d65b47b0182b",
+  "binding_commit": "8e459d50f107249abd12c60500ac6159c5463fb4",
+  "driver_commit": "fba35a7ded46d13ae3ebc43006f27488d01a79ae",
+  "workflow_commit": "47f046562aa983306051904d1524bcfdc292cd8c",
+  "audit_run": 33726098743,
   "checkpoint_namespace": "checkpoints/exp073cp-wm-s3-full39-resource-v0-1",
+  "outer_workers": 8,
   "expected_pass_token": "PASS_EXP073CP_WM_S3_FULL39_8WORKER_TRANSPORT_HARDENED_RESOURCE_V0_1",
-  "launch_policy": "single self-hosted job only after hosted static audit pass"
+  "launch_policy": "single self-hosted job after corrected hosted static audit PASS and zero competing Actions"
 }
