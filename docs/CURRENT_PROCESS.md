@@ -5,39 +5,39 @@ Updated: 2026-09-03
 Repository/immutable Actions/checkpoints are authoritative.
 
 ## Active process
-- experiment: Exp073CO hosted static checkpoint contract audit v0.1
-- workflow run: `33713552822`
-- job: `100517906229`
-- branch/head: `main` / `5e5f618f39e2767f75f8c9a0b89ffa07287ce26b`
-- checkpoint namespace under audit: `checkpoints/exp073co-wm-s3-full39-resource-v0-1`
-- start state at last reconciliation: `queued`
-- expected gate/token: `PASS_EXP073CO_STATIC_CHECKPOINT_CONTRACT_AUDIT_V0_1`
-- home runner ownership: FREE; no self-hosted Exp073CO job is authorized or active
-- exact next action on PASS: inspect audit artifact/digest and raw result; if valid, create activation authority only after rechecking all queued/in_progress DSIR Actions, then launch exactly one checkpointed Exp073CO home resource run
-- exact next action on FAIL: diagnose first static/contract defect, repair prospectively, rerun a NEW post-repair hosted audit; no home launch
-- exact next action on BLOCKED/infrastructure failure: preserve current implementation/binding, diagnose first causal failure, repair only infrastructure/control path, then rerun hosted audit
+- experiment: none
+- workflow run: none
+- job: none
+- branch/head: `main` / recovery reconciliation after Exp073CP run `33726577654`
+- checkpoint namespace: `checkpoints/exp073cp-wm-s3-full39-resource-v0-1`
+- current state: BLOCKED pending first-causal-error recovery or prospectively audited diagnostic successor
+- last durable checkpoint: `025629d9bb7b113bd0548ff6a32c6ee5812ae245` (`checkpoint: band-28-complete`)
+- durable bands: every band `0..28`; bands `29..38` absent
+- expected gate/token from historical Exp073CP v0.1: `PASS_EXP073CP_WM_S3_FULL39_8WORKER_TRANSPORT_HARDENED_RESOURCE_V0_1` (NOT produced)
+- home runner ownership: FREE; no queued/in_progress DSIR Actions at reconciliation
+- exact next action on diagnostic resolution: create a NEW prospectively versioned repair, preserve/import checkpoint head `025629d9bb7b113bd0548ff6a32c6ee5812ae245`, audit hosted, then compute only the first unfinished/missing units
+- exact next action while diagnostic unresolved: do not rerun home; continue only independent hosted/static/theory/reproducibility work
 
 ## Most recently consumed process
-- experiment: Exp073CN Wm_S3 8-worker per-band checkpoint resource v0.1
-- workflow run: `33710044833`
-- authorize job: `100507373744` SUCCESS
-- self-hosted job: `100507407911` terminal at frozen final classification
-- branch/head: `main` / `8eb042e206497a1579877bffe0a588ed8ec15870`
-- checkpoint namespace: `checkpoints/exp073cn-wm-s3-8worker-resource-v0-1`
-- last durable checkpoint: `71e4602212cb2056bc178dfed104bcacf388489c`
-- authority artifact: `9876628517`
-- artifact digest: `sha256:76c5817e01cf60c96ebf796e67c7dda866d6290405e1d557a2512d35416807b1`
-- exact first-8: PASS
-- swap safety: PASS
-- CPU fraction: `0.19305511714998927 < 0.90`
-- observed terminal status: `FAIL_EXP073CN_WM_S3_8WORKER_CPU_TARGET_V0_1`
-- classification: resource/performance FAIL `+0/+0`, not scientific arithmetic FAIL
+- experiment: Exp073CP Wm_S3 full39 transport-hardened resource v0.1
+- workflow run: `33726577654`
+- workflow/head: `.github/workflows/exp073cp-wm-s3-full39-transport-resource-v0-1.yml` / `b972faed6e13b7795dfccab3bca4c4cffd10cbe4`
+- authorize job: `100556781652` SUCCESS
+- self-hosted job: `100556826993` FAILURE
+- runner: `DSIR-HOME-PC`
+- job interval: `2026-09-03T07:08:30Z` -> `2026-09-03T08:00:55Z`
+- first noncompleted step: `Full39 bounded eight-worker compute with per-band durability`
+- frozen final classification: NOT RUN
+- authority artifact: NONE
+- checkpoint namespace: `checkpoints/exp073cp-wm-s3-full39-resource-v0-1`
+- terminal checkpoint: `025629d9bb7b113bd0548ff6a32c6ee5812ae245`
+- durable state: complete payload+receipt for bands `0..28`; no full39 telemetry/final receipt
+- classification: `INFRASTRUCTURE_OR_SOFTWARE_INCOMPLETE_AT_COMPUTE_STAGE`, `+0/+0`; NOT scientific FAIL and NOT resource/performance FAIL
+- exact stderr/exception: unavailable in this reconciliation because GitHub decoded job-log endpoint returned `BlobNotFound`; do not invent cause
+- immutable recovery note: `recovery/2026-09-03_exp073cp_band28_checkpointed_compute_stage_failure_forensics.md`, creation commit `887d3f510d1a78a9545fd16114d70423dd4ddacf`
 
-## Exp073CO frozen chain so far
-- preregistration commit: `95133fc97b9cc013a58c82aed583ee79f7737979`
-- driver commit: `0d0c6032f8af0def02f9e2c15abc3c22bfd049e0`
-- execution workflow commit: `eefb6767ab9452d2c74a1fa36f6f59a42bdb1ca9`
-- binding commit: `b84f4df108b6015c2909d8a00953df1fd0a43eb8`
-- static-audit workflow commit: `10ea8a67f9caef843d4dfb02c9f3d9b7c01344dc`
-- audit launch marker/head: `5e5f618f39e2767f75f8c9a0b89ffa07287ce26b`
-- home execution authorized: NO
+## Preserved prior resource authority
+- Exp073CN run `33710044833` remains exact-equal/swap-safe but CPU-utilization resource FAIL `+0/+0` with CPU fraction `0.19305511714998927 < 0.90`.
+- Exp073CM remains historical resource/performance FAIL `+0/+0`.
+- Wm_S3 angular authority remains absent.
+- Article-3 readiness remains **Verified 52.0% | Draft/data 54.6%**.
