@@ -1,0 +1,77 @@
+name: Exp073CP Wm_S3 full39 transport resource v0.1
+on:
+  workflow_dispatch:
+  push:
+    paths: ['launch/exp073cp_wm_s3_full39_resource_v0_1.json']
+permissions: {contents: write, actions: read}
+concurrency: {group: dsir-home-exp073cp-full39-transport, cancel-in-progress: false}
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+  PYTHONUNBUFFERED: '1'
+jobs:
+  authorize:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - shell: bash
+        run: |
+          set -euo pipefail
+          test -f ci/exp073cp_wm_s3_full39_resource_v0_1.activation.json
+          python3 - <<'PY'
+          import json,subprocess
+          a=json.load(open('ci/exp073cp_wm_s3_full39_resource_v0_1.activation.json'))
+          assert a['state']=='AUTHORIZED_AFTER_HOSTED_STATIC_AUDIT_PASS'
+          def last(p): return subprocess.check_output(['git','log','-1','--format=%H','--',p],text=True).strip()
+          assert a['prereg_commit']==last('preregistration/2026-09-03_exp073cp_wm_s3_full39_transport_hardened_resource_v0_1.md')
+          assert a['sync_commit']==last('ci/dsir_checkpoint_git_sync_v0_3.sh')
+          assert a['driver_commit']==last('ci/exp073cp_wm_s3_full39_transport_resource_v0_1.py')
+          assert a['workflow_commit']==last('.github/workflows/exp073cp-wm-s3-full39-transport-resource-v0-1.yml')
+          assert a['binding_commit']==last('experiments/073cp_wm_s3_full39_transport_resource_v0_1_binding.json')
+          assert a['audit_status']=='PASS_EXP073CP_STATIC_TRANSPORT_CHECKPOINT_AUDIT_V0_1'
+          PY
+  checkpointed-resource:
+    needs: authorize
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Reuse or bootstrap proven NaMaster 2.7 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$HOME/.cache/dsir-miniforge"; ENV="$HOME/.cache/dsir-nmt27"
+          if ! test -x "$MF/bin/conda"; then mkdir -p "$HOME/.cache"; curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"; bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"; fi
+          if ! test -x "$ENV/bin/python"; then "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 numpy; fi
+          echo "NMT_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+      - name: Compile frozen single-band helper
+        shell: bash
+        run: gcc -O2 -shared -fPIC -fopenmp -fno-fast-math -fno-associative-math -ffp-contract=off -fno-tree-vectorize ci/exp073ca_stream_general_coupling_range_v0_1.c -o /tmp/exp073ca.so -ldl -lm
+      - name: Restore immutable upstream and Exp073CP checkpoint first
+        shell: bash
+        run: |
+          set -euo pipefail
+          CM="$RUNNER_TEMP/exp073cm-authority"; CP="$RUNNER_TEMP/exp073cp-checkpoint"
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh restore "$CM" checkpoints/exp073cm-wm-s3-resource-v0-1 d405a7a934bbd8caf464cd2a4bcb6052b8d205cd
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh restore "$CP" checkpoints/exp073cp-wm-s3-full39-resource-v0-1 ALLOW_ABSENT
+          "$NMT_PY" ci/exp073cp_wm_s3_full39_transport_resource_v0_1.py init --checkpoint-dir "$CP" --source-head "$GITHUB_SHA" --driver-commit b49f879f1a50afc78d61f4fe3d64040c68b4aeaf
+          if ! test -f "$CP/upstream/receipt.json"; then "$NMT_PY" ci/exp073cp_wm_s3_full39_transport_resource_v0_1.py import-upstream --checkpoint-dir "$CP" --cm-dir "$CM"; bash ci/dsir_checkpoint_git_sync_v0_3.sh push "$CP" checkpoints/exp073cp-wm-s3-full39-resource-v0-1 validated-upstream; fi
+      - name: Full39 bounded eight-worker compute with per-band durability
+        shell: bash
+        run: "$NMT_PY" ci/exp073cp_wm_s3_full39_transport_resource_v0_1.py compute --checkpoint-dir "$RUNNER_TEMP/exp073cp-checkpoint" --ca-so /tmp/exp073ca.so --branch checkpoints/exp073cp-wm-s3-full39-resource-v0-1 --sync-script ci/dsir_checkpoint_git_sync_v0_3.sh
+      - name: Frozen final classification
+        shell: bash
+        run: |
+          set +e; "$NMT_PY" ci/exp073cp_wm_s3_full39_transport_resource_v0_1.py finalize --checkpoint-dir "$RUNNER_TEMP/exp073cp-checkpoint"; rc=$?; set -e
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh push "$RUNNER_TEMP/exp073cp-checkpoint" checkpoints/exp073cp-wm-s3-full39-resource-v0-1 frozen-final
+          mkdir -p data/derived/g7; cp "$RUNNER_TEMP/exp073cp-checkpoint/final/receipt.json" data/derived/g7/exp073cp_final_receipt_v0_1.json; cp "$RUNNER_TEMP/exp073cp-checkpoint/telemetry/full39.json" data/derived/g7/exp073cp_telemetry_v0_1.json; exit "$rc"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: exp073cp-wm-s3-full39-resource-${{ github.sha }}, path: 'data/derived/g7/exp073cp_*.json', retention-days: 90, compression-level: 0}
