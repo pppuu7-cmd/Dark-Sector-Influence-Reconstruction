@@ -65,7 +65,8 @@ jobs:
           if ! test -f "$CP/upstream/receipt.json"; then "$NMT_PY" ci/exp073cp_wm_s3_full39_transport_resource_v0_1.py import-upstream --checkpoint-dir "$CP" --cm-dir "$CM"; bash ci/dsir_checkpoint_git_sync_v0_3.sh push "$CP" checkpoints/exp073cp-wm-s3-full39-resource-v0-1 validated-upstream; fi
       - name: Full39 bounded eight-worker compute with per-band durability
         shell: bash
-        run: "$NMT_PY" ci/exp073cp_wm_s3_full39_transport_resource_v0_1.py compute --checkpoint-dir "$RUNNER_TEMP/exp073cp-checkpoint" --ca-so /tmp/exp073ca.so --branch checkpoints/exp073cp-wm-s3-full39-resource-v0-1 --sync-script ci/dsir_checkpoint_git_sync_v0_3.sh
+        run: |
+          "$NMT_PY" ci/exp073cp_wm_s3_full39_transport_resource_v0_1.py compute --checkpoint-dir "$RUNNER_TEMP/exp073cp-checkpoint" --ca-so /tmp/exp073ca.so --branch checkpoints/exp073cp-wm-s3-full39-resource-v0-1 --sync-script ci/dsir_checkpoint_git_sync_v0_3.sh
       - name: Frozen final classification
         shell: bash
         run: |
