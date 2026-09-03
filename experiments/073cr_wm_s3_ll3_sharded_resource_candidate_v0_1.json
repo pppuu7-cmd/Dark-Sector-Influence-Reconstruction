@@ -1,0 +1,65 @@
+{
+  "allocation_by_band": {
+    "29": 3,
+    "30": 3,
+    "31": 4,
+    "32": 5,
+    "33": 6,
+    "34": 7,
+    "35": 8,
+    "36": 9,
+    "37": 9,
+    "38": 10
+  },
+  "bands": [
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38
+  ],
+  "cpu_fraction_min": 0.9,
+  "exact_complete_band_reference_required": true,
+  "exactness_rule": "split only ll3 output domain; preserve fixed-ll3 ll2 order, both drc3jj calls, ascending l1 loop, xi multiplication and acc += xi; assembly placement only",
+  "experiment": "Exp073CR",
+  "ll3_boundaries_by_band": {
+    "29": [2,5018,8193,12288],
+    "30": [2,5143,8194,12288],
+    "31": [2,4550,6738,9039,12288],
+    "32": [2,4215,5995,7673,9642,12288],
+    "33": [2,3962,5602,6937,8397,10112,12288],
+    "34": [2,3747,5300,6548,7727,9018,10499,12288],
+    "35": [2,3543,5035,6283,7400,8451,9574,10832,12288],
+    "36": [2,3332,4829,6089,7199,8203,9135,10088,11128,12288],
+    "37": [2,3372,5035,6379,7537,8571,9513,10397,11304,12288],
+    "38": [2,3503,5152,6431,7513,8470,9336,10133,10875,11581,12288]
+  },
+  "ll3_domain": [
+    2,
+    12288
+  ],
+  "lmax": 12287,
+  "nested_threads": 1,
+  "no_tolerance_rescue": true,
+  "outer_workers": 8,
+  "parent_contract_fingerprint": "87b58bf120510bec50b21851d7ff21269689db6dcdd906cb3a14102e4a4f5f97",
+  "parent_experiment": "Exp073CQ v0.2",
+  "parent_terminal_checkpoint_head": "32bf0d1bdbcc2480f8b77f936ea6dc1f425812b0",
+  "proxy_definition": "sum over ll2 in frozen band and ll3 in shard of 3*(min(ll2+ll3,lmax)-abs(ll2-ll3)+1), lmax=12287",
+  "proxy_results": {
+    "heavy_first_list_scheduling_utilization_fraction": 0.9918607445989314,
+    "natural_list_scheduling_utilization_fraction": 0.9777520040464497
+  },
+  "resource_authority": "prospective",
+  "scientific_credit": "+0/+0",
+  "status": "PREREGISTERED_RESOURCE_GATE",
+  "swap_increase_kib_max": 0,
+  "task": "Wm_S3",
+  "total_shards": 64,
+  "version": "v0.1"
+}
