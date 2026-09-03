@@ -13,10 +13,10 @@
   "home_bind_diagnostic_job_id": 100700156146,
   "home_bind_diagnostic_token": "PASS_EXP073CR_V0_3_R2_HOME_BIND_DIAGNOSTIC",
   "home_bind_diagnostic_nproc": 8,
-  "control_repair_run_id": 33770942410,
-  "control_repair_job_id": 100700703465,
-  "control_repair_token": "PASS_EXP073CR_V0_3_R2_SPLIT_BIND_CONTROL_AUDIT",
-  "control_repair_workflow_commit": "3f78577a12d5c6943f713c1451948ce00b8acc26",
+  "control_repair_run_id": 33771208922,
+  "control_repair_job_id": 100701597029,
+  "control_repair_token": "PASS_EXP073CR_V0_3_R3_AFFINITY_CPU_CONTROL_AUDIT",
+  "control_repair_workflow_commit": "d7bf00a5501367899472c861317fc24d83a6c4df",
   "seed_head": "cb408d4edb2a73413db8d3181e9cb1680dc19276",
   "seed_fingerprint": "3eb54728878e5913fcb39b9e6411480c413d6a5a6a968c67e623f1fa48e6ec29",
   "candidate_sha256": "d48e46197b48a6fcdf7d3eb3b0817973a2eadb25bbb617e7b8060c8c17209462",
@@ -27,5 +27,5 @@
   "nested_threads": 1,
   "cpu_fraction_min": 0.9,
   "swap_increase_kib_max": 0,
-  "activation_reason": "Exp073CQ_v0.2_resource_performance_FAIL_cpu_fraction_0.6638297425690942_lt_0.90; Exp073CR_v0.3_exact_ll3_sharding_audited; exact home r2 diagnostic confirmed nproc=8, Python, lineage, py_compile, static audit and seed identity; split-bind repair changes only control-plane step isolation"
+  "activation_reason": "Exp073CQ_v0.2_resource_performance_FAIL_cpu_fraction_0.6638297425690942_lt_0.90; exact home diagnostic proved 8 CPUs; r2 resource run proved GNU nproc is reduced to 1 by job-level OMP_NUM_THREADS=1; r3 measures scheduler affinity independently while preserving nested thread pinning and the frozen 8-worker contract"
 }
