@@ -1,0 +1,42 @@
+name: Exp073CN static audit v0.1
+
+on:
+  push:
+    branches: [ exp073cn-8core-resource ]
+    paths:
+      - 'docs/SELF_HOSTED_8CORE_HEAVY_COMPUTE_STANDARD.md'
+      - 'ci/dsir_8core_band_scheduler_v0_1.py'
+      - 'recovery/2026-09-03_exp073cn_8core_resource_preregistration.md'
+      - '.github/workflows/exp073cn-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Syntax check
+        run: python -m py_compile ci/dsir_8core_band_scheduler_v0_1.py
+      - name: Static contract audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f ci/dsir_remote_band_checkpoint_v0_1.py
+          test -f ci/dsir_checkpoint_git_sync_v0_2.sh
+          grep -Fq 'max_workers != 8' ci/dsir_8core_band_scheduler_v0_1.py
+          grep -Fq 'visible != 8' ci/dsir_8core_band_scheduler_v0_1.py
+          grep -Fq 'ProcessPoolExecutor(max_workers=max_workers)' ci/dsir_8core_band_scheduler_v0_1.py
+          grep -Fq 'OMP_NUM_THREADS' ci/dsir_8core_band_scheduler_v0_1.py
+          grep -Fq 'MKL_NUM_THREADS' ci/dsir_8core_band_scheduler_v0_1.py
+          grep -Fq 'OPENBLAS_NUM_THREADS' ci/dsir_8core_band_scheduler_v0_1.py
+          grep -Fq 'NUMEXPR_NUM_THREADS' ci/dsir_8core_band_scheduler_v0_1.py
+          grep -Fq 'CPU fraction is at least 0.90' recovery/2026-09-03_exp073cn_8core_resource_preregistration.md
+          grep -Fq 'Scientific credit: +0/+0' recovery/2026-09-03_exp073cn_8core_resource_preregistration.md
+          grep -Fq 'Full Wm_S3 scientific A/B production remains forbidden' recovery/2026-09-03_exp073cn_8core_resource_preregistration.md
+          echo 'PASS_EXP073CN_STATIC_AUDIT_V0_1'
