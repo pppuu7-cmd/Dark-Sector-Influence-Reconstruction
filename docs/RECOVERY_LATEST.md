@@ -6,7 +6,7 @@
 
 Repository state, immutable recovery notes, validated GitHub Actions logs/artifacts and durable checkpoint branches outrank chat wording. Resource/checkpoint/infrastructure/static work gives `+0/+0` unless a frozen scientific ledger explicitly says otherwise. Frozen science boundaries are unchanged.
 
-## Immediate frontier — Exp073CR v0.3 r2 split-bind ll3-sharded Wm_S3 resource gate
+## Immediate frontier — Exp073CR v0.3 r3 affinity-controlled ll3-sharded Wm_S3 resource gate
 
 Wm_S3 angular scientific authority remains absent. Scientific Wm_S3 A/B production remains forbidden until a prospectively frozen resource gate passes. No competing self-hosted task is permitted.
 
@@ -16,7 +16,7 @@ Run/job/head `33752799918` / `100640079011` / `011852feb6d40152f4b33bde732b00520
 
 Classification: **RESOURCE/PERFORMANCE FAIL `+0/+0`; not Wm_S3 scientific arithmetic FAIL.** Artifact `9897551836`, digest `sha256:0f10c863ee65f3d7c27177a324cafe2830e6b8b1096da054e35c638b26d6104c`.
 
-### Exp073CR v0.3 frozen architecture
+### Exp073CR v0.3 frozen architecture and seed authority
 
 Exp073CR v0.3 preserves exact complete-band arithmetic/reference authority while bands `29..38` are represented by 64 prospectively frozen source-order ll3 shards solely to improve utilization. Frozen rules: exactly 8 outer workers, max 8 in flight, nested threads=1, durability order `store_shard -> durable_sync -> refill_submit`, exact reconstruction/reference equality, CPU fraction `>=0.90`, swap increase `0 KiB`, no tolerance rescue.
 
@@ -24,27 +24,36 @@ Bound authority: prereg `fb10a589ee5ac03f478160c9cfd28484169e48ca`; driver `365f
 
 Hosted seed/static/bitwise authority run/job `33768977707` / `100694004982` SUCCESS with tokens `PASS_EXP073CR_V0_3_SOURCE_ORDER_STATIC_AUDIT`, `PASS_EXP073CR_HOSTED_AUTHORITATIVE_LL3_BITWISE_REGRESSION_V0_1`, `PASS_EXP073CR_V0_3_HOSTED_SEED_STATIC_BITWISE_AUDIT`. Durable seed head `cb408d4edb2a73413db8d3181e9cb1680dc19276`, fingerprint `3eb54728878e5913fcb39b9e6411480c413d6a5a6a968c67e623f1fa48e6ec29`; artifact `9898817387`, digest `sha256:6d0435cfb99e4c05c49a5e61f8944d85a786820e3bf2f0913135b263bb0c734d`.
 
-### Bind-failure diagnosis and prospective r2 repair
+### Exact control-plane failure chain and r3 repair
 
-Initial home run `33770178685` / job `100698177477` failed before seed/compute at an over-constrained `nproc==8` control. r1 changed only that machine guard to `nproc>=8`, preserving the actual 8-worker contract. r1 run `33770577708` / job `100699512748` again failed in the combined bind shell before seed/compute, but its combined log did not evidence the exact failing subcommand; it is therefore **INFRASTRUCTURE/CONTROL-PLANE INCOMPLETE `+0/+0`**, not resource/science evidence.
+Initial run `33770178685` failed before seed/compute on an `nproc==8` bind control. The subsequent r1 run `33770577708` again failed in the combined bind shell without exposing the exact failed subcommand. Exact-home diagnostic run/job `33770780033` / `100700156146` then passed with token `PASS_EXP073CR_V0_3_R2_HOME_BIND_DIAGNOSTIC`, measuring 8 online logical CPUs and independently validating Python, lineage, py_compile, static audit and exact seed identity.
 
-A narrow exact-home diagnostic run/job `33770780033` / `100700156146` then completed SUCCESS with raw token `PASS_EXP073CR_V0_3_R2_HOME_BIND_DIAGNOSTIC`. It measured `nproc=8`, online CPUs=8 (4 physical cores x2 threads), `/usr/bin/python3` Python 3.14.4, and independently passed bound git lineage, `py_compile`, source-order static audit, and exact read-only seed-head verification. Thus the r1 combined failure is not attributable to deficient online CPU count, missing Python, bound lineage, source syntax/static audit, or seed drift.
+The r2 split-bind run/job `33771012683` / `100700992523` isolated the exact first cause. Under job-level `OMP_NUM_THREADS=1`, the `Bind host CPU availability` log printed `home_nproc=1`; therefore GNU `nproc` was coupled to the nested OpenMP pin and was not a valid machine-capacity probe. The run is **INFRASTRUCTURE/CONTROL-PLANE FAILURE `+0/+0`**; lineage/seed/helper/compute were skipped and zero shards were computed.
 
-The smallest prospective r2 repair is control-plane isolation only: the combined bind shell is split into distinct fail-closed steps at workflow commit `3f78577a12d5c6943f713c1451948ce00b8acc26`; no numerical/resource/science rule changed. Dedicated hosted audit run/job `33770942410` / `100700703465` completed SUCCESS with raw token `PASS_EXP073CR_V0_3_R2_SPLIT_BIND_CONTROL_AUDIT`, while revalidating exactly 8 ProcessPool workers, `CPU_MIN=.90`, durability-before-refill, bound driver/namespace and unchanged seed.
+The smallest prospective r3 repair measures scheduler CPU affinity via `os.sched_getaffinity(0)` independently of GNU `nproc`, while preserving `OMP_NUM_THREADS=1`, all other nested thread pins, exactly 8 outer workers, max-8 inflight, 64 shard geometry/order, durability ordering, exact arithmetic, CPU threshold `.90`, and swap criterion. Resource workflow commit `d7bf00a5501367899472c861317fc24d83a6c4df`.
 
-Immutable notes: `recovery/2026-09-03_exp073cr_v0_3_r1_bind_failure_and_r2_diagnostic.md` and `recovery/2026-09-03_exp073cr_v0_3_r2_diagnostic_pass_split_bind_launch.md`.
+Hosted r3 audit run/job `33771208922` / `100701597029` completed SUCCESS with raw token `PASS_EXP073CR_V0_3_R3_AFFINITY_CPU_CONTROL_AUDIT`. Its job itself ran with `OMP_NUM_THREADS=1`, reproduced `omp_pinned_nproc=1`, and simultaneously revalidated the affinity-based probe, base static contract, exactly 8 ProcessPool workers, `CPU_MIN=.90`, durability-before-refill, bound driver and unchanged seed head.
 
-### LIVE r2 continuation
+Immutable causal/recovery note: `recovery/2026-09-03_exp073cr_v0_3_r2_nproc_omp_cause_r3_running.md`.
 
-Immediately before activation, Actions audit showed `0 in_progress` and `0 queued`. Activation commit `1e4345286d8816ff3d850d3a39b8aff0645948df` triggered exactly one Exp073CR resource workflow.
+### LIVE r3 continuation
 
-Current run: **`33771012683`**, head `1e4345286d8816ff3d850d3a39b8aff0645948df`.
-- hosted authorize job **`100700943092`** was **QUEUED** at the last reconciliation;
-- self-hosted job was not yet instantiated at that instant;
-- once instantiated, it owns DSIR-HOME-PC exclusively while queued/in_progress;
-- no competing home run may be launched.
+Immediately before activation, Actions audit showed `0 in_progress` and `0 queued`. Activation commit `023fcfa28f0eb904656c76e55c55d821e50c8155` triggered exactly one Exp073CR resource workflow.
 
-Exact next action: consume run `33771012683` as it advances. If the split bind succeeds, restore the exact unchanged seed and execute only the frozen 64-shard gate. On terminal state inspect all durable shard receipts, durability-before-refill evidence, exact complete-band reconstruction/reference equality, swap and CPU fraction before classification. Resource PASS remains `+0/+0` and only then may authorize preregistration of the scientifically permitted fresh-independent-PCL Wm_S3 A/B successor. Resource FAIL is preserved negative resource evidence; infrastructure/software failure requires first-distinct-cause diagnosis and checkpoint-safe prospective repair.
+Current authoritative run: **`33771269117`**, head `023fcfa28f0eb904656c76e55c55d821e50c8155`.
+- authorize job **`100701802991`**: SUCCESS;
+- self-hosted job **`100701857748`**: IN_PROGRESS at last reconciliation;
+- affinity CPU bind: SUCCESS;
+- exact lineage bind: SUCCESS;
+- bound Python compile: SUCCESS;
+- source-order static audit: SUCCESS;
+- NaMaster 2.7 environment: SUCCESS;
+- exact v0.3 hosted-seed restore: SUCCESS;
+- exact helper compile and frozen geometry validation: SUCCESS;
+- **`Compute 64 frozen shards with durability-before-refill`: IN_PROGRESS**;
+- DSIR-HOME-PC is **RESERVED EXCLUSIVELY** for run `33771269117` / job `100701857748`; no competing home run may be launched.
+
+Exact next action while running: do not duplicate and do not tune from partial numerical output. On terminal state immediately inspect the durable checkpoint head and all complete shard receipts, seed/contract fingerprint, durability-before-refill evidence, exact reconstructed complete-band equality, swap telemetry and frozen `cpu_fraction>=0.90`, then classify resource PASS/FAIL. A resource PASS remains `+0/+0` and only then may authorize preregistration of the scientifically permitted fresh-independent-PCL Wm_S3 A/B successor. Infrastructure/software failure requires first-causal diagnosis and checkpoint-safe resume of unfinished shards only.
 
 ## Preserved authority and boundaries
 
