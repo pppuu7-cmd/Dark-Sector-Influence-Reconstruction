@@ -1,0 +1,57 @@
+name: Exp073CQ v0.2 hosted seed parent import
+on:
+  push:
+    paths: ['launch/exp073cq_v0_2_hosted_seed_parent_import.json']
+permissions: {contents: write}
+jobs:
+  seed-parent-import:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      PYTHONUNBUFFERED: '1'
+      DSIR_CHECKPOINT_QUERY_ATTEMPTS: '7'
+      DSIR_CHECKPOINT_FETCH_ATTEMPTS: '7'
+      DSIR_CHECKPOINT_PUSH_ATTEMPTS: '7'
+      DSIR_CHECKPOINT_GIT_TIMEOUT_SECONDS: '120'
+      DSIR_WORKFLOW_COMMIT: '31c57d7b3565aea7c6ff3edbdf978f51f652abcb'
+      DSIR_BINDING_COMMIT: 'f25cdc25c9e2d4a0f6d1ec673922cda9ca3019fc'
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Install minimal exact runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check 'numpy<3'
+      - name: Create exact hosted parent-import seed and push durable successor
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- ci/exp073cq_v0_2_hosted_seed_missing29_38_resource.py)" = 0bf7ea195bccbb8e6458f1269640c279668d4a1f
+          test "$(git log -1 --format=%H -- .github/workflows/exp073cq-v0-2-hosted-seeded-missing29-38-resource.yml)" = 31c57d7b3565aea7c6ff3edbdf978f51f652abcb
+          test "$(git log -1 --format=%H -- experiments/073cq_v0_2_hosted_seeded_binding.json)" = f25cdc25c9e2d4a0f6d1ec673922cda9ca3019fc
+          CQ="$RUNNER_TEMP/cqv02"; P="$RUNNER_TEMP/cp"; BR=checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh restore "$CQ" "$BR" ALLOW_ABSENT
+          test ! -e "$CQ/upstream/receipt.json"
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh restore "$P" checkpoints/exp073cp-wm-s3-full39-resource-v0-1 025629d9bb7b113bd0548ff6a32c6ee5812ae245
+          python3 ci/exp073cq_v0_2_hosted_seed_missing29_38_resource.py init --checkpoint-dir "$CQ" --source-head f25cdc25c9e2d4a0f6d1ec673922cda9ca3019fc --driver-commit 0bf7ea195bccbb8e6458f1269640c279668d4a1f
+          python3 ci/exp073cq_v0_2_hosted_seed_missing29_38_resource.py import-parent --checkpoint-dir "$CQ" --parent-dir "$P"
+          python3 ci/exp073cq_v0_2_hosted_seed_missing29_38_resource.py validate --checkpoint-dir "$CQ"
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh push "$CQ" "$BR" hosted-parent-import-seed
+          HEAD=$(git ls-remote --heads origin "refs/heads/$BR" | awk '{print $1}')
+          test "${#HEAD}" = 40
+          mkdir -p data/derived/g7
+          python3 - "$CQ" "$HEAD" <<'PY'
+          import json,sys
+          from pathlib import Path
+          root=Path(sys.argv[1]); head=sys.argv[2]; c=json.load(open(root/'contract.json'))
+          o={'status':'PASS_EXP073CQ_V0_2_HOSTED_PARENT_IMPORT_SEED','seed_head':head,'contract_fingerprint':c['fingerprint'],'imported_bands':list(range(29)),'compute_allowlist':list(range(29,39)),'verified_delta':0.0,'draft_data_delta':0.0}
+          Path('data/derived/g7/exp073cq_v0_2_hosted_seed.json').write_text(json.dumps(o,sort_keys=True,indent=2)+'\n')
+          print(json.dumps(o,sort_keys=True)); print(o['status'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073cq-v0-2-hosted-parent-import-seed-${{ github.sha }}
+          path: data/derived/g7/exp073cq_v0_2_hosted_seed.json
+          retention-days: 90
+          compression-level: 0
