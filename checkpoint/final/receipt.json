@@ -1,0 +1,24 @@
+{
+  "array_equal_reference_0_7": true,
+  "complete": true,
+  "contract_fingerprint": "87b58bf120510bec50b21851d7ff21269689db6dcdd906cb3a14102e4a4f5f97",
+  "cpu_fraction_min": 0.9,
+  "cpu_fraction_of_8_compute": 0.6638297425690942,
+  "draft_data_delta": 0.0,
+  "dtype": "<f8",
+  "experiment": "Exp073CQ",
+  "first8_sha256": "36ee9fca9fb276a30d8ebb97cb04fddc7e95cff18fb29248c033bb364ea2d8cf",
+  "format": "DSIR_UNIVERSAL_SELF_HOSTED_CHECKPOINT_V0_1",
+  "no_tolerance_rescue": true,
+  "reference_sha256": "36ee9fca9fb276a30d8ebb97cb04fddc7e95cff18fb29248c033bb364ea2d8cf",
+  "sha_equal_reference_0_7": true,
+  "stage": "final",
+  "status": "FAIL_EXP073CQ_V0_2_WM_S3_CPU_TARGET",
+  "swap_increase_kib": 0,
+  "target_shape": [
+    39,
+    12288
+  ],
+  "task": "Wm_S3",
+  "verified_delta": 0.0
+}
