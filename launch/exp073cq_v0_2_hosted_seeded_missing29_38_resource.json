@@ -1,0 +1,10 @@
+{
+  "experiment": "Exp073CQ",
+  "version": "v0.2",
+  "task": "single_hosted_seeded_missing29_38_resource",
+  "activation_commit": "fabb0c601edcb117d7734ba1828da762b585c2db",
+  "seed_head": "4f528424a2d2b3e32aeb4a68d73265ef9de8bd4e",
+  "successor_namespace": "checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2",
+  "compute_allowlist": [29,30,31,32,33,34,35,36,37,38],
+  "home_runner_exclusive": true
+}
