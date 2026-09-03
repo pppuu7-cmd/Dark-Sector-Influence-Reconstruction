@@ -9,11 +9,13 @@ Repository/immutable Actions/checkpoints are authoritative.
 - workflow run: `33752799918`
 - workflow/head: `.github/workflows/exp073cq-v0-2-hosted-seeded-missing29-38-resource.yml` / `011852feb6d40152f4b33bde732b00520cd28f79`
 - authorize job: `100640020607` SUCCESS
-- self-hosted job: `100640079011` QUEUED
+- self-hosted job: `100640079011` IN_PROGRESS
+- active step: `Compute only missing bands 29-38 with durability`
 - checkpoint namespace: `checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2`
 - exact hosted seed head: `4f528424a2d2b3e32aeb4a68d73265ef9de8bd4e`
 - seed contract fingerprint: `87b58bf120510bec50b21851d7ff21269689db6dcdd906cb3a14102e4a4f5f97`
-- durable seed state: exact imported/read-only bands `0..28`; compute allowlist exactly `29..38`; no new numerical band yet claimed
+- latest observed durable checkpoint head: `ad9d79d0b32a6a097669966c8b94b7424521c34e` (`checkpoint: band-31-complete`, 2026-09-03T13:00:01Z)
+- durable seed state: exact imported/read-only bands `0..28`; numerical compute allowlist remains exactly `29..38`; at least newly computed complete band `31` is durably present at the observed checkpoint head; no partial numerical output is interpreted
 - expected gate/token: `PASS_EXP073CQ_V0_2_WM_S3_MISSING29_38_8WORKER_HOSTED_SEEDED_RESOURCE`
 - prereg commit: `71800bedbf8c23d7aee4538a0230bdac4bd5c6f3`
 - driver commit: `0bf7ea195bccbb8e6458f1269640c279668d4a1f`
@@ -23,13 +25,20 @@ Repository/immutable Actions/checkpoints are authoritative.
 - launch commit: `011852feb6d40152f4b33bde732b00520cd28f79`
 - hosted seed authority: run `33752529085`, job `100639147404`, token `PASS_EXP073CQ_V0_2_HOSTED_PARENT_IMPORT_SEED`, artifact `9892102247`, digest `sha256:8af123e1102f17feae01050c456983e8547306c9f59b4a72f64ccb917b55a2ae`
 - hosted post-seed audit authority: run `33752695840`, job `100639693792`, token `PASS_EXP073CQ_V0_2_HOSTED_SEED_STATIC_AUDIT`, artifact `9892171765`, digest `sha256:8e9acc8142bf5bc1a441259d6884d2dc54cda8a5690a64cdef81525479c7d68b`
-- home runner ownership: RESERVED EXCLUSIVELY for run `33752799918` / job `100640079011` while queued or in_progress; DO NOT launch a competing home job
-- exact next action while QUEUED/RUNNING: do not duplicate; consume terminal job immediately; validate seed restoration, all new per-band checkpoints, exact first-8, swap and CPU gate
+- home runner ownership: RESERVED EXCLUSIVELY for run `33752799918` / job `100640079011` while in_progress; DO NOT launch a competing home job
+- exact next action while RUNNING: do not duplicate; continue only independent non-biasing audits/research; consume terminal job immediately; validate seed restoration, all new per-band checkpoints, exact first-8, swap and CPU gate
 - exact next action on PASS: consume artifact/checkpoint/final receipt and keep resource gate `+0/+0`; only then preregister fresh-independent-PCL Wm_S3 A/B scientific successor
 - exact next action on numerical/resource FAIL: preserve frozen negative result `+0/+0`; no tolerance rescue
 - exact next action on infrastructure/software/checkpoint failure: preserve all exact-valid durable units, diagnose first causal failure, repair prospectively, hosted-audit again, resume only unfinished units
 
-## Most recently consumed process
+## Independent research-only result reconciled during active compute
+- Exp073CR hosted ll3 bitwise regression run `33754644074`, job `100646005106`, branch/head `research/exp073cr-ll3-shard-prototype-20260903` / `b67b87168e009a263c91d52c529fb459879b8a00`: SUCCESS.
+- Trigger explicitly declares `NON_AUTHORITATIVE_RESEARCH_TRIGGER`, scientific credit `+0/+0`, resource authority `none`, no home runner, and does not modify Exp073CQ v0.2.
+- Raw regression log reported exact array/SHA equality for immutable Exp073CP bands 0, 7 and 15 under two ll3 partitions, with hosted tokens `PASS_EXP073CR_RESEARCH_LL3_BITWISE_REGRESSION_V0_0` and `PASS_EXP073CR_HOSTED_LL3_BITWISE_REGRESSION_V0_1`.
+- Artifact `9892971697`, zip digest `sha256:766184eb42ef696e3c493d55ebb78cbc6c4fab83baf7c0d17bbdb7b3cf104a72`.
+- This evidence is research-only `+0/+0`; it cannot supersede, tune, rescue, or authorize the running Exp073CQ frozen resource gate.
+
+## Most recently consumed authoritative process
 - experiment: Exp073CQ v0.1
 - workflow run/job: `33742582807` / `100607697336`
 - terminal state: FAILURE at `Exact import of immutable Exp073CP band0-28 authority`; helper/29..38/final/artifact not run
