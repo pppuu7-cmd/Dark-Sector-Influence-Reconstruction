@@ -1,0 +1,9 @@
+{
+  "activation": "RUN_EXACTLY_ONE_HOSTED_EXP073CR_SEED_AUDIT_V0_1",
+  "binding_commit": "139a608032f5fa103418bb9b07e0e420d44833b2",
+  "experiment": "Exp073CR",
+  "parent_terminal_checkpoint_head": "32bf0d1bdbcc2480f8b77f936ea6dc1f425812b0",
+  "resource_only": true,
+  "scientific_credit": "+0/+0",
+  "version": "v0.1"
+}
