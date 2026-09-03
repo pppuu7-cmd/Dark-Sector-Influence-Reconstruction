@@ -1,0 +1,8 @@
+{
+  "experiment": "Exp073CQ",
+  "version": "v0.2",
+  "task": "hosted_parent_import_seed",
+  "home_compute": false,
+  "parent_head": "025629d9bb7b113bd0548ff6a32c6ee5812ae245",
+  "successor_namespace": "checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2"
+}
