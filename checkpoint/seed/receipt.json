@@ -1,0 +1,18 @@
+{
+  "complete": true,
+  "contract_fingerprint": "3eb54728878e5913fcb39b9e6411480c413d6a5a6a968c67e623f1fa48e6ec29",
+  "parent_head": "32bf0d1bdbcc2480f8b77f936ea6dc1f425812b0",
+  "pcl_sha256": "ec34ee34311f3b02a16e118113b5b1acd1b961859caccd2c4387c0ae529cd72d",
+  "reference_bands": [
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38
+  ]
+}
