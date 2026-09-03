@@ -1,0 +1,145 @@
+name: Exp073CR Wm_S3 ll3-sharded resource v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073cr_home.activation.json'
+
+permissions:
+  contents: write
+
+jobs:
+  authorize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      seed_head: ${{ steps.auth.outputs.seed_head }}
+      seed_fingerprint: ${{ steps.auth.outputs.seed_fingerprint }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: auth
+        name: Fail-closed hosted audit authorization
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json,re
+          a=json.load(open('ci/exp073cr_home.activation.json'))
+          assert a['experiment']=='Exp073CR' and a['version']=='v0.1'
+          assert a['hosted_audit_token']=='PASS_EXP073CR_HOSTED_SEED_STATIC_BITWISE_AUDIT_V0_1'
+          assert re.fullmatch(r'[0-9a-f]{40}',a['seed_head'])
+          assert re.fullmatch(r'[0-9a-f]{64}',a['seed_fingerprint'])
+          assert a['checkpoint_namespace']=='checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-1'
+          assert a['candidate_sha256']=='15d8f15ae63cec84052f727c8f826e84aeb582671a95c152c565098c32a2c5b5'
+          assert a['queue_sha256']=='3ba315d9bc24883ef746d92e785e0a040f9b13e751f59dda9a93e825a6390db4'
+          print('seed_head='+a['seed_head'])
+          print('seed_fingerprint='+a['seed_fingerprint'])
+          PY
+          echo PASS_EXP073CR_HOSTED_AUDIT_AUTHORIZATION_V0_1
+
+  checkpointed-resource:
+    needs: authorize
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 360
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+      OMP_DYNAMIC: 'FALSE'
+      PYTHONUNBUFFERED: '1'
+      DSIR_CHECKPOINT_QUERY_ATTEMPTS: '7'
+      DSIR_CHECKPOINT_FETCH_ATTEMPTS: '7'
+      DSIR_CHECKPOINT_PUSH_ATTEMPTS: '7'
+      DSIR_CHECKPOINT_GIT_TIMEOUT_SECONDS: '120'
+      SEED_HEAD: ${{ needs.authorize.outputs.seed_head }}
+      SEED_FP: ${{ needs.authorize.outputs.seed_fingerprint }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Bind exact runtime lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "DRIVER_COMMIT=$(git log -1 --format=%H -- ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py)" >> "$GITHUB_ENV"
+          echo "WORKFLOW_COMMIT=$(git log -1 --format=%H -- .github/workflows/exp073cr-wm-s3-ll3-sharded-resource-v0-1.yml)" >> "$GITHUB_ENV"
+          echo "BINDING_COMMIT=$(git log -1 --format=%H -- experiments/073cr_wm_s3_ll3_sharded_binding_v0_1.json)" >> "$GITHUB_ENV"
+          test "$(nproc)" = "8"
+      - name: Reuse or bootstrap NaMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$HOME/.cache/dsir-miniforge"; ENV="$HOME/.cache/dsir-nmt27"
+          if ! test -x "$MF/bin/conda"; then mkdir -p "$HOME/.cache"; curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"; bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"; fi
+          if ! test -x "$ENV/bin/python"; then "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 numpy; fi
+          echo "NMT_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+      - name: Restore exact hosted Exp073CR seed
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/exp073cr-v01"
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh restore "$R" checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-1 "$SEED_HEAD"
+          "$NMT_PY" ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py validate-seed --root "$R"
+          python3 - <<'PY'
+          import json,os
+          c=json.load(open(os.path.join(os.environ['RUNNER_TEMP'],'exp073cr-v01','contract.json')))
+          assert c['fingerprint']==os.environ['SEED_FP']
+          PY
+          echo "CR_ROOT=$R" >> "$GITHUB_ENV"
+      - name: Compile authoritative exact helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          gcc -O2 -shared -fPIC -fopenmp -fno-fast-math -fno-associative-math -ffp-contract=off -fno-tree-vectorize ci/exp073cr_stream_band_ll3_range_v0_1.c -o build/exp073cr.so -ldl -lm
+          nm -D build/exp073cr.so | grep -F ' exp073cr_stream_compress_band_ll3_range_v0_1'
+          "$NMT_PY" ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py validate-geometry --candidate experiments/073cr_wm_s3_ll3_sharded_resource_candidate_v0_1.json --manifest experiments/073cr_wm_s3_ll3_sharded_heavy_first_manifest_v0_1.json
+      - name: Compute 64 frozen ll3 shards with durability-before-refill
+        shell: bash
+        run: |
+          set +e
+          "$NMT_PY" ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py compute --root "$CR_ROOT" --candidate experiments/073cr_wm_s3_ll3_sharded_resource_candidate_v0_1.json --manifest experiments/073cr_wm_s3_ll3_sharded_heavy_first_manifest_v0_1.json --helper build/exp073cr.so --branch checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-1 --sync-script ci/dsir_checkpoint_git_sync_v0_3.sh
+          rc=$?
+          set -e
+          echo "COMPUTE_RC=$rc" >> "$GITHUB_ENV"
+          echo "compute_rc=$rc"
+      - name: Frozen final resource classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test "${COMPUTE_RC:-1}" != "0"; then echo "FINAL_RC=${COMPUTE_RC:-1}" >> "$GITHUB_ENV"; exit 0; fi
+          set +e
+          "$NMT_PY" ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py finalize --root "$CR_ROOT" --candidate experiments/073cr_wm_s3_ll3_sharded_resource_candidate_v0_1.json --manifest experiments/073cr_wm_s3_ll3_sharded_heavy_first_manifest_v0_1.json
+          rc=$?
+          set -e
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh push "$CR_ROOT" checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-1 frozen-final
+          echo "FINAL_RC=$rc" >> "$GITHUB_ENV"
+      - name: Prepare immutable authority artifact
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          cp "$CR_ROOT/contract.json" data/derived/g7/exp073cr_contract_v0_1.json
+          test ! -f "$CR_ROOT/final/receipt.json" || cp "$CR_ROOT/final/receipt.json" data/derived/g7/exp073cr_final_receipt_v0_1.json
+          test ! -f "$CR_ROOT/telemetry/final.json" || cp "$CR_ROOT/telemetry/final.json" data/derived/g7/exp073cr_telemetry_v0_1.json
+          test ! -f "$CR_ROOT/diagnostics/first_failure.json" || cp "$CR_ROOT/diagnostics/first_failure.json" data/derived/g7/exp073cr_diagnostic_v0_1.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073cr-resource-${{ github.sha }}
+          path: data/derived/g7/exp073cr_*_v0_1.json
+          retention-days: 90
+          compression-level: 0
+      - name: Preserve frozen terminal exit code
+        if: always()
+        shell: bash
+        run: |
+          rc="${FINAL_RC:-${COMPUTE_RC:-1}}"
+          exit "$rc"
