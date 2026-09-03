@@ -1,0 +1,113 @@
+name: Exp073CR hosted seed audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073cr_hosted_seed_audit.activation.json'
+
+permissions:
+  contents: write
+
+jobs:
+  seed-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+      OMP_DYNAMIC: 'FALSE'
+      PYTHONUNBUFFERED: '1'
+      DSIR_CHECKPOINT_QUERY_ATTEMPTS: '7'
+      DSIR_CHECKPOINT_FETCH_ATTEMPTS: '7'
+      DSIR_CHECKPOINT_PUSH_ATTEMPTS: '7'
+      DSIR_CHECKPOINT_GIT_TIMEOUT_SECONDS: '120'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Bind exact implementation lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "DRIVER_COMMIT=$(git log -1 --format=%H -- ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py)" >> "$GITHUB_ENV"
+          echo "WORKFLOW_COMMIT=$(git log -1 --format=%H -- .github/workflows/exp073cr-hosted-seed-audit-v0-1.yml)" >> "$GITHUB_ENV"
+          echo "BINDING_COMMIT=$(git log -1 --format=%H -- experiments/073cr_wm_s3_ll3_sharded_binding_v0_1.json)" >> "$GITHUB_ENV"
+          python3 -m py_compile ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py
+          test "$(git log -1 --format=%H -- ci/exp073cr_stream_band_ll3_range_v0_1.c)" = "bb856b8c49eea804fea73807c3eef53cc20ff3fa"
+          test "$(git log -1 --format=%H -- experiments/073cr_wm_s3_ll3_sharded_resource_candidate_v0_1.json)" = "d27deaec49f175ac17267fce94bfe2214a02ab6d"
+          test "$(git log -1 --format=%H -- experiments/073cr_wm_s3_ll3_sharded_heavy_first_manifest_v0_1.json)" = "9fa7566f82ff61ba24e9f94b24d22f1264f0a8a5"
+      - name: Install frozen NaMaster 2.7 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$RUNNER_TEMP/miniforge"; ENV="$RUNNER_TEMP/nmt27"
+          curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"
+          bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"
+          "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 numpy
+          echo "NMT_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+      - name: Exact restore Exp073CQ terminal parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          P="$RUNNER_TEMP/exp073cq-parent"
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh restore "$P" checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2 32bf0d1bdbcc2480f8b77f936ea6dc1f425812b0
+          test -f "$P/final/receipt.json"
+          echo "PARENT_DIR=$P" >> "$GITHUB_ENV"
+      - name: Compile authoritative exact ll3 helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          gcc -O2 -shared -fPIC -fopenmp -fno-fast-math -fno-associative-math -ffp-contract=off -fno-tree-vectorize ci/exp073cr_stream_band_ll3_range_v0_1.c -o "$RUNNER_TEMP/exp073cr.so" -ldl -lm
+          nm -D "$RUNNER_TEMP/exp073cr.so" | grep -F ' exp073cr_stream_compress_band_ll3_range_v0_1'
+          echo "HELPER_SO=$RUNNER_TEMP/exp073cr.so" >> "$GITHUB_ENV"
+      - name: Validate frozen geometry and authoritative bitwise regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$NMT_PY" ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py validate-geometry --candidate experiments/073cr_wm_s3_ll3_sharded_resource_candidate_v0_1.json --manifest experiments/073cr_wm_s3_ll3_sharded_heavy_first_manifest_v0_1.json
+          "$NMT_PY" ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py regression --parent-dir "$PARENT_DIR" --helper "$HELPER_SO" | tee "$RUNNER_TEMP/regression.log"
+          grep -Fx 'PASS_EXP073CR_HOSTED_AUTHORITATIVE_LL3_BITWISE_REGRESSION_V0_1' "$RUNNER_TEMP/regression.log"
+      - name: Create and durably seed Exp073CR checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/exp073cr-seed"
+          "$NMT_PY" ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py init-seed --root "$S" --parent-dir "$PARENT_DIR" --source-head "$GITHUB_SHA" --driver-commit "$DRIVER_COMMIT" --workflow-commit "$WORKFLOW_COMMIT" --binding-commit "$BINDING_COMMIT"
+          "$NMT_PY" ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py validate-seed --root "$S"
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh push "$S" checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-1 hosted-seed
+          SEED_HEAD="$(git -c http.version=HTTP/1.1 ls-remote --heads origin refs/heads/checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-1 | awk '{print $1}')"
+          test "$SEED_HEAD" != ""
+          echo "SEED_HEAD=$SEED_HEAD" >> "$GITHUB_ENV"
+      - name: Exact restore post-seed and static contract audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/exp073cr-restored"
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh restore "$R" checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-1 "$SEED_HEAD"
+          "$NMT_PY" ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py validate-seed --root "$R"
+          grep -F "ProcessPoolExecutor(max_workers=8" ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py
+          grep -F "durability-before-refill" ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py
+          grep -F "CPU_MIN=.90" ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py
+          grep -F "no_tolerance_rescue" ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py
+          grep -F "nthreads MUST equal 1" ci/exp073cr_stream_band_ll3_range_v0_1.c
+          mkdir -p data/derived/g7
+          python3 - <<'PY'
+          import json,os,pathlib
+          r=pathlib.Path(os.environ['RUNNER_TEMP'])/'exp073cr-restored'
+          c=json.load(open(r/'contract.json'))
+          out={'complete':True,'experiment':'Exp073CR','version':'v0.1','stage':'hosted-seed-audit','source_head':os.environ['GITHUB_SHA'],'driver_commit':os.environ['DRIVER_COMMIT'],'workflow_commit':os.environ['WORKFLOW_COMMIT'],'binding_commit':os.environ['BINDING_COMMIT'],'seed_head':os.environ['SEED_HEAD'],'contract_fingerprint':c['fingerprint'],'candidate_sha256':c['candidate_sha256'],'heavy_first_queue_sha256':c['heavy_first_queue_sha256'],'parent_head':c['parent_checkpoint_head'],'token':'PASS_EXP073CR_HOSTED_SEED_STATIC_BITWISE_AUDIT_V0_1'}
+          pathlib.Path('data/derived/g7/exp073cr_hosted_seed_audit_v0_1.json').write_text(json.dumps(out,sort_keys=True,indent=2)+'\n')
+          print(out['token'])
+          PY
+          grep -Fx 'PASS_EXP073CR_HOSTED_SEED_STATIC_BITWISE_AUDIT_V0_1' <(python3 -c "import json;print(json.load(open('data/derived/g7/exp073cr_hosted_seed_audit_v0_1.json'))['token'])")
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073cr-hosted-seed-audit-${{ github.sha }}
+          path: data/derived/g7/exp073cr_hosted_seed_audit_v0_1.json
+          retention-days: 90
+          compression-level: 0
