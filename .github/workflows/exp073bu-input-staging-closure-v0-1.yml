@@ -1,0 +1,137 @@
+name: Exp073BU frozen input staging closure v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073bu-input-staging-closure-v0-1.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  hosted-input-staging-closure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Freeze non-scientific staging scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'EXP073BU_STAGING_CLOSURE_ONLY=1'
+          echo 'EXP073BU_STAGING_ACCOUNTING=+0/+0'
+          echo 'EXP073BU_WM_S3_AUTHORITY_FORBIDDEN=1'
+          echo 'EXP073BU_BOUND_R1_RUN=33270843577'
+          echo 'EXP073BU_BOUND_R1_ARTIFACT=9720335366'
+          echo 'EXP073BU_BOUND_R1_ARTIFACT_DIGEST=sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd'
+          echo 'EXP073BU_BOUND_S3_RECORD_SHA256=3996f2bacf29d46278773530058d4f5666c0d590bf6cebc06459659166bc60ec'
+          echo 'EXP073BU_BOUND_S3_OCCUPANCY_SHA256=21e3776111de305c108463b02b0e3fd5e138cc97817d37e7b05330132d058094'
+          echo 'EXP073BU_BOUND_LENS_SHA256=a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55'
+
+      - name: Download bound Exp073R1 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+          run-id: 33270843577
+          github-token: ${{ github.token }}
+          path: /tmp/exp073bu/r1
+
+      - name: Verify frozen S3 record and occupancy payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, json, struct
+
+          root=Path('/tmp/exp073bu/r1')
+          record=root/'exp073r1_v05_records/exp073r1_v05_bin3_pixel_indices_le_u32.bin'
+          occupancy=root/'exp073r1_v05_masks/exp073r1_v05_source_bin3_mask_ring_nside4096_bitpack_little.bin'
+          assert record.is_file(), record
+          assert occupancy.is_file(), occupancy
+
+          def sha(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for chunk in iter(lambda:f.read(8*1024*1024), b''):
+                      h.update(chunk)
+              return h.hexdigest()
+
+          assert record.stat().st_size == 16_786_564
+          assert record.stat().st_size % 4 == 0
+          assert record.stat().st_size // 4 == 4_196_641
+          assert sha(record) == '3996f2bacf29d46278773530058d4f5666c0d590bf6cebc06459659166bc60ec'
+          assert occupancy.stat().st_size == 25_165_824
+          assert sha(occupancy) == '21e3776111de305c108463b02b0e3fd5e138cc97817d37e7b05330132d058094'
+          print('PASS_EXP073BU_FROZEN_S3_ARTIFACT_PAYLOAD_CLOSURE')
+          PY
+
+      - name: Download exact first-party redMaGiC mask
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/exp073bu/lens
+          curl --fail --location --retry 3 --retry-delay 2 \
+            --output /tmp/exp073bu/lens/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits \
+            https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits
+
+      - name: Verify frozen redMaGiC mask bytes and emit receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073bu
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, json, os
+
+          lens=Path('/tmp/exp073bu/lens/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits')
+          def sha(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for chunk in iter(lambda:f.read(8*1024*1024), b''):
+                      h.update(chunk)
+              return h.hexdigest()
+          assert lens.stat().st_size == 104_595_840
+          lens_sha=sha(lens)
+          assert lens_sha == 'a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55'
+
+          receipt={
+            'schema':'dsir.exp073bu.input_staging_closure.v0.1',
+            'scope':'NON_SCIENTIFIC_INPUT_STAGING_CLOSURE_ONLY',
+            'accounting':'+0/+0',
+            'wm_s3_authority_forbidden':True,
+            'source_head':os.environ.get('GITHUB_SHA'),
+            's3':{
+              'run_id':33270843577,
+              'artifact_id':9720335366,
+              'artifact_digest':'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd',
+              'selected_rows':4196641,
+              'record_bytes':16786564,
+              'record_sha256':'3996f2bacf29d46278773530058d4f5666c0d590bf6cebc06459659166bc60ec',
+              'occupancy_bytes':25165824,
+              'occupancy_sha256':'21e3776111de305c108463b02b0e3fd5e138cc97817d37e7b05330132d058094'
+            },
+            'lens':{
+              'url':'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits',
+              'bytes':104595840,
+              'sha256':lens_sha
+            },
+            'status':'PASS_EXP073BU_FROZEN_INPUT_STAGING_CLOSURE_V0_1'
+          }
+          out=Path('data/derived/exp073bu/exp073bu_input_staging_closure_v0_1.json')
+          out.write_text(json.dumps(receipt, indent=2, sort_keys=True)+'\n')
+          print('PASS_EXP073BU_FROZEN_INPUT_STAGING_CLOSURE_V0_1')
+          print(json.dumps(receipt, indent=2, sort_keys=True))
+          PY
+
+      - name: Upload closure receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073bu-input-staging-closure-${{ github.sha }}
+          path: data/derived/exp073bu/exp073bu_input_staging_closure_v0_1.json
+          if-no-files-found: warn
