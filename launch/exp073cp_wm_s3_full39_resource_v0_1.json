@@ -1,0 +1,8 @@
+{
+  "experiment": "Exp073CP",
+  "version": "v0.1",
+  "activation_commit": "6d75b2d456209538fdeedebd41402de2e8b62267",
+  "checkpoint_namespace": "checkpoints/exp073cp-wm-s3-full39-resource-v0-1",
+  "expected_pass_token": "PASS_EXP073CP_WM_S3_FULL39_8WORKER_TRANSPORT_HARDENED_RESOURCE_V0_1",
+  "launch_policy": "single self-hosted job only after hosted static audit pass"
+}
