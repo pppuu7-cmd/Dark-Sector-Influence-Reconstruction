@@ -1,0 +1,18 @@
+{
+  "experiment": "Exp073CO",
+  "version": "v0.1",
+  "state": "AUTHORIZED_AFTER_HOSTED_STATIC_AUDIT_PASS",
+  "prereg_commit": "95133fc97b9cc013a58c82aed583ee79f7737979",
+  "driver_commit": "0d0c6032f8af0def02f9e2c15abc3c22bfd049e0",
+  "workflow_commit": "eefb6767ab9452d2c74a1fa36f6f59a42bdb1ca9",
+  "binding_commit": "b84f4df108b6015c2909d8a00953df1fd0a43eb8",
+  "audit_status": "PASS_EXP073CO_STATIC_CHECKPOINT_CONTRACT_AUDIT_V0_1",
+  "audit_run_id": 33713552822,
+  "audit_job_id": 100517906229,
+  "audit_artifact_id": 9877714136,
+  "audit_artifact_digest": "sha256:f29bb864f7fd14351d5c7bc71279bff4c7eb26578beb96c625883e01de1b1fce",
+  "audit_result_sha256": "2b193b7debbeb6e3772c729c14442a3ffec3a84878919ae31debc5fd3465eb0e",
+  "checkpoint_namespace": "checkpoints/exp073co-wm-s3-full39-resource-v0-1",
+  "home_execution_authorized": true,
+  "pass_token": "PASS_EXP073CO_WM_S3_FULL39_8WORKER_CHECKPOINT_RESOURCE_V0_1"
+}
