@@ -1,0 +1,57 @@
+{
+  "status": "NON_AUTHORITATIVE_PREFLIGHT_ONLY",
+  "scientific_credit": "+0/+0",
+  "resource_authority": "none",
+  "experiment_candidate": "Exp073CR",
+  "version": "research-v0.1",
+  "task": "Wm_S3",
+  "bands": [29,30,31,32,33,34,35,36,37,38],
+  "lmax": 12287,
+  "ll3_domain": [2,12288],
+  "outer_workers": 8,
+  "nested_threads": 1,
+  "total_shards": 64,
+  "allocation_by_band": {
+    "29": 3,
+    "30": 3,
+    "31": 4,
+    "32": 5,
+    "33": 6,
+    "34": 7,
+    "35": 8,
+    "36": 9,
+    "37": 9,
+    "38": 10
+  },
+  "ll3_boundaries_by_band": {
+    "29": [2,5018,8193,12288],
+    "30": [2,5143,8194,12288],
+    "31": [2,4550,6738,9039,12288],
+    "32": [2,4215,5995,7673,9642,12288],
+    "33": [2,3962,5602,6937,8397,10112,12288],
+    "34": [2,3747,5300,6548,7727,9018,10499,12288],
+    "35": [2,3543,5035,6283,7400,8451,9574,10832,12288],
+    "36": [2,3332,4829,6089,7199,8203,9135,10088,11128,12288],
+    "37": [2,3372,5035,6379,7537,8571,9513,10397,11304,12288],
+    "38": [2,3503,5152,6431,7513,8470,9336,10133,10875,11581,12288]
+  },
+  "proxy_definition": "For each valid pair (ll2,ll3), n = min(ll2+ll3,lmax)-abs(ll2-ll3)+1. Signature (0,2,0,2) gives the same l1 span to both drc3jj calls on the frozen valid domain. The deterministic preflight cost proxy is 3*n: two Wigner recurrences plus the explicit l1 accumulation span. Shard proxy cost is summed over all ll2 in the frozen band and ll3 in the shard.",
+  "allocation_method": "Start with one shard per band; greedily add each of the remaining 54 shards to the band with maximal current total_proxy/shard_count. Within a band choose integer ll3 boundaries by cumulative proxy quantiles.",
+  "proxy_results": {
+    "natural_list_scheduling_utilization_fraction": 0.9777520040464497,
+    "heavy_first_list_scheduling_utilization_fraction": 0.9918607445989314,
+    "minimum_shard_cost_fraction_from_mean": -0.12790134423459887,
+    "maximum_shard_cost_fraction_from_mean": 0.08355693292792354
+  },
+  "exactness_rule": "A shard may split only the ll3 output domain. For every fixed ll3 the frozen ll2 outer order, both drc3jj calls, ascending l1 loop, xi multiplication and acc += xi recurrence must remain byte-for-byte equivalent. Assembly is placement/concatenation only; no arithmetic reduction across shards.",
+  "required_before_any_home_execution": [
+    "consume terminal Exp073CQ v0.2 outcome first",
+    "promote to a new prospectively preregistered experiment/version rather than mutate CQ",
+    "hosted compile and bitwise regression against immutable Exp073CP complete-band payloads under NaMaster 2.7 and frozen compiler FP flags",
+    "prove np.array_equal and canonical SHA256 equality for multiple bands and multiple partition schemes",
+    "freeze shard boundaries, checkpoint namespace, contract fingerprint and task ordering",
+    "hosted post-implementation static/checkpoint audit PASS",
+    "durable complete-shard checkpoint/resume with fail-closed SHA/provenance verification"
+  ],
+  "historical_boundary": "This candidate does not modify or predict the frozen classification of Exp073CQ v0.2 and cannot be substituted for its terminal receipt."
+}
