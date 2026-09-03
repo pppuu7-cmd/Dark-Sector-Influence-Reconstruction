@@ -1,0 +1,16 @@
+{
+  "experiment": "Exp073CQ",
+  "version": "v0.2",
+  "prereg_commit": "71800bedbf8c23d7aee4538a0230bdac4bd5c6f3",
+  "driver_commit": "0bf7ea195bccbb8e6458f1269640c279668d4a1f",
+  "workflow_commit": "31c57d7b3565aea7c6ff3edbdf978f51f652abcb",
+  "parent_checkpoint_head": "025629d9bb7b113bd0548ff6a32c6ee5812ae245",
+  "parent_contract_fingerprint": "32d15a39f1bcdcee0f9b9f88ebc8fd8f82eb850bb71eca4b51d95eb40f111efc",
+  "successor_namespace": "checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2",
+  "imported_bands": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],
+  "compute_allowlist": [29,30,31,32,33,34,35,36,37,38],
+  "outer_workers": 8,
+  "nested_threads": 1,
+  "hosted_seed_required": true,
+  "home_parent_import_forbidden": true
+}
