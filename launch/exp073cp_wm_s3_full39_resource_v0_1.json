@@ -1,13 +1,15 @@
 {
   "experiment": "Exp073CP",
   "version": "v0.1",
-  "activation_commit": "edfe24ff2e58f2ffd881c9a857b7d65b47b0182b",
-  "binding_commit": "8e459d50f107249abd12c60500ac6159c5463fb4",
+  "activation_commit": "da00cc360b4cb1f84b1de43c7510094af8685183",
+  "binding_commit": "f91995504c0186b828419e8358aa11f0ffcdc885",
   "driver_commit": "fba35a7ded46d13ae3ebc43006f27488d01a79ae",
-  "workflow_commit": "47f046562aa983306051904d1524bcfdc292cd8c",
-  "audit_run": 33726098743,
+  "workflow_commit": "7aee4ab8c9ff7d32185fcad1406506ab34737577",
+  "audit_workflow_commit": "c8a904aeec08d069f252ec709e328cf5c881437b",
+  "audit_run": 33726487557,
+  "audit_job": 100556496587,
   "checkpoint_namespace": "checkpoints/exp073cp-wm-s3-full39-resource-v0-1",
   "outer_workers": 8,
   "expected_pass_token": "PASS_EXP073CP_WM_S3_FULL39_8WORKER_TRANSPORT_HARDENED_RESOURCE_V0_1",
-  "launch_policy": "single self-hosted job after corrected hosted static audit PASS and zero competing Actions"
+  "launch_policy": "single self-hosted job after YAML-regression hosted audit PASS and zero competing Actions"
 }
