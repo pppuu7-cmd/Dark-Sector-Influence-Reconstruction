@@ -1,0 +1,10 @@
+{
+  "activation": "RUN_EXACTLY_ONE_HOSTED_EXP073CR_V0_3_SEED_AUDIT",
+  "binding_commit": "0e0d13a6f7736eb56689d57c3557410007ec48d2",
+  "candidate_sha256": "d48e46197b48a6fcdf7d3eb3b0817973a2eadb25bbb617e7b8060c8c17209462",
+  "experiment": "Exp073CR",
+  "queue_sha256": "3ba315d9bc24883ef746d92e785e0a040f9b13e751f59dda9a93e825a6390db4",
+  "resource_only": true,
+  "scientific_credit": "+0/+0",
+  "version": "v0.3"
+}
