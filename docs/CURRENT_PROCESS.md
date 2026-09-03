@@ -5,28 +5,27 @@ Updated: 2026-09-03
 Repository, immutable recovery notes, validated Actions logs/artifacts and durable checkpoints are authoritative. DSIR only; RTK/RQIR excluded.
 
 ## Active process
-- process: Exp073CR v0.3 r2 home bind diagnostic; infrastructure-only `+0/+0`, no numerical Wm_S3 compute and no checkpoint write
-- workflow run/head: `33770780033` / `87ebc2bd850aba7beea6d6f84970ed9241a3e908`
-- self-hosted job: `100700156146` IN_PROGRESS at last reconciliation on `DSIR-HOME-PC`
-- diagnostic workflow commit: `a607cb2a548dfdb569445524b03639ddfa7b298b`
-- purpose: measure/corroborate the first bind failure with distinct steps for host `nproc`/CPU topology, system Python, git lineage, py_compile, static audit, and exact read-only seed identity
-- frozen seed namespace/head remains untouched: `checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-3` / `cb408d4edb2a73413db8d3181e9cb1680dc19276`
+- experiment: Exp073CR Wm_S3 ll3-sharded resource v0.3, r2 split-bind continuation
+- workflow run/head: `33771012683` / `1e4345286d8816ff3d850d3a39b8aff0645948df`
+- hosted authorize job: `100700943092` QUEUED at last reconciliation
+- self-hosted job: not yet instantiated at last reconciliation; once instantiated it exclusively owns DSIR-HOME-PC while queued/in_progress
+- checkpoint namespace/head to restore: `checkpoints/exp073cr-wm-s3-ll3-sharded-resource-v0-3` / `cb408d4edb2a73413db8d3181e9cb1680dc19276`
 - seed fingerprint: `3eb54728878e5913fcb39b9e6411480c413d6a5a6a968c67e623f1fa48e6ec29`
-- home runner ownership: RESERVED EXCLUSIVELY for diagnostic run `33770780033` / job `100700156146` while in_progress; do not launch any competing home workload
-- exact next action on diagnostic terminal: consume raw log immediately; if `nproc<8`, freeze the current 8-worker CPU resource route as runner-capacity BLOCKED without oversubscription/threshold rescue; otherwise repair only the first distinct failed bind dependency, hosted-audit it, then resume from the same seed
+- frozen resource architecture unchanged: exactly 8 outer workers, max 8 in flight, nested threads=1, 64 source-order ll3 shards over bands 29..38, durability-before-refill, exact reconstruction/reference equality, CPU>=0.90, swap increase=0
+- r2 exact-home diagnostic run/job `33770780033` / `100700156146`: SUCCESS; raw token `PASS_EXP073CR_V0_3_R2_HOME_BIND_DIAGNOSTIC`; measured `nproc=8`, online CPUs=8, Python 3.14.4, bound lineage/py_compile/static audit/exact seed identity all PASS
+- r2 split-bind hosted audit run/job `33770942410` / `100700703465`: SUCCESS; raw token `PASS_EXP073CR_V0_3_R2_SPLIT_BIND_CONTROL_AUDIT`
+- split-bind workflow commit: `3f78577a12d5c6943f713c1451948ce00b8acc26`
+- activation commit: `1e4345286d8816ff3d850d3a39b8aff0645948df`
+- exact next action while queued/running: do not duplicate; consume terminal state immediately; verify bind steps, exact seed restore, all shard receipts, durability-before-refill, complete-band exact reconstruction/reference equality, swap and frozen CPU metric
+- on resource PASS: classify `+0/+0`, persist final provenance, then only preregister scientifically permitted fresh-independent-PCL Wm_S3 A/B successor
+- on resource FAIL: preserve frozen negative resource result `+0/+0`, no threshold/arithmetic rescue
+- on infrastructure/software FAIL: preserve complete durable shards, identify first distinct failing step, smallest prospective repair + hosted audit, resume unfinished work only
 
-## Exp073CR v0.3 repaired continuation just consumed
-- run/head `33770577708` / `8eded6a41271e77750a0206ba2766fbbb7819dc3`
-- authorize job `100699474546` SUCCESS
-- home job `100699512748` FAILURE in the combined `Bind v0.3 runtime`; seed/helper/compute/final all skipped
-- decoded log confirms repaired shell source includes `nproc>=8`, git lineage, py_compile and static audit but only exposes generic exit 1; exact failing subcommand is not evidenced, so no narrower cause is claimed
-- classification: INFRASTRUCTURE/CONTROL-PLANE INCOMPLETE `+0/+0`; zero shards computed; seed unchanged
-- immutable note: `recovery/2026-09-03_exp073cr_v0_3_r1_bind_failure_and_r2_diagnostic.md`
-
-## Previous r1 control audit
-- hosted audit run/job `33770476672` / `100699131834`: SUCCESS
-- raw token `PASS_EXP073CR_V0_3_R1_NPROC_CONTROL_AUDIT`
-- repaired workflow commit `9eafc1c431f508d7a34800328b6718f146b346b5` preserved exactly 8 outer workers, nested=1, 64 shard geometry/order, CPU>=0.90, swap=0; only changed machine guard from equality to availability form
+## Preceding r1 continuation
+- run/head `33770577708` / `8eded6a41271e77750a0206ba2766fbbb7819dc3`; authorize `100699474546` SUCCESS; home `100699512748` FAILURE in combined bind before seed/compute
+- classification: INFRASTRUCTURE/CONTROL-PLANE INCOMPLETE `+0/+0`; no shard computed
+- individual r2 diagnostic proved CPU/Python/lineage/compile/static/seed controls independently healthy on exact runner, so split-bind is a control-plane isolation repair only
+- immutable notes: `recovery/2026-09-03_exp073cr_v0_3_r1_bind_failure_and_r2_diagnostic.md` and `recovery/2026-09-03_exp073cr_v0_3_r2_diagnostic_pass_split_bind_launch.md`
 
 ## Latest completed resource result
 - Exp073CQ v0.2 run/job `33752799918` / `100640079011`, terminal checkpoint `32bf0d1bdbcc2480f8b77f936ea6dc1f425812b0`
