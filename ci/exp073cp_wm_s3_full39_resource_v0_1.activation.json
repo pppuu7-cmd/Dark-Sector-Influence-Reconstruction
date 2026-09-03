@@ -1,0 +1,14 @@
+{
+  "experiment": "Exp073CP",
+  "version": "v0.1",
+  "state": "AUTHORIZED_AFTER_HOSTED_STATIC_AUDIT_PASS",
+  "prereg_commit": "451e947d44b325b1089441a0a62c24b1dcdeba5e",
+  "sync_commit": "c20127b6762c6fc9b21875a321aecd7a4cd5f88e",
+  "driver_commit": "b49f879f1a50afc78d61f4fe3d64040c68b4aeaf",
+  "workflow_commit": "9c2de1dd46f7a25deb31a9734e11760de1226c08",
+  "binding_commit": "7f502e9bfa3e41100c636fa3722f31dd79ff1cfa",
+  "audit_run": 33725812969,
+  "audit_job": 100554405960,
+  "audit_status": "PASS_EXP073CP_STATIC_TRANSPORT_CHECKPOINT_AUDIT_V0_1",
+  "checkpoint_namespace": "checkpoints/exp073cp-wm-s3-full39-resource-v0-1"
+}
