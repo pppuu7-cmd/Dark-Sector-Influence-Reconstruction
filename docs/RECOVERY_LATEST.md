@@ -6,13 +6,14 @@
 
 Repository state, immutable GitHub Actions artifacts/logs and durable checkpoint branches outrank chat wording. Synthetic/infrastructure/provenance/numerical/performance/static/diagnostic/checkpoint QA gives `+0/+0` unless a frozen ledger explicitly states otherwise.
 
-## Immediate frontier — Exp073CQ audited checkpoint-preserving continuation authorized
+## Immediate frontier — Exp073CQ home continuation is LIVE; no terminal classification yet
 
 Historical Wm_S3 angular authority remains absent. Full Wm_S3 A/B scientific production remains forbidden until a prospectively versioned Wm_S3 resource gate passes.
 
 Universal checkpoint policy remains `docs/SELF_HOSTED_CHECKPOINT_POLICY.md`, commit `f45ae0ce4d199ae381e8612d41cfd7e4c7dfc427`: every self-hosted DSIR task requires prospectively frozen durable checkpoint/resume.
 
 ### Preserved Exp073CP terminal state
+
 Run `33726577654`, head `b972faed6e13b7795dfccab3bca4c4cffd10cbe4`: authorize job `100556781652` SUCCESS; self-hosted job `100556826993` FAILURE inside `Full39 bounded eight-worker compute with per-band durability`; frozen final classification did NOT run; authority artifact list is empty. Classification remains **`INFRASTRUCTURE_OR_SOFTWARE_INCOMPLETE_AT_COMPUTE_STAGE`, `+0/+0`; NOT scientific FAIL and NOT resource/performance FAIL.**
 
 The GitHub decoded job-log endpoint for job `100556826993` was retried and still returns `BlobNotFound`; the lower-level causal exception remains unknown and MUST NOT be invented.
@@ -22,6 +23,7 @@ Durable parent namespace `checkpoints/exp073cp-wm-s3-full39-resource-v0-1` is ex
 Historical forensics note: `recovery/2026-09-03_exp073cp_band28_checkpointed_compute_stage_failure_forensics.md`, commit `887d3f510d1a78a9545fd16114d70423dd4ddacf`.
 
 ### Exp073CQ v0.1 frozen continuation authority
+
 Exp073CQ is a NEW resource/checkpoint/diagnostic successor, not a mutation or rescue of Exp073CP.
 
 - preregistration: `preregistration/2026-09-03_exp073cq_wm_s3_missing29_38_diagnostic_resume_resource_v0_1.md`, commit `60c975edb35c13bd22907440f4ed767a5fc55712`;
@@ -29,31 +31,59 @@ Exp073CQ is a NEW resource/checkpoint/diagnostic successor, not a mutation or re
 - home workflow: `.github/workflows/exp073cq-wm-s3-missing29-38-diagnostic-resume-resource-v0-1.yml`, commit `76be666e2cc6b8f11710a44ff7772ef708ac1e80`;
 - hosted audit workflow: `.github/workflows/exp073cq-static-parent-import-diagnostic-resume-audit-v0-1.yml`, commit `184dcd43526b87c26ed2fd0f22baa85a2451167f`;
 - frozen implementation binding: commit `f8416855c7dd28b95d30cbf18835dd2b8bb37ddd`;
-- checkpoint sync remains `ci/dsir_checkpoint_git_sync_v0_3.sh`, commit `c20127b6762c6fc9b21875a321aecd7a4cd5f88e`;
+- checkpoint sync: `ci/dsir_checkpoint_git_sync_v0_3.sh`, commit `c20127b6762c6fc9b21875a321aecd7a4cd5f88e`;
 - successor namespace: `checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-1`;
 - import/read-only set: exactly bands `0..28` from parent head `025629d9...`;
 - numerical compute allowlist: exactly bands `29..38`;
 - exactly 8 outer workers, max 8 in flight, nested numerical threads=1;
 - compiled helper is itself a durable completed-stage checkpoint;
 - every complete newly computed band is durably pushed immediately;
-- exceptions are prospectively captured in a canonical diagnostic record without marking incomplete units complete;
-- exact first-8 equality/SHA, CPU fraction `>=0.90`, and zero positive swap increase remain frozen; no tolerance rescue.
+- exceptions are prospectively captured in canonical diagnostic state without marking incomplete numerical units complete;
+- exact first-8 equality/SHA, `cpu_fraction_of_8_compute >= 0.90`, and zero positive swap increase remain frozen; no tolerance rescue.
 
-Hosted static/regression audit run **`33742223874`**, job **`100606527087`**, head `f8416855c7dd28b95d30cbf18835dd2b8bb37ddd` completed SUCCESS. The immutable raw job log explicitly contains frozen authority token **`PASS_EXP073CQ_STATIC_PARENT_IMPORT_DIAGNOSTIC_RESUME_AUDIT_V0_1`**; workflow green status alone is not used as scientific/control PASS.
+Hosted static/regression audit run **`33742223874`**, job **`100606527087`**, head `f8416855c7dd28b95d30cbf18835dd2b8bb37ddd` completed SUCCESS with raw frozen token **`PASS_EXP073CQ_STATIC_PARENT_IMPORT_DIAGNOSTIC_RESUME_AUDIT_V0_1`**.
 
-Activation authority: `ci/exp073cq_wm_s3_missing29_38_resource_v0_1.activation.json`, creation commit **`5cfdf3fb2d41041eff0238718f7841edc8897640`**.
-
-Immutable authorization/recovery note: `recovery/2026-09-03_exp073cq_parent_import_diagnostic_resume_authorized.md`, creation commit **`50257a8f42ce5a0db6483c999eca57af34cc0712`**.
-
-Current-process ledger was advanced at commit **`0b470c5e4aed10a06ccb3ffe8fff5e0403d1f0a1`**. At that ledger point Exp073CQ is authorized but not yet dispatched; immediately before any launch ALL queued/in_progress DSIR Actions must be rechecked and the home runner must be free.
+Activation authority: `ci/exp073cq_wm_s3_missing29_38_resource_v0_1.activation.json`, creation commit **`5cfdf3fb2d41041eff0238718f7841edc8897640`**. Immutable authorization/recovery note: `recovery/2026-09-03_exp073cq_parent_import_diagnostic_resume_authorized.md`, commit **`50257a8f42ce5a0db6483c999eca57af34cc0712`**.
 
 Frozen resource PASS token: **`PASS_EXP073CQ_WM_S3_MISSING29_38_8WORKER_DIAGNOSTIC_RESUME_RESOURCE_V0_1`**. All Exp073CQ outcomes remain Article-3 `+0/+0` and cannot themselves create Wm_S3 angular scientific authority.
 
-### Exact next permitted gate
-1. Reconcile all live queued/in_progress/newly-terminal Actions after recovery commits.
-2. If and only if no competing DSIR home/control process exists, create exactly one Exp073CQ launch marker.
-3. The home workflow must restore the successor namespace first; if absent, exact-restore parent head `025629d9...`, import bands `0..28`, durably checkpoint the import, durably checkpoint the compiled helper, then submit only missing bands `29..38`.
-4. On terminal result consume checkpoint/final artifact and raw frozen token in the same iteration. Resource PASS may authorize preregistration of the full fresh-independent-PCL sequential Wm_S3 A/B scientific successor; resource/numerical FAIL is a negative resource result; infrastructure/software/checkpoint failure triggers prospective repair from last valid checkpoint only.
+### LIVE Exp073CQ execution
+
+Single launch marker head: `ef4f02f0ff3e23d845b6dcd1f45317a0d3811b12`.
+
+GitHub Actions run **`33742582807`**:
+- authorize job **`100607659399`** completed SUCCESS;
+- self-hosted `checkpointed-resource` job **`100607697336`** is **IN_PROGRESS** on runner `DSIR-HOME-PC`, runner id `21`;
+- self-hosted job started `2026-09-03T11:17:15Z`;
+- checkout, exact runtime lineage, NaMaster 2.7 environment, and successor restore/init completed SUCCESS;
+- `Exact import of immutable Exp073CP band0-28 authority` started `2026-09-03T11:17:41Z` and is the current active step at this pointer update;
+- no CQ successor checkpoint branch had yet been durably published at the latest observation, so parent import MUST NOT yet be called complete;
+- frozen helper checkpoint, numerical bands `29..38`, telemetry and final classification have NOT yet run at this pointer update;
+- there are no competing queued DSIR Actions; the live CQ job is the only home computation.
+
+No scientific/resource PASS or FAIL may be inferred until the frozen comparator and durable final receipt exist. Active-job decoded logs may return `BlobNotFound`; step/checkpoint authority is used until terminal logs/artifacts become available.
+
+### Non-authoritative contingency research while CQ runs
+
+The following are `+0/+0` preflight only and do not alter CQ:
+- `recovery/2026-09-03_exp073cq_tail_imbalance_ll3_shard_contingency_analysis.md`, commit `844053aee82faa053dbdd5a8da7166ed6b06fffe`;
+- `recovery/2026-09-03_exp073cq_operation_count_tail_refinement.md`, commit `2ac060d8446376b56e42652608693003821ffd99`;
+- `recovery/2026-09-03_exp073cq_ll3_128shard_candidate_preflight.md`, commit `f6c471ed1fd3f9e0cb1ea7c5bc8ab1ba4d3877e9`.
+
+The refined frozen-kernel operation-count proxy predicts whole-band CQ tail imbalance well below the 0.90 target, while an exact-safe 128-unit `ll3` candidate has operation-proxy scheduling utilization above 0.99. These are predictions only; actual CQ telemetry outranks them.
+
+Separate non-authoritative prototype branch `research/exp073cr-ll3-shard-prototype-20260903` contains an exact-order `ll3`-range helper prototype and equivalence checklist. It is not preregistered and must not be executed as authority before CQ outcome consumption.
+
+### Exact next permitted actions
+
+1. Continue observing run `33742582807`; do not launch any competing home task.
+2. Require durable CQ parent-import checkpoint before accepting import completion.
+3. Require durable compiled-helper checkpoint before numerical submission.
+4. During compute, accept only new complete bands `29..38` with exact successor provenance; never recompute imported `0..28`.
+5. On terminal result, consume checkpoint tree, telemetry, diagnostic record if any, final receipt, artifact and raw frozen token in the same iteration.
+6. If CQ resource PASSes, a prospectively frozen full fresh-independent-PCL Wm_S3 scientific successor may be preregistered.
+7. If CQ exact-completes but CPU `<0.90`, preserve permanent CQ resource/performance FAIL `+0/+0` and only then consider preregistering a NEW exact-safe `ll3`-sharded resource successor.
+8. If CQ is infrastructure/software/checkpoint incomplete, resume/repair only from its last exact-valid durable checkpoint under a NEW version/experiment.
 
 ## Preserved accepted/historical authority
 
