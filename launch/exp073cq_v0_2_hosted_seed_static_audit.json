@@ -1,0 +1,8 @@
+{
+  "experiment": "Exp073CQ",
+  "version": "v0.2",
+  "task": "hosted_seed_static_audit",
+  "home_compute": false,
+  "seed_head": "4f528424a2d2b3e32aeb4a68d73265ef9de8bd4e",
+  "contract_fingerprint": "87b58bf120510bec50b21851d7ff21269689db6dcdd906cb3a14102e4a4f5f97"
+}
