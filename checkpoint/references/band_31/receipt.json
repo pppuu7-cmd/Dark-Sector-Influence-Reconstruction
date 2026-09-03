@@ -1,0 +1,12 @@
+{
+  "band": 31,
+  "complete": true,
+  "contract_fingerprint": "c14d3ffc124a84fb491f411525381acd386fce139c6cf35b05b030a8fbf300ab",
+  "dtype": "<f8",
+  "origin": "hosted_exact_reference_from_exp073cq_v0_2_terminal",
+  "parent_head": "32bf0d1bdbcc2480f8b77f936ea6dc1f425812b0",
+  "payload_sha256": "8fa0d8833867150b49fb34b39e13c491f3425eac9419205fa73412cf1d6af715",
+  "shape": [
+    12288
+  ]
+}
