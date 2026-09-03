@@ -6,7 +6,7 @@
 
 Repository state, immutable GitHub Actions artifacts/logs and durable checkpoint branches outrank chat wording. Infrastructure/provenance/numerical/performance/static/diagnostic/checkpoint QA gives `+0/+0` unless a frozen ledger explicitly states otherwise.
 
-## Immediate frontier — Exp073CQ v0.2 hosted-seeded resource continuation QUEUED
+## Immediate frontier — Exp073CQ v0.2 hosted-seeded resource continuation RUNNING
 
 Wm_S3 angular scientific authority remains absent. Full Wm_S3 A/B scientific production remains forbidden until a prospectively frozen Wm_S3 resource gate passes.
 
@@ -60,23 +60,35 @@ Hosted post-seed audit run **`33752695840`**, job **`100639693792`** completed S
 
 Audit artifact **`9892171765`**, digest **`sha256:8e9acc8142bf5bc1a441259d6884d2dc54cda8a5690a64cdef81525479c7d68b`**. Activation authority is `ci/exp073cq_v0_2_hosted_seeded.activation.json`, creation commit **`fabb0c601edcb117d7734ba1828da762b585c2db`**.
 
-### LIVE/QUEUED Exp073CQ v0.2 execution
+### LIVE/RUNNING Exp073CQ v0.2 execution
 
 Immediately before launch, live Actions audit showed `0 queued` and `0 in_progress` runs. Single launch marker commit: **`011852feb6d40152f4b33bde732b00520cd28f79`**.
 
 GitHub Actions run **`33752799918`**:
 - authorize job **`100640020607`** completed SUCCESS;
-- self-hosted `checkpointed-resource` job **`100640079011`** is **QUEUED**;
-- expected first home action is exact restore of successor seed head `4f528424a2d2b3e32aeb4a68d73265ef9de8bd4e`; home MUST NOT restore/import Exp073CP directly;
-- no newly computed band is yet claimed at this pointer update;
-- **DSIR-HOME-PC is reserved exclusively for run `33752799918` / job `100640079011` while queued or in_progress.**
+- self-hosted `checkpointed-resource` job **`100640079011`** is **IN_PROGRESS**;
+- exact hosted-seed restore step completed SUCCESS;
+- frozen helper compile/restore step completed SUCCESS;
+- current step is `Compute only missing bands 29-38 with durability`;
+- latest observed durable checkpoint head is **`ad9d79d0b32a6a097669966c8b94b7424521c34e`**, commit `checkpoint: band-31-complete`, timestamp `2026-09-03T13:00:01Z`;
+- the band-31 receipt records `complete=true`, frozen fingerprint `87b58bf120510bec50b21851d7ff21269689db6dcdd906cb3a14102e4a4f5f97`, canonical `<f8 [12288]`, `outer_workers=8`, `nested_threads=1`, and payload SHA256 `8fa0d8833867150b49fb34b39e13c491f3425eac9419205fa73412cf1d6af715`;
+- imported bands `0..28` remain read-only; numerical allowlist remains exactly `29..38`;
+- **DSIR-HOME-PC is reserved exclusively for run `33752799918` / job `100640079011` while in_progress.**
 
-No scientific/resource PASS or FAIL may be inferred before durable new-band receipts, telemetry and frozen final receipt exist.
+The durable band receipt is process/provenance evidence only. Partial numerical output is not interpreted, and no frozen gate is tuned. Live Actions audit at this pointer update shows exactly one in-progress run (Exp073CQ v0.2) and zero queued runs.
+
+### Independent Exp073CR research-only regression
+
+A concurrent DSIR-only hosted research branch produced run **`33754644074`**, job **`100646005106`**, head `b67b87168e009a263c91d52c529fb459879b8a00`, SUCCESS. The trigger explicitly declares `NON_AUTHORITATIVE_RESEARCH_TRIGGER`, scientific credit `+0/+0`, resource authority `none`, `no_home_runner=true`, and `does_not_modify_exp073cq_v0_2=true`.
+
+Raw regression logs reported exact array/SHA equality for immutable Exp073CP complete bands 0, 7 and 15 under two distinct ll3 partitions and emitted `PASS_EXP073CR_RESEARCH_LL3_BITWISE_REGRESSION_V0_0` and `PASS_EXP073CR_HOSTED_LL3_BITWISE_REGRESSION_V0_1`. Artifact **`9892971697`**, archive digest **`sha256:766184eb42ef696e3c493d55ebb78cbc6c4fab83baf7c0d17bbdb7b3cf104a72`**.
+
+Classification: independent implementation/invariance evidence only, `+0/+0`; it cannot supersede, tune, rescue, or authorize Exp073CQ and creates no Wm_S3 scientific authority. Immutable reconciliation note: `recovery/2026-09-03_exp073cq_v0_2_running_exp073cr_research_bitwise_pass.md`, creation commit `ab63340f61dec15279c8c5f165444a9b0bf2d7f4`.
 
 ### Exact next permitted actions
 
-1. Do not launch any competing home task while run `33752799918` is queued/in_progress.
-2. On execution, require exact seed restore before helper/compute; any seed mismatch is fail-closed infrastructure/checkpoint failure.
+1. Do not launch any competing home task while run `33752799918` is in_progress.
+2. Continue only independent non-biasing audits/research; do not interpret partial numerical output to tune frozen criteria.
 3. Compute only bands `29..38`; preserve imported `0..28` byte-for-byte and never recompute them.
 4. Require durable receipt after each complete new band; on failure preserve all exact-valid completed units and resume only unfinished units under a prospectively audited repair.
 5. At terminal, consume checkpoint tree, telemetry, final receipt, artifact and raw token in the same iteration.
