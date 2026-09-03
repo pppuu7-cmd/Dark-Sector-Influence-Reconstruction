@@ -1,0 +1,52 @@
+name: Exp073CQ static parent-import diagnostic resume audit v0.1
+on:
+  push:
+    paths: ['experiments/073cq_wm_s3_missing29_38_resource_v0_1_binding.json']
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Audit exact parent authority, missing-only scheduler, checkpoints and diagnostics
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin 025629d9bb7b113bd0548ff6a32c6ee5812ae245
+          python3 - <<'PY'
+          import ast,json,re,subprocess
+          b=json.load(open('experiments/073cq_wm_s3_missing29_38_resource_v0_1_binding.json'))
+          def last(p): return subprocess.check_output(['git','log','-1','--format=%H','--',p],text=True).strip()
+          paths={'prereg_commit':'preregistration/2026-09-03_exp073cq_wm_s3_missing29_38_diagnostic_resume_resource_v0_1.md','sync_commit':'ci/dsir_checkpoint_git_sync_v0_3.sh','driver_commit':'ci/exp073cq_wm_s3_missing29_38_diagnostic_resume_resource_v0_1.py','workflow_commit':'.github/workflows/exp073cq-wm-s3-missing29-38-diagnostic-resume-resource-v0-1.yml','audit_workflow_commit':'.github/workflows/exp073cq-static-parent-import-diagnostic-resume-audit-v0-1.yml'}
+          for k,p in paths.items(): assert b[k]==last(p),(k,b[k],last(p))
+          assert b['prereg_commit']=='60c975edb35c13bd22907440f4ed767a5fc55712'
+          assert b['driver_commit']=='b316354886e1b1857d6f205ffe5d0dd8f0151622'
+          assert b['workflow_commit']=='76be666e2cc6b8f11710a44ff7772ef708ac1e80'
+          assert b['sync_commit']=='c20127b6762c6fc9b21875a321aecd7a4cd5f88e'
+          assert b['parent_checkpoint_head']=='025629d9bb7b113bd0548ff6a32c6ee5812ae245'
+          assert b['parent_contract_fingerprint']=='32d15a39f1bcdcee0f9b9f88ebc8fd8f82eb850bb71eca4b51d95eb40f111efc'
+          assert b['checkpoint_namespace']=='checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-1'
+          assert b['imported_parent_bands']==list(range(29)) and b['compute_allowlist']==list(range(29,39))
+          assert b['outer_workers']==8 and b['max_inflight_futures']==8 and b['nested_threads']==1 and b['cpu_fraction_min']==0.9
+          d=open(paths['driver_commit']).read(); w=open(paths['workflow_commit']).read(); p=open(paths['prereg_commit']).read(); ast.parse(d)
+          for x in ["IMPORTED=tuple(range(29)); ALLOWED=tuple(range(29,39))","PARENT_HEAD='025629d9bb7b113bd0548ff6a32c6ee5812ae245'","PARENT_FINGERPRINT='32d15a39f1bcdcee0f9b9f88ebc8fd8f82eb850bb71eca4b51d95eb40f111efc'","if b not in ALLOWED","ProcessPoolExecutor(max_workers=8)","pending=iter(missing)","origin':'imported_exact_parent_exp073cp'","origin':'new_numerical_exp073cq'","diagnostic-first-failure","still_missing_allowlist","parent_receipt_file_sha256","PASS_EXP073CQ_WM_S3_MISSING29_38_8WORKER_DIAGNOSTIC_RESUME_RESOURCE_V0_1"]: assert x in d,x
+          assert 'for b in IMPORTED' in d and 'for b in ALLOWED' in d
+          assert 'compute_active_wall_seconds' in d and "cpu_fraction_of_8_compute" in d
+          for x in ['runner exclusivity','025629d9bb7b113bd0548ff6a32c6ee5812ae245','imported-parent-band00-28','compiled-helper','Missing29-38 bounded eight-worker compute with per-band durability and diagnostics','checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-1']: assert x in w,x
+          assert 'workflow_dispatch:' not in w, 'home workflow must be launch-marker only'
+          assert "paths: ['launch/exp073cq_wm_s3_missing29_38_resource_v0_1.json']" in w
+          assert 'cpu_fraction_of_8_compute >= 0.90' in p and 'MUST NOT numerically recompute bands `0..28`' in p
+          tree=subprocess.check_output(['git','ls-tree','-r','--name-only',b['parent_checkpoint_head'],'checkpoint/bands'],text=True).splitlines()
+          payload=[]; receipts=[]
+          for q in tree:
+              m=re.fullmatch(r'checkpoint/bands/band_(\d\d)/(payload\.npy|receipt\.json)',q)
+              if m:
+                  (payload if m.group(2)=='payload.npy' else receipts).append(int(m.group(1)))
+          assert sorted(payload)==list(range(29)),sorted(payload)
+          assert sorted(receipts)==list(range(29)),sorted(receipts)
+          pc=json.loads(subprocess.check_output(['git','show',b['parent_checkpoint_head']+':checkpoint/contract.json'],text=True))
+          assert pc['fingerprint']==b['parent_contract_fingerprint'] and pc['experiment']=='Exp073CP'
+          assert pc['pcl_sha256']==b['pcl_sha256'] and pc['reference_sha256']==b['reference_0_7_sha256']
+          print('PASS_EXP073CQ_STATIC_PARENT_IMPORT_DIAGNOSTIC_RESUME_AUDIT_V0_1')
+          PY
