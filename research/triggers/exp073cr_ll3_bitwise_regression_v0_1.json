@@ -1,0 +1,10 @@
+{
+  "kind": "NON_AUTHORITATIVE_RESEARCH_TRIGGER",
+  "scientific_credit": "+0/+0",
+  "resource_authority": "none",
+  "purpose": "Hosted bitwise regression of exact-order ll3 sharding against immutable Exp073CP complete-band payloads",
+  "parent_checkpoint_head": "025629d9bb7b113bd0548ff6a32c6ee5812ae245",
+  "bands": [0,7,15],
+  "no_home_runner": true,
+  "does_not_modify_exp073cq_v0_2": true
+}
