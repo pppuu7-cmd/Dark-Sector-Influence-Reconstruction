@@ -1,0 +1,12 @@
+{
+  "complete": true,
+  "contract_fingerprint": "32d15a39f1bcdcee0f9b9f88ebc8fd8f82eb850bb71eca4b51d95eb40f111efc",
+  "dtype": "<f8",
+  "experiment": "Exp073CP",
+  "format": "DSIR_UNIVERSAL_SELF_HOSTED_CHECKPOINT_V0_1",
+  "pcl_sha256": "ec34ee34311f3b02a16e118113b5b1acd1b961859caccd2c4387c0ae529cd72d",
+  "reference_sha256": "36ee9fca9fb276a30d8ebb97cb04fddc7e95cff18fb29248c033bb364ea2d8cf",
+  "stage": "upstream",
+  "upstream_cm_contract_fingerprint": "9e10b26b57464cc70ce8cb0c5cfedbab118662619ea314beed2f854d9ed65978",
+  "upstream_cm_head": "d405a7a934bbd8caf464cd2a4bcb6052b8d205cd"
+}
