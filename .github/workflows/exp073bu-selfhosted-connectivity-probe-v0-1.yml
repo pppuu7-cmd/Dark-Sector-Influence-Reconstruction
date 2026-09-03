@@ -1,0 +1,39 @@
+name: Exp073BU self-hosted connectivity probe v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ci/exp073bu_selfhosted_connectivity_probe_launch_v0_1.txt'
+
+permissions:
+  contents: read
+
+env:
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  probe:
+    runs-on: [self-hosted, dsir-exp073cr]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify intended DSIR listener
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "EXP073BU_CONNECTIVITY_PROBE_V0_1"
+          echo "repo=$GITHUB_REPOSITORY"
+          echo "run_id=$GITHUB_RUN_ID"
+          echo "run_attempt=$GITHUB_RUN_ATTEMPT"
+          echo "sha=$GITHUB_SHA"
+          echo "runner_name=$RUNNER_NAME"
+          echo "runner_os=$RUNNER_OS"
+          echo "runner_arch=$RUNNER_ARCH"
+          uname -a
+          command -v python3 || true
+          python3 --version || true
+          getconf _NPROCESSORS_ONLN || true
+          free -h || true
+          df -h . || true
+          echo "PASS_EXP073BU_SELFHOSTED_CONNECTIVITY_PROBE_V0_1"
