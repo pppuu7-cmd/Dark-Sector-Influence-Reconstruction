@@ -1,0 +1,28 @@
+{
+  "bands_completed": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "cpu_fraction_of_8": 0.19305511714998927,
+  "effective_cpu_cores": 1.5444409371999142,
+  "process_tree_cpu_seconds": 141.277074,
+  "segment": "33710044833-1788404731344501399",
+  "swap_increase_kib": 0,
+  "swap_used_kib_after": 170844,
+  "swap_used_kib_before": 170876,
+  "wall_seconds": 91.47457218800264
+}
