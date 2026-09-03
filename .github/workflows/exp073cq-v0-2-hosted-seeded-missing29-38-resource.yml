@@ -1,0 +1,120 @@
+name: Exp073CQ v0.2 hosted-seeded missing29-38 resource
+on:
+  push:
+    paths: ['launch/exp073cq_v0_2_hosted_seeded_missing29_38_resource.json']
+permissions: {contents: write, actions: read}
+concurrency: {group: dsir-home-exp073cq-v02-missing29-38, cancel-in-progress: false}
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  OMP_DYNAMIC: 'FALSE'
+  PYTHONUNBUFFERED: '1'
+  DSIR_CHECKPOINT_QUERY_ATTEMPTS: '7'
+  DSIR_CHECKPOINT_FETCH_ATTEMPTS: '7'
+  DSIR_CHECKPOINT_PUSH_ATTEMPTS: '7'
+  DSIR_CHECKPOINT_GIT_TIMEOUT_SECONDS: '120'
+jobs:
+  authorize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Fail-closed hosted-seed and audit authorization
+        shell: bash
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,subprocess
+          a=json.load(open('ci/exp073cq_v0_2_hosted_seeded.activation.json'))
+          assert a['experiment']=='Exp073CQ' and a['version']=='v0.2'
+          assert a['state']=='AUTHORIZED_AFTER_HOSTED_SEED_AND_STATIC_AUDIT_PASS'
+          assert a['seed_head'] and len(a['seed_head'])==40
+          assert a['audit_status']=='PASS_EXP073CQ_V0_2_HOSTED_SEED_STATIC_AUDIT'
+          def last(p): return subprocess.check_output(['git','log','-1','--format=%H','--',p],text=True).strip()
+          assert a['driver_commit']==last('ci/exp073cq_v0_2_hosted_seed_missing29_38_resource.py')
+          assert a['workflow_commit']==last('.github/workflows/exp073cq-v0-2-hosted-seeded-missing29-38-resource.yml')
+          assert a['binding_commit']==last('experiments/073cq_v0_2_hosted_seeded_binding.json')
+          PY
+          python3 - <<'PY'
+          import json,os,urllib.request
+          h={'Authorization':f"Bearer {os.environ['GH_TOKEN']}",'Accept':'application/vnd.github+json'}; repo=os.environ['GITHUB_REPOSITORY']; cur=int(os.environ['GITHUB_RUN_ID'])
+          for s in ('queued','in_progress'):
+              with urllib.request.urlopen(urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?status={s}&per_page=100',headers=h),timeout=30) as r:d=json.load(r)
+              assert not [x for x in d.get('workflow_runs',[]) if int(x['id'])!=cur]
+          PY
+  checkpointed-resource:
+    needs: authorize
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Bind runtime and exact hosted seed
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "DSIR_DRIVER_COMMIT=$(git log -1 --format=%H -- ci/exp073cq_v0_2_hosted_seed_missing29_38_resource.py)" >> "$GITHUB_ENV"
+          echo "DSIR_WORKFLOW_COMMIT=$(git log -1 --format=%H -- .github/workflows/exp073cq-v0-2-hosted-seeded-missing29-38-resource.yml)" >> "$GITHUB_ENV"
+          echo "DSIR_BINDING_COMMIT=$(git log -1 --format=%H -- experiments/073cq_v0_2_hosted_seeded_binding.json)" >> "$GITHUB_ENV"
+          echo "DSIR_SEED_HEAD=$(python3 -c 'import json;print(json.load(open("ci/exp073cq_v0_2_hosted_seeded.activation.json"))["seed_head"])')" >> "$GITHUB_ENV"
+      - name: Reuse or bootstrap proven NaMaster 2.7 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$HOME/.cache/dsir-miniforge"; ENV="$HOME/.cache/dsir-nmt27"
+          if ! test -x "$MF/bin/conda"; then mkdir -p "$HOME/.cache"; curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"; bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"; fi
+          if ! test -x "$ENV/bin/python"; then "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 numpy; fi
+          echo "NMT_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+      - name: Restore exact hosted-seeded successor checkpoint first
+        shell: bash
+        run: |
+          set -euo pipefail
+          CQ="$RUNNER_TEMP/exp073cq-v02"; BR=checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh restore "$CQ" "$BR" "$DSIR_SEED_HEAD"
+          "$NMT_PY" ci/exp073cq_v0_2_hosted_seed_missing29_38_resource.py validate --checkpoint-dir "$CQ"
+      - name: Compile or restore frozen helper checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          CQ="$RUNNER_TEMP/exp073cq-v02"; BR=checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2; mkdir -p build "$CQ/build"
+          if test -f "$CQ/build/exp073ca.so" -a -f "$CQ/build/receipt.json"; then cp "$CQ/build/exp073ca.so" build/exp073ca.so; else
+            gcc -O2 -shared -fPIC -fopenmp -fno-fast-math -fno-associative-math -ffp-contract=off -fno-tree-vectorize ci/exp073ca_stream_general_coupling_range_v0_1.c -o build/exp073ca.so -ldl -lm
+            cp build/exp073ca.so "$CQ/build/exp073ca.so"
+            "$NMT_PY" - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          r=Path(os.environ['RUNNER_TEMP'])/'exp073cq-v02'; c=json.load(open(r/'contract.json')); p=r/'build/exp073ca.so'
+          (r/'build/receipt.json').write_text(json.dumps({'stage':'compiled-helper','complete':True,'contract_fingerprint':c['fingerprint'],'sha256':hashlib.sha256(p.read_bytes()).hexdigest()},sort_keys=True,indent=2)+'\n')
+          PY
+            bash ci/dsir_checkpoint_git_sync_v0_3.sh push "$CQ" "$BR" compiled-helper
+          fi
+      - name: Compute only missing bands 29-38 with durability
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$NMT_PY" ci/exp073cq_v0_2_hosted_seed_missing29_38_resource.py compute --checkpoint-dir "$RUNNER_TEMP/exp073cq-v02" --ca-so build/exp073ca.so --branch checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2 --sync-script ci/dsir_checkpoint_git_sync_v0_3.sh
+      - name: Frozen final classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          CQ="$RUNNER_TEMP/exp073cq-v02"; BR=checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-2
+          set +e; "$NMT_PY" ci/exp073cq_v0_2_hosted_seed_missing29_38_resource.py finalize --checkpoint-dir "$CQ"; rc=$?; set -e
+          bash ci/dsir_checkpoint_git_sync_v0_3.sh push "$CQ" "$BR" frozen-final
+          mkdir -p data/derived/g7
+          cp "$CQ/contract.json" data/derived/g7/exp073cq_v0_2_contract.json
+          cp "$CQ/final/receipt.json" data/derived/g7/exp073cq_v0_2_final_receipt.json
+          cp "$CQ/telemetry/resume29_38.json" data/derived/g7/exp073cq_v0_2_telemetry.json
+          exit "$rc"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073cq-v0-2-resource-${{ github.sha }}
+          path: data/derived/g7/exp073cq_v0_2_*.json
+          retention-days: 90
+          compression-level: 0
