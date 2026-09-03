@@ -1,0 +1,73 @@
+name: Exp073BU selected-TE semantic equivalence support QA v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073bu-selected-te-semantic-equivalence-v0-1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-semantic-equivalence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Freeze support-QA scope and source lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073bu_support_selected_te_semantic_equivalence_v0_1_prereg.md)" = "$(git rev-parse b31733b1047a39942118b409d63e4faa8d8c4b7a:experiments/073bu_support_selected_te_semantic_equivalence_v0_1_prereg.md)"
+          test "$(git hash-object ci/exp073bu_support_selected_te_semantic_equivalence_v0_1.py)" = "$(git rev-parse bed56467b0d9f145ca9e1c5e896d92e02d5141fa:ci/exp073bu_support_selected_te_semantic_equivalence_v0_1.py)"
+          python3 -m py_compile ci/exp073bu_support_selected_te_semantic_equivalence_v0_1.py
+          echo 'EXP073BU_SUPPORT_QA_ONLY=1'
+          echo 'EXP073BU_SCIENCE_AUTHORITY_FORBIDDEN=1'
+
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          if command -v conda >/dev/null 2>&1; then
+            conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy
+            echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+          else
+            sudo apt-get update
+            sudo apt-get install -y libgsl-dev libfftw3-dev libcfitsio-dev build-essential
+            python3 -m venv "${RUNNER_TEMP}/nmt27"
+            "${RUNNER_TEMP}/nmt27/bin/python" -m pip install --upgrade pip wheel 'numpy<2.4'
+            "${RUNNER_TEMP}/nmt27/bin/python" -m pip install 'pymaster==2.7' healpy
+            echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Execute frozen stock-full-window versus selected low-memory QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073bu
+          "${NMT_PY}" ci/exp073bu_support_selected_te_semantic_equivalence_v0_1.py --out data/derived/exp073bu/exp073bu_selected_te_semantic_equivalence_v0_1.json
+          "${NMT_PY}" - <<'PY'
+          import json
+          p='data/derived/exp073bu/exp073bu_selected_te_semantic_equivalence_v0_1.json'
+          d=json.load(open(p))
+          assert d['status'] in {'Q1_EXACT_SELECTED_TE_EQUIVALENCE','Q2_NUMERIC_ONLY_SELECTED_TE_EQUIVALENCE','Q3_SELECTED_TE_SEMANTIC_MISMATCH'}
+          assert d['stock_full_shape']==[2,8,2,48]
+          assert d['selected_shape']==[8,48]
+          assert d['selected_dtype']=='<f8'
+          assert d['accounting']=='+0/+0'
+          assert d['science_gate_scored'] is False and d['wm_s3_authority_created'] is False
+          assert d['historical_or_des_data_read'] is False
+          print('PASS_EXP073BU_SELECTED_TE_SUPPORT_QA_EXECUTED_V0_1')
+          print(d['status'])
+          PY
+
+      - name: Upload support-QA receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073bu-selected-te-semantic-equivalence-${{ github.sha }}
+          path: data/derived/exp073bu/exp073bu_selected_te_semantic_equivalence_v0_1.json
+          if-no-files-found: warn
