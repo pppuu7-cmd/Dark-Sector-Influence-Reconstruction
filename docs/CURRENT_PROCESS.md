@@ -6,20 +6,24 @@ Repository/immutable Actions/checkpoints are authoritative.
 
 ## Active process
 - experiment: Exp073CQ Wm_S3 missing29-38 diagnostic-resume resource v0.1
-- workflow run: not launched yet at this ledger commit; launch-marker-only dispatch is the next permitted action after live Actions recheck
-- job: none yet
-- branch/head: `main` / audited+activated Exp073CQ control plane
+- workflow run: `33742582807`
+- workflow/head: `.github/workflows/exp073cq-wm-s3-missing29-38-diagnostic-resume-resource-v0-1.yml` / `ef4f02f0ff3e23d845b6dcd1f45317a0d3811b12`
+- authorize job: `100607659399` SUCCESS
+- self-hosted job: `100607697336` QUEUED
+- branch/head: `main` / `ef4f02f0ff3e23d845b6dcd1f45317a0d3811b12`
 - checkpoint namespace: `checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-1`
 - parent checkpoint namespace/head: `checkpoints/exp073cp-wm-s3-full39-resource-v0-1` / `025629d9bb7b113bd0548ff6a32c6ee5812ae245`
 - parent contract fingerprint: `32d15a39f1bcdcee0f9b9f88ebc8fd8f82eb850bb71eca4b51d95eb40f111efc`
-- current state: AUTHORIZED_AFTER_HOSTED_STATIC_AUDIT_PASS; awaiting single nonduplicating launch marker
+- current state: QUEUED_FOR_EXCLUSIVE_SELF_HOSTED_EXECUTION; authorize PASS; no in-progress DSIR run exists
+- start/queue time: workflow created `2026-09-03T10:07:11Z`; self-hosted job remains queued at the 2026-09-03 10:57Z authority check
 - last durable scientific payload checkpoint: parent head `025629d9bb7b113bd0548ff6a32c6ee5812ae245`, exact bands `0..28`
-- successor durable checkpoint: absent before first Exp073CQ launch; initial home action must restore successor first, then exact-import parent bands 0..28 and durably checkpoint that import before compute
+- successor durable checkpoint: not yet claimed; self-hosted job has not started, so no Exp073CQ completed stage/band may be inferred
 - compute allowlist: exactly bands `29..38`; bands `0..28` MUST NOT be numerically recomputed
 - expected gate/token: `PASS_EXP073CQ_WM_S3_MISSING29_38_8WORKER_DIAGNOSTIC_RESUME_RESOURCE_V0_1`
 - hosted audit authority: run `33742223874`, job `100606527087`, head `f8416855c7dd28b95d30cbf18835dd2b8bb37ddd`, immutable raw token `PASS_EXP073CQ_STATIC_PARENT_IMPORT_DIAGNOSTIC_RESUME_AUDIT_V0_1`
 - activation authority: commit `5cfdf3fb2d41041eff0238718f7841edc8897640`
-- home runner ownership: FREE at authorization; MUST be rechecked immediately before launch and becomes exclusively owned by the single Exp073CQ home job once queued/in_progress
+- home runner ownership: RESERVED EXCLUSIVELY for run `33742582807` / job `100607697336` while queued or in_progress; DO NOT launch a competing home job
+- exact next action while QUEUED: do not duplicate or rerun; continue only independent non-biasing theory/audit work and consume immediately once terminal
 - exact next action on resource PASS: consume raw artifact/checkpoint/final receipt; keep result `+0/+0`; only then preregister full fresh-independent-PCL sequential Wm_S3 A/B scientific successor
 - exact next action on resource/numerical FAIL: record frozen negative resource result `+0/+0`; do not rescue by tolerance; choose next scientifically permitted architecture prospectively
 - exact next action on infrastructure/software/checkpoint failure: preserve successor durable units, consume first causal diagnostic, repair prospectively, hosted-audit again, resume only missing units
