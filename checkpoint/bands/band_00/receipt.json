@@ -1,0 +1,25 @@
+{
+  "band": 0,
+  "complete": true,
+  "contract_fingerprint": "32d15a39f1bcdcee0f9b9f88ebc8fd8f82eb850bb71eca4b51d95eb40f111efc",
+  "dtype": "<f8",
+  "ell_interval": [
+    0,
+    30
+  ],
+  "experiment": "Exp073CP",
+  "format": "DSIR_UNIVERSAL_SELF_HOSTED_CHECKPOINT_V0_1",
+  "nested_threads": 1,
+  "numerical_end_epoch_ns": 1788419356135991345,
+  "numerical_start_epoch_ns": 1788419355716630240,
+  "outer_workers": 8,
+  "payload_sha256": "8b2ca2c4a85b779752cfa8979275fc617b738a85886c491d50f734aea9fa0289",
+  "pcl_sha256": "ec34ee34311f3b02a16e118113b5b1acd1b961859caccd2c4387c0ae529cd72d",
+  "shape": [
+    12288
+  ],
+  "stage": "band",
+  "task": "Wm_S3",
+  "worker_cpu_seconds": 0.3877865,
+  "worker_wall_seconds": 0.4091617049998604
+}
