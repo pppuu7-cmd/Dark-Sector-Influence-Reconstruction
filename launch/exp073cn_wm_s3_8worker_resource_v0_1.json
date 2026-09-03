@@ -1,0 +1,10 @@
+{
+  "experiment": "Exp073CN",
+  "version": "v0.1",
+  "activation_commit": "4dc17b0102a5e1b428d5247d96be78caea3b7779",
+  "audit_run_id": 33709966197,
+  "audit_artifact_id": 9876558706,
+  "audit_artifact_digest": "sha256:1c574f8ba54a6b1a144d8f576e692f0385d73998a40d2c34d9447ea148bad6b0",
+  "checkpoint_branch": "checkpoints/exp073cn-wm-s3-8worker-resource-v0-1",
+  "launch_condition_observed": "0 queued and 0 in_progress DSIR Actions immediately before creation"
+}
