@@ -1,0 +1,9 @@
+{
+  "experiment": "Exp073CN",
+  "version": "v0.1",
+  "requested_gate": "HOSTED_STATIC_CHECKPOINT_CONTRACT_AUDIT",
+  "resource_workflow_commit": "584b3544a4785594f3607d787368400a74709688",
+  "driver_commit": "6cd0016d061df0156ef64b705fee339c55d5ed9f",
+  "binding_commit": "19526b27380da048b40d55a112f27ed6bed80e97",
+  "home_launch_authorized": false
+}
