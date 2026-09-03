@@ -1,0 +1,8 @@
+{
+  "experiment": "Exp073CQ",
+  "task": "hosted_parent_import_reproducer_v0_1",
+  "authority": "diagnostic_only_+0/+0",
+  "frozen_parent_head": "025629d9bb7b113bd0548ff6a32c6ee5812ae245",
+  "frozen_cq_driver_commit": "b316354886e1b1857d6f205ffe5d0dd8f0151622",
+  "home_compute": false
+}
