@@ -1,0 +1,55 @@
+name: Exp073CO hosted static checkpoint contract audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'launch/exp073co_static_audit_v0_1.json'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Audit frozen implementation and checkpoint contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/g7
+          python3 - <<'PY'
+          import ast,json,re,subprocess,hashlib
+          driver='ci/exp073co_wm_s3_full39_checkpoint_resource_v0_1.py'
+          workflow='.github/workflows/exp073co-wm-s3-full39-checkpoint-resource-v0-1.yml'
+          binding='experiments/073co_wm_s3_full39_checkpoint_resource_v0_1_binding.json'
+          prereg='preregistration/2026-09-03_exp073co_wm_s3_8worker_full39_checkpoint_resource_v0_1.md'
+          txt=open(driver).read(); w=open(workflow).read(); b=json.load(open(binding)); p=open(prereg).read()
+          ast.parse(txt)
+          def last(path): return subprocess.check_output(['git','log','-1','--format=%H','--',path],text=True).strip()
+          assert last(prereg)=='95133fc97b9cc013a58c82aed583ee79f7737979'
+          assert last(driver)=='0d0c6032f8af0def02f9e2c15abc3c22bfd049e0'
+          assert last(workflow)=='eefb6767ab9452d2c74a1fa36f6f59a42bdb1ca9'
+          assert last(binding)=='b84f4df108b6015c2909d8a00953df1fd0a43eb8'
+          assert b['driver_commit']==last(driver) and b['workflow_commit']==last(workflow)
+          assert b['checkpoint_namespace']=='checkpoints/exp073co-wm-s3-full39-resource-v0-1'
+          assert b['outer_workers']==8 and b['nested_threads']==1 and b['bands']==list(range(39))
+          assert abs(float(b['cpu_fraction_min'])-0.90)<1e-15
+          for s in ['BANDS = tuple(range(39))','OUTER_WORKERS = 8','cpu_fraction_of_8_compute','checkpoint_transport_wall_seconds','sync(root,branch,sync_script',"np.array_equal(first8,ref)","REFERENCE_SHA"]: assert s in txt,s
+          for s in ["OMP_NUM_THREADS: '1'","OPENBLAS_NUM_THREADS: '1'","MKL_NUM_THREADS: '1'","BLIS_NUM_THREADS: '1'","checkpoints/exp073co-wm-s3-full39-resource-v0-1","0d0c6032f8af0def02f9e2c15abc3c22bfd049e0"]: assert s in w,s
+          assert '__DRIVER_COMMIT__' not in w
+          assert 'HOME EXECUTION FORBIDDEN UNTIL POST-IMPLEMENTATION HOSTED STATIC AUDIT PASS' in p
+          assert 'PASS_EXP073CO_WM_S3_FULL39_8WORKER_CHECKPOINT_RESOURCE_V0_1' in p
+          result={'status':'PASS_EXP073CO_STATIC_CHECKPOINT_CONTRACT_AUDIT_V0_1','prereg_commit':last(prereg),'driver_commit':last(driver),'workflow_commit':last(workflow),'binding_commit':last(binding),'checkpoint_namespace':b['checkpoint_namespace'],'outer_workers':8,'nested_threads':1,'band_count':39,'cpu_fraction_min':0.90,'scientific_delta':'+0/+0'}
+          raw=(json.dumps(result,sort_keys=True,indent=2)+'\n').encode(); open('data/derived/g7/exp073co_static_audit_v0_1.json','wb').write(raw)
+          print(raw.decode()); print('result_sha256',hashlib.sha256(raw).hexdigest())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073co-static-checkpoint-contract-audit-${{ github.sha }}
+          path: data/derived/g7/exp073co_static_audit_v0_1.json
+          retention-days: 90
+          compression-level: 0
