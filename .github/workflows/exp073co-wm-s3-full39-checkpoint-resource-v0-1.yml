@@ -92,7 +92,7 @@ jobs:
           CM="$RUNNER_TEMP/exp073cm-authority"; CP="$RUNNER_TEMP/exp073co-checkpoint"
           bash ci/dsir_checkpoint_git_sync_v0_2.sh restore "$CM" 'checkpoints/exp073cm-wm-s3-resource-v0-1' 'd405a7a934bbd8caf464cd2a4bcb6052b8d205cd'
           bash ci/dsir_checkpoint_git_sync_v0_2.sh restore "$CP" 'checkpoints/exp073co-wm-s3-full39-resource-v0-1' ALLOW_ABSENT
-          "$NMT_PY" ci/exp073co_wm_s3_full39_checkpoint_resource_v0_1.py init --checkpoint-dir "$CP" --source-head "$GITHUB_SHA" --driver-commit '__DRIVER_COMMIT__'
+          "$NMT_PY" ci/exp073co_wm_s3_full39_checkpoint_resource_v0_1.py init --checkpoint-dir "$CP" --source-head "$GITHUB_SHA" --driver-commit '0d0c6032f8af0def02f9e2c15abc3c22bfd049e0'
           if ! test -f "$CP/upstream/receipt.json"; then
             "$NMT_PY" ci/exp073co_wm_s3_full39_checkpoint_resource_v0_1.py import-upstream --checkpoint-dir "$CP" --cm-dir "$CM"
             bash ci/dsir_checkpoint_git_sync_v0_2.sh push "$CP" 'checkpoints/exp073co-wm-s3-full39-resource-v0-1' 'validated immutable upstream'
