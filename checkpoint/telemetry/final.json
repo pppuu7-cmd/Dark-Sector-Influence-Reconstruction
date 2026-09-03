@@ -1,0 +1,13 @@
+{
+  "complete": true,
+  "compute_active_effective_cores": 7.6991925513940895,
+  "compute_active_wall_seconds": 5822.522733307,
+  "contract_fingerprint": "3eb54728878e5913fcb39b9e6411480c413d6a5a6a968c67e623f1fa48e6ec29",
+  "cpu_fraction_min": 0.9,
+  "cpu_fraction_of_8_compute": 0.9623990689242612,
+  "shard_count": 64,
+  "sum_worker_numerical_cpu_seconds": 44828.72365860001,
+  "swap_increase_kib": 0,
+  "swap_used_kib_after_resource_gate": 0,
+  "swap_used_kib_before_resource_gate": 0
+}
