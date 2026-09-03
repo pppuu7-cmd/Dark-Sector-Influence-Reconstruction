@@ -21,8 +21,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git hash-object experiments/073bu_support_selected_te_semantic_equivalence_v0_1_prereg.md)" = "$(git rev-parse b31733b1047a39942118b409d63e4faa8d8c4b7a:experiments/073bu_support_selected_te_semantic_equivalence_v0_1_prereg.md)"
-          test "$(git hash-object ci/exp073bu_support_selected_te_semantic_equivalence_v0_1.py)" = "$(git rev-parse bed56467b0d9f145ca9e1c5e896d92e02d5141fa:ci/exp073bu_support_selected_te_semantic_equivalence_v0_1.py)"
+          test "$(git hash-object experiments/073bu_support_selected_te_semantic_equivalence_v0_1_prereg.md)" = "04fc181fd3354a4a072d7b488e244486a096d3c0"
+          test "$(git hash-object ci/exp073bu_support_selected_te_semantic_equivalence_v0_1.py)" = "40e2a2c7a96032fcf3b5c7ff369a8cf416e33d1c"
           python3 -m py_compile ci/exp073bu_support_selected_te_semantic_equivalence_v0_1.py
           echo 'EXP073BU_SUPPORT_QA_ONLY=1'
           echo 'EXP073BU_SCIENCE_AUTHORITY_FORBIDDEN=1'
