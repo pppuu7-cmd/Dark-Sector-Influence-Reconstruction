@@ -1,0 +1,26 @@
+{
+  "band": 22,
+  "complete": true,
+  "contract_fingerprint": "87b58bf120510bec50b21851d7ff21269689db6dcdd906cb3a14102e4a4f5f97",
+  "dtype": "<f8",
+  "ell_interval": [
+    1416,
+    1608
+  ],
+  "experiment": "Exp073CQ",
+  "format": "DSIR_UNIVERSAL_SELF_HOSTED_CHECKPOINT_V0_1",
+  "nested_threads": 1,
+  "origin": "imported_exact_parent_exp073cp",
+  "outer_workers": 8,
+  "parent_contract_fingerprint": "32d15a39f1bcdcee0f9b9f88ebc8fd8f82eb850bb71eca4b51d95eb40f111efc",
+  "parent_head": "025629d9bb7b113bd0548ff6a32c6ee5812ae245",
+  "parent_payload_sha256": "b7161445784307f74e6e7b8a4f9b2566c69cfbbb38c292b6fd93fee11d8bc910",
+  "parent_receipt_file_sha256": "95ac206ed51741e17757d0508b9352b65de1eeafce65d60223b9b1539ae3031c",
+  "payload_sha256": "b7161445784307f74e6e7b8a4f9b2566c69cfbbb38c292b6fd93fee11d8bc910",
+  "pcl_sha256": "ec34ee34311f3b02a16e118113b5b1acd1b961859caccd2c4387c0ae529cd72d",
+  "shape": [
+    12288
+  ],
+  "stage": "band",
+  "task": "Wm_S3"
+}
