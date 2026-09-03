@@ -6,15 +6,16 @@ on:
 jobs:
   audit:
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
-      - name: Audit frozen implementation and transport semantics
+      - name: Audit frozen implementation, lineage and transport semantics
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import json,re,subprocess
+          import ast,json,subprocess
           b=json.load(open('experiments/073cp_wm_s3_full39_transport_resource_v0_1_binding.json'))
           def last(p): return subprocess.check_output(['git','log','-1','--format=%H','--',p],text=True).strip()
           paths={
@@ -24,10 +25,14 @@ jobs:
             'workflow_commit':'.github/workflows/exp073cp-wm-s3-full39-transport-resource-v0-1.yml'}
           for k,p in paths.items(): assert b[k]==last(p),(k,b[k],last(p))
           s=open(paths['sync_commit']).read(); d=open(paths['driver_commit']).read(); w=open(paths['workflow_commit']).read(); p=open(paths['prereg_commit']).read()
-          for x in ['http.version=HTTP/1.1','fetch_attempts','push_attempts','query_remote_head','timeout --signal=TERM','force-with-lease']: assert x in s,x
-          for x in ['max8_inflight_refill_before_durability_bounded_abort','ProcessPoolExecutor(max_workers=8)','FIRST_COMPLETED','p.terminate()','band-{b:02d}-complete']: assert x in d,x
-          assert 'checkpoints/exp073cp-wm-s3-full39-resource-v0-1' in d and 'checkpoints/exp073cp-wm-s3-full39-resource-v0-1' in w
+          ast.parse(d)
+          for x in ['http.version=HTTP/1.1','fetch_attempts','push_attempts','query_remote_head','fetch_postcheck','timeout --signal=TERM','force-with-lease']: assert x in s,x
+          for x in ['_BASE_CONTRACT=co.contract','max8_inflight_refill_before_durability_bounded_abort','ProcessPoolExecutor(max_workers=8)','FIRST_COMPLETED','p.terminate()','band-{b:02d}-complete','DSIR_WORKFLOW_COMMIT','DSIR_BINDING_COMMIT','recovered_transport_events','extra_push_attempts']: assert x in d,x
+          for x in ['DSIR_CHECKPOINT_FETCH_ATTEMPTS','DSIR_WORKFLOW_COMMIT','DSIR_BINDING_COMMIT','runner exclusivity','checkpoints/exp073cp-wm-s3-full39-resource-v0-1']: assert x in w,x
+          assert 'checkpoints/exp073cp-wm-s3-full39-resource-v0-1' in d
           assert 'PASS_EXP073CP_WM_S3_FULL39_8WORKER_TRANSPORT_HARDENED_RESOURCE_V0_1' in d
           assert 'cpu_fraction_of_8_compute >= 0.90' in p and 'all 39 band receipts' in p
+          assert b['checkpoint_namespace']=='checkpoints/exp073cp-wm-s3-full39-resource-v0-1'
+          assert b['outer_workers']==8 and b['max_inflight_futures']==8 and b['cpu_fraction_min']==0.9
           print('PASS_EXP073CP_STATIC_TRANSPORT_CHECKPOINT_AUDIT_V0_1')
           PY
