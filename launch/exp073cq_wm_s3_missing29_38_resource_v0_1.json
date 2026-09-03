@@ -1,0 +1,16 @@
+{
+  "experiment": "Exp073CQ",
+  "version": "v0.1",
+  "purpose": "single audited checkpoint-preserving continuation from exact Exp073CP band28 authority",
+  "activation_commit": "5cfdf3fb2d41041eff0238718f7841edc8897640",
+  "audit_run_id": 33742223874,
+  "audit_job_id": 100606527087,
+  "audit_token": "PASS_EXP073CQ_STATIC_PARENT_IMPORT_DIAGNOSTIC_RESUME_AUDIT_V0_1",
+  "parent_checkpoint_head": "025629d9bb7b113bd0548ff6a32c6ee5812ae245",
+  "checkpoint_namespace": "checkpoints/exp073cq-wm-s3-missing29-38-resource-v0-1",
+  "compute_allowlist": [29,30,31,32,33,34,35,36,37,38],
+  "launched_after_live_actions_reconciliation": {
+    "queued": 0,
+    "in_progress": 0
+  }
+}
