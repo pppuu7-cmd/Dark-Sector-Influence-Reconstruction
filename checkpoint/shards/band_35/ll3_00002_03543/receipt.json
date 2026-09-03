@@ -1,0 +1,24 @@
+{
+  "band": 35,
+  "candidate_sha256": "d48e46197b48a6fcdf7d3eb3b0817973a2eadb25bbb617e7b8060c8c17209462",
+  "complete": true,
+  "contract_fingerprint": "3eb54728878e5913fcb39b9e6411480c413d6a5a6a968c67e623f1fa48e6ec29",
+  "dtype": "<f8",
+  "helper_symbol": "exp073cr_stream_compress_band_ll3_range_v0_1",
+  "ll3_interval": [
+    2,
+    3543
+  ],
+  "nested_threads": 1,
+  "numerical_end_epoch_ns": 1788450600436173969,
+  "numerical_start_epoch_ns": 1788450060673964578,
+  "origin": "new_numerical_exp073cr",
+  "outer_workers": 8,
+  "payload_sha256": "a6e5b39a47c556ccefcffe25b3cbfc6bae572620da22806f068d9d4532f7211a",
+  "queue_sha256": "3ba315d9bc24883ef746d92e785e0a040f9b13e751f59dda9a93e825a6390db4",
+  "shape": [
+    3541
+  ],
+  "worker_cpu_seconds": 536.7264304,
+  "worker_wall_seconds": 539.7622254910002
+}
