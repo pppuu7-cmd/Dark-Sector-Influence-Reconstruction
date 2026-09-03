@@ -1,5 +1,6 @@
 Exp073BU self-hosted connectivity probe v0.1
-Triggered prospectively after user confirmed runner ready.
+Retriggered after label audit against proven Exp073CR home-runner contract.
 Scientific authority advance: false.
 Wm_S3 numerical computation: false.
-Target labels: self-hosted, dsir-exp073cr.
+Target labels: self-hosted, Linux, X64.
+Probe generation: 2.
