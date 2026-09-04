@@ -1,0 +1,4 @@
+ACTIVATE Exp073BU Wm_S3 fresh A/B exact science 8-core v0.3
+hardware authority: DSIR-HOME-PC exposes 8 CPUs to Linux affinity
+required hosted authority: PASS_EXP073BU_8CORE_EXACT_EQUIVALENCE_V0_3
+fresh run-specific checkpoint root; no reuse of cancelled or blocked attempts
