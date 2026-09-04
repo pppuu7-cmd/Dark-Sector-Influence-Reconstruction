@@ -1,0 +1,6 @@
+Exp073BU science activation hosted audit v0.1
+activated_utc_date=2026-09-04
+science_workflow_blob=62774cbbe8073aeeb3f66e04a50c891173f91a23
+activation_prereg_blob=ffb8e97f2012b962d8d38d9a851ad88a93a39960
+science_launcher_blob=1a54ad89d32dd217443bc3062a6215bf10e8b17d
+scope=hosted_static_audit_only_no_science
