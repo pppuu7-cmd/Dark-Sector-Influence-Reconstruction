@@ -1,0 +1,45 @@
+name: Exp073CE Exp073BU integrated driver static audit v0.1
+
+on:
+  push:
+    paths:
+      - 'activation/exp073ce_v0_1.activate'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact activation head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Freeze lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "HEAD_SHA=${GITHUB_SHA}"
+          test -f experiments/073ce_exp073bu_integrated_driver_static_audit_v0_1_prereg.md
+          test -f scripts/exp073ce_exp073bu_integrated_contract_v0_1.py
+          test -f scripts/exp073ce_static_audit_v0_1.py
+          test -f activation/exp073ce_v0_1.activate
+          grep -Fx "EXP073CE_V0_1_ACTIVATED" activation/exp073ce_v0_1.activate
+      - name: Run prospective hosted static audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/exp073ce_static_audit_v0_1.py | tee exp073ce_static_audit_receipt.json
+          grep -F 'I1_EXP073BU_INTEGRATED_DRIVER_STATIC_AUDIT_PASS' exp073ce_static_audit_receipt.json
+          grep -F '"wm_s3_authority_created": false' exp073ce_static_audit_receipt.json
+          grep -F '"exp073bu_activated": false' exp073ce_static_audit_receipt.json
+      - name: Upload audit receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ce-v0-1-static-audit-receipt
+          path: exp073ce_static_audit_receipt.json
+          if-no-files-found: warn
