@@ -1,0 +1,3 @@
+activate Exp073BU 8-core exact-equivalence audit v0.3
+hardware authority: DSIR-HOME-PC Linux affinity exposed 8 CPUs
+support-only hosted audit; no DES-scale science numerics
