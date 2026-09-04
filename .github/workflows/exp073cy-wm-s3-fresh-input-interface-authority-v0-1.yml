@@ -1,0 +1,31 @@
+name: Exp073CY Wm_S3 fresh-input interface authority v0.1
+on:
+  push:
+    paths:
+      - 'control/activate_exp073cy_v0_1.txt'
+permissions:
+  contents: read
+jobs:
+  hosted-source-interface-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze Exp073CY contract and scanner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073cy_wm_s3_fresh_input_interface_authority_v0_1_prereg.md)" = '78457116734cf49fa26a6b1e0010a26f47657568'
+          test "$(git hash-object ci/exp073cy_wm_s3_fresh_input_interface_authority_v0_1.py)" = 'f94de8a86582b2173b7b920cd94a47b0771e2d79'
+          echo PASS_EXP073CY_V0_1_STATIC_FREEZE
+      - name: Execute source-interface authority scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073cy
+          python ci/exp073cy_wm_s3_fresh_input_interface_authority_v0_1.py data/derived/exp073cy/exp073cy_receipt_v0_1.json
+          cat data/derived/exp073cy/exp073cy_receipt_v0_1.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073cy-v0-1-source-interface-${{ github.sha }}
+          path: data/derived/exp073cy/exp073cy_receipt_v0_1.json
