@@ -1,0 +1,100 @@
+name: Exp073DE split-identity resume binding v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/activate_exp073de_split_identity_resume_binding_v0_1.txt'
+
+permissions:
+  contents: read
+
+env:
+  PREREG_BLOB: 'bf2f54c83a6e7fcfc580802fb727744a4759e416'
+  LINEAGE_V02_BLOB: 'd1d8677fde9d90d74204dd50c10b7807a1ae528c'
+  RESUME_WRAPPER_BLOB: '156d8abc5a55bd58a8d8778586940a41da98aaf1'
+  OMP8_ADAPTER_BLOB: '63ee393791bba43d3eabbea654efdb9d439d477e'
+  PARAMETRIC_OMP_SOURCE_BLOB: 'be4f381de4c5c043a9c0fcd107e63ef3f2079578'
+  ORIGINAL_BASE_DRIVER_BLOB: '5c8d5d3463e455389a1ca3df2639bf06a3b7b603'
+  FROZEN_SCIENCE_HEAD: 'c02c018ede6a1fcf7aef1a848c0118a0669ed67f'
+  ORIGINAL_WORKFLOW_BLOB: 'f8c70a4206321b0dc10b57f63a2a06163da2249a'
+  ORIGINAL_CONTRACT_FP: 'b38687bf5aa6cf4cfe01b2f38a7091e96d97196ad38bdf2ea771f7b649ac73da'
+  ORIGINAL_CHECKPOINT_ROOT: '~/.cache/dsir/exp073bu-wm-s3-fresh-ab-8core-v0-4-33901458494'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Bind exact prospective and historical identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073de_exp073bu_8core_resume_split_identity_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_2.py)" = "$LINEAGE_V02_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_8core_resume_v0_4.py)" = "$RESUME_WRAPPER_BLOB"
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_omp8_v0_3.py)" = "$OMP8_ADAPTER_BLOB"
+          test "$(git hash-object ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c)" = "$PARAMETRIC_OMP_SOURCE_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py)" = "$ORIGINAL_BASE_DRIVER_BLOB"
+          test "$(git show ${FROZEN_SCIENCE_HEAD}:.github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-8core-v0-4.yml | git hash-object --stdin)" = "$ORIGINAL_WORKFLOW_BLOB"
+          test "$FROZEN_SCIENCE_HEAD" = 'c02c018ede6a1fcf7aef1a848c0118a0669ed67f'
+          test "$ORIGINAL_CONTRACT_FP" = 'b38687bf5aa6cf4cfe01b2f38a7091e96d97196ad38bdf2ea771f7b649ac73da'
+          test "$ORIGINAL_CHECKPOINT_ROOT" = '~/.cache/dsir/exp073bu-wm-s3-fresh-ab-8core-v0-4-33901458494'
+          echo PASS_EXP073DE_IDENTITY_BINDING
+      - name: Static audit thin wrapper and fail-closed lineage semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import ast, pathlib
+          wp=pathlib.Path('ci/exp073bu_wm_s3_fresh_ab_production_8core_resume_v0_4.py')
+          src=wp.read_text(); t=ast.parse(src)
+          assert 'exp073bu_wm_s3_fresh_ab_production_v0_2 as lineage' in src
+          assert 'exp073cv_wm_s3_production_exact_adapter_omp8_v0_3' in src
+          required=[
+            "lineage.base.OUTER_COMPUTE_WORKERS = 8",
+            "'OMP_NUM_THREADS': '8'",
+            "'OPENBLAS_NUM_THREADS': '1'",
+            "'MKL_NUM_THREADS': '1'",
+            "'NUMEXPR_NUM_THREADS': '1'",
+            'lineage.base.execute_exact_adapter = execute_omp8_adapter',
+            'lineage.main()',
+          ]
+          assert all(x in src for x in required)
+          forbidden=['allclose','isclose','rtol','atol','round(','smoothing','average(','mean(','write_text(','atomic_json(']
+          assert not any(x in src for x in forbidden)
+          # Wrapper must contain no function/class definitions or numerical loops.
+          assert not any(isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef,ast.ClassDef,ast.For,ast.While)) for n in ast.walk(t))
+          lin=pathlib.Path('ci/exp073bu_wm_s3_fresh_ab_production_v0_2.py').read_text()
+          for x in [
+            "fail-closed missing workspace lineage checkpoint",
+            "fail-closed cumulative reconstruction lineage mismatch",
+            "fail-closed legacy final receipt requires prospective lineage migration",
+            "cumulative_reconstruction_counts",
+            "invocation_new_reconstruction_counts",
+          ]: assert x in lin
+          base=pathlib.Path('ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py').read_text()
+          for x in ['source_head','contract_fingerprint','sha256','replica']:
+            assert x in base
+          # No checkpoint-manifest migration or historical rewrite helper is introduced by wrapper.
+          assert 'stage_manifest' not in src and 'load_manifest' not in src and 'manifest' not in src.lower()
+          print('PASS_EXP073DE_STATIC_RESUME_WRAPPER')
+          PY
+      - name: Emit frozen support classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > exp073de_result.json <<EOF
+          {"classification":"PASS","raw_token":"PASS_EXP073DE_SPLIT_IDENTITY_RESUME_BINDING_V0_1","science_gate_scored":false,"wm_s3_authority_created":false,"frozen_science_head":"${FROZEN_SCIENCE_HEAD}","original_contract_fingerprint":"${ORIGINAL_CONTRACT_FP}","original_checkpoint_root":"${ORIGINAL_CHECKPOINT_ROOT}","lineage_v02_blob":"${LINEAGE_V02_BLOB}","resume_wrapper_blob":"${RESUME_WRAPPER_BLOB}","omp8_adapter_blob":"${OMP8_ADAPTER_BLOB}","parametric_omp_source_blob":"${PARAMETRIC_OMP_SOURCE_BLOB}"}
+          EOF
+          cat exp073de_result.json
+          echo PASS_EXP073DE_SPLIT_IDENTITY_RESUME_BINDING_V0_1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073de-split-identity-resume-binding-${{ github.run_id }}-${{ github.sha }}
+          path: exp073de_result.json
+          retention-days: 90
+          compression-level: 0
