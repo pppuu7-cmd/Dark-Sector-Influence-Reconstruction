@@ -1,0 +1,356 @@
+name: Exp073BU Wm_S3 fresh A/B exact science v0.1
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_science_activation:
+        description: 'Explicitly activate the frozen Exp073BU Wm_S3 v0.1 science run'
+        required: true
+        type: choice
+        options:
+          - 'NO'
+          - 'ACTIVATE_EXP073BU_WM_S3_V0_1'
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: exp073bu-wm-s3-home-science-v0-1
+  cancel-in-progress: false
+
+env:
+  ORIGINAL_PREREG_BLOB: '816542c7eb7a8ba4e72d6e01228aa62d05c7c805'
+  ACTIVATION_PREREG_BLOB: 'ffb8e97f2012b962d8d38d9a851ad88a93a39960'
+  DRIVER_BLOB: '5c8d5d3463e455389a1ca3df2639bf06a3b7b603'
+  HELPER_BLOB: '73ef04c479547dc8e2e89c9f511f1a55fae3ed64'
+  ADAPTER_BLOB: 'dafe86086a470c852106f0d4ecccbda1d389e397'
+  COMPONENT_BLOBS_BLOB: '0d6d6e882d1a4cf1ff79fbe8227a4f2b460c7e40'
+  DOWNSTREAM_BLOB: 'acafb095deafae7602101d8305e239341010ba79'
+  LAUNCHER_BLOB: '1a54ad89d32dd217443bc3062a6215bf10e8b17d'
+  CX_RECOVERY_BLOB: '43b658028f74b7a0b52fca8261beeb58026d8ffc'
+  AUDIT_RECOVERY: 'recovery/2026-09-04_exp073bu_science_activation_audit_v0_1_pass.md'
+
+jobs:
+  hosted-preflight:
+    name: Hosted frozen activation preflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      source_head: ${{ steps.freeze.outputs.source_head }}
+      contract_fingerprint: ${{ steps.freeze.outputs.contract_fingerprint }}
+      workflow_blob: ${{ steps.freeze.outputs.workflow_blob }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: freeze
+        name: Bind exact audited implementation and source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test '${{ inputs.confirm_science_activation }}' = 'ACTIVATE_EXP073BU_WM_S3_V0_1'
+          test "${GITHUB_REF}" = 'refs/heads/main'
+          test "$(git hash-object experiments/073bu_article3_wm_s3_fresh_independent_ab_exact_repeatability_v0_1_prereg.md)" = "${ORIGINAL_PREREG_BLOB}"
+          test "$(git hash-object experiments/073bu_wm_s3_selfhosted_science_activation_v0_1_prereg.md)" = "${ACTIVATION_PREREG_BLOB}"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py)" = "${DRIVER_BLOB}"
+          test "$(git hash-object ci/exp073bu_fresh_wm_s3_pcl_v0_1.py)" = "${HELPER_BLOB}"
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_v0_1.py)" = "${ADAPTER_BLOB}"
+          test "$(git hash-object ci/exp073cv_component_blobs_v0_1.json)" = "${COMPONENT_BLOBS_BLOB}"
+          test "$(git hash-object ci/exp073by_mmap_full_mcm_downstream_v0_1.c)" = "${DOWNSTREAM_BLOB}"
+          test "$(git hash-object ci/exp073bu_wm_s3_science_launcher_v0_1.py)" = "${LAUNCHER_BLOB}"
+          test "$(git hash-object recovery/2026-09-04_exp073cx_v0_4_a1_activation_readiness_pass.md)" = "${CX_RECOVERY_BLOB}"
+          grep -Fq 'A1_EXP073BU_ACTIVATION_READINESS_PASS' recovery/2026-09-04_exp073cx_v0_4_a1_activation_readiness_pass.md
+          test -f "${AUDIT_RECOVERY}"
+          grep -Fq 'PASS_EXP073BU_SCIENCE_ACTIVATION_HOSTED_AUDIT_V0_1' "${AUDIT_RECOVERY}"
+          workflow_blob="$(git hash-object .github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-v0-1.yml)"
+          grep -Fq "science_workflow_blob=${workflow_blob}" "${AUDIT_RECOVERY}"
+          fp="$(printf '%s\n' "${GITHUB_SHA}" "${ORIGINAL_PREREG_BLOB}" "${ACTIVATION_PREREG_BLOB}" "${DRIVER_BLOB}" "${HELPER_BLOB}" "${ADAPTER_BLOB}" "${COMPONENT_BLOBS_BLOB}" "${DOWNSTREAM_BLOB}" "${LAUNCHER_BLOB}" "${workflow_blob}" | sha256sum | awk '{print $1}')"
+          echo "source_head=${GITHUB_SHA}" >> "${GITHUB_OUTPUT}"
+          echo "contract_fingerprint=${fp}" >> "${GITHUB_OUTPUT}"
+          echo "workflow_blob=${workflow_blob}" >> "${GITHUB_OUTPUT}"
+          echo PASS_EXP073BU_MANUAL_ACTIVATION_FROZEN_BINDING_V0_1
+
+      - name: Fresh repository Actions noncompetition check
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; current=int(os.environ['GITHUB_RUN_ID']); token=os.environ['GH_TOKEN']
+          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          other=[]
+          for status in ('queued','in_progress'):
+              u=f'https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100'
+              req=urllib.request.Request(u,headers=headers)
+              with urllib.request.urlopen(req) as r: data=json.load(r)
+              for x in data.get('workflow_runs',[]):
+                  if int(x['id']) != current:
+                      other.append({'id':x['id'],'status':x['status'],'name':x.get('name')})
+          if other:
+              raise SystemExit('BLOCKED competing Actions runs: '+json.dumps(other,sort_keys=True))
+          print('PASS_EXP073BU_HOSTED_NONCOMPETITION_PREFLIGHT')
+          PY
+
+  science-ab:
+    name: Exp073BU science A then B
+    needs: hosted-preflight
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 720
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+      OMP_DYNAMIC: 'FALSE'
+      PYTHONUNBUFFERED: '1'
+      SOURCE_HEAD: ${{ needs.hosted-preflight.outputs.source_head }}
+      CONTRACT_FP: ${{ needs.hosted-preflight.outputs.contract_fingerprint }}
+      WORKFLOW_BLOB: ${{ needs.hosted-preflight.outputs.workflow_blob }}
+      CHECKPOINT_ROOT: ${{ runner.temp }}/exp073bu-placeholder
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Re-bind exact source checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SOURCE_HEAD}"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py)" = "${DRIVER_BLOB}"
+          test "$(git hash-object ci/exp073bu_wm_s3_science_launcher_v0_1.py)" = "${LAUNCHER_BLOB}"
+          test "$(git hash-object .github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-v0-1.yml)" = "${WORKFLOW_BLOB}"
+
+      - name: Bind home CPU and persistent checkpoint root
+        shell: bash
+        run: |
+          set -euo pipefail
+          cpus="$(python3 - <<'PY'
+          import os
+          print(len(os.sched_getaffinity(0)) if hasattr(os,'sched_getaffinity') else (os.cpu_count() or 0))
+          PY
+          )"
+          echo "home_affinity_cpus=${cpus}"
+          test "${cpus}" -ge 8
+          root="$HOME/.cache/dsir/exp073bu-wm-s3-fresh-ab-v0-1"
+          mkdir -p "$root"
+          echo "CHECKPOINT_ROOT=$root" >> "$GITHUB_ENV"
+
+      - name: Install or reuse exact NaMaster 2.7 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$HOME/.cache/dsir-miniforge"
+          ENV="$HOME/.cache/dsir-nmt27"
+          if ! test -x "$MF/bin/conda"; then
+            mkdir -p "$HOME/.cache/dsir"
+            curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"
+            bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"
+          fi
+          if ! test -x "$ENV/bin/python"; then
+            "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 healpy astropy compilers
+          else
+            "$MF/bin/conda" install -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 healpy astropy compilers
+          fi
+          echo "NMT_PREFIX=$ENV" >> "$GITHUB_ENV"
+          echo "NMT_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+          "$ENV/bin/python" - <<'PY'
+          import importlib.metadata
+          v=importlib.metadata.version('pymaster')
+          assert v=='2.7' or v.startswith('2.7.'),v
+          print('pymaster',v)
+          PY
+
+      - name: Stage exact frozen Exp073R1 S3 authority
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+          run-id: 33270843577
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/exp073bu-r1
+
+      - name: Stage and hash-verify exact DES lens mask
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/exp073bu-lens"
+          lens="$RUNNER_TEMP/exp073bu-lens/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits"
+          curl --fail --location --retry 5 --retry-delay 2 \
+            --output "$lens" \
+            https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits
+          test "$(stat -c %s "$lens")" = '104595840'
+          test "$(sha256sum "$lens" | awk '{print $1}')" = 'a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55'
+          echo "LENS_PATH=$lens" >> "$GITHUB_ENV"
+
+      - name: Compile admitted exact full-stock mmap downstream
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/exp073bu-bin"
+          "$NMT_PREFIX/bin/x86_64-conda-linux-gnu-cc" -O0 -std=c11 \
+            -I"$NMT_PREFIX/include" ci/exp073by_mmap_full_mcm_downstream_v0_1.c \
+            -L"$NMT_PREFIX/lib" -Wl,-rpath,"$NMT_PREFIX/lib" -lgsl -lgslcblas -lm \
+            -o "$RUNNER_TEMP/exp073bu-bin/mmap_full_mcm"
+          echo "DOWNSTREAM_EXE=$RUNNER_TEMP/exp073bu-bin/mmap_full_mcm" >> "$GITHUB_ENV"
+
+      - name: Record exact live process ledger before numerics
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64,json,os,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; run_id=int(os.environ['GITHUB_RUN_ID']); token=os.environ['GH_TOKEN']; source=os.environ['SOURCE_HEAD']; fp=os.environ['CONTRACT_FP']; wblob=os.environ['WORKFLOW_BLOB']
+          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          def get(url):
+              req=urllib.request.Request(url,headers=headers)
+              with urllib.request.urlopen(req) as r: return json.load(r)
+          jobs=get(f'https://api.github.com/repos/{repo}/actions/runs/{run_id}/jobs?per_page=100').get('jobs',[])
+          matches=[j for j in jobs if j.get('name')=='Exp073BU science A then B' and j.get('status')=='in_progress']
+          if len(matches)!=1: raise SystemExit('BLOCKED: cannot resolve unique current science job id')
+          job_id=matches[0]['id']
+          path='docs/CURRENT_PROCESS.md'
+          cur=get(f'https://api.github.com/repos/{repo}/contents/{path}?ref=main')
+          text=f'''# DSIR current-process ledger\n\nUpdated: 2026-09-04\nScope: DSIR only; RTK/RQIR excluded.\n\n## Current owner/process\n- **DSIR-HOME-PC: RESERVED BY EXP073BU v0.1.**\n- Workflow: `.github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-v0-1.yml`.\n- Run/job: `{run_id} / {job_id}`.\n- Frozen dispatch source head: `{source}`.\n- Science workflow blob: `{wblob}`.\n- Contract fingerprint: `{fp}`.\n- A namespace: `checkpoints/exp073bu-wm-s3-a-v0-1`.\n- B namespace: `checkpoints/exp073bu-wm-s3-b-v0-1`.\n- Execution order: fresh A, release replica-local live state, fresh B, then exact comparator.\n- Science equality: whole canonical `<f8 [39,12288]` SHA256 equality **and** `numpy.array_equal`; no tolerance rescue.\n- Allowed terminal classes: `PASS`, `SCIENTIFIC_REPEATABILITY_FAIL`, `INFRASTRUCTURE_INCOMPLETE`, `BLOCKED`.\n- Required PASS token: `PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_V0_1`.\n\n## Authority boundary\nExp073CX v0.4 hosted activation readiness is PASS. Exp073BU numerical authority is absent until this run reaches a valid terminal comparator result. Historical FAIL/infra results remain immutable.\n\nFrozen Article-3 boundaries remain unchanged. No effective ell/z/k, fiducial-P, tolerance, smoothing, averaging, rounding or preferred-replica rescue is permitted.\n'''
+          body={'message':f'record Exp073BU live science process run {run_id}','content':base64.b64encode(text.encode()).decode(),'sha':cur['sha'],'branch':'main'}
+          req=urllib.request.Request(f'https://api.github.com/repos/{repo}/contents/{path}',data=json.dumps(body).encode(),headers={**headers,'Content-Type':'application/json'},method='PUT')
+          with urllib.request.urlopen(req) as r: ans=json.load(r)
+          print('ledger_commit='+ans['commit']['sha'])
+          print(f'run_job={run_id}/{job_id}')
+          PY
+
+      - name: Fresh live exclusivity and Exp073BU A-then-B science
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lock="$HOME/.cache/dsir/DSIR-HOME-PC.exp073bu.lock"
+          exec 9>"$lock"
+          flock -n 9 || { echo 'BLOCKED: DSIR-HOME-PC lock is owned'; echo 'SCIENCE_RC=4' >> "$GITHUB_ENV"; exit 0; }
+
+          "$NMT_PY" - <<'PY'
+          import json,os,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; current=int(os.environ['GITHUB_RUN_ID']); token=os.environ['GH_TOKEN']
+          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          competitors=[]
+          for status in ('queued','in_progress'):
+              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100',headers=headers)
+              with urllib.request.urlopen(req) as r: runs=json.load(r).get('workflow_runs',[])
+              for run in runs:
+                  if int(run['id'])==current: continue
+                  req2=urllib.request.Request(f"https://api.github.com/repos/{repo}/actions/runs/{run['id']}/jobs?per_page=100",headers=headers)
+                  with urllib.request.urlopen(req2) as r2: jobs=json.load(r2).get('jobs',[])
+                  if any('self-hosted' in (j.get('labels') or []) or j.get('runner_name')=='DSIR-HOME-PC' for j in jobs):
+                      competitors.append({'run':run['id'],'name':run.get('name'),'status':run.get('status')})
+          if competitors: raise SystemExit('BLOCKED competing self-hosted Actions work: '+json.dumps(competitors,sort_keys=True))
+          print('PASS_EXP073BU_LIVE_ACTIONS_HOME_EXCLUSIVITY')
+          PY
+
+          "$NMT_PY" - <<'PY'
+          import os
+          me=os.getpid(); ancestors={me}; p=me
+          for _ in range(16):
+              try: p=int(open(f'/proc/{p}/stat').read().split()[3])
+              except Exception: break
+              ancestors.add(p)
+              if p<=1: break
+          bad=[]
+          tokens=('exp073cr_wm_s3','exp073ca_','camb','/class ','/class\x00','classy')
+          for name in os.listdir('/proc'):
+              if not name.isdigit(): continue
+              pid=int(name)
+              if pid in ancestors: continue
+              try: raw=open(f'/proc/{pid}/cmdline','rb').read(); txt=raw.replace(b'\x00',b' ').decode(errors='ignore').lower()
+              except Exception: continue
+              if any(t in txt for t in tokens): bad.append((pid,txt[:500]))
+          if bad: raise SystemExit('BLOCKED competing local heavy process: '+repr(bad))
+          print('PASS_EXP073BU_LOCAL_PROCESS_EXCLUSIVITY')
+          PY
+
+          terminal="$CHECKPOINT_ROOT/terminal_science_receipt.json"
+          if test -f "$terminal"; then
+            cls="$($NMT_PY -c 'import json,sys; print(json.load(open(sys.argv[1])).get("classification",""))' "$terminal")"
+            scored="$($NMT_PY -c 'import json,sys; print(str(json.load(open(sys.argv[1])).get("science_gate_scored",False)).lower())' "$terminal")"
+            if test "$scored" = 'true' || test "$cls" = 'PASS' || test "$cls" = 'SCIENTIFIC_REPEATABILITY_FAIL' || test "$cls" = 'BLOCKED'; then
+              echo "BLOCKED: terminal frozen Exp073BU receipt already exists: $cls"
+              echo 'SCIENCE_RC=4' >> "$GITHUB_ENV"
+              exit 0
+            fi
+          fi
+
+          set +e
+          "$NMT_PY" ci/exp073bu_wm_s3_science_launcher_v0_1.py \
+            --driver ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py \
+            --r1-root "$RUNNER_TEMP/exp073bu-r1" \
+            --lens-mask "$LENS_PATH" \
+            --checkpoint-root "$CHECKPOINT_ROOT" \
+            --downstream-exe "$DOWNSTREAM_EXE" \
+            --component-blobs-json ci/exp073cv_component_blobs_v0_1.json \
+            --source-head "$SOURCE_HEAD" \
+            --contract-fingerprint "$CONTRACT_FP" \
+            --out "$terminal"
+          rc=$?
+          set -e
+          echo "SCIENCE_RC=$rc" >> "$GITHUB_ENV"
+          test -f "$terminal" || echo 'Exp073BU launcher did not produce terminal receipt'
+
+      - name: Prepare immutable science evidence artifact
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/exp073bu-science-evidence"
+          rm -rf "$out"; mkdir -p "$out/A" "$out/B"
+          test ! -f "$CHECKPOINT_ROOT/terminal_science_receipt.json" || cp "$CHECKPOINT_ROOT/terminal_science_receipt.json" "$out/"
+          for r in A B; do
+            test ! -f "$CHECKPOINT_ROOT/$r/replica_receipt.json" || cp "$CHECKPOINT_ROOT/$r/replica_receipt.json" "$out/$r/"
+            for s in fresh_masks_complete fresh_workspace_mcm_complete mcm_fits_verified full_window_complete selected_te_complete replica_receipt_complete; do
+              test ! -f "$CHECKPOINT_ROOT/$r/$s.json" || cp "$CHECKPOINT_ROOT/$r/$s.json" "$out/$r/"
+            done
+            test ! -f "$CHECKPOINT_ROOT/$r/exact_route/selected_te.bin" || cp "$CHECKPOINT_ROOT/$r/exact_route/selected_te.bin" "$out/$r/selected_te.bin"
+          done
+          find "$out" -maxdepth 3 -type f -print -exec sha256sum {} \;
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073bu-wm-s3-fresh-ab-science-${{ github.run_id }}-${{ github.sha }}
+          path: ${{ runner.temp }}/exp073bu-science-evidence
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
+
+      - name: Preserve frozen terminal classification
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          terminal="$CHECKPOINT_ROOT/terminal_science_receipt.json"
+          if ! test -f "$terminal"; then
+            echo INFRASTRUCTURE_INCOMPLETE
+            exit 4
+          fi
+          "$NMT_PY" - <<'PY'
+          import json,os,sys
+          p=os.path.join(os.environ['CHECKPOINT_ROOT'],'terminal_science_receipt.json')
+          r=json.load(open(p)); c=r.get('classification')
+          print('classification='+str(c)); print('raw_token='+str(r.get('raw_token')))
+          if c=='PASS':
+              assert r.get('raw_token')=='PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_V0_1'
+              assert r.get('science_gate_scored') is True
+              assert r.get('wm_s3_authority_created') is True
+              assert r['comparison']['whole_canonical_sha256_equal'] is True
+              assert r['comparison']['numpy_array_equal'] is True
+              raise SystemExit(0)
+          if c=='SCIENTIFIC_REPEATABILITY_FAIL': raise SystemExit(3)
+          if c in {'INFRASTRUCTURE_INCOMPLETE','BLOCKED'}: raise SystemExit(4)
+          raise SystemExit(4)
+          PY
