@@ -1,0 +1,4 @@
+activate Exp073BU 10-core exact-equivalence audit v0.2
+prereg blob: 56bdbca1217b4213603734a96665dae33e3fc4c5
+OpenMP-10 downstream blob: be4f381de4c5c043a9c0fcd107e63ef3f2079578
+support-only hosted audit; no DES-scale science numerics
