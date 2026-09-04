@@ -1,0 +1,68 @@
+name: Exp073DB Wm_S3 remote Git batch checkpoint orchestration v0.1
+on:
+  push:
+    paths:
+      - '.github/activations/exp073db-wm-s3-remote-git-batch-checkpoint-orchestration-v0-1.txt'
+permissions:
+  contents: read
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Freeze source head
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          mkdir -p artifacts/exp073db-v01
+          echo "${GITHUB_SHA}" > artifacts/exp073db-v01/source_head.txt
+      - name: Compile frozen sources
+        run: |
+          python -m py_compile ci/dsir_checkpoint_sharded_payload_v0_1.py
+          python -m py_compile ci/dsir_checkpoint_git_sharded_sync_v0_1.py
+          python -m py_compile ci/exp073db_wm_s3_remote_git_batch_checkpoint_orchestration_v0_1.py
+      - name: Run deterministic local-bare-remote orchestration test
+        shell: bash
+        run: |
+          set +e
+          python ci/dsir_checkpoint_git_sharded_sync_v0_1.py --self-test --work artifacts/exp073db-v01/work --out artifacts/exp073db-v01/selftest.json
+          echo "$?" > artifacts/exp073db-v01/selftest_rc.txt
+          exit 0
+      - name: Run frozen classification audit
+        shell: bash
+        run: |
+          set +e
+          if test "$(cat artifacts/exp073db-v01/selftest_rc.txt)" != 0; then
+            echo 2 > artifacts/exp073db-v01/audit_rc.txt
+            printf '{"status":"L2_REMOTE_GIT_BATCH_ORCHESTRATION_IMPLEMENTATION_FAIL","accounting":"+0/+0","science_gate_scored":false,"exp073bu_activated":false}\n' > artifacts/exp073db-v01/receipt.json
+          else
+            python ci/exp073db_wm_s3_remote_git_batch_checkpoint_orchestration_v0_1.py --source-head "${GITHUB_SHA}" --selftest artifacts/exp073db-v01/selftest.json --out artifacts/exp073db-v01/receipt.json
+            echo "$?" > artifacts/exp073db-v01/audit_rc.txt
+          fi
+          exit 0
+      - name: Hash raw receipts
+        if: always()
+        run: |
+          sha256sum artifacts/exp073db-v01/selftest.json | tee artifacts/exp073db-v01/selftest.sha256 || true
+          sha256sum artifacts/exp073db-v01/receipt.json | tee artifacts/exp073db-v01/receipt.sha256
+      - name: Upload raw artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073db-wm-s3-remote-git-batch-checkpoint-orchestration-v0-1
+          path: |
+            artifacts/exp073db-v01/source_head.txt
+            artifacts/exp073db-v01/selftest.json
+            artifacts/exp073db-v01/selftest.sha256
+            artifacts/exp073db-v01/selftest_rc.txt
+            artifacts/exp073db-v01/receipt.json
+            artifacts/exp073db-v01/receipt.sha256
+            artifacts/exp073db-v01/audit_rc.txt
+          if-no-files-found: error
+          retention-days: 30
+      - name: Propagate frozen classification
+        if: always()
+        run: exit "$(cat artifacts/exp073db-v01/audit_rc.txt)"
