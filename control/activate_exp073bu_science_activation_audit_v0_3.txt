@@ -1,0 +1,5 @@
+activate Exp073BU science activation hosted audit v0.3
+science workflow blob: b95346a1c8243074a1ca49878919847b675a9269
+activation prereg blob: 022e203d1cb966680e3eaff7fae39cb2234ebd5a
+original science prereg blob: 816542c7eb7a8ba4e72d6e01228aa62d05c7c805
+support only +0/+0; no DES-scale numerics
