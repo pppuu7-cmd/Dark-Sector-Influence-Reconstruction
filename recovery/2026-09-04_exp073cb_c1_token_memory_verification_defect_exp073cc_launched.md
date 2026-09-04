@@ -1,0 +1,9 @@
+# DSIR recovery — Exp073CB exact numerics, memory verification defect; Exp073CC launched
+
+Date: 2026-09-04. DSIR only.
+
+Exp073CB run/job `33829545473 / 100889394333`, head `9eacf9a854531cc293c8fad076bbecfeae1d8f91`, artifact `9921183248`, digest `sha256:0c6d5cee92f0fb4954ec9acf66e20bc1be587db4350326fa4e94655b496776e3` completed successfully. Raw numerical evidence is exact in all three frozen cases: full `<f8 [2,8,2,48]` stock vs emulator SHA equal, `numpy.array_equal=true`, max abs difference `0.0`, TE exact.
+
+However the receipt records `fits_memmap=false` for all cases while the frozen Exp073CB memory contract requires FITS opened with memmap enabled and the C1 outcome requires the memory contract to pass. Code audit found that `memory_ok` tested only `max_row_buffer_bytes==768` and did not require actual mmap backing evidence. Therefore the emitted `C1_EXACT_STOCK_WRITE_TO_MMAP_CHAIN` token is not accepted as authoritative support PASS yet. This is a verification/control defect, not a numerical scientific failure; accounting remains `+0/+0`; no Wm_S3 authority exists.
+
+Prospective causal verification Exp073CC v0.1 was frozen before new output. It keeps all numerical arithmetic/cases unchanged and adds OS-level mmap backing evidence by traversing the ndarray base chain to `mmap.mmap` and checking `/proc/self/maps`, while retaining one-row canonicalization and exact full-tensor equality. Prereg commit `02ae088e01aeeb4b9476c2e9b195ea5161ff07f8`; helper commit `a5ba4af5b1a0c0c264ed43d492e5d87a81c888b8`; workflow commit `9c48482d070a908ade70daf2ab821f061e6bf9ce`; activation/head `2bbb68a2e08be1ac7ed7567361d5d41b5bfdc81c`; run `33831289247` queued at write time. DSIR-HOME-PC remains FREE.
