@@ -1,0 +1,59 @@
+name: Exp073DE exact full-window resume repair v0.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073de-full-window-resume-repair-v0-2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-exact-resume:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Freeze exact resume repair
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073de_wm_s3_full_window_resume_repair_v0_2_prereg.md)" = '975ad3cbf446d7dd06cc227a245f97bbd4b57510'
+          test "$(git hash-object ci/exp073de_full_window_resume_v0_2.py)" = '210775ebf9b3f1aad9ade0ea0d095848c1481c0f'
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_v0_1.py)" = 'dafe86086a470c852106f0d4ecccbda1d389e397'
+          grep -Fq "te=canon(full[0,:,0,:]); te_path.write_bytes(memoryview(te).cast('B'))" ci/exp073cv_wm_s3_production_exact_adapter_v0_1.py
+      - name: Execute exact synthetic resume regression
+        id: test
+        run: |
+          set +e
+          python3 ci/exp073de_full_window_resume_v0_2.py --self-test --out exp073de_v02_receipt.json | tee exp073de_v02_stdout.log
+          rc=${PIPESTATUS[0]}
+          echo "rc=${rc}" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Classify frozen gate
+        env:
+          RC: ${{ steps.test.outputs.rc }}
+        run: |
+          python3 - <<'PY'
+          import json,os
+          r=json.load(open('exp073de_v02_receipt.json')); rc=int(os.environ['RC'])
+          exact=(rc==0 and r['sha_equal'] and r['array_equal'] and r['max_abs_difference']==0.0 and r['bytes_equal'] and r['source_full_unchanged'])
+          closed=r['malformed_rejected'] and r['wrong_sha_rejected']
+          token='Q1_FULL_WINDOW_RESUME_EXACT_PASS' if exact and closed else ('Q3_FULL_WINDOW_RESUME_FAILCLOSED_FAIL' if exact else 'Q2_FULL_WINDOW_RESUME_EXACTNESS_FAIL')
+          out={'token':token,'classification':'+0/+0','run_id':os.environ['GITHUB_RUN_ID'],'source_head':os.environ['GITHUB_SHA'],'receipt':r}
+          json.dump(out,open('exp073de_v02_classification.json','w'),indent=2,sort_keys=True); open('exp073de_v02_classification.json','a').write('\n'); print(json.dumps(out,indent=2,sort_keys=True))
+          if token!='Q1_FULL_WINDOW_RESUME_EXACT_PASS': raise SystemExit(2)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073de-full-window-resume-v0-2-${{ github.sha }}
+          path: |
+            exp073de_v02_receipt.json
+            exp073de_v02_classification.json
+            exp073de_v02_stdout.log
+          if-no-files-found: error
+          retention-days: 90
