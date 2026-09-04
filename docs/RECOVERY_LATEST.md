@@ -9,22 +9,25 @@ Repository state, immutable recovery notes, validated Actions logs/artifacts and
 ## Scientific frontier — Exp073BU v0.1 Wm_S3 fresh-independent-PCL A/B
 Wm_S1 Track-A exact PASS and admitted Wm_S2 authority are preserved. Exp073CR v0.3 remains RESOURCE PASS `+0/+0`. **Wm_S3 scientific angular authority remains absent.** Exp073BU is PREREGISTERED / INPUT STAGING PASS / FRESH-PCL STATIC AUDIT PASS / FULL-STOCK WINDOW IMPLEMENTATION OPEN / NOT ACTIVATED. Prereg `e1a0332c128c87049fb8699018a3a3e71c9c5321`; namespaces `checkpoints/exp073bu-wm-s3-a-v0-1`, `checkpoints/exp073bu-wm-s3-b-v0-1`; exact PASS requires SHA256 + `numpy.array_equal` on canonical `<f8 [39,12288]`, no tolerance rescue.
 
-## Reconciled terminal — Exp073CB v0.1
-Run/job/head `33829545473 / 100889394333 / 9eacf9a854531cc293c8fad076bbecfeae1d8f91`; artifact `9921183248`; digest `sha256:0c6d5cee92f0fb4954ec9acf66e20bc1be587db4350326fa4e94655b496776e3`.
+## Newly validated terminal — Exp073CC v0.1
+Run/job/head `33831289247 / 100894641290 / 2bbb68a2e08be1ac7ed7567361d5d41b5bfdc81c`; artifact `9921785254`; Actions digest and independently downloaded ZIP SHA256 `81378d4da4886615bac73f573e36ca8bb25ed1ac0c86e98f96439ae2dc30b901`.
 
-Raw numerical evidence is exact for all three frozen synthetic cases: full `<f8 [2,8,2,48]` stock/emulator SHA equality, `numpy.array_equal=true`, max abs difference `0.0`, selected TE exact. However all receipts record `fits_memmap=false`, and code audit found the frozen evaluator's `memory_ok` tested only the one-row buffer size and did not require mmap backing evidence. Therefore the emitted `C1_EXACT_STOCK_WRITE_TO_MMAP_CHAIN` token is **not accepted yet as authoritative support PASS**. This is a verification/control defect `+0/+0`, not a Wm_S3 scientific failure. Immutable note: `recovery/2026-09-04_exp073cb_c1_token_memory_verification_defect_exp073cc_launched.md`.
+Raw receipt status is **`V1_VERIFIED_OS_MMAP_AND_EXACT_CHAIN`**. All three frozen cases satisfy full stock/emulator SHA equality, `numpy.array_equal=true`, and max abs difference `0.0`. Each case records base-chain `numpy.ndarray -> numpy.ndarray -> mmap.mmap`, `os_mmap_backed=true`, FITS path visible in `/proc/self/maps`, and 768-byte maximum canonical row buffer. NaMaster runtime lineage is 2.7 and GSL is 2.7. Classification: authoritative support/resource PASS `+0/+0`; no Wm_S3 authority created. Immutable note `recovery/2026-09-04_exp073cc_v1_verified_os_mmap_exact_chain.md`, commit `2a777ba7b32aa8a1e079918ad01024458fef8532`.
 
-## Current process — Exp073CC v0.1 FITS OS-mmap backing verification
-Prospectively frozen before new output; collision search found no prior `073cc` authority. It preserves Exp073CB numerical arithmetic/cases and only strengthens memory verification: array base-chain must reach `mmap.mmap`, `/proc/self/maps` must show the FITS path while open, one-row canonicalization remains 768 bytes, and exact full-tensor equality remains required.
+## Current process — Exp073CD v0.1 DES-scale resource/checkpoint design
+Prospectively frozen after Exp073CC V1 and before any DES-scale scientific numerical output. Collision search found no prior `073cd` authority. This is hosted-only support/resource accounting `+0/+0`.
 
-- prereg commit `02ae088e01aeeb4b9476c2e9b195ea5161ff07f8`;
-- helper commit/blob `a5ba4af5b1a0c0c264ed43d492e5d87a81c888b8` / `88d17ad76cabc1651df6b6035d897e9f42853ca5`;
-- workflow commit `9c48482d070a908ade70daf2ab821f061e6bf9ce`;
-- activation/head `2bbb68a2e08be1ac7ed7567361d5d41b5bfdc81c`;
-- run `33831289247`, QUEUED at authority write;
-- home runner ownership: none; DSIR-HOME-PC FREE; checkpoint namespace none.
+Exact frozen sizing for full stock spin-0 x spin-2 at ell `0..12287`: `ncls=2`, `nell=12288`, logical MCM `24576 x 24576`, `603979776` doubles, `4831838208` bytes = exactly `4.5 GiB`; one row `196608` bytes; full `[2,39,2,12288]` window tensor `15335424` bytes = `14.625 MiB`; selected `[39,12288]` TE payload `3833856` bytes.
 
-Frozen outcomes: `V1_VERIFIED_OS_MMAP_AND_EXACT_CHAIN`, `V2_NOT_OS_MMAP_BACKED`, `V3_MEMORY_CONTRACT_FAIL`, `V4_SOURCE_LINEAGE_MISMATCH`, `V5_INFRASTRUCTURE_INCOMPLETE`. Workflow success alone is not V1. On terminal, consume raw logs/artifact immediately. V1 permits prospective DES-scale Exp073BU resource sizing/checkpoint design; V2/V3 require architecture repair; V4/V5 causal repair only.
+Frozen checkpoint stages: `fresh_masks_complete` -> `fresh_workspace_mcm_complete` -> `mcm_fits_verified` -> `full_window_complete` -> `selected_te_complete` -> `replica_receipt_complete`, each with canonical SHA256/provenance/source-head binding and fail-closed restore. A/B namespaces remain isolated and cross-replica numerical restore is forbidden.
+
+- prereg commit `baf4c806d402d68534e526d803ef5eaa7c4d2716`, blob `3cd435642fd7972d4e932e4098e94e818c6d0282`;
+- workflow commit `b89db9ad5d9889240d7817407af5c193865fe3ba`;
+- activation/head `514198bf15995424c56b174459dadab60e42fdbb`;
+- run/job `33834935589 / 100905384484`, QUEUED at ledger write;
+- home runner ownership: none; **DSIR-HOME-PC FREE**; checkpoint namespace none for this hosted gate.
+
+Frozen outcomes: `D1_DES_SCALE_RESOURCE_CHECKPOINT_DESIGN_PASS`, `D2_SIZING_IDENTITY_FAIL`, `D3_CHECKPOINT_CONTRACT_INCOMPLETE`, `D4_SOURCE_LINEAGE_MISMATCH`, `D5_INFRASTRUCTURE_INCOMPLETE`. On terminal, consume raw log immediately. D1 permits implementation/static audit of the single checkpointed Exp073BU A/B scientific process; D2/D3 prospective design repair only; D4/D5 causal infrastructure/source repair only.
 
 ## Preserved support/resource authority
 - Exp073BY M1 exact mmap downstream `+0/+0`, run/job `33823950570 / 100872477739`, artifact `9919271393`.
