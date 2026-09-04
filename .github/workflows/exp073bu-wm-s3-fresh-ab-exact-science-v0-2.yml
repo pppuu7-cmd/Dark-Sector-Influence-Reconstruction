@@ -169,7 +169,7 @@ jobs:
       - name: Stage exact frozen Exp073R1 S3 authority
         uses: actions/download-artifact@v4
         with:
-          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9c5f5eae537986c56ff06e6536
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
           run-id: 33270843577
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/exp073bu-r1
