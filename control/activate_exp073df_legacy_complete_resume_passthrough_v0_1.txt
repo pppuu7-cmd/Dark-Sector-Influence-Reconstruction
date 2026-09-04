@@ -1,0 +1,3 @@
+ACTIVATE Exp073DF legacy-complete resume passthrough v0.1
+Date: 2026-09-04
+Scientific score: +0/+0 only.
