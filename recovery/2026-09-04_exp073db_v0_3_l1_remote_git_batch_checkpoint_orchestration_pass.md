@@ -1,0 +1,17 @@
+# DSIR immutable recovery — Exp073DB v0.3 L1 remote Git batch checkpoint orchestration PASS
+
+Date: 2026-09-04. Scope: DSIR only; RTK/RQIR excluded.
+
+Authoritative process: hosted run/job/head `33882627871 / 101054696599 / b6a673c38998972fa1f17c3c0a8543dbf9cdc739`; artifact `9940486743`. GitHub artifact digest and independent downloaded ZIP SHA256 are exactly `4bbbd2ac5f57c721c8e9c0941352bce89f35f769c4f2a7168f5c5ab96394f0b2`. Raw receipt SHA256 `8a92f3dc328067cbe5cb26728f15b0e328f8bcf77c5d0e603d8915c3e8d19453`; raw self-test SHA256 `c59cdf6da6ec853e664df6494fb3516c6fdeea1f9c317e6206e04dbdbfab2b69`.
+
+Frozen classification: `L1_REMOTE_GIT_BATCH_CHECKPOINT_ORCHESTRATION_PASS`, accounting `+0/+0`. `science_gate_scored=false`, `wm_s3_authority_created=false`, `exp073bu_activated=false`, no DES-scale scientific numerics executed.
+
+All frozen remote-Git transport checks are true: absolute synthetic remote binding; verified-ABSENT non-force branch creation; exact force-with-lease for existing refs; exact post-push remote-head verification; multi-batch progression; interrupted partial state is not stage-complete and cannot be restored as complete; resume to complete; final-head equality; exact byte restore; stale-lease rejection; A/B namespace isolation; stage completion only at the final manifest commit.
+
+Prospective source chain: Exp073DA K1 immutable recovery commit `d5bcd9842dbde6378a6439d93be27d0aa865486d`; Exp073DB v0.1 prereg/implementation are preserved historically. V0.1 run/job `33882304632 / 101053633328` and v0.2 run/job `33882475518 / 101054191721` remain immutable `L2_REMOTE_GIT_BATCH_ORCHESTRATION_IMPLEMENTATION_FAIL +0/+0`. Their failures occurred before science. V0.2 exposed the first causal regression defect: the local bare remote was supplied as a relative path, so `ls-remote` from repository cwd and push through a temporary worktree resolved different filesystem locations. V0.3 prospectively changed only the synthetic local-bare binding to an absolute path; v0.2's safe verified-ABSENT non-force creation hardening was retained. No frozen scientific arithmetic or acceptance rule changed.
+
+Exp073DB v0.3 prereg commit/blob `7ebb93ae4c2ae91c83ede50aed01d13b3ab18baa / 05ab2fcf0444850555dafa9678d5d9d08bba356a`; v0.3 harness commit/blob `8b59a9339a0d748f87f890528592d26b30b9a613 / b716b57f9494eb88467b20dceb30189c96e50728`; workflow commit `cb3debe607d6d241eaa156a074f2eebb6f0e2886`; activation/head `b6a673c38998972fa1f17c3c0a8543dbf9cdc739`.
+
+Preserved large-stage transport authority from Exp073DA: science bytes remain exact; Git-safe shard cap 64 MiB; prospective new-payload batch cap 1 GiB; exact chunk order/offset/length/SHA256 and whole-file SHA256/source-head/contract/stage/replica/namespace binding; no stage-complete marker until every required chunk is remotely durable.
+
+Next permitted gate: a prospectively frozen hosted Exp073BU six-stage remote-checkpoint binding audit. It must bind the admitted sharded remote-Git transport to `fresh_masks_complete -> fresh_workspace_mcm_complete -> mcm_fits_verified -> full_window_complete -> selected_te_complete -> replica_receipt_complete`, exact A/B namespaces, fail-closed durable sync before further compute, restore-without-recompute semantics, one A-then-B process, and the actual self-hosted workflow credential/permissions path. It remains forbidden to launch Exp073BU scientific home numerics until that binding passes and the currently observed zero-job Exp073BU workflow-validation failures are diagnosed/repaired.
