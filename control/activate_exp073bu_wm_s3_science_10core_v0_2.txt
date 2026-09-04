@@ -1,0 +1,4 @@
+ACTIVATE Exp073BU Wm_S3 fresh A/B exact science 10-core v0.2
+user-authorized 10-core restart after cancellation of one-core attempt
+required hosted equivalence authority: PASS_EXP073BU_10CORE_EXACT_EQUIVALENCE_V0_2
+fresh checkpoint root required; no reuse of cancelled-run partial state
