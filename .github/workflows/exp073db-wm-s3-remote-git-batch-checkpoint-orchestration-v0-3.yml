@@ -1,0 +1,74 @@
+name: Exp073DB Wm_S3 remote Git batch checkpoint orchestration v0.3
+on:
+  push:
+    paths:
+      - '.github/activations/exp073db-wm-s3-remote-git-batch-checkpoint-orchestration-v0-3.txt'
+permissions:
+  contents: read
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Freeze exact v0.3 authority
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git hash-object experiments/073db_wm_s3_remote_git_batch_checkpoint_orchestration_v0_3_prereg.md)" = '05ab2fcf0444850555dafa9678d5d9d08bba356a'
+          test "$(git hash-object ci/dsir_checkpoint_git_sharded_sync_v0_3.py)" = 'b716b57f9494eb88467b20dceb30189c96e50728'
+          test "$(git hash-object ci/dsir_checkpoint_git_sharded_sync_v0_2.py)" = 'b1ebffe0983a6c54ded54fbab94a5af41268b439'
+          test "$(git hash-object ci/dsir_checkpoint_git_sharded_sync_v0_1.py)" = 'c5e37c0893d6857d5da9287d51fe0e342e299bb5'
+          test "$(git hash-object ci/dsir_checkpoint_sharded_payload_v0_1.py)" = '72870dc0946f94b421ef104feea2daf34047434f'
+          grep -Fq 'K1_LARGE_STAGE_SHARDED_CHECKPOINT_TRANSPORT_PASS' recovery/2026-09-04_exp073da_v0_1_k1_large_stage_sharded_checkpoint_transport_pass.md
+          mkdir -p artifacts/exp073db-v03
+          echo "${GITHUB_SHA}" > artifacts/exp073db-v03/source_head.txt
+      - name: Compile and execute deterministic transport regression
+        shell: bash
+        run: |
+          set +e
+          python -m py_compile ci/dsir_checkpoint_sharded_payload_v0_1.py ci/dsir_checkpoint_git_sharded_sync_v0_1.py ci/dsir_checkpoint_git_sharded_sync_v0_2.py ci/dsir_checkpoint_git_sharded_sync_v0_3.py
+          crc=$?
+          if test "$crc" = 0; then
+            python ci/dsir_checkpoint_git_sharded_sync_v0_3.py --self-test --work artifacts/exp073db-v03/work --out artifacts/exp073db-v03/selftest.json
+            trc=$?
+          else trc=$crc; fi
+          echo "$trc" > artifacts/exp073db-v03/selftest_rc.txt
+          exit 0
+      - name: Classify raw gate
+        shell: bash
+        run: |
+          set +e
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          rc=int(Path('artifacts/exp073db-v03/selftest_rc.txt').read_text())
+          checks={}
+          if rc==0:
+              s=json.loads(Path('artifacts/exp073db-v03/selftest.json').read_text()); checks={k:(v is True) for k,v in s.items()}
+          c=Path('ci/dsir_checkpoint_git_sharded_sync_v0_2.py').read_text(); h=Path('ci/dsir_checkpoint_git_sharded_sync_v0_3.py').read_text()
+          checks['absolute_path_fix_static']=".resolve()" in h
+          checks['verified_absent_nonforce_static']="if expected_old is None:" in c and "['git','push','origin'" in c
+          checks['existing_exact_lease_static']='--force-with-lease=' in c
+          checks['postquery_static']='post=base.query_remote(remote,branch)' in c
+          ok=rc==0 and all(checks.values()); status='L1_REMOTE_GIT_BATCH_CHECKPOINT_ORCHESTRATION_PASS' if ok else 'L2_REMOTE_GIT_BATCH_ORCHESTRATION_IMPLEMENTATION_FAIL'
+          r={'schema':'dsir.exp073db.wm_s3.remote_git_batch_checkpoint_orchestration.v0.3','status':status,'accounting':'+0/+0','source_head':os.environ['GITHUB_SHA'],'checks':checks,'science_gate_scored':False,'wm_s3_authority_created':False,'exp073bu_activated':False,'no_des_scale_numerics_executed':True,'historical_v01_v02_preserved':True,'permitted_successor':'prospective_exp073bu_six_stage_remote_checkpoint_binding_audit'}
+          Path('artifacts/exp073db-v03/receipt.json').write_text(json.dumps(r,indent=2,sort_keys=True)+'\n'); Path('artifacts/exp073db-v03/audit_rc.txt').write_text('0\n' if ok else '2\n'); print(status); print(json.dumps(r,indent=2,sort_keys=True))
+          PY
+          exit 0
+      - name: Hash raw receipts
+        if: always()
+        run: |
+          sha256sum artifacts/exp073db-v03/selftest.json | tee artifacts/exp073db-v03/selftest.sha256 || true
+          sha256sum artifacts/exp073db-v03/receipt.json | tee artifacts/exp073db-v03/receipt.sha256
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073db-wm-s3-remote-git-batch-checkpoint-orchestration-v0-3
+          path: artifacts/exp073db-v03/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Propagate classification
+        if: always()
+        run: exit "$(cat artifacts/exp073db-v03/audit_rc.txt)"
