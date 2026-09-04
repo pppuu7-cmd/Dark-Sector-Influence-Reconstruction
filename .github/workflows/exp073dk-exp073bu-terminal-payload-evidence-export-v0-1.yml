@@ -35,16 +35,18 @@ jobs:
           set -euo pipefail
           test "${{ github.event.workflow_run.id }}" = "$EXPECTED_UPSTREAM_RUN"
           test "$(git hash-object experiments/073dk_exp073bu_terminal_payload_evidence_export_v0_1_prereg.md)" = "$PREREG_BLOB"
-          root="$HOME/.cache/dsir/exp073bu-wm-s3-fresh-ab-8core-v0-4-33901458494"
-          test -d "$root" || { echo 'BLOCKED historical checkpoint root missing'; exit 4; }
-          echo "CHECKPOINT_ROOT=$root" >> "$GITHUB_ENV"
-      - name: Live self-hosted exclusivity
+          echo "CHECKPOINT_ROOT=$HOME/.cache/dsir/exp073bu-wm-s3-fresh-ab-8core-v0-4-33901458494" >> "$GITHUB_ENV"
+      - name: Live exclusivity and immutable canonical payload export
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          lock="$HOME/.cache/dsir/DSIR-HOME-PC.exp073bu-8core-resume.lock"; exec 9>"$lock"; flock -n 9 || { echo 'BLOCKED DSIR home lock busy'; exit 4; }
+          lock="$HOME/.cache/dsir/DSIR-HOME-PC.exp073bu-8core-resume.lock"
+          exec 9>"$lock"
+          flock -n 9 || { echo 'BLOCKED DSIR home lock busy'; exit 4; }
+          # FD 9 intentionally remains open for this entire shell step.  No historical
+          # checkpoint-root filesystem access occurs before this lock is held.
           python3 - <<'PY'
           import json, os, urllib.request
           repo=os.environ['GITHUB_REPOSITORY']; current=int(os.environ['GITHUB_RUN_ID']); token=os.environ['GH_TOKEN']
@@ -60,10 +62,8 @@ jobs:
           if bad: raise SystemExit('BLOCKED competing self-hosted DSIR runs '+repr(sorted(set(bad))))
           print('PASS_EXP073DK_LIVE_NONCOMPETITION')
           PY
-      - name: Validate and copy immutable canonical payloads
-        shell: bash
-        run: |
-          set -euo pipefail
+          root="$CHECKPOINT_ROOT"
+          test -d "$root" || { echo 'BLOCKED historical checkpoint root missing'; exit 4; }
           out="$RUNNER_TEMP/exp073dk-terminal-payload-evidence"; rm -rf "$out"; mkdir -p "$out/A" "$out/B"
           python3 - <<'PY'
           import hashlib, json, os, shutil
