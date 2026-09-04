@@ -1,0 +1,8 @@
+{
+  "exp073bx_full_stock_reference_blob": "ae0282cbbcdd298f00765d8de68545fe214cec0e",
+  "exp073by_mmap_downstream_c_blob": "acafb095deafae7602101d8305e239341010ba79",
+  "exp073ca_stock_write_chain_blob": "d3c2e3a2ec42ddcb5811447499d80a4a1cfa3132",
+  "exp073cc_os_mmap_verification_blob": "88d17ad76cabc1651df6b6035d897e9f42853ca5",
+  "namaster_version": "2.7",
+  "namaster_upstream_commit": "24365fa59a38c15732f4f37e8b29265b75c442d5"
+}
