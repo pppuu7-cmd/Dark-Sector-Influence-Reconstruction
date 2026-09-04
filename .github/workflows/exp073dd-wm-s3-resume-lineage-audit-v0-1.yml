@@ -1,0 +1,41 @@
+name: Exp073DD Wm_S3 resume-lineage provenance audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'prereg/exp073dd_wm_s3_resume_lineage_provenance_v0_1.md'
+      - 'ci/exp073bu_wm_s3_fresh_ab_production_v0_2.py'
+      - 'ci/exp073dd_wm_s3_resume_lineage_audit_v0_1.py'
+      - '.github/workflows/exp073dd-wm-s3-resume-lineage-audit-v0-1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  resume-lineage-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Freeze support-only scope
+        run: |
+          set -euo pipefail
+          test -f prereg/exp073dd_wm_s3_resume_lineage_provenance_v0_1.md
+          grep -F 'scientific score `+0/+0` only' prereg/exp073dd_wm_s3_resume_lineage_provenance_v0_1.md
+          grep -F 'D1_RESUME_LINEAGE_PROVENANCE_PASS' prereg/exp073dd_wm_s3_resume_lineage_provenance_v0_1.md
+      - name: Execute fail-closed lineage regression
+        run: |
+          set -euo pipefail
+          python3 ci/exp073dd_wm_s3_resume_lineage_audit_v0_1.py | tee exp073dd_stdout.txt
+          grep -Fx 'D1_RESUME_LINEAGE_PROVENANCE_PASS' exp073dd_stdout.txt
+      - name: Upload raw support evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073dd-resume-lineage-evidence-v0-1
+          if-no-files-found: error
+          path: |
+            exp073dd_receipt.json
+            exp073dd_stdout.txt
