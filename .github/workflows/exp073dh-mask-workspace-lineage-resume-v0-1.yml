@@ -1,0 +1,89 @@
+name: Exp073DH mask-workspace lineage resume v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/activate_exp073dh_mask_workspace_lineage_resume_v0_1.txt'
+
+permissions:
+  contents: read
+
+env:
+  PREREG_BLOB: '73e7dd3a922a804da19622660ad6da1316ded902'
+  LINEAGE_V05_BLOB: 'a0b3f399cb26457c03b57dd16e79245aec4fbca0'
+  WRAPPER_V07_BLOB: 'd0fd545ef7b1245f21a5d7cba2f3b2eed459d87b'
+  DG_LINEAGE_V04_BLOB: 'a40d585757e271e4d55de8a28f463a05dd76646c'
+  BASE_V01_BLOB: '5c8d5d3463e455389a1ca3df2639bf06a3b7b603'
+  OMP8_ADAPTER_BLOB: '63ee393791bba43d3eabbea654efdb9d439d477e'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bind exact mask-workspace resume implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073dh_exp073bu_mask_workspace_lineage_resume_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_5.py)" = "$LINEAGE_V05_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_8core_resume_v0_7.py)" = "$WRAPPER_V07_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_4.py)" = "$DG_LINEAGE_V04_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py)" = "$BASE_V01_BLOB"
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_omp8_v0_3.py)" = "$OMP8_ADAPTER_BLOB"
+      - name: Static cumulative-lineage and no-rewrite audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import ast,pathlib
+          s=pathlib.Path('ci/exp073bu_wm_s3_fresh_ab_production_v0_5.py').read_text(); t=ast.parse(s)
+          req=[
+            "import exp073bu_wm_s3_fresh_ab_production_v0_4 as prior",
+            "EXPECTED_CUMULATIVE = {'lens': 1, 'source': 1}",
+            "ZERO_INVOCATION = {'lens': 0, 'source': 0}",
+            "_verify_restored_mask_lineage",
+            "fresh_masks_complete",
+            "prior.base.canonical_f8_sha(lens)",
+            "prior.base.canonical_f8_sha(source)",
+            "if stage == 'fresh_workspace_mcm_complete'",
+            "if _exact_counts(counts, ZERO_INVOCATION)",
+            "out['reconstruction_counts'] = dict(EXPECTED_CUMULATIVE)",
+            "fail-closed new workspace reconstruction lineage mismatch",
+            "if existing is not None:\n        return existing",
+            "prior._preserving_stage_manifest = _preserving_stage_manifest",
+          ]
+          assert all(x in s for x in req)
+          for bad in ('allclose','isclose','rtol','atol','mean(','average(','smooth','round('): assert bad not in s
+          pf=next(n for n in t.body if isinstance(n,ast.FunctionDef) and n.name=='_preserving_stage_manifest')
+          psrc=ast.get_source_segment(s,pf)
+          assert psrc.index('return existing') < psrc.index('out = dict(payloads)')
+          vf=next(n for n in t.body if isinstance(n,ast.FunctionDef) and n.name=='_verify_restored_mask_lineage')
+          vsrc=ast.get_source_segment(s,vf)
+          assert 'canonical_f8_sha' in vsrc and "EXPECTED_CUMULATIVE" in vsrc
+          # Exp073DG boundary-safe implementation stays exact-bound.
+          dg=pathlib.Path('ci/exp073bu_wm_s3_fresh_ab_production_v0_4.py').read_text()
+          for x in ["full[0, :, 0, :]","np.array_equal(restored, selected)","wins[0,:,0,:] = TE<-TE","_accept_finished_receipt_read_only"]: assert x in dg
+          w=pathlib.Path('ci/exp073bu_wm_s3_fresh_ab_production_8core_resume_v0_7.py').read_text(); wt=ast.parse(w)
+          assert 'exp073bu_wm_s3_fresh_ab_production_v0_5 as lineage' in w
+          assert 'exp073cv_wm_s3_production_exact_adapter_omp8_v0_3' in w
+          assert "lineage.prior.base.OUTER_COMPUTE_WORKERS = 8" in w
+          assert "'OMP_NUM_THREADS': '8'" in w and "'OPENBLAS_NUM_THREADS': '1'" in w and "'MKL_NUM_THREADS': '1'" in w and "'NUMEXPR_NUM_THREADS': '1'" in w
+          assert not any(isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef,ast.ClassDef,ast.For,ast.While)) for n in ast.walk(wt))
+          print('PASS_EXP073DH_MASK_WORKSPACE_LINEAGE_RESUME_V0_1')
+          PY
+      - name: Emit raw support result
+        shell: bash
+        run: |
+          cat > exp073dh_result.json <<EOF
+          {"classification":"PASS","raw_token":"PASS_EXP073DH_MASK_WORKSPACE_LINEAGE_RESUME_V0_1","science_gate_scored":false,"wm_s3_authority_created":false,"lineage_v05_blob":"${LINEAGE_V05_BLOB}","wrapper_v07_blob":"${WRAPPER_V07_BLOB}","dg_lineage_v04_blob":"${DG_LINEAGE_V04_BLOB}"}
+          EOF
+          cat exp073dh_result.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073dh-mask-workspace-lineage-resume-${{ github.run_id }}-${{ github.sha }}
+          path: exp073dh_result.json
+          retention-days: 90
+          compression-level: 0
