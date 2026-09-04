@@ -1,0 +1,88 @@
+name: Exp073BU 8-core activation audit v0.4
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/activate_exp073bu_8core_activation_audit_v0_4.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Bind immutable science and 8-core equivalence authorities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073bu_article3_wm_s3_fresh_independent_ab_exact_repeatability_v0_1_prereg.md)" = '816542c7eb7a8ba4e72d6e01228aa62d05c7c805'
+          test "$(git hash-object experiments/073bu_wm_s3_fresh_ab_exact_repeatability_8core_v0_3_prereg.md)" = '1da32a7647601c2c876c2392bf9e17dfd5a8593e'
+          test "$(git hash-object experiments/073bu_wm_s3_8core_activation_v0_4_prereg.md)" = '819ead893b45f93270133dde32ccaf942401a6c4'
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_8core_v0_3.py)" = '2b44ddd2c1167739f643a0f1c23cfbf7905fa464'
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_omp8_v0_3.py)" = '63ee393791bba43d3eabbea654efdb9d439d477e'
+          test "$(git hash-object ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c)" = 'be4f381de4c5c043a9c0fcd107e63ef3f2079578'
+          test "$(git hash-object ci/exp073bu_wm_s3_science_launcher_8core_v0_3.py)" = '8a725ba135e3e120ce6e8d0db3dd14d95d4ffd6e'
+          grep -Fq 'PASS_EXP073BU_8CORE_EXACT_EQUIVALENCE_V0_3' recovery/2026-09-04_exp073bu_8core_v0_3_exact_equivalence_pass.md
+          echo PASS_EXP073BU_8CORE_V04_IMMUTABLE_SCIENCE_LINEAGE
+      - name: Audit sole probe-interpreter infrastructure repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          w=.github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-8core-v0-4.yml
+          test "$(git hash-object "$w")" = 'f8c70a4206321b0dc10b57f63a2a06163da2249a'
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('.github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-8core-v0-4.yml').read_text()
+          a=s.index('- name: Runtime-certify actual 8-thread downstream with frozen NMT Python')
+          b=s.index('- name: Fresh live exclusivity and Exp073BU 8-core A-then-B science',a)
+          sec=s[a:b]
+          assert '"$NMT_PY" - <<\'PY\'' in sec
+          assert "python3 - <<'PY'" not in sec
+          assert "DSIR_OMP_TEAM=8" in sec
+          assert "-DDSIR_WORKERS=8" in s
+          assert "OMP_NUM_THREADS: '8'" in s
+          assert "OPENBLAS_NUM_THREADS: '1'" in s
+          assert "PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_8CORE_V0_3" in s
+          assert "whole_canonical_sha256_equal" in s and "numpy_array_equal" in s
+          assert "exp073bu_wm_s3_science_launcher_8core_v0_3.py" in s
+          assert "exp073bu_wm_s3_fresh_ab_production_8core_v0_3.py" in s
+          assert "fresh-ab-8core-v0-4-${GITHUB_RUN_ID}" in s
+          print('PASS_EXP073BU_8CORE_V04_PROBE_INTERPRETER_REPAIR')
+          PY
+      - name: Emit activation audit receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073bu
+          python3 - <<'PY'
+          import json,os
+          rec={
+            'schema':'dsir.exp073bu.8core_activation_audit.v0.4',
+            'status':'PASS_EXP073BU_8CORE_ACTIVATION_AUDIT_V0_4',
+            'source_head':os.environ['GITHUB_SHA'],
+            'science_workflow_blob':'f8c70a4206321b0dc10b57f63a2a06163da2249a',
+            'v04_prereg_blob':'819ead893b45f93270133dde32ccaf942401a6c4',
+            'eightcore_equivalence_authority':'PASS_EXP073BU_8CORE_EXACT_EQUIVALENCE_V0_3',
+            'driver_blob':'2b44ddd2c1167739f643a0f1c23cfbf7905fa464',
+            'adapter_blob':'63ee393791bba43d3eabbea654efdb9d439d477e',
+            'omp_source_blob':'be4f381de4c5c043a9c0fcd107e63ef3f2079578',
+            'launcher_blob':'8a725ba135e3e120ce6e8d0db3dd14d95d4ffd6e',
+            'sole_repair':'runtime probe uses frozen NMT_PY instead of system python3',
+            'science_numerics_executed':False,
+            'wm_s3_authority_created':False,
+            'accounting':'+0/+0'
+          }
+          open('data/derived/exp073bu/exp073bu_8core_activation_audit_v0_4.json','w').write(json.dumps(rec,indent=2,sort_keys=True)+'\n'); print(rec['status'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bu-8core-activation-audit-v0-4-${{ github.sha }}
+          path: data/derived/exp073bu/exp073bu_8core_activation_audit_v0_4.json
+          retention-days: 90
+          compression-level: 0
