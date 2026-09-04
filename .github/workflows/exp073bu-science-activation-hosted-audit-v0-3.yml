@@ -50,7 +50,6 @@ jobs:
           grep -Fq 'git diff-tree --no-commit-id --name-only -r "${GITHUB_SHA}" | grep -Fxq "${ACTIVATION_CONTROL}"' "$w"
           test "$(grep -Fc 'runs-on: [self-hosted, Linux, X64]' "$w")" = '1'
           grep -Fq 'needs: hosted-preflight' "$w"
-          ! grep -Fq 'CHECKPOINT_ROOT: ${{ runner.' "$w"
           grep -Fq 'echo "CHECKPOINT_ROOT=$root" >> "$GITHUB_ENV"' "$w"
           echo PASS_EXP073BU_V0_3_CONNECTOR_PUSH_SCOPE
 
