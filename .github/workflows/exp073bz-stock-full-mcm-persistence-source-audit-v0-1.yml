@@ -1,0 +1,64 @@
+name: Exp073BZ stock full-MCM persistence source audit v0.1
+on:
+  push:
+    paths:
+      - 'control/activate_exp073bz_v0_1.txt'
+permissions:
+  contents: read
+jobs:
+  hosted-source-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze preregistration
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f experiments/073bz_support_stock_full_mcm_persistence_source_audit_v0_1_prereg.md
+          grep -Fq '24365fa59a38c15732f4f37e8b29265b75c442d5' experiments/073bz_support_stock_full_mcm_persistence_source_audit_v0_1_prereg.md
+          grep -Fq 'P1_DIRECT_STOCK_PERSISTENCE_WITHOUT_SECOND_FULL_MCM_COPY_IDENTIFIED' experiments/073bz_support_stock_full_mcm_persistence_source_audit_v0_1_prereg.md
+      - name: Fetch exact NaMaster 2.7 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone -q https://github.com/LSSTDESC/NaMaster.git "${RUNNER_TEMP}/namaster"
+          cd "${RUNNER_TEMP}/namaster"
+          git checkout -q 24365fa59a38c15732f4f37e8b29265b75c442d5
+          test "$(git rev-parse HEAD)" = '24365fa59a38c15732f4f37e8b29265b75c442d5'
+      - name: Audit stock workspace persistence lifecycle
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${RUNNER_TEMP}/namaster"
+          python - <<'PY'
+          from pathlib import Path
+          import json, hashlib
+          commit='24365fa59a38c15732f4f37e8b29265b75c442d5'
+          io=Path('src/nmt_io.c').read_text()
+          ws=Path('pymaster/workspaces.py').read_text()
+          evidence={
+            'writer_reads_workspace_rows_directly': 'fits_write_pix(fptr,TDOUBLE,fpixel,n_el,w->coupling_matrix_unbinned[ii],status);' in io,
+            'writer_row_loop_present': 'for(ii=0;ii<n_el;ii++)' in io and 'w->coupling_matrix_unbinned[ii]' in io,
+            'python_write_to_calls_direct_writer': 'lib.write_workspace(self.wsp, "!"+fname)' in ws,
+            'python_write_to_requires_unbinned': 'self.check_unbinned()' in ws,
+          }
+          status='P1_DIRECT_STOCK_PERSISTENCE_WITHOUT_SECOND_FULL_MCM_COPY_IDENTIFIED' if all(evidence.values()) else 'P3_SOURCE_LIFECYCLE_AMBIGUOUS'
+          out={
+            'schema':'dsir.exp073bz.stock_full_mcm_persistence_source_audit.v0.1',
+            'upstream_repo':'LSSTDESC/NaMaster','upstream_commit':commit,
+            'source_sha256':{
+              'src/nmt_io.c':hashlib.sha256(Path('src/nmt_io.c').read_bytes()).hexdigest(),
+              'pymaster/workspaces.py':hashlib.sha256(Path('pymaster/workspaces.py').read_bytes()).hexdigest(),
+            },
+            'evidence':evidence,
+            'interpretation':'nmt_workspace_info_tohdus writes each workspace-owned unbinned-MCM row directly to CFITSIO; NmtWorkspace.write_to calls lib.write_workspace directly and does not call get_coupling_matrix.',
+            'status':status,'accounting':'+0/+0','science_gate_scored':False,'wm_s3_authority_created':False
+          }
+          Path('/tmp/exp073bz.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(status)
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bz-source-audit-${{ github.sha }}
+          path: /tmp/exp073bz.json
