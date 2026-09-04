@@ -1,0 +1,44 @@
+name: Exp073DC Wm_S3 six-stage remote checkpoint binding v0.1
+on:
+  push:
+    paths:
+      - '.github/activations/exp073dc-wm-s3-six-stage-remote-checkpoint-binding-v0-1.txt'
+permissions:
+  contents: read
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Freeze exact source head
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git hash-object experiments/073dc_wm_s3_six_stage_remote_checkpoint_binding_v0_1_prereg.md)" = 'b2da85d3b005643afde4a3570a75d2d334232d22'
+          test "$(git hash-object ci/exp073dc_wm_s3_six_stage_remote_checkpoint_binding_v0_1.py)" = 'aac10fff0ceb8d8a3813d73bb0fd1d5f3d694959'
+          mkdir -p artifacts/exp073dc-v01
+          echo "${GITHUB_SHA}" > artifacts/exp073dc-v01/source_head.txt
+      - name: Compile auditor
+        run: python -m py_compile ci/exp073dc_wm_s3_six_stage_remote_checkpoint_binding_v0_1.py
+      - name: Run frozen source binding audit
+        shell: bash
+        run: |
+          set +e
+          python ci/exp073dc_wm_s3_six_stage_remote_checkpoint_binding_v0_1.py --source-head "${GITHUB_SHA}" --out artifacts/exp073dc-v01/receipt.json
+          echo "$?" > artifacts/exp073dc-v01/audit_rc.txt
+          exit 0
+      - name: Hash raw receipt
+        if: always()
+        run: sha256sum artifacts/exp073dc-v01/receipt.json | tee artifacts/exp073dc-v01/receipt.sha256
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073dc-wm-s3-six-stage-remote-checkpoint-binding-v0-1
+          path: artifacts/exp073dc-v01/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Propagate infrastructure-only failure
+        if: always()
+        run: exit "$(cat artifacts/exp073dc-v01/audit_rc.txt)"
