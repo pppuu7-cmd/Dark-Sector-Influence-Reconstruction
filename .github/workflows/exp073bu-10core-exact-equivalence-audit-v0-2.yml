@@ -1,0 +1,127 @@
+name: Exp073BU 10-core exact-equivalence audit v0.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/activate_exp073bu_10core_exact_equivalence_audit_v0_2.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bind prospective 10-core contract and implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073bu_wm_s3_fresh_ab_exact_repeatability_10core_v0_2_prereg.md)" = '56bdbca1217b4213603734a96665dae33e3fc4c5'
+          test "$(git hash-object ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c)" = 'be4f381de4c5c043a9c0fcd107e63ef3f2079578'
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_omp10_v0_2.py)" = 'c5cd7ae0113ec280e363e46850af33d841ff16f8'
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_10core_v0_2.py)" = '08fba42876c1e3a42847a677473dfc8fb20ff592'
+          test "$(git hash-object ci/exp073bu_wm_s3_science_launcher_10core_v0_2.py)" = '77eb05659f2baebe1f72f93fb620dcc95d0249b6'
+          grep -Fq "OMP_NUM_THREADS':'10'" ci/exp073bu_wm_s3_fresh_ab_production_10core_v0_2.py
+          grep -Fq "outer_compute_workers')==10" ci/exp073bu_wm_s3_science_launcher_10core_v0_2.py
+          grep -Fq 'DSIR_WORKERS 10' ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c
+          grep -Fq 'DSIR_OMP_TEAM=%d' ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c
+          echo PASS_EXP073BU_10CORE_STATIC_BINDING_V0_2
+
+      - name: Compile serial and OpenMP-10 downstreams
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libgsl-dev
+          gcc -O0 -std=c11 ci/exp073by_mmap_full_mcm_downstream_v0_1.c -lgsl -lgslcblas -lm -o /tmp/dsir_serial
+          gcc -O0 -std=c11 -fopenmp -DDSIR_WORKERS=10 ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c -lgsl -lgslcblas -lm -o /tmp/dsir_omp10
+
+      - name: Exact serial-vs-OpenMP equivalence and runtime team proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import struct, numpy as np, pathlib
+          root=pathlib.Path('/tmp/dsir_cases'); root.mkdir(exist_ok=True)
+          cases=[(16,[0,4,8,12,16],1e-7),(24,[0,3,7,12,18,24],3e-8),(32,[0,5,11,18,25,32],7e-8)]
+          for ci,(L,edges,eps) in enumerate(cases):
+              ncls=2; nr=ncls*L
+              i=np.arange(nr,dtype=np.float64)
+              m=np.eye(nr,dtype=np.float64)
+              # Deterministic small dense perturbation; diagonal dominance keeps the binned system invertible.
+              m += eps*((i[:,None]+1.0)*(i[None,:]+3.0) % 17.0)
+              p=root/f'case{ci}.bin'
+              with p.open('wb') as f:
+                  f.write(struct.pack('<iii',ncls,len(edges)-1,L))
+                  f.write(np.asarray(edges,dtype='<i4').tobytes())
+                  f.write(np.asarray(m,dtype='<f8').tobytes(order='C'))
+          PY
+          : > /tmp/omp_runtime.txt
+          for i in 0 1 2; do
+            /tmp/dsir_serial "/tmp/dsir_cases/case${i}.bin" "/tmp/serial${i}.bin"
+            /tmp/dsir_omp10 "/tmp/dsir_cases/case${i}.bin" "/tmp/omp${i}.bin" 2>>/tmp/omp_runtime.txt
+            cmp "/tmp/serial${i}.bin" "/tmp/omp${i}.bin"
+            test "$(sha256sum /tmp/serial${i}.bin | awk '{print $1}')" = "$(sha256sum /tmp/omp${i}.bin | awk '{print $1}')"
+          done
+          cat /tmp/omp_runtime.txt
+          test "$(grep -Fc 'DSIR_OMP_TEAM=10' /tmp/omp_runtime.txt)" = '3'
+          echo PASS_EXP073BU_10CORE_SERIAL_BYTE_EQUIVALENCE
+          echo PASS_EXP073BU_10CORE_RUNTIME_TEAM_10
+
+      - name: Audit science workflow execution contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          w=.github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-10core-v0-2.yml
+          grep -Fq "OMP_NUM_THREADS: '10'" "$w"
+          grep -Fq "OPENBLAS_NUM_THREADS: '1'" "$w"
+          grep -Fq "MKL_NUM_THREADS: '1'" "$w"
+          grep -Fq 'test "${cpus}" -ge 10' "$w"
+          grep -Fq 'fresh-ab-10core-v0-2-${GITHUB_RUN_ID}' "$w"
+          grep -Fq -- '-fopenmp -DDSIR_WORKERS=10' "$w"
+          grep -Fq 'PASS_EXP073BU_RUNTIME_10_THREAD_TEAM' "$w"
+          grep -Fq 'numpy_array_equal' "$w"
+          grep -Fq 'whole_canonical_sha256_equal' "$w"
+          echo PASS_EXP073BU_10CORE_WORKFLOW_CONTRACT_V0_2
+
+      - name: Emit audit receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073bu
+          python3 - <<'PY'
+          import json,os,subprocess
+          rec={
+            'schema':'dsir.exp073bu.10core_exact_equivalence.v0.2',
+            'status':'PASS_EXP073BU_10CORE_EXACT_EQUIVALENCE_V0_2',
+            'source_head':os.environ['GITHUB_SHA'],
+            'serial_downstream_blob':'acafb095deafae7602101d8305e239341010ba79',
+            'omp10_downstream_blob':'be4f381de4c5c043a9c0fcd107e63ef3f2079578',
+            'tencore_prereg_blob':'56bdbca1217b4213603734a96665dae33e3fc4c5',
+            'driver_blob':'08fba42876c1e3a42847a677473dfc8fb20ff592',
+            'launcher_blob':'77eb05659f2baebe1f72f93fb620dcc95d0249b6',
+            'adapter_blob':'c5cd7ae0113ec280e363e46850af33d841ff16f8',
+            'synthetic_cases':3,
+            'serial_vs_omp10_byte_equal':True,
+            'serial_vs_omp10_sha256_equal':True,
+            'runtime_omp_team':10,
+            'science_numerics_executed':False,
+            'wm_s3_authority_created':False,
+            'accounting':'+0/+0'
+          }
+          open('data/derived/exp073bu/exp073bu_10core_exact_equivalence_v0_2.json','w').write(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          print(rec['status'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bu-10core-exact-equivalence-v0-2-${{ github.sha }}
+          path: data/derived/exp073bu/exp073bu_10core_exact_equivalence_v0_2.json
+          retention-days: 90
+          compression-level: 0
