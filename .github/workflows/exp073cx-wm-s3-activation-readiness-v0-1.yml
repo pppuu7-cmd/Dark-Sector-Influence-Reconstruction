@@ -1,0 +1,36 @@
+name: Exp073CX Wm_S3 activation readiness v0.1
+on:
+  push:
+    paths:
+      - 'control/activate_exp073cx_v0_1.txt'
+permissions:
+  contents: read
+jobs:
+  hosted-activation-readiness-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze Exp073CX contract and implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073cx_wm_s3_activation_readiness_v0_1_prereg.md)" = 'cfb4eac2ed0eaac400633438f5e3fd1520a71f7a'
+          test "$(git hash-object ci/exp073cx_wm_s3_activation_readiness_v0_1.py)" = '97d8168d7f052d09c0de8f9664a1407c264a745e'
+          test "$(git hash-object experiments/073bu_article3_wm_s3_fresh_independent_ab_exact_repeatability_v0_1_prereg.md)" = '816542c7eb7a8ba4e72d6e01228aa62d05c7c805'
+          test "$(git hash-object ci/exp073cw_single_mask_integrated_driver_v0_1.py)" = 'f61b4e42ace7e2ab7220c0df0b38d8663136896c'
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_v0_1.py)" = 'dafe86086a470c852106f0d4ecccbda1d389e397'
+          echo PASS_EXP073CX_V0_1_STATIC_FREEZE
+      - name: Execute frozen activation-readiness audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073cx
+          python ci/exp073cx_wm_s3_activation_readiness_v0_1.py \
+            --out data/derived/exp073cx/exp073cx_activation_readiness_v0_1.json \
+            --source-head "${GITHUB_SHA}"
+          cat data/derived/exp073cx/exp073cx_activation_readiness_v0_1.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073cx-v0-1-activation-readiness-${{ github.sha }}
+          path: data/derived/exp073cx/exp073cx_activation_readiness_v0_1.json
