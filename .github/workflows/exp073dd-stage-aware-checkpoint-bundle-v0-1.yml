@@ -1,0 +1,101 @@
+name: Exp073DD stage-aware checkpoint bundle v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073dd-stage-aware-checkpoint-bundle-v0-1.yml'
+      - 'ci/dsir_checkpoint_stage_bundle_v0_1.py'
+      - 'ci/exp073dd_stage_bundle_regression_v0_1.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: exp073dd-stage-aware-checkpoint-bundle-v0-1
+  cancel-in-progress: false
+
+env:
+  PREREG_BLOB: '0e7b9392df21f21172ca0d8fb12976c381803fe5'
+  BUNDLE_BLOB: 'b25232223511a7f65abdf3437a40a1c3aaec4702'
+  REGRESSION_BLOB: 'c4172ed349b6f0e3cb8023c6dedb0ae32283ddf2'
+  DB_V02_BLOB: 'b1ebffe0983a6c54ded54fbab94a5af41268b439'
+
+jobs:
+  hosted-regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bind prospective source and same checkpoint control plane
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073dd_wm_s3_stage_aware_checkpoint_bundle_v0_1_prereg.md)" = "${PREREG_BLOB}"
+          test "$(git hash-object ci/dsir_checkpoint_stage_bundle_v0_1.py)" = "${BUNDLE_BLOB}"
+          test "$(git hash-object ci/exp073dd_stage_bundle_regression_v0_1.py)" = "${REGRESSION_BLOB}"
+          test "$(git hash-object ci/dsir_checkpoint_git_sharded_sync_v0_2.py)" = "${DB_V02_BLOB}"
+          grep -Fq 'import dsir_checkpoint_git_sharded_sync_v0_2 as sync' ci/dsir_checkpoint_stage_bundle_v0_1.py
+          grep -Fq 'checkpoints/exp073bu-wm-s3-' ci/dsir_checkpoint_stage_bundle_v0_1.py
+          grep -Fq 'OBJECT_BYTES_MAX=64*1024*1024' ci/dsir_checkpoint_stage_bundle_v0_1.py
+          grep -Fq 'TRANSITION_BYTES_MAX=1024*1024*1024' ci/dsir_checkpoint_stage_bundle_v0_1.py
+          echo PASS_EXP073DD_FROZEN_SOURCE_BINDING
+
+      - name: Run deterministic stage-aware transport regression
+        id: regression
+        shell: bash
+        run: |
+          set +e
+          python3 ci/exp073dd_stage_bundle_regression_v0_1.py > exp073dd_stdout.log 2>&1
+          rc=$?
+          cat exp073dd_stdout.log
+          echo "rc=${rc}" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Classify frozen gate
+        shell: bash
+        env:
+          RC: ${{ steps.regression.outputs.rc }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          rc=int(os.environ['RC'])
+          try:
+              r=json.load(open('exp073dd_receipt.json'))
+          except Exception as e:
+              r={'receipt_error':repr(e)}
+          semantic=['partial_stage_restore_rejected','exact_file_restore','existing_ref_exact_lease','verified_absent_safe_creation','exact_post_head','ab_namespace_isolation','stage_order_rejection','corrupt_object_rejection']
+          positive=['multi_stage_progression','cross_stage_object_reuse','resume','object_cap_64mib','transition_cap_1gib','same_control_plane']+semantic
+          o1=(rc==0 and all(r.get(k) is True for k in positive)
+              and r.get('science_numerics_executed') is False
+              and r.get('wm_s3_authority_created') is False
+              and r.get('exp073bu_activated') is False)
+          if o1:
+              token='O1_STAGE_AWARE_CHECKPOINT_BUNDLE_PASS'
+          elif any(r.get(k) is False for k in semantic):
+              token='O3_STAGE_BUNDLE_FAILCLOSED_SEMANTICS_FAIL'
+          elif 'receipt_error' in r:
+              token='O4_INFRASTRUCTURE_OR_SOURCE_BINDING_FAIL'
+          else:
+              token='O2_STAGE_BUNDLE_IMPLEMENTATION_FAIL'
+          out={'token':token,'classification':'+0/+0','source_head':os.environ['GITHUB_SHA'],'run_id':os.environ['GITHUB_RUN_ID'],'regression_rc':rc,'receipt':r}
+          json.dump(out,open('exp073dd_classification.json','w'),indent=2,sort_keys=True); open('exp073dd_classification.json','a').write('\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          if token!='O1_STAGE_AWARE_CHECKPOINT_BUNDLE_PASS': raise SystemExit(2)
+          PY
+
+      - name: Upload raw Exp073DD evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073dd-stage-aware-checkpoint-bundle-${{ github.sha }}
+          path: |
+            exp073dd_receipt.json
+            exp073dd_classification.json
+            exp073dd_stdout.log
+          if-no-files-found: warn
+          retention-days: 90
