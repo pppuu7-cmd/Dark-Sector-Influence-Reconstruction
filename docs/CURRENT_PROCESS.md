@@ -4,26 +4,29 @@ Updated: 2026-09-04
 Scope: DSIR only; RTK/RQIR excluded.
 
 ## Current owner/process
-- **DSIR-HOME-PC: RESERVED BY EXP073BU v0.1 via activation shell v0.3.**
-- Workflow: `.github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-v0-3.yml`.
-- Run/job: `33885834557 / 101065302520`.
-- Frozen activation source head: `a2f14dfd5a9e54a30fb467f6d0e717bd4f00bd35`.
-- Science workflow blob: `b95346a1c8243074a1ca49878919847b675a9269`.
-- Contract fingerprint: `a400a7cee61f59c89099ac8b2c5ec67286b8c38002d5855a5f3a150c59838147`.
-- A namespace: `checkpoints/exp073bu-wm-s3-a-v0-1`.
-- B namespace: `checkpoints/exp073bu-wm-s3-b-v0-1`.
+- **DSIR-HOME-PC: RESERVED FOR ONE EXP073BU HARDWARE-MATCHED 8-CORE SCIENCE PROCESS.**
+- Authorized workflow: `.github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-8core-v0-3.yml`.
+- Exact workflow blob: `c65464d661ac0361cac6f55153bbd7c4bfb05f76`.
+- Hardware authority: live self-hosted run `33900526972 / 101113324481` reported exactly `home_affinity_cpus=8`; that 10-core attempt stopped before DES numerics.
+- 8-core hosted exact-equivalence authority: `PASS_EXP073BU_8CORE_EXACT_EQUIVALENCE_V0_3`, run/job `33900913648 / 101114517184`, recovery `recovery/2026-09-04_exp073bu_8core_v0_3_exact_equivalence_pass.md`.
+- Execution contract: `OMP_NUM_THREADS=8`; OpenBLAS/MKL/NumExpr/BLIS/Veclib nested threads pinned to 1; full-window OpenMP runtime must prove `DSIR_OMP_TEAM=8` before DES numerics.
+- A namespace semantics remain `checkpoints/exp073bu-wm-s3-a-v0-1`.
+- B namespace semantics remain `checkpoints/exp073bu-wm-s3-b-v0-1`.
+- Physical checkpoint storage for the next activation must be a fresh run-specific root; no cancelled/blocked attempt state may be restored.
 - Execution order: fresh A, release replica-local live state, fresh B, then exact comparator.
 - Science equality: whole canonical `<f8 [39,12288]` SHA256 equality **and** `numpy.array_equal`; no tolerance rescue.
 - Allowed terminal classes: `PASS`, `SCIENTIFIC_REPEATABILITY_FAIL`, `INFRASTRUCTURE_INCOMPLETE`, `BLOCKED`.
-- Required PASS token: `PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_V0_1`.
-- Live state at latest reconciliation: job `101065302520` remains `IN_PROGRESS`, step `Fresh live exclusivity and Exp073BU A-then-B science`; no partial numerical output consumed.
+- Required 8-core PASS token: `PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_8CORE_V0_3`.
 
-## Independent support process consumed this iteration
-Exp073DD v0.1 is terminal authoritative support PASS `D1_RESUME_LINEAGE_PROVENANCE_PASS +0/+0` from run/job `33892969489 / 101088831684`, activation/head `fbe6156d95cafdca3630c058808d74ac139cce46`, artifact `9944582651`, independently verified ZIP SHA256 `06c971ec7b97fae34b0fa1e113fb449d0bffc9b0e126f0045a9660eb1f6a1056`. Immutable note: `recovery/2026-09-04_exp073dd_d1_resume_lineage_provenance_pass.md` (record commit `b936dc9d93f70100a6ffa72d6d9b44cd80c51803`).
+## Historical self-hosted attempts
+- Run `33885834557`, job `101065302520`: manually cancelled after discovery that the claimed outer-worker count did not create actual worker parallelism. No terminal science comparison; infrastructure-only history.
+- Run `33900526972`, job `101113324481`: blocked at hardware gate because Linux affinity exposed 8 CPUs rather than 10. No DES-scale numerics; infrastructure-only history.
+- Neither attempt creates Wm_S3 numerical authority and neither is a scientific repeatability failure.
 
-Exp073DD validates a prospective provenance-only resume repair: invocation-local reconstruction counts are separated from immutable cumulative `{lens:1,source:1}` lineage; missing/malformed/wrong cumulative lineage fails closed. It delegates frozen v0.1 science and exact comparator unchanged. It does **not** change the source of the active Exp073BU run and creates no Wm_S3 scientific authority. A future interrupted-run resume may use v0.2 only after explicit prospective binding; silent source substitution is forbidden.
+## Independent support authority
+Exp073DD v0.1 remains terminal support PASS `D1_RESUME_LINEAGE_PROVENANCE_PASS +0/+0` from run/job `33892969489 / 101088831684`, artifact `9944582651`, recovery `recovery/2026-09-04_exp073dd_d1_resume_lineage_provenance_pass.md`. It is provenance-only and does not substitute for Exp073BU science.
 
 ## Authority boundary
-Exp073CX v0.4 hosted activation readiness is PASS. Exp073BU numerical authority is absent until run `33885834557` reaches a valid terminal comparator result. Historical FAIL/infra results remain immutable.
+Exp073CX v0.4 hosted activation readiness remains PASS. Exp073BU Wm_S3 numerical authority is absent until the hardware-matched 8-core run reaches a valid terminal A/B comparator result. Historical FAIL/infra results remain immutable.
 
 Frozen Article-3 boundaries remain unchanged. No effective ell/z/k, fiducial-P, tolerance, smoothing, averaging, rounding or preferred-replica rescue is permitted.
