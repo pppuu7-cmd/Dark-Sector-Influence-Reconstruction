@@ -1,0 +1,90 @@
+name: Exp073DG boundary-safe resume v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/activate_exp073dg_boundary_safe_resume_v0_1.txt'
+
+permissions:
+  contents: read
+
+env:
+  PREREG_BLOB: 'fb57ec720356ed79f177520069ec7a1125fa619a'
+  LINEAGE_V04_BLOB: 'a40d585757e271e4d55de8a28f463a05dd76646c'
+  WRAPPER_V06_BLOB: '4f8608e8bbdd1d5279f50038d23d8f810d1057bb'
+  BASE_V01_BLOB: '5c8d5d3463e455389a1ca3df2639bf06a3b7b603'
+  OMP8_ADAPTER_BLOB: '63ee393791bba43d3eabbea654efdb9d439d477e'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bind exact boundary-safe implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073dg_exp073bu_boundary_safe_resume_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_4.py)" = "$LINEAGE_V04_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_8core_resume_v0_6.py)" = "$WRAPPER_V06_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py)" = "$BASE_V01_BLOB"
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_omp8_v0_3.py)" = "$OMP8_ADAPTER_BLOB"
+      - name: Static boundary and no-rewrite audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import ast,pathlib
+          s=pathlib.Path('ci/exp073bu_wm_s3_fresh_ab_production_v0_4.py').read_text(); t=ast.parse(s)
+          required=[
+            "_preserving_stage_manifest",
+            "existing = base.load_manifest(root, stage",
+            "if existing is not None:\n        return existing",
+            "_resume_selected_from_verified_full",
+            "full_st = base.load_manifest(root, 'full_window_complete'",
+            "te_st = base.load_manifest(root, 'selected_te_complete'",
+            "if full_st is None or te_st is not None:\n        return",
+            "np.memmap(full_path, dtype='<f8', mode='r', shape=FULL_SHAPE, order='C')",
+            "full[0, :, 0, :]",
+            "np.array_equal(restored, selected)",
+            "'semantics': 'wins[0,:,0,:] = TE<-TE'",
+            "_accept_finished_receipt_read_only",
+            "base.stage_manifest = _preserving_stage_manifest",
+          ]
+          assert all(x in s for x in required)
+          for bad in ('allclose','isclose','rtol','atol','mean(','average(','smooth','round('): assert bad not in s
+          # Legacy-complete acceptance remains write-free.
+          fn=next(n for n in t.body if isinstance(n,ast.FunctionDef) and n.name=='_accept_finished_receipt_read_only')
+          attrs=[]
+          for n in ast.walk(fn):
+            if isinstance(n,ast.Call):
+              f=n.func
+              attrs.append(f.attr if isinstance(f,ast.Attribute) else (f.id if isinstance(f,ast.Name) else ''))
+          for bad in ('atomic_json','stage_manifest','write_text','write_bytes','replace','rename','unlink'): assert bad not in attrs
+          # Existing complete stage manifests are returned before any write.
+          pf=next(n for n in t.body if isinstance(n,ast.FunctionDef) and n.name=='_preserving_stage_manifest')
+          psrc=ast.get_source_segment(s,pf)
+          assert psrc.index('return existing') < psrc.index('_ORIGINAL_STAGE_MANIFEST')
+          w=pathlib.Path('ci/exp073bu_wm_s3_fresh_ab_production_8core_resume_v0_6.py').read_text(); wt=ast.parse(w)
+          assert 'exp073bu_wm_s3_fresh_ab_production_v0_4 as lineage' in w
+          assert 'exp073cv_wm_s3_production_exact_adapter_omp8_v0_3' in w
+          assert "lineage.base.OUTER_COMPUTE_WORKERS = 8" in w
+          assert "'OMP_NUM_THREADS': '8'" in w and "'OPENBLAS_NUM_THREADS': '1'" in w and "'MKL_NUM_THREADS': '1'" in w and "'NUMEXPR_NUM_THREADS': '1'" in w
+          assert not any(isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef,ast.ClassDef,ast.For,ast.While)) for n in ast.walk(wt))
+          print('PASS_EXP073DG_BOUNDARY_SAFE_RESUME_V0_1')
+          PY
+      - name: Emit raw support result
+        shell: bash
+        run: |
+          cat > exp073dg_result.json <<EOF
+          {"classification":"PASS","raw_token":"PASS_EXP073DG_BOUNDARY_SAFE_RESUME_V0_1","science_gate_scored":false,"wm_s3_authority_created":false,"lineage_v04_blob":"${LINEAGE_V04_BLOB}","wrapper_v06_blob":"${WRAPPER_V06_BLOB}"}
+          EOF
+          cat exp073dg_result.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073dg-boundary-safe-resume-${{ github.run_id }}-${{ github.sha }}
+          path: exp073dg_result.json
+          retention-days: 90
+          compression-level: 0
