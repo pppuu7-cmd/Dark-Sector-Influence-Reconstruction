@@ -1,0 +1,85 @@
+name: Exp073DF legacy-complete resume passthrough v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/activate_exp073df_legacy_complete_resume_passthrough_v0_1.txt'
+
+permissions:
+  contents: read
+
+env:
+  PREREG_BLOB: '05db4378b2f1a63e42d2639dfe596575b6c02e26'
+  LINEAGE_V03_BLOB: '0004f751c24ef52a3fa6b504e92ef3f145ab52ca'
+  WRAPPER_V05_BLOB: '9bc5ae988863dee49fae3647e25b14a96ccd9d66'
+  BASE_V01_BLOB: '5c8d5d3463e455389a1ca3df2639bf06a3b7b603'
+  OMP8_ADAPTER_BLOB: '63ee393791bba43d3eabbea654efdb9d439d477e'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bind exact implementation blobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073df_exp073bu_legacy_complete_resume_passthrough_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_3.py)" = "$LINEAGE_V03_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_8core_resume_v0_5.py)" = "$WRAPPER_V05_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py)" = "$BASE_V01_BLOB"
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_omp8_v0_3.py)" = "$OMP8_ADAPTER_BLOB"
+      - name: Regression and no-migration static audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import ast,pathlib
+          p=pathlib.Path('ci/exp073bu_wm_s3_fresh_ab_production_v0_3.py'); s=p.read_text(); t=ast.parse(s)
+          required=[
+            "existing = base.validated_finished_receipt",
+            "_accept_finished_receipt_read_only",
+            "existing.get('reconstruction_counts')",
+            "EXPECTED_CUMULATIVE = {'lens': 1, 'source': 1}",
+            "ZERO_INVOCATION = {'lens': 0, 'source': 0}",
+            "fail-closed legacy final receipt cumulative lineage mismatch",
+            "fail-closed missing workspace lineage checkpoint",
+            "return existing",
+          ]
+          assert all(x in s for x in required)
+          # Legacy acceptance function must be read-only: no persistence calls inside it.
+          fn=next(n for n in t.body if isinstance(n,ast.FunctionDef) and n.name=='_accept_finished_receipt_read_only')
+          calls=[]
+          for n in ast.walk(fn):
+            if isinstance(n,ast.Call):
+              f=n.func
+              if isinstance(f,ast.Attribute): calls.append(f.attr)
+              elif isinstance(f,ast.Name): calls.append(f.id)
+          for forbidden in ('atomic_json','stage_manifest','write_text','write_bytes','replace','rename','unlink'):
+            assert forbidden not in calls, (forbidden,calls)
+          # Exact legacy {0,0} cannot pass because acceptance requires EXPECTED_CUMULATIVE.
+          assert "_exact_counts(existing.get('reconstruction_counts'), EXPECTED_CUMULATIVE)" in s
+          assert 'allclose' not in s and 'isclose' not in s and 'rtol' not in s and 'atol' not in s
+          w=pathlib.Path('ci/exp073bu_wm_s3_fresh_ab_production_8core_resume_v0_5.py').read_text(); wt=ast.parse(w)
+          assert 'exp073bu_wm_s3_fresh_ab_production_v0_3 as lineage' in w
+          assert 'exp073cv_wm_s3_production_exact_adapter_omp8_v0_3' in w
+          assert "lineage.base.OUTER_COMPUTE_WORKERS = 8" in w
+          assert "'OMP_NUM_THREADS': '8'" in w and "'OPENBLAS_NUM_THREADS': '1'" in w and "'MKL_NUM_THREADS': '1'" in w and "'NUMEXPR_NUM_THREADS': '1'" in w
+          assert not any(isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef,ast.ClassDef,ast.For,ast.While)) for n in ast.walk(wt))
+          print('PASS_EXP073DF_LEGACY_COMPLETE_RESUME_PASSTHROUGH_V0_1')
+          PY
+      - name: Emit raw support result
+        shell: bash
+        run: |
+          cat > exp073df_result.json <<EOF
+          {"classification":"PASS","raw_token":"PASS_EXP073DF_LEGACY_COMPLETE_RESUME_PASSTHROUGH_V0_1","science_gate_scored":false,"wm_s3_authority_created":false,"lineage_v03_blob":"${LINEAGE_V03_BLOB}","wrapper_v05_blob":"${WRAPPER_V05_BLOB}"}
+          EOF
+          cat exp073df_result.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073df-legacy-complete-resume-passthrough-${{ github.run_id }}-${{ github.sha }}
+          path: exp073df_result.json
+          retention-days: 90
+          compression-level: 0
