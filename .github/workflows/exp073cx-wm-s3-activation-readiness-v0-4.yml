@@ -1,0 +1,48 @@
+name: Exp073CX Wm_S3 activation readiness v0.4
+on:
+  push:
+    paths:
+      - '.github/activations/exp073cx-wm-s3-activation-readiness-v0-4.txt'
+permissions:
+  contents: read
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Freeze source head
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          mkdir -p artifacts/exp073cx-v04
+          printf '%s\n' "${GITHUB_SHA}" > artifacts/exp073cx-v04/source_head.txt
+      - name: Compile frozen sources
+        run: |
+          set -euo pipefail
+          python -m py_compile ci/exp073cx_wm_s3_activation_readiness_v0_4.py
+          python -m py_compile ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py
+      - name: Run frozen data-bound readiness audit
+        shell: bash
+        run: |
+          set +e
+          python ci/exp073cx_wm_s3_activation_readiness_v0_4.py --source-head "${GITHUB_SHA}" --out artifacts/exp073cx-v04/receipt.json
+          rc=$?
+          echo "$rc" > artifacts/exp073cx-v04/audit_rc.txt
+          exit 0
+      - name: Hash receipt
+        if: always()
+        run: sha256sum artifacts/exp073cx-v04/receipt.json | tee artifacts/exp073cx-v04/receipt.sha256
+      - name: Upload raw readiness artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073cx-wm-s3-activation-readiness-v0-4
+          path: artifacts/exp073cx-v04
+          if-no-files-found: error
+          retention-days: 30
+      - name: Propagate infrastructure classification
+        if: always()
+        run: exit "$(cat artifacts/exp073cx-v04/audit_rc.txt)"
