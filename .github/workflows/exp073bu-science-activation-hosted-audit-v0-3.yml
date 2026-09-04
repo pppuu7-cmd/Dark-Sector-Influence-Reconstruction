@@ -1,0 +1,104 @@
+name: Exp073BU science activation hosted audit v0.3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/activate_exp073bu_science_activation_audit_v0_3.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bind exact v0.3 activation chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073bu_article3_wm_s3_fresh_independent_ab_exact_repeatability_v0_1_prereg.md)" = '816542c7eb7a8ba4e72d6e01228aa62d05c7c805'
+          test "$(git hash-object experiments/073bu_wm_s3_selfhosted_science_activation_v0_3_prereg.md)" = '022e203d1cb966680e3eaff7fae39cb2234ebd5a'
+          test "$(git hash-object .github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-v0-3.yml)" = 'b95346a1c8243074a1ca49878919847b675a9269'
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py)" = '5c8d5d3463e455389a1ca3df2639bf06a3b7b603'
+          test "$(git hash-object ci/exp073bu_fresh_wm_s3_pcl_v0_1.py)" = '73ef04c479547dc8e2e89c9f511f1a55fae3ed64'
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_v0_1.py)" = 'dafe86086a470c852106f0d4ecccbda1d389e397'
+          test "$(git hash-object ci/exp073cv_component_blobs_v0_1.json)" = '0d6d6e882d1a4cf1ff79fbe8227a4f2b460c7e40'
+          test "$(git hash-object ci/exp073by_mmap_full_mcm_downstream_v0_1.c)" = 'acafb095deafae7602101d8305e239341010ba79'
+          test "$(git hash-object ci/exp073bu_wm_s3_science_launcher_v0_1.py)" = '1a54ad89d32dd217443bc3062a6215bf10e8b17d'
+          test "$(git hash-object recovery/2026-09-04_exp073cx_v0_4_a1_activation_readiness_pass.md)" = '43b658028f74b7a0b52fca8261beeb58026d8ffc'
+          grep -Fq 'A1_EXP073BU_ACTIVATION_READINESS_PASS' recovery/2026-09-04_exp073cx_v0_4_a1_activation_readiness_pass.md
+          test -f recovery/2026-09-04_exp073bu_science_activation_audit_v0_2_pass.md
+          grep -Fq 'PASS_EXP073BU_SCIENCE_ACTIVATION_HOSTED_AUDIT_V0_2' recovery/2026-09-04_exp073bu_science_activation_audit_v0_2_pass.md
+          echo PASS_EXP073BU_V0_3_EXACT_BLOB_BINDING
+
+      - name: Audit connector push activation scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          w=.github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-v0-3.yml
+          test "$(grep -c '^  push:' "$w")" = '1'
+          test "$(grep -c '^  workflow_dispatch:' "$w" || true)" = '0'
+          test "$(grep -c '^  schedule:' "$w" || true)" = '0'
+          grep -Fq "branches: [main]" "$w"
+          grep -Fq "control/activate_exp073bu_wm_s3_science_v0_3.txt" "$w"
+          grep -Fq 'git diff-tree --no-commit-id --name-only -r "${GITHUB_SHA}" | grep -Fxq "${ACTIVATION_CONTROL}"' "$w"
+          test "$(grep -Fc 'runs-on: [self-hosted, Linux, X64]' "$w")" = '1'
+          grep -Fq 'needs: hosted-preflight' "$w"
+          ! grep -Fq 'CHECKPOINT_ROOT: ${{ runner.' "$w"
+          grep -Fq 'echo "CHECKPOINT_ROOT=$root" >> "$GITHUB_ENV"' "$w"
+          echo PASS_EXP073BU_V0_3_CONNECTOR_PUSH_SCOPE
+
+      - name: Audit frozen science semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          w=.github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-v0-3.yml
+          p=experiments/073bu_wm_s3_selfhosted_science_activation_v0_3_prereg.md
+          grep -Fq 'does not change' "$p"
+          grep -Fq 'PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_V0_1' "$w"
+          grep -Fq 'numpy_array_equal' "$w"
+          grep -Fq 'whole_canonical_sha256_equal' "$w"
+          grep -Fq 'SCIENTIFIC_REPEATABILITY_FAIL' "$w"
+          grep -Fq 'INFRASTRUCTURE_INCOMPLETE' "$w"
+          grep -Fq 'BLOCKED' "$w"
+          grep -Fq 'No tolerance' "$p"
+          grep -Fq 'exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536' "$w"
+          echo PASS_EXP073BU_V0_3_SCIENCE_BOUNDARY_PRESERVATION
+
+      - name: Emit hosted audit receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073bu
+          python3 - <<'PY'
+          import json, os
+          rec={
+            'schema':'dsir.exp073bu.science_activation_hosted_audit.v0.3',
+            'status':'PASS_EXP073BU_SCIENCE_ACTIVATION_HOSTED_AUDIT_V0_3',
+            'source_head':os.environ['GITHUB_SHA'],
+            'science_workflow_blob':'b95346a1c8243074a1ca49878919847b675a9269',
+            'activation_prereg_blob':'022e203d1cb966680e3eaff7fae39cb2234ebd5a',
+            'original_science_prereg_blob':'816542c7eb7a8ba4e72d6e01228aa62d05c7c805',
+            'production_driver_blob':'5c8d5d3463e455389a1ca3df2639bf06a3b7b603',
+            'science_launcher_blob':'1a54ad89d32dd217443bc3062a6215bf10e8b17d',
+            'activation_mechanism':'unique path-scoped push authorized by explicit user instruction',
+            'science_numerics_executed':False,
+            'wm_s3_authority_created':False,
+            'accounting':'+0/+0',
+          }
+          open('data/derived/exp073bu/exp073bu_science_activation_hosted_audit_v0_3.json','w').write(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          print(rec['status'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bu-science-activation-hosted-audit-v0-3-${{ github.sha }}
+          path: data/derived/exp073bu/exp073bu_science_activation_hosted_audit_v0_3.json
+          retention-days: 90
+          compression-level: 0
