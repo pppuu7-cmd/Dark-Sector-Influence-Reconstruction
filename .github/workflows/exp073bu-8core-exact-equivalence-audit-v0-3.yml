@@ -1,0 +1,121 @@
+name: Exp073BU 8-core exact-equivalence audit v0.3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/activate_exp073bu_8core_exact_equivalence_audit_v0_3.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Bind frozen hardware-matched 8-core implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073bu_wm_s3_fresh_ab_exact_repeatability_8core_v0_3_prereg.md)" = '1da32a7647601c2c876c2392bf9e17dfd5a8593e'
+          test "$(git hash-object ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c)" = 'be4f381de4c5c043a9c0fcd107e63ef3f2079578'
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_omp8_v0_3.py)" = '63ee393791bba43d3eabbea654efdb9d439d477e'
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_8core_v0_3.py)" = '2b44ddd2c1167739f643a0f1c23cfbf7905fa464'
+          test "$(git hash-object ci/exp073bu_wm_s3_science_launcher_8core_v0_3.py)" = '8a725ba135e3e120ce6e8d0db3dd14d95d4ffd6e'
+          test "$(git hash-object .github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-8core-v0-3.yml)" = 'c65464d661ac0361cac6f55153bbd7c4bfb05f76'
+          grep -Fq "OMP_NUM_THREADS':'8'" ci/exp073bu_wm_s3_fresh_ab_production_8core_v0_3.py
+          grep -Fq "outer_compute_workers')==8" ci/exp073bu_wm_s3_science_launcher_8core_v0_3.py
+          echo PASS_EXP073BU_8CORE_STATIC_BINDING_V0_3
+      - name: Compile exact serial and OpenMP-8 implementations
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libgsl-dev python3-numpy
+          gcc -O0 -std=c11 ci/exp073by_mmap_full_mcm_downstream_v0_1.c -lgsl -lgslcblas -lm -o /tmp/dsir_serial
+          gcc -O0 -std=c11 -fopenmp -DDSIR_WORKERS=8 ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c -lgsl -lgslcblas -lm -o /tmp/dsir_omp8
+      - name: Require byte-identical output and actual 8-thread teams
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import struct,numpy as np,pathlib
+          root=pathlib.Path('/tmp/dsir_cases'); root.mkdir(exist_ok=True)
+          cases=[(16,[0,4,8,12,16],1e-7),(24,[0,3,7,12,18,24],3e-8),(32,[0,5,11,18,25,32],7e-8)]
+          for ci,(L,edges,eps) in enumerate(cases):
+              ncls=2; nr=ncls*L; i=np.arange(nr,dtype=np.float64)
+              m=np.eye(nr,dtype=np.float64); m += eps*((i[:,None]+1.0)*(i[None,:]+3.0) % 17.0)
+              with (root/f'case{ci}.bin').open('wb') as f:
+                  f.write(struct.pack('<iii',ncls,len(edges)-1,L)); f.write(np.asarray(edges,dtype='<i4').tobytes()); f.write(np.asarray(m,dtype='<f8').tobytes(order='C'))
+          PY
+          : >/tmp/omp_runtime.txt
+          for i in 0 1 2; do
+            /tmp/dsir_serial "/tmp/dsir_cases/case${i}.bin" "/tmp/serial${i}.bin"
+            /tmp/dsir_omp8 "/tmp/dsir_cases/case${i}.bin" "/tmp/omp${i}.bin" 2>>/tmp/omp_runtime.txt
+            cmp "/tmp/serial${i}.bin" "/tmp/omp${i}.bin"
+            test "$(sha256sum /tmp/serial${i}.bin | awk '{print $1}')" = "$(sha256sum /tmp/omp${i}.bin | awk '{print $1}')"
+          done
+          cat /tmp/omp_runtime.txt
+          test "$(grep -Fc 'DSIR_OMP_TEAM=8' /tmp/omp_runtime.txt)" = '3'
+          echo PASS_EXP073BU_8CORE_SERIAL_BYTE_EQUIVALENCE
+          echo PASS_EXP073BU_8CORE_RUNTIME_TEAM_8
+      - name: Audit frozen science workflow execution contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          w=.github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-8core-v0-3.yml
+          test "$(grep -c '^  push:' "$w")" = '1'
+          grep -Fq "control/activate_exp073bu_wm_s3_science_8core_v0_3.txt" "$w"
+          test "$(grep -Fc 'runs-on: [self-hosted, Linux, X64]' "$w")" = '1'
+          grep -Fq "OMP_NUM_THREADS: '8'" "$w"
+          grep -Fq "OPENBLAS_NUM_THREADS: '1'" "$w"
+          grep -Fq "MKL_NUM_THREADS: '1'" "$w"
+          grep -Fq 'test "${cpus}" -ge 8' "$w"
+          grep -Fq 'fresh-ab-8core-v0-3-${GITHUB_RUN_ID}' "$w"
+          grep -Fq -- '-fopenmp -DDSIR_WORKERS=8' "$w"
+          grep -Fq 'PASS_EXP073BU_RUNTIME_8_THREAD_TEAM' "$w"
+          grep -Fq 'whole_canonical_sha256_equal' "$w"
+          grep -Fq 'numpy_array_equal' "$w"
+          grep -Fq 'root="${CHECKPOINT_ROOT:-}"' "$w"
+          echo PASS_EXP073BU_8CORE_WORKFLOW_CONTRACT_V0_3
+      - name: Emit PASS receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073bu
+          python3 - <<'PY'
+          import json,os
+          rec={
+            'schema':'dsir.exp073bu.8core_exact_equivalence.v0.3',
+            'status':'PASS_EXP073BU_8CORE_EXACT_EQUIVALENCE_V0_3',
+            'source_head':os.environ['GITHUB_SHA'],
+            'original_science_prereg_blob':'816542c7eb7a8ba4e72d6e01228aa62d05c7c805',
+            'eightcore_prereg_blob':'1da32a7647601c2c876c2392bf9e17dfd5a8593e',
+            'serial_downstream_blob':'acafb095deafae7602101d8305e239341010ba79',
+            'parametric_omp_source_blob':'be4f381de4c5c043a9c0fcd107e63ef3f2079578',
+            'adapter_blob':'63ee393791bba43d3eabbea654efdb9d439d477e',
+            'driver_blob':'2b44ddd2c1167739f643a0f1c23cfbf7905fa464',
+            'launcher_blob':'8a725ba135e3e120ce6e8d0db3dd14d95d4ffd6e',
+            'science_workflow_blob':'c65464d661ac0361cac6f55153bbd7c4bfb05f76',
+            'synthetic_cases':3,
+            'serial_vs_omp8_byte_equal':True,
+            'serial_vs_omp8_sha256_equal':True,
+            'runtime_omp_team':8,
+            'live_hardware_affinity_observed_before_prereg':8,
+            'science_numerics_executed':False,
+            'wm_s3_authority_created':False,
+            'accounting':'+0/+0'
+          }
+          open('data/derived/exp073bu/exp073bu_8core_exact_equivalence_v0_3.json','w').write(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          print(rec['status'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bu-8core-exact-equivalence-v0-3-${{ github.sha }}
+          path: data/derived/exp073bu/exp073bu_8core_exact_equivalence_v0_3.json
+          retention-days: 90
+          compression-level: 0
