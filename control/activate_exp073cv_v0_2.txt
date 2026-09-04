@@ -1,0 +1,9 @@
+Exp073CV v0.2 activation
+contract_blob=22e2b1de27fb11b48352e2ddc68248dfc5fad68d
+repair_blob=640205ab9f21fd3b3ada6cb0b3a3e7c5e461f704
+historical_v0_1_run=33843210949
+historical_v0_1_job=100929554219
+classification=I4_INFRASTRUCTURE_OR_SOURCE_BINDING_FAIL +0/+0
+activation_scope=hosted_support_exact_integration_only
+exp073bu_activated=false
+wm_s3_authority_created=false
