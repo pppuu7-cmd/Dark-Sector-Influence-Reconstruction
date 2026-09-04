@@ -1,0 +1,70 @@
+name: Exp073BV stock wrapper raw-layout exact equivalence v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'activations/exp073bv_stock_wrapper_raw_layout_equivalence_v0_1.activate'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-and-synthetic-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Freeze preregistration and helper identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073bv_support_stock_wrapper_raw_layout_equivalence_v0_1_prereg.md)" = "c54ee6422183bc8f1c5f9ba8c38d617a4104e2f0"
+          test "$(git hash-object ci/exp073bv_stock_wrapper_raw_layout_equivalence_v0_1.py)" = "73d8cb082712f887f35eb522137a0fd6dcc81fb0"
+          grep -Fq 'R1_EXACT_WRAPPER_RAW_LAYOUT_EQUIVALENCE' experiments/073bv_support_stock_wrapper_raw_layout_equivalence_v0_1_prereg.md
+          grep -Fq 'No numeric closeness threshold exists in this gate. Exact equality only.' experiments/073bv_support_stock_wrapper_raw_layout_equivalence_v0_1_prereg.md
+          echo 'EXP073BV_SUPPORT_ONLY=1'
+          echo 'EXP073BU_SCIENCE_AUTHORITY_FORBIDDEN=1'
+          echo 'PASS_EXP073BV_V0_1_HOSTED_STATIC_FREEZE_AUDIT'
+
+      - name: Install exact NaMaster 2.7 lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+
+      - name: Verify runtime lineage and exact wrapper source SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${NMT_PY}" - <<'PY'
+          import hashlib, importlib.metadata, inspect
+          import pymaster as nmt
+          version=importlib.metadata.version('pymaster')
+          assert version=='2.7' or version.startswith('2.7.'), version
+          p=inspect.getsourcefile(nmt.NmtWorkspace.get_bandpower_windows)
+          assert p is not None
+          got=hashlib.sha256(open(p,'rb').read()).hexdigest()
+          exp='442e23eb542087566689271ad1c897d5da45f5b76e39def05b37d93b0098178f'
+          assert got==exp,(p,got,exp)
+          print('PASS_EXP073BV_V0_1_NAMASTER27_RUNTIME_LINEAGE')
+          PY
+
+      - name: Execute frozen three-case raw-layout QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073bv
+          "${NMT_PY}" ci/exp073bv_stock_wrapper_raw_layout_equivalence_v0_1.py \
+            --out data/derived/exp073bv/exp073bv_stock_wrapper_raw_layout_equivalence_v0_1.json
+          echo 'PASS_EXP073BV_V0_1_SYNTHETIC_QA_EXECUTED'
+
+      - name: Upload complete receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073bv-stock-wrapper-raw-layout-${{ github.sha }}
+          path: data/derived/exp073bv/exp073bv_stock_wrapper_raw_layout_equivalence_v0_1.json
+          if-no-files-found: warn
