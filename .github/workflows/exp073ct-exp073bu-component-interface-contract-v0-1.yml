@@ -1,0 +1,60 @@
+name: Exp073CT Exp073BU component interface contract v0.1
+
+on:
+  push:
+    paths:
+      - 'activation/exp073ct_v0_1.activate'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  interface-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Recover exact callable and CLI interfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' | tee exp073ct_interface_receipt.json
+          import ast,json,pathlib,subprocess
+          pairs={
+          'ci/exp073bu_fresh_wm_s3_pcl_v0_1.py':'73ef04c479547dc8e2e89c9f511f1a55fae3ed64',
+          'ci/exp073bx_full_mcm_stock_order_v0_1.py':'ae0282cbbcdd298f00765d8de68545fe214cec0e',
+          'ci/exp073ca_stock_write_fits_to_mmap_exact_chain_v0_1.py':'d3c2e3a2ec42ddcb5811447499d80a4a1cfa3132',
+          'ci/exp073cc_verify_fits_memmap_backing_v0_1.py':'88d17ad76cabc1651df6b6035d897e9f42853ca5',
+          'ci/exp073by_mmap_full_mcm_downstream_v0_1.py':'a22d14ad9ae7e81ba6dd35c61b9ab35a05617d76',
+          'ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py':'934c339bb01dd7f541e9191129bcdc8b3a7ad772',
+          'ci/test_dsir_checkpoint_git_sync_v0_2.sh':'39e90b4c1986f1972d43e9dce7b74f0082c39559'}
+          ok=True; interfaces={}
+          for path,expected in pairs.items():
+            p=pathlib.Path(path)
+            actual=subprocess.check_output(['git','hash-object',path],text=True).strip() if p.is_file() else None
+            if actual!=expected: ok=False
+            if path.endswith('.py') and p.is_file():
+              tree=ast.parse(p.read_text('utf-8'))
+              funcs=[n.name for n in tree.body if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef))]
+              flags=sorted({n.args[0].value for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr=='add_argument' and n.args and isinstance(n.args[0],ast.Constant) and isinstance(n.args[0].value,str) and n.args[0].value.startswith('--')})
+              interfaces[path]={'blob':actual,'functions':funcs,'cli_flags':flags}
+              if not funcs: ok=False
+            else: interfaces[path]={'blob':actual}
+          fresh=interfaces['ci/exp073bu_fresh_wm_s3_pcl_v0_1.py']
+          required={'--r1-root','--lens-mask','--work-root','--out-npy','--out-json'}
+          ok &= 'build_fresh_pcl' in fresh['functions'] and required.issubset(set(fresh['cli_flags']))
+          token='T1_COMPONENT_INTERFACE_CONTRACT_COMPLETE' if ok else 'T2_COMPONENT_INTERFACE_CONTRACT_INCOMPLETE'
+          print(json.dumps({'token':token,'head_sha':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'interfaces':interfaces,'accounting':'+0/+0','wm_s3_authority_created':False,'exp073bu_activated':False},sort_keys=True))
+          if not ok: raise SystemExit(2)
+          PY
+          grep -F 'T1_COMPONENT_INTERFACE_CONTRACT_COMPLETE' exp073ct_interface_receipt.json
+      - name: Upload interface receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ct-v0-1-interface-receipt
+          path: exp073ct_interface_receipt.json
+          if-no-files-found: warn
