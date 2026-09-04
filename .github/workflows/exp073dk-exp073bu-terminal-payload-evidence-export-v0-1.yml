@@ -20,9 +20,43 @@ env:
   EXPECTED_UPSTREAM_RUN: '33910213781'
 
 jobs:
+  static-audit:
+    name: Audit Exp073DK lock scope before checkpoint-root access
+    if: ${{ github.event.workflow_run.id == 33910213781 }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify preregistration and lock-scope regression guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ github.event.workflow_run.id }}" = "$EXPECTED_UPSTREAM_RUN"
+          test "$(git hash-object experiments/073dk_exp073bu_terminal_payload_evidence_export_v0_1_prereg.md)" = "$PREREG_BLOB"
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/exp073dk-exp073bu-terminal-payload-evidence-export-v0-1.yml')
+          s=p.read_text()
+          step=s.index('      - name: Live exclusivity and immutable canonical payload export')
+          upload=s.index('      - uses: actions/upload-artifact@v4', step)
+          block=s[step:upload]
+          need=('exec 9>"$lock"','flock -n 9','test -d "$root"','root=Path(os.environ[\'CHECKPOINT_ROOT\'])')
+          pos=[block.index(x) for x in need]
+          if not (pos[0] < pos[1] < pos[2] < pos[3]):
+              raise SystemExit('FAIL_EXP073DK_LOCK_SCOPE_ORDER')
+          bind=s[s.index('      - name: Bind prospective evidence-only contract'):step]
+          forbidden=('test -d "$CHECKPOINT_ROOT"','Path(os.environ[\'CHECKPOINT_ROOT\'])','selected_te.bin','terminal_science_receipt_resume_v0_1.json')
+          if any(x in bind for x in forbidden):
+              raise SystemExit('FAIL_EXP073DK_PRELOCK_ROOT_ACCESS')
+          print('PASS_EXP073DK_LOCK_SCOPE_STATIC_AUDIT_V0_1')
+          PY
+
   export-terminal-canonical-payloads:
     name: Export immutable A/B selected-TE payload evidence
     if: ${{ github.event.workflow_run.id == 33910213781 }}
+    needs: static-audit
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 20
     steps:
@@ -45,7 +79,7 @@ jobs:
           lock="$HOME/.cache/dsir/DSIR-HOME-PC.exp073bu-8core-resume.lock"
           exec 9>"$lock"
           flock -n 9 || { echo 'BLOCKED DSIR home lock busy'; exit 4; }
-          # FD 9 intentionally remains open for this entire shell step.  No historical
+          # FD 9 intentionally remains open for this entire shell step. No historical
           # checkpoint-root filesystem access occurs before this lock is held.
           python3 - <<'PY'
           import json, os, urllib.request
