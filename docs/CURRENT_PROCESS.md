@@ -6,16 +6,17 @@ Scope: DSIR only; RTK/RQIR excluded.
 ## Current owner/process
 - **DSIR-HOME-PC: FREE.** No self-hosted heavy/scientific process is active or authorized.
 - Exp073BU numerical Wm_S3 science: **NOT ACTIVATED**; Wm_S3 scientific authority remains absent.
-- Current authoritative process: hosted-only **Exp073CV v0.3 corrected production exact integration audit**.
-- Workflow run/job `33847132443 / 100941396500`; activation/head `77cc6ba35aac41d2f6af12c7b865787db2bb3e44`; state `IN_PROGRESS` at ledger write.
+- Current authoritative process: hosted-only **Exp073CW v0.1 single-mask integrated-driver assembly audit**.
+- Workflow run/job `33860891989 / 100984835847`; activation/head `b7e42a5a9d215990f97943e3ee270ad09127d612`; state `QUEUED` at ledger write.
 - Checkpoint namespace: none; support accounting `+0/+0`.
-- Prereg commit `4d5729a1d7fc8e0e595e9225da44a85018f03c0b`, prereg blob `8be0c16a3eddf823534b5e91450f97d6dd2138de`; workflow commit `af7340618d302ffb1d94d200f53ed5ef803c600a`; scoped-verifier helper blob `640205ab9f21fd3b3ada6cb0b3a3e7c5e461f704`; inherited production adapter blob `dafe86086a470c852106f0d4ecccbda1d389e397`.
-- Static freeze PASS and scoped-verifier runtime-copy PASS are already observed. Current step: install exact NaMaster 2.7/GSL lineage.
-- Expected PASS token `I1_PRODUCTION_INTERFACE_EXACT_INTEGRATION_PASS`. Exact terminal action: consume raw receipt/artifact, verify exact full/TE SHA equality, `numpy.array_equal`, zero max difference, source head/contract fingerprint and OS mmap proof. Only I1 permits the next executable integrated-driver gate; it does **not** directly permit scientific Exp073BU activation.
+- Prereg commit `11240638a39811c90fdf74a4b214e7876010eab2`, prereg blob `cd656f5bdca99673088aac427fae7bd182f982f6`; helper commit `bada97b874fef18188481ea9e563d012733b6df0`, helper blob `f61b4e42ace7e2ab7220c0df0b38d8663136896c`; workflow commit `e766b7c0fa1ffb809534876d7c8705dd3d1bd99d`; activation/head `b7e42a5a9d215990f97943e3ee270ad09127d612`.
+- Frozen upstream Exp073BU prereg commit/blob `e1a0332c128c87049fb8699018a3a3e71c9c5321 / 816542c7eb7a8ba4e72d6e01228aa62d05c7c805` supplies exact 39-band authority `[0,...,12288]`.
+- Expected PASS token `H1_SINGLE_MASK_INTEGRATED_DRIVER_PASS`.
+- Exact terminal action on H1: consume raw artifact, verify source head/contract fingerprint, PyMaster 2.7, exact 40 DES edges/39 intervals, reconstruction counters lens=1/source=1, identical field-object handoff for PCL and workspace, TE<-TE semantics, six checkpoint order, no historical Wm_S3 numerical import and no tolerance rescue; then prospectively prepare activation-readiness audit. H1 itself does not activate Exp073BU.
+- On H2/H3/H4/H5: classify support/infrastructure blocking `+0/+0`, diagnose first causal defect, repair prospectively without changing frozen science.
 
-## Historical infrastructure outcomes preserved
-- Exp073CV v0.1 run/job/head `33843210949 / 100929554219 / 340baf103192e2cd148daf1b0097a2444c9f3342`: `I4_INFRASTRUCTURE_OR_SOURCE_BINDING_FAIL +0/+0` before numerics. Whole-file forbidden-pattern verifier self-matched its own literal; no receipt/artifact, no science authority.
-- Exp073CV v0.2 run/job/head `33847035743 / 100941100858 / 41fe6e521b69856ab6c4fd0569690b8b4dda4f09`: `I4_INFRASTRUCTURE_OR_SOURCE_BINDING_FAIL +0/+0` before numerics. First causal failure was a prereg blob freeze mismatch (`22e2...` frozen versus actual `a3635da105aed6b7e69f590577bd5e12523b142a`); no numerical step ran and no receipt/artifact was produced.
+## Newly closed authority before this process
+- Exp073CV v0.3 run/job/head `33847132443 / 100941396500 / 77cc6ba35aac41d2f6af12c7b865787db2bb3e44`: authoritative `I1_PRODUCTION_INTERFACE_EXACT_INTEGRATION_PASS +0/+0`, immutable result commit `df49dcb50d5ccffb7b29d030ed8f1f99cbf4cdd6`. Full tensor and TE exact equality, zero max difference, and OS mmap proof are preserved.
 
 ## Prospective scientific gate — Exp073BU v0.1
 Prereg `e1a0332c128c87049fb8699018a3a3e71c9c5321`; A/B namespaces `checkpoints/exp073bu-wm-s3-a-v0-1`, `checkpoints/exp073bu-wm-s3-b-v0-1`; science token `PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_V0_1`. State: **PREREGISTERED / SUPPORT INTEGRATION STILL OPEN / NOT ACTIVATED**. Scientific PASS requires whole canonical `<f8 [39,12288]` SHA256 equality AND `numpy.array_equal`; no tolerance rescue.
