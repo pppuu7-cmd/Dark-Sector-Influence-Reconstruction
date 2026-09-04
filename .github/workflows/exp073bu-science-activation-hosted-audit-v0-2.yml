@@ -44,7 +44,10 @@ jobs:
           test "$(grep -c '^  workflow_dispatch:' "$w")" = '1'
           test "$(grep -c '^  push:' "$w" || true)" = '0'
           test "$(grep -c '^  schedule:' "$w" || true)" = '0'
-          ! grep -Fq 'CHECKPOINT_ROOT: ${{ runner.' "$w"
+          if grep -F 'CHECKPOINT_ROOT:' "$w" | grep -Fq 'runner.'; then
+            echo 'forbidden job-level runner context in CHECKPOINT_ROOT'
+            exit 1
+          fi
           grep -Fq 'echo "CHECKPOINT_ROOT=$root" >> "$GITHUB_ENV"' "$w"
           test "$(grep -Fc 'runs-on: [self-hosted, Linux, X64]' "$w")" = '1'
           grep -Fq 'needs: hosted-preflight' "$w"
