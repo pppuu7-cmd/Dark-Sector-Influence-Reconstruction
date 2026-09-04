@@ -1,0 +1,280 @@
+name: Exp073DJ checkpoint-preserving Exp073BU resume v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/activate_exp073dj_exp073bu_checkpoint_resume_v0_1.txt'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: exp073bu-wm-s3-home-checkpoint-resume-v0-1
+  cancel-in-progress: false
+
+env:
+  PREREG_BLOB: '6481b63f73359a7d05d37ad3e8cc5da00dfd8074'
+  SUPPORT_RECOVERY: 'recovery/2026-09-04_exp073bu_v04_runner_loss_and_resume_support_chain.md'
+  SUPPORT_RECOVERY_BLOB: '7293102c114154a44a1ae514a36d01fb0374e95e'
+  FROZEN_SCIENCE_HEAD: 'c02c018ede6a1fcf7aef1a848c0118a0669ed67f'
+  ORIGINAL_WORKFLOW_BLOB: 'f8c70a4206321b0dc10b57f63a2a06163da2249a'
+  ORIGINAL_CONTRACT_FP: 'b38687bf5aa6cf4cfe01b2f38a7091e96d97196ad38bdf2ea771f7b649ac73da'
+  BASE_DRIVER_BLOB: '5c8d5d3463e455389a1ca3df2639bf06a3b7b603'
+  RESUME_LINEAGE_BLOB: 'a0b3f399cb26457c03b57dd16e79245aec4fbca0'
+  RESUME_DRIVER_BLOB: 'd0fd545ef7b1245f21a5d7cba2f3b2eed459d87b'
+  RESUME_LAUNCHER_BLOB: '0026c9607c935b4b2ad90a396cecee735b893738'
+  FROZEN_LAUNCHER_BLOB: '8a725ba135e3e120ce6e8d0db3dd14d95d4ffd6e'
+  OMP8_ADAPTER_BLOB: '63ee393791bba43d3eabbea654efdb9d439d477e'
+  OMP_SOURCE_BLOB: 'be4f381de4c5c043a9c0fcd107e63ef3f2079578'
+  HELPER_BLOB: '73ef04c479547dc8e2e89c9f511f1a55fae3ed64'
+  BASE_ADAPTER_BLOB: 'dafe86086a470c852106f0d4ecccbda1d389e397'
+  COMPONENT_BLOBS_BLOB: '0d6d6e882d1a4cf1ff79fbe8227a4f2b460c7e40'
+  ACTIVATION_CONTROL: 'control/activate_exp073dj_exp073bu_checkpoint_resume_v0_1.txt'
+
+jobs:
+  hosted-preflight:
+    name: Hosted exact checkpoint-resume binding
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Bind frozen science identity and validated repair chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = 'refs/heads/main'
+          git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" | grep -Fxq "$ACTIVATION_CONTROL"
+          test "$(git hash-object experiments/073dj_exp073bu_checkpoint_preserving_resume_orchestration_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object "$SUPPORT_RECOVERY")" = "$SUPPORT_RECOVERY_BLOB"
+          test "$(git show ${FROZEN_SCIENCE_HEAD}:.github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-8core-v0-4.yml | git hash-object --stdin)" = "$ORIGINAL_WORKFLOW_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py)" = "$BASE_DRIVER_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_5.py)" = "$RESUME_LINEAGE_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_8core_resume_v0_7.py)" = "$RESUME_DRIVER_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_science_launcher_8core_resume_v0_4.py)" = "$RESUME_LAUNCHER_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_science_launcher_8core_v0_3.py)" = "$FROZEN_LAUNCHER_BLOB"
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_omp8_v0_3.py)" = "$OMP8_ADAPTER_BLOB"
+          test "$(git hash-object ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c)" = "$OMP_SOURCE_BLOB"
+          test "$(git hash-object ci/exp073bu_fresh_wm_s3_pcl_v0_1.py)" = "$HELPER_BLOB"
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_v0_1.py)" = "$BASE_ADAPTER_BLOB"
+          test "$(git hash-object ci/exp073cv_component_blobs_v0_1.json)" = "$COMPONENT_BLOBS_BLOB"
+          for tok in PASS_EXP073DE_SPLIT_IDENTITY_RESUME_BINDING_V0_1 PASS_EXP073DF_LEGACY_COMPLETE_RESUME_PASSTHROUGH_V0_1 PASS_EXP073DG_BOUNDARY_SAFE_RESUME_V0_1 PASS_EXP073DH_MASK_WORKSPACE_LINEAGE_RESUME_V0_1 PASS_EXP073DI_RESTORED_ADAPTER_RUNTIME_PROVENANCE_V0_1; do grep -Fq "$tok" "$SUPPORT_RECOVERY"; done
+          grep -Fq '33901458494 / 101116305364' "$SUPPORT_RECOVERY"
+          grep -Fq 'INFRASTRUCTURE_INCOMPLETE / runner-loss-like termination' "$SUPPORT_RECOVERY"
+          echo PASS_EXP073DJ_FROZEN_RESUME_BINDING
+      - name: Hosted self-hosted noncompetition check
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; current=int(os.environ['GITHUB_RUN_ID']); token=os.environ['GH_TOKEN']
+          h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}; bad=[]
+          for status in ('queued','in_progress'):
+              q=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100',headers=h)
+              with urllib.request.urlopen(q) as r: runs=json.load(r).get('workflow_runs',[])
+              for run in runs:
+                  if int(run['id'])==current: continue
+                  q2=urllib.request.Request(f"https://api.github.com/repos/{repo}/actions/runs/{run['id']}/jobs?per_page=100",headers=h)
+                  with urllib.request.urlopen(q2) as r2: jobs=json.load(r2).get('jobs',[])
+                  if any('self-hosted' in (j.get('labels') or []) or j.get('runner_name')=='DSIR-HOME-PC' for j in jobs): bad.append({'run':run['id'],'name':run.get('name')})
+          if bad: raise SystemExit('BLOCKED competing self-hosted DSIR work: '+json.dumps(bad,sort_keys=True))
+          print('PASS_EXP073DJ_HOSTED_NONCOMPETITION')
+          PY
+
+  science-resume-ab:
+    name: Exp073BU checkpoint resume A then B exact 8-core
+    needs: hosted-preflight
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 720
+    env:
+      OMP_NUM_THREADS: '8'
+      OMP_DYNAMIC: 'FALSE'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+      PYTHONUNBUFFERED: '1'
+      SOURCE_HEAD: 'c02c018ede6a1fcf7aef1a848c0118a0669ed67f'
+      CONTRACT_FP: 'b38687bf5aa6cf4cfe01b2f38a7091e96d97196ad38bdf2ea771f7b649ac73da'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Bind exact 8-core hardware and existing historical checkpoint root
+        shell: bash
+        run: |
+          set -euo pipefail
+          cpus="$(python3 - <<'PY'
+          import os
+          print(len(os.sched_getaffinity(0)) if hasattr(os,'sched_getaffinity') else (os.cpu_count() or 0))
+          PY
+          )"
+          echo "home_affinity_cpus=$cpus"; test "$cpus" = '8'
+          root="$HOME/.cache/dsir/exp073bu-wm-s3-fresh-ab-8core-v0-4-33901458494"
+          echo "CHECKPOINT_ROOT=$root" >> "$GITHUB_ENV"
+          test -d "$root" || { echo 'BLOCKED historical checkpoint root missing'; exit 4; }
+          test "$SOURCE_HEAD" = "$FROZEN_SCIENCE_HEAD"
+          test "$CONTRACT_FP" = "$ORIGINAL_CONTRACT_FP"
+          echo PASS_EXP073DJ_EXISTING_CHECKPOINT_ROOT
+      - name: Install or reuse exact NaMaster 2.7 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$HOME/.cache/dsir-miniforge"; ENV="$HOME/.cache/dsir-nmt27"
+          if ! test -x "$MF/bin/conda"; then mkdir -p "$HOME/.cache/dsir"; curl -fL --retry 5 --retry-delay 2 https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o "$RUNNER_TEMP/miniforge.sh"; bash "$RUNNER_TEMP/miniforge.sh" -b -p "$MF"; fi
+          if ! test -x "$ENV/bin/python"; then "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 healpy astropy compilers; else "$MF/bin/conda" install -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 healpy astropy compilers; fi
+          echo "NMT_PREFIX=$ENV" >> "$GITHUB_ENV"; echo "NMT_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+          "$ENV/bin/python" - <<'PY'
+          import importlib.metadata,os,numpy
+          v=importlib.metadata.version('pymaster'); assert v=='2.7' or v.startswith('2.7.'),v; assert os.environ['OMP_NUM_THREADS']=='8'
+          print('pymaster',v,'numpy',numpy.__version__,'OMP_NUM_THREADS',os.environ['OMP_NUM_THREADS'])
+          PY
+      - name: Fail-closed durable checkpoint inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$NMT_PY" - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          import numpy as np
+          root=Path(os.environ['CHECKPOINT_ROOT']); head=os.environ['SOURCE_HEAD']; fp=os.environ['CONTRACT_FP']
+          order=['fresh_masks_complete','fresh_workspace_mcm_complete','mcm_fits_verified','full_window_complete','selected_te_complete','replica_receipt_complete']
+          ns={'A':'checkpoints/exp073bu-wm-s3-a-v0-1','B':'checkpoints/exp073bu-wm-s3-b-v0-1'}
+          def fsha(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for b in iter(lambda:f.read(8<<20),b''): h.update(b)
+              return h.hexdigest()
+          def asha(p):
+              a=np.load(p,mmap_mode='r',allow_pickle=False); c=np.ascontiguousarray(np.asarray(a,dtype='<f8')); h=hashlib.sha256(memoryview(c).cast('B')).hexdigest(); del a,c; return h
+          for r in ('A','B'):
+              rr=root/r; missing=False; present=[]
+              for s in order:
+                  p=rr/f'{s}.json'
+                  if not p.is_file(): missing=True; continue
+                  if missing: raise SystemExit(f'BLOCKED gapped checkpoint sequence {r}: later stage {s} after missing earlier stage')
+                  m=json.loads(p.read_text()); ok=(m.get('complete') is True and m.get('stage')==s and m.get('replica')==r and m.get('checkpoint_namespace')==ns[r] and m.get('source_head')==head and m.get('contract_fingerprint')==fp and m.get('historical_wm_s3_numerical_import') is False and m.get('other_replica_output_read') is False)
+                  if not ok: raise SystemExit(f'BLOCKED checkpoint identity mismatch {r}/{s}')
+                  pl=m.get('payloads') or {}
+                  if s=='fresh_masks_complete':
+                      lp=rr/'lens_mask.npy'; sp=rr/'s3_mask.npy'
+                      if not lp.is_file() or not sp.is_file(): raise SystemExit(f'BLOCKED mask payload missing {r}')
+                      if asha(lp)!=(pl.get('lens_mask') or {}).get('canonical_sha256') or asha(sp)!=(pl.get('s3_mask') or {}).get('canonical_sha256'): raise SystemExit(f'BLOCKED mask SHA mismatch {r}')
+                      if pl.get('reconstruction_counts')!={'lens':1,'source':1}: raise SystemExit(f'BLOCKED mask cumulative lineage {r}')
+                  elif s in ('fresh_workspace_mcm_complete','mcm_fits_verified'):
+                      wp=rr/'fresh_workspace.fits'; want=(pl.get('workspace_fits') or {}).get('sha256')
+                      if not wp.is_file() or not want or fsha(wp)!=want: raise SystemExit(f'BLOCKED workspace SHA mismatch {r}/{s}')
+                  elif s=='full_window_complete':
+                      q=rr/'exact_route'/'full_window.bin'; x=pl.get('full_window') or {}
+                      if x.get('shape')!=[2,39,2,12288] or not q.is_file() or q.stat().st_size!=2*39*2*12288*8 or fsha(q)!=x.get('sha256'): raise SystemExit(f'BLOCKED full-window payload {r}')
+                  elif s=='selected_te_complete':
+                      q=rr/'exact_route'/'selected_te.bin'; x=pl.get('selected_te') or {}
+                      if x.get('shape')!=[39,12288] or x.get('dtype')!='<f8' or x.get('semantics')!='wins[0,:,0,:] = TE<-TE' or not q.is_file() or q.stat().st_size!=39*12288*8 or fsha(q)!=x.get('sha256'): raise SystemExit(f'BLOCKED selected-TE payload {r}')
+                  elif s=='replica_receipt_complete':
+                      q=rr/'replica_receipt.json'; want=(pl.get('replica_receipt') or {}).get('sha256')
+                      if not q.is_file() or not want or fsha(q)!=want: raise SystemExit(f'BLOCKED replica receipt SHA {r}')
+                  present.append(s)
+              print(f'checkpoint_prefix_{r}='+(','.join(present) if present else 'NONE'))
+          print('PASS_EXP073DJ_DURABLE_CHECKPOINT_INVENTORY')
+          PY
+      - name: Stage exact frozen Exp073R1 S3 authority
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+          run-id: 33270843577
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/exp073bu-r1
+      - name: Stage and hash-verify exact DES lens mask
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/exp073bu-lens"; lens="$RUNNER_TEMP/exp073bu-lens/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits"
+          curl --fail --location --retry 5 --retry-delay 2 --output "$lens" https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redmagic/DES_Y1A1_3x2pt_redMaGiC_MASK_HPIX4096RING.fits
+          test "$(stat -c %s "$lens")" = '104595840'; test "$(sha256sum "$lens" | awk '{print $1}')" = 'a519b8522f899e4c33267bb0749f9734f8b7fa760d195636456d370f809a3d55'; echo "LENS_PATH=$lens" >> "$GITHUB_ENV"
+      - name: Compile deterministic OpenMP-8 full-window downstream
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/exp073bu-bin"
+          "$NMT_PREFIX/bin/x86_64-conda-linux-gnu-cc" -O0 -std=c11 -fopenmp -DDSIR_WORKERS=8 -I"$NMT_PREFIX/include" ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c -L"$NMT_PREFIX/lib" -Wl,-rpath,"$NMT_PREFIX/lib" -lgsl -lgslcblas -lm -o "$RUNNER_TEMP/exp073bu-bin/mmap_full_mcm_omp8"
+          echo "DOWNSTREAM_EXE=$RUNNER_TEMP/exp073bu-bin/mmap_full_mcm_omp8" >> "$GITHUB_ENV"
+      - name: Runtime-certify actual 8-thread downstream
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$NMT_PY" - <<'PY'
+          import struct,numpy as np,os
+          p=os.environ['RUNNER_TEMP']+'/omp8_probe.bin'; L=4; ncls=2; edges=np.array([0,2,4],dtype='<i4'); nr=ncls*L
+          i=np.arange(nr,dtype=np.float64); m=np.eye(nr,dtype=np.float64)+1e-7*((i[:,None]+1.0)*(i[None,:]+3.0)%17.0)
+          with open(p,'wb') as f: f.write(struct.pack('<iii',ncls,2,L)); f.write(edges.tobytes()); f.write(np.asarray(m,dtype='<f8').tobytes(order='C'))
+          PY
+          set +e; probe="$($DOWNSTREAM_EXE "$RUNNER_TEMP/omp8_probe.bin" "$RUNNER_TEMP/omp8_probe_out.bin" 2>&1)"; rc=$?; set -e
+          echo "$probe"; test "$rc" = '0'; grep -Fq 'DSIR_OMP_TEAM=8' <<<"$probe"; echo PASS_EXP073DJ_RUNTIME_8_THREAD_TEAM
+      - name: Live exclusivity and checkpoint-preserving Exp073BU A-then-B resume
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lock="$HOME/.cache/dsir/DSIR-HOME-PC.exp073bu-8core-resume.lock"; exec 9>"$lock"; flock -n 9 || { echo BLOCKED; exit 4; }
+          "$NMT_PY" - <<'PY'
+          import json,os,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; current=int(os.environ['GITHUB_RUN_ID']); token=os.environ['GH_TOKEN']; h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}; bad=[]
+          for status in ('queued','in_progress'):
+              q=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100',headers=h)
+              with urllib.request.urlopen(q) as rr: runs=json.load(rr).get('workflow_runs',[])
+              for run in runs:
+                  if int(run['id'])==current: continue
+                  q2=urllib.request.Request(f"https://api.github.com/repos/{repo}/actions/runs/{run['id']}/jobs?per_page=100",headers=h)
+                  with urllib.request.urlopen(q2) as r2: jobs=json.load(r2).get('jobs',[])
+                  if any('self-hosted' in (j.get('labels') or []) or j.get('runner_name')=='DSIR-HOME-PC' for j in jobs): bad.append(run['id'])
+          if bad: raise SystemExit('BLOCKED competing self-hosted runs '+repr(bad))
+          print('PASS_EXP073DJ_LIVE_EXCLUSIVITY')
+          PY
+          terminal="$CHECKPOINT_ROOT/terminal_science_receipt_resume_v0_1.json"
+          "$NMT_PY" ci/exp073bu_wm_s3_science_launcher_8core_resume_v0_4.py --driver ci/exp073bu_wm_s3_fresh_ab_production_8core_resume_v0_7.py --r1-root "$RUNNER_TEMP/exp073bu-r1" --lens-mask "$LENS_PATH" --checkpoint-root "$CHECKPOINT_ROOT" --downstream-exe "$DOWNSTREAM_EXE" --component-blobs-json ci/exp073cv_component_blobs_v0_1.json --source-head "$SOURCE_HEAD" --contract-fingerprint "$CONTRACT_FP" --out "$terminal"
+      - name: Prepare immutable checkpoint-resume science evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/exp073dj-resume-evidence"; rm -rf "$out"; mkdir -p "$out/A" "$out/B"; root="${CHECKPOINT_ROOT:-}"
+          if test -z "$root"; then printf '%s\n' 'INFRASTRUCTURE_INCOMPLETE: checkpoint root was never bound' > "$out/infrastructure_note.txt"; exit 0; fi
+          test ! -f "$root/terminal_science_receipt.json" || cp "$root/terminal_science_receipt.json" "$out/historical_terminal_science_receipt_if_any.json"
+          test ! -f "$root/terminal_science_receipt_resume_v0_1.json" || cp "$root/terminal_science_receipt_resume_v0_1.json" "$out/"
+          for r in A B; do
+            test ! -f "$root/$r/replica_receipt.json" || cp "$root/$r/replica_receipt.json" "$out/$r/"
+            test ! -f "$root/$r/exact_route/receipt.json" || cp "$root/$r/exact_route/receipt.json" "$out/$r/adapter_receipt.json"
+            for s in fresh_masks_complete fresh_workspace_mcm_complete mcm_fits_verified full_window_complete selected_te_complete replica_receipt_complete; do test ! -f "$root/$r/$s.json" || cp "$root/$r/$s.json" "$out/$r/"; done
+          done
+          find "$out" -maxdepth 3 -type f -print -exec sha256sum {} \;
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073dj-exp073bu-checkpoint-resume-${{ github.run_id }}-${{ github.sha }}
+          path: ${{ runner.temp }}/exp073dj-resume-evidence
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
+      - name: Preserve frozen terminal classification
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${CHECKPOINT_ROOT:-}"; term="$root/terminal_science_receipt_resume_v0_1.json"
+          if test -z "$root" || ! test -f "$term"; then echo INFRASTRUCTURE_INCOMPLETE; exit 4; fi
+          NPY="${NMT_PY:-python3}"; "$NPY" - <<'PY'
+          import json,os
+          p=os.path.join(os.environ['CHECKPOINT_ROOT'],'terminal_science_receipt_resume_v0_1.json'); r=json.load(open(p)); c=r.get('classification'); print('classification='+str(c)); print('raw_token='+str(r.get('raw_token')))
+          if c=='PASS':
+              assert r.get('raw_token')=='PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_8CORE_V0_3'; assert r.get('science_gate_scored') is True and r.get('wm_s3_authority_created') is True; assert r['comparison']['whole_canonical_sha256_equal'] is True and r['comparison']['numpy_array_equal'] is True; raise SystemExit(0)
+          if c=='SCIENTIFIC_REPEATABILITY_FAIL': raise SystemExit(3)
+          raise SystemExit(4)
+          PY
