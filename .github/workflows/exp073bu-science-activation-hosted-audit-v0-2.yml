@@ -1,0 +1,101 @@
+name: Exp073BU science activation hosted audit v0.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/activate_exp073bu_science_activation_audit_v0_2.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bind frozen v0.2 activation chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073bu_article3_wm_s3_fresh_independent_ab_exact_repeatability_v0_1_prereg.md)" = '816542c7eb7a8ba4e72d6e01228aa62d05c7c805'
+          test "$(git hash-object experiments/073bu_wm_s3_selfhosted_science_activation_v0_2_prereg.md)" = '58377eb593e7a48302106efa66be576f667ac19a'
+          test "$(git hash-object .github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-v0-2.yml)" = '359df0f9779425a6fb2241ed477c07650eeec36c'
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py)" = '5c8d5d3463e455389a1ca3df2639bf06a3b7b603'
+          test "$(git hash-object ci/exp073bu_fresh_wm_s3_pcl_v0_1.py)" = '73ef04c479547dc8e2e89c9f511f1a55fae3ed64'
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_v0_1.py)" = 'dafe86086a470c852106f0d4ecccbda1d389e397'
+          test "$(git hash-object ci/exp073cv_component_blobs_v0_1.json)" = '0d6d6e882d1a4cf1ff79fbe8227a4f2b460c7e40'
+          test "$(git hash-object ci/exp073by_mmap_full_mcm_downstream_v0_1.c)" = 'acafb095deafae7602101d8305e239341010ba79'
+          test "$(git hash-object ci/exp073bu_wm_s3_science_launcher_v0_1.py)" = '1a54ad89d32dd217443bc3062a6215bf10e8b17d'
+          test "$(git hash-object recovery/2026-09-04_exp073cx_v0_4_a1_activation_readiness_pass.md)" = '43b658028f74b7a0b52fca8261beeb58026d8ffc'
+          grep -Fq 'A1_EXP073BU_ACTIVATION_READINESS_PASS' recovery/2026-09-04_exp073cx_v0_4_a1_activation_readiness_pass.md
+          echo PASS_EXP073BU_V0_2_EXACT_BLOB_BINDING
+
+      - name: Audit validation-scope repair and manual-only activation
+        shell: bash
+        run: |
+          set -euo pipefail
+          w=.github/workflows/exp073bu-wm-s3-fresh-ab-exact-science-v0-2.yml
+          grep -Fq 'workflow_dispatch:' "$w"
+          test "$(grep -c '^  workflow_dispatch:' "$w")" = '1'
+          test "$(grep -c '^  push:' "$w" || true)" = '0'
+          test "$(grep -c '^  schedule:' "$w" || true)" = '0'
+          ! grep -Fq 'CHECKPOINT_ROOT: ${{ runner.' "$w"
+          grep -Fq 'echo "CHECKPOINT_ROOT=$root" >> "$GITHUB_ENV"' "$w"
+          test "$(grep -Fc 'runs-on: [self-hosted, Linux, X64]' "$w")" = '1'
+          grep -Fq 'needs: hosted-preflight' "$w"
+          grep -Fq 'ACTIVATE_EXP073BU_WM_S3_V0_1' "$w"
+          grep -Fq 'exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536' "$w"
+          grep -Fq 'PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_V0_1' "$w"
+          grep -Fq 'numpy_array_equal' "$w"
+          grep -Fq 'whole_canonical_sha256_equal' "$w"
+          echo PASS_EXP073BU_V0_2_GITHUB_VALIDATION_SCOPE_REPAIR
+
+      - name: Audit science boundaries remain frozen
+        shell: bash
+        run: |
+          set -euo pipefail
+          p=experiments/073bu_wm_s3_selfhosted_science_activation_v0_2_prereg.md
+          grep -Fq 'does not change the scientific contract' "$p"
+          grep -Fq 'SCIENTIFIC_REPEATABILITY_FAIL' "$p"
+          grep -Fq 'INFRASTRUCTURE_INCOMPLETE' "$p"
+          grep -Fq 'BLOCKED' "$p"
+          grep -Fq 'No tolerance' "$p"
+          echo PASS_EXP073BU_V0_2_SCIENCE_BOUNDARY_PRESERVATION
+
+      - name: Emit hosted audit receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073bu
+          python3 - <<'PY'
+          import json, os
+          rec={
+            'schema':'dsir.exp073bu.science_activation_hosted_audit.v0.2',
+            'status':'PASS_EXP073BU_SCIENCE_ACTIVATION_HOSTED_AUDIT_V0_2',
+            'source_head':os.environ['GITHUB_SHA'],
+            'science_workflow_blob':'359df0f9779425a6fb2241ed477c07650eeec36c',
+            'activation_prereg_blob':'58377eb593e7a48302106efa66be576f667ac19a',
+            'original_science_prereg_blob':'816542c7eb7a8ba4e72d6e01228aa62d05c7c805',
+            'production_driver_blob':'5c8d5d3463e455389a1ca3df2639bf06a3b7b603',
+            'science_launcher_blob':'1a54ad89d32dd217443bc3062a6215bf10e8b17d',
+            'historical_v0_1_validation_run':33883760874,
+            'historical_v0_1_science_numerics_executed':False,
+            'science_numerics_executed':False,
+            'wm_s3_authority_created':False,
+            'accounting':'+0/+0',
+          }
+          open('data/derived/exp073bu/exp073bu_science_activation_hosted_audit_v0_2.json','w').write(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          print(rec['status'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073bu-science-activation-hosted-audit-v0-2-${{ github.sha }}
+          path: data/derived/exp073bu/exp073bu_science_activation_hosted_audit_v0_2.json
+          retention-days: 90
+          compression-level: 0
