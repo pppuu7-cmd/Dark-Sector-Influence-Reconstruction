@@ -1,0 +1,89 @@
+name: Exp073DI restored adapter runtime provenance v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/activate_exp073di_restored_adapter_runtime_provenance_v0_1.txt'
+
+permissions:
+  contents: read
+
+env:
+  PREREG_BLOB: '27a241bf0ee54384d4b311104d7f36db112c5e37'
+  RESUME_LAUNCHER_BLOB: '0026c9607c935b4b2ad90a396cecee735b893738'
+  FROZEN_LAUNCHER_BLOB: '8a725ba135e3e120ce6e8d0db3dd14d95d4ffd6e'
+  ADAPTER_OMP8_BLOB: '63ee393791bba43d3eabbea654efdb9d439d477e'
+  RESUME_DRIVER_BLOB: 'd0fd545ef7b1245f21a5d7cba2f3b2eed459d87b'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bind exact provenance repair blobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073di_exp073bu_restored_adapter_runtime_provenance_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_science_launcher_8core_resume_v0_4.py)" = "$RESUME_LAUNCHER_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_science_launcher_8core_v0_3.py)" = "$FROZEN_LAUNCHER_BLOB"
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_omp8_v0_3.py)" = "$ADAPTER_OMP8_BLOB"
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_8core_resume_v0_7.py)" = "$RESUME_DRIVER_BLOB"
+      - name: Static fallback and frozen-comparator audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import ast,pathlib
+          s=pathlib.Path('ci/exp073bu_wm_s3_science_launcher_8core_resume_v0_4.py').read_text(); t=ast.parse(s)
+          req=[
+            'import exp073bu_wm_s3_science_launcher_8core_v0_3 as frozen',
+            "root / 'exact_route' / 'receipt.json'",
+            "a.get('source_head') == head",
+            "a.get('contract_fingerprint') == fp",
+            "a.get('checkpoint_namespace') == frozen.NAMESPACES[replica]",
+            "a.get('historical_wm_s3_numerical_import') is False",
+            "a.get('no_tolerance_rescue') is True",
+            "a.get('workspace_fits_sha256') == ws_sha",
+            "a.get('full_window_sha256') == full_sha",
+            "a.get('selected_te_sha256') == te_sha",
+            "a.get('full_shape') == list(frozen.FULL_SHAPE)",
+            "a.get('selected_te_shape') == list(frozen.SHAPE)",
+            "frozen.sha_file(full) == full_sha",
+            "frozen.sha_file(te) == te_sha",
+            "par.get('workers') == 8",
+            "par.get('runtime_team_verified') is True",
+            "par.get('scalar_accumulation_order_preserved') is True",
+            "frozen.validate_replica = validate_replica",
+            "raise SystemExit(frozen.main())",
+          ]
+          assert all(x in s for x in req)
+          for bad in ('allclose','isclose','rtol','atol','mean(','average(','smooth','round('): assert bad not in s
+          # Fallback may only occur when receipt-local runtime proof is absent/invalid.
+          vf=next(n for n in t.body if isinstance(n,ast.FunctionDef) and n.name=='validate_replica')
+          vsrc=ast.get_source_segment(s,vf)
+          assert vsrc.index("par = (r.get('adapter_receipt')") < vsrc.index('if not _parallelism_ok(par):') < vsrc.index('_validated_adapter_fallback')
+          # Frozen launcher retains exact terminal comparator/token.
+          f=pathlib.Path('ci/exp073bu_wm_s3_science_launcher_8core_v0_3.py').read_text()
+          assert "PASS_TOKEN='PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_8CORE_V0_3'" in f
+          assert "se=a['selected_te_sha256']==b['selected_te_sha256']" in f
+          assert 'ae=bool(np.array_equal(aa,bb))' in f
+          assert "if se and ae: rec['classification']='PASS'" in f
+          assert 'no_tolerance_rescue' in f
+          print('PASS_EXP073DI_RESTORED_ADAPTER_RUNTIME_PROVENANCE_V0_1')
+          PY
+      - name: Emit raw support result
+        shell: bash
+        run: |
+          cat > exp073di_result.json <<EOF
+          {"classification":"PASS","raw_token":"PASS_EXP073DI_RESTORED_ADAPTER_RUNTIME_PROVENANCE_V0_1","science_gate_scored":false,"wm_s3_authority_created":false,"resume_launcher_blob":"${RESUME_LAUNCHER_BLOB}","frozen_launcher_blob":"${FROZEN_LAUNCHER_BLOB}","resume_driver_blob":"${RESUME_DRIVER_BLOB}"}
+          EOF
+          cat exp073di_result.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073di-restored-adapter-runtime-provenance-${{ github.run_id }}-${{ github.sha }}
+          path: exp073di_result.json
+          retention-days: 90
+          compression-level: 0
