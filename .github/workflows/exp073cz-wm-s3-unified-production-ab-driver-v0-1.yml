@@ -1,0 +1,64 @@
+name: Exp073CZ Wm_S3 unified production A/B driver v0.1
+on:
+  push:
+    paths:
+      - '.github/activations/exp073cz-wm-s3-unified-production-ab-driver-v0-1.txt'
+permissions:
+  contents: read
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Freeze source head
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          mkdir -p artifacts/exp073cz
+          printf '%s\n' "${GITHUB_SHA}" > artifacts/exp073cz/source_head.txt
+      - name: Compile production and audit sources
+        run: |
+          set -euo pipefail
+          python -m py_compile ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py
+          python -m py_compile ci/exp073cz_wm_s3_unified_production_ab_driver_audit_v0_1.py
+      - name: Run frozen Exp073CZ audit
+        id: audit
+        shell: bash
+        run: |
+          set +e
+          python ci/exp073cz_wm_s3_unified_production_ab_driver_audit_v0_1.py \
+            --driver ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py \
+            --prereg preregistration/exp073cz_wm_s3_unified_production_ab_driver_v0_1.md \
+            --fresh-helper ci/exp073bu_fresh_wm_s3_pcl_v0_1.py \
+            --adapter ci/exp073cv_wm_s3_production_exact_adapter_v0_1.py \
+            --expected-driver-blob 5c8d5d3463e455389a1ca3df2639bf06a3b7b603 \
+            --expected-prereg-blob 3720911912fb7e36657b38f6f5767087cd6e9ca4 \
+            --expected-fresh-blob 73ef04c479547dc8e2e89c9f511f1a55fae3ed64 \
+            --expected-adapter-blob dafe86086a470c852106f0d4ecccbda1d389e397 \
+            --source-head "${GITHUB_SHA}" \
+            --out artifacts/exp073cz/receipt.json
+          rc=$?
+          echo "$rc" > artifacts/exp073cz/audit_rc.txt
+          exit 0
+      - name: Hash receipt
+        if: always()
+        run: |
+          set -euo pipefail
+          sha256sum artifacts/exp073cz/receipt.json | tee artifacts/exp073cz/receipt.sha256
+      - name: Upload raw audit artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073cz-wm-s3-unified-production-ab-driver-v0-1
+          path: artifacts/exp073cz
+          if-no-files-found: error
+          retention-days: 30
+      - name: Propagate frozen audit classification
+        if: always()
+        run: |
+          set -euo pipefail
+          rc=$(cat artifacts/exp073cz/audit_rc.txt)
+          exit "$rc"
