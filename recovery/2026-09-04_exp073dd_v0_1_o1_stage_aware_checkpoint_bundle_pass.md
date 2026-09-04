@@ -8,12 +8,17 @@ Date: 2026-09-04. Scope DSIR only; RTK/RQIR excluded.
 - Hosted regression commit/blob: `34a1a9885495bbdca68a78ee150c034919325a01` / `c4172ed349b6f0e3cb8023c6dedb0ae32283ddf2`.
 - Activation/workflow head: `dbeb4f66c681a94364fcffee92cb11464bf2bc57`.
 - Actions run/job: `33884749118 / 101061680308`.
-- Artifact: `9941347886`, name `exp073dd-stage-aware-checkpoint-bundle-dbeb4f66c681a94364fcffee92cb11464bf2bc57`, Actions digest `sha256:ab8c4e322121e60feabad862224f5b818e6d73c9526005ba0745bb40a5c8d2ce`.
+- Artifact: `9941347886`, name `exp073dd-stage-aware-checkpoint-bundle-dbeb4f66c681a94364fcffee92cb11464bf2bc57`.
+- Actions artifact digest: `sha256:ab8c4e322121e60feabad862224f5b818e6d73c9526005ba0745bb40a5c8d2ce`.
+- Independently downloaded artifact ZIP SHA256: `ab8c4e322121e60feabad862224f5b818e6d73c9526005ba0745bb40a5c8d2ce`, exact match to Actions digest.
+
+## Raw artifact consumption
+Raw `exp073dd_classification.json` was downloaded and inspected, not inferred from workflow success. It contains `token=O1_STAGE_AWARE_CHECKPOINT_BUNDLE_PASS`, `classification=+0/+0`, `regression_rc=0`, `run_id=33884749118`, `source_head=dbeb4f66c681a94364fcffee92cb11464bf2bc57`.
+
+Raw `exp073dd_receipt.json` has all prospectively required positive fields exactly `true`: `multi_stage_progression`, `cross_stage_object_reuse`, `partial_stage_restore_rejected`, `resume`, `exact_file_restore`, `existing_ref_exact_lease`, `verified_absent_safe_creation`, `exact_post_head`, `ab_namespace_isolation`, `stage_order_rejection`, `corrupt_object_rejection`, `object_cap_64mib`, `transition_cap_1gib`, `same_control_plane`. It also has exactly `science_numerics_executed=false`, `wm_s3_authority_created=false`, `exp073bu_activated=false`.
 
 ## Frozen classification
 `O1_STAGE_AWARE_CHECKPOINT_BUNDLE_PASS`, support/infrastructure `+0/+0`.
-
-The run completed the exact frozen source-binding step, deterministic stage-aware transport regression, frozen classifier and raw-artifact upload. The classifier step is fail-closed: workflow success is possible only when all prospectively frozen O1 receipt fields are true, science numerics are false, Wm_S3 authority creation is false, and Exp073BU activation is false.
 
 Validated O1 semantics are: same admitted Exp073DB remote-Git/checkpoints control plane; six ordered stage names; content-addressed immutable objects; <=64 MiB objects; <=1 GiB remote transitions; interrupted incomplete stage rejected by restore; resume to completion; exact file restore; cross-stage object reuse; existing-ref exact lease; verified-ABSENT safe creation; exact post-head; A/B namespace isolation; stage-order rejection; corrupt-object rejection. All regression payloads are synthetic.
 
