@@ -1,0 +1,71 @@
+name: Exp073DE exact full-window resume repair v0.3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073de-full-window-resume-repair-v0-3.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-exact-resume:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Freeze exact unchanged helper and v0.3 shell repair
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073de_wm_s3_full_window_resume_repair_v0_3_prereg.md)" = '1dfbb5809e4a8e2ef4a06b731ca00f5a0a11351c'
+          test "$(git hash-object ci/exp073de_full_window_resume_v0_2.py)" = '210775ebf9b3f1aad9ade0ea0d095848c1481c0f'
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_v0_1.py)" = 'dafe86086a470c852106f0d4ecccbda1d389e397'
+          grep -Fq "te=canon(full[0,:,0,:]); te_path.write_bytes(memoryview(te).cast('B'))" ci/exp073cv_wm_s3_production_exact_adapter_v0_1.py
+      - name: Provision explicit hosted dependency
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check --no-input 'numpy>=2,<3'
+          python3 - <<'PY'
+          import numpy
+          print('numpy='+numpy.__version__)
+          PY
+      - name: Execute exact synthetic resume regression with durable diagnostics
+        id: test
+        shell: bash
+        run: |
+          set +e
+          python3 ci/exp073de_full_window_resume_v0_2.py --self-test --out exp073de_v03_receipt.json 2>&1 | tee exp073de_v03_stdout_stderr.log
+          rc=${PIPESTATUS[0]}
+          echo "rc=${rc}" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Classify frozen gate including missing-receipt Q4
+        if: always()
+        env:
+          RC: ${{ steps.test.outputs.rc }}
+        run: |
+          python3 - <<'PY'
+          import json,os,pathlib
+          p=pathlib.Path('exp073de_v03_receipt.json'); rc=int(os.environ.get('RC') or 99)
+          if not p.exists():
+              out={'token':'Q4_INFRASTRUCTURE_OR_SOURCE_BINDING_FAIL','classification':'+0/+0','run_id':os.environ['GITHUB_RUN_ID'],'source_head':os.environ['GITHUB_SHA'],'regression_rc':rc,'receipt_missing':True}
+          else:
+              r=json.loads(p.read_text()); exact=(rc==0 and r['sha_equal'] and r['array_equal'] and r['max_abs_difference']==0.0 and r['bytes_equal'] and r['source_full_unchanged']); closed=r['malformed_rejected'] and r['wrong_sha_rejected']
+              token='Q1_FULL_WINDOW_RESUME_EXACT_PASS' if exact and closed else ('Q3_FULL_WINDOW_RESUME_FAILCLOSED_FAIL' if exact else 'Q2_FULL_WINDOW_RESUME_EXACTNESS_FAIL')
+              out={'token':token,'classification':'+0/+0','run_id':os.environ['GITHUB_RUN_ID'],'source_head':os.environ['GITHUB_SHA'],'regression_rc':rc,'receipt':r}
+          pathlib.Path('exp073de_v03_classification.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(json.dumps(out,indent=2,sort_keys=True))
+          if out['token']!='Q1_FULL_WINDOW_RESUME_EXACT_PASS': raise SystemExit(2)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073de-full-window-resume-v0-3-${{ github.sha }}
+          path: |
+            exp073de_v03_receipt.json
+            exp073de_v03_classification.json
+            exp073de_v03_stdout_stderr.log
+          if-no-files-found: warn
+          retention-days: 90
