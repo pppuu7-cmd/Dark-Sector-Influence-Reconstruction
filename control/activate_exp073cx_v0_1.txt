@@ -1,0 +1,3 @@
+Exp073CX v0.1 hosted activation-readiness audit activation.
+Prerequisite authority: Exp073CW H1 immutable recovery commit a763a83275c4105903b0dbee272a9ca72fc61ca0.
+This activation is support-only +0/+0 and cannot create Wm_S3 scientific authority or activate Exp073BU.
