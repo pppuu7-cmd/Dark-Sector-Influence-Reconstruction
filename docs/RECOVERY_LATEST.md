@@ -28,11 +28,20 @@ Exactly one scientific process is active:
 - run/job: `33885834557 / 101065302520`;
 - activation/source head: `a2f14dfd5a9e54a30fb467f6d0e717bd4f00bd35`;
 - contract fingerprint: `a400a7cee61f59c89099ac8b2c5ec67286b8c38002d5855a5f3a150c59838147`;
-- state at this recovery sync: `IN_PROGRESS`, numerical step `Fresh live exclusivity and Exp073BU A-then-B science`;
+- state at latest reconciliation: `IN_PROGRESS`, numerical step `Fresh live exclusivity and Exp073BU A-then-B science`;
 - hosted frozen preflight completed PASS before the self-hosted job;
 - DSIR-HOME-PC is **RESERVED BY EXP073BU**; do not launch a competing home/heavy run.
 
 Execution order is fresh A -> release replica-local live state -> fresh B -> exact comparator. Required scientific PASS token: `PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_V0_1`. Allowed terminal classes remain `PASS`, `SCIENTIFIC_REPEATABILITY_FAIL`, `INFRASTRUCTURE_INCOMPLETE`, `BLOCKED`.
+
+## Exp073DD v0.1 — prospective resume-lineage repair authority
+Exp073DD is authoritative support/readiness PASS `D1_RESUME_LINEAGE_PROVENANCE_PASS +0/+0` from run/job `33892969489 / 101088831684`, activation/head `fbe6156d95cafdca3630c058808d74ac139cce46`, artifact `9944582651`, independently verified ZIP SHA256 `06c971ec7b97fae34b0fa1e113fb449d0bffc9b0e126f0045a9660eb1f6a1056`.
+
+Prospective commits: prereg `0e7f1fc8036395ba3faaedaa61f2ef4841565b83`, provenance-only driver repair `0b6f0bc909ae4d596dfa5d9af1828d26d6a2b221`, fail-closed regression `4e0e81eb35caefd50ca8c011870489c8002e3679`, hosted workflow activation `fbe6156d95cafdca3630c058808d74ac139cce46`. Immutable recovery note: `recovery/2026-09-04_exp073dd_d1_resume_lineage_provenance_pass.md`, record commit `b936dc9d93f70100a6ffa72d6d9b44cd80c51803`.
+
+D1 separates invocation-new reconstruction counts from immutable cumulative mask lineage: fresh is invocation/cumulative `{1,1}/{1,1}`; verified workspace resume may be `{0,0}/{1,1}`. Missing, malformed, non-integer or wrong cumulative lineage fails closed. The audit confirms no new science arithmetic in v0.2 and preserves exact 39-band edges, six checkpoint order, 8 outer workers, `TE<-TE`, SHA256 + `numpy.array_equal`, and no tolerance rescue. `science_gate_scored=false`; no historical Wm_S3 numerical import occurred.
+
+**Authority limitation:** Exp073DD does not alter the frozen source of the currently running Exp073BU process and creates no Wm_S3 scientific authority. If a future interruption requires resume, the v0.2 repair must first receive explicit prospective implementation/activation binding; no silent substitution is permitted.
 
 ## Preserved checkpoint architecture
 Six durable stages remain frozen: `fresh_masks_complete -> fresh_workspace_mcm_complete -> mcm_fits_verified -> full_window_complete -> selected_te_complete -> replica_receipt_complete`. Restore is fail-closed on replica, namespace, source head, contract fingerprint, payload SHA and provenance. A and B restore domains remain isolated; cross-replica numerical restore/import is forbidden.
