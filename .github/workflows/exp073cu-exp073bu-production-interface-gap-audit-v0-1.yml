@@ -1,0 +1,62 @@
+name: Exp073CU Exp073BU production interface gap audit v0.1
+
+on:
+  push:
+    paths:
+      - 'activation/exp073cu_v0_1.activate'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gap-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Classify production versus synthetic interfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' | tee exp073cu_gap_receipt.json
+          import ast,json,pathlib,subprocess
+          paths={
+            'fresh_pcl':'ci/exp073bu_fresh_wm_s3_pcl_v0_1.py',
+            'full_stock':'ci/exp073bx_full_mcm_stock_order_v0_1.py',
+            'persist_mmap':'ci/exp073ca_stock_write_fits_to_mmap_exact_chain_v0_1.py',
+            'mmap_verify':'ci/exp073cc_verify_fits_memmap_backing_v0_1.py',
+            'mmap_downstream':'ci/exp073by_mmap_full_mcm_downstream_v0_1.py',
+            'checkpoint_resource':'ci/exp073cr_wm_s3_ll3_sharded_resource_v0_1.py'}
+          def info(path):
+            p=pathlib.Path(path); tree=ast.parse(p.read_text('utf-8'))
+            flags=sorted({n.args[0].value for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr=='add_argument' and n.args and isinstance(n.args[0],ast.Constant) and isinstance(n.args[0].value,str) and n.args[0].value.startswith('--')})
+            funcs=[n.name for n in tree.body if isinstance(n,ast.FunctionDef)]
+            return {'path':path,'blob':subprocess.check_output(['git','hash-object',path],text=True).strip(),'flags':flags,'functions':funcs}
+          data={k:info(v) for k,v in paths.items()}
+          production={
+            'fresh_pcl': {'--r1-root','--lens-mask','--work-root','--out-npy','--out-json'}.issubset(data['fresh_pcl']['flags']),
+            'checkpoint_resource': {'--root','--source-head','--branch'}.issubset(data['checkpoint_resource']['flags']),
+          }
+          synthetic=[]
+          for k in ('full_stock','persist_mmap','mmap_verify','mmap_downstream'):
+            if set(data[k]['flags'])=={'--emulator','--out'}: synthetic.append(k)
+          missing=[]
+          if not production['fresh_pcl']: missing.append('fresh_pcl_production_interface')
+          if len(synthetic): missing += [f'{k}_production_interface' for k in synthetic]
+          if not production['checkpoint_resource']: missing.append('checkpoint_resource_production_interface')
+          # No repository-bound final A/B science receipt driver has yet been admitted.
+          missing.append('final_exact_ab_scientific_receipt_driver')
+          token='U1_PRODUCTION_ASSEMBLY_ROUTE_COMPLETE' if not missing else 'U2_PRODUCTION_ASSEMBLY_GAP_IDENTIFIED'
+          print(json.dumps({'token':token,'head_sha':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'components':data,'synthetic_only_validated_components':synthetic,'missing_production_stages':missing,'accounting':'+0/+0','wm_s3_authority_created':False,'exp073bu_activated':False},sort_keys=True))
+          PY
+          grep -E 'U1_PRODUCTION_ASSEMBLY_ROUTE_COMPLETE|U2_PRODUCTION_ASSEMBLY_GAP_IDENTIFIED' exp073cu_gap_receipt.json
+      - name: Upload gap receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073cu-v0-1-gap-receipt
+          path: exp073cu_gap_receipt.json
+          if-no-files-found: warn
