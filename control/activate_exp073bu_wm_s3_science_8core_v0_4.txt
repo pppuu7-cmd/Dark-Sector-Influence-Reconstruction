@@ -1,0 +1,4 @@
+ACTIVATE Exp073BU Wm_S3 fresh A/B exact science 8-core v0.4
+hardware-matched DSIR-HOME-PC: 8 CPUs exposed by Linux affinity
+required authorities: PASS_EXP073BU_8CORE_EXACT_EQUIVALENCE_V0_3 and PASS_EXP073BU_8CORE_ACTIVATION_AUDIT_V0_4
+fresh run-specific checkpoint root; no prior partial state reuse
