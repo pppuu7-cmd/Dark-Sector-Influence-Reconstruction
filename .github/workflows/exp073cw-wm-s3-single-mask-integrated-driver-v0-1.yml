@@ -1,0 +1,65 @@
+name: Exp073CW Wm_S3 single-mask integrated driver v0.1
+on:
+  push:
+    paths:
+      - 'control/activate_exp073cw_v0_1.txt'
+permissions:
+  contents: read
+jobs:
+  hosted-single-mask-driver-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze Exp073CW contract and authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073cw_wm_s3_single_mask_integrated_driver_audit_v0_1_prereg.md)" = 'cd656f5bdca99673088aac427fae7bd182f982f6'
+          test "$(git hash-object ci/exp073cw_single_mask_integrated_driver_v0_1.py)" = 'f61b4e42ace7e2ab7220c0df0b38d8663136896c'
+          test "$(git hash-object experiments/073bu_article3_wm_s3_fresh_independent_ab_exact_repeatability_v0_1_prereg.md)" = '816542c7eb7a8ba4e72d6e01228aa62d05c7c805'
+          grep -Fq 'H1_SINGLE_MASK_INTEGRATED_DRIVER_PASS' experiments/073cw_wm_s3_single_mask_integrated_driver_audit_v0_1_prereg.md
+          grep -Fq '12288]' ci/exp073cw_single_mask_integrated_driver_v0_1.py
+          echo PASS_EXP073CW_V0_1_STATIC_FREEZE
+      - name: Static single-mask handoff audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast,pathlib
+          p=pathlib.Path('ci/exp073cw_single_mask_integrated_driver_v0_1.py')
+          t=ast.parse(p.read_text())
+          calls=[]
+          for n in ast.walk(t):
+              if isinstance(n,ast.Call) and isinstance(n.func,ast.Name): calls.append(n.func.id)
+          assert calls.count('reconstruct_lens_synthetic')==1,calls.count('reconstruct_lens_synthetic')
+          assert calls.count('reconstruct_source_synthetic')==1,calls.count('reconstruct_source_synthetic')
+          s=p.read_text()
+          assert 'derive_pcl_same_fields(f0,f2,lmax)' in s
+          assert 'workspace_same_fields(f0,f2,nside)' in s
+          assert "wins[0,:,0,:]" in s
+          assert 'historical_wm_s3_numerical_import' in s
+          print('PASS_EXP073CW_V0_1_STATIC_SINGLE_MASK_HANDOFF')
+          PY
+      - name: Install exact NaMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+      - name: Execute frozen synthetic analogue
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073cw
+          "${NMT_PY}" ci/exp073cw_single_mask_integrated_driver_v0_1.py \
+            --out data/derived/exp073cw/exp073cw_single_mask_integrated_driver_v0_1.json \
+            --source-head "${GITHUB_SHA}" \
+            --contract-fingerprint 'cd656f5bdca99673088aac427fae7bd182f982f6'
+          grep -Fq '"status": "H1_SINGLE_MASK_INTEGRATED_DRIVER_PASS"' data/derived/exp073cw/exp073cw_single_mask_integrated_driver_v0_1.json
+          grep -Fq '"same_field_object_identity": true' data/derived/exp073cw/exp073cw_single_mask_integrated_driver_v0_1.json
+          echo PASS_EXP073CW_V0_1_EXECUTABLE_DRIVER_AUDIT
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073cw-v0-1-single-mask-driver-${{ github.sha }}
+          path: data/derived/exp073cw/exp073cw_single_mask_integrated_driver_v0_1.json
