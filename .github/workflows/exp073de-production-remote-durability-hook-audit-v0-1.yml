@@ -1,0 +1,50 @@
+name: Exp073DE production remote durability hook audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073de-production-remote-durability-hook-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Freeze exact Exp073DE sources
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073de_wm_s3_production_remote_durability_hook_v0_1_prereg.md)" = '751459dfc3960f517fc529a0648629ad9ddef112'
+          test "$(git hash-object ci/exp073de_production_remote_durability_hook_audit_v0_1.py)" = '441056a3f933133a299ad571728eca6a0ac0260c'
+          test "$(git hash-object ci/exp073bu_wm_s3_fresh_ab_production_v0_1.py)" = '5c8d5d3463e455389a1ca3df2639bf06a3b7b603'
+          test "$(git hash-object ci/dsir_checkpoint_stage_bundle_v0_1.py)" = 'b25232223511a7f65abdf3437a40a1c3aaec4702'
+          grep -Fq 'O1_STAGE_AWARE_CHECKPOINT_BUNDLE_PASS' recovery/2026-09-04_exp073dd_v0_1_o1_stage_aware_checkpoint_bundle_pass.md
+      - name: Run frozen production-hook source audit
+        id: audit
+        run: |
+          set +e
+          python3 ci/exp073de_production_remote_durability_hook_audit_v0_1.py | tee exp073de_stdout.log
+          rc=${PIPESTATUS[0]}
+          echo "rc=${rc}" >> "$GITHUB_OUTPUT"
+          exit 0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073de-production-remote-durability-hook-${{ github.sha }}
+          path: |
+            exp073de_audit.json
+            exp073de_stdout.log
+          if-no-files-found: error
+          retention-days: 90
+      - name: Propagate frozen classification
+        if: always()
+        env:
+          RC: ${{ steps.audit.outputs.rc }}
+        run: exit "${RC:-5}"
