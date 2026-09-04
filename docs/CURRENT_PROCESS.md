@@ -6,16 +6,17 @@ Scope: DSIR only; RTK/RQIR excluded.
 ## Current owner/process
 - **DSIR-HOME-PC: FREE.** No self-hosted heavy/scientific process is active or authorized.
 - Exp073BU numerical Wm_S3 science: **NOT ACTIVATED**.
-- Current process: hosted-only Exp073CC v0.1 FITS OS-mmap backing verification.
-- Workflow run `33831289247`; head `2bbb68a2e08be1ac7ed7567361d5d41b5bfdc81c`; job ID pending at ledger write.
+- Current process: hosted-only Exp073CD v0.1 DES-scale resource/checkpoint design audit.
+- Workflow run/job `33834935589 / 100905384484`; head `514198bf15995424c56b174459dadab60e42fdbb`.
 - State at ledger write: `QUEUED`.
-- Checkpoint namespace: none; support/resource verification, accounting always `+0/+0`.
-- Prereg commit `02ae088e01aeeb4b9476c2e9b195ea5161ff07f8`; helper commit `a5ba4af5b1a0c0c264ed43d492e5d87a81c888b8`; workflow `9c48482d070a908ade70daf2ab821f061e6bf9ce`; activation/head `2bbb68a2e08be1ac7ed7567361d5d41b5bfdc81c`.
-- Outcomes: `V1_VERIFIED_OS_MMAP_AND_EXACT_CHAIN`, `V2_NOT_OS_MMAP_BACKED`, `V3_MEMORY_CONTRACT_FAIL`, `V4_SOURCE_LINEAGE_MISMATCH`, `V5_INFRASTRUCTURE_INCOMPLETE`.
-- Exact terminal action: consume raw artifact/log. V1 permits prospective DES-scale Exp073BU resource sizing/checkpoint design. V2/V3 require architecture repair; V4/V5 causal repair only.
+- Checkpoint namespace: none for this hosted support gate; accounting always `+0/+0`.
+- Prereg commit `baf4c806d402d68534e526d803ef5eaa7c4d2716`; prereg blob `3cd435642fd7972d4e932e4098e94e818c6d0282`; workflow commit `b89db9ad5d9889240d7817407af5c193865fe3ba`; activation/head `514198bf15995424c56b174459dadab60e42fdbb`.
+- Outcomes: `D1_DES_SCALE_RESOURCE_CHECKPOINT_DESIGN_PASS`, `D2_SIZING_IDENTITY_FAIL`, `D3_CHECKPOINT_CONTRACT_INCOMPLETE`, `D4_SOURCE_LINEAGE_MISMATCH`, `D5_INFRASTRUCTURE_INCOMPLETE`.
+- Exact terminal action: consume raw job log. D1 permits implementation/static audit of the single self-hosted Exp073BU A/B scientific process; D2/D3 require prospective design repair; D4/D5 causal infrastructure/source repair only.
 
-## Newly reconciled — Exp073CB v0.1
-Run/job `33829545473 / 100889394333`, artifact `9921183248`, digest `sha256:0c6d5cee92f0fb4954ec9acf66e20bc1be587db4350326fa4e94655b496776e3`. Numerical exactness is valid in all three cases (SHA equal, `numpy.array_equal=true`, max diff 0.0), but the receipt records `fits_memmap=false` and the evaluator's `memory_ok` omitted mmap backing. Therefore its emitted C1 token is **not yet accepted as authoritative support PASS**. Classification: verification/control defect `+0/+0`, no Wm_S3 authority. Immutable note `recovery/2026-09-04_exp073cb_c1_token_memory_verification_defect_exp073cc_launched.md`.
+## Newly closed — Exp073CC v0.1
+Run/job `33831289247 / 100894641290`; activation/head `2bbb68a2e08be1ac7ed7567361d5d41b5bfdc81c`; artifact `9921785254`; Actions digest and independently downloaded ZIP SHA256 `81378d4da4886615bac73f573e36ca8bb25ed1ac0c86e98f96439ae2dc30b901`.
+Raw status `V1_VERIFIED_OS_MMAP_AND_EXACT_CHAIN`: all three frozen cases have exact stock/emulator SHA equality, `numpy.array_equal=true`, max difference `0.0`, base-chain terminating in `mmap.mmap`, `os_mmap_backed=true`, `/proc/self/maps` FITS path observed, and 768-byte maximum canonical row buffer. Classification: support/resource PASS `+0/+0`; no Wm_S3 authority. Immutable note `recovery/2026-09-04_exp073cc_v1_verified_os_mmap_exact_chain.md`, commit `2a777ba7b32aa8a1e079918ad01024458fef8532`.
 
 ## Prospective scientific gate — Exp073BU v0.1
 Prereg commit `e1a0332c128c87049fb8699018a3a3e71c9c5321`; namespaces `checkpoints/exp073bu-wm-s3-a-v0-1`, `checkpoints/exp073bu-wm-s3-b-v0-1`; required token `PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_V0_1`.
