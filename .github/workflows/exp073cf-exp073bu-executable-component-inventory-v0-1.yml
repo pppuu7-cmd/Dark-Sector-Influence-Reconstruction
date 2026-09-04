@@ -1,0 +1,69 @@
+name: Exp073CF Exp073BU executable component inventory v0.1
+
+on:
+  push:
+    paths:
+      - 'activation/exp073cf_v0_1.activate'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Inventory exact repository head
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' | tee exp073cf_inventory.json
+          import hashlib, json, pathlib, subprocess
+          root=pathlib.Path('.')
+          cats={
+            'fresh_pcl':['fresh_replica_local_pcl','fresh_pcl','compute_coupling_matrix'],
+            'full_stock':['full_ncls2','full stock','get_bandpower_windows','coupling_matrix_unbinned'],
+            'stock_persist':['write_to','write_workspace','coupling_matrix_unbinned'],
+            'os_mmap':['mmap.mmap','os_mmap_backed','read_only_os_mmap','/proc/self/maps'],
+            'checkpoint':['checkpoint_namespace','payload_sha256','contract_fingerprint','fail-closed','fail_closed'],
+            'heavy8':['OUTER_WORKERS = 8','outer_workers','OMP_NUM_THREADS','OPENBLAS_NUM_THREADS'],
+          }
+          allowed_roots={'.github','ci','control','experiments','launch','patches','preregistration','scripts','src','tools','workflows'}
+          files=[]
+          for p in root.rglob('*'):
+            if not p.is_file() or '.git' in p.parts: continue
+            if p.parts[0] not in allowed_roots: continue
+            try: txt=p.read_text('utf-8',errors='ignore')
+            except Exception: continue
+            files.append((p,txt))
+          found={}
+          for cat,tokens in cats.items():
+            hits=[]
+            for p,txt in files:
+              low=txt.lower()
+              if any(t.lower() in low for t in tokens):
+                blob=subprocess.check_output(['git','hash-object',str(p)],text=True).strip()
+                hits.append({'path':str(p),'blob_sha':blob})
+            # exclude this inventory workflow/prereg as self-evidence
+            hits=[h for h in hits if '073cf_' not in h['path'] and 'exp073cf-' not in h['path']]
+            found[cat]=hits
+          complete=all(found[k] for k in cats)
+          token='E1_EXECUTABLE_COMPONENT_SET_IDENTIFIED' if complete else 'E2_EXECUTABLE_COMPONENT_SET_INCOMPLETE'
+          out={'token':token,'head_sha':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+               'accounting':'+0/+0','wm_s3_authority_created':False,'exp073bu_activated':False,'components':found}
+          print(json.dumps(out,sort_keys=True))
+          PY
+          grep -E 'E1_EXECUTABLE_COMPONENT_SET_IDENTIFIED|E2_EXECUTABLE_COMPONENT_SET_INCOMPLETE' exp073cf_inventory.json
+          grep -F '"wm_s3_authority_created": false' exp073cf_inventory.json
+          grep -F '"exp073bu_activated": false' exp073cf_inventory.json
+      - name: Upload inventory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073cf-v0-1-inventory
+          path: exp073cf_inventory.json
+          if-no-files-found: warn
