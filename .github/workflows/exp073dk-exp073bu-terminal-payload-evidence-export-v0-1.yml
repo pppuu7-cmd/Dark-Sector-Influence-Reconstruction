@@ -1,0 +1,111 @@
+name: Exp073DK Exp073BU terminal payload evidence export v0.1
+
+on:
+  workflow_run:
+    workflows: ['Exp073DJ checkpoint-preserving Exp073BU resume v0.1']
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: exp073dk-exp073bu-terminal-payload-evidence-v0-1
+  cancel-in-progress: false
+
+env:
+  PREREG_BLOB: '1e8f29f8552475748680439924c13590d352549a'
+  FROZEN_SCIENCE_HEAD: 'c02c018ede6a1fcf7aef1a848c0118a0669ed67f'
+  ORIGINAL_CONTRACT_FP: 'b38687bf5aa6cf4cfe01b2f38a7091e96d97196ad38bdf2ea771f7b649ac73da'
+  EXPECTED_UPSTREAM_RUN: '33910213781'
+
+jobs:
+  export-terminal-canonical-payloads:
+    name: Export immutable A/B selected-TE payload evidence
+    if: ${{ github.event.workflow_run.id == 33910213781 }}
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Bind prospective evidence-only contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ github.event.workflow_run.id }}" = "$EXPECTED_UPSTREAM_RUN"
+          test "$(git hash-object experiments/073dk_exp073bu_terminal_payload_evidence_export_v0_1_prereg.md)" = "$PREREG_BLOB"
+          root="$HOME/.cache/dsir/exp073bu-wm-s3-fresh-ab-8core-v0-4-33901458494"
+          test -d "$root" || { echo 'BLOCKED historical checkpoint root missing'; exit 4; }
+          echo "CHECKPOINT_ROOT=$root" >> "$GITHUB_ENV"
+      - name: Live self-hosted exclusivity
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lock="$HOME/.cache/dsir/DSIR-HOME-PC.exp073bu-8core-resume.lock"; exec 9>"$lock"; flock -n 9 || { echo 'BLOCKED DSIR home lock busy'; exit 4; }
+          python3 - <<'PY'
+          import json, os, urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; current=int(os.environ['GITHUB_RUN_ID']); token=os.environ['GH_TOKEN']
+          h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}; bad=[]
+          for status in ('queued','in_progress'):
+              q=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100',headers=h)
+              with urllib.request.urlopen(q) as r: runs=json.load(r).get('workflow_runs',[])
+              for run in runs:
+                  if int(run['id'])==current: continue
+                  q2=urllib.request.Request(f"https://api.github.com/repos/{repo}/actions/runs/{run['id']}/jobs?per_page=100",headers=h)
+                  with urllib.request.urlopen(q2) as r2: jobs=json.load(r2).get('jobs',[])
+                  if any('self-hosted' in (j.get('labels') or []) or j.get('runner_name')=='DSIR-HOME-PC' for j in jobs): bad.append(run['id'])
+          if bad: raise SystemExit('BLOCKED competing self-hosted DSIR runs '+repr(sorted(set(bad))))
+          print('PASS_EXP073DK_LIVE_NONCOMPETITION')
+          PY
+      - name: Validate and copy immutable canonical payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/exp073dk-terminal-payload-evidence"; rm -rf "$out"; mkdir -p "$out/A" "$out/B"
+          python3 - <<'PY'
+          import hashlib, json, os, shutil
+          from pathlib import Path
+          import numpy as np
+          root=Path(os.environ['CHECKPOINT_ROOT']); out=Path(os.environ['RUNNER_TEMP'])/'exp073dk-terminal-payload-evidence'
+          head=os.environ['FROZEN_SCIENCE_HEAD']; fp=os.environ['ORIGINAL_CONTRACT_FP']; shape=(39,12288); nbytes=39*12288*8
+          ns={'A':'checkpoints/exp073bu-wm-s3-a-v0-1','B':'checkpoints/exp073bu-wm-s3-b-v0-1'}
+          term=root/'terminal_science_receipt_resume_v0_1.json'
+          if not term.is_file(): raise SystemExit('BLOCKED terminal resume receipt missing')
+          shutil.copy2(term,out/term.name)
+          def fsha(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for b in iter(lambda:f.read(8<<20),b''): h.update(b)
+              return h.hexdigest()
+          hashes={}; copied={}
+          for r in ('A','B'):
+              rr=root/r; mpath=rr/'selected_te_complete.json'; rpath=rr/'replica_receipt.json'; payload=rr/'exact_route'/'selected_te.bin'
+              if not (mpath.is_file() and rpath.is_file() and payload.is_file()): raise SystemExit(f'BLOCKED missing terminal payload evidence {r}')
+              m=json.loads(mpath.read_text()); rec=json.loads(rpath.read_text()); x=(m.get('payloads') or {}).get('selected_te') or {}
+              ok=(m.get('complete') is True and m.get('stage')=='selected_te_complete' and m.get('replica')==r and m.get('checkpoint_namespace')==ns[r] and m.get('source_head')==head and m.get('contract_fingerprint')==fp and m.get('historical_wm_s3_numerical_import') is False and m.get('other_replica_output_read') is False and x.get('shape')==list(shape) and x.get('dtype')=='<f8' and x.get('semantics')=='wins[0,:,0,:] = TE<-TE' and payload.stat().st_size==nbytes)
+              if not ok: raise SystemExit(f'BLOCKED selected manifest identity mismatch {r}')
+              h=fsha(payload)
+              if h!=x.get('sha256') or h!=rec.get('selected_te_sha256'): raise SystemExit(f'BLOCKED selected payload SHA mismatch {r}')
+              dst=out/r/'selected_te.bin'; shutil.copy2(payload,dst); shutil.copy2(mpath,out/r/mpath.name); shutil.copy2(rpath,out/r/rpath.name)
+              if fsha(dst)!=h: raise SystemExit(f'BLOCKED copied payload SHA mismatch {r}')
+              hashes[r]=h; copied[r]=dst
+          aa=np.memmap(copied['A'],dtype='<f8',mode='r',shape=shape,order='C'); bb=np.memmap(copied['B'],dtype='<f8',mode='r',shape=shape,order='C')
+          finite=bool(np.all(np.isfinite(aa)) and np.all(np.isfinite(bb))); ae=bool(np.array_equal(aa,bb)); del aa,bb
+          if not finite: raise SystemExit('BLOCKED non-finite canonical payload')
+          support={'schema':'dsir.exp073dk.exp073bu.terminal_payload_evidence.v0.1','classification':'EVIDENCE_EXPORT_PASS','support_only_plus0_plus0':True,'upstream_run':int(os.environ['EXPECTED_UPSTREAM_RUN']),'source_head':head,'contract_fingerprint':fp,'shape':list(shape),'dtype':'<f8','semantics':'wins[0,:,0,:] = TE<-TE','A_sha256':hashes['A'],'B_sha256':hashes['B'],'whole_canonical_sha256_equal':hashes['A']==hashes['B'],'numpy_array_equal':ae,'no_tolerance_rescue':True,'science_gate_scored_here':False,'wm_s3_authority_created_here':False}
+          (out/'exp073dk_evidence_receipt.json').write_text(json.dumps(support,indent=2,sort_keys=True)+'\n')
+          print('PASS_EXP073DK_TERMINAL_PAYLOAD_EVIDENCE_EXPORT_V0_1')
+          print(json.dumps(support,sort_keys=True))
+          PY
+          find "$out" -type f -print -exec sha256sum {} \;
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073dk-exp073bu-terminal-payload-evidence-${{ github.run_id }}
+          path: ${{ runner.temp }}/exp073dk-terminal-payload-evidence
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
