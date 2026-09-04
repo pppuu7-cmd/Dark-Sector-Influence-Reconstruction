@@ -1,0 +1,61 @@
+name: Exp073DA Wm_S3 large-stage checkpoint transport v0.1
+on:
+  push:
+    paths:
+      - '.github/activations/exp073da-wm-s3-large-stage-checkpoint-transport-v0-1.txt'
+permissions:
+  contents: read
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Freeze source head
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          mkdir -p artifacts/exp073da-v01
+          printf '%s\n' "${GITHUB_SHA}" > artifacts/exp073da-v01/source_head.txt
+      - name: Compile frozen sources
+        run: |
+          set -euo pipefail
+          python -m py_compile ci/dsir_checkpoint_sharded_payload_v0_1.py
+          python -m py_compile ci/exp073da_wm_s3_large_stage_checkpoint_transport_v0_1.py
+      - name: Run deterministic sharded-payload self-test
+        run: |
+          set -euo pipefail
+          python ci/dsir_checkpoint_sharded_payload_v0_1.py --self-test --work artifacts/exp073da-v01/selftest-work --out artifacts/exp073da-v01/selftest.json
+      - name: Run frozen transport readiness audit
+        shell: bash
+        run: |
+          set +e
+          python ci/exp073da_wm_s3_large_stage_checkpoint_transport_v0_1.py --source-head "${GITHUB_SHA}" --selftest-receipt artifacts/exp073da-v01/selftest.json --out artifacts/exp073da-v01/receipt.json
+          rc=$?
+          echo "$rc" > artifacts/exp073da-v01/audit_rc.txt
+          exit 0
+      - name: Hash receipts
+        if: always()
+        run: |
+          set -euo pipefail
+          sha256sum artifacts/exp073da-v01/selftest.json | tee artifacts/exp073da-v01/selftest.sha256
+          sha256sum artifacts/exp073da-v01/receipt.json | tee artifacts/exp073da-v01/receipt.sha256
+      - name: Upload raw transport artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073da-wm-s3-large-stage-checkpoint-transport-v0-1
+          path: |
+            artifacts/exp073da-v01/source_head.txt
+            artifacts/exp073da-v01/selftest.json
+            artifacts/exp073da-v01/selftest.sha256
+            artifacts/exp073da-v01/receipt.json
+            artifacts/exp073da-v01/receipt.sha256
+            artifacts/exp073da-v01/audit_rc.txt
+          if-no-files-found: error
+          retention-days: 30
+      - name: Propagate frozen classification
+        if: always()
+        run: exit "$(cat artifacts/exp073da-v01/audit_rc.txt)"
