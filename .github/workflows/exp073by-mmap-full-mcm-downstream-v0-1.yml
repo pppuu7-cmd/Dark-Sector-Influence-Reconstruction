@@ -1,0 +1,74 @@
+name: Exp073BY mmap full-MCM downstream exact equivalence v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'activations/exp073by_mmap_full_mcm_downstream_v0_1.activate'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-and-mmap-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze preregistration, helper identities and memory contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073by_support_mmap_full_mcm_downstream_equivalence_v0_1_prereg.md)" = "b722f03a87905b8717441c8c31cf69f469d3ce8f"
+          test "$(git hash-object ci/exp073by_mmap_full_mcm_downstream_v0_1.c)" = "acafb095deafae7602101d8305e239341010ba79"
+          test "$(git hash-object ci/exp073by_mmap_full_mcm_downstream_v0_1.py)" = "a22d14ad9ae7e81ba6dd35c61b9ab35a05617d76"
+          grep -Fq 'M1_EXACT_MMAP_FULL_COMPONENT_EQUIVALENCE' experiments/073by_support_mmap_full_mcm_downstream_equivalence_v0_1_prereg.md
+          grep -Fq 'No tolerance or closeness threshold is an acceptance criterion.' experiments/073by_support_mmap_full_mcm_downstream_equivalence_v0_1_prereg.md
+          grep -Fq 'mmap(NULL' ci/exp073by_mmap_full_mcm_downstream_v0_1.c
+          grep -Fq 'PROT_READ,MAP_PRIVATE' ci/exp073by_mmap_full_mcm_downstream_v0_1.c
+          ! grep -Eq 'malloc[[:space:]]*\([[:space:]]*nm|calloc[[:space:]]*\([[:space:]]*nm|fread[[:space:]]*\([[:space:]]*m[[:space:]]*,' ci/exp073by_mmap_full_mcm_downstream_v0_1.c
+          echo 'EXP073BY_SUPPORT_ONLY=1'
+          echo 'EXP073BU_SCIENCE_AUTHORITY_FORBIDDEN=1'
+          echo 'PASS_EXP073BY_V0_1_HOSTED_STATIC_MEMORY_FREEZE_AUDIT'
+      - name: Install exact NaMaster 2.7 plus GSL lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy compilers
+          echo "NMT_PREFIX=${RUNNER_TEMP}/nmt27" >> "${GITHUB_ENV}"
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "${GITHUB_ENV}"
+      - name: Verify runtime source and GSL 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${NMT_PY}" - <<'PY'
+          import hashlib, importlib.metadata, inspect
+          import pymaster as nmt
+          version=importlib.metadata.version('pymaster'); assert version=='2.7' or version.startswith('2.7.'),version
+          p=inspect.getsourcefile(nmt.NmtWorkspace.get_bandpower_windows); assert p
+          got=hashlib.sha256(open(p,'rb').read()).hexdigest(); assert got=='442e23eb542087566689271ad1c897d5da45f5b76e39def05b37d93b0098178f',(p,got)
+          print('PASS_EXP073BY_V0_1_NAMASTER27_RUNTIME_LINEAGE')
+          PY
+          grep -Eq '#define GSL_VERSION "2\.7' "${NMT_PREFIX}/include/gsl/gsl_version.h"
+      - name: Compile frozen mmap full-MCM emulator
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/exp073by-bin"
+          "${NMT_PREFIX}/bin/x86_64-conda-linux-gnu-cc" -O0 -std=c11 -I"${NMT_PREFIX}/include" ci/exp073by_mmap_full_mcm_downstream_v0_1.c -L"${NMT_PREFIX}/lib" -Wl,-rpath,"${NMT_PREFIX}/lib" -lgsl -lgslcblas -lm -o "${RUNNER_TEMP}/exp073by-bin/mmap_full_mcm_emulator"
+          test -x "${RUNNER_TEMP}/exp073by-bin/mmap_full_mcm_emulator"
+          echo "MMAP_EMULATOR=${RUNNER_TEMP}/exp073by-bin/mmap_full_mcm_emulator" >> "${GITHUB_ENV}"
+      - name: Execute frozen three-case mmap QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073by
+          "${NMT_PY}" ci/exp073by_mmap_full_mcm_downstream_v0_1.py --emulator "${MMAP_EMULATOR}" --out data/derived/exp073by/exp073by_mmap_full_mcm_downstream_v0_1.json
+          echo 'PASS_EXP073BY_V0_1_SYNTHETIC_QA_EXECUTED'
+      - name: Upload complete receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073by-mmap-full-mcm-${{ github.sha }}
+          path: data/derived/exp073by/exp073by_mmap_full_mcm_downstream_v0_1.json
+          if-no-files-found: warn
