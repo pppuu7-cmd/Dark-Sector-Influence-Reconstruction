@@ -1,0 +1,5 @@
+ACTIVATE_EXP073DZ_WW_S0_S1_LIBNMT_O3_EXACT_DIAGNOSTIC_V0_1
+accounting=+0/+0
+runner=github-hosted-only
+science_authority=false
+self_hosted_competition=forbidden
