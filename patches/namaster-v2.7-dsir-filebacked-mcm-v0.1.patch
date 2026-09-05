@@ -1,0 +1,135 @@
+diff --git a/src/nmt_master.c b/src/nmt_master.c
+--- a/src/nmt_master.c
++++ b/src/nmt_master.c
+@@ -1,5 +1,69 @@
+ #include "config.h"
+ #include "utils.h"
++#include <errno.h>
++#include <fcntl.h>
++#include <stdint.h>
++#include <sys/mman.h>
++#include <sys/stat.h>
++
++/* DSIR storage-only patch for NaMaster 2.7.
++ *
++ * When DSIR_NMT_FILEBACKED_MCM=1, only the backing store used by
++ * coupling_matrix_unbinned changes: one regular-file MAP_SHARED mapping is
++ * exposed through the same row-pointer interface used by stock NaMaster.
++ * Scientific arithmetic and loop ordering are intentionally untouched.
++ */
++typedef struct dsir_mmap_entry {
++  nmt_workspace *workspace;
++  void *base;
++  size_t bytes;
++  int fd;
++  char *path;
++  struct dsir_mmap_entry *next;
++} dsir_mmap_entry;
++
++static dsir_mmap_entry *dsir_mmaps=NULL;
++
++static int dsir_filebacked_mcm_enabled(void)
++{
++  const char *e=getenv("DSIR_NMT_FILEBACKED_MCM");
++  return (e!=NULL) && (!strcmp(e,"1"));
++}
++
++static void dsir_register_mmap(nmt_workspace *w,void *base,size_t bytes,
++                               int fd,const char *path)
++{
++  dsir_mmap_entry *e=my_malloc(sizeof(dsir_mmap_entry));
++  e->workspace=w;
++  e->base=base;
++  e->bytes=bytes;
++  e->fd=fd;
++  e->path=my_malloc(strlen(path)+1);
++  strcpy(e->path,path);
++  e->next=dsir_mmaps;
++  dsir_mmaps=e;
++}
++
++static dsir_mmap_entry *dsir_take_mmap(nmt_workspace *w)
++{
++  dsir_mmap_entry *e=dsir_mmaps,*p=NULL;
++  while(e!=NULL) {
++    if(e->workspace==w) {
++      if(p==NULL) dsir_mmaps=e->next;
++      else p->next=e->next;
++      return e;
++    }
++    p=e;
++    e=e->next;
++  }
++  return NULL;
++}
+ 
+ static void nmt_workspace_store_bins(nmt_workspace *w,
+ 				     nmt_binning_scheme *bin)
+@@ -43,9 +107,45 @@ static nmt_workspace *nmt_workspace_new(int ncls,
+   w->norm_type=norm_type;
+   w->w2=w2;
+ 
+-  w->coupling_matrix_unbinned=my_malloc(w->ncls*(w->lmax+1)*sizeof(flouble *));
+-  for(ii=0;ii<w->ncls*(w->lmax+1);ii++)
+-    w->coupling_matrix_unbinned[ii]=my_calloc(w->ncls*(w->lmax+1),sizeof(flouble));
++  int nrows=w->ncls*(w->lmax+1);
++  w->coupling_matrix_unbinned=my_malloc(nrows*sizeof(flouble *));
++  if(dsir_filebacked_mcm_enabled()) {
++    const char *dir=getenv("DSIR_NMT_MMAP_DIR");
++    if((dir==NULL) || (!strlen(dir)))
++      report_error(NMT_ERROR_FOPEN,"DSIR_NMT_MMAP_DIR is required for file-backed MCM\n");
++    if((size_t)nrows > SIZE_MAX/(size_t)nrows/sizeof(flouble))
++      report_error(NMT_ERROR_MEMORY,"File-backed MCM size overflow\n");
++    size_t bytes=(size_t)nrows*(size_t)nrows*sizeof(flouble);
++    size_t plen=strlen(dir)+sizeof("/dsir-nmt-mcm-XXXXXX");
++    char *path=my_malloc(plen);
++    snprintf(path,plen,"%s/dsir-nmt-mcm-XXXXXX",dir);
++    int fd=mkstemp(path);
++    if(fd<0)
++      report_error(NMT_ERROR_FOPEN,"Unable to create file-backed MCM: %s\n",strerror(errno));
++    struct stat st;
++    if((fstat(fd,&st)!=0) || (!S_ISREG(st.st_mode)))
++      report_error(NMT_ERROR_FOPEN,"File-backed MCM is not a regular file\n");
++    if(ftruncate(fd,(off_t)bytes)!=0)
++      report_error(NMT_ERROR_WRITE,"Unable to size file-backed MCM: %s\n",strerror(errno));
++    void *base=mmap(NULL,bytes,PROT_READ|PROT_WRITE,MAP_SHARED,fd,0);
++    if(base==MAP_FAILED)
++      report_error(NMT_ERROR_MEMORY,"Unable to mmap file-backed MCM: %s\n",strerror(errno));
++    for(ii=0;ii<nrows;ii++)
++      w->coupling_matrix_unbinned[ii]=((flouble *)base)+(size_t)ii*(size_t)nrows;
++    dsir_register_mmap(w,base,bytes,fd,path);
++    fprintf(stderr,"DSIR_NMT_FILEBACKED_MCM path=%s bytes=%zu rows=%d\n",
++            path,bytes,nrows);
++    free(path);
++  }
++  else {
++    for(ii=0;ii<nrows;ii++)
++      w->coupling_matrix_unbinned[ii]=my_calloc(nrows,sizeof(flouble));
++  }
+ 
+   nmt_workspace_store_bins(w,bin);
+ 
+@@ -59,10 +159,22 @@ void nmt_workspace_free(nmt_workspace *w)
+   gsl_matrix_free(w->coupling_matrix_binned);
+   nmt_bins_free(w->bin);
+   if(w->coupling_matrix_unbinned!=NULL) {
+-    for(ii=0;ii<w->ncls*(w->lmax+1);ii++)
+-      free(w->coupling_matrix_unbinned[ii]);
++    dsir_mmap_entry *e=dsir_take_mmap(w);
++    if(e!=NULL) {
++      if(munmap(e->base,e->bytes)!=0)
++        fprintf(stderr,"DSIR_NMT_FILEBACKED_MCM munmap warning: %s\n",strerror(errno));
++      if(close(e->fd)!=0)
++        fprintf(stderr,"DSIR_NMT_FILEBACKED_MCM close warning: %s\n",strerror(errno));
++      if(unlink(e->path)!=0)
++        fprintf(stderr,"DSIR_NMT_FILEBACKED_MCM unlink warning: %s\n",strerror(errno));
++      free(e->path);
++      free(e);
++    }
++    else {
++      for(ii=0;ii<w->ncls*(w->lmax+1);ii++)
++        free(w->coupling_matrix_unbinned[ii]);
++    }
+     free(w->coupling_matrix_unbinned);
+   }
+   free(w->beam_prod);
