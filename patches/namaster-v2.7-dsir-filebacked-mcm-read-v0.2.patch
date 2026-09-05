@@ -1,7 +1,7 @@
 diff --git a/src/utils.h b/src/utils.h
 --- a/src/utils.h
 +++ b/src/utils.h
-@@ -33,6 +33,10 @@ extern char nmt_error_message[256];
+@@ -33,5 +33,9 @@ extern char nmt_error_message[256];
  #define NMT_ERROR_NOT_IMPLEMENTED 1015
  #define NMT_ERROR_LITE 1016
 +
