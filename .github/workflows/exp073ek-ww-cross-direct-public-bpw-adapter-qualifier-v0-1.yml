@@ -1,0 +1,45 @@
+name: Exp073EK WW cross direct public BPW adapter qualifier v0.1
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'docs/RESEARCH_LOG_EXP073EK_2026-09-05.md'
+permissions:
+  contents: read
+jobs:
+  hosted-direct-public-bpw:
+    runs-on: ubuntu-24.04
+    env:
+      PREREG_BLOB: 8ace7b91e0607552cab2e2a9e6cf20c2c5e24621
+      SCRIPT_BLOB: b3fcdf5acfe0d5818657bd1f2885c91c2903a877
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073ek_ww_cross_direct_public_bpw_adapter_qualifier_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073ek_ww_cross_direct_public_bpw_adapter_qualifier_v0_1.py)" = "$SCRIPT_BLOB"
+      - name: Install exact NaMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "$GITHUB_ENV"
+      - name: Execute frozen direct public BPW qualifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT=data/derived/exp073ek/v0_1; mkdir -p "$OUT"
+          "${NMT_PY}" ci/exp073ek_ww_cross_direct_public_bpw_adapter_qualifier_v0_1.py --out-dir "$OUT/runtime" --source-head "$GITHUB_SHA" --prereg-blob "$PREREG_BLOB" | tee "$OUT/stdout.txt"
+          cp "$OUT/runtime/terminal_diagnostic_receipt.json" "$OUT/terminal_diagnostic_receipt.json"
+      - name: Upload immutable diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ek-ww-cross-direct-public-bpw-adapter-qualifier-v0-1-${{ github.sha }}
+          path: data/derived/exp073ek/v0_1/
+          if-no-files-found: error
