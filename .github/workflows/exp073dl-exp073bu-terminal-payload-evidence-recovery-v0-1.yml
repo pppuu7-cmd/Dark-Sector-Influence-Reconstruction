@@ -33,31 +33,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git hash-object experiments/073dl_exp073bu_terminal_payload_evidence_recovery_v0_1_prereg.md)" = "$PREREG_BLOB"
-          python3 - <<'PY'
-          from pathlib import Path
-          s=Path('.github/workflows/exp073dl-exp073bu-terminal-payload-evidence-recovery-v0-1.yml').read_text()
-          step=s.find('      - name: Lock, live noncompetition, and immutable payload export')
-          bind_start=s.find('      - name: Bind prospective evidence-only contract')
-          if step < 0 or bind_start < 0 or bind_start >= step:
-              raise SystemExit('FAIL_EXP073DL_EXPORT_OR_BIND_STEP_MISSING')
-          markers=['exec 9>"$lock"','flock -n 9','root="$CHECKPOINT_ROOT"','test -d "$root"',"root=Path(os.environ['CHECKPOINT_ROOT'])"]
-          pos=[]
-          for m in markers:
-              i=s.find(m,step)
-              if i < 0: raise SystemExit('FAIL_EXP073DL_STATIC_MARKER_MISSING:'+m)
-              pos.append(i)
-          if pos != sorted(pos) or len(set(pos)) != len(pos):
-              raise SystemExit('FAIL_EXP073DL_LOCK_SCOPE_ORDER')
-          bind=s[bind_start:step]
-          forbidden=('test -d "$CHECKPOINT_ROOT"',"Path(os.environ['CHECKPOINT_ROOT'])",'selected_te.bin','terminal_science_receipt_resume_v0_1.json')
-          if any(x in bind for x in forbidden):
-              raise SystemExit('FAIL_EXP073DL_PRELOCK_ROOT_ACCESS')
-          body=s[step:]
-          forbidden_science=('pymaster','compute_coupling_matrix','get_bandpower_windows','couple_cell','decouple_cell')
-          if any(x in body for x in forbidden_science):
-              raise SystemExit('FAIL_EXP073DL_SCIENCE_RECOMPUTE_PRESENT')
-          print('PASS_EXP073DL_HOSTED_STATIC_AUDIT_V0_1')
-          PY
+          python3 ci/exp073dl_evidence_guard_static_test_v0_1.py .github/workflows/exp073dl-exp073bu-terminal-payload-evidence-recovery-v0-1.yml
 
   export-terminal-canonical-payloads:
     name: Export immutable Exp073BU A/B selected-TE payload evidence
