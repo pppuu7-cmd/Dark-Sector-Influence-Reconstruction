@@ -26,30 +26,31 @@ Frozen preregistration commit `946964121f12c67e053514109bf974050eeb0cc9`; workfl
 Attempts 1–3 are `INFRASTRUCTURE_INCOMPLETE +0/+0` external shutdowns, not scientific FAIL. Only complete hash/identity-verified stages may restore; interrupted/incomplete stages recompute; malformed/mismatched state fails closed.
 
 ## Required terminal provenance closure — Exp073EB
-Exp073EB remains prospectively armed support-only `+0/+0`. The frozen Exp073DT terminal artifact does not export the full six-stage checkpoint chain, so workflow SUCCESS/token alone is insufficient. On DT SUCCESS, only frozen token + independently verified exact A/B equality + Exp073EB full checkpoint-provenance PASS may create `WW_S0_S0` authority.
+Exp073EB remains prospectively armed support-only `+0/+0`. On DT SUCCESS, only frozen token + independently verified exact A/B equality + Exp073EB full checkpoint-provenance PASS may create `WW_S0_S0` authority.
 
-## Distinct-field WW_S0_S1 readiness history
-Exp073DU and Exp073DW remain immutable qualifier FAIL `+0/+0`: the current saved-FITS production adapter is not exact for the distinct spin-2 S0→S1 workspace under either pre-serialization or official serialized→reloaded reference. Exp073DX excluded FITS storage orientation/transpose. Exp073ED excluded the PyMaster 2.7 low-level/public bandpower-window tensor-layout bridge. Exp073DV full-resolution WW_S0_S1 remains `PREPARED_NOT_ACTIVATED` and blocked on both valid WW_S0_S0 authority/provenance closure and a prospectively validated exact cross-workspace adapter architecture.
+## Distinct-field support history
+Exp073DU/DW remain immutable qualifier FAIL `+0/+0`; Exp073DX excluded FITS orientation/transpose; Exp073ED excluded the PyMaster 2.7 low-level/public bandpower-window tensor-layout bridge. Exp073DV full-resolution WW_S0_S1 remains `PREPARED_NOT_ACTIVATED` and blocked on both valid WW_S0_S0 authority/provenance closure and a prospectively validated exact cross-workspace adapter architecture.
 
-## Exp073EE — terminal FORMULA_MISMATCH +0/+0
-Hosted run/job `33982602346 / 101350386458` completed SUCCESS at workflow level under activation head `d7725bebe13b5a21c7a0a0b2e1c83c6da7808541`. Artifact `9974198332`; GitHub artifact digest and independently downloaded ZIP SHA256 both `4b7b3db48b01f2954b3a355e40d08aaac7cca5caa92672a502dc66e201787af6`.
+### Exp073EE — terminal FORMULA_MISMATCH +0/+0
+Run/job `33982602346 / 101350386458`; artifact `9974198332`; GitHub and independently downloaded ZIP SHA256 `4b7b3db48b01f2954b3a355e40d08aaac7cca5caa92672a502dc66e201787af6`. Frozen token `COMPLETE_EXP073EE_WW_CROSS_FORMULA_MISMATCH_V0_1`. Full and selected-EE exact equality fail. Diagnostic-only max difference `1.3877787807814457e-16` cannot rescue the gate. No science gate and no WW authority.
 
-Raw frozen token `COMPLETE_EXP073EE_WW_CROSS_FORMULA_MISMATCH_V0_1`; classification `FORMULA_MISMATCH`. Exact full and selected-EE SHA/array equality are false. Diagnostic-only max absolute difference is `1.3877787807814457e-16`; this does not rescue the exact gate. `science_gate_scored=false`; `ww_authority_created=false`; accounting `+0/+0`.
+### Exp073EF — terminal KR_OPERATOR_MISMATCH +0/+0
+Run/job `33985910151 / 101359236929`; artifact `9975148874`; GitHub and independently downloaded ZIP SHA256 `63fc67c32a95b5e5b37ed0222712677e5f690d4c6ea5c2f3d4056e3431816f73`. Frozen token `COMPLETE_EXP073EF_KR_OPERATOR_MISMATCH_V0_1`.
 
-Interpretation: the current saved-FITS reconstruction path already diverges bitwise from official serialized→reloaded PyMaster 2.7 windows when independently reproduced in NumPy. This is not a WW scientific result and may not be repaired post hoc.
+K formula/public SHA256: `7b5aa911c3093354094f686cb027ef2d6edd4679513f4b244f40e947777fe6f4` / `225d968562b3758cfae2a98b9bb4e36ec80fb7aabb4506b57b4974b5839da974`; R formula/public SHA256: `d633ed6e60d0e3a090a394a8c72078f71426163113536b98168ec457c2ac800d` / `64fdceec21057b5ce4c309d4836bc49f7693e84141a9c5ddef1de2ef00ff2480`. Both exact comparisons fail before any solve. Diagnostic-only maxima `1.1102230246251565e-16` and `2.7755575615628914e-17` cannot rescue the gate. No science gate and no WW authority.
 
-## Active exact support diagnostic — Exp073EF
-Exp073EF is prospectively frozen support-only `+0/+0` to localize whether the Exp073EE mismatch is already present before the solve in `K=P M Q` and/or `R=P M`.
+## Active exact support diagnostic — Exp073EG
+Exp073EG prospectively separates the manual P/bin and Q/unbin operators from official PyMaster 2.7 `NmtBin.bin_cell` and `NmtBin.unbin_cell` before any solve or alternate reconstruction.
 
-Prereg commit/blob `f448d919924c0fbb5b7f0e56a5b48aa31fffbf1b / 10da9087dd136207b5e82304eaedf698bb398ad0`; script commit/blob `df429e99d44ee19e97c88e9a61e5f6ce79c6a182 / 9d14d483c04e6564d7a3cc3e2cdb138f9bc45cda`; workflow commit `a135943d6c128f24f28f6a18e20cd56ba2ad37ff`; activation head `1e525c7006539a6524e48ef214b755e6a70f4272`.
+Prereg commit/blob `4b41beab01fd4856fe49761ef7868e07df9ec31a / d072892e492af4d836db118b03a83f91391adcb4`; script commit/blob `351756854b2096ebb7a6eeb9ff76e8a6f32f84d4 / 6a8b83644925d370aad453dd2e2523e3d30805a1`; workflow commit `ca9d14b38a0897b97bcf799ce428bd6422f7fbf5`; activation head `a667907d9862a64223d647431788f11d3e931df5`.
 
-Run/job `33985910151 / 101359236929` is **IN_PROGRESS** on GitHub-hosted Ubuntu at latest reconciliation. Identity freeze passed; NaMaster 2.7 installation is in progress. Formula K/R are compared with independently operational public-PyMaster K/R assembled using official `unbin_cell`, `couple_cell` and `bin_cell`; no solve occurs. Frozen classifications: `KR_OPERATORS_EXACT` or `KR_OPERATOR_MISMATCH`, both `+0/+0`, exact SHA256 + `numpy.array_equal` only, no tolerance rescue and no WW authority.
+Run `33986108360` is **QUEUED** on GitHub-hosted infrastructure at latest reconciliation. Frozen classifications: `BIN_UNBIN_EXACT`, `BIN_ONLY_MISMATCH`, `UNBIN_ONLY_MISMATCH`, or `BIN_AND_UNBIN_MISMATCH`; all support-only `+0/+0`, exact SHA256 + `numpy.array_equal`, no tolerance/rescue and no WW authority.
 
 ## Frozen science/execution boundaries
 `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A invalid `<=0.05`; Layer-B invalid-row `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
 
 ## Exact next gates
 1. Do not launch another self-hosted task while Exp073DT attempt 4 is queued/in_progress.
-2. Consume Exp073EF immediately when terminal. If `KR_OPERATORS_EXACT`, separately preregister solver/backend exact localization. If `KR_OPERATOR_MISMATCH`, separately preregister operator-only K-versus-R/bin-unbin localization. Do not retrofit the current adapter.
+2. Consume Exp073EG immediately when terminal. If P mismatches, next support gate must be source-bound to official PyMaster binning arithmetic/order; if only Q mismatches, localize official unbin semantics; if both are exact, only then localize coupling multiplication/arithmetic order.
 3. When Exp073DT `33940588308 / 101288014666` becomes terminal, consume raw artifact/digest, A/B payloads/comparator and checkpoint provenance. On SUCCESS also consume Exp073EB before admitting any WW_S0_S0 authority.
 4. Keep Exp073DV inactive until both WW_S0_S0 authority prerequisites and a prospectively validated cross-workspace exact adapter exist.
