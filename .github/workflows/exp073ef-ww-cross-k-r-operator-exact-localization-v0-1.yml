@@ -1,0 +1,45 @@
+name: Exp073EF WW cross K/R operator exact localization v0.1
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'docs/RESEARCH_LOG_EXP073EF_2026-09-05.md'
+permissions:
+  contents: read
+jobs:
+  hosted-kr-localization:
+    runs-on: ubuntu-24.04
+    env:
+      PREREG_BLOB: 10da9087dd136207b5e82304eaedf698bb398ad0
+      SCRIPT_BLOB: 9d14d483c04e6564d7a3cc3e2cdb138f9bc45cda
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073ef_ww_cross_k_r_operator_exact_localization_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073ef_ww_cross_k_r_operator_exact_localization_v0_1.py)" = "$SCRIPT_BLOB"
+      - name: Install exact NaMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "$GITHUB_ENV"
+      - name: Execute frozen exact K/R localization
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT=data/derived/exp073ef/v0_1; mkdir -p "$OUT"
+          "${NMT_PY}" ci/exp073ef_ww_cross_k_r_operator_exact_localization_v0_1.py --out-dir "$OUT/runtime" --source-head "$GITHUB_SHA" --prereg-blob "$PREREG_BLOB" | tee "$OUT/stdout.txt"
+          cp "$OUT/runtime/terminal_diagnostic_receipt.json" "$OUT/terminal_diagnostic_receipt.json"
+      - name: Upload immutable diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ef-ww-cross-k-r-localization-v0-1-${{ github.sha }}
+          path: data/derived/exp073ef/v0_1/
+          if-no-files-found: error
