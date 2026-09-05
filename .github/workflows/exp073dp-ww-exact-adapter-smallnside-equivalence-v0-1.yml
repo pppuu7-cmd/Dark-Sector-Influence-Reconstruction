@@ -1,0 +1,57 @@
+name: Exp073DP WW exact adapter small-NSIDE equivalence v0.1
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/exp073dp-ww-exact-adapter-smallnside-equivalence-v0-1.yml']
+  workflow_dispatch:
+permissions: {contents: read}
+concurrency:
+  group: dsir-exp073dp-ww-exact-adapter-smallnside-equivalence-v0-1
+  cancel-in-progress: false
+jobs:
+  hosted-equivalence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Install native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgsl-dev libcfitsio-dev libfftw3-dev
+      - name: Install frozen Python lineage
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install 'numpy<3' astropy healpy 'pymaster==2.7.0'
+      - name: Compile deterministic 8-worker downstream
+        run: |
+          gcc -O2 -std=c11 -fopenmp -DDSIR_WORKERS=8 ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c -o /tmp/exp073dp_downstream -lgsl -lgslcblas -lm
+      - name: Run exact WW equivalence
+        env:
+          OMP_NUM_THREADS: '8'
+          OMP_DYNAMIC: 'FALSE'
+          OPENBLAS_NUM_THREADS: '1'
+          MKL_NUM_THREADS: '1'
+          NUMEXPR_NUM_THREADS: '1'
+        run: |
+          set -euo pipefail
+          python3 ci/exp073dp_ww_exact_adapter_smallnside_equivalence_v0_1.py --emulator /tmp/exp073dp_downstream --out exp073dp_ww_exact_adapter_smallnside_equivalence_v0_1.json | tee exp073dp_stdout.txt
+          grep -Fx 'PASS_EXP073DP_WW_EXACT_ADAPTER_SMALLNSIDE_EQUIVALENCE_V0_1' exp073dp_stdout.txt
+          python3 - <<'PY'
+          import json
+          d=json.load(open('exp073dp_ww_exact_adapter_smallnside_equivalence_v0_1.json'))
+          assert d['token']=='PASS_EXP073DP_WW_EXACT_ADAPTER_SMALLNSIDE_EQUIVALENCE_V0_1'
+          assert d['science_gate_scored'] is False and d['ww_authority_created'] is False and d['home_execution_authorized'] is False
+          assert d['no_tolerance_rescue'] is True
+          assert len(d['cases'])==3
+          PY
+      - run: sha256sum exp073dp_ww_exact_adapter_smallnside_equivalence_v0_1.json exp073dp_stdout.txt > exp073dp_sha256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073dp-ww-exact-equivalence-${{ github.run_id }}-${{ github.sha }}
+          path: |
+            exp073dp_ww_exact_adapter_smallnside_equivalence_v0_1.json
+            exp073dp_stdout.txt
+            exp073dp_sha256.txt
+          if-no-files-found: error
+          retention-days: 90
