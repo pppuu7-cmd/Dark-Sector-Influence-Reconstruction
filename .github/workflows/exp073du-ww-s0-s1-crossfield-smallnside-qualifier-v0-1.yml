@@ -1,0 +1,137 @@
+name: Exp073DU WW_S0_S1 cross-field small-NSIDE qualifier v0.1
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/activate_exp073du_v0_1.txt'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: dsir-exp073du-ww-s0-s1-crossfield-smallnside-v0-1
+  cancel-in-progress: false
+
+env:
+  PREREG_BLOB: 'b9d34bc86bb4e7726c27e044402806c3b14ef558'
+  QUALIFIER_BLOB: '7f3c6cdd01831e5632b789365c0ecb2a3464dbbf'
+  ADAPTER_BLOB: 'd6f20600d6a206dd9fbb254b382e71a49c6b3c07'
+  SHARED_ADAPTER_BLOB: 'dafe86086a470c852106f0d4ecccbda1d389e397'
+  DOWNSTREAM_BLOB: 'be4f381de4c5c043a9c0fcd107e63ef3f2079578'
+  COMPONENTS_BLOB: '8ece8b6cb3880340e3bc6c35331c768fab030b77'
+  OMP_NUM_THREADS: '2'
+  OMP_DYNAMIC: 'FALSE'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+
+jobs:
+  hosted-crossfield-qualifier:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Freeze preregistration and implementation identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073du_ww_s0_s1_crossfield_smallnside_qualifier_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073du_ww_s0_s1_crossfield_smallnside_qualifier_v0_1.py)" = "$QUALIFIER_BLOB"
+          test "$(git hash-object ci/exp073do_ww_s0_s0_production_exact_adapter_v0_1.py)" = "$ADAPTER_BLOB"
+          test "$(git hash-object ci/exp073cv_wm_s3_production_exact_adapter_v0_1.py)" = "$SHARED_ADAPTER_BLOB"
+          test "$(git hash-object ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c)" = "$DOWNSTREAM_BLOB"
+          test "$(git hash-object ci/exp073du_component_blobs_v0_1.json)" = "$COMPONENTS_BLOB"
+          grep -Fq 'PASS_EXP073DU_WW_S0_S1_CROSSFIELD_SMALLNSIDE_EXACT_ADAPTER_V0_1' experiments/073du_ww_s0_s1_crossfield_smallnside_qualifier_v0_1_prereg.md
+          grep -Fq 'science_gate_scored = false' experiments/073du_ww_s0_s1_crossfield_smallnside_qualifier_v0_1_prereg.md
+          grep -Fq 'ww_s0_s1_authority_created = false' experiments/073du_ww_s0_s1_crossfield_smallnside_qualifier_v0_1_prereg.md
+          echo PASS_EXP073DU_STATIC_FREEZE
+
+      - name: Install exact NaMaster 2.7 plus GSL lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy compilers
+          echo "NMT_PREFIX=${RUNNER_TEMP}/nmt27" >> "$GITHUB_ENV"
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "$GITHUB_ENV"
+
+      - name: Verify frozen runtime numerical lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${NMT_PY}" - <<'PY'
+          import hashlib,importlib.metadata,inspect,os,pymaster as nmt
+          v=importlib.metadata.version('pymaster')
+          assert v=='2.7' or v.startswith('2.7.'),v
+          p=inspect.getsourcefile(nmt.NmtWorkspace.get_bandpower_windows); assert p
+          assert hashlib.sha256(open(p,'rb').read()).hexdigest()=='442e23eb542087566689271ad1c897d5da45f5b76e39def05b37d93b0098178f'
+          assert os.environ['OMP_NUM_THREADS']=='2' and os.environ['OMP_DYNAMIC']=='FALSE'
+          for k in ('OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS','BLIS_NUM_THREADS'):
+              assert os.environ[k]=='1',(k,os.environ[k])
+          print('PASS_EXP073DU_NAMASTER27_RUNTIME_LINEAGE')
+          PY
+          grep -Eq '#define GSL_VERSION "2\.7' "${NMT_PREFIX}/include/gsl/gsl_version.h"
+
+      - name: Compile and certify frozen mmap downstream
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/exp073du-bin"
+          "${NMT_PREFIX}/bin/x86_64-conda-linux-gnu-cc" -O0 -std=c11 -fopenmp -DDSIR_WORKERS=2 \
+            -I"${NMT_PREFIX}/include" ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c \
+            -L"${NMT_PREFIX}/lib" -Wl,-rpath,"${NMT_PREFIX}/lib" -lgsl -lgslcblas -lm \
+            -o "${RUNNER_TEMP}/exp073du-bin/mmap_full_mcm"
+          "${NMT_PY}" - <<'PY'
+          import os,struct,numpy as np
+          p=os.path.join(os.environ['RUNNER_TEMP'],'exp073du-tiny.bin')
+          with open(p,'wb') as f:
+              f.write(struct.pack('<iii',4,1,1))
+              f.write(np.array([0,1],dtype='<i4').tobytes())
+              f.write(np.eye(4,dtype='<f8').tobytes())
+          PY
+          "${RUNNER_TEMP}/exp073du-bin/mmap_full_mcm" "${RUNNER_TEMP}/exp073du-tiny.bin" "${RUNNER_TEMP}/exp073du-tiny.out" 2>"${RUNNER_TEMP}/exp073du-tiny.stderr"
+          grep -Fx 'DSIR_OMP_TEAM=2' "${RUNNER_TEMP}/exp073du-tiny.stderr"
+          echo "MMAP_EMULATOR=${RUNNER_TEMP}/exp073du-bin/mmap_full_mcm" >> "$GITHUB_ENV"
+
+      - name: Execute fail-closed S0-to-S1 qualifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="data/derived/exp073du/v0_1"
+          mkdir -p "$OUT"
+          "${NMT_PY}" ci/exp073du_ww_s0_s1_crossfield_smallnside_qualifier_v0_1.py \
+            --emulator "${MMAP_EMULATOR}" \
+            --out-dir "$OUT/runtime" \
+            --source-head "${GITHUB_SHA}" \
+            --contract-fingerprint "$PREREG_BLOB" \
+            --component-blobs-json ci/exp073du_component_blobs_v0_1.json \
+            --nside 16 | tee "$OUT/stdout.txt"
+          cp "$OUT/runtime/terminal_qualifier_receipt.json" "$OUT/terminal_qualifier_receipt.json"
+          cp "$OUT/runtime/adapter01/receipt.json" "$OUT/adapter_receipt.json"
+          "${NMT_PY}" - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('data/derived/exp073du/v0_1/terminal_qualifier_receipt.json')
+          r=json.loads(p.read_text())
+          assert r['token']=='PASS_EXP073DU_WW_S0_S1_CROSSFIELD_SMALLNSIDE_EXACT_ADAPTER_V0_1'
+          assert r['classification']=='QUALIFIER_PASS'
+          assert r['science_gate_scored'] is False
+          assert r['ww_s0_s1_authority_created'] is False
+          assert r['no_tolerance_rescue'] is True
+          assert r['nside']==16 and r['nl']==48
+          assert r['band_edges']==[0,6,12,18,24,30,36,42,48]
+          assert r['full_shape']==[4,8,4,48] and r['selected_shape']==[8,48]
+          assert all(r['checks'].values()),r['checks']
+          print('PASS_EXP073DU_TERMINAL_REREAD')
+          PY
+          sha256sum "$OUT/terminal_qualifier_receipt.json" "$OUT/adapter_receipt.json" "$OUT/stdout.txt" > "$OUT/payload_sha256.txt"
+
+      - name: Upload immutable qualifier evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073du-ww-s0-s1-crossfield-smallnside-v0-1-${{ github.sha }}
+          path: data/derived/exp073du/v0_1/
+          if-no-files-found: error
