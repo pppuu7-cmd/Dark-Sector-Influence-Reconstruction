@@ -46,6 +46,13 @@ Hosted static validation of this successor: Exp073EC commit `c9014c2763e542f22aa
 
 Immutable note: `recovery/2026-09-05_exp073dt_terminal_provenance_gap_exp073eb_armed.md` (commit `609195629826c6eed3d0c6f981647ebbf2a1d9f5`). Research log: `docs/RESEARCH_LOG_EXP073EB_2026-09-05.md` (commit `b94d4d675ca3f7fe025450835d9369f3cb39dd0b`).
 
+## Prospective next-front design — Exp073DV
+While Exp073DT attempt 4 is queued and before any full-resolution `WW_S0_S1` numerical output exists, `experiments/073dv_ww_s0_s1_full_resolution_activation_design_v0_1.md` was added in commit `1dc7d3f1838856890ba0b04515d6ae275fbc02cf`. This is design/readiness only, with no workflow activation and no scientific authority.
+
+The future activation is constrained prospectively to ordered distinct `(S0,S1)` spin-2 fields reconstructed from authoritative R1 streams, no lens mask, NSIDE=4096, ell `0..12287`, 39 bands, full `[4,39,4,12288]`, exact `EE<-EE`, canonical `<f8 [39,12288]`, A/B exact SHA + `numpy.array_equal`, and no tolerance rescue. Durable checkpoints must bind both S0 and S1 payloads and the ordered cross-workspace identity. Unlike the Exp073DT fast-path gap, any future terminal fast-path must reread the entire ordered checkpoint-manifest chain and export enough manifest/receipt evidence for independent authority review.
+
+Exp073DV remains `PREPARED_NOT_ACTIVATED`; entry is blocked until Exp073DT terminal classification, required Exp073EB closure on DT PASS, consumed Exp073DU qualifier, and zero competing self-hosted DSIR heavy processes.
+
 ## Frozen science/execution boundaries
 `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A invalid `<=0.05`; Layer-B invalid-row `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
 
@@ -56,4 +63,4 @@ Do not launch another self-hosted task while Exp073DT attempt 4 is queued/in_pro
 - exact A/B inequality is scientific repeatability FAIL;
 - infrastructure/runtime/checkpoint/provenance/artifact failures remain `+0/+0` and require diagnosis/resume from verified stages.
 
-Independent next-front preparation Exp073DU for `WW_S0_S1` remains support-only and cannot supersede Exp073DT.
+Independent next-front preparation Exp073DU and Exp073DV for `WW_S0_S1` remains support/design-only and cannot supersede Exp073DT.
