@@ -1,0 +1,5 @@
+ACTIVATE_EXP073DW_WW_S0_S0_DT_TOOLCHAIN_EXACT_EQUIVALENCE_V0_1
+accounting=+0/+0
+runner=github-hosted-only
+science_authority=false
+self_hosted_competition=forbidden
