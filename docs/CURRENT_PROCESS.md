@@ -17,18 +17,18 @@ Wm_S1 Track-A exact PASS, admitted Wm_S2 and Wm_S3 exact scientific PASS remain 
 ## Current authoritative process — Exp073DT WW_S0_S0 checkpoint-preserving resume
 Preregistration commit `946964121f12c67e053514109bf974050eeb0cc9`; frozen activation workflow/head `c450aef42d96eb0bfe0b4c78d5a0fdc850d9a2cd`.
 
-Attempt 1: run `33940588308`, hosted preflight `101237102962` SUCCESS; self-hosted `101237118421` external runner shutdown at `2026-09-05T03:56:42Z`; science CANCELLED; evidence SKIPPED; `INFRASTRUCTURE_INCOMPLETE +0/+0`.
+Attempts 1 and 2 remain historical `INFRASTRUCTURE_INCOMPLETE +0/+0` external runner shutdowns with science CANCELLED and evidence SKIPPED.
 
-Attempt 2: hosted preflight `101244675822` SUCCESS; self-hosted `101244660215` external runner shutdown at `2026-09-05T07:49:54Z`; science CANCELLED; evidence SKIPPED; no run artifacts; `INFRASTRUCTURE_INCOMPLETE +0/+0`. No numerical/scientific failure preceded the shutdown.
+Attempt 3: hosted preflight `101274119122` SUCCESS; self-hosted `101274118640` passed live exclusivity, PyMaster 2.7 and `DSIR_OMP_TEAM=8`, then received external runner shutdown at `2026-09-05T09:27:06Z`; science CANCELLED and terminal evidence SKIPPED. This is `INFRASTRUCTURE_INCOMPLETE +0/+0`, not scientific FAIL.
 
-Attempt 3 is authoritative and live:
-- run `33940588308`, attempt `3`;
-- hosted preflight `101274119122`: SUCCESS;
-- self-hosted science `101274118640`: **IN_PROGRESS** at latest reconciliation;
-- active step: `Full fail-closed WW_S0_S0 A/B science under one continuous flock`;
-- terminal evidence upload remains pending;
-- runner ownership: **DSIR-HOME-PC RESERVED BY Exp073DT attempt 3**;
-- live Actions reconciliation: exactly `1 in_progress / 0 queued` DSIR workflow runs.
+After live reconciliation showed exactly `0 in_progress / 0 queued`, the failed self-hosted job of the same frozen run was rerun. No new workflow or scientific arithmetic was created.
+
+Attempt 4 is authoritative:
+- run `33940588308`, attempt `4`;
+- hosted preflight `101288015425`: SUCCESS;
+- self-hosted science `101288014666`: **QUEUED** at latest reconciliation;
+- runner ownership: **DSIR-HOME-PC RESERVED BY Exp073DT attempt 4**;
+- terminal evidence upload pending.
 
 Frozen identity remains unchanged:
 - frozen head `c450aef42d96eb0bfe0b4c78d5a0fdc850d9a2cd`;
@@ -40,11 +40,7 @@ Frozen identity remains unchanged:
 
 Only complete hash/identity-verified stages may be restored; interrupted/incomplete stages recompute; malformed/mismatched state fails closed. Frozen science remains `WW_S0_S0`, DES NSIDE=4096, ell 0..12287, 39 bands, full `[4,39,4,12288]`, selected `EE<-EE`, canonical `<f8 [39,12288]`, OpenMP=8, nested numerical-library threads=1, no tolerance rescue.
 
-Immutable reconciliation notes:
-- `recovery/2026-09-05_exp073dt_runner_shutdown_infrastructure_resume.md`;
-- `recovery/2026-09-05_exp073dt_attempt2_runner_shutdown_dispatch_block.md`;
-- `recovery/2026-09-05_exp073dt_attempt3_same_frozen_resume_dispatched.md`;
-- `recovery/2026-09-05_exp073ea_saved_lu_official_reload_exact_pass.md`.
+Immutable reconciliation notes include `recovery/2026-09-05_exp073dt_attempt3_runner_shutdown_attempt4_dispatched.md` plus the prior attempt-1/2/3 and Exp073EA notes.
 
 ## Independent non-biasing preparation
 Commit `2f9c2950dc118aa281b938d58f444fcfed3b8d18` adds Exp073DU, a small-NSIDE distinct-field `WW_S0_S1` cross-field adapter qualifier. Later hosted-only diagnostics through Exp073EA remain support-only and cannot supersede Exp073DT or create science authority. Exp073EA specifically shows that the saved-LU path can reproduce the official serialized/reloaded PyMaster numerical state bit-for-bit, while the original in-memory state remains last-bit distinct; this boundary must be preserved prospectively in any future checkpoint route.
