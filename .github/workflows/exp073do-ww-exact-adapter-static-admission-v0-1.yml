@@ -1,0 +1,40 @@
+name: Exp073DO WW exact adapter static admission v0.1
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/exp073do-ww-exact-adapter-static-admission-v0-1.yml']
+  workflow_dispatch:
+permissions: {contents: read}
+concurrency:
+  group: dsir-exp073do-ww-exact-adapter-static-admission-v0-1
+  cancel-in-progress: false
+jobs:
+  hosted-static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Run static admission
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/exp073do_ww_exact_adapter_static_audit_v0_1.py | tee exp073do_stdout.txt
+          grep -Fx 'PASS_EXP073DO_WW_EXACT_ADAPTER_STATIC_ADMISSION_V0_1' exp073do_stdout.txt
+          python3 - <<'PY'
+          import json
+          d=json.load(open('exp073do_ww_exact_adapter_static_admission_v0_1.json'))
+          assert d['token']=='PASS_EXP073DO_WW_EXACT_ADAPTER_STATIC_ADMISSION_V0_1'
+          assert d['science_gate_scored'] is False and d['ww_authority_created'] is False and d['home_execution_authorized'] is False
+          assert all(d['checks'].values())
+          PY
+      - run: sha256sum exp073do_ww_exact_adapter_static_admission_v0_1.json exp073do_stdout.txt > exp073do_sha256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073do-ww-exact-adapter-static-${{ github.run_id }}-${{ github.sha }}
+          path: |
+            exp073do_ww_exact_adapter_static_admission_v0_1.json
+            exp073do_stdout.txt
+            exp073do_sha256.txt
+          if-no-files-found: error
+          retention-days: 90
