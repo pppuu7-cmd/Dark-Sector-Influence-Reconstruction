@@ -1,41 +1,44 @@
 # DSIR current-process ledger
 
-Updated: 2026-09-05
+Updated: 2026-09-06
 Scope: DSIR only; RTK/RQIR excluded.
 
 ## Preserved authority
-Wm_S1 Track-A exact PASS, admitted Wm_S2 and Wm_S3 exact scientific PASS remain preserved. Historical negative/infrastructure results remain immutable. Current scientific target is `WW_S0_S0`.
+Wm_S1 Track-A exact PASS, admitted Wm_S2 and Wm_S3 exact scientific PASS remain preserved. Historical negative/resource/infrastructure outcomes remain immutable. Current scientific target is `WW_S0_S0`.
 
-## Authoritative heavy process — Exp073DT WW_S0_S0 attempt 5
-- run `33940588308`, attempt `5`;
-- hosted preflight job `101374977192`: SUCCESS;
-- self-hosted science job `101374976626`: **QUEUED** at latest live reconciliation;
-- head `c450aef42d96eb0bfe0b4c78d5a0fdc850d9a2cd`;
-- source authority `de83e20a68f79ccf25b89b0d33eb4206e294c757`;
+## Authoritative heavy process — Exp073EN retry-safe file-backed WW_S0_S0
+- workflow: `Exp073EN WW_S0_S0 file-backed A/B science network-retry v0.2`;
+- run `33994398927`, attempt `1`;
+- hosted preflight job `101382210840`: SUCCESS;
+- self-hosted science job `101382229273`: **IN_PROGRESS** at latest live reconciliation;
+- activation head `4d1cbd504067a64a94b038292793e5e8bffba911`;
+- frozen Exp073EN science source authority `de83e20a68f79ccf25b89b0d33eb4206e294c757`;
 - contract fingerprint `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
-- durable root `$HOME/.cache/dsir/exp073dt-ww-s0-s0-ab-v0-1`;
-- namespaces `checkpoints/exp073dq-ww-s0-s0-a-v0-1`, `checkpoints/exp073dq-ww-s0-s0-b-v0-1`;
-- expected token `PASS_EXP073DT_WW_S0_S0_EXACT_REPEATABILITY_8CORE_V0_1`;
-- on SUCCESS: consume raw A/B exact evidence and Exp073EB six-stage provenance before any WW_S0_S0 authority;
-- on scientific exact FAIL: preserve as negative science and move to next allowed branch;
-- on runner/infrastructure failure: diagnose first causal failure and resume only from fail-closed verified durable checkpoints;
-- **DSIR-HOME-PC RESERVED BY Exp073DT attempt 5**. No competing self-hosted heavy task may launch.
+- durable science root `$HOME/.cache/dsir/exp073en-ww-s0-s0-filebacked-ab-v0-1`;
+- checkpoint root `$HOME/.cache/dsir/exp073en-ww-s0-s0-filebacked-ab-v0-1/checkpoints`;
+- replica checkpoint namespaces remain `checkpoints/exp073dq-ww-s0-s0-a-v0-1` and `checkpoints/exp073dq-ww-s0-s0-b-v0-1` inside the frozen durable driver;
+- expected terminal science-candidate token `PASS_EXP073EN_WW_S0_S0_FILEBACKED_AB_EXACT_REPEATABILITY_8CORE_V0_1`;
+- last durable checkpoint: not inferable from partial output; partial numerical output MUST NOT be inspected or used for tuning while the run is active;
+- on terminal candidate PASS: consume raw compact artifact, verify artifact digest/identities/exact A/B evidence, then activate only the prospectively preregistered Exp073EO checkpoint-provenance admission gate; no WW authority before EO PASS;
+- on scientific exact FAIL after all storage/provenance qualification: preserve immutable negative science and continue to the next scientifically allowed branch;
+- on infrastructure/resource failure: diagnose the first causal failure, preserve all verified durable checkpoints and resume only prospectively without changing frozen arithmetic.
 
-### Attempt 4 immutable outcome
-Attempt 4 self-hosted job `101288014666` ended `INFRASTRUCTURE_RUNNER_SHUTDOWN +0/+0`: GitHub log records a runner shutdown signal at `2026-09-05T20:43:43Z`, then cancellation. Before shutdown, live exclusivity, PyMaster 2.7 and `DSIR_OMP_TEAM=8` checks passed. Terminal artifact upload was skipped; therefore no scientific result was scored. No science criterion was changed. Attempt 5 was dispatched only after live Actions reconciliation found zero queued and zero in-progress runs.
+**DSIR-HOME-PC RESERVED BY Exp073EN run `33994398927`, job `101382229273`. No competing self-hosted DSIR heavy task may launch.**
 
-## Direct cross-workspace adapter closure — Exp073EK terminal PASS
-Exp073EK run/job `33988956806 / 101367596573`, head `51f8a7d7dd481e79b734ba174bffa29236f2fc0b`, artifact `9976033816`, GitHub artifact ZIP digest `sha256:f39351cddec695559686126fc15e212556eea370fe3eeab73d5f20f80c288c06`. The downloaded artifact ZIP was independently hashed and matched the same SHA256.
+## Superseded Exp073EN attempts 1-2 — immutable network/infrastructure `+0/+0`
+Original run `33993889263` reached hosted preflight SUCCESS but home jobs `101380820499` and `101381512953` failed before disk gate, local Exp073EM qualifier, NaMaster build, R1 validation or full-resolution arithmetic because the live-exclusivity API call encountered SSL EOF/network failure. No science artifact or `WW_S0_S0` authority was created.
 
-Frozen token `PASS_EXP073EK_DIRECT_PUBLIC_BPW_ADAPTER_EXACT_V0_1`; classification `DIRECT_PUBLIC_BPW_ADAPTER_EXACT +0/+0`. Two independent reloads of the same serialized distinct S0->S1 PyMaster 2.7 workspace followed by only public `get_bandpower_windows()` were bitwise identical. Full A/B SHA `aa883a13c305641e6e1aab5feca4692a8da1cdbcca16e8c124f12e601608d628`; selected `EE<-EE` A/B SHA `9e7a0e169d752e56d4a1f14244c58ac9a14a5c1a3782c27b3a6562a69cb0cf5e`; full and selected `numpy.array_equal=true`; no tolerance rescue.
+The repair is infrastructure-only: `ci/exp073en_live_exclusivity_curl_retry_v0_2.sh` adds retry-safe `curl --retry 8 --retry-all-errors`, and `ci/exp073en_home_filebacked_fullres_v0_2.sh` replaces only the live-exclusivity transport block while inheriting the frozen science code unchanged. This repair was committed before activation of current run `33994398927`.
 
-This is support/readiness only. It qualifies direct reload + public BPW as the sole currently exact cross-workspace adapter candidate. It does not create WW authority.
+## File-backed storage qualification — Exp073EM terminal exact support PASS
+Hosted run/job `33993395728 / 101379508508`, artifact `9977333691`, digest `sha256:0ece75e489b6f413d96e85a099e42db96b5d5acdc03c3ee6901273357762cda1`, token `PASS_EXP073EM_NAMASTER27_FILEBACKED_MMAP_EXACT_STORAGE_V0_1`. Small-NSIDE stock vs patched WSP/full-BPW/selected-EE comparisons were exact for auto0/auto1/cross01; support-only `+0/+0`, no WW authority.
 
-## Prepared next support gate — Exp073EL
-`experiments/073el_ww_cross_direct_public_bpw_full_resolution_resource_gate_v0_1_prereg.md` was prospectively committed at `c00b9268b0e397fbf471023a28059215dd4e572d` after EK PASS and while DT attempt 5 was queued. Status `PREREGISTERED_NOT_ACTIVATED`, support-only `+0/+0`.
+## Direct cross-workspace adapter closure — Exp073EK support PASS
+Run/job `33988956806 / 101367596573`, artifact `9976033816`, digest `sha256:f39351cddec695559686126fc15e212556eea370fe3eeab73d5f20f80c288c06`, token `PASS_EXP073EK_DIRECT_PUBLIC_BPW_ADAPTER_EXACT_V0_1`. Direct serialized-workspace reload + public PyMaster 2.7 `get_bandpower_windows()` is the sole currently exact distinct-field adapter candidate. Support-only `+0/+0`.
 
-Exp073EL freezes the full-resolution resource/readiness contract for exactly the EK-qualified operation: ordered distinct `(S0,S1)`, NSIDE=4096, ell 0..12287, 39 bands, serialized cross workspace, direct public PyMaster 2.7 `get_bandpower_windows()`, exact `[4,39,4,12288]`, exact `EE<-EE [39,12288]`, durable fail-closed checkpoints, no alternate reconstruction or tolerance rescue. It must not activate while Exp073DT attempt 5 owns the home runner.
-
-Exp073DV full-resolution `WW_S0_S1` remains `PREPARED_NOT_ACTIVATED`, blocked on valid `WW_S0_S0` authority/provenance closure plus Exp073EL resource/readiness PASS.
+## Prepared next gates
+- `experiments/073eo_ww_s0_s0_filebacked_checkpoint_provenance_admission_v0_1_prereg.md` prospectively committed at `65c8e8d4f68c6d81c5a139fbb93f5b59467761a9` while Exp073EN was still running. Status `PREREGISTERED_NOT_ACTIVATED`. It independently audits the terminal compact artifact plus complete six-stage A/B durable checkpoint chain and is the only gate allowed to admit `WW_S0_S0` authority.
+- Exp073EL remains preregistered/inactive for the ordered distinct-field full-resolution resource path. It may activate only after valid `WW_S0_S0` authority and while respecting single-home-runner ownership.
+- Exp073DV remains prepared but blocked on valid `WW_S0_S0` plus Exp073EL readiness PASS.
 
 Frozen frontier: `Wm_S1 -> Wm_S2 -> Wm_S3 -> WW_S0_S0 -> WW_S0_S1 -> WW_S0_S2 -> WW_S0_S3 -> WW_S1_S1 -> WW_S1_S2 -> WW_S1_S3 -> WW_S2_S2 -> WW_S2_S3 -> WW_S3_S3`.
