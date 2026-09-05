@@ -1,0 +1,9 @@
+# DSIR immutable recovery — Exp073DZ complete / Exp073ED armed
+
+Date: 2026-09-05. Scope: DSIR only.
+
+Exp073DZ hosted run/job `33973350908 / 101325656145` completed SUCCESS. Raw log emitted `COMPLETE_EXP073DZ_PYMASTER27_WORKSPACE_POSTMCM_API_AUDIT_V0_1` and classification `DIAGNOSTIC_COMPLETE +0/+0`. Artifact `9971589033` had GitHub ZIP SHA256 `71a45e8eb21b4a17f7695b8d9cc6c7fe4081513d0d1251ff62494f5ef6352c37`; the downloaded ZIP independently reproduced the same SHA256. Its JSON records public bandpower windows `[4,8,4,48]`, coupling matrix `[192,192]`, absent `NmtWorkspace.bpws`, absent Python-visible `mcm` and `mcm_binned`, present `wsp.bin`, `wsp.ncls`, `wsp.lmax`, `wsp.lmax_fields`, `wsp.norm_type`, and absent `NmtBin._bin_mcm`. No science gate was scored and no WW authority was created.
+
+The smallest prospectively frozen continuation is Exp073ED, hosted support-only `+0/+0`, which directly calls PyMaster 2.7 `nmtlib.get_bandpower_windows` and verifies the exact source-defined buffer reshape/transpose against the public `NmtWorkspace.get_bandpower_windows()` tensor. Prereg commit `4174ddc970649f3f50eba4b90db72874e26e6ada`, prereg blob `8e447bbd739bab94a3f1e8e4891f30e40c278b79`; script commit `37e50c48416fada37fc76ed9c8ef3b257b11a6fb`, script blob `332a3616b20604c5c21cf58f0b5780ad185ff180`; workflow commit `1538e0b299b258e84fbb8b554b768ff7192f4aea`; activation head `1b10a5ade1eb3e911da06269d452915f70e4959c`; run `33976431383`.
+
+Exp073DT attempt 4 remains the sole authoritative self-hosted heavy process (`33940588308 / 101288014666`), queued at the live reconciliation that preceded this note. DSIR-HOME-PC remains reserved by it. No competing home task was launched.
