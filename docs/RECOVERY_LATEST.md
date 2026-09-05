@@ -67,7 +67,7 @@ Historical support chain remains immutable: DU/DW qualifier FAIL; DX excluded FI
 
 Exp073EK run/job `33988956806 / 101367596573`, artifact `9976033816`, digest `sha256:f39351cddec695559686126fc15e212556eea370fe3eeab73d5f20f80c288c06`, token `PASS_EXP073EK_DIRECT_PUBLIC_BPW_ADAPTER_EXACT_V0_1`, support-only `+0/+0`. Two independent reloads of one serialized distinct S0->S1 workspace followed only by public PyMaster 2.7 `get_bandpower_windows()` are exact. No WW authority was created.
 
-## Latest independent support closures — Exp073EP and Exp073EQ
+## Latest independent support closures — Exp073EP, Exp073EQ and Exp073ER
 Exp073EP terminal hosted support PASS:
 - run/job `33994782890 / 101383307890`;
 - artifact `9977735941`, digest `sha256:4007fa89e678f4585cd73641ff26054a9c939c3f0e679581202cdf2154a39ed5`;
@@ -83,9 +83,19 @@ Exp073EQ terminal hosted static contract PASS:
 - classification `STATIC_AUTHORITY_CONTRACT_EXACT`, accounting `+0/+0`, no WW authority.
 EQ prospectively confirms EN workflow/prereg and EO prereg are consistent on source authority, contract fingerprint, R1 artifact/digest, NaMaster source, file-backed patch, Exp073EM identity, exact-only policy and critical geometry. It closes static EN→EO contract risk only.
 
-Immutable reconciliation note: `docs/recovery/RECOVERY_2026-09-06_EXP073EP_EQ_RECONCILED_EN_RUNNING.md`.
+Exp073ER terminal hosted support PASS:
+- preregistration blob `3a3642189d33a1a2185f6b3b0aad86c6870b18a2`;
+- run/job `33997539503 / 101390573286`;
+- activation head `b5b6d75aa569473e5e0770ba1d718f93bf286c86`;
+- artifact `9978528214`;
+- GitHub digest and independently verified ZIP SHA256 `sha256:1e0c3516de041e773eca030d9488f7af7d38455033ae5b97ba1151820eb22267`;
+- token `PASS_EXP073ER_FILEBACKED_FITS_READ_PUBLIC_BPW_EXACT_V0_1`;
+- classification `FILEBACKED_FITS_READ_PUBLIC_BPW_EXACT`, accounting `+0/+0`, no WW authority.
+Patched fresh FITS reload A/B each proved a regular mapped backing file of exactly `294912` bytes with complete cleanup. Stock A/B and patched A/B public `read_from(read_unbinned_MCM=True) -> get_bandpower_windows()` outputs were exact for full BPW `[4,8,4,48]` and selected `EE<-EE [8,48]`: SHA equality, `numpy.array_equal=true`, max absolute difference `0.0`, no tolerance rescue. Full BPW SHA `bf656c5f0493dc44d6c42b31b804f04f6893b7fc4895e92b99cefc356b10b884`; selected EE SHA `336a0b57fe734a2f17a4a0844db1a18fc43887abf7556fb63009ee4a3de5f607`.
 
-Exp073EL remains preregistered/inactive for the full-resolution ordered distinct-field resource path; Exp073DV remains blocked until valid `WW_S0_S0` authority plus Exp073EL readiness PASS.
+Immutable reconciliation notes: `docs/recovery/RECOVERY_2026-09-06_EXP073EP_EQ_RECONCILED_EN_RUNNING.md` and `docs/recovery/RECOVERY_2026-09-06_EXP073ER_TERMINAL_EXACT_EN_RUNNING.md`.
+
+Exp073EL remains preregistered/inactive for the full-resolution ordered distinct-field resource path; Exp073ER now closes the FITS-read storage exactness prerequisite for that future route, but Exp073EL itself remains unpassed. Exp073DV remains blocked until valid `WW_S0_S0` authority plus Exp073EL readiness PASS.
 
 ## Frozen science/execution boundaries
 `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A invalid `<=0.05`; Layer-B invalid-row `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
@@ -95,4 +105,4 @@ Exp073EL remains preregistered/inactive for the full-resolution ordered distinct
 2. When terminal, consume the raw compact artifact in the same research iteration. Verify digest, source/contract identities, local Exp073EM qualifier, mmap proof, exact A/B evidence and terminal token; workflow SUCCESS alone is insufficient.
 3. On candidate PASS, activate Exp073EO and independently audit the complete A/B six-stage durable provenance. Only EO PASS creates `WW_S0_S0` authority.
 4. On infrastructure/resource failure, diagnose the first causal failure and preserve verified checkpoints; never weaken arithmetic or re-run completed expensive stages unnecessarily.
-5. After valid `WW_S0_S0`, activate Exp073EL for the EK/EP-qualified ordered distinct-field full-resolution resource path; then WW_S0_S1 may proceed only under the frozen frontier.
+5. After valid `WW_S0_S0`, activate Exp073EL for the EK/EP/ER-qualified ordered distinct-field full-resolution resource path; then WW_S0_S1 may proceed only under the frozen frontier.
