@@ -1,0 +1,38 @@
+name: Exp073EQ EN-to-EO static authority contract qualifier v0.1
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073eq-en-eo-static-authority-contract-qualifier-v0-1.yml'
+permissions:
+  contents: read
+jobs:
+  hosted-static-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Freeze qualifier identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073eq_eo_en_static_authority_contract_qualifier_v0_1_prereg.md)" = "$(git rev-parse HEAD:experiments/073eq_eo_en_static_authority_contract_qualifier_v0_1_prereg.md)"
+          test "$(git hash-object ci/exp073eq_static_authority_contract_qualifier_v0_1.py)" = "$(git rev-parse HEAD:ci/exp073eq_static_authority_contract_qualifier_v0_1.py)"
+      - name: Execute fail-closed static authority-contract qualifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT=data/derived/exp073eq/v0_1
+          mkdir -p "$OUT"
+          python3 ci/exp073eq_static_authority_contract_qualifier_v0_1.py "$OUT/terminal_qualifier_receipt.json" | tee "$OUT/stdout.txt"
+          grep -Fx 'PASS_EXP073EQ_EN_EO_STATIC_AUTHORITY_CONTRACT_V0_1' "$OUT/stdout.txt"
+      - name: Upload immutable Exp073EQ evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073eq-en-eo-static-authority-contract-v0-1-${{ github.sha }}
+          path: data/derived/exp073eq/v0_1/
+          if-no-files-found: warn
+          retention-days: 30
