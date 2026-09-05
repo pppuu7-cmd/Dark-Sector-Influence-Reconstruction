@@ -3,37 +3,50 @@
 Updated: 2026-09-05
 Scope: DSIR only; RTK/RQIR excluded.
 
-## Scientific authority
-**Wm_S3 scientific angular authority is exact PASS.** Authoritative process: Exp073DJ checkpoint-preserving Exp073BU resume, run/job `33910213781 / 101144660519`, activation head `c0f5959b3edb0957cfb14a1d06f7715242d57f48`, frozen science head `c02c018ede6a1fcf7aef1a848c0118a0669ed67f`, contract fingerprint `b38687bf5aa6cf4cfe01b2f38a7091e96d97196ad38bdf2ea771f7b649ac73da`, checkpoint root `~/.cache/dsir/exp073bu-wm-s3-fresh-ab-8core-v0-4-33901458494`, namespaces `checkpoints/exp073bu-wm-s3-a-v0-1` and `checkpoints/exp073bu-wm-s3-b-v0-1`.
+## Preserved scientific authority
 
-Artifact `9959064322` has GitHub and independently downloaded ZIP SHA256 `4c9cbebdf4be2e901943a738ebb7df9c1040a6d9524bdd359feb3d3331a647c9`. Raw receipt is `PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_8CORE_V0_3` with canonical `<f8 [39,12288]`, whole SHA equality=true, `numpy.array_equal=true`, no tolerance rescue; A/B selected-TE SHA256 both `d282ebdf98dc04e41a8c85f487e209634a8324ce7677107112b8abfd1660f749`.
+**Wm_S3 scientific angular authority is exact PASS.** Authoritative process: Exp073DJ checkpoint-preserving Exp073BU resume, run/job `33910213781 / 101144660519`, frozen science head `c02c018ede6a1fcf7aef1a848c0118a0669ed67f`, contract fingerprint `b38687bf5aa6cf4cfe01b2f38a7091e96d97196ad38bdf2ea771f7b649ac73da`, historical checkpoint root `~/.cache/dsir/exp073bu-wm-s3-fresh-ab-8core-v0-4-33901458494`, namespaces `checkpoints/exp073bu-wm-s3-a-v0-1` and `checkpoints/exp073bu-wm-s3-b-v0-1`.
 
-Historical Exp073CM resource FAIL and original Exp073BU v0.4 runner-loss remain immutable `+0/+0` outcomes.
+Raw terminal token `PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_8CORE_V0_3`; A/B canonical selected-TE SHA256 `d282ebdf98dc04e41a8c85f487e209634a8324ce7677107112b8abfd1660f749`; exact SHA equality and `numpy.array_equal=true`, no tolerance rescue.
 
-## Current process — Exp073DL evidence recovery support `+0/+0`
-Prereg: `experiments/073dl_exp073bu_terminal_payload_evidence_recovery_v0_1_prereg.md`, commit/blob `d22a4cddd4675ca3174eb0ba38d8b5cd16ba7296 / 1422fc524ed1a391fa6a0b3a464a2c754fcca01a`.
+Wm_S1 Track-A exact PASS and admitted Wm_S2 authority remain preserved. Historical Exp073CM resource/performance FAIL and original Exp073BU v0.4 runner-loss remain immutable `+0/+0`.
 
-Support failure history:
-- Exp073DK `33932618320`: hosted static harness `ValueError: substring not found`, export skipped.
-- Exp073DL `33934660163`, `33934706167`: self-referential hosted audit false positives, export skipped.
-- Exp073DL `33934784345 / 101220495111`: hosted audit PASS and home lock/live noncompetition PASS; first causal failure before payload reading was `ModuleNotFoundError: No module named 'numpy'` from system `python3`; no artifact files were produced. Classification infrastructure/dependency `+0/+0`.
+## Closed support evidence — Exp073DL `+0/+0`
 
-Prospective repair:
-- external static regression: `ci/exp073dl_evidence_guard_static_test_v0_1.py`;
-- frozen-Python binding regression commit `96475ac95061bbaf28f0b55437db8583dd6d22a1`;
-- evidence workflow activation commit `726d629236da0e807093840de80915718805ca5d`;
-- evidence payload checker now binds read-only to the already validated `$HOME/.cache/dsir-nmt27/bin/python`; it never installs dependencies or recomputes NaMaster/masks/workspaces/MCM/PCL.
+Terminal run/job `33934918432 / 101220868663`, artifact `9959830267`; GitHub and independently verified ZIP SHA256 `cc32969cba9802201ac8cf7eae32b430ec47285f3357a58d470850aff8ceb8ab`. Exported A/B payloads are each canonical `<f8 [39,12288]`, finite, 3,833,856 bytes, SHA256 `d282ebdf98dc04e41a8c85f487e209634a8324ce7677107112b8abfd1660f749`, independently `numpy.array_equal=true`. This is evidence support only; Wm_S3 authority remains the Exp073DJ science receipt.
 
-Current live run: `33934918432`.
-- hosted static-audit job `101220844879`: SUCCESS;
-- self-hosted evidence-only job `101220868663`: QUEUED at latest reconciliation;
-- expected support token `PASS_EXP073DL_TERMINAL_PAYLOAD_EVIDENCE_RECOVERY_V0_1`;
-- DSIR-HOME-PC is RESERVED for this single queued evidence-only job; no competing self-hosted/heavy process may start;
-- on SUCCESS consume and independently validate Actions artifact digest, exact A/B payload SHA, `<f8 [39,12288]`, finiteness and `numpy.array_equal`;
-- on FAIL/BLOCKED diagnose first support/infrastructure cause without altering Wm_S3 PASS or historical checkpoints.
+## Closed preflight — Exp073DM `PASS +0/+0`
+
+Frozen next angular object from pre-existing repository order is exactly `WW_S0_S0` after Wm_S3.
+
+Exp073DM prereg commit `030310dbf78652972f74afd5b8cf85ab435b6a43`. Initial hosted run/job `33937934428 / 101229402478` was infrastructure/static-harness FAIL `+0/+0`: self-referential anti-rescue audit matched its own forbidden-string literals. Smallest prospective harness repair commit `ab72044ff0393eba58a669ae77521bd4c4321a03`; retrigger head `71e8ad4ea601eb756e0e0b2218620b5347416cbe`.
+
+Repaired run/job `33937980591 / 101229540163` = terminal SUCCESS; artifact `9960805717`; GitHub and independent ZIP SHA256 `fa19dbf8c6735e25ec1a500a3f8540f2f868f30e92aa589d3194d7f9deb5c8e3`. Raw token `PASS_EXP073DM_WW_S0_S0_EXACT_AUTHORITY_PREFLIGHT_V0_1`; `science_gate_scored=false`, `ww_authority_created=false`, no numerical WW payload. Frozen target: full `[4,39,4,12288]`, selected `EE<-EE`, canonical `<f8 [39,12288]`, no lens-mask route.
+
+## Current process — Exp073DN hosted checkpoint-architecture binding `+0/+0`
+
+Purpose: before any home WW computation, machine-check whether proven Wm durable machinery can be reused unchanged. Source inspection shows the Wm base is explicitly lens+S3 / spin-0×spin-2 / `ncls=2` / `[2,39,2,12288]` / `TE<-TE` / Wm-namespace specific, so direct flag-based reuse is forbidden; only fail-closed checkpoint invariants may be reused.
+
+- prereg: `experiments/073dn_ww_s0_s0_checkpoint_architecture_binding_v0_1_prereg.md`, commit `08271223c92a2aabbb81238d9455ac1e49acbce3`;
+- static audit implementation commit `9d42ed49da74df53205930f6a7cfa5b23f6bd64c`;
+- workflow/head `24762df625db3516d6da7f07447b9d2599627152`;
+- workflow/run ID `33938100671`;
+- job ID `101229887636`;
+- checkpoint namespace: `N/A` (hosted source-only audit);
+- start: `2026-09-05T02:05:56Z`;
+- expected token: `PASS_EXP073DN_REQUIRE_WW_SPECIFIC_CHECKPOINT_ADAPTER_V0_1`;
+- current state at ledger write: `IN_PROGRESS`;
+- last durable checkpoint: not applicable; no numerical payload exists;
+- runner ownership: GitHub-hosted only; **DSIR-HOME-PC is FREE**.
+
+On SUCCESS: consume raw artifact/digest. If the exact frozen PASS is independently validated, implement a **WW-specific** durable adapter/driver preserving S0-only spin-2×spin-2 auto, full stock `[4,39,4,12288]` before `EE<-EE`, dedicated checkpoints, exact source-head/contract binding and exact A/B comparator; run a separate exact-equivalence/activation audit before any home science.
+
+On FAIL/BLOCKED: diagnose first source/audit cause prospectively; no home run, no science change.
 
 ## Frozen boundaries
+
 `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A operator_f_invalid `<=0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
 
 ## Exact next action
-Consume run/job `33934918432 / 101220868663`. Only after its support evidence is terminal and classified may a next self-hosted process be launched. Once evidence recovery is closed, advance from the admitted Wm_S3 PASS to the next prospectively permitted DSIR scientific gate from repository frontier authority.
+
+Consume terminal `33938100671 / 101229887636`. Do not launch a self-hosted WW computation until Exp073DN is raw-artifact validated and a separate WW-specific checkpoint implementation/equivalence chain has prospectively passed.
