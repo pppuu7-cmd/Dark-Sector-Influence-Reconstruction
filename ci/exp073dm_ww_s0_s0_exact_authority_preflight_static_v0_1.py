@@ -17,6 +17,15 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def dotted_name(node: ast.AST) -> str:
+    if isinstance(node, ast.Name):
+        return node.id
+    if isinstance(node, ast.Attribute):
+        p = dotted_name(node.value)
+        return f"{p}.{node.attr}" if p else node.attr
+    return ""
+
+
 def main() -> None:
     source = SRC.read_text(encoding="utf-8")
     prereg = PREREG.read_text(encoding="utf-8")
@@ -36,8 +45,6 @@ def main() -> None:
     ])
     checks["successor_order_frozen"] = "Wm_S3 -> WW_S0_S0 -> WW_S0_S1" in prereg
 
-    # Literal/structural source assertions. These audit the already-frozen executor;
-    # they do not execute NaMaster or create numerical WW output.
     required = [
         "NSIDE=4096", "LMAX_PLUS_ONE=3*NSIDE",
         "'WW_S0_S0'", "'WW_S0_S1'", "'WW_S3_S3'",
@@ -55,7 +62,6 @@ def main() -> None:
     for item in required:
         checks[f"source::{item[:48]}"] = item in source
 
-    # Verify exact task list order and constants by evaluating only AST literals.
     assignments = {}
     for node in tree.body:
         if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
@@ -72,10 +78,14 @@ def main() -> None:
     checks["exact_successor_task_order"] = tasks == expected_tasks
     checks["ww_s0_s0_next_after_wm_s3"] = tasks.index("WW_S0_S0") == tasks.index("Wm_S3") + 1
 
-    # Ban result-rescue concepts in this support decision file itself.
-    me = Path(__file__).read_text(encoding="utf-8").lower()
-    banned_decision_terms = ["np.allclose", "isclose(", "round(", "smoothing", "majority vote", "preferred replica"]
-    checks["no_tolerance_rescue_in_preflight"] = not any(t in me for t in banned_decision_terms)
+    # Inspect only the frozen executor, not this harness, for numerical rescue calls.
+    call_names = {dotted_name(n.func) for n in ast.walk(tree) if isinstance(n, ast.Call)}
+    forbidden_calls = {"np.allclose", "numpy.allclose", "np.isclose", "numpy.isclose", "round"}
+    checks["no_tolerance_rescue_calls_in_executor"] = not bool(call_names & forbidden_calls)
+    lowered_source = source.lower()
+    checks["no_textual_rescue_policy_in_executor"] = not any(
+        term in lowered_source for term in ["majority vote", "preferred replica", "smoothing rescue", "ulp allowance"]
+    )
 
     if not all(checks.values()):
         failed = [k for k, v in checks.items() if not v]
