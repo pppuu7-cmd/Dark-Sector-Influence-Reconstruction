@@ -33,27 +33,28 @@ Exp073EB remains prospectively armed support-only `+0/+0`. The frozen Exp073DT t
 Run/job `33955300558 / 101277450615`, artifact `9966167115`, independently verified ZIP SHA256 `34a90ebe024c53c1bb833465346bd0ef6ca3196184bb49a8ba18e543eca8bba1`. Its preregistered reference was pre-serialization in-memory W01; all distinct-source/cross-vs-auto/shape/finiteness/no-tolerance checks passed, but adapter exact checks failed. DU remains immutable FAIL.
 
 ### Exp073DW v0.1 — serialized→reloaded qualifier FAIL +0/+0
-Minimal prospective repair retained the same synthetic S0→S1 geometry and production adapter but changed the exact authority reference to official `NmtWorkspace.read_from(w01.fits)` state, with pre-serialization only diagnostic. Run/job `33967669396 / 101310531746` completed FAILURE. Artifact `9969959852`: GitHub digest and independently recomputed ZIP SHA256 both `5dd606e7bf5db19a68f4bcea3ccf33f76d0ba1e77366a2f957a987e180ec6cbf`.
+Run/job `33967669396 / 101310531746`, artifact `9969959852`, independently verified ZIP SHA256 `5dd606e7bf5db19a68f4bcea3ccf33f76d0ba1e77366a2f957a987e180ec6cbf`. Raw receipt is `QUALIFIER_FAIL +0/+0`, token `FAIL_EXP073DW_WW_S0_S1_SERIALIZED_RELOAD_EXACT_ADAPTER_V0_1`, with no WW authority. Distinct masks/fields, cross-vs-auto, shapes, finiteness and no-tolerance checks passed; exact full/selected adapter-vs-reloaded checks failed. Reloaded selected SHA `02d0fc53059de8fa3af61337cb58dfe53fd0f288bceef131c7a9b8be83769a93`; adapter selected SHA `239a80aaf552f9fcfb4523a7b6e409b9570fd82503a2672fb498e530dbe4bc11`.
 
-Raw receipt: `classification=QUALIFIER_FAIL`, token `FAIL_EXP073DW_WW_S0_S1_SERIALIZED_RELOAD_EXACT_ADAPTER_V0_1`, `science_gate_scored=false`, `ww_s0_s1_authority_created=false`, accounting `+0/+0`. Passed: distinct masks/fields, reloaded cross differs from both autos, expected shapes, finiteness, and `no_tolerance_rescue=true`. Failed exactly: adapter full exact vs reloaded W01, adapter selected EE exact vs reloaded W01, selected SHA equality. Reloaded selected SHA `02d0fc53059de8fa3af61337cb58dfe53fd0f288bceef131c7a9b8be83769a93`; adapter selected SHA `239a80aaf552f9fcfb4523a7b6e409b9570fd82503a2672fb498e530dbe4bc11`; pre-serialization selected SHA separately `75e144d4654b1c867b09865d32958733b2829510878ba8f39143910264b5dbc6`.
+## Consumed structural diagnostic — Exp073DX
+Run/job `33967888245 / 101311110512` completed SUCCESS. Raw log emitted `COMPLETE_EXP073DX_WW_CROSSFIELD_MCM_STORAGE_ORIENTATION_AUDIT_V0_1`, classification `DIAGNOSTIC_COMPLETE +0/+0`, `science_gate_scored=false`, no authority. Artifact `9970022236`; GitHub SHA256 `de883a5bb915c26573e4fb8efe6913dad80638f13b188b6e7a9aef82fc6f02c8`.
 
-Conclusion: DU's reference-state issue was real but not sufficient. The current production adapter route is not exact for this distinct spin-2 cross workspace under the frozen qualifier. This is a genuine support/readiness negative `+0/+0`, not infrastructure and not a WW scientific FAIL. No tolerance/post-hoc rescue is permitted.
+Frozen result: raw FITS `WSP_PRIMARY` equals the official serialized→reloaded logical coupling matrix exactly for W00/W01/W10/W11; raw transpose does not equal logical. W01 equals W10 exactly and not W10 transpose. Therefore FITS storage orientation/transpose is excluded as the DU/DW adapter mismatch cause.
 
-Immutable notes: `recovery/2026-09-05_exp073du_qualifier_fail_exp073dw_serialized_reload_repair.md` and `recovery/2026-09-05_exp073dw_exact_fail_exp073dx_storage_audit.md`.
+Immutable note: `recovery/2026-09-05_exp073dx_complete_exp073dy_solver_backend_diagnostic.md`.
 
-## Active structural diagnostic — Exp073DX
-Before any DX output, `Exp073DX` was prospectively frozen as diagnostic-only `+0/+0` to isolate whether raw FITS `WSP_PRIMARY` storage/orientation differs from official reloaded `get_coupling_matrix()` in distinct cross-field cases. It records W01/W10/W00/W11 raw-vs-logical and transpose exact relations; no relation is an acceptance criterion and it cannot create authority.
+## Active post-MCM diagnostic — Exp073DY
+Prospectively frozen before output to isolate the post-MCM solver/backend path. Prereg commit `98df7a122ee7450de1374bcf881ff3105e67f024`, blob `7e23a1daf217c50d4506594c9b5b754350ae19fb`; implementation commit `a2836bda48c10a55da828a73d5b63efffef66343`, blob `25a196f298d5d030a0d303162e780e1d50936157`; workflow commit `5513b96826b48ec18ef4664bf51e38f766d7ab30`; activation/research-log head `18316043727cace7749e92b4c069f7921cc93624`.
 
-Provenance: prereg commit `012c461df4b8351f509ad511438ebe4423ac99a5`; implementation `4e9d39f5e230203a2ec107d46bd7ede8b254bd1c`; workflow `8c32ee8ac8f919bb1718e973d999504f822a1d71`; activation/research-log head `4375ee5daa387e8bcb018cd949beb737c6c6c228`; hosted run `33967888245` was QUEUED at dispatch. No self-hosted ownership.
+Hosted run/job `33970593677 / 101318281168` is **QUEUED** at latest reconciliation. It compares official reloaded PyMaster 2.7 windows with exact reconstruction from the workspace's own `_bin_mcm` products using official `np.linalg.inv` + `np.dot`, a diagnostic `np.linalg.solve`, and the frozen GSL production-adapter downstream. Frozen classification is `SOLVER_BACKEND_LOCALIZED` only if rebuilt binned MCM and inv+dot are bitwise official while the adapter is not; otherwise `POSTPROC_RECONSTRUCTION_NOT_LOCALIZED`. Always `+0/+0`, no authority, no tolerance rescue.
 
 ## Prospective next-front design — Exp073DV
-`experiments/073dv_ww_s0_s1_full_resolution_activation_design_v0_1.md` remains `PREPARED_NOT_ACTIVATED`. After DU/DW, full-resolution WW_S0_S1 is additionally blocked on a prospectively validated exact cross-workspace adapter architecture; the current auto-qualified adapter must not be silently reused. Existing prerequisites remain valid WW_S0_S0 authority, Exp073EB provenance closure, and zero competing self-hosted heavy work.
+`experiments/073dv_ww_s0_s1_full_resolution_activation_design_v0_1.md` remains `PREPARED_NOT_ACTIVATED`. Full-resolution WW_S0_S1 is blocked on both valid WW_S0_S0 authority/provenance closure and a prospectively validated exact cross-workspace adapter architecture.
 
 ## Frozen science/execution boundaries
 `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A invalid `<=0.05`; Layer-B invalid-row `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
 
 ## Exact next gates
 1. Do not launch another self-hosted task while Exp073DT attempt 4 is queued/in_progress.
-2. Consume Exp073DX immediately when terminal and use only its frozen observational output to determine the next prospective cross-adapter audit; do not retrofit DU/DW.
+2. Consume Exp073DY immediately when terminal. If `SOLVER_BACKEND_LOCALIZED`, prospectively design an adapter preserving official PyMaster 2.7 post-processing arithmetic/backend semantics; otherwise freeze a narrower diagnostic before any repair.
 3. When Exp073DT `33940588308 / 101288014666` becomes terminal, consume raw artifact/digest, A/B payloads/comparator and checkpoint provenance. On SUCCESS also consume Exp073EB before admitting any WW_S0_S0 authority.
 4. Keep Exp073DV inactive until both WW_S0_S0 authority prerequisites and a prospectively validated cross-workspace exact adapter exist.
