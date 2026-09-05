@@ -1,0 +1,45 @@
+name: Exp073EE WW cross formula vs public exact diagnostic v0.1
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'docs/RESEARCH_LOG_EXP073EE_2026-09-05.md'
+permissions:
+  contents: read
+jobs:
+  hosted-formula-diagnostic:
+    runs-on: ubuntu-24.04
+    env:
+      PREREG_BLOB: 620612bc00f5e302c0e1a725593d8f2f3d7db335
+      SCRIPT_BLOB: 43ae31a72a0c84e4923947e16075b289cce4c0e4
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073ee_ww_cross_formula_vs_public_exact_diagnostic_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073ee_ww_cross_formula_vs_public_exact_diagnostic_v0_1.py)" = "$SCRIPT_BLOB"
+      - name: Install exact NaMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "$GITHUB_ENV"
+      - name: Execute frozen exact formula diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT=data/derived/exp073ee/v0_1; mkdir -p "$OUT"
+          "${NMT_PY}" ci/exp073ee_ww_cross_formula_vs_public_exact_diagnostic_v0_1.py --out-dir "$OUT/runtime" --source-head "$GITHUB_SHA" --prereg-blob "$PREREG_BLOB" | tee "$OUT/stdout.txt"
+          cp "$OUT/runtime/terminal_diagnostic_receipt.json" "$OUT/terminal_diagnostic_receipt.json"
+      - name: Upload immutable diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ee-ww-cross-formula-vs-public-v0-1-${{ github.sha }}
+          path: data/derived/exp073ee/v0_1/
+          if-no-files-found: error
