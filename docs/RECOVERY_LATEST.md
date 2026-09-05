@@ -31,26 +31,25 @@ Exp073EB remains prospectively armed support-only `+0/+0`. On DT SUCCESS, only f
 ## Distinct-field support history
 Exp073DU/DW remain immutable qualifier FAIL `+0/+0`; Exp073DX excluded FITS orientation/transpose; Exp073ED excluded the PyMaster 2.7 low-level/public bandpower-window tensor-layout bridge. Exp073DV full-resolution WW_S0_S1 remains `PREPARED_NOT_ACTIVATED` and blocked on both valid WW_S0_S0 authority/provenance closure and a prospectively validated exact cross-workspace adapter architecture.
 
-### Exp073EE — terminal FORMULA_MISMATCH +0/+0
-Run/job `33982602346 / 101350386458`; artifact `9974198332`; GitHub and independently downloaded ZIP SHA256 `4b7b3db48b01f2954b3a355e40d08aaac7cca5caa92672a502dc66e201787af6`. Frozen token `COMPLETE_EXP073EE_WW_CROSS_FORMULA_MISMATCH_V0_1`. Full and selected-EE exact equality fail. Diagnostic-only max difference `1.3877787807814457e-16` cannot rescue the gate. No science gate and no WW authority.
+Exp073EE remains terminal `FORMULA_MISMATCH +0/+0`; Exp073EF remains terminal `KR_OPERATOR_MISMATCH +0/+0`, localizing the divergence before any solve.
 
-### Exp073EF — terminal KR_OPERATOR_MISMATCH +0/+0
-Run/job `33985910151 / 101359236929`; artifact `9975148874`; GitHub and independently downloaded ZIP SHA256 `63fc67c32a95b5e5b37ed0222712677e5f690d4c6ea5c2f3d4056e3431816f73`. Frozen token `COMPLETE_EXP073EF_KR_OPERATOR_MISMATCH_V0_1`.
+### Exp073EG — terminal BIN_ONLY_MISMATCH +0/+0
+Run/job `33986108360 / 101359768937`; artifact `9975205491`; GitHub and independently downloaded ZIP SHA256 `8e57af97dee144bdf2166f071245fba96e1de80a30c3f1f5d2bfbf5b574da917`. Frozen token `COMPLETE_EXP073EG_BIN_ONLY_MISMATCH_V0_1`.
 
-K formula/public SHA256: `7b5aa911c3093354094f686cb027ef2d6edd4679513f4b244f40e947777fe6f4` / `225d968562b3758cfae2a98b9bb4e36ec80fb7aabb4506b57b4974b5839da974`; R formula/public SHA256: `d633ed6e60d0e3a090a394a8c72078f71426163113536b98168ec457c2ac800d` / `64fdceec21057b5ce4c309d4836bc49f7693e84141a9c5ddef1de2ef00ff2480`. Both exact comparisons fail before any solve. Diagnostic-only maxima `1.1102230246251565e-16` and `2.7755575615628914e-17` cannot rescue the gate. No science gate and no WW authority.
+Manual/public P exact equality fails (`8748d0354ce52c2cf4c478423a2df819323e5d568768695a2eaa2ac8394a10c6` vs `712ee840d17806d1724688caa6c0fd832c7e2201e08b18ac4b79cb7c8af3f63f`), while manual/public Q is bitwise exact on SHA and `numpy.array_equal` (`8811f2299bf04269e8af8783209dc3bc91b8ef1c4c50d62e14e344b3f33fa412`). Diagnostic-only P max difference `2.7755575615628914e-17` cannot rescue the gate. Therefore the current pre-solve exact mismatch is localized to manual binning arithmetic/order; Q/unbin semantics are excluded under the frozen probe. No science gate and no WW authority.
 
-## Active exact support diagnostic — Exp073EG
-Exp073EG prospectively separates the manual P/bin and Q/unbin operators from official PyMaster 2.7 `NmtBin.bin_cell` and `NmtBin.unbin_cell` before any solve or alternate reconstruction.
+## Active exact support diagnostic — Exp073EH
+Exp073EH was prospectively frozen only after Exp073EG terminal consumption. It tests one causal substitution: P is delegated only to official PyMaster 2.7 `NmtBin.bin_cell`; Q is generated only through official `NmtBin.unbin_cell`; then one frozen NumPy `K=RQ`, `inv(K)@R` path is compared bitwise with public serialized->reloaded `NmtWorkspace.get_bandpower_windows()`.
 
-Prereg commit/blob `4b41beab01fd4856fe49761ef7868e07df9ec31a / d072892e492af4d836db118b03a83f91391adcb4`; script commit/blob `351756854b2096ebb7a6eeb9ff76e8a6f32f84d4 / 6a8b83644925d370aad453dd2e2523e3d30805a1`; workflow commit `ca9d14b38a0897b97bcf799ce428bd6422f7fbf5`; activation head `a667907d9862a64223d647431788f11d3e931df5`.
+Prereg commit/blob `9674b330a3f6514127cc8781e3e68aac8478f6a2 / aac835594fcb29da9d85b0c4444e3a2b40481a59`; implementation commit/blob `b9abc653e0035d17fbce8bde05822e8b07d86928 / 1dde55ce90810cf1da82a9bc169ba2dc411dc65a`; workflow commit `c75103dbb45e63d81650a20748d6484944aa5d8b`; activation head `a1b2c20e63deb002f384b5ec28caf7055dbf3800`.
 
-Run `33986108360` is **QUEUED** on GitHub-hosted infrastructure at latest reconciliation. Frozen classifications: `BIN_UNBIN_EXACT`, `BIN_ONLY_MISMATCH`, `UNBIN_ONLY_MISMATCH`, or `BIN_AND_UNBIN_MISMATCH`; all support-only `+0/+0`, exact SHA256 + `numpy.array_equal`, no tolerance/rescue and no WW authority.
+Run/job `33988609203 / 101366649641` is **QUEUED** on GitHub-hosted infrastructure at latest reconciliation. Frozen outcomes: `OFFICIAL_BIN_SUBSTITUTION_FULL_EXACT` or `OFFICIAL_BIN_SUBSTITUTION_STILL_MISMATCH`; both support-only `+0/+0`, exact SHA256 + `numpy.array_equal`, no tolerance/rescue, no WW authority.
 
 ## Frozen science/execution boundaries
 `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A invalid `<=0.05`; Layer-B invalid-row `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
 
 ## Exact next gates
 1. Do not launch another self-hosted task while Exp073DT attempt 4 is queued/in_progress.
-2. Consume Exp073EG immediately when terminal. If P mismatches, next support gate must be source-bound to official PyMaster binning arithmetic/order; if only Q mismatches, localize official unbin semantics; if both are exact, only then localize coupling multiplication/arithmetic order.
+2. Consume Exp073EH immediately when terminal. If exact, next support gate may validate a production-safe official-bin adapter architecture. If still mismatched, isolate only remaining matrix-multiplication/solver arithmetic; do not revisit P/Q semantics or use tolerance rescue.
 3. When Exp073DT `33940588308 / 101288014666` becomes terminal, consume raw artifact/digest, A/B payloads/comparator and checkpoint provenance. On SUCCESS also consume Exp073EB before admitting any WW_S0_S0 authority.
 4. Keep Exp073DV inactive until both WW_S0_S0 authority prerequisites and a prospectively validated cross-workspace exact adapter exist.
