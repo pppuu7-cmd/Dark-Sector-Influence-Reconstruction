@@ -20,18 +20,15 @@ Wm_S1 Track-A exact PASS, admitted Wm_S2 and Wm_S3 exact scientific PASS remain 
 
 No competing self-hosted heavy process may launch. On DT SUCCESS, frozen DT token + independent exact A/B equality + Exp073EB full checkpoint-provenance PASS remain jointly required before WW_S0_S0 authority.
 
-## Exp073DZ — terminal diagnostic complete +0/+0
-Run/job `33973350908 / 101325656145` completed SUCCESS. Raw token `COMPLETE_EXP073DZ_PYMASTER27_WORKSPACE_POSTMCM_API_AUDIT_V0_1`; classification `DIAGNOSTIC_COMPLETE +0/+0`. Artifact `9971589033`; GitHub ZIP SHA256 and independently downloaded ZIP SHA256 both `71a45e8eb21b4a17f7695b8d9cc6c7fe4081513d0d1251ff62494f5ef6352c37`. Observed PyMaster 2.7 state: public windows `[4,8,4,48]`, coupling matrix `[192,192]`; `NmtWorkspace.bpws`, Python-visible `mcm`, `mcm_binned`, and `NmtBin._bin_mcm` absent; `wsp.bin`, `wsp.ncls`, `wsp.lmax`, `wsp.lmax_fields`, `wsp.norm_type` present. No science authority created.
+## Exp073ED — terminal exact low-level bridge +0/+0
+Hosted run/job `33976431383 / 101333833555` completed SUCCESS. Artifact `9972458954`; GitHub ZIP digest and independently downloaded ZIP SHA256 both `eb71f29599fe3b9a71848c65cc4bfd68fbee9e014c0149ff99b1fbde970431c9`. Raw token `COMPLETE_EXP073ED_PYMASTER27_LOWLEVEL_BANDPOWER_WINDOW_LAYOUT_BRIDGE_V0_1`; classification `LOWLEVEL_LAYOUT_EXACT`.
 
-## Active hosted support diagnostic — Exp073ED
-Prospectively frozen low-level layout bridge. Prereg commit `4174ddc970649f3f50eba4b90db72874e26e6ada`, blob `8e447bbd739bab94a3f1e8e4891f30e40c278b79`; script commit `37e50c48416fada37fc76ed9c8ef3b257b11a6fb`, blob `332a3616b20604c5c21cf58f0b5780ad185ff180`; workflow commit `1538e0b299b258e84fbb8b554b768ff7192f4aea`; activation head `1b10a5ade1eb3e911da06269d452915f70e4959c`.
+PyMaster 2.7 low-level `nmtlib.get_bandpower_windows`, after only the frozen source-defined reshape/transpose, is exactly equal to public `get_bandpower_windows()`: public/rebuilt shape `[4,8,4,48]`, SHA256 `aa883a13c305641e6e1aab5feca4692a8da1cdbcca16e8c124f12e601608d628`, `sha_equal=true`, `array_equal=true`, no tolerance rescue. `science_gate_scored=false`, `ww_authority_created=false`.
 
-Hosted run/job `33976431383 / 101333833555` is **QUEUED** at latest reconciliation. It directly compares low-level PyMaster 2.7 `nmtlib.get_bandpower_windows` output, transformed only by the source-defined reshape/transpose, with the public `get_bandpower_windows()` tensor using exact SHA256 and `numpy.array_equal`. Support-only `+0/+0`; no tolerance or WW authority.
-
-Exact next action on terminal: consume raw Exp073ED log/artifact and classify only `LOWLEVEL_LAYOUT_EXACT`, `LOWLEVEL_LAYOUT_MISMATCH`, or infrastructure/software incomplete according to the frozen preregistration. Use that result to prospectively narrow the cross-workspace scalable adapter architecture.
+This excludes the Python tensor-layout / low-level-public bridge as the cause of historical Exp073DU/DW cross-workspace mismatch. Next support work must prospectively isolate the remaining saved-FITS reconstruction/post-MCM solver path; no current adapter may be retrofitted as a scientific rescue.
 
 ## Distinct-field frontier
-Exp073DU and Exp073DW remain historical qualifier FAIL `+0/+0`; Exp073DX excludes FITS orientation/transpose as cause. Exp073DV full-resolution WW_S0_S1 remains PREPARED_NOT_ACTIVATED and blocked on both valid WW_S0_S0 authority/provenance closure and a prospectively validated exact cross-workspace adapter architecture.
+Exp073DU and Exp073DW remain historical qualifier FAIL `+0/+0`; Exp073DX excludes FITS orientation/transpose; Exp073ED excludes low-level/public bandpower-window tensor layout. Exp073DV full-resolution WW_S0_S1 remains PREPARED_NOT_ACTIVATED and blocked on both valid WW_S0_S0 authority/provenance closure and a prospectively validated exact cross-workspace adapter architecture.
 
 ## Frozen frontier
 `Wm_S1 -> Wm_S2 -> Wm_S3 -> WW_S0_S0 -> WW_S0_S1 -> WW_S0_S2 -> WW_S0_S3 -> WW_S1_S1 -> WW_S1_S2 -> WW_S1_S3 -> WW_S2_S2 -> WW_S2_S3 -> WW_S3_S3`.
