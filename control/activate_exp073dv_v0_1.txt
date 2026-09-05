@@ -1,0 +1,5 @@
+ACTIVATE_EXP073DV_WW_CROSSFIELD_FITS_ORIENTATION_DIAGNOSTIC_V0_1
+accounting=+0/+0
+runner=github-hosted-only
+science_authority=false
+self_hosted_competition=forbidden
