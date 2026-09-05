@@ -1,0 +1,222 @@
+name: Exp073DT WW_S0_S0 full-resolution A/B exact science v0.1
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/exp073dt-ww-s0-s0-full-resolution-ab-science-v0-1.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: dsir-exp073dt-ww-s0-s0-full-resolution-ab-science-v0-1
+  cancel-in-progress: false
+
+env:
+  FROZEN_SOURCE_HEAD: 'de83e20a68f79ccf25b89b0d33eb4206e294c757'
+  CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
+  R1_ARTIFACT_ID: '9720335366'
+  R1_DIGEST: 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd'
+  DRIVER_SHA256: '0b7a0a2336a89dcea63060d4049d09fabacc9c5e75fad870d2599efd27d0e63b'
+  ADAPTER_SHA256: 'ab85f76e724a9861837299ce29c0961e4adcd09954b9522d678d5e610267f641'
+  DRIVER_BLOB: 'baff99c2b9d7866432bebda5844d2d450324d08a'
+  ADAPTER_BLOB: 'd6f20600d6a206dd9fbb254b382e71a49c6b3c07'
+  DOWNSTREAM_BLOB: 'be4f381de4c5c043a9c0fcd107e63ef3f2079578'
+  TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
+
+jobs:
+  hosted-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Bind frozen contract and fail closed on competing home ownership
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test -f experiments/073dt_ww_s0_s0_full_resolution_ab_science_v0_1_prereg.md
+          test "$(sha256sum ci/exp073dq_ww_s0_s0_durable_ab_production_v0_1.py | awk '{print $1}')" = "$DRIVER_SHA256"
+          test "$(sha256sum ci/exp073do_ww_s0_s0_production_exact_adapter_v0_1.py | awk '{print $1}')" = "$ADAPTER_SHA256"
+          test "$(git rev-parse HEAD:ci/exp073dq_ww_s0_s0_durable_ab_production_v0_1.py)" = "$DRIVER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073do_ww_s0_s0_production_exact_adapter_v0_1.py)" = "$ADAPTER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c)" = "$DOWNSTREAM_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073aa_article3_des_angular_task_runner_v0_1.py)" = "$TASKRUNNER_BLOB"
+          python3 - <<'PY'
+          import json,os,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; current=int(os.environ['GITHUB_RUN_ID']); token=os.environ['GH_TOKEN']
+          h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}; bad=[]
+          for status in ('queued','in_progress'):
+              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100',headers=h)
+              with urllib.request.urlopen(req) as r: runs=json.load(r).get('workflow_runs',[])
+              for run in runs:
+                  if int(run['id'])==current: continue
+                  req2=urllib.request.Request(f"https://api.github.com/repos/{repo}/actions/runs/{run['id']}/jobs?per_page=100",headers=h)
+                  with urllib.request.urlopen(req2) as r2: jobs=json.load(r2).get('jobs',[])
+                  if any('self-hosted' in (j.get('labels') or []) or j.get('runner_name')=='DSIR-HOME-PC' for j in jobs): bad.append(run['id'])
+          if bad: raise SystemExit('BLOCKED competing self-hosted runs '+repr(bad))
+          print('PASS_EXP073DT_HOSTED_NONCOMPETITION')
+          PY
+
+  home-science-ab:
+    needs: hosted-preflight
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 360
+    env:
+      OMP_NUM_THREADS: '8'
+      OMP_DYNAMIC: 'FALSE'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Full fail-closed WW_S0_S0 A/B science under one continuous flock
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          SCI_ROOT="$HOME/.cache/dsir/exp073dt-ww-s0-s0-ab-v0-1"
+          mkdir -p "$SCI_ROOT" "$RUNNER_TEMP/exp073dt-artifact"
+          exec 9>"$HOME/.cache/dsir/DSIR-HOME-PC.exp073dt-ww-s0-s0.lock"
+          flock -n 9 || { echo BLOCKED_EXP073DT_LOCK; exit 4; }
+
+          cpus="$(python3 - <<'PY'
+          import os
+          print(len(os.sched_getaffinity(0)) if hasattr(os,'sched_getaffinity') else (os.cpu_count() or 0))
+          PY
+          )"
+          test "$cpus" = '8'
+
+          python3 - <<'PY'
+          import json,os,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; current=int(os.environ['GITHUB_RUN_ID']); token=os.environ['GH_TOKEN']
+          h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}; bad=[]
+          for status in ('queued','in_progress'):
+              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100',headers=h)
+              with urllib.request.urlopen(req) as r: runs=json.load(r).get('workflow_runs',[])
+              for run in runs:
+                  if int(run['id'])==current: continue
+                  req2=urllib.request.Request(f"https://api.github.com/repos/{repo}/actions/runs/{run['id']}/jobs?per_page=100",headers=h)
+                  with urllib.request.urlopen(req2) as r2: jobs=json.load(r2).get('jobs',[])
+                  if any('self-hosted' in (j.get('labels') or []) or j.get('runner_name')=='DSIR-HOME-PC' for j in jobs): bad.append(run['id'])
+          if bad: raise SystemExit('BLOCKED competing self-hosted runs '+repr(bad))
+          print('PASS_EXP073DT_LIVE_EXCLUSIVITY')
+          PY
+
+          test "$(sha256sum ci/exp073dq_ww_s0_s0_durable_ab_production_v0_1.py | awk '{print $1}')" = "$DRIVER_SHA256"
+          test "$(sha256sum ci/exp073do_ww_s0_s0_production_exact_adapter_v0_1.py | awk '{print $1}')" = "$ADAPTER_SHA256"
+          test "$(git rev-parse HEAD:ci/exp073dq_ww_s0_s0_durable_ab_production_v0_1.py)" = "$DRIVER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073do_ww_s0_s0_production_exact_adapter_v0_1.py)" = "$ADAPTER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c)" = "$DOWNSTREAM_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073aa_article3_des_angular_task_runner_v0_1.py)" = "$TASKRUNNER_BLOB"
+
+          MF="$HOME/.cache/dsir-miniforge"; ENV="$HOME/.cache/dsir-nmt27"
+          test -x "$MF/bin/conda" || { echo BLOCKED_NO_MINIFORGE; exit 4; }
+          if ! test -x "$ENV/bin/python"; then "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 healpy astropy compilers; fi
+          NMT_PREFIX="$ENV"; NMT_PY="$ENV/bin/python"; export NMT_PREFIX NMT_PY
+          "$NMT_PY" - <<'PY'
+          import importlib.metadata,os
+          v=importlib.metadata.version('pymaster'); assert v=='2.7' or v.startswith('2.7.'),v
+          assert os.environ['OMP_NUM_THREADS']=='8' and os.environ['OMP_DYNAMIC']=='FALSE'
+          for k in ['OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS','BLIS_NUM_THREADS','VECLIB_MAXIMUM_THREADS']: assert os.environ[k]=='1',(k,os.environ[k])
+          print('PYMASTER='+v)
+          PY
+
+          mkdir -p "$SCI_ROOT/bin"
+          "$NMT_PREFIX/bin/x86_64-conda-linux-gnu-cc" -O0 -std=c11 -fopenmp -DDSIR_WORKERS=8 -I"$NMT_PREFIX/include" ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c -L"$NMT_PREFIX/lib" -Wl,-rpath,"$NMT_PREFIX/lib" -lgsl -lgslcblas -lm -o "$SCI_ROOT/bin/ww_downstream_8"
+          "$NMT_PY" - <<'PY'
+          import os,struct,numpy as np
+          p=os.path.expanduser('~/.cache/dsir/exp073dt-ww-s0-s0-ab-v0-1/tiny.bin')
+          with open(p,'wb') as f:
+              f.write(struct.pack('<iii',4,1,1)); f.write(np.array([0,1],dtype='<i4').tobytes()); f.write(np.eye(4,dtype='<f8').tobytes())
+          PY
+          "$SCI_ROOT/bin/ww_downstream_8" "$SCI_ROOT/tiny.bin" "$SCI_ROOT/tiny.out" 2>"$SCI_ROOT/tiny.stderr"
+          grep -Fx 'DSIR_OMP_TEAM=8' "$SCI_ROOT/tiny.stderr"
+
+          R1_ROOT="$SCI_ROOT/r1"; mkdir -p "$R1_ROOT"
+          if ! test -f "$R1_ROOT/.artifact_verified"; then
+            rm -rf "$R1_ROOT"/* "$SCI_ROOT/r1.zip"
+            curl --fail --location --retry 5 --retry-delay 2 -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$R1_ARTIFACT_ID/zip" -o "$SCI_ROOT/r1.zip"
+            unzip -q "$SCI_ROOT/r1.zip" -d "$R1_ROOT"
+            R1_ROOT="$R1_ROOT" "$NMT_PY" - <<'PY'
+          import os,sys
+          from pathlib import Path
+          sys.path.insert(0,'ci')
+          from exp073aa_article3_des_angular_task_runner_v0_1 import validate_r1
+          rec=validate_r1(Path(os.environ['R1_ROOT']),os.environ['R1_DIGEST']); assert all(rec['checks'].values())
+          PY
+            printf '%s\n' "$R1_DIGEST" > "$R1_ROOT/.artifact_verified.tmp"; mv "$R1_ROOT/.artifact_verified.tmp" "$R1_ROOT/.artifact_verified"
+          else
+            test "$(cat "$R1_ROOT/.artifact_verified")" = "$R1_DIGEST"
+            R1_ROOT="$R1_ROOT" "$NMT_PY" - <<'PY'
+          import os,sys
+          from pathlib import Path
+          sys.path.insert(0,'ci')
+          from exp073aa_article3_des_angular_task_runner_v0_1 import validate_r1
+          rec=validate_r1(Path(os.environ['R1_ROOT']),os.environ['R1_DIGEST']); assert all(rec['checks'].values())
+          PY
+          fi
+
+          cat > "$SCI_ROOT/component_blobs.json" <<JSON
+          {"driver_sha256":"$DRIVER_SHA256","adapter_sha256":"$ADAPTER_SHA256","driver_git_blob":"$DRIVER_BLOB","adapter_git_blob":"$ADAPTER_BLOB","downstream_git_blob":"$DOWNSTREAM_BLOB","taskrunner_git_blob":"$TASKRUNNER_BLOB","frozen_source_head":"$FROZEN_SOURCE_HEAD","contract_fingerprint":"$CONTRACT_FP"}
+          JSON
+
+          "$NMT_PY" ci/exp073dq_ww_s0_s0_durable_ab_production_v0_1.py \
+            --replica AB --r1-root "$R1_ROOT" --r1-artifact-digest "$R1_DIGEST" \
+            --checkpoint-root "$SCI_ROOT/checkpoints" --downstream-exe "$SCI_ROOT/bin/ww_downstream_8" \
+            --component-blobs-json "$SCI_ROOT/component_blobs.json" --source-head "$FROZEN_SOURCE_HEAD" \
+            --contract-fingerprint "$CONTRACT_FP" --ab-out "$SCI_ROOT/ab_compare.json" | tee "$SCI_ROOT/driver_stdout.txt"
+
+          SCI_ROOT="$SCI_ROOT" "$NMT_PY" - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          import numpy as np
+          root=Path(os.environ['SCI_ROOT']); cmp=json.loads((root/'ab_compare.json').read_text())
+          A=root/'checkpoints/A/exact_route/selected_ee.bin'; B=root/'checkpoints/B/exact_route/selected_ee.bin'
+          def sha(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for b in iter(lambda:f.read(8<<20),b''): h.update(b)
+              return h.hexdigest()
+          a=np.memmap(A,dtype='<f8',mode='r',shape=(39,12288)); b=np.memmap(B,dtype='<f8',mode='r',shape=(39,12288))
+          checks={
+            'provisional_pass':cmp.get('status')=='PASS_EXP073DQ_WW_S0_S0_DURABLE_AB_PROVISIONAL_EXACT_REPEATABILITY_V0_1',
+            'sha_flag':cmp.get('sha256_equal') is True,
+            'array_flag':cmp.get('numpy_array_equal') is True,
+            'no_tolerance':cmp.get('no_tolerance_rescue') is True,
+            'a_exists':A.exists(),'b_exists':B.exists(),
+            'a_size':A.stat().st_size==39*12288*8,'b_size':B.stat().st_size==39*12288*8,
+            'sha_recomputed_equal':sha(A)==sha(B)==cmp.get('a_sha256')==cmp.get('b_sha256'),
+            'array_recomputed_equal':bool(np.array_equal(a,b)),
+            'finite':bool(np.all(np.isfinite(a)) and np.all(np.isfinite(b))),
+          }
+          del a,b
+          passed=all(checks.values())
+          rec={'experiment':'Exp073DT','task':'WW_S0_S0','classification':'SCIENTIFIC_PASS' if passed else 'SCIENTIFIC_REPEATABILITY_FAIL','token':'PASS_EXP073DT_WW_S0_S0_EXACT_REPEATABILITY_8CORE_V0_1' if passed else 'FAIL_EXP073DT_WW_S0_S0_EXACT_REPEATABILITY_8CORE_V0_1','science_gate_scored':True,'ww_s0_s0_authority_created':passed,'checks':checks,'a_sha256':sha(A),'b_sha256':sha(B),'selected_shape':[39,12288],'dtype':'<f8','selected_semantics':'EE<-EE','full_shape':[4,39,4,12288],'frozen_source_head':os.environ['FROZEN_SOURCE_HEAD'],'contract_fingerprint':os.environ['CONTRACT_FP'],'checkpoint_root':str(root/'checkpoints'),'no_tolerance_rescue':True}
+          (root/'terminal_science_receipt.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          print(rec['token'])
+          if not passed: raise SystemExit(2)
+          PY
+
+          cp "$SCI_ROOT/terminal_science_receipt.json" "$RUNNER_TEMP/exp073dt-artifact/"
+          cp "$SCI_ROOT/ab_compare.json" "$RUNNER_TEMP/exp073dt-artifact/"
+          cp "$SCI_ROOT/component_blobs.json" "$RUNNER_TEMP/exp073dt-artifact/"
+          cp "$SCI_ROOT/driver_stdout.txt" "$RUNNER_TEMP/exp073dt-artifact/"
+          cp "$SCI_ROOT/checkpoints/A/replica_receipt.json" "$RUNNER_TEMP/exp073dt-artifact/A_replica_receipt.json"
+          cp "$SCI_ROOT/checkpoints/B/replica_receipt.json" "$RUNNER_TEMP/exp073dt-artifact/B_replica_receipt.json"
+          cp "$SCI_ROOT/checkpoints/A/exact_route/selected_ee.bin" "$RUNNER_TEMP/exp073dt-artifact/A_selected_ee.bin"
+          cp "$SCI_ROOT/checkpoints/B/exact_route/selected_ee.bin" "$RUNNER_TEMP/exp073dt-artifact/B_selected_ee.bin"
+          sha256sum "$RUNNER_TEMP/exp073dt-artifact"/* > "$RUNNER_TEMP/exp073dt-artifact/payload_sha256.txt"
+      - name: Upload terminal science evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073dt-ww-s0-s0-ab-science-${{ github.run_id }}-${{ github.sha }}
+          path: ${{ runner.temp }}/exp073dt-artifact
+          if-no-files-found: warn
+          retention-days: 90
