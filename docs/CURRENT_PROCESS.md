@@ -20,7 +20,9 @@ Attempt 1 of run `33940588308`: hosted preflight `101237102962` SUCCESS; self-ho
 
 Attempt 2 is now authoritative:
 - run `33940588308`, attempt `2`;
-- self-hosted resume job `101244660215`: QUEUED at latest reconciliation;
+- hosted preflight job `101244675822`: SUCCESS;
+- self-hosted resume job `101244660215`: **IN_PROGRESS** at latest reconciliation;
+- active step: `Full fail-closed WW_S0_S0 A/B science under one continuous flock`;
 - frozen head `c450aef42d96eb0bfe0b4c78d5a0fdc850d9a2cd`;
 - frozen source authority head `de83e20a68f79ccf25b89b0d33eb4206e294c757`;
 - contract fingerprint `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
@@ -33,7 +35,10 @@ The retry was dispatched only after first-cause diagnosis. No code/science repai
 
 Frozen science remains exactly `WW_S0_S0`, no lens mask, DES NSIDE=4096, ell 0..12287, 39 bands, full `[4,39,4,12288]`, selected `EE<-EE`, canonical `<f8 [39,12288]`, exactly 8 OpenMP workers, nested numerical-library threads pinned to 1, no tolerance rescue.
 
-On SUCCESS: independently inspect terminal artifact/digest, receipt, A/B selected payloads, comparator, replica receipts and checkpoint provenance. Only exact SHA equality plus `numpy.array_equal=true` creates `WW_S0_S0` authority and advances frontier to `WW_S0_S1`. On exact A/B inequality: scientific repeatability FAIL. On new infrastructure/checkpoint failure: `+0/+0`, diagnose first new cause and preserve verified stages.
+## Independent non-biasing preparation while Exp073DT runs
+Commit `2f9c2950dc118aa281b938d58f444fcfed3b8d18` adds Exp073DU, a small-NSIDE distinct-field `WW_S0_S1` cross-field adapter qualifier. It is preparation only: `science_gate_scored=false`, `ww_s0_s1_authority_created=false`, and it must not launch or alter the frozen Exp073DT result. It records ordered cross-field behavior and requires the production adapter to match direct PyMaster `EE<-EE` exactly without tolerance rescue.
+
+On Exp073DT SUCCESS: independently inspect terminal artifact/digest, receipt, A/B selected payloads, comparator, replica receipts and checkpoint provenance. Only exact SHA equality plus `numpy.array_equal=true` creates `WW_S0_S0` authority. Then consume/validate any prospectively frozen Exp073DU qualifier result before deciding the full-resolution `WW_S0_S1` science launch. On exact A/B inequality: scientific repeatability FAIL. On new infrastructure/checkpoint failure: `+0/+0`, diagnose first new cause and preserve verified stages.
 
 ## Frozen frontier
 `Wm_S1 -> Wm_S2 -> Wm_S3 -> WW_S0_S0 -> WW_S0_S1 -> WW_S0_S2 -> WW_S0_S3 -> WW_S1_S1 -> WW_S1_S2 -> WW_S1_S3 -> WW_S2_S2 -> WW_S2_S3 -> WW_S3_S3`.
