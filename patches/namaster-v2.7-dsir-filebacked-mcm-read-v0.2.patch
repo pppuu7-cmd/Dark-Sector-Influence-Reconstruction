@@ -14,7 +14,7 @@ diff --git a/src/utils.h b/src/utils.h
 diff --git a/src/nmt_master.c b/src/nmt_master.c
 --- a/src/nmt_master.c
 +++ b/src/nmt_master.c
-@@ -1,5 +1,100 @@
+@@ -1,5 +1,106 @@
  #include "config.h"
  #include "utils.h"
 +#include <errno.h>
@@ -121,7 +121,7 @@ diff --git a/src/nmt_master.c b/src/nmt_master.c
  
  static void nmt_workspace_store_bins(nmt_workspace *w,
  				     nmt_binning_scheme *bin)
-@@ -43,9 +138,8 @@ static nmt_workspace *nmt_workspace_new(int ncls,
+@@ -43,9 +144,8 @@ static nmt_workspace *nmt_workspace_new(int ncls,
    w->norm_type=norm_type;
    w->w2=w2;
  
@@ -133,7 +133,7 @@ diff --git a/src/nmt_master.c b/src/nmt_master.c
  
    nmt_workspace_store_bins(w,bin);
  
-@@ -59,8 +153,21 @@ void nmt_workspace_free(nmt_workspace *w)
+@@ -59,8 +159,21 @@ void nmt_workspace_free(nmt_workspace *w)
    gsl_matrix_free(w->coupling_matrix_binned);
    nmt_bins_free(w->bin);
    if(w->coupling_matrix_unbinned!=NULL) {
