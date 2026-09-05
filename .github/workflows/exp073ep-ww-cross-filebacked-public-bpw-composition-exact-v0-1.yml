@@ -1,0 +1,127 @@
+name: Exp073EP WW cross file-backed public BPW composition exact v0.1
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/exp073ep-ww-cross-filebacked-public-bpw-composition-exact-v0-1.yml']
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  PYTHONHASHSEED: '0'
+  NAMASTER_HEAD: '24365fa59a38c15732f4f37e8b29265b75c442d5'
+  PATCH_SHA256: '9a80a756960afa8b4ddf61b5fbba7fba6ad5ed9ac919e093bb1365a636c789f0'
+  PATCH_BLOB: 'f1eb886ca8af2584a9f621f333cd8be3c6cdb967'
+  PREREG_BLOB: '036197fa4b2ab5a3a1da8c6dd9be349aa5dfdeaa'
+  BUILD_BLOB: '7380d657429702f6aaebbe3f691a16e9cd8fb8b1'
+  RELOAD_BLOB: 'dbdcb9bb1b3c87be38f9b099e1ba519cfd556e68'
+  COMPARE_BLOB: '9ac8680ad0a2cc06dfea463cafb8a147696e83c0'
+
+jobs:
+  hosted-composition-exact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout DSIR
+        uses: actions/checkout@v4
+      - name: Freeze prospective identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073ep_ww_cross_filebacked_public_bpw_composition_exact_qualifier_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ep_build_cross_workspace_v0_1.py)" = "$BUILD_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ep_reload_public_bpw_v0_1.py)" = "$RELOAD_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ep_compare_composed_exact_v0_1.py)" = "$COMPARE_BLOB"
+          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-v0.1.patch)" = "$PATCH_BLOB"
+          test "$(sha256sum patches/namaster-v2.7-dsir-filebacked-mcm-v0.1.patch | awk '{print $1}')" = "$PATCH_SHA256"
+      - name: Install native build dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y libcfitsio-dev libfftw3-dev libgsl-dev autoconf automake libtool patch
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Freeze exact NaMaster source and patch clone
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/exp073ep"; mkdir -p "$ROOT"
+          git clone --depth 1 --branch v2.7 https://github.com/LSSTDESC/NaMaster.git "$ROOT/namaster-stock"
+          test "$(git -C "$ROOT/namaster-stock" rev-parse HEAD)" = "$NAMASTER_HEAD"
+          cp -a "$ROOT/namaster-stock" "$ROOT/namaster-patched"
+          patch --dry-run -d "$ROOT/namaster-patched" -p1 < "$GITHUB_WORKSPACE/patches/namaster-v2.7-dsir-filebacked-mcm-v0.1.patch"
+          patch -d "$ROOT/namaster-patched" -p1 < "$GITHUB_WORKSPACE/patches/namaster-v2.7-dsir-filebacked-mcm-v0.1.patch"
+          git -C "$ROOT/namaster-patched" diff --check
+          printf 'NAMASTER_HEAD=%s\nPATCH_SHA256=%s\n' "$NAMASTER_HEAD" "$PATCH_SHA256" > "$ROOT/build_identity.txt"
+      - name: Build isolated stock and patched PyMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/exp073ep"
+          for kind in stock patched; do
+            python -m venv "$ROOT/venv-$kind"
+            "$ROOT/venv-$kind/bin/python" -m pip install --upgrade pip setuptools wheel
+            "$ROOT/venv-$kind/bin/python" -m pip install numpy healpy ducc0 astropy
+            (cd "$ROOT/namaster-$kind" && "$ROOT/venv-$kind/bin/python" setup.py install)
+            "$ROOT/venv-$kind/bin/python" - <<'PY'
+          import importlib.metadata,pymaster
+          v=importlib.metadata.version('pymaster'); assert v=='2.7' or v.startswith('2.7.'),v
+          print(v,pymaster.__file__)
+          PY
+          done
+      - name: Construct stock and file-backed cross workspaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/exp073ep"; E="$ROOT/evidence"; mkdir -p "$E/stock-build" "$E/patched-build" "$ROOT/mmap"
+          unset DSIR_NMT_FILEBACKED_MCM || true; unset DSIR_NMT_MMAP_DIR || true
+          "$ROOT/venv-stock/bin/python" ci/exp073ep_build_cross_workspace_v0_1.py --label stock --out-dir "$E/stock-build" | tee "$E/stock-build/stdout.txt"
+          DSIR_NMT_FILEBACKED_MCM=1 DSIR_NMT_MMAP_DIR="$ROOT/mmap" \
+            "$ROOT/venv-patched/bin/python" ci/exp073ep_build_cross_workspace_v0_1.py --label patched --mmap-dir "$ROOT/mmap" --out-dir "$E/patched-build" | tee "$E/patched-build/stdout.txt"
+          if find "$ROOT/mmap" -type f -name 'dsir-nmt-mcm-*' -print -quit | grep -q .; then echo BLOCKED_EXP073EP_MMAP_CLEANUP; exit 4; fi
+      - name: Four fresh public BPW reload processes
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/exp073ep"; E="$ROOT/evidence"; PY="$ROOT/venv-stock/bin/python"
+          "$PY" ci/exp073ep_reload_public_bpw_v0_1.py --workspace "$E/stock-build/stock_cross_workspace.fits" --out-dir "$E/stock-reload-a" --label stock-A
+          "$PY" ci/exp073ep_reload_public_bpw_v0_1.py --workspace "$E/stock-build/stock_cross_workspace.fits" --out-dir "$E/stock-reload-b" --label stock-B
+          "$PY" ci/exp073ep_reload_public_bpw_v0_1.py --workspace "$E/patched-build/patched_cross_workspace.fits" --out-dir "$E/patched-reload-a" --label patched-A
+          "$PY" ci/exp073ep_reload_public_bpw_v0_1.py --workspace "$E/patched-build/patched_cross_workspace.fits" --out-dir "$E/patched-reload-b" --label patched-B
+      - name: Terminal composed exact comparison
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/exp073ep"; E="$ROOT/evidence"
+          "$ROOT/venv-stock/bin/python" ci/exp073ep_compare_composed_exact_v0_1.py \
+            --stock-build "$E/stock-build" --patched-build "$E/patched-build" \
+            --stock-a "$E/stock-reload-a" --stock-b "$E/stock-reload-b" \
+            --patched-a "$E/patched-reload-a" --patched-b "$E/patched-reload-b" \
+            --out "$E/terminal_qualifier_receipt.json" | tee "$E/terminal_stdout.txt"
+          cat "$ROOT/build_identity.txt"
+      - name: Record native hashes
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/exp073ep"
+          { find "$ROOT/venv-stock" -type f -name '_nmtlib*.so' -exec sha256sum {} \; 2>/dev/null || true; find "$ROOT/venv-patched" -type f -name '_nmtlib*.so' -exec sha256sum {} \; 2>/dev/null || true; } > "$ROOT/native_hashes.txt"
+      - name: Upload Exp073EP immutable evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ep-cross-filebacked-public-bpw-composition-exact-v0-1
+          path: |
+            ${{ runner.temp }}/exp073ep/evidence
+            ${{ runner.temp }}/exp073ep/build_identity.txt
+            ${{ runner.temp }}/exp073ep/native_hashes.txt
+          if-no-files-found: warn
+          retention-days: 30
