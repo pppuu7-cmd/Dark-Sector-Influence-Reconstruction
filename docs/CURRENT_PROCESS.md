@@ -20,15 +20,15 @@ Wm_S1 Track-A exact PASS, admitted Wm_S2 and Wm_S3 exact scientific PASS remain 
 
 No competing self-hosted heavy process may launch. On DT SUCCESS, frozen DT token + independent exact A/B equality + Exp073EB full checkpoint-provenance PASS remain jointly required before WW_S0_S0 authority.
 
-## Exp073DY — terminal infrastructure/software incomplete +0/+0
-Run/job `33970593677 / 101318281168` completed FAILURE. First causal failure from raw log is `AttributeError: 'NmtWorkspace' object has no attribute 'bpws'` at `wr.bpws`, before any solver/backend numerical comparison. Identity checks, PyMaster 2.7 install and GSL comparator compile were SUCCESS. Evidence artifact `9970819324`, GitHub ZIP SHA256 `c4f72f053e1d19ff6e66f060e68e0e672bdbd60369c47c2164f010f0ad7069c3`, is incomplete evidence only. Classification: `INFRASTRUCTURE/SOFTWARE_INCOMPLETE +0/+0`; no solver-backend localization result is admitted.
+## Exp073DZ — terminal diagnostic complete +0/+0
+Run/job `33973350908 / 101325656145` completed SUCCESS. Raw token `COMPLETE_EXP073DZ_PYMASTER27_WORKSPACE_POSTMCM_API_AUDIT_V0_1`; classification `DIAGNOSTIC_COMPLETE +0/+0`. Artifact `9971589033`; GitHub ZIP SHA256 and independently downloaded ZIP SHA256 both `71a45e8eb21b4a17f7695b8d9cc6c7fe4081513d0d1251ff62494f5ef6352c37`. Observed PyMaster 2.7 state: public windows `[4,8,4,48]`, coupling matrix `[192,192]`; `NmtWorkspace.bpws`, Python-visible `mcm`, `mcm_binned`, and `NmtBin._bin_mcm` absent; `wsp.bin`, `wsp.ncls`, `wsp.lmax`, `wsp.lmax_fields`, `wsp.norm_type` present. No science authority created.
 
-## Active hosted support diagnostic — Exp073DZ
-Prospectively frozen API-state audit to avoid guessing at PyMaster 2.7 internals. Prereg commit `df29d093b6c72f18d25e01109d26057cfa4df7a5`, prereg blob `b5174c4bf3c100993ffb66c171daf655222248e9`; script commit `b9d51f51876dd454491e99fc86cb9a3ce302d7e5`, script blob `4966ceb7561b91cb4052b0ccc267c7beca185c3d`; workflow commit `34232b7b7cd3e9ec546a9f4c674ce0dc3942fab9`; activation head `7ee7ad66363af1462b0cddf34b218868221fc383`.
+## Active hosted support diagnostic — Exp073ED
+Prospectively frozen low-level layout bridge. Prereg commit `4174ddc970649f3f50eba4b90db72874e26e6ada`, blob `8e447bbd739bab94a3f1e8e4891f30e40c278b79`; script commit `37e50c48416fada37fc76ed9c8ef3b257b11a6fb`, blob `332a3616b20604c5c21cf58f0b5780ad185ff180`; workflow commit `1538e0b299b258e84fbb8b554b768ff7192f4aea`; activation head `1b10a5ade1eb3e911da06269d452915f70e4959c`.
 
-Hosted run `33973350908` is **QUEUED** at latest reconciliation. It is diagnostic/support-only `+0/+0`, records exact public/low-level workspace API availability and shapes, cannot create WW authority, and does not occupy the home runner.
+Hosted run/job `33976431383 / 101333833555` is **QUEUED** at latest reconciliation. It directly compares low-level PyMaster 2.7 `nmtlib.get_bandpower_windows` output, transformed only by the source-defined reshape/transpose, with the public `get_bandpower_windows()` tensor using exact SHA256 and `numpy.array_equal`. Support-only `+0/+0`; no tolerance or WW authority.
 
-Exact next action on terminal: consume raw Exp073DZ evidence and use only the observed API surface to prospectively repair/re-freeze the post-MCM solver diagnostic. No result-dependent numerical rescue is permitted.
+Exact next action on terminal: consume raw Exp073ED log/artifact and classify only `LOWLEVEL_LAYOUT_EXACT`, `LOWLEVEL_LAYOUT_MISMATCH`, or infrastructure/software incomplete according to the frozen preregistration. Use that result to prospectively narrow the cross-workspace scalable adapter architecture.
 
 ## Distinct-field frontier
 Exp073DU and Exp073DW remain historical qualifier FAIL `+0/+0`; Exp073DX excludes FITS orientation/transpose as cause. Exp073DV full-resolution WW_S0_S1 remains PREPARED_NOT_ACTIVATED and blocked on both valid WW_S0_S0 authority/provenance closure and a prospectively validated exact cross-workspace adapter architecture.
