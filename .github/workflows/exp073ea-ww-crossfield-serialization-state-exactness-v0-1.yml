@@ -1,0 +1,89 @@
+name: Exp073EA WW cross-field serialization-state exactness v0.1
+on:
+  push:
+    branches: [main]
+    paths: ['control/activate_exp073ea_v0_1.txt']
+  workflow_dispatch:
+permissions: {contents: read}
+concurrency:
+  group: dsir-exp073ea-ww-crossfield-serialization-state-v0-1
+  cancel-in-progress: false
+
+env:
+  PREREG_BLOB: '79a0fd70fcae3b25f1d25b1f46f3d35b15626fb1'
+  DIAG_BLOB: '17de0459742237cb0f2b87f5855cbc6c82d9b0d7'
+  SAVED_LU_BLOB: 'f9d0eeb98bf8cb9b9099f28f90f6b8490d87d785'
+  OMP_NUM_THREADS: '2'
+  OMP_DYNAMIC: 'FALSE'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+
+jobs:
+  hosted-serialization-state-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Freeze diagnostic identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073ea_ww_crossfield_serialization_state_exactness_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073ea_ww_crossfield_serialization_state_exactness_v0_1.py)" = "$DIAG_BLOB"
+          test "$(git hash-object ci/exp073dy_saved_lu_mmap_downstream_v0_1.c)" = "$SAVED_LU_BLOB"
+          grep -Fq 'PASS_EXP073EA_SAVED_LU_EXACT_OFFICIAL_RELOAD_STATE_V0_1' experiments/073ea_ww_crossfield_serialization_state_exactness_v0_1_prereg.md
+          echo PASS_EXP073EA_STATIC_FREEZE
+      - name: Install exact NaMaster 2.7 runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy astropy compilers
+          echo "NMT_PREFIX=${RUNNER_TEMP}/nmt27" >> "$GITHUB_ENV"
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "$GITHUB_ENV"
+      - name: Verify numerical lineage and compile saved-LU diagnostic route
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${NMT_PY}" - <<'PY'
+          import hashlib,importlib.metadata,inspect,os,pymaster as nmt
+          v=importlib.metadata.version('pymaster'); assert v=='2.7' or v.startswith('2.7.'),v
+          p=inspect.getsourcefile(nmt.NmtWorkspace.get_bandpower_windows); assert p
+          assert hashlib.sha256(open(p,'rb').read()).hexdigest()=='442e23eb542087566689271ad1c897d5da45f5b76e39def05b37d93b0098178f'
+          assert os.environ['OMP_NUM_THREADS']=='2' and os.environ['OMP_DYNAMIC']=='FALSE'
+          for k in ['OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS','BLIS_NUM_THREADS','VECLIB_MAXIMUM_THREADS']: assert os.environ[k]=='1',(k,os.environ[k])
+          print('PASS_EXP073EA_NAMASTER27_LINEAGE')
+          PY
+          "${NMT_PREFIX}/bin/x86_64-conda-linux-gnu-cc" -O0 -std=c11 -fopenmp -DDSIR_WORKERS=2 \
+            -I"${NMT_PREFIX}/include" ci/exp073dy_saved_lu_mmap_downstream_v0_1.c \
+            -L"${NMT_PREFIX}/lib" -Wl,-rpath,"${NMT_PREFIX}/lib" -lgsl -lgslcblas -lm -o "${RUNNER_TEMP}/saved_lu_downstream"
+      - name: Execute serialization-state diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT=data/derived/exp073ea/v0_1
+          mkdir -p "$OUT"
+          "${NMT_PY}" ci/exp073ea_ww_crossfield_serialization_state_exactness_v0_1.py \
+            --saved-lu-exe "${RUNNER_TEMP}/saved_lu_downstream" \
+            --out-dir "$OUT/runtime" --source-head "$GITHUB_SHA" --prereg-blob "$PREREG_BLOB" | tee "$OUT/stdout.txt"
+          cp "$OUT/runtime/terminal_diagnostic_receipt.json" "$OUT/terminal_diagnostic_receipt.json"
+          "${NMT_PY}" - <<'PY'
+          import json
+          r=json.load(open('data/derived/exp073ea/v0_1/terminal_diagnostic_receipt.json'))
+          assert r['science_gate_scored'] is False and r['ww_authority_created'] is False and r['production_route_authorized'] is False
+          assert r['no_tolerance_rescue'] is True and r['nside']==16 and r['nl']==48 and r['ncls']==4
+          allowed={'PASS_EXP073EA_SAVED_LU_EXACT_OFFICIAL_RELOAD_STATE_V0_1','DIAG_EXP073EA_RELOAD_STATE_EXACT_BUT_SAVED_LU_MISMATCH_V0_1','DIAG_EXP073EA_SERIALIZATION_NUMERICAL_STATE_MUTATES_V0_1','DIAG_EXP073EA_INPROCESS_NONREPEATABILITY_V0_1','DIAG_EXP073EA_UNRESOLVED_V0_1'}
+          assert r['token'] in allowed,r['token']
+          print(r['token'])
+          PY
+          sha256sum "$OUT/terminal_diagnostic_receipt.json" "$OUT/stdout.txt" > "$OUT/payload_sha256.txt"
+      - name: Upload immutable diagnostic evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073ea-ww-crossfield-serialization-state-v0-1-${{ github.sha }}
+          path: data/derived/exp073ea/v0_1/
+          if-no-files-found: error
