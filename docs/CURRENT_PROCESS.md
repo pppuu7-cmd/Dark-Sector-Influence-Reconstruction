@@ -42,7 +42,7 @@ Frozen observation: raw FITS `WSP_PRIMARY` equals official serialized→reloaded
 ## Active hosted diagnostic — Exp073DY
 Exp073DY is prospectively frozen support/diagnostic only `+0/+0`. Prereg commit `98df7a122ee7450de1374bcf881ff3105e67f024`, prereg blob `7e23a1daf217c50d4506594c9b5b754350ae19fb`; implementation commit `a2836bda48c10a55da828a73d5b63efffef66343`, script blob `25a196f298d5d030a0d303162e780e1d50936157`; workflow commit `5513b96826b48ec18ef4664bf51e38f766d7ab30`; activation head `18316043727cace7749e92b4c069f7921cc93624`.
 
-Hosted run/job `33970593677 / 101318281168` is QUEUED at latest reconciliation. It tests whether official PyMaster 2.7 `np.linalg.inv` + `np.dot` post-processing exactly reconstructs the reloaded bandpower windows while the frozen GSL adapter differs. It cannot create scientific authority and cannot use tolerance rescue.
+Hosted run/job `33970593677 / 101318281168` is **IN_PROGRESS** at latest reconciliation. Identity-freeze steps are SUCCESS; NaMaster 2.7/compiler environment installation is active. It tests whether official PyMaster 2.7 `np.linalg.inv` + `np.dot` post-processing exactly reconstructs the reloaded bandpower windows while the frozen GSL adapter differs. It cannot create scientific authority and cannot use tolerance rescue.
 
 Exact next action on terminal: consume raw log and artifact. `SOLVER_BACKEND_LOCALIZED` permits only a prospectively designed adapter preserving official PyMaster 2.7 post-processing arithmetic/backend semantics; otherwise freeze a narrower diagnostic before any repair.
 
