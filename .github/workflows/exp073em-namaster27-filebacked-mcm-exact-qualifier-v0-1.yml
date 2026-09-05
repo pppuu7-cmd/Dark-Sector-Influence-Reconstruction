@@ -1,0 +1,149 @@
+name: Exp073EM NaMaster27 file-backed MCM exact qualifier v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'patches/namaster-v2.7-dsir-filebacked-mcm-v0.1.patch'
+      - 'ci/exp073em_generate_namaster27_storage_reference_v0_1.py'
+      - 'ci/exp073em_compare_namaster27_storage_exact_v0_1.py'
+      - '.github/workflows/exp073em-namaster27-filebacked-mcm-exact-qualifier-v0-1.yml'
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '2'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  PYTHONHASHSEED: '0'
+
+jobs:
+  exact-storage-qualifier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout DSIR
+        uses: actions/checkout@v4
+
+      - name: Install native build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcfitsio-dev libfftw3-dev libgsl-dev autoconf automake libtool patch
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Freeze source and validate storage-only patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/exp073em"
+          git clone --depth 1 --branch v2.7 https://github.com/LSSTDESC/NaMaster.git "$RUNNER_TEMP/exp073em/namaster-stock"
+          cp -a "$RUNNER_TEMP/exp073em/namaster-stock" "$RUNNER_TEMP/exp073em/namaster-patched"
+          cd "$RUNNER_TEMP/exp073em/namaster-patched"
+          patch --dry-run -p1 < "$GITHUB_WORKSPACE/patches/namaster-v2.7-dsir-filebacked-mcm-v0.1.patch"
+          patch -p1 < "$GITHUB_WORKSPACE/patches/namaster-v2.7-dsir-filebacked-mcm-v0.1.patch"
+          git diff --check
+          {
+            echo "NAMASTER_TAG=v2.7"
+            echo "NAMASTER_HEAD=$(git -C "$RUNNER_TEMP/exp073em/namaster-stock" rev-parse HEAD)"
+            echo "PATCH_SHA256=$(sha256sum "$GITHUB_WORKSPACE/patches/namaster-v2.7-dsir-filebacked-mcm-v0.1.patch" | awk '{print $1}')"
+            echo "GCC=$(gcc --version | head -n1)"
+            echo "PYTHON=$(python --version 2>&1)"
+          } > "$RUNNER_TEMP/exp073em/build_identity.txt"
+
+      - name: Build stock PyMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/exp073em/venv-stock"
+          "$RUNNER_TEMP/exp073em/venv-stock/bin/python" -m pip install --upgrade pip setuptools wheel
+          "$RUNNER_TEMP/exp073em/venv-stock/bin/python" -m pip install numpy healpy ducc0 astropy
+          cd "$RUNNER_TEMP/exp073em/namaster-stock"
+          "$RUNNER_TEMP/exp073em/venv-stock/bin/python" setup.py install
+          "$RUNNER_TEMP/exp073em/venv-stock/bin/python" - <<'PY'
+          import importlib.metadata,pymaster
+          print('STOCK_PYMASTER',importlib.metadata.version('pymaster'))
+          print('STOCK_MODULE',pymaster.__file__)
+          PY
+
+      - name: Build patched PyMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/exp073em/venv-patched"
+          "$RUNNER_TEMP/exp073em/venv-patched/bin/python" -m pip install --upgrade pip setuptools wheel
+          "$RUNNER_TEMP/exp073em/venv-patched/bin/python" -m pip install numpy healpy ducc0 astropy
+          cd "$RUNNER_TEMP/exp073em/namaster-patched"
+          "$RUNNER_TEMP/exp073em/venv-patched/bin/python" setup.py install
+          "$RUNNER_TEMP/exp073em/venv-patched/bin/python" - <<'PY'
+          import importlib.metadata,pymaster
+          print('PATCHED_PYMASTER',importlib.metadata.version('pymaster'))
+          print('PATCHED_MODULE',pymaster.__file__)
+          PY
+
+      - name: Generate stock exact reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          unset DSIR_NMT_FILEBACKED_MCM || true
+          unset DSIR_NMT_MMAP_DIR || true
+          "$RUNNER_TEMP/exp073em/venv-stock/bin/python" \
+            ci/exp073em_generate_namaster27_storage_reference_v0_1.py \
+            --label stock --out-dir "$RUNNER_TEMP/exp073em/evidence/stock"
+
+      - name: Generate patched file-backed reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/exp073em/mmap"
+          DSIR_NMT_FILEBACKED_MCM=1 \
+          DSIR_NMT_MMAP_DIR="$RUNNER_TEMP/exp073em/mmap" \
+          "$RUNNER_TEMP/exp073em/venv-patched/bin/python" \
+            ci/exp073em_generate_namaster27_storage_reference_v0_1.py \
+            --label patched --out-dir "$RUNNER_TEMP/exp073em/evidence/patched"
+          if find "$RUNNER_TEMP/exp073em/mmap" -type f -name 'dsir-nmt-mcm-*' -print -quit | grep -q .; then
+            echo 'fail-closed: mapped MCM backing file survived workspace destruction' >&2
+            exit 4
+          fi
+
+      - name: Exact stock-vs-file-backed comparison
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/exp073em/venv-stock/bin/python" \
+            ci/exp073em_compare_namaster27_storage_exact_v0_1.py \
+            --stock "$RUNNER_TEMP/exp073em/evidence/stock" \
+            --patched "$RUNNER_TEMP/exp073em/evidence/patched" \
+            --out "$RUNNER_TEMP/exp073em/evidence/exp073em_receipt.json"
+          cat "$RUNNER_TEMP/exp073em/build_identity.txt"
+          cat "$RUNNER_TEMP/exp073em/evidence/exp073em_receipt.json"
+
+      - name: Record build binary hashes
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo '=== stock native objects ==='
+            find "$RUNNER_TEMP/exp073em/venv-stock" -type f \( -name '_nmtlib*.so' -o -name 'libnmt.a' \) -exec sha256sum {} \; 2>/dev/null || true
+            echo '=== patched native objects ==='
+            find "$RUNNER_TEMP/exp073em/venv-patched" -type f \( -name '_nmtlib*.so' -o -name 'libnmt.a' \) -exec sha256sum {} \; 2>/dev/null || true
+          } > "$RUNNER_TEMP/exp073em/native_hashes.txt"
+
+      - name: Upload Exp073EM evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073em-namaster27-filebacked-exact-evidence-v0-1
+          path: |
+            ${{ runner.temp }}/exp073em/evidence
+            ${{ runner.temp }}/exp073em/build_identity.txt
+            ${{ runner.temp }}/exp073em/native_hashes.txt
+          if-no-files-found: warn
+          retention-days: 30
