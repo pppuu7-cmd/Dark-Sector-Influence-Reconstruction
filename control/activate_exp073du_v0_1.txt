@@ -1,0 +1,6 @@
+ACTIVATE_EXP073DU_WW_S0_S1_CROSSFIELD_SMALLNSIDE_QUALIFIER_V0_1
+prereg_blob=b9d34bc86bb4e7726c27e044402806c3b14ef558
+qualifier_blob=7f3c6cdd01831e5632b789365c0ecb2a3464dbbf
+accounting=+0/+0
+runner=github-hosted-only
+self_hosted_competition=forbidden
