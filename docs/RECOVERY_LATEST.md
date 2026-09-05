@@ -31,23 +31,25 @@ Exp073EB remains prospectively armed support-only `+0/+0`. The frozen Exp073DT t
 ## Distinct-field WW_S0_S1 readiness history
 Exp073DU and Exp073DW remain immutable qualifier FAIL `+0/+0`: the current saved-FITS production adapter is not exact for the distinct spin-2 S0→S1 workspace under either pre-serialization or official serialized→reloaded reference. Exp073DX excluded FITS storage orientation/transpose. Exp073ED excluded the PyMaster 2.7 low-level/public bandpower-window tensor-layout bridge. Exp073DV full-resolution WW_S0_S1 remains `PREPARED_NOT_ACTIVATED` and blocked on both valid WW_S0_S0 authority/provenance closure and a prospectively validated exact cross-workspace adapter architecture.
 
-## Exp073ED — terminal LOWLEVEL_LAYOUT_EXACT +0/+0
-Hosted run/job `33976431383 / 101333833555` completed SUCCESS under activation head `1b10a5ade1eb3e911da06269d452915f70e4959c`. Artifact `9972458954`; GitHub artifact digest and independently downloaded ZIP SHA256 both `eb71f29599fe3b9a71848c65cc4bfd68fbee9e014c0149ff99b1fbde970431c9`.
+## Exp073EE — terminal FORMULA_MISMATCH +0/+0
+Hosted run/job `33982602346 / 101350386458` completed SUCCESS at workflow level under activation head `d7725bebe13b5a21c7a0a0b2e1c83c6da7808541`. Artifact `9974198332`; GitHub artifact digest and independently downloaded ZIP SHA256 both `4b7b3db48b01f2954b3a355e40d08aaac7cca5caa92672a502dc66e201787af6`.
 
-Raw token `COMPLETE_EXP073ED_PYMASTER27_LOWLEVEL_BANDPOWER_WINDOW_LAYOUT_BRIDGE_V0_1`; frozen classification `LOWLEVEL_LAYOUT_EXACT`. Public/rebuilt tensors both have shape `[4,8,4,48]` and exact SHA256 `aa883a13c305641e6e1aab5feca4692a8da1cdbcca16e8c124f12e601608d628`; `sha_equal=true`; `array_equal=true`; `no_tolerance_rescue=true`; `science_gate_scored=false`; `ww_authority_created=false`.
+Raw frozen token `COMPLETE_EXP073EE_WW_CROSS_FORMULA_MISMATCH_V0_1`; classification `FORMULA_MISMATCH`. Exact full and selected-EE SHA/array equality are false. Diagnostic-only max absolute difference is `1.3877787807814457e-16`; this does not rescue the exact gate. `science_gate_scored=false`; `ww_authority_created=false`; accounting `+0/+0`.
 
-Interpretation: low-level/public tensor layout is not the cause of Exp073DU/DW mismatch.
+Interpretation: the current saved-FITS reconstruction path already diverges bitwise from official serialized→reloaded PyMaster 2.7 windows when independently reproduced in NumPy. This is not a WW scientific result and may not be repaired post hoc.
 
-## Active exact support diagnostic — Exp073EE
-Exp073EE is prospectively frozen support-only `+0/+0` to isolate whether the remaining mismatch is already present in the current emulator's mathematical reconstruction formula before the GSL LU/BLAS backend. Prereg commit/blob `5a37b7639462ee01f8fafe0472e19c2e27c22752 / 620612bc00f5e302c0e1a725593d8f2f3d7db335`; script commit/blob `e1d59536c7168afd05977b1e5a0b042525da35af / 43ae31a72a0c84e4923947e16075b289cce4c0e4`; workflow commit `0d98b04b7fe79ebadf360a2ed8a238d3842c4421`; activation head `d7725bebe13b5a21c7a0a0b2e1c83c6da7808541`.
+## Active exact support diagnostic — Exp073EF
+Exp073EF is prospectively frozen support-only `+0/+0` to localize whether the Exp073EE mismatch is already present before the solve in `K=P M Q` and/or `R=P M`.
 
-Run `33982602346` is **QUEUED** at latest reconciliation. It reproduces exactly the current C emulator flattened indexing, binning and `K^{-1}R` formula in NumPy on a small distinct S0→S1 serialized→reloaded PyMaster 2.7 workspace and compares full plus EE-selected arrays by canonical SHA256 and `numpy.array_equal`. Frozen classifications: `FORMULA_EXACT` or `FORMULA_MISMATCH`; either is `+0/+0`, no tolerance rescue, no WW authority.
+Prereg commit/blob `f448d919924c0fbb5b7f0e56a5b48aa31fffbf1b / 10da9087dd136207b5e82304eaedf698bb398ad0`; script commit/blob `df429e99d44ee19e97c88e9a61e5f6ce79c6a182 / 9d14d483c04e6564d7a3cc3e2cdb138f9bc45cda`; workflow commit `a135943d6c128f24f28f6a18e20cd56ba2ad37ff`; activation head `1e525c7006539a6524e48ef214b755e6a70f4272`.
+
+Run/job `33985910151 / 101359236929` is **IN_PROGRESS** on GitHub-hosted Ubuntu at latest reconciliation. Identity freeze passed; NaMaster 2.7 installation is in progress. Formula K/R are compared with independently operational public-PyMaster K/R assembled using official `unbin_cell`, `couple_cell` and `bin_cell`; no solve occurs. Frozen classifications: `KR_OPERATORS_EXACT` or `KR_OPERATOR_MISMATCH`, both `+0/+0`, exact SHA256 + `numpy.array_equal` only, no tolerance rescue and no WW authority.
 
 ## Frozen science/execution boundaries
 `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A invalid `<=0.05`; Layer-B invalid-row `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
 
 ## Exact next gates
 1. Do not launch another self-hosted task while Exp073DT attempt 4 is queued/in_progress.
-2. Consume Exp073EE immediately when terminal. If `FORMULA_MISMATCH`, separately preregister a narrower formula/index/binning diagnostic; if `FORMULA_EXACT`, separately preregister solver/backend localization. Do not retrofit the current adapter.
+2. Consume Exp073EF immediately when terminal. If `KR_OPERATORS_EXACT`, separately preregister solver/backend exact localization. If `KR_OPERATOR_MISMATCH`, separately preregister operator-only K-versus-R/bin-unbin localization. Do not retrofit the current adapter.
 3. When Exp073DT `33940588308 / 101288014666` becomes terminal, consume raw artifact/digest, A/B payloads/comparator and checkpoint provenance. On SUCCESS also consume Exp073EB before admitting any WW_S0_S0 authority.
 4. Keep Exp073DV inactive until both WW_S0_S0 authority prerequisites and a prospectively validated cross-workspace exact adapter exist.
