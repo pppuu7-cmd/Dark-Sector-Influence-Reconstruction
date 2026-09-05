@@ -1,0 +1,179 @@
+name: Exp073DS WW_S0_S0 home readiness exclusivity v0.1
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/exp073ds-ww-s0-s0-home-readiness-exclusivity-v0-1.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: dsir-exp073ds-ww-s0-s0-home-readiness-v0-1
+  cancel-in-progress: false
+
+env:
+  R1_DIGEST: 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd'
+  DRIVER_SHA256: '0b7a0a2336a89dcea63060d4049d09fabacc9c5e75fad870d2599efd27d0e63b'
+  ADAPTER_SHA256: 'ab85f76e724a9861837299ce29c0961e4adcd09954b9522d678d5e610267f641'
+
+jobs:
+  hosted-noncompetition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Bind prereg and live noncompetition
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test -f experiments/073ds_ww_s0_s0_home_readiness_exclusivity_v0_1_prereg.md
+          test "$(sha256sum ci/exp073dq_ww_s0_s0_durable_ab_production_v0_1.py | awk '{print $1}')" = "$DRIVER_SHA256"
+          test "$(sha256sum ci/exp073do_ww_s0_s0_production_exact_adapter_v0_1.py | awk '{print $1}')" = "$ADAPTER_SHA256"
+          python3 - <<'PY'
+          import json,os,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; current=int(os.environ['GITHUB_RUN_ID']); token=os.environ['GH_TOKEN']; h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}; bad=[]
+          for status in ('queued','in_progress'):
+              q=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100',headers=h)
+              with urllib.request.urlopen(q) as r: runs=json.load(r).get('workflow_runs',[])
+              for run in runs:
+                  if int(run['id'])==current: continue
+                  q2=urllib.request.Request(f"https://api.github.com/repos/{repo}/actions/runs/{run['id']}/jobs?per_page=100",headers=h)
+                  with urllib.request.urlopen(q2) as r2: jobs=json.load(r2).get('jobs',[])
+                  if any('self-hosted' in (j.get('labels') or []) or j.get('runner_name')=='DSIR-HOME-PC' for j in jobs): bad.append({'run':run['id'],'name':run.get('name')})
+          if bad: raise SystemExit('BLOCKED competing self-hosted DSIR work: '+json.dumps(bad,sort_keys=True))
+          print('PASS_EXP073DS_HOSTED_NONCOMPETITION')
+          PY
+
+  home-readiness:
+    needs: hosted-noncompetition
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 45
+    env:
+      OMP_NUM_THREADS: '8'
+      OMP_DYNAMIC: 'FALSE'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Bind 8-core hardware and acquire readiness lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          cpus="$(python3 - <<'PY'
+          import os
+          print(len(os.sched_getaffinity(0)) if hasattr(os,'sched_getaffinity') else (os.cpu_count() or 0))
+          PY
+          )"
+          echo "home_affinity_cpus=$cpus"; test "$cpus" = '8'
+          mkdir -p "$HOME/.cache/dsir/readiness"
+          lock="$HOME/.cache/dsir/readiness/DSIR-HOME-PC.exp073ds.lock"
+          exec 9>"$lock"; flock -n 9 || { echo BLOCKED_EXP073DS_LOCK; exit 4; }
+          echo "READINESS_LOCK_FD=9" >> "$GITHUB_ENV"
+          echo PASS_EXP073DS_8CORE_LOCK
+      - name: Recheck live self-hosted exclusivity
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; current=int(os.environ['GITHUB_RUN_ID']); token=os.environ['GH_TOKEN']; h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}; bad=[]
+          for status in ('queued','in_progress'):
+              q=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100',headers=h)
+              with urllib.request.urlopen(q) as rr: runs=json.load(rr).get('workflow_runs',[])
+              for run in runs:
+                  if int(run['id'])==current: continue
+                  q2=urllib.request.Request(f"https://api.github.com/repos/{repo}/actions/runs/{run['id']}/jobs?per_page=100",headers=h)
+                  with urllib.request.urlopen(q2) as r2: jobs=json.load(r2).get('jobs',[])
+                  if any('self-hosted' in (j.get('labels') or []) or j.get('runner_name')=='DSIR-HOME-PC' for j in jobs): bad.append(run['id'])
+          if bad: raise SystemExit('BLOCKED competing self-hosted runs '+repr(bad))
+          print('PASS_EXP073DS_LIVE_EXCLUSIVITY')
+          PY
+      - name: Reuse exact NaMaster 2.7 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          MF="$HOME/.cache/dsir-miniforge"; ENV="$HOME/.cache/dsir-nmt27"
+          test -x "$MF/bin/conda" || { echo BLOCKED_NO_MINIFORGE; exit 4; }
+          if ! test -x "$ENV/bin/python"; then "$MF/bin/conda" create -y -p "$ENV" -c conda-forge python=3.11 namaster=2.7 healpy astropy compilers; fi
+          echo "NMT_PREFIX=$ENV" >> "$GITHUB_ENV"; echo "NMT_PY=$ENV/bin/python" >> "$GITHUB_ENV"
+          "$ENV/bin/python" - <<'PY'
+          import importlib.metadata,os
+          v=importlib.metadata.version('pymaster'); print('pymaster='+v); assert v=='2.7' or v.startswith('2.7.')
+          assert os.environ['OMP_NUM_THREADS']=='8' and os.environ['OMP_DYNAMIC']=='FALSE'
+          for k in ['OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS','BLIS_NUM_THREADS','VECLIB_MAXIMUM_THREADS']: assert os.environ[k]=='1',(k,os.environ[k])
+          PY
+      - name: Stage exact frozen Exp073R1 authority
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073r1-v08-hosted-wholestream-ef783ca941fb9b9b5f5eae537986c56ff06e6536
+          run-id: 33270843577
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/exp073ds-r1
+      - name: Validate R1 authority without reconstructing S0
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$NMT_PY" - <<'PY'
+          import sys,os
+          sys.path.insert(0,'ci')
+          from pathlib import Path
+          from exp073aa_article3_des_angular_task_runner_v0_1 import validate_r1
+          r=validate_r1(Path(os.environ['RUNNER_TEMP'])/'exp073ds-r1',os.environ['R1_DIGEST'])
+          assert all(r['checks'].values())
+          print('PASS_EXP073DS_R1_AUTHORITY')
+          PY
+      - name: Compile and runtime-certify exact 8-thread WW downstream
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/exp073ds-bin"
+          "$NMT_PREFIX/bin/x86_64-conda-linux-gnu-cc" -O0 -std=c11 -fopenmp -DDSIR_WORKERS=8 -I"$NMT_PREFIX/include" ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c -L"$NMT_PREFIX/lib" -Wl,-rpath,"$NMT_PREFIX/lib" -lgsl -lgslcblas -lm -o "$RUNNER_TEMP/exp073ds-bin/downstream8"
+          "$NMT_PY" - <<'PY'
+          import os,struct,numpy as np
+          p=os.environ['RUNNER_TEMP']+'/exp073ds_probe.bin'; ncls=4; nb=1; L=1; edges=np.array([0,1],dtype='<i4'); m=np.eye(4,dtype='<f8')
+          with open(p,'wb') as f: f.write(struct.pack('<iii',ncls,nb,L)); f.write(edges.tobytes()); f.write(m.tobytes(order='C'))
+          PY
+          set +e; probe="$($RUNNER_TEMP/exp073ds-bin/downstream8 "$RUNNER_TEMP/exp073ds_probe.bin" "$RUNNER_TEMP/exp073ds_probe_out.bin" 2>&1)"; rc=$?; set -e
+          echo "$probe"; test "$rc" = '0'; grep -Fq 'DSIR_OMP_TEAM=8' <<<"$probe"; test "$(stat -c %s "$RUNNER_TEMP/exp073ds_probe_out.bin")" = '128'
+          echo PASS_EXP073DS_RUNTIME_8_THREAD_TEAM
+      - name: Verify committed driver/adapter and readiness-path durability
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(sha256sum ci/exp073dq_ww_s0_s0_durable_ab_production_v0_1.py | awk '{print $1}')" = "$DRIVER_SHA256"
+          test "$(sha256sum ci/exp073do_ww_s0_s0_production_exact_adapter_v0_1.py | awk '{print $1}')" = "$ADAPTER_SHA256"
+          root="$HOME/.cache/dsir/readiness/exp073ds-ww-s0-s0-v0-1"; mkdir -p "$root"
+          "$NMT_PY" - <<'PY'
+          import json,os,tempfile
+          from pathlib import Path
+          root=Path.home()/'.cache/dsir/readiness/exp073ds-ww-s0-s0-v0-1'; tmp=root/'probe.tmp'; fin=root/'probe.json'
+          with tmp.open('w') as f: json.dump({'ok':True},f); f.flush(); os.fsync(f.fileno())
+          os.replace(tmp,fin); assert json.loads(fin.read_text())=={'ok':True}; fin.unlink()
+          PY
+      - name: Write readiness receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$NMT_PY" - <<'PY'
+          import importlib.metadata,json,os
+          from pathlib import Path
+          out=Path(os.environ['RUNNER_TEMP'])/'exp073ds_receipt.json'
+          d={'experiment':'Exp073DS','classification':'SUPPORT_HOME_READINESS_PASS_PLUS_0_PLUS_0','token':'PASS_EXP073DS_WW_S0_S0_HOME_READINESS_EXCLUSIVITY_V0_1','science_gate_scored':False,'ww_authority_created':False,'full_workspace_computed':False,'selected_ww_payload_created':False,'home_science_execution_authorized':False,'pymaster_version':importlib.metadata.version('pymaster'),'affinity_cpus':len(os.sched_getaffinity(0)) if hasattr(os,'sched_getaffinity') else os.cpu_count(),'omp_threads':os.environ['OMP_NUM_THREADS'],'nested_threads':{k:os.environ[k] for k in ['OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS','BLIS_NUM_THREADS','VECLIB_MAXIMUM_THREADS']},'driver_sha256':os.environ['DRIVER_SHA256'],'adapter_sha256':os.environ['ADAPTER_SHA256'],'r1_digest':os.environ['R1_DIGEST'],'runtime_team':8}
+          out.write_text(json.dumps(d,indent=2,sort_keys=True)+'\n'); print(d['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ds-ww-s0-s0-home-readiness-${{ github.run_id }}-${{ github.sha }}
+          path: ${{ runner.temp }}/exp073ds_receipt.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
