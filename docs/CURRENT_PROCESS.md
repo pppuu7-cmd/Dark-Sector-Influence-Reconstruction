@@ -35,6 +35,11 @@ Hosted static regression Exp073EC (commit `c9014c2763e542f22aa5c01583e5e8011ccdf
 
 Immutable recovery authority includes `recovery/2026-09-05_exp073dt_terminal_provenance_gap_exp073eb_armed.md`; research log `docs/RESEARCH_LOG_EXP073EB_2026-09-05.md`.
 
+## Independent next-front preparation — Exp073DV
+While Exp073DT attempt 4 remains queued, `experiments/073dv_ww_s0_s1_full_resolution_activation_design_v0_1.md` was added prospectively in commit `1dc7d3f1838856890ba0b04515d6ae275fbc02cf`. It is design/readiness only: no workflow activation, no full-resolution `WW_S0_S1` output, `science_gate_scored=false`, `ww_s0_s1_authority_created=false`.
+
+The design fixes the future cross-field invariants before any `WW_S0_S1` full-resolution result exists: ordered distinct `(S0,S1)` spin-2 fields, exact authoritative reconstruction of both source maps, full `[4,39,4,12288]`, selected `wins[0,:,0,:]=EE<-EE`, canonical `<f8 [39,12288]`, dual-map SHA-bound checkpoints, full ordered manifest-chain reread on terminal fast-path, and exact A/B SHA plus `numpy.array_equal` with no tolerance rescue. Activation remains blocked on terminal Exp073DT classification, required Exp073EB provenance closure on DT PASS, consumed Exp073DU qualifier, and zero competing self-hosted DSIR heavy work.
+
 ## Exact terminal action
 On Exp073DT terminal SUCCESS: consume raw artifact/digest, receipt, A/B selected payloads and comparator; independently recompute exact SHA and `numpy.array_equal`; then consume Exp073EB full checkpoint-provenance evidence. Only the frozen science token plus exact A/B equality plus full provenance closure may create `WW_S0_S0` authority. Exact A/B inequality is scientific repeatability FAIL. Infrastructure/checkpoint/provenance/artifact failures are `+0/+0`.
 
