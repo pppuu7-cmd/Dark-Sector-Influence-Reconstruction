@@ -1,0 +1,6 @@
+ACTIVATE_EXP073DY_WW_CROSSFIELD_SAVED_LU_EXACT_DIAGNOSTIC_V0_1
+accounting=+0/+0
+runner=github-hosted-only
+science_authority=false
+production_route_authorized=false
+self_hosted_competition=forbidden
