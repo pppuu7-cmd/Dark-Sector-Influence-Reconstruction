@@ -34,13 +34,20 @@ Raw receipt: `FAIL_EXP073DW_WW_S0_S1_SERIALIZED_RELOAD_EXACT_ADAPTER_V0_1`, `sci
 
 Conclusion: current production adapter path is not exact for the distinct spin-2 S0→S1 workspace under the frozen qualifier. This is a support/readiness negative result `+0/+0`, not infrastructure and not WW science FAIL. No post-hoc tolerance rescue is allowed.
 
-## Active hosted diagnostic — Exp073DX
-Exp073DX is diagnostic-only and was prospectively frozen before output to isolate raw FITS `WSP_PRIMARY` storage/orientation versus official reloaded `get_coupling_matrix()` for W01/W10/W00/W11. It cannot create authority or alter DU/DW results.
+## Consumed structural diagnostic — Exp073DX
+Run/job `33967888245 / 101311110512` completed SUCCESS with diagnostic token `COMPLETE_EXP073DX_WW_CROSSFIELD_MCM_STORAGE_ORIENTATION_AUDIT_V0_1`. Artifact `9970022236`, GitHub SHA256 `de883a5bb915c26573e4fb8efe6913dad80638f13b188b6e7a9aef82fc6f02c8`.
 
-Provenance: prereg `012c461df4b8351f509ad511438ebe4423ac99a5`; implementation `4e9d39f5e230203a2ec107d46bd7ede8b254bd1c`; workflow `8c32ee8ac8f919bb1718e973d999504f822a1d71`; activation/log head `4375ee5daa387e8bcb018cd949beb737c6c6c228`; hosted run `33967888245` QUEUED at latest dispatch. Accounting always `+0/+0`.
+Frozen observation: raw FITS `WSP_PRIMARY` equals official serialized→reloaded logical MCM exactly for W00/W01/W10/W11; raw transpose is not equal to logical. W01 equals W10 exactly and not W10 transpose. Therefore FITS storage orientation/transpose is excluded as the DU/DW mismatch cause. Diagnostic only `+0/+0`; no WW authority.
+
+## Active hosted diagnostic — Exp073DY
+Exp073DY is prospectively frozen support/diagnostic only `+0/+0`. Prereg commit `98df7a122ee7450de1374bcf881ff3105e67f024`, prereg blob `7e23a1daf217c50d4506594c9b5b754350ae19fb`; implementation commit `a2836bda48c10a55da828a73d5b63efffef66343`, script blob `25a196f298d5d030a0d303162e780e1d50936157`; workflow commit `5513b96826b48ec18ef4664bf51e38f766d7ab30`; activation head `18316043727cace7749e92b4c069f7921cc93624`.
+
+Hosted run/job `33970593677 / 101318281168` is QUEUED at latest reconciliation. It tests whether official PyMaster 2.7 `np.linalg.inv` + `np.dot` post-processing exactly reconstructs the reloaded bandpower windows while the frozen GSL adapter differs. It cannot create scientific authority and cannot use tolerance rescue.
+
+Exact next action on terminal: consume raw log and artifact. `SOLVER_BACKEND_LOCALIZED` permits only a prospectively designed adapter preserving official PyMaster 2.7 post-processing arithmetic/backend semantics; otherwise freeze a narrower diagnostic before any repair.
 
 ## Future WW_S0_S1
-Exp073DV remains PREPARED_NOT_ACTIVATED. Full-resolution WW_S0_S1 is now additionally blocked on a prospectively validated cross-workspace exact adapter architecture; the auto-qualified current adapter cannot be reused after DU/DW negative qualifiers. Existing prerequisites still apply: valid WW_S0_S0 authority, Exp073EB provenance closure, and zero competing self-hosted heavy work.
+Exp073DV remains PREPARED_NOT_ACTIVATED. Full-resolution WW_S0_S1 remains blocked on both valid WW_S0_S0 authority/provenance closure and a prospectively validated exact cross-workspace adapter architecture.
 
 ## Frozen frontier
 `Wm_S1 -> Wm_S2 -> Wm_S3 -> WW_S0_S0 -> WW_S0_S1 -> WW_S0_S2 -> WW_S0_S3 -> WW_S1_S1 -> WW_S1_S2 -> WW_S1_S3 -> WW_S2_S2 -> WW_S2_S3 -> WW_S3_S3`.
