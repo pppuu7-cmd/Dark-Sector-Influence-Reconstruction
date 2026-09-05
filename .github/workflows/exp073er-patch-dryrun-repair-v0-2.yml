@@ -1,0 +1,28 @@
+name: Exp073ER patch dry-run repair v0.2
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch'
+      - '.github/workflows/exp073er-patch-dryrun-repair-v0-2.yml'
+permissions:
+  contents: read
+jobs:
+  patch-dryrun:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply exact-source patch syntax only
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/er-patch"
+          git clone -q https://github.com/LSSTDESC/NaMaster.git "$R"
+          git -C "$R" checkout -q --detach 24365fa59a38c15732f4f37e8b29265b75c442d5
+          echo "PATCH_BLOB=$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch 2>/dev/null || git rev-parse "$GITHUB_SHA":patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)"
+          cd "$R"
+          patch --dry-run -p1 < "$GITHUB_WORKSPACE/patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch"
+          patch -p1 < "$GITHUB_WORKSPACE/patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch"
+          git diff --check
+          echo PASS_EXP073ER_PATCH_DRYRUN_V0_2
