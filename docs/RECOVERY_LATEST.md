@@ -29,20 +29,25 @@ Attempts 1–3 are `INFRASTRUCTURE_INCOMPLETE +0/+0` external shutdowns, not sci
 Exp073EB remains prospectively armed support-only `+0/+0`. The frozen Exp073DT terminal artifact does not export the full six-stage checkpoint chain, so workflow SUCCESS/token alone is insufficient. On DT SUCCESS, only frozen token + independently verified exact A/B equality + Exp073EB full checkpoint-provenance PASS may create `WW_S0_S0` authority.
 
 ## Distinct-field WW_S0_S1 readiness history
-Exp073DU and Exp073DW remain immutable qualifier FAIL `+0/+0`: the current saved-FITS production adapter is not exact for the distinct spin-2 S0→S1 workspace under either pre-serialization or official serialized→reloaded reference. Exp073DX excluded FITS storage orientation/transpose. Exp073ED now excludes the PyMaster 2.7 low-level/public bandpower-window tensor-layout bridge. Exp073DV full-resolution WW_S0_S1 remains `PREPARED_NOT_ACTIVATED` and blocked on both valid WW_S0_S0 authority/provenance closure and a prospectively validated exact cross-workspace adapter architecture.
+Exp073DU and Exp073DW remain immutable qualifier FAIL `+0/+0`: the current saved-FITS production adapter is not exact for the distinct spin-2 S0→S1 workspace under either pre-serialization or official serialized→reloaded reference. Exp073DX excluded FITS storage orientation/transpose. Exp073ED excluded the PyMaster 2.7 low-level/public bandpower-window tensor-layout bridge. Exp073DV full-resolution WW_S0_S1 remains `PREPARED_NOT_ACTIVATED` and blocked on both valid WW_S0_S0 authority/provenance closure and a prospectively validated exact cross-workspace adapter architecture.
 
 ## Exp073ED — terminal LOWLEVEL_LAYOUT_EXACT +0/+0
 Hosted run/job `33976431383 / 101333833555` completed SUCCESS under activation head `1b10a5ade1eb3e911da06269d452915f70e4959c`. Artifact `9972458954`; GitHub artifact digest and independently downloaded ZIP SHA256 both `eb71f29599fe3b9a71848c65cc4bfd68fbee9e014c0149ff99b1fbde970431c9`.
 
 Raw token `COMPLETE_EXP073ED_PYMASTER27_LOWLEVEL_BANDPOWER_WINDOW_LAYOUT_BRIDGE_V0_1`; frozen classification `LOWLEVEL_LAYOUT_EXACT`. Public/rebuilt tensors both have shape `[4,8,4,48]` and exact SHA256 `aa883a13c305641e6e1aab5feca4692a8da1cdbcca16e8c124f12e601608d628`; `sha_equal=true`; `array_equal=true`; `no_tolerance_rescue=true`; `science_gate_scored=false`; `ww_authority_created=false`.
 
-Interpretation: low-level `pymaster.nmtlib.get_bandpower_windows`, transformed only by the source-defined reshape `[n_bands,ncls,lmax+1,ncls]` and transpose `[1,0,3,2]`, is bitwise identical to public `NmtWorkspace.get_bandpower_windows()`. Thus Python tensor layout / the low-level-public bridge is not the cause of Exp073DU/DW mismatch. The remaining diagnostic frontier is the saved-FITS reconstruction/post-MCM solver path; any next diagnostic must be prospectively frozen, exact, support-only `+0/+0`, and may not alter scientific arithmetic or create WW authority.
+Interpretation: low-level/public tensor layout is not the cause of Exp073DU/DW mismatch.
+
+## Active exact support diagnostic — Exp073EE
+Exp073EE is prospectively frozen support-only `+0/+0` to isolate whether the remaining mismatch is already present in the current emulator's mathematical reconstruction formula before the GSL LU/BLAS backend. Prereg commit/blob `5a37b7639462ee01f8fafe0472e19c2e27c22752 / 620612bc00f5e302c0e1a725593d8f2f3d7db335`; script commit/blob `e1d59536c7168afd05977b1e5a0b042525da35af / 43ae31a72a0c84e4923947e16075b289cce4c0e4`; workflow commit `0d98b04b7fe79ebadf360a2ed8a238d3842c4421`; activation head `d7725bebe13b5a21c7a0a0b2e1c83c6da7808541`.
+
+Run `33982602346` is **QUEUED** at latest reconciliation. It reproduces exactly the current C emulator flattened indexing, binning and `K^{-1}R` formula in NumPy on a small distinct S0→S1 serialized→reloaded PyMaster 2.7 workspace and compares full plus EE-selected arrays by canonical SHA256 and `numpy.array_equal`. Frozen classifications: `FORMULA_EXACT` or `FORMULA_MISMATCH`; either is `+0/+0`, no tolerance rescue, no WW authority.
 
 ## Frozen science/execution boundaries
 `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A invalid `<=0.05`; Layer-B invalid-row `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
 
 ## Exact next gates
 1. Do not launch another self-hosted task while Exp073DT attempt 4 is queued/in_progress.
-2. Prospectively isolate the remaining distinct-field adapter mismatch inside the saved-FITS reconstruction/post-MCM solver path using exact-only hosted support diagnostics; do not retrofit the current adapter.
+2. Consume Exp073EE immediately when terminal. If `FORMULA_MISMATCH`, separately preregister a narrower formula/index/binning diagnostic; if `FORMULA_EXACT`, separately preregister solver/backend localization. Do not retrofit the current adapter.
 3. When Exp073DT `33940588308 / 101288014666` becomes terminal, consume raw artifact/digest, A/B payloads/comparator and checkpoint provenance. On SUCCESS also consume Exp073EB before admitting any WW_S0_S0 authority.
 4. Keep Exp073DV inactive until both WW_S0_S0 authority prerequisites and a prospectively validated cross-workspace exact adapter exist.
