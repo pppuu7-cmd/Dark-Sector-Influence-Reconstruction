@@ -19,10 +19,27 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgsl-dev libcfitsio-dev libfftw3-dev
-      - name: Install frozen Python lineage
+      - name: Install frozen Python lineage from official NaMaster v2.7 source
+        shell: bash
         run: |
+          set -euo pipefail
           python3 -m pip install --upgrade pip
-          python3 -m pip install 'numpy<3' astropy healpy 'pymaster==2.7.0'
+          python3 -m pip install 'numpy<3' astropy healpy
+          rm -rf /tmp/NaMaster-v2.7
+          git clone --depth 1 --branch v2.7 https://github.com/LSSTDESC/NaMaster.git /tmp/NaMaster-v2.7
+          cd /tmp/NaMaster-v2.7
+          test "$(git describe --tags --exact-match)" = "v2.7"
+          git rev-parse HEAD | tee /tmp/exp073dp_namaster_v27_commit.txt
+          test "$(cut -c1-7 /tmp/exp073dp_namaster_v27_commit.txt)" = "24365fa"
+          python3 -m pip install .
+          cd "$GITHUB_WORKSPACE"
+          python3 - <<'PY'
+          import importlib.metadata
+          import pymaster
+          v=importlib.metadata.version('pymaster')
+          print('PYMASTER_VERSION='+v)
+          assert v == '2.7' or v.startswith('2.7.'), v
+          PY
       - name: Compile deterministic 8-worker downstream
         run: |
           gcc -O2 -std=c11 -fopenmp -DDSIR_WORKERS=8 ci/exp073by_mmap_full_mcm_downstream_omp10_v0_2.c -o /tmp/exp073dp_downstream -lgsl -lgslcblas -lm
@@ -45,13 +62,17 @@ jobs:
           assert d['no_tolerance_rescue'] is True
           assert len(d['cases'])==3
           PY
-      - run: sha256sum exp073dp_ww_exact_adapter_smallnside_equivalence_v0_1.json exp073dp_stdout.txt > exp073dp_sha256.txt
+      - name: Hash evidence and source provenance
+        run: |
+          cp /tmp/exp073dp_namaster_v27_commit.txt .
+          sha256sum exp073dp_ww_exact_adapter_smallnside_equivalence_v0_1.json exp073dp_stdout.txt exp073dp_namaster_v27_commit.txt > exp073dp_sha256.txt
       - uses: actions/upload-artifact@v4
         with:
           name: exp073dp-ww-exact-equivalence-${{ github.run_id }}-${{ github.sha }}
           path: |
             exp073dp_ww_exact_adapter_smallnside_equivalence_v0_1.json
             exp073dp_stdout.txt
+            exp073dp_namaster_v27_commit.txt
             exp073dp_sha256.txt
           if-no-files-found: error
           retention-days: 90
