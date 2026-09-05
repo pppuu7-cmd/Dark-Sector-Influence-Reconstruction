@@ -50,7 +50,9 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git hash-object experiments/073dl_exp073bu_terminal_payload_evidence_recovery_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test -x "$HOME/.cache/dsir-nmt27/bin/python" || { echo 'BLOCKED frozen NaMaster Python missing'; exit 4; }
           echo "CHECKPOINT_ROOT=$HOME/.cache/dsir/exp073bu-wm-s3-fresh-ab-8core-v0-4-33901458494" >> "$GITHUB_ENV"
+          echo "NMT_PY=$HOME/.cache/dsir-nmt27/bin/python" >> "$GITHUB_ENV"
       - name: Lock, live noncompetition, and immutable payload export
         shell: bash
         env:
@@ -79,7 +81,7 @@ jobs:
           root="$CHECKPOINT_ROOT"
           test -d "$root" || { echo 'BLOCKED historical checkpoint root missing'; exit 4; }
           out="$RUNNER_TEMP/exp073dl-terminal-payload-evidence"; rm -rf "$out"; mkdir -p "$out/A" "$out/B"
-          python3 - <<'PY'
+          "$NMT_PY" - <<'PY'
           import hashlib, json, os, shutil
           from pathlib import Path
           import numpy as np
