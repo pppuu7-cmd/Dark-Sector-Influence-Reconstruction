@@ -1,0 +1,170 @@
+name: Exp073EB Exp073DT terminal checkpoint provenance audit v0.1
+on:
+  workflow_run:
+    workflows: ['Exp073DT WW_S0_S0 full-resolution A/B exact science v0.1']
+    types: [completed]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: dsir-exp073eb-exp073dt-terminal-checkpoint-provenance-audit-v0-1
+  cancel-in-progress: false
+
+env:
+  UPSTREAM_RUN_ID: '33940588308'
+  UPSTREAM_HEAD: 'c450aef42d96eb0bfe0b4c78d5a0fdc850d9a2cd'
+  FROZEN_SOURCE_HEAD: 'de83e20a68f79ccf25b89b0d33eb4206e294c757'
+  CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
+
+jobs:
+  hosted-bind:
+    if: ${{ github.event.workflow_run.id == 33940588308 && github.event.workflow_run.head_sha == 'c450aef42d96eb0bfe0b4c78d5a0fdc850d9a2cd' && github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Bind preregistration and upstream identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f experiments/073eb_exp073dt_terminal_checkpoint_provenance_audit_v0_1_prereg.md
+          test '${{ github.event.workflow_run.id }}' = "$UPSTREAM_RUN_ID"
+          test '${{ github.event.workflow_run.head_sha }}' = "$UPSTREAM_HEAD"
+          test '${{ github.event.workflow_run.conclusion }}' = 'success'
+          echo PASS_EXP073EB_HOSTED_UPSTREAM_BIND
+
+  home-provenance-audit:
+    needs: hosted-bind
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Read-only six-stage checkpoint provenance audit under continuous flock
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          SCI_ROOT="$HOME/.cache/dsir/exp073dt-ww-s0-s0-ab-v0-1"
+          OUT="$RUNNER_TEMP/exp073eb-artifact"
+          mkdir -p "$OUT"
+          exec 9>"$HOME/.cache/dsir/DSIR-HOME-PC.exp073dt-ww-s0-s0.lock"
+          flock -n 9 || { echo BLOCKED_EXP073EB_LOCK; exit 4; }
+
+          python3 - <<'PY'
+          import json,os,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; current=int(os.environ['GITHUB_RUN_ID']); token=os.environ['GH_TOKEN']
+          h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}; bad=[]
+          for status in ('queued','in_progress'):
+              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100',headers=h)
+              with urllib.request.urlopen(req) as r: runs=json.load(r).get('workflow_runs',[])
+              for run in runs:
+                  if int(run['id'])==current: continue
+                  req2=urllib.request.Request(f"https://api.github.com/repos/{repo}/actions/runs/{run['id']}/jobs?per_page=100",headers=h)
+                  with urllib.request.urlopen(req2) as r2: jobs=json.load(r2).get('jobs',[])
+                  if any('self-hosted' in (j.get('labels') or []) or j.get('runner_name')=='DSIR-HOME-PC' for j in jobs): bad.append(run['id'])
+          if bad: raise SystemExit('BLOCKED competing self-hosted runs '+repr(sorted(set(bad))))
+          print('PASS_EXP073EB_LIVE_NONCOMPETITION')
+          PY
+
+          SCI_ROOT="$SCI_ROOT" OUT="$OUT" python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          import numpy as np
+
+          root=Path(os.environ['SCI_ROOT'])
+          out=Path(os.environ['OUT'])
+          source=os.environ['FROZEN_SOURCE_HEAD']; fp=os.environ['CONTRACT_FP']
+          order=['fresh_s0_mask_complete','fresh_workspace_mcm_complete','mcm_fits_verified','full_window_complete','selected_ee_complete','replica_receipt_complete']
+          namespaces={'A':'checkpoints/exp073dq-ww-s0-s0-a-v0-1','B':'checkpoints/exp073dq-ww-s0-s0-b-v0-1'}
+
+          def fsha(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for b in iter(lambda:f.read(8<<20),b''): h.update(b)
+              return h.hexdigest()
+
+          def array_canon_sha(p):
+              a=np.load(p,mmap_mode='r',allow_pickle=False)
+              if a.dtype.str!='<f8' or not a.flags.c_contiguous: raise RuntimeError(f'noncanonical array {p}: {a.dtype} {a.shape}')
+              mv=memoryview(a).cast('B'); h=hashlib.sha256(); step=8<<20
+              for i in range(0,len(mv),step): h.update(mv[i:i+step])
+              shape=list(a.shape); del mv,a
+              return h.hexdigest(),shape
+
+          rows={}
+          for rep in ('A','B'):
+              rr=root/'checkpoints'/rep
+              if not rr.is_dir(): raise RuntimeError(f'missing replica root {rep}')
+              manifests={}
+              for stage in order:
+                  p=rr/(stage+'.json')
+                  if not p.is_file(): raise RuntimeError(f'{rep}: missing {stage}')
+                  m=json.loads(p.read_text())
+                  ident=(m.get('complete') is True and m.get('stage')==stage and m.get('replica')==rep and
+                         m.get('checkpoint_namespace')==namespaces[rep] and m.get('source_head')==source and
+                         m.get('contract_fingerprint')==fp and m.get('historical_ww_numerical_import') is False and
+                         m.get('other_replica_output_read') is False)
+                  if not ident: raise RuntimeError(f'{rep}: identity mismatch {stage}')
+                  manifests[stage]=m
+
+              s0=rr/'s0_count_map.npy'
+              s0sha,s0shape=array_canon_sha(s0)
+              if s0sha!=manifests['fresh_s0_mask_complete']['payloads']['s0_count_map']['canonical_sha256']:
+                  raise RuntimeError(f'{rep}: S0 canonical SHA mismatch')
+              if manifests['fresh_s0_mask_complete']['payloads']['s0_count_map'].get('dtype')!='<f8':
+                  raise RuntimeError(f'{rep}: S0 manifest dtype mismatch')
+              if s0shape!=manifests['fresh_s0_mask_complete']['payloads']['s0_count_map'].get('shape'):
+                  raise RuntimeError(f'{rep}: S0 shape mismatch')
+
+              wsp=rr/'fresh_workspace.fits'; wsha=fsha(wsp)
+              w1=manifests['fresh_workspace_mcm_complete']['payloads']['workspace_fits']['sha256']
+              w2=manifests['mcm_fits_verified']['payloads']['workspace_fits']['sha256']
+              if not (wsha==w1==w2): raise RuntimeError(f'{rep}: workspace SHA chain mismatch')
+
+              full=rr/'exact_route'/'full_window.bin'; fullsha=fsha(full)
+              fullm=manifests['full_window_complete']['payloads']['full_window']
+              if fullm.get('shape')!=[4,39,4,12288] or full.stat().st_size!=4*39*4*12288*8 or fullsha!=fullm.get('sha256'):
+                  raise RuntimeError(f'{rep}: full-window provenance mismatch')
+
+              ee=rr/'exact_route'/'selected_ee.bin'; eesha=fsha(ee)
+              eem=manifests['selected_ee_complete']['payloads']['selected_ee']
+              if eem.get('shape')!=[39,12288] or eem.get('dtype')!='<f8' or eem.get('semantics')!='wins[0,:,0,:] = EE<-EE' or ee.stat().st_size!=39*12288*8 or eesha!=eem.get('sha256'):
+                  raise RuntimeError(f'{rep}: selected-EE provenance mismatch')
+
+              receipt=rr/'replica_receipt.json'; rsha=fsha(receipt); rec=json.loads(receipt.read_text())
+              rm=manifests['replica_receipt_complete']['payloads']
+              if rsha!=rm['replica_receipt']['sha256'] or eesha!=rm['selected_ee']['sha256']:
+                  raise RuntimeError(f'{rep}: terminal manifest SHA mismatch')
+              if not (rec.get('replica')==rep and rec.get('selected_ee_sha256')==eesha and rec.get('workspace_fits_sha256')==wsha and
+                      rec.get('source_head')==source and rec.get('contract_fingerprint')==fp and rec.get('checkpoint_namespace')==namespaces[rep] and
+                      rec.get('historical_ww_numerical_import') is False and rec.get('other_replica_output_read') is False and rec.get('science_gate_scored') is False):
+                  raise RuntimeError(f'{rep}: receipt provenance mismatch')
+
+              for stage,m in manifests.items():
+                  (out/f'{rep}_{stage}.json').write_text(json.dumps(m,indent=2,sort_keys=True)+'\n')
+              (out/f'{rep}_replica_receipt.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+              rows[rep]={'checkpoint_namespace':namespaces[rep],'s0_canonical_sha256':s0sha,'s0_shape':s0shape,
+                         'workspace_fits_sha256':wsha,'full_window_sha256':fullsha,'selected_ee_sha256':eesha,
+                         'replica_receipt_sha256':rsha,'stage_order':order,'all_stage_identities_verified':True}
+
+          result={'experiment':'Exp073EB','classification':'SUPPORT_PROVENANCE_PASS_PLUS0_PLUS0',
+                  'token':'PASS_EXP073EB_EXP073DT_FULL_CHECKPOINT_PROVENANCE_AUDIT_V0_1','science_gate_scored':False,
+                  'ww_s0_s0_authority_created':False,'upstream_run_id':int(os.environ['UPSTREAM_RUN_ID']),
+                  'upstream_head':os.environ['UPSTREAM_HEAD'],'frozen_source_head':source,'contract_fingerprint':fp,
+                  'durable_root':str(root),'replicas':rows,'no_tolerance_rescue':True,'durable_state_modified':False}
+          (out/'exp073eb_provenance_audit.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(result['token'])
+          PY
+
+          sha256sum "$OUT"/* > "$OUT/payload_sha256.txt"
+      - name: Upload provenance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073eb-exp073dt-checkpoint-provenance-${{ github.run_id }}
+          path: ${{ runner.temp }}/exp073eb-artifact
+          if-no-files-found: error
+          retention-days: 90
