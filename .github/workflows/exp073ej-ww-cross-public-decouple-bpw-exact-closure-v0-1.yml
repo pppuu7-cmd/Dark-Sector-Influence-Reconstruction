@@ -1,0 +1,45 @@
+name: Exp073EJ WW cross public-decouple BPW exact closure v0.1
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'docs/RESEARCH_LOG_EXP073EJ_2026-09-05.md'
+permissions:
+  contents: read
+jobs:
+  hosted-public-decouple-bpw-closure:
+    runs-on: ubuntu-24.04
+    env:
+      PREREG_BLOB: 79b42e2fc2a7307a02f1fe6eb06808f60e50521a
+      SCRIPT_BLOB: 4451cfd7c35234303e7de9bc93e5d7a079626ecf
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073ej_ww_cross_public_decouple_bpw_exact_closure_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073ej_ww_cross_public_decouple_bpw_exact_closure_v0_1.py)" = "$SCRIPT_BLOB"
+      - name: Install exact NaMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "$GITHUB_ENV"
+      - name: Execute frozen public-decouple BPW exact closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT=data/derived/exp073ej/v0_1; mkdir -p "$OUT"
+          "${NMT_PY}" ci/exp073ej_ww_cross_public_decouple_bpw_exact_closure_v0_1.py --out-dir "$OUT/runtime" --source-head "$GITHUB_SHA" --prereg-blob "$PREREG_BLOB" | tee "$OUT/stdout.txt"
+          cp "$OUT/runtime/terminal_diagnostic_receipt.json" "$OUT/terminal_diagnostic_receipt.json"
+      - name: Upload immutable diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ej-ww-cross-public-decouple-bpw-exact-closure-v0-1-${{ github.sha }}
+          path: data/derived/exp073ej/v0_1/
+          if-no-files-found: error
