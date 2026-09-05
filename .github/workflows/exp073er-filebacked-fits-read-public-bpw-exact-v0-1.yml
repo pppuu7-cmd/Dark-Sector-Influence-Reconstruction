@@ -1,0 +1,97 @@
+name: Exp073ER file-backed FITS-read public BPW exact v0.1
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073er-filebacked-fits-read-public-bpw-exact-v0-1.yml'
+permissions:
+  contents: read
+env:
+  OMP_NUM_THREADS: '2'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  PYTHONHASHSEED: '0'
+jobs:
+  hosted-read-exact:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Freeze prospective identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073er_filebacked_fits_read_public_bpw_exact_qualifier_v0_1_prereg.md)" = '3a3642189d33a1a2185f6b3b0aad86c6870b18a2'
+          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)" = '699203267ebcc91dcb75ceafe30f32dd0069e353'
+          test "$(git rev-parse HEAD:ci/exp073er_build_stock_cross_workspace_v0_1.py)" = '81e1bcfc7d822fd26e031c97b7399e7eee3b3e27'
+          test "$(git rev-parse HEAD:ci/exp073er_reload_public_bpw_with_mmap_proof_v0_1.py)" = '76ad1fae2d5e700a5a107f67a78d89011cf52341'
+          test "$(git rev-parse HEAD:ci/exp073er_compare_read_exact_v0_1.py)" = '01f728548ba8a0f39b93d38279620cdd41601422'
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcfitsio-dev libfftw3-dev libgsl-dev autoconf automake libtool patch
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Freeze exact NaMaster source and apply read-storage patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/exp073er"; mkdir -p "$R"
+          git clone https://github.com/LSSTDESC/NaMaster.git "$R/stock"
+          git -C "$R/stock" checkout --detach 24365fa59a38c15732f4f37e8b29265b75c442d5
+          test "$(git -C "$R/stock" rev-parse HEAD)" = '24365fa59a38c15732f4f37e8b29265b75c442d5'
+          cp -a "$R/stock" "$R/patched"
+          cd "$R/patched"
+          patch --dry-run -p1 < "$GITHUB_WORKSPACE/patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch"
+          patch -p1 < "$GITHUB_WORKSPACE/patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch"
+          git diff --check
+      - name: Build isolated stock and patched PyMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/exp073er"
+          python -m venv "$R/venv-stock"; python -m venv "$R/venv-patched"
+          for V in "$R/venv-stock" "$R/venv-patched"; do
+            "$V/bin/python" -m pip install -q --upgrade pip setuptools wheel
+            "$V/bin/python" -m pip install -q numpy healpy ducc0 astropy
+          done
+          (cd "$R/stock" && "$R/venv-stock/bin/python" setup.py install >/tmp/er-stock-build.log 2>&1)
+          (cd "$R/patched" && "$R/venv-patched/bin/python" setup.py install >/tmp/er-patched-build.log 2>&1)
+          "$R/venv-stock/bin/python" -c "import importlib.metadata; assert importlib.metadata.version('pymaster').startswith('2.7')"
+          "$R/venv-patched/bin/python" -c "import importlib.metadata; assert importlib.metadata.version('pymaster').startswith('2.7')"
+      - name: Build one immutable stock ordered-cross workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/exp073er"; E="$R/evidence"; mkdir -p "$E/build"
+          unset DSIR_NMT_FILEBACKED_MCM DSIR_NMT_MMAP_DIR || true
+          "$R/venv-stock/bin/python" ci/exp073er_build_stock_cross_workspace_v0_1.py --out-dir "$E/build"
+      - name: Execute stock and file-backed fresh reloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/exp073er"; E="$R/evidence"; W="$E/build/cross01_stock.fits"
+          unset DSIR_NMT_FILEBACKED_MCM DSIR_NMT_MMAP_DIR || true
+          "$R/venv-stock/bin/python" ci/exp073er_reload_public_bpw_with_mmap_proof_v0_1.py --workspace "$W" --out-dir "$E/stock_a" --mode stock --label stock_a
+          "$R/venv-stock/bin/python" ci/exp073er_reload_public_bpw_with_mmap_proof_v0_1.py --workspace "$W" --out-dir "$E/stock_b" --mode stock --label stock_b
+          for X in a b; do
+            M="$R/mmap_$X"; mkdir -p "$M"
+            DSIR_NMT_FILEBACKED_MCM=1 DSIR_NMT_MMAP_DIR="$M" "$R/venv-patched/bin/python" ci/exp073er_reload_public_bpw_with_mmap_proof_v0_1.py --workspace "$W" --out-dir "$E/patched_$X" --mode patched --mmap-dir "$M" --label "patched_$X"
+            test -z "$(find "$M" -type f -name 'dsir-nmt-mcm-*' -print -quit)"
+          done
+      - name: Terminal exact comparison
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/exp073er"; E="$R/evidence"
+          "$R/venv-stock/bin/python" ci/exp073er_compare_read_exact_v0_1.py --stock-a "$E/stock_a" --stock-b "$E/stock_b" --patched-a "$E/patched_a" --patched-b "$E/patched_b" --out "$E/terminal_qualifier_receipt.json" | tee "$E/stdout.txt"
+          grep -Fx 'PASS_EXP073ER_FILEBACKED_FITS_READ_PUBLIC_BPW_EXACT_V0_1' "$E/stdout.txt"
+      - name: Upload immutable Exp073ER evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073er-filebacked-fits-read-public-bpw-exact-v0-1-${{ github.sha }}
+          path: ${{ runner.temp }}/exp073er/evidence/
+          if-no-files-found: warn
+          retention-days: 30
