@@ -1,6 +1,6 @@
 # DSIR current-process ledger
 
-Updated: 2026-09-04
+Updated: 2026-09-05
 Scope: DSIR only; RTK/RQIR excluded.
 
 ## Current authoritative process
@@ -18,7 +18,17 @@ Scope: DSIR only; RTK/RQIR excluded.
 - Expected science PASS token remains exactly `PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_8CORE_V0_3`.
 - Current state: self-hosted runner claimed the job. Steps through exact checkpoint inventory, frozen S3/lens staging, OpenMP-8 downstream compilation and actual 8-thread runtime certification are completed SUCCESS. Active step is `Live exclusivity and checkpoint-preserving Exp073BU A-then-B resume`; evidence/upload/classification steps are still pending.
 - Last durable checkpoint: the live job has successfully completed the fail-closed durable checkpoint inventory step. Exact manifest/hash details are not asserted here because decoded active-job logs returned `BlobNotFound`; no partial numerical values were inspected.
+- Live Actions reconciliation at this update: **1 in_progress / 0 queued**.
 - Immutable live reconciliation note: `recovery/2026-09-04_exp073dj_resume_started_checkpoint_inventory_pass.md`, commit `6f76e3ecf40dd0746880a5f8ac1387c8c21b8055`.
+
+## Prospective Exp073DK terminal-evidence successor — repaired support `+0/+0`
+- Prereg remains immutable: `experiments/073dk_exp073bu_terminal_payload_evidence_export_v0_1_prereg.md`, blob `1e8f29f8552475748680439924c13590d352549a`.
+- Audit found a TOCTOU defect in the original orchestration: the home lock was acquired in one shell step but released before a later shell step touched the historical checkpoint root.
+- Prospective minimal repair commit `65c73cf736b081b1964fd951732c1ecccbc4b0c0` now holds FD9/flock throughout live noncompetition and all historical-root reads.
+- Hosted regression/static-audit commit `ce4df169b9ae91bf64b2288b42dbfbcd2c37101c` verifies lock-before-root ordering and forbids pre-lock payload/receipt access; the self-hosted export job depends on it.
+- The static audit is **ARMED, NOT YET A VALIDATED PASS** because Exp073DJ has not terminated and therefore Exp073DK has not run.
+- Repair classification: infrastructure/evidence support `+0/+0`; no scientific arithmetic, frozen acceptance criterion or current Exp073DJ implementation was modified.
+- Immutable repair note: `recovery/2026-09-05_exp073dk_lock_scope_toctou_repair.md`, commit `7d1d6188a14fd682f90942d14986a60792991885`.
 
 ## Historical Exp073BU v0.4 terminal state
 - Run/job `33901458494 / 101116305364` ended `failure` with the science step still reported `in_progress`, no following always-evidence/classification steps executed and no Actions artifact.
@@ -54,4 +64,4 @@ Validated repair blobs:
 39 frozen bands; DES NSIDE=4096; ell=0..12287; Wm `TE<-TE`; selected canonical `<f8 [39,12288]`; whole-array SHA256 equality **and** `numpy.array_equal`; no tolerance, rounding, smoothing, averaging, effective ell/z/k, fiducial-P or preferred-replica rescue.
 
 ## Exact next action
-Track run/job `33910213781 / 101144660519` without duplication. While it remains active, do not inspect partial numerical values or change the frozen gate. When terminal, immediately inspect the raw evidence artifact and classify it under the frozen contract. Only independently validated raw `PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_8CORE_V0_3` may admit Wm_S3 authority; exact inequality is scientific FAIL; checkpoint/runner/provenance failures remain infrastructure/BLOCKED `+0/+0` and must preserve valid checkpoints.
+Track run/job `33910213781 / 101144660519` without duplication. While it remains active, do not inspect partial numerical values or change the frozen gate. When terminal, immediately inspect the raw Exp073DJ evidence/artifact and classify it under the frozen contract; then consume the automatically triggered Exp073DK hosted static audit and terminal canonical-payload evidence. Only independently validated raw `PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_8CORE_V0_3` may admit Wm_S3 authority; exact inequality is scientific FAIL; checkpoint/runner/provenance failures remain infrastructure/BLOCKED `+0/+0` and must preserve valid checkpoints.
