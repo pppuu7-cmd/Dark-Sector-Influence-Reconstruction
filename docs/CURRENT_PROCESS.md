@@ -3,49 +3,40 @@
 Updated: 2026-09-05
 Scope: DSIR only; RTK/RQIR excluded.
 
-## Preserved scientific authority
-Wm_S1 Track-A exact PASS, admitted Wm_S2 and Wm_S3 exact scientific PASS remain preserved. Historical Exp073CM resource/performance FAIL `+0/+0` and original Exp073BU runner-loss infrastructure `+0/+0` remain immutable.
+## Preserved authority
+Wm_S1 Track-A exact PASS, admitted Wm_S2 and Wm_S3 exact scientific PASS remain preserved. Historical Exp073CM resource/performance FAIL `+0/+0` and Exp073BU/Exp073DT runner-loss infrastructure results remain immutable and are never rewritten as science.
 
-## Reconciled WW support authority
-- Exp073DP repaired exact-equivalence PASS `+0/+0`: run/job `33938446310 / 101230897808`, artifact `9960969007`, ZIP SHA256 `e34b545b21fc93f8948ad328084afd405885c1045313d7162b553a45583af7a8`.
-- Exp073DQ durable A/B driver static PASS `+0/+0`: `33938583879 / 101231302981`, artifact `9961000737`, driver SHA256 `0b7a0a2336a89dcea63060d4049d09fabacc9c5e75fad870d2599efd27d0e63b`.
-- Exp073DR activation/resource PASS `+0/+0`: `33938637212 / 101231459805`, artifact `9961019381`.
-- Exp073DS v0.1 governance-invalid `+0/+0`.
-- Exp073DS v0.2 readiness PASS `+0/+0`: run `33938789513` attempt 2, jobs `101233076119 / 101233097355`, artifact `9961211035`, ZIP SHA256 `d12693ce2b2ec17abfef7008e82eca2bf9f9a29b99f43b00c83e30b2313df53d`.
-- Exp073EA saved-LU official-reload-state exactness qualifier PASS `+0/+0`: run/job `33956292805 / 101280130448`, artifact `9966484239`, GitHub and independently downloaded ZIP SHA256 `7850d7c01ece7c2cb3ed8ea11b208a5600aea4a3fd68da81e2e17db9d06a1f61`, token `PASS_EXP073EA_SAVED_LU_EXACT_OFFICIAL_RELOAD_STATE_V0_1`. It establishes exact saved-LU equivalence to the official serialized/reloaded PyMaster state, not to the original pre-serialization in-memory state, and creates no WW science authority.
+Validated WW support remains preserved: Exp073DP exact-equivalence PASS `+0/+0`; Exp073DQ durable A/B driver static PASS `+0/+0`; Exp073DR activation/resource PASS `+0/+0`; Exp073DS v0.2 readiness PASS `+0/+0`; Exp073EA saved-LU official-reload-state exactness PASS `+0/+0`. Exp073EC hosted static audit is also PASS `+0/+0`: run/job `33962004169 / 101295382699`, raw token `PASS_EXP073EC_EXP073EB_STATIC_GOVERNANCE_AUDIT_V0_1`.
 
-## Current authoritative process — Exp073DT WW_S0_S0 checkpoint-preserving resume
-Preregistration commit `946964121f12c67e053514109bf974050eeb0cc9`; frozen activation workflow/head `c450aef42d96eb0bfe0b4c78d5a0fdc850d9a2cd`.
-
-Attempts 1 and 2 remain historical `INFRASTRUCTURE_INCOMPLETE +0/+0` external runner shutdowns with science CANCELLED and evidence SKIPPED.
-
-Attempt 3: hosted preflight `101274119122` SUCCESS; self-hosted `101274118640` passed live exclusivity, PyMaster 2.7 and `DSIR_OMP_TEAM=8`, then received external runner shutdown at `2026-09-05T09:27:06Z`; science CANCELLED and terminal evidence SKIPPED. This is `INFRASTRUCTURE_INCOMPLETE +0/+0`, not scientific FAIL.
-
-After live reconciliation showed exactly `0 in_progress / 0 queued`, the failed self-hosted job of the same frozen run was rerun. No new workflow or scientific arithmetic was created.
-
-Attempt 4 is authoritative:
+## Authoritative live process — Exp073DT WW_S0_S0 attempt 4
 - run `33940588308`, attempt `4`;
 - hosted preflight `101288015425`: SUCCESS;
 - self-hosted science `101288014666`: **QUEUED** at latest reconciliation;
-- runner ownership: **DSIR-HOME-PC RESERVED BY Exp073DT attempt 4**;
-- terminal evidence upload pending.
-
-Frozen identity remains unchanged:
-- frozen head `c450aef42d96eb0bfe0b4c78d5a0fdc850d9a2cd`;
+- frozen activation head `c450aef42d96eb0bfe0b4c78d5a0fdc850d9a2cd`;
 - frozen source authority `de83e20a68f79ccf25b89b0d33eb4206e294c757`;
 - contract fingerprint `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
 - durable root `$HOME/.cache/dsir/exp073dt-ww-s0-s0-ab-v0-1`;
-- checkpoint namespaces `checkpoints/exp073dq-ww-s0-s0-a-v0-1` and `checkpoints/exp073dq-ww-s0-s0-b-v0-1`;
-- expected token `PASS_EXP073DT_WW_S0_S0_EXACT_REPEATABILITY_8CORE_V0_1`.
+- namespaces `checkpoints/exp073dq-ww-s0-s0-a-v0-1`, `checkpoints/exp073dq-ww-s0-s0-b-v0-1`;
+- expected science token `PASS_EXP073DT_WW_S0_S0_EXACT_REPEATABILITY_8CORE_V0_1`;
+- runner ownership: **DSIR-HOME-PC RESERVED BY Exp073DT attempt 4**.
 
-Only complete hash/identity-verified stages may be restored; interrupted/incomplete stages recompute; malformed/mismatched state fails closed. Frozen science remains `WW_S0_S0`, DES NSIDE=4096, ell 0..12287, 39 bands, full `[4,39,4,12288]`, selected `EE<-EE`, canonical `<f8 [39,12288]`, OpenMP=8, nested numerical-library threads=1, no tolerance rescue.
+Attempts 1–3 remain `INFRASTRUCTURE_INCOMPLETE +0/+0` external runner shutdowns. No competing heavy process may be launched while attempt 4 is queued/in_progress. Frozen science remains `WW_S0_S0`, DES NSIDE=4096, ell 0..12287, 39 bands, full `[4,39,4,12288]`, selected `EE<-EE`, canonical `<f8 [39,12288]`, OpenMP=8, nested numerical-library threads=1, no tolerance rescue.
 
-Immutable reconciliation notes include `recovery/2026-09-05_exp073dt_attempt3_runner_shutdown_attempt4_dispatched.md` plus the prior attempt-1/2/3 and Exp073EA notes.
+## Prospective provenance closure — Exp073EB
+A source audit performed before any attempt-4 terminal output found that the frozen DQ `validated_finished()` fast path verifies the final receipt and selected-EE SHA but does not itself reread every earlier stage manifest; Exp073DT terminal evidence also does not export the full six-stage manifest chain. The frozen Exp073DT preregistration nevertheless requires all checkpoint provenance and stage-order checks before authority admission. Therefore workflow SUCCESS or the PASS token alone is not sufficient authority evidence.
 
-## Independent non-biasing preparation
-Commit `2f9c2950dc118aa281b938d58f444fcfed3b8d18` adds Exp073DU, a small-NSIDE distinct-field `WW_S0_S1` cross-field adapter qualifier. Later hosted-only diagnostics through Exp073EA remain support-only and cannot supersede Exp073DT or create science authority. Exp073EA specifically shows that the saved-LU path can reproduce the official serialized/reloaded PyMaster numerical state bit-for-bit, while the original in-memory state remains last-bit distinct; this boundary must be preserved prospectively in any future checkpoint route.
+Exp073EB was prospectively preregistered in commit `664aab881b898cef2b0e4eebf2043aed2bc28138`; event-driven workflow commit `00d2a3c94511486af56867a6218192f28866ee5c`. It is support-only `+0/+0`, bound to exact upstream run/head `33940588308 / c450aef42d96eb0bfe0b4c78d5a0fdc850d9a2cd` and only upstream conclusion `success`. It acquires the same flock, performs no workspace/window computation, does not modify durable checkpoints, and independently verifies the ordered A/B chain:
 
-On Exp073DT terminal SUCCESS: independently inspect raw artifact/digest, receipt, A/B selected payloads, comparator, replica receipts and checkpoint provenance. Only exact SHA equality plus `numpy.array_equal=true` and frozen token create `WW_S0_S0` authority. Exact A/B inequality is scientific repeatability FAIL. Infrastructure/checkpoint/provenance/artifact failures are `+0/+0`.
+`fresh_s0_mask_complete -> fresh_workspace_mcm_complete -> mcm_fits_verified -> full_window_complete -> selected_ee_complete -> replica_receipt_complete`.
+
+Exp073EB can emit only `PASS_EXP073EB_EXP073DT_FULL_CHECKPOINT_PROVENANCE_AUDIT_V0_1` with `science_gate_scored=false` and `ww_s0_s0_authority_created=false`. It cannot rescue scientific FAIL.
+
+Hosted static regression Exp073EC (commit `c9014c2763e542f22aa5c01583e5e8011ccdf7b7`) completed PASS from raw log, validating Exp073EB's support-only/fail-closed/no-recompute structure.
+
+Immutable recovery authority includes `recovery/2026-09-05_exp073dt_terminal_provenance_gap_exp073eb_armed.md`; research log `docs/RESEARCH_LOG_EXP073EB_2026-09-05.md`.
+
+## Exact terminal action
+On Exp073DT terminal SUCCESS: consume raw artifact/digest, receipt, A/B selected payloads and comparator; independently recompute exact SHA and `numpy.array_equal`; then consume Exp073EB full checkpoint-provenance evidence. Only the frozen science token plus exact A/B equality plus full provenance closure may create `WW_S0_S0` authority. Exact A/B inequality is scientific repeatability FAIL. Infrastructure/checkpoint/provenance/artifact failures are `+0/+0`.
 
 ## Frozen frontier
 `Wm_S1 -> Wm_S2 -> Wm_S3 -> WW_S0_S0 -> WW_S0_S1 -> WW_S0_S2 -> WW_S0_S3 -> WW_S1_S1 -> WW_S1_S2 -> WW_S1_S3 -> WW_S2_S2 -> WW_S2_S3 -> WW_S3_S3`.
