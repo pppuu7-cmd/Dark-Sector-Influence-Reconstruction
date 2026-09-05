@@ -1,8 +1,10 @@
 name: Exp073DL Exp073BU terminal payload evidence recovery v0.1
 
+# Historical Exp073DL support authority is already terminal and independently
+# validated. Keep this workflow available for deliberate manual forensics only;
+# do not instantiate a phantom self-hosted run on every unrelated DSIR push.
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -21,7 +23,6 @@ env:
 jobs:
   hosted-audit:
     name: Hosted Exp073DL prereg and lock-order audit
-    if: ${{ github.event.head_commit.message == 'activate Exp073DL terminal payload evidence recovery v0.1' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -37,7 +38,6 @@ jobs:
 
   export-terminal-canonical-payloads:
     name: Export immutable Exp073BU A/B selected-TE payload evidence
-    if: ${{ github.event.head_commit.message == 'activate Exp073DL terminal payload evidence recovery v0.1' }}
     needs: hosted-audit
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 20
@@ -106,8 +106,7 @@ jobs:
               m=json.loads(mpath.read_text()); rec=json.loads(rpath.read_text()); x=(m.get('payloads') or {}).get('selected_te') or {}
               ok=(m.get('complete') is True and m.get('stage')=='selected_te_complete' and m.get('replica')==r and m.get('checkpoint_namespace')==ns[r] and m.get('source_head')==head and m.get('contract_fingerprint')==fp and m.get('historical_wm_s3_numerical_import') is False and m.get('other_replica_output_read') is False and x.get('shape')==list(shape) and x.get('dtype')=='<f8' and x.get('semantics')=='wins[0,:,0,:] = TE<-TE' and payload.stat().st_size==nbytes)
               if not ok: raise SystemExit(f'BLOCKED selected manifest identity mismatch {r}')
-              if not (rec.get('replica')==r and rec.get('checkpoint_namespace')==ns[r] and rec.get('source_head')==head and rec.get('contract_fingerprint')==fp and rec.get('historical_wm_s3_numerical_import') is False and rec.get('other_replica_output_read') is False):
-                  raise SystemExit(f'BLOCKED replica receipt identity mismatch {r}')
+              if not (rec.get('replica')==r and rec.get('checkpoint_namespace')==ns[r] and rec.get('source_head')==head and rec.get('contract_fingerprint')==fp and rec.get('historical_wm_s3_numerical_import') is False and rec.get('other_replica_output_read') is False): raise SystemExit(f'BLOCKED replica receipt identity mismatch {r}')
               h=fsha(payload)
               if h!=x.get('sha256') or h!=rec.get('selected_te_sha256'): raise SystemExit(f'BLOCKED selected payload SHA mismatch {r}')
               dst=out/r/'selected_te.bin'; shutil.copy2(payload,dst); shutil.copy2(mpath,out/r/mpath.name); shutil.copy2(rpath,out/r/rpath.name)
