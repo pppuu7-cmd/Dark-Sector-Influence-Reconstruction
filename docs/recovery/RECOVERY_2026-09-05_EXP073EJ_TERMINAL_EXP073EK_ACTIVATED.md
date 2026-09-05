@@ -1,0 +1,11 @@
+# DSIR immutable recovery — Exp073EJ terminal / Exp073EK activated — 2026-09-05
+
+Scope: DSIR only; RTK/RQIR excluded.
+
+Exp073EJ run/job `33988827671 / 101367245475` completed workflow SUCCESS but frozen support classification is `PUBLIC_DECOUPLE_BPW_MISMATCH +0/+0`, not science FAIL. Artifact `9975998092`; GitHub digest and independently downloaded ZIP SHA256 both `2c5b1ff36a50680aaa9c6aa46e05fc4803ea09abd1e213fa6e41f55d97548e17`. Exact array/SHA equality failed between public-decouple composition (`ba4e386e7c06d89a1942e9ded5c38827278c97278ed470d22f4f428d3ecd95df`) and public BPW (`70df69ed48c7fb4b8706cc69dbc08a56272c791892394b357e14111f813681b7`). Diagnostic max difference `8.326672684688674e-17` is not an acceptance criterion. No tolerance rescue, science gate or WW authority.
+
+This rules out exact reconstruction not only through manual P/Q and NumPy/GSL inversion, but also through columnwise composition of another public operation. For exact authority, `get_bandpower_windows()` itself must be treated as the candidate authoritative operation unless a later prospectively frozen source-level equivalence is proved.
+
+Exp073EK is prospectively frozen support/readiness `+0/+0`. It serializes one distinct S0->S1 PyMaster 2.7 workspace, independently reloads it twice, invokes only public `get_bandpower_windows()`, selects exact `EE<-EE` `[0,:,0,:]`, and requires bitwise SHA256 + `numpy.array_equal` for full and selected arrays. Prereg commit/blob `2072f683ba0a0d26a70762e5424c8cff564c1b2d / 8ace7b91e0607552cab2e2a9e6cf20c2c5e24621`; implementation commit/blob `c4c587ccd62341b9eb89dac168c2abf6ae6f15a8 / b3fcdf5acfe0d5818657bd1f2885c91c2903a877`; workflow commit `fc9cd10556870119cbdea2d790218f6d23cce0f1`; activation head `51f8a7d7dd481e79b734ba174bffa29236f2fc0b`; run `33988956806` queued at this recovery write.
+
+Exp073DT attempt 4 remains the sole authoritative self-hosted heavy process `33940588308 / 101288014666`; DSIR-HOME-PC remains reserved and no competing self-hosted job was launched.
