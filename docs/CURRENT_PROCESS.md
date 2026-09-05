@@ -20,18 +20,22 @@ Wm_S1 Track-A exact PASS, admitted Wm_S2 and Wm_S3 exact scientific PASS remain 
 
 No competing self-hosted heavy process may launch. On DT SUCCESS, frozen DT token + independent exact A/B equality + Exp073EB full checkpoint-provenance PASS remain jointly required before WW_S0_S0 authority.
 
-## Newly terminal support result — Exp073EE
-Run/job `33982602346 / 101350386458` completed SUCCESS at workflow level and was independently consumed from raw logs plus artifact `9974198332`. GitHub artifact digest and independently downloaded ZIP SHA256 are both `4b7b3db48b01f2954b3a355e40d08aaac7cca5caa92672a502dc66e201787af6`.
+## Terminal support results this iteration
+### Exp073EE
+Run/job `33982602346 / 101350386458`; frozen `FORMULA_MISMATCH +0/+0`; artifact `9974198332`; independently verified ZIP SHA256 `4b7b3db48b01f2954b3a355e40d08aaac7cca5caa92672a502dc66e201787af6`. Exact full and selected-EE equality failed. Diagnostic-only max difference `1.3877787807814457e-16`; no tolerance rescue and no WW authority.
 
-Frozen token `COMPLETE_EXP073EE_WW_CROSS_FORMULA_MISMATCH_V0_1`; classification `FORMULA_MISMATCH +0/+0`. Full and selected-EE exact SHA/array equality are false; diagnostic-only max absolute difference is `1.3877787807814457e-16`. No tolerance rescue; no science gate scored; no WW authority created.
+### Exp073EF
+Run/job `33985910151 / 101359236929`; frozen token `COMPLETE_EXP073EF_KR_OPERATOR_MISMATCH_V0_1`; classification `KR_OPERATOR_MISMATCH +0/+0`; artifact `9975148874`; GitHub and independently downloaded ZIP SHA256 `63fc67c32a95b5e5b37ed0222712677e5f690d4c6ea5c2f3d4056e3431816f73`.
 
-## Active hosted support process — Exp073EF
-Exp073EF is prospectively frozen support-only `+0/+0` to localize the Exp073EE mismatch before any solve. Prereg commit/blob `f448d919924c0fbb5b7f0e56a5b48aa31fffbf1b / 10da9087dd136207b5e82304eaedf698bb398ad0`; script commit/blob `df429e99d44ee19e97c88e9a61e5f6ce79c6a182 / 9d14d483c04e6564d7a3cc3e2cdb138f9bc45cda`; workflow commit `a135943d6c128f24f28f6a18e20cd56ba2ad37ff`; activation head `1e525c7006539a6524e48ef214b755e6a70f4272`.
+K exact equality failed: formula SHA `7b5aa911c3093354094f686cb027ef2d6edd4679513f4b244f40e947777fe6f4`, public SHA `225d968562b3758cfae2a98b9bb4e36ec80fb7aabb4506b57b4974b5839da974`. R exact equality failed: formula SHA `d633ed6e60d0e3a090a394a8c72078f71426163113536b98168ec457c2ac800d`, public SHA `64fdceec21057b5ce4c309d4836bc49f7693e84141a9c5ddef1de2ef00ff2480`. Diagnostic-only maxima `1.1102230246251565e-16` and `2.7755575615628914e-17`; no rescue.
 
-Run/job `33985910151 / 101359236929` is **IN_PROGRESS** on GitHub-hosted Ubuntu. Identity freeze passed; NaMaster 2.7 installation is in progress at latest reconciliation. Frozen classifications: `KR_OPERATORS_EXACT` or `KR_OPERATOR_MISMATCH`; both `+0/+0`. It compares pre-solve `K=P M Q` and `R=P M` from the Exp073EE formula with independent public-PyMaster operational constructions using official `unbin_cell`, `couple_cell`, and `bin_cell`, exact SHA256 plus `numpy.array_equal` only.
+## Active hosted support process — Exp073EG
+Exp073EG is prospectively frozen support-only `+0/+0` to separate exact P/bin and Q/unbin behavior before any solve or alternate reconstruction. Prereg commit/blob `4b41beab01fd4856fe49761ef7868e07df9ec31a / d072892e492af4d836db118b03a83f91391adcb4`; script commit/blob `351756854b2096ebb7a6eeb9ff76e8a6f32f84d4 / 6a8b83644925d370aad453dd2e2523e3d30805a1`; workflow commit `ca9d14b38a0897b97bcf799ce428bd6422f7fbf5`; activation head `a667907d9862a64223d647431788f11d3e931df5`.
+
+Run `33986108360` is **QUEUED** on GitHub-hosted infrastructure at latest reconciliation. Frozen classifications are `BIN_UNBIN_EXACT`, `BIN_ONLY_MISMATCH`, `UNBIN_ONLY_MISMATCH`, or `BIN_AND_UNBIN_MISMATCH`; all `+0/+0`, exact SHA256 + `numpy.array_equal`, no tolerance rescue and no WW authority.
 
 ## Distinct-field frontier
-Exp073DU and Exp073DW remain historical qualifier FAIL `+0/+0`; Exp073DX excludes FITS orientation/transpose; Exp073ED excludes low-level/public bandpower-window tensor layout; Exp073EE establishes exact formula mismatch. Exp073EF is now the active K/R operator-localization diagnostic. Exp073DV full-resolution WW_S0_S1 remains PREPARED_NOT_ACTIVATED and blocked on both valid WW_S0_S0 authority/provenance closure and a prospectively validated exact cross-workspace adapter architecture.
+Exp073DU/DW remain historical qualifier FAIL `+0/+0`; Exp073DX excludes FITS orientation; Exp073ED excludes low-level/public BPW layout; Exp073EE establishes formula mismatch; Exp073EF localizes it before solve to K and R operator construction; Exp073EG now isolates bin/unbin exactness. Exp073DV full-resolution WW_S0_S1 remains PREPARED_NOT_ACTIVATED and blocked on valid WW_S0_S0 authority/provenance closure plus a prospectively validated exact cross-workspace adapter architecture.
 
 ## Frozen frontier
 `Wm_S1 -> Wm_S2 -> Wm_S3 -> WW_S0_S0 -> WW_S0_S1 -> WW_S0_S2 -> WW_S0_S3 -> WW_S1_S1 -> WW_S1_S2 -> WW_S1_S3 -> WW_S2_S2 -> WW_S2_S3 -> WW_S3_S3`.
