@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'ci/exp073dw_activation_v0_1.txt'
+      - 'docs/RESEARCH_LOG_EXP073DW_2026-09-05.md'
 permissions:
   contents: read
 jobs:
