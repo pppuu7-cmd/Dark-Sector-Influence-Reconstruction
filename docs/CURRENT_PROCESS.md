@@ -36,9 +36,12 @@ Hosted run/job `33993395728 / 101379508508`, artifact `9977333691`, digest `sha2
 ## Direct cross-workspace adapter closure — Exp073EK support PASS
 Run/job `33988956806 / 101367596573`, artifact `9976033816`, digest `sha256:f39351cddec695559686126fc15e212556eea370fe3eeab73d5f20f80c288c06`, token `PASS_EXP073EK_DIRECT_PUBLIC_BPW_ADAPTER_EXACT_V0_1`. Direct serialized-workspace reload + public PyMaster 2.7 `get_bandpower_windows()` is the sole currently exact distinct-field adapter candidate. Support-only `+0/+0`.
 
+## Exp073ER FITS-read storage closure — terminal exact support PASS
+Run/job `33997539503 / 101390573286`, activation head `b5b6d75aa569473e5e0770ba1d718f93bf286c86`, artifact `9978528214`, digest and independently verified ZIP SHA256 `1e0c3516de041e773eca030d9488f7af7d38455033ae5b97ba1151820eb22267`, token `PASS_EXP073ER_FILEBACKED_FITS_READ_PUBLIC_BPW_EXACT_V0_1`, classification `FILEBACKED_FITS_READ_PUBLIC_BPW_EXACT`, accounting `+0/+0`, no WW authority. Patched fresh FITS reload A/B proved regular-file mmap backing of exactly `294912` bytes and exact public-BPW equality to stock for full `[4,8,4,48]` and selected `EE<-EE [8,48]`, using SHA equality, `numpy.array_equal=true`, and max absolute difference `0.0`, with no tolerance rescue. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073ER_TERMINAL_EXACT_EN_RUNNING.md`.
+
 ## Prepared next gates
 - `experiments/073eo_ww_s0_s0_filebacked_checkpoint_provenance_admission_v0_1_prereg.md` prospectively committed at `65c8e8d4f68c6d81c5a139fbb93f5b59467761a9` while Exp073EN was still running. Status `PREREGISTERED_NOT_ACTIVATED`. It independently audits the terminal compact artifact plus complete six-stage A/B durable checkpoint chain and is the only gate allowed to admit `WW_S0_S0` authority.
-- Exp073EL remains preregistered/inactive for the ordered distinct-field full-resolution resource path. It may activate only after valid `WW_S0_S0` authority and while respecting single-home-runner ownership.
+- Exp073EL remains preregistered/inactive for the ordered distinct-field full-resolution resource path. It may activate only after valid `WW_S0_S0` authority and while respecting single-home-runner ownership. Exp073ER is now exact support evidence for the serialized FITS-read public-BPW storage path but does not itself satisfy Exp073EL or admit any science authority.
 - Exp073DV remains prepared but blocked on valid `WW_S0_S0` plus Exp073EL readiness PASS.
 
 Frozen frontier: `Wm_S1 -> Wm_S2 -> Wm_S3 -> WW_S0_S0 -> WW_S0_S1 -> WW_S0_S2 -> WW_S0_S3 -> WW_S1_S1 -> WW_S1_S2 -> WW_S1_S3 -> WW_S2_S2 -> WW_S2_S3 -> WW_S3_S3`.
