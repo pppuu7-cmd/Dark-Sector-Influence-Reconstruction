@@ -23,7 +23,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD:experiments/073er_filebacked_fits_read_public_bpw_exact_qualifier_v0_1_prereg.md)" = '3a3642189d33a1a2185f6b3b0aad86c6870b18a2'
-          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)" = '699203267ebcc91dcb75ceafe30f32dd0069e353'
+          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)" = 'd534b698f9131688d263eedcef27260386c58641'
           test "$(git rev-parse HEAD:ci/exp073er_build_stock_cross_workspace_v0_1.py)" = '81e1bcfc7d822fd26e031c97b7399e7eee3b3e27'
           test "$(git rev-parse HEAD:ci/exp073er_reload_public_bpw_with_mmap_proof_v0_1.py)" = '76ad1fae2d5e700a5a107f67a78d89011cf52341'
           test "$(git rev-parse HEAD:ci/exp073er_compare_read_exact_v0_1.py)" = '01f728548ba8a0f39b93d38279620cdd41601422'
