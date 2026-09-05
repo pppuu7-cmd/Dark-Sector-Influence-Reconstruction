@@ -1,0 +1,78 @@
+name: Exp073DM WW_S0_S0 exact-authority preflight v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073dm-ww-s0-s0-exact-authority-preflight-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dsir-exp073dm-ww-s0-s0-exact-authority-preflight-v0-1
+  cancel-in-progress: false
+
+jobs:
+  hosted-static-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact activation head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fail closed on unexpected live heavy marker in source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f experiments/073dm_article3_ww_s0_s0_exact_authority_preflight_v0_1_prereg.md
+          test -f ci/exp073dm_ww_s0_s0_exact_authority_preflight_static_v0_1.py
+          test -f ci/exp073aa_article3_des_angular_task_runner_v0_1.py
+
+      - name: Run frozen source-only WW_S0_S0 preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/exp073dm_ww_s0_s0_exact_authority_preflight_static_v0_1.py | tee exp073dm_stdout.txt
+          grep -Fx 'PASS_EXP073DM_WW_S0_S0_EXACT_AUTHORITY_PREFLIGHT_V0_1' exp073dm_stdout.txt
+          python3 - <<'PY'
+          import json
+          p='exp073dm_ww_s0_s0_exact_authority_preflight_v0_1.json'
+          d=json.load(open(p,encoding='utf-8'))
+          assert d['token']=='PASS_EXP073DM_WW_S0_S0_EXACT_AUTHORITY_PREFLIGHT_V0_1'
+          assert d['classification']=='SUPPORT_READINESS_PASS_PLUS_0_PLUS_0'
+          assert d['science_gate_scored'] is False
+          assert d['ww_authority_created'] is False
+          assert d['numerical_ww_payload_created'] is False
+          assert d['full_window_shape']==[4,39,4,12288]
+          assert d['selected_semantics']=='EE<-EE'
+          assert d['selected_canonical']=={'dtype':'<f8','shape':[39,12288]}
+          assert all(d['checks'].values())
+          PY
+
+      - name: Hash frozen evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum \
+            experiments/073dm_article3_ww_s0_s0_exact_authority_preflight_v0_1_prereg.md \
+            ci/exp073dm_ww_s0_s0_exact_authority_preflight_static_v0_1.py \
+            ci/exp073aa_article3_des_angular_task_runner_v0_1.py \
+            exp073dm_ww_s0_s0_exact_authority_preflight_v0_1.json \
+            exp073dm_stdout.txt \
+            > exp073dm_sha256.txt
+          cat exp073dm_sha256.txt
+
+      - name: Upload preflight artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073dm-ww-s0-s0-exact-authority-preflight-${{ github.run_id }}-${{ github.sha }}
+          path: |
+            exp073dm_ww_s0_s0_exact_authority_preflight_v0_1.json
+            exp073dm_stdout.txt
+            exp073dm_sha256.txt
+          if-no-files-found: error
+          retention-days: 90
