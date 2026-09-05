@@ -25,9 +25,12 @@ Run/job `33988956806 / 101367596573`, head `51f8a7d7dd481e79b734ba174bffa29236f2
 
 Frozen token `PASS_EXP073EK_DIRECT_PUBLIC_BPW_ADAPTER_EXACT_V0_1`. Two independent reloads of the same serialized distinct S0->S1 PyMaster 2.7 workspace followed by only public `NmtWorkspace.get_bandpower_windows()` are exact under the qualifier: all frozen checks true, full A/B SHA `aa883a13c305641e6e1aab5feca4692a8da1cdbcca16e8c124f12e601608d628`, selected `EE<-EE` A/B SHA `9e7a0e169d752e56d4a1f14244c58ac9a14a5c1a3782c27b3a6562a69cb0cf5e`, full and selected `numpy.array_equal=true`, no tolerance rescue. `science_gate_scored=false`; `ww_authority_created=false`.
 
-Direct serialized-workspace reload + public BPW is therefore the sole currently qualified exact cross-workspace adapter candidate. It still requires a separate prospectively frozen full-resolution resource/readiness gate before Exp073DV activation.
+Direct serialized-workspace reload + public BPW is therefore the sole currently qualified exact cross-workspace adapter candidate.
 
-Exp073DV remains `PREPARED_NOT_ACTIVATED`, additionally blocked on valid `WW_S0_S0` authority/provenance closure.
+### Exp073EL — prospectively preregistered, not activated
+Commit `c00b9268b0e397fbf471023a28059215dd4e572d` adds `experiments/073el_ww_cross_direct_public_bpw_full_resolution_resource_gate_v0_1_prereg.md`. Exp073EL is support/resource only `+0/+0` and freezes the full-resolution readiness contract for exactly the EK-qualified operation: ordered distinct `(S0,S1)`, NSIDE=4096, ell 0..12287, 39 frozen bands, serialized cross workspace, direct public PyMaster 2.7 `get_bandpower_windows()`, exact full `[4,39,4,12288]`, selected `EE<-EE <f8 [39,12288]`, durable fail-closed checkpoints, no manual reconstruction and no tolerance rescue. It must not activate while Exp073DT owns the home runner.
+
+Exp073DV remains `PREPARED_NOT_ACTIVATED`, blocked on valid `WW_S0_S0` authority/Exp073EB closure plus Exp073EL resource/readiness PASS.
 
 ## Frozen science/execution boundaries
 `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A invalid `<=0.05`; Layer-B invalid-row `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
@@ -35,5 +38,5 @@ Exp073DV remains `PREPARED_NOT_ACTIVATED`, additionally blocked on valid `WW_S0_
 ## Exact next gates
 1. Do not launch another self-hosted task while Exp073DT attempt 5 is queued/in_progress.
 2. When Exp073DT `33940588308 / 101374976626` becomes terminal, consume raw artifact/digest, exact A/B evidence and Exp073EB full six-stage checkpoint provenance before any WW_S0_S0 authority. On another infrastructure shutdown, diagnose the first causal failure and resume only from verified durable checkpoints; do not alter science.
-3. Independently, prepare but do not activate a prospectively frozen full-resolution resource/readiness gate for the Exp073EK direct reload + public BPW adapter while the heavy home runner is reserved.
-4. Keep Exp073DV inactive until both WW_S0_S0 authority and the full-resolution exact-adapter resource/readiness prerequisite pass.
+3. Exp073EL is preregistered but remains inactive while DT attempt 5 owns `DSIR-HOME-PC`; after DT terminal consumption, activate it only if no competing heavy process owns the runner and the repository authority still permits the support resource gate.
+4. Keep Exp073DV inactive until both WW_S0_S0 authority and Exp073EL resource/readiness PASS exist.
