@@ -1,0 +1,44 @@
+name: Exp073EC Exp073EB static governance audit v0.1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073eb-exp073dt-terminal-checkpoint-provenance-audit-v0-1.yml'
+      - '.github/workflows/exp073ec-exp073eb-static-governance-audit-v0-1.yml'
+      - 'experiments/073eb_exp073dt_terminal_checkpoint_provenance_audit_v0_1_prereg.md'
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Verify Exp073EB is support-only, fail-closed and immutable-read on science state
+        shell: bash
+        run: |
+          set -euo pipefail
+          W='.github/workflows/exp073eb-exp073dt-terminal-checkpoint-provenance-audit-v0-1.yml'
+          P='experiments/073eb_exp073dt_terminal_checkpoint_provenance_audit_v0_1_prereg.md'
+          test -f "$W" -a -f "$P"
+          grep -Fq "workflows: ['Exp073DT WW_S0_S0 full-resolution A/B exact science v0.1']" "$W"
+          grep -Fq "UPSTREAM_RUN_ID: '33940588308'" "$W"
+          grep -Fq "UPSTREAM_HEAD: 'c450aef42d96eb0bfe0b4c78d5a0fdc850d9a2cd'" "$W"
+          grep -Fq "FROZEN_SOURCE_HEAD: 'de83e20a68f79ccf25b89b0d33eb4206e294c757'" "$W"
+          grep -Fq "CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'" "$W"
+          grep -Fq 'github.event.workflow_run.conclusion == '\''success'\''' "$W"
+          grep -Fq 'flock -n 9' "$W"
+          grep -Fq 'PASS_EXP073EB_EXP073DT_FULL_CHECKPOINT_PROVENANCE_AUDIT_V0_1' "$W"
+          grep -Fq "'science_gate_scored':False" "$W"
+          grep -Fq "'ww_s0_s0_authority_created':False" "$W"
+          grep -Fq "'durable_state_modified':False" "$W"
+          grep -Fq "order=['fresh_s0_mask_complete','fresh_workspace_mcm_complete','mcm_fits_verified','full_window_complete','selected_ee_complete','replica_receipt_complete']" "$W"
+          ! grep -Fq 'compute_coupling_matrix' "$W"
+          ! grep -Fq 'execute_ww_adapter' "$W"
+          ! grep -Fq 'exp073dq_ww_s0_s0_durable_ab_production_v0_1.py' "$W"
+          ! grep -Eq 'rm[[:space:]].*SCI_ROOT|mv[[:space:]].*SCI_ROOT|cp[[:space:]].*SCI_ROOT/checkpoints' "$W"
+          grep -Fq 'Exp073EB cannot create, rescue, weaken, reinterpret, or supersede `WW_S0_S0` scientific authority' "$P"
+          echo PASS_EXP073EC_EXP073EB_STATIC_GOVERNANCE_AUDIT_V0_1
