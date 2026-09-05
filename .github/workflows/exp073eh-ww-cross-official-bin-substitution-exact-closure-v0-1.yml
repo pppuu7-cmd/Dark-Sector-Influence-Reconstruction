@@ -1,0 +1,45 @@
+name: Exp073EH WW cross official-bin substitution exact closure v0.1
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'docs/RESEARCH_LOG_EXP073EH_2026-09-05.md'
+permissions:
+  contents: read
+jobs:
+  hosted-official-bin-closure:
+    runs-on: ubuntu-24.04
+    env:
+      PREREG_BLOB: aac835594fcb29da9d85b0c4444e3a2b40481a59
+      SCRIPT_BLOB: 1dde55ce90810cf1da82a9bc169ba2dc411dc65a
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073eh_ww_cross_official_bin_substitution_exact_closure_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073eh_ww_cross_official_bin_substitution_exact_closure_v0_1.py)" = "$SCRIPT_BLOB"
+      - name: Install exact NaMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "$GITHUB_ENV"
+      - name: Execute frozen official-bin exact closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT=data/derived/exp073eh/v0_1; mkdir -p "$OUT"
+          "${NMT_PY}" ci/exp073eh_ww_cross_official_bin_substitution_exact_closure_v0_1.py --out-dir "$OUT/runtime" --source-head "$GITHUB_SHA" --prereg-blob "$PREREG_BLOB" | tee "$OUT/stdout.txt"
+          cp "$OUT/runtime/terminal_diagnostic_receipt.json" "$OUT/terminal_diagnostic_receipt.json"
+      - name: Upload immutable diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073eh-ww-cross-official-bin-substitution-exact-closure-v0-1-${{ github.sha }}
+          path: data/derived/exp073eh/v0_1/
+          if-no-files-found: error
