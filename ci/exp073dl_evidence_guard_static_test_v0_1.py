@@ -21,6 +21,7 @@ markers = [
     'flock -n 9',
     'root="$CHECKPOINT_ROOT"',
     'test -d "$root"',
+    '"$NMT_PY" - <<\'PY\'',
     "root=Path(os.environ['CHECKPOINT_ROOT'])",
 ]
 pos = []
@@ -33,6 +34,12 @@ if pos != sorted(pos) or len(set(pos)) != len(pos):
     raise SystemExit('FAIL_EXP073DL_LOCK_SCOPE_ORDER')
 
 bind = s[bind_start:step]
+required_bind = (
+    'NMT_PY=$HOME/.cache/dsir-nmt27/bin/python',
+    'test -x "$HOME/.cache/dsir-nmt27/bin/python"',
+)
+if not all(x in bind for x in required_bind):
+    raise SystemExit('FAIL_EXP073DL_FROZEN_PYTHON_BINDING_MISSING')
 forbidden_prelock = (
     'test -d "$CHECKPOINT_ROOT"',
     "Path(os.environ['CHECKPOINT_ROOT'])",
@@ -49,8 +56,10 @@ forbidden_science = (
     'get_bandpower_windows(',
     'couple_cell(',
     'decouple_cell(',
+    'conda install',
+    'pip install',
 )
 if any(x in body for x in forbidden_science):
-    raise SystemExit('FAIL_EXP073DL_SCIENCE_RECOMPUTE_PRESENT')
+    raise SystemExit('FAIL_EXP073DL_SCIENCE_OR_DEPENDENCY_RECOMPUTE_PRESENT')
 
 print('PASS_EXP073DL_HOSTED_STATIC_AUDIT_V0_1')
