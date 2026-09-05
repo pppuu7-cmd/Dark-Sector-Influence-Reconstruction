@@ -1,0 +1,41 @@
+name: Exp073ED PyMaster 2.7 low-level bandpower-window layout bridge v0.1
+on:
+  push:
+    paths:
+      - 'docs/RESEARCH_LOG_EXP073ED_2026-09-05.md'
+permissions:
+  contents: read
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    env:
+      PREREG_BLOB: 8e447bbd739bab94a3f1e8e4891f30e40c278b79
+      SCRIPT_BLOB: 332a3616b20604c5c21cf58f0b5780ad185ff180
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073ed_pymaster27_lowlevel_bandpower_window_layout_bridge_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073ed_pymaster27_lowlevel_bandpower_window_layout_bridge_v0_1.py)" = "$SCRIPT_BLOB"
+      - name: Install PyMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "$GITHUB_ENV"
+      - name: Run frozen low-level layout bridge audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073ed/v0_1
+          cd data/derived/exp073ed/v0_1
+          "${NMT_PY}" "$GITHUB_WORKSPACE/ci/exp073ed_pymaster27_lowlevel_bandpower_window_layout_bridge_v0_1.py" | tee stdout.txt
+      - name: Upload immutable audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ed-pymaster27-lowlevel-bandpower-window-layout-bridge-v0-1-${{ github.sha }}
+          path: data/derived/exp073ed/v0_1/
+          if-no-files-found: error
