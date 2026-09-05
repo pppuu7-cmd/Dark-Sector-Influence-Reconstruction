@@ -58,7 +58,7 @@ Partial numerical output is forbidden for adaptive decisions and was not inspect
 **DSIR-HOME-PC is reserved exclusively for Exp073EN run `33994398927`, job `101382229273`. Do not launch competing self-hosted DSIR work.**
 
 ## Exp073EO — prospectively preregistered WW_S0_S0 provenance/admission gate
-Preregistration `experiments/073eo_ww_s0_s0_filebacked_checkpoint_provenance_admission_v0_1_prereg.md`, commit `65c8e8d4f68c6d81c5a139fbb93f5b59467761a9`. It was frozen while Exp073EN was still running and is `PREREGISTERED_NOT_ACTIVATED`.
+Preregistration `experiments/073eo_ww_s0_s0_filebacked_checkpoint_provenance_admission_v0_1_prereg.md`, prospectively frozen while Exp073EN was still running. It is `PREREGISTERED_NOT_ACTIVATED`.
 
 EO may run only after terminal Exp073EN evidence exists. It must independently verify the compact artifact/digest, exact frozen identities, local/hosted file-backed storage qualification, full-resolution mmap proof, and the complete ordered six-stage durable chain for A and B: `fresh_s0_mask_complete`, `fresh_workspace_mcm_complete`, `mcm_fits_verified`, `full_window_complete`, `selected_ee_complete`, `replica_receipt_complete`. Verified post-receipt pruning of huge intermediates is allowed only if the pre-pruning hashes/provenance are bound by complete receipts. Missing/malformed provenance is BLOCKED `+0/+0`, not science FAIL. Only `PASS_EXP073EO_WW_S0_S0_FILEBACKED_PROVENANCE_ADMISSION_V0_1` may admit valid `WW_S0_S0` authority.
 
@@ -66,6 +66,24 @@ EO may run only after terminal Exp073EN evidence exists. It must independently v
 Historical support chain remains immutable: DU/DW qualifier FAIL; DX excluded FITS orientation; ED excluded low-level/public BPW tensor layout; EE/EF/EG/EH/EI/EJ localized why manual/public-composition reconstruction is not bitwise identical to public BPW.
 
 Exp073EK run/job `33988956806 / 101367596573`, artifact `9976033816`, digest `sha256:f39351cddec695559686126fc15e212556eea370fe3eeab73d5f20f80c288c06`, token `PASS_EXP073EK_DIRECT_PUBLIC_BPW_ADAPTER_EXACT_V0_1`, support-only `+0/+0`. Two independent reloads of one serialized distinct S0->S1 workspace followed only by public PyMaster 2.7 `get_bandpower_windows()` are exact. No WW authority was created.
+
+## Latest independent support closures — Exp073EP and Exp073EQ
+Exp073EP terminal hosted support PASS:
+- run/job `33994782890 / 101383307890`;
+- artifact `9977735941`, digest `sha256:4007fa89e678f4585cd73641ff26054a9c939c3f0e679581202cdf2154a39ed5`;
+- token `PASS_EXP073EP_FILEBACKED_CROSS_PUBLIC_BPW_COMPOSITION_EXACT_V0_1`;
+- classification `COMPOSED_STORAGE_PUBLIC_BPW_EXACT`, accounting `+0/+0`, no WW authority.
+It exactly closes the composition support risk between Exp073EM file-backed MCM storage and Exp073EK serialized distinct-field public-BPW semantics; all frozen exact comparisons passed with `numpy.array_equal`, canonical SHA equality and max absolute difference `0.0`.
+
+Exp073EQ terminal hosted static contract PASS:
+- run/job `33997161393 / 101389591224`;
+- activation head `cbb306f32d1ddaaf0a70f00a6aa101854ae3de33`;
+- artifact `9978399252`, digest `sha256:063ca99330de8040e1b019a26bbbf9ab030f50aba3eaaf726fdc4febc1d016e9`;
+- token `PASS_EXP073EQ_EN_EO_STATIC_AUTHORITY_CONTRACT_V0_1`;
+- classification `STATIC_AUTHORITY_CONTRACT_EXACT`, accounting `+0/+0`, no WW authority.
+EQ prospectively confirms EN workflow/prereg and EO prereg are consistent on source authority, contract fingerprint, R1 artifact/digest, NaMaster source, file-backed patch, Exp073EM identity, exact-only policy and critical geometry. It closes static EN→EO contract risk only.
+
+Immutable reconciliation note: `docs/recovery/RECOVERY_2026-09-06_EXP073EP_EQ_RECONCILED_EN_RUNNING.md`.
 
 Exp073EL remains preregistered/inactive for the full-resolution ordered distinct-field resource path; Exp073DV remains blocked until valid `WW_S0_S0` authority plus Exp073EL readiness PASS.
 
@@ -77,4 +95,4 @@ Exp073EL remains preregistered/inactive for the full-resolution ordered distinct
 2. When terminal, consume the raw compact artifact in the same research iteration. Verify digest, source/contract identities, local Exp073EM qualifier, mmap proof, exact A/B evidence and terminal token; workflow SUCCESS alone is insufficient.
 3. On candidate PASS, activate Exp073EO and independently audit the complete A/B six-stage durable provenance. Only EO PASS creates `WW_S0_S0` authority.
 4. On infrastructure/resource failure, diagnose the first causal failure and preserve verified checkpoints; never weaken arithmetic or re-run completed expensive stages unnecessarily.
-5. After valid `WW_S0_S0`, activate Exp073EL for the EK-qualified ordered distinct-field full-resolution resource path; then WW_S0_S1 may proceed only under the frozen frontier.
+5. After valid `WW_S0_S0`, activate Exp073EL for the EK/EP-qualified ordered distinct-field full-resolution resource path; then WW_S0_S1 may proceed only under the frozen frontier.
