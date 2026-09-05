@@ -35,7 +35,9 @@ Immutable reconciliation note: `recovery/2026-09-05_exp073dt_runner_shutdown_inf
 After first-cause diagnosis, only failed self-hosted job `101237118421` was rerun; no competing workflow or new science implementation was created.
 
 - run `33940588308`, run attempt `2`;
-- new self-hosted job `101244660215`: QUEUED at latest reconciliation;
+- hosted preflight job `101244675822`: SUCCESS;
+- self-hosted job `101244660215`: **IN_PROGRESS** at latest reconciliation;
+- active step: `Full fail-closed WW_S0_S0 A/B science under one continuous flock`;
 - head `c450aef42d96eb0bfe0b4c78d5a0fdc850d9a2cd` unchanged;
 - frozen source authority head `de83e20a68f79ccf25b89b0d33eb4206e294c757`;
 - contract fingerprint `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
@@ -47,8 +49,11 @@ No code/science repair was made because the diagnosed cause is external runner s
 
 Scientific PASS still requires exact SHA equality and `numpy.array_equal=true` in the frozen comparator plus independent terminal reread of both A/B selected `<f8 [39,12288]` payloads with valid provenance. Exact A/B inequality is scientific repeatability FAIL. Infrastructure/runtime/checkpoint/provenance/artifact failures are `+0/+0`.
 
+## Independent preparation for the next frontier
+Commit `2f9c2950dc118aa281b938d58f444fcfed3b8d18` adds Exp073DU, a small-NSIDE distinct-field `WW_S0_S1` cross-field production-adapter qualifier. It is explicitly support-only (`science_gate_scored=false`, `ww_s0_s1_authority_created=false`) and cannot modify or supersede Exp073DT. It tests ordered cross-field workspace construction against direct PyMaster and exact `EE<-EE` adapter extraction without tolerance rescue. Do not launch a competing self-hosted task while Exp073DT owns the runner.
+
 ## Frozen science/execution boundaries
 `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A invalid `<=0.05`; Layer-B invalid-row `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
 
 ## Exact next gate
-Consume attempt-2 job `33940588308 / 101244660215`. If it exact PASSes, independently validate the raw terminal artifact and create `WW_S0_S0` authority, then advance prospectively to `WW_S0_S1`. If it fails infrastructure/checkpoint validation, diagnose the first new cause and preserve verified complete stages.
+Consume attempt-2 job `33940588308 / 101244660215`. If it exact PASSes, independently validate the raw terminal artifact and create `WW_S0_S0` authority. Then validate any prospectively frozen Exp073DU qualifier result before deciding the full-resolution `WW_S0_S1` science launch. If Exp073DT fails infrastructure/checkpoint validation, diagnose the first new cause and preserve verified complete stages.
