@@ -1,0 +1,45 @@
+name: Exp073EG WW cross bin/unbin exact localization v0.1
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'docs/RESEARCH_LOG_EXP073EG_2026-09-05.md'
+permissions:
+  contents: read
+jobs:
+  hosted-bin-unbin-localization:
+    runs-on: ubuntu-24.04
+    env:
+      PREREG_BLOB: d072892e492af4d836db118b03a83f91391adcb4
+      SCRIPT_BLOB: 6a8b83644925d370aad453dd2e2523e3d30805a1
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073eg_ww_cross_bin_unbin_exact_localization_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073eg_ww_cross_bin_unbin_exact_localization_v0_1.py)" = "$SCRIPT_BLOB"
+      - name: Install exact NaMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "$GITHUB_ENV"
+      - name: Execute frozen exact bin/unbin localization
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT=data/derived/exp073eg/v0_1; mkdir -p "$OUT"
+          "${NMT_PY}" ci/exp073eg_ww_cross_bin_unbin_exact_localization_v0_1.py --out-dir "$OUT/runtime" --source-head "$GITHUB_SHA" --prereg-blob "$PREREG_BLOB" | tee "$OUT/stdout.txt"
+          cp "$OUT/runtime/terminal_diagnostic_receipt.json" "$OUT/terminal_diagnostic_receipt.json"
+      - name: Upload immutable diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073eg-ww-cross-bin-unbin-localization-v0-1-${{ github.sha }}
+          path: data/derived/exp073eg/v0_1/
+          if-no-files-found: error
