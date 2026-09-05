@@ -1,0 +1,41 @@
+name: Exp073DZ PyMaster 2.7 workspace post-MCM API audit v0.1
+on:
+  push:
+    paths:
+      - 'docs/RESEARCH_LOG_EXP073DZ_2026-09-05.md'
+permissions:
+  contents: read
+jobs:
+  hosted-audit:
+    runs-on: ubuntu-24.04
+    env:
+      PREREG_BLOB: b5174c4bf3c100993ffb66c171daf655222248e9
+      SCRIPT_BLOB: 4966ceb7561b91cb4052b0ccc267c7beca185c3d
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073dz_pymaster27_workspace_postmcm_api_audit_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073dz_pymaster27_workspace_postmcm_api_audit_v0_1.py)" = "$SCRIPT_BLOB"
+      - name: Install PyMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          conda create -y -p "${RUNNER_TEMP}/nmt27" -c conda-forge python=3.11 namaster=2.7 healpy
+          echo "NMT_PY=${RUNNER_TEMP}/nmt27/bin/python" >> "$GITHUB_ENV"
+      - name: Run frozen API audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/derived/exp073dz/v0_1
+          cd data/derived/exp073dz/v0_1
+          "${NMT_PY}" "$GITHUB_WORKSPACE/ci/exp073dz_pymaster27_workspace_postmcm_api_audit_v0_1.py" | tee stdout.txt
+      - name: Upload immutable audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073dz-pymaster27-workspace-postmcm-api-audit-v0-1-${{ github.sha }}
+          path: data/derived/exp073dz/v0_1/
+          if-no-files-found: error
