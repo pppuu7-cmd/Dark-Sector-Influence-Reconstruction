@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/exp073dm-ww-s0-s0-exact-authority-preflight-v0-1.yml'
+      - 'ci/exp073dm_ww_s0_s0_exact_authority_preflight_static_v0_1.py'
   workflow_dispatch:
 
 permissions:
@@ -24,7 +25,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Fail closed on unexpected live heavy marker in source
+      - name: Fail closed on frozen source presence
         shell: bash
         run: |
           set -euo pipefail
