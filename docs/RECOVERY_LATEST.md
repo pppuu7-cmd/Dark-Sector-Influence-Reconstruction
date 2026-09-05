@@ -49,7 +49,7 @@ Exactly one scientific/self-hosted resume process is live:
 - completed SUCCESS steps include exact hardware/checkpoint-root binding, NaMaster environment, fail-closed checkpoint inventory, frozen S3 authority staging, DES lens hash verification, deterministic OpenMP-8 downstream compilation and actual 8-thread runtime certification;
 - active step is `Live exclusivity and checkpoint-preserving Exp073BU A-then-B resume`;
 - evidence/upload/classification steps remain pending;
-- DSIR-HOME-PC is **RESERVED BY THIS SINGLE RESUME JOB**; live Actions reconciliation shows `1 in_progress / 0 queued`, so no competing DSIR workload may be started;
+- DSIR-HOME-PC is **RESERVED BY THIS SINGLE RESUME JOB**; latest live reconciliation shows `1 in_progress / 0 queued`, so no competing DSIR workload may be started;
 - frozen checkpoint identity remains old science head `c02c018ede6a1fcf7aef1a848c0118a0669ed67f` and fingerprint `b38687bf5aa6cf4cfe01b2f38a7091e96d97196ad38bdf2ea771f7b649ac73da`;
 - historical checkpoint root must already exist; the workflow may not silently create a replacement root;
 - existing manifests must form an ordered six-stage prefix per replica and every accepted durable payload is hash/identity checked;
@@ -64,10 +64,19 @@ Detailed process ledger: `docs/CURRENT_PROCESS.md`.
 Exp073DK v0.1 is prospectively preregistered to close an evidence/reproducibility gap **without modifying the frozen science comparator**.
 - prereg: `experiments/073dk_exp073bu_terminal_payload_evidence_export_v0_1_prereg.md`;
 - prereg commit/blob: `286b6dace47cd2c2dc631be544a998401557cef2 / 1e8f29f8552475748680439924c13590d352549a`;
-- successor workflow commit: `75c0d7d8197bc29d7a06037a355aaf34b17f8d59`;
-- immutable note: `recovery/2026-09-05_exp073dk_terminal_payload_evidence_successor_preregistered.md`, commit `6d1cf0c83eb063e3a635b86dd5d40c7cfeb4513b`.
+- original successor workflow commit: `75c0d7d8197bc29d7a06037a355aaf34b17f8d59`;
+- original preregistration note: `recovery/2026-09-05_exp073dk_terminal_payload_evidence_successor_preregistered.md`, commit `6d1cf0c83eb063e3a635b86dd5d40c7cfeb4513b`.
 
-The successor is `workflow_run`-triggered only after completion of Exp073DJ and additionally hard-binds upstream run `33910213781`. It performs no NaMaster/mask/workspace/MCM/PCL/scientific recomputation. It only exports already-final A/B canonical `selected_te.bin`, exact-validates provenance and receipt/manifests, recomputes whole-file SHA equality and independently reruns `numpy.array_equal` on `<f8 [39,12288]`. Missing/malformed terminal evidence or payload is fail-closed infrastructure/BLOCKED `+0/+0`. Exp073DK cannot create or rescue Wm_S3 authority by itself.
+Independent audit while Exp073DJ remained active found an evidence-orchestration TOCTOU defect in the original successor: the DSIR home lock was acquired in one shell step but released before the later step that touched the historical checkpoint root. This is an infrastructure/evidence issue only, not a scientific result.
+
+Prospective repair authority:
+- lock-scope repair commit `65c73cf736b081b1964fd951732c1ecccbc4b0c0` keeps FD9/flock held across live noncompetition and **all** historical checkpoint-root reads;
+- hosted lock-scope static regression audit commit `ce4df169b9ae91bf64b2288b42dbfbcd2c37101c` verifies lock-before-root ordering, forbids pre-lock payload/receipt access and gates the self-hosted export job with `needs: static-audit`;
+- immutable repair note `recovery/2026-09-05_exp073dk_lock_scope_toctou_repair.md`, commit `7d1d6188a14fd682f90942d14986a60792991885`.
+
+The static audit is currently **ARMED, NOT YET A VALIDATED PASS**; Exp073DJ is still running, so Exp073DK has not yet been triggered. No current-science code or criterion changed.
+
+The successor remains `workflow_run`-triggered only after completion of Exp073DJ and additionally hard-binds upstream run `33910213781`. It performs no NaMaster/mask/workspace/MCM/PCL/scientific recomputation. It only exports already-final A/B canonical `selected_te.bin`, exact-validates provenance and receipt/manifests, recomputes whole-file SHA equality and independently reruns `numpy.array_equal` on `<f8 [39,12288]`. Missing/malformed terminal evidence or payload is fail-closed infrastructure/BLOCKED `+0/+0`. Exp073DK cannot create or rescue Wm_S3 authority by itself.
 
 ## Frozen execution/science contract
 Exactly 8 affinity CPUs; `OMP_NUM_THREADS=8`; OpenBLAS/MKL/NumExpr/BLIS/Veclib nested threads=1; runtime must prove `DSIR_OMP_TEAM=8`. Six durable stages remain `fresh_masks_complete -> fresh_workspace_mcm_complete -> mcm_fits_verified -> full_window_complete -> selected_te_complete -> replica_receipt_complete`.
@@ -78,4 +87,4 @@ Frozen boundaries: `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A 
 Exp073CM remains historical resource/performance FAIL `+0/+0`, not Wm_S3 arithmetic failure. Exp073DD remains `D1_RESUME_LINEAGE_PROVENANCE_PASS +0/+0`, run/job `33892969489 / 101088831684`, artifact `9944582651`. Exp073CW remains `H1_SINGLE_MASK_INTEGRATED_DRIVER_PASS +0/+0`, run/job `33860891989 / 100984835847`, artifact `9932088071`. Exp073CV v0.3 remains `I1_PRODUCTION_INTERFACE_EXACT_INTEGRATION_PASS +0/+0`, run/job `33847132443 / 100941396500`, artifact `9926971841`. All historical negative/infrastructure/support outcomes remain immutable.
 
 ## Exact next gate
-Track `33910213781 / 101144660519` without duplication. While active, do not inspect partial numerical values or tune the frozen gate. When terminal, immediately consume the Exp073DJ raw science receipt/artifact and classify it under the frozen contract. Exp073DK should then deterministically export the final canonical A/B payload evidence and independently reproduce exact SHA equality plus `numpy.array_equal`. Only an independently validated raw `PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_8CORE_V0_3` may admit Wm_S3 authority. Exact A/B inequality is scientific repeatability FAIL; checkpoint/runner/provenance/dependency failures are `INFRASTRUCTURE_INCOMPLETE` or `BLOCKED` `+0/+0` and must preserve valid checkpoints.
+Track `33910213781 / 101144660519` without duplication. While active, do not inspect partial numerical values or tune the frozen gate. When terminal, immediately consume the Exp073DJ raw science receipt/artifact and classify it under the frozen contract. Then consume the automatically triggered Exp073DK hosted static audit and terminal canonical-payload evidence artifact. Only an independently validated raw `PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_8CORE_V0_3` may admit Wm_S3 authority. Exact A/B inequality is scientific repeatability FAIL; checkpoint/runner/provenance/dependency failures are `INFRASTRUCTURE_INCOMPLETE` or `BLOCKED` `+0/+0` and must preserve valid checkpoints.
