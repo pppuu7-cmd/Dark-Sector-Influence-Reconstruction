@@ -1,0 +1,135 @@
+name: Exp073EN WW_S0_S0 file-backed A/B science network-retry v0.2
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/exp073en-ww-s0-s0-filebacked-ab-network-retry-v0-2.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: dsir-exp073en-ww-s0-s0-filebacked-ab-network-retry-v0-2
+  cancel-in-progress: false
+
+env:
+  FROZEN_SOURCE_HEAD: 'de83e20a68f79ccf25b89b0d33eb4206e294c757'
+  CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
+  R1_ARTIFACT_ID: '9720335366'
+  R1_DIGEST: 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd'
+  DRIVER_SHA256: '0b7a0a2336a89dcea63060d4049d09fabacc9c5e75fad870d2599efd27d0e63b'
+  ADAPTER_SHA256: 'ab85f76e724a9861837299ce29c0961e4adcd09954b9522d678d5e610267f641'
+  DRIVER_BLOB: 'baff99c2b9d7866432bebda5844d2d450324d08a'
+  ADAPTER_BLOB: 'd6f20600d6a206dd9fbb254b382e71a49c6b3c07'
+  DOWNSTREAM_BLOB: 'be4f381de4c5c043a9c0fcd107e63ef3f2079578'
+  TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
+  PATCH_BLOB: 'f1eb886ca8af2584a9f621f333cd8be3c6cdb967'
+  EM_GENERATOR_BLOB: 'bd1795f2a2c2cf80341f212996eb8278e0be53d9'
+  EM_COMPARE_BLOB: 'f0de92f3f121592b6d139eb7d948426946d901d1'
+  PREREG_BLOB: '02f22926705cca05d128b1cea8ca7a3a3c73ef3b'
+  HOME_V01_BLOB: 'fb589e1521c6774e4c7d0714cae9e4cc194fb7ee'
+  RETRY_HELPER_BLOB: '3bc8faf4bbb861961ce4cb27c25959100e82c501'
+  RETRY_WRAPPER_BLOB: 'ac4689c4b9b52451fd8eac3387b14029e67c1cdc'
+  RETRY_HELPER_SHA256: '18da216f85d6a51eb08a4ef9e0ae18bc5e8d44995c3859d3162e59d611afeb8c'
+  RETRY_WRAPPER_SHA256: '2f07add883c1a5b9ebe7becf5b18d61000e1d37cf662e3d40bfbb175ebed4351'
+  PATCH_SHA256: '9a80a756960afa8b4ddf61b5fbba7fba6ad5ed9ac919e093bb1365a636c789f0'
+  NAMASTER_HEAD: '24365fa59a38c15732f4f37e8b29265b75c442d5'
+  EM_ARTIFACT_ID: '9977333691'
+  EM_ARTIFACT_DIGEST: 'sha256:0ece75e489b6f413d96e85a099e42db96b5d5acdc03c3ee6901273357762cda1'
+
+jobs:
+  hosted-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Bind retry-only repair and frozen science identities
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ci/exp073en_home_filebacked_fullres_v0_1.sh)" = "$HOME_V01_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073en_live_exclusivity_curl_retry_v0_2.sh)" = "$RETRY_HELPER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073en_home_filebacked_fullres_v0_2.sh)" = "$RETRY_WRAPPER_BLOB"
+          test "$(sha256sum ci/exp073en_live_exclusivity_curl_retry_v0_2.sh | awk '{print $1}')" = "$RETRY_HELPER_SHA256"
+          test "$(sha256sum ci/exp073en_home_filebacked_fullres_v0_2.sh | awk '{print $1}')" = "$RETRY_WRAPPER_SHA256"
+          test "$(git rev-parse HEAD:experiments/073en_ww_s0_s0_filebacked_full_resolution_ab_science_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-v0.1.patch)" = "$PATCH_BLOB"
+          tmp="$(mktemp)"
+          curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 2 \
+            -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$EM_ARTIFACT_ID" -o "$tmp"
+          python3 - "$tmp" "$EM_ARTIFACT_DIGEST" <<'PY'
+          import json,sys
+          rec=json.load(open(sys.argv[1]))
+          assert rec.get('digest')==sys.argv[2],(rec.get('digest'),sys.argv[2])
+          assert rec.get('expired') is False
+          print('PASS_EXP073EN_V02_HOSTED_BINDING')
+          PY
+
+  home-filebacked-science-ab:
+    needs: hosted-preflight
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 720
+    env:
+      OMP_NUM_THREADS: '8'
+      OMP_DYNAMIC: 'FALSE'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Run exact-qualified file-backed WW_S0_S0 A/B science candidate with retry-safe live check
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ci/exp073en_home_filebacked_fullres_v0_1.sh)" = "$HOME_V01_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073en_live_exclusivity_curl_retry_v0_2.sh)" = "$RETRY_HELPER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073en_home_filebacked_fullres_v0_2.sh)" = "$RETRY_WRAPPER_BLOB"
+          test "$(sha256sum ci/exp073en_live_exclusivity_curl_retry_v0_2.sh | awk '{print $1}')" = "$RETRY_HELPER_SHA256"
+          test "$(sha256sum ci/exp073en_home_filebacked_fullres_v0_2.sh | awk '{print $1}')" = "$RETRY_WRAPPER_SHA256"
+          bash ci/exp073en_home_filebacked_fullres_v0_2.sh
+      - name: Collect compact evidence even on interruption/failure
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$HOME/.cache/dsir/exp073en-ww-s0-s0-filebacked-ab-v0-1"
+          OUT="$RUNNER_TEMP/exp073en-v02-artifact"
+          mkdir -p "$OUT"
+          ROOT="$ROOT" OUT="$OUT" python3 - <<'PY'
+          import os,shutil
+          from pathlib import Path
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT']); out.mkdir(parents=True,exist_ok=True)
+          if root.exists():
+              for p in root.rglob('*.json'):
+                  try:
+                      rel=p.relative_to(root); q=out/rel; q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+                  except OSError: pass
+              for rep in ('A','B'):
+                  p=root/'checkpoints'/rep/'exact_route'/'selected_ee.bin'
+                  if p.exists():
+                      q=out/'checkpoints'/rep/'exact_route'/'selected_ee.bin'; q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+              for name in ('A_driver.log','B_driver.log','ab_compare_stdout.txt','resource_telemetry.log','tiny.stderr'):
+                  p=root/name
+                  if p.exists(): shutil.copy2(p,out/name)
+              act=root/'local_exp073em_activation'
+              if act.exists():
+                  for p in act.rglob('*'):
+                      if p.is_file() and (p.suffix in {'.json','.log'}):
+                          q=out/'local_exp073em_activation'/p.relative_to(act); q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+          PY
+      - name: Upload Exp073EN v0.2 terminal/partial evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073en-ww-s0-s0-filebacked-fullres-network-retry-evidence-v0-2
+          path: ${{ runner.temp }}/exp073en-v02-artifact
+          if-no-files-found: warn
+          retention-days: 30
