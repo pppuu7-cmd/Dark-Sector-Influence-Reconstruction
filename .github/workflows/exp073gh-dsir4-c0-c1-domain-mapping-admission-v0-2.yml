@@ -1,0 +1,60 @@
+name: Exp073GH DSIR-4 C0 C1 domain mapping admission v0.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073gh-dsir4-c0-c1-domain-mapping-admission-v0-2.txt'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  hosted-domain-mapping-admission:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Independently admit unchanged C0 and C1 G_DOMAIN_MAPPING only
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073gh_dsir4_c0_c1_domain_mapping_admission_v0_1_prereg.md)" = 'aff3ba121909642b0671287761155f0b3eacc4b6'
+          test "$(git rev-parse HEAD:docs/dsir4/DSIR4_COMMON_RESIDUAL_CONVENTION_V0_1.md)" = '9ab68fe254891a076e24757de724e32e2190bfb6'
+          test "$(git rev-parse HEAD:docs/dsir4/mappings/C0_C1_ANALYTIC_RESIDUAL_MAPPINGS_V0_1.md)" = 'f080b8cec3197d8852a68e7de7e2183d2c7c6b50'
+          test "$(git rev-parse HEAD:data/dsir4/mappings/C0_LCDM_REFERENCE_mapping_v0_1.json)" = '46e9a402a57aee7baa4649784e868013ea6a07bb'
+          test "$(git rev-parse HEAD:data/dsir4/mappings/C1_SMOOTH_W_LOCAL_EPS1E4_mapping_v0_1.json)" = 'cec09e097aa8650f488276ed21e949f34e4f4ac1'
+          test "$(git rev-parse HEAD:ci/validate_dsir4_c0_c1_mapping_v0_1.py)" = 'de0bce5e3e96d20e7a56e546cecfb846289b2f5c'
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/34060810001" > gg-run.json
+          python3 - <<'PY'
+          import json
+          r=json.load(open('gg-run.json'))
+          assert r['status']=='completed' and r['conclusion']=='success'
+          assert r['name']=='Exp073GG DSIR-4 C0 C1 mapping static audit v0.2'
+          assert r['head_sha']=='36b9ca3afe6ee97eb399586f00ff6ccf98185df9'
+          PY
+          gh api --allow-escape-sequences "repos/${GITHUB_REPOSITORY}/actions/jobs/101560878127/logs" > gg.log
+          grep -aF 'PASS_EXP073GG_DSIR4_C0_C1_MAPPING_STATIC_AUDIT_V0_1' gg.log >/dev/null
+          grep -aF 'scientific_gate_authority_created=false' gg.log >/dev/null
+          python3 ci/validate_dsir4_c0_c1_mapping_v0_1.py data/dsir4/mappings/C0_LCDM_REFERENCE_mapping_v0_1.json data/dsir4/mappings/C1_SMOOTH_W_LOCAL_EPS1E4_mapping_v0_1.json > local.log
+          grep -Fx 'PASS_DSIR4_C0_C1_MAPPING_STATIC_VALIDATOR_V0_1' local.log >/dev/null
+          python3 - <<'PY'
+          import json
+          for p in ['data/dsir4/mappings/C0_LCDM_REFERENCE_mapping_v0_1.json','data/dsir4/mappings/C1_SMOOTH_W_LOCAL_EPS1E4_mapping_v0_1.json']:
+              d=json.load(open(p)); dom=d['certified_domain']; c=d['common_residual']['components']
+              assert dom['z_min']==0.295 and dom['z_max']==2.33
+              assert dom['k_min_exclusive_mpc_inv']==0.0 and dom['k_max_mpc_inv']==0.06664762008318016
+              assert dom['linear_regime'] is True and dom['quasi_static_assumption'] is False and dom['sub_horizon_assumption'] is False
+              assert len(c)==6 and all(v['expression_ref'] for v in c.values())
+              assert d['readiness']['mapping_ready'] is True and d['readiness']['prediction_ready'] is False
+          c1=json.load(open('data/dsir4/mappings/C1_SMOOTH_W_LOCAL_EPS1E4_mapping_v0_1.json'))
+          assert c1['hypothesis_identity']['parameter_values']=={'epsilon_w':0.0001,'w':-0.9999,'smooth_de_control':True}
+          PY
+          echo PASS_EXP073GH_C0_LCDM_G_DOMAIN_MAPPING_ADMISSION_V0_1
+          echo PASS_EXP073GH_C1_SMOOTH_W_G_DOMAIN_MAPPING_ADMISSION_V0_1
+          echo classification=SCIENTIFIC_GATE_AUTHORITY_ADMITTED
+          echo admitted_gate=G_DOMAIN_MAPPING
+          echo scientific_model_authority_created=false
+          echo full_dsir_model_pass=false
+          echo downstream_model_gates=NOT_YET_TESTABLE
