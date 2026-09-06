@@ -25,6 +25,7 @@ Frozen committed Exp073FM implementation blobs: driver v0.1 `477647c5164264665cc
 - branch/head: `main` / **`f0caca0c3e812710e5958ee13348a150d045a7d8`**;
 - state at latest reconciliation: **IN_PROGRESS** step `Run frozen WW_S1_S1 A/B gate with durable checkpoints`;
 - runner ownership: **`DSIR-HOME-PC` exclusively owned by job `101533574294`**;
+- live Actions at reconciliation: exactly **1 in-progress DSIR run and 0 queued runs**;
 - no competing self-hosted/home task may be launched;
 - science checkpoint namespaces: `checkpoints/exp073fm-ww-s1-s1-a-v0-1`, `checkpoints/exp073fm-ww-s1-s1-b-v0-1`;
 - last durable checkpoint: **UNKNOWN_NOT_INSPECTED_WHILE_RUNNING**; partial numerical output must not be inspected;
@@ -33,7 +34,7 @@ Frozen committed Exp073FM implementation blobs: driver v0.1 `477647c5164264665cc
 - next action on infrastructure/resource FAIL: inspect first causal failure, preserve any verified complete-stage checkpoints, make only the smallest prospective repair, and resume from the last verified checkpoint without changing frozen science;
 - next action on genuine exact numerical mismatch: record `SCIENTIFIC_FAIL`; never rescue with tolerance/rounding/smoothing/averaging.
 
-## Prospectively frozen next authority gate — Exp073FR
+## Prospectively frozen next authority gate — canonical Exp073FR
 
 While Exp073FM remains in progress and before reading any partial/terminal numerical result, Exp073FR was preregistered as the sole prospective `WW_S1_S1` provenance-admission gate.
 
@@ -43,6 +44,18 @@ While Exp073FM remains in progress and before reading any partial/terminal numer
 - frozen admission PASS token: `PASS_EXP073FR_WW_S1_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1`;
 - Exp073FR must not run until Exp073FM is terminal and independently consumed;
 - Exp073FR is hosted-only, creates no home-runner ownership, and may create authority only if every frozen terminal artifact/checkpoint/source/same-object/file-backed/exact-equality check passes.
+
+A later pre-terminal automatic/duplicate Exp073FR implementation was removed from active `main`; the active workflow path `.github/workflows/exp073fr-ww-s1-s1-provenance-admission-and-dispatch-v0-1.yml` is intentionally absent while FM runs. Canonical prereg above remains authority.
+
+## Reconciled future successor staging — support only
+
+Another DSIR process prospectively staged successor transforms/workflows while Exp073FM runs. These do not supersede the current frontier and do not create authority.
+
+- Exp073FS future `WW_S1_S2` queue/static audit `34054103704 / 101542730121`: raw `PASS_EXP073FS_AUTONOMOUS_QUEUE_STATIC_AUDIT_V0_1`, `SUPPORT_PLUS_0_PLUS_0`, `self_hosted_science_started=false`. Its heavy workflow is `workflow_dispatch` only and requires an explicit successful Exp073FR admission predecessor before a home job can start.
+- Exp073FU future `WW_S1_S3` static audit v0.1 `34054723711 / 101544419091`: implementation/static FAIL `+0/+0`, first causal failure `AssertionError: Exp073FS`; no science ran. Minimal transform-only repair commit `5c0d75a57c909b0a0b699bbe79a5b5ab15c0f852` preserved science. Repaired v0.2 `34054859313 / 101544834479`: raw `PASS_EXP073FU_WW_S1_S3_TRANSFORMATION_STATIC_AUDIT_V0_2`, `SUPPORT_PLUS_0_PLUS_0`, `self_hosted_science_started=false`.
+- Later staged Exp073FW/FX (`WW_S2_S2`), Exp073FY/FZ (`WW_S2_S3`) and Exp073GA/GB (`WW_S3_S3`) commits are prereg/transformation preparation only. Their presence on `main` is not scientific PASS and they are not running.
+
+Immutable reconciliation note: `docs/recovery/RECOVERY_2026-09-06_EXP073FS_FU_STAGED_FM_RUNNING.md`. Research-log supplement: `docs/research_log/RESEARCH_LOG_2026-09-06_EXP073FS_FU_STAGING.md`.
 
 ## Frozen WW_S1_S1 science
 
