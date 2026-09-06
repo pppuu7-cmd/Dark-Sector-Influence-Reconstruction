@@ -44,7 +44,8 @@ The implementation preserves one S1 source checkpoint, one field construction, s
 - workflow/run: **Exp073FM `34050657030`**;
 - home job: **`101533574294`**;
 - head: **`f0caca0c3e812710e5958ee13348a150d045a7d8`**;
-- state at latest reconciliation: **IN_PROGRESS** in `Run frozen WW_S1_S1 A/B gate with durable checkpoints`;
+- state at latest live reconciliation: **IN_PROGRESS** in `Run frozen WW_S1_S1 A/B gate with durable checkpoints`;
+- live Actions: exactly **1 in-progress DSIR run and 0 queued runs**;
 - current runner ownership: **`DSIR-HOME-PC` exclusively owned by job `101533574294`**;
 - checkpoint namespaces: `checkpoints/exp073fm-ww-s1-s1-a-v0-1`, `checkpoints/exp073fm-ww-s1-s1-b-v0-1`;
 - last durable checkpoint: `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`; do not inspect partial numerical output;
@@ -54,9 +55,7 @@ On terminal SUCCESS, immediately download/inspect the compact artifact and indep
 
 On infrastructure/resource failure, identify the first causal defect, preserve every valid complete-stage checkpoint, make the smallest prospective repair and resume without changing frozen scientific arithmetic or criteria. An exact numerical mismatch is a genuine scientific FAIL and must never be tolerance-rescued.
 
-### Prospectively frozen post-candidate admission — Exp073FR
-
-While Exp073FM is still running and before any partial or terminal numerical result was consumed, a collision-checked prospective authority gate was frozen:
+### Prospectively frozen post-candidate admission — canonical Exp073FR
 
 - path `experiments/073fr_ww_s1_s1_filebacked_checkpoint_provenance_admission_v0_1_prereg.md`;
 - creation commit `55fa8c56ec8bb7e7cb0d278870a05619c5a59f67`;
@@ -66,8 +65,17 @@ While Exp073FM is still running and before any partial or terminal numerical res
 - it is hosted-only and must not acquire `DSIR-HOME-PC`;
 - authority may be created only if the frozen Exp073FM artifact digest, independent ZIP SHA256, both complete checkpoint chains, S1 same-object semantics, source/contract/implementation identities, exact file-backed mmap proof, canonical array identities, finiteness and exact A/B equality all pass without tolerance/rescue.
 
-Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FR_PREREG_FM_RUNNING.md`.
-Research-log supplement remains `docs/research_log/RESEARCH_LOG_2026-09-06_EXP073FN_FO_FP.md`; no partial Exp073FM numerical output was added.
+A later pre-terminal automatic/duplicate Exp073FR workflow was removed from active `main`; the corresponding active workflow path is intentionally absent while FM runs. Canonical prereg above remains authoritative.
+
+### Reconciled successor staging while FM runs — support only
+
+Another DSIR process staged future ordered WW work prospectively on `main`. This does not supersede the current frontier or create authority.
+
+- Exp073FS future `WW_S1_S2` queue/static audit `34054103704 / 101542730121`: raw token `PASS_EXP073FS_AUTONOMOUS_QUEUE_STATIC_AUDIT_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `self_hosted_science_started=false`. Its heavy workflow is `workflow_dispatch` only and requires explicit successful Exp073FR admission evidence before any home job.
+- Exp073FU future `WW_S1_S3` static audit v0.1 `34054723711 / 101544419091`: implementation/static FAIL `+0/+0`; first causal failure from raw logs `AssertionError: Exp073FS`; no science ran. Minimal transform-only repair commit `5c0d75a57c909b0a0b699bbe79a5b5ab15c0f852` preserved frozen science. Repaired v0.2 `34054859313 / 101544834479`: raw token `PASS_EXP073FU_WW_S1_S3_TRANSFORMATION_STATIC_AUDIT_V0_2`, `classification=SUPPORT_PLUS_0_PLUS_0`, `self_hosted_science_started=false`.
+- Prospectively staged Exp073FW/FX (`WW_S2_S2`), Exp073FY/FZ (`WW_S2_S3`) and Exp073GA/GB (`WW_S3_S3`) are preparation only. Commits/workflow presence are not scientific PASS; none is running.
+
+Immutable reconciliation note: `docs/recovery/RECOVERY_2026-09-06_EXP073FS_FU_STAGED_FM_RUNNING.md` (creation commit `5696296347b27479ebeb2460fc3da2066c3978f6`). Research-log supplement: `docs/research_log/RESEARCH_LOG_2026-09-06_EXP073FS_FU_STAGING.md` (creation commit `986a2f37644da16546f1fcb16fdac858f1adc7ae`). Current-process reconciliation commit: `a7277be44b41985c8aa5eda8489933b37111773b`.
 
 ## Frozen global boundaries
 
