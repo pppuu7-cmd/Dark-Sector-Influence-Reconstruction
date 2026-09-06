@@ -69,14 +69,19 @@ Corrected Exp073EY run **`34006214398`**, activation/head **`0476ce61a84a97392ab
 
 Expected candidate token: `PASS_EXP073EY_WW_S0_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`. A workflow SUCCESS alone is insufficient. A valid exact A/B PASS is only a WW_S0_S1 candidate pending separately frozen provenance admission. A valid completed exact A/B mismatch is genuine WW_S0_S1 scientific FAIL. Infrastructure/resource/provenance/checkpoint failures remain `+0/+0` and require causal repair/resume from the last verified checkpoint without changing science.
 
+## Exp073EZ — prospectively frozen next admission gate
+While Exp073EY remained in progress, the result-independent provenance/admission gate `experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_1_prereg.md` was frozen prospectively at commit `73bfd98efb1a1e2535f644f48dbf5ee5a01dcd88`, blob `346bdbedcb34bdd67a0df88e5444f08071e822b6`.
+
+Exp073EZ is `PREREGISTERED_NOT_ACTIVATED`. It deliberately does not guess a terminal Exp073EY artifact ID or digest. On a valid EY candidate PASS it must bind live terminal artifact metadata, independently recompute ZIP SHA256, verify the exact ordered six-stage A/B chains, distinct `(S0,S1)` handoff, file-backed public-BPW route, source/contract/implementation identities, exact selected SHA/`numpy.array_equal`, finiteness and no-rescue policy. Only token `PASS_EXP073EZ_WW_S0_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1` may create WW_S0_S1 scientific authority.
+
 ## Frozen science/execution boundaries
 `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A invalid `<=0.05`; Layer-B invalid-row `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
 
 ## Exact next gates
 1. Do not duplicate or disturb Exp073EY `34006214398 / 101413789646`.
 2. The instant EY becomes terminal, consume raw compact evidence in the same iteration: workflow/jobs, artifact digest plus independent ZIP SHA256, frozen source/contract/workflow/driver identities, both ordered six-stage checkpoint chains, distinct-field handoff proof, exact file-backed public-BPW proof, selected A/B SHA/array equality, finiteness and terminal token.
-3. On valid candidate PASS, prospectively freeze and run a hosted provenance-admission gate. Only that separate admission may create WW_S0_S1 authority; then advance to `WW_S0_S2`.
+3. On valid candidate PASS, bind the exact terminal artifact identity into a fail-closed Exp073EZ implementation and run the hosted provenance-admission gate. Only Exp073EZ admission PASS may create WW_S0_S1 authority; then advance to `WW_S0_S2`.
 4. On genuine completed exact A/B mismatch, record WW_S0_S1 scientific FAIL and continue to the next scientifically permitted branch without tuning the frozen gate.
 5. On infrastructure/resource/provenance/checkpoint failure, identify the first causal defect, preserve all verified complete checkpoint stages, repair minimally and resume; never recompute a verified expensive stage unnecessarily.
 
-Current immutable recovery note: `docs/recovery/RECOVERY_2026-09-06_EXP073EO_ADMITTED_EL_VERIFIED_EY_RUNNING.md`.
+Current immutable recovery note: `docs/recovery/RECOVERY_2026-09-06_EXP073EY_RUNNING_EXP073EZ_PREREGISTERED.md`.
