@@ -3,47 +3,35 @@
 Updated: 2026-09-06
 Scope: DSIR only; RTK/RQIR excluded.
 
-## Preserved/admitted authority
-Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 exact scientific PASS remain preserved. `WW_S0_S0` is now admitted scientific authority by Exp073EO v0.2 run/job `34005373819 / 101411448176`, artifact `9980754356`, digest `sha256:0e1a4cff3b761fecc65d8e07df9e56f8109fd221fb4454746caa8c7d0f2fb4be`, token `PASS_EXP073EO_WW_S0_S0_FILEBACKED_PROVENANCE_ADMISSION_V0_2`, `classification=SCIENTIFIC_AUTHORITY_ADMITTED`, `ww_s0_s0_authority_created=true`.
+## Preserved scientific authority
+Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 exact scientific PASS remain preserved. `WW_S0_S0` remains admitted by Exp073EO v0.2 run/job `34005373819 / 101411448176`, artifact `9980754356`, digest `sha256:0e1a4cff3b761fecc65d8e07df9e56f8109fd221fb4454746caa8c7d0f2fb4be`, token `PASS_EXP073EO_WW_S0_S0_FILEBACKED_PROVENANCE_ADMISSION_V0_2`. Exp073EL resource readiness remains PASS +0/+0 with artifact `9980783193`, digest `sha256:c720233664be2e8a7666db6f95def0a2f13eb674732add6852f0c09e916e5e46`.
 
-Historical Exp073EO v0.1 NumPy runtime failure and string-vs-int EM artifact-ID provenance block remain `+0/+0`. Historical Exp073EY first hosted preflight failure `34006121336 / 101413506204` remains provenance/infrastructure `+0/+0`; its home job `101413524265` was skipped and no EY numerical science ran under the bad EL digest binding.
+## Consumed Exp073EY failure
+Original corrected EY run/job `34006214398 / 101413789646` is terminal FAILURE, classified `INFRASTRUCTURE_SOFTWARE_PATCH_BINDING_FAIL +0/+0`, not scientific FAIL. Artifact `9982181156` has GitHub and independently downloaded ZIP SHA256 `9b600273307c915cba691a998ea33a9443f188a8d4f81f03bc60fb471c0a61c5`.
 
-## Verified WW_S0_S1 resource readiness
-Exp073EL run `34005467421`, hosted job `101411738320`, home job `101411728725`, artifact `9980783193`, authoritative live and independently recomputed ZIP digest `sha256:c720233664be2e8a7666db6f95def0a2f13eb674732add6852f0c09e916e5e46`, raw token `PASS_EXP073EL_WW_S0_S1_FULLRES_RESOURCE_PATH_V0_2`, classification `FULLRES_RESOURCE_PATH_READY`, accounting `+0/+0`. Earlier `f66da690...` digest was a stale provenance transcription and is not authority.
+First causal exception: `fail-closed file-backed FITS read candidate count 0`. Replica A valid durable stages preserved from raw artifact: `fresh_sources_complete -> fresh_workspace_mcm_complete -> mcm_fits_verified`; workspace FITS SHA `ccadf25f8724acfbd29c16135674e0f845e98d99644be3d6c55526f03dbe241b`. No full-window, selected-EE, replica receipt, B science result, A/B result or terminal science token was produced.
 
-## Authoritative current process — Exp073EY WW_S0_S1
-Workflow: `Exp073EY WW_S0_S1 file-backed A/B science v0.1`.
+Causal defect: EY bound construction-only patch `patches/namaster-v2.7-dsir-filebacked-mcm-v0.1.patch` blob `f1eb886ca8af2584a9f621f333cd8be3c6cdb967`, which does not patch `src/nmt_io.c`. The already qualified Exp073ER read-capable storage patch is `patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch`, blob `d534b698f9131688d263eedcef27260386c58641`; Exp073ER `33997539503 / 101390573286`, artifact `9978528214`, digest `sha256:1e0c3516de041e773eca030d9488f7af7d38455033ae5b97ba1151820eb22267` proved exact public FITS-read BPW semantics.
 
-- run `34006214398`;
-- hosted authority-preflight job `101413770925`: SUCCESS;
-- self-hosted home-science job `101413789646`: **IN_PROGRESS** at latest reconciliation;
-- activation/head SHA `0476ce61a84a97392abb80afadad188a588bbe1f`;
-- science workflow blob `e6711cecea8e30122a1477215d68e8559ae9b832`;
-- frozen source authority `de83e20a68f79ccf25b89b0d33eb4206e294c757`;
-- contract fingerprint `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
-- science prereg blob `5790f7502370abffc5c450278520cc73c1f901f8`;
-- implementation prereg blob `a2ea3a705a4cb6f32c8b5337ce522cb7b72b0737`;
-- identity erratum blob `748b6c2ad0f2a1cb4508d2607e65a2ad88c636b9`;
-- EL-binding erratum blob `716e4c0e9054af79029e53923992776dbc6e3850`;
-- ordered distinct source pair `(S0,S1)`;
-- DES NSIDE=4096, ell `0..12287`, 39 bands;
-- selected semantics `EE<-EE = wins[0,:,0,:]`, canonical `<f8 [39,12288]`;
-- exact-only A/B SHA256 plus `numpy.array_equal`, finiteness, no tolerance rescue;
-- public `read_from(..., read_unbinned_MCM=True) -> get_bandpower_windows()` route with exact 19,327,352,832-byte regular-file `/proc/self/maps` proof;
-- checkpoint namespace A: `checkpoints/exp073ey-ww-s0-s1-a-v0-1`;
-- checkpoint namespace B: `checkpoints/exp073ey-ww-s0-s1-b-v0-1`;
-- stage order: `fresh_sources_complete -> fresh_workspace_mcm_complete -> mcm_fits_verified -> full_window_complete -> selected_ee_complete -> replica_receipt_complete`.
+## Authoritative current process — Exp073EY checkpoint resume
+Workflow: `Exp073EY WW_S0_S1 checkpoint resume v0.2`.
 
-Static qualification is closed: `34006046818 / 101413292411` token `PASS_EXP073EY_STATIC_FAILCLOSED_AUDIT_V0_1`; `34006100427 / 101413444610` token `PASS_EXP073EY_STATIC_FAILCLOSED_AUDIT_V0_2`; corrected-binding audit `34006195574 / 101413721477` token `PASS_EXP073EY_STATIC_FAILCLOSED_AUDIT_V0_3`.
+- run `34010599584`;
+- hosted repair-audit job `101425618749`: SUCCESS;
+- self-hosted home resume job `101425638857`: IN_PROGRESS;
+- activation/head SHA `4c570bf6b7f3f53547f43e2882149defa125da89`;
+- repair erratum blob `a6fc7a1a3af86f8f02eba8c02294283192642784`;
+- repair wrapper blob `a9cabeadc9b091424246adf00e9959dc62145e9b`;
+- read-capable patch blob `d534b698f9131688d263eedcef27260386c58641`;
+- original scientific driver blobs remain `1db1eabbdba492c476cc61d3c4d71147aa688384` and `066847006b2ed9d712d2c22d3576a0d8887fa7bf`;
+- frozen source head remains `de83e20a68f79ccf25b89b0d33eb4206e294c757`;
+- contract fingerprint remains `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
+- checkpoint namespaces remain `checkpoints/exp073ey-ww-s0-s1-a-v0-1` and `checkpoints/exp073ey-ww-s0-s1-b-v0-1`.
 
-**Runner ownership:** DSIR-HOME-PC is reserved exclusively for Exp073EY `34006214398 / 101413789646`. Never launch a competing self-hosted DSIR run.
+Frozen science remains ordered distinct `(S0,S1)`, NSIDE=4096, ell `0..12287`, 39 bands, public serialized-workspace `read_from(..., read_unbinned_MCM=True) -> get_bandpower_windows()`, exact regular-file MCM size `19,327,352,832` bytes, selected `EE<-EE = wins[0,:,0,:]`, canonical `<f8 [39,12288]`, exact SHA256 plus `numpy.array_equal`, finiteness, no tolerance/rounding/smoothing/averaging rescue.
 
-**Last durable checkpoint:** intentionally not inferred from partial live numerical state. Partial output is not inspected for adaptive decisions.
+**Runner ownership:** DSIR-HOME-PC is reserved exclusively for `34010599584 / 101425638857`. No competing self-hosted DSIR run is permitted.
 
-**On terminal SUCCESS:** download and independently hash the compact artifact; verify frozen source/contract/driver/workflow identities, both complete ordered six-stage checkpoint chains, ordered distinct-field proof, file-backed public-BPW proof, exact A/B selected SHA/array equality, finiteness and terminal token. A valid PASS is `WW_S0_S1` candidate pending a separately frozen provenance-admission gate; do not create authority from workflow SUCCESS alone.
+**Last verified durable checkpoint:** replica A `mcm_fits_verified`; its earlier complete stages must be restored by exact manifest/source/contract/payload SHA checks rather than recomputed. Replica B has no admitted science checkpoint from the failed run.
 
-**On valid completed exact A/B mismatch:** classify genuine `WW_S0_S1` scientific FAIL and move to the next allowed branch without tuning the gate.
-
-**On infrastructure/resource/provenance/checkpoint failure:** identify the first cause, preserve all valid complete stages and resume from the last verified checkpoint; accounting `+0/+0`; never weaken science.
-
-Frozen frontier: `Wm_S1 -> Wm_S2 -> Wm_S3 -> WW_S0_S0 -> WW_S0_S1 -> WW_S0_S2 -> WW_S0_S3 -> WW_S1_S1 -> WW_S1_S2 -> WW_S1_S3 -> WW_S2_S2 -> WW_S2_S3 -> WW_S3_S3`.
+**On terminal:** consume raw artifact and independently verify ZIP SHA256, restored-vs-new stage provenance, exact patch/driver/source/contract identities, public file-backed mmap proof, both six-stage chains, exact A/B selected equality/finiteness and terminal token. Candidate PASS must still go through the preregistered Exp073EZ provenance-admission gate before `WW_S0_S1` authority is created. Exact completed mismatch is scientific FAIL; infrastructure/resource/provenance failure remains checkpoint-preserving +0/+0 repair/resume.
