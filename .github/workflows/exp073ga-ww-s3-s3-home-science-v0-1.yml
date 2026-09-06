@@ -1,0 +1,168 @@
+name: Exp073GA WW_S3_S3 final autonomous audited home science v0.1
+
+on:
+  workflow_dispatch:
+    inputs:
+      predecessor_admission_run:
+        description: Exp073FZ S2S3 admission run id
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: dsir-exp073ga-ww-s3-s3-home-science-v0-1
+  cancel-in-progress: false
+
+env:
+  GA_PREREG_BLOB: 'd2365e70d65b51ccca6ddf13cb788ebf60fca0ec'
+  GB_PREREG_BLOB: '8751e843f9a6f91a4b2b22c0ff81f930e0dbbfc8'
+  DRIVER_V01_BLOB: 'b839681a5a86640513c1600a6a130d75345cb127'
+  DRIVER_V02_BLOB: 'facc3e2bd6c36ae160d35009b5df4494809d1322'
+  PRUNER_BLOB: '24ee2408b4b66a17001fb734e9e46d008179c310'
+  COMPARE_BLOB: '263c69075f8a9c5ad3644224485f20fbb3961406'
+  HOME_BLOB: '775348eb79f6f15d5c11a15fb6866bb1fa5f6774'
+  ADMIT_VERIFY_BLOB: 'ee065b7d844090ae16386cc6944db23846d663ec'
+  TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
+  PATCH_BLOB: 'd534b698f9131688d263eedcef27260386c58641'
+  FROZEN_SOURCE_HEAD: 'de83e20a68f79ccf25b89b0d33eb4206e294c757'
+  CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
+  R1_ARTIFACT_ID: '9720335366'
+  R1_DIGEST: 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd'
+  NAMASTER_HEAD: '24365fa59a38c15732f4f37e8b29265b75c442d5'
+  ARTIFACT_NAME: 'exp073ga-ww-s3-s3-filebacked-ab-v0-1'
+
+jobs:
+  hosted-launch-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze final S3S3 code and require admitted S2S3 predecessor
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREV_RUN: ${{ inputs.predecessor_admission_run }}
+        run: |
+          set -euo pipefail
+          [[ "$PREV_RUN" =~ ^[0-9]+$ ]]
+          test "$(git rev-parse HEAD:experiments/073ga_ww_s3_s3_filebacked_full_resolution_ab_science_v0_1_prereg.md)" = "$GA_PREREG_BLOB"
+          test "$(git rev-parse HEAD:experiments/073gb_ww_s3_s3_provenance_admission_v0_1_prereg.md)" = "$GB_PREREG_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ga_ww_s3_s3_durable_ab_production_v0_1.py)" = "$DRIVER_V01_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ga_ww_s3_s3_durable_ab_production_v0_2.py)" = "$DRIVER_V02_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ga_verify_and_prune_replica_v0_1.py)" = "$PRUNER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ga_compare_terminal_receipts_v0_1.py)" = "$COMPARE_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ga_home_filebacked_fullres_v0_1.sh)" = "$HOME_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073gb_verify_ga_candidate_v0_1.py)" = "$ADMIT_VERIFY_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073aa_article3_des_angular_task_runner_v0_1.py)" = "$TASKRUNNER_BLOB"
+          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)" = "$PATCH_BLOB"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${PREV_RUN}" > prev-run.json
+          python3 - <<'PY'
+          import json
+          r=json.load(open('prev-run.json')); assert r['status']=='completed' and r['conclusion']=='success' and r['name']=='Exp073FY WW_S2_S3 autonomous audited home science v0.1'
+          PY
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${PREV_RUN}/jobs?per_page=100" > prev-jobs.json
+          python3 - <<'PY' > prev-ids.txt
+          import json
+          for j in json.load(open('prev-jobs.json'))['jobs']:
+              if j['status']=='completed' and j['conclusion']=='success': print(j['id'])
+          PY
+          : > prev.log; while read -r j; do gh api --allow-escape-sequences "repos/${GITHUB_REPOSITORY}/actions/jobs/${j}/logs" >> prev.log; done < prev-ids.txt
+          grep -aF 'PASS_EXP073FZ_WW_S2_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1' prev.log >/dev/null
+          grep -aF 'ww_s2_s3_authority_created=true' prev.log >/dev/null
+          python3 -m py_compile ci/exp073ga_ww_s3_s3_durable_ab_production_v0_1.py ci/exp073ga_ww_s3_s3_durable_ab_production_v0_2.py ci/exp073ga_verify_and_prune_replica_v0_1.py ci/exp073ga_compare_terminal_receipts_v0_1.py ci/exp073gb_verify_ga_candidate_v0_1.py
+          bash -n ci/exp073ga_home_filebacked_fullres_v0_1.sh
+          grep -F 'source_count_map(r1_root,3)' ci/exp073ga_ww_s3_s3_durable_ab_production_v0_1.py >/dev/null
+          grep -F "'ordered_source_indices':[3,3]" ci/exp073ga_ww_s3_s3_durable_ab_production_v0_1.py >/dev/null
+          grep -F 'compute_coupling_matrix(f3,f3,b)' ci/exp073ga_ww_s3_s3_durable_ab_production_v0_1.py >/dev/null
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073ga_*.py ci/exp073gb_verify_ga_candidate_v0_1.py experiments/073g[ab]_*.md
+          echo PASS_EXP073GA_HOSTED_LAUNCH_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+
+  home-science:
+    needs: [hosted-launch-audit]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 720
+    env:
+      OMP_NUM_THREADS: '8'
+      OMP_DYNAMIC: 'FALSE'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+      DRIVER_V01_BLOB: 'b839681a5a86640513c1600a6a130d75345cb127'
+      DRIVER_V02_BLOB: 'facc3e2bd6c36ae160d35009b5df4494809d1322'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run frozen WW_S3_S3 A/B gate with durable checkpoints
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash ci/exp073ga_home_filebacked_fullres_v0_1.sh
+      - name: Collect compact terminal or partial evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$HOME/.cache/dsir/exp073ga-ww-s3-s3-filebacked-ab-v0-1"; OUT="$RUNNER_TEMP/exp073ga-artifact"; rm -rf "$OUT"; mkdir -p "$OUT"
+          ROOT="$ROOT" OUT="$OUT" python3 - <<'PY'
+          import os,shutil
+          from pathlib import Path
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          if root.exists():
+              for p in root.rglob('*.json'):
+                  try: q=out/p.relative_to(root); q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+                  except OSError: pass
+              for rep in ('A','B'):
+                  p=root/'checkpoints'/rep/'exact_route'/'selected_ee.bin'
+                  if p.exists(): q=out/'checkpoints'/rep/'exact_route'/'selected_ee.bin'; q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+              for n in ('A_driver.log','B_driver.log','A_prune_verify.log','B_prune_verify.log','ab_compare_stdout.txt','resource_telemetry.log','terminal_receipt.json'):
+                  p=root/n
+                  if p.exists(): shutil.copy2(p,out/n)
+          PY
+      - name: Upload Exp073GA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ga-ww-s3-s3-filebacked-ab-v0-1
+          path: ${{ runner.temp }}/exp073ga-artifact
+          if-no-files-found: warn
+          retention-days: 30
+
+  hosted-final-provenance-admission:
+    needs: [home-science]
+    if: ${{ needs.home-science.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact GA artifact, verify digest, and admit final WW target
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073gb_ww_s3_s3_provenance_admission_v0_1_prereg.md)" = "$GB_PREREG_BLOB"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs?per_page=100" > jobs.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?per_page=100" > artifacts.json
+          python3 - <<'PY' > evidence.env
+          import json,os,shlex
+          jobs=json.load(open('jobs.json'))['jobs']; h=[j for j in jobs if j['name']=='home-science']; assert len(h)==1 and h[0]['status']=='completed' and h[0]['conclusion']=='success'
+          arts=json.load(open('artifacts.json'))['artifacts']; a=[x for x in arts if x['name']==os.environ['ARTIFACT_NAME']]; assert len(a)==1 and a[0]['expired'] is False and a[0].get('digest','').startswith('sha256:')
+          a=a[0]
+          for k,v in [('HOME_JOB',h[0]['id']),('ARTIFACT_ID',a['id']),('ARTIFACT_DIGEST',a['digest'])]: print(k+'='+shlex.quote(str(v)))
+          PY
+          source evidence.env
+          gh api --allow-escape-sequences "repos/${GITHUB_REPOSITORY}/actions/jobs/${HOME_JOB}/logs" > candidate.log
+          curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 2 -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" -o candidate.zip
+          test "sha256:$(sha256sum candidate.zip | awk '{print $1}')" = "$ARTIFACT_DIGEST"
+          mkdir candidate; unzip -q candidate.zip -d candidate
+          python3 ci/exp073gb_verify_ga_candidate_v0_1.py --root candidate --log candidate.log | tee admission.log
+          grep -Fx 'PASS_EXP073GB_WW_S3_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1' admission.log >/dev/null
+          grep -Fx 'classification=SCIENTIFIC_AUTHORITY_ADMITTED' admission.log >/dev/null
+          grep -Fx 'ww_s3_s3_authority_created=true' admission.log >/dev/null
+          echo AUTOQUEUE_FINAL_HEAVY_TARGET_ADMITTED=WW_S3_S3
+          echo DOWNSTREAM_14_WINDOW_JOIN_NOT_STARTED=true
