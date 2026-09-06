@@ -21,15 +21,15 @@ Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 PASS remain preserved. `WW_S0_
 
 **Runner ownership:** `DSIR-HOME-PC` is exclusively owned by job `101452805620`; no competing self-hosted DSIR task may launch.
 
-## Exp073FE — independent hosted restore-hardening support
+## Exp073FE — restore-hardening support CLOSED
 
 Before any terminal Exp073FA numerical output was inspected, static audit found that the wrapper's final `--replica AB` invocation re-enters `validated_finished()`, whose terminal restore checks only the terminal receipt and selected EE payload, not the complete six-stage chain/all prior payloads required by the Exp073FA checkpoint contract. This is implementation/provenance only and does not change frozen science.
 
 Prospective hardening prereg blob `43ff6dfe8d1eb682202b142e6ed2408a4beb00f7`; terminal-receipt comparator blob `14841dc412d3989e6f86294072479424f26cec93`.
 
-First Exp073FE hosted audit `34023253707 / 101459598645` is immutable **INFRASTRUCTURE_DEPENDENCY_FAIL +0/+0**. First causal failure: hosted Ubuntu image lacked NumPy (`ModuleNotFoundError: No module named 'numpy'`) before comparator tests. Minimal repair changed only the hosted audit environment by installing NumPy; comparator, prereg and science were unchanged.
+First Exp073FE hosted audit `34023253707 / 101459598645` remains immutable **INFRASTRUCTURE_DEPENDENCY_FAIL +0/+0** because the hosted image lacked NumPy before comparator testing. Minimal repair changed only the hosted audit environment.
 
-Repaired hosted-only Exp073FE run **`34023325339`**, job **`101459798149`**, head **`a4e832e9e275f2baa4958279c7b4a01d220df934`**, is currently queued/in_progress. Expected support token `PASS_EXP073FE_EXP073FA_TERMINAL_COMPARE_RESTORE_HARDENING_V0_1`; it cannot create authority and does not use `DSIR-HOME-PC`.
+Repaired Exp073FE **`34023325339 / 101459798149`** is terminal raw-verified exact support PASS `+0/+0`. Raw log contains `PASS_EXP073FE_EXP073FA_TERMINAL_COMPARE_RESTORE_HARDENING_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `ww_s0_s2_authority_created=false`. Synthetic audit verifies exact PASS for identical arrays, exact scientific FAIL after a one-ULP mismatch, and fail-closed rejection of receipt tampering. No WW authority was created.
 
 On terminal Exp073FA: consume raw artifact/digest/provenance/checkpoint identities and exact A/B result. Exact mismatch remains scientific FAIL. A numerical match remains non-authoritative; if the complete checkpoint/provenance contract cannot be proven, classify provenance/infrastructure `+0/+0`, preserve valid evidence, and use the smallest repair. Only a separately frozen hosted provenance admission may create `WW_S0_S2` authority.
 
