@@ -43,7 +43,7 @@ All are `+0/+0` and create no WW authority.
 - Exp073EM construction storage exact PASS: run/job `33993395728 / 101379508508`, artifact `9977333691`, digest `sha256:0ece75e489b6f413d96e85a099e42db96b5d5acdc03c3ee6901273357762cda1`.
 - Exp073EK direct serialized public-BPW repeatability PASS: run/job `33988956806 / 101367596573`, artifact `9976033816`, digest `sha256:f39351cddec695559686126fc15e212556eea370fe3eeab73d5f20f80c288c06`.
 - Exp073EP file-backed composition PASS: run/job `33994782890 / 101383307890`, artifact `9977735941`, digest `sha256:4007fa89e678f4585cd73641ff26054a9c939c3f0e679581202cdf2154a39ed5`.
-- Exp073ER FITS-read/public-BPW exact PASS: run/job `33997539503 / 101390573286`, artifact `9978528214`, digest `sha256:1e0c3516de0410c1af30367cd1ce02644b7aa626` is NOT authoritative; authoritative digest remains the validated recovery value `sha256:1e0c3516de041e773eca030d9488f7af7d38455033ae5b97ba1151820eb22267`.
+- Exp073ER FITS-read/public-BPW exact PASS: run/job `33997539503 / 101390573286`, artifact `9978528214`, digest `sha256:1e0c3516de041e773eca030d9488f7af7d38455033ae5b97ba1151820eb22267`.
 - Exp073ET immutable formal support FAIL: run/job `34001003402 / 101399741708`; mismatch localized to cross-state pre/post-serialization last-bit difference, while all pre-serialization low-memory arithmetic comparisons passed exactly.
 - Exp073EU corrected state-matched exact PASS: run/job `34001139228 / 101400097453`, artifact `9979525491`, ZIP SHA256 `5cd9ce3f668b135ee695d51b7dba3e80cfa332c925e71397b2a6e32041ff872c`.
 - Exp073EV conservative full-resolution disk-budget PASS: run/job `34001215421 / 101400305564`, conservative peak `41,135,996,928` bytes against 50-GiB floor.
