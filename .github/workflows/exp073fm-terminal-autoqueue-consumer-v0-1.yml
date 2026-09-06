@@ -21,7 +21,7 @@ env:
   CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
   FR_PREREG_BLOB: 'aa08636426dd48142c3a3da7c032f1075a1be1f9'
   VERIFIER_BLOB: '127beca2392e6b093d08330828a764a3108b646b'
-  GENERATOR_BLOB: '9fa82a984d1a2d7179581a2d2959c813ca3ce3b2'
+  GENERATOR_BLOB: '47a96ab38674d0997a73205312c4a41be86a8218'
   CANONICAL_WORKFLOW: '.github/workflows/exp073fr-ww-s1-s1-canonical-admission-v0-1.yml'
 
 jobs:
@@ -73,7 +73,7 @@ jobs:
           python3 ci/exp073fr_generate_canonical_admission_workflow_v0_1.py --candidate-run "$EXPECTED_RUN" --candidate-job "$CANDIDATE_JOB" --candidate-head "$EXPECTED_HEAD" --artifact-id "$ARTIFACT_ID" --artifact-name "$ARTIFACT_NAME" --artifact-size "$ARTIFACT_SIZE" --artifact-digest "$ARTIFACT_DIGEST" --consumer-run "$GITHUB_RUN_ID" --out generated-fr.yml
           python3 - <<'PY'
           import pathlib
-          s=pathlib.Path('generated-fr.yml').read_text(); assert 'PASS_EXP073FR_WW_S1_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1' in s and 'Exp073FR WW_S1_S1 canonical checkpoint provenance admission v0.1' in s
+          s=pathlib.Path('generated-fr.yml').read_text(); assert 'PASS_EXP073FR_WW_S1_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1' in s and 'Exp073FR WW_S1_S1 provenance admission and successor dispatch v0.1' in s
           PY
           API="repos/${GITHUB_REPOSITORY}/contents/${CANONICAL_WORKFLOW}"
           if gh api -H 'Accept: application/vnd.github.raw+json' "$API" > existing-fr.yml 2>/dev/null; then
