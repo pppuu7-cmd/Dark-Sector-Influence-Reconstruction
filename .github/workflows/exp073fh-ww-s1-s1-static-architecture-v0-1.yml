@@ -1,0 +1,83 @@
+name: Exp073FH WW_S1_S1 same-field architecture audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073fh-ww-s1-s1-static-architecture-v0-1.txt'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  FH_PREREG_BLOB: '0fc09948c7cfb5c05868538544554dc8001a9126'
+  MANIFEST_BLOB: '52623cdd398b8bde72418ac6a3fc8cd985556da1'
+  TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
+  R1_RUN_ID: '33270843577'
+  R1_JOB_ID: '99148916507'
+  R1_ARTIFACT_ID: '9720335366'
+  R1_DIGEST: 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd'
+
+jobs:
+  same-field-contract-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen auto-pair semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073fh_ww_s1_s1_same_field_architecture_v0_1_prereg.md)" = "$FH_PREREG_BLOB"
+          test "$(git rev-parse HEAD:docs/ARTICLE3_DES_ANGULAR_14_TASK_MANIFEST_2026-08-30.md)" = "$MANIFEST_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073aa_article3_des_angular_task_runner_v0_1.py)" = "$TASKRUNNER_BLOB"
+          python3 - <<'PY'
+          from pathlib import Path
+          m=Path('docs/ARTICLE3_DES_ANGULAR_14_TASK_MANIFEST_2026-08-30.md').read_text()
+          s=Path('ci/exp073aa_article3_des_angular_task_runner_v0_1.py').read_text()
+          assert m.count('`WW_S1_S1`.')==1
+          assert m.index('`WW_S0_S3`.') < m.index('`WW_S1_S1`.')
+          auth="1:{'selected':7_851_711,'bytes':31_406_844,'record_sha':'752f585125e413c7bd40cc5174cf7ef98e95f970022a351c5d91206f371d2241','unique':4_339_193,'occupancy_sha':'fed1ffdf2ef7a7ae88e42615bd08e207e039239c44fa20b7994258f147a739f1'}"
+          assert auth in s
+          assert "'WW_S1_S1'" in s
+          assert "if i>j:\n        raise AssertionError('WW task must be unordered i<=j')" in s
+          assert "if bmap is a:\n            fb=fa\n        else:\n            fb=nmt.NmtField(bmap,None,spin=2)" in s
+          assert "w.compute_coupling_matrix(fa,fb,b)" in s
+          assert "selected=np.ascontiguousarray(wins[0,:,0,:],dtype='<f8')" in s
+          assert "expected=(4,39,4,LMAX_PLUS_ONE)" in s
+          assert "'science_gate_scored':False" in s
+          assert "'physical_support_evaluated':False" in s
+          assert "'covariance_read':False" in s and "'G8_read':False" in s
+          PY
+          echo PASS_EXP073FH_WW_S1_S1_SAME_FIELD_ARCHITECTURE_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo ww_s1_s1_authority_created=false
+
+  r1-lineage-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reconcile S1 R1 provenance without science reads
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api="https://api.github.com/repos/${GITHUB_REPOSITORY}"
+          hdr=(-H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28')
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/runs/$R1_RUN_ID" -o run.json
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/runs/$R1_RUN_ID/jobs?per_page=100" -o jobs.json
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/runs/$R1_RUN_ID/artifacts?per_page=100" -o artifacts.json
+          python3 - <<'PY'
+          import json,os
+          r=json.load(open('run.json')); j=json.load(open('jobs.json'))['jobs']; a=json.load(open('artifacts.json'))['artifacts']
+          assert r['id']==int(os.environ['R1_RUN_ID']) and r['status']=='completed' and r['conclusion']=='success' and r['head_sha']=='ef783ca941fb9b9b5f5eae537986c56ff06e6536'
+          q=next(x for x in j if x['id']==int(os.environ['R1_JOB_ID'])); assert q['status']=='completed' and q['conclusion']=='success'
+          z=next(x for x in a if x['id']==int(os.environ['R1_ARTIFACT_ID'])); assert z['digest']==os.environ['R1_DIGEST'] and not z['expired']
+          PY
+          grep -F "1:{'selected':7_851_711,'bytes':31_406_844" ci/exp073aa_article3_des_angular_task_runner_v0_1.py >/dev/null
+          echo PASS_EXP073FH_R1_S1_LINEAGE_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo ww_s1_s1_authority_created=false
