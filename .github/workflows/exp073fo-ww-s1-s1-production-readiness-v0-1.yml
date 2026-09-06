@@ -1,0 +1,42 @@
+name: Exp073FO WW_S1_S1 production readiness v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073fo-ww-s1-s1-production-readiness-v0-1.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-readiness-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen S1S1 transformation readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073fo_ww_s1_s1_production_transformation_readiness_v0_1_prereg.md)" = "8bbe6e45b10295c245f588a4bc65713acb1a1d2e"
+          python3 - <<'PY'
+          from pathlib import Path
+          fm=Path('experiments/073fm_ww_s1_s1_filebacked_full_resolution_ab_science_v0_1_prereg.md').read_text()
+          fl=Path('experiments/073fl_ww_s1_s1_driver_generation_static_audit_v0_1_prereg.md').read_text()
+          fa=Path('ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py').read_text()
+          fg=Path('ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py').read_text()
+          for t in ('[1,1]','exactly one spin-2','same field object','EE<-EE','<f8 [39,12288]','NSIDE=4096','numpy.array_equal','separate provenance-admission'):
+              assert t in fm, t
+          for t in ('equal-but-distinct','same-object','[1,1]'):
+              assert t in fl, t
+          for t in ("CHECKPOINT_ORDER=['fresh_sources_complete','fresh_workspace_mcm_complete','mcm_fits_verified','full_window_complete','selected_ee_complete','replica_receipt_complete']",'get_bandpower_windows()','read_unbinned_MCM=True','np.array_equal'):
+              assert t in fa, t
+          assert 'np.allclose' not in fa and 'np.isclose' not in fa
+          for t in ('strict_validated_finished','complete six-stage','fail-closed missing complete-stage manifest'):
+              assert t in fg, t
+          PY
+          echo PASS_EXP073FO_WW_S1_S1_PRODUCTION_TRANSFORMATION_READINESS_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo ww_s1_s1_authority_created=false
+          echo self_hosted_science_started=false
