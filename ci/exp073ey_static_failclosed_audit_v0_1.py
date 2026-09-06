@@ -3,6 +3,7 @@ from pathlib import Path
 import ast,subprocess
 p1=Path('experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_1_prereg.md').read_text()
 p2=Path('experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_2_impl_prereg.md').read_text()
+p3=Path('experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_3_identity_erratum.md').read_text()
 d1=Path('ci/exp073ey_ww_s0_s1_durable_ab_production_v0_1.py').read_text()
 d2=Path('ci/exp073ey_ww_s0_s1_durable_ab_production_v0_2.py').read_text()
 h=Path('ci/exp073ey_home_filebacked_fullres_v0_1.sh').read_text()
@@ -18,6 +19,7 @@ for x in ['OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NU
  assert x in h,x
 assert 'PASS_EXP073EO_WW_S0_S0_FILEBACKED_PROVENANCE_ADMISSION_V0_2' in p1
 assert 'PASS_EXP073EL_WW_S0_S1_FULLRES_RESOURCE_PATH_V0_2' in p1
-assert 'a2970a4332d415817b011c6ce73049f0083ada93' in p2
-assert '1db1eabbdba492c476cc61d3c4d71147aa688384' in p2
+assert '5790f7502370abffc5c450278520cc73c1f901f8' in p3
+assert '1db1eabbdba492c476cc61d3c4d71147aa688384' in p3
+assert '066847006b2ed9d712d2c22d3576a0d8887fa7bf' in p3
 print('PASS_EXP073EY_STATIC_FAILCLOSED_AUDIT_V0_1')
