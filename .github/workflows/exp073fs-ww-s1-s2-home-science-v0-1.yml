@@ -1,0 +1,220 @@
+name: Exp073FS WW_S1_S2 autonomous audited home science v0.1
+
+on:
+  workflow_dispatch:
+    inputs:
+      predecessor_admission_run:
+        description: Exp073FR admission run id
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: dsir-exp073fs-ww-s1-s2-home-science-v0-1
+  cancel-in-progress: false
+
+env:
+  FS_PREREG_BLOB: '80c6af017b47d51db3f588221749fb152577b0e5'
+  FT_PREREG_BLOB: '072bdeae68e86312142e980fe2015f979e7b117f'
+  DRIVER_V01_BLOB: '030f64f4d1b5bb233ad977b6a6971ebb197d45bf'
+  DRIVER_V02_BLOB: 'a02370a5d9d588a813026dee6355c8a1c58a380d'
+  PRUNER_BLOB: '92bf5eaa047d97adeddad240784dcc5176c9459e'
+  COMPARE_BLOB: '826fcefc8ce64a26e8c8205b1898f63c42ffc0f0'
+  HOME_BLOB: 'a9f1777c68db522c02068828bc9e47a78b065681'
+  FA_HOME_BLOB: '309c464bbfbe4896bd560165985ee7f643d9ee22'
+  TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
+  PATCH_BLOB: 'd534b698f9131688d263eedcef27260386c58641'
+  EM_GENERATOR_BLOB: 'bd1795f2a2c2cf80341f212996eb8278e0be53d9'
+  EM_COMPARE_BLOB: 'f0de92f3f121592b6d139eb7d948426946d901d1'
+  FROZEN_SOURCE_HEAD: 'de83e20a68f79ccf25b89b0d33eb4206e294c757'
+  CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
+  R1_ARTIFACT_ID: '9720335366'
+  R1_DIGEST: 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd'
+  NAMASTER_HEAD: '24365fa59a38c15732f4f37e8b29265b75c442d5'
+  NEXT_WORKFLOW: 'exp073fu-ww-s1-s3-home-science-v0-1.yml'
+
+jobs:
+  hosted-launch-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze S1S2 code and require admitted S1S1 predecessor
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREV_RUN: ${{ inputs.predecessor_admission_run }}
+        run: |
+          set -euo pipefail
+          [[ "$PREV_RUN" =~ ^[0-9]+$ ]]
+          test "$(git rev-parse HEAD:experiments/073fs_ww_s1_s2_filebacked_full_resolution_ab_science_v0_1_prereg.md)" = "$FS_PREREG_BLOB"
+          test "$(git rev-parse HEAD:experiments/073ft_ww_s1_s2_provenance_admission_v0_1_prereg.md)" = "$FT_PREREG_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fs_ww_s1_s2_durable_ab_production_v0_1.py)" = "$DRIVER_V01_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fs_ww_s1_s2_durable_ab_production_v0_2.py)" = "$DRIVER_V02_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fs_verify_and_prune_replica_v0_1.py)" = "$PRUNER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fs_compare_terminal_receipts_v0_1.py)" = "$COMPARE_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fs_home_filebacked_fullres_v0_1.sh)" = "$HOME_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fa_home_filebacked_fullres_v0_1.sh)" = "$FA_HOME_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073aa_article3_des_angular_task_runner_v0_1.py)" = "$TASKRUNNER_BLOB"
+          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)" = "$PATCH_BLOB"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${PREV_RUN}" > prev-run.json
+          python3 - <<'PY'
+          import json,os
+          r=json.load(open('prev-run.json'))
+          assert r['status']=='completed' and r['conclusion']=='success'
+          assert r['name']=='Exp073FR WW_S1_S1 provenance admission and successor dispatch v0.1'
+          PY
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${PREV_RUN}/jobs?per_page=100" > prev-jobs.json
+          python3 - <<'PY' > prev-job-ids.txt
+          import json
+          for j in json.load(open('prev-jobs.json'))['jobs']:
+              if j['status']=='completed' and j['conclusion']=='success': print(j['id'])
+          PY
+          : > prev.log
+          while read -r jid; do gh api --allow-escape-sequences "repos/${GITHUB_REPOSITORY}/actions/jobs/${jid}/logs" >> prev.log; done < prev-job-ids.txt
+          grep -aF 'PASS_EXP073FR_WW_S1_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1' prev.log >/dev/null
+          grep -aF 'classification=SCIENTIFIC_AUTHORITY_ADMITTED' prev.log >/dev/null
+          grep -aF 'ww_s1_s1_authority_created=true' prev.log >/dev/null
+          python3 -m py_compile ci/exp073fs_ww_s1_s2_durable_ab_production_v0_1.py ci/exp073fs_ww_s1_s2_durable_ab_production_v0_2.py ci/exp073fs_verify_and_prune_replica_v0_1.py ci/exp073fs_compare_terminal_receipts_v0_1.py
+          bash -n ci/exp073fs_home_filebacked_fullres_v0_1.sh
+          grep -F 'source_count_map(r1_root,1)' ci/exp073fs_ww_s1_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F 'source_count_map(r1_root,2)' ci/exp073fs_ww_s1_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F 'compute_coupling_matrix(f1,f2,b)' ci/exp073fs_ww_s1_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F "'ordered_source_indices':[1,2]" ci/exp073fs_ww_s1_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F 'ids[0]==ids[1]' ci/exp073fs_ww_s1_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F 'EXPECTED_MCM_BYTES = 19327352832' ci/exp073fs_ww_s1_s2_durable_ab_production_v0_2.py >/dev/null
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fs_*.py experiments/073fs_ww_s1_s2_filebacked_full_resolution_ab_science_v0_1_prereg.md
+          echo PASS_EXP073FS_HOSTED_LAUNCH_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+
+  home-science:
+    needs: [hosted-launch-audit]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 720
+    env:
+      OMP_NUM_THREADS: '8'
+      OMP_DYNAMIC: 'FALSE'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run frozen WW_S1_S2 A/B gate with durable checkpoints
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash ci/exp073fs_home_filebacked_fullres_v0_1.sh
+      - name: Collect compact terminal or partial evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$HOME/.cache/dsir/exp073fs-ww-s1-s2-filebacked-ab-v0-1"
+          OUT="$RUNNER_TEMP/exp073fs-artifact"
+          rm -rf "$OUT"; mkdir -p "$OUT"
+          ROOT="$ROOT" OUT="$OUT" python3 - <<'PY'
+          import os,shutil
+          from pathlib import Path
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          if root.exists():
+              for p in root.rglob('*.json'):
+                  try:
+                      q=out/p.relative_to(root); q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+                  except OSError: pass
+              for rep in ('A','B'):
+                  p=root/'checkpoints'/rep/'exact_route'/'selected_ee.bin'
+                  if p.exists():
+                      q=out/'checkpoints'/rep/'exact_route'/'selected_ee.bin'; q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+              for n in ('A_driver.log','B_driver.log','A_prune_verify.log','B_prune_verify.log','ab_compare_stdout.txt','resource_telemetry.log','terminal_receipt.json'):
+                  p=root/n
+                  if p.exists(): shutil.copy2(p,out/n)
+          PY
+      - name: Upload Exp073FS evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073fs-ww-s1-s2-filebacked-ab-v0-1
+          path: ${{ runner.temp }}/exp073fs-artifact
+          if-no-files-found: warn
+          retention-days: 30
+
+  hosted-provenance-admission:
+    needs: [home-science]
+    if: ${{ needs.home-science.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: exp073fs-ww-s1-s2-filebacked-ab-v0-1
+          path: candidate
+      - name: Independently admit exact S1S2 candidate
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073ft_ww_s1_s2_provenance_admission_v0_1_prereg.md)" = "$FT_PREREG_BLOB"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs?per_page=100" > jobs.json
+          HOME_JOB="$(python3 - <<'PY'
+          import json
+          x=[j for j in json.load(open('jobs.json'))['jobs'] if j['name']=='home-science']
+          assert len(x)==1 and x[0]['status']=='completed' and x[0]['conclusion']=='success'
+          print(x[0]['id'])
+          PY
+          )"
+          gh api --allow-escape-sequences "repos/${GITHUB_REPOSITORY}/actions/jobs/${HOME_JOB}/logs" > candidate.log
+          grep -aF 'PASS_EXP073FS_REPLICA_A_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' candidate.log >/dev/null
+          grep -aF 'PASS_EXP073FS_REPLICA_B_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' candidate.log >/dev/null
+          grep -aF 'PASS_EXP073FS_WW_S1_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1' candidate.log >/dev/null
+          grep -aF 'PASS_EXP073FS_LIVE_EXCLUSIVITY' candidate.log >/dev/null
+          python3 - <<'PY'
+          import hashlib,json,math,struct
+          from pathlib import Path
+          root=Path('candidate'); term=json.loads((root/'terminal_receipt.json').read_text())
+          expected={'classification':'SCIENTIFIC_CANDIDATE_PASS_PENDING_PROVENANCE_ADMISSION','token':'PASS_EXP073FS_WW_S1_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1','science_gate_scored':True,'ww_s1_s2_authority_created':False,'source_pair':'S1->S2','ordered_source_indices':[1,2],'same_field_object_handoff':False,'selected_semantics':'EE<-EE','selected_shape':[39,12288],'selected_dtype':'<f8','sha256_equal':True,'numpy_array_equal':True,'all_finite':True,'source_head':'de83e20a68f79ccf25b89b0d33eb4206e294c757','contract_fingerprint':'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251','bpw_route':'public_get_bandpower_windows_after_filebacked_fits_read','no_tolerance_rescue':True,'terminal_compare_restored_replica':False,'full_chain_verified_before_prune':True}
+          for k,v in expected.items(): assert term.get(k)==v,(k,term.get(k),v)
+          def sha(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for b in iter(lambda:f.read(8<<20),b''): h.update(b)
+              return h.hexdigest()
+          stages=['fresh_sources_complete','fresh_workspace_mcm_complete','mcm_fits_verified','full_window_complete','selected_ee_complete','replica_receipt_complete']; eps=[]
+          for rep in ('A','B'):
+              rr=root/'checkpoints'/rep; rp=rr/'replica_receipt.json'; pp=rr/'post_receipt_prune.json'; cp=rr/'replica_receipt_complete.json'; ep=rr/'exact_route'/'selected_ee.bin'
+              rec=json.loads(rp.read_text()); prune=json.loads(pp.read_text()); comp=json.loads(cp.read_text()); src=json.loads((rr/'fresh_sources_complete.json').read_text())['payloads']; ws=json.loads((rr/'fresh_workspace_mcm_complete.json').read_text())['payloads']; ad=rec['adapter_receipt']
+              assert rec['source_pair']=='S1->S2' and rec['ordered_source_indices']==[1,2] and rec['same_field_object_handoff'] is False
+              assert src['ordered_source_indices']==[1,2] and src['reconstruction_counts']=={'s1':1,'s2':1} and src['same_source_map_both_sides'] is False
+              ids=ws['field_object_ids']; assert ws['field_construction_count']==2 and ws['same_field_object_handoff'] is False and len(ids)==2 and ids[0]!=ids[1]
+              assert ad['mcm_backing_bytes']==19327352832 and ad['mcm_filebacked'] is True and ad['mcm_proc_maps'] is True and ad['read_unbinned_MCM'] is True and ad['route']=='public_get_bandpower_windows_after_filebacked_fits_read'
+              assert ad['public_full_shape']==[4,39,4,12288] and ad['selected_semantics']=='wins[0,:,0,:] = EE<-EE' and ad['no_tolerance_rescue'] is True
+              assert prune['complete_chain_verified_before_prune'] is True and prune['pruned_only_after_receipt'] is True and set(prune['stage_manifest_sha256'])==set(stages)
+              for st in stages:
+                  sp=rr/(st+'.json'); assert sha(sp)==prune['stage_manifest_sha256'][st]
+              he=sha(ep); assert he==rec['selected_ee_sha256']==prune['selected_ee_sha256']==comp['payloads']['selected_ee']['sha256']; assert ep.stat().st_size==39*12288*8
+              eps.append((ep,he))
+          assert eps[0][1]==eps[1][1]==term['a_sha256']==term['b_sha256']
+          ba=eps[0][0].read_bytes(); bb=eps[1][0].read_bytes(); assert ba==bb and all(math.isfinite(x[0]) for x in struct.iter_unpack('<d',ba))
+          PY
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fs_*.py experiments/073ft_ww_s1_s2_provenance_admission_v0_1_prereg.md
+          echo PASS_EXP073FT_WW_S1_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1
+          echo classification=SCIENTIFIC_AUTHORITY_ADMITTED
+          echo ww_s1_s2_authority_created=true
+      - name: Dispatch next frozen heavy target when installed
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/${NEXT_WORKFLOW}" >/dev/null 2>&1; then
+            gh api --method POST "repos/${GITHUB_REPOSITORY}/actions/workflows/${NEXT_WORKFLOW}/dispatches" -f ref=main -f inputs[predecessor_admission_run]="${GITHUB_RUN_ID}"
+            echo "DISPATCHED_SUCCESSOR=${NEXT_WORKFLOW}"
+          else
+            echo "NO_FROZEN_SUCCESSOR_INSTALLED=${NEXT_WORKFLOW}"
+          fi
