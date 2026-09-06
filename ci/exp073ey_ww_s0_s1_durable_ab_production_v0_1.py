@@ -4,14 +4,13 @@ import argparse,gc,hashlib,importlib.metadata,json,os
 from pathlib import Path
 import numpy as np
 import pymaster as nmt
-
 from exp073aa_article3_des_angular_task_runner_v0_1 import BAND_EDGES, LMAX_PLUS_ONE, source_count_map, validate_r1
-from exp073do_ww_s0_s0_production_exact_adapter_v0_1 import execute as execute_ww_adapter
 
 SCHEMA='dsir.exp073ey.ww_s0_s1.durable_ab_production.v0.1'
 CHECKPOINT_ORDER=['fresh_sources_complete','fresh_workspace_mcm_complete','mcm_fits_verified','full_window_complete','selected_ee_complete','replica_receipt_complete']
 NAMESPACES={'A':'checkpoints/exp073ey-ww-s0-s1-a-v0-1','B':'checkpoints/exp073ey-ww-s0-s1-b-v0-1'}
 THREAD_ENV={'OPENBLAS_NUM_THREADS':'1','MKL_NUM_THREADS':'1','NUMEXPR_NUM_THREADS':'1'}
+FULL_SHAPE=(4,39,4,12288); EE_SHAPE=(39,12288)
 
 def file_sha(path:Path):
  h=hashlib.sha256()
@@ -55,8 +54,33 @@ def validated_finished(root,replica,head,fp):
  if not rp.exists() or file_sha(rp)!=st['payloads']['replica_receipt']['sha256']: raise RuntimeError('fail-closed receipt restore mismatch')
  r=json.loads(rp.read_text()); ee=Path(r['selected_ee_path'])
  if not ee.exists() or file_sha(ee)!=r['selected_ee_sha256'] or r['selected_ee_sha256']!=st['payloads']['selected_ee']['sha256']: raise RuntimeError('fail-closed final EE restore mismatch')
- if r.get('ordered_source_indices')!=[0,1] or r.get('same_field_object_handoff') is not False: raise RuntimeError('fail-closed ordered distinct-field receipt mismatch')
+ if r.get('ordered_source_indices')!=[0,1] or r.get('same_field_object_handoff') is not False or r.get('bpw_route')!='public_get_bandpower_windows_after_filebacked_fits_read': raise RuntimeError('fail-closed ordered public-route receipt mismatch')
  return r
+
+def base_chain(obj):
+ out=[]; cur=obj; seen=set()
+ for _ in range(16):
+  if id(cur) in seen: break
+  seen.add(id(cur)); out.append(type(cur).__name__)
+  nxt=getattr(cur,'base',None)
+  if nxt is None: break
+  cur=nxt
+ return out
+
+def public_bpw_from_serialized_workspace(wp:Path,out_dir:Path):
+ out_dir.mkdir(parents=True,exist_ok=True)
+ w2=nmt.NmtWorkspace(); w2.read_from(str(wp),read_unbinned_MCM=True)
+ mcm=getattr(getattr(w2,'wsp',None),'mcm',None)
+ if mcm is None: raise RuntimeError('fail-closed missing unbinned MCM after FITS read')
+ chain=base_chain(mcm); mmap_backed=any(x in ('memmap','mmap') for x in chain)
+ if not mmap_backed: raise RuntimeError('fail-closed MCM is not file-backed after FITS read')
+ wins=np.asarray(w2.get_bandpower_windows())
+ if tuple(wins.shape)!=FULL_SHAPE: raise RuntimeError(f'fail-closed public BPW shape {wins.shape}')
+ full_arr=np.ascontiguousarray(wins,dtype='<f8'); ee_arr=np.ascontiguousarray(wins[0,:,0,:],dtype='<f8')
+ if tuple(ee_arr.shape)!=EE_SHAPE or not np.isfinite(full_arr).all() or not np.isfinite(ee_arr).all(): raise RuntimeError('fail-closed public BPW geometry/finiteness')
+ full=out_dir/'full_window.bin'; ee=out_dir/'selected_ee.bin'; full_arr.tofile(full); ee_arr.tofile(ee)
+ receipt={'route':'public_get_bandpower_windows_after_filebacked_fits_read','read_unbinned_MCM':True,'mcm_base_chain':chain,'mcm_filebacked':True,'public_full_shape':list(FULL_SHAPE),'selected_semantics':'wins[0,:,0,:] = EE<-EE','selected_shape':list(EE_SHAPE),'full_sha256':file_sha(full),'selected_sha256':file_sha(ee),'historical_manual_reconstruction':False,'no_tolerance_rescue':True}
+ atomic_json(out_dir/'public_bpw_receipt.json',receipt); del wins,full_arr,ee_arr,mcm,w2; gc.collect(); return full,ee,receipt
 
 def run_replica(replica,args):
  if replica not in NAMESPACES: raise RuntimeError(replica)
@@ -86,23 +110,21 @@ def run_replica(replica,args):
  if ee_st is not None:
   if not ee.exists() or file_sha(ee)!=ee_st['payloads']['selected_ee']['sha256']: raise RuntimeError('fail-closed selected EE restore mismatch')
   if full_st is None or not full.exists() or file_sha(full)!=full_st['payloads']['full_window']['sha256']: raise RuntimeError('fail-closed full-window restore mismatch')
-  adapter={'status':'RESTORED_FROM_VERIFIED_SELECTED_EE_CHECKPOINT','historical_ww_numerical_import':False}
+  adapter={'route':'RESTORED_VERIFIED_PUBLIC_BPW_CHECKPOINT','mcm_filebacked':True,'historical_manual_reconstruction':False,'no_tolerance_rescue':True}
  else:
-  ep=root/'edges.json'; ep.write_text(json.dumps(BAND_EDGES.tolist())); ad=argparse.Namespace(workspace_fits=str(wp),edges_json=str(ep),ncls=4,nl=LMAX_PLUS_ONE,emulator=args.downstream_exe,out_dir=str(root/'exact_route'),source_head=args.source_head,contract_fingerprint=args.contract_fingerprint,checkpoint_namespace=NAMESPACES[replica],component_blobs_json=args.component_blobs_json); adapter=execute_ww_adapter(ad)
-  if not full.exists() or full.stat().st_size!=4*39*4*12288*8: raise RuntimeError('fail-closed full-window geometry')
-  if not ee.exists() or ee.stat().st_size!=39*12288*8: raise RuntimeError('fail-closed selected-EE geometry')
-  manifest(root,'full_window_complete',replica,args.source_head,args.contract_fingerprint,{'full_window':{'sha256':file_sha(full),'shape':[4,39,4,12288]}}); manifest(root,'selected_ee_complete',replica,args.source_head,args.contract_fingerprint,{'selected_ee':{'sha256':file_sha(ee),'shape':[39,12288],'dtype':'<f8','semantics':'wins[0,:,0,:] = EE<-EE'}})
- rec={'schema':SCHEMA+'.replica','replica':replica,'selected_ee_sha256':file_sha(ee),'selected_ee_path':str(ee),'workspace_fits_sha256':wsha,'adapter_receipt':adapter,'ordered_source_indices':[0,1],'same_field_object_handoff':False,'source_pair':'S0->S1','source_map_sha256':ws['payloads']['source_map_sha256'],'source_head':args.source_head,'contract_fingerprint':args.contract_fingerprint,'checkpoint_namespace':NAMESPACES[replica],'historical_ww_numerical_import':False,'other_replica_output_read':False,'science_gate_scored':False}
+  full,ee,adapter=public_bpw_from_serialized_workspace(wp,root/'exact_route')
+  manifest(root,'full_window_complete',replica,args.source_head,args.contract_fingerprint,{'full_window':{'sha256':file_sha(full),'shape':list(FULL_SHAPE),'route':adapter['route'],'mcm_filebacked':True}}); manifest(root,'selected_ee_complete',replica,args.source_head,args.contract_fingerprint,{'selected_ee':{'sha256':file_sha(ee),'shape':list(EE_SHAPE),'dtype':'<f8','semantics':'wins[0,:,0,:] = EE<-EE','route':adapter['route']}})
+ rec={'schema':SCHEMA+'.replica','replica':replica,'selected_ee_sha256':file_sha(ee),'selected_ee_path':str(ee),'workspace_fits_sha256':wsha,'adapter_receipt':adapter,'bpw_route':'public_get_bandpower_windows_after_filebacked_fits_read','ordered_source_indices':[0,1],'same_field_object_handoff':False,'source_pair':'S0->S1','source_map_sha256':ws['payloads']['source_map_sha256'],'source_head':args.source_head,'contract_fingerprint':args.contract_fingerprint,'checkpoint_namespace':NAMESPACES[replica],'historical_ww_numerical_import':False,'other_replica_output_read':False,'science_gate_scored':False}
  atomic_json(root/'replica_receipt.json',rec); manifest(root,'replica_receipt_complete',replica,args.source_head,args.contract_fingerprint,{'replica_receipt':{'sha256':file_sha(root/'replica_receipt.json')},'selected_ee':{'sha256':rec['selected_ee_sha256']}}); return rec
 
 def compare(a,b,out):
  for r in (a,b):
-  if r.get('source_pair')!='S0->S1' or r.get('ordered_source_indices')!=[0,1] or r.get('same_field_object_handoff') is not False: raise RuntimeError('fail-closed A/B semantics')
- aa=np.memmap(a['selected_ee_path'],dtype='<f8',mode='r',shape=(39,12288)); bb=np.memmap(b['selected_ee_path'],dtype='<f8',mode='r',shape=(39,12288)); se=a['selected_ee_sha256']==b['selected_ee_sha256']; ae=bool(np.array_equal(aa,bb)); finite=bool(np.isfinite(aa).all() and np.isfinite(bb).all()); del aa,bb
- status='PASS_EXP073EY_WW_S0_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1' if se and ae and finite else 'FAIL_EXP073EY_WW_S0_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'; r={'schema':SCHEMA+'.ab_compare','status':status,'sha256_equal':se,'numpy_array_equal':ae,'all_finite':finite,'a_sha256':a['selected_ee_sha256'],'b_sha256':b['selected_ee_sha256'],'source_pair':'S0->S1','ordered_source_indices':[0,1],'same_field_object_handoff':False,'no_tolerance_rescue':True,'science_gate_scored':True,'ww_s0_s1_authority_created':False}; atomic_json(out,r); return r
+  if r.get('source_pair')!='S0->S1' or r.get('ordered_source_indices')!=[0,1] or r.get('same_field_object_handoff') is not False or r.get('bpw_route')!='public_get_bandpower_windows_after_filebacked_fits_read': raise RuntimeError('fail-closed A/B semantics')
+ aa=np.memmap(a['selected_ee_path'],dtype='<f8',mode='r',shape=EE_SHAPE); bb=np.memmap(b['selected_ee_path'],dtype='<f8',mode='r',shape=EE_SHAPE); se=a['selected_ee_sha256']==b['selected_ee_sha256']; ae=bool(np.array_equal(aa,bb)); finite=bool(np.isfinite(aa).all() and np.isfinite(bb).all()); del aa,bb
+ status='PASS_EXP073EY_WW_S0_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1' if se and ae and finite else 'FAIL_EXP073EY_WW_S0_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'; r={'schema':SCHEMA+'.ab_compare','status':status,'sha256_equal':se,'numpy_array_equal':ae,'all_finite':finite,'a_sha256':a['selected_ee_sha256'],'b_sha256':b['selected_ee_sha256'],'source_pair':'S0->S1','ordered_source_indices':[0,1],'bpw_route':'public_get_bandpower_windows_after_filebacked_fits_read','same_field_object_handoff':False,'no_tolerance_rescue':True,'science_gate_scored':True,'ww_s0_s1_authority_created':False}; atomic_json(out,r); return r
 
 def main():
- ap=argparse.ArgumentParser(); ap.add_argument('--replica',choices=['A','B','AB'],default='AB'); ap.add_argument('--r1-root',required=True); ap.add_argument('--r1-artifact-digest',required=True); ap.add_argument('--checkpoint-root',required=True); ap.add_argument('--downstream-exe',required=True); ap.add_argument('--component-blobs-json',required=True); ap.add_argument('--source-head',required=True); ap.add_argument('--contract-fingerprint',required=True); ap.add_argument('--ab-out',required=True); a=ap.parse_args()
+ ap=argparse.ArgumentParser(); ap.add_argument('--replica',choices=['A','B','AB'],default='AB'); ap.add_argument('--r1-root',required=True); ap.add_argument('--r1-artifact-digest',required=True); ap.add_argument('--checkpoint-root',required=True); ap.add_argument('--source-head',required=True); ap.add_argument('--contract-fingerprint',required=True); ap.add_argument('--ab-out',required=True); a=ap.parse_args()
  if a.replica=='A':run_replica('A',a);return
  if a.replica=='B':run_replica('B',a);return
  ra=run_replica('A',a); rb=run_replica('B',a); print(compare(ra,rb,Path(a.ab_out))['status'])
