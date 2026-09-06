@@ -16,9 +16,11 @@ concurrency:
 
 env:
   FG_PREREG_BLOB: '50c64a3f7e341f0a180b9c8dbc83a074f6cae150'
-  FG_DRIVER_V01_BLOB: '91b31f7f6e7b4312fab554363700ee0521dc904c'
+  FG_DRIVER_V01_BLOB: 'd919da63ad5ccd1b94255d9e45face1c922c4f44'
   FG_DRIVER_V02_BLOB: '8749c20f41e5259787307bbd5d556cb772ceba18'
-  FG_HOME_BLOB: '1ca77b18ab9c463b061f0556677ae666fcbac639'
+  FG_HOME_BLOB: '77e7f7dafc91ee79767eb31a288633ca1285c66e'
+  FG_PRUNER_BLOB: 'd925840c60035b30ed1375657585967ec2644e0d'
+  FG_COMPARE_BLOB: '74a1a2f8d3b44eaab66e834d69156e1810b75a8e'
   FA_DRIVER_V01_BLOB: '5c5d6aff574b8ed2679e345903d5f4447e5d5c18'
   FA_DRIVER_V02_BLOB: '9bde1f5de584e3378a1fe365e7a9771146fe08b5'
   FA_HOME_BLOB: '309c464bbfbe4896bd560165985ee7f643d9ee22'
@@ -42,7 +44,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Freeze Exp073FG code and exact semantics
+      - name: Freeze Exp073FG code, checkpoint chain, and exact semantics
         shell: bash
         run: |
           set -euo pipefail
@@ -50,6 +52,8 @@ jobs:
           test "$(git rev-parse HEAD:ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py)" = "$FG_DRIVER_V01_BLOB"
           test "$(git rev-parse HEAD:ci/exp073fg_ww_s0_s3_durable_ab_production_v0_2.py)" = "$FG_DRIVER_V02_BLOB"
           test "$(git rev-parse HEAD:ci/exp073fg_home_filebacked_fullres_v0_1.sh)" = "$FG_HOME_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fg_verify_and_prune_replica_v0_1.py)" = "$FG_PRUNER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fg_compare_terminal_receipts_v0_1.py)" = "$FG_COMPARE_BLOB"
           test "$(git rev-parse HEAD:ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py)" = "$FA_DRIVER_V01_BLOB"
           test "$(git rev-parse HEAD:ci/exp073fa_ww_s0_s2_durable_ab_production_v0_2.py)" = "$FA_DRIVER_V02_BLOB"
           test "$(git rev-parse HEAD:ci/exp073fa_home_filebacked_fullres_v0_1.sh)" = "$FA_HOME_BLOB"
@@ -57,20 +61,27 @@ jobs:
           test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)" = "$PATCH_BLOB"
           test "$(git rev-parse HEAD:ci/exp073em_generate_namaster27_storage_reference_v0_1.py)" = "$EM_GENERATOR_BLOB"
           test "$(git rev-parse HEAD:ci/exp073em_compare_namaster27_storage_exact_v0_1.py)" = "$EM_COMPARE_BLOB"
-          python3 -m py_compile ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py ci/exp073fg_ww_s0_s3_durable_ab_production_v0_2.py
+          python3 -m py_compile ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py ci/exp073fg_ww_s0_s3_durable_ab_production_v0_2.py ci/exp073fg_verify_and_prune_replica_v0_1.py ci/exp073fg_compare_terminal_receipts_v0_1.py
+          bash -n ci/exp073fg_home_filebacked_fullres_v0_1.sh
           grep -F "('source_count_map(r1_root,2)', 'source_count_map(r1_root,3)')" ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py >/dev/null
           grep -F "('[0,2]', '[0,3]')" ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py >/dev/null
           grep -F "('S0->S2', 'S0->S3')" ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py >/dev/null
-          grep -F 'PASS_EXP073FG_WW_S0_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1' ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py >/dev/null
+          grep -F '_install_strict_complete_restore' ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py >/dev/null
+          grep -F 'missing complete-stage payload' ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py >/dev/null
           grep -F 'read_from(str(wp), read_unbinned_MCM=True)' ci/exp073fg_ww_s0_s3_durable_ab_production_v0_2.py >/dev/null
           grep -F 'get_bandpower_windows()' ci/exp073fg_ww_s0_s3_durable_ab_production_v0_2.py >/dev/null
           grep -F 'EXPECTED_MCM_BYTES = 19327352832' ci/exp073fg_ww_s0_s3_durable_ab_production_v0_2.py >/dev/null
+          grep -F 'complete_chain_verified_before_prune' ci/exp073fg_verify_and_prune_replica_v0_1.py >/dev/null
+          grep -F 'complete_chain_verified_before_prune' ci/exp073fg_compare_terminal_receipts_v0_1.py >/dev/null
+          grep -F 'terminal_compare_restored_replica' ci/exp073fg_compare_terminal_receipts_v0_1.py >/dev/null
+          grep -F 'ci/exp073fg_verify_and_prune_replica_v0_1.py' ci/exp073fg_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'ci/exp073fg_compare_terminal_receipts_v0_1.py' ci/exp073fg_home_filebacked_fullres_v0_1.sh >/dev/null
           grep -F "3:{'selected':4_196_641" ci/exp073aa_article3_des_angular_task_runner_v0_1.py >/dev/null
           grep -F "'WW_S0_S3'" ci/exp073aa_article3_des_angular_task_runner_v0_1.py >/dev/null
           grep -F 'test "$cpus" = 8' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
           grep -F '50*1024*1024*1024' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
-          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py ci/exp073fg_ww_s0_s3_durable_ab_production_v0_2.py
-          echo PASS_EXP073FG_HOSTED_CODE_AUDIT_V0_1
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py ci/exp073fg_ww_s0_s3_durable_ab_production_v0_2.py ci/exp073fg_verify_and_prune_replica_v0_1.py ci/exp073fg_compare_terminal_receipts_v0_1.py
+          echo PASS_EXP073FG_HOSTED_CODE_AUDIT_V0_2
           echo classification=SUPPORT_PLUS_0_PLUS_0
 
   hosted-lineage-audit:
@@ -122,7 +133,7 @@ jobs:
       NUMEXPR_NUM_THREADS: '1'
       BLIS_NUM_THREADS: '1'
       VECLIB_MAXIMUM_THREADS: '1'
-      DRIVER_V01_BLOB: '91b31f7f6e7b4312fab554363700ee0521dc904c'
+      DRIVER_V01_BLOB: 'd919da63ad5ccd1b94255d9e45face1c922c4f44'
       DRIVER_V02_BLOB: '8749c20f41e5259787307bbd5d556cb772ceba18'
     steps:
       - uses: actions/checkout@v4
@@ -147,13 +158,12 @@ jobs:
               for p in root.rglob('*.json'):
                   try:
                       q=out/p.relative_to(root); q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
-                  except OSError:
-                      pass
+                  except OSError: pass
               for rep in ('A','B'):
                   p=root/'checkpoints'/rep/'exact_route'/'selected_ee.bin'
                   if p.exists():
                       q=out/'checkpoints'/rep/'exact_route'/'selected_ee.bin'; q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
-              for n in ('A_driver.log','B_driver.log','ab_compare_stdout.txt','resource_telemetry.log','terminal_receipt.json'):
+              for n in ('A_driver.log','B_driver.log','A_prune_verify.log','B_prune_verify.log','ab_compare_stdout.txt','resource_telemetry.log','terminal_receipt.json'):
                   p=root/n
                   if p.exists(): shutil.copy2(p,out/n)
           PY
