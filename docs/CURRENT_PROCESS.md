@@ -45,6 +45,12 @@ Exp073FJ prereg `experiments/073fj_remaining_ww_semantic_matrix_v0_1_prereg.md`,
 
 No artifact was produced. This is exact static/support authority only for future implementation semantics: auto-pairs reuse the exact same field object (`fb=fa`), cross-pairs use distinct field objects, unordered `i<=j` is enforced, frozen source literals and `EE<-EE` extraction are verified, and science/radial/covariance/nuisance/relation/G8 scoring remains forbidden. It creates no WW scientific authority. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FJ_SEMANTIC_MATRIX_PASS_FG_RUNNING.md`.
 
+## Parallel support — Exp073FK S1S1 transformation contract
+
+Exp073FK prereg `experiments/073fk_ww_s1_s1_same_field_transformation_contract_v0_1_prereg.md`, blob `f1deff3378f991a9a052b5314ccec1d19629f9b0`, creation commit `e913a49ac914eddf204e17ad9d76814d1fe542e3`. Workflow/run **`34037855604`**, hosted job **`101499105572`**, head `114d99c61c359c93ad462862f33642f196105f6c` completed SUCCESS. Raw log contains exact token `PASS_EXP073FK_WW_S1_S1_SAME_FIELD_TRANSFORMATION_CONTRACT_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `ww_s1_s1_authority_created=false`, `self_hosted_science_started=false`.
+
+This freezes only the future implementation transformation boundary from the current cross-pair durable architecture to the next auto-pair: `[0,3]/S0->S3` -> `[1,1]/S1->S1`, two source reconstructions -> exactly one authoritative S1 reconstruction, distinct source identities -> one source identity, distinct-field handoff -> same field object reuse, and dedicated future S1S1 task/token/checkpoint namespaces. No heavy S1S1 run is authorized while Exp073FG owns `DSIR-HOME-PC`. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FK_S1S1_TRANSFORMATION_CONTRACT_PASS_FG_RUNNING.md`.
+
 ## Frozen boundaries
 
 Unless prospectively superseded: `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid<=0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; exact-threshold ambiguity `numerically_unresolved`; no tolerance, rounding, smoothing, averaging, effective ell/z/k or fiducial-P shortcut.
