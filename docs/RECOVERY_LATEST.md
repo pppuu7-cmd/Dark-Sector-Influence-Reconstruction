@@ -74,6 +74,16 @@ Workflow/run **`34037855604`**, job **`101499105572`**, completed SUCCESS. Raw l
 
 The support audit cross-checks Exp073FH, Exp073FJ, the generic Article-3 task runner and the current Exp073FG durable cross-pair source. It freezes the inseparable future transformation boundary: `[0,3]/S0->S3` -> `[1,1]/S1->S1`; two source reconstructions -> exactly one authoritative S1 reconstruction; distinct source identities -> one source identity; distinct-field handoff false -> same-field-object handoff true; cross field construction -> one spin-2 field object reused on both sides; dedicated future S1S1 task/token/checkpoint namespaces. It authorizes no heavy S1S1 run while Exp073FG owns the home runner and creates no scientific authority. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FK_S1S1_TRANSFORMATION_CONTRACT_PASS_FG_RUNNING.md`.
 
+## Frozen publication architecture
+
+Project-level publication architecture is frozen in `docs/DSIR_PUBLICATION_ARCHITECTURE_2026-09-06.md`, created at commit `fce46eb74aad797285e2a3fd89d01e41633e76f0`, blob `4661b4c9c796094a57e3e5f33e3fd8a25c186eb5`. Immutable recovery note: `docs/recovery/RECOVERY_2026-09-06_PUBLICATION_ARCHITECTURE_FROZEN.md`.
+
+Frozen sequence: **DSIR-1 Framework -> DSIR-2 Inverse reconstruction/mathematical machinery -> DSIR-3 Observational implementation + complete funnel -> DSIR-4 Existing-Model Funnel Matrix -> conditional DSIR-5 DSIR-derived new dark-sector model -> conditional DSIR-6 Independent predictions/external falsification tests**.
+
+DSIR-4 and DSIR-5 remain deliberately separate by default. Existing models must be tested through the prospectively frozen funnel before a new model is claimed to be necessary. DSIR-5 may begin early only as a provenance-linked constraint skeleton, not as a final frozen model. Future model construction and validation must be anti-circular: define `G_design` for construction and reserve `G_blind`/external evidence for validation after the model is frozen. A blind-gate failure cannot be silently rescued without defining a new model version.
+
+Model Funnel Matrix preparation may begin in parallel with Article 3, but only authoritative available gates may be scored; unavailable gates remain `NOT_YET_TESTABLE`. No existing model receives a full `DSIR PASS` until every mandatory final funnel gate has admissible authority.
+
 ## Frozen Article-3 angular manifest
 
 Exactly 14 unique tasks remain the production inventory: four Wm workspaces and ten unordered WW workspaces. Existing authority includes the admitted S0-row WW tasks through `WW_S0_S2`; `WW_S0_S3` is the active candidate frontier. The ordered 14-window join, radial multiplication, physical-support scoring, covariance/whitening, nuisance quotient/relation/null and G8 remain forbidden until their frozen prerequisites are satisfied.
