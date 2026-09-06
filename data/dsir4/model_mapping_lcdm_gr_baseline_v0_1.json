@@ -1,0 +1,78 @@
+{
+  "schema_version": "dsir4-model-mapping-v0.1",
+  "scientific_authority_created": false,
+  "hypothesis_identity": {
+    "model_class_id": "LCDM_GR",
+    "hypothesis_id": "LCDM_GR_SYMBOLIC_BASELINE_V0_1",
+    "hypothesis_kind": "equivalence_class",
+    "parameter_values": {
+      "H0": "symbolic_positive",
+      "Omega_c0": "symbolic_nonnegative",
+      "Omega_Lambda0": "symbolic_nonnegative"
+    },
+    "theory_version": "GR + pressureless CDM + cosmological constant; symbolic linear-scalar baseline v0.1"
+  },
+  "conventions": {
+    "metric_signature": "(-,+,+,+)",
+    "index_convention": "covariant X_munu; mixed/background component labels are bookkeeping only",
+    "M0_definition": "constant reduced Planck mass with M0^2=(8*pi*G)^(-1)",
+    "T_known_definition": "baryons + photons + standard neutrinos; CDM and Lambda are intentionally left in the residual dark sector",
+    "frame": "Jordan/GR matter frame",
+    "gauge_or_gauge_invariant_basis": "linear scalar expressions recorded in conformal Newtonian gauge; gauge-bound quantities are not claimed gauge invariant"
+  },
+  "common_residual": {
+    "definition": "X_munu = M0^2 G_munu - T_known_munu",
+    "total_residual_is_authoritative": true,
+    "components": {
+      "background_density_like": {"mapping_state": "DERIVED_NONZERO", "expression_ref": "rho_X(a)=rho_c0*a^(-3)+rho_Lambda"},
+      "background_pressure_like": {"mapping_state": "DERIVED_NONZERO", "expression_ref": "p_X(a)=-rho_Lambda"},
+      "scalar_density_perturbation": {"mapping_state": "DERIVED_NONZERO", "expression_ref": "delta_rho_X=delta_rho_c; delta_rho_Lambda=0"},
+      "scalar_momentum_velocity": {"mapping_state": "DERIVED_NONZERO", "expression_ref": "(rho_X+p_X)*theta_X = rho_c*theta_c; Lambda momentum is structural zero"},
+      "scalar_isotropic_pressure_perturbation": {"mapping_state": "STRUCTURAL_ZERO", "expression_ref": "delta_p_c=0 and delta_p_Lambda=0"},
+      "scalar_anisotropic_stress": {"mapping_state": "STRUCTURAL_ZERO", "expression_ref": "pi_c=0 and pi_Lambda=0 in the pressureless-CDM + exact-Lambda baseline"}
+    }
+  },
+  "sector_bookkeeping": {
+    "has_interacting_sector_partition": false,
+    "sector_partition_definition": "X_total = T_cdm + T_Lambda; both sectors separately conserved in baseline GR",
+    "transfer_current_convention": "Q_c^mu=Q_Lambda^mu=0",
+    "total_residual_invariant_under_relabeling_required": true
+  },
+  "modified_gravity_bookkeeping": {
+    "effective_source_rearrangement_used": false,
+    "original_field_equation_ref": "M0^2 G_munu = T_known_munu + T_cdm_munu - rho_Lambda g_munu",
+    "algebraic_equivalence_proof_ref": "direct subtraction of T_known_munu gives X_munu=T_cdm_munu-rho_Lambda g_munu"
+  },
+  "certified_domain": {
+    "z_min": 0.295,
+    "z_max": 2.33,
+    "k_min_exclusive_mpc_inv": 0.0,
+    "k_max_mpc_inv": 0.06664762008318016,
+    "linear_regime": true,
+    "quasi_static_assumption": false,
+    "sub_horizon_assumption": false,
+    "branch_conditions": ["expanding FLRW branch", "rho_c>=0", "rho_Lambda>=0"],
+    "stability_conditions": ["standard GR tensor kinetic sign M0^2>0", "pressureless CDM density nonnegative"],
+    "other_approximations": ["linear scalar perturbations only for perturbation components", "radiation/neutrino perturbations belong to T_known by convention and are not silently folded into X_munu"]
+  },
+  "prediction_artifact": {
+    "generator_type": "analytic_or_numerical",
+    "code_commit_or_expression_id": null,
+    "mapping_artifact_sha256": null,
+    "payload_sha256": null,
+    "output_grid": null,
+    "units": null,
+    "external_solver_provenance": null
+  },
+  "equivalence": {
+    "equivalence_class_id": "LCDM_GR_SYMBOLIC_BASELINE",
+    "criterion_ref": "same GR field equations, pressureless separately-conserved CDM, exact cosmological constant, and identical T_known convention on the certified domain",
+    "comparison_hashes": []
+  },
+  "readiness": {
+    "mapping_ready": true,
+    "prediction_ready": false,
+    "numerically_evaluated": false,
+    "scientific_gate_status": "NOT_YET_TESTABLE"
+  }
+}
