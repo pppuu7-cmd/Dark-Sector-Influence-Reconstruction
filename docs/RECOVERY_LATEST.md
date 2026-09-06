@@ -10,33 +10,49 @@ Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 exact scientific PASS remain p
 
 `WW_S0_S1` remains admitted by Exp073EZ run/job `34017921734 / 101444964371`, exact token `PASS_EXP073EZ_WW_S0_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1`, `classification=SCIENTIFIC_AUTHORITY_ADMITTED`. Its Exp073EY candidate remains run/job `34010599584 / 101425638857`, artifact `9983630139`, independently verified ZIP SHA256 `12291c1c9f6100ebfb03a6db1e613f422bd48bc6c02720f89ee613c8646cf9d6`, selected exact A/B SHA `49af7a3d165daaf7cc6781e2286e45cd5baa0042ed9770800588bced7d700e79`.
 
-## Current frontier — WW_S0_S2 / Exp073FA
+`WW_S0_S2` is now admitted by Exp073FF run/job `34032384956 / 101484177968`, exact token `PASS_EXP073FF_WW_S0_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1`, `classification=SCIENTIFIC_AUTHORITY_ADMITTED`. The admitted lineage preserves source head `de83e20a68f79ccf25b89b0d33eb4206e294c757`, contract `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`, R1 artifact `9720335366`, digest `sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd`.
 
-Science prereg `experiments/073fa_ww_s0_s2_filebacked_full_resolution_ab_science_v0_1_prereg.md`, blob `edc044792be8ac7b796c8469943924942ae91932`. Frozen: ordered `(S0,S2)` / authoritative R1 indices `[0,2]`; source head `de83e20a68f79ccf25b89b0d33eb4206e294c757`; contract `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`; NSIDE=4096; ell `0..12287`; 39 bands; public serialized `read_from(...,read_unbinned_MCM=True)->get_bandpower_windows()`; one regular-file-backed MCM exactly `19,327,352,832` bytes; full `[4,39,4,12288]`; selected `EE<-EE <f8 [39,12288]`; exact SHA plus `numpy.array_equal`; all finite; no tolerance/rounding/smoothing/averaging/manual-reconstruction rescue. Durable namespaces `checkpoints/exp073fa-ww-s0-s2-a-v0-1` and `...-b-v0-1`; exact six-stage chain and fail-closed restore. Candidate token `PASS_EXP073FA_WW_S0_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`; candidate alone never creates authority.
+## Current science frontier — WW_S0_S3 / Exp073FG
 
-Exp073FA prerequisite audit `34018080500 / 101445404866` = exact support PASS `+0/+0`. Repaired Exp073FB `34018241319 / 101445845648` = exact implementation support PASS `+0/+0`, artifact `9984600349`, independently verified ZIP SHA256 `b371821a77cb4a62051ceee45f82764a5486ea3b0bcf0939a9bcac0eff624cda`. Exp073FC `34018341064 / 101446155067` = terminal raw-verified support PASS `+0/+0`, token `PASS_EXP073FC_EXP073FA_COMMITTED_DRIVER_BINDING_V0_1`.
+Preregistration: `experiments/073fg_ww_s0_s3_filebacked_full_resolution_ab_science_v0_1_prereg.md`, blob `50c64a3f7e341f0a180b9c8dbc83a074f6cae150`.
 
-## Authoritative current science process
+Frozen target: ordered `(S0,S3)`, authoritative R1 indices `[0,3]`, two independently reconstructed source count maps and two distinct spin-2 fields; never `(S3,S0)` and never same-field. Numerical/storage semantics: DES NSIDE=4096; ell `0..12287`; 39 bands; PyMaster/NaMaster 2.7 lineage; serialized workspace `read_from(...,read_unbinned_MCM=True)` then public `get_bandpower_windows()`; one regular-file-backed unbinned MCM exactly `19,327,352,832` bytes with `/proc/self/maps` proof; full BPW `[4,39,4,12288]`; selected `EE<-EE`, canonical `<f8 [39,12288]`; exact A/B SHA plus `numpy.array_equal`; all finite; no tolerance/allclose/rounding/smoothing/averaging/manual reconstruction/effective-coordinate/fiducial rescue.
 
-Repaired Exp073FD workflow run **`34020756634`**, head **`894885b2c2b811954d1724c2733d2a810a486d70`**, branch `main`, started `2026-09-06T08:02:37Z`. Hosted audit job **`101452788638`** = terminal SUCCESS `+0/+0`. Dependent home science job **`101452805620`** remains **IN_PROGRESS** inside the frozen A/B step. Live reconciliation in the current iteration found exactly one in-progress Actions run (`34020756634`) and zero queued runs. `DSIR-HOME-PC` is exclusively owned by this job; no competing self-hosted DSIR workload may launch. Partial numerical output is not inspected. Last durable checkpoint remains `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`, never guessed.
+Candidate token is frozen as `PASS_EXP073FG_WW_S0_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`. Candidate alone creates no authority; a separate provenance-admission gate remains mandatory.
 
-## Exp073FE — checkpoint/restore hardening support CLOSED
+### Immutable pre-science wrapper failures
 
-While Exp073FA was still running and before any terminal numerical output was inspected, static audit found a result-independent implementation/provenance issue: after completing and pruning A and B, the home wrapper invokes the driver again as `--replica AB`; v0.1 `validated_finished()` then restores a completed replica after checking only the terminal receipt and selected EE payload, not the entire six-stage chain and all prior payloads. The Exp073FA preregistration requires complete-stage restores to occur only after exact identity and payload verification. This does **not** change frozen science and does not imply a scientific FAIL.
+Exp073FG run `34033970885`, home job `101488568727`: both GitHub-hosted audits passed, but home wrapper failed immediately on an over-strict transformation check requiring absent optional literal `WW_S0_S2`. Classification: infrastructure/wrapper FAIL `+0/+0`; no heavy numerical science began; no authority.
 
-Exp073FE prereg `experiments/073fe_exp073fa_terminal_compare_checkpoint_restore_hardening_v0_1_prereg.md`, blob `43ff6dfe8d1eb682202b142e6ed2408a4beb00f7`. Comparator `ci/exp073fe_compare_exp073fa_terminal_receipts_v0_1.py`, blob `14841dc412d3989e6f86294072479424f26cec93`, compares terminal A/B receipts and selected EE payloads without restoring completed replicas merely to compare them; it fail-closes frozen identities, selected SHA/size, exact SHA equality, `numpy.array_equal`, finiteness, no-cross-read/no-historical-import and no-tolerance policy.
+Exp073FG run `34034127464`, home job `101488993099`: hosted audits passed, but home wrapper again failed immediately because it required the candidate PASS literal to exist in the shell source even though that token is produced dynamically by the Python driver. Classification: infrastructure/wrapper FAIL `+0/+0`; no heavy numerical science began; no authority.
 
-First hosted Exp073FE audit **`34023253707 / 101459598645`** remains immutable `INFRASTRUCTURE_DEPENDENCY_FAIL +0/+0`: raw logs show `ModuleNotFoundError: No module named 'numpy'` before comparator testing. Minimal repair only installed NumPy in the hosted audit environment; comparator, prereg and science were unchanged.
+These failures are preserved and must never be relabeled as scientific FAILs.
 
-Repaired Exp073FE **`34023325339 / 101459798149`**, head **`a4e832e9e275f2baa4958279c7b4a01d220df934`**, is terminal raw-verified exact support PASS `+0/+0`. Raw log contains `PASS_EXP073FE_EXP073FA_TERMINAL_COMPARE_RESTORE_HARDENING_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `ww_s0_s2_authority_created=false`. The synthetic audit proves exact PASS for byte-identical arrays, exact scientific FAIL after a one-ULP mismatch, and fail-closed rejection of receipt tampering. No WW authority was created.
+### Hardened implementation now active
 
-## Exp073FF — provenance admission prospectively frozen
+Frozen current files:
 
-While Exp073FA remains IN_PROGRESS and without inspecting partial numerical output, the next authority-writing gate has been preregistered as `experiments/073ff_ww_s0_s2_filebacked_checkpoint_provenance_admission_v0_1_prereg.md`, blob **`c6f1fd11c4a0dc68bb17669a58854979fe84869e`**, creation commit **`2e3425cae2d564bf368417123af48b2662730557`**. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FF_PREREG_FA_RUNNING.md`, creation commit **`20f9f3215146682f6b42314ef18e6c048b403254`**.
+- `ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py`, blob `d919da63ad5ccd1b94255d9e45face1c922c4f44`;
+- `ci/exp073fg_ww_s0_s3_durable_ab_production_v0_2.py`, blob `8749c20f41e5259787307bbd5d556cb772ceba18`;
+- `ci/exp073fg_home_filebacked_fullres_v0_1.sh`, blob `77e7f7dafc91ee79767eb31a288633ca1285c66e`;
+- `ci/exp073fg_verify_and_prune_replica_v0_1.py`, blob `d925840c60035b30ed1375657585967ec2644e0d`;
+- `ci/exp073fg_compare_terminal_receipts_v0_1.py`, blob `74a1a2f8d3b44eaab66e834d69156e1810b75a8e`.
 
-Exp073FF is `PREREGISTERED_NOT_ACTIVATED`; future Exp073FA terminal artifact ID and digest are intentionally unknown until terminal state and independent ZIP SHA256 verification. It preserves exact `(S0,S2)`, `[0,2]`, source/contract identities, both complete six-stage chains, exact `19,327,352,832`-byte file-backed MCM, canonical `<f8 [39,12288]` `EE<-EE`, exact SHA plus `numpy.array_equal`, finiteness, and Exp073FE restore-hardening provenance. It forbids tolerance or alternative-path rescue. Only `PASS_EXP073FF_WW_S0_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1` may create `WW_S0_S2` authority.
+The new wrapper prospectively closes the known Exp073FA completed-replica restore weakness rather than relying on a later repair. If a completed, unpruned replica is restored, all six stage manifests plus all still-present source/workspace/full-window/selected/receipt payload hashes must validate. For the normal uninterrupted path, each replica is fully verified across all six stages **before** large intermediates are pruned. The prune receipt binds the SHA256 of every stage manifest and all verified payload hashes. Terminal A/B comparison reads only the bound terminal/prune evidence and selected EE arrays; it does not invoke `--replica AB` and does not restore completed replicas.
 
-On terminal Exp073FA: immediately consume job steps/logs and compact artifact; independently verify ZIP SHA256 against GitHub digest; verify source/contract/driver/patch/R1/checkpoint identities, complete six-stage chains, exact `19,327,352,832`-byte mmap proof, exact canonical A/B `EE<-EE`, finiteness and frozen token. Exact A/B mismatch remains genuine scientific FAIL. A matching candidate remains non-authoritative; if the complete frozen checkpoint/provenance contract cannot be proven, classify provenance/infrastructure `+0/+0`, preserve validated evidence, and apply the smallest prospective repair. Only after successful terminal consumption may Exp073FF be activated.
+Current authoritative workflow run: **`34034377795`**, head `4a02952ee3bcb368a088d87608f61243cd9f7056`. Hosted lineage job `101489652912` = SUCCESS; hosted code/checkpoint audit job `101489652945` = SUCCESS. Home science job **`101489679508`** on `DSIR-HOME-PC` is **IN_PROGRESS** in the frozen `S0->S3` A/B step at this recovery update. Do not inspect/interpret partial numerical output and do not launch a second self-hosted DSIR workload while this job remains queued/in-progress. Exact durable checkpoint stage is `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`, never guessed.
+
+## Parallel GitHub-hosted support — next frontier WW_S1_S1 / Exp073FH
+
+The frozen 14-task manifest orders `WW_S1_S1` immediately after `WW_S0_S3`. Exp073FH preregistration `experiments/073fh_ww_s1_s1_same_field_architecture_v0_1_prereg.md`, blob `0fc09948c7cfb5c05868538544554dc8001a9126`, freezes only a support/static audit; no self-hosted science and no `WW_S1_S1` authority.
+
+`WW_S1_S1` has a materially different semantic boundary from cross-pair `S0_S3`: reconstruct authoritative S1 once, create one spin-2 `NmtField`, and pass the **same field object** on both sides. The generic frozen Article-3 task runner encodes `if bmap is a: fb=fa`; equal-but-distinct field objects are forbidden for this auto-pair.
+
+Exp073FH workflow run **`34034445222`**, head `8856c7df19253310ca286b0e0fc2d4348e5df97a`, completed **SUCCESS**. It verified the frozen S1 R1 constants, unordered `i<=j` task rule, same-field object reuse, WW EE extraction, and no science/radial/covariance/G8 scoring. Classification remains `SUPPORT_PLUS_0_PLUS_0`, `ww_s1_s1_authority_created=false`. This support may be used to prepare the future S1_S1 implementation while Exp073FG computes, but a heavy S1_S1 run must not compete with the current home science job.
+
+## Frozen Article-3 angular manifest
+
+Exactly 14 unique tasks remain the production inventory: four Wm workspaces and ten unordered WW workspaces. Existing authority now includes the admitted S0-row WW tasks through `WW_S0_S2`; `WW_S0_S3` is the active candidate frontier. The ordered 14-window join, radial multiplication, physical-support scoring, covariance/whitening, nuisance quotient/relation/null and G8 remain forbidden until their frozen prerequisites are satisfied.
 
 ## Frozen global boundaries
 
