@@ -1,107 +1,74 @@
-# DSIR20 — G_DOMAIN_MAPPING re-audit for IDE, GDM, and designer-f(R)
+# DSIR20 — G_DOMAIN_MAPPING re-audit correction
 
 Date: 2026-09-07
-Status: **CLOSED — THREE FAMILY MAPPINGS RE-ADMITTED FROM EXISTING HARD EVIDENCE**
+Status: **CORRECTED / SUPERSEDES THE EARLIER SAME-DAY RE-ADMISSION CLAIM**
 
-## Purpose
+## Why this correction is necessary
 
-Reconstruct the actual Gate-1/domain-mapping status of three already implemented known-model families without changing the frozen DSIR response contract and without treating infrastructure failures or downstream missing angular authority as model failures.
+The earlier version of this note incorrectly promoted legacy Exp030/031 response-space evidence for IDE, GDM, and designer-f(R) to DSIR-4 `G_DOMAIN_MAPPING=PASS`.
 
-This note is a provenance re-audit of existing hard solver/manifold evidence. It is **not** a new observational ranking and it does not rerun or reinterpret partial Exp073FM outputs.
+That promotion violated the frozen migration rule in `docs/dsir4/DSIR4_EXISTING_MODEL_PILOT_V0_1.md` and the artifact requirements in `docs/dsir4/DSIR4_MODEL_MAPPING_ARTIFACT_CONTRACT_V0_1.md`.
 
-## Frozen common response contract
+The frozen DSIR-4 contract requires, before Gate-1 scientific admission, a dedicated hypothesis mapping/prediction lineage that explicitly binds the common residual tensor
 
-Authority basis: `config/response_basis_v0_1_1.json`, status `frozen-pass`.
+`X_{mu nu} = M0^2 G_{mu nu} - T_known_{mu nu}`,
 
-Required first-six-family common coordinates:
+including all six required residual components, the `T_known` partition, conventions, certified `(z,k)` domain, stability/branch assumptions, and immutable prediction provenance. Legacy theory-response separability is not a substitute for this artifact.
 
-- relative expansion `r_E` on the frozen redshift nodes;
-- comoving total-matter response
-  `r_Delta = ln[P_Delta_model/P_Delta_ref_same_solver]`
-  on the common linear grid
-  `k = {0.001,0.003,0.01,0.03,0.1} h/Mpc`.
+## Repository audit
 
-Same-solver reference quotients, explicit matter-component provenance, fixed primordial parameters, model-specific solver/domain masks, and no zero-imputation are mandatory.
+At the time of this correction, `docs/dsir4/mappings/` contains only:
 
-## C2 — interacting vacuum / IDE
+`C0_C1_ANALYTIC_RESIDUAL_MAPPINGS_V0_1.md`.
 
-Pinned upstream:
-`kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`.
+There are no dedicated DSIR-4 mapping artifacts in that directory for:
 
-Pinned interaction:
+- C2 IDE;
+- C3 GDM;
+- C5 designer-f(R).
 
-`Q = H (alpha rho_idm + beta rho_iv)`.
+Therefore the earlier same-day claim that those three hypotheses had been re-admitted at Gate 1 is retracted.
 
-Source audit (`experiments/016_interacting_vacuum_perturbation_source_audit.md`) establishes the synchronous-gauge zero-coupling closure. The production family uses the physical composition `f_idm_iv=1`, `f_iv=1`, with explicit positivity checks on the interacting densities.
+## Correct DSIR-4 status
 
-`experiments/030_comparison_readiness_gate.md` admits both a physical negative-alpha ray and a two-sided beta tangent line into the frozen 35-cell low-k block. The hard comparison-readiness run returned no failures and measured an alpha/beta structure angle of `58.933798 deg`.
-
-**Reconstructed G_DOMAIN_MAPPING verdict: PASS.**
-
-Scope: PASS means a valid, provenance-controlled mapping into the frozen DSIR response domain. It is not an observational preference for IDE.
-
-## C3 — generalized dark matter / GDM
-
-Pinned upstream:
-`s-ilic/gdm_class_public@4c87916aab5ca124a68f1dd16f31846fc13d1829`.
-
-Source-level zero-closure regression (`experiments/014_gdm_zero_limit_source_regression.py`) verifies the CDM limit at background, perturbation-equation, shear, and leading adiabatic-IC level, with the documented finite-start IC caveat.
-
-`experiments/025_gdm_cs2_manifold.md` establishes a nonzero sound-speed response manifold on the frozen response grid. The frozen response-basis contract explicitly keeps `k<0.001 h/Mpc` outside the core for the pinned GDM implementation because of finite-start IC sensitivity.
-
-`experiments/030_comparison_readiness_gate.md` admits both positive `cs2` and `cv2` rays into the 35-cell common block; the hard run returns no failures and reproduces their orientation angle `0.322616 deg`.
-
-**Reconstructed G_DOMAIN_MAPPING verdict: PASS.**
-
-Scope: this does not resolve the strong internal cs2/cv2 low-k degeneracy; that requires later discriminant channels.
-
-## C5 — designer f(R)
-
-Pinned official upstream:
-`EFTCAMB/EFTCAMB@16d9c4e9f85751e30efd0a53b177941713078904`.
-
-`experiments/021_eftcamb_designer_fr_gr_limit.md` closes MG-S0 with pre-frozen hard conditions. The fresh hard rerun obtained
-
-`max |r_Delta(B0=0)| = 1.0926960404022163e-6 < 2e-6`,
-
-`|B0_found| = 2.221e-17 < 1e-12`,
-
-and theory stability passed.
-
-The nonzero production direction uses same-solver GR quotients. `experiments/030_comparison_readiness_gate.md` admits the minimum resolved production ray `B0=1e-6` after exact-zero-floor subtraction. The comparison-readiness hard run returns no failures.
-
-**Reconstructed G_DOMAIN_MAPPING verdict: PASS.**
-
-Scope: this is domain admissibility and a controlled GR limit, not evidence that f(R) is preferred by observations.
-
-## Cross-family hard evidence
-
-`experiments/030_comparison_readiness_gate.md`:
-
-- status: `PASS_READY_FOR_BLOCK_AWARE_MODEL_COMPARISON`;
-- exactly six nonzero low-k response objects required and admitted;
-- failures: `[]`;
-- IDE, GDM, and designer-f(R) all present in the admitted aggregate.
-
-`experiments/031_first_model_comparison.md` then performed the first actual cross-family comparison in the same 35-cell response space. It found, among other diagnostics:
-
-- GDM cs2 vs cv2: `0.3226 deg`;
-- IDE negative-alpha vs GDM cs2: `24.9345 deg`;
-- GDM cs2 vs designer-f(R): oriented ray angle `154.8182 deg`;
-- nearly identical leading low-k scale shapes for GDM cs2/cv2 and designer-f(R), while their time/sign behavior differs.
-
-This is raw theory-response geometry, not an observational likelihood or Bayes-factor ranking.
-
-## DSIR20 verdict table
-
-| Family | G_DOMAIN_MAPPING | Evidence status | Downstream status |
+| Hypothesis/family | Legacy theory evidence | Dedicated DSIR-4 mapping artifact | Current `G_DOMAIN_MAPPING` |
 |---|---|---|---|
-| IDE | **PASS** | pinned source + zero-coupling source audit + admitted alpha/beta hard response | observational/angular gates remain downstream |
-| GDM | **PASS** | pinned source + CDM zero closure + admitted cs2/cv2 hard response | extra channel needed to break internal low-k degeneracy |
-| designer-f(R) | **PASS** | pinned H-EFTCAMB + hard GR limit + admitted B0=1e-6 response | observational/angular gates remain downstream |
+| C0 LambdaCDM reference | strong | present/admitted | PASS |
+| C1 smooth-w local control | strong | present/admitted | PASS |
+| C2 IDE local tangent cone | strong; Exp030/031 comparison-ready | **missing** | **NOT_YET_TESTABLE** |
+| C3 GDM cs2/cv2 local pair | strong; Exp030/031 and slip separator | **missing** | **NOT_YET_TESTABLE** |
+| C5 designer-f(R) | strong; controlled GR limit and Exp030/031 response | **missing** | **NOT_YET_TESTABLE** |
 
-## Authority boundary
+No scientific FAIL is created by the missing mapping artifacts. This is a missing-authority state, not evidence against any model.
 
-The current missing `G_ANGULAR_AUTHORITY` is downstream of this domain-mapping result. Its absence must **not** erase these Gate-1 passes, and the failed Exp073FM terminal consumer must **not** be converted into a scientific model failure.
+## Legacy evidence retained
 
-Therefore DSIR20 should no longer describe IDE, GDM, or designer-f(R) as waiting for `G_DOMAIN_MAPPING`. Gate-1 is already supported by repository hard evidence. The next scientifically new task is to carry these already-admitted families through the next common observational/discriminant gates under the same frozen no-tuning rules.
+The correction does **not** invalidate the old hard computations:
+
+- IDE has a pinned interaction implementation, physical tangent-cone constraints, and non-collinear alpha/beta response geometry;
+- GDM has controlled CDM zero closure, cs2/cv2 manifolds, and a theory-level slip separator;
+- designer-f(R) has a controlled H-EFTCAMB GR limit and nonzero production response manifold;
+- Exp030 remains a valid block-aware theory-comparison readiness PASS;
+- Exp031 remains a valid raw-theory cross-family comparison.
+
+Those facts remain support for constructing the missing DSIR-4 mapping artifacts. They are not themselves DSIR-4 Gate-1 authority.
+
+## Methodological lesson
+
+DSIR must apply the same anti-circular/fail-closed discipline to its own bookkeeping as to external cosmological models. A strong prior result cannot be promoted across a newly frozen gate unless the new gate's exact artifact contract is satisfied.
+
+## Next prospective order
+
+Preserve the previously frozen no-cherry-picking order for mapping conversion:
+
+`C2 IDE -> C3 GDM -> C5 designer-f(R)`.
+
+For each family:
+
+1. freeze the six-component residual mapping and `T_known` partition;
+2. certify the exact domain and branch/stability conditions;
+3. bind the immutable prediction artifact/source lineage;
+4. run the Gate-1 admission audit without using downstream outcomes;
+5. only then expose the hypothesis to later DSIR-4 gates.
+
+This correction creates no model PASS/FAIL beyond the already admitted C0/C1 Gate-1 results.
