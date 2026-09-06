@@ -1,0 +1,118 @@
+name: Exp073EY WW_S0_S1 file-backed A/B science v0.1
+on:
+  push:
+    branches: [main]
+    paths: ['.github/activations/exp073ey-science-v0-1.txt']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: dsir-exp073ey-ww-s0-s1-filebacked-ab-science-v0-1
+  cancel-in-progress: false
+env:
+  FROZEN_SOURCE_HEAD: 'de83e20a68f79ccf25b89b0d33eb4206e294c757'
+  CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
+  R1_ARTIFACT_ID: '9720335366'
+  R1_DIGEST: 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd'
+  NAMASTER_HEAD: '24365fa59a38c15732f4f37e8b29265b75c442d5'
+  PATCH_SHA256: '9a80a756960afa8b4ddf61b5fbba7fba6ad5ed9ac919e093bb1365a636c789f0'
+  SCI_PREREG_BLOB: '5790f7502370abffc5c450278520cc73c1f901f8'
+  IMPL_PREREG_BLOB: 'a2ea3a705a4cb6f32c8b5337ce522cb7b72b0737'
+  IDENTITY_ERRATUM_BLOB: '748b6c2ad0f2a1cb4508d2607e65a2ad88c636b9'
+  DRIVER_V01_BLOB: '1db1eabbdba492c476cc61d3c4d71147aa688384'
+  DRIVER_V02_BLOB: '066847006b2ed9d712d2c22d3576a0d8887fa7bf'
+  HOME_BLOB: 'e48453e71970eecabdc6dec33facb26b77bb9e4e'
+  TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
+  PATCH_BLOB: 'f1eb886ca8af2584a9f621f333cd8be3c6cdb967'
+  EM_GENERATOR_BLOB: 'bd1795f2a2c2cf80341f212996eb8278e0be53d9'
+  EM_COMPARE_BLOB: 'f0de92f3f121592b6d139eb7d948426946d901d1'
+  EO_RUN_ID: '34005373819'
+  EO_ARTIFACT_ID: '9980754356'
+  EO_DIGEST: 'sha256:0e1a4cff3b761fecc65d8e07df9e56f8109fd221fb4454746caa8c7d0f2fb4be'
+  EL_RUN_ID: '34005467421'
+  EL_ARTIFACT_ID: '9980783193'
+  EL_DIGEST: 'sha256:f66da69068532134aa91ee35c8beb51e4135123556518adea416802feee38e8e'
+  STATIC_RUN_ID: '34006046818'
+  STATIC_HEAD: 'f1fd75711111fec8901df7098c37bf428195d4b6'
+jobs:
+  hosted-authority-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bind frozen science, admitted authority, resource and static audit
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_1_prereg.md)" = "$SCI_PREREG_BLOB"
+          test "$(git rev-parse HEAD:experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_2_impl_prereg.md)" = "$IMPL_PREREG_BLOB"
+          test "$(git rev-parse HEAD:experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_3_identity_erratum.md)" = "$IDENTITY_ERRATUM_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ey_ww_s0_s1_durable_ab_production_v0_1.py)" = "$DRIVER_V01_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ey_ww_s0_s1_durable_ab_production_v0_2.py)" = "$DRIVER_V02_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ey_home_filebacked_fullres_v0_1.sh)" = "$HOME_BLOB"
+          python3 - "$GITHUB_REPOSITORY" "$GH_TOKEN" "$STATIC_RUN_ID" "$STATIC_HEAD" "$EO_RUN_ID" "$EO_ARTIFACT_ID" "$EO_DIGEST" "$EL_RUN_ID" "$EL_ARTIFACT_ID" "$EL_DIGEST" <<'PY'
+          import json,sys,urllib.request,time
+          repo,token=sys.argv[1],sys.argv[2]; sr=int(sys.argv[3]); sh=sys.argv[4]; er=int(sys.argv[5]); ea=int(sys.argv[6]); ed=sys.argv[7]; lr=int(sys.argv[8]); la=int(sys.argv[9]); ld=sys.argv[10]
+          h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          def get(url):
+            for i in range(8):
+              try:
+                with urllib.request.urlopen(urllib.request.Request(url,headers=h),timeout=30) as r:return json.load(r)
+              except Exception:
+                if i==7:raise
+                time.sleep(2)
+          s=get(f'https://api.github.com/repos/{repo}/actions/runs/{sr}'); assert s['head_sha']==sh and s['status']=='completed' and s['conclusion']=='success'
+          for rid,aid,digest in ((er,ea,ed),(lr,la,ld)):
+            r=get(f'https://api.github.com/repos/{repo}/actions/runs/{rid}'); a=get(f'https://api.github.com/repos/{repo}/actions/artifacts/{aid}'); assert r['status']=='completed' and r['conclusion']=='success'; assert a['digest']==digest and a['expired'] is False; assert (a.get('workflow_run') or {}).get('id')==rid
+          print('PASS_EXP073EY_HOSTED_AUTHORITY_PREFLIGHT')
+          PY
+  home-science-ab:
+    needs: hosted-authority-preflight
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 720
+    env:
+      OMP_NUM_THREADS: '8'
+      OMP_DYNAMIC: 'FALSE'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run frozen ordered S0-to-S1 A/B gate
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash ci/exp073ey_home_filebacked_fullres_v0_1.sh
+      - name: Collect compact terminal or partial evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$HOME/.cache/dsir/exp073ey-ww-s0-s1-filebacked-ab-v0-1"; OUT="$RUNNER_TEMP/exp073ey-artifact"; mkdir -p "$OUT"
+          ROOT="$ROOT" OUT="$OUT" python3 - <<'PY'
+          import os,shutil
+          from pathlib import Path
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          if root.exists():
+            for p in root.rglob('*.json'):
+              try:q=out/p.relative_to(root); q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+              except OSError:pass
+            for rep in ('A','B'):
+              p=root/'checkpoints'/rep/'exact_route'/'selected_ee.bin'
+              if p.exists():q=out/'checkpoints'/rep/'exact_route'/'selected_ee.bin'; q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+            for n in ('A_driver.log','B_driver.log','ab_compare_stdout.txt','resource_telemetry.log','terminal_receipt.json'):
+              p=root/n
+              if p.exists():shutil.copy2(p,out/n)
+          PY
+      - name: Upload Exp073EY evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ey-ww-s0-s1-filebacked-ab-evidence-v0-1
+          path: ${{ runner.temp }}/exp073ey-artifact
+          if-no-files-found: warn
+          retention-days: 30
