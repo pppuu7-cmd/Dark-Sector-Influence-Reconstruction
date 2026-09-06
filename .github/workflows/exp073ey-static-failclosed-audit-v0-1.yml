@@ -1,0 +1,26 @@
+name: Exp073EY static fail-closed audit v0.1
+on:
+  push:
+    branches: [main]
+    paths: ['.github/activations/exp073ey-static-audit-v0-1.txt']
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bind prospective Exp073EY identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_1_prereg.md)" = '5790f7502370abffc5c450278520cc73c1f901f8'
+          test "$(git rev-parse HEAD:experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_2_impl_prereg.md)" = 'a2ea3a705a4cb6f32c8b5337ce522cb7b72b0737'
+          test "$(git rev-parse HEAD:experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_3_identity_erratum.md)" = '748b6c2ad0f2a1cb4508d2607e65a2ad88c636b9'
+          test "$(git rev-parse HEAD:ci/exp073ey_ww_s0_s1_durable_ab_production_v0_1.py)" = '1db1eabbdba492c476cc61d3c4d71147aa688384'
+          test "$(git rev-parse HEAD:ci/exp073ey_ww_s0_s1_durable_ab_production_v0_2.py)" = '066847006b2ed9d712d2c22d3576a0d8887fa7bf'
+          test "$(git rev-parse HEAD:ci/exp073ey_home_filebacked_fullres_v0_1.sh)" = 'e48453e71970eecabdc6dec33facb26b77bb9e4e'
+          test "$(git rev-parse HEAD:ci/exp073ey_static_failclosed_audit_v0_1.py)" = '66040f42b61a18fb7cd2c8d582164bcf891c91d6'
+      - name: Execute static fail-closed audit
+        run: python3 ci/exp073ey_static_failclosed_audit_v0_1.py
