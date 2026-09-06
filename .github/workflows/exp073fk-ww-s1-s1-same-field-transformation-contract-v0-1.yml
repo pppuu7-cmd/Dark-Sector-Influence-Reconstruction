@@ -1,0 +1,70 @@
+name: Exp073FK WW S1S1 same-field transformation contract v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073fk-ww-s1-s1-same-field-transformation-contract-v0-1.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-contract-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen same-field transformation boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073fk_ww_s1_s1_same_field_transformation_contract_v0_1_prereg.md)" = 'f1deff3378f991a9a052b5314ccec1d19629f9b0'
+          test "$(git rev-parse HEAD:experiments/073fh_ww_s1_s1_same_field_architecture_v0_1_prereg.md)" = '0fc09948c7cfb5c05868538544554dc8001a9126'
+          test "$(git rev-parse HEAD:experiments/073fj_remaining_ww_semantic_matrix_v0_1_prereg.md)" = 'cb088f84361d682c613f3f60ba7d441142ba881c'
+          test "$(git rev-parse HEAD:ci/exp073aa_article3_des_angular_task_runner_v0_1.py)" = '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
+          test "$(git rev-parse HEAD:ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py)" = 'd919da63ad5ccd1b94255d9e45face1c922c4f44'
+          python3 - <<'PY'
+          from pathlib import Path
+          prereg=Path('experiments/073fk_ww_s1_s1_same_field_transformation_contract_v0_1_prereg.md').read_text()
+          fh=Path('experiments/073fh_ww_s1_s1_same_field_architecture_v0_1_prereg.md').read_text()
+          fj=Path('experiments/073fj_remaining_ww_semantic_matrix_v0_1_prereg.md').read_text()
+          runner=Path('ci/exp073aa_article3_des_angular_task_runner_v0_1.py').read_text()
+          fg=Path('ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py').read_text()
+
+          required_prereg=[
+            '`WW_S1_S1`','`[1,1]`','same Python field object','`same_field_object_handoff=true`',
+            'exactly one S1 reconstruction','two source-map reconstruction calls -> exactly one S1 reconstruction',
+            'distinct-field handoff false -> same-field-object handoff true',
+            'no tolerance/rescue',
+            'PASS_EXP073FK_WW_S1_S1_SAME_FIELD_TRANSFORMATION_CONTRACT_V0_1',
+            '`ww_s1_s1_authority_created=false`'
+          ]
+          for x in required_prereg:
+              assert x in prereg, x
+
+          # Independent frozen semantic authorities agree on auto-pair same-object reuse.
+          assert 'same field object' in fh.lower()
+          assert '`WW_S1_S1` — auto-pair, same-field object.' in fj
+          assert "if bmap is a:\n            fb=fa\n        else:\n            fb=nmt.NmtField(bmap,None,spin=2)" in runner
+          assert "w.compute_coupling_matrix(fa,fb,b)" in runner
+          assert "1:{'selected':7_851_711,'bytes':31_406_844,'record_sha':'752f585125e413c7bd40cc5174cf7ef98e95f970022a351c5d91206f371d2241','unique':4_339_193,'occupancy_sha':'fed1ffdf2ef7a7ae88e42615bd08e207e039239c44fa20b7994258f147a739f1'}" in runner
+          assert "selected=np.ascontiguousarray(wins[0,:,0,:],dtype='<f8')" in runner
+
+          # Cross-pair FG is a valid architectural source only if all cross semantics are explicitly removed later.
+          for x in ("'ordered_source_indices':[0,3]", "'source_pair':'S0->S3'", "source_count_map(r1_root,3)", "same_field_object_handoff"):
+              assert x in fg, x
+          assert "p0 = root/'s0_count_map.npy'; p3 = root/'s1_count_map.npy'" in fg
+
+          low=prereg.lower()
+          for bad in ('np.allclose','np.isclose','rounding_rescue','smoothing_rescue','averaging_rescue'):
+              assert bad not in low
+          assert 'no self-hosted computation' in low
+          assert 'no science-gate scoring' in low
+          assert 'no `ww_s1_s1` authority creation' in low
+
+          print('PASS_EXP073FK_WW_S1_S1_SAME_FIELD_TRANSFORMATION_CONTRACT_V0_1')
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('ww_s1_s1_authority_created=false')
+          print('self_hosted_science_started=false')
+          PY
