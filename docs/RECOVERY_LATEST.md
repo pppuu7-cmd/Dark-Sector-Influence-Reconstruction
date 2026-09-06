@@ -4,45 +4,49 @@ Updated: 2026-09-06. Scope: **DSIR only**. Never mix RTK or RQIR.
 
 ## Preserved authority
 
-Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 exact scientific PASS remain preserved. Historical negative/resource/infrastructure outcomes remain immutable.
+Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. Historical negative/resource/infrastructure outcomes remain immutable.
 
-`WW_S0_S0` remains admitted by Exp073EO v0.2 run/job `34005373819 / 101411448176`, artifact `9980754356`, digest `sha256:0e1a4cff3b761fecc65d8e07df9e56f8109fd221fb4454746caa8c7d0f2fb4be`.
+WW admitted authorities now include:
+- `WW_S0_S0` — Exp073EO v0.2 `34005373819 / 101411448176`;
+- `WW_S0_S1` — Exp073EZ `34017921734 / 101444964371`;
+- `WW_S0_S2` — Exp073FF `34032384956 / 101484177968`;
+- **`WW_S0_S3` — Exp073FN `34050154578 / 101532191756`, token `PASS_EXP073FN_WW_S0_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1`.**
 
-`WW_S0_S1` remains admitted by Exp073EZ `34017921734 / 101444964371`, token `PASS_EXP073EZ_WW_S0_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1`. Its Exp073EY candidate is `34010599584 / 101425638857`, artifact `9983630139`, independently verified ZIP SHA256 `12291c1c9f6100ebfb03a6db1e613f422bd48bc6c02720f89ee613c8646cf9d6`, selected exact A/B SHA `49af7a3d165daaf7cc6781e2286e45cd5baa0042ed9770800588bced7d700e79`.
+## Exp073FG terminal candidate and admission
 
-`WW_S0_S2` remains admitted by Exp073FF `34032384956 / 101484177968`, token `PASS_EXP073FF_WW_S0_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1`. Preserved lineage includes source head `de83e20a68f79ccf25b89b0d33eb4206e294c757`, contract `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`, R1 artifact `9720335366`, digest `sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd`.
+Exp073FG science run/job: `34034377795 / 101489679508`, head `4a02952ee3bcb368a088d87608f61243cd9f7056`, artifact `9993520467` (`exp073fg-ww-s0-s3-filebacked-ab-v0-1`). GitHub digest and independently re-downloaded ZIP SHA256 match exactly: `8ddd1e1b81e5fa9c3a4de16c6d72b35353cb42bba04bb77c736aa4998340bde0`.
 
-## Current science frontier — WW_S0_S3 / Exp073FG
+Raw artifact validation established candidate token `PASS_EXP073FG_WW_S0_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`; candidate classification `SCIENTIFIC_CANDIDATE_PASS_PENDING_PROVENANCE_ADMISSION`; ordered `(S0,S3)` / `[0,3]`; distinct-field semantics; exact A/B selected SHA `db58af980e2997ebbe327ce91dfafb682c38fda1ba841c3d5acba78e429007d3`; canonical `<f8 [39,12288]`, `EE<-EE`, finite, byte-identical and exact-array-equal. Full public BPW SHA is `6a9fe87ab5ae44db5d475686cbc6024174b8c8384433c9d98f48e182557fc942`; workspace FITS SHA `af870ad38f5d74796519f18ab135bf1c0129d888206079606081e3bb7653fc5d`. Both six-stage manifest chains match their post-prune receipts exactly. Both receipts preserve public `get_bandpower_windows()` after `read_unbinned_MCM=True`, regular-file-backed unbinned MCM exactly `19,327,352,832` bytes with `/proc/self/maps` proof, no manual/historical numerical reconstruction, no tolerance rescue, and no cross-replica output read.
 
-Preregistration: `experiments/073fg_ww_s0_s3_filebacked_full_resolution_ab_science_v0_1_prereg.md`, blob `50c64a3f7e341f0a180b9c8dbc83a074f6cae150`.
+Governance correction: `Exp073FL` was already occupied by the earlier `WW_S1_S1` driver-generation static audit. A later S0S3 admission implementation accidentally reused that label. Historical collided run/job `34047839320 / 101525992295` is immutable `INFRASTRUCTURE_LOG_TRANSPORT_FAIL_PLUS_0_PLUS_0`; first causal failure was `gh api .../logs` rejecting terminal escape sequences. It created no authority. The collision is not rewritten.
 
-Frozen target: ordered `(S0,S3)`, authoritative R1 `[0,3]`, two independently reconstructed source count maps and distinct spin-2 fields. Numerical/storage semantics remain DES NSIDE=4096; ell `0..12287`; 39 bands; PyMaster/NaMaster 2.7 lineage; serialized workspace `read_from(...,read_unbinned_MCM=True)` then public `get_bandpower_windows()`; one regular-file-backed unbinned MCM exactly `19,327,352,832` bytes with `/proc/self/maps` proof; full BPW `[4,39,4,12288]`; selected `EE<-EE`, canonical `<f8 [39,12288]`; exact A/B SHA plus `numpy.array_equal`; all finite; no tolerance/allclose/rounding/smoothing/averaging/manual reconstruction/effective-coordinate/fiducial rescue.
+Prospectively unused label **Exp073FN** superseded only the S0S3 admission implementation while freezing the same candidate evidence and criteria. Prereg blob `3294965fbbccc5e08eb6de7d0ed1556a263a2b6a`, creation commit `aa5230aba107557609e645b8b5a28006f5d275a5`. Exp073FN run/job `34050154578 / 101532191756`, head `84c7505e0b84c00317e73e2045d973ae325a6b9a`, passed raw hosted verification and emitted `PASS_EXP073FN_WW_S0_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1`, `classification=SCIENTIFIC_AUTHORITY_ADMITTED`, `ww_s0_s3_authority_created=true`. The only transport repair was `gh api --allow-escape-sequences`; frozen science and candidate evidence were unchanged.
 
-Candidate token remains `PASS_EXP073FG_WW_S0_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`. Candidate alone creates no authority; separate provenance admission remains mandatory.
+Immutable recovery note: `docs/recovery/RECOVERY_2026-09-06_EXP073FN_ADMITTED_S0S3_FO_QUEUED.md`.
 
-Historical pre-science wrapper failures `34033970885 / 101488568727` and `34034127464 / 101488993099` remain infrastructure `+0/+0`, never scientific FAILs.
+## Current science frontier — WW_S1_S1 / Exp073FM
 
-Frozen current implementation blobs: `ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py` `d919da63ad5ccd1b94255d9e45face1c922c4f44`; v0.2 `8749c20f41e5259787307bbd5d556cb772ceba18`; home wrapper `77e7f7dafc91ee79767eb31a288633ca1285c66e`; prune verifier `d925840c60035b30ed1375657585967ec2644e0d`; terminal comparator `74a1a2f8d3b44eaab66e834d69156e1810b75a8e`.
+Exp073FM science prereg creation commit: `391af1d14ca61f20ef42cccde348453ca84a1aaa`.
 
-Current authoritative workflow/run **`34034377795`**, head **`4a02952ee3bcb368a088d87608f61243cd9f7056`**. Hosted lineage job `101489652912` = SUCCESS; hosted code/checkpoint audit `101489652945` = SUCCESS. Home science job **`101489679508`** on `DSIR-HOME-PC` is **IN_PROGRESS** in the frozen S0-to-S3 A/B step at latest live reconciliation. Do not inspect or interpret partial numerical output and do not launch any competing self-hosted DSIR workload. Exact durable checkpoint stage remains `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`.
+Frozen target: `[1,1]`, authoritative S1 reconstructed exactly once per replica; exactly one spin-2 `NmtField`; exact same Python field object passed on both sides (`fb=fa` semantics); equal-but-distinct second field forbidden; DES NSIDE=4096; ell `0..12287`; 39 bands; public file-backed NaMaster/PyMaster route; full BPW `[4,39,4,12288]`; selected `EE<-EE`, canonical `<f8 [39,12288]`; exact A/B SHA plus `numpy.array_equal`; all finite; no tolerance/allclose/rounding/smoothing/averaging/manual reconstruction/effective-coordinate/fiducial rescue. Candidate token: `PASS_EXP073FM_WW_S1_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`; candidate alone creates no authority.
 
-On terminal state: consume compact artifact and raw job evidence immediately; independently verify ZIP SHA256, complete six-stage/prune provenance, frozen source/contract/R1/driver/patch identities, `19,327,352,832`-byte mmap proof, canonical `<f8 [39,12288]` `EE<-EE`, exact A/B SHA and `numpy.array_equal`, finiteness and no rescue. Exact numerical mismatch is a scientific FAIL. Infrastructure/provenance/software failure requires smallest prospective repair and checkpoint-preserving resume.
+Existing hosted support remains preserved: Exp073FH same-field architecture, Exp073FJ semantic matrix, Exp073FK same-field transformation contract, and Exp073FL S1S1 driver-generation static audit. These are support `+0/+0` only.
 
-## Closed hosted support — future WW_S1_S1
+### Current authoritative process — Exp073FO
 
-The frozen 14-task manifest places `WW_S1_S1` immediately after `WW_S0_S3`. Exp073FH `34034445222` closed same-field architecture support `+0/+0`; Exp073FJ `34034662798` closed the remaining six WW semantic cells `+0/+0`; Exp073FK `34037855604 / 101499105572` closed the same-field transformation contract `+0/+0`. These support gates create no scientific authority and cannot start competing home science.
+Exp073FO hosted-only production-transformation readiness prereg: blob `8bbe6e45b10295c245f588a4bc65713acb1a1d2e`, creation commit `90c3648d625a64c94e01fd3046fc0e683cfb5f69`.
 
-Exp073FL preregistration `experiments/073fl_ww_s1_s1_driver_generation_static_audit_v0_1_prereg.md`, blob `e578cac17048f73193ff73c97ca38cb1d644d202`, creation commit `8b59dd08cd79af594198b038bd96bd69910cab5f`, freezes a hosted-only qualification of deterministic S1S1 driver generation: exact `[1,1]`, one authoritative S1 reconstruction, one spin-2 field object, exact same-object coupling handoff, dedicated future S1S1 checkpoint namespaces, hardened complete-stage/prune semantics, public file-backed BPW route and no tolerance/rescue.
+Live process at latest reconciliation:
+- workflow/run **`34050224161`**;
+- job **`101532385479`**;
+- head **`0f9d5d6039b129390e780c805ae6043884135459`**;
+- state **QUEUED**;
+- expected token `PASS_EXP073FO_WW_S1_S1_PRODUCTION_TRANSFORMATION_READINESS_V0_1`;
+- classification on PASS `SUPPORT_PLUS_0_PLUS_0`;
+- `ww_s1_s1_authority_created=false`;
+- `self_hosted_science_started=false`.
 
-Historical first Exp073FL run/job **`34043934290 / 101515496355`**, head `25ef2ecccac9e79a3de1395b31cf7402e52c6277`, failed before science on an over-strict textual-format assertion against immutable Exp073FK. Classification: `IMPLEMENTATION_STATIC_FAIL_PLUS_0_PLUS_0`; no workspace, self-hosted computation or authority. Minimal repair commit **`37180c62451731e87bf7e1f2ea17892da5d28070`** changed only the exact textual binding; scientific semantics were untouched. Reactivation head: **`cdbcf0019df9ef6ec9b71abc32dc12bee2ff0579`**.
-
-Repaired Exp073FL run/job **`34043987159 / 101515646656`** completed SUCCESS. Raw job log contains exact token `PASS_EXP073FL_WW_S1_S1_DRIVER_GENERATION_STATIC_AUDIT_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `ww_s1_s1_authority_created=false`, `self_hosted_science_started=false`. It compiled the hosted-only deterministic contract skeleton, checked one S1 reconstruction, one field construction, exact same-object handoff, forbidden stale/tolerance semantics, and synthetically rejected an equal-but-distinct second field. Immutable recovery note: `docs/recovery/RECOVERY_2026-09-06_EXP073FL_STATIC_PASS_FG_RUNNING.md`.
-
-No heavy `WW_S1_S1` computation is authorized while Exp073FG owns the home runner. After Exp073FG is terminal and fully consumed, an exact S1S1 production driver and fail-closed home envelope may be committed/audited under FH/FJ/FK/FL, but those support steps still create no S1S1 scientific authority.
-
-## Frozen publication architecture
-
-`docs/DSIR_PUBLICATION_ARCHITECTURE_2026-09-06.md`, creation commit `fce46eb74aad797285e2a3fd89d01e41633e76f0`, blob `4661b4c9c796094a57e3e5f33e3fd8a25c186eb5`, remains frozen. Sequence: **DSIR-1 Framework -> DSIR-2 inverse reconstruction/mathematical machinery -> DSIR-3 observational implementation + complete funnel -> DSIR-4 Existing-Model Funnel Matrix -> conditional DSIR-5 DSIR-derived new dark-sector model -> conditional DSIR-6 independent predictions/external falsification tests**. Existing models are tested through the prospectively frozen funnel before a new model is claimed necessary; future model construction must remain anti-circular with design and blind/external validation separated.
+`DSIR-HOME-PC` is currently free. Do not launch Exp073FM home science until an exact S1S1 production driver, hardened terminal comparator/prune path and dedicated fail-closed home envelope are committed and separately hosted-audited. On Exp073FO PASS, that implementation/audit is the exact next permitted work. On Exp073FO FAIL, diagnose the first causal static/infrastructure defect and make the smallest prospective repair without changing frozen S1S1 science.
 
 ## Frozen global boundaries
 
