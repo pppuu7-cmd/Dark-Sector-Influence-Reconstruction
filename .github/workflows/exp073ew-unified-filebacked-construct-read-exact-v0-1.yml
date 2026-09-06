@@ -1,0 +1,85 @@
+name: Exp073EW unified file-backed construct-read exact v0.1
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073ew-unified-filebacked-construct-read-exact-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  OMP_NUM_THREADS: '2'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  PYTHONHASHSEED: '0'
+jobs:
+  hosted-exact:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Freeze prospective identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073ew_namaster27_unified_filebacked_construct_read_exact_v0_1_prereg.md)" = '2d7708c2d6ff53968c2fc6911ee177228d1268d6'
+          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)" = 'd534b698f9131688d263eedcef27260386c58641'
+          test "$(git rev-parse HEAD:ci/exp073ew_run_construct_read_route_v0_1.py)" = '4fe00c55d875eeaf6786ffeac89e4a5090d6ac36'
+          test "$(git rev-parse HEAD:ci/exp073ew_compare_construct_read_exact_v0_1.py)" = '9d9a606188144b47dee7cc04c6ce3e7db31ea651'
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcfitsio-dev libfftw3-dev libgsl-dev autoconf automake libtool patch
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Freeze exact NaMaster source and apply unified patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/exp073ew"; mkdir -p "$R"
+          git clone -q https://github.com/LSSTDESC/NaMaster.git "$R/stock"
+          git -C "$R/stock" checkout -q --detach 24365fa59a38c15732f4f37e8b29265b75c442d5
+          test "$(git -C "$R/stock" rev-parse HEAD)" = '24365fa59a38c15732f4f37e8b29265b75c442d5'
+          cp -a "$R/stock" "$R/patched"
+          cd "$R/patched"
+          patch --dry-run -p1 < "$GITHUB_WORKSPACE/patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch"
+          patch -p1 < "$GITHUB_WORKSPACE/patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch"
+          git diff --check
+      - name: Build isolated stock and patched PyMaster 2.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/exp073ew"
+          python -m venv "$R/venv-stock"; python -m venv "$R/venv-patched"
+          for V in "$R/venv-stock" "$R/venv-patched"; do
+            "$V/bin/python" -m pip install -q --upgrade pip setuptools wheel
+            "$V/bin/python" -m pip install -q numpy healpy ducc0 astropy scipy cython
+          done
+          (cd "$R/stock" && "$R/venv-stock/bin/python" setup.py install >"$RUNNER_TEMP/ew-stock-build.log" 2>&1)
+          (cd "$R/patched" && "$R/venv-patched/bin/python" setup.py install >"$RUNNER_TEMP/ew-patched-build.log" 2>&1)
+          "$R/venv-stock/bin/python" -c "import importlib.metadata; v=importlib.metadata.version('pymaster'); assert v=='2.7' or v.startswith('2.7.')"
+          "$R/venv-patched/bin/python" -c "import importlib.metadata; v=importlib.metadata.version('pymaster'); assert v=='2.7' or v.startswith('2.7.')"
+      - name: Run stock and unified patched routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/exp073ew"; E="$R/evidence"; mkdir -p "$E/stock" "$E/patched" "$R/mmap"
+          unset DSIR_NMT_FILEBACKED_MCM DSIR_NMT_MMAP_DIR || true
+          "$R/venv-stock/bin/python" "$GITHUB_WORKSPACE/ci/exp073ew_run_construct_read_route_v0_1.py" --mode stock --out-dir "$E/stock"
+          DSIR_NMT_FILEBACKED_MCM=1 DSIR_NMT_MMAP_DIR="$R/mmap" "$R/venv-patched/bin/python" "$GITHUB_WORKSPACE/ci/exp073ew_run_construct_read_route_v0_1.py" --mode patched --out-dir "$E/patched" --mmap-dir "$R/mmap"
+          test -z "$(find "$R/mmap" -type f -name 'dsir-nmt-mcm-*' -print -quit)"
+      - name: Terminal state-matched exact comparison
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/exp073ew"; E="$R/evidence"
+          "$R/venv-stock/bin/python" "$GITHUB_WORKSPACE/ci/exp073ew_compare_construct_read_exact_v0_1.py" --stock "$E/stock" --patched "$E/patched" --out "$E/terminal_qualifier_receipt.json" | tee "$E/stdout.txt"
+          grep -Fx 'PASS_EXP073EW_NAMASTER27_UNIFIED_FILEBACKED_CONSTRUCT_READ_EXACT_V0_1' "$E/stdout.txt"
+      - name: Upload immutable Exp073EW evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ew-unified-filebacked-construct-read-exact-v0-1-${{ github.sha }}
+          path: ${{ runner.temp }}/exp073ew/evidence/
+          if-no-files-found: warn
+          retention-days: 30
