@@ -1,0 +1,74 @@
+name: Exp073FP WW_S1_S1 exact production driver static audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073fp-ww-s1-s1-exact-production-driver-static-audit-v0-1.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact committed Exp073FM driver
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073fp_ww_s1_s1_exact_production_driver_static_audit_v0_1_prereg.md)" = "$(git rev-parse HEAD:experiments/073fp_ww_s1_s1_exact_production_driver_static_audit_v0_1_prereg.md)"
+          test "$(git rev-parse HEAD:ci/exp073fm_ww_s1_s1_durable_ab_production_v0_1.py)" = "477647c5164264665cc16e20d1577fb25cd245f4"
+          test "$(git rev-parse HEAD:ci/exp073fm_ww_s1_s1_durable_ab_production_v0_2.py)" = "8e3edff39aae95d3abc3196806802c5f0ae59832"
+          python3 -m py_compile ci/exp073fm_ww_s1_s1_durable_ab_production_v0_1.py ci/exp073fm_ww_s1_s1_durable_ab_production_v0_2.py
+          python3 - <<'PY'
+          import ast
+          from pathlib import Path
+          p1=Path('ci/exp073fm_ww_s1_s1_durable_ab_production_v0_1.py')
+          p2=Path('ci/exp073fm_ww_s1_s1_durable_ab_production_v0_2.py')
+          s=p1.read_text(); s2=p2.read_text(); tree=ast.parse(s)
+          required=[
+            "SCHEMA = 'dsir.exp073fm.ww_s1_s1.durable_ab_production.v0.1'",
+            "'A':'checkpoints/exp073fm-ww-s1-s1-a-v0-1'",
+            "'B':'checkpoints/exp073fm-ww-s1-s1-b-v0-1'",
+            "mod.source_count_map(r1_root,1)",
+            "w.compute_coupling_matrix(f1,f1,b)",
+            "'reconstruction_counts':{'s1':1}",
+            "'field_construction_count':1",
+            "'ordered_source_indices':[1,1]",
+            "'same_field_object_handoff':True",
+            "'source_pair':'S1->S1'",
+            "PASS_EXP073FM_WW_S1_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1",
+            "mod.np.array_equal",
+            "strict_validated_finished",
+            "fail-closed missing complete-stage manifest",
+            "public_get_bandpower_windows_after_filebacked_fits_read",
+          ]
+          for x in required: assert x in s,x
+          assert s.count('mod.source_count_map(r1_root,1)')==1
+          assert s.count('mod.nmt.NmtField(')==1
+          assert s.count('w.compute_coupling_matrix(f1,f1,b)')==1
+          for x in ('source_count_map(r1_root,0)','source_count_map(r1_root,2)','source_count_map(r1_root,3)','np.allclose','np.isclose','rounding_rescue','smoothing_rescue','averaging_rescue'):
+            assert x not in s,x
+          for x in ('EXPECTED_MCM_BYTES = 19327352832','read_unbinned_MCM=True',"Path('/proc/self/maps')",'get_bandpower_windows()',"'mcm_proc_maps': True","'historical_manual_reconstruction': False","'no_tolerance_rescue': True"):
+            assert x in s2,x
+          assert 'np.allclose' not in s2 and 'np.isclose' not in s2
+          # AST: one source_count_map call with literal index 1 and one NmtField construction.
+          scm=[]; fields=[]; coupling=[]
+          for n in ast.walk(tree):
+            if isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute):
+              if n.func.attr=='source_count_map': scm.append(n)
+              if n.func.attr=='NmtField': fields.append(n)
+              if n.func.attr=='compute_coupling_matrix': coupling.append(n)
+          assert len(scm)==1 and len(scm[0].args)>=2 and isinstance(scm[0].args[1],ast.Constant) and scm[0].args[1].value==1
+          assert len(fields)==1
+          assert len(coupling)==1 and len(coupling[0].args)>=2
+          a,b=coupling[0].args[:2]
+          assert isinstance(a,ast.Name) and isinstance(b,ast.Name) and a.id==b.id=='f1'
+          PY
+          echo PASS_EXP073FP_WW_S1_S1_EXACT_PRODUCTION_DRIVER_STATIC_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo ww_s1_s1_authority_created=false
+          echo self_hosted_science_started=false
