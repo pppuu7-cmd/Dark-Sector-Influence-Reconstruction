@@ -72,11 +72,11 @@ jobs:
             IFS=: read -r rid jid tok <<<"$pair"
             curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/runs/$rid" -o "run-$rid.json"
             python3 - "$rid" "$jid" "run-$rid.json" <<'PY'
-import json,sys
-rid,jid,p=sys.argv[1:]
-r=json.load(open(p))
-assert r['id']==int(rid) and r['status']=='completed' and r['conclusion']=='success'
-PY
+          import json,sys
+          rid,jid,p=sys.argv[1:]
+          r=json.load(open(p))
+          assert r['id']==int(rid) and r['status']=='completed' and r['conclusion']=='success'
+          PY
             curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/jobs/$jid/logs" -o "job-$jid.log"
             grep -Fqx "$tok" "job-$jid.log"
           done
@@ -84,17 +84,17 @@ PY
           curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/runs/$CANDIDATE_RUN_ID/jobs?per_page=100" -o jobs.json
           curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/artifacts/$CANDIDATE_ARTIFACT_ID" -o artifact.json
           python3 - <<'PY'
-import json,os
-run=json.load(open('run.json')); jobs=json.load(open('jobs.json'))['jobs']; art=json.load(open('artifact.json'))
-assert run['id']==int(os.environ['CANDIDATE_RUN_ID']) and run['status']=='completed' and run['conclusion']=='success'
-assert run['head_sha']==os.environ['CANDIDATE_HEAD']
-J={j['id']:j for j in jobs}
-for k in ('CANDIDATE_HOSTED_JOB_ID','CANDIDATE_HOME_JOB_ID'):
-    j=J[int(os.environ[k])]; assert j['status']=='completed' and j['conclusion']=='success'
-assert art['id']==int(os.environ['CANDIDATE_ARTIFACT_ID']) and art['name']==os.environ['CANDIDATE_ARTIFACT_NAME']
-assert art['digest']=='sha256:'+os.environ['CANDIDATE_ZIP_SHA256']
-wr=art['workflow_run']; assert wr['id']==int(os.environ['CANDIDATE_RUN_ID']) and wr['head_sha']==os.environ['CANDIDATE_HEAD']
-PY
+          import json,os
+          run=json.load(open('run.json')); jobs=json.load(open('jobs.json'))['jobs']; art=json.load(open('artifact.json'))
+          assert run['id']==int(os.environ['CANDIDATE_RUN_ID']) and run['status']=='completed' and run['conclusion']=='success'
+          assert run['head_sha']==os.environ['CANDIDATE_HEAD']
+          J={j['id']:j for j in jobs}
+          for k in ('CANDIDATE_HOSTED_JOB_ID','CANDIDATE_HOME_JOB_ID'):
+              j=J[int(os.environ[k])]; assert j['status']=='completed' and j['conclusion']=='success'
+          assert art['id']==int(os.environ['CANDIDATE_ARTIFACT_ID']) and art['name']==os.environ['CANDIDATE_ARTIFACT_NAME']
+          assert art['digest']=='sha256:'+os.environ['CANDIDATE_ZIP_SHA256']
+          wr=art['workflow_run']; assert wr['id']==int(os.environ['CANDIDATE_RUN_ID']) and wr['head_sha']==os.environ['CANDIDATE_HEAD']
+          PY
           curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/artifacts/$CANDIDATE_ARTIFACT_ID/zip" -o candidate.zip
           test "$(sha256sum candidate.zip | awk '{print $1}')" = "$CANDIDATE_ZIP_SHA256"
           mkdir candidate && unzip -q candidate.zip -d candidate
@@ -105,76 +105,76 @@ PY
           set -euo pipefail
           python3 -m pip install --disable-pip-version-check --no-input 'numpy==2.3.2'
           python3 - <<'PY'
-import numpy
-assert numpy.__version__ == '2.3.2'
-PY
+          import numpy
+          assert numpy.__version__ == '2.3.2'
+          PY
 
       - name: Fail-closed raw provenance and exact scientific admission audit
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
-import hashlib,json,os,pathlib,numpy as np
-root=pathlib.Path('candidate')
-H=lambda p: hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
-source=os.environ['SOURCE_HEAD']; fp=os.environ['CONTRACT_FP']; selected=os.environ['SELECTED_SHA256']; full=os.environ['FULL_SHA256']; wsp=os.environ['WORKSPACE_SHA256']
-stages=['fresh_sources_complete','fresh_workspace_mcm_complete','mcm_fits_verified','full_window_complete','selected_ee_complete','replica_receipt_complete']
-term=json.loads((root/'terminal_receipt.json').read_text())
-assert term['token']=='PASS_EXP073FA_WW_S0_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'
-assert term['classification']=='SCIENTIFIC_CANDIDATE_PASS_PENDING_PROVENANCE_ADMISSION'
-assert term['science_gate_scored'] is True and term['ww_s0_s2_authority_created'] is False
-assert term['source_head']==source and term['contract_fingerprint']==fp
-assert term['source_pair']=='S0->S2' and term['ordered_source_indices']==[0,2] and term['same_field_object_handoff'] is False
-assert term['selected_semantics']=='EE<-EE' and term['selected_shape']==[39,12288] and term['selected_dtype']=='<f8'
-assert term['a_sha256']==selected and term['b_sha256']==selected and term['sha256_equal'] is True and term['numpy_array_equal'] is True and term['all_finite'] is True and term['no_tolerance_rescue'] is True
-assert term['bpw_route']=='public_get_bandpower_windows_after_filebacked_fits_read'
-arrays=[]
-for rep in ('A','B'):
-    ns=f'checkpoints/exp073fa-ww-s0-s2-{rep.lower()}-v0-1'
-    rr=root/'checkpoints'/rep
-    for stage in stages:
-        m=json.loads((rr/(stage+'.json')).read_text())
-        assert m['schema']=='dsir.exp073fa.ww_s0_s2.durable_ab_production.v0.1.checkpoint'
-        assert m['stage']==stage and m['complete'] is True and m['replica']==rep and m['checkpoint_namespace']==ns
-        assert m['source_head']==source and m['contract_fingerprint']==fp
-        assert m['historical_ww_numerical_import'] is False and m['other_replica_output_read'] is False
-    src=json.loads((rr/'fresh_sources_complete.json').read_text())
-    assert src['payloads']['ordered_source_indices']==[0,2]
-    assert src['payloads']['reconstruction_counts']=={'s0':1,'s2':1}
-    ws=json.loads((rr/'fresh_workspace_mcm_complete.json').read_text())
-    assert ws['payloads']['ordered_source_indices']==[0,2] and ws['payloads']['same_field_object_handoff'] is False
-    assert len(set(ws['payloads']['field_object_ids']))==2 and len(set(ws['payloads']['source_map_sha256']))==2
-    assert ws['payloads']['workspace_fits']['sha256']==wsp
-    mv=json.loads((rr/'mcm_fits_verified.json').read_text()); assert mv['payloads']['workspace_fits']['sha256']==wsp
-    fw=json.loads((rr/'full_window_complete.json').read_text())['payloads']['full_window']
-    assert fw=={'mcm_filebacked':True,'route':'public_get_bandpower_windows_after_filebacked_fits_read','sha256':full,'shape':[4,39,4,12288]}
-    se=json.loads((rr/'selected_ee_complete.json').read_text())['payloads']['selected_ee']
-    assert se['sha256']==selected and se['shape']==[39,12288] and se['dtype']=='<f8' and se['semantics']=='wins[0,:,0,:] = EE<-EE'
-    receipt=json.loads((rr/'replica_receipt.json').read_text())
-    assert receipt['selected_ee_sha256']==selected and receipt['workspace_fits_sha256']==wsp
-    assert receipt['source_pair']=='S0->S2' and receipt['ordered_source_indices']==[0,2] and receipt['same_field_object_handoff'] is False
-    assert receipt['source_head']==source and receipt['contract_fingerprint']==fp and receipt['checkpoint_namespace']==ns
-    assert receipt['historical_ww_numerical_import'] is False and receipt['other_replica_output_read'] is False and receipt['science_gate_scored'] is False
-    ar=receipt['adapter_receipt']
-    assert ar['route']=='public_get_bandpower_windows_after_filebacked_fits_read' and ar['read_unbinned_MCM'] is True
-    assert ar['mcm_filebacked'] is True and ar['mcm_proc_maps'] is True and ar['mcm_backing_bytes']==19327352832
-    assert ar['public_full_shape']==[4,39,4,12288] and ar['full_sha256']==full
-    assert ar['selected_semantics']=='wins[0,:,0,:] = EE<-EE' and ar['selected_shape']==[39,12288] and ar['selected_sha256']==selected
-    assert ar['historical_manual_reconstruction'] is False and ar['no_tolerance_rescue'] is True
-    assert json.loads((rr/'exact_route/public_bpw_receipt.json').read_text())==ar
-    pr=json.loads((rr/'post_receipt_prune.json').read_text())
-    assert pr['replica']==rep and pr['preserved_complete_receipt'] is True and pr['pruned_only_after_receipt'] is True and pr['selected_ee_sha256']==selected
-    done=json.loads((rr/'replica_receipt_complete.json').read_text())
-    assert H(rr/'replica_receipt.json')==done['payloads']['replica_receipt']['sha256']
-    eep=rr/'exact_route/selected_ee.bin'; assert H(eep)==selected and eep.stat().st_size==39*12288*8
-    a=np.fromfile(eep,dtype='<f8').reshape(39,12288); assert np.isfinite(a).all(); arrays.append(a)
-assert np.array_equal(arrays[0],arrays[1])
-ab=json.loads((root/'ab_compare.json').read_text())
-assert ab['status']=='PASS_EXP073FA_WW_S0_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'
-assert ab['sha256_equal'] is True and ab['numpy_array_equal'] is True and ab['all_finite'] is True and ab['no_tolerance_rescue'] is True
-assert ab['a_sha256']==selected and ab['b_sha256']==selected and ab['source_pair']=='S0->S2' and ab['ordered_source_indices']==[0,2]
-print('PASS_EXP073FF_WW_S0_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1')
-print('classification=SCIENTIFIC_AUTHORITY_ADMITTED')
-print('science_gate_scored=true')
-print('ww_s0_s2_authority_created=true')
-PY
+          import hashlib,json,os,pathlib,numpy as np
+          root=pathlib.Path('candidate')
+          H=lambda p: hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
+          source=os.environ['SOURCE_HEAD']; fp=os.environ['CONTRACT_FP']; selected=os.environ['SELECTED_SHA256']; full=os.environ['FULL_SHA256']; wsp=os.environ['WORKSPACE_SHA256']
+          stages=['fresh_sources_complete','fresh_workspace_mcm_complete','mcm_fits_verified','full_window_complete','selected_ee_complete','replica_receipt_complete']
+          term=json.loads((root/'terminal_receipt.json').read_text())
+          assert term['token']=='PASS_EXP073FA_WW_S0_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'
+          assert term['classification']=='SCIENTIFIC_CANDIDATE_PASS_PENDING_PROVENANCE_ADMISSION'
+          assert term['science_gate_scored'] is True and term['ww_s0_s2_authority_created'] is False
+          assert term['source_head']==source and term['contract_fingerprint']==fp
+          assert term['source_pair']=='S0->S2' and term['ordered_source_indices']==[0,2] and term['same_field_object_handoff'] is False
+          assert term['selected_semantics']=='EE<-EE' and term['selected_shape']==[39,12288] and term['selected_dtype']=='<f8'
+          assert term['a_sha256']==selected and term['b_sha256']==selected and term['sha256_equal'] is True and term['numpy_array_equal'] is True and term['all_finite'] is True and term['no_tolerance_rescue'] is True
+          assert term['bpw_route']=='public_get_bandpower_windows_after_filebacked_fits_read'
+          arrays=[]
+          for rep in ('A','B'):
+              ns=f'checkpoints/exp073fa-ww-s0-s2-{rep.lower()}-v0-1'
+              rr=root/'checkpoints'/rep
+              for stage in stages:
+                  m=json.loads((rr/(stage+'.json')).read_text())
+                  assert m['schema']=='dsir.exp073fa.ww_s0_s2.durable_ab_production.v0.1.checkpoint'
+                  assert m['stage']==stage and m['complete'] is True and m['replica']==rep and m['checkpoint_namespace']==ns
+                  assert m['source_head']==source and m['contract_fingerprint']==fp
+                  assert m['historical_ww_numerical_import'] is False and m['other_replica_output_read'] is False
+              src=json.loads((rr/'fresh_sources_complete.json').read_text())
+              assert src['payloads']['ordered_source_indices']==[0,2]
+              assert src['payloads']['reconstruction_counts']=={'s0':1,'s2':1}
+              ws=json.loads((rr/'fresh_workspace_mcm_complete.json').read_text())
+              assert ws['payloads']['ordered_source_indices']==[0,2] and ws['payloads']['same_field_object_handoff'] is False
+              assert len(set(ws['payloads']['field_object_ids']))==2 and len(set(ws['payloads']['source_map_sha256']))==2
+              assert ws['payloads']['workspace_fits']['sha256']==wsp
+              mv=json.loads((rr/'mcm_fits_verified.json').read_text()); assert mv['payloads']['workspace_fits']['sha256']==wsp
+              fw=json.loads((rr/'full_window_complete.json').read_text())['payloads']['full_window']
+              assert fw=={'mcm_filebacked':True,'route':'public_get_bandpower_windows_after_filebacked_fits_read','sha256':full,'shape':[4,39,4,12288]}
+              se=json.loads((rr/'selected_ee_complete.json').read_text())['payloads']['selected_ee']
+              assert se['sha256']==selected and se['shape']==[39,12288] and se['dtype']=='<f8' and se['semantics']=='wins[0,:,0,:] = EE<-EE'
+              receipt=json.loads((rr/'replica_receipt.json').read_text())
+              assert receipt['selected_ee_sha256']==selected and receipt['workspace_fits_sha256']==wsp
+              assert receipt['source_pair']=='S0->S2' and receipt['ordered_source_indices']==[0,2] and receipt['same_field_object_handoff'] is False
+              assert receipt['source_head']==source and receipt['contract_fingerprint']==fp and receipt['checkpoint_namespace']==ns
+              assert receipt['historical_ww_numerical_import'] is False and receipt['other_replica_output_read'] is False and receipt['science_gate_scored'] is False
+              ar=receipt['adapter_receipt']
+              assert ar['route']=='public_get_bandpower_windows_after_filebacked_fits_read' and ar['read_unbinned_MCM'] is True
+              assert ar['mcm_filebacked'] is True and ar['mcm_proc_maps'] is True and ar['mcm_backing_bytes']==19327352832
+              assert ar['public_full_shape']==[4,39,4,12288] and ar['full_sha256']==full
+              assert ar['selected_semantics']=='wins[0,:,0,:] = EE<-EE' and ar['selected_shape']==[39,12288] and ar['selected_sha256']==selected
+              assert ar['historical_manual_reconstruction'] is False and ar['no_tolerance_rescue'] is True
+              assert json.loads((rr/'exact_route/public_bpw_receipt.json').read_text())==ar
+              pr=json.loads((rr/'post_receipt_prune.json').read_text())
+              assert pr['replica']==rep and pr['preserved_complete_receipt'] is True and pr['pruned_only_after_receipt'] is True and pr['selected_ee_sha256']==selected
+              done=json.loads((rr/'replica_receipt_complete.json').read_text())
+              assert H(rr/'replica_receipt.json')==done['payloads']['replica_receipt']['sha256']
+              eep=rr/'exact_route/selected_ee.bin'; assert H(eep)==selected and eep.stat().st_size==39*12288*8
+              a=np.fromfile(eep,dtype='<f8').reshape(39,12288); assert np.isfinite(a).all(); arrays.append(a)
+          assert np.array_equal(arrays[0],arrays[1])
+          ab=json.loads((root/'ab_compare.json').read_text())
+          assert ab['status']=='PASS_EXP073FA_WW_S0_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'
+          assert ab['sha256_equal'] is True and ab['numpy_array_equal'] is True and ab['all_finite'] is True and ab['no_tolerance_rescue'] is True
+          assert ab['a_sha256']==selected and ab['b_sha256']==selected and ab['source_pair']=='S0->S2' and ab['ordered_source_indices']==[0,2]
+          print('PASS_EXP073FF_WW_S0_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1')
+          print('classification=SCIENTIFIC_AUTHORITY_ADMITTED')
+          print('science_gate_scored=true')
+          print('ww_s0_s2_authority_created=true')
+          PY
