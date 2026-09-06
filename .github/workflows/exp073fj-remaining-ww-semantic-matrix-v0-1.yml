@@ -1,0 +1,72 @@
+name: Exp073FJ remaining WW semantic matrix v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073fj-remaining-ww-semantic-matrix-v0-1.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  semantic-cell:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { task: WW_S1_S1, i: 1, j: 1, mode: auto }
+          - { task: WW_S1_S2, i: 1, j: 2, mode: cross }
+          - { task: WW_S1_S3, i: 1, j: 3, mode: cross }
+          - { task: WW_S2_S2, i: 2, j: 2, mode: auto }
+          - { task: WW_S2_S3, i: 2, j: 3, mode: cross }
+          - { task: WW_S3_S3, i: 3, j: 3, mode: auto }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit ${{ matrix.task }} semantic cell
+        env:
+          TASK: ${{ matrix.task }}
+          I: ${{ matrix.i }}
+          J: ${{ matrix.j }}
+          MODE: ${{ matrix.mode }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073fj_remaining_ww_semantic_matrix_v0_1_prereg.md)" = 'cb088f84361d682c613f3f60ba7d441142ba881c'
+          test "$(git rev-parse HEAD:docs/ARTICLE3_DES_ANGULAR_14_TASK_MANIFEST_2026-08-30.md)" = '52623cdd398b8bde72418ac6a3fc8cd985556da1'
+          test "$(git rev-parse HEAD:ci/exp073aa_article3_des_angular_task_runner_v0_1.py)" = '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
+          python3 - <<'PY'
+          import os,re
+          from pathlib import Path
+          task=os.environ['TASK']; i=int(os.environ['I']); j=int(os.environ['J']); mode=os.environ['MODE']
+          runner=Path('ci/exp073aa_article3_des_angular_task_runner_v0_1.py').read_text()
+          manifest=Path('docs/ARTICLE3_DES_ANGULAR_14_TASK_MANIFEST_2026-08-30.md').read_text()
+          expected=['WW_S1_S1','WW_S1_S2','WW_S1_S3','WW_S2_S2','WW_S2_S3','WW_S3_S3']
+          assert task in expected and i<=j
+          assert (mode=='auto') == (i==j)
+          assert f"'{task}'" in runner and f'`{task}`.' in manifest
+          positions=[manifest.index(f'`{x}`.') for x in expected]
+          assert positions==sorted(positions)
+          auth={
+            1:(7_851_711,31_406_844,'752f585125e413c7bd40cc5174cf7ef98e95f970022a351c5d91206f371d2241',4_339_193,'fed1ffdf2ef7a7ae88e42615bd08e207e039239c44fa20b7994258f147a739f1'),
+            2:(8_238_547,32_954_188,'259295a1f5a23ad9e5c6b46842bcf612b0eb13dc701ab6d54eb15f0d7bb0105f',4_401_919,'9e2bfb92289ca4a3abb11efabf7ac8d59bb7c68eb63a7104c2b247267733b24d'),
+            3:(4_196_641,16_786_564,'3996f2bacf29d46278773530058d4f5666c0d590bf6cebc06459659166bc60ec',2_943_132,'21e3776111de305c108463b02b0e3fd5e138cc97817d37e7b05330132d058094'),
+          }
+          for b in sorted({i,j}):
+              sel,byt,rec,uniq,occ=auth[b]
+              literal=f"{b}:{{'selected':{sel:_},'bytes':{byt:_},'record_sha':'{rec}','unique':{uniq:_},'occupancy_sha':'{occ}'}}"
+              assert literal in runner
+          assert "if i>j:\n        raise AssertionError('WW task must be unordered i<=j')" in runner
+          assert "if bmap is a:\n            fb=fa\n        else:\n            fb=nmt.NmtField(bmap,None,spin=2)" in runner
+          assert "w.compute_coupling_matrix(fa,fb,b)" in runner
+          assert "expected=(4,39,4,LMAX_PLUS_ONE)" in runner
+          assert "selected=np.ascontiguousarray(wins[0,:,0,:],dtype='<f8')" in runner
+          for guard in ("'physical_support_evaluated':False","'science_gate_scored':False","'covariance_read':False","'nuisance_geometry_read':False","'relation_null_read':False","'G8_read':False"):
+              assert guard in runner
+          print(f'PASS_EXP073FJ_{task}_SEMANTIC_MATRIX_V0_1')
+          print(f'mode={mode}')
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('authority_created=false')
+          PY
