@@ -1,0 +1,100 @@
+name: Exp073FM terminal support consumer for canonical FR autoqueue v0.1
+
+on:
+  workflow_run:
+    workflows: ['Exp073FM WW_S1_S1 audited home science v0.1']
+    types: [completed]
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: dsir-exp073fm-terminal-autoqueue-consumer-v0-1
+  cancel-in-progress: false
+
+env:
+  EXPECTED_RUN: '34050657030'
+  EXPECTED_HEAD: 'f0caca0c3e812710e5958ee13348a150d045a7d8'
+  ARTIFACT_NAME: 'exp073fm-ww-s1-s1-filebacked-ab-v0-1'
+  SOURCE_HEAD: 'de83e20a68f79ccf25b89b0d33eb4206e294c757'
+  CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
+  FR_PREREG_BLOB: 'aa08636426dd48142c3a3da7c032f1075a1be1f9'
+  VERIFIER_BLOB: '127beca2392e6b093d08330828a764a3108b646b'
+  GENERATOR_BLOB: '9fa82a984d1a2d7179581a2d2959c813ca3ce3b2'
+  CANONICAL_WORKFLOW: '.github/workflows/exp073fr-ww-s1-s1-canonical-admission-v0-1.yml'
+
+jobs:
+  consume-terminal-and-generate-admission:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Independently consume terminal Exp073FM evidence
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_RUN: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          test "$EVENT_RUN" = "$EXPECTED_RUN"
+          test "$(git rev-parse HEAD:experiments/073fr_ww_s1_s1_filebacked_checkpoint_provenance_admission_v0_1_prereg.md)" = "$FR_PREREG_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fr_verify_fm_terminal_evidence_v0_1.py)" = "$VERIFIER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fr_generate_canonical_admission_workflow_v0_1.py)" = "$GENERATOR_BLOB"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${EVENT_RUN}" > run.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${EVENT_RUN}/jobs?per_page=100" > jobs.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${EVENT_RUN}/artifacts?per_page=100" > artifacts.json
+          python3 - <<'PY' > evidence.env
+          import json,os,shlex
+          r=json.load(open('run.json')); assert r['id']==int(os.environ['EXPECTED_RUN']) and r['status']=='completed' and r['conclusion']=='success' and r['head_sha']==os.environ['EXPECTED_HEAD']
+          jobs=json.load(open('jobs.json'))['jobs']; h=[j for j in jobs if j['name']=='home-science']; assert len(h)==1 and h[0]['status']=='completed' and h[0]['conclusion']=='success'
+          arts=json.load(open('artifacts.json'))['artifacts']; a=[x for x in arts if x['name']==os.environ['ARTIFACT_NAME']]; assert len(a)==1 and a[0]['expired'] is False and a[0].get('digest','').startswith('sha256:')
+          a=a[0]; assert a['workflow_run']['id']==int(os.environ['EXPECTED_RUN']) and a['workflow_run']['head_sha']==os.environ['EXPECTED_HEAD']
+          for k,v in [('CANDIDATE_JOB',h[0]['id']),('ARTIFACT_ID',a['id']),('ARTIFACT_SIZE',a['size_in_bytes']),('ARTIFACT_DIGEST',a['digest'])]: print(k+'='+shlex.quote(str(v)))
+          PY
+          source evidence.env
+          gh api --allow-escape-sequences "repos/${GITHUB_REPOSITORY}/actions/jobs/${CANDIDATE_JOB}/logs" > candidate.log
+          curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 2 -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" -o candidate.zip
+          test "sha256:$(sha256sum candidate.zip | awk '{print $1}')" = "$ARTIFACT_DIGEST"
+          mkdir candidate; unzip -q candidate.zip -d candidate
+          python3 ci/exp073fr_verify_fm_terminal_evidence_v0_1.py --candidate-root candidate --run-json run.json --jobs-json jobs.json --artifacts-json artifacts.json --candidate-log candidate.log --artifact-zip candidate.zip --candidate-run "$EVENT_RUN" --candidate-job "$CANDIDATE_JOB" --candidate-head "$EXPECTED_HEAD" --artifact-id "$ARTIFACT_ID" --artifact-name "$ARTIFACT_NAME" --artifact-size "$ARTIFACT_SIZE" --artifact-digest "$ARTIFACT_DIGEST" --source-head "$SOURCE_HEAD" --contract-fingerprint "$CONTRACT_FP" | tee consume.log
+          grep -Fx 'PASS_EXP073FM_TERMINAL_EVIDENCE_CONSUMED_FOR_CANONICAL_FR_V0_1' consume.log >/dev/null
+          grep -Fx 'ww_s1_s1_authority_created=false' consume.log >/dev/null
+          printf '%s\n' "$CANDIDATE_JOB" "$ARTIFACT_ID" "$ARTIFACT_SIZE" "$ARTIFACT_DIGEST" > frozen_dynamic_evidence.txt
+      - name: Generate canonical Exp073FR only after consumption PASS
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mapfile -t E < frozen_dynamic_evidence.txt
+          CANDIDATE_JOB="${E[0]}"; ARTIFACT_ID="${E[1]}"; ARTIFACT_SIZE="${E[2]}"; ARTIFACT_DIGEST="${E[3]}"
+          python3 ci/exp073fr_generate_canonical_admission_workflow_v0_1.py --candidate-run "$EXPECTED_RUN" --candidate-job "$CANDIDATE_JOB" --candidate-head "$EXPECTED_HEAD" --artifact-id "$ARTIFACT_ID" --artifact-name "$ARTIFACT_NAME" --artifact-size "$ARTIFACT_SIZE" --artifact-digest "$ARTIFACT_DIGEST" --consumer-run "$GITHUB_RUN_ID" --out generated-fr.yml
+          python3 - <<'PY'
+          import pathlib
+          s=pathlib.Path('generated-fr.yml').read_text(); assert 'PASS_EXP073FR_WW_S1_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1' in s and 'Exp073FR WW_S1_S1 canonical checkpoint provenance admission v0.1' in s
+          PY
+          API="repos/${GITHUB_REPOSITORY}/contents/${CANONICAL_WORKFLOW}"
+          if gh api -H 'Accept: application/vnd.github.raw+json' "$API" > existing-fr.yml 2>/dev/null; then
+            cmp generated-fr.yml existing-fr.yml
+            echo CANONICAL_FR_ALREADY_EXISTS_IDENTICAL
+          else
+            B64="$(base64 -w0 generated-fr.yml)"
+            gh api --method PUT "$API" -f message='Generate canonical Exp073FR after terminal evidence consumption' -f content="$B64" >/dev/null
+            echo GENERATED_CANONICAL_FR_AFTER_TERMINAL_CONSUMPTION
+          fi
+      - name: Dispatch newly generated canonical Exp073FR
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          WF="$(basename "$CANONICAL_WORKFLOW")"
+          for i in $(seq 1 20); do
+            if gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/${WF}" >/dev/null 2>&1; then break; fi
+            sleep 3
+          done
+          gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/${WF}" >/dev/null
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/actions/workflows/${WF}/dispatches" -f ref=main
+          echo DISPATCHED_CANONICAL_EXP073FR
