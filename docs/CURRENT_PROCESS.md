@@ -1,6 +1,6 @@
 # DSIR current-process ledger
 
-Updated: 2026-09-06. Scope: **DSIR only**; RTK/RQIR excluded.
+Updated: 2026-09-07. Scope: **DSIR only**; RTK/RQIR excluded.
 
 ## Preserved authority
 
@@ -25,7 +25,6 @@ Frozen committed Exp073FM implementation blobs: driver v0.1 `477647c5164264665cc
 - branch/head: `main` / **`f0caca0c3e812710e5958ee13348a150d045a7d8`**;
 - state at latest reconciliation: **IN_PROGRESS** step `Run frozen WW_S1_S1 A/B gate with durable checkpoints`;
 - runner ownership: **`DSIR-HOME-PC` exclusively owned by job `101533574294`**;
-- live Actions at reconciliation: exactly **1 in-progress DSIR run and 0 queued runs**;
 - no competing self-hosted/home task may be launched;
 - science checkpoint namespaces: `checkpoints/exp073fm-ww-s1-s1-a-v0-1`, `checkpoints/exp073fm-ww-s1-s1-b-v0-1`;
 - last durable checkpoint: **UNKNOWN_NOT_INSPECTED_WHILE_RUNNING**; partial numerical output must not be inspected;
@@ -56,6 +55,25 @@ Another DSIR process prospectively staged successor transforms/workflows while E
 - Later staged Exp073FW/FX (`WW_S2_S2`), Exp073FY/FZ (`WW_S2_S3`) and Exp073GA/GB (`WW_S3_S3`) commits are prereg/transformation preparation only. Their presence on `main` is not scientific PASS and they are not running.
 
 Immutable reconciliation note: `docs/recovery/RECOVERY_2026-09-06_EXP073FS_FU_STAGED_FM_RUNNING.md`. Research-log supplement: `docs/research_log/RESEARCH_LOG_2026-09-06_EXP073FS_FU_STAGING.md`.
+
+## DSIR-4 independent frontier — C0/C1 G_DOMAIN_MAPPING admitted
+
+This branch is independent of the running Exp073FM numerical result and did not inspect any FM partial output.
+
+Exp073GH v0.1 run/job `34060870654 / 101561036784`, head `f4d9d2e34d72415dda4b70522e63703c549840c4`, is an immutable `INFRASTRUCTURE_LOG_TRANSPORT_FAIL_PLUS_0_PLUS_0`: the first causal failure was exact-line `grep -aFx` against timestamp-prefixed GitHub logs. No scientific authority was created.
+
+Minimal workflow-only repair changed log matching to fixed-substring `grep -aF` without changing mapping artifacts, certified domain, residual equations or acceptance semantics. Repaired Exp073GH v0.2 run/job **`34060904951 / 101561132087`**, head **`000641a05b962e53ce5b9e8f2feafe20ff312d1b`**, was independently raw-log verified and emitted:
+- `PASS_EXP073GH_C0_LCDM_G_DOMAIN_MAPPING_ADMISSION_V0_1`;
+- `PASS_EXP073GH_C1_SMOOTH_W_G_DOMAIN_MAPPING_ADMISSION_V0_1`;
+- `classification=SCIENTIFIC_GATE_AUTHORITY_ADMITTED`;
+- `admitted_gate=G_DOMAIN_MAPPING`;
+- `scientific_model_authority_created=false`;
+- `full_dsir_model_pass=false`;
+- `downstream_model_gates=NOT_YET_TESTABLE`.
+
+Therefore C0 ΛCDM-reference and C1 smooth-w local control now possess authority **only for the G_DOMAIN_MAPPING gate**. They do not yet have prediction authority or full DSIR-model PASS/FAIL. Frozen mapping domain remains exactly `0.295<=z<=2.33`, `0<k<=0.06664762008318016 Mpc^-1`, linear scalar regime, no quasi-static assumption and no sub-horizon assumption.
+
+Immutable recovery note: `docs/recovery/RECOVERY_2026-09-07_EXP073GH_G_DOMAIN_MAPPING_ADMITTED_FM_RUNNING.md`, creation commit `89c2f603881266b5bc913015ade52f5c0a7bc49a`.
 
 ## Frozen WW_S1_S1 science
 
