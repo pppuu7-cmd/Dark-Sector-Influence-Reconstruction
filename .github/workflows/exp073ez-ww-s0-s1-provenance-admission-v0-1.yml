@@ -82,6 +82,16 @@ jobs:
           test "$(sha256sum candidate.zip | awk '{print $1}')" = "$CANDIDATE_ZIP_SHA256"
           mkdir candidate && unzip -q candidate.zip -d candidate
 
+      - name: Install exact audit dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check --no-input 'numpy==2.3.2'
+          python3 - <<'PY'
+          import numpy
+          assert numpy.__version__ == '2.3.2', numpy.__version__
+          PY
+
       - name: Fail-closed raw provenance and exact scientific admission audit
         shell: bash
         run: |
@@ -149,7 +159,6 @@ jobs:
           assert ab['status']=='PASS_EXP073EY_WW_S0_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'
           assert ab['sha256_equal'] is True and ab['numpy_array_equal'] is True and ab['all_finite'] is True and ab['no_tolerance_rescue'] is True
           assert ab['a_sha256']==selected and ab['b_sha256']==selected and ab['source_pair']=='S0->S1' and ab['ordered_source_indices']==[0,1]
-          # Resume preservation: A's three expensive manifests are retained from before the resume's new A public-read stage.
           assert (root/'checkpoints/A/fresh_sources_complete.json').stat().st_mtime < (root/'checkpoints/A/full_window_complete.json').stat().st_mtime
           assert (root/'checkpoints/A/fresh_workspace_mcm_complete.json').stat().st_mtime < (root/'checkpoints/A/full_window_complete.json').stat().st_mtime
           assert (root/'checkpoints/A/mcm_fits_verified.json').stat().st_mtime < (root/'checkpoints/A/full_window_complete.json').stat().st_mtime
