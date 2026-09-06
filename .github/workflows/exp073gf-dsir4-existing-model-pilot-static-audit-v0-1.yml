@@ -1,0 +1,44 @@
+name: Exp073GF DSIR-4 existing-model pilot static audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073gf-dsir4-existing-model-pilot-static-audit-v0-1.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit existing-model pilot migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:docs/GATES.md)" = 'f0127d3f8ab4e7e9bd3ce88ce823c17d9404a285'
+          test "$(git rev-parse HEAD:docs/dsir4/DSIR4_EXISTING_MODEL_PILOT_V0_1.md)" = '541becd8e46570a49846d595e2e1a201e7eb7f6a'
+          test "$(git rev-parse HEAD:data/dsir4/existing_model_pilot_v0_1.json)" = '0297bffc21d1f4caa792d8ef2b15a0cf436baca3'
+          test "$(git rev-parse HEAD:ci/validate_dsir4_existing_model_pilot_v0_1.py)" = '6a946ceb0e7e5f67069caf32594878e9d90893b5'
+          test "$(git rev-parse HEAD:experiments/073gf_dsir4_existing_model_pilot_static_audit_v0_1_prereg.md)" = '268be92bb0573b47e954747418f35feff7b8a2d9'
+          test "$(git rev-parse HEAD:docs/dsir4/DSIR4_MODEL_FUNNEL_MATRIX_CONTRACT_V0_1.md)" = '2ad6d26381119442ccd3811b29f24522f5f6eeff'
+          test "$(git rev-parse HEAD:docs/dsir4/DSIR4_MODEL_MAPPING_ARTIFACT_CONTRACT_V0_1.md)" = '03fd11d8536b9743eb82f92f9a0d5386444079ed'
+          python3 -m py_compile ci/validate_dsir4_existing_model_pilot_v0_1.py
+          python3 ci/validate_dsir4_existing_model_pilot_v0_1.py data/dsir4/existing_model_pilot_v0_1.json | tee pilot.log
+          grep -Fx 'PASS_DSIR4_EXISTING_MODEL_PILOT_VALIDATOR_V0_1' pilot.log >/dev/null
+          grep -Fx 'pilot_hypotheses=8' pilot.log >/dev/null
+          grep -Fx 'scientific_model_authority_created=false' pilot.log >/dev/null
+          # Independent anchors against the frozen legacy authority text.
+          grep -F 'Structure angle alpha/beta = `58.9338 deg`' docs/GATES.md >/dev/null
+          grep -F 'angle `0.322616 deg`' docs/GATES.md >/dev/null
+          grep -F 'metric-slip angle `137.9432 deg`' docs/GATES.md >/dev/null
+          grep -F 'For 3 keV, `r_T(0.1)=-3.46e-6`, while `r_T(10)=-0.10375`' docs/GATES.md >/dev/null
+          grep -F 'B0={1e-6,1e-5,1e-4,1e-3}' docs/GATES.md >/dev/null
+          grep -F 'Gamma/H0={0.25,0.5,1,2}' docs/GATES.md >/dev/null
+          echo PASS_EXP073GF_DSIR4_EXISTING_MODEL_PILOT_STATIC_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo self_hosted_science_started=false
+          echo scientific_model_authority_created=false
