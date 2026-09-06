@@ -25,7 +25,9 @@
       "legacy_evidence": {"status": "COMPARISON_READY_CONTROL", "facts": ["G3B reference origin", "multiple solver-specific zero limits"]},
       "domain_relation": "LOW_K_RESPONSE_PRESENT",
       "mapping_conversion_status": "EXPLICIT_SIX_COMPONENT_MAPPING_REQUIRED",
-      "gate_results": {},
+      "gate_results": {
+        "G_DOMAIN_MAPPING":"NOT_YET_TESTABLE","G_ANGULAR_AUTHORITY":"NOT_YET_TESTABLE","G_ORDERED_JOIN":"NOT_YET_TESTABLE","G_RADIAL_SUPPORT":"NOT_YET_TESTABLE","G_PHYSICAL_SUPPORT":"NOT_YET_TESTABLE","G_COV_WHITENING":"NOT_YET_TESTABLE","G_NUISANCE_QUOTIENT":"NOT_YET_TESTABLE","G_RELATION_NULL":"NOT_YET_TESTABLE","G_FINAL_MODEL":"NOT_YET_TESTABLE"
+      },
       "overall_status": "NOT_YET_TESTABLE"
     },
     {
@@ -35,7 +37,9 @@
       "legacy_evidence": {"status": "COMPARISON_READY", "facts": ["one-sided local ray", "finite-difference convergence documented"]},
       "domain_relation": "LOW_K_RESPONSE_PRESENT",
       "mapping_conversion_status": "EXPLICIT_SIX_COMPONENT_MAPPING_REQUIRED",
-      "gate_results": {},
+      "gate_results": {
+        "G_DOMAIN_MAPPING":"NOT_YET_TESTABLE","G_ANGULAR_AUTHORITY":"NOT_YET_TESTABLE","G_ORDERED_JOIN":"NOT_YET_TESTABLE","G_RADIAL_SUPPORT":"NOT_YET_TESTABLE","G_PHYSICAL_SUPPORT":"NOT_YET_TESTABLE","G_COV_WHITENING":"NOT_YET_TESTABLE","G_NUISANCE_QUOTIENT":"NOT_YET_TESTABLE","G_RELATION_NULL":"NOT_YET_TESTABLE","G_FINAL_MODEL":"NOT_YET_TESTABLE"
+      },
       "overall_status": "NOT_YET_TESTABLE"
     },
     {
@@ -45,7 +49,9 @@
       "legacy_evidence": {"status": "COMPARISON_READY", "facts": ["structure_angle_deg=58.9338", "physical tangent-cone sign restriction frozen"]},
       "domain_relation": "LOW_K_RESPONSE_PRESENT",
       "mapping_conversion_status": "TRANSFER_CURRENT_AND_SIX_COMPONENT_MAPPING_REQUIRED",
-      "gate_results": {},
+      "gate_results": {
+        "G_DOMAIN_MAPPING":"NOT_YET_TESTABLE","G_ANGULAR_AUTHORITY":"NOT_YET_TESTABLE","G_ORDERED_JOIN":"NOT_YET_TESTABLE","G_RADIAL_SUPPORT":"NOT_YET_TESTABLE","G_PHYSICAL_SUPPORT":"NOT_YET_TESTABLE","G_COV_WHITENING":"NOT_YET_TESTABLE","G_NUISANCE_QUOTIENT":"NOT_YET_TESTABLE","G_RELATION_NULL":"NOT_YET_TESTABLE","G_FINAL_MODEL":"NOT_YET_TESTABLE"
+      },
       "overall_status": "NOT_YET_TESTABLE"
     },
     {
@@ -55,7 +61,9 @@
       "legacy_evidence": {"status": "COMPARISON_READY", "facts": ["low_k_matter_angle_deg=0.322616", "metric_slip_angle_deg=137.9432", "equalized_weyl_slip_angle_deg=56.9632"]},
       "domain_relation": "LOW_K_RESPONSE_PRESENT",
       "mapping_conversion_status": "EXPLICIT_PRESSURE_SHEAR_RESIDUAL_MAPPING_REQUIRED",
-      "gate_results": {},
+      "gate_results": {
+        "G_DOMAIN_MAPPING":"NOT_YET_TESTABLE","G_ANGULAR_AUTHORITY":"NOT_YET_TESTABLE","G_ORDERED_JOIN":"NOT_YET_TESTABLE","G_RADIAL_SUPPORT":"NOT_YET_TESTABLE","G_PHYSICAL_SUPPORT":"NOT_YET_TESTABLE","G_COV_WHITENING":"NOT_YET_TESTABLE","G_NUISANCE_QUOTIENT":"NOT_YET_TESTABLE","G_RELATION_NULL":"NOT_YET_TESTABLE","G_FINAL_MODEL":"NOT_YET_TESTABLE"
+      },
       "overall_status": "NOT_YET_TESTABLE"
     },
     {
@@ -65,7 +73,9 @@
       "legacy_evidence": {"status": "BLOCK_AWARE_COMPARISON_READY", "facts": ["rT_k0p1=-3.46e-6", "rT_k10=-0.10375", "low-k identifiability blind block"]},
       "domain_relation": "IN_DOMAIN_BUT_LOW_K_NEAR_BLIND_HIGH_K_BLOCK_DISTINCT",
       "mapping_conversion_status": "EXPLICIT_WDM_RESIDUAL_MAPPING_REQUIRED",
-      "gate_results": {},
+      "gate_results": {
+        "G_DOMAIN_MAPPING":"NOT_YET_TESTABLE","G_ANGULAR_AUTHORITY":"NOT_YET_TESTABLE","G_ORDERED_JOIN":"NOT_YET_TESTABLE","G_RADIAL_SUPPORT":"NOT_YET_TESTABLE","G_PHYSICAL_SUPPORT":"NOT_YET_TESTABLE","G_COV_WHITENING":"NOT_YET_TESTABLE","G_NUISANCE_QUOTIENT":"NOT_YET_TESTABLE","G_RELATION_NULL":"NOT_YET_TESTABLE","G_FINAL_MODEL":"NOT_YET_TESTABLE"
+      },
       "overall_status": "NOT_YET_TESTABLE"
     },
     {
@@ -75,7 +85,9 @@
       "legacy_evidence": {"status": "COMPARISON_READY", "facts": ["official H-EFTCAMB lineage", "MG exact-GR and common-baseline gates passed", "time/sign structure separates from GDM scale-only similarity"]},
       "domain_relation": "LOW_K_RESPONSE_PRESENT",
       "mapping_conversion_status": "ORIGINAL_FIELD_EQUATION_TO_EFFECTIVE_RESIDUAL_PROOF_REQUIRED",
-      "gate_results": {},
+      "gate_results": {
+        "G_DOMAIN_MAPPING":"NOT_YET_TESTABLE","G_ANGULAR_AUTHORITY":"NOT_YET_TESTABLE","G_ORDERED_JOIN":"NOT_YET_TESTABLE","G_RADIAL_SUPPORT":"NOT_YET_TESTABLE","G_PHYSICAL_SUPPORT":"NOT_YET_TESTABLE","G_COV_WHITENING":"NOT_YET_TESTABLE","G_NUISANCE_QUOTIENT":"NOT_YET_TESTABLE","G_RELATION_NULL":"NOT_YET_TESTABLE","G_FINAL_MODEL":"NOT_YET_TESTABLE"
+      },
       "overall_status": "NOT_YET_TESTABLE"
     },
     {
@@ -85,7 +97,9 @@
       "legacy_evidence": {"status": "COMPARISON_READY", "facts": ["official H-EFTCAMB lineage", "production point", "withheld transition-scale mechanism tests exist within family"]},
       "domain_relation": "LOW_K_RESPONSE_PRESENT",
       "mapping_conversion_status": "ORIGINAL_FIELD_EQUATION_TO_EFFECTIVE_RESIDUAL_PROOF_REQUIRED",
-      "gate_results": {},
+      "gate_results": {
+        "G_DOMAIN_MAPPING":"NOT_YET_TESTABLE","G_ANGULAR_AUTHORITY":"NOT_YET_TESTABLE","G_ORDERED_JOIN":"NOT_YET_TESTABLE","G_RADIAL_SUPPORT":"NOT_YET_TESTABLE","G_PHYSICAL_SUPPORT":"NOT_YET_TESTABLE","G_COV_WHITENING":"NOT_YET_TESTABLE","G_NUISANCE_QUOTIENT":"NOT_YET_TESTABLE","G_RELATION_NULL":"NOT_YET_TESTABLE","G_FINAL_MODEL":"NOT_YET_TESTABLE"
+      },
       "overall_status": "NOT_YET_TESTABLE"
     },
     {
@@ -95,7 +109,9 @@
       "legacy_evidence": {"status": "WITHHELD_FAMILY_MECHANISM_SUPPORT", "facts": ["withheld family not used to construct characteristic-scale finding", "Gamma/H0 sequence showed preregistered monotonic epoch shift", "G7 and G8 remained open"]},
       "domain_relation": "LOW_K_TIME_RESPONSE_PRESENT",
       "mapping_conversion_status": "DECAY_TRANSFER_AND_SIX_COMPONENT_MAPPING_REQUIRED",
-      "gate_results": {},
+      "gate_results": {
+        "G_DOMAIN_MAPPING":"NOT_YET_TESTABLE","G_ANGULAR_AUTHORITY":"NOT_YET_TESTABLE","G_ORDERED_JOIN":"NOT_YET_TESTABLE","G_RADIAL_SUPPORT":"NOT_YET_TESTABLE","G_PHYSICAL_SUPPORT":"NOT_YET_TESTABLE","G_COV_WHITENING":"NOT_YET_TESTABLE","G_NUISANCE_QUOTIENT":"NOT_YET_TESTABLE","G_RELATION_NULL":"NOT_YET_TESTABLE","G_FINAL_MODEL":"NOT_YET_TESTABLE"
+      },
       "overall_status": "NOT_YET_TESTABLE"
     }
   ]
