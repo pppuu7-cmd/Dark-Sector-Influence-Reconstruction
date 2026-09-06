@@ -1,0 +1,102 @@
+name: Exp073FL WW S1S1 driver-generation static audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073fl-ww-s1-s1-driver-generation-static-audit-v0-1.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit deterministic S1S1 same-field generation boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073fl_ww_s1_s1_driver_generation_static_audit_v0_1_prereg.md)" = 'e578cac17048f73193ff73c97ca38cb1d644d202'
+          test "$(git rev-parse HEAD:experiments/073fh_ww_s1_s1_same_field_architecture_v0_1_prereg.md)" = '0fc09948c7cfb5c05868538544554dc8001a9126'
+          test "$(git rev-parse HEAD:experiments/073fj_remaining_ww_semantic_matrix_v0_1_prereg.md)" = 'cb088f84361d682c613f3f60ba7d441142ba881c'
+          test "$(git rev-parse HEAD:experiments/073fk_ww_s1_s1_same_field_transformation_contract_v0_1_prereg.md)" = 'f1deff3378f991a9a052b5314ccec1d19629f9b0'
+          test "$(git rev-parse HEAD:ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py)" = 'd919da63ad5ccd1b94255d9e45face1c922c4f44'
+          test "$(git rev-parse HEAD:ci/exp073fg_verify_and_prune_replica_v0_1.py)" = 'd925840c60035b30ed1375657585967ec2644e0d'
+          test "$(git rev-parse HEAD:ci/exp073fg_compare_terminal_receipts_v0_1.py)" = '74a1a2f8d3b44eaab66e834d69156e1810b75a8e'
+          python3 - <<'PY'
+          import ast
+          from pathlib import Path
+
+          prereg=Path('experiments/073fl_ww_s1_s1_driver_generation_static_audit_v0_1_prereg.md').read_text()
+          fh=Path('experiments/073fh_ww_s1_s1_same_field_architecture_v0_1_prereg.md').read_text()
+          fj=Path('experiments/073fj_remaining_ww_semantic_matrix_v0_1_prereg.md').read_text()
+          fk=Path('experiments/073fk_ww_s1_s1_same_field_transformation_contract_v0_1_prereg.md').read_text()
+          fg=Path('ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py').read_text()
+          prune=Path('ci/exp073fg_verify_and_prune_replica_v0_1.py').read_text()
+          compare=Path('ci/exp073fg_compare_terminal_receipts_v0_1.py').read_text()
+
+          for x in ('`WW_S1_S1`','`[1,1]`','exactly one spin-2 `NmtField`','same Python field object','`same_field_object_handoff=true`','equal-but-distinct second fields are forbidden','PASS_EXP073FL_WW_S1_S1_DRIVER_GENERATION_STATIC_AUDIT_V0_1'):
+              assert x in prereg, x
+          assert 'same field object' in fh.lower()
+          assert '`WW_S1_S1` — auto-pair, same-field object.' in fj
+          assert '[0,3]/S0->S3' in fk and '[1,1]/S1->S1' in fk
+          for x in ('strict_validated_finished','CHECKPOINT_ORDER','fail-closed','get_bandpower_windows()'):
+              assert x in fg, x
+          assert 'prune' in prune.lower() and 'sha256' in prune.lower()
+          assert 'array_equal' in compare and 'allclose' not in compare and 'isclose' not in compare
+
+          # Deterministic generated-driver contract skeleton. It is deliberately non-executable
+          # for science: the hosted gate only compiles and inspects same-object semantics.
+          generated = '''\
+          TASK = "WW_S1_S1"
+          ORDERED_SOURCE_INDICES = [1,1]
+          SAME_FIELD_OBJECT_HANDOFF = True
+          CHECKPOINT_A = "checkpoints/future-ww-s1-s1-a-v0-1"
+          CHECKPOINT_B = "checkpoints/future-ww-s1-s1-b-v0-1"
+          def build_workspace(nmt, source_count_map, r1_root, binning):
+              s1 = source_count_map(r1_root, 1)
+              fa = nmt.NmtField(s1, None, spin=2)
+              w = nmt.NmtWorkspace()
+              w.compute_coupling_matrix(fa, fa, binning)
+              return w
+          def provenance_receipt():
+              return {"task":TASK,"ordered_source_indices":[1,1],"source_pair":"S1->S1","same_field_object_handoff":True,"source_reconstruction_count":1}
+          '''
+          compile(generated, 'exp073fl_generated_s1s1_contract.py', 'exec')
+
+          forbidden=('S0','S2','S3','[0,3]','S0->S3','allclose','isclose','round(','smooth','averag')
+          for bad in forbidden:
+              assert bad not in generated, bad
+          assert generated.count('source_count_map(r1_root, 1)') == 1
+          assert generated.count('nmt.NmtField(') == 1
+          assert 'compute_coupling_matrix(fa, fa, binning)' in generated
+          assert 'same_field_object_handoff":True' in generated
+
+          def same_object_checker(src):
+              tree=ast.parse(src)
+              calls=[n for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr=='compute_coupling_matrix']
+              assert len(calls)==1
+              args=calls[0].args
+              assert len(args)>=2 and isinstance(args[0],ast.Name) and isinstance(args[1],ast.Name)
+              assert args[0].id==args[1].id, 'fail-closed equal-but-distinct second-field mutation'
+              nmt_fields=[n for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr=='NmtField']
+              assert len(nmt_fields)==1, 'fail-closed field construction count'
+              return True
+
+          assert same_object_checker(generated)
+          mutated=generated.replace('w.compute_coupling_matrix(fa, fa, binning)', 'fb = nmt.NmtField(s1, None, spin=2)\n    w.compute_coupling_matrix(fa, fb, binning)')
+          rejected=False
+          try:
+              same_object_checker(mutated)
+          except AssertionError:
+              rejected=True
+          assert rejected, 'equal-but-distinct mutation was not rejected'
+
+          print('PASS_EXP073FL_WW_S1_S1_DRIVER_GENERATION_STATIC_AUDIT_V0_1')
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('ww_s1_s1_authority_created=false')
+          print('self_hosted_science_started=false')
+          PY
