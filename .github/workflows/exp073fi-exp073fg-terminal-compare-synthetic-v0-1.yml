@@ -1,0 +1,29 @@
+name: Exp073FI Exp073FG terminal comparator synthetic audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073fi-exp073fg-terminal-compare-synthetic-v0-1.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-terminal-compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze comparator and synthetic audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ci/exp073fg_compare_terminal_receipts_v0_1.py)" = '74a1a2f8d3b44eaab66e834d69156e1810b75a8e'
+          test "$(git rev-parse HEAD:ci/exp073fi_synthetic_test_exp073fg_terminal_compare_v0_1.py)" = '3823687f61cd04489431e3d480c2fae8805bac0d'
+          python3 -m py_compile ci/exp073fg_compare_terminal_receipts_v0_1.py ci/exp073fi_synthetic_test_exp073fg_terminal_compare_v0_1.py
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fg_compare_terminal_receipts_v0_1.py ci/exp073fi_synthetic_test_exp073fg_terminal_compare_v0_1.py
+      - name: Install synthetic-test dependency
+        run: python3 -m pip install --disable-pip-version-check numpy
+      - name: Exact PASS, one-ULP FAIL, and tamper rejection
+        run: python3 ci/exp073fi_synthetic_test_exp073fg_terminal_compare_v0_1.py
