@@ -1,0 +1,45 @@
+name: Exp073GI DSIR-4 angular authority binding static audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073gi-dsir4-angular-authority-binding-static-audit-v0-1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen angular authority binding boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:docs/dsir4/DSIR4_ANGULAR_AUTHORITY_BINDING_CONTRACT_V0_1.md)" = 'af2cdbfa03e0a68c24df8d1009c723d411d2d0a2'
+          test "$(git rev-parse HEAD:experiments/073gi_dsir4_angular_authority_binding_static_audit_v0_1_prereg.md)" = '709171bb9780a9ac50311643a12f2dc4656cbfaa'
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('docs/dsir4/DSIR4_ANGULAR_AUTHORITY_BINDING_CONTRACT_V0_1.md').read_text()
+          required=[
+            'G_DOMAIN_MAPPING','G_ANGULAR_AUTHORITY','G_ORDERED_JOIN',
+            'S0_S0, S0_S1, S0_S2, S0_S3, S1_S1, S1_S2, S1_S3, S2_S2, S2_S3, S3_S3',
+            'EE<-EE','<f8 [39,12288]','NSIDE=4096','ell `0..12287`','39 bands',
+            'NOT_YET_TESTABLE','candidate-only evidence','workflow-success-only evidence',
+            'partial checkpoints','effective ell/z/k','fiducial-P replacement','tolerance rescue',
+            'no `G_ANGULAR_AUTHORITY` scientific authority','may dispatch self-hosted science'
+          ]
+          for s in required:
+              assert s in p, s
+          assert 'Missing authority is `NOT_YET_TESTABLE`, never PASS and never FAIL.' in p
+          assert 'Infrastructure/resource failures remain distinct and do not become scientific FAIL.' in p
+          assert 'This contract currently creates no `G_ANGULAR_AUTHORITY` scientific authority.' in p
+          assert 'Neither this contract nor its static audit may dispatch self-hosted science.' in p
+          PY
+          echo PASS_EXP073GI_DSIR4_ANGULAR_AUTHORITY_BINDING_STATIC_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo g_angular_authority_created=false
+          echo scientific_model_authority_created=false
+          echo self_hosted_science_started=false
