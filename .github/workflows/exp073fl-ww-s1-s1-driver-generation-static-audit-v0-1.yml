@@ -42,14 +42,12 @@ jobs:
               assert x in prereg, x
           assert 'same field object' in fh.lower()
           assert '`WW_S1_S1` — auto-pair, same-field object.' in fj
-          assert '[0,3]/S0->S3' in fk and '[1,1]/S1->S1' in fk
+          assert 'cross source pair `[0,3]` / `S0->S3` -> auto pair `[1,1]` / `S1->S1`' in fk
           for x in ('strict_validated_finished','CHECKPOINT_ORDER','fail-closed','get_bandpower_windows()'):
               assert x in fg, x
           assert 'prune' in prune.lower() and 'sha256' in prune.lower()
           assert 'array_equal' in compare and 'allclose' not in compare and 'isclose' not in compare
 
-          # Deterministic generated-driver contract skeleton. It is deliberately non-executable
-          # for science: the hosted gate only compiles and inspects same-object semantics.
           generated = '''\
           TASK = "WW_S1_S1"
           ORDERED_SOURCE_INDICES = [1,1]
