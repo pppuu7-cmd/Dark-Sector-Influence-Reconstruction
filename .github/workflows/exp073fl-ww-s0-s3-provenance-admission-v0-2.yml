@@ -1,0 +1,93 @@
+name: Exp073FL WW_S0_S3 provenance admission v0.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073fl-ww-s0-s3-provenance-admission-v0-2.txt'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-exp073fl-ww-s0-s3-provenance-admission-v0-2
+  cancel-in-progress: false
+
+env:
+  PREREG_BLOB: 'ff6b9613699081872c8d48e40dafa2b64654c147'
+  CANDIDATE_RUN_ID: '34034377795'
+  CANDIDATE_JOB_ID: '101489679508'
+  CANDIDATE_HEAD: '4a02952ee3bcb368a088d87608f61243cd9f7056'
+  ARTIFACT_ID: '9993520467'
+  ARTIFACT_NAME: 'exp073fg-ww-s0-s3-filebacked-ab-v0-1'
+  ARTIFACT_SIZE: '7382890'
+  ARTIFACT_DIGEST: 'sha256:8ddd1e1b81e5fa9c3a4de16c6d72b35353cb42bba04bb77c736aa4998340bde0'
+  CANDIDATE_TOKEN: 'PASS_EXP073FG_WW_S0_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'
+  SOURCE_HEAD: 'de83e20a68f79ccf25b89b0d33eb4206e294c757'
+  CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
+
+jobs:
+  hosted-provenance-admission:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download frozen candidate artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: exp073fg-ww-s0-s3-filebacked-ab-v0-1
+          path: candidate
+          repository: ${{ github.repository }}
+          run-id: 34034377795
+          github-token: ${{ github.token }}
+      - name: Verify frozen candidate metadata, logs, and artifact payload
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073fl_ww_s0_s3_provenance_admission_v0_1_prereg.md)" = "$PREREG_BLOB"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${CANDIDATE_RUN_ID}" > run.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${CANDIDATE_RUN_ID}/jobs?per_page=100" > jobs.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${CANDIDATE_RUN_ID}/artifacts?per_page=100" > artifacts.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/jobs/${CANDIDATE_JOB_ID}/logs" > candidate.log
+          python3 - <<'PY'
+          import hashlib,json,math,os,struct
+          from pathlib import Path
+          r=json.load(open('run.json')); jobs=json.load(open('jobs.json'))['jobs']; arts=json.load(open('artifacts.json'))['artifacts']
+          assert r['id']==int(os.environ['CANDIDATE_RUN_ID']) and r['status']=='completed' and r['conclusion']=='success' and r['head_sha']==os.environ['CANDIDATE_HEAD']
+          j=next(x for x in jobs if x['id']==int(os.environ['CANDIDATE_JOB_ID'])); assert j['status']=='completed' and j['conclusion']=='success' and j['name']=='home-science'
+          a=next(x for x in arts if x['id']==int(os.environ['ARTIFACT_ID']))
+          assert a['name']==os.environ['ARTIFACT_NAME'] and int(a['size_in_bytes'])==int(os.environ['ARTIFACT_SIZE']) and a['digest']==os.environ['ARTIFACT_DIGEST'] and a['expired'] is False
+          assert a['workflow_run']['id']==int(os.environ['CANDIDATE_RUN_ID']) and a['workflow_run']['head_sha']==os.environ['CANDIDATE_HEAD']
+          log=open('candidate.log','rb').read().decode('utf-8','replace')
+          for tok in ('PASS_EXP073FG_REPLICA_A_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1','PASS_EXP073FG_REPLICA_B_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1',os.environ['CANDIDATE_TOKEN'],'PASS_EXP073FG_LIVE_EXCLUSIVITY'): assert tok in log,tok
+          assert log.count('bytes=19327352832')>=4
+          root=Path('candidate'); term=json.loads((root/'terminal_receipt.json').read_text())
+          expected={'classification':'SCIENTIFIC_CANDIDATE_PASS_PENDING_PROVENANCE_ADMISSION','token':os.environ['CANDIDATE_TOKEN'],'science_gate_scored':True,'ww_s0_s3_authority_created':False,'source_pair':'S0->S3','ordered_source_indices':[0,3],'same_field_object_handoff':False,'selected_semantics':'EE<-EE','selected_shape':[39,12288],'selected_dtype':'<f8','sha256_equal':True,'numpy_array_equal':True,'all_finite':True,'source_head':os.environ['SOURCE_HEAD'],'contract_fingerprint':os.environ['CONTRACT_FP'],'bpw_route':'public_get_bandpower_windows_after_filebacked_fits_read','no_tolerance_rescue':True,'terminal_compare_restored_replica':False,'full_chain_verified_before_prune':True}
+          for k,v in expected.items(): assert term.get(k)==v,(k,term.get(k),v)
+          def sha(p):
+            h=hashlib.sha256();
+            with p.open('rb') as f:
+              for b in iter(lambda:f.read(8<<20),b''): h.update(b)
+            return h.hexdigest()
+          stages=['fresh_sources_complete','fresh_workspace_mcm_complete','mcm_fits_verified','full_window_complete','selected_ee_complete','replica_receipt_complete']; eps=[]
+          for rep in ('A','B'):
+            rr=root/'checkpoints'/rep; rp=rr/'replica_receipt.json'; pp=rr/'post_receipt_prune.json'; cp=rr/'replica_receipt_complete.json'; ep=rr/'exact_route'/'selected_ee.bin'
+            rec=json.loads(rp.read_text()); prune=json.loads(pp.read_text()); comp=json.loads(cp.read_text())
+            assert rec['replica']==rep and rec['source_pair']=='S0->S3' and rec['ordered_source_indices']==[0,3] and rec['same_field_object_handoff'] is False
+            assert rec['source_head']==os.environ['SOURCE_HEAD'] and rec['contract_fingerprint']==os.environ['CONTRACT_FP']
+            assert prune['complete_chain_verified_before_prune'] is True and prune['pruned_only_after_receipt'] is True and prune['preserved_complete_receipt'] is True and set(prune['stage_manifest_sha256'])==set(stages)
+            for st in stages:
+              sp=rr/(st+'.json'); assert sha(sp)==prune['stage_manifest_sha256'][st]
+              sm=json.loads(sp.read_text()); assert sm['stage']==st and sm['complete'] is True and sm['replica']==rep and sm['source_head']==os.environ['SOURCE_HEAD'] and sm['contract_fingerprint']==os.environ['CONTRACT_FP']
+            he=sha(ep); assert he==rec['selected_ee_sha256']==prune['selected_ee_sha256']==comp['payloads']['selected_ee']['sha256']; assert ep.stat().st_size==39*12288*8
+            eps.append((ep,he))
+          assert eps[0][1]==eps[1][1]==term['a_sha256']==term['b_sha256']
+          ba=eps[0][0].read_bytes(); bb=eps[1][0].read_bytes(); assert ba==bb and all(math.isfinite(x[0]) for x in struct.iter_unpack('<d',ba))
+          PY
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' experiments/073fl_ww_s0_s3_provenance_admission_v0_1_prereg.md
+          echo PASS_EXP073FL_WW_S0_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1
+          echo classification=SCIENTIFIC_AUTHORITY_ADMITTED
+          echo ww_s0_s3_authority_created=true
