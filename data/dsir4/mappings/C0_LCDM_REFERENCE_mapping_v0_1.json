@@ -1,0 +1,20 @@
+{
+  "schema_version":"dsir4-model-mapping-v0.1",
+  "scientific_authority_created":false,
+  "hypothesis_identity":{"model_class_id":"LCDM_GR","hypothesis_id":"C0_LCDM_REFERENCE","hypothesis_kind":"parameter_point_or_equivalence_class","parameter_values":{"control":"reference_origin"},"theory_version":"GR+CDM+Lambda control"},
+  "conventions":{"metric_signature":"bound_to_DSIR_common_convention","index_convention":"bound_to_DSIR_common_convention","M0_definition":"fixed common reference normalization; see DSIR4_COMMON_RESIDUAL_CONVENTION_V0_1","T_known_definition":"baryons+photons+frozen standard-neutrino sector; dark sector excluded","frame":"linear cosmological scalar decomposition","gauge_or_gauge_invariant_basis":"model variables must be transformed to frozen DSIR comoving response basis for observable comparison"},
+  "common_residual":{"definition":"X_munu = M0^2 G_munu - T_known_munu","total_residual_is_authoritative":true,"components":{
+    "background_density_like":{"mapping_state":"DERIVED","expression_ref":"C0_C1_ANALYTIC_RESIDUAL_MAPPINGS_V0_1:C0:rho_X=rho_c+rho_Lambda"},
+    "background_pressure_like":{"mapping_state":"DERIVED","expression_ref":"C0_C1_ANALYTIC_RESIDUAL_MAPPINGS_V0_1:C0:p_X=-rho_Lambda"},
+    "scalar_density_perturbation":{"mapping_state":"DERIVED","expression_ref":"C0_C1_ANALYTIC_RESIDUAL_MAPPINGS_V0_1:C0:delta_rho_X=delta_rho_c"},
+    "scalar_momentum_velocity":{"mapping_state":"DERIVED","expression_ref":"C0_C1_ANALYTIC_RESIDUAL_MAPPINGS_V0_1:C0:q_X=q_c"},
+    "scalar_isotropic_pressure_perturbation":{"mapping_state":"STRUCTURAL_ZERO","expression_ref":"C0_C1_ANALYTIC_RESIDUAL_MAPPINGS_V0_1:C0:delta_p_X=0"},
+    "scalar_anisotropic_stress":{"mapping_state":"STRUCTURAL_ZERO","expression_ref":"C0_C1_ANALYTIC_RESIDUAL_MAPPINGS_V0_1:C0:pi_X=0"}
+  }},
+  "sector_bookkeeping":{"has_interacting_sector_partition":false,"sector_partition_definition":"CDM plus Lambda inside total residual","transfer_current_convention":null,"total_residual_invariant_under_relabeling_required":true},
+  "modified_gravity_bookkeeping":{"effective_source_rearrangement_used":false,"original_field_equation_ref":"Einstein GR with fixed M0","algebraic_equivalence_proof_ref":"C0_C1_ANALYTIC_RESIDUAL_MAPPINGS_V0_1:C0"},
+  "certified_domain":{"z_min":0.295,"z_max":2.33,"k_min_exclusive_mpc_inv":0.0,"k_max_mpc_inv":0.06664762008318016,"linear_regime":true,"quasi_static_assumption":false,"sub_horizon_assumption":false,"branch_conditions":[],"stability_conditions":["standard stable LambdaCDM control"],"other_approximations":["linear scalar mapping for perturbation components"]},
+  "prediction_artifact":{"generator_type":"analytic_or_numerical","code_commit_or_expression_id":null,"mapping_artifact_sha256":null,"payload_sha256":null,"output_grid":null,"units":null,"external_solver_provenance":"legacy numerical control evidence remains separately bound in docs/GATES.md"},
+  "equivalence":{"equivalence_class_id":null,"criterion_ref":null,"comparison_hashes":[]},
+  "readiness":{"mapping_ready":true,"prediction_ready":false,"numerically_evaluated":false,"scientific_gate_status":"NOT_YET_TESTABLE"}
+}
