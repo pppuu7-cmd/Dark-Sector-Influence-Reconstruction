@@ -1,0 +1,26 @@
+name: Exp073EX EL v0.2 resource checker static audit v0.1
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/exp073ex-el-v02-resource-checker-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bind prospectively frozen identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/073ex_exp073el_v0_2_resource_checker_static_failclosed_audit_v0_1_prereg.md)" = '7285edaccf2c3b6ea4826cb509107aa4431c827b'
+          test "$(git hash-object ci/exp073ex_exp073el_v02_resource_checker_static_failclosed_audit_v0_1.py)" = 'd89ddf287104b04b73f5e0188185339175301c31'
+          test "$(git hash-object ci/exp073el_host_resource_admission_v0_2.sh)" = 'f0a3a2e42326183944b838d42c5072c59e259b68'
+      - name: Run hosted static fail-closed audit
+        run: python3 ci/exp073ex_exp073el_v02_resource_checker_static_failclosed_audit_v0_1.py
