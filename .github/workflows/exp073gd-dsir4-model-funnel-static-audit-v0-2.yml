@@ -1,0 +1,45 @@
+name: Exp073GD DSIR-4 model funnel matrix static audit v0.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073gd-dsir4-model-funnel-static-audit-v0-2.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit DSIR-4 frozen model funnel infrastructure
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:docs/DSIR_PUBLICATION_ARCHITECTURE_2026-09-06.md)" = '4661b4c9c796094a57e3e5f33e3fd8a25c186eb5'
+          test "$(git rev-parse HEAD:docs/dsir4/DSIR4_MODEL_FUNNEL_MATRIX_CONTRACT_V0_1.md)" = '2ad6d26381119442ccd3811b29f24522f5f6eeff'
+          test "$(git rev-parse HEAD:data/dsir4/model_funnel_inventory_v0_1.json)" = '0817a4243c67cd5e198829996040074ee061c0c9'
+          test "$(git rev-parse HEAD:ci/validate_dsir4_model_funnel_v0_1.py)" = 'd0db9da8b8c94ae3eb8e97a0701c39e95a2469b9'
+          test "$(git rev-parse HEAD:experiments/073gd_dsir4_model_funnel_matrix_static_audit_v0_1_prereg.md)" = 'f97e21083f5e11db45c0ad48d48567870f049597'
+          python3 -m py_compile ci/validate_dsir4_model_funnel_v0_1.py
+          python3 ci/validate_dsir4_model_funnel_v0_1.py data/dsir4/model_funnel_inventory_v0_1.json | tee validator.log
+          grep -Fx 'PASS_DSIR4_MODEL_FUNNEL_MATRIX_VALIDATOR_V0_1' validator.log >/dev/null
+          grep -Fx 'classification=SUPPORT_PLUS_0_PLUS_0' validator.log >/dev/null
+          grep -Fx 'scientific_model_authority_created=false' validator.log >/dev/null
+          ! grep -Eqi 'fractional[_ -]?pass|percentage[_ -]?pass|percent[_ -]?pass' docs/dsir4/DSIR4_MODEL_FUNNEL_MATRIX_CONTRACT_V0_1.md data/dsir4/model_funnel_inventory_v0_1.json
+          ! grep -Eqi 'DSIR-derived new model|new DSIR-derived model' data/dsir4/model_funnel_inventory_v0_1.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/dsir4/model_funnel_inventory_v0_1.json'))
+          assert len(d['inventory']) >= 9
+          assert all(x['overall_status']=='NOT_YET_TESTABLE' for x in d['inventory'])
+          assert all(x['mapping_status']=='NOT_YET_TESTABLE' for x in d['inventory'])
+          assert all(x['hypotheses']==[] for x in d['inventory'])
+          PY
+          echo PASS_EXP073GD_DSIR4_MODEL_FUNNEL_MATRIX_STATIC_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo self_hosted_science_started=false
+          echo scientific_model_authority_created=false
