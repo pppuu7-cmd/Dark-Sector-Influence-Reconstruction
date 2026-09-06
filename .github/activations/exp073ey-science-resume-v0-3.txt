@@ -1,0 +1,6 @@
+Exp073EY checkpoint-preserving resume v0.3
+repair erratum: experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_5_read_patch_repair_erratum.md
+evidence failure run/job: 34006214398 / 101413789646
+preserve A checkpoints through mcm_fits_verified
+read-capable storage patch blob: d534b698f9131688d263eedcef27260386c58641
+science identity unchanged
