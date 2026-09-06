@@ -1,0 +1,22 @@
+name: Exp073EY static fail-closed audit v0.2
+on:
+  push:
+    branches: [main]
+    paths: ['.github/activations/exp073ey-static-audit-v0-2.txt']
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bind frozen workflow-inclusive audit surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ci/exp073ey_static_failclosed_audit_v0_1.py)" = '66040f42b61a18fb7cd2c8d582164bcf891c91d6'
+          test "$(git rev-parse HEAD:ci/exp073ey_static_failclosed_audit_v0_2.py)" = 'a0232a82a53873eb7568b3a6954fcfadbb2077ff'
+          test "$(git rev-parse HEAD:.github/workflows/exp073ey-ww-s0-s1-filebacked-ab-science-v0-1.yml)" = '842feacec0f239a908b1bfaf04dbc0878a0ea6ea'
+      - name: Execute workflow-inclusive audit
+        run: python3 ci/exp073ey_static_failclosed_audit_v0_2.py
