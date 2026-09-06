@@ -5,44 +5,47 @@ Scope: DSIR only; RTK/RQIR excluded.
 
 ## Preserved scientific authority
 
-Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 exact scientific PASS remain preserved. `WW_S0_S0` remains admitted by Exp073EO v0.2 run/job `34005373819 / 101411448176`, artifact `9980754356`, digest `sha256:0e1a4cff3b761fecc65d8e07df9e56f8109fd221fb4454746caa8c7d0f2fb4be`. Exp073EL resource readiness remains support PASS +0/+0, artifact `9980783193`, digest `sha256:c720233664be2e8a7666db6f95def0a2f13eb674732add6852f0c09e916e5e46`.
+Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 exact scientific PASS remain preserved. `WW_S0_S0` remains admitted by Exp073EO v0.2 run/job `34005373819 / 101411448176`, artifact `9980754356`, digest `sha256:0e1a4cff3b761fecc65d8e07df9e56f8109fd221fb4454746caa8c7d0f2fb4be`. Exp073EL remains resource/readiness support PASS +0/+0.
 
-`WW_S0_S1` is now admitted scientific authority by Exp073EZ run/job **`34017921734 / 101444964371`**. Raw admission token:
-`PASS_EXP073EZ_WW_S0_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1`.
-Classification: `SCIENTIFIC_AUTHORITY_ADMITTED`; `science_gate_scored=true`; `ww_s0_s1_authority_created=true`.
+`WW_S0_S1` is admitted by Exp073EZ run/job `34017921734 / 101444964371`, raw token `PASS_EXP073EZ_WW_S0_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1`, classification `SCIENTIFIC_AUTHORITY_ADMITTED`. Its candidate is Exp073EY resume `34010599584 / 101425638857`, artifact `9983630139`, independently verified ZIP SHA256 `12291c1c9f6100ebfb03a6db1e613f422bd48bc6c02720f89ee613c8646cf9d6`, exact selected A/B SHA `49af7a3d165daaf7cc6781e2286e45cd5baa0042ed9770800588bced7d700e79`.
 
-Upstream candidate remains Exp073EY resume `34010599584 / 101425638857`, artifact `9983630139`, independently verified ZIP SHA256 `12291c1c9f6100ebfb03a6db1e613f422bd48bc6c02720f89ee613c8646cf9d6`, exact selected A/B SHA `49af7a3d165daaf7cc6781e2286e45cd5baa0042ed9770800588bced7d700e79`, full BPW SHA `eb6c2427c86e76225a39feab3a4788d3a0b7ba142809f79cecb2e362c0b44b98`, exact `numpy.array_equal=true`, all finite, no tolerance rescue.
-
-Historical Exp073EZ first admission run `34017884048 / 101444857315` is immutable `INFRASTRUCTURE_DEPENDENCY_FAIL +0/+0` because hosted Python lacked NumPy before raw numerical/provenance audit. Minimal repair pinned audit-only `numpy==2.3.2`; science criteria were unchanged. Repair commit `a429b4a3b439bcca92e3adccfaa0de621137f6bc`.
+Historical Exp073EZ first admission `34017884048 / 101444857315` remains `INFRASTRUCTURE_DEPENDENCY_FAIL +0/+0`; minimal audit-only NumPy repair did not change science.
 
 ## Current frontier
 
-Frozen order advances to **`WW_S0_S2`**.
+`WW_S0_S2`, prospectively frozen as Exp073FA.
 
-Exp073FA preregistration:
-- file `experiments/073fa_ww_s0_s2_filebacked_full_resolution_ab_science_v0_1_prereg.md`;
+Exp073FA prereg:
+- `experiments/073fa_ww_s0_s2_filebacked_full_resolution_ab_science_v0_1_prereg.md`;
 - commit `a1ce88850d037b408eb5f8cdd3275dbc7cf629b4`;
 - blob `edc044792be8ac7b796c8469943924942ae91932`;
-- source pair ordered distinct `(S0,S2)`;
-- source authority `de83e20a68f79ccf25b89b0d33eb4206e294c757`;
+- ordered distinct `(S0,S2)` using source indices `[0,2]`;
+- source head `de83e20a68f79ccf25b89b0d33eb4206e294c757`;
 - contract fingerprint `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
-- checkpoint namespaces `checkpoints/exp073fa-ww-s0-s2-a-v0-1` and `checkpoints/exp073fa-ww-s0-s2-b-v0-1`;
-- expected candidate token `PASS_EXP073FA_WW_S0_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`;
+- checkpoint namespaces `checkpoints/exp073fa-ww-s0-s2-a-v0-1` and `...-b-v0-1`;
+- candidate token `PASS_EXP073FA_WW_S0_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`;
 - candidate PASS alone creates no authority.
 
-## Current authoritative process
+Exp073FA prerequisite static audit run/job `34018080500 / 101445404866` is terminal SUCCESS with raw token `PASS_EXP073FA_WW_S0_S2_PREREQUISITE_STATIC_AUDIT_V0_1`, classification `SUPPORT_PLUS_0_PLUS_0`, `ww_s0_s2_authority_created=false`. It verified exact prereg/task-runner/read-patch identities, authoritative source-2 support, upstream Exp073EZ terminal success, and the frozen no-rescue contract.
 
-Workflow: `Exp073FA WW_S0_S2 prerequisite static audit v0.1`.
-- run **`34018080500`**;
-- job **`101445404866`**;
-- activation/head **`d2c1d5abb857d636eac586851f477e0c868c3dc9`**;
-- state at ledger update: `IN_PROGRESS` with fail-closed audit step already SUCCESS, awaiting terminal workflow reconciliation;
-- home/self-hosted ownership: **NONE**; this workflow is hosted-only;
-- last durable science checkpoint for Exp073FA: none yet, because no Exp073FA science computation has started.
+## Authoritative current process — Exp073FB
 
-Expected static token: `PASS_EXP073FA_WW_S0_S2_PREREQUISITE_STATIC_AUDIT_V0_1`. This is support `+0/+0` only and can never create WW authority.
+Purpose: generate and statically audit the dedicated Exp073FA S0_S2 durable A/B drivers before any home science launch.
 
-On terminal static PASS: implement/freeze the dedicated checkpointed Exp073FA S0_S2 production envelope, run a hosted fail-closed implementation audit, verify no queued/in-progress competing self-hosted DSIR job, then launch the sole home A/B science computation. On static failure: diagnose the first causal implementation/governance defect and repair without changing the preregistered science.
+- workflow `Exp073FB Exp073FA S0_S2 driver transformation v0.1`;
+- run **`34018169771`**;
+- job **`101445653251`**;
+- activation/head **`fdfbfa161e5661f9eb32dc70804f5ac9cd145adf`**;
+- prereg `experiments/073fb_exp073fa_s0_s2_driver_transformation_v0_1_prereg.md`;
+- prereg blob `7ff28ad4239728c14d05094b55ffc713c52210e6`;
+- state at ledger update: **IN_PROGRESS** on GitHub-hosted runner;
+- expected token `PASS_EXP073FB_EXP073FA_S0_S2_DRIVER_TRANSFORMATION_STATIC_AUDIT_V0_1`;
+- classification on PASS: support/governance `+0/+0`, no WW authority;
+- output artifact if PASS: generated S0_S2 v0.1/v0.2 driver candidates plus transformation receipt.
+
+**Runner ownership:** `DSIR-HOME-PC` currently has no DSIR owner; Exp073FB is hosted-only. No Exp073FA science checkpoint exists yet.
+
+On Exp073FB PASS: consume generated artifact and digest, freeze exact generated driver identities plus a dedicated fail-closed home envelope, run hosted implementation audit, live-check zero competing self-hosted jobs, then launch exactly one Exp073FA A/B science computation. On FB failure: diagnose first causal transformation/audit defect and repair without changing Exp073FA science preregistration.
 
 ## Frozen global boundaries
 
