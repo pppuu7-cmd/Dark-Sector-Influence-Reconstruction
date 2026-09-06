@@ -25,17 +25,20 @@ Wm_S1 Track-A exact PASS, admitted Wm_S2 and Wm_S3 exact scientific PASS remain 
 
 **DSIR-HOME-PC RESERVED BY Exp073EN run `33994398927`, job `101382229273`. No competing self-hosted DSIR heavy task may launch.**
 
-## Current independent hosted support process — Exp073EX
-Purpose: static fail-closed audit of the already-prepared Exp073EL v0.2 host resource checker; support-only `+0/+0`, no WW authority, no Exp073EN partial-output inspection.
+## Exp073EX — terminal hosted static support PASS `+0/+0`
+Purpose: static fail-closed audit of the already-prepared Exp073EL v0.2 host resource checker; no WW authority and no Exp073EN partial-output inspection.
 
-- prereg: `experiments/073ex_exp073el_v0_2_resource_checker_static_failclosed_audit_v0_1_prereg.md`, blob `7285edaccf2c3b6ea4826cb509107aa4431c827b`;
-- auditor: `ci/exp073ex_exp073el_v02_resource_checker_static_failclosed_audit_v0_1.py`, blob `d89ddf287104b04b73f5e0188185339175301c31`;
-- target checker: `ci/exp073el_host_resource_admission_v0_2.sh`, blob `f0a3a2e42326183944b838d42c5072c59e259b68`;
+- prereg blob `7285edaccf2c3b6ea4826cb509107aa4431c827b`, commit `59a0f68a331fbe60f5f61576f9ea78566350b451`;
+- auditor blob `d89ddf287104b04b73f5e0188185339175301c31`, commit `2b8cbf5aaa1a86b034ceff12bcf6c7d803fc7881`;
+- target checker `ci/exp073el_host_resource_admission_v0_2.sh`, blob `f0a3a2e42326183944b838d42c5072c59e259b68`;
 - activation head `baaf8347bace992f1a55a2d741f348556fccfd4a`;
-- run/job `34002549484 / 101403893778`: **IN_PROGRESS** at latest reconciliation on GitHub-hosted runner;
-- expected PASS token `PASS_EXP073EX_EXP073EL_V02_RESOURCE_CHECKER_STATIC_FAILCLOSED_AUDIT_V0_1`;
-- on PASS: record static checker integrity only; Exp073EL remains blocked until real Exp073EO PASS;
-- on FAIL: repair only the smallest resource-checker/static-contract defect prospectively; do not change science or run the host gate while EN owns DSIR-HOME-PC.
+- run/job `34002549484 / 101403893778`: SUCCESS;
+- raw terminal token `PASS_EXP073EX_EXP073EL_V02_RESOURCE_CHECKER_STATIC_FAILCLOSED_AUDIT_V0_1`;
+- classification `STATIC_RESOURCE_CHECKER_FAILCLOSED_EXACT`;
+- no Actions artifact by design; frozen identity checks and raw job log are the terminal evidence;
+- consequence: Exp073EL v0.2 checker is structurally qualified, but actual resource readiness remains blocked until real Exp073EO PASS and later self-hosted EL execution.
+
+Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073EX_STATIC_AUDIT_PASS_EN_RUNNING.md`.
 
 ## Preserved support chain relevant to future WW_S0_S1
 All are `+0/+0` and create no WW authority.
