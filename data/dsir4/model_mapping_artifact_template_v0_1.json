@@ -1,0 +1,74 @@
+{
+  "schema_version": "dsir4-model-mapping-v0.1",
+  "scientific_authority_created": false,
+  "hypothesis_identity": {
+    "model_class_id": null,
+    "hypothesis_id": null,
+    "hypothesis_kind": "parameter_point_or_equivalence_class",
+    "parameter_values": null,
+    "theory_version": null
+  },
+  "conventions": {
+    "metric_signature": null,
+    "index_convention": null,
+    "M0_definition": null,
+    "T_known_definition": null,
+    "frame": null,
+    "gauge_or_gauge_invariant_basis": null
+  },
+  "common_residual": {
+    "definition": "X_munu = M0^2 G_munu - T_known_munu",
+    "total_residual_is_authoritative": true,
+    "components": {
+      "background_density_like": {"mapping_state": "NOT_YET_MAPPED", "expression_ref": null},
+      "background_pressure_like": {"mapping_state": "NOT_YET_MAPPED", "expression_ref": null},
+      "scalar_density_perturbation": {"mapping_state": "NOT_YET_MAPPED", "expression_ref": null},
+      "scalar_momentum_velocity": {"mapping_state": "NOT_YET_MAPPED", "expression_ref": null},
+      "scalar_isotropic_pressure_perturbation": {"mapping_state": "NOT_YET_MAPPED", "expression_ref": null},
+      "scalar_anisotropic_stress": {"mapping_state": "NOT_YET_MAPPED", "expression_ref": null}
+    }
+  },
+  "sector_bookkeeping": {
+    "has_interacting_sector_partition": null,
+    "sector_partition_definition": null,
+    "transfer_current_convention": null,
+    "total_residual_invariant_under_relabeling_required": true
+  },
+  "modified_gravity_bookkeeping": {
+    "effective_source_rearrangement_used": null,
+    "original_field_equation_ref": null,
+    "algebraic_equivalence_proof_ref": null
+  },
+  "certified_domain": {
+    "z_min": null,
+    "z_max": null,
+    "k_min_exclusive_mpc_inv": null,
+    "k_max_mpc_inv": null,
+    "linear_regime": null,
+    "quasi_static_assumption": null,
+    "sub_horizon_assumption": null,
+    "branch_conditions": [],
+    "stability_conditions": [],
+    "other_approximations": []
+  },
+  "prediction_artifact": {
+    "generator_type": "analytic_or_numerical",
+    "code_commit_or_expression_id": null,
+    "mapping_artifact_sha256": null,
+    "payload_sha256": null,
+    "output_grid": null,
+    "units": null,
+    "external_solver_provenance": null
+  },
+  "equivalence": {
+    "equivalence_class_id": null,
+    "criterion_ref": null,
+    "comparison_hashes": []
+  },
+  "readiness": {
+    "mapping_ready": false,
+    "prediction_ready": false,
+    "numerically_evaluated": false,
+    "scientific_gate_status": "NOT_YET_TESTABLE"
+  }
+}
