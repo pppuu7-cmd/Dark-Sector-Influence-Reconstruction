@@ -1,0 +1,22 @@
+name: Exp073EY static fail-closed audit v0.3
+on:
+  push:
+    branches: [main]
+    paths: ['.github/activations/exp073ey-static-audit-v0-3.txt']
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bind corrected workflow surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ci/exp073ey_static_failclosed_audit_v0_3.py)" = 'c8265d5226f1df5e82307c0e84d2155e7479a188'
+          test "$(git rev-parse HEAD:.github/workflows/exp073ey-ww-s0-s1-filebacked-ab-science-v0-1.yml)" = 'e6711cecea8e30122a1477215d68e8559ae9b832'
+          test "$(git rev-parse HEAD:experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_4_el_binding_erratum.md)" = '716e4c0e9054af79029e53923992776dbc6e3850'
+      - name: Execute corrected-binding audit
+        run: python3 ci/exp073ey_static_failclosed_audit_v0_3.py
