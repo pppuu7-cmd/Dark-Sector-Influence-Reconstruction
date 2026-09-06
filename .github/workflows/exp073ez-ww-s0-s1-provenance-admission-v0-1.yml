@@ -1,0 +1,160 @@
+name: Exp073EZ WW_S0_S1 provenance admission v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073ez-ww-s0-s1-provenance-admission-v0-1.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  hosted-admission:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CANDIDATE_RUN_ID: '34010599584'
+      CANDIDATE_HOSTED_JOB_ID: '101425618749'
+      CANDIDATE_HOME_JOB_ID: '101425638857'
+      CANDIDATE_HEAD: '4c570bf6b7f3f53547f43e2882149defa125da89'
+      CANDIDATE_ARTIFACT_ID: '9983630139'
+      CANDIDATE_ARTIFACT_NAME: 'exp073ey-ww-s0-s1-filebacked-ab-resume-v0-2'
+      CANDIDATE_ZIP_SHA256: '12291c1c9f6100ebfb03a6db1e613f422bd48bc6c02720f89ee613c8646cf9d6'
+      SOURCE_HEAD: 'de83e20a68f79ccf25b89b0d33eb4206e294c757'
+      CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
+      SELECTED_SHA256: '49af7a3d165daaf7cc6781e2286e45cd5baa0042ed9770800588bced7d700e79'
+      FULL_SHA256: 'eb6c2427c86e76225a39feab3a4788d3a0b7ba142809f79cecb2e362c0b44b98'
+      WORKSPACE_SHA256: 'ccadf25f8724acfbd29c16135674e0f845e98d99644be3d6c55526f03dbe241b'
+      BASE_PREREG_BLOB: '346bdbedcb34bdd67a0df88e5444f08071e822b6'
+      RESUME_ERRATUM_BLOB: 'c5125bb9a09f6c02a1d6b48a862902ead9127b61'
+      TERMINAL_BINDING_BLOB: 'd3c6c1ba9c6f6f4d41d1d123e765f8de5ead0fec'
+      RESUME_WORKFLOW_BLOB: '7c0e8718357cfe4448b26c372a0567edf860f572'
+      REPAIR_ERRATUM_BLOB: 'a6fc7a1a3af86f8f02eba8c02294283192642784'
+      REPAIR_WRAPPER_BLOB: 'a9cabeadc9b091424246adf00e9959dc62145e9b'
+      READ_PATCH_BLOB: 'd534b698f9131688d263eedcef27260386c58641'
+      DRIVER_V01_BLOB: '1db1eabbdba492c476cc61d3c4d71147aa688384'
+      DRIVER_V02_BLOB: '066847006b2ed9d712d2c22d3576a0d8887fa7bf'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Freeze repository identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_1_prereg.md)" = "$BASE_PREREG_BLOB"
+          test "$(git rev-parse HEAD:experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_2_resume_binding_erratum.md)" = "$RESUME_ERRATUM_BLOB"
+          test "$(git rev-parse HEAD:experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_3_terminal_binding_erratum.md)" = "$TERMINAL_BINDING_BLOB"
+          test "$(git rev-parse HEAD:.github/workflows/exp073ey-ww-s0-s1-filebacked-ab-resume-v0-2.yml)" = "$RESUME_WORKFLOW_BLOB"
+          test "$(git rev-parse HEAD:experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_5_read_patch_repair_erratum.md)" = "$REPAIR_ERRATUM_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ey_home_filebacked_fullres_v0_2.sh)" = "$REPAIR_WRAPPER_BLOB"
+          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)" = "$READ_PATCH_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ey_ww_s0_s1_durable_ab_production_v0_1.py)" = "$DRIVER_V01_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ey_ww_s0_s1_durable_ab_production_v0_2.py)" = "$DRIVER_V02_BLOB"
+
+      - name: Verify terminal run jobs artifact metadata and ZIP digest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api="https://api.github.com/repos/${GITHUB_REPOSITORY}"
+          hdr=(-H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28')
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/runs/$CANDIDATE_RUN_ID" -o run.json
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/runs/$CANDIDATE_RUN_ID/jobs?per_page=100" -o jobs.json
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/artifacts/$CANDIDATE_ARTIFACT_ID" -o artifact.json
+          python3 - <<'PY'
+          import json,os
+          run=json.load(open('run.json')); jobs=json.load(open('jobs.json'))['jobs']; art=json.load(open('artifact.json'))
+          assert run['id']==int(os.environ['CANDIDATE_RUN_ID']) and run['status']=='completed' and run['conclusion']=='success'
+          assert run['head_sha']==os.environ['CANDIDATE_HEAD']
+          J={j['id']:j for j in jobs}
+          for k in ('CANDIDATE_HOSTED_JOB_ID','CANDIDATE_HOME_JOB_ID'):
+              j=J[int(os.environ[k])]; assert j['status']=='completed' and j['conclusion']=='success',j
+          assert art['id']==int(os.environ['CANDIDATE_ARTIFACT_ID'])
+          assert art['name']==os.environ['CANDIDATE_ARTIFACT_NAME']
+          assert art['digest']=='sha256:'+os.environ['CANDIDATE_ZIP_SHA256']
+          wr=art['workflow_run']; assert wr['id']==int(os.environ['CANDIDATE_RUN_ID']) and wr['head_sha']==os.environ['CANDIDATE_HEAD']
+          PY
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/artifacts/$CANDIDATE_ARTIFACT_ID/zip" -o candidate.zip
+          test "$(sha256sum candidate.zip | awk '{print $1}')" = "$CANDIDATE_ZIP_SHA256"
+          mkdir candidate && unzip -q candidate.zip -d candidate
+
+      - name: Fail-closed raw provenance and exact scientific admission audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib,numpy as np
+          root=pathlib.Path('candidate')
+          H=lambda p: hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
+          source=os.environ['SOURCE_HEAD']; fp=os.environ['CONTRACT_FP']; selected=os.environ['SELECTED_SHA256']; full=os.environ['FULL_SHA256']; wsp=os.environ['WORKSPACE_SHA256']
+          stages=['fresh_sources_complete','fresh_workspace_mcm_complete','mcm_fits_verified','full_window_complete','selected_ee_complete','replica_receipt_complete']
+          term=json.loads((root/'terminal_receipt.json').read_text())
+          assert term['token']=='PASS_EXP073EY_WW_S0_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'
+          assert term['classification']=='SCIENTIFIC_CANDIDATE_PASS_PENDING_PROVENANCE_ADMISSION'
+          assert term['science_gate_scored'] is True and term['ww_s0_s1_authority_created'] is False
+          assert term['source_head']==source and term['contract_fingerprint']==fp
+          assert term['source_pair']=='S0->S1' and term['ordered_source_indices']==[0,1] and term['same_field_object_handoff'] is False
+          assert term['selected_semantics']=='EE<-EE' and term['selected_shape']==[39,12288] and term['selected_dtype']=='<f8'
+          assert term['a_sha256']==selected and term['b_sha256']==selected and term['sha256_equal'] is True and term['numpy_array_equal'] is True and term['all_finite'] is True and term['no_tolerance_rescue'] is True
+          assert term['bpw_route']=='public_get_bandpower_windows_after_filebacked_fits_read'
+          live=json.loads((root/'live_runs.json').read_text())
+          active=[r for r in live.get('workflow_runs',[]) if r.get('status') in ('queued','in_progress')]
+          assert len(active)==1 and active[0]['id']==int(os.environ['CANDIDATE_RUN_ID'])
+          arrays=[]
+          for rep in ('A','B'):
+              ns=f'checkpoints/exp073ey-ww-s0-s1-{rep.lower()}-v0-1'
+              rr=root/'checkpoints'/rep
+              for stage in stages:
+                  m=json.loads((rr/(stage+'.json')).read_text())
+                  assert m['schema']=='dsir.exp073ey.ww_s0_s1.durable_ab_production.v0.1.checkpoint'
+                  assert m['stage']==stage and m['complete'] is True and m['replica']==rep and m['checkpoint_namespace']==ns
+                  assert m['source_head']==source and m['contract_fingerprint']==fp
+                  assert m['historical_ww_numerical_import'] is False and m['other_replica_output_read'] is False
+              src=json.loads((rr/'fresh_sources_complete.json').read_text())
+              assert src['payloads']['ordered_source_indices']==[0,1]
+              assert src['payloads']['reconstruction_counts']=={'s0':1,'s1':1}
+              ws=json.loads((rr/'fresh_workspace_mcm_complete.json').read_text())
+              assert ws['payloads']['ordered_source_indices']==[0,1] and ws['payloads']['same_field_object_handoff'] is False
+              assert len(set(ws['payloads']['field_object_ids']))==2
+              assert ws['payloads']['workspace_fits']['sha256']==wsp
+              mv=json.loads((rr/'mcm_fits_verified.json').read_text()); assert mv['payloads']['workspace_fits']['sha256']==wsp
+              fw=json.loads((rr/'full_window_complete.json').read_text())['payloads']['full_window']
+              assert fw=={'mcm_filebacked':True,'route':'public_get_bandpower_windows_after_filebacked_fits_read','sha256':full,'shape':[4,39,4,12288]}
+              se=json.loads((rr/'selected_ee_complete.json').read_text())['payloads']['selected_ee']
+              assert se['sha256']==selected and se['shape']==[39,12288] and se['dtype']=='<f8' and se['semantics']=='wins[0,:,0,:] = EE<-EE' and se['route']=='public_get_bandpower_windows_after_filebacked_fits_read'
+              receipt=json.loads((rr/'replica_receipt.json').read_text())
+              assert receipt['selected_ee_sha256']==selected and receipt['workspace_fits_sha256']==wsp
+              assert receipt['source_pair']=='S0->S1' and receipt['ordered_source_indices']==[0,1] and receipt['same_field_object_handoff'] is False
+              assert receipt['source_head']==source and receipt['contract_fingerprint']==fp and receipt['checkpoint_namespace']==ns
+              assert receipt['historical_ww_numerical_import'] is False and receipt['other_replica_output_read'] is False and receipt['science_gate_scored'] is False
+              ar=receipt['adapter_receipt']
+              assert ar['route']=='public_get_bandpower_windows_after_filebacked_fits_read' and ar['read_unbinned_MCM'] is True
+              assert ar['mcm_filebacked'] is True and ar['mcm_proc_maps'] is True and ar['mcm_backing_bytes']==19327352832
+              assert ar['public_full_shape']==[4,39,4,12288] and ar['full_sha256']==full
+              assert ar['selected_semantics']=='wins[0,:,0,:] = EE<-EE' and ar['selected_shape']==[39,12288] and ar['selected_sha256']==selected
+              assert ar['historical_manual_reconstruction'] is False and ar['no_tolerance_rescue'] is True
+              bp=json.loads((rr/'exact_route/public_bpw_receipt.json').read_text()); assert bp==ar
+              pr=json.loads((rr/'post_receipt_prune.json').read_text())
+              assert pr['replica']==rep and pr['preserved_complete_receipt'] is True and pr['pruned_only_after_receipt'] is True and pr['selected_ee_sha256']==selected
+              done=json.loads((rr/'replica_receipt_complete.json').read_text())
+              assert H(rr/'replica_receipt.json')==done['payloads']['replica_receipt']['sha256']
+              eep=rr/'exact_route/selected_ee.bin'; assert H(eep)==selected and eep.stat().st_size==39*12288*8
+              a=np.fromfile(eep,dtype='<f8').reshape(39,12288); assert np.isfinite(a).all(); arrays.append(a)
+          assert np.array_equal(arrays[0],arrays[1])
+          ab=json.loads((root/'ab_compare.json').read_text())
+          assert ab['status']=='PASS_EXP073EY_WW_S0_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'
+          assert ab['sha256_equal'] is True and ab['numpy_array_equal'] is True and ab['all_finite'] is True and ab['no_tolerance_rescue'] is True
+          assert ab['a_sha256']==selected and ab['b_sha256']==selected and ab['source_pair']=='S0->S1' and ab['ordered_source_indices']==[0,1]
+          # Resume preservation: A's three expensive manifests are retained from before the resume's new A public-read stage.
+          assert (root/'checkpoints/A/fresh_sources_complete.json').stat().st_mtime < (root/'checkpoints/A/full_window_complete.json').stat().st_mtime
+          assert (root/'checkpoints/A/fresh_workspace_mcm_complete.json').stat().st_mtime < (root/'checkpoints/A/full_window_complete.json').stat().st_mtime
+          assert (root/'checkpoints/A/mcm_fits_verified.json').stat().st_mtime < (root/'checkpoints/A/full_window_complete.json').stat().st_mtime
+          print('PASS_EXP073EZ_WW_S0_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1')
+          print('classification=SCIENTIFIC_AUTHORITY_ADMITTED')
+          print('science_gate_scored=true')
+          print('ww_s0_s1_authority_created=true')
+          PY
