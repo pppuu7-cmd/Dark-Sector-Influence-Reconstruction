@@ -1,0 +1,60 @@
+name: Exp073EU sequential spill serialized public BPW exact v0.1
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073eu-sequential-spill-serialized-public-bpw-exact-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  OMP_NUM_THREADS: '2'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  PYTHONHASHSEED: '0'
+jobs:
+  hosted-exact:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Freeze prospective identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073eu_ww_s0_s1_sequential_spill_serialized_public_bpw_exact_v0_1_prereg.md)" = 'be77fbb5e175775d5e5c0e1370fa4e0bee2ad2d6'
+          test "$(git rev-parse HEAD:ci/exp073eu_sequential_spill_serialized_public_bpw_exact_v0_1.py)" = 'a6f149180551767e0317f0f57580ad588517870b'
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcfitsio-dev libfftw3-dev libgsl-dev autoconf automake libtool
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Build exact PyMaster 2.7 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/exp073eu"
+          git clone -q https://github.com/LSSTDESC/NaMaster.git "$R"
+          git -C "$R" checkout -q --detach 24365fa59a38c15732f4f37e8b29265b75c442d5
+          test "$(git -C "$R" rev-parse HEAD)" = '24365fa59a38c15732f4f37e8b29265b75c442d5'
+          python -m pip install -q --upgrade pip setuptools wheel
+          python -m pip install -q numpy healpy ducc0 astropy scipy cython
+          (cd "$R" && python setup.py install >"$RUNNER_TEMP/exp073eu-build.log" 2>&1)
+          python -c "import importlib.metadata; v=importlib.metadata.version('pymaster'); assert v=='2.7' or v.startswith('2.7.'); print('PYMASTER='+v)"
+      - name: Run state-matched exact qualifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/exp073eu-evidence"; mkdir -p "$E"; cd "$E"
+          python "$GITHUB_WORKSPACE/ci/exp073eu_sequential_spill_serialized_public_bpw_exact_v0_1.py" | tee stdout.txt
+          grep -Fx 'PASS_EXP073EU_WW_S0_S1_SEQUENTIAL_SPILL_SERIALIZED_PUBLIC_BPW_EXACT_V0_1' stdout.txt
+          test -s exp073eu_terminal_receipt.json
+      - name: Upload immutable Exp073EU evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073eu-sequential-spill-serialized-public-bpw-exact-v0-1-${{ github.sha }}
+          path: ${{ runner.temp }}/exp073eu-evidence/
+          if-no-files-found: warn
+          retention-days: 30
