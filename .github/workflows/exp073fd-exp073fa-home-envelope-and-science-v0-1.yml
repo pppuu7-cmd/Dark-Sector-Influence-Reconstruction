@@ -1,0 +1,131 @@
+name: Exp073FD Exp073FA audited home envelope and science v0.1
+on:
+  push:
+    branches: [main]
+    paths: ['.github/activations/exp073fd-exp073fa-science-v0-1.txt']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: dsir-exp073fa-ww-s0-s2-filebacked-ab-science-v0-1
+  cancel-in-progress: false
+env:
+  PREREG_BLOB: '6636766b565956d6af28ae04bcdeec1a410259a1'
+  HOME_ENVELOPE_BLOB: '309c464bbfbe4896bd560165985ee7f643d9ee22'
+  FA_PREREG_BLOB: 'edc044792be8ac7b796c8469943924942ae91932'
+  FROZEN_SOURCE_HEAD: 'de83e20a68f79ccf25b89b0d33eb4206e294c757'
+  CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
+  R1_ARTIFACT_ID: '9720335366'
+  R1_DIGEST: 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd'
+  NAMASTER_HEAD: '24365fa59a38c15732f4f37e8b29265b75c442d5'
+  PATCH_BLOB: 'd534b698f9131688d263eedcef27260386c58641'
+  DRIVER_V01_BLOB: '5c5d6aff574b8ed2679e345903d5f4447e5d5c18'
+  DRIVER_V02_BLOB: '9bde1f5de584e3378a1fe365e7a9771146fe08b5'
+  DRIVER_V01_SHA256: 'fe354b95e9aeefe0772f4c7eecbba6e1944fb1f4955fceb3e9e72ed1c06b293a'
+  DRIVER_V02_SHA256: '77f321e22c923d8d5996105487cae9afb6eecc5863174d849b092164a26824ba'
+  TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
+  EM_GENERATOR_BLOB: 'bd1795f2a2c2cf80341f212996eb8278e0be53d9'
+  EM_COMPARE_BLOB: 'f0de92f3f121592b6d139eb7d948426946d901d1'
+  FC_RUN_ID: '34018341064'
+  FC_JOB_ID: '101446155067'
+jobs:
+  hosted-envelope-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail-closed Exp073FD envelope and FC authority audit
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073fd_exp073fa_home_execution_envelope_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git rev-parse HEAD:experiments/073fa_ww_s0_s2_filebacked_full_resolution_ab_science_v0_1_prereg.md)" = "$FA_PREREG_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fa_home_filebacked_fullres_v0_1.sh)" = "$HOME_ENVELOPE_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py)" = "$DRIVER_V01_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fa_ww_s0_s2_durable_ab_production_v0_2.py)" = "$DRIVER_V02_BLOB"
+          test "$(sha256sum ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py | awk '{print $1}')" = "$DRIVER_V01_SHA256"
+          test "$(sha256sum ci/exp073fa_ww_s0_s2_durable_ab_production_v0_2.py | awk '{print $1}')" = "$DRIVER_V02_SHA256"
+          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)" = "$PATCH_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073aa_article3_des_angular_task_runner_v0_1.py)" = "$TASKRUNNER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073em_generate_namaster27_storage_reference_v0_1.py)" = "$EM_GENERATOR_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073em_compare_namaster27_storage_exact_v0_1.py)" = "$EM_COMPARE_BLOB"
+          python3 -m py_compile ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py ci/exp073fa_ww_s0_s2_durable_ab_production_v0_2.py
+          grep -F "source_count_map(r1_root,2)" ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F "'ordered_source_indices':[0,2]" ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F "'source_pair':'S0->S2'" ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F "FULL_SHAPE=(4,39,4,12288); EE_SHAPE=(39,12288)" ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F 'EXPECTED_MCM_BYTES=19327352832' ci/exp073fa_ww_s0_s2_durable_ab_production_v0_2.py >/dev/null
+          grep -F 'read_from(str(wp),read_unbinned_MCM=True)' ci/exp073fa_ww_s0_s2_durable_ab_production_v0_2.py >/dev/null
+          grep -F 'get_bandpower_windows()' ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F 'np.array_equal' ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F 'flock -n 9' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'test "$cpus" = 8' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'OMP_NUM_THREADS' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F '50*1024*1024*1024' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'PASS_EXP073EM_NAMASTER27_FILEBACKED_MMAP_EXACT_STORAGE_V0_1' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
+          ! grep -Eqi 'np\.(allclose|isclose)|tolerance_rescue.*false|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py ci/exp073fa_ww_s0_s2_durable_ab_production_v0_2.py
+          api="https://api.github.com/repos/${GITHUB_REPOSITORY}"; hdr=(-H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28')
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/runs/$FC_RUN_ID" -o fc_run.json
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/runs/$FC_RUN_ID/jobs?per_page=100" -o fc_jobs.json
+          python3 - <<'PY'
+          import json,os
+          r=json.load(open('fc_run.json')); jobs=json.load(open('fc_jobs.json'))['jobs']
+          assert r['id']==int(os.environ['FC_RUN_ID']) and r['status']=='completed' and r['conclusion']=='success'
+          j=next(x for x in jobs if x['id']==int(os.environ['FC_JOB_ID'])); assert j['status']=='completed' and j['conclusion']=='success'
+          PY
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/jobs/$FC_JOB_ID/logs" -o fc_logs.zip
+          unzip -p fc_logs.zip | grep -F 'PASS_EXP073FC_EXP073FA_COMMITTED_DRIVER_BINDING_V0_1' >/dev/null
+          unzip -p fc_logs.zip | grep -F 'classification=SUPPORT_PLUS_0_PLUS_0' >/dev/null
+          echo PASS_EXP073FD_EXP073FA_HOME_ENVELOPE_STATIC_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo ww_s0_s2_authority_created=false
+  home-science:
+    needs: hosted-envelope-audit
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 720
+    env:
+      OMP_NUM_THREADS: '8'
+      OMP_DYNAMIC: 'FALSE'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run frozen ordered S0-to-S2 A/B gate with durable checkpoints
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash ci/exp073fa_home_filebacked_fullres_v0_1.sh
+      - name: Collect compact terminal or partial evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$HOME/.cache/dsir/exp073fa-ww-s0-s2-filebacked-ab-v0-1"; OUT="$RUNNER_TEMP/exp073fa-artifact"; rm -rf "$OUT"; mkdir -p "$OUT"
+          ROOT="$ROOT" OUT="$OUT" python3 - <<'PY'
+          import os,shutil
+          from pathlib import Path
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          if root.exists():
+            for p in root.rglob('*.json'):
+              try:q=out/p.relative_to(root); q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+              except OSError:pass
+            for rep in ('A','B'):
+              p=root/'checkpoints'/rep/'exact_route'/'selected_ee.bin'
+              if p.exists():q=out/'checkpoints'/rep/'exact_route'/'selected_ee.bin'; q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+            for n in ('A_driver.log','B_driver.log','ab_compare_stdout.txt','resource_telemetry.log','terminal_receipt.json'):
+              p=root/n
+              if p.exists():shutil.copy2(p,out/n)
+          PY
+      - name: Upload Exp073FA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073fa-ww-s0-s2-filebacked-ab-v0-1
+          path: ${{ runner.temp }}/exp073fa-artifact
+          if-no-files-found: warn
+          retention-days: 30
