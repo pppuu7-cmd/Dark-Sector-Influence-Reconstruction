@@ -1,0 +1,53 @@
+name: Exp073FQ WW_S1_S1 home envelope static audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073fq-ww-s1-s1-home-envelope-static-audit-v0-1.txt'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  hosted-home-envelope-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Exp073FM fail-closed home envelope
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ci/exp073fm_ww_s1_s1_durable_ab_production_v0_1.py)" = '477647c5164264665cc16e20d1577fb25cd245f4'
+          test "$(git rev-parse HEAD:ci/exp073fm_ww_s1_s1_durable_ab_production_v0_2.py)" = '8e3edff39aae95d3abc3196806802c5f0ae59832'
+          test "$(git rev-parse HEAD:ci/exp073fm_verify_and_prune_replica_v0_1.py)" = '8e04e99084aed582f9586e3f316c023650ce6c63'
+          test "$(git rev-parse HEAD:ci/exp073fm_compare_terminal_receipts_v0_1.py)" = '02d69d5d517c676b3ec0963380f93d13f2b9874e'
+          test "$(git rev-parse HEAD:ci/exp073fm_home_filebacked_fullres_v0_1.sh)" = '873232cc96f9a97afefeff1ff0a433fd5b49a5a2'
+          python3 -m py_compile ci/exp073fm_ww_s1_s1_durable_ab_production_v0_1.py ci/exp073fm_ww_s1_s1_durable_ab_production_v0_2.py ci/exp073fm_verify_and_prune_replica_v0_1.py ci/exp073fm_compare_terminal_receipts_v0_1.py
+          bash -n ci/exp073fm_home_filebacked_fullres_v0_1.sh
+          gh api --allow-escape-sequences repos/${GITHUB_REPOSITORY}/actions/jobs/101532983406/logs > fp.log
+          grep -aF 'PASS_EXP073FP_WW_S1_S1_EXACT_PRODUCTION_DRIVER_STATIC_AUDIT_V0_1' fp.log >/dev/null
+          grep -aF 'classification=SUPPORT_PLUS_0_PLUS_0' fp.log >/dev/null
+          grep -F "flock -n 9" ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'COMPETING_SELF_HOSTED' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'test "$cpus" = 8' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F '50*1024*1024*1024' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F "OPENBLAS_NUM_THREADS MKL_NUM_THREADS NUMEXPR_NUM_THREADS BLIS_NUM_THREADS VECLIB_MAXIMUM_THREADS" ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'PASS_EXP073EM_NAMASTER27_FILEBACKED_MMAP_EXACT_STORAGE_V0_1' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'ci/exp073fm_verify_and_prune_replica_v0_1.py' ci/exp073fm_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'ci/exp073fm_compare_terminal_receipts_v0_1.py' ci/exp073fm_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F "for p in (p1,wp,full): p.unlink()" ci/exp073fm_verify_and_prune_replica_v0_1.py >/dev/null
+          grep -F 'complete_chain_verified_before_prune' ci/exp073fm_verify_and_prune_replica_v0_1.py >/dev/null
+          grep -F 'terminal_compare_restored_replica' ci/exp073fm_compare_terminal_receipts_v0_1.py >/dev/null
+          grep -F "same_field_object_handoff':True" ci/exp073fm_verify_and_prune_replica_v0_1.py >/dev/null
+          grep -F "same_field_object_handoff':True" ci/exp073fm_compare_terminal_receipts_v0_1.py >/dev/null
+          grep -F 'mcm_backing_bytes' ci/exp073fm_verify_and_prune_replica_v0_1.py >/dev/null
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fm_ww_s1_s1_durable_ab_production_v0_1.py ci/exp073fm_ww_s1_s1_durable_ab_production_v0_2.py ci/exp073fm_verify_and_prune_replica_v0_1.py ci/exp073fm_compare_terminal_receipts_v0_1.py
+          echo PASS_EXP073FQ_WW_S1_S1_HOME_ENVELOPE_STATIC_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo ww_s1_s1_authority_created=false
+          echo self_hosted_science_started=false
