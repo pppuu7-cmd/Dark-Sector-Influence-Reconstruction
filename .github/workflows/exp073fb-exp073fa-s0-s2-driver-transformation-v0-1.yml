@@ -43,7 +43,7 @@ jobs:
           import re,json,hashlib
           src=Path('ci/exp073ey_ww_s0_s1_durable_ab_production_v0_1.py').read_text()
           out=src.replace('exp073ey','exp073fa').replace('EXP073EY','EXP073FA')
-          out=out.replace('s0-s1','s0-s2').replace('S0_S1','S0_S2').replace('S0->S1','S0->S2')
+          out=out.replace('s0-s1','s0-s2').replace('s0_s1','s0_s2').replace('S0_S1','S0_S2').replace('S0->S1','S0->S2')
           out=re.sub(r'\bs1\b','s2',out); out=re.sub(r'\bp1\b','p2',out); out=re.sub(r'\bf1\b','f2',out)
           old='source_count_map(r1_root,1)'; new='source_count_map(r1_root,2)'
           if out.count(old)!=1: raise SystemExit(f'expected one source-index substitution, got {out.count(old)}')
