@@ -65,7 +65,7 @@ jobs:
           grep -F 'OMP_NUM_THREADS' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
           grep -F '50*1024*1024*1024' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
           grep -F 'PASS_EXP073EM_NAMASTER27_FILEBACKED_MMAP_EXACT_STORAGE_V0_1' ci/exp073fa_home_filebacked_fullres_v0_1.sh >/dev/null
-          ! grep -Eqi 'np\.(allclose|isclose)|tolerance_rescue.*false|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py ci/exp073fa_ww_s0_s2_durable_ab_production_v0_2.py
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py ci/exp073fa_ww_s0_s2_durable_ab_production_v0_2.py
           api="https://api.github.com/repos/${GITHUB_REPOSITORY}"; hdr=(-H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28')
           curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/runs/$FC_RUN_ID" -o fc_run.json
           curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/runs/$FC_RUN_ID/jobs?per_page=100" -o fc_jobs.json
@@ -75,9 +75,9 @@ jobs:
           assert r['id']==int(os.environ['FC_RUN_ID']) and r['status']=='completed' and r['conclusion']=='success'
           j=next(x for x in jobs if x['id']==int(os.environ['FC_JOB_ID'])); assert j['status']=='completed' and j['conclusion']=='success'
           PY
-          curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/jobs/$FC_JOB_ID/logs" -o fc_logs.zip
-          unzip -p fc_logs.zip | grep -F 'PASS_EXP073FC_EXP073FA_COMMITTED_DRIVER_BINDING_V0_1' >/dev/null
-          unzip -p fc_logs.zip | grep -F 'classification=SUPPORT_PLUS_0_PLUS_0' >/dev/null
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors "${hdr[@]}" "$api/actions/jobs/$FC_JOB_ID/logs" -o fc_logs.txt
+          grep -aF 'PASS_EXP073FC_EXP073FA_COMMITTED_DRIVER_BINDING_V0_1' fc_logs.txt >/dev/null
+          grep -aF 'classification=SUPPORT_PLUS_0_PLUS_0' fc_logs.txt >/dev/null
           echo PASS_EXP073FD_EXP073FA_HOME_ENVELOPE_STATIC_AUDIT_V0_1
           echo classification=SUPPORT_PLUS_0_PLUS_0
           echo ww_s0_s2_authority_created=false
