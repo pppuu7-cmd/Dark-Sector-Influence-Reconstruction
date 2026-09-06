@@ -1,0 +1,66 @@
+name: Exp073ET sequential ALM spill direct-lib exact v0.1
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073et-sequential-alm-spill-direct-lib-exact-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  OMP_NUM_THREADS: '2'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  PYTHONHASHSEED: '0'
+jobs:
+  hosted-exact:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Freeze prospective identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073et_ww_s0_s1_sequential_alm_spill_direct_lib_exact_v0_1_prereg.md)" = '6b6ebdfedd0930a7f450ea50d4334d883fb9ab49'
+          test "$(git rev-parse HEAD:ci/exp073et_sequential_alm_spill_direct_lib_exact_v0_1.py)" = 'd8054ac06a0037278feb84f59d231680738d7233'
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcfitsio-dev libfftw3-dev libgsl-dev autoconf automake libtool
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Build exact PyMaster 2.7 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/exp073et"
+          git clone -q https://github.com/LSSTDESC/NaMaster.git "$R"
+          git -C "$R" checkout -q --detach 24365fa59a38c15732f4f37e8b29265b75c442d5
+          test "$(git -C "$R" rev-parse HEAD)" = '24365fa59a38c15732f4f37e8b29265b75c442d5'
+          python -m pip install -q --upgrade pip setuptools wheel
+          python -m pip install -q numpy healpy ducc0 astropy scipy cython
+          (cd "$R" && python setup.py install >"$RUNNER_TEMP/exp073et-build.log" 2>&1)
+          python - <<'PY'
+          import importlib.metadata
+          v=importlib.metadata.version('pymaster')
+          assert v=='2.7' or v.startswith('2.7.'),v
+          print('PYMASTER='+v)
+          PY
+      - name: Run exact sequential-spill qualifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/exp073et-evidence"; mkdir -p "$E"
+          cd "$E"
+          python "$GITHUB_WORKSPACE/ci/exp073et_sequential_alm_spill_direct_lib_exact_v0_1.py" | tee stdout.txt
+          grep -Fx 'PASS_EXP073ET_WW_S0_S1_SEQUENTIAL_ALM_SPILL_DIRECT_LIB_EXACT_V0_1' stdout.txt
+          test -s exp073et_terminal_receipt.json
+      - name: Upload immutable Exp073ET evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073et-sequential-alm-spill-direct-lib-exact-v0-1-${{ github.sha }}
+          path: ${{ runner.temp }}/exp073et-evidence/
+          if-no-files-found: warn
+          retention-days: 30
