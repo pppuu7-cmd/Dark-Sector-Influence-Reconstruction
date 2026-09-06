@@ -28,17 +28,27 @@ The envelope enforces local flock plus live GitHub self-hosted exclusivity, exac
 
 First Exp073FD run `34020704615`, hosted job `101452648911`, is historical `INFRASTRUCTURE_STATIC_LOG_TRANSPORT_FAIL +0/+0`: GitHub job logs were treated as ZIP although the endpoint returned text; home science was skipped. Minimal repair changed only FC job-log transport/parsing to direct text grep. Science, drivers, envelope, source head, contract, patch, R1 identity and acceptance rules were unchanged.
 
-## Authoritative current process
+## Authoritative current science process
 
 Repaired Exp073FD workflow run **`34020756634`**, head **`894885b2c2b811954d1724c2733d2a810a486d70`**, branch `main`, started `2026-09-06T08:02:37Z`.
 
 Hosted audit job **`101452788638`** = terminal SUCCESS. Raw log was inspected and contains `PASS_EXP073FD_EXP073FA_HOME_ENVELOPE_STATIC_AUDIT_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `ww_s0_s2_authority_created=false`.
 
-Dependent home science job **`101452805620`** is currently **IN_PROGRESS** inside the frozen A/B step. `DSIR-HOME-PC` is exclusively owned by this job; no competing self-hosted DSIR workload may launch. Partial numerical output is not inspected. Last durable checkpoint is therefore recorded prospectively as `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`, never guessed.
+Dependent home science job **`101452805620`** remains **IN_PROGRESS** inside the frozen A/B step. `DSIR-HOME-PC` is exclusively owned by this job; no competing self-hosted DSIR workload may launch. Partial numerical output is not inspected. Last durable checkpoint remains `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`, never guessed.
 
-Immutable current recovery note: `docs/recovery/RECOVERY_2026-09-06_EXP073FC_PASS_EXP073FD_HOME_RUNNING.md`, creation commit `ce5a786fbffabc02f759b83c8925c75f818a85c5`.
+## Exp073FE — prospectively frozen checkpoint/restore hardening
 
-On terminal state: immediately consume job steps/logs and compact artifact; independently verify ZIP SHA256 against GitHub digest; verify source/contract/driver/patch/R1/checkpoint identities, complete six-stage chains, exact `19,327,352,832`-byte mmap proof, exact canonical A/B `EE<-EE`, finiteness and frozen token. Candidate PASS must then pass a separately frozen hosted provenance admission bound to the exact terminal run/job/artifact/digest before `WW_S0_S2` authority may exist. Infrastructure failure is a causal repair/resume condition preserving validated checkpoints; exact A/B mismatch is a genuine scientific FAIL.
+While Exp073FA was still running and before any terminal numerical output was inspected, static audit found a result-independent implementation/provenance issue: after completing and pruning A and B, the home wrapper invokes the driver again as `--replica AB`; v0.1 `validated_finished()` then restores a completed replica after checking only the terminal receipt and selected EE payload, not the entire six-stage chain and all prior payloads. The Exp073FA preregistration requires complete-stage restores to occur only after exact identity and payload verification.
+
+This does **not** change frozen science and does not imply a scientific FAIL. It is a prospective provenance/restore hardening issue.
+
+Exp073FE prereg `experiments/073fe_exp073fa_terminal_compare_checkpoint_restore_hardening_v0_1_prereg.md`, blob `43ff6dfe8d1eb682202b142e6ed2408a4beb00f7`. Repaired comparator `ci/exp073fe_compare_exp073fa_terminal_receipts_v0_1.py`, blob `14841dc412d3989e6f86294072479424f26cec93`, compares only terminal A/B receipts and selected EE payloads and never restores completed replicas merely to compare them. It fail-closes all frozen identities, selected payload SHA/size, exact SHA equality, `numpy.array_equal`, finiteness, no-cross-read/no-historical-import and no-tolerance policy.
+
+Hosted-only Exp073FE support audit run/job **`34023253707 / 101459598645`** is currently running. Expected token `PASS_EXP073FE_EXP073FA_TERMINAL_COMPARE_RESTORE_HARDENING_V0_1`; classification is support `+0/+0` only and it can never create authority. It does not use or compete for `DSIR-HOME-PC`.
+
+Immutable current recovery note: `docs/recovery/RECOVERY_2026-09-06_EXP073FE_PREREG_RESTORE_HARDENING_FA_RUNNING.md`, creation commit `f800d5b3889726baa5ef9ebc7b1b750abfcd644e`.
+
+On terminal Exp073FA: immediately consume job steps/logs and compact artifact; independently verify ZIP SHA256 against GitHub digest; verify source/contract/driver/patch/R1/checkpoint identities, complete six-stage chains, exact `19,327,352,832`-byte mmap proof, exact canonical A/B `EE<-EE`, finiteness and frozen token. Exact A/B mismatch remains genuine scientific FAIL. A matching candidate remains non-authoritative; if the complete frozen checkpoint/provenance contract cannot be proven, classify provenance/infrastructure `+0/+0`, preserve validated evidence, and apply the smallest prospective repair. Only a separately frozen hosted provenance admission may create `WW_S0_S2` authority.
 
 ## Frozen global boundaries
 
