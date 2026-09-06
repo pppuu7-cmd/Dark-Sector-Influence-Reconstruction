@@ -1,0 +1,102 @@
+{
+  "schema_version": "dsir4-existing-model-pilot-v0.1",
+  "frozen_date": "2026-09-07",
+  "scientific_model_authority_created": false,
+  "source_authority": {
+    "path": "docs/GATES.md",
+    "blob": "f0127d3f8ab4e7e9bd3ce88ce823c17d9404a285"
+  },
+  "mandatory_gates": [
+    "G_DOMAIN_MAPPING",
+    "G_ANGULAR_AUTHORITY",
+    "G_ORDERED_JOIN",
+    "G_RADIAL_SUPPORT",
+    "G_PHYSICAL_SUPPORT",
+    "G_COV_WHITENING",
+    "G_NUISANCE_QUOTIENT",
+    "G_RELATION_NULL",
+    "G_FINAL_MODEL"
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "C0_LCDM_REFERENCE",
+      "model_class_id": "LCDM_GR",
+      "frozen_object": "reference origin / solver-specific exact zero limits",
+      "legacy_evidence": {"status": "COMPARISON_READY_CONTROL", "facts": ["G3B reference origin", "multiple solver-specific zero limits"]},
+      "domain_relation": "LOW_K_RESPONSE_PRESENT",
+      "mapping_conversion_status": "EXPLICIT_SIX_COMPONENT_MAPPING_REQUIRED",
+      "gate_results": {},
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "hypothesis_id": "C1_SMOOTH_W_LOCAL_EPS1E4",
+      "model_class_id": "WCDM",
+      "frozen_object": "smooth non-phantom local ray epsilon_w=1+w=1e-4",
+      "legacy_evidence": {"status": "COMPARISON_READY", "facts": ["one-sided local ray", "finite-difference convergence documented"]},
+      "domain_relation": "LOW_K_RESPONSE_PRESENT",
+      "mapping_conversion_status": "EXPLICIT_SIX_COMPONENT_MAPPING_REQUIRED",
+      "gate_results": {},
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "hypothesis_id": "C2_IDE_LOCAL_TANGENT_CONE",
+      "model_class_id": "INTERACTING_DARK_SECTOR",
+      "frozen_object": "left-sided alpha ray plus two-sided beta tangent",
+      "legacy_evidence": {"status": "COMPARISON_READY", "facts": ["structure_angle_deg=58.9338", "physical tangent-cone sign restriction frozen"]},
+      "domain_relation": "LOW_K_RESPONSE_PRESENT",
+      "mapping_conversion_status": "TRANSFER_CURRENT_AND_SIX_COMPONENT_MAPPING_REQUIRED",
+      "gate_results": {},
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "hypothesis_id": "C3_GDM_CS2_CV2_LOCAL_PAIR",
+      "model_class_id": "GDM",
+      "frozen_object": "local cs2/cv2 tangent pair",
+      "legacy_evidence": {"status": "COMPARISON_READY", "facts": ["low_k_matter_angle_deg=0.322616", "metric_slip_angle_deg=137.9432", "equalized_weyl_slip_angle_deg=56.9632"]},
+      "domain_relation": "LOW_K_RESPONSE_PRESENT",
+      "mapping_conversion_status": "EXPLICIT_PRESSURE_SHEAR_RESIDUAL_MAPPING_REQUIRED",
+      "gate_results": {},
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "hypothesis_id": "C4_WDM_3KEV",
+      "model_class_id": "WDM",
+      "frozen_object": "thermal WDM mass=3 keV",
+      "legacy_evidence": {"status": "BLOCK_AWARE_COMPARISON_READY", "facts": ["rT_k0p1=-3.46e-6", "rT_k10=-0.10375", "low-k identifiability blind block"]},
+      "domain_relation": "IN_DOMAIN_BUT_LOW_K_NEAR_BLIND_HIGH_K_BLOCK_DISTINCT",
+      "mapping_conversion_status": "EXPLICIT_WDM_RESIDUAL_MAPPING_REQUIRED",
+      "gate_results": {},
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "hypothesis_id": "C5_FR_B0_1E5",
+      "model_class_id": "F_R",
+      "frozen_object": "designer f(R) H-EFTCAMB B0=1e-5",
+      "legacy_evidence": {"status": "COMPARISON_READY", "facts": ["official H-EFTCAMB lineage", "MG exact-GR and common-baseline gates passed", "time/sign structure separates from GDM scale-only similarity"]},
+      "domain_relation": "LOW_K_RESPONSE_PRESENT",
+      "mapping_conversion_status": "ORIGINAL_FIELD_EQUATION_TO_EFFECTIVE_RESIDUAL_PROOF_REQUIRED",
+      "gate_results": {},
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "hypothesis_id": "C5_FR_B0_1E4",
+      "model_class_id": "F_R",
+      "frozen_object": "designer f(R) H-EFTCAMB B0=1e-4",
+      "legacy_evidence": {"status": "COMPARISON_READY", "facts": ["official H-EFTCAMB lineage", "production point", "withheld transition-scale mechanism tests exist within family"]},
+      "domain_relation": "LOW_K_RESPONSE_PRESENT",
+      "mapping_conversion_status": "ORIGINAL_FIELD_EQUATION_TO_EFFECTIVE_RESIDUAL_PROOF_REQUIRED",
+      "gate_results": {},
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "hypothesis_id": "C6_DCDM_DR_GAMMA_H0_1",
+      "model_class_id": "DCDM_DR",
+      "frozen_object": "DCDM->DR Gamma/H0=1",
+      "legacy_evidence": {"status": "WITHHELD_FAMILY_MECHANISM_SUPPORT", "facts": ["withheld family not used to construct characteristic-scale finding", "Gamma/H0 sequence showed preregistered monotonic epoch shift", "G7 and G8 remained open"]},
+      "domain_relation": "LOW_K_TIME_RESPONSE_PRESENT",
+      "mapping_conversion_status": "DECAY_TRANSFER_AND_SIX_COMPONENT_MAPPING_REQUIRED",
+      "gate_results": {},
+      "overall_status": "NOT_YET_TESTABLE"
+    }
+  ]
+}
