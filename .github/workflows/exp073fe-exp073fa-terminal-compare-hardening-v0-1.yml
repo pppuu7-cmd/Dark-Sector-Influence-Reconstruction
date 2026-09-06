@@ -1,0 +1,67 @@
+name: Exp073FE Exp073FA terminal compare hardening v0.1
+on:
+  push:
+    branches: [main]
+    paths: ['.github/activations/exp073fe-exp073fa-terminal-compare-hardening-v0-1.txt']
+permissions:
+  contents: read
+concurrency:
+  group: dsir-exp073fe-exp073fa-terminal-compare-hardening-v0-1
+  cancel-in-progress: false
+env:
+  PREREG_BLOB: '43ff6dfe8d1eb682202b142e6ed2408a4beb00f7'
+  COMPARATOR_BLOB: '14841dc412d3989e6f86294072479424f26cec93'
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail-closed Exp073FE comparator audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073fe_exp073fa_terminal_compare_checkpoint_restore_hardening_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fe_compare_exp073fa_terminal_receipts_v0_1.py)" = "$COMPARATOR_BLOB"
+          python3 -m py_compile ci/exp073fe_compare_exp073fa_terminal_receipts_v0_1.py
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fe_compare_exp073fa_terminal_receipts_v0_1.py
+          grep -F "terminal_compare_restored_replica':False" ci/exp073fe_compare_exp073fa_terminal_receipts_v0_1.py >/dev/null
+          grep -F "other_replica_output_read':False" ci/exp073fe_compare_exp073fa_terminal_receipts_v0_1.py >/dev/null
+          grep -F "np.array_equal" ci/exp073fe_compare_exp073fa_terminal_receipts_v0_1.py >/dev/null
+          python3 - <<'PY'
+          import json, subprocess, tempfile
+          from pathlib import Path
+          import numpy as np, hashlib
+          root=Path(tempfile.mkdtemp())
+          source='de83e20a68f79ccf25b89b0d33eb4206e294c757'
+          contract='b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
+          arr=np.arange(39*12288,dtype='<f8').reshape(39,12288)
+          for rep in ('A','B'):
+              d=root/'checkpoints'/rep/'exact_route'; d.mkdir(parents=True)
+              p=d/'selected_ee.bin'; arr.tofile(p)
+              h=hashlib.sha256(p.read_bytes()).hexdigest()
+              r={'replica':rep,'source_pair':'S0->S2','ordered_source_indices':[0,2],
+                 'same_field_object_handoff':False,
+                 'bpw_route':'public_get_bandpower_windows_after_filebacked_fits_read',
+                 'source_head':source,'contract_fingerprint':contract,
+                 'checkpoint_namespace':f'checkpoints/exp073fa-ww-s0-s2-{rep.lower()}-v0-1',
+                 'historical_ww_numerical_import':False,'other_replica_output_read':False,
+                 'science_gate_scored':False,'selected_ee_sha256':h}
+              (root/'checkpoints'/rep/'replica_receipt.json').write_text(json.dumps(r))
+          out=root/'ab.json'
+          q=subprocess.run(['python3','ci/exp073fe_compare_exp073fa_terminal_receipts_v0_1.py','--root',str(root),'--out',str(out)],capture_output=True,text=True,check=True)
+          assert q.stdout.strip()=='PASS_EXP073FA_WW_S0_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'
+          o=json.loads(out.read_text()); assert o['sha256_equal'] and o['numpy_array_equal'] and o['all_finite'] and o['terminal_compare_restored_replica'] is False
+          # Exact mismatch must produce scientific FAIL, not tolerance rescue.
+          pb=root/'checkpoints'/'B'/'exact_route'/'selected_ee.bin'; b=np.memmap(pb,dtype='<f8',mode='r+',shape=(39,12288)); b[0,0]+=np.finfo(np.float64).eps; b.flush(); del b
+          rb=root/'checkpoints'/'B'/'replica_receipt.json'; r=json.loads(rb.read_text()); r['selected_ee_sha256']=hashlib.sha256(pb.read_bytes()).hexdigest(); rb.write_text(json.dumps(r))
+          q=subprocess.run(['python3','ci/exp073fe_compare_exp073fa_terminal_receipts_v0_1.py','--root',str(root),'--out',str(out)],capture_output=True,text=True,check=True)
+          assert q.stdout.strip()=='FAIL_EXP073FA_WW_S0_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'
+          # Receipt tamper must fail closed.
+          r=json.loads(rb.read_text()); r['other_replica_output_read']=True; rb.write_text(json.dumps(r))
+          q=subprocess.run(['python3','ci/exp073fe_compare_exp073fa_terminal_receipts_v0_1.py','--root',str(root),'--out',str(out)],capture_output=True,text=True)
+          assert q.returncode!=0
+          PY
+          echo PASS_EXP073FE_EXP073FA_TERMINAL_COMPARE_RESTORE_HARDENING_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo ww_s0_s2_authority_created=false
