@@ -1,0 +1,2 @@
+activate Exp073FS autonomous queue static audit v0.1
+frozen FR admission -> FS heavy -> FT admission handoff
