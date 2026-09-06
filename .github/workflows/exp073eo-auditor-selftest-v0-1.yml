@@ -19,8 +19,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD:ci/exp073eo_ww_s0_s0_provenance_admission_v0_1.py)" = 'PLACEHOLDER_AUDITOR_BLOB'
-          test "$(git rev-parse HEAD:ci/exp073eo_make_synthetic_fixture_v0_1.py)" = 'PLACEHOLDER_FIXTURE_BLOB'
+          test "$(git rev-parse HEAD:ci/exp073eo_ww_s0_s0_provenance_admission_v0_1.py)" = '4403d3e140acd14f0b95a31a8b2851f3229c1da3'
+          test "$(git rev-parse HEAD:ci/exp073eo_make_synthetic_fixture_v0_1.py)" = 'deaaf752f8c14132a6a5ebdd335a3ee4cd803642'
       - name: Install numerical dependency
         run: python -m pip install -q numpy
       - name: Positive synthetic authority-chain test
