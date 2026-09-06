@@ -1,0 +1,108 @@
+name: Exp073EL WW_S0_S1 resource admission v0.3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073el-resource-v0-3.txt'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-exp073el-ww-s0-s1-resource-admission-v0-3
+  cancel-in-progress: false
+
+env:
+  EL_PREREG_V03_BLOB: '0e8e834f407a9d6ba1fdfea6165e26ccc8d2f59c'
+  EL_CHECKER_BLOB: 'f0a3a2e42326183944b838d42c5072c59e259b68'
+  EO_RUN_ID: '34005373819'
+  EO_HEAD: 'd848a081a4c2344c4e58af26360ddaaee8147ffd'
+  EO_ARTIFACT_ID: '9980754356'
+  EO_ARTIFACT_DIGEST: 'sha256:0e1a4cff3b761fecc65d8e07df9e56f8109fd221fb4454746caa8c7d0f2fb4be'
+  EO_PASS: 'PASS_EXP073EO_WW_S0_S0_FILEBACKED_PROVENANCE_ADMISSION_V0_2'
+
+jobs:
+  hosted-authority-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Bind frozen EL and admitted EO authority
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073el_ww_s0_s1_full_resolution_resource_path_v0_3_prereg.md)" = "$EL_PREREG_V03_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073el_host_resource_admission_v0_2.sh)" = "$EL_CHECKER_BLOB"
+          R="$RUNNER_TEMP/exp073el-eo-bind"; mkdir -p "$R"
+          curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 2 \
+            -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$EO_RUN_ID" -o "$R/run.json"
+          curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 2 \
+            -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$EO_ARTIFACT_ID" -o "$R/art.json"
+          python3 - "$R/run.json" "$R/art.json" "$EO_RUN_ID" "$EO_HEAD" "$EO_ARTIFACT_ID" "$EO_ARTIFACT_DIGEST" <<'PY'
+          import json,sys
+          run=json.load(open(sys.argv[1])); art=json.load(open(sys.argv[2]))
+          assert run.get('id')==int(sys.argv[3]) and run.get('head_sha')==sys.argv[4]
+          assert run.get('status')=='completed' and run.get('conclusion')=='success'
+          assert art.get('id')==int(sys.argv[5]) and art.get('digest')==sys.argv[6] and art.get('expired') is False
+          wr=art.get('workflow_run') or {}; assert wr.get('id')==int(sys.argv[3]) and wr.get('head_sha')==sys.argv[4]
+          PY
+          curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 2 \
+            -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$EO_ARTIFACT_ID/zip" -o "$R/eo.zip"
+          test "$(sha256sum "$R/eo.zip" | awk '{print $1}')" = "${EO_ARTIFACT_DIGEST#sha256:}"
+          python3 - "$R/eo.zip" "$EO_PASS" <<'PY'
+          import json,sys,zipfile
+          with zipfile.ZipFile(sys.argv[1]) as z:
+              names=z.namelist(); target=[n for n in names if n.endswith('eo_admission_receipt.json')]
+              assert len(target)==1,names
+              r=json.loads(z.read(target[0]))
+          assert r.get('token')==sys.argv[2]
+          assert r.get('classification')=='SCIENTIFIC_AUTHORITY_ADMITTED'
+          assert r.get('ww_s0_s0_authority_created') is True
+          assert r.get('science_gate_scored') is True
+          print('PASS_EXP073EL_EO_V02_AUTHORITY_BINDING')
+          PY
+
+  home-resource-admission:
+    needs: hosted-authority-preflight
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Run frozen Exp073EL v0.2 checker under v0.3 governance binding
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073el_ww_s0_s1_full_resolution_resource_path_v0_3_prereg.md)" = "$EL_PREREG_V03_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073el_host_resource_admission_v0_2.sh)" = "$EL_CHECKER_BLOB"
+          bash ci/exp073el_host_resource_admission_v0_2.sh | tee "$RUNNER_TEMP/exp073el-resource-stdout.txt"
+          grep -Fx 'PASS_EXP073EL_WW_S0_S1_FULLRES_RESOURCE_PATH_V0_2' "$RUNNER_TEMP/exp073el-resource-stdout.txt"
+      - name: Collect Exp073EL resource receipt
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/exp073el-artifact"; mkdir -p "$OUT"
+          ROOT="$HOME/.cache/dsir/exp073el-resource-v0-2"
+          for f in resource_admission_receipt.json live_exclusivity.txt wslconfig.txt; do
+            if test -f "$ROOT/$f"; then cp "$ROOT/$f" "$OUT/$f"; fi
+          done
+          if test -f "$RUNNER_TEMP/exp073el-resource-stdout.txt"; then cp "$RUNNER_TEMP/exp073el-resource-stdout.txt" "$OUT/"; fi
+      - name: Upload Exp073EL terminal evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073el-ww-s0-s1-resource-admission-v0-3
+          path: ${{ runner.temp }}/exp073el-artifact
+          if-no-files-found: warn
+          retention-days: 30
