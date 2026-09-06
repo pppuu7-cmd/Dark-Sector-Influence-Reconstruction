@@ -12,11 +12,11 @@ Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 PASS remain preserved. `WW_S0_
 - branch `main`, run head **`4a02952ee3bcb368a088d87608f61243cd9f7056`**;
 - hosted lineage job **`101489652912`** = terminal SUCCESS support;
 - hosted code/checkpoint audit job **`101489652945`** = terminal SUCCESS support;
-- home science job **`101489679508`** = **IN_PROGRESS** in the frozen ordered `S0->S3` A/B step;
+- home science job **`101489679508`** = **IN_PROGRESS** in the frozen ordered `S0->S3` A/B step at the latest live reconciliation;
 - checkpoint ownership: Exp073FG dedicated A/B checkpoint namespaces frozen by its prereg/workflow; exact current durable stage **`UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`** by anti-bias policy;
 - expected candidate token: `PASS_EXP073FG_WW_S0_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`;
 - runner ownership: **`DSIR-HOME-PC` exclusively owned by job `101489679508`**;
-- live reconciliation at this update: exactly one in-progress DSIR run (`34034377795`) and zero queued runs.
+- competing self-hosted DSIR workload: **none launched**.
 
 On terminal SUCCESS/candidate output: consume raw compact artifact and job evidence; independently verify artifact ZIP SHA256, complete six-stage/prune provenance, frozen source/contract/R1/driver/patch identities, mmap proof for the regular-file-backed `19,327,352,832`-byte MCM, canonical `<f8 [39,12288]` `EE<-EE`, exact A/B SHA + `numpy.array_equal`, finiteness and no rescue. Candidate PASS alone creates no authority; activate a separate prospectively frozen provenance-admission gate only after full terminal consumption.
 
@@ -31,6 +31,19 @@ Exp073FH run `34034445222`, head `8856c7df19253310ca286b0e0fc2d4348e5df97a`, is 
 Exp073FI workflow `34034555778`, job **`101490139309`**, head `e7159f685f8e848a27bd41e1db9a1f95076d36bb` completed SUCCESS. Raw log contains exact token `PASS_EXP073FI_EXP073FG_TERMINAL_COMPARE_SYNTHETIC_HARDENING_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `ww_s0_s3_authority_created=false`.
 
 The workflow froze comparator blob `74a1a2f8d3b44eaab66e834d69156e1810b75a8e` and synthetic-audit blob `3823687f61cd04489431e3d480c2fae8805bac0d`, rejected tolerance/rescue patterns, and verified exact identical-array PASS, one-ULP FAIL and tamper rejection. This is support-only and does not score the active science result.
+
+## Parallel support — Exp073FJ remaining WW semantic matrix
+
+Exp073FJ prereg `experiments/073fj_remaining_ww_semantic_matrix_v0_1_prereg.md`, blob `cb088f84361d682c613f3f60ba7d441142ba881c`, was activated at head `867d43fe8be8312c978d51a1344134707e3b4ecd`. Workflow `34034662798` completed SUCCESS with six hosted jobs; all six raw logs were consumed and all emitted the frozen cell token plus `classification=SUPPORT_PLUS_0_PLUS_0` and `authority_created=false`:
+
+- `101490432099` `WW_S1_S1` auto;
+- `101490432119` `WW_S1_S2` cross;
+- `101490431953` `WW_S1_S3` cross;
+- `101490432031` `WW_S2_S2` auto;
+- `101490432021` `WW_S2_S3` cross;
+- `101490432036` `WW_S3_S3` auto.
+
+No artifact was produced. This is exact static/support authority only for future implementation semantics: auto-pairs reuse the exact same field object (`fb=fa`), cross-pairs use distinct field objects, unordered `i<=j` is enforced, frozen source literals and `EE<-EE` extraction are verified, and science/radial/covariance/nuisance/relation/G8 scoring remains forbidden. It creates no WW scientific authority. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FJ_SEMANTIC_MATRIX_PASS_FG_RUNNING.md`.
 
 ## Frozen boundaries
 
