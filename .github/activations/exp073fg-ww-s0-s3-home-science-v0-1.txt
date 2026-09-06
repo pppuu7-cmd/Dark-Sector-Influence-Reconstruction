@@ -1,3 +1,3 @@
 activate Exp073FG WW_S0_S3 audited home science v0.1
-retry=2
-repair=optional-uppercase-task-token
+retry=3
+repair=full-chain-prune-and-terminal-compare-hardening
