@@ -16,32 +16,42 @@ Wm_S1 Track-A exact PASS, admitted Wm_S2 and Wm_S3 exact scientific PASS remain 
 - contract fingerprint `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
 - durable science root `$HOME/.cache/dsir/exp073en-ww-s0-s0-filebacked-ab-v0-1`;
 - checkpoint root `$HOME/.cache/dsir/exp073en-ww-s0-s0-filebacked-ab-v0-1/checkpoints`;
-- replica checkpoint namespaces remain `checkpoints/exp073dq-ww-s0-s0-a-v0-1` and `checkpoints/exp073dq-ww-s0-s0-b-v0-1` inside the frozen durable driver;
-- expected terminal science-candidate token `PASS_EXP073EN_WW_S0_S0_FILEBACKED_AB_EXACT_REPEATABILITY_8CORE_V0_1`;
-- last durable checkpoint: not inferable from partial output; partial numerical output MUST NOT be inspected or used for tuning while the run is active;
-- on terminal candidate PASS: consume raw compact artifact, verify artifact digest/identities/exact A/B evidence, then activate only the prospectively preregistered Exp073EO checkpoint-provenance admission gate; no WW authority before EO PASS;
-- on scientific exact FAIL after all storage/provenance qualification: preserve immutable negative science and continue to the next scientifically allowed branch;
-- on infrastructure/resource failure: diagnose the first causal failure, preserve all verified durable checkpoints and resume only prospectively without changing frozen arithmetic.
+- replica namespaces `checkpoints/exp073dq-ww-s0-s0-a-v0-1` and `checkpoints/exp073dq-ww-s0-s0-b-v0-1`;
+- expected candidate token `PASS_EXP073EN_WW_S0_S0_FILEBACKED_AB_EXACT_REPEATABILITY_8CORE_V0_1`;
+- last durable checkpoint is deliberately not inferred from partial output;
+- on terminal candidate PASS: consume compact artifact and exact identities/evidence, then activate only prospectively frozen Exp073EO;
+- on scientific exact FAIL: preserve immutable negative science and continue only to the next allowed branch;
+- on infrastructure/resource failure: diagnose first cause and preserve verified checkpoints without changing frozen arithmetic.
 
 **DSIR-HOME-PC RESERVED BY Exp073EN run `33994398927`, job `101382229273`. No competing self-hosted DSIR heavy task may launch.**
 
-## Superseded Exp073EN attempts 1-2 — immutable network/infrastructure `+0/+0`
-Original run `33993889263` reached hosted preflight SUCCESS but home jobs `101380820499` and `101381512953` failed before disk gate, local Exp073EM qualifier, NaMaster build, R1 validation or full-resolution arithmetic because the live-exclusivity API call encountered SSL EOF/network failure. No science artifact or `WW_S0_S0` authority was created.
+## Current independent hosted support process — Exp073EX
+Purpose: static fail-closed audit of the already-prepared Exp073EL v0.2 host resource checker; support-only `+0/+0`, no WW authority, no Exp073EN partial-output inspection.
 
-The repair is infrastructure-only: `ci/exp073en_live_exclusivity_curl_retry_v0_2.sh` adds retry-safe `curl --retry 8 --retry-all-errors`, and `ci/exp073en_home_filebacked_fullres_v0_2.sh` replaces only the live-exclusivity transport block while inheriting the frozen science code unchanged. This repair was committed before activation of current run `33994398927`.
+- prereg: `experiments/073ex_exp073el_v0_2_resource_checker_static_failclosed_audit_v0_1_prereg.md`, blob `7285edaccf2c3b6ea4826cb509107aa4431c827b`;
+- auditor: `ci/exp073ex_exp073el_v02_resource_checker_static_failclosed_audit_v0_1.py`, blob `d89ddf287104b04b73f5e0188185339175301c31`;
+- target checker: `ci/exp073el_host_resource_admission_v0_2.sh`, blob `f0a3a2e42326183944b838d42c5072c59e259b68`;
+- activation head `baaf8347bace992f1a55a2d741f348556fccfd4a`;
+- run/job `34002549484 / 101403893778`: **IN_PROGRESS** at latest reconciliation on GitHub-hosted runner;
+- expected PASS token `PASS_EXP073EX_EXP073EL_V02_RESOURCE_CHECKER_STATIC_FAILCLOSED_AUDIT_V0_1`;
+- on PASS: record static checker integrity only; Exp073EL remains blocked until real Exp073EO PASS;
+- on FAIL: repair only the smallest resource-checker/static-contract defect prospectively; do not change science or run the host gate while EN owns DSIR-HOME-PC.
 
-## File-backed storage qualification — Exp073EM terminal exact support PASS
-Hosted run/job `33993395728 / 101379508508`, artifact `9977333691`, digest `sha256:0ece75e489b6f413d96e85a099e42db96b5d5acdc03c3ee6901273357762cda1`, token `PASS_EXP073EM_NAMASTER27_FILEBACKED_MMAP_EXACT_STORAGE_V0_1`. Small-NSIDE stock vs patched WSP/full-BPW/selected-EE comparisons were exact for auto0/auto1/cross01; support-only `+0/+0`, no WW authority.
+## Preserved support chain relevant to future WW_S0_S1
+All are `+0/+0` and create no WW authority.
 
-## Direct cross-workspace adapter closure — Exp073EK support PASS
-Run/job `33988956806 / 101367596573`, artifact `9976033816`, digest `sha256:f39351cddec695559686126fc15e212556eea370fe3eeab73d5f20f80c288c06`, token `PASS_EXP073EK_DIRECT_PUBLIC_BPW_ADAPTER_EXACT_V0_1`. Direct serialized-workspace reload + public PyMaster 2.7 `get_bandpower_windows()` is the sole currently exact distinct-field adapter candidate. Support-only `+0/+0`.
+- Exp073EM construction storage exact PASS: run/job `33993395728 / 101379508508`, artifact `9977333691`, digest `sha256:0ece75e489b6f413d96e85a099e42db96b5d5acdc03c3ee6901273357762cda1`.
+- Exp073EK direct serialized public-BPW repeatability PASS: run/job `33988956806 / 101367596573`, artifact `9976033816`, digest `sha256:f39351cddec695559686126fc15e212556eea370fe3eeab73d5f20f80c288c06`.
+- Exp073EP file-backed composition PASS: run/job `33994782890 / 101383307890`, artifact `9977735941`, digest `sha256:4007fa89e678f4585cd73641ff26054a9c939c3f0e679581202cdf2154a39ed5`.
+- Exp073ER FITS-read/public-BPW exact PASS: run/job `33997539503 / 101390573286`, artifact `9978528214`, digest `sha256:1e0c3516de0410c1af30367cd1ce02644b7aa626` is NOT authoritative; authoritative digest remains the validated recovery value `sha256:1e0c3516de041e773eca030d9488f7af7d38455033ae5b97ba1151820eb22267`.
+- Exp073ET immutable formal support FAIL: run/job `34001003402 / 101399741708`; mismatch localized to cross-state pre/post-serialization last-bit difference, while all pre-serialization low-memory arithmetic comparisons passed exactly.
+- Exp073EU corrected state-matched exact PASS: run/job `34001139228 / 101400097453`, artifact `9979525491`, ZIP SHA256 `5cd9ce3f668b135ee695d51b7dba3e80cfa332c925e71397b2a6e32041ff872c`.
+- Exp073EV conservative full-resolution disk-budget PASS: run/job `34001215421 / 101400305564`, conservative peak `41,135,996,928` bytes against 50-GiB floor.
+- Exp073EW unified v0.2 construction+read exact PASS: run/job `34001363206 / 101400704206`, artifact `9979599494`, ZIP SHA256 `1f2fa10aaa271884773036ed5895a480190b37b803b5070227c736ea03962f73`.
 
-## Exp073ER FITS-read storage closure — terminal exact support PASS
-Run/job `33997539503 / 101390573286`, activation head `b5b6d75aa569473e5e0770ba1d718f93bf286c86`, artifact `9978528214`, digest and independently verified ZIP SHA256 `1e0c3516de041e773eca030d9488f7af7d38455033ae5b97ba1151820eb22267`, token `PASS_EXP073ER_FILEBACKED_FITS_READ_PUBLIC_BPW_EXACT_V0_1`, classification `FILEBACKED_FITS_READ_PUBLIC_BPW_EXACT`, accounting `+0/+0`, no WW authority. Patched fresh FITS reload A/B proved regular-file mmap backing of exactly `294912` bytes and exact public-BPW equality to stock for full `[4,8,4,48]` and selected `EE<-EE [8,48]`, using SHA equality, `numpy.array_equal=true`, and max absolute difference `0.0`, with no tolerance rescue. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073ER_TERMINAL_EXACT_EN_RUNNING.md`.
-
-## Prepared next gates
-- `experiments/073eo_ww_s0_s0_filebacked_checkpoint_provenance_admission_v0_1_prereg.md` prospectively committed at `65c8e8d4f68c6d81c5a139fbb93f5b59467761a9` while Exp073EN was still running. Status `PREREGISTERED_NOT_ACTIVATED`. It independently audits the terminal compact artifact plus complete six-stage A/B durable checkpoint chain and is the only gate allowed to admit `WW_S0_S0` authority.
-- Exp073EL remains preregistered/inactive for the ordered distinct-field full-resolution resource path. It may activate only after valid `WW_S0_S0` authority and while respecting single-home-runner ownership. Exp073ER is now exact support evidence for the serialized FITS-read public-BPW storage path but does not itself satisfy Exp073EL or admit any science authority.
-- Exp073DV remains prepared but blocked on valid `WW_S0_S0` plus Exp073EL readiness PASS.
+## Prepared next authority/readiness gates
+- Exp073EO is `PREREGISTERED_NOT_ACTIVATED` and may run only after terminal Exp073EN evidence exists. It is the only gate allowed to admit `WW_S0_S0` authority.
+- Exp073EL v0.2 is `PREREGISTERED_NOT_ACTIVATED` and may run on DSIR-HOME-PC only after real Exp073EO PASS and only when no other self-hosted DSIR job owns the runner.
+- After real EO PASS and EL resource PASS, freeze and dispatch a separate full-resolution `WW_S0_S1` A/B science run using the EM/EK/EP/ER/EU/EV/EW-qualified sequential unified-v0.2 route.
 
 Frozen frontier: `Wm_S1 -> Wm_S2 -> Wm_S3 -> WW_S0_S0 -> WW_S0_S1 -> WW_S0_S2 -> WW_S0_S3 -> WW_S1_S1 -> WW_S1_S2 -> WW_S1_S3 -> WW_S2_S2 -> WW_S2_S3 -> WW_S3_S3`.
