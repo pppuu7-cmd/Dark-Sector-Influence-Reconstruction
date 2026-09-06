@@ -1,0 +1,51 @@
+name: Exp073FU WW_S1_S3 transformation static audit v0.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073fu-s1-s3-static-audit-v0-2.txt'
+permissions:
+  contents: read
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify repaired frozen S1S3 transformation and autonomous workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073fu_ww_s1_s3_filebacked_full_resolution_ab_science_v0_1_prereg.md)" = '9a65174bb6e4f2ce4def3a83bad2f992ddd38d6a'
+          test "$(git rev-parse HEAD:experiments/073fv_ww_s1_s3_provenance_admission_v0_1_prereg.md)" = '6f6e995bdeeea02b64e192f91fd2f5078d5eeedd'
+          test "$(git rev-parse HEAD:ci/exp073fu_ww_s1_s3_durable_ab_production_v0_1.py)" = '0b05e8dbf5cf87c6b35e6729bc3c4e5443a1421d'
+          test "$(git rev-parse HEAD:ci/exp073fu_ww_s1_s3_durable_ab_production_v0_2.py)" = '26b88d930eef2a04c21752c55b0bf7240e1540e9'
+          test "$(git rev-parse HEAD:ci/exp073fu_verify_and_prune_replica_v0_1.py)" = '9ab0838ea27fcb5dddbf2ecc761ed29f8894da63'
+          test "$(git rev-parse HEAD:ci/exp073fu_compare_terminal_receipts_v0_1.py)" = '8266a04a579d68b51503daa928a1fad7b533fd1c'
+          test "$(git rev-parse HEAD:ci/exp073fu_home_filebacked_fullres_v0_1.sh)" = 'ec42afbd6b976ae0e2f4162836ce1fe77bd8154e'
+          test "$(git rev-parse HEAD:ci/exp073fv_verify_fu_candidate_v0_1.py)" = '03cf7109def0fa1b422bd46e080d5a65121c700f'
+          test "$(git rev-parse HEAD:.github/workflows/exp073fu-ww-s1-s3-home-science-v0-1.yml)" = '254a5826c34f34771dd36fe80b20b5a0a194fdb1'
+          python3 -m py_compile ci/exp073fu_ww_s1_s3_durable_ab_production_v0_1.py ci/exp073fu_ww_s1_s3_durable_ab_production_v0_2.py ci/exp073fu_verify_and_prune_replica_v0_1.py ci/exp073fu_compare_terminal_receipts_v0_1.py ci/exp073fv_verify_fu_candidate_v0_1.py
+          bash -n ci/exp073fu_home_filebacked_fullres_v0_1.sh
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          s=Path('ci/exp073fs_ww_s1_s2_durable_ab_production_v0_1.py').read_text()
+          req=[('exp073fs','exp073fu'),('EXP073FS','EXP073FU'),('ww_s1_s2','ww_s1_s3'),('ww-s1-s2','ww-s1-s3'),('WW_S1_S2','WW_S1_S3'),('S1S2','S1S3'),('S1->S2','S1->S3'),('[1,2]','[1,3]'),('s2_count_map','s3_count_map'),('source_count_map(r1_root,2)','source_count_map(r1_root,3)'),('load_s1s2','load_s1s3')]
+          for old,new in req:
+              assert old in s,old; s=s.replace(old,new)
+          s=s.replace('Exp073FS','Exp073FU')
+          for old,new in [('p2','p3'),('s2','s3'),('m2','m3'),('h2','h3'),('f2','f3')]: s=re.sub(rf'\b{old}\b',new,s)
+          s=s.replace("'s2':1","'s3':1")
+          for t in ("source_count_map(r1_root,3)","'ordered_source_indices':[1,3]","'source_pair':'S1->S3'","compute_coupling_matrix(f1,f3,b)","field_construction_count':2",'PASS_EXP073FU_WW_S1_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1',"reconstruction_counts':{'s1':1,'s3':1}"): assert t in s,t
+          for t in ("source_count_map(r1_root,2)","'ordered_source_indices':[1,2]","'source_pair':'S1->S2'",'PASS_EXP073FS_WW_S1_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'): assert t not in s,t
+          PY
+          grep -F 'EXPECTED_MCM_BYTES=19327352832' ci/exp073fu_ww_s1_s3_durable_ab_production_v0_2.py >/dev/null
+          grep -F 'PASS_EXP073FT_WW_S1_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1' .github/workflows/exp073fu-ww-s1-s3-home-science-v0-1.yml >/dev/null
+          grep -F 'PASS_EXP073FV_WW_S1_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1' .github/workflows/exp073fu-ww-s1-s3-home-science-v0-1.yml >/dev/null
+          grep -F "NEXT_WORKFLOW: 'exp073fw-ww-s2-s2-home-science-v0-1.yml'" .github/workflows/exp073fu-ww-s1-s3-home-science-v0-1.yml >/dev/null
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fu_*.py ci/exp073fv_verify_fu_candidate_v0_1.py experiments/073f[uv]_*.md
+          echo PASS_EXP073FU_WW_S1_S3_TRANSFORMATION_STATIC_AUDIT_V0_2
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo self_hosted_science_started=false
