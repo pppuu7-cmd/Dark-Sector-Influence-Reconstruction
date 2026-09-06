@@ -18,7 +18,7 @@ Exp073FA prerequisite audit `34018080500 / 101445404866` = exact support PASS `+
 
 ## Authoritative current science process
 
-Repaired Exp073FD workflow run **`34020756634`**, head **`894885b2c2b811954d1724c2733d2a810a486d70`**, branch `main`, started `2026-09-06T08:02:37Z`. Hosted audit job **`101452788638`** = terminal SUCCESS `+0/+0`. Dependent home science job **`101452805620`** remains **IN_PROGRESS** inside the frozen A/B step. `DSIR-HOME-PC` is exclusively owned by this job; no competing self-hosted DSIR workload may launch. Partial numerical output is not inspected. Last durable checkpoint remains `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`, never guessed.
+Repaired Exp073FD workflow run **`34020756634`**, head **`894885b2c2b811954d1724c2733d2a810a486d70`**, branch `main`, started `2026-09-06T08:02:37Z`. Hosted audit job **`101452788638`** = terminal SUCCESS `+0/+0`. Dependent home science job **`101452805620`** remains **IN_PROGRESS** inside the frozen A/B step. Live reconciliation in the current iteration found exactly one in-progress Actions run (`34020756634`) and zero queued runs. `DSIR-HOME-PC` is exclusively owned by this job; no competing self-hosted DSIR workload may launch. Partial numerical output is not inspected. Last durable checkpoint remains `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`, never guessed.
 
 ## Exp073FE — checkpoint/restore hardening support CLOSED
 
@@ -30,9 +30,13 @@ First hosted Exp073FE audit **`34023253707 / 101459598645`** remains immutable `
 
 Repaired Exp073FE **`34023325339 / 101459798149`**, head **`a4e832e9e275f2baa4958279c7b4a01d220df934`**, is terminal raw-verified exact support PASS `+0/+0`. Raw log contains `PASS_EXP073FE_EXP073FA_TERMINAL_COMPARE_RESTORE_HARDENING_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `ww_s0_s2_authority_created=false`. The synthetic audit proves exact PASS for byte-identical arrays, exact scientific FAIL after a one-ULP mismatch, and fail-closed rejection of receipt tampering. No WW authority was created.
 
-Immutable current recovery note: `docs/recovery/RECOVERY_2026-09-06_EXP073FE_PREREG_RESTORE_HARDENING_FA_RUNNING.md`, creation commit `f800d5b3889726baa5ef9ebc7b1b750abfcd644e`.
+## Exp073FF — provenance admission prospectively frozen
 
-On terminal Exp073FA: immediately consume job steps/logs and compact artifact; independently verify ZIP SHA256 against GitHub digest; verify source/contract/driver/patch/R1/checkpoint identities, complete six-stage chains, exact `19,327,352,832`-byte mmap proof, exact canonical A/B `EE<-EE`, finiteness and frozen token. Exact A/B mismatch remains genuine scientific FAIL. A matching candidate remains non-authoritative; if the complete frozen checkpoint/provenance contract cannot be proven, classify provenance/infrastructure `+0/+0`, preserve validated evidence, and apply the smallest prospective repair. Only a separately frozen hosted provenance admission may create `WW_S0_S2` authority.
+While Exp073FA remains IN_PROGRESS and without inspecting partial numerical output, the next authority-writing gate has been preregistered as `experiments/073ff_ww_s0_s2_filebacked_checkpoint_provenance_admission_v0_1_prereg.md`, blob **`c6f1fd11c4a0dc68bb17669a58854979fe84869e`**, creation commit **`2e3425cae2d564bf368417123af48b2662730557`**. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FF_PREREG_FA_RUNNING.md`, creation commit **`20f9f3215146682f6b42314ef18e6c048b403254`**.
+
+Exp073FF is `PREREGISTERED_NOT_ACTIVATED`; future Exp073FA terminal artifact ID and digest are intentionally unknown until terminal state and independent ZIP SHA256 verification. It preserves exact `(S0,S2)`, `[0,2]`, source/contract identities, both complete six-stage chains, exact `19,327,352,832`-byte file-backed MCM, canonical `<f8 [39,12288]` `EE<-EE`, exact SHA plus `numpy.array_equal`, finiteness, and Exp073FE restore-hardening provenance. It forbids tolerance or alternative-path rescue. Only `PASS_EXP073FF_WW_S0_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1` may create `WW_S0_S2` authority.
+
+On terminal Exp073FA: immediately consume job steps/logs and compact artifact; independently verify ZIP SHA256 against GitHub digest; verify source/contract/driver/patch/R1/checkpoint identities, complete six-stage chains, exact `19,327,352,832`-byte mmap proof, exact canonical A/B `EE<-EE`, finiteness and frozen token. Exact A/B mismatch remains genuine scientific FAIL. A matching candidate remains non-authoritative; if the complete frozen checkpoint/provenance contract cannot be proven, classify provenance/infrastructure `+0/+0`, preserve validated evidence, and apply the smallest prospective repair. Only after successful terminal consumption may Exp073FF be activated.
 
 ## Frozen global boundaries
 
