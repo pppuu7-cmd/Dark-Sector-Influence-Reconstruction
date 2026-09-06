@@ -6,47 +6,51 @@ Updated: 2026-09-06. Scope: **DSIR only**. Never mix RTK or RQIR.
 
 Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. Historical negative/resource/infrastructure outcomes remain immutable.
 
-WW admitted authorities now include:
+WW admitted authorities:
 - `WW_S0_S0` — Exp073EO v0.2 `34005373819 / 101411448176`;
 - `WW_S0_S1` — Exp073EZ `34017921734 / 101444964371`;
 - `WW_S0_S2` — Exp073FF `34032384956 / 101484177968`;
-- **`WW_S0_S3` — Exp073FN `34050154578 / 101532191756`, token `PASS_EXP073FN_WW_S0_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1`.**
+- `WW_S0_S3` — **Exp073FN `34050154578 / 101532191756`**, token `PASS_EXP073FN_WW_S0_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1`.
 
-## Exp073FG terminal candidate and admission
+Exp073FG candidate provenance remains run/job `34034377795 / 101489679508`, artifact `9993520467`, exact artifact/independent ZIP SHA256 `8ddd1e1b81e5fa9c3a4de16c6d72b35353cb42bba04bb77c736aa4998340bde0`, selected exact A/B SHA `db58af980e2997ebbe327ce91dfafb682c38fda1ba841c3d5acba78e429007d3`, public full BPW SHA `6a9fe87ab5ae44db5d475686cbc6024174b8c8384433c9d98f48e182557fc942`, workspace FITS SHA `af870ad38f5d74796519f18ab135bf1c0129d888206079606081e3bb7653fc5d`. Both complete six-stage/prune chains, public file-backed `read_unbinned_MCM=True -> get_bandpower_windows()` route and exact `19,327,352,832`-byte `/proc/self/maps` proof were independently verified before admission.
 
-Exp073FG science run/job: `34034377795 / 101489679508`, head `4a02952ee3bcb368a088d87608f61243cd9f7056`, artifact `9993520467` (`exp073fg-ww-s0-s3-filebacked-ab-v0-1`). GitHub digest and independently re-downloaded ZIP SHA256 match exactly: `8ddd1e1b81e5fa9c3a4de16c6d72b35353cb42bba04bb77c736aa4998340bde0`.
+Governance correction remains immutable: Exp073FL already belonged to the S1S1 driver-generation static audit. Later collided S0S3 admission run/job `34047839320 / 101525992295` remains `INFRASTRUCTURE_LOG_TRANSPORT_FAIL_PLUS_0_PLUS_0`; it created no authority. Exp073FN prospectively corrected the label collision and the log transport defect using only `--allow-escape-sequences`, without changing candidate evidence or science.
 
-Raw artifact validation established candidate token `PASS_EXP073FG_WW_S0_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`; candidate classification `SCIENTIFIC_CANDIDATE_PASS_PENDING_PROVENANCE_ADMISSION`; ordered `(S0,S3)` / `[0,3]`; distinct-field semantics; exact A/B selected SHA `db58af980e2997ebbe327ce91dfafb682c38fda1ba841c3d5acba78e429007d3`; canonical `<f8 [39,12288]`, `EE<-EE`, finite, byte-identical and exact-array-equal. Full public BPW SHA is `6a9fe87ab5ae44db5d475686cbc6024174b8c8384433c9d98f48e182557fc942`; workspace FITS SHA `af870ad38f5d74796519f18ab135bf1c0129d888206079606081e3bb7653fc5d`. Both six-stage manifest chains match their post-prune receipts exactly. Both receipts preserve public `get_bandpower_windows()` after `read_unbinned_MCM=True`, regular-file-backed unbinned MCM exactly `19,327,352,832` bytes with `/proc/self/maps` proof, no manual/historical numerical reconstruction, no tolerance rescue, and no cross-replica output read.
+## Current frontier — WW_S1_S1 / Exp073FM
 
-Governance correction: `Exp073FL` was already occupied by the earlier `WW_S1_S1` driver-generation static audit. A later S0S3 admission implementation accidentally reused that label. Historical collided run/job `34047839320 / 101525992295` is immutable `INFRASTRUCTURE_LOG_TRANSPORT_FAIL_PLUS_0_PLUS_0`; first causal failure was `gh api .../logs` rejecting terminal escape sequences. It created no authority. The collision is not rewritten.
+Science prereg creation commit `391af1d14ca61f20ef42cccde348453ca84a1aaa`, blob `da64cbb6d0f7553387b5b635812cfa25ec7fb8fa`.
 
-Prospectively unused label **Exp073FN** superseded only the S0S3 admission implementation while freezing the same candidate evidence and criteria. Prereg blob `3294965fbbccc5e08eb6de7d0ed1556a263a2b6a`, creation commit `aa5230aba107557609e645b8b5a28006f5d275a5`. Exp073FN run/job `34050154578 / 101532191756`, head `84c7505e0b84c00317e73e2045d973ae325a6b9a`, passed raw hosted verification and emitted `PASS_EXP073FN_WW_S0_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1`, `classification=SCIENTIFIC_AUTHORITY_ADMITTED`, `ww_s0_s3_authority_created=true`. The only transport repair was `gh api --allow-escape-sequences`; frozen science and candidate evidence were unchanged.
+Frozen science: authoritative `[1,1]`; reconstruct S1 exactly once per replica; exactly one spin-2 field; pass the exact same Python field object on both coupling sides; equal-but-distinct second field forbidden; DES NSIDE=4096; ell `0..12287`; 39 bands; public file-backed BPW; full `[4,39,4,12288]`; selected canonical `<f8 [39,12288]` `EE<-EE`; exact A/B SHA plus `numpy.array_equal`; finiteness; no tolerance/allclose/isclose/rounding/smoothing/averaging/manual reconstruction/effective-coordinate/fiducial rescue. Candidate token `PASS_EXP073FM_WW_S1_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`; candidate alone creates no authority.
 
-Immutable recovery note: `docs/recovery/RECOVERY_2026-09-06_EXP073FN_ADMITTED_S0S3_FO_QUEUED.md`.
+### Newly closed hosted support
 
-## Current science frontier — WW_S1_S1 / Exp073FM
+- Exp073FO `34050224161 / 101532385479`: `PASS_EXP073FO_WW_S1_S1_PRODUCTION_TRANSFORMATION_READINESS_V0_1`, support `+0/+0`.
+- Exp073FP `34050445433 / 101532983406`: raw-log token `PASS_EXP073FP_WW_S1_S1_EXACT_PRODUCTION_DRIVER_STATIC_AUDIT_V0_1`, support `+0/+0`, no authority/no home science.
+- Exp073FQ `34050588344 / 101533366352`: raw-log token `PASS_EXP073FQ_WW_S1_S1_HOME_ENVELOPE_STATIC_AUDIT_V0_1`, support `+0/+0`, no authority/no home science.
 
-Exp073FM science prereg creation commit: `391af1d14ca61f20ef42cccde348453ca84a1aaa`.
+Committed exact implementation blobs:
+- `ci/exp073fm_ww_s1_s1_durable_ab_production_v0_1.py` = `477647c5164264665cc16e20d1577fb25cd245f4`;
+- v0.2 file-backed adapter = `8e3edff39aae95d3abc3196806802c5f0ae59832`;
+- complete-chain verify/prune = `8e04e99084aed582f9586e3f316c023650ce6c63`;
+- terminal receipt comparator = `02d69d5d517c676b3ec0963380f93d13f2b9874e`;
+- fail-closed home envelope = `873232cc96f9a97afefeff1ff0a433fd5b49a5a2`.
 
-Frozen target: `[1,1]`, authoritative S1 reconstructed exactly once per replica; exactly one spin-2 `NmtField`; exact same Python field object passed on both sides (`fb=fa` semantics); equal-but-distinct second field forbidden; DES NSIDE=4096; ell `0..12287`; 39 bands; public file-backed NaMaster/PyMaster route; full BPW `[4,39,4,12288]`; selected `EE<-EE`, canonical `<f8 [39,12288]`; exact A/B SHA plus `numpy.array_equal`; all finite; no tolerance/allclose/rounding/smoothing/averaging/manual reconstruction/effective-coordinate/fiducial rescue. Candidate token: `PASS_EXP073FM_WW_S1_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`; candidate alone creates no authority.
+The implementation preserves one S1 source checkpoint and one field construction, same-object `compute_coupling_matrix(f1,f1,...)`, six-stage durable A/B namespaces, strict completed-restore payload revalidation, exact public BPW route, exact 19,327,352,832-byte MCM backing + `/proc/self/maps`, complete-chain verification before pruning, terminal comparison without restoring replicas, and exact-only A/B scoring.
 
-Existing hosted support remains preserved: Exp073FH same-field architecture, Exp073FJ semantic matrix, Exp073FK same-field transformation contract, and Exp073FL S1S1 driver-generation static audit. These are support `+0/+0` only.
+### Authoritative current process — Exp073FM home-science workflow
 
-### Current authoritative process — Exp073FO
+- run **`34050657030`**;
+- head **`f0caca0c3e812710e5958ee13348a150d045a7d8`**;
+- hosted-launch job **`101533554310`**, latest state **IN_PROGRESS** at this recovery write;
+- self-hosted job not yet created at this exact write; `DSIR-HOME-PC` remains FREE until the hosted dependency passes;
+- checkpoint namespaces `checkpoints/exp073fm-ww-s1-s1-a-v0-1` and `...-b-v0-1`;
+- hosted launch fail-closes on Exp073FN S0S3 authority, Exp073FQ PASS, frozen blobs, S1 R1 authority, syntax and no-rescue checks;
+- on hosted PASS GitHub may start exactly one self-hosted job; never duplicate it;
+- on terminal home SUCCESS consume compact artifact and independently verify digest, complete chains, S1 same-object semantics, MCM proof, selected arrays and frozen identities before classifying candidate;
+- on infrastructure failure preserve verified checkpoints and repair only the first causal implementation/transport defect;
+- on exact numerical mismatch record genuine scientific FAIL and do not rescue with tolerances.
 
-Exp073FO hosted-only production-transformation readiness prereg: blob `8bbe6e45b10295c245f588a4bc65713acb1a1d2e`, creation commit `90c3648d625a64c94e01fd3046fc0e683cfb5f69`.
-
-Live process at latest reconciliation:
-- workflow/run **`34050224161`**;
-- job **`101532385479`**;
-- head **`0f9d5d6039b129390e780c805ae6043884135459`**;
-- state **QUEUED**;
-- expected token `PASS_EXP073FO_WW_S1_S1_PRODUCTION_TRANSFORMATION_READINESS_V0_1`;
-- classification on PASS `SUPPORT_PLUS_0_PLUS_0`;
-- `ww_s1_s1_authority_created=false`;
-- `self_hosted_science_started=false`.
-
-`DSIR-HOME-PC` is currently free. Do not launch Exp073FM home science until an exact S1S1 production driver, hardened terminal comparator/prune path and dedicated fail-closed home envelope are committed and separately hosted-audited. On Exp073FO PASS, that implementation/audit is the exact next permitted work. On Exp073FO FAIL, diagnose the first causal static/infrastructure defect and make the smallest prospective repair without changing frozen S1S1 science.
+Research log supplement: `docs/research_log/RESEARCH_LOG_2026-09-06_EXP073FN_FO_FP.md`.
 
 ## Frozen global boundaries
 
