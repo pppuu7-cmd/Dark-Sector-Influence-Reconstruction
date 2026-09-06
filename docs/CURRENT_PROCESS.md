@@ -13,23 +13,25 @@ Exp073FG candidate provenance remains run/job `34034377795 / 101489679508`, arti
 - Exp073FO `34050224161 / 101532385479`: `PASS_EXP073FO_WW_S1_S1_PRODUCTION_TRANSFORMATION_READINESS_V0_1`, `SUPPORT_PLUS_0_PLUS_0`.
 - Exp073FP `34050445433 / 101532983406`: `PASS_EXP073FP_WW_S1_S1_EXACT_PRODUCTION_DRIVER_STATIC_AUDIT_V0_1`, `SUPPORT_PLUS_0_PLUS_0`.
 - Exp073FQ `34050588344 / 101533366352`: `PASS_EXP073FQ_WW_S1_S1_HOME_ENVELOPE_STATIC_AUDIT_V0_1`, `SUPPORT_PLUS_0_PLUS_0`.
-All three create no authority and did not start scientific scoring.
+- Exp073FM hosted-launch job `101533554310`: raw token `PASS_EXP073FM_HOSTED_LAUNCH_AUDIT_V0_1`, `SUPPORT_PLUS_0_PLUS_0`.
+None of these support gates creates WW_S1_S1 authority.
 
 Frozen committed Exp073FM implementation blobs: driver v0.1 `477647c5164264665cc16e20d1577fb25cd245f4`; driver v0.2 `8e3edff39aae95d3abc3196806802c5f0ae59832`; verify/prune `8e04e99084aed582f9586e3f316c023650ce6c63`; terminal comparator `02d69d5d517c676b3ec0963380f93d13f2b9874e`; home envelope `873232cc96f9a97afefeff1ff0a433fd5b49a5a2`.
 
-## Authoritative current process — Exp073FM WW_S1_S1
+## Authoritative current process — Exp073FM WW_S1_S1 home science
 
 - workflow/run: **`34050657030`**;
-- current hosted-launch job: **`101533554310`**;
+- home job: **`101533574294`**;
 - branch/head: `main` / **`f0caca0c3e812710e5958ee13348a150d045a7d8`**;
-- state at latest reconciliation: **IN_PROGRESS hosted launch audit**;
-- home job: not yet created at this ledger write; `DSIR-HOME-PC` remains FREE until dependency passes;
+- state at latest reconciliation: **IN_PROGRESS** step `Run frozen WW_S1_S1 A/B gate with durable checkpoints`;
+- runner ownership: **`DSIR-HOME-PC` exclusively owned by job `101533574294`**;
+- no competing self-hosted/home task may be launched;
 - science checkpoint namespaces: `checkpoints/exp073fm-ww-s1-s1-a-v0-1`, `checkpoints/exp073fm-ww-s1-s1-b-v0-1`;
+- last durable checkpoint: **UNKNOWN_NOT_INSPECTED_WHILE_RUNNING**; partial numerical output must not be inspected;
 - expected candidate token: `PASS_EXP073FM_WW_S1_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`;
-- next action on hosted-launch PASS: GitHub dependency may start exactly one self-hosted home job; do not duplicate it;
-- next action on terminal home SUCCESS: download artifact, independently verify ZIP digest, both complete six-stage/prune chains, S1 same-object semantics, exact file-backed MCM proof, exact A/B canonical arrays, then classify candidate; separate provenance admission mandatory before authority;
-- next action on infrastructure FAIL: diagnose first causal failure, preserve verified checkpoints, repair minimally, resume without changing frozen science;
-- next action on scientific exact mismatch: record scientific FAIL and proceed to next prospectively allowed manifest branch.
+- next action on terminal SUCCESS: download artifact, independently verify ZIP digest, both complete six-stage/prune chains, S1 same-object semantics, exact file-backed MCM proof, exact A/B canonical arrays, and frozen source/contract/checkpoint identities, then classify candidate; a separate provenance admission is mandatory before authority;
+- next action on infrastructure/resource FAIL: inspect first causal failure, preserve any verified complete-stage checkpoints, make only the smallest prospective repair, and resume from the last verified checkpoint without changing frozen science;
+- next action on genuine exact numerical mismatch: record `SCIENTIFIC_FAIL`; never rescue with tolerance/rounding/smoothing/averaging.
 
 ## Frozen WW_S1_S1 science
 
