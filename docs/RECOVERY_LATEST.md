@@ -48,12 +48,12 @@ Infrastructure-only repair v0.2 changes only the live-exclusivity transport: `ci
 - run `33994398927`;
 - activation head `4d1cbd504067a64a94b038292793e5e8bffba911`;
 - hosted preflight job `101382210840` SUCCESS;
-- self-hosted science job `101382229273` **IN_PROGRESS** at latest live reconciliation;
+- self-hosted science job `101382229273` **IN_PROGRESS** at latest live reconciliation, now beyond two hours and therefore well beyond the historical ~64-minute DT shutdown point;
 - durable root `$HOME/.cache/dsir/exp073en-ww-s0-s0-filebacked-ab-v0-1`;
 - checkpoint root `$HOME/.cache/dsir/exp073en-ww-s0-s0-filebacked-ab-v0-1/checkpoints`;
 - expected terminal candidate token `PASS_EXP073EN_WW_S0_S0_FILEBACKED_AB_EXACT_REPEATABILITY_8CORE_V0_1`.
 
-Partial numerical output is forbidden for adaptive decisions and was not inspected. The exact current durable checkpoint stage cannot be inferred safely from GitHub live step summaries and must not be guessed.
+Partial numerical output is forbidden for adaptive decisions and was not inspected. The exact current durable checkpoint stage cannot be inferred safely from GitHub live step summaries and must not be guessed. Surviving past the former ~64-minute failure point is infrastructure evidence only; it is not science PASS.
 
 **DSIR-HOME-PC is reserved exclusively for Exp073EN run `33994398927`, job `101382229273`. Do not launch competing self-hosted DSIR work.**
 
@@ -61,6 +61,8 @@ Partial numerical output is forbidden for adaptive decisions and was not inspect
 Preregistration `experiments/073eo_ww_s0_s0_filebacked_checkpoint_provenance_admission_v0_1_prereg.md`, prospectively frozen while Exp073EN was still running. It is `PREREGISTERED_NOT_ACTIVATED`.
 
 EO may run only after terminal Exp073EN evidence exists. It must independently verify the compact artifact/digest, exact frozen identities, local/hosted file-backed storage qualification, full-resolution mmap proof, and the complete ordered six-stage durable chain for A and B: `fresh_s0_mask_complete`, `fresh_workspace_mcm_complete`, `mcm_fits_verified`, `full_window_complete`, `selected_ee_complete`, `replica_receipt_complete`. Verified post-receipt pruning of huge intermediates is allowed only if the pre-pruning hashes/provenance are bound by complete receipts. Missing/malformed provenance is BLOCKED `+0/+0`, not science FAIL. Only `PASS_EXP073EO_WW_S0_S0_FILEBACKED_PROVENANCE_ADMISSION_V0_1` may admit valid `WW_S0_S0` authority.
+
+Latest architecture audit shows EO can be hosted-only after EN completion: the EN compact artifact already copies all JSON checkpoint/provenance manifests, A/B selected payloads, A/B driver logs, local Exp073EM activation records and component identities. The frozen EN wrapper itself requires successful mmap cleanup before it can advance to the terminal candidate receipt. EO should therefore verify the hash chain `workspace-stage -> verified-stage -> replica receipt -> prune receipt`, recompute selected A/B SHA and exact array equality, and bind the original EN run/head/workflow through GitHub metadata. No heavy numerical recomputation is required for admission.
 
 ## Distinct-field exact-adapter investigation — Exp073EK
 Historical support chain remains immutable: DU/DW qualifier FAIL; DX excluded FITS orientation; ED excluded low-level/public BPW tensor layout; EE/EF/EG/EH/EI/EJ localized why manual/public-composition reconstruction is not bitwise identical to public BPW.
@@ -103,6 +105,6 @@ Exp073EL remains preregistered/inactive for the full-resolution ordered distinct
 ## Exact next gates
 1. Do not duplicate current Exp073EN run `33994398927 / 101382229273`; keep DSIR-HOME-PC exclusively owned by it.
 2. When terminal, consume the raw compact artifact in the same research iteration. Verify digest, source/contract identities, local Exp073EM qualifier, mmap proof, exact A/B evidence and terminal token; workflow SUCCESS alone is insufficient.
-3. On candidate PASS, activate Exp073EO and independently audit the complete A/B six-stage durable provenance. Only EO PASS creates `WW_S0_S0` authority.
+3. On candidate PASS, activate Exp073EO as a hosted-only independent provenance/admission audit. Only EO PASS creates `WW_S0_S0` authority.
 4. On infrastructure/resource failure, diagnose the first causal failure and preserve verified checkpoints; never weaken arithmetic or re-run completed expensive stages unnecessarily.
 5. After valid `WW_S0_S0`, activate Exp073EL for the EK/EP/ER-qualified ordered distinct-field full-resolution resource path; then WW_S0_S1 may proceed only under the frozen frontier.
