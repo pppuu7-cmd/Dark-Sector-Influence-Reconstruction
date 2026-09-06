@@ -1,0 +1,58 @@
+name: Exp073EZ resume-binding static audit v0.1
+on:
+  push:
+    branches: [main]
+    paths: ['.github/activations/exp073ez-resume-binding-audit-v0-1.txt']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      BASE_EZ_BLOB: '346bdbedcb34bdd67a0df88e5444f08071e822b6'
+      ERRATUM_BLOB: 'c5125bb9a09f6c02a1d6b48a862902ead9127b61'
+      RESUME_WORKFLOW_BLOB: '7c0e8718357cfe4448b26c372a0567edf860f572'
+      REPAIR_ERRATUM_BLOB: 'a6fc7a1a3af86f8f02eba8c02294283192642784'
+      REPAIR_WRAPPER_BLOB: 'a9cabeadc9b091424246adf00e9959dc62145e9b'
+      READ_PATCH_BLOB: 'd534b698f9131688d263eedcef27260386c58641'
+      RESUME_RUN: '34010599584'
+      HOSTED_JOB: '101425618749'
+      HOME_JOB: '101425638857'
+      ACTIVATION_HEAD: '4c570bf6b7f3f53547f43e2882149defa125da89'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail-closed static and live-identity audit
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_1_prereg.md)" = "$BASE_EZ_BLOB"
+          test "$(git rev-parse HEAD:experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_2_resume_binding_erratum.md)" = "$ERRATUM_BLOB"
+          test "$(git rev-parse HEAD:.github/workflows/exp073ey-ww-s0-s1-filebacked-ab-resume-v0-2.yml)" = "$RESUME_WORKFLOW_BLOB"
+          test "$(git rev-parse HEAD:experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_5_read_patch_repair_erratum.md)" = "$REPAIR_ERRATUM_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ey_home_filebacked_fullres_v0_2.sh)" = "$REPAIR_WRAPPER_BLOB"
+          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)" = "$READ_PATCH_BLOB"
+          grep -F '`34010599584`' experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_2_resume_binding_erratum.md >/dev/null
+          grep -F '`101425638857`' experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_2_resume_binding_erratum.md >/dev/null
+          grep -F 'does **not** change any scientific arithmetic' experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_2_resume_binding_erratum.md >/dev/null
+          grep -F 'PASS_EXP073EZ_WW_S0_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1' experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_2_resume_binding_erratum.md >/dev/null
+          ! grep -Eqi 'allclose|isclose|tolerance rescue|rounding rescue|smoothing rescue|averaging rescue' experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_2_resume_binding_erratum.md
+          python3 - "$GITHUB_REPOSITORY" "$GH_TOKEN" <<'PY'
+          import json, os, sys, urllib.request
+          repo, token=sys.argv[1],sys.argv[2]
+          run=int(os.environ['RESUME_RUN']); hj=int(os.environ['HOSTED_JOB']); sj=int(os.environ['HOME_JOB']); head=os.environ['ACTIVATION_HEAD']
+          h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          def get(url):
+              with urllib.request.urlopen(urllib.request.Request(url,headers=h),timeout=30) as r:return json.load(r)
+          r=get(f'https://api.github.com/repos/{repo}/actions/runs/{run}')
+          assert r['head_sha']==head
+          assert r['name']=='Exp073EY WW_S0_S1 checkpoint resume v0.2'
+          jobs=get(f'https://api.github.com/repos/{repo}/actions/runs/{run}/jobs?per_page=100')['jobs']
+          d={j['id']:j for j in jobs}
+          assert d[hj]['status']=='completed' and d[hj]['conclusion']=='success'
+          assert d[sj]['status'] in ('queued','in_progress','completed')
+          print('PASS_EXP073EZ_RESUME_BINDING_STATIC_AUDIT_V0_1')
+          PY
