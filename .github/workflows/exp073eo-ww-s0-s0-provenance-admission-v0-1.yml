@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/activations/exp073eo-real-en-v0-1.txt'
+      - '.github/activations/exp073eo-real-en-v0-2.txt'
 
 permissions:
   contents: read
@@ -29,6 +29,16 @@ jobs:
           test "$(git rev-parse HEAD:experiments/073eo_ww_s0_s0_filebacked_checkpoint_provenance_admission_v0_1_prereg.md)" = "$EO_PREREG_BLOB"
           test "$(git rev-parse HEAD:ci/exp073eo_ww_s0_s0_provenance_admission_v0_1.py)" = "$EO_AUDITOR_BLOB"
           test "$(git rev-parse HEAD:ci/exp073eo_consume_real_en_artifact_v0_1.sh)" = '704395173f10d69b4496e1422884fc71097c2919'
+      - name: Install exact auditor runtime dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check 'numpy==2.3.3'
+          python3 - <<'PY'
+          import numpy as np
+          assert np.__version__ == '2.3.3'
+          print('PASS_EXP073EO_NUMPY_RUNTIME_2_3_3')
+          PY
       - name: Consume real Exp073EN artifact and audit authority admission
         shell: bash
         run: bash ci/exp073eo_consume_real_en_artifact_v0_1.sh
