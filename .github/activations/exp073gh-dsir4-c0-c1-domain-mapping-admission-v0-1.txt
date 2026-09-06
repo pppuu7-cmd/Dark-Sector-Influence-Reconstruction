@@ -1,0 +1,2 @@
+Activate hosted-only Exp073GH C0/C1 G_DOMAIN_MAPPING admission v0.1.
+Admit only the domain-mapping gate; no full model PASS.
