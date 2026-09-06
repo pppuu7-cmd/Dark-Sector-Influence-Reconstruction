@@ -1,0 +1,44 @@
+name: Exp073GE DSIR-4 model mapping artifact static audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073ge-dsir4-model-mapping-static-audit-v0-1.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen DSIR-4 mapping artifact contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:docs/dsir4/DSIR4_MODEL_MAPPING_ARTIFACT_CONTRACT_V0_1.md)" = '03fd11d8536b9743eb82f92f9a0d5386444079ed'
+          test "$(git rev-parse HEAD:data/dsir4/model_mapping_artifact_template_v0_1.json)" = '1f815dfaae7ed9c0a825d251b8c904dd544170cd'
+          test "$(git rev-parse HEAD:ci/validate_dsir4_model_mapping_template_v0_1.py)" = 'c3d6e77070f1572b9178ab25cc2ff4beb0d6b954'
+          test "$(git rev-parse HEAD:experiments/073ge_dsir4_model_mapping_artifact_static_audit_v0_1_prereg.md)" = '55f0c225376add809e3b576930892ce4f4a27571'
+          python3 -m py_compile ci/validate_dsir4_model_mapping_template_v0_1.py
+          python3 ci/validate_dsir4_model_mapping_template_v0_1.py data/dsir4/model_mapping_artifact_template_v0_1.json | tee validator.log
+          grep -Fx 'PASS_DSIR4_MODEL_MAPPING_TEMPLATE_VALIDATOR_V0_1' validator.log >/dev/null
+          grep -Fx 'classification=SUPPORT_PLUS_0_PLUS_0' validator.log >/dev/null
+          grep -Fx 'scientific_model_authority_created=false' validator.log >/dev/null
+          python3 - <<'PY'
+          import json
+          d=json.load(open('data/dsir4/model_mapping_artifact_template_v0_1.json'))
+          c=d['common_residual']['components']
+          assert len(c)==6
+          assert d['common_residual']['total_residual_is_authoritative'] is True
+          assert d['sector_bookkeeping']['total_residual_invariant_under_relabeling_required'] is True
+          assert d['readiness']['scientific_gate_status']=='NOT_YET_TESTABLE'
+          assert d['scientific_authority_created'] is False
+          PY
+          echo PASS_EXP073GE_DSIR4_MODEL_MAPPING_ARTIFACT_STATIC_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo self_hosted_science_started=false
+          echo scientific_model_authority_created=false
