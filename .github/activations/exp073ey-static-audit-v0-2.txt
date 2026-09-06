@@ -1,0 +1,4 @@
+Exp073EY workflow-inclusive static audit activation v0.2
+AUDITOR_V01_BLOB=66040f42b61a18fb7cd2c8d582164bcf891c91d6
+AUDITOR_V02_BLOB=a0232a82a53873eb7568b3a6954fcfadbb2077ff
+SCIENCE_WORKFLOW_BLOB=842feacec0f239a908b1bfaf04dbc0878a0ea6ea
