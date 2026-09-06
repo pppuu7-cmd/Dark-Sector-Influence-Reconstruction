@@ -1,0 +1,40 @@
+name: Exp073GG DSIR-4 C0 C1 mapping static audit v0.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073gg-dsir4-c0-c1-mapping-static-audit-v0-2.txt'
+permissions:
+  contents: read
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit unchanged C0 and C1 analytic mappings
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:docs/dsir4/DSIR4_COMMON_RESIDUAL_CONVENTION_V0_1.md)" = '9ab68fe254891a076e24757de724e32e2190bfb6'
+          test "$(git rev-parse HEAD:docs/dsir4/mappings/C0_C1_ANALYTIC_RESIDUAL_MAPPINGS_V0_1.md)" = 'f080b8cec3197d8852a68e7de7e2183d2c7c6b50'
+          test "$(git rev-parse HEAD:data/dsir4/mappings/C0_LCDM_REFERENCE_mapping_v0_1.json)" = '46e9a402a57aee7baa4649784e868013ea6a07bb'
+          test "$(git rev-parse HEAD:data/dsir4/mappings/C1_SMOOTH_W_LOCAL_EPS1E4_mapping_v0_1.json)" = 'cec09e097aa8650f488276ed21e949f34e4f4ac1'
+          test "$(git rev-parse HEAD:ci/validate_dsir4_c0_c1_mapping_v0_1.py)" = 'de0bce5e3e96d20e7a56e546cecfb846289b2f5c'
+          test "$(git rev-parse HEAD:experiments/073gg_dsir4_c0_c1_mapping_static_audit_v0_1_prereg.md)" = 'ff88f2e9197737fbc39cc9da9196671cc19cbd13'
+          python3 -m py_compile ci/validate_dsir4_c0_c1_mapping_v0_1.py
+          python3 ci/validate_dsir4_c0_c1_mapping_v0_1.py data/dsir4/mappings/C0_LCDM_REFERENCE_mapping_v0_1.json data/dsir4/mappings/C1_SMOOTH_W_LOCAL_EPS1E4_mapping_v0_1.json | tee audit.log
+          grep -Fx 'PASS_DSIR4_C0_C1_MAPPING_STATIC_VALIDATOR_V0_1' audit.log >/dev/null
+          grep -Fx 'mapping_ready_count=2' audit.log >/dev/null
+          python3 - <<'PY'
+          import json
+          c0=json.load(open('data/dsir4/mappings/C0_LCDM_REFERENCE_mapping_v0_1.json'))
+          c1=json.load(open('data/dsir4/mappings/C1_SMOOTH_W_LOCAL_EPS1E4_mapping_v0_1.json'))
+          assert c0['common_residual']['components']['background_density_like']['expression_ref'].endswith('rho_X=rho_c+rho_Lambda')
+          assert c1['hypothesis_identity']['parameter_values']['w']==-0.9999
+          assert c1['hypothesis_identity']['parameter_values']['epsilon_w']==0.0001
+          PY
+          echo PASS_EXP073GG_DSIR4_C0_C1_MAPPING_STATIC_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo scientific_gate_authority_created=false
