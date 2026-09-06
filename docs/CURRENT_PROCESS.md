@@ -16,7 +16,8 @@ Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 PASS remain preserved. `WW_S0_
 - checkpoint ownership: Exp073FG dedicated A/B checkpoint namespaces frozen by its prereg/workflow; exact current durable stage **`UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`** by anti-bias policy;
 - expected candidate token: `PASS_EXP073FG_WW_S0_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`;
 - runner ownership: **`DSIR-HOME-PC` exclusively owned by job `101489679508`**;
-- competing self-hosted DSIR workload: **none launched**.
+- competing self-hosted DSIR workload: **none launched**;
+- live queued DSIR workflow count at latest reconciliation: **0**.
 
 On terminal SUCCESS/candidate output: consume raw compact artifact and job evidence; independently verify artifact ZIP SHA256, complete six-stage/prune provenance, frozen source/contract/R1/driver/patch identities, mmap proof for the regular-file-backed `19,327,352,832`-byte MCM, canonical `<f8 [39,12288]` `EE<-EE`, exact A/B SHA + `numpy.array_equal`, finiteness and no rescue. Candidate PASS alone creates no authority; activate a separate prospectively frozen provenance-admission gate only after full terminal consumption.
 
@@ -50,6 +51,14 @@ No artifact was produced. This is exact static/support authority only for future
 Exp073FK prereg `experiments/073fk_ww_s1_s1_same_field_transformation_contract_v0_1_prereg.md`, blob `f1deff3378f991a9a052b5314ccec1d19629f9b0`, creation commit `e913a49ac914eddf204e17ad9d76814d1fe542e3`. Workflow/run **`34037855604`**, hosted job **`101499105572`**, head `114d99c61c359c93ad462862f33642f196105f6c` completed SUCCESS. Raw log contains exact token `PASS_EXP073FK_WW_S1_S1_SAME_FIELD_TRANSFORMATION_CONTRACT_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `ww_s1_s1_authority_created=false`, `self_hosted_science_started=false`.
 
 This freezes only the future implementation transformation boundary from the current cross-pair durable architecture to the next auto-pair: `[0,3]/S0->S3` -> `[1,1]/S1->S1`, two source reconstructions -> exactly one authoritative S1 reconstruction, distinct source identities -> one source identity, distinct-field handoff -> same field object reuse, and dedicated future S1S1 task/token/checkpoint namespaces. No heavy S1S1 run is authorized while Exp073FG owns `DSIR-HOME-PC`. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FK_S1S1_TRANSFORMATION_CONTRACT_PASS_FG_RUNNING.md`.
+
+## Parallel support — Exp073FL S1S1 driver-generation qualification preregistered
+
+Exp073FL prereg `experiments/073fl_ww_s1_s1_driver_generation_static_audit_v0_1_prereg.md`, blob `e578cac17048f73193ff73c97ca38cb1d644d202`, creation commit `8b59dd08cd79af594198b038bd96bd69910cab5f`, was frozen prospectively while Exp073FG remains unresolved. It is hosted/static support only and cannot read partial Exp073FG numerics or start self-hosted science.
+
+It freezes the next implementation qualification boundary: exact `[1,1]`; reconstruct authoritative S1 exactly once; create exactly one spin-2 field and reuse the same Python object on both coupling sides; `same_field_object_handoff=true`; reject stale S0/S2/S3 and cross-pair semantics; preserve hardened complete-stage/checkpoint/prune evidence plus the full-resolution public file-backed BPW route; reject tolerance/rescue; compile the generated driver and synthetically reject a deliberately equal-but-distinct second-field mutation. Frozen support token: `PASS_EXP073FL_WW_S1_S1_DRIVER_GENERATION_STATIC_AUDIT_V0_1`; any PASS is only `SUPPORT_PLUS_0_PLUS_0`, with `ww_s1_s1_authority_created=false` and `self_hosted_science_started=false`.
+
+No Exp073FL workflow or heavy S1S1 computation has been launched. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FL_PREREG_FG_RUNNING.md`.
 
 ## Frozen boundaries
 
