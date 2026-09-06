@@ -1,0 +1,145 @@
+{
+  "schema_version": "dsir4-model-funnel-v0.1",
+  "frozen_date": "2026-09-06",
+  "scope": "DSIR-4 existing-model funnel infrastructure only",
+  "scientific_authority_created": false,
+  "allowed_statuses": [
+    "PASS",
+    "FAIL",
+    "OUTSIDE_DOMAIN",
+    "NOT_YET_TESTABLE",
+    "NUMERICALLY_UNRESOLVED"
+  ],
+  "mandatory_gates": [
+    "G_DOMAIN_MAPPING",
+    "G_ANGULAR_AUTHORITY",
+    "G_ORDERED_JOIN",
+    "G_RADIAL_SUPPORT",
+    "G_PHYSICAL_SUPPORT",
+    "G_COV_WHITENING",
+    "G_NUISANCE_QUOTIENT",
+    "G_RELATION_NULL",
+    "G_FINAL_MODEL"
+  ],
+  "frozen_domain": {
+    "z_min": 0.295,
+    "z_max": 2.33,
+    "k_min_exclusive_mpc_inv": 0.0,
+    "k_max_mpc_inv": 0.06664762008318016
+  },
+  "aggregation": {
+    "pass_requires_all_mandatory_pass": true,
+    "any_mandatory_fail_implies_overall_fail": true,
+    "outside_domain_is_not_extrapolated": true,
+    "not_yet_testable_is_never_pass_or_fail": true,
+    "numerically_unresolved_requires_frozen_ambiguity_rule": true,
+    "missing_authority_forbids_overall_pass": true
+  },
+  "inventory": [
+    {
+      "model_class_id": "LCDM_GR",
+      "label": "LambdaCDM / GR baseline",
+      "inventory_role": "baseline",
+      "mapping_status": "NOT_YET_TESTABLE",
+      "hypotheses": [],
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "model_class_id": "WCDM",
+      "label": "wCDM",
+      "inventory_role": "existing_model_class",
+      "mapping_status": "NOT_YET_TESTABLE",
+      "hypotheses": [],
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "model_class_id": "W0WA",
+      "label": "w0wa dark energy",
+      "inventory_role": "existing_model_class",
+      "mapping_status": "NOT_YET_TESTABLE",
+      "hypotheses": [],
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "model_class_id": "QUINTESSENCE_CANONICAL",
+      "label": "Canonical quintessence-like models",
+      "inventory_role": "existing_model_class",
+      "mapping_status": "NOT_YET_TESTABLE",
+      "hypotheses": [],
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "model_class_id": "INTERACTING_DARK_SECTOR",
+      "label": "Interacting dark-energy / dark-sector models",
+      "inventory_role": "existing_model_class",
+      "mapping_status": "NOT_YET_TESTABLE",
+      "hypotheses": [],
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "model_class_id": "F_R",
+      "label": "f(R)-type modified gravity",
+      "inventory_role": "existing_model_class",
+      "mapping_status": "NOT_YET_TESTABLE",
+      "hypotheses": [],
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "model_class_id": "DGP_LIKE",
+      "label": "DGP-like models",
+      "inventory_role": "existing_model_class",
+      "mapping_status": "NOT_YET_TESTABLE",
+      "hypotheses": [],
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "model_class_id": "HORNDESKI_EFT_LIKE",
+      "label": "Horndeski / EFT-like representative models",
+      "inventory_role": "existing_model_class",
+      "mapping_status": "NOT_YET_TESTABLE",
+      "hypotheses": [],
+      "overall_status": "NOT_YET_TESTABLE"
+    },
+    {
+      "model_class_id": "ADDITIONAL_DARK_SECTOR_TBD",
+      "label": "Additional representative dark-matter/dark-sector class with explicit mapping",
+      "inventory_role": "inventory_placeholder",
+      "mapping_status": "NOT_YET_TESTABLE",
+      "hypotheses": [],
+      "overall_status": "NOT_YET_TESTABLE"
+    }
+  ],
+  "hypothesis_record_template": {
+    "hypothesis_id": null,
+    "hypothesis_kind": "parameter_point_or_equivalence_class",
+    "parameterization": null,
+    "mapping_artifact": {
+      "path_or_uri": null,
+      "sha256": null,
+      "version": null
+    },
+    "prediction_artifact": {
+      "path_or_uri": null,
+      "sha256": null,
+      "version": null
+    },
+    "certified_domain": {
+      "z_min": null,
+      "z_max": null,
+      "k_min_exclusive_mpc_inv": null,
+      "k_max_mpc_inv": null
+    },
+    "gate_results": {
+      "G_DOMAIN_MAPPING": {"status": "NOT_YET_TESTABLE", "authority": null},
+      "G_ANGULAR_AUTHORITY": {"status": "NOT_YET_TESTABLE", "authority": null},
+      "G_ORDERED_JOIN": {"status": "NOT_YET_TESTABLE", "authority": null},
+      "G_RADIAL_SUPPORT": {"status": "NOT_YET_TESTABLE", "authority": null},
+      "G_PHYSICAL_SUPPORT": {"status": "NOT_YET_TESTABLE", "authority": null},
+      "G_COV_WHITENING": {"status": "NOT_YET_TESTABLE", "authority": null},
+      "G_NUISANCE_QUOTIENT": {"status": "NOT_YET_TESTABLE", "authority": null},
+      "G_RELATION_NULL": {"status": "NOT_YET_TESTABLE", "authority": null},
+      "G_FINAL_MODEL": {"status": "NOT_YET_TESTABLE", "authority": null}
+    },
+    "overall_status": "NOT_YET_TESTABLE"
+  }
+}
