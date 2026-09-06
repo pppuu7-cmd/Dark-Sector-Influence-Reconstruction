@@ -40,7 +40,7 @@ Frozen current files:
 
 The wrapper prospectively closes the known Exp073FA completed-replica restore weakness rather than relying on a later repair. If a completed, unpruned replica is restored, all six stage manifests plus all still-present source/workspace/full-window/selected/receipt payload hashes must validate. For the normal uninterrupted path, each replica is fully verified across all six stages **before** large intermediates are pruned. The prune receipt binds the SHA256 of every stage manifest and all verified payload hashes. Terminal A/B comparison reads only the bound terminal/prune evidence and selected EE arrays; it does not invoke `--replica AB` and does not restore completed replicas.
 
-Current authoritative workflow run: **`34034377795`**, head `4a02952ee3bcb368a088d87608f61243cd9f7056`. Hosted lineage job `101489652912` = SUCCESS; hosted code/checkpoint audit job `101489652945` = SUCCESS. Home science job **`101489679508`** on `DSIR-HOME-PC` is **IN_PROGRESS** in the frozen `S0->S3` A/B step at this recovery update. Live reconciliation finds exactly one in-progress DSIR run and zero queued runs. Do not inspect/interpret partial numerical output and do not launch a second self-hosted DSIR workload while this job remains queued/in-progress. Exact durable checkpoint stage is `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`, never guessed.
+Current authoritative workflow run: **`34034377795`**, head `4a02952ee3bcb368a088d87608f61243cd9f7056`. Hosted lineage job `101489652912` = SUCCESS; hosted code/checkpoint audit job `101489652945` = SUCCESS. Home science job **`101489679508`** on `DSIR-HOME-PC` is **IN_PROGRESS** in the frozen `S0->S3` A/B step at this recovery update. Do not inspect/interpret partial numerical output and do not launch a second self-hosted DSIR workload while this job remains queued/in-progress. Exact durable checkpoint stage is `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`, never guessed.
 
 ## Parallel GitHub-hosted support — next frontier WW_S1_S1 / Exp073FH
 
@@ -57,6 +57,14 @@ Hosted workflow **`34034555778`**, job **`101490139309`**, head `e7159f685f8e848
 The workflow froze comparator blob `74a1a2f8d3b44eaab66e834d69156e1810b75a8e` and synthetic audit blob `3823687f61cd04489431e3d480c2fae8805bac0d`, compiled them, rejected `np.allclose`/`np.isclose` and rounding/smoothing/averaging rescue patterns, and verified exact identical-array PASS, one-ULP FAIL, and receipt-tamper rejection. No `WW_S0_S3` authority was created and the running Exp073FG arithmetic was not inspected or altered.
 
 Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FI_TERMINAL_COMPARATOR_SYNTHETIC_PASS_FG_RUNNING.md`.
+
+## Exp073FJ — remaining WW semantic matrix CLOSED
+
+Preregistration `experiments/073fj_remaining_ww_semantic_matrix_v0_1_prereg.md`, blob `cb088f84361d682c613f3f60ba7d441142ba881c`, creation commit `84f75e9f284c9bdd0b6d1043a8e94a543675bc1d`. Hosted workflow **`34034662798`**, activation head `867d43fe8be8312c978d51a1344134707e3b4ecd`, completed SUCCESS with six jobs and no artifact.
+
+All six raw job logs were inspected. Each emitted its prospectively frozen cell PASS token, `classification=SUPPORT_PLUS_0_PLUS_0`, and `authority_created=false`: `WW_S1_S1` job `101490432099` auto; `WW_S1_S2` `101490432119` cross; `WW_S1_S3` `101490431953` cross; `WW_S2_S2` `101490432031` auto; `WW_S2_S3` `101490432021` cross; `WW_S3_S3` `101490432036` auto.
+
+The matrix verifies only future implementation semantics: exact six-task order and unordered `i<=j`, same-object `fb=fa` for auto-pairs, distinct second field for cross-pairs, frozen S1/S2/S3 source literals, full BPW shape `(4,39,4,12288)`, selected `wins[0,:,0,:] = EE<-EE`, and explicit guards against science/radial/covariance/nuisance/relation/G8 scoring. It creates **no** WW scientific authority and does not inspect or predict any Exp073FG numerical result. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FJ_SEMANTIC_MATRIX_PASS_FG_RUNNING.md`.
 
 ## Frozen Article-3 angular manifest
 
