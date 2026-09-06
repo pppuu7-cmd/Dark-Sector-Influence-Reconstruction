@@ -21,7 +21,7 @@ def main():
     assert a.candidate_head=='f0caca0c3e812710e5958ee13348a150d045a7d8'
     assert a.artifact_name=='exp073fm-ww-s1-s1-filebacked-ab-v0-1'
     assert a.artifact_digest.startswith('sha256:') and len(a.artifact_digest)==71
-    y=f'''name: Exp073FR WW_S1_S1 canonical checkpoint provenance admission v0.1
+    y=f'''name: Exp073FR WW_S1_S1 provenance admission and successor dispatch v0.1
 
 on:
   workflow_dispatch:
