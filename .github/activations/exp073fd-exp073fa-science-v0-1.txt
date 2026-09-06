@@ -1,1 +1,2 @@
 Activate Exp073FD hosted envelope audit and, only on exact hosted PASS with live self-hosted exclusivity, the single frozen Exp073FA WW_S0_S2 checkpointed A/B science run.
+Retry after hosted-only FC job-log transport repair; no science semantics changed.
