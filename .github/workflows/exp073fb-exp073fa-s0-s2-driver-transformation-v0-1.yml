@@ -1,0 +1,104 @@
+name: Exp073FB Exp073FA S0_S2 driver transformation v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073fb-exp073fa-s0-s2-driver-transformation-v0-1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  generate-and-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PREREG_BLOB: '7ff28ad4239728c14d05094b55ffc713c52210e6'
+      FA_PREREG_BLOB: 'edc044792be8ac7b796c8469943924942ae91932'
+      EY_V01_BLOB: '1db1eabbdba492c476cc61d3c4d71147aa688384'
+      EY_V02_BLOB: '066847006b2ed9d712d2c22d3576a0d8887fa7bf'
+      TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
+      READ_PATCH_BLOB: 'd534b698f9131688d263eedcef27260386c58641'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Freeze transformation inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073fb_exp073fa_s0_s2_driver_transformation_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git rev-parse HEAD:experiments/073fa_ww_s0_s2_filebacked_full_resolution_ab_science_v0_1_prereg.md)" = "$FA_PREREG_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ey_ww_s0_s1_durable_ab_production_v0_1.py)" = "$EY_V01_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ey_ww_s0_s1_durable_ab_production_v0_2.py)" = "$EY_V02_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073aa_article3_des_angular_task_runner_v0_1.py)" = "$TASKRUNNER_BLOB"
+          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)" = "$READ_PATCH_BLOB"
+
+      - name: Generate prospectively constrained S0_S2 drivers
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p generated
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,json,hashlib
+          src=Path('ci/exp073ey_ww_s0_s1_durable_ab_production_v0_1.py').read_text()
+          out=src.replace('exp073ey','exp073fa').replace('EXP073EY','EXP073FA')
+          out=out.replace('s0-s1','s0-s2').replace('S0_S1','S0_S2').replace('S0->S1','S0->S2')
+          out=re.sub(r'\bs1\b','s2',out); out=re.sub(r'\bp1\b','p2',out); out=re.sub(r'\bf1\b','f2',out)
+          old='source_count_map(r1_root,1)'; new='source_count_map(r1_root,2)'
+          if out.count(old)!=1: raise SystemExit(f'expected one source-index substitution, got {out.count(old)}')
+          out=out.replace(old,new)
+          if out.count('[0,1]')<1: raise SystemExit('ordered provenance marker absent')
+          out=out.replace('[0,1]','[0,2]')
+          p=Path('generated/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py'); p.write_text(out)
+          src2=Path('ci/exp073ey_ww_s0_s1_durable_ab_production_v0_2.py').read_text()
+          out2=src2.replace('exp073ey','exp073fa').replace('exp073fa_ww_s0_s1','exp073fa_ww_s0_s2')
+          p2=Path('generated/exp073fa_ww_s0_s2_durable_ab_production_v0_2.py'); p2.write_text(out2)
+          rec={'schema':'dsir.exp073fb.driver_transform.v0.1','base_v01_blob':'1db1eabbdba492c476cc61d3c4d71147aa688384','base_v02_blob':'066847006b2ed9d712d2c22d3576a0d8887fa7bf','generated_v01_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'generated_v02_sha256':hashlib.sha256(p2.read_bytes()).hexdigest(),'science_pair':'S0->S2','ordered_source_indices':[0,2],'historical_numerical_import':False}
+          Path('generated/transformation_receipt.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Fail-closed static semantic equivalence audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile generated/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py generated/exp073fa_ww_s0_s2_durable_ab_production_v0_2.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import ast,re,json
+          s=Path('generated/exp073fa_ww_s0_s2_durable_ab_production_v0_1.py').read_text()
+          s2=Path('generated/exp073fa_ww_s0_s2_durable_ab_production_v0_2.py').read_text()
+          tree=ast.parse(s); const={n.value for n in ast.walk(tree) if isinstance(n,ast.Constant) and isinstance(n.value,str)}
+          assert 'dsir.exp073fa.ww_s0_s1.durable_ab_production.v0.1' not in const
+          assert any('exp073fa.ww_s0_s1' in x for x in const)==False
+          assert 'S0->S2' in const
+          assert 'PASS_EXP073FA_WW_S0_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1' in const
+          assert 'FAIL_EXP073FA_WW_S0_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1' in const
+          assert 'checkpoints/exp073fa-ww-s0-s2-a-v0-1' in const and 'checkpoints/exp073fa-ww-s0-s2-b-v0-1' in const
+          assert 'source_count_map(r1_root,2)' in s and 'source_count_map(r1_root,1)' not in s
+          assert '[0,2]' in s and '[0,1]' not in s
+          assert 'FULL_SHAPE=(4,39,4,12288)' in s and 'EE_SHAPE=(39,12288)' in s
+          assert "wins[0,:,0,:]" in s
+          assert "dtype='<f8'" in s
+          assert "np.array_equal" in s
+          assert "np.isfinite" in s
+          assert "CHECKPOINT_ORDER=['fresh_sources_complete','fresh_workspace_mcm_complete','mcm_fits_verified','full_window_complete','selected_ee_complete','replica_receipt_complete']" in s
+          assert 'historical_ww_numerical_import' in s and 'other_replica_output_read' in s
+          assert not re.search(r'np\.(allclose|isclose)\b',s)
+          assert "BASE=Path(__file__).with_name('exp073fa_ww_s0_s2_durable_ab_production_v0_1.py')" in s2
+          assert 'EXPECTED_MCM_BYTES=19327352832' in s2
+          assert 'read_unbinned_MCM=True' in s2 and 'get_bandpower_windows()' in s2
+          assert "wins[0,:,0,:]" in s2 and "dtype='<f8'" in s2
+          assert not re.search(r'np\.(allclose|isclose)\b',s2)
+          r=json.loads(Path('generated/transformation_receipt.json').read_text()); assert r['science_pair']=='S0->S2' and r['ordered_source_indices']==[0,2] and r['historical_numerical_import'] is False
+          print('PASS_EXP073FB_EXP073FA_S0_S2_DRIVER_TRANSFORMATION_STATIC_AUDIT_V0_1')
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('ww_s0_s2_authority_created=false')
+          PY
+
+      - name: Upload generated implementation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073fb-exp073fa-s0-s2-generated-drivers-v0-1
+          path: generated
+          retention-days: 30
