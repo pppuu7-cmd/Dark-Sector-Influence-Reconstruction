@@ -1,0 +1,32 @@
+name: Exp073ES EN-to-EO artifact interface static v0.1
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073es-en-eo-artifact-interface-static-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-interface:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Freeze identities and syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ci/exp073en_home_filebacked_fullres_v0_1.sh)" = 'fb589e1521c6774e4c7d0714cae9e4cc194fb7ee'
+          test "$(git rev-parse HEAD:experiments/073eo_ww_s0_s0_filebacked_checkpoint_provenance_admission_v0_1_prereg.md)" = '490e1f44a7d7bb9b42dc00a72e0b39961da1692a'
+          test "$(git rev-parse HEAD:ci/exp073eo_ww_s0_s0_provenance_admission_v0_1.py)" = '4403d3e140acd14f0b95a31a8b2851f3229c1da3'
+          test "$(git rev-parse HEAD:ci/exp073eo_consume_real_en_artifact_v0_1.sh)" = '704395173f10d69b4496e1422884fc71097c2919'
+          test "$(git rev-parse HEAD:ci/exp073es_en_eo_artifact_interface_static_v0_1.py)" = '58e7f6d0d48b9fa9675f785fd1f1dce13d239499'
+          bash -n ci/exp073eo_consume_real_en_artifact_v0_1.sh
+          python -m py_compile ci/exp073eo_ww_s0_s0_provenance_admission_v0_1.py ci/exp073es_en_eo_artifact_interface_static_v0_1.py
+      - name: Verify complete EN-to-EO artifact interface
+        shell: bash
+        run: |
+          set -euo pipefail
+          python ci/exp073es_en_eo_artifact_interface_static_v0_1.py | tee "$RUNNER_TEMP/es.txt"
+          grep -Fx 'PASS_EXP073ES_EN_EO_ARTIFACT_INTERFACE_STATIC_V0_1' "$RUNNER_TEMP/es.txt"
