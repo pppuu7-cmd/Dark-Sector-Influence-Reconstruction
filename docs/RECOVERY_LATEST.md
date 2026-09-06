@@ -44,8 +44,14 @@ Frozen Exp073EY science remains: ordered distinct `(S0,S1)`; DES NSIDE=4096; ell
 
 Expected candidate token remains `PASS_EXP073EY_WW_S0_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`. Workflow SUCCESS alone is not science PASS.
 
-## Exp073EZ next admission gate
-`experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_1_prereg.md`, commit `73bfd98efb1a1e2535f644f48dbf5ee5a01dcd88`, blob `346bdbedcb34bdd67a0df88e5444f08071e822b6`, remains `PREREGISTERED_NOT_ACTIVATED`. It must bind the exact terminal EY resume artifact only after independently verified candidate PASS. Only token `PASS_EXP073EZ_WW_S0_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1` may create WW_S0_S1 authority.
+## Exp073EZ next admission gate — resume binding prospectively repaired
+Base immutable preregistration remains `experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_1_prereg.md`, commit `73bfd98efb1a1e2535f644f48dbf5ee5a01dcd88`, blob `346bdbedcb34bdd67a0df88e5444f08071e822b6`.
+
+A governance audit found that v0.1 still bound the candidate execution to the original failed Exp073EY run. Before any terminal resume result was known and without reading partial numerical output, provenance-only erratum `experiments/073ez_ww_s0_s1_filebacked_checkpoint_provenance_admission_v0_2_resume_binding_erratum.md` was frozen: commit `d694c80fd488b60faaea68a37294ee85cff5fe77`, blob `c5125bb9a09f6c02a1d6b48a862902ead9127b61`.
+
+The erratum changes execution/provenance binding only: candidate run/job `34010599584 / 101425638857`, activation/head `4c570bf6b7f3f53547f43e2882149defa125da89`, resume workflow blob `7c0e8718357cfe4448b26c372a0567edf860f572`, repair erratum/wrapper/read-patch identities. It preserves the v0.1 scientific arithmetic, exact acceptance gate, ordered six-stage checkpoint chains and authority token unchanged. Terminal artifact ID/digest/result remain deliberately unknown until terminal.
+
+Hosted static audit run/job `34012838925 / 101431487475` = SUCCESS; raw token `PASS_EXP073EZ_RESUME_BINDING_STATIC_AUDIT_V0_1`. This is governance/support `+0/+0`, not WW authority. Exp073EZ remains `PREREGISTERED_NOT_ACTIVATED`. Only token `PASS_EXP073EZ_WW_S0_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1` may create `WW_S0_S1` authority.
 
 ## Frozen global boundaries
 `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A invalid `<=0.05`; Layer-B invalid-row `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
@@ -53,8 +59,8 @@ Expected candidate token remains `PASS_EXP073EY_WW_S0_S1_FILEBACKED_AB_EXACT_REP
 ## Exact next actions
 1. Do not duplicate or disturb Exp073EY resume `34010599584 / 101425638857`.
 2. On terminal, download the compact artifact and independently verify ZIP SHA256, restored-vs-new stage provenance, source/contract/driver/patch identities, both six-stage chains, file-backed mmap proof, exact A/B selected equality/finiteness and terminal token.
-3. On valid candidate PASS, bind exact terminal run/job/artifact/digest into Exp073EZ and run hosted provenance admission; only EZ PASS admits WW_S0_S1, then advance to WW_S0_S2.
+3. On valid candidate PASS, bind exact terminal run/job/artifact/digest into Exp073EZ under immutable v0.1 plus v0.2 resume-binding erratum and run hosted provenance admission; only EZ PASS admits WW_S0_S1, then advance to WW_S0_S2.
 4. On genuine completed exact A/B mismatch, record WW_S0_S1 scientific FAIL and continue without tuning the gate.
 5. On infrastructure/resource/provenance/checkpoint failure, diagnose first cause, preserve verified complete stages, repair minimally and resume without recomputing verified expensive work.
 
-Current immutable recovery note: `docs/recovery/RECOVERY_2026-09-06_EXP073EY_PATCH_BINDING_FAIL_RESUME_V02.md`.
+Current immutable recovery note: `docs/recovery/RECOVERY_2026-09-06_EXP073EZ_RESUME_BINDING_PREREG_AUDIT.md`.
