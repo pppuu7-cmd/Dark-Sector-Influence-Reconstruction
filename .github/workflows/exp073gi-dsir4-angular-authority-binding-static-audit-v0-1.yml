@@ -43,3 +43,5 @@ jobs:
           echo g_angular_authority_created=false
           echo scientific_model_authority_created=false
           echo self_hosted_science_started=false
+
+# activation marker: v0.1
