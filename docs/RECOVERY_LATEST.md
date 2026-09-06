@@ -54,8 +54,20 @@ On terminal SUCCESS, immediately download/inspect the compact artifact and indep
 
 On infrastructure/resource failure, identify the first causal defect, preserve every valid complete-stage checkpoint, make the smallest prospective repair and resume without changing frozen scientific arithmetic or criteria. An exact numerical mismatch is a genuine scientific FAIL and must never be tolerance-rescued.
 
-Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FN_ADMITTED_FM_HOME_RUNNING.md`.
-Research-log supplement: `docs/research_log/RESEARCH_LOG_2026-09-06_EXP073FN_FO_FP.md`.
+### Prospectively frozen post-candidate admission — Exp073FR
+
+While Exp073FM is still running and before any partial or terminal numerical result was consumed, a collision-checked prospective authority gate was frozen:
+
+- path `experiments/073fr_ww_s1_s1_filebacked_checkpoint_provenance_admission_v0_1_prereg.md`;
+- creation commit `55fa8c56ec8bb7e7cb0d278870a05619c5a59f67`;
+- prereg blob `aa08636426dd48142c3a3da7c032f1075a1be1f9`;
+- exact admission token `PASS_EXP073FR_WW_S1_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1`;
+- it may run only after Exp073FM is terminal and independently consumed;
+- it is hosted-only and must not acquire `DSIR-HOME-PC`;
+- authority may be created only if the frozen Exp073FM artifact digest, independent ZIP SHA256, both complete checkpoint chains, S1 same-object semantics, source/contract/implementation identities, exact file-backed mmap proof, canonical array identities, finiteness and exact A/B equality all pass without tolerance/rescue.
+
+Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FR_PREREG_FM_RUNNING.md`.
+Research-log supplement remains `docs/research_log/RESEARCH_LOG_2026-09-06_EXP073FN_FO_FP.md`; no partial Exp073FM numerical output was added.
 
 ## Frozen global boundaries
 
