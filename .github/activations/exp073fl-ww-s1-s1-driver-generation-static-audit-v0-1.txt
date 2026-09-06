@@ -1,3 +1,4 @@
 activate Exp073FL WW_S1_S1 driver-generation static audit v0.1
-workflow commit: dc7d59400664bedf2f197fe43b6bdc9a8cc378e1
+workflow commit: 37180c62451731e87bf7e1f2ea17892da5d28070
 scope: hosted static/support only; no self-hosted science; no WW_S1_S1 authority
+repair: exact frozen FK formatting binding only; science criteria unchanged
