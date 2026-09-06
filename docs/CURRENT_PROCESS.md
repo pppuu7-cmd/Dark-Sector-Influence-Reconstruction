@@ -14,7 +14,7 @@ Exp073FC `34018341064 / 101446155067` is terminal raw-verified PASS `+0/+0`: `PA
 
 Exp073FD home-envelope prereg blob `6636766b565956d6af28ae04bcdeec1a410259a1`; fail-closed home shell blob `309c464bbfbe4896bd560165985ee7f643d9ee22`. First Exp073FD run `34020704615`, hosted job `101452648911`, is immutable infrastructure/static log-transport FAIL `+0/+0`; home science was skipped. Minimal repair changed only GitHub FC job-log parsing from erroneous ZIP handling to plain-text `grep -aF`; science was unchanged.
 
-## Authoritative current process — Exp073FD / Exp073FA home science
+## Authoritative current science process — Exp073FD / Exp073FA home science
 
 - workflow: `Exp073FD Exp073FA audited home envelope and science v0.1`;
 - run **`34020756634`**;
@@ -30,6 +30,12 @@ Exp073FD home-envelope prereg blob `6636766b565956d6af28ae04bcdeec1a410259a1`; f
 
 **Runner ownership:** `DSIR-HOME-PC` is exclusively owned by Exp073FD/Exp073FA job `101452805620`. Do not launch another self-hosted DSIR task.
 
-On terminal SUCCESS/candidate PASS: consume raw artifact/digest/provenance/checkpoint identities and exact A/B result; then freeze a dedicated hosted provenance admission bound to the exact terminal artifact. Only admission PASS may create `WW_S0_S2` authority. On scientific exact mismatch: record scientific FAIL and move to the next allowed branch. On infrastructure/software failure: diagnose the first causal defect and preserve/resume all validated complete checkpoints.
+## Independent hosted support process — Exp073FE
+
+A result-independent static audit found before terminal Exp073FA output that the wrapper's final `--replica AB` invocation re-enters `validated_finished()`, whose terminal restore validates the receipt and selected EE payload but not the full six-stage chain/all prior payloads. That restore shortcut is weaker than the Exp073FA preregistered checkpoint rule. This is implementation/provenance only and does not alter science.
+
+Prospective hardening prereg blob: `43ff6dfe8d1eb682202b142e6ed2408a4beb00f7`. Repaired terminal-receipt comparator blob: `14841dc412d3989e6f86294072479424f26cec93`. Hosted-only Exp073FE run **`34023253707`**, job **`101459598645`**, head `7da98fcf70b3a8560b287214b59984252a64a4b9`, expected token `PASS_EXP073FE_EXP073FA_TERMINAL_COMPARE_RESTORE_HARDENING_V0_1`; it is support `+0/+0` only and cannot create authority. It does not use `DSIR-HOME-PC`.
+
+On terminal Exp073FA: consume raw artifact/digest/provenance/checkpoint identities and exact A/B result. Exact mismatch remains scientific FAIL. A numerical candidate PASS is still non-authoritative; if the complete checkpoint/provenance contract cannot be proven, classify provenance/infrastructure `+0/+0`, preserve valid evidence, and use the smallest prospective repair. A later separately frozen hosted provenance admission must inspect the complete six-stage manifests and exact terminal A/B evidence before `WW_S0_S2` authority may exist.
 
 Frozen global boundaries remain: `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A `<=0.05`; Layer-B `<=0.05`; retained dimension `>=15`; NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging/effective-coordinate/fiducial rescue.
