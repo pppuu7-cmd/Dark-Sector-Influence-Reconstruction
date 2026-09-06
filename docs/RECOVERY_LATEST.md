@@ -8,85 +8,41 @@ Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 exact scientific PASS remain p
 
 `WW_S0_S0` remains admitted by Exp073EO v0.2 run/job `34005373819 / 101411448176`, artifact `9980754356`, digest `sha256:0e1a4cff3b761fecc65d8e07df9e56f8109fd221fb4454746caa8c7d0f2fb4be`.
 
-`WW_S0_S1` remains admitted by Exp073EZ run/job `34017921734 / 101444964371`, exact token `PASS_EXP073EZ_WW_S0_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1`, `classification=SCIENTIFIC_AUTHORITY_ADMITTED`. Its Exp073EY candidate remains run/job `34010599584 / 101425638857`, artifact `9983630139`, independently verified ZIP SHA256 `12291c1c9f6100ebfb03a6db1e613f422bd48bc6c02720f89ee613c8646cf9d6`, selected exact A/B SHA `49af7a3d165daaf7cc6781e2286e45cd5baa0042ed9770800588bced7d700e79`.
+`WW_S0_S1` remains admitted by Exp073EZ `34017921734 / 101444964371`, token `PASS_EXP073EZ_WW_S0_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1`. Its Exp073EY candidate is `34010599584 / 101425638857`, artifact `9983630139`, independently verified ZIP SHA256 `12291c1c9f6100ebfb03a6db1e613f422bd48bc6c02720f89ee613c8646cf9d6`, selected exact A/B SHA `49af7a3d165daaf7cc6781e2286e45cd5baa0042ed9770800588bced7d700e79`.
 
-`WW_S0_S2` is admitted by Exp073FF run/job `34032384956 / 101484177968`, exact token `PASS_EXP073FF_WW_S0_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1`, `classification=SCIENTIFIC_AUTHORITY_ADMITTED`. The admitted lineage preserves source head `de83e20a68f79ccf25b89b0d33eb4206e294c757`, contract `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`, R1 artifact `9720335366`, digest `sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd`.
+`WW_S0_S2` remains admitted by Exp073FF `34032384956 / 101484177968`, token `PASS_EXP073FF_WW_S0_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1`. Preserved lineage includes source head `de83e20a68f79ccf25b89b0d33eb4206e294c757`, contract `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`, R1 artifact `9720335366`, digest `sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd`.
 
 ## Current science frontier — WW_S0_S3 / Exp073FG
 
 Preregistration: `experiments/073fg_ww_s0_s3_filebacked_full_resolution_ab_science_v0_1_prereg.md`, blob `50c64a3f7e341f0a180b9c8dbc83a074f6cae150`.
 
-Frozen target: ordered `(S0,S3)`, authoritative R1 indices `[0,3]`, two independently reconstructed source count maps and two distinct spin-2 fields; never `(S3,S0)` and never same-field. Numerical/storage semantics: DES NSIDE=4096; ell `0..12287`; 39 bands; PyMaster/NaMaster 2.7 lineage; serialized workspace `read_from(...,read_unbinned_MCM=True)` then public `get_bandpower_windows()`; one regular-file-backed unbinned MCM exactly `19,327,352,832` bytes with `/proc/self/maps` proof; full BPW `[4,39,4,12288]`; selected `EE<-EE`, canonical `<f8 [39,12288]`; exact A/B SHA plus `numpy.array_equal`; all finite; no tolerance/allclose/rounding/smoothing/averaging/manual reconstruction/effective-coordinate/fiducial rescue.
+Frozen target: ordered `(S0,S3)`, authoritative R1 `[0,3]`, two independently reconstructed source count maps and distinct spin-2 fields. Numerical/storage semantics remain DES NSIDE=4096; ell `0..12287`; 39 bands; PyMaster/NaMaster 2.7 lineage; serialized workspace `read_from(...,read_unbinned_MCM=True)` then public `get_bandpower_windows()`; one regular-file-backed unbinned MCM exactly `19,327,352,832` bytes with `/proc/self/maps` proof; full BPW `[4,39,4,12288]`; selected `EE<-EE`, canonical `<f8 [39,12288]`; exact A/B SHA plus `numpy.array_equal`; all finite; no tolerance/allclose/rounding/smoothing/averaging/manual reconstruction/effective-coordinate/fiducial rescue.
 
-Candidate token is frozen as `PASS_EXP073FG_WW_S0_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`. Candidate alone creates no authority; a separate provenance-admission gate remains mandatory.
+Candidate token remains `PASS_EXP073FG_WW_S0_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`. Candidate alone creates no authority; separate provenance admission remains mandatory.
 
-### Immutable pre-science wrapper failures
+Historical pre-science wrapper failures `34033970885 / 101488568727` and `34034127464 / 101488993099` remain infrastructure `+0/+0`, never scientific FAILs.
 
-Exp073FG run `34033970885`, home job `101488568727`: both GitHub-hosted audits passed, but home wrapper failed immediately on an over-strict transformation check requiring absent optional literal `WW_S0_S2`. Classification: infrastructure/wrapper FAIL `+0/+0`; no heavy numerical science began; no authority.
+Frozen current implementation blobs: `ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py` `d919da63ad5ccd1b94255d9e45face1c922c4f44`; v0.2 `8749c20f41e5259787307bbd5d556cb772ceba18`; home wrapper `77e7f7dafc91ee79767eb31a288633ca1285c66e`; prune verifier `d925840c60035b30ed1375657585967ec2644e0d`; terminal comparator `74a1a2f8d3b44eaab66e834d69156e1810b75a8e`.
 
-Exp073FG run `34034127464`, home job `101488993099`: hosted audits passed, but home wrapper again failed immediately because it required the candidate PASS literal to exist in the shell source even though that token is produced dynamically by the Python driver. Classification: infrastructure/wrapper FAIL `+0/+0`; no heavy numerical science began; no authority.
+Current authoritative workflow/run **`34034377795`**, head **`4a02952ee3bcb368a088d87608f61243cd9f7056`**. Hosted lineage job `101489652912` = SUCCESS; hosted code/checkpoint audit `101489652945` = SUCCESS. Home science job **`101489679508`** on `DSIR-HOME-PC` is **IN_PROGRESS** in the frozen S0-to-S3 A/B step at latest live reconciliation. Do not inspect or interpret partial numerical output and do not launch any competing self-hosted DSIR workload. Exact durable checkpoint stage remains `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`.
 
-These failures are preserved and must never be relabeled as scientific FAILs.
+On terminal state: consume compact artifact and raw job evidence immediately; independently verify ZIP SHA256, complete six-stage/prune provenance, frozen source/contract/R1/driver/patch identities, `19,327,352,832`-byte mmap proof, canonical `<f8 [39,12288]` `EE<-EE`, exact A/B SHA and `numpy.array_equal`, finiteness and no rescue. Exact numerical mismatch is a scientific FAIL. Infrastructure/provenance/software failure requires smallest prospective repair and checkpoint-preserving resume.
 
-### Hardened implementation now active
+## Closed hosted support — future WW_S1_S1
 
-Frozen current files:
+The frozen 14-task manifest places `WW_S1_S1` immediately after `WW_S0_S3`. Exp073FH `34034445222` closed same-field architecture support `+0/+0`; Exp073FJ `34034662798` closed the remaining six WW semantic cells `+0/+0`; Exp073FK `34037855604 / 101499105572` closed the same-field transformation contract `+0/+0`. These support gates create no scientific authority and cannot start competing home science.
 
-- `ci/exp073fg_ww_s0_s3_durable_ab_production_v0_1.py`, blob `d919da63ad5ccd1b94255d9e45face1c922c4f44`;
-- `ci/exp073fg_ww_s0_s3_durable_ab_production_v0_2.py`, blob `8749c20f41e5259787307bbd5d556cb772ceba18`;
-- `ci/exp073fg_home_filebacked_fullres_v0_1.sh`, blob `77e7f7dafc91ee79767eb31a288633ca1285c66e`;
-- `ci/exp073fg_verify_and_prune_replica_v0_1.py`, blob `d925840c60035b30ed1375657585967ec2644e0d`;
-- `ci/exp073fg_compare_terminal_receipts_v0_1.py`, blob `74a1a2f8d3b44eaab66e834d69156e1810b75a8e`.
+Exp073FL preregistration `experiments/073fl_ww_s1_s1_driver_generation_static_audit_v0_1_prereg.md`, blob `e578cac17048f73193ff73c97ca38cb1d644d202`, creation commit `8b59dd08cd79af594198b038bd96bd69910cab5f`, freezes a hosted-only qualification of deterministic S1S1 driver generation: exact `[1,1]`, one authoritative S1 reconstruction, one spin-2 field object, exact same-object coupling handoff, dedicated future S1S1 checkpoint namespaces, hardened complete-stage/prune semantics, public file-backed BPW route and no tolerance/rescue.
 
-The wrapper prospectively closes the known Exp073FA completed-replica restore weakness rather than relying on a later repair. If a completed, unpruned replica is restored, all six stage manifests plus all still-present source/workspace/full-window/selected/receipt payload hashes must validate. For the normal uninterrupted path, each replica is fully verified across all six stages **before** large intermediates are pruned. The prune receipt binds the SHA256 of every stage manifest and all verified payload hashes. Terminal A/B comparison reads only the bound terminal/prune evidence and selected EE arrays; it does not invoke `--replica AB` and does not restore completed replicas.
+Historical first Exp073FL run/job **`34043934290 / 101515496355`**, head `25ef2ecccac9e79a3de1395b31cf7402e52c6277`, failed before science on an over-strict textual-format assertion against immutable Exp073FK. Classification: `IMPLEMENTATION_STATIC_FAIL_PLUS_0_PLUS_0`; no workspace, self-hosted computation or authority. Minimal repair commit **`37180c62451731e87bf7e1f2ea17892da5d28070`** changed only the exact textual binding; scientific semantics were untouched. Reactivation head: **`cdbcf0019df9ef6ec9b71abc32dc12bee2ff0579`**.
 
-Current authoritative workflow run: **`34034377795`**, head `4a02952ee3bcb368a088d87608f61243cd9f7056`. Hosted lineage job `101489652912` = SUCCESS; hosted code/checkpoint audit job `101489652945` = SUCCESS. Home science job **`101489679508`** on `DSIR-HOME-PC` is **IN_PROGRESS** in the frozen `S0->S3` A/B step at this recovery update. Do not inspect/interpret partial numerical output and do not launch a second self-hosted DSIR workload while this job remains queued/in-progress. Exact durable checkpoint stage is `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`, never guessed.
+Repaired Exp073FL run/job **`34043987159 / 101515646656`** completed SUCCESS. Raw job log contains exact token `PASS_EXP073FL_WW_S1_S1_DRIVER_GENERATION_STATIC_AUDIT_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `ww_s1_s1_authority_created=false`, `self_hosted_science_started=false`. It compiled the hosted-only deterministic contract skeleton, checked one S1 reconstruction, one field construction, exact same-object handoff, forbidden stale/tolerance semantics, and synthetically rejected an equal-but-distinct second field. Immutable recovery note: `docs/recovery/RECOVERY_2026-09-06_EXP073FL_STATIC_PASS_FG_RUNNING.md`.
 
-## Parallel GitHub-hosted support — next frontier WW_S1_S1 / Exp073FH
-
-The frozen 14-task manifest orders `WW_S1_S1` immediately after `WW_S0_S3`. Exp073FH preregistration `experiments/073fh_ww_s1_s1_same_field_architecture_v0_1_prereg.md`, blob `0fc09948c7cfb5c05868538544554dc8001a9126`, freezes only a support/static audit; no self-hosted science and no `WW_S1_S1` authority.
-
-`WW_S1_S1` has a materially different semantic boundary from cross-pair `S0_S3`: reconstruct authoritative S1 once, create one spin-2 `NmtField`, and pass the **same field object** on both sides. The generic frozen Article-3 task runner encodes `if bmap is a: fb=fa`; equal-but-distinct field objects are forbidden for this auto-pair.
-
-Exp073FH workflow run **`34034445222`**, head `8856c7df19253310ca286b0e0fc2d4348e5df97a`, completed **SUCCESS**. It verified the frozen S1 R1 constants, unordered `i<=j` task rule, same-field object reuse, WW EE extraction, and no science/radial/covariance/G8 scoring. Classification remains `SUPPORT_PLUS_0_PLUS_0`, `ww_s1_s1_authority_created=false`. This support may be used to prepare the future S1_S1 implementation while Exp073FG computes, but a heavy S1_S1 run must not compete with the current home science job.
-
-## Exp073FI — terminal comparator synthetic hardening CLOSED
-
-Hosted workflow **`34034555778`**, job **`101490139309`**, head `e7159f685f8e848a27bd41e1db9a1f95076d36bb` completed SUCCESS. Raw job log contains exact token `PASS_EXP073FI_EXP073FG_TERMINAL_COMPARE_SYNTHETIC_HARDENING_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, and `ww_s0_s3_authority_created=false`; therefore workflow success is classified only as exact support `+0/+0`, not scientific PASS.
-
-The workflow froze comparator blob `74a1a2f8d3b44eaab66e834d69156e1810b75a8e` and synthetic audit blob `3823687f61cd04489431e3d480c2fae8805bac0d`, compiled them, rejected `np.allclose`/`np.isclose` and rounding/smoothing/averaging rescue patterns, and verified exact identical-array PASS, one-ULP FAIL, and receipt-tamper rejection. No `WW_S0_S3` authority was created and the running Exp073FG arithmetic was not inspected or altered.
-
-Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FI_TERMINAL_COMPARATOR_SYNTHETIC_PASS_FG_RUNNING.md`.
-
-## Exp073FJ — remaining WW semantic matrix CLOSED
-
-Preregistration `experiments/073fj_remaining_ww_semantic_matrix_v0_1_prereg.md`, blob `cb088f84361d682c613f3f60ba7d441142ba881c`, creation commit `84f75e9f284c9bdd0b6d1043a8e94a543675bc1d`. Hosted workflow **`34034662798`**, activation head `867d43fe8be8312c978d51a1344134707e3b4ecd`, completed SUCCESS with six jobs and no artifact.
-
-All six raw job logs were inspected. Each emitted its prospectively frozen cell PASS token, `classification=SUPPORT_PLUS_0_PLUS_0`, and `authority_created=false`: `WW_S1_S1` job `101490432099` auto; `WW_S1_S2` `101490432119` cross; `WW_S1_S3` `101490431953` cross; `WW_S2_S2` `101490432031` auto; `WW_S2_S3` `101490432021` cross; `WW_S3_S3` `101490432036` auto.
-
-The matrix verifies only future implementation semantics: exact six-task order and unordered `i<=j`, same-object `fb=fa` for auto-pairs, distinct second field for cross-pairs, frozen S1/S2/S3 source literals, full BPW shape `(4,39,4,12288)`, selected `wins[0,:,0,:] = EE<-EE`, and explicit guards against science/radial/covariance/nuisance/relation/G8 scoring. It creates **no** WW scientific authority and does not inspect or predict any Exp073FG numerical result. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FJ_SEMANTIC_MATRIX_PASS_FG_RUNNING.md`.
-
-## Exp073FK — WW_S1_S1 transformation contract CLOSED
-
-Preregistration `experiments/073fk_ww_s1_s1_same_field_transformation_contract_v0_1_prereg.md`, blob `f1deff3378f991a9a052b5314ccec1d19629f9b0`, creation commit `e913a49ac914eddf204e17ad9d76814d1fe542e3`. Hosted workflow was added at `df6b4bf33930c075e930b269eca6a5c858758237` and activated at head `114d99c61c359c93ad462862f33642f196105f6c`.
-
-Workflow/run **`34037855604`**, job **`101499105572`**, completed SUCCESS. Raw log contains exact token `PASS_EXP073FK_WW_S1_S1_SAME_FIELD_TRANSFORMATION_CONTRACT_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `ww_s1_s1_authority_created=false`, `self_hosted_science_started=false`.
-
-The support audit cross-checks Exp073FH, Exp073FJ, the generic Article-3 task runner and the current Exp073FG durable cross-pair source. It freezes the inseparable future transformation boundary: `[0,3]/S0->S3` -> `[1,1]/S1->S1`; two source reconstructions -> exactly one authoritative S1 reconstruction; distinct source identities -> one source identity; distinct-field handoff false -> same-field-object handoff true; cross field construction -> one spin-2 field object reused on both sides; dedicated future S1S1 task/token/checkpoint namespaces. It authorizes no heavy S1S1 run while Exp073FG owns the home runner and creates no scientific authority. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FK_S1S1_TRANSFORMATION_CONTRACT_PASS_FG_RUNNING.md`.
+No heavy `WW_S1_S1` computation is authorized while Exp073FG owns the home runner. After Exp073FG is terminal and fully consumed, an exact S1S1 production driver and fail-closed home envelope may be committed/audited under FH/FJ/FK/FL, but those support steps still create no S1S1 scientific authority.
 
 ## Frozen publication architecture
 
-Project-level publication architecture is frozen in `docs/DSIR_PUBLICATION_ARCHITECTURE_2026-09-06.md`, created at commit `fce46eb74aad797285e2a3fd89d01e41633e76f0`, blob `4661b4c9c796094a57e3e5f33e3fd8a25c186eb5`. Immutable recovery note: `docs/recovery/RECOVERY_2026-09-06_PUBLICATION_ARCHITECTURE_FROZEN.md`.
-
-Frozen sequence: **DSIR-1 Framework -> DSIR-2 Inverse reconstruction/mathematical machinery -> DSIR-3 Observational implementation + complete funnel -> DSIR-4 Existing-Model Funnel Matrix -> conditional DSIR-5 DSIR-derived new dark-sector model -> conditional DSIR-6 Independent predictions/external falsification tests**.
-
-DSIR-4 and DSIR-5 remain deliberately separate by default. Existing models must be tested through the prospectively frozen funnel before a new model is claimed to be necessary. DSIR-5 may begin early only as a provenance-linked constraint skeleton, not as a final frozen model. Future model construction and validation must be anti-circular: define `G_design` for construction and reserve `G_blind`/external evidence for validation after the model is frozen. A blind-gate failure cannot be silently rescued without defining a new model version.
-
-Model Funnel Matrix preparation may begin in parallel with Article 3, but only authoritative available gates may be scored; unavailable gates remain `NOT_YET_TESTABLE`. No existing model receives a full `DSIR PASS` until every mandatory final funnel gate has admissible authority.
-
-## Frozen Article-3 angular manifest
-
-Exactly 14 unique tasks remain the production inventory: four Wm workspaces and ten unordered WW workspaces. Existing authority includes the admitted S0-row WW tasks through `WW_S0_S2`; `WW_S0_S3` is the active candidate frontier. The ordered 14-window join, radial multiplication, physical-support scoring, covariance/whitening, nuisance quotient/relation/null and G8 remain forbidden until their frozen prerequisites are satisfied.
+`docs/DSIR_PUBLICATION_ARCHITECTURE_2026-09-06.md`, creation commit `fce46eb74aad797285e2a3fd89d01e41633e76f0`, blob `4661b4c9c796094a57e3e5f33e3fd8a25c186eb5`, remains frozen. Sequence: **DSIR-1 Framework -> DSIR-2 inverse reconstruction/mathematical machinery -> DSIR-3 observational implementation + complete funnel -> DSIR-4 Existing-Model Funnel Matrix -> conditional DSIR-5 DSIR-derived new dark-sector model -> conditional DSIR-6 independent predictions/external falsification tests**. Existing models are tested through the prospectively frozen funnel before a new model is claimed necessary; future model construction must remain anti-circular with design and blind/external validation separated.
 
 ## Frozen global boundaries
 
