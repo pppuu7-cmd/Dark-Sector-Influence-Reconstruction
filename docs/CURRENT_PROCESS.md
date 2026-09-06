@@ -33,6 +33,17 @@ Frozen committed Exp073FM implementation blobs: driver v0.1 `477647c5164264665cc
 - next action on infrastructure/resource FAIL: inspect first causal failure, preserve any verified complete-stage checkpoints, make only the smallest prospective repair, and resume from the last verified checkpoint without changing frozen science;
 - next action on genuine exact numerical mismatch: record `SCIENTIFIC_FAIL`; never rescue with tolerance/rounding/smoothing/averaging.
 
+## Prospectively frozen next authority gate — Exp073FR
+
+While Exp073FM remains in progress and before reading any partial/terminal numerical result, Exp073FR was preregistered as the sole prospective `WW_S1_S1` provenance-admission gate.
+
+- prereg path: `experiments/073fr_ww_s1_s1_filebacked_checkpoint_provenance_admission_v0_1_prereg.md`;
+- creation commit: `55fa8c56ec8bb7e7cb0d278870a05619c5a59f67`;
+- prereg blob: `aa08636426dd48142c3a3da7c032f1075a1be1f9`;
+- frozen admission PASS token: `PASS_EXP073FR_WW_S1_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1`;
+- Exp073FR must not run until Exp073FM is terminal and independently consumed;
+- Exp073FR is hosted-only, creates no home-runner ownership, and may create authority only if every frozen terminal artifact/checkpoint/source/same-object/file-backed/exact-equality check passes.
+
 ## Frozen WW_S1_S1 science
 
 Target `[1,1]`: authoritative S1 reconstructed exactly once per replica; exactly one spin-2 field; identical Python field object passed on both coupling sides; equal-but-distinct field forbidden; NSIDE=4096; ell `0..12287`; 39 bands; public file-backed BPW; canonical `<f8 [39,12288]` `EE<-EE`; exact SHA + `numpy.array_equal`; no tolerance/rounding/smoothing/averaging/manual/effective-coordinate/fiducial rescue. Candidate creates no authority.
