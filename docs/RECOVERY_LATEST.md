@@ -66,6 +66,14 @@ All six raw job logs were inspected. Each emitted its prospectively frozen cell 
 
 The matrix verifies only future implementation semantics: exact six-task order and unordered `i<=j`, same-object `fb=fa` for auto-pairs, distinct second field for cross-pairs, frozen S1/S2/S3 source literals, full BPW shape `(4,39,4,12288)`, selected `wins[0,:,0,:] = EE<-EE`, and explicit guards against science/radial/covariance/nuisance/relation/G8 scoring. It creates **no** WW scientific authority and does not inspect or predict any Exp073FG numerical result. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FJ_SEMANTIC_MATRIX_PASS_FG_RUNNING.md`.
 
+## Exp073FK — WW_S1_S1 transformation contract CLOSED
+
+Preregistration `experiments/073fk_ww_s1_s1_same_field_transformation_contract_v0_1_prereg.md`, blob `f1deff3378f991a9a052b5314ccec1d19629f9b0`, creation commit `e913a49ac914eddf204e17ad9d76814d1fe542e3`. Hosted workflow was added at `df6b4bf33930c075e930b269eca6a5c858758237` and activated at head `114d99c61c359c93ad462862f33642f196105f6c`.
+
+Workflow/run **`34037855604`**, job **`101499105572`**, completed SUCCESS. Raw log contains exact token `PASS_EXP073FK_WW_S1_S1_SAME_FIELD_TRANSFORMATION_CONTRACT_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `ww_s1_s1_authority_created=false`, `self_hosted_science_started=false`.
+
+The support audit cross-checks Exp073FH, Exp073FJ, the generic Article-3 task runner and the current Exp073FG durable cross-pair source. It freezes the inseparable future transformation boundary: `[0,3]/S0->S3` -> `[1,1]/S1->S1`; two source reconstructions -> exactly one authoritative S1 reconstruction; distinct source identities -> one source identity; distinct-field handoff false -> same-field-object handoff true; cross field construction -> one spin-2 field object reused on both sides; dedicated future S1S1 task/token/checkpoint namespaces. It authorizes no heavy S1S1 run while Exp073FG owns the home runner and creates no scientific authority. Immutable note: `docs/recovery/RECOVERY_2026-09-06_EXP073FK_S1S1_TRANSFORMATION_CONTRACT_PASS_FG_RUNNING.md`.
+
 ## Frozen Article-3 angular manifest
 
 Exactly 14 unique tasks remain the production inventory: four Wm workspaces and ten unordered WW workspaces. Existing authority includes the admitted S0-row WW tasks through `WW_S0_S2`; `WW_S0_S3` is the active candidate frontier. The ordered 14-window join, radial multiplication, physical-support scoring, covariance/whitening, nuisance quotient/relation/null and G8 remain forbidden until their frozen prerequisites are satisfied.
