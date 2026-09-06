@@ -1,0 +1,34 @@
+name: Exp073EV full-resolution disk budget static v0.1
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073ev-fullres-disk-budget-static-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  budget:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Freeze identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073ev_ww_s0_s1_fullres_disk_budget_static_v0_1_prereg.md)" = '0dbffbfa5fbf4cc7e8baff8a5c8affae1f020f8c'
+          test "$(git rev-parse HEAD:ci/exp073ev_fullres_disk_budget_static_v0_1.py)" = 'e4535b156eec3728c93c934d626c8a0658349538'
+      - name: Verify staged resource budget
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          python "$GITHUB_WORKSPACE/ci/exp073ev_fullres_disk_budget_static_v0_1.py" | tee stdout.txt
+          grep -Fx 'PASS_EXP073EV_WW_S0_S1_FULLRES_DISK_BUDGET_STATIC_V0_1' stdout.txt
+      - name: Upload receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ev-fullres-disk-budget-static-v0-1-${{ github.sha }}
+          path: ${{ runner.temp }}/exp073ev_terminal_receipt.json
+          retention-days: 30
