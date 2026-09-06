@@ -3,79 +3,80 @@
 **Updated:** 2026-09-06
 **Scope:** DSIR only; RTK/RQIR excluded.
 
-Repository state, immutable recovery notes, validated GitHub Actions raw logs/artifacts and durable checkpoints outrank chat wording. Historical outcomes remain immutable. Never upgrade support evidence into science authority.
+Repository state, immutable recovery notes, validated GitHub Actions raw logs/artifacts and durable checkpoints outrank chat wording. Historical outcomes remain immutable. Never upgrade support evidence into science authority. Never mix DSIR with RTK or RQIR.
 
-## Readiness accounting
-Until a real Exp073EO admission exists, preserve: Article 1 strict ≈96%; Article 2 strict ≈94%; Article 3 strict scientific ≈60%; Article 3 method/code/provenance ≈86%; strict three-article mean ≈83.3%; overall DSIR ≈85%. Support-only PASS/FAIL is `+0/+0`.
+## Preserved science authority and frontier
+Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 exact scientific PASS remain preserved.
 
-## Preserved science authority and frozen frontier
-Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 exact science PASS remain preserved. Current target is `WW_S0_S0`.
+**WW_S0_S0 is now admitted scientific authority.** Exp073EO v0.2 run/job `34005373819 / 101411448176`, head `d848a081a4c2344c4e58af26360ddaaee8147ffd`, artifact `9980754356`, independently verified digest `sha256:0e1a4cff3b761fecc65d8e07df9e56f8109fd221fb4454746caa8c7d0f2fb4be`, raw token `PASS_EXP073EO_WW_S0_S0_FILEBACKED_PROVENANCE_ADMISSION_V0_2`, `classification=SCIENTIFIC_AUTHORITY_ADMITTED`, `science_gate_scored=true`, `ww_s0_s0_authority_created=true`.
+
+Current science target is **WW_S0_S1**.
 
 Frozen order:
 `Wm_S1 -> Wm_S2 -> Wm_S3 -> WW_S0_S0 -> WW_S0_S1 -> WW_S0_S2 -> WW_S0_S3 -> WW_S1_S1 -> WW_S1_S2 -> WW_S1_S3 -> WW_S2_S2 -> WW_S2_S3 -> WW_S3_S3`.
 
-Historical stock-heap Exp073DT full-resolution attempts remain infrastructure/resource outcomes, not science failures. Attempt 5 established the spin-2 unbinned MCM size exactly `49152 x 49152` float64 = `19,327,352,832` bytes = 18 GiB, unsafe for heap residence on the 6-GiB WSL guest. Never rerun the stock heap-backed full-resolution WW route on DSIR-HOME-PC.
+## Exp073EN evidence preserved
+Exp073EN full-resolution file-backed A/B run/job `33994398927 / 101382229273`, activation head `4d1cbd504067a64a94b038292793e5e8bffba911`, terminal artifact `9980311204`, independently verified ZIP/GitHub SHA256 `54db5c1c213a041616111071c23ce2710e88c0f085efc9e625dd51538e71dd49`, was a valid `SCIENTIFIC_CANDIDATE_PASS_PENDING_PROVENANCE_ADMISSION` for WW_S0_S0. Exact selected A/B `EE<-EE <f8 [39,12288]` SHA256 is `244f8f831ac7041af00f9cddca0ea93a04298fb0b1b029af5030376ce93da647`; byte equality and frozen `numpy.array_equal` both pass. Both replicas have the ordered six-stage chain `fresh_s0_mask_complete -> fresh_workspace_mcm_complete -> mcm_fits_verified -> full_window_complete -> selected_ee_complete -> replica_receipt_complete`. Source `de83e20a68f79ccf25b89b0d33eb4206e294c757`, contract `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`, NaMaster `24365fa59a38c15732f4f37e8b29265b75c442d5`, and exact file-backed MCM geometry `19,327,352,832` bytes / `49,152` rows remain frozen.
 
-## Exp073EN — sole authoritative WW_S0_S0 science process
-Workflow `Exp073EN WW_S0_S0 file-backed A/B science network-retry v0.2`:
-- run `33994398927`;
-- activation head `4d1cbd504067a64a94b038292793e5e8bffba911`;
-- hosted preflight job `101382210840` SUCCESS;
-- self-hosted science job `101382229273` **IN_PROGRESS** at latest reconciliation;
-- source authority `de83e20a68f79ccf25b89b0d33eb4206e294c757`;
-- contract fingerprint `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
-- R1 artifact `9720335366`, digest `sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd`;
-- exact NaMaster source `24365fa59a38c15732f4f37e8b29265b75c442d5`;
-- NSIDE=4096, ell `0..12287`, 39 bands, spin-2 auto `S0 -> S0`;
-- selected candidate `EE<-EE`, canonical `<f8 [39,12288]`;
-- each newly computed MCM must prove regular-file mmap exactly `19,327,352,832` bytes / `49,152` rows;
-- exact A/B equality only, no tolerance rescue.
+Exp073EO v0.1 historical failures remain `+0/+0`: `34005282438 / 101411204812` lacked NumPy before auditor execution; `34005304226 / 101411264696` then exposed only a JSON string-vs-int Exp073EM artifact-ID representation defect. The prospectively frozen EO v0.2 repair changed only that representation and retained all scientific/provenance/hash/checkpoint criteria.
 
-Expected candidate token: `PASS_EXP073EN_WW_S0_S0_FILEBACKED_AB_EXACT_REPEATABILITY_8CORE_V0_1`.
+## WW_S0_S1 resource authority boundary
+Exp073EL resource admission run `34005467421`, hosted job `101411738320`, home job `101411728725`, artifact `9980783193` passed token `PASS_EXP073EL_WW_S0_S1_FULLRES_RESOURCE_PATH_V0_2`, raw `classification=FULLRES_RESOURCE_PATH_READY`, accounting `+0/+0`, `science_gate_scored=false`, `ww_s0_s1_authority_created=false`.
 
-Partial numerical output from a live EN run is forbidden for adaptive decisions and has not been inspected. Durable stage must not be guessed from the GitHub step summary.
+**Authoritative Exp073EL artifact digest is `sha256:c720233664be2e8a7666db6f95def0a2f13eb674732add6852f0c09e916e5e46`.** Live GitHub metadata and an independent downloaded-ZIP SHA256 recomputation agree exactly. Earlier draft digest `f66da690...` was a provenance transcription error and is not authority. EL confirms DSIR-HOME-PC resource readiness: 8 CPU affinity, WSL configured/observed memory and swap floors, >=50 GiB WSL and Windows C: disk floors, and real mmap sanity. EL itself scores no science.
 
-**DSIR-HOME-PC remains reserved exclusively for run `33994398927`, job `101382229273`. Do not launch competing self-hosted DSIR work and do not use `wsl --shutdown` while active.**
+Qualified support chain EM/EK/EP/ER/EU/EV/EW/EX remains support-only `+0/+0`; Exp073ET remains immutable formal support FAIL `+0/+0`. Historical manual/saved-FITS reconstruction routes remain non-authoritative. Direct public `get_bandpower_windows()` after qualified file-backed construction/read is the allowed S0->S1 production path.
 
-## Exp073EO — frozen hosted-only authority admission
-Prereg `experiments/073eo_ww_s0_s0_filebacked_checkpoint_provenance_admission_v0_1_prereg.md`, blob `490e1f44a7d7bb9b42dc00a72e0b39961da1692a`; auditor `ci/exp073eo_ww_s0_s0_provenance_admission_v0_1.py`, blob `4403d3e140acd14f0b95a31a8b2851f3229c1da3`; real artifact consumer `ci/exp073eo_consume_real_en_artifact_v0_1.sh`, blob `704395173f10d69b4496e1422884fc71097c2919`.
+## Exp073EY — current authoritative WW_S0_S1 science process
+Scientific prereg: `experiments/073ey_ww_s0_s1_filebacked_full_resolution_ab_science_v0_1_prereg.md`, blob `5790f7502370abffc5c450278520cc73c1f901f8`.
 
-EO is `PREREGISTERED_NOT_ACTIVATED` and may run only after terminal EN evidence exists. It verifies run/head/workflow metadata, artifact digest and ZIP SHA256, source/contract identities, hosted/local Exp073EM qualification, full-resolution mmap proof, complete A/B six-stage checkpoint chain, replica/prune hash chains, selected payload hashes and exact A/B array equality. Provenance defects are `BLOCKED +0/+0`, never science FAIL. Auditor self-test `34000601753 / 101398655101` SUCCESS and static EN->EO interface test `34000744773 / 101399048496` SUCCESS.
+Frozen science:
+- ordered distinct source pair exactly `(S0,S1)`, never `(S1,S0)` and never a same-field shadow;
+- DES NSIDE=4096; ell `0..12287`; 39 bands;
+- distinct spin-2 `NmtField` objects and exact `compute_coupling_matrix(f0,f1,b)`;
+- public serialized-workspace `read_from(..., read_unbinned_MCM=True) -> get_bandpower_windows()` route;
+- file-backed proof via one regular `dsir-nmt-mcm-*` file exactly `19,327,352,832` bytes and its path present in `/proc/self/maps`;
+- full BPW `[4,39,4,12288]`; selected `EE<-EE = wins[0,:,0,:]`; canonical `<f8 [39,12288]`;
+- exact A/B SHA256 equality plus `numpy.array_equal`; finiteness; no tolerance/allclose/rounding/smoothing/averaging/effective-ell/fiducial rescue.
 
-Only `PASS_EXP073EO_WW_S0_S0_FILEBACKED_PROVENANCE_ADMISSION_V0_1` creates valid `WW_S0_S0` authority.
+Implementation/provenance bindings:
+- v0.1 driver blob `1db1eabbdba492c476cc61d3c4d71147aa688384`;
+- public-route v0.2 wrapper blob `066847006b2ed9d712d2c22d3576a0d8887fa7bf`;
+- home execution envelope blob `e48453e71970eecabdc6dec33facb26b77bb9e4e`;
+- implementation prereg blob `a2ea3a705a4cb6f32c8b5337ce522cb7b72b0737`;
+- prereg identity erratum blob `748b6c2ad0f2a1cb4508d2607e65a2ad88c636b9`;
+- Exp073EL digest-binding erratum blob `716e4c0e9054af79029e53923992776dbc6e3850`;
+- corrected science workflow blob `e6711cecea8e30122a1477215d68e8559ae9b832`.
 
-## Distinct-field S0->S1 support chain
-All entries are support-only `+0/+0` and create no WW authority.
+Two implementation defects were caught **before any EY numerical execution** and repaired prospectively: the historical reconstruction adapter was removed in favor of the qualified public route; then hidden `wsp.mcm` inspection was replaced by regular-file + `/proc/self/maps` proof. A prereg blob typo was separately corrected before data. None changed the frozen scientific criterion.
 
-- Exp073EM construction storage exact PASS: `33993395728 / 101379508508`, artifact `9977333691`, digest `sha256:0ece75e489b6f413d96e85a099e42db96b5d5acdc03c3ee6901273357762cda1`.
-- Exp073EK serialized distinct-field public-BPW repeatability PASS: `33988956806 / 101367596573`, artifact `9976033816`, digest `sha256:f39351cddec695559686126fc15e212556eea370fe3eeab73d5f20f80c288c06`.
-- Exp073EP file-backed cross/public-BPW composition PASS: `33994782890 / 101383307890`, artifact `9977735941`, digest `sha256:4007fa89e678f4585cd73641ff26054a9c939c3f0e679581202cdf2154a39ed5`.
-- Exp073ER file-backed FITS-read/public-BPW exact PASS: `33997539503 / 101390573286`, artifact `9978528214`, digest `sha256:1e0c3516de041e773eca030d9488f7af7d38455033ae5b97ba1151820eb22267`. V0.2 read patch blob `d534b698f9131688d263eedcef27260386c58641`; frozen serialized-public full BPW hash `bf656c5f0493dc44d6c42b31b804f04f6893b7fc4895e92b99cefc356b10b884`, selected EE `336a0b57fe734a2f17a4a0844db1a18fc43887abf7556fb63009ee4a3de5f607`.
-- Exp073ET immutable formal support FAIL: `34001003402 / 101399741708`, artifact `9979490098`, ZIP `90fd16a4f38628f2bfe39dca09ff4f43b86d2077f4ee5ef731f5cb8276fcaa50`; frozen cross-state pre/post-serialization exact comparison failed at the independently known `1.1102230246251565e-16` class, while every pre-serialization low-memory arithmetic comparison passed bit-for-bit. Do not reclassify ET.
-- Exp073EU corrected state-matched exact PASS: `34001139228 / 101400097453`, artifact `9979525491`, ZIP `5cd9ce3f668b135ee695d51b7dba3e80cfa332c925e71397b2a6e32041ff872c`; nine scored exact comparisons passed and reload hashes equal ER.
-- Exp073EV conservative full-resolution disk-budget PASS: `34001215421 / 101400305564`, artifact `9979535369`, ZIP `03fc1935292d17d30e236089a17e68e93cd209e3dbd96bb385b6d5bf03663247`; conservative peak `41,135,996,928` bytes, 50-GiB floor margin `12,551,094,272` bytes = `11.689117431640625 GiB`.
-- Exp073EW unified v0.2 construction+read exact PASS: `34001363206 / 101400704206`, activation head `46912fc16d2d54d908ed11e1ccdd37c39c003eb9`, artifact `9979599494`, ZIP `1f2fa10aaa271884773036ed5895a480190b37b803b5070227c736ea03962f73`; one v0.2 PyMaster build is exact for both construction and FITS-read matched states.
-- Exp073EX resource-checker static fail-closed PASS: prereg blob `7285edaccf2c3b6ea4826cb509107aa4431c827b`, auditor blob `d89ddf287104b04b73f5e0188185339175301c31`, target checker blob `f0a3a2e42326183944b838d42c5072c59e259b68`, activation head `baaf8347bace992f1a55a2d741f348556fccfd4a`, run/job `34002549484 / 101403893778`, raw token `PASS_EXP073EX_EXP073EL_V02_RESOURCE_CHECKER_STATIC_FAILCLOSED_AUDIT_V0_1`, classification `STATIC_RESOURCE_CHECKER_FAILCLOSED_EXACT`. No artifact by design; frozen identity checks plus raw job log are terminal evidence. This proves structural fail-closed integrity only, not current host readiness.
+Static qualification is exact and complete:
+- `34006046818 / 101413292411`: `PASS_EXP073EY_STATIC_FAILCLOSED_AUDIT_V0_1`;
+- `34006100427 / 101413444610`: `PASS_EXP073EY_STATIC_FAILCLOSED_AUDIT_V0_2`;
+- corrected-binding `34006195574 / 101413721477`: `PASS_EXP073EY_STATIC_FAILCLOSED_AUDIT_V0_3`.
 
-Detailed immutable notes include:
-- `docs/recovery/RECOVERY_2026-09-06_EXP073ET_FAIL_EU_EV_PASS_EL_V02_EN_RUNNING.md`;
-- `docs/recovery/RECOVERY_2026-09-06_EXP073EX_STATIC_AUDIT_PASS_EN_RUNNING.md`.
+First EY science activation run `34006121336` failed only in hosted preflight `101413506204` because it carried the stale wrong EL artifact digest; home job `101413524265` was skipped. This is immutable provenance/infrastructure `+0/+0`, not WW_S0_S1 science. The sole binding defect was corrected prospectively and statically re-audited before home execution.
 
-## Exp073EL v0.2 — prospective S0->S1 full-resolution resource gate
-Original EL v0.1 was never activated and became unsatisfiable after immutable ET-v0.1 FAIL. Superseding prospective v0.2: `experiments/073el_ww_s0_s1_full_resolution_resource_path_v0_2_prereg.md`, creation commit `dae08a9716b34f98c62083c171b7b7d55a960908`. Status `PREREGISTERED_NOT_ACTIVATED`, locked behind real EO PASS.
+### Current process ledger
+Corrected Exp073EY run **`34006214398`**, activation/head **`0476ce61a84a97392abb80afadad188a588bbe1f`**:
+- hosted authority preflight job `101413770925`: SUCCESS;
+- self-hosted home science job **`101413789646`: IN_PROGRESS** at latest reconciliation;
+- checkpoint A namespace `checkpoints/exp073ey-ww-s0-s1-a-v0-1`;
+- checkpoint B namespace `checkpoints/exp073ey-ww-s0-s1-b-v0-1`;
+- stage order `fresh_sources_complete -> fresh_workspace_mcm_complete -> mcm_fits_verified -> full_window_complete -> selected_ee_complete -> replica_receipt_complete`.
 
-Exact source reconstruction must reuse `ci/exp073aa_article3_des_angular_task_runner_v0_1.py`, blob `050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2`, sequentially `source_count_map(root,0)` then `source_count_map(root,1)`. Frozen low-memory route: S0 mask -> exact ALM spill/hash -> release; S1 mask -> spill/hash -> release; mmap ALMs -> ordered `healpy.alm2cl` -> release; exact PyMaster-2.7 `nmtlib.comp_coupling_matrix` arguments; unified v0.2 file-backed MCM construction; ordinary FITS serialization; fresh v0.2 file-backed public reload; public `get_bandpower_windows`; selected `EE<-EE <f8 [39,12288]`.
+**DSIR-HOME-PC is reserved exclusively for Exp073EY `34006214398 / 101413789646`. Never launch a competing self-hosted DSIR run.** Partial numerical output must not be inspected for adaptive decisions; current durable stage must not be guessed from a live job.
 
-Prepared checker `ci/exp073el_host_resource_admission_v0_2.sh`, blob `f0a3a2e42326183944b838d42c5072c59e259b68`, requires DSIR-HOME-PC/Linux/X64, exact 8-CPU affinity, `.wslconfig` >= memory=6GB/processors=8/swap=16GB plus observed guest floors, >=50 GiB free in WSL and Windows C:, no competing self-hosted DSIR run, and real regular-file mmap sanity. Exp073EX has statically verified those fail-closed invariants. The checker must not run while EN owns the home runner.
-
-Only future token `PASS_EXP073EL_WW_S0_S1_FULLRES_RESOURCE_PATH_V0_2` means resource readiness; it does not score `WW_S0_S1` science.
+Expected candidate token: `PASS_EXP073EY_WW_S0_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`. A workflow SUCCESS alone is insufficient. A valid exact A/B PASS is only a WW_S0_S1 candidate pending separately frozen provenance admission. A valid completed exact A/B mismatch is genuine WW_S0_S1 scientific FAIL. Infrastructure/resource/provenance/checkpoint failures remain `+0/+0` and require causal repair/resume from the last verified checkpoint without changing science.
 
 ## Frozen science/execution boundaries
 `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A invalid `<=0.05`; Layer-B invalid-row `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; no effective ell/z/k or fiducial-P shortcut; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging rescue.
 
 ## Exact next gates
-1. Do not duplicate or disturb Exp073EN `33994398927 / 101382229273`.
-2. The instant EN becomes terminal, stop support detours and consume its compact artifact. Workflow status alone is insufficient: verify artifact digest/ZIP, source+contract identities, local Exp073EM qualifier, full-resolution mmap proof, six-stage A/B provenance, selected A/B exact evidence and terminal token.
-3. If EN is a valid candidate PASS, activate hosted-only Exp073EO. Only real EO PASS creates `WW_S0_S0` authority and permits readiness increase.
-4. If EN ends with infrastructure/resource failure, preserve verified checkpoints and diagnose the first causal failure; do not weaken arithmetic or recompute completed expensive stages unnecessarily.
-5. Only after real EO PASS may Exp073EL v0.2 run on DSIR-HOME-PC. If EL resource PASS follows, freeze and dispatch a separate `WW_S0_S1` full-resolution science A/B run using the EM/EK/EP/ER/EU/EV/EW-qualified sequential unified-v0.2 route.
+1. Do not duplicate or disturb Exp073EY `34006214398 / 101413789646`.
+2. The instant EY becomes terminal, consume raw compact evidence in the same iteration: workflow/jobs, artifact digest plus independent ZIP SHA256, frozen source/contract/workflow/driver identities, both ordered six-stage checkpoint chains, distinct-field handoff proof, exact file-backed public-BPW proof, selected A/B SHA/array equality, finiteness and terminal token.
+3. On valid candidate PASS, prospectively freeze and run a hosted provenance-admission gate. Only that separate admission may create WW_S0_S1 authority; then advance to `WW_S0_S2`.
+4. On genuine completed exact A/B mismatch, record WW_S0_S1 scientific FAIL and continue to the next scientifically permitted branch without tuning the frozen gate.
+5. On infrastructure/resource/provenance/checkpoint failure, identify the first causal defect, preserve all verified complete checkpoint stages, repair minimally and resume; never recompute a verified expensive stage unnecessarily.
+
+Current immutable recovery note: `docs/recovery/RECOVERY_2026-09-06_EXP073EO_ADMITTED_EL_VERIFIED_EY_RUNNING.md`.
