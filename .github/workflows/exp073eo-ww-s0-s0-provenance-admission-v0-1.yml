@@ -1,0 +1,46 @@
+name: Exp073EO WW_S0_S0 provenance admission v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073eo-real-en-v0-1.txt'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  hosted-provenance-admission:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      EN_ARTIFACT_ID: '9980311204'
+      EN_ARTIFACT_DIGEST: 'sha256:54db5c1c213a041616111071c23ce2710e88c0f085efc9e625dd51538e71dd49'
+      EO_AUDITOR_BLOB: '4403d3e140acd14f0b95a31a8b2851f3229c1da3'
+      EO_PREREG_BLOB: '490e1f44a7d7bb9b42dc00a72e0b39961da1692a'
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bind frozen EO identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073eo_ww_s0_s0_filebacked_checkpoint_provenance_admission_v0_1_prereg.md)" = "$EO_PREREG_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073eo_ww_s0_s0_provenance_admission_v0_1.py)" = "$EO_AUDITOR_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073eo_consume_real_en_artifact_v0_1.sh)" = '704395173f10d69b4496e1422884fc71097c2919'
+      - name: Consume real Exp073EN artifact and audit authority admission
+        shell: bash
+        run: bash ci/exp073eo_consume_real_en_artifact_v0_1.sh
+      - name: Upload EO admission receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073eo-ww-s0-s0-provenance-admission-v0-1
+          path: |
+            ${{ runner.temp }}/exp073eo-real/eo_admission_receipt.json
+            ${{ runner.temp }}/exp073eo-real/eo_stdout.txt
+            ${{ runner.temp }}/exp073eo-real/en_run.json
+            ${{ runner.temp }}/exp073eo-real/en_artifact.json
+          if-no-files-found: warn
+          retention-days: 30
