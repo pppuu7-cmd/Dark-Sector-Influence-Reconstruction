@@ -1,0 +1,129 @@
+name: Exp073FM WW_S1_S1 audited home science v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073fm-ww-s1-s1-home-science-v0-1.txt'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-exp073fm-ww-s1-s1-home-science-v0-1
+  cancel-in-progress: false
+
+env:
+  FM_PREREG_BLOB: 'da64cbb6d0f7553387b5b635812cfa25ec7fb8fa'
+  FM_DRIVER_V01_BLOB: '477647c5164264665cc16e20d1577fb25cd245f4'
+  FM_DRIVER_V02_BLOB: '8e3edff39aae95d3abc3196806802c5f0ae59832'
+  FM_HOME_BLOB: '873232cc96f9a97afefeff1ff0a433fd5b49a5a2'
+  FM_PRUNER_BLOB: '8e04e99084aed582f9586e3f316c023650ce6c63'
+  FM_COMPARE_BLOB: '02d69d5d517c676b3ec0963380f93d13f2b9874e'
+  FA_HOME_BLOB: '309c464bbfbe4896bd560165985ee7f643d9ee22'
+  TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
+  PATCH_BLOB: 'd534b698f9131688d263eedcef27260386c58641'
+  EM_GENERATOR_BLOB: 'bd1795f2a2c2cf80341f212996eb8278e0be53d9'
+  EM_COMPARE_BLOB: 'f0de92f3f121592b6d139eb7d948426946d901d1'
+  FROZEN_SOURCE_HEAD: 'de83e20a68f79ccf25b89b0d33eb4206e294c757'
+  CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
+  R1_ARTIFACT_ID: '9720335366'
+  R1_DIGEST: 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd'
+  NAMASTER_HEAD: '24365fa59a38c15732f4f37e8b29265b75c442d5'
+  FN_RUN_ID: '34050154578'
+  FN_JOB_ID: '101532191756'
+  FQ_RUN_ID: '34050588344'
+  FQ_JOB_ID: '101533366352'
+
+jobs:
+  hosted-launch-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze code and predecessor authority
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073fm_ww_s1_s1_filebacked_full_resolution_ab_science_v0_1_prereg.md)" = "$FM_PREREG_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fm_ww_s1_s1_durable_ab_production_v0_1.py)" = "$FM_DRIVER_V01_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fm_ww_s1_s1_durable_ab_production_v0_2.py)" = "$FM_DRIVER_V02_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fm_home_filebacked_fullres_v0_1.sh)" = "$FM_HOME_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fm_verify_and_prune_replica_v0_1.py)" = "$FM_PRUNER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fm_compare_terminal_receipts_v0_1.py)" = "$FM_COMPARE_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fa_home_filebacked_fullres_v0_1.sh)" = "$FA_HOME_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073aa_article3_des_angular_task_runner_v0_1.py)" = "$TASKRUNNER_BLOB"
+          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)" = "$PATCH_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073em_generate_namaster27_storage_reference_v0_1.py)" = "$EM_GENERATOR_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073em_compare_namaster27_storage_exact_v0_1.py)" = "$EM_COMPARE_BLOB"
+          gh api --allow-escape-sequences repos/${GITHUB_REPOSITORY}/actions/jobs/${FN_JOB_ID}/logs > fn.log
+          gh api --allow-escape-sequences repos/${GITHUB_REPOSITORY}/actions/jobs/${FQ_JOB_ID}/logs > fq.log
+          grep -aF 'PASS_EXP073FN_WW_S0_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1' fn.log >/dev/null
+          grep -aF 'classification=SCIENTIFIC_AUTHORITY_ADMITTED' fn.log >/dev/null
+          grep -aF 'PASS_EXP073FQ_WW_S1_S1_HOME_ENVELOPE_STATIC_AUDIT_V0_1' fq.log >/dev/null
+          grep -aF 'classification=SUPPORT_PLUS_0_PLUS_0' fq.log >/dev/null
+          grep -F "1:{'selected':7_851_711" ci/exp073aa_article3_des_angular_task_runner_v0_1.py >/dev/null
+          grep -F "'WW_S1_S1'" ci/exp073aa_article3_des_angular_task_runner_v0_1.py >/dev/null
+          python3 -m py_compile ci/exp073fm_ww_s1_s1_durable_ab_production_v0_1.py ci/exp073fm_ww_s1_s1_durable_ab_production_v0_2.py ci/exp073fm_verify_and_prune_replica_v0_1.py ci/exp073fm_compare_terminal_receipts_v0_1.py
+          bash -n ci/exp073fm_home_filebacked_fullres_v0_1.sh
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fm_ww_s1_s1_durable_ab_production_v0_1.py ci/exp073fm_ww_s1_s1_durable_ab_production_v0_2.py ci/exp073fm_verify_and_prune_replica_v0_1.py ci/exp073fm_compare_terminal_receipts_v0_1.py
+          echo PASS_EXP073FM_HOSTED_LAUNCH_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+
+  home-science:
+    needs: [hosted-launch-audit]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 720
+    env:
+      OMP_NUM_THREADS: '8'
+      OMP_DYNAMIC: 'FALSE'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+      DRIVER_V01_BLOB: '477647c5164264665cc16e20d1577fb25cd245f4'
+      DRIVER_V02_BLOB: '8e3edff39aae95d3abc3196806802c5f0ae59832'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run frozen WW_S1_S1 A/B gate with durable checkpoints
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash ci/exp073fm_home_filebacked_fullres_v0_1.sh
+      - name: Collect compact terminal or partial evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$HOME/.cache/dsir/exp073fm-ww-s1-s1-filebacked-ab-v0-1"
+          OUT="$RUNNER_TEMP/exp073fm-artifact"
+          rm -rf "$OUT"; mkdir -p "$OUT"
+          ROOT="$ROOT" OUT="$OUT" python3 - <<'PY'
+          import os,shutil
+          from pathlib import Path
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          if root.exists():
+              for p in root.rglob('*.json'):
+                  try:
+                      q=out/p.relative_to(root); q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+                  except OSError: pass
+              for rep in ('A','B'):
+                  p=root/'checkpoints'/rep/'exact_route'/'selected_ee.bin'
+                  if p.exists():
+                      q=out/'checkpoints'/rep/'exact_route'/'selected_ee.bin'; q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+              for n in ('A_driver.log','B_driver.log','A_prune_verify.log','B_prune_verify.log','ab_compare_stdout.txt','resource_telemetry.log','terminal_receipt.json'):
+                  p=root/n
+                  if p.exists(): shutil.copy2(p,out/n)
+          PY
+      - name: Upload Exp073FM evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073fm-ww-s1-s1-filebacked-ab-v0-1
+          path: ${{ runner.temp }}/exp073fm-artifact
+          if-no-files-found: warn
+          retention-days: 30
