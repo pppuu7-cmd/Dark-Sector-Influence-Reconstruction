@@ -1,0 +1,29 @@
+name: Exp073GF DSIR-4 LambdaCDM GR mapping static audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'automation/activate_exp073gf_v0_1.txt'
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen LambdaCDM GR mapping
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:data/dsir4/model_mapping_lcdm_gr_baseline_v0_1.json)" = '9d438b385db5bc2cd07cfaa3c9088f5baa79dd6b'
+          test "$(git rev-parse HEAD:ci/validate_dsir4_lcdm_gr_mapping_v0_1.py)" = 'bcd081c1d8cde8dd89ff545ca20504dfc8a9aef5'
+          test "$(git rev-parse HEAD:docs/dsir4/DSIR4_MODEL_MAPPING_ARTIFACT_CONTRACT_V0_1.md)" = '03fd11d8536b9743eb82f92f9a0d5386444079ed'
+          python3 -m py_compile ci/validate_dsir4_lcdm_gr_mapping_v0_1.py
+          python3 ci/validate_dsir4_lcdm_gr_mapping_v0_1.py data/dsir4/model_mapping_lcdm_gr_baseline_v0_1.json | tee validator.log
+          grep -Fx 'PASS_DSIR4_LCDM_GR_MAPPING_VALIDATOR_V0_1' validator.log >/dev/null
+          grep -Fx 'classification=SUPPORT_PLUS_0_PLUS_0' validator.log >/dev/null
+          grep -Fx 'scientific_model_authority_created=false' validator.log >/dev/null
+          echo PASS_EXP073GF_DSIR4_LCDM_GR_MAPPING_STATIC_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo self_hosted_science_started=false
+          echo scientific_model_authority_created=false
