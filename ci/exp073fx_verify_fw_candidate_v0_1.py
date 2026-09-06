@@ -5,8 +5,6 @@ from pathlib import Path
 STAGES=['fresh_sources_complete','fresh_workspace_mcm_complete','mcm_fits_verified','full_window_complete','selected_ee_complete','replica_receipt_complete']
 PASS='PASS_EXP073FW_WW_S2_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'
 SOURCE_HEAD='de83e20a68f79ccf25b89b0d33eb4206e294c757'
-CONTRACT='b7845df5ce4bcbd730461476b7ff0831512003ceb5b3558436005c9876bd251'
-# Correct frozen contract literal is assigned separately to make accidental shortening fail closed.
 CONTRACT='b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
 
 def sha(p:Path):
