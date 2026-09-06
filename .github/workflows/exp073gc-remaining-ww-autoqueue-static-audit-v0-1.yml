@@ -1,0 +1,106 @@
+name: Exp073GC remaining WW autonomous heavy queue static audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/exp073gc-remaining-ww-autoqueue-static-audit-v0-1.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit complete remaining heavy queue through S3S3
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073gc_remaining_ww_autoqueue_static_audit_v0_1_prereg.md)" = '9c890d179141f2c210b5d1dc76f426c8464d6b31'
+          # Frozen workflows.
+          test "$(git rev-parse HEAD:.github/workflows/exp073fu-ww-s1-s3-home-science-v0-1.yml)" = '254a5826c34f34771dd36fe80b20b5a0a194fdb1'
+          test "$(git rev-parse HEAD:.github/workflows/exp073fw-ww-s2-s2-home-science-v0-1.yml)" = 'db53deb69ad59c8c0f74c26394da8b32a478bc88'
+          test "$(git rev-parse HEAD:.github/workflows/exp073fy-ww-s2-s3-home-science-v0-1.yml)" = '6830de6b9773f1f9e13ebf771166cb9f58f61c22'
+          test "$(git rev-parse HEAD:.github/workflows/exp073ga-ww-s3-s3-home-science-v0-1.yml)" = 'ed19c5fbfa2198fce22f1495d76c1c5046b17f49'
+          # Frozen S2S2 stack.
+          test "$(git rev-parse HEAD:experiments/073fw_ww_s2_s2_filebacked_full_resolution_ab_science_v0_1_prereg.md)" = '10ffd2b4d3c709fa79fd64222cc132cccd13440f'
+          test "$(git rev-parse HEAD:experiments/073fx_ww_s2_s2_provenance_admission_v0_1_prereg.md)" = '9f4722ebbcdb3e36e753b35d1b5765c8974f48a3'
+          test "$(git rev-parse HEAD:ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py)" = 'e396b69639b1db73044d60c0afc37f2f74e643ed'
+          test "$(git rev-parse HEAD:ci/exp073fw_ww_s2_s2_durable_ab_production_v0_2.py)" = 'f63ffe431a034ea4e842970210365a156fb35089'
+          test "$(git rev-parse HEAD:ci/exp073fw_verify_and_prune_replica_v0_1.py)" = '1dfc57bddd1db6c8aeaadd0bc1e73b130e611bcb'
+          test "$(git rev-parse HEAD:ci/exp073fw_compare_terminal_receipts_v0_1.py)" = '5b6ab180bf13d1fe8ac4557310a19d4a4e9668f6'
+          test "$(git rev-parse HEAD:ci/exp073fw_home_filebacked_fullres_v0_1.sh)" = '7e6399a3d829c9a4068908c583957fbe7e2a9c50'
+          test "$(git rev-parse HEAD:ci/exp073fx_verify_fw_candidate_v0_1.py)" = 'eb907944eac68b9fd13c405399cf238a8cb5bc96'
+          # Frozen S2S3 stack.
+          test "$(git rev-parse HEAD:experiments/073fy_ww_s2_s3_filebacked_full_resolution_ab_science_v0_1_prereg.md)" = '8aacb4e7f6615fe7e30a88ae02eb02ee5f4dba24'
+          test "$(git rev-parse HEAD:experiments/073fz_ww_s2_s3_provenance_admission_v0_1_prereg.md)" = '3bbfae2fb5816b6933aeafdb74b8f6b4bce25c2f'
+          test "$(git rev-parse HEAD:ci/exp073fy_ww_s2_s3_durable_ab_production_v0_1.py)" = '53c3a12fe01ce2cccf404c5938d622363d4c7928'
+          test "$(git rev-parse HEAD:ci/exp073fy_ww_s2_s3_durable_ab_production_v0_2.py)" = '78ecb51a0d249c6dc25b2b8925d1075efbb5aefc'
+          test "$(git rev-parse HEAD:ci/exp073fy_verify_and_prune_replica_v0_1.py)" = '62026ccea2fb983340caaf3c98256b1efc371d04'
+          test "$(git rev-parse HEAD:ci/exp073fy_compare_terminal_receipts_v0_1.py)" = '4e28dbbbc08d38c292cfb437477c9d7e55624064'
+          test "$(git rev-parse HEAD:ci/exp073fy_home_filebacked_fullres_v0_1.sh)" = 'c6a88414eac03994e14f052bba28f921936bc628'
+          test "$(git rev-parse HEAD:ci/exp073fz_verify_fy_candidate_v0_1.py)" = 'c3f967c8fc9efed017bb6d5794d53433afefd4ac'
+          # Frozen S3S3 stack.
+          test "$(git rev-parse HEAD:experiments/073ga_ww_s3_s3_filebacked_full_resolution_ab_science_v0_1_prereg.md)" = 'd2365e70d65b51ccca6ddf13cb788ebf60fca0ec'
+          test "$(git rev-parse HEAD:experiments/073gb_ww_s3_s3_provenance_admission_v0_1_prereg.md)" = '8751e843f9a6f91a4b2b22c0ff81f930e0dbbfc8'
+          test "$(git rev-parse HEAD:ci/exp073ga_ww_s3_s3_durable_ab_production_v0_1.py)" = 'b839681a5a86640513c1600a6a130d75345cb127'
+          test "$(git rev-parse HEAD:ci/exp073ga_ww_s3_s3_durable_ab_production_v0_2.py)" = 'facc3e2bd6c36ae160d35009b5df4494809d1322'
+          test "$(git rev-parse HEAD:ci/exp073ga_verify_and_prune_replica_v0_1.py)" = '24ee2408b4b66a17001fb734e9e46d008179c310'
+          test "$(git rev-parse HEAD:ci/exp073ga_compare_terminal_receipts_v0_1.py)" = '263c69075f8a9c5ad3644224485f20fbb3961406'
+          test "$(git rev-parse HEAD:ci/exp073ga_home_filebacked_fullres_v0_1.sh)" = '775348eb79f6f15d5c11a15fb6866bb1fa5f6774'
+          test "$(git rev-parse HEAD:ci/exp073gb_verify_ga_candidate_v0_1.py)" = 'ee065b7d844090ae16386cc6944db23846d663ec'
+
+          python3 -m py_compile \
+            ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py ci/exp073fw_ww_s2_s2_durable_ab_production_v0_2.py ci/exp073fw_verify_and_prune_replica_v0_1.py ci/exp073fw_compare_terminal_receipts_v0_1.py ci/exp073fx_verify_fw_candidate_v0_1.py \
+            ci/exp073fy_ww_s2_s3_durable_ab_production_v0_1.py ci/exp073fy_ww_s2_s3_durable_ab_production_v0_2.py ci/exp073fy_verify_and_prune_replica_v0_1.py ci/exp073fy_compare_terminal_receipts_v0_1.py ci/exp073fz_verify_fy_candidate_v0_1.py \
+            ci/exp073ga_ww_s3_s3_durable_ab_production_v0_1.py ci/exp073ga_ww_s3_s3_durable_ab_production_v0_2.py ci/exp073ga_verify_and_prune_replica_v0_1.py ci/exp073ga_compare_terminal_receipts_v0_1.py ci/exp073gb_verify_ga_candidate_v0_1.py
+          bash -n ci/exp073fw_home_filebacked_fullres_v0_1.sh ci/exp073fy_home_filebacked_fullres_v0_1.sh ci/exp073ga_home_filebacked_fullres_v0_1.sh
+
+          # Independent semantic reconstruction from already-frozen bases; compile but do not execute science.
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          fm=Path('ci/exp073fm_ww_s1_s1_durable_ab_production_v0_1.py').read_text()
+          def auto(idx,exp):
+              s=fm
+              for old,new in [('exp073fm',f'exp073{exp}'),('EXP073FM',f'EXP073{exp.upper()}'),('ww_s1_s1',f'ww_s{idx}_s{idx}'),('ww-s1-s1',f'ww-s{idx}-s{idx}'),('WW_S1_S1',f'WW_S{idx}_S{idx}'),('S1S1',f'S{idx}S{idx}'),('S1->S1',f'S{idx}->S{idx}'),('[1,1]',f'[{idx},{idx}]'),('s1_count_map',f's{idx}_count_map'),('source_count_map(r1_root,1)',f'source_count_map(r1_root,{idx})'),('load_s1s1',f'load_s{idx}s{idx}'),('s1_authority',f's{idx}_authority'),('S1 source',f'S{idx} source')]:
+                  assert old in s,old; s=s.replace(old,new)
+              for old,new in [('p1',f'p{idx}'),('s1',f's{idx}'),('m1',f'm{idx}'),('h1',f'h{idx}'),('f1',f'f{idx}')]: s=re.sub(rf'\b{old}\b',new,s)
+              s=s.replace("'s1':1",f"'s{idx}':1")
+              for t in (f"source_count_map(r1_root,{idx})",f"'ordered_source_indices':[{idx},{idx}]",f"'source_pair':'S{idx}->S{idx}'",f"compute_coupling_matrix(f{idx},f{idx},b)","field_construction_count':1","same_field_object_handoff':True"): assert t in s,t
+              compile(s,f'auto_s{idx}s{idx}.py','exec')
+          auto(2,'fw'); auto(3,'ga')
+
+          fs=Path('ci/exp073fs_ww_s1_s2_durable_ab_production_v0_1.py').read_text(); s=fs
+          protected=[('source_count_map(r1_root,1)','__LC__'),('source_count_map(r1_root,2)','__RC__'),('s1_count_map','__LK__'),('s2_count_map','__RK__'),('s1_authority','__LA__'),('s2_authority','__RA__'),("'s1':1",'__LR__'),("'s2':1",'__RR__')]
+          for old,new in protected: assert old in s,old; s=s.replace(old,new)
+          for old,new in [('exp073fs','exp073fy'),('EXP073FS','EXP073FY'),('ww_s1_s2','ww_s2_s3'),('ww-s1-s2','ww-s2-s3'),('WW_S1_S2','WW_S2_S3'),('S1S2','S2S3'),('S1->S2','S2->S3'),('[1,2]','[2,3]'),('load_s1s2','load_s2s3')]: assert old in s,old; s=s.replace(old,new)
+          for old,new in [('p1','__PL__'),('p2','__PR__'),('s1','__SL__'),('s2','__SR__'),('m1','__ML__'),('m2','__MR__'),('h1','__HL__'),('h2','__HR__'),('f1','__FL__'),('f2','__FR__')]: s=re.sub(rf'\b{old}\b',new,s)
+          for old,new in {'__LC__':'source_count_map(r1_root,2)','__RC__':'source_count_map(r1_root,3)','__LK__':'s2_count_map','__RK__':'s3_count_map','__LA__':'s2_authority','__RA__':'s3_authority','__LR__':"'s2':1",'__RR__':"'s3':1",'__PL__':'p2','__PR__':'p3','__SL__':'s2','__SR__':'s3','__ML__':'m2','__MR__':'m3','__HL__':'h2','__HR__':'h3','__FL__':'f2','__FR__':'f3'}.items(): s=s.replace(old,new)
+          for t in ("source_count_map(r1_root,2)","source_count_map(r1_root,3)","'ordered_source_indices':[2,3]","'source_pair':'S2->S3'","compute_coupling_matrix(f2,f3,b)","field_construction_count':2","same_field_object_handoff':False","reconstruction_counts':{'s2':1,'s3':1}"): assert t in s,t
+          compile(s,'cross_s2s3.py','exec')
+          PY
+
+          for f in ci/exp073fw_ww_s2_s2_durable_ab_production_v0_2.py ci/exp073fy_ww_s2_s3_durable_ab_production_v0_2.py ci/exp073ga_ww_s3_s3_durable_ab_production_v0_2.py; do grep -F 'EXPECTED_MCM_BYTES=19327352832' "$f" >/dev/null; done
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fw_*.py ci/exp073fx_*.py ci/exp073fy_*.py ci/exp073fz_*.py ci/exp073ga_*.py ci/exp073gb_*.py
+
+          # Ordered automatic handoff chain and one heavy home job per workflow.
+          grep -F "NEXT_WORKFLOW: 'exp073fw-ww-s2-s2-home-science-v0-1.yml'" .github/workflows/exp073fu-ww-s1-s3-home-science-v0-1.yml >/dev/null
+          grep -F "NEXT_WORKFLOW: 'exp073fy-ww-s2-s3-home-science-v0-1.yml'" .github/workflows/exp073fw-ww-s2-s2-home-science-v0-1.yml >/dev/null
+          grep -F "NEXT_WORKFLOW: 'exp073ga-ww-s3-s3-home-science-v0-1.yml'" .github/workflows/exp073fy-ww-s2-s3-home-science-v0-1.yml >/dev/null
+          ! grep -F 'NEXT_WORKFLOW:' .github/workflows/exp073ga-ww-s3-s3-home-science-v0-1.yml
+          ! grep -F '/dispatches' .github/workflows/exp073ga-ww-s3-s3-home-science-v0-1.yml
+          for w in .github/workflows/exp073fu-ww-s1-s3-home-science-v0-1.yml .github/workflows/exp073fw-ww-s2-s2-home-science-v0-1.yml .github/workflows/exp073fy-ww-s2-s3-home-science-v0-1.yml .github/workflows/exp073ga-ww-s3-s3-home-science-v0-1.yml; do test "$(grep -Fc 'runs-on: [self-hosted, Linux, X64]' "$w")" = 1; done
+          grep -F 'PASS_EXP073FV_WW_S1_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1' .github/workflows/exp073fw-ww-s2-s2-home-science-v0-1.yml >/dev/null
+          grep -F 'PASS_EXP073FX_WW_S2_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1' .github/workflows/exp073fy-ww-s2-s3-home-science-v0-1.yml >/dev/null
+          grep -F 'PASS_EXP073FZ_WW_S2_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1' .github/workflows/exp073ga-ww-s3-s3-home-science-v0-1.yml >/dev/null
+          grep -F 'DOWNSTREAM_14_WINDOW_JOIN_NOT_STARTED=true' .github/workflows/exp073ga-ww-s3-s3-home-science-v0-1.yml >/dev/null
+          ! grep -Eqi 'physical-support|covariance-whitening|nuisance quotient|relation/null|G8 scoring' .github/workflows/exp073f[uwy]-ww-*-home-science-v0-1.yml .github/workflows/exp073ga-ww-s3-s3-home-science-v0-1.yml
+
+          echo PASS_EXP073GC_REMAINING_WW_AUTOQUEUE_STATIC_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo self_hosted_science_started=false
+          echo queue_terminal=WW_S3_S3
