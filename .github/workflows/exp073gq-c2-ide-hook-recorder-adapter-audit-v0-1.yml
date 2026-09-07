@@ -1,0 +1,68 @@
+name: Exp073GQ C2 IDE hook recorder adapter audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073gq-c2-ide-hook-recorder-adapter-audit-v0-1.yml'
+      - 'docs/dsir4/prereg/EXP073GQ_C2_IDE_HOOK_RECORDER_ADAPTER_AUDIT_V0_1.md'
+      - 'scripts/dsir4/fixtures/dsir_c2_recorder_v0_1.h'
+      - 'scripts/dsir4/fixtures/dsir_c2_hook_recorder_adapter_v0_1.h'
+
+jobs:
+  hosted-adapter-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and execute frozen adapter fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/test_exp073gq.c <<'EOF'
+          #include <assert.h>
+          #include <math.h>
+          #include <stdio.h>
+          #include <string.h>
+          #include "scripts/dsir4/fixtures/dsir_c2_hook_recorder_adapter_v0_1.h"
+          int main(void) {
+            FILE *fp = tmpfile(); assert(fp != NULL);
+            const double in[8] = {1.25,2.5,3.75,4.5,5.25,6.5,7.75,8.5};
+            assert(dsir_c2_pretransform_observe_to_file_v0_1(
+              fp,in[0],in[1],in[2],in[3],in[4],in[5],in[6],in[7]) == 1);
+            assert(fflush(fp) == 0); assert(fseek(fp,0,SEEK_SET) == 0);
+            double out[8] = {0}; assert(fread(out,sizeof(double),8,fp) == 8);
+            assert(memcmp(in,out,sizeof(in)) == 0);
+            assert(fseek(fp,0,SEEK_END) == 0); long n = ftell(fp); assert(n == 64);
+            assert(dsir_c2_pretransform_observe_to_file_v0_1(
+              fp,in[0],in[1],in[2],in[3],in[4],NAN,in[6],in[7]) == 0);
+            assert(fseek(fp,0,SEEK_END) == 0); assert(ftell(fp) == n);
+            fclose(fp);
+            return 0;
+          }
+          EOF
+          cc -std=c11 -Wall -Wextra -Werror -pedantic \
+             -Iscripts/dsir4/fixtures -I. /tmp/test_exp073gq.c -lm -o /tmp/test_exp073gq
+          /tmp/test_exp073gq
+      - name: Static no-solver-state and exact-transfer audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          f=scripts/dsir4/fixtures/dsir_c2_hook_recorder_adapter_v0_1.h
+          ! grep -Eq 'pba->|ppt->|ppw->|pv->|pvecback\[|delta_m[[:space:]]*[+*/-]|theta_m[[:space:]]*[+*/-]' "$f"
+          grep -Fq 'tau, k, a, H, delta_m, theta_m, rho_idm_iv, rho_iv' "$f"
+          grep -Fq 'dsir_c2_record_write_v0_1(fp, &r)' "$f"
+      - name: Classify hosted support gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'adapter_transfer_exact=true'
+          echo 'record_bytes=64'
+          echo 'nonfinite_zero_append=true'
+          echo 'solver_state_pointer_accepted=false'
+          echo 'cosmological_run_started=false'
+          echo 'self_hosted_science_started=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073GQ_C2_IDE_HOOK_RECORDER_ADAPTER_AUDIT_V0_1'
