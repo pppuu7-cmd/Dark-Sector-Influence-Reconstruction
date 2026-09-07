@@ -1,0 +1,48 @@
+name: Exp073GV C2 IDE record packet admission static audit v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073gv-c2-ide-record-packet-admission-static-audit-v0-1.yml'
+      - 'scripts/dsir4/fixtures/dsir_c2_record_packet_admission_v0_1.py'
+      - 'docs/dsir4/prereg/EXP073GV_C2_IDE_RECORD_PACKET_ADMISSION_STATIC_AUDIT_V0_1.md'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen packet validator
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import copy, importlib.util
+          from pathlib import Path
+          p = Path('scripts/dsir4/fixtures/dsir_c2_record_packet_admission_v0_1.py')
+          spec = importlib.util.spec_from_file_location('gv', p)
+          m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          packet, record = m.synthetic_packet(0)
+          assert m.validate(packet, record) is True
+          tests = []
+          r = bytearray(record); r[0] ^= 1; tests.append((packet, bytes(r)))
+          tests.append((packet, record[:-1])); tests.append((packet, record + b'\x00'))
+          q = copy.deepcopy(packet); q['ordinal'] = 1; tests.append((q, record))
+          q = copy.deepcopy(packet); q['z'] = 0.51; tests.append((q, record))
+          q = copy.deepcopy(packet); q['solver_head'] = '0'*40; tests.append((q, record))
+          q = copy.deepcopy(packet); q['record_sha256'] = '0'*64; tests.append((q, record))
+          for q, r in tests:
+              try: m.validate(q, r)
+              except RuntimeError: pass
+              else: raise SystemExit('fail-open mutation')
+          print('synthetic_test_vector_only=true')
+          print('scientific_record_admitted=false')
+          print('cosmological_run_started=false')
+          print('self_hosted_science_started=false')
+          print('prediction_ready=false')
+          print('scientific_model_authority_created=false')
+          print('G_DOMAIN_MAPPING=NOT_YET_TESTABLE')
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('PASS_EXP073GV_C2_IDE_RECORD_PACKET_ADMISSION_STATIC_AUDIT_V0_1')
+          PY
