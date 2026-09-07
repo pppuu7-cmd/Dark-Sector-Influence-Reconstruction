@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Generate and audit the prospective Exp073GM C2 observation-only hook.
 
-This script is intentionally fail-closed.  It only accepts the pinned class_iv
-perturbations.c blob and inserts one diagnostic block immediately after the
-existing perturb_total_stress_energy() call inside perturb_einstein().
+This script is intentionally fail-closed. It only accepts the pinned class_iv
+perturbations.c source shape and inserts one diagnostic block immediately after
+the existing perturb_total_stress_energy() call inside perturb_einstein().
 It does not alter equations, state, tolerances, species sums, or gate logic.
 """
 
@@ -12,10 +12,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 from pathlib import Path
-import subprocess
 import sys
 
-PINNED_SOURCE_SHA256 = ""  # populated from exact source at runtime only for reporting
 PINNED_GIT_COMMIT = "ac627d54e9ce196a08878d1ba33999819925d19c"
 BEGIN = "/* DSIR_EXP073GM_DIAGNOSTIC_ONLY_BEGIN */"
 END = "/* DSIR_EXP073GM_DIAGNOSTIC_ONLY_END */"
@@ -54,7 +52,7 @@ FORBIDDEN_IN_BLOCK = (
     "thermodynamics_at_z(",
     "ppw->delta_m =",
     "ppw->theta_m =",
-    "ppw->pvecback[" + "pba->index_bg_a] =",
+    "ppw->pvecback[pba->index_bg_a] =",
     "ppw->pvecmetric[",
     "y[",
     "ppr->",
@@ -69,7 +67,6 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("source", type=Path)
     ap.add_argument("--apply", action="store_true")
-    ap.add_argument("--expect-git-commit", default=PINNED_GIT_COMMIT)
     args = ap.parse_args()
 
     source = args.source
@@ -88,13 +85,13 @@ def main() -> int:
     if patched.count(BEGIN) != 1 or patched.count(END) != 1:
         raise SystemExit("FAIL: diagnostic markers not unique after patch construction")
 
-    # Structural proof: removing the inserted block must reproduce the source byte-for-byte.
-    start = patched.index("\n#ifdef DSIR_EXP073GM_DIAGNOSTICS", patched.index(ANCHOR) + len(ANCHOR))
-    end_marker = "\n#endif\n"
-    end = patched.index(end_marker, start) + len(end_marker)
-    restored = patched[:start] + patched[end:]
+    # Structural proof: remove the exact bytes that were inserted. This avoids
+    # newline-normalisation ambiguity and must recover the source byte-for-byte.
+    if patched.count(BLOCK) != 1:
+        raise SystemExit(f"FAIL: exact inserted block count is {patched.count(BLOCK)}, expected 1")
+    restored = patched.replace(BLOCK, "", 1)
     if restored != text:
-        raise SystemExit("FAIL: patched source is not source-equivalent after removing diagnostic block")
+        raise SystemExit("FAIL: patched source is not source-equivalent after removing exact diagnostic block")
 
     after = sha256_text(patched)
     print(f"EXP073GM_SOURCE_SHA256_BEFORE={before}")
