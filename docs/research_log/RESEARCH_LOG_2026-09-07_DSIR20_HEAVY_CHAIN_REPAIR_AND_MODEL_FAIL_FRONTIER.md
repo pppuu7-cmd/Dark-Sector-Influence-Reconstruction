@@ -1,8 +1,8 @@
-# DSIR20 research log — heavy-chain repair and existing-model FAIL frontier
+# DSIR research log — heavy-chain repair and existing-model FAIL frontier
 
 Date: 2026-09-07
 Scope: DSIR only
-Status: **INFRASTRUCTURE REPAIRED; SCIENTIFIC FAIL FRONTIER AUDITED; NO MODEL FAIL DECLARED**
+Status: **INFRASTRUCTURE REPAIRED; SCIENTIFIC FAIL FRONTIER AUDITED; C2 SOURCE MAPPING ADVANCED; NO MODEL FAIL DECLARED**
 
 ## 1. Heavy-chain incident
 
@@ -48,11 +48,11 @@ No competing/duplicate home-science job was started. No partial numerical checkp
 
 ## 3. Gate-1 bookkeeping correction discovered during the audit
 
-The same audit found that the earlier DSIR20 note had incorrectly promoted legacy theory-response evidence for IDE, GDM, and designer-f(R) to DSIR-4 `G_DOMAIN_MAPPING=PASS`.
+An earlier same-day note had incorrectly promoted legacy theory-response evidence for IDE, GDM, and designer-f(R) to DSIR-4 `G_DOMAIN_MAPPING=PASS`.
 
-The frozen DSIR-4 pilot and model-mapping contract require dedicated six-component residual mapping/prediction artifacts. At this date `docs/dsir4/mappings/` contains only the C0/C1 analytic mapping artifact.
+The frozen DSIR-4 pilot and model-mapping contract require dedicated six-component residual mapping/prediction artifacts. At the time of that correction `docs/dsir4/mappings/` contained only the C0/C1 analytic mapping artifact.
 
-Therefore the same-day Gate-1 note was corrected in commit
+Therefore the Gate-1 note was corrected in commit
 
 `1e6c14903a7334d913283caecee9955e11e942be`.
 
@@ -60,9 +60,9 @@ Correct current Gate-1 states:
 
 - C0 LambdaCDM: `PASS` (already mapped/admitted);
 - C1 smooth-w control: `PASS` (already mapped/admitted);
-- C2 IDE: `NOT_YET_TESTABLE` (dedicated DSIR-4 mapping artifact missing);
-- C3 GDM: `NOT_YET_TESTABLE` (dedicated DSIR-4 mapping artifact missing);
-- C5 designer-f(R): `NOT_YET_TESTABLE` (dedicated DSIR-4 mapping artifact missing).
+- C2 IDE: `NOT_YET_TESTABLE` pending dedicated DSIR-4 admission authority;
+- C3 GDM: `NOT_YET_TESTABLE`;
+- C5 designer-f(R): `NOT_YET_TESTABLE`.
 
 The old Exp030/031 hard results remain valid legacy theory evidence. Missing DSIR-4 mapping authority is not evidence against any model.
 
@@ -161,22 +161,56 @@ Legacy G8 discipline remains scientifically important: a relation discovered/cal
 
 Even the LambdaCDM reference and smooth-w control receive no automatic scientific immunity. Once the complete funnel exists, a frozen reference/control hypothesis can fail the same prospectively defined relation/null/final comparison if the authoritative residual requires structure it cannot produce.
 
-## 6. Current conclusion
+## 6. C2 IDE source-level mapping advance — 2026-09-07
+
+The pinned implementation `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c` was re-audited directly at source level while the heavy WW_S1_S2 job remained active.
+
+Exact findings:
+
+- `source/background.c` adds `rho_idm_iv` to total density with zero pressure, and adds `rho_iv` to total density with pressure `-rho_iv`; hence `rho_X=rho_idm+rho_iv`, `p_X=-rho_iv` for the frozen C2 implementation.
+- `source/perturbations.c` explicitly refuses Newtonian-gauge IDM-IV perturbation evolution; the source-native mapping is synchronous-gauge only.
+- In synchronous gauge, only `delta_idm_iv` is evolved, with the interaction term proportional to `a H (alpha rho_idm + beta rho_iv)`.
+- The Einstein stress-energy assembly adds `rho_idm * delta_idm` to `delta_rho` for the dark pair, but adds no separate IV density perturbation, no IDM-IV pressure perturbation and no IDM-IV shear.
+- The source comments state the IDM-IV velocity is set to zero by the synchronous gauge definition; the IV background satisfies `rho_iv+p_iv=0`.
+
+Therefore all six required source-native components are now source-audited in the pinned synchronous frame:
+
+- `rho_X = rho_idm + rho_iv`;
+- `p_X = -rho_iv`;
+- `delta rho_X = rho_idm * delta_idm_iv`;
+- `q_X = 0` in the pinned source-native synchronous frame;
+- `delta p_X = 0` in the pinned implementation;
+- `pi_X = 0` in the pinned implementation.
+
+These zeros are implementation- and frame-qualified and must not be generalized to arbitrary IDE models or copied to another gauge.
+
+The dedicated audit document was updated in commit
+
+`c42809c140caa4eb10aa073d4c03e09e99ac0d46`
+
+(`Complete pinned C2 IDE source-level component audit`).
+
+Scientific consequence: **no model PASS/FAIL changed**. C2 remains `G_DOMAIN_MAPPING = NOT_YET_TESTABLE` until the source-native mapping is bound to the frozen common observable/gauge bridge, exact domain/provenance, deterministic prediction payload/hash, and formal Gate-1 admission procedure.
+
+## 7. Current conclusion
 
 No existing model receives a scientific `FAIL` in this iteration.
 
 The strongest corrected statement is:
 
-1. heavy computation was healthy; orchestration permission was broken and is repaired;
-2. the next heavy WW_S1_S2 task is active and must not be duplicated;
-3. IDE/GDM/designer-f(R) still require formal DSIR-4 Gate-1 mapping artifacts despite mature legacy theory evidence;
-4. `G_PHYSICAL_SUPPORT` is the earliest audited mandatory gate with an explicit scientific-support FAIL class;
-5. the decisive 'model physics disagrees with cleaned observations' frontier is `G_RELATION_NULL`, followed by `G_FINAL_MODEL` and fresh withheld falsification discipline.
+1. the prior heavy computation was healthy; its orchestration permission failure was repaired without rerunning expensive science;
+2. the next heavy WW_S1_S2 task remains active and must not be duplicated;
+3. C2 now has a complete six-component **source-native** audit, but still lacks final Gate-1 observable/provenance admission authority;
+4. C3 GDM and C5 designer-f(R) still require formal DSIR-4 Gate-1 mapping artifacts;
+5. `G_PHYSICAL_SUPPORT` is the earliest audited mandatory gate with an explicit scientific-support FAIL class;
+6. the decisive 'model physics disagrees with cleaned observations' frontier is `G_RELATION_NULL`, followed by `G_FINAL_MODEL` and fresh withheld falsification discipline.
 
-## 7. Next prospective work
+## 8. Next prospective work
 
-While the active WW_S1_S2 heavy job runs independently, safe static work should proceed without using its partial output:
+While the active WW_S1_S2 heavy job runs independently, safe static work remains:
 
-`C2 IDE -> C3 GDM -> C5 designer-f(R)`
+1. finish the C2 common observable/gauge/provenance binding and formal Gate-1 admission audit;
+2. then continue the frozen no-cherry-picking mapping order `C3 GDM -> C5 designer-f(R)`;
+3. only after Gate-1 authority may the corresponding hypotheses enter `G_ANGULAR_AUTHORITY` and subsequent gates.
 
-through the exact six-component DSIR-4 mapping contract, preserving the already frozen no-cherry-picking order. After Gate-1 authority and the angular authority chain are terminal, later gates must be executed strictly in order without proxy substitution or post-hoc threshold rescue.
+No partial heavy-job checkpoint may be interpreted, no duplicate heavy run may be launched, and no threshold/model definition may be altered to rescue a result.
