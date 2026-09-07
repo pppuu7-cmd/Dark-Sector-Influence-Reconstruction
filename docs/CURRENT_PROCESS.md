@@ -28,17 +28,21 @@ All three FU failures are historical `IMPLEMENTATION/INFRASTRUCTURE_PLUS_0_PLUS_
 - workflow/run: **Exp073FU `34089383137`**;
 - branch/head: `main` / **`11b62ebd73fe8bed03f31c559593756149c7fbc0`**;
 - hosted launch job: **`101639612389` SUCCESS**;
-- home job: **`101639652148`**, latest observed state **QUEUED** after hosted audit;
+- home job: **`101639652148` IN_PROGRESS**;
+- runner ownership: **`DSIR-HOME-PC-2` / runner id `22`, exclusively owned by job `101639652148`**;
+- created `2026-09-07T06:06:44Z`, started `2026-09-07T06:06:47Z`; frozen compute step started `2026-09-07T06:06:52Z`;
 - predecessor authority run: **Exp073FS/FT `34067352681`**;
 - checkpoint root: `~/.cache/dsir/exp073fu-ww-s1-s3-filebacked-ab-v0-1`, replicas `/checkpoints/A` and `/checkpoints/B`;
-- last durable checkpoint: `NONE_YET_CONFIRMED`; no partial output inspected;
+- last durable checkpoint: `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`; no partial numerical output inspected;
 - expected gate: ordered `[1,3] = S1->S3`, distinct fields, DES NSIDE=4096, ell `0..12287`, 39 bands, public file-backed BPW, canonical `<f8 [39,12288] EE<-EE`, exact A/B SHA and array equality, all finite;
 - frozen source/contract: `de83e20a68f79ccf25b89b0d33eb4206e294c757` / `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
+- current wrapper blob: `4e6d24fc26760c7e7d31545837239148269d81d5`;
+- canonical workflow trigger was restored to dispatch-only in commit `80f9f8f23f391edc3906218badb4a1dc4e535e6f` after run 5 was launched;
 - exact next action on SUCCESS: consume candidate artifact, independently verify full provenance and only then allow Exp073FV admission;
 - exact next action on infrastructure/resource FAIL: preserve verified complete checkpoints, diagnose first causal defect, smallest prospective repair/resume;
 - exact next action on numerical mismatch: scientific FAIL, no tolerance rescue.
 
-The live Actions reconciliation showed exactly one in-progress DSIR workflow (`34089383137`) and no competing heavy computation. Runner ownership must be taken from the live home job once assigned; no second home job may be launched.
+Live Actions reconciliation shows exactly one in-progress DSIR workflow (`34089383137`), whose only self-hosted job is `101639652148`; no second home job may be launched.
 
 Remaining deterministic queue after valid FV authority: `FW -> FX -> FY -> FZ -> GA -> GB -> STOP`.
 
