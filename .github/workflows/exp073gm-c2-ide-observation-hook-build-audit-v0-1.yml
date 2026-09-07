@@ -42,15 +42,17 @@ jobs:
           cp /tmp/class_iv/source/perturbations.c /tmp/perturbations.original.c
           python3 scripts/dsir4/make_exp073gm_c2_observation_hook.py --apply /tmp/class_iv/source/perturbations.c | tee /tmp/exp073gm_patch_audit.txt
           python3 - <<'PY'
+          from importlib.util import spec_from_file_location, module_from_spec
           from pathlib import Path
-          import re
           original = Path('/tmp/perturbations.original.c').read_text()
           patched = Path('/tmp/class_iv/source/perturbations.c').read_text()
-          m = re.search(r'\n#ifdef DSIR_EXP073GM_DIAGNOSTICS\n.*?\n#endif\n', patched, flags=re.S)
-          assert m is not None, 'diagnostic block absent'
-          restored = patched[:m.start()] + patched[m.end():]
-          assert restored == original, 'source equivalence modulo diagnostic block failed'
-          block = m.group(0)
+          spec = spec_from_file_location('exp073gm_hook', 'scripts/dsir4/make_exp073gm_c2_observation_hook.py')
+          mod = module_from_spec(spec)
+          spec.loader.exec_module(mod)
+          assert patched.count(mod.BLOCK) == 1, 'exact diagnostic block absent or non-unique'
+          restored = patched.replace(mod.BLOCK, '', 1)
+          assert restored == original, 'source equivalence modulo exact diagnostic block failed'
+          block = mod.BLOCK
           forbidden = [
               'background_at_tau(', 'thermodynamics_at_z(',
               'ppw->delta_m =', 'ppw->theta_m =',
