@@ -1,4 +1,4 @@
-name: Exp073FU replica-A repaired-pruner read-only validation v0.3
+name: Exp073FU replica-A repaired-pruner read-only validation v0.4
 
 on:
   workflow_dispatch:
@@ -25,6 +25,12 @@ jobs:
           set -euo pipefail
           test "$RUNNER_NAME" = "$EXPECTED_RUNNER_NAME"
           test "$(git rev-parse HEAD:ci/exp073fu_verify_and_prune_replica_v0_2.py)" = "$FU_PRUNER_V02_BLOB"
+          PATCH_PY="$HOME/.cache/dsir-nmt27-filebacked-read-v0-2/bin/python"
+          test -x "$PATCH_PY"
+          "$PATCH_PY" - <<'PY'
+          import numpy,importlib.metadata
+          v=importlib.metadata.version('pymaster'); assert v=='2.7' or v.startswith('2.7.'),v
+          PY
           ROOT="$HOME/.cache/dsir/exp073fu-ww-s1-s3-filebacked-ab-v0-1"
           test -d "$ROOT/checkpoints/A"
           test ! -e "$ROOT/checkpoints/A/post_receipt_prune.json"
@@ -40,8 +46,8 @@ jobs:
               elif p.is_file(): q.parent.mkdir(parents=True,exist_ok=True); q.symlink_to(p)
           print('mirror_file_links='+str(sum(1 for p in dst.rglob('*') if p.is_symlink())))
           PY
-          python3 ci/exp073fu_verify_and_prune_replica_v0_2.py --checkpoint-root "$MIRROR/checkpoints" --replica A
+          "$PATCH_PY" ci/exp073fu_verify_and_prune_replica_v0_2.py --checkpoint-root "$MIRROR/checkpoints" --replica A
           test -f "$MIRROR/checkpoints/A/post_receipt_prune.json"
           test ! -e "$ROOT/checkpoints/A/post_receipt_prune.json"
           echo original_checkpoint_mutated=false
-          echo PASS_EXP073FU_REPLICA_A_REPAIRED_PRUNER_READONLY_VALIDATION_V0_3
+          echo PASS_EXP073FU_REPLICA_A_REPAIRED_PRUNER_READONLY_VALIDATION_V0_4
