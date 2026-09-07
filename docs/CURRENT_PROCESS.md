@@ -4,66 +4,55 @@ Updated: 2026-09-07. Scope: **DSIR only**; RTK/RQIR excluded.
 
 ## Preserved authority
 
-Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities now include `S0_S0`, `S0_S1`, `S0_S2`, `S0_S3`, `S1_S1`, and newly admitted **`S1_S2`**.
+Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities: `S0_S0`, `S0_S1`, `S0_S2`, `S0_S3`, `S1_S1`, `S1_S2`. `WW_S1_S3` is NOT ADMITTED.
 
-Newest immutable recovery note before this iteration: `docs/recovery/RECOVERY_2026-09-07_FS_ADMITTED_FU_WRAPPER_REPAIR_RUN5.md`, creation commit `3a21aecf36a0ec3add6c172f89d7a0cc6c8fb7d2`.
+Newest immutable recovery note: `docs/recovery/RECOVERY_2026-09-07_FU_SCHEMA_VALIDATION_PASS_RESUME_ACTIVE_V04.md`, creation commit `b48d275a1d4d58f7bdacbec9637f1d480b266146`.
 
-## Newly admitted WW_S1_S2
+## Newly closed support validation
 
-Exp073FS run `34067352681` attempt 2, home job `101592579318`, artifact `10005532345`, artifact ZIP SHA256 `f878a49241dde97eb0ef1d24561719cf896a77d111c3a3b91725d4989b894d23`. Candidate A/B exact SHA256 `77f3e314d76f85cb95ed8edade672575bfa0e40c3b10a831f380a6c6d5f977fd`; canonical `<f8 [39,12288] EE<-EE`; exact equality; finite; ordered `S1->S2`; distinct fields; complete pre-prune chains; exact `19,327,352,832`-byte file-backed proof. Exp073FT admission job `101632852284` emitted `PASS_EXP073FT_WW_S1_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1` and `ww_s1_s2_authority_created=true`.
+Read-only repaired-pruner validation run `34103206078`, job `101682164394`, completed SUCCESS on `DSIR-HOME-PC-2`. Raw log independently verified exact tokens:
 
-## Exp073FU historical implementation/infrastructure failures +0/+0
+- `PASS_EXP073FU_REPLICA_A_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1`
+- `original_checkpoint_mutated=false`
+- `PASS_EXP073FU_REPLICA_A_REPAIRED_PRUNER_READONLY_VALIDATION_V0_6`
 
-- run `34087011068`, home job `101632910644`: pre-science false positive from outer wrapper scanning inherited scanner literals; no checkpoint/science artifact;
-- repair `07de7028dd2cb8baf1927ddcdbceef812bda45f3`, workflow binding `511d008b7b5ce74ade38e6d3cdc7faa537d95dc8`;
-- run `34089005639`, home job `101638631901`: pre-science generated-shell syntax failure caused by transform-of-transform wrapper architecture;
-- direct frozen-base repair `fa01c7d7a2d20cd222c1d208ac4e359ad1313710`;
-- run `34089259696`, home job `101639297762`: direct wrapper parsed, then failed pre-science because FA-base-required `EM_GENERATOR_BLOB`/`EM_COMPARE_BLOB` were not exported;
-- storage-identity repair `614c5bca01280792b5ea0affe93729fbea174d40`, wrapper blob `4e6d24fc26760c7e7d31545837239148269d81d5`, binding exact helper blobs `bd1795f2a2c2cf80341f212996eb8278e0be53d9` / `f0de92f3f121592b6d139eb7d948426946d901d1`.
+Repaired pruner blob: `b9ed7d7178424fb656b4a7c7bfb2ee370c751cb0`. Classification: support/implementation `+0/+0`; no scientific authority.
 
-All three FU failures are historical `IMPLEMENTATION/INFRASTRUCTURE_PLUS_0_PLUS_0`; no FU scientific gate was scored and no frozen criterion was changed.
+## Authoritative current process — Exp073FU repaired checkpoint resume
 
-## Authoritative current process — Exp073FU / WW_S1_S3
-
-- workflow/run: **Exp073FU `34089383137`**;
-- branch/head: `main` / **`11b62ebd73fe8bed03f31c559593756149c7fbc0`**;
-- hosted launch job: **`101639612389` SUCCESS**;
-- home job: **`101639652148` IN_PROGRESS**;
-- runner ownership: **`DSIR-HOME-PC-2` / runner id `22`, exclusively owned by job `101639652148`**;
-- created `2026-09-07T06:06:44Z`, started `2026-09-07T06:06:47Z`; frozen compute step started `2026-09-07T06:06:52Z`;
-- predecessor authority run: **Exp073FS/FT `34067352681`**;
+- workflow/run: **Exp073FU `34103803637`**;
+- event: one-shot path-scoped `push`;
+- branch/head: `main` / **`85eb20e70a9fa6d8d444aaaf368dd396e164769c`**;
+- production wrapper binding commit: `cfd67ce78428bf029a42a922bdb202112f77ce07`;
+- wrapper blob: `b6ac5d8ba4472b04efedb4b1a732980428cf4c82`;
+- repaired pruner blob: `b9ed7d7178424fb656b4a7c7bfb2ee370c751cb0`;
+- hosted launch audit job: **`101684090730` SUCCESS**;
+- home-science job: **`101684145754` IN_PROGRESS** at latest reconciliation;
+- active step: `Run frozen WW_S1_S3 A/B gate with durable checkpoints`;
+- runner ownership: self-hosted DSIR home runner is exclusively owned by job `101684145754` while active;
 - checkpoint root: `~/.cache/dsir/exp073fu-ww-s1-s3-filebacked-ab-v0-1`, replicas `/checkpoints/A` and `/checkpoints/B`;
-- last durable checkpoint: `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`; no partial numerical output inspected;
+- predecessor authority run: Exp073FS/FT `34067352681`;
+- frozen source head: `de83e20a68f79ccf25b89b0d33eb4206e294c757`;
+- contract fingerprint: `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
 - expected gate: ordered `[1,3] = S1->S3`, distinct fields, DES NSIDE=4096, ell `0..12287`, 39 bands, public file-backed BPW, canonical `<f8 [39,12288] EE<-EE`, exact A/B SHA and array equality, all finite;
-- frozen source/contract: `de83e20a68f79ccf25b89b0d33eb4206e294c757` / `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
-- current wrapper blob: `4e6d24fc26760c7e7d31545837239148269d81d5`;
-- canonical workflow trigger restored to dispatch-only in commit `80f9f8f23f391edc3906218badb4a1dc4e535e6f` after run 5 launch;
-- exact next action on SUCCESS: consume candidate artifact, independently verify full provenance and only then allow Exp073FV admission;
-- exact next action on infrastructure/resource FAIL: preserve verified complete checkpoints, diagnose first causal defect, smallest prospective repair/resume;
-- exact next action on numerical mismatch: scientific FAIL, no tolerance rescue.
+- queued DSIR workflows: **0**;
+- in-progress DSIR workflows: **exactly 1**, run `34103803637`;
+- partial numerical output: **NOT INSPECTED**;
+- competing heavy job: **NONE**.
 
-Live Actions reconciliation in this iteration still shows home job `101639652148` inside `Run frozen WW_S1_S3 A/B gate with durable checkpoints`; evidence collection/upload remain pending. No partial output was read and no competing self-hosted job was launched.
+Historical FU run `34089383137` remains implementation/infrastructure FAIL `+0/+0`, not scientific FAIL. Its valid durable checkpoints are being reused; verified expensive stages must not be recomputed unnecessarily.
 
-Remaining deterministic queue after valid FV authority: `FW -> FX -> FY -> FZ -> GA -> GB -> STOP`.
+Exact next action on terminal SUCCESS: consume raw jobs/logs/artifact; independently verify artifact digest, checkpoint and restore provenance, ordered S1->S3 distinct-field semantics, frozen identities, exact file-backed proof, canonical finiteness and exact A/B equality. Workflow success alone is not scientific PASS. Only a validated candidate permits frozen Exp073FV admission; only FV may create `WW_S1_S3` authority.
 
-## Independent C2 IDE support process — Exp073GL
+Exact next action on infrastructure/resource FAIL: preserve verified complete checkpoints, diagnose first causal failure, smallest prospective repair/resume. Exact numerical mismatch under frozen contract is a scientific FAIL with no tolerance rescue.
 
-C2 remains `mapping_ready=true`, `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, scientific `+0/+0`. Existing extraction contract and native-source audit remain authoritative; no competing interface was created.
+## Trigger safety
 
-This iteration prospectively created **Exp073GL C2 IDE pre-transform source eligibility v0.1**:
+The Exp073FU workflow currently retains the temporary path-scoped push trigger used for this resume. Do not modify that workflow while `34103803637` is active if the change would trigger a competing FU run. Repository/doc-only commits are outside its path filter. Restore dispatch-only semantics at a safe terminal/authority transition.
 
-- prereg creation commit: `319457d0079ade637c012c945ac81545859a2f10`;
-- static auditor creation commit: `ffb485f83fcfd013b3c70850138ca1dd847df9e7`;
-- workflow activation/head: `846368c14550f67ec3c4f0aed25ab637e89c0c70`;
-- hosted run: **`34093447421`**, job **`101651685666`**, currently `QUEUED` at last reconciliation;
-- runner: hosted `ubuntu-latest` only; no home ownership;
-- frozen solver: `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`;
-- expected token: `PASS_EXP073GL_C2_IDE_PRETRANSFORM_SOURCE_ELIGIBILITY_STATIC_AUDIT_V0_1`;
-- classification ceiling: `SUPPORT_PLUS_0_PLUS_0` only;
-- exact next action on PASS: consume raw job log, verify token and source identity, then only allow prospectively frozen Exp073GM observation-only extraction-patch specification/audit;
-- exact next action on static/infrastructure FAIL: diagnose first causal source/auditor defect and repair prospectively without altering frozen C2 science or interface.
+## Independent C2 frontier
 
-Exp073GL is independent of running WW numerical output and cannot create C2 prediction/model authority.
+C2 IDE remains `mapping_ready=true`, `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, scientific `+0/+0`. Exp073GL and Exp073GM are support-only static PASSes and do not authorize model authority or numerical prediction generation by themselves.
 
 ## Global frozen boundaries
 
