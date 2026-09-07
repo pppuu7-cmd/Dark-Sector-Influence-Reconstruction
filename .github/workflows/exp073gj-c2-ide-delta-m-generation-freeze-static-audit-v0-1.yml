@@ -20,25 +20,36 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          f='experiments/073gj_c2_ide_delta_m_generation_freeze_v0_1_prereg.md'
-          test -s "$f"
-          grep -Fq 'C2_IDE_LOCAL_TANGENT_CONE' "$f"
-          grep -Fq 'kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c' "$f"
-          grep -Fq 'Delta_m(k,z) = delta_m(k,z) + 3*(1+w_m(k,z))*Hconf(z)*theta_m(k,z)/k^2' "$f"
-          grep -Fq 'r_Delta(k,z) = ln[P_Delta_model^S(k,z) / P_Delta_ref^S(k,z)]' "$f"
-          grep -Fq '(alpha,beta)=(-1e-4,0)' "$f"
-          grep -Fq '(0,+1e-4)' "$f"
-          grep -Fq '(0,-1e-4)' "$f"
-          grep -Fq 'z = [0.295, 0.51, 0.706, 0.934, 1.317, 1.491, 2.33]' "$f"
-          grep -Fq 'k_Mpc^-1 = [0.00067, 0.00201, 0.0067, 0.0201]' "$f"
-          grep -Fq '0.067 > 0.06664762008318016' "$f"
-          grep -Fq 'rho_idm>0' "$f"
-          grep -Fq 'rho_iv>=0' "$f"
-          grep -Fq 'sorted keys and compact separators' "$f"
-          grep -Fq 'prediction_ready=true' "$f"
-          grep -Fq 'No raw `delta_idm_iv`, raw `mPk`' "$f"
-          grep -Fq 'SUPPORT_PLUS_0_PLUS_0' "$f"
-          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
-          echo 'self_hosted_science_started=false'
-          echo 'scientific_model_authority_created=false'
-          echo 'PASS_EXP073GJ_C2_IDE_DELTA_M_GENERATION_FREEZE_STATIC_AUDIT_V0_1'
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('experiments/073gj_c2_ide_delta_m_generation_freeze_v0_1_prereg.md')
+          text = p.read_text(encoding='utf-8')
+          required = [
+              'C2_IDE_LOCAL_TANGENT_CONE',
+              'kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c',
+              'Delta_m(k,z) = delta_m(k,z) + 3*(1+w_m(k,z))*Hconf(z)*theta_m(k,z)/k^2',
+              'r_Delta(k,z) = ln[P_Delta_model^S(k,z) / P_Delta_ref^S(k,z)]',
+              '(alpha,beta)=(-1e-4,0)',
+              '(0,+1e-4)',
+              '(0,-1e-4)',
+              'z = [0.295, 0.51, 0.706, 0.934, 1.317, 1.491, 2.33]',
+              'k_Mpc^-1 = [0.00067, 0.00201, 0.0067, 0.0201]',
+              '0.067 > 0.06664762008318016',
+              'rho_idm>0',
+              'rho_iv>=0',
+              'sorted keys and compact separators',
+              'prediction_ready=true',
+              'No raw `delta_idm_iv`, raw `mPk`',
+              'SUPPORT_PLUS_0_PLUS_0',
+          ]
+          missing = [x for x in required if x not in text]
+          if missing:
+              print('MISSING_STATIC_LITERALS:')
+              for x in missing:
+                  print(repr(x))
+              raise SystemExit(1)
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('self_hosted_science_started=false')
+          print('scientific_model_authority_created=false')
+          print('PASS_EXP073GJ_C2_IDE_DELTA_M_GENERATION_FREEZE_STATIC_AUDIT_V0_1')
+          PY
