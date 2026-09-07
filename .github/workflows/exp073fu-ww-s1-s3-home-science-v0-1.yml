@@ -7,9 +7,6 @@ on:
         description: Exp073FT S1S2 admission run id
         required: true
         type: string
-  push:
-    paths:
-      - '.github/workflows/exp073fu-ww-s1-s3-home-science-v0-1.yml'
 
 permissions:
   contents: read
