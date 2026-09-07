@@ -2,7 +2,7 @@
 
 Updated: 2026-09-07. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_EXP073FY_ACTIVE_EXP073GA_TERMINAL_RESUME_HARDENED_V19.md` (creation commit `8cf625c062fc7f2131a453a5f5c9fc06aab6af68`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_EXP073FY_ACTIVE_EXP073GZ_PREREG_V20.md` (creation commit `8fe8db6af6a144dbf1c68901b87a1b91ec6ffb76`). Earlier recovery notes remain immutable history.
 
 ## Preserved scientific authority
 
@@ -27,19 +27,17 @@ FY still retains its temporary one-shot path trigger; do not edit FY while run `
 
 ## Prospectively hardened final heavy successor — Exp073GA WW_S3_S3
 
-The dispatch-only GA successor uses the proven direct frozen-FA base. While FY remained the sole active home-heavy owner, an independent infrastructure audit found that GA had not yet inherited the terminal-pruned retry hardening that became necessary for FW. GA had not run, so this was prospective implementation risk only, not a scientific result.
+The dispatch-only GA successor uses the proven direct frozen-FA base. Direct-base repair remains commit `4a232aa8369ba8e4f6c5a247ecaf2b75696ced8c`. Additional terminal-resume hardening commit `e9aa36283d0f3b78a91b8a855326c0faec9a613c` updates only the GA home launcher; current home blob is `f28bf114e6da502e2a3a0a97f0828c27849814c9`. Workflow binding commit `d149630f30f3e904c78c7ca43f32917f9e2aaf85` requires that blob plus explicit terminal-pruned restore and post-comparator re-attestation tokens. Expected GA hosted token remains `PASS_EXP073GA_HOSTED_LAUNCH_AUDIT_V0_2`.
 
-Direct-base repair remains commit `4a232aa8369ba8e4f6c5a247ecaf2b75696ced8c`. Additional terminal-resume hardening commit `e9aa36283d0f3b78a91b8a855326c0faec9a613c` updates only the GA home launcher; current home blob is `f28bf114e6da502e2a3a0a97f0828c27849814c9`. Workflow binding commit `d149630f30f3e904c78c7ca43f32917f9e2aaf85` requires that blob plus explicit terminal-pruned restore and post-comparator re-attestation tokens. Expected GA hosted token remains `PASS_EXP073GA_HOSTED_LAUNCH_AUDIT_V0_2`.
-
-The hardened GA retry path never feeds a deliberately pruned terminal checkpoint back into the full expensive driver. It reuses such a checkpoint only through the frozen terminal comparator and emits historical full-chain proof tokens only after the comparator has revalidated prune receipts, stage-manifest hashes, terminal receipts, selected-EE payloads, exact A/B equality and finiteness. This is support `+0/+0`; no scientific gate or threshold changed.
-
-Frozen GA science remains unchanged: ordered `[3,3]`, same-field `S3->S3`, `compute_coupling_matrix(f3,f3,b)`, exact A/B equality and exact file-backed proof. Only Exp073GB may create WW_S3_S3 authority. GA remains workflow-dispatch only, so the repair did not launch a competing heavy run.
-
-FY's hosted FZ admission already dispatches GA only after a successful frozen S2S3 admission.
+Frozen GA science remains unchanged: ordered `[3,3]`, same-field `S3->S3`, `compute_coupling_matrix(f3,f3,b)`, exact A/B equality and exact file-backed proof. Only Exp073GB may create WW_S3_S3 authority. GA remains workflow-dispatch only and FY's hosted FZ admission dispatches GA only after successful frozen S2S3 admission.
 
 ## Independent C2 frontier
 
-Exp073GW/GX/GY remain hosted support-only `+0/+0`; no real C2 record-set/model authority exists. The next meaningful C2 step is real runtime generation/admission of the complete frozen 28-packet set, BLOCKED while FY owns home. Do not substitute further metadata-only scaffolding.
+Exp073GW/GX/GY remain hosted support-only `+0/+0`; no real C2 record-set/model authority exists.
+
+Commit `a8499c404aa2b862cc08634fe4ed20d2753c9f25` prospectively froze `C2_IDE_RUNTIME_ADMISSION_RECEIPT_CONTRACT_V0_1.md`, blob `1c2e30e6563efe3976ee0b1825dfb250a902a529`. It binds a future exact 28-packet / 1792-byte raw record set to producer/build/config/model-point/coordinate/provenance identities and keeps decoding, mapping, prediction readiness and scientific authority false.
+
+Exp073GZ static audit is prospectively preregistered by commit `d5791df0c81169c9a3797ac1867b921028097579`, exact token `PASS_EXP073GZ_C2_RUNTIME_ADMISSION_RECEIPT_CONTRACT_STATIC_AUDIT_V0_1`. A workflow-install write was rejected by the connector/platform safety layer before any repository write; therefore GZ is **PREREGISTERED / BLOCKED_BY_AUDIT_EXECUTION_PATH**, not PASS/FAIL. Do not bypass or weaken it. Real C2 runtime production remains BLOCKED while FY owns home and additionally requires GZ PASS.
 
 ## Global frozen boundaries
 
