@@ -2,7 +2,7 @@
 
 Updated: 2026-09-07. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_EXP073FY_PRUNER_REPAIR_RESUME_V21.md` (creation commit `2c645a5c1e4e4416ab8d26b5496c6bbd2f55d252`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_EXP073FY_NAMESPACE_REPAIR_RESUME_V22.md` (creation commit `94607e9b068552bc565bb4d3b58e32e973584b22`). Earlier recovery notes remain immutable history.
 
 ## Preserved scientific authority
 
@@ -10,29 +10,30 @@ Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted 
 
 `WW_S2_S2` authority remains Exp073FW final run `34146468135`, artifact `10027835016`, digest `sha256:ef36ddafc5f30d33206fbf952deea5c0f58f5465370a9c8bd96c2b2d61b1ecef`, admitted by Exp073FX job `101819621240` with `PASS_EXP073FX_WW_S2_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1` and `ww_s2_s2_authority_created=true`. Historical FW failures remain historical `+0/+0`.
 
-## Newly consumed Exp073FY failure
+## Consumed Exp073FY failures and repair
 
-Exp073FY run `34147009217`, head `f04346a8e6909cb4342e536a0e7328f5ca5e54c9`, is terminal FAILURE. Hosted job `101821110137` succeeded; home job `101821144414` failed; FZ admission was skipped. Classification: **implementation/infrastructure FAIL +0/+0**, not scientific FAIL.
+Original Exp073FY run `34147009217` is terminal implementation/infrastructure FAIL `+0/+0`, not scientific FAIL. Expensive Replica A completed through `replica_receipt_complete` with correct ordered `S2->S3`, `[2,3]` science payload and exact file-backed evidence, but its manifests carried invalid checkpoint namespace `checkpoints/exp073fy-ww-s3-s3-a-v0-1`. FZ admission was skipped.
 
-First causal failure: after expensive Replica A had completed through `replica_receipt_complete`, the FY post-receipt pruner required lexical token `WW_S1_S2`, which is absent from its pinned frozen FS base. Artifact `10031272604` has GitHub digest and independently recomputed ZIP SHA256 `624a44f05b2762a58d1191b58df41c194b86bcc7ceb5622517c0a55f64405a6c`. It preserves A selected EE `<f8 [39,12288]`, 3,833,856 bytes, SHA256 `3a787a12152ec023b6747145ec96345bc805ab0c96b5a26d0b528a9d68672de2`, ordered `[2,3]`, `S2->S3`, distinct fields, and exact `19,327,352,832`-byte file-backed MCM receipt. No B result exists in that artifact.
+Recovery run `34157571794` correctly failed closed at `fresh_sources_complete`, exposing the namespace cascade. The cause was the FY wrapper's generic symbol shift mutating an already-correct `S2-S3` checkpoint namespace to `S3-S3`.
 
-Independent provenance audit also found that A manifests carry checkpoint namespace `checkpoints/exp073fy-ww-s3-s3-a-v0-1` despite correct S2->S3 science payload. The cause is a cascade in the FY wrapper: intended hyphenated namespace transformation is subsequently altered again by word-boundary `s2 -> s3` variable transformation. This is a provenance/checkpoint-identity defect. It is not scientific authority and must not be relabelled or rescued by weakening namespace checks.
+Prospective driver repair commit `f899b93f966e617ad1ff46b5abba6f928d4ad389`, blob `65161f78f7c993df571be3ea871de03c54f6847a`, protects the exact S2-S3 checkpoint namespace strings before generic source-symbol substitution and statically forbids `exp073fy-ww-s3-s3-`. Frozen arithmetic/domain/order/tolerance rules are unchanged.
 
-Minimal lexical-pruner repair is commit `c28396aa4cba6206f737cfd683b9f27f9cbe5273`, blob `8c0e7ae30a80c6d74e6a1fbc079c1d2bc4eef773`; only the impossible uppercase-token requirement was removed. Workflow binding commit `3217ea05f5ab8a45bc237f34a8fa894e8c49df38` prospectively pins that blob; frozen arithmetic/domain/order/tolerance rules were unchanged.
+First namespace-repair workflow run `34160466102` had hosted audit SUCCESS but home job `101861088550` failed before heavy computation because the self-hosted machine has no `gh` executable (`gh: command not found`). Classification remains infrastructure FAIL `+0/+0`. Recovery workflow V0.3 commit `b5c8a059a014bee5d318d6067f7a2fac37c5b173` replaces that self-hosted service call with authenticated `curl`; hosted-only steps may continue using GitHub CLI.
 
-## Authoritative current heavy process — Exp073FY recovery run
+Invalid historical S3-S3-labelled FY checkpoint directories are not rewritten or relabelled. The V0.3 recovery verifies their known defect and hashes, records retirement evidence, and moves them outside the active checkpoint path before constructing a new valid authority chain.
 
-Run **`34157571794`**, head `3217ea05f5ab8a45bc237f34a8fa894e8c49df38`:
-- hosted audit job `101852463413`: SUCCESS;
-- home job **`101852500796`**: IN_PROGRESS inside frozen FY checkpoint-first path at latest reconciliation;
+## Authoritative current heavy process — Exp073FY namespace-repair V0.3
+
+Run **`34160898921`**, head `b5c8a059a014bee5d318d6067f7a2fac37c5b173`, workflow `.github/workflows/exp073fy-ww-s2-s3-namespace-repair-resume-v0-3.yml`:
+- hosted audit job `101862362835`: SUCCESS;
+- home job **`101862390771`**: IN_PROGRESS at latest reconciliation;
+- invalid S3-S3-labelled FY checkpoint retirement step: SUCCESS;
+- repaired frozen `WW_S2_S3` A/B gate: IN_PROGRESS;
 - single self-hosted DSIR runner owns the job;
-- checkpoint root `~/.cache/dsir/exp073fy-ww-s2-s3-filebacked-ab-v0-1`;
 - no competing heavy run is permitted;
 - partial numerical output must not be inspected.
 
-Because the namespace-cascade defect was discovered independently while this run is active, do not edit its workflow mid-run. On terminal state consume logs/artifact first. If the namespace inconsistency is the first causal failure, prospectively repair the wrapper transformation by protecting checkpoint namespace tokens before source-variable substitutions, add a static regression requiring exact `exp073fy-ww-s2-s3-{a,b}-v0-1` and forbidding `ww-s3-s3`, then resume only from checkpoints that pass the repaired fail-closed identity. Do not rewrite invalid checkpoint manifests in place.
-
-Frozen FY science remains ordered `S2->S3`, `[2,3]`, distinct fields, DES NSIDE=4096, ell 0..12287, 39 bands, canonical `<f8 [39,12288] EE<-EE`, exact file-backed MCM proof, finiteness and exact A/B equality. `WW_S2_S3` remains **NOT ADMITTED**. Only FZ token `PASS_EXP073FZ_WW_S2_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1` may create authority.
+Frozen FY science remains ordered `S2->S3`, `[2,3]`, distinct fields, DES NSIDE=4096, ell `0..12287`, 39 bands, canonical `<f8 [39,12288] EE<-EE`, exact file-backed MCM proof, finiteness and exact A/B equality. `WW_S2_S3` remains **NOT ADMITTED**. Only FZ token `PASS_EXP073FZ_WW_S2_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1` may create authority.
 
 ## Prospectively hardened final heavy successor — Exp073GA WW_S3_S3
 
