@@ -33,17 +33,33 @@ if any(x in s for x in ('np.allclose','np.isclose','rounding_rescue','smoothing_
 marker='run_replica A; prune_replica A\n'
 if marker not in s: raise SystemExit('fail-closed missing legacy terminal marker')
 pos=s.index(marker)
-tail='''run_replica A
-"$PATCH_PY" ci/exp073fw_verify_and_prune_replica_v0_1.py --checkpoint-root "$CHECKPOINT_ROOT" --replica A | tee "$SCI_ROOT/A_prune_verify.log"
-rm -f "$SCI_ROOT/mmap/A"/dsir-nmt-mcm-* || true
-run_replica B
-"$PATCH_PY" ci/exp073fw_verify_and_prune_replica_v0_1.py --checkpoint-root "$CHECKPOINT_ROOT" --replica B | tee "$SCI_ROOT/B_prune_verify.log"
-rm -f "$SCI_ROOT/mmap/B"/dsir-nmt-mcm-* || true
+tail='''# A post_receipt_prune receipt exists only after the frozen pruner has
+# verified the complete expensive chain and deliberately removed large
+# intermediate payloads.  Never feed such a terminal-pruned checkpoint back
+# into the full-stage driver: the driver correctly requires payloads that the
+# pruner intentionally deleted.  Presence only selects the restore path;
+# scientific/provenance validity is still checked fail-closed by the frozen
+# terminal comparator below (stage-manifest hashes, receipt identity,
+# selected-EE SHA/bytes, exact A/B equality and finiteness).
+if [[ -f "$CHECKPOINT_ROOT/A/post_receipt_prune.json" ]]; then
+  echo PASS_EXP073FW_REPLICA_A_TERMINAL_PRUNED_RESTORE_SELECTED_V0_1
+else
+  run_replica A
+  "$PATCH_PY" ci/exp073fw_verify_and_prune_replica_v0_1.py --checkpoint-root "$CHECKPOINT_ROOT" --replica A | tee "$SCI_ROOT/A_prune_verify.log"
+  rm -f "$SCI_ROOT/mmap/A"/dsir-nmt-mcm-* || true
+fi
+if [[ -f "$CHECKPOINT_ROOT/B/post_receipt_prune.json" ]]; then
+  echo PASS_EXP073FW_REPLICA_B_TERMINAL_PRUNED_RESTORE_SELECTED_V0_1
+else
+  run_replica B
+  "$PATCH_PY" ci/exp073fw_verify_and_prune_replica_v0_1.py --checkpoint-root "$CHECKPOINT_ROOT" --replica B | tee "$SCI_ROOT/B_prune_verify.log"
+  rm -f "$SCI_ROOT/mmap/B"/dsir-nmt-mcm-* || true
+fi
 "$PATCH_PY" ci/exp073fw_compare_terminal_receipts_v0_1.py --root "$SCI_ROOT" --out "$SCI_ROOT/ab_compare.json" | tee "$SCI_ROOT/ab_compare_stdout.txt"
 cp "$SCI_ROOT/ab_compare.json" "$SCI_ROOT/terminal_receipt.json"
 '''
 s=s[:pos]+tail
-for token in ('ci/exp073fw_verify_and_prune_replica_v0_1.py','ci/exp073fw_compare_terminal_receipts_v0_1.py','terminal_receipt.json'):
+for token in ('ci/exp073fw_verify_and_prune_replica_v0_1.py','ci/exp073fw_compare_terminal_receipts_v0_1.py','PASS_EXP073FW_REPLICA_A_TERMINAL_PRUNED_RESTORE_SELECTED_V0_1','PASS_EXP073FW_REPLICA_B_TERMINAL_PRUNED_RESTORE_SELECTED_V0_1','terminal_receipt.json'):
  if token not in s: raise SystemExit(f'fail-closed hardened FW terminal path missing {token!r}')
 if '--replica AB' in s: raise SystemExit('fail-closed legacy completed-replica restore path survived')
 out.write_text(s,encoding='utf-8')
