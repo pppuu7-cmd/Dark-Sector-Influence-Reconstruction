@@ -1,30 +1,47 @@
 #!/usr/bin/env bash
 set -euo pipefail
-BASE="$GITHUB_WORKSPACE/ci/exp073fs_home_filebacked_fullres_v0_1.sh"
-EXPECTED_BASE_BLOB='a9f1777c68db522c02068828bc9e47a78b065681'
-test "$(git rev-parse HEAD:ci/exp073fs_home_filebacked_fullres_v0_1.sh)" = "$EXPECTED_BASE_BLOB"
+
+BASE="$GITHUB_WORKSPACE/ci/exp073fa_home_filebacked_fullres_v0_1.sh"
+EXPECTED_BASE_BLOB='309c464bbfbe4896bd560165985ee7f643d9ee22'
+test "$(git rev-parse HEAD:ci/exp073fa_home_filebacked_fullres_v0_1.sh)" = "$EXPECTED_BASE_BLOB"
+
 tmp="$RUNNER_TEMP/exp073fu_home_filebacked_fullres_v0_1.transformed.sh"
 BASE="$BASE" OUT="$tmp" python3 - <<'PY'
-import os,re
+import os
 from pathlib import Path
-s=Path(os.environ['BASE']).read_text(encoding='utf-8')
-for old,new in [('exp073fs','exp073fu'),('Exp073FS','Exp073FU'),('EXP073FS','EXP073FU'),('ww_s1_s2','ww_s1_s3'),('ww-s1-s2','ww-s1-s3'),('WW_S1_S2','WW_S1_S3'),('S1->S2','S1->S3'),('[1,2]','[1,3]')]:
-    if old not in s: raise SystemExit(f'fail-closed missing FU home transform {old!r}')
-    s=s.replace(old,new)
-required=['ci/exp073fu_ww_s1_s3_durable_ab_production_v0_1.py','ci/exp073fu_ww_s1_s3_durable_ab_production_v0_2.py','ci/exp073fu_verify_and_prune_replica_v0_1.py','ci/exp073fu_compare_terminal_receipts_v0_1.py','exp073fu-ww-s1-s3-filebacked-ab-v0-1']
-for t in required:
-    if t not in s: raise SystemExit(f'fail-closed missing FU home invariant {t!r}')
-for t in ("'source_pair':'S1->S2'","'ordered_source_indices':[1,2]",'PASS_EXP073FS_WW_S1_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'):
-    if t in s: raise SystemExit(f'fail-closed stale FS home token {t!r}')
-# The inherited FS wrapper contains the literal forbidden-token list because it
-# performs the authoritative scan on the final executable payload generated
-# from the FA base.  Scanning this intermediate wrapper for those literals is
-# therefore a false positive.  Preserve and require the inherited fail-closed
-# scanner instead; the hosted launch audit separately scans the frozen Python
-# science files and preregistration text.
-if "fail-closed tolerance/rescue path detected" not in s:
-    raise SystemExit('fail-closed inherited final-payload rescue scanner missing')
-Path(os.environ['OUT']).write_text(s,encoding='utf-8')
+base=Path(os.environ['BASE']); out=Path(os.environ['OUT']); s=base.read_text(encoding='utf-8')
+required_repl=[
+ ('exp073fa','exp073fu'),('Exp073FA','Exp073FU'),('EXP073FA','EXP073FU'),
+ ('ww_s0_s2','ww_s1_s3'),('ww-s0-s2','ww-s1-s3'),('S0->S2','S1->S3'),('[0,2]','[1,3]'),
+]
+for old,new in required_repl:
+ if old not in s: raise SystemExit(f'fail-closed missing FU direct-base transform token {old!r}')
+ s=s.replace(old,new)
+s=s.replace('WW_S0_S2','WW_S1_S3')
+required=['ci/exp073fu_ww_s1_s3_durable_ab_production_v0_1.py','ci/exp073fu_ww_s1_s3_durable_ab_production_v0_2.py','exp073fu-ww-s1-s3-filebacked-ab-v0-1']
+for token in required:
+ if token not in s: raise SystemExit(f'fail-closed missing Exp073FU home invariant {token!r}')
+for token in ("'source_pair':'S0->S2'","'ordered_source_indices':[0,2]",'PASS_EXP073FA_WW_S0_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'):
+ if token in s: raise SystemExit(f'fail-closed stale S0-S2 home token {token!r}')
+if any(x in s for x in ('np.allclose','np.isclose','rounding_rescue','smoothing_rescue','averaging_rescue')): raise SystemExit('fail-closed tolerance/rescue path detected')
+marker='run_replica A; prune_replica A\n'
+if marker not in s: raise SystemExit('fail-closed missing legacy terminal marker')
+pos=s.index(marker)
+tail='''run_replica A
+"$PATCH_PY" ci/exp073fu_verify_and_prune_replica_v0_1.py --checkpoint-root "$CHECKPOINT_ROOT" --replica A | tee "$SCI_ROOT/A_prune_verify.log"
+rm -f "$SCI_ROOT/mmap/A"/dsir-nmt-mcm-* || true
+run_replica B
+"$PATCH_PY" ci/exp073fu_verify_and_prune_replica_v0_1.py --checkpoint-root "$CHECKPOINT_ROOT" --replica B | tee "$SCI_ROOT/B_prune_verify.log"
+rm -f "$SCI_ROOT/mmap/B"/dsir-nmt-mcm-* || true
+"$PATCH_PY" ci/exp073fu_compare_terminal_receipts_v0_1.py --root "$SCI_ROOT" --out "$SCI_ROOT/ab_compare.json" | tee "$SCI_ROOT/ab_compare_stdout.txt"
+cp "$SCI_ROOT/ab_compare.json" "$SCI_ROOT/terminal_receipt.json"
+'''
+s=s[:pos]+tail
+for token in ('ci/exp073fu_verify_and_prune_replica_v0_1.py','ci/exp073fu_compare_terminal_receipts_v0_1.py','terminal_receipt.json'):
+ if token not in s: raise SystemExit(f'fail-closed hardened FU terminal path missing {token!r}')
+if '--replica AB' in s: raise SystemExit('fail-closed legacy completed-replica restore path survived')
+out.write_text(s,encoding='utf-8')
 PY
 chmod 700 "$tmp"
+bash -n "$tmp"
 exec bash "$tmp"
