@@ -2,7 +2,7 @@
 
 Updated: 2026-09-08. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-08_EXP073GZ_HOSTED_AUDIT_PASS_FY_ACTIVE_V23.md` (creation commit `9f55976e65b5cc803bf226c6987bafc8766a3361`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-08_EXP073FY_ACTIVE_GB_PREFLIGHT_REPAIRED_V24.md` (creation commit `424e2f404267ec364cbc614899936a564a0bf2de`). Earlier recovery notes remain immutable history.
 
 ## Preserved scientific authority
 
@@ -35,9 +35,17 @@ Run **`34160898921`**, head `b5c8a059a014bee5d318d6067f7a2fac37c5b173`, workflow
 
 Frozen FY science remains ordered `S2->S3`, `[2,3]`, distinct fields, DES NSIDE=4096, ell `0..12287`, 39 bands, canonical `<f8 [39,12288] EE<-EE`, exact file-backed MCM proof, finiteness and exact A/B equality. `WW_S2_S3` remains **NOT ADMITTED**. Only FZ token `PASS_EXP073FZ_WW_S2_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1` may create authority.
 
-## Prospectively hardened final heavy successor — Exp073GA WW_S3_S3
+## Prospectively hardened final heavy successor — Exp073GA / Exp073GB
 
-GA remains dispatch-only and forbidden until successful FZ admission. Direct-base repair commit `4a232aa8369ba8e4f6c5a247ecaf2b75696ced8c`; additional terminal-resume hardening commit `e9aa36283d0f3b78a91b8a855326c0faec9a613c`; current home blob `f28bf114e6da502e2a3a0a97f0828c27849814c9`; workflow binding `d149630f30f3e904c78c7ca43f32917f9e2aaf85`. Frozen GA target is `[3,3]`, same-field `S3->S3`, exact A/B equality and exact file-backed proof. Only Exp073GB may create authority.
+GA remains dispatch-only and forbidden until successful FZ admission. Frozen GA numerical target is `[3,3]`, same-field `S3->S3`, exact A/B equality and exact file-backed proof. Direct-base repair commit `4a232aa8369ba8e4f6c5a247ecaf2b75696ced8c`; terminal-resume hardening commit `e9aa36283d0f3b78a91b8a855326c0faec9a613c`; GA home blob remains `f28bf114e6da502e2a3a0a97f0828c27849814c9`.
+
+Parallel hosted-only preflight found two deterministic defects in the original GB transform before any GA heavy execution: missing lowercase base token (`Exp073HA` run `34168565710`) and a redundant authority-key replacement after the shorter `ww_s2_s2 -> ww_s3_s3` substitution (`Exp073HB` run `34168722516`). Both are implementation/provenance `+0/+0`, never scientific FAIL.
+
+Final prospective GB repair commit `7846c63765fcc8b1fc748fd7ecb25f88c1333a81`; current GB verifier blob `cc815737e658a850452d9b0f9488e703f8de84ea`. GA rebinding commit `23b2253d02739c064bc539f28f8020de5069168c`; current GA workflow blob `7c408b877a5c0ddc96346cff74efffc1a1985687` binds that exact verifier.
+
+Exp073HC hosted static audit run **`34168906285`**, job **`101885299058`**, completed SUCCESS with exact tokens `PASS_EXP073HC_REPAIRED_GB_TRANSFORM_INVARIANTS`, `PASS_EXP073HC_REPAIRED_GA_GB_BINDING_INVARIANTS`, and `PASS_EXP073HC_WW_S3_S3_GB_REDUNDANT_AUTHORITY_TRANSFORM_REPAIR_STATIC_AUDIT_V0_1`. It verifies both pre-prune proofs, GA exact A/B PASS, live exclusivity, S3->S3/[3,3], same-field semantics, 19327352832-byte file-backed MCM, exact adapter route, complete stage-manifest SHA binding, byte equality, finiteness, and no tolerance/rounding/smoothing/averaging rescue. Classification remains `SUPPORT_PLUS_0_PLUS_0`; `ww_s3_s3_authority_created=false`.
+
+Only a future real Exp073GB execution over a valid successful GA artifact may create `WW_S3_S3` authority.
 
 ## Independent C2 frontier — Exp073GZ PASS
 
@@ -45,7 +53,7 @@ Runtime admission contract commit `a8499c404aa2b862cc08634fe4ed20d2753c9f25`, ex
 
 Exp073GZ preregistration was commit `d5791df0c81169c9a3797ac1867b921028097579`. Repository commit `a4961a87432f53bc55a13c7f542a8775634b90bd` added the dedicated hosted audit without changing the frozen contract. Actions run **`34168323933`**, hosted job **`101883674574`**, completed SUCCESS; raw job log contains exact token `PASS_EXP073GZ_C2_RUNTIME_ADMISSION_RECEIPT_CONTRACT_STATIC_AUDIT_V0_1` after verifying the exact contract blob and frozen fail-closed provenance/receipt requirements.
 
-Exp073GZ classification is strictly **`SUPPORT_PLUS_0_PLUS_0`**. It creates no scientific/model authority, performs no decoding/mapping, and launches no CLASS/scientific prediction. The prior `BLOCKED_BY_AUDIT_EXECUTION_PATH` status is closed.
+Exp073GZ classification is strictly **`SUPPORT_PLUS_0_PLUS_0`**. It creates no scientific/model authority, performs no decoding/mapping, and launches no CLASS/scientific prediction.
 
 The next C2 transition is real frozen 28-packet / 1792-byte runtime production and admission under the audited receipt contract, but it remains **BLOCKED_BY_HEAVY_RUN_EXCLUSIVITY** while FY owns the home runner. No competing home job may be launched.
 
