@@ -1,4 +1,4 @@
-name: Exp073FU replica-A pruner read-only diagnostic v0.1
+name: Exp073FU replica-A pruner read-only diagnostic v0.2
 
 on:
   workflow_dispatch:
@@ -20,7 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Reproduce exact FU A-pruner on nonmutating symlink mirror
-        id: diagnose
         shell: bash
         run: |
           set -euo pipefail
@@ -29,8 +28,7 @@ jobs:
           ROOT="$HOME/.cache/dsir/exp073fu-ww-s1-s3-filebacked-ab-v0-1"
           test -d "$ROOT/checkpoints/A"
           MIRROR="$RUNNER_TEMP/exp073fu-pruner-mirror"
-          OUT="$RUNNER_TEMP/exp073fu-pruner-diagnostic"
-          rm -rf "$MIRROR" "$OUT"; mkdir -p "$MIRROR/checkpoints/A" "$OUT"
+          rm -rf "$MIRROR"; mkdir -p "$MIRROR/checkpoints/A"
           ROOT="$ROOT" MIRROR="$MIRROR" python3 - <<'PY'
           import os
           from pathlib import Path
@@ -42,36 +40,10 @@ jobs:
               elif p.is_file():
                   q.parent.mkdir(parents=True,exist_ok=True)
                   q.symlink_to(p)
+          print('mirror_file_links='+str(sum(1 for p in dst.rglob('*') if p.is_symlink())))
           PY
-          set +e
-          python3 ci/exp073fu_verify_and_prune_replica_v0_1.py --checkpoint-root "$MIRROR/checkpoints" --replica A >"$OUT/pruner_stdout.log" 2>"$OUT/pruner_stderr.log"
-          rc=$?
-          set -e
-          printf '%s\n' "$rc" > "$OUT/exit_code.txt"
-          MIRROR="$MIRROR" OUT="$OUT" ROOT="$ROOT" RC="$rc" python3 - <<'PY'
-          import json,os
-          from pathlib import Path
-          m=Path(os.environ['MIRROR'])/'checkpoints'/'A'; root=Path(os.environ['ROOT'])/'checkpoints'/'A'; out=Path(os.environ['OUT'])
-          info={
-            'classification':'READONLY_DIAGNOSTIC_PLUS_0_PLUS_0',
-            'runner_name':os.environ.get('RUNNER_NAME'),
-            'exit_code':int(os.environ['RC']),
-            'original_checkpoint_mutated':False,
-            'mirror_post_receipt_prune_created':(m/'post_receipt_prune.json').is_file(),
-            'original_post_receipt_prune_exists':(root/'post_receipt_prune.json').is_file(),
-            'mirror_remaining_symlink_count':sum(1 for p in m.rglob('*') if p.is_symlink()),
-          }
-          (out/'diagnostic_manifest.json').write_text(json.dumps(info,indent=2,sort_keys=True)+'\n')
-          PY
-          cat "$OUT/pruner_stdout.log" || true
-          cat "$OUT/pruner_stderr.log" >&2 || true
-          echo "DIAGNOSTIC_EXIT_CODE=$rc"
-          if [ "$rc" -eq 0 ]; then echo PASS_EXP073FU_REPLICA_A_PRUNER_READONLY_REPRO_V0_1; fi
-      - name: Upload diagnostic evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: exp073fu-replica-a-pruner-readonly-diagnostic-v0-1
-          path: ${{ runner.temp }}/exp073fu-pruner-diagnostic
-          if-no-files-found: error
-          retention-days: 30
+          python3 ci/exp073fu_verify_and_prune_replica_v0_1.py --checkpoint-root "$MIRROR/checkpoints" --replica A
+          test -f "$MIRROR/checkpoints/A/post_receipt_prune.json"
+          test ! -f "$ROOT/checkpoints/A/post_receipt_prune.json"
+          echo original_checkpoint_mutated=false
+          echo PASS_EXP073FU_REPLICA_A_PRUNER_READONLY_REPRO_V0_2
