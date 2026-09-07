@@ -2,7 +2,7 @@
 
 Updated: 2026-09-07. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_C2_GT_GU_SUPPORT_PASS_FW_ACTIVE_V11.md` (creation commit `270d9754b75101670e3acbd7989755993794659a`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_C2_GV_SUPPORT_PASS_FW_ACTIVE_V12.md` (creation commit `827b38daa93f6b7fbe1da1f739063f8ef5b0956d`). Earlier recovery notes remain immutable history.
 
 ## Preserved authority
 
@@ -28,12 +28,9 @@ Exact next heavy action: terminal-consume `34125785882`; inspect raw final logs/
 
 C2 remains `mapping_ready=true`, `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, scientific `+0/+0`. Exact z `[0.295,0.51,0.706,0.934,1.317,1.491,2.33]`, k `[0.00067,0.00201,0.0067,0.0201] Mpc^-1`; no interpolation/smoothing/averaging/tolerance/effective-coordinate/fiducial-P rescue. No real C2 extraction while FW owns the home runner.
 
-- Exp073GR run `34130804754`, job `101770188173`: raw-validated `SUPPORT_PLUS_0_PLUS_0` PASS; canonical contract SHA256 `6a14470157e0677ee10d65d24e759907b9a5df5fe1fd9d80e940787224dbfe9b`; exact 28-node z-major/k-minor sampling/provenance contract.
-- Exp073GS run `34130948407`, job `101770660311`: raw-validated support PASS; exact request emitter, manifest SHA256 `1448d6d6ac3ef2a018af3df9b732a91d4006263bc2fb8b7d232e1eded87316b0`.
-- Exp073GT authoritative prereg `035e00a4aa3e8f2b00e43a6a4473ed66c70a7f60`; run `34131162547`, job `101771357352`: raw-validated support PASS, exact token `PASS_EXP073GT_C2_IDE_DRYRUN_RECORD_ENVELOPE_AUDIT_V0_1`, all payloads null, deterministic manifest SHA256 `d86a034988fd42b98e40f68f176a1b834844d1e18208f938542c69f979d048f8`. Later same-label collision commit `5bbdd469b686f5f4c186d159e0c8ad07dfe474bd` does not supersede the older prospective authority.
-- Exp073GU prereg `365e08ab795c673ed55d3a49a5e5020bc3d9e677`: initial run `34131654711` was implementation/provenance FAIL `+0/+0` because a stale embedded GT manifest hash was trusted; minimal fixture repair `ff364fc83c3bbceca66dc03c5034eb021d22c012` added content-bound recomputation. Run `34131740611` then exposed a harness-only module-binding failure `+0/+0`; workflow repair `9bdc6c06dc5cc3df8ce68b3c08124ce683a95a3c` fixed only the audit harness. Repaired run `34131822658`, job `101773484203`, is raw-validated `SUPPORT_PLUS_0_PLUS_0` PASS with handoff SHA256 `5ed0b924379f8ae961acd5d5b14171f96b3692972b2348cba3022d669a343931`, receipt-set SHA256 `bbcfffbc9845dfb74ef4b8fffbcd5f9851cc45d27272cf39595d62ce9f0d8075`, 28 zero-payload receipts, all tested mutations fail closed, exact token `PASS_EXP073GU_C2_IDE_RUNTIME_HANDOFF_RECEIPT_SCHEMA_AUDIT_V0_1`.
+Preserved support chain: Exp073GR/GS/GT/GU raw-validated support PASS as recorded in V11 recovery. Exp073GV prospective prereg `6bf70f7ebdc164a63c2896dc5afeebd6b2972866`, fixture `23217fa330c550f9bd543e03989c90ac5836d6b2`, workflow `54e844ce0db3ebddc5f27b4dda60c98c57bc4421`; hosted run **`34135739339`**, job **`101786143296`**, raw-validated exact token `PASS_EXP073GV_C2_IDE_RECORD_PACKET_ADMISSION_STATIC_AUDIT_V0_1`. It used only a clearly synthetic deterministic 64-byte vector, rejected byte/length/ordinal/coordinate/provenance/digest mutations fail-closed, and emitted `scientific_record_admitted=false`, `cosmological_run_started=false`, `self_hosted_science_started=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `classification=SUPPORT_PLUS_0_PLUS_0`.
 
-Exact independent next C2 work must remain hosted-only metadata/support work while FW owns the runner. No scientific authority is created by GR/GS/GT/GU.
+GV freezes only the future exact-record packet admission boundary; it creates no scientific payload or authority. Exact independent next C2 work must remain hosted-only metadata/support work while FW owns the runner.
 
 ## Global frozen boundaries
 
