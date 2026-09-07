@@ -23,7 +23,7 @@ env:
   DRIVER_V02_BLOB: 'facc3e2bd6c36ae160d35009b5df4494809d1322'
   PRUNER_BLOB: '24ee2408b4b66a17001fb734e9e46d008179c310'
   COMPARE_BLOB: '263c69075f8a9c5ad3644224485f20fbb3961406'
-  HOME_BLOB: '90e8fc8ba66dce9c47cccb5ce79fbc0cebed2259'
+  HOME_BLOB: 'f28bf114e6da502e2a3a0a97f0828c27849814c9'
   ADMIT_VERIFY_BLOB: 'ee065b7d844090ae16386cc6944db23846d663ec'
   TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
   PATCH_BLOB: 'd534b698f9131688d263eedcef27260386c58641'
@@ -79,6 +79,10 @@ jobs:
           grep -F 'compute_coupling_matrix(f3,f3,b)' ci/exp073ga_ww_s3_s3_durable_ab_production_v0_1.py >/dev/null
           grep -F 'BASE="$GITHUB_WORKSPACE/ci/exp073fa_home_filebacked_fullres_v0_1.sh"' ci/exp073ga_home_filebacked_fullres_v0_1.sh >/dev/null
           grep -F "EXPECTED_BASE_BLOB='309c464bbfbe4896bd560165985ee7f643d9ee22'" ci/exp073ga_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'PASS_EXP073GA_REPLICA_A_TERMINAL_PRUNED_RESTORE_SELECTED_V0_1' ci/exp073ga_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'PASS_EXP073GA_REPLICA_B_TERMINAL_PRUNED_RESTORE_SELECTED_V0_1' ci/exp073ga_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'PASS_EXP073GA_REPLICA_A_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' ci/exp073ga_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'PASS_EXP073GA_REPLICA_B_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' ci/exp073ga_home_filebacked_fullres_v0_1.sh >/dev/null
           grep -F 'bash -n "$tmp"' ci/exp073ga_home_filebacked_fullres_v0_1.sh >/dev/null
           ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073ga_*.py ci/exp073gb_verify_ga_candidate_v0_1.py experiments/073g[ab]_*.md
           echo PASS_EXP073GA_HOSTED_LAUNCH_AUDIT_V0_2
