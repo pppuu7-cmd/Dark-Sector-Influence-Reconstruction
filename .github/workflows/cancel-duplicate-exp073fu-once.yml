@@ -1,0 +1,36 @@
+name: Cancel duplicate Exp073FU recovery run once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cancel-duplicate-exp073fu-once.yml'
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  cancel-duplicate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel queued duplicate only
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DUPLICATE_RUN_ID: '34089005639'
+        run: |
+          set -euo pipefail
+          state="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${DUPLICATE_RUN_ID}" --jq '.status')"
+          case "$state" in
+            queued|pending|waiting|requested)
+              gh api --method POST "repos/${GITHUB_REPOSITORY}/actions/runs/${DUPLICATE_RUN_ID}/cancel"
+              echo "CANCELLED_DUPLICATE_RUN=${DUPLICATE_RUN_ID}"
+              ;;
+            completed)
+              echo "DUPLICATE_ALREADY_TERMINAL=${DUPLICATE_RUN_ID}"
+              ;;
+            *)
+              echo "REFUSE_CANCEL_UNEXPECTED_STATE=${state}"
+              exit 1
+              ;;
+          esac
