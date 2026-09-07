@@ -1,0 +1,81 @@
+name: Exp073FU terminal evidence recovery v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073fu-terminal-evidence-recovery-v0-1.yml'
+
+permissions:
+  contents: read
+
+env:
+  SOURCE_RUN_ID: '34089383137'
+  SOURCE_JOB_ID: '101639652148'
+  EXPECTED_RUNNER_NAME: 'DSIR-HOME-PC-2'
+  ARTIFACT_NAME: 'exp073fu-terminal-evidence-recovery-v0-1'
+
+jobs:
+  recover-terminal-evidence:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail closed on runner ownership and collect existing evidence only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$RUNNER_NAME" = "$EXPECTED_RUNNER_NAME"
+          ROOT="$HOME/.cache/dsir/exp073fu-ww-s1-s3-filebacked-ab-v0-1"
+          test -d "$ROOT"
+          OUT="$RUNNER_TEMP/exp073fu-terminal-evidence-recovery"
+          rm -rf "$OUT"; mkdir -p "$OUT"
+          ROOT="$ROOT" OUT="$OUT" SOURCE_RUN_ID="$SOURCE_RUN_ID" SOURCE_JOB_ID="$SOURCE_JOB_ID" RUNNER_NAME="$RUNNER_NAME" python3 - <<'PY'
+          import hashlib,json,os,shutil
+          from pathlib import Path
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          copied=[]
+          def cp(p):
+              if not p.exists() or not p.is_file(): return
+              q=out/p.relative_to(root); q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q); copied.append(q)
+          for p in root.rglob('*.json'): cp(p)
+          for rep in ('A','B'):
+              cp(root/'checkpoints'/rep/'exact_route'/'selected_ee.bin')
+          for n in ('A_driver.log','B_driver.log','A_prune_verify.log','B_prune_verify.log','ab_compare_stdout.txt','ab_compare.json','resource_telemetry.log','terminal_receipt.json'):
+              cp(root/n)
+          if not copied:
+              raise SystemExit('FAIL_NO_EXISTING_FU_EVIDENCE')
+          files=[]
+          for p in sorted(out.rglob('*')):
+              if p.is_file():
+                  h=hashlib.sha256()
+                  with p.open('rb') as f:
+                      for b in iter(lambda:f.read(1024*1024),b''): h.update(b)
+                  files.append({'path':str(p.relative_to(out)),'bytes':p.stat().st_size,'sha256':h.hexdigest()})
+          manifest={
+              'classification':'EVIDENCE_RECOVERY_ONLY_PLUS_0_PLUS_0',
+              'source_run_id':os.environ['SOURCE_RUN_ID'],
+              'source_job_id':os.environ['SOURCE_JOB_ID'],
+              'runner_name':os.environ['RUNNER_NAME'],
+              'checkpoint_root':str(root),
+              'recompute_performed':False,
+              'checkpoint_mutation_performed':False,
+              'files':files,
+          }
+          (out/'recovery_manifest.json').write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n')
+          print('classification=EVIDENCE_RECOVERY_ONLY_PLUS_0_PLUS_0')
+          print('source_run_id='+os.environ['SOURCE_RUN_ID'])
+          print('source_job_id='+os.environ['SOURCE_JOB_ID'])
+          print('runner_name='+os.environ['RUNNER_NAME'])
+          print('recompute_performed=false')
+          print('checkpoint_mutation_performed=false')
+          print('recovered_file_count='+str(len(files)))
+          print('PASS_EXP073FU_TERMINAL_EVIDENCE_RECOVERY_V0_1')
+          PY
+      - name: Upload recovered FU evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073fu-terminal-evidence-recovery-v0-1
+          path: ${{ runner.temp }}/exp073fu-terminal-evidence-recovery
+          if-no-files-found: error
+          retention-days: 30
