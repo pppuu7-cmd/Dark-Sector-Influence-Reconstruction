@@ -7,6 +7,9 @@ on:
         description: Exp073FT S1S2 admission run id
         required: true
         type: string
+  push:
+    paths:
+      - '.github/workflows/exp073fu-ww-s1-s3-home-science-v0-1.yml'
 
 permissions:
   contents: read
@@ -23,7 +26,7 @@ env:
   DRIVER_V02_BLOB: '26b88d930eef2a04c21752c55b0bf7240e1540e9'
   PRUNER_BLOB: 'b9ed7d7178424fb656b4a7c7bfb2ee370c751cb0'
   COMPARE_BLOB: '94a649dd9a9a10bb497f40fff6f866826f2076cf'
-  HOME_BLOB: 'b6ac5d8ba4472b04efedb4b1a732980428cf4c82'
+  HOME_BLOB: 'a32eb3c47b4e6c557d43a572a0af356c91134e1b'
   ADMIT_VERIFY_BLOB: '03cf7109def0fa1b422bd46e080d5a65121c700f'
   FS_DRIVER_BLOB: '030f64f4d1b5bb233ad977b6a6971ebb197d45bf'
   FS_HOME_BLOB: 'a9f1777c68db522c02068828bc9e47a78b065681'
@@ -84,8 +87,9 @@ jobs:
           grep -F 'compute_coupling_matrix(f1,f3,b)' ci/exp073fu_ww_s1_s3_durable_ab_production_v0_1.py >/dev/null
           grep -F "('ww-s1-s2','ww-s1-s3')" ci/exp073fu_compare_terminal_receipts_v0_1.py >/dev/null
           grep -F "('ww_s1_s2','ww_s1_s3')" ci/exp073fu_compare_terminal_receipts_v0_1.py >/dev/null
+          grep -F 'POST_PRUNE_TERMINAL_RESUME_CANDIDATE' ci/exp073fu_home_filebacked_fullres_v0_1.sh >/dev/null
           ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fu_*.py ci/exp073fv_verify_fu_candidate_v0_1.py experiments/073f[uv]_*.md
-          echo PASS_EXP073FU_HOSTED_LAUNCH_AUDIT_V0_2
+          echo PASS_EXP073FU_HOSTED_LAUNCH_AUDIT_V0_3
           echo classification=SUPPORT_PLUS_0_PLUS_0
 
   home-science:
