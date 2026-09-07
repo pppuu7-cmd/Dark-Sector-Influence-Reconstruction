@@ -1,0 +1,75 @@
+name: Exp073GN C2 IDE hook ABI build equivalence v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073gn-c2-ide-hook-abi-build-equivalence-v0-1.yml'
+      - 'docs/dsir4/prereg/EXP073GN_C2_IDE_HOOK_ABI_BUILD_EQUIVALENCE_V0_1.md'
+      - 'scripts/dsir4/fixtures/dsir_c2_pretransform_hook.h'
+      - 'scripts/dsir4/apply_exp073gm_c2_pretransform_hook.py'
+      - 'scripts/dsir4/audit_exp073gm_c2_hook.py'
+
+jobs:
+  hosted-build-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned build dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libgsl-dev
+      - name: Clone exact base and instrumented lineages
+        shell: bash
+        run: |
+          set -euo pipefail
+          for d in /tmp/class_iv_base /tmp/class_iv_hook; do
+            git clone --no-checkout https://github.com/kaeonikc/class_iv.git "$d"
+            git -C "$d" checkout --detach ac627d54e9ce196a08878d1ba33999819925d19c
+            test "$(git -C "$d" rev-parse HEAD)" = "ac627d54e9ce196a08878d1ba33999819925d19c"
+          done
+      - name: Apply exact GM transform and no-op ABI
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/dsir4/apply_exp073gm_c2_pretransform_hook.py \
+            /tmp/class_iv_hook/source/perturbations.c \
+            /tmp/class_iv_hook/source/perturbations.c.patched
+          mv /tmp/class_iv_hook/source/perturbations.c.patched /tmp/class_iv_hook/source/perturbations.c
+          cp scripts/dsir4/fixtures/dsir_c2_pretransform_hook.h /tmp/class_iv_hook/include/dsir_c2_pretransform_hook.h
+      - name: Reverify exact GM source-equivalence contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/dsir4/audit_exp073gm_c2_hook.py \
+            /tmp/class_iv_base \
+            "$(git -C /tmp/class_iv_base rev-parse HEAD)" \
+            scripts/dsir4/apply_exp073gm_c2_pretransform_hook.py
+      - name: Build uninstrumented pinned solver
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C /tmp/class_iv_base -j2 class
+          test -x /tmp/class_iv_base/class
+      - name: Build instrumented solver with no-op observer ABI
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C /tmp/class_iv_hook -j2 class CC='gcc -DDSIR_C2_PRETRANSFORM_HOOK'
+          test -x /tmp/class_iv_hook/class
+      - name: Classify hosted support gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'source_commit=ac627d54e9ce196a08878d1ba33999819925d19c'
+          echo 'base_build=true'
+          echo 'instrumented_noop_build=true'
+          echo 'cosmological_run_started=false'
+          echo 'self_hosted_science_started=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073GN_C2_IDE_HOOK_ABI_BUILD_EQUIVALENCE_V0_1'
