@@ -1,0 +1,96 @@
+name: Exp073GY C2 IDE runtime packet-set admission boundary v0.1
+
+on:
+  push:
+    paths:
+      - 'docs/dsir4/prereg/EXP073GY_C2_IDE_RUNTIME_PACKET_SET_ADMISSION_BOUNDARY_V0_1.md'
+      - '.github/workflows/exp073gy-c2-ide-runtime-packet-set-admission-boundary-v0-1.yml'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen runtime packet-set admission boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, re
+          from pathlib import Path
+
+          prereg = Path('docs/dsir4/prereg/EXP073GY_C2_IDE_RUNTIME_PACKET_SET_ADMISSION_BOUNDARY_V0_1.md').read_text()
+          required = [
+              'dsir.c2.packet_set_provenance_receipt.v0.1',
+              'packet_count=28',
+              'record_bytes_total=1792',
+              'coordinate_order=z-major/k-minor',
+              'decoded_field_values_inspected=false',
+              'scientific_mapping_applied=false',
+              'G_DOMAIN_MAPPING=NOT_YET_TESTABLE',
+              'PASS_EXP073GY_C2_IDE_RUNTIME_PACKET_SET_ADMISSION_BOUNDARY_V0_1',
+          ]
+          for token in required:
+              if token not in prereg:
+                  raise SystemExit(f'missing frozen token: {token}')
+
+          SYN='a98f9ca1f10a9b2bfc957fac81ed837d85bbb203a5f5f0d7ff369a2061bc78b7'
+          SHA40=re.compile(r'^[0-9a-f]{40}$')
+          SHA64=re.compile(r'^[0-9a-f]{64}$')
+          DIGEST=re.compile(r'^sha256:[0-9a-f]{64}$')
+
+          def admit(c):
+              if c['schema'] != 'dsir.c2.packet_set_provenance_receipt.v0.1': return False
+              if c['packet_count'] != 28 or c['record_bytes_total'] != 1792: return False
+              if c['coordinate_order'] != 'z-major/k-minor': return False
+              if c['solver_head'] != 'ac627d54e9ce196a08878d1ba33999819925d19c': return False
+              if c['recorder_blob'] != 'c6144598b9f75908ee27a517d31eda509f7947f6': return False
+              if c['decoded_field_values_inspected'] is not False: return False
+              if c['scientific_mapping_applied'] is not False: return False
+              if not SHA64.fullmatch(c['aggregate']) or c['aggregate'] == SYN: return False
+              if not isinstance(c['run_id'], int) or c['run_id'] <= 0: return False
+              if not isinstance(c['job_id'], int) or c['job_id'] <= 0: return False
+              if not isinstance(c['artifact_id'], int) or c['artifact_id'] <= 0: return False
+              if not SHA40.fullmatch(c['commit_sha']): return False
+              if not DIGEST.fullmatch(c['artifact_digest']): return False
+              if c['producer_status'] != 'success': return False
+              if c['transformations_applied'] is not False: return False
+              return True
+
+          base = dict(
+              schema='dsir.c2.packet_set_provenance_receipt.v0.1', packet_count=28,
+              record_bytes_total=1792, coordinate_order='z-major/k-minor',
+              solver_head='ac627d54e9ce196a08878d1ba33999819925d19c',
+              recorder_blob='c6144598b9f75908ee27a517d31eda509f7947f6',
+              decoded_field_values_inspected=False, scientific_mapping_applied=False,
+              aggregate='1'*64, run_id=1, job_id=2, artifact_id=3,
+              commit_sha='2'*40, artifact_digest='sha256:'+'3'*64,
+              producer_status='success', transformations_applied=False)
+          assert admit(base)
+          mutations = {
+              'synthetic_aggregate': {'aggregate': SYN},
+              'bad_count': {'packet_count': 27},
+              'bad_bytes': {'record_bytes_total': 1728},
+              'decoded': {'decoded_field_values_inspected': True},
+              'mapped': {'scientific_mapping_applied': True},
+              'reordered': {'coordinate_order': 'k-major/z-minor'},
+              'nonterminal': {'producer_status': 'in_progress'},
+              'transformed': {'transformations_applied': True},
+              'missing_run': {'run_id': 0},
+              'bad_commit': {'commit_sha': 'x'*40},
+              'bad_digest': {'artifact_digest': 'sha256:'+'x'*64},
+          }
+          for name, patch in mutations.items():
+              c=base.copy(); c.update(patch)
+              if admit(c): raise SystemExit(f'fail-open mutation: {name}')
+
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('scientific_record_set_admitted=false')
+          print('cosmological_run_started=false')
+          print('self_hosted_science_started=false')
+          print('prediction_ready=false')
+          print('scientific_model_authority_created=false')
+          print('G_DOMAIN_MAPPING=NOT_YET_TESTABLE')
+          print('PASS_EXP073GY_C2_IDE_RUNTIME_PACKET_SET_ADMISSION_BOUNDARY_V0_1')
+          PY
