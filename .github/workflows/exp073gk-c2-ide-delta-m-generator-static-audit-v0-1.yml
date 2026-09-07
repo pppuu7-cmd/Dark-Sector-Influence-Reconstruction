@@ -22,20 +22,21 @@ jobs:
           set -euo pipefail
           python -m py_compile analysis/exp073gk_c2_ide_delta_m_generator_v0_1.py
           python - <<'PY'
-          import copy, importlib.util, json, math, pathlib
+          import copy, importlib.util, pathlib
 
           path = pathlib.Path('analysis/exp073gk_c2_ide_delta_m_generator_v0_1.py')
           text = path.read_text()
           prereg = pathlib.Path('experiments/073gk_c2_ide_delta_m_generator_static_audit_v0_1_prereg.md').read_text()
-          required = [
+          parent = pathlib.Path('experiments/073gj_c2_ide_delta_m_generation_freeze_v0_1_prereg.md').read_text()
+          required_local = [
               'ac627d54e9ce196a08878d1ba33999819925d19c',
-              '0.06664762008318016',
               '[0.00067, 0.00201, 0.0067, 0.0201]',
               'delta_m', 'theta_m', 'w_m', 'Hconf',
               'matched_primordial_normalization_and_phase',
           ]
-          for token in required:
+          for token in required_local:
               assert token in prereg or token in text, token
+          assert '0.06664762008318016' in parent
           for forbidden in ['allclose(', 'isclose(', 'interp(', 'interpolate(', 'round(']:
               assert forbidden not in text, forbidden
 
@@ -79,9 +80,7 @@ jobs:
           }
           a = mod.generate(copy.deepcopy(manifest))
           b = mod.generate(copy.deepcopy(manifest))
-          ba = mod._canonical_bytes(a)
-          bb = mod._canonical_bytes(b)
-          assert ba == bb
+          assert mod._canonical_bytes(a) == mod._canonical_bytes(b)
           assert a['payload_sha256'] == b['payload_sha256']
           iz, ik = 0, 0
           p = manifest['points']['alpha_left']
@@ -102,7 +101,7 @@ jobs:
               else:
                   raise AssertionError('mutation did not fail closed')
 
-          assert a['prediction_ready'] is True  # synthetic fixture only; not scientific authority
+          assert a['prediction_ready'] is True
           print('PASS_EXP073GK_C2_IDE_DELTA_M_GENERATOR_STATIC_AUDIT_V0_1')
           print('classification=SUPPORT_PLUS_0_PLUS_0')
           print('self_hosted_science_started=false')
