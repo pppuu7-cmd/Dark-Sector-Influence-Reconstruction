@@ -97,7 +97,12 @@ No thresholds, equations, hypothesis IDs, source ordering, contract fingerprint,
 
 Run `34125785882` was created from binding commit `1c635f5192d26e76e0ec82a308363b666e5a248b`.
 
-At the most recent checkpoint recorded in this log, hosted-launch-audit job `101754018941` was running. No duplicate heavy run was intentionally launched. The concurrency group remains fail-closed with `cancel-in-progress: false`.
+Latest verified state:
+
+- hosted-launch-audit job `101754018941`: `SUCCESS`;
+- single self-hosted home-science job `101754061309`: `IN_PROGRESS`, executing the frozen `WW_S2_S2` A/B gate;
+- no second active/queued heavy run was intentionally launched;
+- the concurrency group remains fail-closed with `cancel-in-progress: false`.
 
 ## Scientific status
 
