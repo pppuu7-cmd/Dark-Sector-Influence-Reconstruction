@@ -1,0 +1,78 @@
+name: Exp073GO C2 IDE perturbations TU ABI equivalence v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073go-c2-ide-perturbations-tu-abi-equivalence-v0-1.yml'
+      - 'docs/dsir4/prereg/EXP073GO_C2_IDE_PERTURBATIONS_TU_ABI_EQUIVALENCE_V0_1.md'
+      - 'scripts/dsir4/fixtures/dsir_c2_pretransform_hook.h'
+      - 'scripts/dsir4/apply_exp073gm_c2_pretransform_hook.py'
+      - 'scripts/dsir4/audit_exp073gm_c2_hook.py'
+
+jobs:
+  hosted-tu-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned compile dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libgsl-dev
+      - name: Clone exact base and instrumented lineages
+        shell: bash
+        run: |
+          set -euo pipefail
+          for d in /tmp/class_iv_base /tmp/class_iv_hook; do
+            git clone --no-checkout https://github.com/kaeonikc/class_iv.git "$d"
+            git -C "$d" checkout --detach ac627d54e9ce196a08878d1ba33999819925d19c
+            test "$(git -C "$d" rev-parse HEAD)" = "ac627d54e9ce196a08878d1ba33999819925d19c"
+          done
+      - name: Apply exact GM transform and no-op ABI
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/dsir4/apply_exp073gm_c2_pretransform_hook.py \
+            /tmp/class_iv_hook/source/perturbations.c \
+            /tmp/class_iv_hook/source/perturbations.c.patched
+          mv /tmp/class_iv_hook/source/perturbations.c.patched /tmp/class_iv_hook/source/perturbations.c
+          cp scripts/dsir4/fixtures/dsir_c2_pretransform_hook.h /tmp/class_iv_hook/include/dsir_c2_pretransform_hook.h
+      - name: Reverify exact GM source-equivalence contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/dsir4/audit_exp073gm_c2_hook.py \
+            /tmp/class_iv_base \
+            "$(git -C /tmp/class_iv_base rev-parse HEAD)" \
+            scripts/dsir4/apply_exp073gm_c2_pretransform_hook.py
+      - name: Compile uninstrumented perturbations translation unit
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C /tmp/class_iv_base perturbations.o
+          test -s /tmp/class_iv_base/build/perturbations.o
+          sha256sum /tmp/class_iv_base/build/perturbations.o
+      - name: Compile instrumented perturbations translation unit
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C /tmp/class_iv_hook perturbations.o CC='gcc -DDSIR_C2_PRETRANSFORM_HOOK'
+          test -s /tmp/class_iv_hook/build/perturbations.o
+          sha256sum /tmp/class_iv_hook/build/perturbations.o
+      - name: Classify hosted support gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'source_commit=ac627d54e9ce196a08878d1ba33999819925d19c'
+          echo 'base_perturbations_tu_compiled=true'
+          echo 'instrumented_perturbations_tu_compiled=true'
+          echo 'full_executable_link_attempted=false'
+          echo 'cosmological_run_started=false'
+          echo 'self_hosted_science_started=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073GO_C2_IDE_PERTURBATIONS_TU_ABI_EQUIVALENCE_V0_1'
