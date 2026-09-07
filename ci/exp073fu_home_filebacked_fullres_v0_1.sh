@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Exp073FU directly transforms the frozen FA base.  FA also requires the two
+# Exp073FU directly transforms the frozen FA base. FA also requires the two
 # exact storage-audit helper identities; bind them here prospectively because
 # they are infrastructure provenance, not FU scientific parameters.
 : "${EM_GENERATOR_BLOB:=bd1795f2a2c2cf80341f212996eb8278e0be53d9}"
@@ -35,16 +35,16 @@ marker='run_replica A; prune_replica A\n'
 if marker not in s: raise SystemExit('fail-closed missing legacy terminal marker')
 pos=s.index(marker)
 tail='''run_replica A
-"$PATCH_PY" ci/exp073fu_verify_and_prune_replica_v0_1.py --checkpoint-root "$CHECKPOINT_ROOT" --replica A | tee "$SCI_ROOT/A_prune_verify.log"
+"$PATCH_PY" ci/exp073fu_verify_and_prune_replica_v0_2.py --checkpoint-root "$CHECKPOINT_ROOT" --replica A | tee "$SCI_ROOT/A_prune_verify.log"
 rm -f "$SCI_ROOT/mmap/A"/dsir-nmt-mcm-* || true
 run_replica B
-"$PATCH_PY" ci/exp073fu_verify_and_prune_replica_v0_1.py --checkpoint-root "$CHECKPOINT_ROOT" --replica B | tee "$SCI_ROOT/B_prune_verify.log"
+"$PATCH_PY" ci/exp073fu_verify_and_prune_replica_v0_2.py --checkpoint-root "$CHECKPOINT_ROOT" --replica B | tee "$SCI_ROOT/B_prune_verify.log"
 rm -f "$SCI_ROOT/mmap/B"/dsir-nmt-mcm-* || true
 "$PATCH_PY" ci/exp073fu_compare_terminal_receipts_v0_1.py --root "$SCI_ROOT" --out "$SCI_ROOT/ab_compare.json" | tee "$SCI_ROOT/ab_compare_stdout.txt"
 cp "$SCI_ROOT/ab_compare.json" "$SCI_ROOT/terminal_receipt.json"
 '''
 s=s[:pos]+tail
-for token in ('ci/exp073fu_verify_and_prune_replica_v0_1.py','ci/exp073fu_compare_terminal_receipts_v0_1.py','terminal_receipt.json'):
+for token in ('ci/exp073fu_verify_and_prune_replica_v0_2.py','ci/exp073fu_compare_terminal_receipts_v0_1.py','terminal_receipt.json'):
  if token not in s: raise SystemExit(f'fail-closed hardened FU terminal path missing {token!r}')
 if '--replica AB' in s: raise SystemExit('fail-closed legacy completed-replica restore path survived')
 out.write_text(s,encoding='utf-8')
