@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Exp073FU directly transforms the frozen FA base.  FA also requires the two
+# exact storage-audit helper identities; bind them here prospectively because
+# they are infrastructure provenance, not FU scientific parameters.
+: "${EM_GENERATOR_BLOB:=bd1795f2a2c2cf80341f212996eb8278e0be53d9}"
+: "${EM_COMPARE_BLOB:=f0de92f3f121592b6d139eb7d948426946d901d1}"
+export EM_GENERATOR_BLOB EM_COMPARE_BLOB
+
 BASE="$GITHUB_WORKSPACE/ci/exp073fa_home_filebacked_fullres_v0_1.sh"
 EXPECTED_BASE_BLOB='309c464bbfbe4896bd560165985ee7f643d9ee22'
 test "$(git rev-parse HEAD:ci/exp073fa_home_filebacked_fullres_v0_1.sh)" = "$EXPECTED_BASE_BLOB"
