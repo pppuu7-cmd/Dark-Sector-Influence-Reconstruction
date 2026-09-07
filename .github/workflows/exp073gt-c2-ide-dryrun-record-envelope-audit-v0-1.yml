@@ -1,0 +1,87 @@
+name: Exp073GT C2 IDE dry-run record-envelope audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073gt-c2-ide-dryrun-record-envelope-audit-v0-1.yml'
+      - 'docs/dsir4/prereg/EXP073GT_C2_IDE_DRYRUN_RECORD_ENVELOPE_AUDIT_V0_1.md'
+      - 'scripts/dsir4/fixtures/dsir_c2_runtime_sampling_provenance_contract_v0_1.json'
+      - 'scripts/dsir4/fixtures/dsir_c2_runtime_request_emitter_v0_1.py'
+      - 'scripts/dsir4/fixtures/dsir_c2_dryrun_record_envelope_v0_1.py'
+
+jobs:
+  hosted-envelope-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute frozen dry-run envelope audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import copy, importlib.util, pathlib
+          module_path = pathlib.Path('scripts/dsir4/fixtures/dsir_c2_dryrun_record_envelope_v0_1.py')
+          spec = importlib.util.spec_from_file_location('envmod', module_path)
+          envmod = importlib.util.module_from_spec(spec)
+          assert spec.loader is not None
+          spec.loader.exec_module(envmod)
+          contract = pathlib.Path('scripts/dsir4/fixtures/dsir_c2_runtime_sampling_provenance_contract_v0_1.json')
+          emitter = envmod._load_emitter()
+          req = emitter.emit_requests(contract)
+          envelopes = envmod.assemble_envelopes(contract, req)
+          assert len(envelopes) == 28
+          assert [e['ordinal'] for e in envelopes] == list(range(28))
+          for r, e in zip(req, envelopes):
+              assert e['ordinal'] == r['ordinal']
+              assert e['z'] == r['z']
+              assert e['k_Mpc^-1'] == r['k_Mpc^-1']
+              assert e['record_schema'] == 'dsir_c2_record_v0_1'
+              assert e['record_fields'] == ['tau','k','a','H','delta_m','theta_m','rho_idm_iv','rho_iv']
+              assert e['record_field_count'] == 8
+              assert e['record_bytes'] == 64
+              assert e['solver_head'] == 'ac627d54e9ce196a08878d1ba33999819925d19c'
+              assert e['recorder_blob_sha1'] == 'c6144598b9f75908ee27a517d31eda509f7947f6'
+              assert e['runtime_status'] == 'AWAITING_EXACT_RUNTIME_RECORD'
+              assert e['record_payload'] is None
+          for mutation in ('coordinate','reorder','delete','duplicate'):
+              bad = copy.deepcopy(req)
+              if mutation == 'coordinate': bad[0]['z'] = 0.296
+              elif mutation == 'reorder': bad[0], bad[1] = bad[1], bad[0]
+              elif mutation == 'delete': bad.pop()
+              else: bad.append(copy.deepcopy(bad[-1]))
+              try:
+                  envmod.assemble_envelopes(contract, bad)
+              except RuntimeError:
+                  pass
+              else:
+                  raise AssertionError(f'{mutation} mutation did not fail closed')
+          manifest1 = envmod.build_manifest(contract)
+          manifest2 = envmod.build_manifest(contract)
+          assert manifest1 == manifest2
+          assert len(manifest1['manifest_sha256']) == 64
+          print('request_count=28')
+          print('payloads_all_null=true')
+          print('mutations_fail_closed=true')
+          print('manifest_deterministic=true')
+          print('manifest_sha256=' + manifest1['manifest_sha256'])
+          PY
+      - name: Static no-solver no-rescue audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          f=scripts/dsir4/fixtures/dsir_c2_dryrun_record_envelope_v0_1.py
+          ! grep -Eiq 'subprocess|os\.system|popen|mpirun|srun|class_iv|interp|smooth|average|nearest|round\(|tolerance' "$f"
+          grep -Fq '"record_payload": None' "$f"
+          grep -Fq 'AWAITING_EXACT_RUNTIME_RECORD' "$f"
+      - name: Classify hosted support gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'cosmological_run_started=false'
+          echo 'self_hosted_science_started=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073GT_C2_IDE_DRYRUN_RECORD_ENVELOPE_AUDIT_V0_1'
