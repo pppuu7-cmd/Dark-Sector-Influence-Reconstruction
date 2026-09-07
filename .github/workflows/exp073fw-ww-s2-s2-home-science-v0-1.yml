@@ -25,7 +25,7 @@ env:
   DRIVER_V01_BLOB: 'e396b69639b1db73044d60c0afc37f2f74e643ed'
   DRIVER_V02_BLOB: 'f63ffe431a034ea4e842970210365a156fb35089'
   PRUNER_BLOB: 'fb66e67d88a90b093a7da8b42ab0ac6fee13b504'
-  COMPARE_BLOB: '5b6ab180bf13d1fe8ac4557310a19d4a4e9668f6'
+  COMPARE_BLOB: 'b5b828bd71eaf6da360c8ebfa279888165531e49'
   HOME_BLOB: 'c4ef9587d5f4b54179304a44741eece2cec0a7a5'
   ADMIT_VERIFY_BLOB: 'eb907944eac68b9fd13c405399cf238a8cb5bc96'
   TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
@@ -82,10 +82,13 @@ jobs:
           grep -F "'source_pair':'S2->S2'" ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py >/dev/null
           grep -F "'ordered_source_indices':[2,2]" ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py >/dev/null
           grep -F 'compute_coupling_matrix(f2,f2,b)' ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F "('ww-s1-s1','ww-s2-s2')" ci/exp073fw_compare_terminal_receipts_v0_1.py >/dev/null
+          grep -F 'checkpoints/exp073fw-ww-s2-s2-a-v0-1' ci/exp073fw_compare_terminal_receipts_v0_1.py >/dev/null
+          grep -F 'checkpoints/exp073fw-ww-s2-s2-b-v0-1' ci/exp073fw_compare_terminal_receipts_v0_1.py >/dev/null
           grep -F 'BASE="$GITHUB_WORKSPACE/ci/exp073fa_home_filebacked_fullres_v0_1.sh"' ci/exp073fw_home_filebacked_fullres_v0_1.sh >/dev/null
           grep -F 'bash -n "$tmp"' ci/exp073fw_home_filebacked_fullres_v0_1.sh >/dev/null
           ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' experiments/073f[wx]_*.md
-          echo PASS_EXP073FW_HOSTED_LAUNCH_AUDIT_V0_5
+          echo PASS_EXP073FW_HOSTED_LAUNCH_AUDIT_V0_6
           echo classification=SUPPORT_PLUS_0_PLUS_0
 
   home-science:
