@@ -15,39 +15,84 @@ p = root / "source" / "perturbations.c"
 text = p.read_text(encoding="utf-8")
 
 # Static source-binding checks. Whitespace may differ, operator/arithmetic identity may not.
-def pos(pattern, label, flags=re.S):
-    m = re.search(pattern, text, flags)
+def match(pattern, label, haystack=text, flags=re.S):
+    m = re.search(pattern, haystack, flags)
     if not m:
         raise SystemExit(f"FAIL missing {label}")
-    return m.start()
+    return m
 
-# Matter construction must include IDE density and momentum source terms.
-pos(r"rho_idm_iv\s*\*\s*ppw->delta_idm_iv", "idm_iv density contribution")
-pos(r"rho_idm_iv[^;\n]*ppw->theta_idm_iv|ppw->theta_idm_iv[^;\n]*rho_idm_iv", "idm_iv momentum contribution")
+# Isolate the helper that constructs current-gauge matter sums. The caller later
+# applies the gauge-invariant correction after this helper returns.
+helper = match(
+    r"int\s+perturb_total_stress_energy\s*\([^)]*\)\s*\{(?P<body>.*?)(?=\nint\s+[A-Za-z_][A-Za-z0-9_]*\s*\()",
+    "perturb_total_stress_energy function",
+).group("body")
 
-p_delta = pos(r"ppw->delta_m\s*=\s*delta_rho_m\s*/\s*rho_m\s*;", "pre-transform delta_m assignment")
-p_theta = pos(r"ppw->theta_m\s*=\s*rho_plus_p_theta_m\s*/\s*rho_plus_p_m\s*;", "pre-transform theta_m assignment")
-p_corr = pos(r"ppw->delta_m\s*\+=\s*3\s*\*\s*a\s*\*\s*H\s*\*\s*ppw->theta_m\s*/\s*k2\s*;", "gauge-invariant density correction")
-p_export = pos(r"index_tp_delta_m", "delta_m export symbol")
+# Matter construction must include the exact pinned-source IDE density term.
+match(
+    r"delta_rho_m\s*\+=\s*ppw->pvecback\s*\[\s*pba->index_bg_rho_idm_iv\s*\]\s*\*\s*y\s*\[\s*ppw->pv->index_pt_delta_idm_iv\s*\]\s*;",
+    "idm_iv density contribution",
+    helper,
+)
 
-if not (p_delta < p_corr and p_theta < p_corr):
-    raise SystemExit("FAIL pre-transform assignments do not precede density correction")
-# Require a bounded source segment between construction and correction with native a,H in scope.
-segment = text[min(p_delta,p_theta):p_corr]
-if "a" not in segment and "H" not in segment:
-    # Scope is lexical C, so the exact declarations may be earlier; this is only a guard against a wrong match.
-    pass
+# Momentum is explicitly omitted only in synchronous gauge in this implementation;
+# outside that special case it must enter the total-matter momentum sum.
+match(
+    r"if\s*\(\s*ppt->gauge\s*!=\s*synchronous\s*\)\s*\n?\s*rho_plus_p_theta_m\s*\+=\s*ppw->pvecback\s*\[\s*pba->index_bg_rho_idm_iv\s*\]\s*\*\s*y\s*\[\s*ppw->pv->index_pt_theta_idm_iv\s*\]\s*;",
+    "idm_iv momentum contribution outside synchronous special case",
+    helper,
+)
 
-# The standard source/export must exist and the correction must occur before the relevant later source-storage section.
-if p_export < min(p_delta, p_theta):
-    # Index declarations can occur earlier globally; locate an occurrence after correction instead.
-    later = text.find("index_tp_delta_m", p_corr)
-    if later < 0:
-        raise SystemExit("FAIL no downstream index_tp_delta_m use after correction")
+p_delta = match(
+    r"ppw->delta_m\s*=\s*delta_rho_m\s*/\s*rho_m\s*;",
+    "pre-transform delta_m assignment",
+    helper,
+).start()
+p_theta = match(
+    r"ppw->theta_m\s*=\s*rho_plus_p_theta_m\s*/\s*rho_plus_p_m\s*;",
+    "pre-transform theta_m assignment",
+    helper,
+).start()
+if not p_delta < p_theta:
+    raise SystemExit("FAIL unexpected helper assignment ordering")
 
-# Ensure source itself labels total matter overdensity as gauge-invariant somewhere downstream.
-if "total matter overdensity (gauge-invariant" not in text:
-    raise SystemExit("FAIL missing native gauge-invariant delta_m declaration/comment")
+# In the caller, require the helper call to occur before the exact native CLASS
+# gauge-invariant density correction. This establishes runtime ordering without
+# falsely assuming the helper definition must appear lexically before its caller.
+einstein = match(
+    r"int\s+perturb_einstein\s*\([^)]*\)\s*\{(?P<body>.*?)(?=\nint\s+perturb_total_stress_energy\s*\()",
+    "perturb_einstein function",
+).group("body")
+p_call = match(
+    r"perturb_total_stress_energy\s*\(\s*ppr\s*,\s*pba\s*,\s*pth\s*,\s*ppt\s*,\s*index_md\s*,\s*k\s*,\s*y\s*,\s*ppw\s*\)",
+    "total stress-energy helper call",
+    einstein,
+).start()
+p_corr = match(
+    r"ppw->delta_m\s*\+=\s*3\s*\.\s*\*\s*ppw->pvecback\s*\[\s*pba->index_bg_a\s*\]\s*\*\s*ppw->pvecback\s*\[\s*pba->index_bg_H\s*\]\s*\*\s*ppw->theta_m\s*/\s*k2\s*;",
+    "gauge-invariant density correction",
+    einstein,
+).start()
+if not p_call < p_corr:
+    raise SystemExit("FAIL total-matter helper is not called before density correction")
+
+# Require native a,H identities at the correction itself: Hconf=a*H is therefore
+# available observation-only without a second cosmology calculation.
+match(r"index_bg_a", "native scale factor in correction", einstein)
+match(r"index_bg_H", "native H in correction", einstein)
+
+# Standard exported index_tp_delta_m must exist somewhere downstream in the source,
+# but it is forbidden as the pre-transform input by the frozen contract.
+match(r"index_tp_delta_m", "delta_m export symbol")
+
+# The source must explicitly document that the caller transforms current-gauge
+# (delta_m,theta_m) into gauge-independent variables after helper construction.
+match(
+    r"transform\s*\(delta_m,\s*theta_m\)\s*of\s*the\s*current\s*gauge\s*into\s*gauge-independent\s*variables",
+    "native current-gauge to gauge-independent transformation comment",
+    einstein,
+    flags=re.S | re.I,
+)
 
 print("classification=SUPPORT_PLUS_0_PLUS_0")
 print("self_hosted_science_started=false")
