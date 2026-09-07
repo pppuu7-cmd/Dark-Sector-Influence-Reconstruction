@@ -25,7 +25,7 @@ env:
   DRIVER_V01_BLOB: '0b05e8dbf5cf87c6b35e6729bc3c4e5443a1421d'
   DRIVER_V02_BLOB: '26b88d930eef2a04c21752c55b0bf7240e1540e9'
   PRUNER_BLOB: 'b9ed7d7178424fb656b4a7c7bfb2ee370c751cb0'
-  COMPARE_BLOB: '8266a04a579d68b51503daa928a1fad7b533fd1c'
+  COMPARE_BLOB: '94a649dd9a9a10bb497f40fff6f866826f2076cf'
   HOME_BLOB: 'b6ac5d8ba4472b04efedb4b1a732980428cf4c82'
   ADMIT_VERIFY_BLOB: '03cf7109def0fa1b422bd46e080d5a65121c700f'
   FS_DRIVER_BLOB: '030f64f4d1b5bb233ad977b6a6971ebb197d45bf'
@@ -85,8 +85,10 @@ jobs:
           grep -F 'source_count_map(r1_root,3)' ci/exp073fu_ww_s1_s3_durable_ab_production_v0_1.py >/dev/null
           grep -F "'ordered_source_indices':[1,3]" ci/exp073fu_ww_s1_s3_durable_ab_production_v0_1.py >/dev/null
           grep -F 'compute_coupling_matrix(f1,f3,b)' ci/exp073fu_ww_s1_s3_durable_ab_production_v0_1.py >/dev/null
+          grep -F "('ww-s1-s2','ww-s1-s3')" ci/exp073fu_compare_terminal_receipts_v0_1.py >/dev/null
+          grep -F "('ww_s1_s2','ww_s1_s3')" ci/exp073fu_compare_terminal_receipts_v0_1.py >/dev/null
           ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fu_*.py ci/exp073fv_verify_fu_candidate_v0_1.py experiments/073f[uv]_*.md
-          echo PASS_EXP073FU_HOSTED_LAUNCH_AUDIT_V0_1
+          echo PASS_EXP073FU_HOSTED_LAUNCH_AUDIT_V0_2
           echo classification=SUPPORT_PLUS_0_PLUS_0
 
   home-science:
