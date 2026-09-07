@@ -1,4 +1,4 @@
-name: Exp073FU replica-A repaired-pruner read-only validation v0.5
+name: Exp073FU replica-A repaired-pruner read-only validation v0.6
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ permissions:
 
 env:
   EXPECTED_RUNNER_NAME: 'DSIR-HOME-PC-2'
-  FU_PRUNER_V02_BLOB: '004c5318acd6ea5a21625b5d831d5302d0322020'
+  FU_PRUNER_V03_BLOB: 'b9ed7d7178424fb656b4a7c7bfb2ee370c751cb0'
 
 jobs:
   validate-repaired-pruner:
@@ -19,12 +19,12 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Validate repaired FU A-pruner on nonmutating symlink mirror
+      - name: Validate schema-repaired FU A-pruner on nonmutating symlink mirror
         shell: bash
         run: |
           set -euo pipefail
           test "$RUNNER_NAME" = "$EXPECTED_RUNNER_NAME"
-          test "$(git rev-parse HEAD:ci/exp073fu_verify_and_prune_replica_v0_2.py)" = "$FU_PRUNER_V02_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fu_verify_and_prune_replica_v0_2.py)" = "$FU_PRUNER_V03_BLOB"
           PATCH_PY="$HOME/.cache/dsir-nmt27-filebacked-read-v0-2/bin/python"
           test -x "$PATCH_PY"
           "$PATCH_PY" - <<'PY'
@@ -42,7 +42,7 @@ jobs:
           keys=('schema','stage','complete','replica','checkpoint_namespace','source_head','contract_fingerprint','historical_ww_numerical_import','other_replica_output_read')
           print('fresh_sources_identity='+json.dumps({k:o.get(k) for k in keys},sort_keys=True))
           PY
-          MIRROR="$RUNNER_TEMP/exp073fu-pruner-v02-mirror"
+          MIRROR="$RUNNER_TEMP/exp073fu-pruner-v03-mirror"
           rm -rf "$MIRROR"; mkdir -p "$MIRROR/checkpoints/A"
           ROOT="$ROOT" MIRROR="$MIRROR" python3 - <<'PY'
           import os
@@ -58,4 +58,4 @@ jobs:
           test -f "$MIRROR/checkpoints/A/post_receipt_prune.json"
           test ! -e "$ROOT/checkpoints/A/post_receipt_prune.json"
           echo original_checkpoint_mutated=false
-          echo PASS_EXP073FU_REPLICA_A_REPAIRED_PRUNER_READONLY_VALIDATION_V0_5
+          echo PASS_EXP073FU_REPLICA_A_REPAIRED_PRUNER_READONLY_VALIDATION_V0_6
