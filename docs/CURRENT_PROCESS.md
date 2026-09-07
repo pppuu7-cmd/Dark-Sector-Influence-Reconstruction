@@ -4,81 +4,58 @@ Updated: 2026-09-07. Scope: **DSIR only**; RTK/RQIR excluded.
 
 ## Preserved authority
 
-Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities: `S0_S0` Exp073EO, `S0_S1` Exp073EZ, `S0_S2` Exp073FF, `S0_S3` **Exp073FN `34050154578 / 101532191756`**, token `PASS_EXP073FN_WW_S0_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1`.
+Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities now include `S0_S0` Exp073EO, `S0_S1` Exp073EZ, `S0_S2` Exp073FF, `S0_S3` Exp073FN, and newly admitted **`S1_S1` Exp073FR**.
 
-Exp073FG candidate provenance remains run/job `34034377795 / 101489679508`, artifact `9993520467`, exact ZIP SHA256 `8ddd1e1b81e5fa9c3a4de16c6d72b35353cb42bba04bb77c736aa4998340bde0`, selected exact A/B SHA `db58af980e2997ebbe327ce91dfafb682c38fda1ba841c3d5acba78e429007d3`. Historical collided S0S3 admission run `34047839320 / 101525992295` remains `INFRASTRUCTURE_LOG_TRANSPORT_FAIL_PLUS_0_PLUS_0`; canonical Exp073FL remains the earlier S1S1 static audit.
+Newest immutable recovery note: `docs/recovery/RECOVERY_2026-09-07_EXP073FM_FR_ADMITTED_FS_RUNNING.md`.
 
-## Newly closed hosted support for WW_S1_S1
+## Newly closed — Exp073FM candidate and Exp073FR authority
 
-- Exp073FO `34050224161 / 101532385479`: `PASS_EXP073FO_WW_S1_S1_PRODUCTION_TRANSFORMATION_READINESS_V0_1`, `SUPPORT_PLUS_0_PLUS_0`.
-- Exp073FP `34050445433 / 101532983406`: `PASS_EXP073FP_WW_S1_S1_EXACT_PRODUCTION_DRIVER_STATIC_AUDIT_V0_1`, `SUPPORT_PLUS_0_PLUS_0`.
-- Exp073FQ `34050588344 / 101533366352`: `PASS_EXP073FQ_WW_S1_S1_HOME_ENVELOPE_STATIC_AUDIT_V0_1`, `SUPPORT_PLUS_0_PLUS_0`.
-- Exp073FM hosted-launch job `101533554310`: raw token `PASS_EXP073FM_HOSTED_LAUNCH_AUDIT_V0_1`, `SUPPORT_PLUS_0_PLUS_0`.
-None of these support gates creates WW_S1_S1 authority.
+Exp073FM run/job **`34050657030 / 101533574294`**, head `f0caca0c3e812710e5958ee13348a150d045a7d8`, is terminal SUCCESS and was independently consumed against the frozen contract.
 
-Frozen committed Exp073FM implementation blobs: driver v0.1 `477647c5164264665cc16e20d1577fb25cd245f4`; driver v0.2 `8e3edff39aae95d3abc3196806802c5f0ae59832`; verify/prune `8e04e99084aed582f9586e3f316c023650ce6c63`; terminal comparator `02d69d5d517c676b3ec0963380f93d13f2b9874e`; home envelope `873232cc96f9a97afefeff1ff0a433fd5b49a5a2`.
+- candidate token: `PASS_EXP073FM_WW_S1_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`;
+- artifact `9998932628`, `exp073fm-ww-s1-s1-filebacked-ab-v0-1`, size `7380196`;
+- ZIP SHA256 `db3aa00e060047f354c5374c78dba3808491cf61a1d810114d35b474badd49af`;
+- selected A/B SHA256 `ff7215d5e523134e10ef4c9b512c6829d66fd63af33dc5655bd8e88dfd0c33ff`;
+- canonical A/B `<f8 [39,12288]`, all finite, exact byte equality and `numpy.array_equal=true`;
+- both complete six-stage/prune chains and exact `19,327,352,832`-byte file-backed MCM proof verified;
+- frozen source head `de83e20a68f79ccf25b89b0d33eb4206e294c757` and contract fingerprint `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251` preserved.
 
-## Authoritative current process — Exp073FM WW_S1_S1 home science
+Terminal consumer run/job `34065976761 / 101578311604` emitted `PASS_EXP073FM_TERMINAL_EVIDENCE_CONSUMED_FOR_CANONICAL_FR_V0_1`, classification `SUPPORT_TERMINAL_EVIDENCE_CONSUMED_PLUS_0_PLUS_0`, and created no authority.
 
-- workflow/run: **`34050657030`**;
-- home job: **`101533574294`**;
-- branch/head: `main` / **`f0caca0c3e812710e5958ee13348a150d045a7d8`**;
-- state at latest reconciliation: **IN_PROGRESS** step `Run frozen WW_S1_S1 A/B gate with durable checkpoints`;
-- runner ownership: **`DSIR-HOME-PC` exclusively owned by job `101533574294`**;
-- no competing self-hosted/home task may be launched;
-- science checkpoint namespaces: `checkpoints/exp073fm-ww-s1-s1-a-v0-1`, `checkpoints/exp073fm-ww-s1-s1-b-v0-1`;
-- last durable checkpoint: **UNKNOWN_NOT_INSPECTED_WHILE_RUNNING**; partial numerical output must not be inspected;
-- expected candidate token: `PASS_EXP073FM_WW_S1_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`;
-- next action on terminal SUCCESS: download artifact, independently verify ZIP digest, both complete six-stage/prune chains, S1 same-object semantics, exact file-backed MCM proof, exact A/B canonical arrays, and frozen source/contract/checkpoint identities, then classify candidate; a separate provenance admission is mandatory before authority;
-- next action on infrastructure/resource FAIL: inspect first causal failure, preserve any verified complete-stage checkpoints, make only the smallest prospective repair, and resume from the last verified checkpoint without changing frozen science;
-- next action on genuine exact numerical mismatch: record `SCIENTIFIC_FAIL`; never rescue with tolerance/rounding/smoothing/averaging.
+Canonical Exp073FR run/job **`34067345251 / 101578330386`**, head `f3e49041a5b869ddf22be8ca7a612901ec9f9458`, independently reverified the frozen terminal evidence and emitted:
 
-## Prospectively frozen next authority gate — canonical Exp073FR
+`PASS_EXP073FR_WW_S1_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1`
 
-While Exp073FM remains in progress and before reading any partial/terminal numerical result, Exp073FR was preregistered as the sole prospective `WW_S1_S1` provenance-admission gate.
+with `classification=SCIENTIFIC_AUTHORITY_ADMITTED` and `ww_s1_s1_authority_created=true`. Therefore **WW_S1_S1 is formally admitted**.
 
-- prereg path: `experiments/073fr_ww_s1_s1_filebacked_checkpoint_provenance_admission_v0_1_prereg.md`;
-- creation commit: `55fa8c56ec8bb7e7cb0d278870a05619c5a59f67`;
-- prereg blob: `aa08636426dd48142c3a3da7c032f1075a1be1f9`;
-- frozen admission PASS token: `PASS_EXP073FR_WW_S1_S1_FILEBACKED_PROVENANCE_ADMISSION_V0_1`;
-- Exp073FR must not run until Exp073FM is terminal and independently consumed;
-- Exp073FR is hosted-only, creates no home-runner ownership, and may create authority only if every frozen terminal artifact/checkpoint/source/same-object/file-backed/exact-equality check passes.
+## Authoritative current process — Exp073FS WW_S1_S2
 
-A later pre-terminal automatic/duplicate Exp073FR implementation was removed from active `main`; the active workflow path `.github/workflows/exp073fr-ww-s1-s1-provenance-admission-and-dispatch-v0-1.yml` is intentionally absent while FM runs. Canonical prereg above remains authority.
+Exp073FR dispatched the already prospectively frozen successor. Live Actions reconciliation shows exactly one in-progress DSIR workflow; do not duplicate it.
 
-## Reconciled future successor staging — support only
+- workflow/run: **Exp073FS `34067352681`**;
+- hosted launch job: `101578350681`, SUCCESS, token `PASS_EXP073FS_HOSTED_LAUNCH_AUDIT_V0_1`, support `+0/+0`;
+- home job: **`101578366531`**;
+- branch/head: `main` / **`f3e49041a5b869ddf22be8ca7a612901ec9f9458`**;
+- start: `2026-09-06T23:36:14Z`;
+- current state: **IN_PROGRESS** in `Run frozen WW_S1_S2 A/B gate with durable checkpoints`;
+- runner ownership: **`DSIR-HOME-PC` exclusively owned by job `101578366531`**;
+- checkpoint root/namespaces: `~/.cache/dsir/exp073fs-ww-s1-s2-filebacked-ab-v0-1/checkpoints/A` and `/B`;
+- last durable checkpoint: `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`; partial numerical output must not be inspected;
+- science prereg blob: `80c6af017b47d51db3f588221749fb152577b0e5`;
+- Exp073FT admission prereg blob: `072bdeae68e86312142e980fe2015f979e7b117f`;
+- frozen source/contract: `de83e20a68f79ccf25b89b0d33eb4206e294c757` / `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
+- expected candidate token: `PASS_EXP073FS_WW_S1_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`.
 
-Another DSIR process prospectively staged successor transforms/workflows while Exp073FM runs. These do not supersede the current frontier and do not create authority.
+Frozen pair semantics are ordered `[1,2] = S1->S2`: reconstruct S1 and S2 once each, build two distinct spin-2 fields, forbid same-object handoff and reversed order; DES NSIDE=4096; ell `0..12287`; 39 bands; public file-backed BPW; full `[4,39,4,12288]`; canonical `<f8 [39,12288] EE<-EE`; exact A/B SHA + array equality; all finite; no tolerance/rounding/smoothing/averaging/effective-coordinate/fiducial rescue.
 
-- Exp073FS future `WW_S1_S2` queue/static audit `34054103704 / 101542730121`: raw `PASS_EXP073FS_AUTONOMOUS_QUEUE_STATIC_AUDIT_V0_1`, `SUPPORT_PLUS_0_PLUS_0`, `self_hosted_science_started=false`. Its heavy workflow is `workflow_dispatch` only and requires an explicit successful Exp073FR admission predecessor before a home job can start.
-- Exp073FU future `WW_S1_S3` static audit v0.1 `34054723711 / 101544419091`: implementation/static FAIL `+0/+0`, first causal failure `AssertionError: Exp073FS`; no science ran. Minimal transform-only repair commit `5c0d75a57c909b0a0b699bbe79a5b5ab15c0f852` preserved science. Repaired v0.2 `34054859313 / 101544834479`: raw `PASS_EXP073FU_WW_S1_S3_TRANSFORMATION_STATIC_AUDIT_V0_2`, `SUPPORT_PLUS_0_PLUS_0`, `self_hosted_science_started=false`.
-- Later staged Exp073FW/FX (`WW_S2_S2`), Exp073FY/FZ (`WW_S2_S3`) and Exp073GA/GB (`WW_S3_S3`) commits are prereg/transformation preparation only. Their presence on `main` is not scientific PASS and they are not running.
+### Exact next actions
 
-Immutable reconciliation note: `docs/recovery/RECOVERY_2026-09-06_EXP073FS_FU_STAGED_FM_RUNNING.md`. Research-log supplement: `docs/research_log/RESEARCH_LOG_2026-09-06_EXP073FS_FU_STAGING.md`.
+On terminal SUCCESS, consume raw job log and artifact immediately; independently verify artifact digest/ZIP SHA, both complete stage chains before prune, ordered source/reconstruction counts, distinct field identities, source/contract/implementation/checkpoint provenance, exact `19,327,352,832`-byte mmap proof, finiteness and exact canonical A/B equality. Candidate PASS does not itself create authority. Only the prospectively frozen Exp073FT admission may create `WW_S1_S2` authority and then dispatch Exp073FU.
 
-## DSIR-4 independent frontier — C0/C1 G_DOMAIN_MAPPING admitted
+On infrastructure/resource failure, diagnose the first causal defect, preserve every verified complete-stage checkpoint, make the smallest prospective repair, and resume without changing frozen science. Exact numerical mismatch is a scientific FAIL and must never be tolerance-rescued.
 
-This branch is independent of the running Exp073FM numerical result and did not inspect any FM partial output.
-
-Exp073GH v0.1 run/job `34060870654 / 101561036784`, head `f4d9d2e34d72415dda4b70522e63703c549840c4`, is an immutable `INFRASTRUCTURE_LOG_TRANSPORT_FAIL_PLUS_0_PLUS_0`: the first causal failure was exact-line `grep -aFx` against timestamp-prefixed GitHub logs. No scientific authority was created.
-
-Minimal workflow-only repair changed log matching to fixed-substring `grep -aF` without changing mapping artifacts, certified domain, residual equations or acceptance semantics. Repaired Exp073GH v0.2 run/job **`34060904951 / 101561132087`**, head **`000641a05b962e53ce5b9e8f2feafe20ff312d1b`**, was independently raw-log verified and emitted:
-- `PASS_EXP073GH_C0_LCDM_G_DOMAIN_MAPPING_ADMISSION_V0_1`;
-- `PASS_EXP073GH_C1_SMOOTH_W_G_DOMAIN_MAPPING_ADMISSION_V0_1`;
-- `classification=SCIENTIFIC_GATE_AUTHORITY_ADMITTED`;
-- `admitted_gate=G_DOMAIN_MAPPING`;
-- `scientific_model_authority_created=false`;
-- `full_dsir_model_pass=false`;
-- `downstream_model_gates=NOT_YET_TESTABLE`.
-
-Therefore C0 ΛCDM-reference and C1 smooth-w local control now possess authority **only for the G_DOMAIN_MAPPING gate**. They do not yet have prediction authority or full DSIR-model PASS/FAIL. Frozen mapping domain remains exactly `0.295<=z<=2.33`, `0<k<=0.06664762008318016 Mpc^-1`, linear scalar regime, no quasi-static assumption and no sub-horizon assumption.
-
-Immutable recovery note: `docs/recovery/RECOVERY_2026-09-07_EXP073GH_G_DOMAIN_MAPPING_ADMITTED_FM_RUNNING.md`, creation commit `89c2f603881266b5bc913015ade52f5c0a7bc49a`.
-
-## Frozen WW_S1_S1 science
-
-Target `[1,1]`: authoritative S1 reconstructed exactly once per replica; exactly one spin-2 field; identical Python field object passed on both coupling sides; equal-but-distinct field forbidden; NSIDE=4096; ell `0..12287`; 39 bands; public file-backed BPW; canonical `<f8 [39,12288]` `EE<-EE`; exact SHA + `numpy.array_equal`; no tolerance/rounding/smoothing/averaging/manual/effective-coordinate/fiducial rescue. Candidate creates no authority.
+The remaining prospectively frozen deterministic queue remains `FS -> FT -> FU -> FV -> FW -> FX -> FY -> FZ -> GA -> GB -> STOP`; every heavy successor is gated on the predecessor's explicit scientific authority token. No competing home job is permitted.
 
 ## Global frozen boundaries
 
-Unless prospectively superseded: `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid<=0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; exact-threshold ambiguity `numerically_unresolved`; no tolerance, rounding, smoothing, averaging, effective ell/z/k or fiducial-P shortcut.
+Unless prospectively superseded by explicit repository authority: `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid<=0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; exact-threshold ambiguity `numerically_unresolved`; no tolerance, rounding, smoothing, averaging, effective ell/z/k or fiducial-P shortcut.
