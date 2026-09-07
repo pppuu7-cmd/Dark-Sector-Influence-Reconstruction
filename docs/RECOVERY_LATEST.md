@@ -1,8 +1,8 @@
 # DSIR authoritative recovery — latest
 
-Updated: 2026-09-07. Scope: **DSIR only**. Never mix RTK or RQIR.
+Updated: 2026-09-08. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_EXP073FY_NAMESPACE_REPAIR_RESUME_V22.md` (creation commit `94607e9b068552bc565bb4d3b58e32e973584b22`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-08_EXP073GZ_HOSTED_AUDIT_PASS_FY_ACTIVE_V23.md` (creation commit `9f55976e65b5cc803bf226c6987bafc8766a3361`). Earlier recovery notes remain immutable history.
 
 ## Preserved scientific authority
 
@@ -39,9 +39,15 @@ Frozen FY science remains ordered `S2->S3`, `[2,3]`, distinct fields, DES NSIDE=
 
 GA remains dispatch-only and forbidden until successful FZ admission. Direct-base repair commit `4a232aa8369ba8e4f6c5a247ecaf2b75696ced8c`; additional terminal-resume hardening commit `e9aa36283d0f3b78a91b8a855326c0faec9a613c`; current home blob `f28bf114e6da502e2a3a0a97f0828c27849814c9`; workflow binding `d149630f30f3e904c78c7ca43f32917f9e2aaf85`. Frozen GA target is `[3,3]`, same-field `S3->S3`, exact A/B equality and exact file-backed proof. Only Exp073GB may create authority.
 
-## Independent C2 frontier
+## Independent C2 frontier — Exp073GZ PASS
 
-Exp073GW/GX/GY remain hosted support-only `+0/+0`; no real C2 record-set/model authority exists. Runtime admission contract commit `a8499c404aa2b862cc08634fe4ed20d2753c9f25`, blob `1c2e30e6563efe3976ee0b1825dfb250a902a529`, remains frozen. Exp073GZ static audit preregistration commit `d5791df0c81169c9a3797ac1867b921028097579`, expected token `PASS_EXP073GZ_C2_RUNTIME_ADMISSION_RECEIPT_CONTRACT_STATIC_AUDIT_V0_1`, remains **PREREGISTERED / BLOCKED_BY_AUDIT_EXECUTION_PATH**. Real C2 runtime remains blocked while FY owns home and additionally requires GZ PASS.
+Runtime admission contract commit `a8499c404aa2b862cc08634fe4ed20d2753c9f25`, exact blob `1c2e30e6563efe3976ee0b1825dfb250a902a529`, remains frozen.
+
+Exp073GZ preregistration was commit `d5791df0c81169c9a3797ac1867b921028097579`. Repository commit `a4961a87432f53bc55a13c7f542a8775634b90bd` added the dedicated hosted audit without changing the frozen contract. Actions run **`34168323933`**, hosted job **`101883674574`**, completed SUCCESS; raw job log contains exact token `PASS_EXP073GZ_C2_RUNTIME_ADMISSION_RECEIPT_CONTRACT_STATIC_AUDIT_V0_1` after verifying the exact contract blob and frozen fail-closed provenance/receipt requirements.
+
+Exp073GZ classification is strictly **`SUPPORT_PLUS_0_PLUS_0`**. It creates no scientific/model authority, performs no decoding/mapping, and launches no CLASS/scientific prediction. The prior `BLOCKED_BY_AUDIT_EXECUTION_PATH` status is closed.
+
+The next C2 transition is real frozen 28-packet / 1792-byte runtime production and admission under the audited receipt contract, but it remains **BLOCKED_BY_HEAVY_RUN_EXCLUSIVITY** while FY owns the home runner. No competing home job may be launched.
 
 ## Global frozen boundaries
 
