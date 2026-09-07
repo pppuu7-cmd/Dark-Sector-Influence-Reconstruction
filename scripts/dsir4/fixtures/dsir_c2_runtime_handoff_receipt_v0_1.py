@@ -27,11 +27,19 @@ def _load_gt_module():
     return module
 
 
+def _validate_gt_manifest(manifest):
+    embedded = manifest.get("manifest_sha256")
+    unsigned = dict(manifest)
+    unsigned.pop("manifest_sha256", None)
+    recomputed = hashlib.sha256(_canonical(unsigned)).hexdigest()
+    if embedded != GT_MANIFEST_SHA256 or recomputed != GT_MANIFEST_SHA256:
+        raise RuntimeError("fail-closed GT manifest content fingerprint mismatch")
+
+
 def build_handoff_and_receipts(contract_path):
     gt = _load_gt_module()
     manifest = gt.build_manifest(contract_path)
-    if manifest.get("manifest_sha256") != GT_MANIFEST_SHA256:
-        raise RuntimeError("fail-closed GT manifest mismatch")
+    _validate_gt_manifest(manifest)
     envs = manifest.get("envelopes")
     if not isinstance(envs, list) or len(envs) != REQUEST_COUNT:
         raise RuntimeError("fail-closed envelope count mismatch")
