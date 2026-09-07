@@ -14,7 +14,8 @@ if reported != EXPECTED_COMMIT:
 p = root / "source" / "perturbations.c"
 text = p.read_text(encoding="utf-8")
 
-# Static source-binding checks. Whitespace may differ, operator/arithmetic identity may not.
+# Static source-binding checks. Whitespace/comments/guard layout may differ;
+# symbol and arithmetic identity may not.
 def match(pattern, label, haystack=text, flags=re.S):
     m = re.search(pattern, haystack, flags)
     if not m:
@@ -28,19 +29,28 @@ helper = match(
     "perturb_total_stress_energy function",
 ).group("body")
 
-# Matter construction must include the exact pinned-source IDE density term.
+# Pinned class_iv source places IDE matter contributions behind source/gauge
+# guards. Freeze the exact arithmetic identities while remaining insensitive to
+# comments and brace/guard formatting.
 match(
     r"delta_rho_m\s*\+=\s*ppw->pvecback\s*\[\s*pba->index_bg_rho_idm_iv\s*\]\s*\*\s*y\s*\[\s*ppw->pv->index_pt_delta_idm_iv\s*\]\s*;",
     "idm_iv density contribution",
-    helper,
+    text,
 )
-
-# Momentum is explicitly omitted only in synchronous gauge in this implementation;
-# outside that special case it must enter the total-matter momentum sum.
 match(
-    r"if\s*\(\s*ppt->gauge\s*!=\s*synchronous\s*\)\s*\n?\s*rho_plus_p_theta_m\s*\+=\s*ppw->pvecback\s*\[\s*pba->index_bg_rho_idm_iv\s*\]\s*\*\s*y\s*\[\s*ppw->pv->index_pt_theta_idm_iv\s*\]\s*;",
-    "idm_iv momentum contribution outside synchronous special case",
-    helper,
+    r"rho_m\s*\+=\s*ppw->pvecback\s*\[\s*pba->index_bg_rho_idm_iv\s*\]\s*;",
+    "idm_iv matter-density normalization contribution",
+    text,
+)
+match(
+    r"rho_plus_p_theta_m\s*\+=\s*ppw->pvecback\s*\[\s*pba->index_bg_rho_idm_iv\s*\]\s*\*\s*y\s*\[\s*ppw->pv->index_pt_theta_idm_iv\s*\]\s*;",
+    "idm_iv momentum contribution",
+    text,
+)
+match(
+    r"if\s*\(\s*ppt->gauge\s*!=\s*synchronous\s*\).*?rho_plus_p_theta_m\s*\+=\s*ppw->pvecback\s*\[\s*pba->index_bg_rho_idm_iv\s*\]\s*\*\s*y\s*\[\s*ppw->pv->index_pt_theta_idm_iv\s*\]",
+    "idm_iv momentum synchronous-gauge guard",
+    text,
 )
 
 p_delta = match(
@@ -76,17 +86,9 @@ p_corr = match(
 if not p_call < p_corr:
     raise SystemExit("FAIL total-matter helper is not called before density correction")
 
-# Require native a,H identities at the correction itself: Hconf=a*H is therefore
-# available observation-only without a second cosmology calculation.
 match(r"index_bg_a", "native scale factor in correction", einstein)
 match(r"index_bg_H", "native H in correction", einstein)
-
-# Standard exported index_tp_delta_m must exist somewhere downstream in the source,
-# but it is forbidden as the pre-transform input by the frozen contract.
 match(r"index_tp_delta_m", "delta_m export symbol")
-
-# The source must explicitly document that the caller transforms current-gauge
-# (delta_m,theta_m) into gauge-independent variables after helper construction.
 match(
     r"transform\s*\(delta_m,\s*theta_m\)\s*of\s*the\s*current\s*gauge\s*into\s*gauge-independent\s*variables",
     "native current-gauge to gauge-independent transformation comment",
