@@ -1,0 +1,26 @@
+name: Repair Exp073FU dispatch once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/repair-exp073fu-dispatch-once.yml'
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch repaired Exp073FU from current main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api --method POST \
+            "repos/${GITHUB_REPOSITORY}/actions/workflows/exp073fu-ww-s1-s3-home-science-v0-1.yml/dispatches" \
+            -f ref=main \
+            -f 'inputs[predecessor_admission_run]'='34067352681'
+          echo DISPATCHED_REPAIRED_EXP073FU
