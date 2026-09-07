@@ -6,7 +6,7 @@ Updated: 2026-09-07. Scope: **DSIR only**; RTK/RQIR excluded.
 
 Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities include `S0_S0` Exp073EO, `S0_S1` Exp073EZ, `S0_S2` Exp073FF, `S0_S3` Exp073FN, and `S1_S1` Exp073FR.
 
-Newest immutable recovery note: `docs/recovery/RECOVERY_2026-09-07_C2_PREDICTION_PROVENANCE_RECOVERED_FS_ATTEMPT2_RUNNING.md`.
+Newest immutable recovery note: `docs/recovery/RECOVERY_2026-09-07_EXP073GJ_C2_DELTA_M_FREEZE_FS_ATTEMPT2_RUNNING.md`.
 
 ## Exp073FS attempt 1 — historical infrastructure failure +0/+0
 
@@ -23,7 +23,7 @@ The same workflow run is attempt `2`; this is not a competing heavy run.
 - created `2026-09-07T01:18:30Z`, started `2026-09-07T01:31:27Z`;
 - latest live state: **IN_PROGRESS** in `Run frozen WW_S1_S2 A/B gate with durable checkpoints`;
 - latest-attempt hosted-launch audit `101592593435`: SUCCESS, support `+0/+0`;
-- latest live Actions reconciliation: one in-progress DSIR run and no competing heavy run observed;
+- latest live Actions reconciliation: one in-progress DSIR heavy run and no competing heavy run observed;
 - evidence collection and artifact upload are still pending;
 - checkpoint roots: `~/.cache/dsir/exp073fs-ww-s1-s2-filebacked-ab-v0-1/checkpoints/A` and `/B`;
 - last durable checkpoint: `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`;
@@ -44,21 +44,35 @@ On infrastructure/resource failure, diagnose the first causal defect from termin
 
 Remaining deterministic queue: `FS -> FT -> FU -> FV -> FW -> FX -> FY -> FZ -> GA -> GB -> STOP`; every successor is gated on explicit predecessor scientific authority.
 
-## Independent DSIR-4 work while heavy compute runs
+## Independent DSIR-4 work while heavy compute runs — C2 IDE
 
-C2 IDE six-component mapping is frozen and `mapping_ready=true`; prediction authority is still absent.
+C2 IDE six-component mapping is frozen and `mapping_ready=true`; numerical prediction authority is still absent.
 
-The validated legacy IDE artifact was independently recovered and checked in `docs/dsir4/mappings/C2_IDE_PREDICTION_PROVENANCE_RECOVERY_V0_1.md` (creation commit `1e6f48278cb3398c290df4d08c0d239fab032147`):
+The validated legacy IDE artifact remains independently recovered in `docs/dsir4/mappings/C2_IDE_PREDICTION_PROVENANCE_RECOVERY_V0_1.md` (creation commit `1e6f48278cb3398c290df4d08c0d239fab032147`). Legacy raw `mPk` response is not a valid replacement for the frozen common `Delta_m` bridge.
 
-- legacy run/job/artifact `32760042765 / 97536488223 / 9532491954`;
-- independent ZIP SHA256 exactly equals GitHub digest `408322a2ee79907dd98cdd0e532daaed1e1aeeb1b633f42ab5321cb32149ab6d`;
+### Exp073GJ same-solver Delta_m generation freeze — hosted support PASS +0/+0
+
+Prospective prereg `experiments/073gj_c2_ide_delta_m_generation_freeze_v0_1_prereg.md` was created in commit `668031cade3455e795e299056c9d98334b4ad0e3`, before any new C2 numerical generation. It freezes:
+
 - pinned solver `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`;
-- exact alpha physical left-sided and beta central step hierarchy recovered, with base `1e-4`;
-- exact baseline cosmology, z nodes and p8 precision preset recovered;
-- legacy k nodes convert at `h=0.67` to `[0.00067,0.00201,0.0067,0.0201,0.067] Mpc^-1`; the final `0.067` is outside frozen DSIR `k_max=0.06664762008318016` and is not rounded/rescued;
-- legacy `r_Delta` is explicitly raw `ln(P_model/P_zero_interaction)` from `mPk`, so it cannot be relabelled as the currently required common gauge-aware `Delta_m` response.
+- common bridge `Delta_m = delta_m + 3*(1+w_m)*Hconf*theta_m/k^2` and matched `r_Delta` power response;
+- reference `(alpha,beta)=(0,0)`, alpha base point `(-1e-4,0)`, beta central pair `(0,+1e-4)/(0,-1e-4)`;
+- exact z grid `[0.295,0.51,0.706,0.934,1.317,1.491,2.33]`;
+- exact in-domain k subset `[0.00067,0.00201,0.0067,0.0201] Mpc^-1`;
+- explicit exclusion of legacy `0.067 Mpc^-1` because it exceeds `k_max=0.06664762008318016`;
+- fail-closed source-variable identity, physical branch masks, deterministic JSON serialization and SHA256 requirements.
 
-Therefore C2 remains `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, support `+0/+0`. The exact independent next step is a prospectively frozen same-solver `Delta_m` extraction/generation implementation plus an output grid strictly inside the common domain, followed by hosted/static provenance audit before any science gate.
+Hosted static-audit history is immutable support-only:
+
+- run `34081553496`, job `101617650342`: `IMPLEMENTATION_STATIC_FAIL_PLUS_0_PLUS_0`; first audit harness used an incorrect square-bracket `ln[...]` literal against the prereg's frozen parenthesized `ln(...)` expression;
+- run `34081596871`, job `101617772642`: diagnostic `IMPLEMENTATION_STATIC_FAIL_PLUS_0_PLUS_0`, explicitly identified the mismatched `r_Delta` literal;
+- run `34081626964`, job `101617857129`: repair-attempt `IMPLEMENTATION_STATIC_FAIL_PLUS_0_PLUS_0`, still checked `ln[` and therefore remained harness-only failure;
+- minimal harness-only repair commit `1b977af76a7ca2de438156a7ceb88c4e1a29844c` changed only the audit literal to the already-frozen prereg syntax; C2 science, domain, parameters and formula were not changed;
+- repaired run `34081658093`, job `101617944759`: raw exact token `PASS_EXP073GJ_C2_IDE_DELTA_M_GENERATION_FREEZE_STATIC_AUDIT_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `self_hosted_science_started=false`, `scientific_model_authority_created=false`.
+
+Therefore Exp073GJ closes only the prospective generation-interface/static-audit prerequisite. C2 remains `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, scientific contribution `+0/+0` until a generator is implemented, source-variable identities are proven from the pinned solver, a deterministic payload is generated, and its provenance is independently admitted.
+
+Exact independent next step while FS runs: implement/audit the pinned-lineage generator without changing the frozen Exp073GJ interface and without using partial FS or downstream C2 results.
 
 ## Global frozen boundaries
 
