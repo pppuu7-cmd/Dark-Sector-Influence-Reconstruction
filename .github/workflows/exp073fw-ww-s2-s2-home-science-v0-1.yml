@@ -26,7 +26,7 @@ env:
   DRIVER_V02_BLOB: 'f63ffe431a034ea4e842970210365a156fb35089'
   PRUNER_BLOB: 'fb66e67d88a90b093a7da8b42ab0ac6fee13b504'
   COMPARE_BLOB: 'b5b828bd71eaf6da360c8ebfa279888165531e49'
-  HOME_BLOB: '81827beb73dabd5a73cfe5e5d3db8b61f50b34aa'
+  HOME_BLOB: '98bda6e19495ebccd1ee8a0d73267293fb0bffda'
   ADMIT_VERIFY_BLOB: 'eb907944eac68b9fd13c405399cf238a8cb5bc96'
   TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
   PATCH_BLOB: 'd534b698f9131688d263eedcef27260386c58641'
@@ -87,11 +87,13 @@ jobs:
           grep -F 'checkpoints/exp073fw-ww-s2-s2-b-v0-1' ci/exp073fw_compare_terminal_receipts_v0_1.py >/dev/null
           grep -F 'PASS_EXP073FW_REPLICA_A_TERMINAL_PRUNED_RESTORE_SELECTED_V0_1' ci/exp073fw_home_filebacked_fullres_v0_1.sh >/dev/null
           grep -F 'PASS_EXP073FW_REPLICA_B_TERMINAL_PRUNED_RESTORE_SELECTED_V0_1' ci/exp073fw_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'PASS_EXP073FW_REPLICA_A_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' ci/exp073fw_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'PASS_EXP073FW_REPLICA_B_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' ci/exp073fw_home_filebacked_fullres_v0_1.sh >/dev/null
           grep -F 'post_receipt_prune.json' ci/exp073fw_home_filebacked_fullres_v0_1.sh >/dev/null
           grep -F 'BASE="$GITHUB_WORKSPACE/ci/exp073fa_home_filebacked_fullres_v0_1.sh"' ci/exp073fw_home_filebacked_fullres_v0_1.sh >/dev/null
           grep -F 'bash -n "$tmp"' ci/exp073fw_home_filebacked_fullres_v0_1.sh >/dev/null
           ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' experiments/073f[wx]_*.md
-          echo PASS_EXP073FW_HOSTED_LAUNCH_AUDIT_V0_7
+          echo PASS_EXP073FW_HOSTED_LAUNCH_AUDIT_V0_8
           echo classification=SUPPORT_PLUS_0_PLUS_0
 
   home-science:
