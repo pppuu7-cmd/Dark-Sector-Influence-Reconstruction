@@ -31,7 +31,7 @@ jobs:
           q = copy.deepcopy(pairs); q[7] = copy.deepcopy(q[6]); tests.append((manifest, q))
           q = copy.deepcopy(pairs); q[7], q[8] = q[8], q[7]; tests.append((manifest, q))
           q = copy.deepcopy(pairs); q[7][0]['ordinal'] = 8; tests.append((manifest, q))
-          q = copy.deepcopy(pairs); q[7][0]['z'] = 0.51; tests.append((manifest, q))
+          q = copy.deepcopy(pairs); q[7][0]['z'] = 0.295; tests.append((manifest, q))
           q = copy.deepcopy(pairs); r = bytearray(q[7][1]); r[0] ^= 1; q[7] = (q[7][0], bytes(r)); tests.append((manifest, q))
           q = copy.deepcopy(pairs); q[7][0]['record_sha256'] = '0'*64; tests.append((manifest, q))
           h = copy.deepcopy(manifest); h['aggregate_record_sha256'] = '0'*64; tests.append((h, pairs))
