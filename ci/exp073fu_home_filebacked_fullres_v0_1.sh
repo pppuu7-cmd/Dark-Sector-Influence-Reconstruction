@@ -34,17 +34,28 @@ if any(x in s for x in ('np.allclose','np.isclose','rounding_rescue','smoothing_
 marker='run_replica A; prune_replica A\n'
 if marker not in s: raise SystemExit('fail-closed missing legacy terminal marker')
 pos=s.index(marker)
-tail='''run_replica A
-"$PATCH_PY" ci/exp073fu_verify_and_prune_replica_v0_2.py --checkpoint-root "$CHECKPOINT_ROOT" --replica A | tee "$SCI_ROOT/A_prune_verify.log"
-rm -f "$SCI_ROOT/mmap/A"/dsir-nmt-mcm-* || true
-run_replica B
-"$PATCH_PY" ci/exp073fu_verify_and_prune_replica_v0_2.py --checkpoint-root "$CHECKPOINT_ROOT" --replica B | tee "$SCI_ROOT/B_prune_verify.log"
-rm -f "$SCI_ROOT/mmap/B"/dsir-nmt-mcm-* || true
+tail='''resume_or_run_replica() {
+  local rep="$1"
+  local rr="$SCI_ROOT/checkpoints/$rep"
+  # A post-prune checkpoint is terminal only if the compact verifier evidence
+  # and canonical selected payload both survived. The comparator below rechecks
+  # every stage-manifest SHA, receipt identity, payload SHA, provenance field,
+  # exact shape/finiteness and A/B equality fail-closed before scoring science.
+  if [[ -f "$rr/post_receipt_prune.json" && -f "$rr/exact_route/selected_ee.bin" ]]; then
+    echo "PASS_EXP073FU_${rep}_POST_PRUNE_TERMINAL_RESUME_CANDIDATE_V0_1"
+    return 0
+  fi
+  run_replica "$rep"
+  "$PATCH_PY" ci/exp073fu_verify_and_prune_replica_v0_2.py --checkpoint-root "$CHECKPOINT_ROOT" --replica "$rep" | tee "$SCI_ROOT/${rep}_prune_verify.log"
+  rm -f "$SCI_ROOT/mmap/$rep"/dsir-nmt-mcm-* || true
+}
+resume_or_run_replica A
+resume_or_run_replica B
 "$PATCH_PY" ci/exp073fu_compare_terminal_receipts_v0_1.py --root "$SCI_ROOT" --out "$SCI_ROOT/ab_compare.json" | tee "$SCI_ROOT/ab_compare_stdout.txt"
 cp "$SCI_ROOT/ab_compare.json" "$SCI_ROOT/terminal_receipt.json"
 '''
 s=s[:pos]+tail
-for token in ('ci/exp073fu_verify_and_prune_replica_v0_2.py','ci/exp073fu_compare_terminal_receipts_v0_1.py','terminal_receipt.json'):
+for token in ('resume_or_run_replica A','resume_or_run_replica B','ci/exp073fu_verify_and_prune_replica_v0_2.py','ci/exp073fu_compare_terminal_receipts_v0_1.py','terminal_receipt.json','POST_PRUNE_TERMINAL_RESUME_CANDIDATE'):
  if token not in s: raise SystemExit(f'fail-closed hardened FU terminal path missing {token!r}')
 if '--replica AB' in s: raise SystemExit('fail-closed legacy completed-replica restore path survived')
 out.write_text(s,encoding='utf-8')
