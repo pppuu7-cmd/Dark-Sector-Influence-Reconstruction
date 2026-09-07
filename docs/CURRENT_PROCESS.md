@@ -6,7 +6,7 @@ Updated: 2026-09-07. Scope: **DSIR only**; RTK/RQIR excluded.
 
 Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities: `S0_S0`, `S0_S1`, `S0_S2`, `S0_S3`, `S1_S1`, `S1_S2`, **`S1_S3`**. `WW_S2_S2` is **NOT ADMITTED**.
 
-Newest immutable note: `docs/recovery/RECOVERY_2026-09-07_FW_NESTED_OVERWRITE_REPAIRED_DIRECT_FA_QUEUED_V09.md`, creation commit `37f000d9c752fda0c851676c25c8382cc7e1319e`.
+Newest immutable note: `docs/recovery/RECOVERY_2026-09-07_C2_GR_GS_SUPPORT_PASS_FW_ACTIVE_V10.md`, creation commit `6a5b5f4ce9194f09f658b6e78479e381e12b3851`.
 
 ## Exp073FW terminal implementation history
 
@@ -36,6 +36,11 @@ No competing DSIR heavy run is permitted. Partial numerical output must not be i
 ## Independent C2 frontier
 
 C2 remains support-only: `mapping_ready=true`, `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, `+0/+0`; exact z `[0.295,0.51,0.706,0.934,1.317,1.491,2.33]`, k `[0.00067,0.00201,0.0067,0.0201] Mpc^-1`. No competing C2 heavy extraction while FW owns the runner.
+
+- Exp073GR run `34130804754`, job `101770188173`: raw-validated `SUPPORT_PLUS_0_PLUS_0` PASS, token `PASS_EXP073GR_C2_IDE_RUNTIME_SAMPLING_PROVENANCE_CONTRACT_V0_1`; canonical contract SHA256 `6a14470157e0677ee10d65d24e759907b9a5df5fe1fd9d80e940787224dbfe9b`; 28 exact unique z-major/k-minor requests; recorder blob verified; prohibited transformations all false.
+- Exp073GS run `34130948407`, job `101770660311`: raw-validated `SUPPORT_PLUS_0_PLUS_0` PASS, token `PASS_EXP073GS_C2_IDE_RUNTIME_REQUEST_EMITTER_AUDIT_V0_1`; exact ordinals `0..27`; contract mutation fails closed before emission; provenance manifest SHA256 `1448d6d6ac3ef2a018af3df9b732a91d4006263bc2fb8b7d232e1eded87316b0`.
+
+Exact independent next C2 gate permitted: prospectively frozen hosted-only dry-run record-envelope assembly binding each of the 28 deterministic requests to the validated 64-byte recorder ABI. It must not build/run CLASS, use the home runner, or create scientific model authority.
 
 ## Global frozen boundaries
 
