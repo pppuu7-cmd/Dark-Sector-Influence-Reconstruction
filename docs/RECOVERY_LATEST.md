@@ -2,7 +2,7 @@
 
 Updated: 2026-09-07. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_FW_NESTED_OVERWRITE_REPAIRED_DIRECT_FA_QUEUED_V09.md` (creation commit `37f000d9c752fda0c851676c25c8382cc7e1319e`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_C2_GR_GS_SUPPORT_PASS_FW_ACTIVE_V10.md` (creation commit `6a5b5f4ce9194f09f658b6e78479e381e12b3851`). Earlier recovery notes remain immutable history.
 
 ## Preserved authority
 
@@ -24,7 +24,7 @@ Authoritative live run: **`34125785882`**, head **`1c635f5192d26e76e0ec82a308363
 
 - hosted launch audit job **`101754018941`**: SUCCESS;
 - hosted raw token: `PASS_EXP073FW_HOSTED_LAUNCH_AUDIT_V0_5`, `classification=SUPPORT_PLUS_0_PLUS_0`;
-- home-science job **`101754061309`**: IN_PROGRESS at last reconciliation;
+- home-science job **`101754061309`**: IN_PROGRESS at latest reconciliation;
 - runner owner: **`DSIR-HOME-PC-2`**, machine `win-ws338`;
 - checkpoint namespace: `~/.cache/dsir/exp073fw-ww-s2-s2-filebacked-ab-v0-1`;
 - predecessor authority: Exp073FV run `34120000242`;
@@ -39,6 +39,12 @@ The FW workflow retains a path-scoped push trigger for controlled repair binding
 ## Independent C2 support frontier
 
 C2 remains `mapping_ready=true`, `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, support/scientific `+0/+0`. Exact z `[0.295,0.51,0.706,0.934,1.317,1.491,2.33]`, k `[0.00067,0.00201,0.0067,0.0201] Mpc^-1`; no interpolation/smoothing/averaging/tolerance. No competing C2 heavy extraction while FW owns the runner.
+
+Exp073GR is raw-validated hosted support PASS `+0/+0`: run `34130804754`, job `101770188173`, token `PASS_EXP073GR_C2_IDE_RUNTIME_SAMPLING_PROVENANCE_CONTRACT_V0_1`; canonical contract SHA256 `6a14470157e0677ee10d65d24e759907b9a5df5fe1fd9d80e940787224dbfe9b`; exact solver head `ac627d54e9ce196a08878d1ba33999819925d19c`; recorder blob `c6144598b9f75908ee27a517d31eda509f7947f6`; 28 exact unique z-major/k-minor requests; 64-byte/8-field recorder; rounded `0.067` excluded; all prohibited transformation flags false.
+
+Exp073GS is raw-validated hosted support PASS `+0/+0`: run `34130948407`, job `101770660311`, token `PASS_EXP073GS_C2_IDE_RUNTIME_REQUEST_EMITTER_AUDIT_V0_1`; exact ordinals `0..27`, exact z-major/k-minor sequence, mutated contract fails closed before emission, provenance manifest SHA256 `1448d6d6ac3ef2a018af3df9b732a91d4006263bc2fb8b7d232e1eded87316b0`. No CLASS build/run or self-hosted science occurred.
+
+Exact independent next C2 gate permitted by GS: prospectively freeze a hosted-only dry-run record-envelope assembly that binds each deterministic request to the validated 64-byte recorder ABI. It must not run CLASS, use the home runner, create a prediction, or create scientific model authority.
 
 ## Global frozen boundaries
 
