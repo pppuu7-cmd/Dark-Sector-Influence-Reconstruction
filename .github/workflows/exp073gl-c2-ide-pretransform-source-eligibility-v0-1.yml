@@ -1,0 +1,29 @@
+name: Exp073GL C2 IDE pretransform source eligibility v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073gl-c2-ide-pretransform-source-eligibility-v0-1.yml'
+      - 'scripts/dsir4/audit_exp073gl_c2_pretransform_source.py'
+      - 'docs/dsir4/prereg/EXP073GL_C2_IDE_PRETRANSFORM_SOURCE_ELIGIBILITY_V0_1.md'
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clone pinned class_iv lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --no-checkout https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --detach ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C /tmp/class_iv rev-parse HEAD)" = "ac627d54e9ce196a08878d1ba33999819925d19c"
+      - name: Audit exact pretransform source eligibility
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/dsir4/audit_exp073gl_c2_pretransform_source.py \
+            /tmp/class_iv \
+            "$(git -C /tmp/class_iv rev-parse HEAD)"
