@@ -6,7 +6,7 @@ Updated: 2026-09-07. Scope: **DSIR only**; RTK/RQIR excluded.
 
 Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities: `S0_S0`, `S0_S1`, `S0_S2`, `S0_S3`, `S1_S1`, `S1_S2`, **`S1_S3`**. `WW_S2_S2` is **NOT ADMITTED**.
 
-Newest immutable note: `docs/recovery/RECOVERY_2026-09-07_C2_GT_GU_SUPPORT_PASS_FW_ACTIVE_V11.md`, creation commit `270d9754b75101670e3acbd7989755993794659a`.
+Newest immutable note: `docs/recovery/RECOVERY_2026-09-07_C2_GV_SUPPORT_PASS_FW_ACTIVE_V12.md`, creation commit `827b38daa93f6b7fbe1da1f739063f8ef5b0956d`.
 
 ## Exp073FW terminal implementation history
 
@@ -33,12 +33,10 @@ No competing DSIR heavy run is permitted. Partial numerical output must not be i
 
 C2 remains support-only: `mapping_ready=true`, `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, `+0/+0`; exact z `[0.295,0.51,0.706,0.934,1.317,1.491,2.33]`, k `[0.00067,0.00201,0.0067,0.0201] Mpc^-1`. No real C2 extraction while FW owns the runner.
 
-- Exp073GR run `34130804754`, job `101770188173`: raw-validated support PASS; contract SHA256 `6a14470157e0677ee10d65d24e759907b9a5df5fe1fd9d80e940787224dbfe9b`.
-- Exp073GS run `34130948407`, job `101770660311`: raw-validated support PASS; request-emitter manifest SHA256 `1448d6d6ac3ef2a018af3df9b732a91d4006263bc2fb8b7d232e1eded87316b0`.
-- Exp073GT authoritative prospective prereg `035e00a4aa3e8f2b00e43a6a4473ed66c70a7f60`; run `34131162547`, job `101771357352`: raw-validated support PASS; all payloads null; manifest SHA256 `d86a034988fd42b98e40f68f176a1b834844d1e18208f938542c69f979d048f8`. Later same-label collision commit `5bbdd469b686f5f4c186d159e0c8ad07dfe474bd` does not supersede the older prospective authority.
-- Exp073GU prereg `365e08ab795c673ed55d3a49a5e5020bc3d9e677`; run `34131654711` implementation/provenance FAIL `+0/+0` due stale embedded GT digest trust; fixture repair `ff364fc83c3bbceca66dc03c5034eb021d22c012`; run `34131740611` harness-only module-binding FAIL `+0/+0`; workflow repair `9bdc6c06dc5cc3df8ce68b3c08124ce683a95a3c`; repaired run `34131822658`, job `101773484203` raw-validated support PASS with handoff SHA256 `5ed0b924379f8ae961acd5d5b14171f96b3692972b2348cba3022d669a343931`, receipt-set SHA256 `bbcfffbc9845dfb74ef4b8fffbcd5f9851cc45d27272cf39595d62ce9f0d8075`, 28 zero-payload receipts, mutations fail closed, exact token `PASS_EXP073GU_C2_IDE_RUNTIME_HANDOFF_RECEIPT_SCHEMA_AUDIT_V0_1`.
+- Exp073GR/GS/GT/GU remain raw-validated support authority exactly as recorded in immutable V11 recovery.
+- Exp073GV prereg `6bf70f7ebdc164a63c2896dc5afeebd6b2972866`, fixture `23217fa330c550f9bd543e03989c90ac5836d6b2`, workflow `54e844ce0db3ebddc5f27b4dda60c98c57bc4421`; run **`34135739339`**, hosted job **`101786143296`**, raw-validated support PASS with exact token `PASS_EXP073GV_C2_IDE_RECORD_PACKET_ADMISSION_STATIC_AUDIT_V0_1`. Only a deterministic synthetic 64-byte vector was used; byte, length, ordinal, coordinate, source-provenance and digest mutations all failed closed. `scientific_record_admitted=false`, `cosmological_run_started=false`, `self_hosted_science_started=false`, `prediction_ready=false`, `scientific_model_authority_created=false`.
 
-Exact independent next C2 work must remain hosted-only metadata/support work while FW owns the runner. GR/GS/GT/GU create no scientific model authority.
+Exact independent next C2 work must remain hosted-only metadata/support work while FW owns the runner. GV creates no scientific model authority and does not authorize a real C2 extraction.
 
 ## Global frozen boundaries
 
