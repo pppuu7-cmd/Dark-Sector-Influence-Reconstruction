@@ -2,14 +2,14 @@
 
 Date: 2026-09-07
 
-Status: **SOURCE AUDIT / PRE-MAPPING ONLY**. This document does not create `mapping_ready`, `prediction_ready`, or a scientific gate PASS.
+Status: **SOURCE AUDIT COMPLETE FOR THE SIX SOURCE-NATIVE COMPONENTS; PRE-ADMISSION ONLY**. This document does not by itself create `prediction_ready` or a scientific gate PASS.
 
 Frozen hypothesis: `C2_IDE_LOCAL_TANGENT_CONE`.
-Pinned legacy implementation lineage: `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`.
+Pinned implementation lineage: `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`.
 
 ## Purpose
 
-This audit records only the C2 statements already supported by the pinned DSIR legacy evidence and the frozen DSIR-4 mapping contract. It deliberately leaves any perturbation-level component that has not yet been source-audited as `NOT_YET_MAPPED`. No structural zero is inferred from absence of evidence.
+This audit binds the C2 residual decomposition to the exact pinned implementation. It distinguishes the source-native synchronous-gauge stress-energy mapping from the later common DSIR observable bridge. A source-native component can be structurally zero only when the pinned implementation supplies enough evidence; absence of an output column alone is never used as evidence.
 
 ## Common residual partition
 
@@ -25,33 +25,106 @@ For C2 the interacting dark pair is assigned to the residual sector,
 X^{\rm C2}_{\mu\nu}=T^{\rm idm}_{\mu\nu}+T^{\rm iv}_{\mu\nu},
 \]
 
-while the shared ordinary sector (baryons, photons and the frozen standard-neutrino sector, with the same common assumptions used by the pilot) remains in `T_known`.
+while the shared ordinary sector (baryons, photons and the frozen standard-neutrino sector, under the common pilot assumptions) remains in `T_known`.
 
 The internal interaction is represented by equal-and-opposite transfer currents,
 
 \[
 \nabla_\mu T_{\rm idm}^{\mu\nu}=Q_{\rm idm}^{\nu},\qquad
 \nabla_\mu T_{\rm iv}^{\mu\nu}=Q_{\rm iv}^{\nu},\qquad
-Q_{\rm idm}^{\nu}+Q_{\rm iv}^{\nu}=0.
+Q_{\rm idm}^{\nu}+Q_{\rm iv}^{\nu}=0,
 \]
 
-Therefore
+hence
 
 \[
 \nabla_\mu X_{\rm C2}^{\mu\nu}=0.
 \]
 
-Changing only the bookkeeping of the internal transfer cannot define a different total DSIR residual prediction.
+Changing only the bookkeeping of the internal transfer therefore cannot define a different total DSIR residual prediction.
 
-The pinned legacy source convention uses the background transfer scalar
+The pinned source states the interaction convention as
 
 \[
-Q=H\left(\alpha\rho_{\rm idm}+\beta\rho_{\rm iv}\right),
+Q=H\left(\alpha\rho_{\rm idm}+\beta\rho_{\rm iv}\right).
 \]
 
-with the legacy source flags `f_idm_iv=1`, `f_iv=1`. The exact sign assignment of `Q` to the two sector equations must remain bound to the pinned source implementation and must not be reconstructed from notation alone.
+The exact sign assignment to the sector continuity equations remains bound to the pinned implementation rather than reconstructed from notation.
 
-## Branch/domain facts already certified by legacy evidence
+## Exact background source audit
+
+In `source/background.c` at pinned commit `ac627d54...`, the `has_idm_iv` branch constructs `rho_idm_iv` and `rho_iv` separately. It adds
+
+- `rho_idm_iv` to `rho_tot` with zero pressure,
+- `rho_iv` to `rho_tot`,
+- `-rho_iv` to `p_tot`.
+
+Therefore the source-native background residual components are exactly
+
+\[
+\rho_X=\rho_{\rm idm}+\rho_{\rm iv},\qquad
+p_X=-\rho_{\rm iv}.
+\]
+
+This is an implementation statement for the frozen C2 lineage, not a generic statement about every interacting-vacuum parameterization.
+
+## Exact scalar perturbation source audit
+
+### Gauge support
+
+The pinned `source/perturbations.c` explicitly aborts the IDM-IV perturbation implementation in Newtonian gauge with
+
+`IDM IV implementation not supporting newtonian gauge (yet)`.
+
+The source-native C2 perturbation mapping is therefore certified only in the implementation's synchronous gauge. No Newtonian-gauge C2 prediction is admitted from this lineage.
+
+### Density evolution
+
+In synchronous gauge the pinned implementation evolves only `delta_idm_iv` for this dark pair,
+
+\[
+\delta'_{\rm idm}=-\mathrm{metric\_continuity}
++\frac{\delta_{\rm idm}}{\rho_{\rm idm}}\,aH\left(\alpha\rho_{\rm idm}+\beta\rho_{\rm iv}\right),
+\]
+
+where the last term is explicitly identified in the source as the interaction contribution.
+
+### Contribution to Einstein stress-energy sums
+
+In `perturb_total_stress_energy`, the `has_idm_iv` branch adds
+
+\[
+\rho_{\rm idm}\,\delta_{\rm idm}
+\]
+
+to total `delta_rho`. It adds an IDM momentum term only outside synchronous gauge; the same source does not add a separate IV density perturbation, IV momentum, IDM-IV pressure perturbation, or IDM-IV shear contribution to the Einstein source sums.
+
+This is stronger evidence than absence of transfer-function columns because it is the actual stress-energy assembly used by the Einstein equations.
+
+The synchronous-gauge comments also state that the IDM-IV velocity is set to zero by the gauge definition. Since the interacting-vacuum background has `rho_iv+p_iv=0`, the vacuum contributes no source-native `(rho+p) theta` term in this implementation.
+
+## Required six-component decomposition
+
+For the **pinned source-native synchronous gauge only**, the six mandatory DSIR mapping entries are now:
+
+| Required DSIR component | Source-audit state | Frozen source-native mapping |
+|---|---|---|
+| background residual density-like `rho_X` | DERIVED | `rho_X = rho_idm + rho_iv` |
+| background residual pressure-like `p_X` | DERIVED | `p_X = -rho_iv` |
+| scalar density perturbation `delta rho_X` | DERIVED | `delta rho_X = rho_idm * delta_idm_iv` in the pinned synchronous implementation; there is no separate IV density perturbation in the Einstein-source assembly |
+| scalar momentum/velocity `q_X` | STRUCTURAL_ZERO_IN_SOURCE_NATIVE_SYNCHRONOUS_FRAME | IDM-IV velocity is fixed to zero by the synchronous gauge choice; IV has `rho+p=0`; therefore the source-native dark-pair momentum contribution is zero in this frame |
+| scalar isotropic pressure perturbation `delta p_X` | STRUCTURAL_ZERO_IN_PINNED_IMPLEMENTATION | no IDM-IV contribution is added to `delta_p` in the Einstein-source assembly |
+| scalar anisotropic-stress / slip component `pi_X` | STRUCTURAL_ZERO_IN_PINNED_IMPLEMENTATION | no IDM-IV contribution is added to `rho_plus_p_shear` in the Einstein-source assembly |
+
+These zeros are **implementation- and frame-qualified**. They must not be generalized to arbitrary IDE/vacuum models or transported to another gauge by simply copying component values.
+
+## Observable/gauge bridge still required
+
+DSIR production observables are not raw gauge-specific variables. The source-native decomposition above is therefore necessary but not sufficient for Gate 1 admission.
+
+The final C2 mapping/prediction artifact must explicitly bind how the source-native synchronous variables generate the frozen common DSIR observable response. In particular, raw `delta_idm_iv` is not itself a gauge-invariant common residual coordinate. The existing production matter response uses the common comoving total-matter construction, so the final artifact must bind that bridge without claiming unsupported Newtonian-gauge IDE evolution.
+
+## Branch/domain facts
 
 The physical branch mask is
 
@@ -63,51 +136,36 @@ Positive-`alpha` perturbations of the reference point can violate the full-histo
 
 The local C2 pilot geometry is therefore a tangent cone: a left-sided `alpha` ray around the reference and a two-sided `beta` tangent where the physical branch remains valid. The exact zero-coupling limit `alpha=beta=0` recovers the CDM synchronous continuity source in the pinned legacy regression.
 
-## Required six-component decomposition audit
-
-The following table is intentionally fail-closed.
-
-| Required DSIR component | Current source-audit state | Statement allowed at this stage |
-|---|---|---|
-| background residual density-like `rho_X` | DERIVED | `rho_X = rho_idm + rho_iv` |
-| background residual pressure-like `p_X` | PARTIALLY_DERIVED | For pressureless IDM plus interacting-vacuum equation of state, the expected tensor sum gives `p_X = p_idm + p_iv`; the exact source-level vacuum convention must be pinned before freezing the simplified expression |
-| scalar density perturbation `delta rho_X` | NOT_YET_MAPPED | Must be derived from the pinned perturbation equations and gauge convention; no sector contribution may be silently dropped |
-| scalar momentum/velocity `q_X` | NOT_YET_MAPPED | Must be derived from the pinned momentum-transfer/frame convention; a vacuum momentum contribution must not be assumed zero without source evidence |
-| scalar isotropic pressure perturbation `delta p_X` | NOT_YET_MAPPED | Must be source-audited; no structural zero is frozen here |
-| scalar anisotropic-stress / slip component `pi_X` | NOT_YET_MAPPED | Must be source-audited; no structural zero is frozen here |
-
-Because four mandatory perturbation entries are still `NOT_YET_MAPPED` and the pressure simplification has not yet been bound to exact source lines, this audit **must not** be promoted to the final C2 mapping artifact.
-
-## Gauge/frame and observable bridge
-
-The legacy implementation is audited around synchronous-gauge perturbation equations, while DSIR production perturbation observables use the frozen common response convention. Raw gauge-specific `delta` or `theta` variables are therefore not common DSIR coordinates by themselves. The final C2 mapping artifact must state the exact frame/gauge definitions and the transformation/combination used to construct the authoritative common observable response.
-
 ## Certified comparison domain
 
-The eventual C2 prediction artifact must be restricted to the frozen DSIR-4 linear comparison domain and to points satisfying the C2 physical branch mask throughout the required history. It must not extrapolate through a positivity violation. Exact `z_min`, `z_max`, `k_min_exclusive_mpc_inv`, and `k_max_mpc_inv` must be copied from the frozen common-domain authority when the final mapping/prediction artifact is assembled, rather than retyped from memory here.
+The eventual C2 prediction artifact must be restricted to the frozen DSIR-4 linear comparison domain and to points satisfying the C2 physical branch mask throughout the required history. It must not extrapolate through a positivity violation. Exact domain numbers, units and endpoint inclusivity must be copied from the frozen common-domain authority when the final mapping/prediction artifact is assembled rather than retyped from memory.
 
 ## Prediction provenance still required
 
-Before C2 can become testable at `G_DOMAIN_MAPPING`, the final versioned artifact must bind at least:
+Before C2 can be scientifically admitted at `G_DOMAIN_MAPPING`, the final versioned artifact must bind at least:
 
 - `hypothesis_id = C2_IDE_LOCAL_TANGENT_CONE`;
 - exact allowed alpha/beta tangent-cone parameter definition;
+- exact common observable/gauge bridge;
 - final mapping artifact SHA-256;
 - pinned implementation commit and numerical settings;
 - exact output grid/domain/units;
 - deterministic prediction payload hash;
-- source-level perturbation-equation evidence for all six required components.
+- source-level evidence lineage for all six components.
 
 ## Gate consequence
 
-Current DSIR-4 status remains:
+This audit upgrades the state from “four perturbation components not yet source-mapped” to “all six source-native components audited”. It **does not** by itself perform the frozen Gate-1 admission procedure.
 
-- `mapping_ready = false`;
+Current DSIR-4 status therefore remains:
+
+- `source_component_audit_complete = true`;
+- `mapping_ready = false` pending the common observable/provenance binding;
 - `prediction_ready = false` for the dedicated DSIR-4 C2 artifact;
 - `G_DOMAIN_MAPPING = NOT_YET_TESTABLE`.
 
-This is missing mapping authority, **not evidence against IDE** and not a scientific `FAIL`.
+This remaining gap is missing admission authority, **not evidence against IDE** and not a scientific `FAIL`.
 
 ## Automation guard note — 2026-09-07
 
-At the time of this audit, heavy successor run `34067352681` remained active. Job `101578350681` (`hosted-launch-audit`) had completed successfully and job `101578366531` (`home-science`) was still `in_progress` on the frozen `WW_S1_S2` A/B gate. No duplicate heavy run was launched and no partial science checkpoint was interpreted.
+During this source audit, heavy successor run `34067352681` remained active. Job `101578350681` (`hosted-launch-audit`) had completed successfully and job `101578366531` (`home-science`) remained `in_progress` on the frozen `WW_S1_S2` A/B gate. No duplicate heavy run was launched and no partial science checkpoint was interpreted.
