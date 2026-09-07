@@ -2,7 +2,7 @@
 
 Updated: 2026-09-07. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_EXP073FY_ACTIVE_EXP073GZ_PREREG_V20.md` (creation commit `8fe8db6af6a144dbf1c68901b87a1b91ec6ffb76`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_EXP073FY_PRUNER_REPAIR_RESUME_V21.md` (creation commit `2c645a5c1e4e4416ab8d26b5496c6bbd2f55d252`). Earlier recovery notes remain immutable history.
 
 ## Preserved scientific authority
 
@@ -10,34 +10,37 @@ Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted 
 
 `WW_S2_S2` authority remains Exp073FW final run `34146468135`, artifact `10027835016`, digest `sha256:ef36ddafc5f30d33206fbf952deea5c0f58f5465370a9c8bd96c2b2d61b1ecef`, admitted by Exp073FX job `101819621240` with `PASS_EXP073FX_WW_S2_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1` and `ww_s2_s2_authority_created=true`. Historical FW failures remain historical `+0/+0`.
 
-## Authoritative current heavy process — Exp073FY WW_S2_S3
+## Newly consumed Exp073FY failure
 
-Run **`34147009217`**, head `f04346a8e6909cb4342e536a0e7328f5ca5e54c9`:
-- hosted audit job `101821110137`: SUCCESS, raw `PASS_EXP073FY_HOSTED_LAUNCH_AUDIT_V0_4`, support `+0/+0`;
-- home job **`101821144414`**: IN_PROGRESS inside the frozen A/B gate at latest reconciliation;
-- owner `DSIR-HOME-PC-2` / `win-ws338`;
+Exp073FY run `34147009217`, head `f04346a8e6909cb4342e536a0e7328f5ca5e54c9`, is terminal FAILURE. Hosted job `101821110137` succeeded; home job `101821144414` failed; FZ admission was skipped. Classification: **implementation/infrastructure FAIL +0/+0**, not scientific FAIL.
+
+First causal failure: after expensive Replica A had completed through `replica_receipt_complete`, the FY post-receipt pruner required lexical token `WW_S1_S2`, which is absent from its pinned frozen FS base. Artifact `10031272604` has GitHub digest and independently recomputed ZIP SHA256 `624a44f05b2762a58d1191b58df41c194b86bcc7ceb5622517c0a55f64405a6c`. It preserves A selected EE `<f8 [39,12288]`, 3,833,856 bytes, SHA256 `3a787a12152ec023b6747145ec96345bc805ab0c96b5a26d0b528a9d68672de2`, ordered `[2,3]`, `S2->S3`, distinct fields, and exact `19,327,352,832`-byte file-backed MCM receipt. No B result exists in that artifact.
+
+Independent provenance audit also found that A manifests carry checkpoint namespace `checkpoints/exp073fy-ww-s3-s3-a-v0-1` despite correct S2->S3 science payload. The cause is a cascade in the FY wrapper: intended hyphenated namespace transformation is subsequently altered again by word-boundary `s2 -> s3` variable transformation. This is a provenance/checkpoint-identity defect. It is not scientific authority and must not be relabelled or rescued by weakening namespace checks.
+
+Minimal lexical-pruner repair is commit `c28396aa4cba6206f737cfd683b9f27f9cbe5273`, blob `8c0e7ae30a80c6d74e6a1fbc079c1d2bc4eef773`; only the impossible uppercase-token requirement was removed. Workflow binding commit `3217ea05f5ab8a45bc237f34a8fa894e8c49df38` prospectively pins that blob; frozen arithmetic/domain/order/tolerance rules were unchanged.
+
+## Authoritative current heavy process — Exp073FY recovery run
+
+Run **`34157571794`**, head `3217ea05f5ab8a45bc237f34a8fa894e8c49df38`:
+- hosted audit job `101852463413`: SUCCESS;
+- home job **`101852500796`**: IN_PROGRESS inside frozen FY checkpoint-first path at latest reconciliation;
+- single self-hosted DSIR runner owns the job;
 - checkpoint root `~/.cache/dsir/exp073fy-ww-s2-s3-filebacked-ab-v0-1`;
-- frozen target ordered `S2->S3`, `[2,3]`, distinct fields, DES NSIDE=4096, ell 0..12287, 39 bands, canonical `<f8 [39,12288] EE<-EE`, exact file-backed MCM proof, finiteness and exact A/B equality;
-- candidate token `PASS_EXP073FY_WW_S2_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`;
-- only FZ token `PASS_EXP073FZ_WW_S2_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1` may create WW_S2_S3 authority.
+- no competing heavy run is permitted;
+- partial numerical output must not be inspected.
 
-No competing heavy run is permitted and partial numerical output must not be inspected. On terminal success, independently verify artifact digest, complete A/B durable chains, provenance, ordered distinct-field semantics, exact file-backed proof, finiteness and exact equality before scientific admission. On failure preserve complete checkpoints and diagnose the first causal defect.
+Because the namespace-cascade defect was discovered independently while this run is active, do not edit its workflow mid-run. On terminal state consume logs/artifact first. If the namespace inconsistency is the first causal failure, prospectively repair the wrapper transformation by protecting checkpoint namespace tokens before source-variable substitutions, add a static regression requiring exact `exp073fy-ww-s2-s3-{a,b}-v0-1` and forbidding `ww-s3-s3`, then resume only from checkpoints that pass the repaired fail-closed identity. Do not rewrite invalid checkpoint manifests in place.
 
-FY still retains its temporary one-shot path trigger; do not edit FY while run `34147009217` is active.
+Frozen FY science remains ordered `S2->S3`, `[2,3]`, distinct fields, DES NSIDE=4096, ell 0..12287, 39 bands, canonical `<f8 [39,12288] EE<-EE`, exact file-backed MCM proof, finiteness and exact A/B equality. `WW_S2_S3` remains **NOT ADMITTED**. Only FZ token `PASS_EXP073FZ_WW_S2_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1` may create authority.
 
 ## Prospectively hardened final heavy successor — Exp073GA WW_S3_S3
 
-The dispatch-only GA successor uses the proven direct frozen-FA base. Direct-base repair remains commit `4a232aa8369ba8e4f6c5a247ecaf2b75696ced8c`. Additional terminal-resume hardening commit `e9aa36283d0f3b78a91b8a855326c0faec9a613c` updates only the GA home launcher; current home blob is `f28bf114e6da502e2a3a0a97f0828c27849814c9`. Workflow binding commit `d149630f30f3e904c78c7ca43f32917f9e2aaf85` requires that blob plus explicit terminal-pruned restore and post-comparator re-attestation tokens. Expected GA hosted token remains `PASS_EXP073GA_HOSTED_LAUNCH_AUDIT_V0_2`.
-
-Frozen GA science remains unchanged: ordered `[3,3]`, same-field `S3->S3`, `compute_coupling_matrix(f3,f3,b)`, exact A/B equality and exact file-backed proof. Only Exp073GB may create WW_S3_S3 authority. GA remains workflow-dispatch only and FY's hosted FZ admission dispatches GA only after successful frozen S2S3 admission.
+GA remains dispatch-only and forbidden until successful FZ admission. Direct-base repair commit `4a232aa8369ba8e4f6c5a247ecaf2b75696ced8c`; additional terminal-resume hardening commit `e9aa36283d0f3b78a91b8a855326c0faec9a613c`; current home blob `f28bf114e6da502e2a3a0a97f0828c27849814c9`; workflow binding `d149630f30f3e904c78c7ca43f32917f9e2aaf85`. Frozen GA target is `[3,3]`, same-field `S3->S3`, exact A/B equality and exact file-backed proof. Only Exp073GB may create authority.
 
 ## Independent C2 frontier
 
-Exp073GW/GX/GY remain hosted support-only `+0/+0`; no real C2 record-set/model authority exists.
-
-Commit `a8499c404aa2b862cc08634fe4ed20d2753c9f25` prospectively froze `C2_IDE_RUNTIME_ADMISSION_RECEIPT_CONTRACT_V0_1.md`, blob `1c2e30e6563efe3976ee0b1825dfb250a902a529`. It binds a future exact 28-packet / 1792-byte raw record set to producer/build/config/model-point/coordinate/provenance identities and keeps decoding, mapping, prediction readiness and scientific authority false.
-
-Exp073GZ static audit is prospectively preregistered by commit `d5791df0c81169c9a3797ac1867b921028097579`, exact token `PASS_EXP073GZ_C2_RUNTIME_ADMISSION_RECEIPT_CONTRACT_STATIC_AUDIT_V0_1`. A workflow-install write was rejected by the connector/platform safety layer before any repository write; therefore GZ is **PREREGISTERED / BLOCKED_BY_AUDIT_EXECUTION_PATH**, not PASS/FAIL. Do not bypass or weaken it. Real C2 runtime production remains BLOCKED while FY owns home and additionally requires GZ PASS.
+Exp073GW/GX/GY remain hosted support-only `+0/+0`; no real C2 record-set/model authority exists. Runtime admission contract commit `a8499c404aa2b862cc08634fe4ed20d2753c9f25`, blob `1c2e30e6563efe3976ee0b1825dfb250a902a529`, remains frozen. Exp073GZ static audit preregistration commit `d5791df0c81169c9a3797ac1867b921028097579`, expected token `PASS_EXP073GZ_C2_RUNTIME_ADMISSION_RECEIPT_CONTRACT_STATIC_AUDIT_V0_1`, remains **PREREGISTERED / BLOCKED_BY_AUDIT_EXECUTION_PATH**. Real C2 runtime remains blocked while FY owns home and additionally requires GZ PASS.
 
 ## Global frozen boundaries
 
