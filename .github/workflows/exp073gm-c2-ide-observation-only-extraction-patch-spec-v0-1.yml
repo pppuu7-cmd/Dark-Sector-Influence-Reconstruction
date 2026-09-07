@@ -1,0 +1,33 @@
+name: Exp073GM C2 IDE observation-only extraction patch spec v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073gm-c2-ide-observation-only-extraction-patch-spec-v0-1.yml'
+      - 'scripts/dsir4/audit_exp073gm_c2_observation_patch_spec.py'
+      - 'docs/dsir4/prereg/EXP073GM_C2_IDE_OBSERVATION_ONLY_EXTRACTION_PATCH_SPEC_V0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clone pinned class_iv lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --no-checkout https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --detach ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C /tmp/class_iv rev-parse HEAD)" = "ac627d54e9ce196a08878d1ba33999819925d19c"
+      - name: Audit frozen observation-only extraction patch specification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/dsir4/audit_exp073gm_c2_observation_patch_spec.py \
+            /tmp/class_iv \
+            "$(git -C /tmp/class_iv rev-parse HEAD)" \
+            docs/dsir4/prereg/EXP073GM_C2_IDE_OBSERVATION_ONLY_EXTRACTION_PATCH_SPEC_V0_1.md
