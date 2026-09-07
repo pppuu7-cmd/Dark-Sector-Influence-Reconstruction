@@ -45,22 +45,27 @@ jobs:
           assert len(receipt_sha) == 64
 
           gt = gu._load_gt_module()
-          original = gt.build_manifest
-          base = original(contract)
-          for mutation in ('coordinate','order','payload','count'):
-              bad = copy.deepcopy(base)
-              if mutation == 'coordinate': bad['envelopes'][0]['z'] = 0.296
-              elif mutation == 'order': bad['envelopes'][0], bad['envelopes'][1] = bad['envelopes'][1], bad['envelopes'][0]
-              elif mutation == 'payload': bad['envelopes'][0]['record_payload'] = [0.0]
-              else: bad['envelopes'].pop()
-              gt.build_manifest = lambda _path, b=bad: b
-              try:
-                  gu.build_handoff_and_receipts(contract)
-              except RuntimeError:
-                  pass
-              else:
-                  raise AssertionError(f'{mutation} mutation did not fail closed')
-          gt.build_manifest = original
+          original_loader = gu._load_gt_module
+          original_build = gt.build_manifest
+          base = original_build(contract)
+          gu._load_gt_module = lambda: gt
+          try:
+              for mutation in ('coordinate','order','payload','count'):
+                  bad = copy.deepcopy(base)
+                  if mutation == 'coordinate': bad['envelopes'][0]['z'] = 0.296
+                  elif mutation == 'order': bad['envelopes'][0], bad['envelopes'][1] = bad['envelopes'][1], bad['envelopes'][0]
+                  elif mutation == 'payload': bad['envelopes'][0]['record_payload'] = [0.0]
+                  else: bad['envelopes'].pop()
+                  gt.build_manifest = lambda _path, b=bad: b
+                  try:
+                      gu.build_handoff_and_receipts(contract)
+                  except RuntimeError:
+                      pass
+                  else:
+                      raise AssertionError(f'{mutation} mutation did not fail closed')
+          finally:
+              gt.build_manifest = original_build
+              gu._load_gt_module = original_loader
 
           print('handoff_sha256=' + handoff['handoff_sha256'])
           print('receipt_set_sha256=' + receipt_sha)
