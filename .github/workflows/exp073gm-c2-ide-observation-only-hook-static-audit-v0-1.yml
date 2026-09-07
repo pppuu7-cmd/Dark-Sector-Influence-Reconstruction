@@ -1,0 +1,31 @@
+name: Exp073GM C2 IDE observation-only hook static audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073gm-c2-ide-observation-only-hook-static-audit-v0-1.yml'
+      - 'scripts/dsir4/apply_exp073gm_c2_pretransform_hook.py'
+      - 'scripts/dsir4/audit_exp073gm_c2_hook.py'
+      - 'docs/dsir4/prereg/EXP073GM_C2_IDE_OBSERVATION_ONLY_HOOK_STATIC_AUDIT_V0_1.md'
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clone pinned class_iv lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --no-checkout https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --detach ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C /tmp/class_iv rev-parse HEAD)" = "ac627d54e9ce196a08878d1ba33999819925d19c"
+      - name: Audit exact observation-only pretransform hook
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/dsir4/audit_exp073gm_c2_hook.py \
+            /tmp/class_iv \
+            "$(git -C /tmp/class_iv rev-parse HEAD)" \
+            scripts/dsir4/apply_exp073gm_c2_pretransform_hook.py
