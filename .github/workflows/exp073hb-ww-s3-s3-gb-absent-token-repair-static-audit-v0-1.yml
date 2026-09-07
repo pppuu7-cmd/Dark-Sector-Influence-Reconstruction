@@ -1,0 +1,91 @@
+name: Exp073HB WW_S3_S3 GB absent-token repair static audit v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073hb-ww-s3-s3-gb-absent-token-repair-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify repaired GB transform and GA binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073hb_ww_s3_s3_gb_absent_lowercase_transform_repair_v0_1_prereg.md)" = '47a2603d6c1eb3fc9513ee7e1b3995e91c1cf402'
+          test "$(git rev-parse HEAD:ci/exp073gb_verify_ga_candidate_v0_1.py)" = '075bb568f82407ec5ca2bdf8e598cfdac55dbe83'
+          test "$(git rev-parse HEAD:ci/exp073fx_verify_fw_candidate_v0_1.py)" = 'eb907944eac68b9fd13c405399cf238a8cb5bc96'
+          test "$(git rev-parse HEAD:.github/workflows/exp073ga-ww-s3-s3-home-science-v0-1.yml)" = '633dc27216ff59e4c922018fea55cc91f55cc5d7'
+          test "$(git rev-parse HEAD:ci/exp073ga_home_filebacked_fullres_v0_1.sh)" = 'f28bf114e6da502e2a3a0a97f0828c27849814c9'
+          test "$(git rev-parse HEAD:ci/exp073ga_verify_and_prune_replica_v0_1.py)" = '24ee2408b4b66a17001fb734e9e46d008179c310'
+          test "$(git rev-parse HEAD:ci/exp073ga_compare_terminal_receipts_v0_1.py)" = '263c69075f8a9c5ad3644224485f20fbb3961406'
+          python3 -m py_compile ci/exp073gb_verify_ga_candidate_v0_1.py ci/exp073fx_verify_fw_candidate_v0_1.py
+          python3 - <<'PY'
+          from pathlib import Path
+          gb=Path('ci/exp073gb_verify_ga_candidate_v0_1.py').read_text()
+          base=Path('ci/exp073fx_verify_fw_candidate_v0_1.py').read_text()
+          assert 'exp073fw' not in base
+          assert "('exp073fw','exp073ga')" not in gb
+          assert "BASE_GIT_BLOB='eb907944eac68b9fd13c405399cf238a8cb5bc96'" in gb
+          repl=[('EXP073FW','EXP073GA'),('EXP073FX','EXP073GB'),('ww_s2_s2','ww_s3_s3'),('WW_S2_S2','WW_S3_S3'),('S2->S2','S3->S3'),('[2,2]','[3,3]'),("{'s2':1}","{'s3':1}"),('ww_s2_s2_authority_created','ww_s3_s3_authority_created')]
+          transformed=base
+          for old,new in repl:
+              assert old in transformed, old
+              transformed=transformed.replace(old,new)
+          required=[
+            'PASS_EXP073GA_REPLICA_A_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1',
+            'PASS_EXP073GA_REPLICA_B_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1',
+            'PASS_EXP073GA_WW_S3_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1',
+            'PASS_EXP073GA_LIVE_EXCLUSIVITY',
+            "'source_pair':'S3->S3'",
+            "'ordered_source_indices':[3,3]",
+            "reconstruction_counts']=={'s3':1}",
+            "rec['same_field_object_handoff'] is True",
+            "ad['mcm_backing_bytes']==19327352832",
+            "ad['route']=='public_get_bandpower_windows_after_filebacked_fits_read'",
+            "set(prune['stage_manifest_sha256'])==set(STAGES)",
+            'assert ba==bb',
+            'math.isfinite',
+            "'no_tolerance_rescue':True",
+            'PASS_EXP073GB_WW_S3_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1',
+            'ww_s3_s3_authority_created=true',
+          ]
+          for x in required: assert x in transformed, x
+          forbidden=[
+            'PASS_EXP073FW_WW_S2_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1',
+            'PASS_EXP073FX_WW_S2_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1',
+            "'source_pair':'S2->S2'",
+            "'ordered_source_indices':[2,2]",
+            'np.allclose','np.isclose','rounding_rescue','smoothing_rescue','averaging_rescue'
+          ]
+          for x in forbidden: assert x not in transformed, x
+          print('PASS_EXP073HB_REPAIRED_GB_TRANSFORM_INVARIANTS')
+          PY
+          python3 - <<'PY'
+          from pathlib import Path
+          w=Path('.github/workflows/exp073ga-ww-s3-s3-home-science-v0-1.yml').read_text()
+          required=[
+            "ADMIT_VERIFY_BLOB: '075bb568f82407ec5ca2bdf8e598cfdac55dbe83'",
+            'test "$(git rev-parse HEAD:ci/exp073gb_verify_ga_candidate_v0_1.py)" = "$ADMIT_VERIFY_BLOB"',
+            'needs: [home-science]',
+            "needs.home-science.result == 'success'",
+            'test "sha256:$(sha256sum candidate.zip | awk',
+            'python3 ci/exp073gb_verify_ga_candidate_v0_1.py --root candidate --log candidate.log',
+            "grep -Fx 'PASS_EXP073GB_WW_S3_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1' admission.log",
+            "grep -Fx 'classification=SCIENTIFIC_AUTHORITY_ADMITTED' admission.log",
+            "grep -Fx 'ww_s3_s3_authority_created=true' admission.log",
+          ]
+          for x in required: assert x in w,x
+          print('PASS_EXP073HB_REPAIRED_GA_GB_BINDING_INVARIANTS')
+          PY
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073gb_verify_ga_candidate_v0_1.py ci/exp073fx_verify_fw_candidate_v0_1.py
+          echo PASS_EXP073HB_WW_S3_S3_GB_ABSENT_TOKEN_REPAIR_STATIC_AUDIT_V0_1
+          echo classification=SUPPORT_PLUS_0_PLUS_0
+          echo ww_s3_s3_authority_created=false
