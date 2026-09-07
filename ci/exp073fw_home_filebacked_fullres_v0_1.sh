@@ -24,9 +24,10 @@ for t in ("'source_pair':'S2->S2'","'ordered_source_indices':[2,2]",'source_coun
     if t not in d: raise SystemExit(f'fail-closed missing frozen FW driver invariant {t!r}')
 # Audit the generated shell envelope for forbidden rescue paths. The inherited FM
 # generator contains the exact forbidden spellings only inside its own fail-closed
-# scanner. Exclude exactly those two guard lines from this outer lexical audit; any
-# occurrence anywhere else remains fatal. The transformed science source is still
-# independently checked by the frozen driver and hosted audit.
+# scanner; scanning its source text would self-match. Exclude exactly those two
+# guard lines from this outer lexical audit; any occurrence anywhere else remains
+# fatal. The transformed science source is still independently checked by the
+# frozen driver and hosted audit.
 _guard_if="if any(x in s for x in ('np.allclose','np.isclose','rounding_rescue','smoothing_rescue','averaging_rescue')):"
 _guard_raise="raise SystemExit('fail-closed tolerance/rescue path detected in transformed home envelope')"
 audit_s='\n'.join(line for line in s.splitlines() if line.strip() not in (_guard_if,_guard_raise))
