@@ -1,0 +1,112 @@
+name: Exp073GR C2 IDE runtime sampling provenance contract v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073gr-c2-ide-runtime-sampling-provenance-contract-v0-1.yml'
+      - 'docs/dsir4/prereg/EXP073GR_C2_IDE_RUNTIME_SAMPLING_PROVENANCE_CONTRACT_V0_1.md'
+      - 'scripts/dsir4/fixtures/dsir_c2_runtime_sampling_provenance_contract_v0_1.json'
+      - 'scripts/dsir4/fixtures/dsir_c2_recorder_v0_1.h'
+
+jobs:
+  hosted-contract-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate frozen runtime sampling and provenance contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, math, pathlib, subprocess
+
+          p = pathlib.Path('scripts/dsir4/fixtures/dsir_c2_runtime_sampling_provenance_contract_v0_1.json')
+          c = json.loads(p.read_text(encoding='utf-8'))
+
+          assert c['schema'] == 'dsir.c2.runtime_sampling_provenance_contract.v0.1'
+          assert c['solver_repository'] == 'kaeonikc/class_iv'
+          assert c['solver_head'] == 'ac627d54e9ce196a08878d1ba33999819925d19c'
+          assert len(c['solver_head']) == 40
+          assert all(ch in '0123456789abcdef' for ch in c['solver_head'])
+
+          recorder = pathlib.Path(c['recorder_path'])
+          actual_blob = subprocess.check_output(['git','hash-object',str(recorder)], text=True).strip()
+          assert actual_blob == c['recorder_blob_sha1'] == 'c6144598b9f75908ee27a517d31eda509f7947f6'
+
+          fields = ['tau','k','a','H','delta_m','theta_m','rho_idm_iv','rho_iv']
+          assert c['record_fields'] == fields
+          assert c['record_field_count'] == 8
+          assert c['record_bytes'] == 64
+
+          z_expected = [0.295,0.51,0.706,0.934,1.317,1.491,2.33]
+          k_expected = [0.00067,0.00201,0.0067,0.0201]
+          assert c['z'] == z_expected
+          assert c['k_Mpc^-1'] == k_expected
+          assert c['ordering'] == 'z_major_k_minor'
+          pairs = [(z,k) for z in c['z'] for k in c['k_Mpc^-1']]
+          assert len(pairs) == 28 == c['expected_request_count']
+          assert len(set(pairs)) == 28
+          assert pairs[:4] == [(0.295,k) for k in k_expected]
+          assert pairs[-4:] == [(2.33,k) for k in k_expected]
+
+          s = c['global_support']
+          assert s == {
+              'z_min_inclusive': 0.295,
+              'z_max_inclusive': 2.33,
+              'k_min_exclusive': 0.0,
+              'k_max_inclusive_Mpc^-1': 0.06664762008318016,
+          }
+          assert all(s['z_min_inclusive'] <= z <= s['z_max_inclusive'] for z in c['z'])
+          assert all(s['k_min_exclusive'] < k <= s['k_max_inclusive_Mpc^-1'] for k in c['k_Mpc^-1'])
+          assert c['forbidden_rounded_k_Mpc^-1'] == 0.067
+          assert 0.067 > s['k_max_inclusive_Mpc^-1']
+          assert 0.067 not in c['k_Mpc^-1']
+
+          forbidden_flags = [
+              'interpolation','extrapolation','smoothing','averaging',
+              'tolerance_matching','nearest_neighbour','rounding_rescue',
+              'effective_coordinate_substitution','fiducial_P_shortcut'
+          ]
+          assert all(c[k] is False for k in forbidden_flags)
+          assert c['classification_ceiling'] == 'SUPPORT_PLUS_0_PLUS_0'
+          assert c['prediction_ready'] is False
+          assert c['scientific_model_authority_created'] is False
+          assert c['G_DOMAIN_MAPPING'] == 'NOT_YET_TESTABLE'
+
+          canonical = json.dumps(c, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')
+          fingerprint = hashlib.sha256(canonical).hexdigest()
+          assert len(fingerprint) == 64
+          print('canonical_contract_sha256=' + fingerprint)
+          print('request_count=28')
+          print('ordered_unique_pairs=true')
+          print('recorder_blob_verified=true')
+          print('record_bytes=64')
+          print('record_field_count=8')
+          print('all_requested_nodes_inside_frozen_support=true')
+          print('forbidden_rounded_k_excluded=true')
+          print('prohibited_transformations_all_false=true')
+          PY
+      - name: Static prereg consistency audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          f=docs/dsir4/prereg/EXP073GR_C2_IDE_RUNTIME_SAMPLING_PROVENANCE_CONTRACT_V0_1.md
+          grep -Fq 'ac627d54e9ce196a08878d1ba33999819925d19c' "$f"
+          grep -Fq 'c6144598b9f75908ee27a517d31eda509f7947f6' "$f"
+          grep -Fq '[0.295, 0.51, 0.706, 0.934, 1.317, 1.491, 2.33]' "$f"
+          grep -Fq '[0.00067, 0.00201, 0.0067, 0.0201]' "$f"
+          grep -Fq 'z-major then k-minor' "$f"
+          grep -Fq 'exactly 28 requested' "$f"
+          grep -Fq 'No effective z, effective k, interpolation, extrapolation, smoothing, averaging' "$f"
+      - name: Classify hosted support gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'cosmological_run_started=false'
+          echo 'self_hosted_science_started=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073GR_C2_IDE_RUNTIME_SAMPLING_PROVENANCE_CONTRACT_V0_1'
