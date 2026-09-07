@@ -9,7 +9,7 @@ def main():
  got=subprocess.check_output(['git','rev-parse','HEAD:ci/exp073fx_verify_fw_candidate_v0_1.py'],text=True).strip()
  if got!=BASE_GIT_BLOB: raise RuntimeError(f'fail-closed FX verifier blob drift {got}')
  s=BASE.read_text()
- for old,new in [('exp073fw','exp073ga'),('EXP073FW','EXP073GA'),('EXP073FX','EXP073GB'),('ww_s2_s2','ww_s3_s3'),('WW_S2_S2','WW_S3_S3'),('S2->S2','S3->S3'),('[2,2]','[3,3]'),("{'s2':1}","{'s3':1}"),('ww_s2_s2_authority_created','ww_s3_s3_authority_created')]:
+ for old,new in [('EXP073FW','EXP073GA'),('EXP073FX','EXP073GB'),('ww_s2_s2','ww_s3_s3'),('WW_S2_S2','WW_S3_S3'),('S2->S2','S3->S3'),('[2,2]','[3,3]'),("{'s2':1}","{'s3':1}"),('ww_s2_s2_authority_created','ww_s3_s3_authority_created')]:
   if old not in s: raise RuntimeError(f'fail-closed missing GB verifier token {old!r}')
   s=s.replace(old,new)
  for t in ('PASS_EXP073GA_WW_S3_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1','PASS_EXP073GB_WW_S3_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1',"'source_pair':'S3->S3'","'ordered_source_indices':[3,3]","reconstruction_counts']=={'s3':1}"):
