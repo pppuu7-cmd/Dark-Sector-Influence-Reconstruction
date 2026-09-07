@@ -26,7 +26,7 @@ The workflow was prospectively checking that the already-frozen DSIR4 angular-do
 
 Classification: **INFRASTRUCTURE / IMPLEMENTATION-AUDIT FAILURE, scientific support +0/+0**. It is not `FAIL`, not `OUTSIDE_DOMAIN`, and not evidence against `C2_IDE_LOCAL_TANGENT_CONE`.
 
-## Repair
+## Repair and verification
 
 Updated `experiments/073gk_c2_ide_delta_m_generator_static_audit_v0_1_prereg.md` to state explicitly:
 
@@ -36,11 +36,13 @@ and to record that every already-frozen generator node lies strictly inside that
 
 Repair commit: `7c399cdead1511b485575337ea9f368829fb5e49` (`Repair Exp073GK frozen k-max audit binding`).
 
-The path-filtered push automatically launched replacement hosted audit run `34085009787`; job `101627249783` entered `in_progress`. This is a light hosted static audit, not a duplicate self-hosted heavy science run.
+The path-filtered push launched replacement hosted audit run `34085009787`, job `101627249783`. It completed **success**, including the static/deterministic fail-closed audit. This is a light hosted support audit, not a duplicate self-hosted heavy science run.
+
+Research-log terminal-status update commit follows this repair lineage.
 
 ## C2 scientific status after repair
 
-Exp073GK remains a support-only deterministic generator/static-audit layer. Even if the replacement hosted run passes, it cannot by itself create real C2 numerical authority.
+Exp073GK remains a support-only deterministic generator/static-audit layer. Its successful rerun verifies implementation consistency only; it does not create real C2 numerical authority.
 
 Current fail-closed state remains:
 
@@ -53,6 +55,6 @@ No scientific model FAIL was created in this iteration.
 
 ## Next guard action
 
-1. Poll `34085009787` to terminal state; if it fails, inspect the exact hosted log and repair only implementation/provenance defects without changing frozen science.
-2. Independently poll heavy run `34067352681`; do not duplicate while active.
-3. After Exp073GK static support is clean, proceed to the mandatory source-extraction/provenance step for the four prospectively frozen C2 points, then deterministic payload admission. Only after that may Gate-1 status be reconsidered.
+1. Independently poll heavy run `34067352681`; do not duplicate while active.
+2. With Exp073GK static support now clean, proceed to the mandatory source-extraction/provenance step for the four prospectively frozen C2 points, then deterministic payload admission.
+3. Only after real source-bound provenance passes may Gate-1 status be reconsidered.
