@@ -6,7 +6,7 @@ Updated: 2026-09-07. Scope: **DSIR only**; RTK/RQIR excluded.
 
 Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities include `S0_S0` Exp073EO, `S0_S1` Exp073EZ, `S0_S2` Exp073FF, `S0_S3` Exp073FN, and `S1_S1` Exp073FR.
 
-Newest immutable recovery note: `docs/recovery/RECOVERY_2026-09-07_EXP073GJ_C2_DELTA_M_FREEZE_FS_ATTEMPT2_RUNNING.md`.
+Newest immutable recovery note: `docs/recovery/RECOVERY_2026-09-07_EXP073GK_C2_GENERATOR_SOURCE_BINDING_FS_ATTEMPT2_RUNNING.md` (creation commit `ab03d23ee8af1bd03d2497d13fb7a5b311e14b2e`).
 
 ## Exp073FS attempt 1 — historical infrastructure failure +0/+0
 
@@ -23,7 +23,7 @@ The same workflow run is attempt `2`; this is not a competing heavy run.
 - created `2026-09-07T01:18:30Z`, started `2026-09-07T01:31:27Z`;
 - latest live state: **IN_PROGRESS** in `Run frozen WW_S1_S2 A/B gate with durable checkpoints`;
 - latest-attempt hosted-launch audit `101592593435`: SUCCESS, support `+0/+0`;
-- latest live Actions reconciliation: one in-progress DSIR heavy run and no competing heavy run observed;
+- latest live Actions reconciliation during this iteration: one in-progress DSIR heavy run and no competing heavy run observed;
 - evidence collection and artifact upload are still pending;
 - checkpoint roots: `~/.cache/dsir/exp073fs-ww-s1-s2-filebacked-ab-v0-1/checkpoints/A` and `/B`;
 - last durable checkpoint: `UNKNOWN_NOT_INSPECTED_WHILE_RUNNING`;
@@ -46,33 +46,42 @@ Remaining deterministic queue: `FS -> FT -> FU -> FV -> FW -> FX -> FY -> FZ -> 
 
 ## Independent DSIR-4 work while heavy compute runs — C2 IDE
 
-C2 IDE six-component mapping is frozen and `mapping_ready=true`; numerical prediction authority is still absent.
-
-The validated legacy IDE artifact remains independently recovered in `docs/dsir4/mappings/C2_IDE_PREDICTION_PROVENANCE_RECOVERY_V0_1.md` (creation commit `1e6f48278cb3398c290df4d08c0d239fab032147`). Legacy raw `mPk` response is not a valid replacement for the frozen common `Delta_m` bridge.
+C2 IDE six-component mapping is frozen and `mapping_ready=true`; numerical prediction authority is still absent. The validated legacy IDE artifact remains independently recovered in `docs/dsir4/mappings/C2_IDE_PREDICTION_PROVENANCE_RECOVERY_V0_1.md`; legacy raw `mPk` response is not a valid replacement for the frozen common `Delta_m` bridge.
 
 ### Exp073GJ same-solver Delta_m generation freeze — hosted support PASS +0/+0
 
-Prospective prereg `experiments/073gj_c2_ide_delta_m_generation_freeze_v0_1_prereg.md` was created in commit `668031cade3455e795e299056c9d98334b4ad0e3`, before any new C2 numerical generation. It freezes:
+Prospective prereg `experiments/073gj_c2_ide_delta_m_generation_freeze_v0_1_prereg.md`, creation commit `668031cade3455e795e299056c9d98334b4ad0e3`, freezes pinned `class_iv@ac627d54...`, the common bridge `Delta_m = delta_m + 3*(1+w_m)*Hconf*theta_m/k^2`, tangent points, exact z grid, exact in-domain k subset `[0.00067,0.00201,0.0067,0.0201] Mpc^-1`, physical branch masks, source identities and deterministic serialization. Repaired hosted run/job `34081658093 / 101617944759` produced exact support token `PASS_EXP073GJ_C2_IDE_DELTA_M_GENERATION_FREEZE_STATIC_AUDIT_V0_1`; no model authority was created.
 
-- pinned solver `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`;
-- common bridge `Delta_m = delta_m + 3*(1+w_m)*Hconf*theta_m/k^2` and matched `r_Delta` power response;
-- reference `(alpha,beta)=(0,0)`, alpha base point `(-1e-4,0)`, beta central pair `(0,+1e-4)/(0,-1e-4)`;
-- exact z grid `[0.295,0.51,0.706,0.934,1.317,1.491,2.33]`;
-- exact in-domain k subset `[0.00067,0.00201,0.0067,0.0201] Mpc^-1`;
-- explicit exclusion of legacy `0.067 Mpc^-1` because it exceeds `k_max=0.06664762008318016`;
-- fail-closed source-variable identity, physical branch masks, deterministic JSON serialization and SHA256 requirements.
+### Exp073GK deterministic generator — hosted support PASS after harness-only repair
 
-Hosted static-audit history is immutable support-only:
+Prospective prereg: `experiments/073gk_c2_ide_delta_m_generator_static_audit_v0_1_prereg.md`, creation commit `139fd5a949c7fbfca13b92a6550245440f84d490`.
 
-- run `34081553496`, job `101617650342`: `IMPLEMENTATION_STATIC_FAIL_PLUS_0_PLUS_0`; first audit harness used an incorrect square-bracket `ln[...]` literal against the prereg's frozen parenthesized `ln(...)` expression;
-- run `34081596871`, job `101617772642`: diagnostic `IMPLEMENTATION_STATIC_FAIL_PLUS_0_PLUS_0`, explicitly identified the mismatched `r_Delta` literal;
-- run `34081626964`, job `101617857129`: repair-attempt `IMPLEMENTATION_STATIC_FAIL_PLUS_0_PLUS_0`, still checked `ln[` and therefore remained harness-only failure;
-- minimal harness-only repair commit `1b977af76a7ca2de438156a7ceb88c4e1a29844c` changed only the audit literal to the already-frozen prereg syntax; C2 science, domain, parameters and formula were not changed;
-- repaired run `34081658093`, job `101617944759`: raw exact token `PASS_EXP073GJ_C2_IDE_DELTA_M_GENERATION_FREEZE_STATIC_AUDIT_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `self_hosted_science_started=false`, `scientific_model_authority_created=false`.
+Generator: `analysis/exp073gk_c2_ide_delta_m_generator_v0_1.py`, creation commit `b763b11a349422758414ffad3524305e0c84c965`. It is only a fail-closed arithmetic/serialization layer over explicitly source-bound arrays and cannot run CLASS or create scientific authority.
 
-Therefore Exp073GJ closes only the prospective generation-interface/static-audit prerequisite. C2 remains `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, scientific contribution `+0/+0` until a generator is implemented, source-variable identities are proven from the pinned solver, a deterministic payload is generated, and its provenance is independently admitted.
+Hosted audit history is immutable support-only:
 
-Exact independent next step while FS runs: implement/audit the pinned-lineage generator without changing the frozen Exp073GJ interface and without using partial FS or downstream C2 results.
+- first run/job `34084884016 / 101626888946`: `IMPLEMENTATION_STATIC_FAIL_PLUS_0_PLUS_0`; raw first causal failure `AssertionError: 0.06664762008318016` because the harness incorrectly demanded an inherited parent-domain literal locally;
+- minimal workflow-only repair commit `c80cb15cdb131dac785f8119d11155e2eb70d832` changed only that inheritance check; science/formulas/domain/solver identity were unchanged;
+- repaired run/job `34084914369 / 101626977858`: exact raw `PASS_EXP073GK_C2_IDE_DELTA_M_GENERATOR_STATIC_AUDIT_V0_1`, `classification=SUPPORT_PLUS_0_PLUS_0`, `self_hosted_science_started=false`, `scientific_model_authority_created=false`.
+
+### Pinned-source binding audit — standard CLASS d_m would double-transform
+
+`docs/dsir4/mappings/C2_IDE_NATIVE_SOURCE_BINDING_AUDIT_V0_1.md`, creation commit `66bbf83bd87d6937cde3ada50adc0e5e7116fec8`, audits pinned `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c` source.
+
+The pinned solver first constructs current-gauge `delta_rho_m/rho_m` and matter momentum/`theta_m`, then explicitly applies `ppw->delta_m += 3*a*H*ppw->theta_m/k^2` before exposing the standard gauge-invariant `index_tp_delta_m` transfer source. Therefore standard CLASS `d_m` / `index_tp_delta_m` cannot be supplied as the current-gauge `delta_m` input to Exp073GJ and corrected again; that would double-apply the gauge transformation. This is a fail-closed source-interface/provenance finding `+0/+0`, not a scientific C2 failure.
+
+Exp073GK remains usable only for manifests proving that its input `delta_m`/`theta_m` are the pre-transform native quantities required by the already-frozen GJ bridge. Synthetic static fixtures do not establish real source provenance.
+
+C2 therefore remains:
+
+- `mapping_ready=true`;
+- deterministic generator/static audit: support PASS only;
+- native extraction binding: `BLOCKED / NOT_YET_ADMITTED`;
+- `prediction_ready=false`;
+- `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`;
+- scientific contribution `+0/+0`.
+
+Exact independent next step while FS runs: prospectively freeze and statically audit a minimal pinned-lineage pre-transform extraction hook/patch that emits current-gauge `delta_rho_m/rho_m`, current-gauge `theta_m` and exact `aH` at the frozen coordinates, records source-file/blob identities, and proves solver evolution/physics are unchanged. No real C2 numerical generation is permitted before that source route is admitted.
 
 ## Global frozen boundaries
 
