@@ -1,6 +1,10 @@
 name: Exp073FU WW_S1_S3 autonomous audited home science v0.1
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073fu-ww-s1-s3-home-science-v0-1.yml'
   workflow_dispatch:
     inputs:
       predecessor_admission_run:
@@ -23,7 +27,7 @@ env:
   DRIVER_V02_BLOB: '26b88d930eef2a04c21752c55b0bf7240e1540e9'
   PRUNER_BLOB: '9ab0838ea27fcb5dddbf2ecc761ed29f8894da63'
   COMPARE_BLOB: '8266a04a579d68b51503daa928a1fad7b533fd1c'
-  HOME_BLOB: '7dcde986e4621a3bdf75562170444e1608114504'
+  HOME_BLOB: '4e6d24fc26760c7e7d31545837239148269d81d5'
   ADMIT_VERIFY_BLOB: '03cf7109def0fa1b422bd46e080d5a65121c700f'
   FS_DRIVER_BLOB: '030f64f4d1b5bb233ad977b6a6971ebb197d45bf'
   FS_HOME_BLOB: 'a9f1777c68db522c02068828bc9e47a78b065681'
@@ -47,7 +51,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          PREV_RUN: ${{ inputs.predecessor_admission_run }}
+          PREV_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.predecessor_admission_run || '34067352681' }}
         run: |
           set -euo pipefail
           [[ "$PREV_RUN" =~ ^[0-9]+$ ]]
