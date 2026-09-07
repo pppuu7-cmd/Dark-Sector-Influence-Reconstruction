@@ -1,4 +1,4 @@
-name: Exp073FU replica-A repaired-pruner read-only validation v0.4
+name: Exp073FU replica-A repaired-pruner read-only validation v0.5
 
 on:
   workflow_dispatch:
@@ -34,6 +34,14 @@ jobs:
           ROOT="$HOME/.cache/dsir/exp073fu-ww-s1-s3-filebacked-ab-v0-1"
           test -d "$ROOT/checkpoints/A"
           test ! -e "$ROOT/checkpoints/A/post_receipt_prune.json"
+          ROOT="$ROOT" python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ['ROOT'])/'checkpoints'/'A'/'fresh_sources_complete.json'
+          o=json.loads(p.read_text())
+          keys=('schema','stage','complete','replica','checkpoint_namespace','source_head','contract_fingerprint','historical_ww_numerical_import','other_replica_output_read')
+          print('fresh_sources_identity='+json.dumps({k:o.get(k) for k in keys},sort_keys=True))
+          PY
           MIRROR="$RUNNER_TEMP/exp073fu-pruner-v02-mirror"
           rm -rf "$MIRROR"; mkdir -p "$MIRROR/checkpoints/A"
           ROOT="$ROOT" MIRROR="$MIRROR" python3 - <<'PY'
@@ -50,4 +58,4 @@ jobs:
           test -f "$MIRROR/checkpoints/A/post_receipt_prune.json"
           test ! -e "$ROOT/checkpoints/A/post_receipt_prune.json"
           echo original_checkpoint_mutated=false
-          echo PASS_EXP073FU_REPLICA_A_REPAIRED_PRUNER_READONLY_VALIDATION_V0_4
+          echo PASS_EXP073FU_REPLICA_A_REPAIRED_PRUNER_READONLY_VALIDATION_V0_5
