@@ -1,0 +1,70 @@
+name: Exp073GP C2 IDE recorder ABI static audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073gp-c2-ide-recorder-abi-static-audit-v0-1.yml'
+      - 'docs/dsir4/prereg/EXP073GP_C2_IDE_RECORDER_ABI_STATIC_AUDIT_V0_1.md'
+      - 'scripts/dsir4/fixtures/dsir_c2_recorder_v0_1.h'
+
+jobs:
+  hosted-recorder-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and execute frozen recorder ABI fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/test_exp073gp.c <<'EOF'
+          #include <assert.h>
+          #include <math.h>
+          #include <stdint.h>
+          #include <stdio.h>
+          #include <string.h>
+          #include "scripts/dsir4/fixtures/dsir_c2_recorder_v0_1.h"
+          int main(void) {
+            _Static_assert(sizeof(double) == 8, "binary64 storage width required");
+            _Static_assert(sizeof(dsir_c2_record_v0_1) == 8 * sizeof(double), "record must contain exactly eight doubles");
+            dsir_c2_record_v0_1 r = {1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0};
+            FILE *fp = tmpfile(); assert(fp != NULL);
+            assert(dsir_c2_record_write_v0_1(fp, &r) == 1);
+            assert(fflush(fp) == 0); assert(fseek(fp, 0, SEEK_SET) == 0);
+            double out[8] = {0}; assert(fread(out, sizeof(double), 8, fp) == 8);
+            const double in[8] = {1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0};
+            assert(memcmp(in, out, sizeof(in)) == 0);
+            assert(fseek(fp, 0, SEEK_END) == 0); long n = ftell(fp); assert(n == 64);
+            dsir_c2_record_v0_1 bad = r; bad.theta_m = NAN;
+            assert(dsir_c2_record_write_v0_1(fp, &bad) == 0);
+            assert(fseek(fp, 0, SEEK_END) == 0); assert(ftell(fp) == n);
+            fclose(fp);
+            return 0;
+          }
+          EOF
+          cc -std=c11 -Wall -Wextra -Werror -pedantic -I. /tmp/test_exp073gp.c -lm -o /tmp/test_exp073gp
+          /tmp/test_exp073gp
+      - name: Fail-closed static mutation scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          f=scripts/dsir4/fixtures/dsir_c2_recorder_v0_1.h
+          ! grep -Eq 'pba->|ppt->|ppw->|ppw->pv->|pvecback\[' "$f"
+          grep -Fq 'fwrite(payload, sizeof(double), 8, fp)' "$f"
+          grep -Fq 'isfinite(r->delta_m)' "$f"
+          grep -Fq 'isfinite(r->theta_m)' "$f"
+      - name: Classify hosted support gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'record_fields=8'
+          echo 'record_bytes=64'
+          echo 'finite_rejection_fail_closed=true'
+          echo 'roundtrip_byte_exact=true'
+          echo 'cosmological_run_started=false'
+          echo 'self_hosted_science_started=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073GP_C2_IDE_RECORDER_ABI_STATIC_AUDIT_V0_1'
