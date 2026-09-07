@@ -6,7 +6,7 @@ Updated: 2026-09-07. Scope: **DSIR only**; RTK/RQIR excluded.
 
 Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities now include `S0_S0`, `S0_S1`, `S0_S2`, `S0_S3`, `S1_S1`, and newly admitted **`S1_S2`**.
 
-Newest immutable recovery note: `docs/recovery/RECOVERY_2026-09-07_FS_ADMITTED_FU_WRAPPER_REPAIR_RUN5.md`, creation commit `3a21aecf36a0ec3add6c172f89d7a0cc6c8fb7d2`.
+Newest immutable recovery note before this iteration: `docs/recovery/RECOVERY_2026-09-07_FS_ADMITTED_FU_WRAPPER_REPAIR_RUN5.md`, creation commit `3a21aecf36a0ec3add6c172f89d7a0cc6c8fb7d2`.
 
 ## Newly admitted WW_S1_S2
 
@@ -37,18 +37,33 @@ All three FU failures are historical `IMPLEMENTATION/INFRASTRUCTURE_PLUS_0_PLUS_
 - expected gate: ordered `[1,3] = S1->S3`, distinct fields, DES NSIDE=4096, ell `0..12287`, 39 bands, public file-backed BPW, canonical `<f8 [39,12288] EE<-EE`, exact A/B SHA and array equality, all finite;
 - frozen source/contract: `de83e20a68f79ccf25b89b0d33eb4206e294c757` / `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`;
 - current wrapper blob: `4e6d24fc26760c7e7d31545837239148269d81d5`;
-- canonical workflow trigger was restored to dispatch-only in commit `80f9f8f23f391edc3906218badb4a1dc4e535e6f` after run 5 was launched;
+- canonical workflow trigger restored to dispatch-only in commit `80f9f8f23f391edc3906218badb4a1dc4e535e6f` after run 5 launch;
 - exact next action on SUCCESS: consume candidate artifact, independently verify full provenance and only then allow Exp073FV admission;
 - exact next action on infrastructure/resource FAIL: preserve verified complete checkpoints, diagnose first causal defect, smallest prospective repair/resume;
 - exact next action on numerical mismatch: scientific FAIL, no tolerance rescue.
 
-Live Actions reconciliation shows exactly one in-progress DSIR workflow (`34089383137`), whose only self-hosted job is `101639652148`; no second home job may be launched.
+Live Actions reconciliation in this iteration still shows home job `101639652148` inside `Run frozen WW_S1_S3 A/B gate with durable checkpoints`; evidence collection/upload remain pending. No partial output was read and no competing self-hosted job was launched.
 
 Remaining deterministic queue after valid FV authority: `FW -> FX -> FY -> FZ -> GA -> GB -> STOP`.
 
-## Independent C2 IDE status
+## Independent C2 IDE support process — Exp073GL
 
-Exp073GK deterministic generator/source-binding support remains unchanged: `mapping_ready=true`, `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, scientific `+0/+0`. Standard CLASS `d_m` is already gauge-invariant and cannot be fed through the frozen correction again. Exact independent next C2 step remains a prospectively frozen/static-audited pre-transform extraction hook; do not run it on home while FU owns the heavy frontier.
+C2 remains `mapping_ready=true`, `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, scientific `+0/+0`. Existing extraction contract and native-source audit remain authoritative; no competing interface was created.
+
+This iteration prospectively created **Exp073GL C2 IDE pre-transform source eligibility v0.1**:
+
+- prereg creation commit: `319457d0079ade637c012c945ac81545859a2f10`;
+- static auditor creation commit: `ffb485f83fcfd013b3c70850138ca1dd847df9e7`;
+- workflow activation/head: `846368c14550f67ec3c4f0aed25ab637e89c0c70`;
+- hosted run: **`34093447421`**, job **`101651685666`**, currently `QUEUED` at last reconciliation;
+- runner: hosted `ubuntu-latest` only; no home ownership;
+- frozen solver: `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`;
+- expected token: `PASS_EXP073GL_C2_IDE_PRETRANSFORM_SOURCE_ELIGIBILITY_STATIC_AUDIT_V0_1`;
+- classification ceiling: `SUPPORT_PLUS_0_PLUS_0` only;
+- exact next action on PASS: consume raw job log, verify token and source identity, then only allow prospectively frozen Exp073GM observation-only extraction-patch specification/audit;
+- exact next action on static/infrastructure FAIL: diagnose first causal source/auditor defect and repair prospectively without altering frozen C2 science or interface.
+
+Exp073GL is independent of running WW numerical output and cannot create C2 prediction/model authority.
 
 ## Global frozen boundaries
 
