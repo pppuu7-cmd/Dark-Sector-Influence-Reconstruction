@@ -16,7 +16,14 @@ for t in required:
     if t not in s: raise SystemExit(f'fail-closed missing FU home invariant {t!r}')
 for t in ("'source_pair':'S1->S2'","'ordered_source_indices':[1,2]",'PASS_EXP073FS_WW_S1_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'):
     if t in s: raise SystemExit(f'fail-closed stale FS home token {t!r}')
-if any(x in s for x in ('np.allclose','np.isclose','rounding_rescue','smoothing_rescue','averaging_rescue')): raise SystemExit('fail-closed tolerance/rescue path')
+# The inherited FS wrapper contains the literal forbidden-token list because it
+# performs the authoritative scan on the final executable payload generated
+# from the FA base.  Scanning this intermediate wrapper for those literals is
+# therefore a false positive.  Preserve and require the inherited fail-closed
+# scanner instead; the hosted launch audit separately scans the frozen Python
+# science files and preregistration text.
+if "fail-closed tolerance/rescue path detected" not in s:
+    raise SystemExit('fail-closed inherited final-payload rescue scanner missing')
 Path(os.environ['OUT']).write_text(s,encoding='utf-8')
 PY
 chmod 700 "$tmp"
