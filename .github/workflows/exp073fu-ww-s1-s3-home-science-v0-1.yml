@@ -27,7 +27,7 @@ env:
   PRUNER_BLOB: 'b9ed7d7178424fb656b4a7c7bfb2ee370c751cb0'
   COMPARE_BLOB: '08e91910da2b510ef92ab705dbbe360f57506a31'
   HOME_BLOB: 'a32eb3c47b4e6c557d43a572a0af356c91134e1b'
-  ADMIT_VERIFY_BLOB: '03cf7109def0fa1b422bd46e080d5a65121c700f'
+  ADMIT_VERIFY_BLOB: '0c17dae9172316563a0b09d1da07cceb152acb7a'
   FS_DRIVER_BLOB: '030f64f4d1b5bb233ad977b6a6971ebb197d45bf'
   FS_HOME_BLOB: 'a9f1777c68db522c02068828bc9e47a78b065681'
   TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
@@ -89,8 +89,9 @@ jobs:
           grep -F "('ww_s1_s2','ww_s1_s3')" ci/exp073fu_compare_terminal_receipts_v0_1.py >/dev/null
           grep -F "('WW_S1_S2','WW_S1_S3')" ci/exp073fu_compare_terminal_receipts_v0_1.py >/dev/null
           grep -F 'POST_PRUNE_TERMINAL_RESUME_CANDIDATE' ci/exp073fu_home_filebacked_fullres_v0_1.sh >/dev/null
+          grep -F 'missing original-or-resume verification marker' ci/exp073fv_verify_fu_candidate_v0_1.py >/dev/null
           ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fu_*.py ci/exp073fv_verify_fu_candidate_v0_1.py experiments/073f[uv]_*.md
-          echo PASS_EXP073FU_HOSTED_LAUNCH_AUDIT_V0_4
+          echo PASS_EXP073FU_HOSTED_LAUNCH_AUDIT_V0_5
           echo classification=SUPPORT_PLUS_0_PLUS_0
 
   home-science:
