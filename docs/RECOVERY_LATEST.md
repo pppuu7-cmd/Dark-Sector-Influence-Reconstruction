@@ -2,7 +2,7 @@
 
 Updated: 2026-09-07. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_C2_GR_GS_SUPPORT_PASS_FW_ACTIVE_V10.md` (creation commit `6a5b5f4ce9194f09f658b6e78479e381e12b3851`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_C2_GT_GU_SUPPORT_PASS_FW_ACTIVE_V11.md` (creation commit `270d9754b75101670e3acbd7989755993794659a`). Earlier recovery notes remain immutable history.
 
 ## Preserved authority
 
@@ -10,41 +10,30 @@ Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted 
 
 `WW_S1_S3` authority was created only by Exp073FV run `34120000242`, admission job `101735763144`, token `PASS_EXP073FV_WW_S1_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1`. Artifact `10017795904`, ZIP SHA256 `91c881a132e5a85c7a18cacb6890e42f4bd66ae7dbdd402c72cd9a317e8d68c2`; canonical A/B SHA256 `aee5a7b28b60b522a885a121c44544b0360fd9736b955fa5024641db63c2429b`, exact-equal finite `<f8 [39,12288] EE<-EE`, ordered `[1,3]=S1->S3`, distinct fields, exact `19,327,352,832`-byte file-backed proof.
 
-## Exp073FW repair history — pre-science +0/+0 only
-
-Prior FW static/implementation failures remain historical and are never rewritten. Run `34121012410`, home `101738820469`, failed before science on an outer lexical self-match. The prospective guard repair chain was `09cf5b398d22286afab7715fbee450b114d4d065`, `e7129a3299f1e2f49ec3a1b4546a578a64fc9cf8`, `f1f29bf2fef56d52b3ce3f13645de22d8fb682d2`.
-
-Repaired run `34125530921` had hosted audit `101753205410` SUCCESS with `PASS_EXP073FW_HOSTED_LAUNCH_AUDIT_V0_4`, but home job `101753245014` failed before numerical science with `continue: only meaningful in a for... loop` followed by a shell syntax error. No checkpoint/evidence files existed; Exp073FX admission was skipped. First causal defect was nested transform self-overwrite: the outer FW transform executed inherited FM while the inherited generator rewrote the same `$RUNNER_TEMP/exp073fw_home_filebacked_fullres_v0_1.transformed.sh` file the shell was reading. Classification: implementation `+0/+0`, not scientific FAIL.
-
-Prospective repair commit `820b0f8c082e45b2f51c3ff9d076a197ee3848f2` adopts the proven direct frozen-FA transform architecture, pins FA blob `309c464bbfbe4896bd560165985ee7f643d9ee22`, preserves frozen `S2->S2` driver/source ordering/checkpoint semantics and exact gate, binds existing storage-audit helper identities, and syntax-checks the generated shell before execution. Current FW home-wrapper blob: `c4ef9587d5f4b54179304a44741eece2cec0a7a5`. Binding commit: `1c635f5192d26e76e0ec82a308363b666e5a248b`.
-
 ## Current heavy frontier — Exp073FW `WW_S2_S2`
 
 Authoritative live run: **`34125785882`**, head **`1c635f5192d26e76e0ec82a308363b666e5a248b`**.
 
-- hosted launch audit job **`101754018941`**: SUCCESS;
-- hosted raw token: `PASS_EXP073FW_HOSTED_LAUNCH_AUDIT_V0_5`, `classification=SUPPORT_PLUS_0_PLUS_0`;
-- home-science job **`101754061309`**: IN_PROGRESS at latest reconciliation;
+- hosted launch audit job **`101754018941`**: SUCCESS, token `PASS_EXP073FW_HOSTED_LAUNCH_AUDIT_V0_5`, classification support `+0/+0`;
+- home-science job **`101754061309`**: IN_PROGRESS at latest reconciliation inside frozen `WW_S2_S2` A/B gate;
 - runner owner: **`DSIR-HOME-PC-2`**, machine `win-ws338`;
 - checkpoint namespace: `~/.cache/dsir/exp073fw-ww-s2-s2-filebacked-ab-v0-1`;
-- predecessor authority: Exp073FV run `34120000242`;
-- expected gate: frozen `WW_S2_S2` A/B exact file-backed gate;
-- no competing DSIR heavy run was observed;
-- partial numerical output was not inspected.
+- no competing DSIR heavy run observed; partial numerical output not inspected.
 
-Exact next action: terminal-consume run `34125785882`; inspect raw final logs/artifact, verify GitHub artifact digest and ZIP SHA, complete checkpoint/provenance chain, `S2->S2` same-field semantics, exact `19,327,352,832`-byte file-backed MCM proof, canonical finite `<f8 [39,12288] EE<-EE`, and exact A/B equality. Workflow success alone is not scientific PASS. Only frozen Exp073FX may create `WW_S2_S2` authority. On implementation/infrastructure failure preserve valid complete checkpoints and repair only the first causal defect; on genuine frozen numerical failure record a scientific negative result without weakening the gate.
+Historical FW implementation/static failures remain `+0/+0`; current direct frozen-FA repair authority is commit `820b0f8c082e45b2f51c3ff9d076a197ee3848f2`, wrapper blob `c4ef9587d5f4b54179304a44741eece2cec0a7a5`, binding head `1c635f5192d26e76e0ec82a308363b666e5a248b`.
 
-The FW workflow retains a path-scoped push trigger for controlled repair binding. Do not edit it while home job `101754061309` is active if doing so could create a duplicate. Restore dispatch-only semantics at a safe terminal transition.
+Exact next heavy action: terminal-consume `34125785882`; inspect raw final logs/artifact, verify GitHub artifact digest/ZIP, complete checkpoint/provenance chain, frozen S2->S2 same-field semantics, exact `19,327,352,832`-byte file-backed proof, canonical finite `<f8 [39,12288] EE<-EE`, and exact A/B equality. Workflow success alone is not scientific PASS. Only frozen Exp073FX may create `WW_S2_S2` authority.
 
 ## Independent C2 support frontier
 
-C2 remains `mapping_ready=true`, `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, support/scientific `+0/+0`. Exact z `[0.295,0.51,0.706,0.934,1.317,1.491,2.33]`, k `[0.00067,0.00201,0.0067,0.0201] Mpc^-1`; no interpolation/smoothing/averaging/tolerance. No competing C2 heavy extraction while FW owns the runner.
+C2 remains `mapping_ready=true`, `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, scientific `+0/+0`. Exact z `[0.295,0.51,0.706,0.934,1.317,1.491,2.33]`, k `[0.00067,0.00201,0.0067,0.0201] Mpc^-1`; no interpolation/smoothing/averaging/tolerance/effective-coordinate/fiducial-P rescue. No real C2 extraction while FW owns the home runner.
 
-Exp073GR is raw-validated hosted support PASS `+0/+0`: run `34130804754`, job `101770188173`, token `PASS_EXP073GR_C2_IDE_RUNTIME_SAMPLING_PROVENANCE_CONTRACT_V0_1`; canonical contract SHA256 `6a14470157e0677ee10d65d24e759907b9a5df5fe1fd9d80e940787224dbfe9b`; exact solver head `ac627d54e9ce196a08878d1ba33999819925d19c`; recorder blob `c6144598b9f75908ee27a517d31eda509f7947f6`; 28 exact unique z-major/k-minor requests; 64-byte/8-field recorder; rounded `0.067` excluded; all prohibited transformation flags false.
+- Exp073GR run `34130804754`, job `101770188173`: raw-validated `SUPPORT_PLUS_0_PLUS_0` PASS; canonical contract SHA256 `6a14470157e0677ee10d65d24e759907b9a5df5fe1fd9d80e940787224dbfe9b`; exact 28-node z-major/k-minor sampling/provenance contract.
+- Exp073GS run `34130948407`, job `101770660311`: raw-validated support PASS; exact request emitter, manifest SHA256 `1448d6d6ac3ef2a018af3df9b732a91d4006263bc2fb8b7d232e1eded87316b0`.
+- Exp073GT authoritative prereg `035e00a4aa3e8f2b00e43a6a4473ed66c70a7f60`; run `34131162547`, job `101771357352`: raw-validated support PASS, exact token `PASS_EXP073GT_C2_IDE_DRYRUN_RECORD_ENVELOPE_AUDIT_V0_1`, all payloads null, deterministic manifest SHA256 `d86a034988fd42b98e40f68f176a1b834844d1e18208f938542c69f979d048f8`. Later same-label collision commit `5bbdd469b686f5f4c186d159e0c8ad07dfe474bd` does not supersede the older prospective authority.
+- Exp073GU prereg `365e08ab795c673ed55d3a49a5e5020bc3d9e677`: initial run `34131654711` was implementation/provenance FAIL `+0/+0` because a stale embedded GT manifest hash was trusted; minimal fixture repair `ff364fc83c3bbceca66dc03c5034eb021d22c012` added content-bound recomputation. Run `34131740611` then exposed a harness-only module-binding failure `+0/+0`; workflow repair `9bdc6c06dc5cc3df8ce68b3c08124ce683a95a3c` fixed only the audit harness. Repaired run `34131822658`, job `101773484203`, is raw-validated `SUPPORT_PLUS_0_PLUS_0` PASS with handoff SHA256 `5ed0b924379f8ae961acd5d5b14171f96b3692972b2348cba3022d669a343931`, receipt-set SHA256 `bbcfffbc9845dfb74ef4b8fffbcd5f9851cc45d27272cf39595d62ce9f0d8075`, 28 zero-payload receipts, all tested mutations fail closed, exact token `PASS_EXP073GU_C2_IDE_RUNTIME_HANDOFF_RECEIPT_SCHEMA_AUDIT_V0_1`.
 
-Exp073GS is raw-validated hosted support PASS `+0/+0`: run `34130948407`, job `101770660311`, token `PASS_EXP073GS_C2_IDE_RUNTIME_REQUEST_EMITTER_AUDIT_V0_1`; exact ordinals `0..27`, exact z-major/k-minor sequence, mutated contract fails closed before emission, provenance manifest SHA256 `1448d6d6ac3ef2a018af3df9b732a91d4006263bc2fb8b7d232e1eded87316b0`. No CLASS build/run or self-hosted science occurred.
-
-Exact independent next C2 gate permitted by GS: prospectively freeze a hosted-only dry-run record-envelope assembly that binds each deterministic request to the validated 64-byte recorder ABI. It must not run CLASS, use the home runner, create a prediction, or create scientific model authority.
+Exact independent next C2 work must remain hosted-only metadata/support work while FW owns the runner. No scientific authority is created by GR/GS/GT/GU.
 
 ## Global frozen boundaries
 
