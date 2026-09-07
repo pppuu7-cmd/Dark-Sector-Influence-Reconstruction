@@ -7,6 +7,9 @@ on:
         description: Exp073FV S1S3 admission run id
         required: true
         type: string
+  push:
+    paths:
+      - '.github/workflows/exp073fw-ww-s2-s2-home-science-v0-1.yml'
 
 permissions:
   contents: read
@@ -23,7 +26,7 @@ env:
   DRIVER_V02_BLOB: 'f63ffe431a034ea4e842970210365a156fb35089'
   PRUNER_BLOB: '1dfc57bddd1db6c8aeaadd0bc1e73b130e611bcb'
   COMPARE_BLOB: '5b6ab180bf13d1fe8ac4557310a19d4a4e9668f6'
-  HOME_BLOB: '7e6399a3d829c9a4068908c583957fbe7e2a9c50'
+  HOME_BLOB: '3c7e64e9a359ced198c2cb56b9a7c93f6c54c3d1'
   ADMIT_VERIFY_BLOB: 'eb907944eac68b9fd13c405399cf238a8cb5bc96'
   TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
   PATCH_BLOB: 'd534b698f9131688d263eedcef27260386c58641'
@@ -45,7 +48,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          PREV_RUN: ${{ inputs.predecessor_admission_run }}
+          PREV_RUN: ${{ inputs.predecessor_admission_run || '34120000242' }}
         run: |
           set -euo pipefail
           [[ "$PREV_RUN" =~ ^[0-9]+$ ]]
@@ -76,10 +79,12 @@ jobs:
           python3 -m py_compile ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py ci/exp073fw_ww_s2_s2_durable_ab_production_v0_2.py ci/exp073fw_verify_and_prune_replica_v0_1.py ci/exp073fw_compare_terminal_receipts_v0_1.py ci/exp073fx_verify_fw_candidate_v0_1.py
           bash -n ci/exp073fw_home_filebacked_fullres_v0_1.sh
           grep -F 'source_count_map(r1_root,2)' ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F "'source_pair':'S2->S2'" ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py >/dev/null
           grep -F "'ordered_source_indices':[2,2]" ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py >/dev/null
           grep -F 'compute_coupling_matrix(f2,f2,b)' ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py >/dev/null
+          grep -F "DRIVER=\"$GITHUB_WORKSPACE/ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py\"" ci/exp073fw_home_filebacked_fullres_v0_1.sh >/dev/null
           ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fw_*.py ci/exp073fx_verify_fw_candidate_v0_1.py experiments/073f[wx]_*.md
-          echo PASS_EXP073FW_HOSTED_LAUNCH_AUDIT_V0_1
+          echo PASS_EXP073FW_HOSTED_LAUNCH_AUDIT_V0_2
           echo classification=SUPPORT_PLUS_0_PLUS_0
 
   home-science:
