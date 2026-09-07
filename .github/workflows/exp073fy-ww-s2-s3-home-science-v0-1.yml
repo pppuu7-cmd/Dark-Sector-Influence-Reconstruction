@@ -26,7 +26,7 @@ env:
   DRIVER_V02_BLOB: '78ecb51a0d249c6dc25b2b8925d1075efbb5aefc'
   PRUNER_BLOB: '62026ccea2fb983340caaf3c98256b1efc371d04'
   COMPARE_BLOB: '4e28dbbbc08d38c292cfb437477c9d7e55624064'
-  HOME_BLOB: '6f0d4ef167887d124e68d34739d523b5e4bf01b8'
+  HOME_BLOB: '3009d77c92cbde10b4f5e750e967b05421dfe07e'
   ADMIT_VERIFY_BLOB: 'c3f967c8fc9efed017bb6d5794d53433afefd4ac'
   TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
   PATCH_BLOB: 'd534b698f9131688d263eedcef27260386c58641'
@@ -85,7 +85,7 @@ jobs:
           grep -F 'compute_coupling_matrix(f2,f3,b)' ci/exp073fy_ww_s2_s3_durable_ab_production_v0_1.py >/dev/null
           grep -F 'bash -n "$tmp"' ci/exp073fy_home_filebacked_fullres_v0_1.sh >/dev/null
           ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fy_*.py ci/exp073fz_verify_fy_candidate_v0_1.py experiments/073f[yz]_*.md
-          echo PASS_EXP073FY_HOSTED_LAUNCH_AUDIT_V0_2
+          echo PASS_EXP073FY_HOSTED_LAUNCH_AUDIT_V0_3
           echo classification=SUPPORT_PLUS_0_PLUS_0
 
   home-science:
