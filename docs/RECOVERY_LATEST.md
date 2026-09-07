@@ -2,7 +2,7 @@
 
 Updated: 2026-09-07. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_EXP073GW_GX_C2_PACKET_SET_SUPPORT_WITH_FW_ACTIVE_V14.md` (creation commit `2476af97cbb91b8c65593d21f6e157d997e79238`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-07_EXP073GY_C2_ADMISSION_BOUNDARY_RECONCILED_WITH_FW_ACTIVE_V15.md` (creation commit `3a08831a03993101764e017d222ace8fa1d7a326`). Earlier recovery notes remain immutable history.
 
 ## Preserved authority
 
@@ -32,11 +32,13 @@ The FW workflow still has a path-scoped one-shot push trigger. Do not edit it wh
 
 C2 remains `mapping_ready=true`, `prediction_ready=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`, scientific `+0/+0`. Exact z `[0.295,0.51,0.706,0.934,1.317,1.491,2.33]`, k `[0.00067,0.00201,0.0067,0.0201] Mpc^-1`; no interpolation/smoothing/averaging/tolerance/effective-coordinate/fiducial-P rescue. No real C2 extraction while FW owns the home runner.
 
-Exp073GR/GS/GT/GU/GV remain raw-validated support authority. New Exp073GW prereg `f117f872a2afed90ce4cd28de3cd64325eec4e49`, fixture `430b64363dbb4366d0d2ff6ba9be0a4477cc144d`. Initial run `34140964891 / 101802625599` is harness-only implementation FAIL `+0/+0` because its ordinal-7 z mutation was a no-op; workflow-only repair `b86a2ce78c96d61556512cd9c2b8f6dccb815de2` changed only the test mutation. Repaired run `34141027839 / 101802824730` raw-validated token `PASS_EXP073GW_C2_IDE_RECORD_PACKET_SET_ADMISSION_STATIC_AUDIT_V0_1`, exactly 28 packets, 1792 opaque bytes, synthetic aggregate SHA256 `a98f9ca1f10a9b2bfc957fac81ed837d85bbb203a5f5f0d7ff369a2061bc78b7`, classification `SUPPORT_PLUS_0_PLUS_0`.
+Exp073GR/GS/GT/GU/GV remain raw-validated support authority. Exp073GW repaired run `34141027839 / 101802824730` raw-validated token `PASS_EXP073GW_C2_IDE_RECORD_PACKET_SET_ADMISSION_STATIC_AUDIT_V0_1`, exactly 28 packets / 1792 opaque bytes, synthetic aggregate SHA256 `a98f9ca1f10a9b2bfc957fac81ed837d85bbb203a5f5f0d7ff369a2061bc78b7`, classification `SUPPORT_PLUS_0_PLUS_0`. Its earlier harness-only mutation failure remains historical implementation `+0/+0`.
 
 Exp073GX prereg `08042089799e84e5d83ea857c0182255997f8bf8`, fixture `44fef3cfb09a9c081f33425e05956f5ae1cbb8a5`, workflow `10da5f412f1d5a5b01f4a10e3c78bb046bab0860`; hosted run `34141138190 / 101803172545` raw-validated token `PASS_EXP073GX_C2_IDE_PACKET_SET_PROVENANCE_RECEIPT_STATIC_AUDIT_V0_1`, receipt SHA256 `6163dff74d1749ab506593c48915ad731f12e885e180af27612226c8261534f9`, `decoded_field_values_inspected=false`, `scientific_mapping_applied=false`, classification `SUPPORT_PLUS_0_PLUS_0`.
 
-The next meaningful C2 step is real runtime generation/admission of the complete 28-packet set under frozen GW/GX provenance. It is BLOCKED while Exp073FW owns home; do not replace that prerequisite with arbitrary further metadata gates.
+Exp073GY was prospectively preregistered in commit `200382a02ff3db9285f3bfe6de0d29d3cb86b422`, before workflow commit `8671ab882d0ef32723668c7683685410bcad244a`. Hosted run **`34141294357 / 101803642167`** completed SUCCESS on head `8671ab882d0ef32723668c7683685410bcad244a`; raw log emitted exact token `PASS_EXP073GY_C2_IDE_RUNTIME_PACKET_SET_ADMISSION_BOUNDARY_V0_1` and classification `SUPPORT_PLUS_0_PLUS_0`, with `scientific_record_set_admitted=false`, `cosmological_run_started=false`, `self_hosted_science_started=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`. It is a static fail-closed future-producer admission boundary only; no actual record set or science was admitted.
+
+The next meaningful C2 step remains **real runtime generation/admission of the complete 28-packet set under frozen GW/GX/GY provenance**. It is BLOCKED while Exp073FW owns home. Do not replace this prerequisite with additional metadata-only scaffolding.
 
 ## Global frozen boundaries
 
