@@ -1,0 +1,244 @@
+name: Exp073FY WW_S2_S3 autonomous audited home science v0.1
+
+on:
+  workflow_dispatch:
+    inputs:
+      predecessor_admission_run:
+        description: Exp073FW S2S2 admitted predecessor run id
+        required: false
+        default: '34146468135'
+        type: string
+  push:
+    paths:
+      - '.github/workflows/exp073fy-ww-s2-s3-namespace-repair-resume-v0-3.yml'
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: dsir-exp073fy-ww-s2-s3-home-science-v0-1
+  cancel-in-progress: false
+
+env:
+  FY_PREREG_BLOB: '8aacb4e7f6615fe7e30a88ae02eb02ee5f4dba24'
+  FZ_PREREG_BLOB: '3bbfae2fb5816b6933aeafdb74b8f6b4bce25c2f'
+  DRIVER_V01_BLOB: '65161f78f7c993df571be3ea871de03c54f6847a'
+  DRIVER_V02_BLOB: '78ecb51a0d249c6dc25b2b8925d1075efbb5aefc'
+  PRUNER_BLOB: '8c0e7ae30a80c6d74e6a1fbc079c1d2bc4eef773'
+  COMPARE_BLOB: '4e28dbbbc08d38c292cfb437477c9d7e55624064'
+  HOME_BLOB: '63132e199c0af956f27218393240d5f85c681f88'
+  ADMIT_VERIFY_BLOB: 'c3f967c8fc9efed017bb6d5794d53433afefd4ac'
+  TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
+  PATCH_BLOB: 'd534b698f9131688d263eedcef27260386c58641'
+  FROZEN_SOURCE_HEAD: 'de83e20a68f79ccf25b89b0d33eb4206e294c757'
+  CONTRACT_FP: 'b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251'
+  R1_ARTIFACT_ID: '9720335366'
+  R1_DIGEST: 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd'
+  NAMASTER_HEAD: '24365fa59a38c15732f4f37e8b29265b75c442d5'
+  ARTIFACT_NAME: 'exp073fy-ww-s2-s3-filebacked-ab-v0-1'
+  OLD_BAD_ARTIFACT_ID: '10031552592'
+  OLD_BAD_ARTIFACT_DIGEST: 'sha256:87b094a75ae15d540442aedc356d284860aec40eb7f374e0243770b890cf621c'
+  NEXT_WORKFLOW: 'exp073ga-ww-s3-s3-home-science-v0-1.yml'
+
+jobs:
+  hosted-launch-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze repaired S2S3 code and predecessor authority
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREV_RUN: ${{ inputs.predecessor_admission_run || '34146468135' }}
+        run: |
+          set -euo pipefail
+          [[ "$PREV_RUN" =~ ^[0-9]+$ ]]
+          test "$(git rev-parse HEAD:experiments/073fy_ww_s2_s3_filebacked_full_resolution_ab_science_v0_1_prereg.md)" = "$FY_PREREG_BLOB"
+          test "$(git rev-parse HEAD:experiments/073fz_ww_s2_s3_provenance_admission_v0_1_prereg.md)" = "$FZ_PREREG_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fy_ww_s2_s3_durable_ab_production_v0_1.py)" = "$DRIVER_V01_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fy_ww_s2_s3_durable_ab_production_v0_2.py)" = "$DRIVER_V02_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fy_verify_and_prune_replica_v0_1.py)" = "$PRUNER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fy_compare_terminal_receipts_v0_1.py)" = "$COMPARE_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fy_home_filebacked_fullres_v0_1.sh)" = "$HOME_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fz_verify_fy_candidate_v0_1.py)" = "$ADMIT_VERIFY_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073aa_article3_des_angular_task_runner_v0_1.py)" = "$TASKRUNNER_BLOB"
+          test "$(git rev-parse HEAD:patches/namaster-v2.7-dsir-filebacked-mcm-read-v0.2.patch)" = "$PATCH_BLOB"
+          python3 -m py_compile ci/exp073fy_ww_s2_s3_durable_ab_production_v0_1.py ci/exp073fy_ww_s2_s3_durable_ab_production_v0_2.py ci/exp073fy_verify_and_prune_replica_v0_1.py ci/exp073fy_compare_terminal_receipts_v0_1.py ci/exp073fz_verify_fy_candidate_v0_1.py
+          bash -n ci/exp073fy_home_filebacked_fullres_v0_1.sh
+          python3 - <<'PY'
+          import importlib.util
+          p='ci/exp073fy_ww_s2_s3_durable_ab_production_v0_1.py'
+          spec=importlib.util.spec_from_file_location('fy',p); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          s=m.transform_source()
+          required=["'A':'checkpoints/exp073fy-ww-s2-s3-a-v0-1'","'B':'checkpoints/exp073fy-ww-s2-s3-b-v0-1'","'ordered_source_indices':[2,3]","'source_pair':'S2->S3'","compute_coupling_matrix(f2,f3,b)"]
+          for x in required: assert x in s,x
+          assert 'exp073fy-ww-s3-s3-' not in s
+          print('PASS_EXP073FY_NAMESPACE_TRANSFORM_STATIC_REGRESSION_V0_3')
+          PY
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fy_*.py ci/exp073fz_verify_fy_candidate_v0_1.py experiments/073f[yz]_*.md
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${PREV_RUN}" > prev-run.json
+          python3 - <<'PY'
+          import json
+          r=json.load(open('prev-run.json')); assert r['status']=='completed' and r['conclusion']=='success' and r['name']=='Exp073FW WW_S2_S2 autonomous audited home science v0.1'
+          PY
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${PREV_RUN}/jobs?per_page=100" > prev-jobs.json
+          python3 - <<'PY' > prev-ids.txt
+          import json
+          for j in json.load(open('prev-jobs.json'))['jobs']:
+              if j['status']=='completed' and j['conclusion']=='success': print(j['id'])
+          PY
+          : > prev.log
+          while read -r j; do gh api --allow-escape-sequences "repos/${GITHUB_REPOSITORY}/actions/jobs/${j}/logs" >> prev.log; done < prev-ids.txt
+          grep -aF 'PASS_EXP073FX_WW_S2_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1' prev.log >/dev/null
+          grep -aF 'ww_s2_s2_authority_created=true' prev.log >/dev/null
+          echo PASS_EXP073FY_NAMESPACE_REPAIR_HOSTED_AUDIT_V0_3
+
+  home-science:
+    needs: [hosted-launch-audit]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 720
+    env:
+      OMP_NUM_THREADS: '8'
+      OMP_DYNAMIC: 'FALSE'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retire only proven invalid S3-S3-labelled FY checkpoints
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 2 \
+            -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${OLD_BAD_ARTIFACT_ID}" \
+            -o "$RUNNER_TEMP/old-fy-artifact.json"
+          OLD_BAD_ARTIFACT_DIGEST="$OLD_BAD_ARTIFACT_DIGEST" python3 - "$RUNNER_TEMP/old-fy-artifact.json" <<'PY'
+          import json,os,sys
+          a=json.load(open(sys.argv[1]))
+          assert a['name']=='exp073fy-ww-s2-s3-filebacked-ab-v0-1'
+          assert a.get('expired') is False
+          assert a.get('digest')==os.environ['OLD_BAD_ARTIFACT_DIGEST']
+          PY
+          SCI_ROOT="$HOME/.cache/dsir/exp073fy-ww-s2-s3-filebacked-ab-v0-1"
+          SCI_ROOT="$SCI_ROOT" SOURCE_HEAD="$FROZEN_SOURCE_HEAD" CONTRACT_FP="$CONTRACT_FP" python3 - <<'PY'
+          import hashlib,json,os,shutil
+          from pathlib import Path
+          sci=Path(os.environ['SCI_ROOT']); cp=sci/'checkpoints'; cp.mkdir(parents=True,exist_ok=True)
+          archive=sci/'retired_invalid_namespace_v0_3'; archive.mkdir(parents=True,exist_ok=True)
+          head=os.environ['SOURCE_HEAD']; fp=os.environ['CONTRACT_FP']
+          stages=['fresh_sources_complete','fresh_workspace_mcm_complete','mcm_fits_verified','full_window_complete','selected_ee_complete','replica_receipt_complete']
+          retired=[]
+          for rep in ('A','B'):
+              root=cp/rep
+              if not root.exists(): continue
+              found=[]
+              for st in stages:
+                  p=root/(st+'.json')
+                  if p.is_file(): found.append((st,p,json.loads(p.read_text())))
+              if not found: continue
+              good=f'checkpoints/exp073fy-ww-s2-s3-{rep.lower()}-v0-1'
+              bad=f'checkpoints/exp073fy-ww-s3-s3-{rep.lower()}-v0-1'
+              namespaces={o.get('checkpoint_namespace') for _,_,o in found}
+              if namespaces=={good}: continue
+              if namespaces!={bad}: raise RuntimeError(f'fail-closed unexpected/mixed FY checkpoint namespaces replica {rep}: {namespaces}')
+              for st,p,o in found:
+                  if o.get('stage')!=st or o.get('complete') is not True or o.get('replica')!=rep or o.get('source_head')!=head or o.get('contract_fingerprint')!=fp:
+                      raise RuntimeError(f'fail-closed invalid legacy checkpoint identity beyond known namespace defect {rep}/{st}')
+              evidence={'schema':'dsir.exp073fy.invalid_namespace_retirement.v0.3','replica':rep,'known_bad_namespace':bad,'required_good_namespace':good,'source_head':head,'contract_fingerprint':fp,'server_artifact_id':10031552592,'server_artifact_digest':'sha256:87b094a75ae15d540442aedc356d284860aec40eb7f374e0243770b890cf621c','manifest_sha256':{}}
+              for st,p,o in found: evidence['manifest_sha256'][p.name]=hashlib.sha256(p.read_bytes()).hexdigest()
+              rp=root/'replica_receipt.json'; ee=root/'exact_route'/'selected_ee.bin'
+              if rp.is_file():
+                  rec=json.loads(rp.read_text()); evidence['replica_receipt_sha256']=hashlib.sha256(rp.read_bytes()).hexdigest()
+                  if rec.get('source_pair')!='S2->S3' or rec.get('ordered_source_indices')!=[2,3] or rec.get('checkpoint_namespace')!=bad:
+                      raise RuntimeError(f'fail-closed legacy receipt has defect beyond namespace {rep}')
+                  if ee.is_file():
+                      h=hashlib.sha256(ee.read_bytes()).hexdigest(); evidence['selected_ee_sha256']=h
+                      if rec.get('selected_ee_sha256')!=h: raise RuntimeError(f'fail-closed legacy selected EE hash {rep}')
+              (sci/f'retired_invalid_namespace_{rep}_v0_3.json').write_text(json.dumps(evidence,indent=2,sort_keys=True)+'\n')
+              dest=archive/rep
+              if dest.exists(): raise RuntimeError(f'fail-closed retirement destination already exists {dest}')
+              shutil.move(str(root),str(dest)); retired.append(rep)
+          print('PASS_EXP073FY_INVALID_NAMESPACE_RETIREMENT_V0_3 retired='+','.join(retired))
+          PY
+      - name: Run repaired frozen WW_S2_S3 A/B gate
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash ci/exp073fy_home_filebacked_fullres_v0_1.sh
+      - name: Collect terminal or partial evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$HOME/.cache/dsir/exp073fy-ww-s2-s3-filebacked-ab-v0-1"; OUT="$RUNNER_TEMP/exp073fy-artifact"; rm -rf "$OUT"; mkdir -p "$OUT"
+          ROOT="$ROOT" OUT="$OUT" python3 - <<'PY'
+          import os,shutil
+          from pathlib import Path
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          if root.exists():
+              for p in root.rglob('*.json'):
+                  try: q=out/p.relative_to(root); q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+                  except OSError: pass
+              for rep in ('A','B'):
+                  p=root/'checkpoints'/rep/'exact_route'/'selected_ee.bin'
+                  if p.exists(): q=out/'checkpoints'/rep/'exact_route'/'selected_ee.bin'; q.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,q)
+              for n in ('A_driver.log','B_driver.log','A_prune_verify.log','B_prune_verify.log','ab_compare_stdout.txt','resource_telemetry.log','terminal_receipt.json'):
+                  p=root/n
+                  if p.exists(): shutil.copy2(p,out/n)
+          PY
+      - name: Upload Exp073FY evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073fy-ww-s2-s3-filebacked-ab-v0-1
+          path: ${{ runner.temp }}/exp073fy-artifact
+          if-no-files-found: warn
+          retention-days: 30
+
+  hosted-provenance-admission:
+    needs: [home-science]
+    if: ${{ needs.home-science.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact FY artifact and admit S2-S3
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073fz_ww_s2_s3_provenance_admission_v0_1_prereg.md)" = "$FZ_PREREG_BLOB"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs?per_page=100" > jobs.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?per_page=100" > artifacts.json
+          python3 - <<'PY' > evidence.env
+          import json,os,shlex
+          jobs=json.load(open('jobs.json'))['jobs']; h=[j for j in jobs if j['name']=='home-science']; assert len(h)==1 and h[0]['status']=='completed' and h[0]['conclusion']=='success'
+          arts=json.load(open('artifacts.json'))['artifacts']; a=[x for x in arts if x['name']==os.environ['ARTIFACT_NAME']]; assert len(a)==1 and a[0]['expired'] is False and a[0].get('digest','').startswith('sha256:')
+          a=a[0]
+          for k,v in [('HOME_JOB',h[0]['id']),('ARTIFACT_ID',a['id']),('ARTIFACT_DIGEST',a['digest'])]: print(k+'='+shlex.quote(str(v)))
+          PY
+          source evidence.env
+          gh api --allow-escape-sequences "repos/${GITHUB_REPOSITORY}/actions/jobs/${HOME_JOB}/logs" > candidate.log
+          curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 2 -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" -o candidate.zip
+          test "sha256:$(sha256sum candidate.zip | awk '{print $1}')" = "$ARTIFACT_DIGEST"
+          mkdir candidate; unzip -q candidate.zip -d candidate
+          python3 ci/exp073fz_verify_fy_candidate_v0_1.py --root candidate --log candidate.log | tee admission.log
+          grep -Fx 'PASS_EXP073FZ_WW_S2_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1' admission.log >/dev/null
+          grep -Fx 'classification=SCIENTIFIC_AUTHORITY_ADMITTED' admission.log >/dev/null
+          grep -Fx 'ww_s2_s3_authority_created=true' admission.log >/dev/null
+      - name: Dispatch final frozen WW_S3_S3 successor
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/actions/workflows/${NEXT_WORKFLOW}/dispatches" -f ref=main -f 'inputs[predecessor_admission_run]'="${GITHUB_RUN_ID}"
+          echo "DISPATCHED_SUCCESSOR=${NEXT_WORKFLOW}"
