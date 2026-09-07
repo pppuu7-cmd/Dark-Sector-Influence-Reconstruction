@@ -1,0 +1,91 @@
+name: Exp073GU C2 IDE runtime handoff receipt schema audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073gu-c2-ide-runtime-handoff-receipt-schema-audit-v0-1.yml'
+      - 'docs/dsir4/prereg/EXP073GU_C2_IDE_RUNTIME_HANDOFF_RECEIPT_SCHEMA_AUDIT_V0_1.md'
+      - 'scripts/dsir4/fixtures/dsir_c2_runtime_handoff_receipt_v0_1.py'
+      - 'scripts/dsir4/fixtures/dsir_c2_dryrun_record_envelope_v0_1.py'
+      - 'scripts/dsir4/fixtures/dsir_c2_runtime_sampling_provenance_contract_v0_1.json'
+
+jobs:
+  hosted-handoff-receipt-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute frozen handoff receipt audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import copy, importlib.util, pathlib
+          p = pathlib.Path('scripts/dsir4/fixtures/dsir_c2_runtime_handoff_receipt_v0_1.py')
+          spec = importlib.util.spec_from_file_location('gu', p)
+          gu = importlib.util.module_from_spec(spec)
+          assert spec.loader is not None
+          spec.loader.exec_module(gu)
+          contract = pathlib.Path('scripts/dsir4/fixtures/dsir_c2_runtime_sampling_provenance_contract_v0_1.json')
+          handoff, receipts, receipt_sha = gu.build_handoff_and_receipts(contract)
+          assert handoff['gt_manifest_sha256'] == 'd86a034988fd42b98e40f68f176a1b834844d1e18208f938542c69f979d048f8'
+          assert handoff['gr_contract_sha256'] == '6a14470157e0677ee10d65d24e759907b9a5df5fe1fd9d80e940787224dbfe9b'
+          assert handoff['payload_state'] == 'ABSENT_BY_CONTRACT'
+          assert handoff['prediction_ready'] is False
+          assert handoff['request_count'] == 28
+          assert handoff['record_bytes'] == 64
+          assert handoff['record_field_count'] == 8
+          assert len(handoff['handoff_sha256']) == 64
+          assert len(receipts) == 28
+          assert [r['ordinal'] for r in receipts] == list(range(28))
+          assert all(r['received_record_bytes'] == 0 for r in receipts)
+          assert all(r['expected_record_bytes'] == 64 for r in receipts)
+          assert all(r['receipt_status'] == 'DRY_RUN_NO_PAYLOAD' for r in receipts)
+          assert all(r['gt_manifest_sha256'] == handoff['gt_manifest_sha256'] for r in receipts)
+          assert len(receipt_sha) == 64
+
+          gt = gu._load_gt_module()
+          original = gt.build_manifest
+          base = original(contract)
+          for mutation in ('coordinate','order','payload','count'):
+              bad = copy.deepcopy(base)
+              if mutation == 'coordinate': bad['envelopes'][0]['z'] = 0.296
+              elif mutation == 'order': bad['envelopes'][0], bad['envelopes'][1] = bad['envelopes'][1], bad['envelopes'][0]
+              elif mutation == 'payload': bad['envelopes'][0]['record_payload'] = [0.0]
+              else: bad['envelopes'].pop()
+              gt.build_manifest = lambda _path, b=bad: b
+              try:
+                  gu.build_handoff_and_receipts(contract)
+              except RuntimeError:
+                  pass
+              else:
+                  raise AssertionError(f'{mutation} mutation did not fail closed')
+          gt.build_manifest = original
+
+          print('handoff_sha256=' + handoff['handoff_sha256'])
+          print('receipt_set_sha256=' + receipt_sha)
+          print('receipt_count=28')
+          print('received_record_bytes_all_zero=true')
+          print('payload_state_absent_by_contract=true')
+          print('mutations_fail_closed=true')
+          PY
+      - name: Static no-solver no-payload audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          f=scripts/dsir4/fixtures/dsir_c2_runtime_handoff_receipt_v0_1.py
+          ! grep -Eiq 'subprocess|os\.system|popen|mpirun|srun|class_iv|interp|smooth|average|nearest|round\(|tolerance|fwrite|struct\.pack' "$f"
+          grep -Fq '"received_record_bytes": 0' "$f"
+          grep -Fq '"payload_state": "ABSENT_BY_CONTRACT"' "$f"
+      - name: Classify hosted support gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'cosmological_run_started=false'
+          echo 'self_hosted_science_started=false'
+          echo 'record_payload_created=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073GU_C2_IDE_RUNTIME_HANDOFF_RECEIPT_SCHEMA_AUDIT_V0_1'
