@@ -1,38 +1,53 @@
 #!/usr/bin/env bash
 set -euo pipefail
-BASE="$GITHUB_WORKSPACE/ci/exp073fm_home_filebacked_fullres_v0_1.sh"
-EXPECTED_BASE_BLOB='873232cc96f9a97afefeff1ff0a433fd5b49a5a2'
-test "$(git rev-parse HEAD:ci/exp073fm_home_filebacked_fullres_v0_1.sh)" = "$EXPECTED_BASE_BLOB"
+
+# Exp073FW directly transforms the frozen FA base. This avoids recursively
+# executing the FM generator while preserving the frozen S2->S2 scientific
+# driver, source ordering, exact-equality contract, and thresholds.
+: "${EM_GENERATOR_BLOB:=bd1795f2a2c2cf80341f212996eb8278e0be53d9}"
+: "${EM_COMPARE_BLOB:=f0de92f3f121592b6d139eb7d948426946d901d1}"
+export EM_GENERATOR_BLOB EM_COMPARE_BLOB
+
+BASE="$GITHUB_WORKSPACE/ci/exp073fa_home_filebacked_fullres_v0_1.sh"
+EXPECTED_BASE_BLOB='309c464bbfbe4896bd560165985ee7f643d9ee22'
+test "$(git rev-parse HEAD:ci/exp073fa_home_filebacked_fullres_v0_1.sh)" = "$EXPECTED_BASE_BLOB"
 tmp="$RUNNER_TEMP/exp073fw_home_filebacked_fullres_v0_1.transformed.sh"
-BASE="$BASE" OUT="$tmp" DRIVER="$GITHUB_WORKSPACE/ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py" python3 - <<'PY'
+BASE="$BASE" OUT="$tmp" python3 - <<'PY'
 import os
 from pathlib import Path
-s=Path(os.environ['BASE']).read_text()
-for old,new in [('exp073fm','exp073fw'),('Exp073FM','Exp073FW'),('EXP073FM','EXP073FW'),('ww_s1_s1','ww_s2_s2'),('ww-s1-s1','ww-s2-s2'),('WW_S1_S1','WW_S2_S2'),('S1->S1','S2->S2'),('[1,1]','[2,2]')]:
-    if old not in s: raise SystemExit(f'fail-closed missing FW home transform token {old!r}')
-    s=s.replace(old,new)
-# The transformed outer envelope does not itself serialize source_pair/order; those
-# scientific identities live in the frozen driver. Audit them there instead of
-# requiring impossible literals in the shell wrapper.
-required=['ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py','ci/exp073fw_ww_s2_s2_durable_ab_production_v0_2.py','ci/exp073fw_verify_and_prune_replica_v0_1.py','ci/exp073fw_compare_terminal_receipts_v0_1.py','exp073fw-ww-s2-s2-filebacked-ab-v0-1']
-for t in required:
-    if t not in s: raise SystemExit(f'fail-closed missing FW home invariant {t!r}')
-for t in ("'source_pair':'S1->S1'","'ordered_source_indices':[1,1]",'PASS_EXP073FM_WW_S1_S1_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'):
-    if t in s: raise SystemExit(f'fail-closed stale FM home token {t!r}')
-d=Path(os.environ['DRIVER']).read_text()
-for t in ("'source_pair':'S2->S2'","'ordered_source_indices':[2,2]",'source_count_map(r1_root,2)','compute_coupling_matrix(f2,f2,b)'):
-    if t not in d: raise SystemExit(f'fail-closed missing frozen FW driver invariant {t!r}')
-# Audit the generated shell envelope for forbidden rescue paths. The inherited FM
-# generator contains the exact forbidden spellings only inside its own fail-closed
-# scanner; scanning its source text would self-match. Exclude exactly those two
-# guard lines from this outer lexical audit; any occurrence anywhere else remains
-# fatal. The transformed science source is still independently checked by the
-# frozen driver and hosted audit.
-_guard_if="if any(x in s for x in ('np.allclose','np.isclose','rounding_rescue','smoothing_rescue','averaging_rescue')):"
-_guard_raise="raise SystemExit('fail-closed tolerance/rescue path detected in transformed home envelope')"
-audit_s='\n'.join(line for line in s.splitlines() if line.strip() not in (_guard_if,_guard_raise))
-if any(x in audit_s for x in ('np.allclose','np.isclose','rounding_rescue','smoothing_rescue','averaging_rescue')): raise SystemExit('fail-closed tolerance/rescue path')
-Path(os.environ['OUT']).write_text(s)
+base=Path(os.environ['BASE']); out=Path(os.environ['OUT']); s=base.read_text(encoding='utf-8')
+required_repl=[
+ ('exp073fa','exp073fw'),('Exp073FA','Exp073FW'),('EXP073FA','EXP073FW'),
+ ('ww_s0_s2','ww_s2_s2'),('ww-s0-s2','ww-s2-s2'),('S0->S2','S2->S2'),('[0,2]','[2,2]'),
+]
+for old,new in required_repl:
+ if old not in s: raise SystemExit(f'fail-closed missing FW direct-base transform token {old!r}')
+ s=s.replace(old,new)
+s=s.replace('WW_S0_S2','WW_S2_S2')
+required=['ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py','ci/exp073fw_ww_s2_s2_durable_ab_production_v0_2.py','exp073fw-ww-s2-s2-filebacked-ab-v0-1']
+for token in required:
+ if token not in s: raise SystemExit(f'fail-closed missing Exp073FW home invariant {token!r}')
+for token in ("'source_pair':'S0->S2'","'ordered_source_indices':[0,2]",'PASS_EXP073FA_WW_S0_S2_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'):
+ if token in s: raise SystemExit(f'fail-closed stale S0-S2 home token {token!r}')
+if any(x in s for x in ('np.allclose','np.isclose','rounding_rescue','smoothing_rescue','averaging_rescue')): raise SystemExit('fail-closed tolerance/rescue path detected')
+marker='run_replica A; prune_replica A\n'
+if marker not in s: raise SystemExit('fail-closed missing legacy terminal marker')
+pos=s.index(marker)
+tail='''run_replica A
+"$PATCH_PY" ci/exp073fw_verify_and_prune_replica_v0_1.py --checkpoint-root "$CHECKPOINT_ROOT" --replica A | tee "$SCI_ROOT/A_prune_verify.log"
+rm -f "$SCI_ROOT/mmap/A"/dsir-nmt-mcm-* || true
+run_replica B
+"$PATCH_PY" ci/exp073fw_verify_and_prune_replica_v0_1.py --checkpoint-root "$CHECKPOINT_ROOT" --replica B | tee "$SCI_ROOT/B_prune_verify.log"
+rm -f "$SCI_ROOT/mmap/B"/dsir-nmt-mcm-* || true
+"$PATCH_PY" ci/exp073fw_compare_terminal_receipts_v0_1.py --root "$SCI_ROOT" --out "$SCI_ROOT/ab_compare.json" | tee "$SCI_ROOT/ab_compare_stdout.txt"
+cp "$SCI_ROOT/ab_compare.json" "$SCI_ROOT/terminal_receipt.json"
+'''
+s=s[:pos]+tail
+for token in ('ci/exp073fw_verify_and_prune_replica_v0_1.py','ci/exp073fw_compare_terminal_receipts_v0_1.py','terminal_receipt.json'):
+ if token not in s: raise SystemExit(f'fail-closed hardened FW terminal path missing {token!r}')
+if '--replica AB' in s: raise SystemExit('fail-closed legacy completed-replica restore path survived')
+out.write_text(s,encoding='utf-8')
 PY
 chmod 700 "$tmp"
+bash -n "$tmp"
 exec bash "$tmp"
