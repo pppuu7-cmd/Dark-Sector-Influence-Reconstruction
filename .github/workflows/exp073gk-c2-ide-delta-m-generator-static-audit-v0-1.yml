@@ -1,0 +1,110 @@
+name: Exp073GK C2 IDE Delta_m generator static audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'analysis/exp073gk_c2_ide_delta_m_generator_v0_1.py'
+      - 'experiments/073gk_c2_ide_delta_m_generator_static_audit_v0_1_prereg.md'
+      - '.github/workflows/exp073gk-c2-ide-delta-m-generator-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Static and deterministic fail-closed audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile analysis/exp073gk_c2_ide_delta_m_generator_v0_1.py
+          python - <<'PY'
+          import copy, importlib.util, json, math, pathlib
+
+          path = pathlib.Path('analysis/exp073gk_c2_ide_delta_m_generator_v0_1.py')
+          text = path.read_text()
+          prereg = pathlib.Path('experiments/073gk_c2_ide_delta_m_generator_static_audit_v0_1_prereg.md').read_text()
+          required = [
+              'ac627d54e9ce196a08878d1ba33999819925d19c',
+              '0.06664762008318016',
+              '[0.00067, 0.00201, 0.0067, 0.0201]',
+              'delta_m', 'theta_m', 'w_m', 'Hconf',
+              'matched_primordial_normalization_and_phase',
+          ]
+          for token in required:
+              assert token in prereg or token in text, token
+          for forbidden in ['allclose(', 'isclose(', 'interp(', 'interpolate(', 'round(']:
+              assert forbidden not in text, forbidden
+
+          spec = importlib.util.spec_from_file_location('gk', path)
+          mod = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(mod)
+
+          def mat(base):
+              return [[base + iz*0.01 + ik*0.001 for ik in range(4)] for iz in range(7)]
+          def point(ab, shift):
+              return {
+                  'alpha_beta': ab,
+                  'physical_branch': {
+                      'rho_idm_positive_all_history': True,
+                      'rho_iv_nonnegative_all_history': True,
+                  },
+                  'delta_m': mat(1.0 + shift),
+                  'theta_m': mat(1e-9 + shift*1e-10),
+                  'w_m': mat(0.0),
+                  'Hconf': [1e-4 + iz*1e-6 for iz in range(7)],
+              }
+          manifest = {
+              'hypothesis_id': mod.HYPOTHESIS_ID,
+              'solver_repository': mod.SOLVER_REPO,
+              'solver_commit': mod.SOLVER_COMMIT,
+              'z': mod.Z,
+              'k_Mpc^-1': mod.K,
+              'matched_primordial_normalization_and_phase': True,
+              'native_source_identities': {k: f'pinned-native::{k}' for k in mod.REQUIRED_NATIVE},
+              'generator_repository_commit': 'synthetic-static-audit',
+              'generator_script_blob_sha': 'synthetic-static-audit',
+              'document_blob_identities': {'exp073gj': 'frozen', 'exp073gk': 'frozen'},
+              'baseline_cosmology_identity': 'legacy-verified-ide0.ini::0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c',
+              'precision_identity': 'legacy-verified-dsir_ide_p8.pre::463a3960d6a955c1e2a561e988562a1fc5486b0b79f120eb634ccca6f86002f9',
+              'points': {
+                  'reference': point([0.0,0.0], 0.0),
+                  'alpha_left': point([-0.0001,0.0], 1.0),
+                  'beta_plus': point([0.0,0.0001], 2.0),
+                  'beta_minus': point([0.0,-0.0001], 3.0),
+              },
+          }
+          a = mod.generate(copy.deepcopy(manifest))
+          b = mod.generate(copy.deepcopy(manifest))
+          ba = mod._canonical_bytes(a)
+          bb = mod._canonical_bytes(b)
+          assert ba == bb
+          assert a['payload_sha256'] == b['payload_sha256']
+          iz, ik = 0, 0
+          p = manifest['points']['alpha_left']
+          expected = p['delta_m'][iz][ik] + 3.0*(1.0+p['w_m'][iz][ik])*p['Hconf'][iz]*p['theta_m'][iz][ik]/(manifest['k_Mpc^-1'][ik]**2)
+          assert a['points']['alpha_left']['Delta_m'][iz][ik] == expected
+
+          mutations = []
+          x=copy.deepcopy(manifest); x['solver_commit']='bad'; mutations.append(x)
+          x=copy.deepcopy(manifest); x['k_Mpc^-1']=[0.00067,0.00201,0.0067,0.067]; mutations.append(x)
+          x=copy.deepcopy(manifest); x['native_source_identities']['theta_m']=''; mutations.append(x)
+          x=copy.deepcopy(manifest); x['points']['alpha_left']['physical_branch']['rho_iv_nonnegative_all_history']=False; mutations.append(x)
+          x=copy.deepcopy(manifest); x['matched_primordial_normalization_and_phase']=False; mutations.append(x)
+          for x in mutations:
+              try:
+                  mod.generate(x)
+              except mod.ContractError:
+                  pass
+              else:
+                  raise AssertionError('mutation did not fail closed')
+
+          assert a['prediction_ready'] is True  # synthetic fixture only; not scientific authority
+          print('PASS_EXP073GK_C2_IDE_DELTA_M_GENERATOR_STATIC_AUDIT_V0_1')
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('self_hosted_science_started=false')
+          print('scientific_model_authority_created=false')
+          PY
