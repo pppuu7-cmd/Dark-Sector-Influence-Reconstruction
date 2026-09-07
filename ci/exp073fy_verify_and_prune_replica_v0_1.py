@@ -13,7 +13,12 @@ def main():
  for old,new in protected:
   if old not in s: raise RuntimeError(f'fail-closed missing FY pruner protected token {old!r}')
   s=s.replace(old,new)
- for old,new in [('exp073fs','exp073fy'),('EXP073FS','EXP073FY'),('ww_s1_s2','ww_s2_s3'),('ww-s1-s2','ww-s2-s3'),('WW_S1_S2','WW_S2_S3'),('S1->S2','S2->S3'),('[1,2]','[2,3]')]:
+ # The frozen FS base contains lowercase/schema/path and source-pair tokens, but
+ # no literal uppercase WW_S1_S2 token. Requiring that absent lexical token made
+ # the post-receipt pruner fail after a valid expensive replica. Transform only
+ # tokens that are actually part of the pinned base; all scientific invariants
+ # below remain fail-closed and unchanged.
+ for old,new in [('exp073fs','exp073fy'),('EXP073FS','EXP073FY'),('ww_s1_s2','ww_s2_s3'),('ww-s1-s2','ww-s2-s3'),('S1->S2','S2->S3'),('[1,2]','[2,3]')]:
   if old not in s: raise RuntimeError(f'fail-closed missing FY pruner token {old!r}')
   s=s.replace(old,new)
  for old,new in [('p1','__P_L__'),('p2','__P_R__'),('h1','__H_L__'),('h2','__H_R__')]: s=re.sub(rf'\b{old}\b',new,s)
