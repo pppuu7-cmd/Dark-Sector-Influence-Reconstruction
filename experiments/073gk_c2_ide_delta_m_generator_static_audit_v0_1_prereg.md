@@ -27,6 +27,8 @@ Every point must carry exact arrays over
 - explicit solver commit and native source-variable identity strings;
 - physical branch status proving `rho_idm>0` and `rho_iv>=0` over the required history.
 
+The inherited DSIR4 angular-domain ceiling is exactly `k_max=0.06664762008318016 Mpc^-1`; every frozen generator node above is strictly inside that ceiling. This line is an implementation binding to the already-frozen domain, not a new threshold or a change of the coordinate grid.
+
 Shape is prospectively fixed as `[7,4]` for `delta_m`, `theta_m`, `w_m` and generated `Delta_m`; `Hconf` may be `[7]` only and is broadcast across k. Missing, extra, repeated, non-finite, mismatched-coordinate, ambiguous-source, wrong-commit or branch-invalid input fails closed.
 
 The exact arithmetic remains
