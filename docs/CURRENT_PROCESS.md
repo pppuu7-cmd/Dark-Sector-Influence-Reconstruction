@@ -6,7 +6,7 @@ Updated: 2026-09-08. Scope: **DSIR only**; RTK/RQIR excluded.
 
 Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities: `S0_S0`, `S0_S1`, `S0_S2`, `S0_S3`, `S1_S1`, `S1_S2`, `S1_S3`, `S2_S2`.
 
-Newest immutable note: `docs/recovery/RECOVERY_2026-09-07_EXP073FY_NAMESPACE_REPAIR_RESUME_V22.md`, creation commit `94607e9b068552bc565bb4d3b58e32e973584b22`.
+Newest immutable note: `docs/recovery/RECOVERY_2026-09-08_EXP073GZ_HOSTED_AUDIT_PASS_FY_ACTIVE_V23.md`, creation commit `9f55976e65b5cc803bf226c6987bafc8766a3361`.
 
 `WW_S2_S2` authority remains Exp073FW final run `34146468135`, artifact `10027835016`, digest `sha256:ef36ddafc5f30d33206fbf952deea5c0f58f5465370a9c8bd96c2b2d61b1ecef`, admitted by Exp073FX job `101819621240` with `PASS_EXP073FX_WW_S2_S2_FILEBACKED_PROVENANCE_ADMISSION_V0_1` and `ww_s2_s2_authority_created=true`.
 
@@ -29,7 +29,7 @@ Newest immutable note: `docs/recovery/RECOVERY_2026-09-07_EXP073FY_NAMESPACE_REP
 - SUCCESS action: consume terminal raw logs and artifact, independently verify artifact digest, provenance and contract fingerprint, complete A+B checkpoint chains, exact S2-S3 namespace identity, ordered distinct `S2->S3` semantics, exact 19,327,352,832-byte file-backed MCM proof, canonical finite `<f8 [39,12288] EE<-EE`, SHA equality and `numpy.array_equal`; only then allow Exp073FZ admission;
 - FAIL/BLOCKED action: preserve all newly complete valid checkpoint stages, diagnose the first causal infrastructure/software defect, repair only that cause prospectively, and never weaken or reinterpret a genuine frozen numerical mismatch.
 
-Live Actions reconciliation at this ledger update found exactly one in-progress DSIR workflow run (`34160898921`) and no competing heavy process. Do not inspect partial numerical output and do not launch a competing home-heavy task while job `101862390771` remains active.
+Live Actions reconciliation at this ledger update found exactly one in-progress DSIR workflow run (`34160898921`) and zero queued runs. Do not inspect partial numerical output and do not launch a competing home-heavy task while job `101862390771` remains active.
 
 ## Consumed FY failure history relevant to resume
 
@@ -51,11 +51,22 @@ GA is dispatch-only and forbidden until successful FZ S2-S3 admission. It uses t
 
 The FY workflow may dispatch GA only after successful FZ S2-S3 admission. GA preparation is implementation/support `+0/+0`; it changes no science arithmetic, domain, thresholds or acceptance criteria.
 
-## Independent C2 frontier
+## Independent C2 frontier — Exp073GZ consumed PASS
 
-Commit `a8499c404aa2b862cc08634fe4ed20d2753c9f25` froze the runtime admission receipt contract, blob `1c2e30e6563efe3976ee0b1825dfb250a902a529`.
+Frozen runtime admission receipt contract: commit `a8499c404aa2b862cc08634fe4ed20d2753c9f25`, blob `1c2e30e6563efe3976ee0b1825dfb250a902a529`.
 
-Exp073GZ was prospectively preregistered at commit `d5791df0c81169c9a3797ac1867b921028097579` with exact token `PASS_EXP073GZ_C2_RUNTIME_ADMISSION_RECEIPT_CONTRACT_STATIC_AUDIT_V0_1` and classification on PASS `SUPPORT_PLUS_0_PLUS_0` only. Current state: **PREREGISTERED / BLOCKED_BY_AUDIT_EXECUTION_PATH**. Real frozen 28-packet runtime generation/admission remains additionally blocked while FY owns home. No scientific/model authority exists for C2.
+Exp073GZ preregistration: commit `d5791df0c81169c9a3797ac1867b921028097579`. Hosted workflow commit: `a4961a87432f53bc55a13c7f542a8775634b90bd`.
+
+- run: **`34168323933`**;
+- hosted job: **`101883674574 SUCCESS`**;
+- raw-log token: `PASS_EXP073GZ_C2_RUNTIME_ADMISSION_RECEIPT_CONTRACT_STATIC_AUDIT_V0_1`;
+- classification: **`SUPPORT_PLUS_0_PLUS_0`**;
+- audited object: exact contract blob `1c2e30e6563efe3976ee0b1825dfb250a902a529`;
+- no runtime bytes decoded or mapped;
+- `prediction_ready=false`;
+- no scientific/model authority created.
+
+The former GZ `BLOCKED_BY_AUDIT_EXECUTION_PATH` state is closed. The exact next C2 task is real frozen 28-packet / 1792-byte runtime generation and receipt admission under this audited contract. It is currently **BLOCKED_BY_HEAVY_RUN_EXCLUSIVITY** because FY owns the single home runner. Do not dispatch C2 runtime while FY is active.
 
 ## Global frozen boundaries
 
