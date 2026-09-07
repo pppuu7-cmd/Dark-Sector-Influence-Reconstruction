@@ -52,13 +52,8 @@ corr = re.search(r"ppw->delta_m\s*\+=\s*3\s*\.\s*\*\s*ppw->pvecback\s*\[\s*pba->
 if not corr or hook_pos >= corr.start():
     raise SystemExit("FAIL hook is not before native gauge correction")
 
-required = [
-    'tau', 'k', 'a', 'ppw->pvecback[pba->index_bg_H]', 'ppw->delta_m', 'ppw->theta_m',
-    'ppw->pvecback[pba->index_bg_rho_idm_iv]', 'ppw->pvecback[pba->index_bg_rho_iv]'
-]
-for token in required:
-    if call_block.count(token) != 1:
-        raise SystemExit(f"FAIL hook argument identity {token}")
+# Exact call_block equality above freezes the complete ordered argument list.
+# Only scan that exact block for mutation/forbidden downstream operations.
 for forbidden in ['++','--','+=','-=','*=','/=','index_tp_delta_m','background_at_tau','thermodynamics_at_z','memcpy','memset','malloc(','realloc(','free(']:
     if forbidden in call_block:
         raise SystemExit(f"FAIL forbidden hook token {forbidden}")
