@@ -16,7 +16,17 @@ def sha(p:Path):
 def main():
  ap=argparse.ArgumentParser(); ap.add_argument('--root',required=True); ap.add_argument('--log',required=True); a=ap.parse_args(); root=Path(a.root)
  log=Path(a.log).read_bytes().decode('utf-8','replace')
- for t in ('PASS_EXP073FU_REPLICA_A_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1','PASS_EXP073FU_REPLICA_B_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1',PASS,'PASS_EXP073FU_LIVE_EXCLUSIVITY'): assert t in log,t
+ # Infrastructure-only resume compatibility: a fresh run may reuse an already
+ # verified post-receipt-pruned terminal checkpoint. In that case the original
+ # prune PASS marker is not re-emitted in the current job log. Require either
+ # the original marker or the explicit terminal-resume marker for each replica;
+ # the artifact checks below still independently verify the complete pre-prune
+ # SHA chain, post-prune receipt and preserved canonical payload.
+ for rep in ('A','B'):
+  original=f'PASS_EXP073FU_REPLICA_{rep}_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1'
+  resumed=f'PASS_EXP073FU_{rep}_POST_PRUNE_TERMINAL_RESUME_CANDIDATE_V0_1'
+  assert original in log or resumed in log,(rep,'missing original-or-resume verification marker')
+ for t in (PASS,'PASS_EXP073FU_LIVE_EXCLUSIVITY'): assert t in log,t
  term=json.loads((root/'terminal_receipt.json').read_text())
  expected={'classification':'SCIENTIFIC_CANDIDATE_PASS_PENDING_PROVENANCE_ADMISSION','token':PASS,'science_gate_scored':True,'ww_s1_s3_authority_created':False,'source_pair':'S1->S3','ordered_source_indices':[1,3],'same_field_object_handoff':False,'selected_semantics':'EE<-EE','selected_shape':[39,12288],'selected_dtype':'<f8','sha256_equal':True,'numpy_array_equal':True,'all_finite':True,'source_head':SOURCE_HEAD,'contract_fingerprint':CONTRACT,'bpw_route':'public_get_bandpower_windows_after_filebacked_fits_read','no_tolerance_rescue':True,'terminal_compare_restored_replica':False,'full_chain_verified_before_prune':True}
  for k,v in expected.items(): assert term.get(k)==v,(k,term.get(k),v)
