@@ -1,0 +1,92 @@
+name: Exp073GS C2 IDE runtime request emitter audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073gs-c2-ide-runtime-request-emitter-audit-v0-1.yml'
+      - 'docs/dsir4/prereg/EXP073GS_C2_IDE_RUNTIME_REQUEST_EMITTER_AUDIT_V0_1.md'
+      - 'scripts/dsir4/fixtures/dsir_c2_runtime_sampling_provenance_contract_v0_1.json'
+      - 'scripts/dsir4/fixtures/dsir_c2_runtime_request_emitter_v0_1.py'
+
+jobs:
+  hosted-emitter-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute frozen deterministic request-emitter audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import importlib.util, json, pathlib, tempfile
+
+          module_path = pathlib.Path('scripts/dsir4/fixtures/dsir_c2_runtime_request_emitter_v0_1.py')
+          spec = importlib.util.spec_from_file_location('emitter', module_path)
+          emitter = importlib.util.module_from_spec(spec)
+          assert spec.loader is not None
+          spec.loader.exec_module(emitter)
+
+          contract_path = pathlib.Path('scripts/dsir4/fixtures/dsir_c2_runtime_sampling_provenance_contract_v0_1.json')
+          requests = emitter.emit_requests(contract_path)
+          z = [0.295,0.51,0.706,0.934,1.317,1.491,2.33]
+          k = [0.00067,0.00201,0.0067,0.0201]
+          expected = [
+              {'ordinal': i, 'z': zz, 'k_Mpc^-1': kk}
+              for i, (zz, kk) in enumerate((zz, kk) for zz in z for kk in k)
+          ]
+          assert requests == expected
+          assert [r['ordinal'] for r in requests] == list(range(28))
+          assert len({(r['z'],r['k_Mpc^-1']) for r in requests}) == 28
+
+          manifest = emitter.build_provenance_manifest(contract_path)
+          assert manifest['contract_sha256'] == '6a14470157e0677ee10d65d24e759907b9a5df5fe1fd9d80e940787224dbfe9b'
+          assert manifest['solver_head'] == 'ac627d54e9ce196a08878d1ba33999819925d19c'
+          assert manifest['recorder_blob_sha1'] == 'c6144598b9f75908ee27a517d31eda509f7947f6'
+          assert manifest['ordering'] == 'z_major_k_minor'
+          assert manifest['units'] == 'k_Mpc^-1'
+          assert manifest['request_count'] == 28
+          assert manifest['record_bytes'] == 64
+          assert manifest['record_field_count'] == 8
+          assert all(v is False for v in manifest['prohibited_transformations'].values())
+          assert len(manifest['manifest_sha256']) == 64
+
+          mutated = json.loads(contract_path.read_text(encoding='utf-8'))
+          mutated['z'][0] = 0.296
+          with tempfile.TemporaryDirectory() as td:
+              bad = pathlib.Path(td) / 'mutated.json'
+              bad.write_text(json.dumps(mutated), encoding='utf-8')
+              try:
+                  emitter.emit_requests(bad)
+              except RuntimeError as exc:
+                  assert 'fingerprint mismatch' in str(exc)
+              else:
+                  raise AssertionError('mutated contract did not fail closed')
+
+          print('request_count=28')
+          print('ordinals_exact_0_27=true')
+          print('z_major_k_minor_exact=true')
+          print('mutation_fails_closed_before_emit=true')
+          print('provenance_manifest_bound=true')
+          print('manifest_sha256=' + manifest['manifest_sha256'])
+          PY
+      - name: Static no-rescue no-solver-execution audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          f=scripts/dsir4/fixtures/dsir_c2_runtime_request_emitter_v0_1.py
+          ! grep -Eiq 'interp|smooth|average|nearest|round\(|tolerance|class_iv|subprocess|os\.system|popen|make[[:space:]]|cmake|mpirun|srun' "$f"
+          grep -Fq 'EXPECTED_CONTRACT_SHA256 = "6a14470157e0677ee10d65d24e759907b9a5df5fe1fd9d80e940787224dbfe9b"' "$f"
+          grep -Fq 'for z in contract["z"]' "$f"
+          grep -Fq 'for k in contract[EXPECTED_UNITS]' "$f"
+      - name: Classify hosted support gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'cosmological_run_started=false'
+          echo 'self_hosted_science_started=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073GS_C2_IDE_RUNTIME_REQUEST_EMITTER_AUDIT_V0_1'
