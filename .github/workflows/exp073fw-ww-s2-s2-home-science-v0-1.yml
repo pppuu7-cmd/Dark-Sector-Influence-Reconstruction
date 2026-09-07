@@ -26,7 +26,7 @@ env:
   DRIVER_V02_BLOB: 'f63ffe431a034ea4e842970210365a156fb35089'
   PRUNER_BLOB: '1dfc57bddd1db6c8aeaadd0bc1e73b130e611bcb'
   COMPARE_BLOB: '5b6ab180bf13d1fe8ac4557310a19d4a4e9668f6'
-  HOME_BLOB: '3c7e64e9a359ced198c2cb56b9a7c93f6c54c3d1'
+  HOME_BLOB: '84bbfada3dadd405196c6986ccc012333108f6a9'
   ADMIT_VERIFY_BLOB: 'eb907944eac68b9fd13c405399cf238a8cb5bc96'
   TASKRUNNER_BLOB: '050ed7dd3387c4fb031f877825e6b3f4d4ce3ef2'
   PATCH_BLOB: 'd534b698f9131688d263eedcef27260386c58641'
@@ -83,8 +83,9 @@ jobs:
           grep -F "'ordered_source_indices':[2,2]" ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py >/dev/null
           grep -F 'compute_coupling_matrix(f2,f2,b)' ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py >/dev/null
           grep -F 'DRIVER="$GITHUB_WORKSPACE/ci/exp073fw_ww_s2_s2_durable_ab_production_v0_1.py"' ci/exp073fw_home_filebacked_fullres_v0_1.sh >/dev/null
-          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073fw_*.py ci/exp073fx_verify_fw_candidate_v0_1.py experiments/073f[wx]_*.md
-          echo PASS_EXP073FW_HOSTED_LAUNCH_AUDIT_V0_3
+          grep -F 'scanning its source text would self-match' ci/exp073fw_home_filebacked_fullres_v0_1.sh >/dev/null
+          ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' experiments/073f[wx]_*.md
+          echo PASS_EXP073FW_HOSTED_LAUNCH_AUDIT_V0_4
           echo classification=SUPPORT_PLUS_0_PLUS_0
 
   home-science:
