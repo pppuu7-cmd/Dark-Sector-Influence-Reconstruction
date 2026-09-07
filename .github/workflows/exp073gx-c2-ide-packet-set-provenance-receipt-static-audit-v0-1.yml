@@ -1,0 +1,58 @@
+name: Exp073GX C2 IDE packet-set provenance receipt static audit v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073gx-c2-ide-packet-set-provenance-receipt-static-audit-v0-1.yml'
+      - 'scripts/dsir4/fixtures/dsir_c2_packet_set_provenance_receipt_v0_1.py'
+      - 'docs/dsir4/prereg/EXP073GX_C2_IDE_PACKET_SET_PROVENANCE_RECEIPT_STATIC_AUDIT_V0_1.md'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen packet-set provenance receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import copy, importlib.util
+          from pathlib import Path
+          p=Path('scripts/dsir4/fixtures/dsir_c2_packet_set_provenance_receipt_v0_1.py')
+          spec=importlib.util.spec_from_file_location('gx',p)
+          m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          receipt,digest=m.synthetic_receipt()
+          assert m.validate(receipt,digest) is True
+          tests=[]
+          for key,value in [
+              ('packet_set_aggregate_sha256','0'*64),('packet_count',27),('record_bytes_total',1791),
+              ('gt_manifest_sha256','0'*64),('gr_contract_sha256','0'*64),('solver_head','0'*40),
+              ('recorder_blob_sha1','0'*40),('gu_handoff_sha256','0'*64),('gu_receipt_set_sha256','0'*64),
+              ('coordinate_order','k-major/z-minor'),('schema','dsir.c2.packet_set_provenance_receipt.v0.X'),
+              ('decoded_field_values_inspected',True),('scientific_mapping_applied',True),
+          ]:
+              q=copy.deepcopy(receipt); q[key]=value; tests.append((q,digest))
+          tests.append((receipt,'0'*64))
+          for q,d in tests:
+              try: m.validate(q,d)
+              except RuntimeError: pass
+              else: raise SystemExit('fail-open receipt mutation')
+          independent=m.receipt_digest(receipt)
+          assert independent == digest
+          print('receipt_sha256='+digest)
+          print('packet_count=28')
+          print('record_bytes_total=1792')
+          print('decoded_field_values_inspected=false')
+          print('scientific_mapping_applied=false')
+          print('synthetic_test_vectors_only=true')
+          print('scientific_record_set_admitted=false')
+          print('cosmological_run_started=false')
+          print('self_hosted_science_started=false')
+          print('prediction_ready=false')
+          print('scientific_model_authority_created=false')
+          print('G_DOMAIN_MAPPING=NOT_YET_TESTABLE')
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('PASS_EXP073GX_C2_IDE_PACKET_SET_PROVENANCE_RECEIPT_STATIC_AUDIT_V0_1')
+          PY
