@@ -1,4 +1,4 @@
-name: Exp073FU replica-A pruner read-only diagnostic v0.2
+name: Exp073FU replica-A repaired-pruner read-only validation v0.3
 
 on:
   workflow_dispatch:
@@ -11,39 +11,37 @@ permissions:
 
 env:
   EXPECTED_RUNNER_NAME: 'DSIR-HOME-PC-2'
-  FU_PRUNER_BLOB: '9ab0838ea27fcb5dddbf2ecc761ed29f8894da63'
+  FU_PRUNER_V02_BLOB: '004c5318acd6ea5a21625b5d831d5302d0322020'
 
 jobs:
-  diagnose-pruner:
+  validate-repaired-pruner:
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Reproduce exact FU A-pruner on nonmutating symlink mirror
+      - name: Validate repaired FU A-pruner on nonmutating symlink mirror
         shell: bash
         run: |
           set -euo pipefail
           test "$RUNNER_NAME" = "$EXPECTED_RUNNER_NAME"
-          test "$(git rev-parse HEAD:ci/exp073fu_verify_and_prune_replica_v0_1.py)" = "$FU_PRUNER_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fu_verify_and_prune_replica_v0_2.py)" = "$FU_PRUNER_V02_BLOB"
           ROOT="$HOME/.cache/dsir/exp073fu-ww-s1-s3-filebacked-ab-v0-1"
           test -d "$ROOT/checkpoints/A"
-          MIRROR="$RUNNER_TEMP/exp073fu-pruner-mirror"
+          test ! -e "$ROOT/checkpoints/A/post_receipt_prune.json"
+          MIRROR="$RUNNER_TEMP/exp073fu-pruner-v02-mirror"
           rm -rf "$MIRROR"; mkdir -p "$MIRROR/checkpoints/A"
           ROOT="$ROOT" MIRROR="$MIRROR" python3 - <<'PY'
           import os
           from pathlib import Path
-          src=Path(os.environ['ROOT'])/'checkpoints'/'A'
-          dst=Path(os.environ['MIRROR'])/'checkpoints'/'A'
+          src=Path(os.environ['ROOT'])/'checkpoints'/'A'; dst=Path(os.environ['MIRROR'])/'checkpoints'/'A'
           for p in src.rglob('*'):
               rel=p.relative_to(src); q=dst/rel
               if p.is_dir(): q.mkdir(parents=True,exist_ok=True)
-              elif p.is_file():
-                  q.parent.mkdir(parents=True,exist_ok=True)
-                  q.symlink_to(p)
+              elif p.is_file(): q.parent.mkdir(parents=True,exist_ok=True); q.symlink_to(p)
           print('mirror_file_links='+str(sum(1 for p in dst.rglob('*') if p.is_symlink())))
           PY
-          python3 ci/exp073fu_verify_and_prune_replica_v0_1.py --checkpoint-root "$MIRROR/checkpoints" --replica A
+          python3 ci/exp073fu_verify_and_prune_replica_v0_2.py --checkpoint-root "$MIRROR/checkpoints" --replica A
           test -f "$MIRROR/checkpoints/A/post_receipt_prune.json"
-          test ! -f "$ROOT/checkpoints/A/post_receipt_prune.json"
+          test ! -e "$ROOT/checkpoints/A/post_receipt_prune.json"
           echo original_checkpoint_mutated=false
-          echo PASS_EXP073FU_REPLICA_A_PRUNER_READONLY_REPRO_V0_2
+          echo PASS_EXP073FU_REPLICA_A_REPAIRED_PRUNER_READONLY_VALIDATION_V0_3
