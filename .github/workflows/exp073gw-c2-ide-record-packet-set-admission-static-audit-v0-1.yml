@@ -1,0 +1,61 @@
+name: Exp073GW C2 IDE record packet-set admission static audit v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073gw-c2-ide-record-packet-set-admission-static-audit-v0-1.yml'
+      - 'scripts/dsir4/fixtures/dsir_c2_record_packet_set_admission_v0_1.py'
+      - 'docs/dsir4/prereg/EXP073GW_C2_IDE_RECORD_PACKET_SET_ADMISSION_STATIC_AUDIT_V0_1.md'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen packet-set validator
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import copy, importlib.util
+          from pathlib import Path
+          p = Path('scripts/dsir4/fixtures/dsir_c2_record_packet_set_admission_v0_1.py')
+          spec = importlib.util.spec_from_file_location('gw', p)
+          m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          manifest, pairs = m.synthetic_set()
+          assert m.validate_set(manifest, pairs) is True
+
+          tests = []
+          q = copy.deepcopy(pairs); del q[7]; tests.append((manifest, q))
+          q = copy.deepcopy(pairs); q[7] = copy.deepcopy(q[6]); tests.append((manifest, q))
+          q = copy.deepcopy(pairs); q[7], q[8] = q[8], q[7]; tests.append((manifest, q))
+          q = copy.deepcopy(pairs); q[7][0]['ordinal'] = 8; tests.append((manifest, q))
+          q = copy.deepcopy(pairs); q[7][0]['z'] = 0.51; tests.append((manifest, q))
+          q = copy.deepcopy(pairs); r = bytearray(q[7][1]); r[0] ^= 1; q[7] = (q[7][0], bytes(r)); tests.append((manifest, q))
+          q = copy.deepcopy(pairs); q[7][0]['record_sha256'] = '0'*64; tests.append((manifest, q))
+          h = copy.deepcopy(manifest); h['aggregate_record_sha256'] = '0'*64; tests.append((h, pairs))
+          h = copy.deepcopy(manifest); h['schema'] = 'dsir.c2.record_packet_set.v0.X'; tests.append((h, pairs))
+          h = copy.deepcopy(manifest); h['record_bytes_total'] = 1791; tests.append((h, pairs))
+
+          for h, q in tests:
+              try:
+                  m.validate_set(h, q)
+              except RuntimeError:
+                  pass
+              else:
+                  raise SystemExit('fail-open packet-set mutation')
+
+          print('packet_count=28')
+          print('record_bytes_total=1792')
+          print('aggregate_record_sha256=' + manifest['aggregate_record_sha256'])
+          print('synthetic_test_vectors_only=true')
+          print('scientific_record_set_admitted=false')
+          print('cosmological_run_started=false')
+          print('self_hosted_science_started=false')
+          print('prediction_ready=false')
+          print('scientific_model_authority_created=false')
+          print('G_DOMAIN_MAPPING=NOT_YET_TESTABLE')
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('PASS_EXP073GW_C2_IDE_RECORD_PACKET_SET_ADMISSION_STATIC_AUDIT_V0_1')
+          PY
