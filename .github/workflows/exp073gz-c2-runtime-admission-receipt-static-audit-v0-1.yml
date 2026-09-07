@@ -1,0 +1,39 @@
+name: Exp073GZ C2 runtime admission receipt contract static audit v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073gz-c2-runtime-admission-receipt-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen C2 runtime admission receipt contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          f='docs/dsir4/mappings/C2_IDE_RUNTIME_ADMISSION_RECEIPT_CONTRACT_V0_1.md'
+          test "$(git hash-object "$f")" = '1c2e30e6563efe3976ee0b1825dfb250a902a529'
+          grep -Fq 'C2_IDE_LOCAL_TANGENT_CONE' "$f"
+          grep -Fq 'kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c' "$f"
+          grep -Fq '7 redshift x 4 physical-k grid = 28 packets' "$f"
+          grep -Fq 'z-major/k-minor' "$f"
+          grep -Fq '64 bytes and aggregate width 1792 bytes' "$f"
+          grep -Fq '`packet_count=28` and `aggregate_bytes=1792`' "$f"
+          grep -Fq 'SHA-256 of the raw aggregate before decoding/mapping' "$f"
+          grep -Fq 'producer run/job identity and terminal status' "$f"
+          grep -Fq 'artifact identity/digest when transported through GitHub Actions' "$f"
+          grep -Fq '`raw_record_set_admitted`, `decoded=false`, `mapped=false`, `prediction_ready=false`' "$f"
+          grep -Fq 'Reject as infrastructure / `INVALID_FOR_SCIENCE` and never scientific FAIL' "$f"
+          grep -Fq 'synthetic fixture bytes are presented as runtime data' "$f"
+          grep -Fq '`OUTSIDE_DOMAIN`' "$f"
+          grep -Fq '`NOT_YET_TESTABLE`' "$f"
+          grep -Fq 'next C2 transition may only be a real runtime producer launch when heavy-run exclusivity is clear' "$f"
+          grep -Fq 'scientific support contribution `+0/+0`' "$f"
+          echo 'PASS_EXP073GZ_C2_RUNTIME_ADMISSION_RECEIPT_CONTRACT_STATIC_AUDIT_V0_1'
