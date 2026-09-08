@@ -1,0 +1,15 @@
+k_step_sub = 0.0010
+k_step_super = 0.000003
+k_step_super_reduction = 0.1
+start_small_k_at_tau_c_over_tau_h = 1e-6
+start_large_k_at_tau_h_over_tau_k = 0.05
+tight_coupling_trigger_tau_c_over_tau_h = 0.005
+tight_coupling_trigger_tau_c_over_tau_k = 0.008
+start_sources_at_tau_c_over_tau_h = 0.006
+tol_perturb_integration = 3e-10
+perturb_sampling_stepsize = 0.00035
+radiation_streaming_approximation = 2
+radiation_streaming_trigger_tau_over_tau_k = 240.
+radiation_streaming_trigger_tau_c_over_tau = 100.
+ur_fluid_approximation = 2
+ur_fluid_trigger_tau_over_tau_k = 50.
