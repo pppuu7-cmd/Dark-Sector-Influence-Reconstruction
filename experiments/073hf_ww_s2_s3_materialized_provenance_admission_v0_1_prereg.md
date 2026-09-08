@@ -1,0 +1,11 @@
+# Exp073HF — WW_S2_S3 materialized provenance admission v0.1 preregistration
+
+Scope: DSIR only. Hosted-only; no home/heavy computation.
+
+Evidence remains frozen to Exp073FY run 34160898921, home job 101862390771, artifact 10040351900, digest `sha256:ebd1800b9f2b179305d8c1a83208c146915c492f0c3ae614f6ded6ab3be35ad6`, source head `de83e20a68f79ccf25b89b0d33eb4206e294c757`, contract `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`.
+
+Exp073HE run 34189083696 established the exact scientific candidate token `PASS_EXP073FY_WW_S2_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`, then stopped before authority because frozen FZ wrapper was bound to historical FV blob `03cf7109...` while the repository path had drifted to infrastructure-resume-compatible blob `0c17dae...`. The FZ transform list also has an implementation-order hazard because generic `ww_s1_s3` replacement precedes the more specific `ww_s1_s3_authority_created` token.
+
+Frozen repair verifier is the materialized intended S2->S3 form of the historical FV provenance verifier: `ci/exp073hf_verify_fy_candidate_materialized_v0_1.py`, blob `ad1a43b216b67125ed473b74d95e362a4666aa04`. It preserves the historical FV checks: original A/B pre-prune PASS markers, live exclusivity, candidate PASS, terminal receipt exact identities, source ordering/counts, distinct-field construction, file-backed MCM adapter identities, complete stage-manifest SHA chain, exact selected-payload/receipt hashes, byte-for-byte A/B equality, and finiteness. Only label/source identities are materialized to FY S2->S3. No scientific arithmetic, threshold, contract, hypothesis ID, tolerance, rounding, smoothing, averaging, or payload is changed.
+
+Gate re-runs the frozen HE comparator blob `7698487dd137ec4c2b4f3f2faa158aeb6846ef78` over the same preserved artifact and requires its exact PASS before invoking HF verifier. Provenance/implementation mismatch is +0/+0 and creates no authority. Exact candidate inequality/non-finiteness after valid provenance is scientific FAIL. Authority requires exact `PASS_EXP073FZ_WW_S2_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1`, `classification=SCIENTIFIC_AUTHORITY_ADMITTED`, and `ww_s2_s3_authority_created=true`.
