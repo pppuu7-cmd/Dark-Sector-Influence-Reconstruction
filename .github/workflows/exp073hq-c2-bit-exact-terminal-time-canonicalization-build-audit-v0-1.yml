@@ -1,0 +1,79 @@
+name: Exp073HQ C2 bit exact terminal time canonicalization build audit v0.1
+
+on:
+  push:
+    paths:
+      - 'docs/dsir4/contracts/EXP073HQ_IMPLEMENTATION_BINDING_V0_1.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-build-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify prospective HQ binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          M=docs/dsir4/contracts/EXP073HQ_IMPLEMENTATION_BINDING_V0_1.txt
+          get(){ awk -F= -v k="$1" '$1==k{print $2}' "$M"; }
+          test "$(git hash-object docs/dsir4/prereg/EXP073HQ_C2_BIT_EXACT_TERMINAL_TIME_CANONICALIZATION_BUILD_AUDIT_V0_1.md)" = "$(get PREREG_BLOB)"
+          test "$(git hash-object scripts/dsir4/exp073hq_c2_bit_exact_terminal_time_canonicalization_patch_v0_1.py)" = "$(get PATCH_BLOB)"
+          test "$(git hash-object .github/workflows/exp073hq-c2-bit-exact-terminal-time-canonicalization-build-audit-v0-1.yml)" = "$(get WORKFLOW_BLOB)"
+      - name: Reconstruct post-HM source and apply HQ exactly once
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libgsl-dev
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hj_c2_complete_native_record_observation_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hm_c2_mpk_native_theta_observer_guard_patch_v0_1.py /tmp/class_iv
+          test "$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')" = "8c76c0b0ba8de6c0528980569ae748b24ff1b790a9f752ac11e90ca71d5b63de"
+          test "$(sha256sum /tmp/class_iv/tools/evolver_ndf15.c | awk '{print $1}')" = "b3967efaf7a45a3ec6c0144e892caab54f91c595bc726dc1704cfb812f9c0df6"
+          cp /tmp/class_iv/tools/evolver_ndf15.c /tmp/pre_hq_evolver_ndf15.c
+          python scripts/dsir4/exp073hq_c2_bit_exact_terminal_time_canonicalization_patch_v0_1.py /tmp/class_iv | tee /tmp/hq_patch.log
+          grep -F 'PASS_EXP073HQ_PATCH_APPLIED_EXACTLY_ONCE' /tmp/hq_patch.log
+      - name: Prove minimal diagnostic-only transform
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import difflib
+          a=Path('/tmp/pre_hq_evolver_ndf15.c').read_text().splitlines()
+          b=Path('/tmp/class_iv/tools/evolver_ndf15.c').read_text().splitlines()
+          d=list(difflib.unified_diff(a,b,lineterm=''))
+          added=[x[1:] for x in d if x.startswith('+') and not x.startswith('+++')]
+          removed=[x[1:] for x in d if x.startswith('-') and not x.startswith('---')]
+          assert sum('dsir_c2_diag_arm_terminal(tnew' in x for x in removed)==1
+          assert sum('(*derivs)(tnew,ynew+1' in x for x in removed)==1
+          assert sum('dsir_c2_diag_commit_terminal(tnew' in x for x in removed)==1
+          assert sum('dsir_c2_diag_arm_terminal(tfinal' in x for x in added)==1
+          assert sum('(*derivs)(tfinal,ynew+1' in x for x in added)==1
+          assert sum('dsir_c2_diag_commit_terminal(tfinal' in x for x in added)==1
+          text='\n'.join(b)
+          assert 'if ((done==_TRUE_) && (dsir_c2_diag_enabled()!=0)) {' in text
+          assert '(*derivs)(tfinal,ynew+1,f0+1' in text
+          # The transform must not replace accepted ynew or touch integration calls outside the hook.
+          assert text.count('(*derivs)(tfinal,ynew+1,f0+1')==1
+          print('PASS_EXP073HQ_MINIMAL_DIAGNOSTIC_ONLY_DIFF_V0_1')
+          PY
+      - name: Full solver build only
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C /tmp/class_iv -j2 class >/tmp/hq_build.log 2>&1
+          test -x /tmp/class_iv/class
+          echo "post_hq_evolver_ndf15_sha256=$(sha256sum /tmp/class_iv/tools/evolver_ndf15.c | awk '{print $1}')"
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'cosmological_run_started=false'
+          echo 'raw_record_set_admitted=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'PASS_EXP073HQ_C2_BIT_EXACT_TERMINAL_TIME_CANONICALIZATION_BUILD_AUDIT_V0_1'
