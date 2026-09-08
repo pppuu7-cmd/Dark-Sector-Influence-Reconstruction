@@ -1,0 +1,65 @@
+{
+  "schema": "EXP073IK_SOURCE_BASIS_OBSERVABLE_ORDER_INVENTORY_V0_1",
+  "scope": "DSIR_ONLY",
+  "classification_ceiling": "SUPPORT_PLUS_0_PLUS_0",
+  "hypothesis_id": "C2_IDE_LOCAL_TANGENT_CONE",
+  "parent_angular_authority": {
+    "experiment": "Exp073IJ",
+    "version": "v0.2",
+    "run": 34255057685,
+    "job": 102158621226,
+    "token": "PASS_EXP073IJ_C2_G_ANGULAR_AUTHORITY_V0_2",
+    "receipt": "docs/dsir4/authority/C2_WW_ANGULAR_AUTHORITY_ADMITTED_V0_1.json"
+  },
+  "r1_source_authority": {
+    "run": 33270843577,
+    "job": 99148916507,
+    "artifact_id": 9720335366,
+    "artifact_digest": "sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd",
+    "selection": "zbin_mcal == t AND dec >= -90 AND dec <= -35 AND flags_select == 0",
+    "mapper": {"nside": 4096, "ordering": "RING", "coords": "C", "lonlat": true}
+  },
+  "source_basis": [
+    {"name":"S0","zbin_mcal":0,"selected":7705486,"record_bytes":30821944,"record_sha256":"5b507215ca961c09b82786e61e681a0178c29e9b593c17b588e366722a021f15","unique_pixels":4305774,"occupancy_sha256":"b6ed74f31540d4041267f94e2f7cdb70b7040d943ba22a4aa7eab62418f8cb32"},
+    {"name":"S1","zbin_mcal":1,"selected":7851711,"record_bytes":31406844,"record_sha256":"752f585125e413c7bd40cc5174cf7ef98e95f970022a351c5d91206f371d2241","unique_pixels":4339193,"occupancy_sha256":"fed1ffdf2ef7a7ae88e42615bd08e207e039239c44fa20b7994258f147a739f1"},
+    {"name":"S2","zbin_mcal":2,"selected":8238547,"record_bytes":32954188,"record_sha256":"259295a1f5a23ad9e5c6b46842bcf612b0eb13dc701ab6d54eb15f0d7bb0105f","unique_pixels":4401919,"occupancy_sha256":"9e2bfb92289ca4a3abb11efabf7ac8d59bb7c68eb63a7104c2b247267733b24d"},
+    {"name":"S3","zbin_mcal":3,"selected":4196641,"record_bytes":16786564,"record_sha256":"3996f2bacf29d46278773530058d4f5666c0d590bf6cebc06459659166bc60ec","unique_pixels":2943132,"occupancy_sha256":"21e3776111de305c108463b02b0e3fd5e138cc97817d37e7b05330132d058094"}
+  ],
+  "c2_required_ww_pair_order": ["S0_S0","S0_S1","S0_S2","S0_S3","S1_S1","S1_S2","S1_S3","S2_S2","S2_S3","S3_S3"],
+  "historical_14_angular_task_order": ["Wm_S0","Wm_S1","Wm_S2","Wm_S3","WW_S0_S0","WW_S0_S1","WW_S0_S2","WW_S0_S3","WW_S1_S1","WW_S1_S2","WW_S1_S3","WW_S2_S2","WW_S2_S3","WW_S3_S3"],
+  "angular_semantics": {
+    "nside": 4096,
+    "ell_min": 0,
+    "ell_max": 12287,
+    "bands": 39,
+    "dtype": "<f8",
+    "shape": [39,12288],
+    "Wm": "TE<-TE",
+    "WW": "EE<-EE",
+    "exact_equality_only": true
+  },
+  "interpretation_firewall": {
+    "historical_14_manifest_implies_future_c2_join_membership": false,
+    "join_equation_defined": false,
+    "scientific_values_read": false,
+    "radial_kernel_read": false,
+    "physical_support_evaluated": false,
+    "covariance_read": false,
+    "whitening_performed": false,
+    "nuisance_geometry_read": false,
+    "relation_null_read": false,
+    "scientific_model_authority_created": false
+  },
+  "status": {
+    "G_DOMAIN_MAPPING": "PASS",
+    "G_ANGULAR_AUTHORITY": "PASS",
+    "G_ORDERED_JOIN": "NOT_YET_TESTABLE",
+    "G_RADIAL_SUPPORT": "NOT_YET_TESTABLE",
+    "G_PHYSICAL_SUPPORT": "NOT_YET_TESTABLE",
+    "G_COV_WHITENING": "NOT_YET_TESTABLE",
+    "G_NUISANCE_QUOTIENT": "NOT_YET_TESTABLE",
+    "G_RELATION_NULL": "NOT_YET_TESTABLE",
+    "G_FINAL_MODEL": "NOT_YET_TESTABLE",
+    "overall_status": "NOT_YET_TESTABLE"
+  }
+}
