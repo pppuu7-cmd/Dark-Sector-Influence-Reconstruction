@@ -4,51 +4,54 @@ Updated: 2026-09-08. Scope: **DSIR only**; RTK/RQIR excluded.
 
 ## Preserved authority
 
-Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities are `S0_S0`, `S0_S1`, `S0_S2`, `S0_S3`, `S1_S1`, `S1_S2`, `S1_S3`, `S2_S2`, and `S2_S3`. `WW_S3_S3` remains **NOT_YET_ADMITTED**.
+Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities are `S0_S0`, `S0_S1`, `S0_S2`, `S0_S3`, `S1_S1`, `S1_S2`, `S1_S3`, `S2_S2`, `S2_S3`, and **`S3_S3`**.
 
-Newest immutable note: `docs/recovery/RECOVERY_2026-09-08_HA_EXACT_ENDPOINT_STATIC_AUDIT_PASS_V29.md` (creation commit `f02ad2ff93f005c08ce3b7c17564bda490d3d3ea`).
+Newest immutable note: `docs/recovery/RECOVERY_2026-09-08_WW_S3_S3_ADMITTED_C2_UNBLOCKED_V31.md` (creation commit `d99a6a3458402f3045cd4760c357046e7d516d3d`).
 
-## Authoritative current heavy process — Exp073GA recovery
+## Last heavy process — terminal and consumed
 
-- workflow/run: **`34197207582`**;
-- workflow: `.github/workflows/exp073ga-ww-s3-s3-home-science-v0-1.yml`;
-- branch/head: `main` / **`f6d8b429ac64643e7cb7766e0bfa2ab51abe751d`**;
-- run start: `2026-09-08T07:00:11Z`;
-- hosted launch-audit job: **`101967492875 SUCCESS`**;
-- hosted tokens: `PASS_EXP073GA_PRUNER_TRANSFORM_SOURCE_STATIC_REGRESSION_V0_1`, `PASS_EXP073GA_HOSTED_LAUNCH_AUDIT_V0_3`, classification `SUPPORT_PLUS_0_PLUS_0`;
-- self-hosted home-science job: **`101967543808 IN_PROGRESS`**;
-- active step: `Run frozen WW_S3_S3 A/B gate with durable checkpoints`;
-- runner ownership: **single self-hosted DSIR owner; no competing home-heavy work**;
-- checkpoint root: `$HOME/.cache/dsir/exp073ga-ww-s3-s3-filebacked-ab-v0-1`;
-- last verified durable checkpoint: Replica A `replica_receipt_complete` from historical run `34189540992`, to be restored/verified rather than recomputed;
-- expected candidate token: `PASS_EXP073GA_WW_S3_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`;
-- final authority token: `PASS_EXP073GB_WW_S3_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1` plus `classification=SCIENTIFIC_AUTHORITY_ADMITTED` and `ww_s3_s3_authority_created=true`.
+- workflow/run: Exp073GA recovery **`34197207582`**;
+- head: `f6d8b429ac64643e7cb7766e0bfa2ab51abe751d`;
+- hosted job: `101967492875 SUCCESS`;
+- home job: `101967543808 FAILURE`, but both expensive replicas completed full-chain verification before the first causal failure;
+- first causal failure: terminal comparator stale hyphenated namespace expectation, `fail-closed receipt identity mismatch A:checkpoint_namespace`;
+- classification: **implementation/provenance FAIL `+0/+0`**, not scientific FAIL;
+- artifact: `10051382493`, digest `sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109`;
+- durable checkpoint root: `$HOME/.cache/dsir/exp073ga-ww-s3-s3-filebacked-ab-v0-1`;
+- verified completed stages: Replica A and Replica B through `replica_receipt_complete`, then post-receipt prune evidence;
+- repair: commit `becbbb58dc59a9f548ddb2c2628cbc5cb1404616`, comparator blob `6e7b45578c647a70233fec7db7d0a1d3c88d1774`.
 
-SUCCESS action: consume raw home log/artifact and verify exact digest, code/source/contract/checkpoint identities, complete A+B chains, same-field `S3->S3/[3,3]`, exact file-backed MCM evidence, finite canonical arrays, exact SHA equality and `numpy.array_equal`; only then accept GB admission. FAIL action: diagnose first causal defect, preserve verified checkpoint stages, and never weaken science.
+## WW_S3_S3 admission
 
-Historical GA run `34189540992` remains implementation/infrastructure FAIL `+0/+0`; its expensive Replica A is valid and preserved. Minimal repair commit `f52fa856eb029c64f744926eecf55f506fcf1da5`; rebinding/regression commit `f6d8b429ac64643e7cb7766e0bfa2ab51abe751d`.
+Authoritative hosted recovery-admission run **`34218457380`**, job **`102035691774 SUCCESS`**, head `4e5514b6077e1d70537586b43c9b5ca0e51abcf2` consumed the exact GA artifact without heavy recomputation and emitted:
 
-## Independent C2 frontier
+- `PASS_EXP073GA_WW_S3_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`;
+- `PASS_EXP073GB_WW_S3_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1`;
+- `classification=SCIENTIFIC_AUTHORITY_ADMITTED`;
+- `ww_s3_s3_authority_created=true`;
+- `heavy_recompute_performed=false`.
 
-Exp073GZ receipt-contract audit remains PASS `SUPPORT_PLUS_0_PLUS_0`.
+Therefore `WW_S3_S3` is admitted scientific authority. The redundant concurrently created Exp073HE hosted route is reconciliation-only and must not become a competing control plane.
 
-Exp073HA static audit remains **PASS `SUPPORT_PLUS_0_PLUS_0`**:
+## Current ownership
 
-- prereg commit `33b7bc35401bef01f436b433e5c7ebf9bab0cb4f`, prereg blob `f970da98a91f541e62aa957b16aaf4ea12bd98a7`;
-- workflow implementation head `b02625a459dcc21f2497752becc5798a574db7b3`;
-- run `34207078292`, job `101998967311 SUCCESS`;
-- exact token `PASS_EXP073HA_C2_NATIVE_EXACT_ENDPOINT_EXTRACTION_STATIC_AUDIT_V0_1`;
-- `cosmological_run_started=false`, `record_payload_created=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`.
+Live Actions after admission: **0 queued, 0 in-progress**. Self-hosted heavy owner: **none**. Home runner is free.
 
-Exp073HB diagnostic exact-endpoint producer build/static audit is now prospectively frozen:
+## Current next gate — Exp073HB
 
-- prereg path `docs/dsir4/prereg/EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1.md`;
-- creation commit `4ca51c172c89c52a3f5a2613e30133a59d03d38e`;
-- prereg blob `fc5f08889f84e628cb789070abd9179a74ef7e04`;
-- expected PASS token `PASS_EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1`;
-- scientific ceiling `SUPPORT_PLUS_0_PLUS_0` with no cosmological run and zero runtime records.
+- prereg: `docs/dsir4/prereg/EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1.md`;
+- prereg blob: `fc5f08889f84e628cb789070abd9179a74ef7e04`;
+- upstream: `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`;
+- pinned `source/perturbations.c` blob: `92a48331658c5941ed4eb43b0e98ee78e39b8385`;
+- pinned `tools/evolver_ndf15.c` blob: `790ced55f2eaa08e805d467734ad1435954bc5b7`;
+- expected token: `PASS_EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1`;
+- scientific ceiling: `SUPPORT_PLUS_0_PLUS_0`;
+- state: implementation/build audit **TO BE LAUNCHED**;
+- permitted execution: GitHub-hosted build/static audit only; no cosmological execution, no 28-record/1792-byte payload;
+- SUCCESS action: raw-log consume HB PASS and then prospectively dispatch the already frozen real C2 diagnostic extraction under GZ contract, subject to no new competing heavy owner;
+- FAIL action: classify implementation/infrastructure `+0/+0`, diagnose first causal patch/build/static defect, repair prospectively without changing science.
 
-Next C2 action: implement a deterministic diagnostic-only producer patch and a hosted build/static audit bound exactly to the HB preregistration and the pinned upstream blobs. Real 28-packet / 1792-byte runtime remains `BLOCKED_BY_HEAVY_RUN_EXCLUSIVITY` while GA owns the self-hosted runner. No home C2 job may be launched concurrently.
+The previous `BLOCKED_BY_HEAVY_RUN_EXCLUSIVITY` is released, but real C2 runtime remains `NOT_YET_AUTHORIZED` until HB PASS.
 
 ## Frozen boundaries
 
