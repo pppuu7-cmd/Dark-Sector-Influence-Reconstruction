@@ -1,0 +1,128 @@
+name: Exp073HJ C2 complete native record producer build audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073hj-c2-complete-native-record-producer-build-audit-v0-1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-build-static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify frozen HJ authority and implementation identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073HJ_C2_COMPLETE_NATIVE_RECORD_PRODUCER_BUILD_AUDIT_V0_1.md)" = "16009f3a0016dc0fb04c0271af954bd6fc76f9e8"
+          test "$(git hash-object docs/dsir4/results/EXP073HI_C2_PINNED_UPSTREAM_BUILD_COMPATIBILITY_ADMISSION_RECEIPT_V0_1.md)" = "8313779961a6addce71843fe8b101c81fdae3ad1"
+          test "$(git hash-object scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py)" = "b7fe663154519b605699c1fd622d0079a5f76772"
+          test "$(git hash-object scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py)" = "f3d3d80cda2f937f544722e684a44c649e771487"
+          test "$(git hash-object scripts/dsir4/exp073hj_c2_complete_native_record_observation_patch_v0_1.py)" = "9096eddfb592703ef6a2adc82bf27db05bee9ee0"
+
+      - name: Reconstruct exact HI plus HB producer source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C /tmp/class_iv rev-parse HEAD)" = "ac627d54e9ce196a08878d1ba33999819925d19c"
+          test "$(git -C /tmp/class_iv hash-object source/background.c)" = "310e0f5764ab41da3a886ed239db3fff2aac32ec"
+          test "$(git -C /tmp/class_iv hash-object Makefile)" = "45f912a2b8b2849998affb6857f49f5950fe9be5"
+          test "$(git -C /tmp/class_iv hash-object source/perturbations.c)" = "92a48331658c5941ed4eb43b0e98ee78e39b8385"
+          test "$(git -C /tmp/class_iv hash-object tools/evolver_ndf15.c)" = "790ced55f2eaa08e805d467734ad1435954bc5b7"
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py /tmp/class_iv
+          test "$(sha256sum /tmp/class_iv/source/background.c | awk '{print $1}')" = "bc4053922ae984652f5858b2869e7bbbe8682ea502b88e485709e6828e059ce0"
+          test "$(sha256sum /tmp/class_iv/Makefile | awk '{print $1}')" = "2bb326590b3d0c3a23e984fc17cafce680674aa5234db15d35d72a06e1bfa87e"
+          python scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py /tmp/class_iv
+          test "$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')" = "da7c427e383f1e9b83d7ff75ef82784c2fe89d91f9681e21e7805b7f354e7e79"
+          test "$(sha256sum /tmp/class_iv/tools/evolver_ndf15.c | awk '{print $1}')" = "b3967efaf7a45a3ec6c0144e892caab54f91c595bc726dc1704cfb812f9c0df6"
+          cp /tmp/class_iv/source/perturbations.c /tmp/hb_perturbations.c
+
+      - name: Apply prospectively fingerprinted HJ observation extension
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/dsir4/exp073hj_c2_complete_native_record_observation_patch_v0_1.py /tmp/class_iv | tee /tmp/hj.txt
+          grep -Fx 'EXP073HJ_COMPLETE_NATIVE_RECORD_OBSERVATION_PATCH_APPLIED' /tmp/hj.txt
+          test "$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')" = "f1a5619ea2dfb60e4e236349485dcffb58c1c2ef96358bd59b8a1207d77248d2"
+          git -C /tmp/class_iv diff --check
+
+      - name: Static complete-eight-field and no-second-background audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          hb=Path('/tmp/hb_perturbations.c').read_text()
+          hj=Path('/tmp/class_iv/source/perturbations.c').read_text()
+          e=Path('/tmp/class_iv/tools/evolver_ndf15.c').read_text()
+          line='DSIR_C2_EXACT_ENDPOINT z=%s tau=%a k=%a a=%a H=%a delta_m=%a theta_m=%a rho_idm_iv=%a rho_iv=%a'
+          assert line in hj
+          for tok in [
+              'ppw->pvecback[pba->index_bg_a]',
+              'ppw->pvecback[pba->index_bg_H]',
+              'ppw->pvecback[pba->index_bg_rho_idm_iv]',
+              'ppw->pvecback[pba->index_bg_rho_iv]',
+          ]:
+              assert tok in hj
+          # HJ may not introduce any second background/interpolation call.
+          for forbidden in ['background_at_tau(', 'background_tau_of_z(', 'perturb_sources_at_tau(', 'interp_from_dif(']:
+              assert hj.count(forbidden) == hb.count(forbidden), (forbidden, hb.count(forbidden), hj.count(forbidden))
+          # Preserve HB exact endpoint semantics.
+          assert 'getenv("DSIR_C2_EXACT_Z")' in hj
+          assert 'ppt->k_output_values_num != 1' in hj
+          assert 'background_tau_of_z(pba,z,&dsir_c2_diag_tau_target)' in hj
+          assert 'dsir_c2_diag_delta_m_raw = ppw->delta_m;' in hj
+          assert 'dsir_c2_diag_theta_m_raw = ppw->theta_m;' in hj
+          assert 'if ((done==_TRUE_) && (dsir_c2_diag_enabled()!=0))' in e
+          assert '(*derivs)(tnew,ynew+1,f0+1' in e
+          assert 'dsir_c2_diag_commit_terminal(tnew' in e
+          print('PASS_EXP073HJ_STATIC_COMPLETE_NATIVE_RECORD_OBSERVATION_V0_1')
+          PY
+
+      - name: Install hosted build dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libgsl-dev
+
+      - name: Compile complete producer without cosmological execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/class_iv
+          make -j2 class
+          test -x ./class
+          echo 'PASS_EXP073HJ_COMPLETE_NATIVE_RECORD_PRODUCER_COMPILES_V0_1'
+
+      - name: Emit frozen support-only HJ boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e /tmp/dsir_c2_records.bin
+          test ! -e /tmp/dsir_c2_payload.bin
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'complete_eight_field_observation_verified=true'
+          echo 'native_endpoint_background_workspace_verified=true'
+          echo 'diagnostic_producer_compile_verified=true'
+          echo 'cosmological_run_started=false'
+          echo 'record_payload_created=false'
+          echo 'runtime_record_count=0'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073HJ_C2_COMPLETE_NATIVE_RECORD_PRODUCER_BUILD_AUDIT_V0_1'
