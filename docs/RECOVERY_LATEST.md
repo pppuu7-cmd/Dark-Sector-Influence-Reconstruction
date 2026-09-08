@@ -2,7 +2,7 @@
 
 Updated: 2026-09-08. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-08_C2_HM_HN_PASS_HO_RAW_RUNTIME_FRONT_V35.md` (creation commit `fb372b5d4181cadeccd612b1689a454fdde40d50`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-08_C2_HO_EXACT_ENDPOINT_IDENTITY_BLOCK_V36.md` (creation commit `e8125e822069651f9001ed31930df705f5f8183c`). Earlier recovery notes remain immutable history.
 
 ## Preserved scientific authority
 
@@ -10,29 +10,27 @@ All prior scientific authority remains unchanged. Wm_S1 Track-A exact PASS and a
 
 C2 remains `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`.
 
-## Newly consumed C2 support results
+## Preserved C2 support results
 
-Exp073HM run `34227557134 / 102065303554 SUCCESS` is raw-log validated support PASS. It closes the mpk-native theta observer guard/build path. No cosmological run or payload was created; classification remains `SUPPORT_PLUS_0_PLUS_0`. Downstream exact post-HM source identities are `source/perturbations.c` SHA256 `8c76c0b0ba8de6c0528980569ae748b24ff1b790a9f752ac11e90ca71d5b63de` and `tools/evolver_ndf15.c` SHA256 `b3967efaf7a45a3ec6c0144e892caab54f91c595bc726dc1704cfb812f9c0df6` over parent `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`.
+Exp073HM `34227557134 / 102065303554 SUCCESS` and Exp073HN `34228937213 / 102069878872 SUCCESS` remain raw-log validated support-only PASS results (`SUPPORT_PLUS_0_PLUS_0`). They create no scientific/model authority.
 
-Exp073HN run `34228937213 / 102069878872 SUCCESS` is raw-log validated support PASS with exact token `PASS_EXP073HN_C2_REFERENCE_RUNTIME_DRIVER_SERIALIZER_STATIC_AUDIT_V0_1`. It verifies the exact 28-request z-major/k-minor reference plan and synthetic 64-byte binary ABI only. It explicitly emitted `cosmological_run_started=false`, `real_runtime_payload_created=false`, `scientific_model_authority_created=false`; classification `SUPPORT_PLUS_0_PLUS_0`.
+## Current C2 frontier — Exp073HO v0.1 blocked at exact endpoint identity
 
-HN binding: `docs/dsir4/contracts/EXP073HN_IMPLEMENTATION_BINDING_V0_1.txt`; driver blob `2b0fdf27114cb8a067806b2b5fa163e006527e13`; serializer blob `40f361d06fc2732f5c0ad384ed729e5d483810f5`; workflow blob `444cfe863ade8d10ffe0f2ad4fdbcd208f3b1251`.
+Frozen Exp073HO head `841e431d55aadbdc0ea972902be6da5ffa0125bf`, run `34229170304`, actual job `102070681656`, is terminal `FAILURE`. Frozen binding and exact post-HM solver/serializer build passed; the first frozen runtime request failed before aggregate, provenance receipt, artifact upload or raw-candidate boundary. No raw record set was created or admitted.
 
-## Current C2 frontier — Exp073HO real reference raw producer
+Hosted-only exact first-request diagnostic run `34229365325`, job `102071344339`, workflow creation commit `0d68fc61f58e5b7b9f46ca43f4ed32d7b4a34d92`, reproduced the failure without changing model/config/coordinates. Exact causal error is:
 
-The real `(alpha_idm_iv,beta_idm_iv)=(0,0)` raw producer is prospectively frozen by `docs/dsir4/prereg/EXP073HO_C2_REFERENCE_RAW_RUNTIME_PRODUCER_V0_1.md`, blob `c38f1aeb9921bee76fbc66ef5cdbf80b430d904f`, and runtime binding `docs/dsir4/contracts/EXP073HO_RUNTIME_BINDING_V0_1.txt`. Workflow blob is `3f881743037cd66bbe610f20a111328ed8584118`.
+`dsir_c2_diag_arm_terminal: condition (tau != dsir_c2_diag_tau_target) is true; DSIR C2 terminal tau is not the exact background_tau_of_z endpoint`.
 
-Authoritative process: run `34229170304`, job `102070631358`, head `ba9f35b0b10780d447eb4776a317810b20fca65a`, GitHub-hosted `ubuntu-24.04`, state at this pointer update **IN_PROGRESS**. No self-hosted/home heavy owner exists and no competing C2 runtime was launched.
+Classification is `BLOCKED_BY_FROZEN_IMPLEMENTATION_EXACT_ENDPOINT_IDENTITY +0/+0`; scientific FAIL contribution is `0`. This is an implementation/runtime failure before an admitted observation, not a physical/model rejection.
 
-Frozen producer grid is exactly z `[0.295,0.51,0.706,0.934,1.317,1.491,2.33]`, physical k `[0.00067,0.00201,0.0067,0.0201] Mpc^-1`, z-major/k-minor, 28 requests. Baseline SHA256 `0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c`; p8 SHA256 `463a3960d6a955c1e2a561e988562a1fc5486b0b79f120eb634ccca6f86002f9`; packet ABI 64 bytes/record and exact aggregate 1792 bytes.
-
-Expected producer token is `PASS_EXP073HO_C2_REFERENCE_RAW_RUNTIME_PRODUCER_V0_1`, but workflow success or this token creates only a raw candidate and **does not admit** the record set. Scientific field values must not be decoded or inspected before separate fail-closed admission.
+No tolerance, rounding, nearest-time, interpolation, altered z/k, modified baseline/p8, or weakened provenance rescue is permitted. Exp073HO v0.1 must not be rerun unchanged because the exact first request deterministically reproduces the same failure.
 
 ## Exact next transition
 
-On HO terminal SUCCESS: consume raw log plus artifact, verify exact run/job/head/artifact digest, parent/source/config bindings, 28 ordered packet identities, 64-byte packet sizes, exact 1792-byte aggregate and aggregate SHA256. Then prospectively bind that terminal identity into the frozen GY/GZ admission-receipt contract blob `1c2e30e6563efe3976ee0b1825dfb250a902a529` and execute the separate admission gate. Only admission PASS may authorize downstream decode/map.
+A further runtime attempt requires a **new prospectively versioned implementation contract/preregistration frozen before execution** that defines bit-exact terminal-time canonicalization while preserving the same physical endpoint, equations, solver tolerances, model point, z/k grid, baseline, p8 settings, 64-byte packet ABI, field order and provenance requirements.
 
-On HO terminal FAIL: diagnose the first causal build/runtime/transport/serialization/provenance failure and classify it infrastructure/runtime `+0/+0`; repair the smallest causal implementation defect prospectively without changing frozen model, z/k grid, baseline, p8, ABI, arithmetic or provenance criteria.
+The present guard explicitly forbids changing frozen contracts, so that prospective version transition is not performed here. Until it is independently authorized/frozen: `raw_record_set_admitted=false`, `decoded=false`, `mapped=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`.
 
 ## Frozen boundaries
 
