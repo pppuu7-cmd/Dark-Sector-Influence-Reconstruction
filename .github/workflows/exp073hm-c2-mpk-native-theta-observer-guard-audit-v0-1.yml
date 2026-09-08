@@ -1,0 +1,88 @@
+name: Exp073HM C2 mPk native theta observer guard audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073hm-c2-mpk-native-theta-observer-guard-audit-v0-1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-build-static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen identities and reconstruct HJ source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073HM_C2_MPK_NATIVE_THETA_OBSERVER_GUARD_AUDIT_V0_1.md)" = "62453b0ab331538a8312c0a48b8851feddce37ab"
+          test "$(git hash-object scripts/dsir4/exp073hm_c2_mpk_native_theta_observer_guard_patch_v0_1.py)" = "5644611966af2c03ea9883f77b34aa7e88a3527d"
+          test "$(git hash-object scripts/dsir4/exp073hj_c2_complete_native_record_observation_patch_v0_1.py)" = "9096eddfb592703ef6a2adc82bf27db05bee9ee0"
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hj_c2_complete_native_record_observation_patch_v0_1.py /tmp/class_iv
+          test "$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')" = "f1a5619ea2dfb60e4e236349485dcffb58c1c2ef96358bd59b8a1207d77248d2"
+          cp /tmp/class_iv/source/perturbations.c /tmp/hj_perturbations.c
+
+      - name: Apply HM observer guard and prove native mPk theta path
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/dsir4/exp073hm_c2_mpk_native_theta_observer_guard_patch_v0_1.py /tmp/class_iv | tee /tmp/hm.txt
+          grep -Fx 'EXP073HM_MPK_NATIVE_THETA_OBSERVER_GUARD_PATCH_APPLIED' /tmp/hm.txt
+          git -C /tmp/class_iv diff --check
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('/tmp/class_iv/source/perturbations.c').read_text()
+          hj=Path('/tmp/hj_perturbations.c').read_text()
+          assert 'if ((ppt->has_pk_matter == _TRUE_) || (ppt->has_nl_corrections_based_on_delta_m))' in p
+          assert 'ppt->has_source_delta_m = _TRUE_;' in p
+          assert 'if ((ppt->has_source_delta_m == _TRUE_) || (ppt->has_source_theta_m == _TRUE_))' in p
+          assert 'ppw->theta_m = rho_plus_p_theta_m/rho_plus_p_m;' in p
+          assert 'dsir_c2_diag_delta_m_raw = ppw->delta_m;' in p
+          assert 'dsir_c2_diag_theta_m_raw = ppw->theta_m;' in p
+          assert 'class_test(ppt->has_source_delta_m != _TRUE_,error_message,"DSIR C2 diagnostic requires native mPk delta_m source path (which also computes theta_m)");' in p
+          assert 'ppt->has_source_delta_m != _TRUE_ || ppt->has_source_theta_m != _TRUE_' not in p
+          for forbidden in ['background_at_tau(', 'background_tau_of_z(', 'perturb_sources_at_tau(', 'interp_from_dif(']:
+              assert p.count(forbidden) == hj.count(forbidden)
+          assert 'DSIR_C2_EXACT_ENDPOINT z=%s tau=%a k=%a a=%a H=%a delta_m=%a theta_m=%a rho_idm_iv=%a rho_iv=%a' in p
+          print('PASS_EXP073HM_STATIC_MPK_NATIVE_THETA_PATH_V0_1')
+          PY
+
+      - name: Install hosted build dependency
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libgsl-dev
+
+      - name: Compile without cosmological execution
+        run: |
+          set -euo pipefail
+          make -C /tmp/class_iv -j2 class
+          test -x /tmp/class_iv/class
+          echo 'PASS_EXP073HM_OBSERVER_GUARD_PRODUCER_COMPILES_V0_1'
+
+      - name: Emit frozen support-only boundary
+        run: |
+          set -euo pipefail
+          test ! -e /tmp/dsir_c2_records.bin
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'mpk_native_delta_enables_theta_path_verified=true'
+          echo 'observer_guard_corrected=true'
+          echo 'diagnostic_producer_compile_verified=true'
+          echo 'cosmological_run_started=false'
+          echo 'record_payload_created=false'
+          echo 'runtime_record_count=0'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073HM_C2_MPK_NATIVE_THETA_OBSERVER_GUARD_AUDIT_V0_1'
