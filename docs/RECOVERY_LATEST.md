@@ -2,42 +2,39 @@
 
 Updated: 2026-09-08. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-08_C2_HS_PASS_HT_RAW_RUNTIME_FRONT_V39.md` (creation commit `4b6742b7b9d42fa3965c9bff77d58ca64c34a99d`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-08_C2_HU_ADMITTED_HV_DECODE_FRONT_V41.md` (creation commit `b24f4cb61c4841adf2a9f08957e27da5350dd855`). Earlier recovery notes remain immutable history.
 
 ## Preserved scientific authority
 
-All prior scientific authority remains unchanged. Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW authority through scientifically admitted `S3_S3` remains preserved; `WW_S3_S3` authority is run `34218457380 / 102035691774`, GA artifact `10051382493`, digest `sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109`.
+All prior DSIR scientific authority remains unchanged. Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. Scientifically admitted `WW_S3_S3` remains run `34218457380 / 102035691774`, GA artifact `10051382493`, digest `sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109`.
 
-C2 remains `raw_record_set_admitted=false`, `decoded=false`, `mapped=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`.
+No C2 scientific/model authority exists.
 
-## Newly validated support result — Exp073HS
+## Newly validated C2 authorities
 
-Exp073HS `34230896860 / 102076459069` is terminal `SUCCESS`. The raw job log was inspected and contains exact frozen token `PASS_EXP073HS_C2_FINAL_APPROXIMATION_INTERVAL_ENDPOINT_GUARD_BUILD_AUDIT_V0_1`. Classification is strictly `SUPPORT_PLUS_0_PLUS_0`. HS is a build/static implementation gate only and creates no runtime payload or scientific/model authority.
+Exp073HT run `34235038323 / job 102090438079`, head `bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba`, is independently consumed as `RAW_RUNTIME_CANDIDATE_PLUS_0_PLUS_0`. Artifact `10061693504` has GitHub and independently verified ZIP digest `sha256:9f544297b90d1fed51c78d98be4737b97e2066b2a06b96bb314ccc9b9c3242d0`. Exactly 28×64-byte packets reassemble byte-for-byte to the 1792-byte aggregate SHA256 `905d01d986e38baca0924937e7bd54db901a53853ffd138427e892fe25039fb4` with exact run/job/head/source/config receipt binding.
 
-The earlier HR/HO failures remain historical implementation/runtime `+0/+0` results and are not rewritten.
+Exp073HU run `34242025242 / job 102114346415`, head `e2e6a2c1633b48553b99aac34df0801283ddd0b5`, raw-log PASS token `PASS_EXP073HU_C2_RAW_RECORD_SET_PROVENANCE_ADMISSION_V0_1`, creates provenance-only raw-record admission: `raw_record_set_admitted=true`, while `decoded=false`, `mapped=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`. Durable authority file: `docs/dsir4/authority/EXP073HU_C2_RAW_RECORD_SET_ADMISSION_AUTHORITY_V0_1.txt`, blob `dbcc251cb6534112929c937deb9da6323d3be4f7`.
 
-## Current C2 frontier — Exp073HT raw reference runtime v0.3
+## Current frontier — Exp073HV ABI decode v0.1
 
-A reconciled parallel DSIR process prospectively froze `docs/dsir4/prereg/EXP073HT_C2_REFERENCE_RAW_RUNTIME_PRODUCER_V0_3.md` in commit `7c745691c6a6370f120fe7c65ccdf30c072d8b9d`. This frozen gate was materialized without creating a competing DSIR control plane:
+Prospectively frozen from the pre-existing producer ABI, not from payload-result tuning:
 
-- workflow implementation commit `b75d7aa497beae88eaef3e8a353dc66c2249129e`;
-- workflow blob `9d99107f0dc309e5c05810085d92c5149531e0c0`;
-- runtime binding/head commit `bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba`;
-- run `34235038323`;
-- job `102090438079`;
-- branch/head `main / bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba`;
-- GitHub-hosted `ubuntu-24.04`; self-hosted/home heavy owner **none**;
-- state at pointer update: **IN_PROGRESS**, runtime execution step;
-- frozen binding verification and exact post-HS solver/serializer build already passed.
+- prereg `docs/dsir4/prereg/EXP073HV_C2_RAW_RECORD_ABI_DECODE_V0_1.md`, commit `5ba5a4a2ca8d6ffa620efb9ead7fbee904202555`, blob `8da26d9a051d3de2e8b957123b7019036fdfa3e9`;
+- recorder blob `c6144598b9f75908ee27a517d31eda509f7947f6`;
+- serializer blob `40f361d06fc2732f5c0ad384ed729e5d483810f5`;
+- workflow `.github/workflows/exp073hv-c2-raw-record-abi-decode-v0-1.yml`, implementation commit `792625ee7fdc20b934f1df9152d41ddbb72a5282`, blob `67ee3ff170ba3314958befc915be79222fc844da`;
+- binding/head commit `0687ca5ac973dc50340090213ceaaff70ecc6e04`;
+- run `34242333899`, job `102115404956`;
+- GitHub-hosted `ubuntu-24.04`; self-hosted/home heavy owner none;
+- state at pointer update: `QUEUED`.
 
-The HT gate keeps pinned solver `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`, reference `(alpha,beta)=(0,0)`, unchanged 28 z/k nodes in frozen z-major/k-minor order, exact native endpoint observation, one 64-byte packet per request and exact aggregate size 1792 bytes. Interpolation/tolerance/nearest-coordinate/effective-coordinate rescue is forbidden.
+HV may only decode the already-admitted 64-byte packets as the frozen eight little-endian IEEE-754 binary64 fields, prove exact bit identity against producer hexadecimal endpoint evidence, and emit canonical exact-hex JSONL. PASS ceiling is `DECODED_RECORD_SET_PLUS_0_PLUS_0`: `decoded=true` only; mapping/prediction/scientific authority remain false.
 
-Frozen post-HS source/config identities: `perturbations.c sha256=483b481b48e50a6afb396b15b85258ac6c5a7a39b38fb1c6192e7e4a95c139ae`; `evolver_ndf15.c sha256=3f12121ce2de319453e1ff5fadae9391fd96747731c0df3fa05fae1cd2608aa9`; baseline `sha256=0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c`; precision `sha256=463a3960d6a955c1e2a561e988562a1fc5486b0b79f120eb634ccca6f86002f9`.
+Expected token: `PASS_EXP073HV_C2_RAW_RECORD_ABI_DECODE_V0_1`.
 
 ## Exact next transition
 
-Workflow SUCCESS alone is insufficient. On terminal HT, consume raw job log and artifact in the same iteration; verify GitHub digest, provenance/receipt run-job-head binding, source/config fingerprints, exactly 28 distinct ordered packets, exact 64-byte packet size, exact 1792-byte aggregate and aggregate SHA256. Only after all frozen checks may `PASS_EXP073HT_C2_REFERENCE_RAW_RUNTIME_PRODUCER_V0_3` be classified as `RAW_RUNTIME_CANDIDATE_PLUS_0_PLUS_0`.
+On HV terminal state, inspect raw job log and decoded artifact; workflow success alone is insufficient. Verify artifact digest, decode receipt, 28 rows, canonical JSONL SHA, exact HU/HT/ABI provenance and bitwise endpoint-vs-packet equality. Only then record decode authority and prospectively freeze a separate semantic/domain mapping gate.
 
-Even a validated HT candidate remains non-admitted and may not be decoded/mapped/interpreted. It can only authorize a separately prospectively frozen admission/receipt gate. On HT failure, diagnose only the first causal implementation/runtime/provenance defect and repair prospectively without altering scientific equations, arithmetic, model, grid, tolerances, ABI or provenance.
-
-Global frozen DSIR science boundaries remain unchanged: `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid<=0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; exact-threshold ambiguity `numerically_unresolved`; no tolerance, rounding, smoothing, averaging, effective ell/z/k or fiducial-P shortcut.
+Global frozen DSIR boundaries remain unchanged: `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid<=0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; exact-threshold ambiguity `numerically_unresolved`; no tolerance, rounding, smoothing, averaging, effective ell/z/k or fiducial-P shortcut.
