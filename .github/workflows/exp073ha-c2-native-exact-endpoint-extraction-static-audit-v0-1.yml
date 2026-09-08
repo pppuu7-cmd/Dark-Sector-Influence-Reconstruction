@@ -1,0 +1,80 @@
+name: Exp073HA C2 native exact-endpoint extraction static audit v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073ha-c2-native-exact-endpoint-extraction-static-audit-v0-1.yml'
+      - 'docs/dsir4/prereg/EXP073HA_C2_NATIVE_EXACT_ENDPOINT_EXTRACTION_STATIC_AUDIT_V0_1.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Fail-closed audit native exact-endpoint extraction architecture
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073HA_C2_NATIVE_EXACT_ENDPOINT_EXTRACTION_STATIC_AUDIT_V0_1.md)" = "f970da98a91f541e62aa957b16aaf4ea12bd98a7"
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C /tmp/class_iv hash-object source/perturbations.c)" = "92a48331658c5941ed4eb43b0e98ee78e39b8385"
+          test "$(git -C /tmp/class_iv hash-object tools/evolver_ndf15.c)" = "790ced55f2eaa08e805d467734ad1435954bc5b7"
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('/tmp/class_iv/source/perturbations.c').read_text(encoding='utf-8', errors='replace')
+          e = Path('/tmp/class_iv/tools/evolver_ndf15.c').read_text(encoding='utf-8', errors='replace')
+          r = Path('docs/dsir4/prereg/EXP073HA_C2_NATIVE_EXACT_ENDPOINT_EXTRACTION_STATIC_AUDIT_V0_1.md').read_text(encoding='utf-8')
+
+          # Frozen preregistration identity and no-runtime ceiling.
+          for token in [
+              'C2_IDE_LOCAL_TANGENT_CONE',
+              'SUPPORT_PLUS_0_PLUS_0',
+              'PASS_EXP073HA_C2_NATIVE_EXACT_ENDPOINT_EXTRACTION_STATIC_AUDIT_V0_1',
+              'cosmological_run_started=false',
+              'record_payload_created=false',
+              'prediction_ready=false',
+              'scientific_model_authority_created=false',
+              'G_DOMAIN_MAPPING=NOT_YET_TESTABLE',
+              'OMP_NUM_THREADS=1',
+              'No nearest-neighbour lookup, tolerance match',
+              'perturb_sources_at_tau(...)',
+              'interp_from_dif(...)',
+          ]:
+              assert token in r, f'missing frozen prereg token: {token!r}'
+
+          # Native exact-k insertion/indexing and perturbation-evolver route.
+          for token in ['k_output_values', 'ppt->k', 'index_k_output_values']:
+              assert token in p, f'missing perturbation k-output token: {token!r}'
+          assert 'perturb_solve' in p
+          assert 'evolver_ndf15' in p or 'evolver' in p
+
+          # Native z coordinate resolution and proof that standard nonzero-z output interpolates sources.
+          assert 'background_tau_of_z' in p
+          assert 'perturb_sources_at_tau' in p
+          assert 'array_interpolate_spline' in p
+          assert 'if (z == 0.)' in p
+
+          # NDF15 terminal-step mechanics and separation from interpolation branch.
+          for token in ['tfinal', 'tnew', 'ynew', 'interp_from_dif', 'print_variables']:
+              assert token in e, f'missing NDF15 token: {token!r}'
+          assert 'h = tfinal - t' in e, 'terminal step is not explicitly stretched to tfinal'
+          assert 'done = _TRUE_' in e, 'terminal-step done flag missing'
+          assert '(*output)' in e, 'output callback route missing'
+          assert '(*derivs)' in e, 'derivative callback route missing'
+
+          # Fail closed on architecture scope: static audit only, no CLASS execution or payload creation here.
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('cosmological_run_started=false')
+          print('record_payload_created=false')
+          print('prediction_ready=false')
+          print('scientific_model_authority_created=false')
+          print('G_DOMAIN_MAPPING=NOT_YET_TESTABLE')
+          print('PASS_EXP073HA_C2_NATIVE_EXACT_ENDPOINT_EXTRACTION_STATIC_AUDIT_V0_1')
+          PY
