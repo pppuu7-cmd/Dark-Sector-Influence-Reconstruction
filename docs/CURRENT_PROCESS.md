@@ -6,23 +6,9 @@ Updated: 2026-09-08. Scope: **DSIR only**; RTK/RQIR excluded.
 
 Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities are `S0_S0`, `S0_S1`, `S0_S2`, `S0_S3`, `S1_S1`, `S1_S2`, `S1_S3`, `S2_S2`, and `S2_S3`. `WW_S3_S3` remains **NOT_YET_ADMITTED**.
 
-Newest immutable note: `docs/recovery/RECOVERY_2026-09-08_GA_PRUNER_REPAIR_RESUME_V28.md` (creation commit `9e708c7aab8b2b00ee3e3fcf637728e289ac0159`).
+Newest immutable note: `docs/recovery/RECOVERY_2026-09-08_HA_EXACT_ENDPOINT_STATIC_AUDIT_PASS_V29.md` (creation commit `f02ad2ff93f005c08ce3b7c17564bda490d3d3ea`).
 
-## Newly consumed Exp073GA failure
-
-Historical run `34189540992`, hosted job `101944582891 SUCCESS`, home job `101944608861 FAILURE`, GB job skipped. Evidence artifact `10043979600`, digest `sha256:b859e658e1046c4d9905d589003a1d26aaf3e2601c51d9db361b48176226906a` was independently downloaded and hash-matched.
-
-First causal error after expensive Replica A completed its six-stage chain: `RuntimeError: fail-closed missing GA pruner token 'WW_S1_S1'`. The pinned FM base does not contain that uppercase literal. Classification: **implementation/infrastructure FAIL +0/+0**, not scientific FAIL.
-
-Preserved verified A checkpoint: namespace `checkpoints/exp073ga-ww-s3-s3-a-v0-1`; frozen source head `de83e20a68f79ccf25b89b0d33eb4206e294c757`; contract `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`; ordered `[3,3]`, `S3->S3`, same-field handoff; exact `19,327,352,832`-byte file-backed proof; selected canonical `<f8 [39,12288] EE<-EE` SHA256 `e4aad74b8b733d280f4abfd6654778f0e037ab6060b12a908d30f8ec34c36c07`, independently confirmed all finite. Replica B had not started. Do not recompute verified A.
-
-## Repair provenance
-
-Minimal pruner repair commit: `f52fa856eb029c64f744926eecf55f506fcf1da5`; repaired pruner blob `fc3e4d8444630e4b5a2dde0a052e1069b7887c01`. Only the nonexistent uppercase transform requirement was removed.
-
-Workflow rebinding/regression commit: `f6d8b429ac64643e7cb7766e0bfa2ab51abe751d`. Hosted regression now proves the actual pinned FM token set and `WW_S1_S1` absence before home compute. Science arithmetic/domain/order/checkpoints/tolerances unchanged.
-
-## Authoritative current process — Exp073GA recovery
+## Authoritative current heavy process — Exp073GA recovery
 
 - workflow/run: **`34197207582`**;
 - workflow: `.github/workflows/exp073ga-ww-s3-s3-home-science-v0-1.yml`;
@@ -40,9 +26,21 @@ Workflow rebinding/regression commit: `f6d8b429ac64643e7cb7766e0bfa2ab51abe751d`
 
 SUCCESS action: consume raw home log/artifact and verify exact digest, code/source/contract/checkpoint identities, complete A+B chains, same-field `S3->S3/[3,3]`, exact file-backed MCM evidence, finite canonical arrays, exact SHA equality and `numpy.array_equal`; only then accept GB admission. FAIL action: diagnose first causal defect, preserve verified checkpoint stages, and never weaken science.
 
+Historical GA run `34189540992` remains implementation/infrastructure FAIL `+0/+0`; its expensive Replica A is valid and preserved. Minimal repair commit `f52fa856eb029c64f744926eecf55f506fcf1da5`; rebinding/regression commit `f6d8b429ac64643e7cb7766e0bfa2ab51abe751d`.
+
 ## Independent C2 frontier
 
-Exp073GZ hosted static audit remains PASS `SUPPORT_PLUS_0_PLUS_0`. Real frozen 28-packet / 1792-byte runtime generation/admission remains blocked while GA owns the self-hosted heavy runner.
+Exp073GZ receipt-contract audit remains PASS `SUPPORT_PLUS_0_PLUS_0`.
+
+Exp073HA static audit is now **PASS `SUPPORT_PLUS_0_PLUS_0`**:
+
+- prereg commit `33b7bc35401bef01f436b433e5c7ebf9bab0cb4f`, prereg blob `f970da98a91f541e62aa957b16aaf4ea12bd98a7`;
+- workflow implementation head `b02625a459dcc21f2497752becc5798a574db7b3`;
+- run `34207078292`, job `101998967311 SUCCESS`;
+- exact token `PASS_EXP073HA_C2_NATIVE_EXACT_ENDPOINT_EXTRACTION_STATIC_AUDIT_V0_1`;
+- `cosmological_run_started=false`, `record_payload_created=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`.
+
+Next C2 action: prospectively implement and hosted-build/static-audit a diagnostic-only exact-endpoint producer patch under the frozen HA architecture. Real 28-packet / 1792-byte runtime remains `BLOCKED_BY_HEAVY_RUN_EXCLUSIVITY` while GA owns the self-hosted runner. No home C2 job may be launched concurrently.
 
 ## Frozen boundaries
 
