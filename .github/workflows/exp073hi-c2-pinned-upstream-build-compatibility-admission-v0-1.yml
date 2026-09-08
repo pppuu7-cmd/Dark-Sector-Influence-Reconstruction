@@ -1,0 +1,101 @@
+name: Exp073HI C2 pinned-upstream build compatibility admission v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073hi-c2-pinned-upstream-build-compatibility-admission-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-build-compat-admission:
+    runs-on: ubuntu-latest
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fail-closed frozen identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073HI_C2_PINNED_UPSTREAM_BUILD_COMPATIBILITY_ADMISSION_V0_1.md)" = "030fac1023c1f811c1832cd0ec01060b27a613a7"
+          test "$(git hash-object scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py)" = "b7fe663154519b605699c1fd622d0079a5f76772"
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C /tmp/class_iv rev-parse HEAD)" = "ac627d54e9ce196a08878d1ba33999819925d19c"
+          test "$(git -C /tmp/class_iv hash-object source/background.c)" = "310e0f5764ab41da3a886ed239db3fff2aac32ec"
+          test "$(git -C /tmp/class_iv hash-object Makefile)" = "45f912a2b8b2849998affb6857f49f5950fe9be5"
+          cp /tmp/class_iv/source/background.c /tmp/background.original.c
+          cp /tmp/class_iv/Makefile /tmp/Makefile.original
+          echo 'PASS_EXP073HI_PARENT_IDENTITIES_V0_1'
+
+      - name: Apply and prove exact compatibility derivative
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py /tmp/class_iv | tee /tmp/compat.txt
+          grep -Fx 'EXP073HB_PINNED_UPSTREAM_STRAY_BRACE_REMOVED_EXACTLY_ONCE' /tmp/compat.txt
+          grep -Fx 'EXP073HB_PINNED_UPSTREAM_MODERN_LINK_COMPAT_APPLIED_EXACTLY' /tmp/compat.txt
+          python - <<'PY'
+          from pathlib import Path
+          a=Path('/tmp/background.original.c').read_text(); b=Path('/tmp/class_iv/source/background.c').read_text()
+          old="    break;\n  }\n\n  case IDM_IV:"; new="    break;\n\n  case IDM_IV:"
+          assert a.count(old)==1
+          assert b == a.replace(old,new,1)
+          ma=Path('/tmp/Makefile.original').read_text(); mb=Path('/tmp/class_iv/Makefile').read_text()
+          expected=ma.replace('OPTFLAG = -O2 #-ffast-math #-march=native','OPTFLAG = -O2 -fcommon #-ffast-math #-march=native',1)
+          expected=expected.replace('LDFLAG = -g -fPIC -lgsl -lgslcblas','LDFLAG = -g -fPIC',1)
+          expected=expected.replace('\t$(CC) $(OPTFLAG) $(OMPFLAG) $(LDFLAG) -o class $(addprefix build/,$(notdir $^)) -lm','\t$(CC) $(OPTFLAG) $(OMPFLAG) $(LDFLAG) -o class $(addprefix build/,$(notdir $^)) -lgsl -lgslcblas -lm',1)
+          assert mb == expected
+          print('PASS_EXP073HI_EXACT_TRANSFORM_SEMANTIC_SURFACE_V0_1')
+          PY
+          mapfile -t changed < <(git -C /tmp/class_iv diff --name-only)
+          test "${#changed[@]}" -eq 2
+          printf '%s\n' "${changed[@]}" | sort > /tmp/changed.txt
+          printf '%s\n' Makefile source/background.c > /tmp/expected_changed.txt
+          diff -u /tmp/expected_changed.txt /tmp/changed.txt
+          test "$(sha256sum /tmp/class_iv/source/background.c | awk '{print $1}')" = "bc4053922ae984652f5858b2869e7bbbe8682ea502b88e485709e6828e059ce0"
+          test "$(sha256sum /tmp/class_iv/Makefile | awk '{print $1}')" = "2bb326590b3d0c3a23e984fc17cafce680674aa5234db15d35d72a06e1bfa87e"
+          git -C /tmp/class_iv diff --check
+          git -C /tmp/class_iv diff -- Makefile source/background.c > /tmp/exp073hi.patch
+          sha256sum /tmp/exp073hi.patch
+          echo 'PASS_EXP073HI_WHOLE_TREE_DIFF_AND_HASH_V0_1'
+
+      - name: Install hosted baseline dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libgsl-dev
+
+      - name: Build derivative without executing cosmology
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/class_iv
+          make -j2 class
+          test -x ./class
+          echo 'PASS_EXP073HI_BUILD_COMPATIBLE_DERIVATIVE_COMPILES_V0_1'
+
+      - name: Emit frozen support-only admission
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e /tmp/dsir_c2_records.bin
+          test ! -e /tmp/dsir_c2_payload.bin
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'build_compatible_derivative_admitted=true'
+          echo 'cosmological_run_started=false'
+          echo 'record_payload_created=false'
+          echo 'runtime_record_count=0'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073HI_C2_PINNED_UPSTREAM_BUILD_COMPATIBILITY_ADMISSION_V0_1'
