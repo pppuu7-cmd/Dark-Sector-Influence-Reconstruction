@@ -1,0 +1,101 @@
+name: Exp073ID C2 Tangent Response Monotone Scale Stability Admission v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073id-c2-tangent-response-monotone-scale-stability-admission-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  stability:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen prereg and IC artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073ID_C2_TANGENT_RESPONSE_MONOTONE_SCALE_STABILITY_ADMISSION_V0_1.md)" = '92454c05e19b95ba04574d9c077c5ccba6d38920'
+          mkdir -p /tmp/id/ic /tmp/id/out
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10065344213/zip" -o /tmp/id/ic.zip
+          test "$(sha256sum /tmp/id/ic.zip | awk '{print $1}')" = 'e48b0fd4f7d80717231df60a5065d9f1eac37a13193951f17d01ee34761ff7dc'
+          unzip -q /tmp/id/ic.zip -d /tmp/id/ic
+          test "$(sha256sum /tmp/id/ic/tangent_response_candidates.jsonl | awk '{print $1}')" = 'e97ef98a5b137081df5937454f02576d30e726266e9c50733bf399a9be2b1907'
+          grep -Fxq 'response_candidate_created=true' /tmp/id/ic/AUTHORITY.txt
+          grep -Fxq 'tangent_response_ready=false' /tmp/id/ic/AUTHORITY.txt
+      - name: Apply frozen no-tolerance monotone stability gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,math,pathlib
+          p=pathlib.Path('/tmp/id/ic/tangent_response_candidates.jsonl')
+          rows=[json.loads(x) for x in p.read_text().splitlines()]
+          assert len(rows)==28
+          checks=[]; fails=[]
+          for i,r in enumerate(rows):
+            rid=f'z{i//4:02d}k{i%4:02d}'; assert r['request_id']==rid
+            for x in ('alpha','beta'):
+              D1=float.fromhex(r[f'dDelta_d{x}_h1e4_hex'])
+              D2=float.fromhex(r[f'dDelta_d{x}_h1e3_hex'])
+              D3=float.fromhex(r[f'dDelta_d{x}_h1e2_hex'])
+              assert all(math.isfinite(v) for v in (D1,D2,D3))
+              e_small=abs(D1-D2); e_large=abs(D2-D3)
+              ok=e_small<=e_large
+              checks.append((rid,x,e_small.hex(),e_large.hex(),ok))
+              if not ok: fails.append((rid,x,e_small.hex(),e_large.hex()))
+          assert len(checks)==56
+          with open('/tmp/id/out/stability_checks.tsv','w') as f:
+            f.write('request_id\tdirection\te_small_hex\te_large_hex\tpass\n')
+            for q in checks: f.write('\t'.join(map(str,q[:-1]))+'\t'+str(q[-1]).lower()+'\n')
+          print('stability_check_count=56')
+          print('stability_fail_count='+str(len(fails)))
+          if fails:
+            for q in fails: print('FAIL_NODE',*q)
+            print('classification=SCIENTIFIC_NUMERICAL_STABILITY_FAIL')
+            print('tangent_response_ready=false')
+            print('prediction_ready=false')
+            print('scientific_model_authority_created=false')
+            raise SystemExit(2)
+          PY
+          cat > /tmp/id/out/AUTHORITY.txt <<EOF
+          hypothesis_id=C2_IDE_LOCAL_TANGENT_CONE
+          source_ic_run=34249380208
+          source_ic_job=102139612475
+          source_ic_artifact=10065344213
+          source_ic_response_sha256=e97ef98a5b137081df5937454f02576d30e726266e9c50733bf399a9be2b1907
+          id_head=${GITHUB_SHA}
+          id_run=${GITHUB_RUN_ID}
+          id_prereg_blob=92454c05e19b95ba04574d9c077c5ccba6d38920
+          stability_rule=e_small_le_e_large_exact_binary64
+          stability_check_count=56
+          stability_fail_count=0
+          response_candidate_created=true
+          tangent_response_ready=true
+          admitted_base_step=1e-4
+          prediction_ready=false
+          scientific_model_authority_created=false
+          G_DOMAIN_MAPPING=NOT_YET_TESTABLE
+          EOF
+          echo 'PASS_EXP073ID_C2_TANGENT_RESPONSE_MONOTONE_SCALE_STABILITY_ADMISSION_V0_1'
+          echo 'classification=TANGENT_RESPONSE_NUMERICALLY_ADMITTED_PLUS_0_PLUS_0'
+          echo 'response_candidate_created=true'
+          echo 'tangent_response_ready=true'
+          echo 'admitted_base_step=1e-4'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073id-c2-tangent-stability-admission-v0-1
+          path: /tmp/id/out/*
+          retention-days: 30
+          if-no-files-found: error
