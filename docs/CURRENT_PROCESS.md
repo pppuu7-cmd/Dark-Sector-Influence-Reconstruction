@@ -6,40 +6,39 @@ Updated: 2026-09-08. Scope: **DSIR only**; RTK/RQIR excluded.
 
 All prior scientific authority remains unchanged, including scientifically admitted `WW_S3_S3` from run `34218457380 / 102035691774`, GA artifact `10051382493`, digest `sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109`.
 
-Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-08_C2_HS_PASS_HT_RAW_RUNTIME_FRONT_V39.md`, creation commit `4b6742b7b9d42fa3965c9bff77d58ca64c34a99d`.
+Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-08_C2_HU_ADMITTED_HV_DECODE_FRONT_V41.md`, creation commit `b24f4cb61c4841adf2a9f08957e27da5350dd855`.
 
-## Newly closed C2 support gate
+## Closed C2 front
 
-Exp073HS run `34230896860`, job `102076459069`, is terminal `SUCCESS`. Raw job log inspection confirmed exact frozen token `PASS_EXP073HS_C2_FINAL_APPROXIMATION_INTERVAL_ENDPOINT_GUARD_BUILD_AUDIT_V0_1`; classification is **SUPPORT_PLUS_0_PLUS_0** only. HS creates no runtime payload or scientific authority.
+Exp073HT `34235038323 / 102090438079` is validated `RAW_RUNTIME_CANDIDATE_PLUS_0_PLUS_0`, artifact `10061693504`, ZIP digest `sha256:9f544297b90d1fed51c78d98be4737b97e2066b2a06b96bb314ccc9b9c3242d0`, aggregate SHA256 `905d01d986e38baca0924937e7bd54db901a53853ffd138427e892fe25039fb4`.
 
-## Current process — Exp073HT raw runtime producer v0.3
+Exp073HU `34242025242 / 102114346415` is raw-log validated `RAW_RECORD_SET_ADMITTED_PLUS_0_PLUS_0`; durable authority blob `dbcc251cb6534112929c937deb9da6323d3be4f7`. Current C2 boundary is `raw_record_set_admitted=true`, `decoded=false`, `mapped=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`.
 
-- prereg `docs/dsir4/prereg/EXP073HT_C2_REFERENCE_RAW_RUNTIME_PRODUCER_V0_3.md`;
-- prereg blob `3bdbda16db2640dc68ab91cd34fbd85da787e2c8`;
-- prereg commit `7c745691c6a6370f120fe7c65ccdf30c072d8b9d`;
-- workflow `.github/workflows/exp073ht-c2-reference-raw-runtime-producer-v0-3.yml`;
-- workflow blob `9d99107f0dc309e5c05810085d92c5149531e0c0`;
-- workflow implementation commit `b75d7aa497beae88eaef3e8a353dc66c2249129e`;
-- binding/head commit `bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba`;
-- workflow/run ID `34235038323`;
-- job ID `102090438079`;
-- branch/head `main / bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba`;
-- checkpoint namespace: `N/A` — GitHub-hosted bounded raw producer, not home-heavy checkpoint work;
-- start time `2026-09-08T13:55:58Z`;
+## Current process — Exp073HV ABI decode v0.1
+
+- prereg `docs/dsir4/prereg/EXP073HV_C2_RAW_RECORD_ABI_DECODE_V0_1.md`;
+- prereg commit `5ba5a4a2ca8d6ffa620efb9ead7fbee904202555`;
+- prereg blob `8da26d9a051d3de2e8b957123b7019036fdfa3e9`;
+- workflow `.github/workflows/exp073hv-c2-raw-record-abi-decode-v0-1.yml`;
+- workflow implementation commit `792625ee7fdc20b934f1df9152d41ddbb72a5282`;
+- workflow blob `67ee3ff170ba3314958befc915be79222fc844da`;
+- binding/head commit `0687ca5ac973dc50340090213ceaaff70ecc6e04`;
+- workflow/run ID `34242333899`;
+- job ID `102115404956`;
+- branch/head `main / 0687ca5ac973dc50340090213ceaaff70ecc6e04`;
+- checkpoint namespace `N/A` — GitHub-hosted bounded decode, no home-heavy compute;
+- start time `2026-09-08T15:03:55Z`;
 - runner ownership GitHub-hosted `ubuntu-24.04`; self-hosted/home heavy owner **none**;
-- state at ledger update: **IN_PROGRESS** in `Execute frozen 28-request raw producer v0.3`;
-- last durable completed stages: frozen binding verification `SUCCESS`; exact post-HS solver + HN serializer build `SUCCESS`;
-- expected token `PASS_EXP073HT_C2_REFERENCE_RAW_RUNTIME_PRODUCER_V0_3`;
-- candidate classification ceiling `RAW_RUNTIME_CANDIDATE_PLUS_0_PLUS_0`.
+- state at ledger update: `QUEUED`;
+- expected token `PASS_EXP073HV_C2_RAW_RECORD_ABI_DECODE_V0_1`;
+- classification ceiling `DECODED_RECORD_SET_PLUS_0_PLUS_0`.
 
-Frozen runtime target: exactly 28 distinct requests in z-major/k-minor order, exactly one exact native endpoint observation per request, one 64-byte packet per request, canonical aggregate exactly 1792 bytes. No interpolation, tolerance, nearest-z/k/time, effective-coordinate, rounding or averaging rescue is permitted.
+HV may only prove the frozen 8×binary64 ABI, bitwise packet/endpoint equivalence and canonical exact-hex decoded JSONL. No mapping, prediction or scientific interpretation is allowed.
 
 ### Exact next actions
 
-On HT terminal SUCCESS: inspect raw log and artifact; verify GitHub digest, run/job/head receipt binding, post-HS source/config fingerprints, 28 packet identities/order, 64-byte packet size, exact 1792-byte aggregate and aggregate SHA256. Only then classify the HT candidate `+0/+0`. Do **not** decode, map or create scientific authority in HT. After a validated candidate, dispatch only a separately prospectively frozen admission/receipt gate.
+On HV terminal SUCCESS: inspect raw log and artifact, verify GitHub artifact digest, decoded receipt, 28 canonical rows, decoded JSONL SHA256, exact HU/HT/ABI provenance and bitwise proof. Only after all frozen checks record decode authority (`decoded=true`) and prospectively define a separate semantic/domain mapping gate.
 
-On HT FAIL/BLOCKED: diagnose the first causal implementation/runtime/provenance defect from logs, preserve any valid complete output unit, repair only the smallest causal defect prospectively, and do not change frozen scientific equations/arithmetic/model/grid/tolerances/ABI/provenance.
-
-C2 remains `raw_record_set_admitted=false`, `decoded=false`, `mapped=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE` until a later explicit admission gate says otherwise.
+On HV FAIL/BLOCKED: diagnose the first causal ABI/provenance/canonicalization defect and repair prospectively without tolerance/rounding or any scientific-boundary change.
 
 Global frozen DSIR boundaries remain unchanged.
