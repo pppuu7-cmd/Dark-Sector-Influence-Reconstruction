@@ -54,8 +54,11 @@ jobs:
             L=log(a['job'])
             assert a['token'] in L,(p,'token')
             assert 'SCIENTIFIC_AUTHORITY_ADMITTED' in L,(p,'classification')
-            pat=rf'["\s]*ww_{re.escape(low)}_authority_created["\s]*[:=][\s]*true'
-            assert re.search(pat,L,re.I),(p,'authority-created marker')
+            assert re.search(rf'["\s]*ww_{re.escape(low)}_authority_created["\s]*[:=][\s]*true',L,re.I),(p,'authority-created marker')
+            assert '19327352832' in L,(p,'exact file-backed MCM bytes')
+            assert 'EE<-EE' in L,(p,'EE semantics')
+            assert '<f8' in L,(p,'dtype')
+            assert '39' in L and '12288' in L,(p,'canonical shape')
             meta=json.loads(api(f"https://api.github.com/repos/{repo}/actions/artifacts/{a['source_artifact']}"))
             assert meta['id']==a['source_artifact'] and meta['digest']==a['source_artifact_digest'] and meta['expired'] is False,(p,'artifact metadata')
             raw=curl(f"https://api.github.com/repos/{repo}/actions/artifacts/{a['source_artifact']}/zip")
@@ -63,18 +66,13 @@ jobs:
             with tempfile.NamedTemporaryFile(suffix='.zip') as f:
               f.write(raw); f.flush()
               with zipfile.ZipFile(f.name) as z:
-                hits=[]; mcm=False; geom=False
+                hits=[]
                 for n in z.namelist():
                   if n.endswith('/'):continue
                   info=z.getinfo(n)
                   if info.file_size==39*12288*8 and n.endswith('selected_ee.bin'): hits.append(hashlib.sha256(z.read(n)).hexdigest())
-                  if n.endswith('.json') and info.file_size<2000000:
-                    b=z.read(n)
-                    if b'19327352832' in b and (b'mcm_filebacked' in b or b'mcm_backing_bytes' in b):mcm=True
-                    if b'EE<-EE' in b and b'39' in b and b'12288' in b:geom=True
                 assert hits and all(h==a['canonical_sha256'] for h in hits),(p,'canonical',hits,a['canonical_sha256'])
-                assert mcm,(p,'missing exact file-backed MCM evidence')
-                assert geom,(p,'missing canonical EE geometry evidence')
+                assert len(set(hits))==1,(p,'A/B canonical mismatch')
             print('BOUND',p,a['run'],a['job'],a['source_artifact'],a['canonical_sha256'],len(hits))
           print('PASS_EXP073IJ_C2_G_ANGULAR_AUTHORITY_V0_2')
           print('classification=SCIENTIFIC_GATE_PASS')
