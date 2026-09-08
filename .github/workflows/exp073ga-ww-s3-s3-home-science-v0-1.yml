@@ -24,7 +24,7 @@ env:
   GB_PREREG_BLOB: '8751e843f9a6f91a4b2b22c0ff81f930e0dbbfc8'
   DRIVER_V01_BLOB: 'b839681a5a86640513c1600a6a130d75345cb127'
   DRIVER_V02_BLOB: 'facc3e2bd6c36ae160d35009b5df4494809d1322'
-  PRUNER_BLOB: '24ee2408b4b66a17001fb734e9e46d008179c310'
+  PRUNER_BLOB: 'fc3e4d8444630e4b5a2dde0a052e1069b7887c01'
   COMPARE_BLOB: '263c69075f8a9c5ad3644224485f20fbb3961406'
   HOME_BLOB: 'f28bf114e6da502e2a3a0a97f0828c27849814c9'
   ADMIT_VERIFY_BLOB: 'cc815737e658a850452d9b0f9488e703f8de84ea'
@@ -76,6 +76,14 @@ jobs:
           grep -aF 'PASS_EXP073FZ_WW_S2_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1' prev.log >/dev/null
           grep -aF 'ww_s2_s3_authority_created=true' prev.log >/dev/null
           python3 -m py_compile ci/exp073ga_ww_s3_s3_durable_ab_production_v0_1.py ci/exp073ga_ww_s3_s3_durable_ab_production_v0_2.py ci/exp073ga_verify_and_prune_replica_v0_1.py ci/exp073ga_compare_terminal_receipts_v0_1.py ci/exp073gb_verify_ga_candidate_v0_1.py
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('ci/exp073fm_verify_and_prune_replica_v0_1.py').read_text()
+          required=('ww_s1_s1','ww-s1-s1','S1->S1','[1,1]','s1_count_map','S1 source')
+          for t in required: assert t in s, t
+          assert 'WW_S1_S1' not in s
+          print('PASS_EXP073GA_PRUNER_TRANSFORM_SOURCE_STATIC_REGRESSION_V0_1')
+          PY
           bash -n ci/exp073ga_home_filebacked_fullres_v0_1.sh
           grep -F 'source_count_map(r1_root,3)' ci/exp073ga_ww_s3_s3_durable_ab_production_v0_1.py >/dev/null
           grep -F "'ordered_source_indices':[3,3]" ci/exp073ga_ww_s3_s3_durable_ab_production_v0_1.py >/dev/null
@@ -88,7 +96,7 @@ jobs:
           grep -F 'PASS_EXP073GA_REPLICA_B_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' ci/exp073ga_home_filebacked_fullres_v0_1.sh >/dev/null
           grep -F 'bash -n "$tmp"' ci/exp073ga_home_filebacked_fullres_v0_1.sh >/dev/null
           ! grep -Eqi 'np\.(allclose|isclose)|rounding_rescue|smoothing_rescue|averaging_rescue' ci/exp073ga_*.py ci/exp073gb_verify_ga_candidate_v0_1.py experiments/073g[ab]_*.md
-          echo PASS_EXP073GA_HOSTED_LAUNCH_AUDIT_V0_2
+          echo PASS_EXP073GA_HOSTED_LAUNCH_AUDIT_V0_3
           echo classification=SUPPORT_PLUS_0_PLUS_0
 
   home-science:
