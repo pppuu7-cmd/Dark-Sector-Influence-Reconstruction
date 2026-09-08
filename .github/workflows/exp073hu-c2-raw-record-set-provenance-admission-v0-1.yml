@@ -1,0 +1,148 @@
+name: Exp073HU C2 raw-record-set provenance admission v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/contracts/EXP073HU_ADMISSION_BINDING_V0_1.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  hosted-provenance-admission:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify frozen HU admission binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          M=docs/dsir4/contracts/EXP073HU_ADMISSION_BINDING_V0_1.txt
+          get(){ awk -F= -v k="$1" '$1==k{print $2}' "$M"; }
+          test "$(git hash-object docs/dsir4/prereg/EXP073HU_C2_RAW_RECORD_SET_PROVENANCE_ADMISSION_V0_1.md)" = "$(get PREREG_BLOB)"
+          test "$(git hash-object .github/workflows/exp073hu-c2-raw-record-set-provenance-admission-v0-1.yml)" = "$(get WORKFLOW_BLOB)"
+          test "$(get HT_RUN_ID)" = '34235038323'
+          test "$(get HT_JOB_ID)" = '102090438079'
+          test "$(get HT_HEAD)" = 'bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba'
+          test "$(get HT_ARTIFACT_ID)" = '10061693504'
+          test "$(get HT_ARTIFACT_ZIP_SHA256)" = '9f544297b90d1fed51c78d98be4737b97e2066b2a06b96bb314ccc9b9c3242d0'
+          test "$(get HT_AGGREGATE_SHA256)" = '905d01d986e38baca0924937e7bd54db901a53853ffd138427e892fe25039fb4'
+
+      - name: Download and verify frozen HT artifact identity
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/hu
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            'https://api.github.com/repos/${{ github.repository }}/actions/artifacts/10061693504' > /tmp/hu/meta.json
+          python - <<'PY'
+          import json
+          m=json.load(open('/tmp/hu/meta.json'))
+          assert m['id']==10061693504
+          assert m['name']=='exp073ht-c2-reference-raw-runtime-v0-3'
+          assert m['digest']=='sha256:9f544297b90d1fed51c78d98be4737b97e2066b2a06b96bb314ccc9b9c3242d0'
+          w=m['workflow_run']
+          assert w['id']==34235038323
+          assert w['head_sha']=='bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba'
+          PY
+          curl -fsSL -L -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            'https://api.github.com/repos/${{ github.repository }}/actions/artifacts/10061693504/zip' -o /tmp/hu/ht.zip
+          test "$(sha256sum /tmp/hu/ht.zip | awk '{print $1}')" = '9f544297b90d1fed51c78d98be4737b97e2066b2a06b96bb314ccc9b9c3242d0'
+          mkdir /tmp/hu/art
+          unzip -q /tmp/hu/ht.zip -d /tmp/hu/art
+
+      - name: Verify receipt, ordering, opaque packet identity, and frozen bindings
+        shell: bash
+        run: |
+          set -euo pipefail
+          A=/tmp/hu/art
+          python - <<'PY'
+          import json, hashlib, pathlib
+          A=pathlib.Path('/tmp/hu/art')
+          receipt={}
+          for line in (A/'RECEIPT.txt').read_text().splitlines():
+              if line:
+                  k,v=line.split('=',1); receipt[k]=v
+          expected={
+              'hypothesis_id':'C2_IDE_LOCAL_TANGENT_CONE',
+              'model_point':'reference_alpha0_beta0',
+              'solver_repo':'kaeonikc/class_iv',
+              'solver_commit':'ac627d54e9ce196a08878d1ba33999819925d19c',
+              'producer_head':'bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba',
+              'producer_run_id':'34235038323',
+              'producer_job_id':'102090438079',
+              'producer_run_attempt':'1',
+              'post_hs_perturbations_sha256':'483b481b48e50a6afb396b15b85258ac6c5a7a39b38fb1c6192e7e4a95c139ae',
+              'post_hs_ndf15_sha256':'3f12121ce2de319453e1ff5fadae9391fd96747731c0df3fa05fae1cd2608aa9',
+              'baseline_sha256':'0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c',
+              'precision_sha256':'463a3960d6a955c1e2a561e988562a1fc5486b0b79f120eb634ccca6f86002f9',
+              'packet_count':'28','packet_bytes':'64','aggregate_bytes':'1792',
+              'coordinate_order':'z-major/k-minor',
+              'aggregate_sha256':'905d01d986e38baca0924937e7bd54db901a53853ffd138427e892fe25039fb4',
+              'raw_record_set_admitted':'false','decoded':'false','mapped':'false',
+              'prediction_ready':'false','scientific_model_authority_created':'false'
+          }
+          assert receipt==expected, (receipt, expected)
+          req=[]
+          for line in (A/'requests.tsv').read_text().splitlines():
+              rid,z,k=line.split('\t'); req.append((rid,z,k))
+          plan=[json.loads(x) for x in (A/'plan.jsonl').read_text().splitlines() if x]
+          assert len(req)==28 and len(plan)==28
+          assert len({r[0] for r in req})==28
+          assert len({(r[1],r[2]) for r in req})==28
+          assert [p['request_id'] for p in plan]==[r[0] for r in req]
+          assert [(p['z_literal'],p['k_mpc_literal']) for p in plan]==[(r[1],r[2]) for r in req]
+          expected_ids=[f'z{zi:02d}k{ki:02d}' for zi in range(7) for ki in range(4)]
+          assert [r[0] for r in req]==expected_ids
+          packet_files=sorted((A/'packets').glob('*.bin'))
+          assert len(packet_files)==28
+          assert {p.stem for p in packet_files}==set(expected_ids)
+          for p in packet_files: assert p.stat().st_size==64
+          concat=b''.join((A/'packets'/f'{rid}.bin').read_bytes() for rid,_,_ in req)
+          agg=(A/'dsir_c2_reference_raw_v0_3.bin').read_bytes()
+          assert len(agg)==1792 and concat==agg
+          h=hashlib.sha256(agg).hexdigest()
+          assert h=='905d01d986e38baca0924937e7bd54db901a53853ffd138427e892fe25039fb4'
+          assert (A/'aggregate.sha256').read_text().strip()==h
+          eps=list((A/'raw').glob('*.endpoint'))
+          assert len(eps)==28 and {p.stem for p in eps}==set(expected_ids)
+          # Literal request binding only; no parsing/interpretation of endpoint numeric payload values.
+          for rid,z,k in req:
+              text=(A/'raw'/f'{rid}.endpoint').read_text()
+              assert text.count('\n')<=1
+              assert text.startswith(f'DSIR_C2_EXACT_ENDPOINT z={z} ')
+          PY
+          git fetch --quiet --depth=1 origin bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba
+          git show bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba:docs/dsir4/contracts/EXP073HN_IMPLEMENTATION_BINDING_V0_1.txt > /tmp/hu/HN_EXPECTED.txt
+          git show bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba:docs/dsir4/contracts/EXP073HQ_IMPLEMENTATION_BINDING_V0_1.txt > /tmp/hu/HQ_EXPECTED.txt
+          git show bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba:docs/dsir4/contracts/EXP073HS_IMPLEMENTATION_BINDING_V0_1.txt > /tmp/hu/HS_EXPECTED.txt
+          git show bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba:docs/dsir4/contracts/EXP073HT_RUNTIME_BINDING_V0_3.txt > /tmp/hu/HT_EXPECTED.txt
+          cmp -s "$A/HN_BINDING.txt" /tmp/hu/HN_EXPECTED.txt
+          cmp -s "$A/HQ_BINDING.txt" /tmp/hu/HQ_EXPECTED.txt
+          cmp -s "$A/HS_BINDING.txt" /tmp/hu/HS_EXPECTED.txt
+          cmp -s "$A/HT_BINDING.txt" /tmp/hu/HT_EXPECTED.txt
+
+      - name: Emit raw-record-set admission boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'classification=RAW_RECORD_SET_ADMITTED_PLUS_0_PLUS_0'
+          echo 'upstream_ht_artifact_id=10061693504'
+          echo 'upstream_ht_artifact_digest=sha256:9f544297b90d1fed51c78d98be4737b97e2066b2a06b96bb314ccc9b9c3242d0'
+          echo 'aggregate_bytes=1792'
+          echo 'aggregate_sha256=905d01d986e38baca0924937e7bd54db901a53853ffd138427e892fe25039fb4'
+          echo 'raw_record_set_admitted=true'
+          echo 'decoded=false'
+          echo 'mapped=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073HU_C2_RAW_RECORD_SET_PROVENANCE_ADMISSION_V0_1'
