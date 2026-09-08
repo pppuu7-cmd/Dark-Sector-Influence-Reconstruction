@@ -1,0 +1,116 @@
+name: Exp073IE C2 Six Component Residual Mapping Source Audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073ie-c2-six-component-residual-mapping-source-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen repository identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073IE_C2_SIX_COMPONENT_RESIDUAL_MAPPING_SOURCE_AUDIT_V0_1.md)" = '35d2979d271934758aaa166a9e6280874c695c5e'
+          test "$(git hash-object configs/dsir4/c2/ide0_reference_v0_1.ini)" = 'cd2beb01ce6575f97f2e3203226ed6d4f048dcaa'
+          test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = '0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c'
+          test "$(git hash-object docs/dsir4/DSIR4_COMMON_RESIDUAL_CONVENTION_V0_1.md)" = '9ab68fe254891a076e24757de724e32e2190bfb6'
+          test "$(git hash-object docs/dsir4/DSIR4_MODEL_MAPPING_ARTIFACT_CONTRACT_V0_1.md)" = '03fd11d8536b9743eb82f92f9a0d5386444079ed'
+          grep -Eq '^gauge[[:space:]]*=[[:space:]]*synchronous$' configs/dsir4/c2/ide0_reference_v0_1.ini
+      - name: Clone exact pinned solver
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C /tmp/class_iv rev-parse HEAD)" = 'ac627d54e9ce196a08878d1ba33999819925d19c'
+          sha256sum /tmp/class_iv/source/background.c /tmp/class_iv/source/perturbations.c | tee /tmp/source_sha256.txt
+      - name: Audit six residual components and interaction convention
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import pathlib,re
+          bg=pathlib.Path('/tmp/class_iv/source/background.c').read_text()
+          pt=pathlib.Path('/tmp/class_iv/source/perturbations.c').read_text()
+
+          # Background rho_X and p_X source evidence.
+          assert 'pvecback[pba->index_bg_rho_idm_iv]' in bg
+          assert 'pvecback[pba->index_bg_rho_iv]' in bg
+          assert 'rho_tot += pvecback[pba->index_bg_rho_idm_iv];' in bg
+          assert 'rho_tot += pvecback[pba->index_bg_rho_iv];' in bg
+          assert 'p_tot += 0.;' in bg
+          assert 'p_tot -= pvecback[pba->index_bg_rho_iv];' in bg
+
+          # Interaction convention: exact source-equivalent alpha H rho_idm + beta H rho_iv.
+          assert re.search(r'Q_idm_iv\s*=\s*pba->alpha_idm_iv\s*\*\s*[^;]*index_bg_H[^;]*index_bg_rho_idm_iv[^;]*\+\s*pba->beta_idm_iv\s*\*\s*[^;]*index_bg_H[^;]*index_bg_rho_iv',bg,re.S)
+
+          # Source-state definition: idm density always, idm velocity only outside synchronous.
+          assert 'class_define_index(ppv->index_pt_delta_idm_iv,pba->has_idm_iv,index_pt,1);' in pt
+          assert 'class_define_index(ppv->index_pt_theta_idm_iv,pba->has_idm_iv && (ppt->gauge != synchronous),index_pt,1);' in pt
+          assert 'idm_iv velocity vanishes in the synchronous gauge' in pt
+
+          # No independent vacuum perturbation state/source is defined in the pinned implementation.
+          for forbidden in ('index_pt_delta_iv','index_pt_theta_iv','index_tp_delta_iv','index_tp_theta_iv'):
+              assert forbidden not in pt
+
+          # Exact idm_iv contribution to total perturbed stress-energy.
+          marker='/* idm_iv contribution */'
+          start=pt.index(marker)
+          end=pt.index('/* dcdm contribution */',start)
+          block=pt[start:end]
+          assert 'ppw->delta_rho += ppw->pvecback[pba->index_bg_rho_idm_iv]*y[ppw->pv->index_pt_delta_idm_iv]' in block
+          assert 'if (ppt->gauge != synchronous)' in block
+          assert 'ppw->rho_plus_p_theta' in block and 'index_pt_theta_idm_iv' in block
+          # Structural zeros in this solver-bound representation: no pressure/shear term in IDE block.
+          assert 'ppw->delta_p' not in block
+          assert 'ppw->rho_plus_p_shear' not in block
+
+          print('EXP073IE_COMPONENT background_density_like=SOURCE_DERIVED rho_X=rho_idm_iv+rho_iv')
+          print('EXP073IE_COMPONENT background_pressure_like=SOURCE_DERIVED p_X=-rho_iv')
+          print('EXP073IE_COMPONENT scalar_density_perturbation=SOURCE_DERIVED delta_rho_X=rho_idm_iv*delta_idm_iv gauge=synchronous')
+          print('EXP073IE_COMPONENT scalar_momentum_velocity=STRUCTURAL_ZERO q_X=0 gauge=synchronous')
+          print('EXP073IE_COMPONENT scalar_isotropic_pressure_perturbation=STRUCTURAL_ZERO delta_p_X=0 gauge=synchronous')
+          print('EXP073IE_COMPONENT scalar_anisotropic_stress=STRUCTURAL_ZERO pi_X=0 gauge=synchronous')
+          print('EXP073IE_INTERACTION Q=alpha*H*rho_idm_iv+beta*H*rho_iv total_residual=idm_iv+iv')
+          PY
+      - name: Audit frozen C2 request domain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/dsir4/exp073hn_c2_reference_runtime_driver_v0_1.py --plan-only > /tmp/plan.jsonl
+          python - <<'PY'
+          import json
+          rows=[json.loads(x) for x in open('/tmp/plan.jsonl')]
+          assert len(rows)==28
+          zs=[]; ks=[]
+          for r in rows:
+              z=float(r['z_literal']); k=float(r['k_mpc_literal'])
+              assert 0.295 <= z <= 2.33
+              assert 0.0 < k <= 0.06664762008318016
+              zs.append(z); ks.append(k)
+          assert min(zs)==0.295 and max(zs)==2.33
+          assert max(ks)<=0.06664762008318016
+          print('EXP073IE_DOMAIN request_count=28 z_min=0.295 z_max=2.33 k_positive=true k_max_within_frozen=true')
+          PY
+      - name: Emit support-only gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'PASS_EXP073IE_C2_SIX_COMPONENT_RESIDUAL_MAPPING_SOURCE_AUDIT_V0_1'
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'six_component_source_mapping_ready=true'
+          echo 'mapping_artifact_created=false'
+          echo 'mapping_ready=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
