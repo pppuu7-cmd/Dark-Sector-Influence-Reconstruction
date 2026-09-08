@@ -24,6 +24,16 @@ jobs:
       ARTIFACT_DIGEST: 'sha256:ebd1800b9f2b179305d8c1a83208c146915c492f0c3ae614f6ded6ab3be35ad6'
     steps:
       - uses: actions/checkout@v4
+      - name: Install exact comparator runtime dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check 'numpy==2.3.3'
+          python3 - <<'PY'
+          import numpy
+          assert numpy.__version__=='2.3.3'
+          print('PASS_EXP073HD_NUMPY_RUNTIME_V0_1')
+          PY
       - name: Verify frozen evidence and admit exact S2-S3 candidate
         shell: bash
         env:
