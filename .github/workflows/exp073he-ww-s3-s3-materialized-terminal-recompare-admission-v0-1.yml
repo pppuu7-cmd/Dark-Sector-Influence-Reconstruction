@@ -1,0 +1,90 @@
+name: Exp073HE WW_S3_S3 materialized terminal recompare admission v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073he-ww-s3-s3-materialized-terminal-recompare-admission-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-exp073he-ww-s3-s3-materialized-terminal-recompare-admission-v0-1
+  cancel-in-progress: false
+
+env:
+  PREREG_BLOB: 'bf756f129c1630064db9e2f4c4fc06315245a51a'
+  COMPARE_BLOB: '6e7b45578c647a70233fec7db7d0a1d3c88d1774'
+  ADMIT_BLOB: 'cc815737e658a850452d9b0f9488e703f8de84ea'
+  SOURCE_RUN: '34197207582'
+  SOURCE_JOB: '101967543808'
+  ARTIFACT_ID: '10051382493'
+  ARTIFACT_DIGEST: 'sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109'
+
+jobs:
+  hosted-materialized-recompare-admission:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen bindings and materialized source evidence
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073he_ww_s3_s3_materialized_terminal_recompare_admission_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073ga_compare_terminal_receipts_v0_1.py)" = "$COMPARE_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073gb_verify_ga_candidate_v0_1.py)" = "$ADMIT_BLOB"
+          python3 -m pip install --disable-pip-version-check --no-input numpy==2.3.3
+          python3 - <<'PY'
+          import numpy as np
+          assert np.__version__ == '2.3.3'
+          PY
+          curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 2 \
+            -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/jobs/$SOURCE_JOB/logs" -o source.log
+          grep -aFx 'PASS_EXP073GA_LIVE_EXCLUSIVITY' source.log >/dev/null
+          grep -aFx 'PASS_EXP073GA_REPLICA_A_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' source.log >/dev/null
+          grep -aFx 'PASS_EXP073GA_REPLICA_B_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' source.log >/dev/null
+          curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 2 \
+            -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" -o candidate.zip
+          test "sha256:$(sha256sum candidate.zip | awk '{print $1}')" = "$ARTIFACT_DIGEST"
+          mkdir candidate
+          unzip -q candidate.zip -d candidate
+          test -f candidate/checkpoints/A/replica_receipt_complete.json
+          test -f candidate/checkpoints/B/replica_receipt_complete.json
+          echo PASS_EXP073HE_MATERIALIZED_INPUT_BINDING_V0_1
+      - name: Re-run repaired terminal comparator only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/exp073ga_compare_terminal_receipts_v0_1.py --root candidate --out candidate/terminal_receipt.json | tee compare.log
+          grep -Fx 'PASS_EXP073GA_WW_S3_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1' compare.log >/dev/null
+          python3 - <<'PY'
+          import json
+          t=json.load(open('candidate/terminal_receipt.json'))
+          assert t['classification']=='SCIENTIFIC_CANDIDATE_PASS_PENDING_PROVENANCE_ADMISSION'
+          assert t['token']=='PASS_EXP073GA_WW_S3_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1'
+          assert t['checkpoint_namespaces']==['checkpoints/exp073ga-ww-s3-s3-a-v0-1','checkpoints/exp073ga-ww-s3-s3-b-v0-1']
+          assert t['source_pair']=='S3->S3' and t['ordered_source_indices']==[3,3]
+          assert t['same_field_object_handoff'] is True
+          assert t['selected_semantics']=='EE<-EE' and t['selected_shape']==[39,12288] and t['selected_dtype']=='<f8'
+          assert t['sha256_equal'] is True and t['numpy_array_equal'] is True and t['all_finite'] is True
+          assert t['no_tolerance_rescue'] is True and t['full_chain_verified_before_prune'] is True
+          assert t['ww_s3_s3_authority_created'] is False
+          PY
+          cat compare.log >> source.log
+          echo PASS_EXP073HE_REPAIRED_TERMINAL_RECOMPARE_V0_1
+      - name: Execute frozen GB provenance admission
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/exp073gb_verify_ga_candidate_v0_1.py --root candidate --log source.log | tee admission.log
+          grep -Fx 'PASS_EXP073GB_WW_S3_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1' admission.log >/dev/null
+          grep -Fx 'classification=SCIENTIFIC_AUTHORITY_ADMITTED' admission.log >/dev/null
+          grep -Fx 'ww_s3_s3_authority_created=true' admission.log >/dev/null
+          echo PASS_EXP073HE_WW_S3_S3_MATERIALIZED_TERMINAL_RECOMPARE_ADMISSION_V0_1
