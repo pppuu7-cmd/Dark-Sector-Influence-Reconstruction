@@ -2,29 +2,31 @@
 
 Updated: 2026-09-08. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-08_GA_LEDGER_SYNC_V27.md` (creation commit `d4ec802705fc4b3d6f2e0a424b244c1b279b2533`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-08_GA_PRUNER_REPAIR_RESUME_V28.md` (creation commit `9e708c7aab8b2b00ee3e3fcf637728e289ac0159`). Earlier recovery notes remain immutable history.
 
 ## Preserved scientific authority
 
-Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authority includes `S0_S0`, `S0_S1`, `S0_S2`, `S0_S3`, `S1_S1`, `S1_S2`, `S1_S3`, `S2_S2`, and **`S2_S3`**. `WW_S3_S3` remains **NOT_YET_ADMITTED** while the final frozen heavy gate is active.
+Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authority includes `S0_S0`, `S0_S1`, `S0_S2`, `S0_S3`, `S1_S1`, `S1_S2`, `S1_S3`, `S2_S2`, and **`S2_S3`**. `WW_S3_S3` remains **NOT_YET_ADMITTED**.
 
-## Exp073FY S2->S3 authority
+Preserved Exp073FY/HE/HF provenance remains authoritative for `WW_S2_S3`; HF run `34189183845`, job `101943539978`, emitted the exact FZ admission token, `classification=SCIENTIFIC_AUTHORITY_ADMITTED`, and `ww_s2_s3_authority_created=true`.
 
-Preserved source evidence remains Exp073FY run `34160898921`, home job `101862390771`, artifact `10040351900`, digest `sha256:ebd1800b9f2b179305d8c1a83208c146915c492f0c3ae614f6ded6ab3be35ad6`, frozen source head `de83e20a68f79ccf25b89b0d33eb4206e294c757`, contract fingerprint `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`.
+## Consumed Exp073GA failure
 
-HE established exact FY candidate equality; HF run `34189183845`, job `101943539978`, emitted `PASS_EXP073FZ_WW_S2_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1`, `classification=SCIENTIFIC_AUTHORITY_ADMITTED`, and `ww_s2_s3_authority_created=true`. Therefore `WW_S2_S3 = SCIENTIFIC_AUTHORITY_ADMITTED`. HD/HE infrastructure/provenance failures remain historical `+0/+0`, not scientific FAIL.
+Exp073GA run `34189540992`, head `10e6fb67af7d6485fca3d1ecf2362e4622883417`: hosted job `101944582891 SUCCESS`, home job `101944608861 FAILURE`, GB skipped. Evidence artifact `10043979600` has GitHub digest `sha256:b859e658e1046c4d9905d589003a1d26aaf3e2601c51d9db361b48176226906a`; independently downloaded ZIP SHA256 matched.
 
-## Active final heavy successor
+First causal failure occurred only after Replica A completed its expensive six-stage chain and receipt: `RuntimeError: fail-closed missing GA pruner token 'WW_S1_S1'`. The pinned FM base contains no such uppercase literal. Classification: **implementation/infrastructure FAIL `+0/+0`**, not scientific FAIL.
 
-Current single active heavy workflow: Exp073GA `WW_S3_S3`, run **`34189540992`**, head **`10e6fb67af7d6485fca3d1ecf2362e4622883417`**. Hosted job `101944582891` is `SUCCESS`; self-hosted job `101944608861` is `IN_PROGRESS` on the frozen A/B gate. Live global reconciliation found exactly one in-progress workflow and zero queued workflows. Do not launch a duplicate heavy run.
+Preserved A evidence is valid and must not be recomputed: namespace `checkpoints/exp073ga-ww-s3-s3-a-v0-1`; source head `de83e20a68f79ccf25b89b0d33eb4206e294c757`; contract `b7845df5ce4bc2bd730461476b7ff0831512003ceb5b3558436005c9876bd251`; same-field `S3->S3/[3,3]`; exact `19,327,352,832`-byte file-backed proof; canonical `<f8 [39,12288] EE<-EE` SHA256 `e4aad74b8b733d280f4abfd6654778f0e037ab6060b12a908d30f8ec34c36c07`, independently confirmed all finite. Replica B had not started.
 
-Checkpoint root: `$HOME/.cache/dsir/exp073ga-ww-s3-s3-filebacked-ab-v0-1`. Candidate token: `PASS_EXP073GA_WW_S3_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`. Only frozen GB output `PASS_EXP073GB_WW_S3_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1`, `classification=SCIENTIFIC_AUTHORITY_ADMITTED`, and `ww_s3_s3_authority_created=true` may create final authority.
+## Prospective repair and active recovery
 
-V27 repaired stale process-ledger governance only: `docs/CURRENT_PROCESS.md` is synchronized to live V26/V27 authority in commit `8e168bd9bb1f2a3177d493197e610aaaaaae1b52`. No scientific code, arithmetic, source ordering, domain, thresholds, tolerances or checkpoint semantics changed. No partial GA numerical output was inspected.
+Minimal pruner repair commit `f52fa856eb029c64f744926eecf55f506fcf1da5`, blob `fc3e4d8444630e4b5a2dde0a052e1069b7887c01`, removes only the false absent-token requirement. Workflow rebinding/regression commit `f6d8b429ac64643e7cb7766e0bfa2ab51abe751d` pins that blob and adds a hosted static regression proving the real pinned FM token set and absence of `WW_S1_S1`. Frozen science/arithmetic/domain/order/checkpoints/tolerances are unchanged.
 
-Next allowed transition: wait for terminal GA evidence; consume raw log/artifact/provenance/checkpoint identity and exact A/B result, then permit only frozen GB admission if the candidate passes.
+Current single heavy workflow: Exp073GA recovery run **`34197207582`**, head **`f6d8b429ac64643e7cb7766e0bfa2ab51abe751d`**. Hosted audit job **`101967492875 SUCCESS`** with `PASS_EXP073GA_PRUNER_TRANSFORM_SOURCE_STATIC_REGRESSION_V0_1`, `PASS_EXP073GA_HOSTED_LAUNCH_AUDIT_V0_3`, classification `SUPPORT_PLUS_0_PLUS_0`. Home job **`101967543808 IN_PROGRESS`** on the frozen A/B gate. Do not launch competing home-heavy work.
 
-Research log: `docs/research_log/RESEARCH_LOG_2026-09-08_GA_LEDGER_SYNC_V27.md` (creation commit `e1d19544113b7464398a12ef6b9416f4d24128d5`).
+Checkpoint root: `$HOME/.cache/dsir/exp073ga-ww-s3-s3-filebacked-ab-v0-1`; last verified durable checkpoint is Replica A `replica_receipt_complete` from run `34189540992`, to be restored/verified rather than recomputed. Candidate token remains `PASS_EXP073GA_WW_S3_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`. Only frozen GB output `PASS_EXP073GB_WW_S3_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1`, `classification=SCIENTIFIC_AUTHORITY_ADMITTED`, and `ww_s3_s3_authority_created=true` may create final WW authority.
+
+Research log: `docs/research_log/RESEARCH_LOG_2026-09-08_GA_PRUNER_REPAIR_RESUME_V28.md` (creation commit `b96e3aee00bb60a4228f22a9a09b30e284bc89dc`). Process ledger update commit `f6317eacb717540c95102157ccc1954d2e323246`.
 
 ## Global frozen boundaries
 
