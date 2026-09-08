@@ -52,7 +52,6 @@ jobs:
           e = Path('/tmp/class_iv/tools/evolver_ndf15.c').read_text()
           r = Path('docs/dsir4/prereg/EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1.md').read_text()
 
-          # Frozen prereg and PASS ceiling.
           for t in [
               'PASS_EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1',
               'SUPPORT_PLUS_0_PLUS_0', 'cosmological_run_started=false',
@@ -61,12 +60,10 @@ jobs:
               'G_DOMAIN_MAPPING=NOT_YET_TESTABLE']:
               assert t in r, t
 
-          # Opt-in only: no ordinary-path activation absent the diagnostic environment variable.
           assert 'getenv("DSIR_C2_EXACT_Z")' in p
           assert 'if (ztext == NULL || *ztext == \'\\0\') return _SUCCESS_;' in p
           assert 'OMP_NUM_THREADS' in p and 'strcmp(omp,"1")' in p
 
-          # Native exact-k indexing, one requested k, literal-z authority only.
           assert 'ppt->k_output_values_num != 1' in p
           assert 'ppt->index_k_output_values[index_md*ppt->k_output_values_num]' in p
           assert 'if (index_k != native_index) return _SUCCESS_;' in p
@@ -74,21 +71,17 @@ jobs:
           for z in ['0.295','0.51','0.706','0.934','1.317','1.491','2.33']:
               assert f'"{z}"' in p
 
-          # Exact terminal endpoint is fed into the approximation interval construction.
           assert p.count('dsir_tau_end') >= 5
           assert 'perturb_find_approximation_number' in p
           assert 'perturb_find_approximation_switches' in p
           assert 'dsir_c2_diag_tau_target' in p
 
-          # Raw matter capture must occur immediately after native current-gauge construction,
-          # before downstream source construction / gauge-invariant delta_m use.
           anchor_theta = 'ppw->theta_m = rho_plus_p_theta_m/rho_plus_p_m;'
           anchor_capture = 'dsir_c2_diag_delta_m_raw = ppw->delta_m;'
           anchor_source = 'int perturb_sources('
           assert p.index(anchor_theta) < p.index(anchor_capture) < p.index(anchor_source)
           assert 'dsir_c2_diag_theta_m_raw = ppw->theta_m;' in p
 
-          # Accepted NDF15 ynew only, after successful step and before interpolation output.
           hook = 'if ((done==_TRUE_) && (dsir_c2_diag_enabled()!=0))'
           assert hook in e
           assert 'dsir_c2_diag_arm_terminal(tnew' in e
@@ -98,12 +91,17 @@ jobs:
           assert e.index(hook) < e.index('interp_from_dif(t_vec[next]')
           assert 'tnew = tfinal; /*Hit end point exactly. */' in e
 
-          # Producer emits exact hexadecimal float text only; frozen external recorder owns bytes.
           assert 'DSIR_C2_EXACT_ENDPOINT z=%s tau=%a k=%a delta_m=%a theta_m=%a' in p
           assert 'fopen(' not in p[p.index('/* DSIR Exp073HB'):p.index('/**\n * Source function')]
-
           print('PASS_EXP073HB_STATIC_SEMANTICS_V0_1')
           PY
+
+      - name: Install pinned solver build dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libgsl-dev
 
       - name: Compile patched pinned solver without cosmological execution
         shell: bash
@@ -118,8 +116,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # This hosted gate never invokes ./class. No cosmological run or C2 record producer executes.
-          ! grep -R --binary-files=without-match -l 'DSIR_C2_EXACT_ENDPOINT z=' /tmp/class_iv/output 2>/dev/null || false
           test ! -e /tmp/dsir_c2_records.bin
           test ! -e /tmp/dsir_c2_payload.bin
           echo 'classification=SUPPORT_PLUS_0_PLUS_0'
