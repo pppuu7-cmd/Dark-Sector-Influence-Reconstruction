@@ -1,0 +1,76 @@
+name: Exp073II C2 WW Angular Authority Inventory Audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073ii-c2-ww-angular-authority-inventory-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  inventory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify frozen inputs and IH raw authority
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073II_C2_WW_ANGULAR_AUTHORITY_INVENTORY_AUDIT_V0_1.md)" = '53b447675ec3af6c9327f1504a243c9681532c6b'
+          test "$(git hash-object docs/dsir4/DSIR4_ANGULAR_AUTHORITY_BINDING_CONTRACT_V0_1.md)" = 'af2cdbfa03e0a68c24df8d1009c723d411d2d0a2'
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/jobs/102147505217/logs" -o /tmp/ih.log
+          grep -Fq 'PASS_EXP073IH_C2_G_DOMAIN_MAPPING_V0_1' /tmp/ih.log
+          grep -Fq 'G_DOMAIN_MAPPING=PASS' /tmp/ih.log
+          grep -Fq 'overall_status=NOT_YET_TESTABLE' /tmp/ih.log
+      - name: Build exact repository authority inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          : > out/matches.txt
+          : > out/history.txt
+          printf 'pair\trepository_evidence\tmatch_line_count\thistory_line_count\n' > out/inventory.tsv
+          pairs=(S0_S0 S0_S1 S0_S2 S0_S3 S1_S1 S1_S2 S1_S3 S2_S2 S2_S3 S3_S3)
+          for pair in "${pairs[@]}"; do
+            hy=${pair/_/-}; low=$(printf '%s' "$pair" | tr '[:upper:]' '[:lower:]'); lowhy=${low/_/-}
+            pat="${pair}|${hy}|${low}|${lowhy}"
+            {
+              echo "===== ${pair} ====="
+              grep -RInE --exclude-dir=.git "$pat" .github docs results scripts configs 2>/dev/null || true
+            } >> out/matches.txt
+            {
+              echo "===== ${pair} ====="
+              git log --all --date=iso-strict --pretty='commit %H %ad %s' --name-only --regexp-ignore-case --grep="$pair\|$hy\|$low\|$lowhy" || true
+            } >> out/history.txt
+            mc=$(grep -RIE --exclude-dir=.git "$pat" .github docs results scripts configs 2>/dev/null | wc -l || true)
+            hc=$(git log --all --pretty='%H %s' --regexp-ignore-case --grep="$pair\|$hy\|$low\|$lowhy" | wc -l || true)
+            if [ "$mc" -gt 0 ] || [ "$hc" -gt 0 ]; then state=EVIDENCE_PRESENT; else state=INVENTORY_EVIDENCE_NOT_FOUND; fi
+            printf '%s\t%s\t%s\t%s\n' "$pair" "$state" "$mc" "$hc" >> out/inventory.tsv
+          done
+          cat > out/SUMMARY.txt <<'EOF'
+          PASS_EXP073II_C2_WW_ANGULAR_AUTHORITY_INVENTORY_AUDIT_V0_1
+          classification=SUPPORT_PLUS_0_PLUS_0
+          G_DOMAIN_MAPPING=PASS
+          G_ANGULAR_AUTHORITY=NOT_YET_TESTABLE
+          angular_authority_receipt_created=false
+          scientific_model_authority_created=false
+          authority_admission_inferred=false
+          EOF
+          cat out/inventory.tsv
+          cat out/SUMMARY.txt
+      - name: Upload immutable inventory evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ii-ww-angular-authority-inventory-v0-1
+          path: out/
+          if-no-files-found: error
+          retention-days: 90
