@@ -29,11 +29,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          python3 -m pip install --quiet numpy
           test "$(git rev-parse HEAD:ci/exp073ga_compare_terminal_receipts_v0_1.py)" = "$COMPARATOR_BLOB"
           test "$(git rev-parse HEAD:ci/exp073gb_verify_ga_candidate_v0_1.py)" = "$GB_VERIFY_BLOB"
           gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN}" > source-run.json
           python3 - <<'PY'
-          import json,os
+          import json
           r=json.load(open('source-run.json'))
           assert r['status']=='completed' and r['conclusion']=='failure'
           assert r['head_sha']=='f6d8b429ac64643e7cb7766e0bfa2ab51abe751d'
