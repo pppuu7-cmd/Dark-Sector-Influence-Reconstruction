@@ -3,38 +3,41 @@
 Updated: 2026-09-08. Scope: **DSIR only**; RTK/RQIR excluded.
 
 ## Preserved authority
-All prior DSIR authority remains preserved. Scientifically admitted `WW_S3_S3` remains `34218457380 / 102035691774`, GA artifact `10051382493`, digest `sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109`. C2 has no complete model authority/overall PASS.
+All prior DSIR authority remains preserved. Scientifically admitted `WW_S3_S3` remains `34218457380 / 102035691774`, GA artifact `10051382493`, digest `sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109`. C2 still has no complete model authority or overall PASS.
 
-Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-08_C2_IF_IG_PASS_IH_DOMAIN_GATE_FRONT_V49.md`, creation commit `47ee3a9f79cf2a819d16c17fe8f28edb13a3b336`.
+Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-08_C2_IH_DOMAIN_PASS_II_ANGULAR_INVENTORY_FRONT_V50.md`, creation commit `5f5874ac5b1551444c7ee2cf85988f9efd7201fe`.
 
 ## Newly closed C2 processes
 - IE `34250165394 / 102142253548`: six-component pinned-source audit raw PASS, support-only.
-- IF `34250714613 / 102144147469`: mapping artifact admission raw PASS; `mapping_ready=true`, mapping blob `5f2b690e4f56fc0fd3109ff2bcdb53dd0eb806cc`, mapping SHA256 `7f660b6806494b00d17caed50b7cc66d01d9d02bc4cb1d66f333c1c12e1386df`.
-- IG `34251593341 / 102147045097`: local tangent prediction artifact admission raw PASS; 28-record payload SHA256 `2836a3665e6bab75587957228fbd3b9e152ef7d6e667966c308d81bf666c7c56`; `prediction_ready=true`, scientific authority still false.
+- IF `34250714613 / 102144147469`: mapping admission raw PASS; `mapping_ready=true`.
+- IG `34251593341 / 102147045097`: terminal SUCCESS, prediction admission raw PASS; 28-record payload SHA256 `2836a3665e6bab75587957228fbd3b9e152ef7d6e667966c308d81bf666c7c56`; `prediction_ready=true`.
+- IH `34251721583 / 102147505217`: terminal SUCCESS and raw scientific PASS `PASS_EXP073IH_C2_G_DOMAIN_MAPPING_V0_1`; `G_DOMAIN_MAPPING=PASS` only; `overall_status=NOT_YET_TESTABLE`.
 
-## Current process — Exp073IH C2 G_DOMAIN_MAPPING Scientific Gate v0.1
-- prereg: `docs/dsir4/prereg/EXP073IH_C2_G_DOMAIN_MAPPING_SCIENTIFIC_GATE_V0_1.md`;
-- prereg creation commit: `03208ce2b4cffba352dc927471594ea65873cb14`;
-- prereg blob: `63ea9e9c11b1f77353af613eb8236b5c5961b1fd`;
-- workflow: `.github/workflows/exp073ih-c2-g-domain-mapping-scientific-gate-v0-1.yml`;
-- workflow/head commit: `08a3750cbbd59ad41102c59896231769b65eff93`;
-- workflow/run ID: `34251721583`;
-- job ID: `102147505217`;
-- branch/head: `main / 08a3750cbbd59ad41102c59896231769b65eff93`;
-- checkpoint namespace: N/A; GitHub-hosted structural/domain gate;
-- start time: `2026-09-08T16:32:54Z`;
-- expected gate/token: `PASS_EXP073IH_C2_G_DOMAIN_MAPPING_V0_1`;
+## Current process — Exp073II C2 WW Angular Authority Inventory Audit v0.1
+- governing angular contract: `docs/dsir4/DSIR4_ANGULAR_AUTHORITY_BINDING_CONTRACT_V0_1.md`, blob `af2cdbfa03e0a68c24df8d1009c723d411d2d0a2`;
+- required WW pair set: `S0_S0,S0_S1,S0_S2,S0_S3,S1_S1,S1_S2,S1_S3,S2_S2,S2_S3,S3_S3`;
+- prereg: `docs/dsir4/prereg/EXP073II_C2_WW_ANGULAR_AUTHORITY_INVENTORY_AUDIT_V0_1.md`;
+- prereg creation commit: `7d25f5a402ad7c0c10586b30dd380504c76e7d50`;
+- prereg blob: `53b447675ec3af6c9327f1504a243c9681532c6b`;
+- workflow: `.github/workflows/exp073ii-c2-ww-angular-authority-inventory-audit-v0-1.yml`;
+- workflow/head commit: `6f75e323cc938ec861e9cc659fbb6710f9d571e0`;
+- workflow/run ID: `34252435914`;
+- job ID: `102149881007`;
+- branch/head: `main / 6f75e323cc938ec861e9cc659fbb6710f9d571e0`;
+- checkpoint namespace: N/A; hosted support-only provenance inventory;
+- start time: `2026-09-08T16:39:54Z`;
+- expected token: `PASS_EXP073II_C2_WW_ANGULAR_AUTHORITY_INVENTORY_AUDIT_V0_1`;
 - runner ownership: GitHub-hosted `ubuntu-24.04`; self-hosted/home owner **none**;
 - state at ledger update: QUEUED;
-- last durable scientific payload: admitted C2 tangent response ID h=`1e-4`; last durable mapping/prediction payloads are IF mapping artifact and IG 28-record local tangent basis.
+- last durable scientific state: `G_DOMAIN_MAPPING=PASS`; `G_ANGULAR_AUTHORITY=NOT_YET_TESTABLE`.
 
 ### Exact next action on SUCCESS
-Consume raw IH log. Require exact frozen gate token and verify it was derived from raw IF/IG authorities, six-component mapping, full certified DSIR mapping envelope and immutable prediction identity. On PASS record `G_DOMAIN_MAPPING=PASS` only. Preserve `G_ANGULAR_AUTHORITY=NOT_YET_TESTABLE`, all later mandatory gates `NOT_YET_TESTABLE`, `overall_status=NOT_YET_TESTABLE`, and `scientific_model_authority_created=false`. Then audit the exact required angular observational authority set before defining the next gate.
+Consume raw II log and artifact. Verify artifact digest/provenance. Inspect `inventory.tsv`, `matches.txt`, `history.txt`, `SUMMARY.txt`; for each of the ten WW pairs trace text/history evidence to an actual repository-admitted authority token plus run/job/head/artifact/checkpoint identity. II evidence presence alone is never authority. If all ten exact authorities are recovered, prospectively freeze a candidate-local angular receipt/admission gate. If any are missing, record only those exact missing pair(s) as `NOT_YET_TESTABLE` and restore original authority rather than substitute a surrogate.
 
 ### Exact next action on FAIL
-If execution/provenance defect: diagnose first causal defect and repair only that without changing the frozen scientific decision rule. If genuine frozen-hypothesis domain/mapping failure: record exactly `FAIL` or `OUTSIDE_DOMAIN`/`NUMERICALLY_UNRESOLVED` per preregistration and proceed scientifically; do not rescue by extrapolation or tolerance.
+Diagnose the first inventory workflow/provenance defect. Repair only that defect prospectively; do not alter angular scientific requirements.
 
 ### Exact next action on BLOCKED
-Preserve IF/IG admitted support authority and ID tangent authority; do not infer model acceptance/rejection.
+Preserve `G_DOMAIN_MAPPING=PASS`; keep `G_ANGULAR_AUTHORITY=NOT_YET_TESTABLE`; do not dispatch deep/self-hosted science.
 
 Global frozen DSIR boundaries remain unchanged.
