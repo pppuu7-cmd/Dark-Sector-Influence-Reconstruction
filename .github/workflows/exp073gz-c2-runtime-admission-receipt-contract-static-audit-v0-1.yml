@@ -1,0 +1,97 @@
+name: Exp073GZ C2 runtime admission receipt contract static audit v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073gz-c2-runtime-admission-receipt-contract-static-audit-v0-1.yml'
+      - 'docs/dsir4/mappings/C2_IDE_RUNTIME_ADMISSION_RECEIPT_CONTRACT_V0_1.md'
+      - 'docs/dsir4/prereg/EXP073GZ_C2_RUNTIME_ADMISSION_RECEIPT_CONTRACT_STATIC_AUDIT_V0_1.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Fail-closed audit frozen C2 runtime receipt contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          contract = Path('docs/dsir4/mappings/C2_IDE_RUNTIME_ADMISSION_RECEIPT_CONTRACT_V0_1.md')
+          prereg = Path('docs/dsir4/prereg/EXP073GZ_C2_RUNTIME_ADMISSION_RECEIPT_CONTRACT_STATIC_AUDIT_V0_1.md')
+          assert contract.is_file(), 'missing frozen C2 runtime receipt contract'
+          assert prereg.is_file(), 'missing Exp073GZ preregistration'
+
+          contract_blob = subprocess.check_output(['git','hash-object',str(contract)], text=True).strip()
+          prereg_blob = subprocess.check_output(['git','hash-object',str(prereg)], text=True).strip()
+          assert contract_blob == '1c2e30e6563efe3976ee0b1825dfb250a902a529', (contract_blob, 'contract blob mismatch')
+          assert prereg_blob == '863d05b0436c94e30c96bd471cf2d3231bd4ff70', (prereg_blob, 'prereg blob mismatch')
+
+          c = contract.read_text(encoding='utf-8')
+          p = prereg.read_text(encoding='utf-8')
+
+          required_contract = [
+              'C2_IDE_LOCAL_TANGENT_CONE',
+              'kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c',
+              '7 redshift x 4 physical-k grid = 28 packets',
+              'z-major/k-minor',
+              'packet width 64 bytes and aggregate width 1792 bytes',
+              'packet_count=28',
+              'aggregate_bytes=1792',
+              'SHA-256 of the raw aggregate before decoding/mapping',
+              'producer run/job identity and terminal status',
+              'artifact identity/digest',
+              'raw_record_set_admitted',
+              'decoded=false',
+              'mapped=false',
+              'prediction_ready=false',
+              'synthetic fixture bytes are presented as runtime data',
+              'OUTSIDE_DOMAIN',
+              'NOT_YET_TESTABLE',
+              'real runtime producer launch when heavy-run exclusivity is clear',
+              'scientific_model_authority_created=false',
+              'G_DOMAIN_MAPPING=NOT_YET_TESTABLE',
+          ]
+          for token in required_contract:
+              assert token in c, f'missing contract token: {token!r}'
+
+          prohibited_relaxations = [
+              'interpolation, smoothing, averaging, extrapolation, tolerance rescue',
+              'decoded, transformed, interpolated, filtered, reordered, duplicated, deleted, averaged, smoothed, or tolerance-rescued',
+          ]
+          for token in prohibited_relaxations:
+              assert token in c, f'missing fail-closed no-rescue boundary: {token!r}'
+
+          required_prereg = [
+              'SUPPORT_PLUS_0_PLUS_0',
+              '28 packets',
+              '64 bytes',
+              '1792 bytes',
+              'decoded=false',
+              'mapped=false',
+              'prediction_ready=false',
+              'PASS_EXP073GZ_C2_RUNTIME_ADMISSION_RECEIPT_CONTRACT_STATIC_AUDIT_V0_1',
+              'real runtime producer only when heavy-run exclusivity is clear',
+          ]
+          for token in required_prereg:
+              assert token in p, f'missing prereg token: {token!r}'
+
+          assert 'No CLASS execution' in p
+          assert 'does not launch it while another home-heavy process owns the runner' in p
+
+          print('contract_blob=' + contract_blob)
+          print('prereg_blob=' + prereg_blob)
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('prediction_ready=false')
+          print('scientific_model_authority_created=false')
+          print('PASS_EXP073GZ_C2_RUNTIME_ADMISSION_RECEIPT_CONTRACT_STATIC_AUDIT_V0_1')
+          PY
