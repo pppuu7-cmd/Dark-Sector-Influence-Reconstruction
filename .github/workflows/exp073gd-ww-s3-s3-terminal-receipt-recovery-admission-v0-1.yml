@@ -1,0 +1,62 @@
+name: Exp073GD WW_S3_S3 terminal receipt recovery admission v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073gd-ww-s3-s3-terminal-receipt-recovery-admission-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  hosted-recovery-admission:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SOURCE_RUN: '34197207582'
+      SOURCE_JOB: '101967543808'
+      SOURCE_ARTIFACT: '10051382493'
+      SOURCE_DIGEST: 'sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109'
+      COMPARATOR_BLOB: '6e7b45578c647a70233fec7db7d0a1d3c88d1774'
+      GB_VERIFY_BLOB: 'cc815737e658a850452d9b0f9488e703f8de84ea'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Recover terminal compare from exact completed A/B artifact and admit
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ci/exp073ga_compare_terminal_receipts_v0_1.py)" = "$COMPARATOR_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073gb_verify_ga_candidate_v0_1.py)" = "$GB_VERIFY_BLOB"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN}" > source-run.json
+          python3 - <<'PY'
+          import json,os
+          r=json.load(open('source-run.json'))
+          assert r['status']=='completed' and r['conclusion']=='failure'
+          assert r['head_sha']=='f6d8b429ac64643e7cb7766e0bfa2ab51abe751d'
+          PY
+          gh api --allow-escape-sequences "repos/${GITHUB_REPOSITORY}/actions/jobs/${SOURCE_JOB}/logs" > candidate.log
+          grep -aF 'PASS_EXP073GA_REPLICA_A_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' candidate.log >/dev/null
+          grep -aF 'PASS_EXP073GA_REPLICA_B_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' candidate.log >/dev/null
+          grep -aF 'PASS_EXP073GA_LIVE_EXCLUSIVITY' candidate.log >/dev/null
+          grep -aF 'fail-closed receipt identity mismatch A:checkpoint_namespace' candidate.log >/dev/null
+          curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 2 -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$SOURCE_ARTIFACT/zip" -o candidate.zip
+          test "sha256:$(sha256sum candidate.zip | awk '{print $1}')" = "$SOURCE_DIGEST"
+          mkdir candidate; unzip -q candidate.zip -d candidate
+          test "$(python3 -c "import json; print(json.load(open('candidate/checkpoints/A/replica_receipt.json'))['checkpoint_namespace'])")" = 'checkpoints/exp073ga-ww-s3-s3-a-v0-1'
+          test "$(python3 -c "import json; print(json.load(open('candidate/checkpoints/B/replica_receipt.json'))['checkpoint_namespace'])")" = 'checkpoints/exp073ga-ww-s3-s3-b-v0-1'
+          python3 ci/exp073ga_compare_terminal_receipts_v0_1.py --root candidate --out candidate/terminal_receipt.json | tee compare.log
+          grep -Fx 'PASS_EXP073GA_WW_S3_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1' compare.log >/dev/null
+          cat candidate.log compare.log > admission-source.log
+          python3 ci/exp073gb_verify_ga_candidate_v0_1.py --root candidate --log admission-source.log | tee admission.log
+          grep -Fx 'PASS_EXP073GB_WW_S3_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1' admission.log >/dev/null
+          grep -Fx 'classification=SCIENTIFIC_AUTHORITY_ADMITTED' admission.log >/dev/null
+          grep -Fx 'ww_s3_s3_authority_created=true' admission.log >/dev/null
+          echo recovery_classification=INFRASTRUCTURE_IMPLEMENTATION_FAILURE_PLUS_0_PLUS_0
+          echo heavy_recompute_performed=false
+          echo source_run=$SOURCE_RUN
+          echo source_job=$SOURCE_JOB
+          echo source_artifact=$SOURCE_ARTIFACT
