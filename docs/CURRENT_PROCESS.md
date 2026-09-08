@@ -3,28 +3,27 @@
 Updated: 2026-09-08. Scope: **DSIR only**; RTK/RQIR excluded.
 
 ## Preserved authority
-All prior DSIR authority remains preserved. Scientifically admitted `WW_S3_S3` remains `34218457380 / 102035691774`, GA artifact `10051382493`, digest `sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109`. C2 has `G_DOMAIN_MAPPING=PASS` and `G_ANGULAR_AUTHORITY=PASS`, but no complete model authority or overall PASS.
+All prior DSIR authority remains preserved. Scientifically admitted `WW_S3_S3` remains `34218457380 / 102035691774`, GA artifact `10051382493`, digest `sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109`.
 
-Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-08_C2_IK_INVENTORY_PASS_ORDERED_JOIN_DEFINITION_FRONT_V53.md`, creation commit `f030922ad46c31ee62b7facdb9b697cf9e890e4c`.
+Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-08_C2_IL_ORDERED_JOIN_PASS_RADIAL_SUPPORT_BLOCKED_V54.md`, creation commit `95fc6416b350e1a41ab1bca8fa50cd2c665024c9`.
 
-## Newly closed process — Exp073IK
-- experiment: Exp073IK C2 Source-Basis / Observable-Order Inventory Audit v0.1;
-- classification ceiling/result: `SUPPORT_PLUS_0_PLUS_0`;
-- prereg creation commit: `0212a3ab9abcbd8f2644ae6a663e5b84a5307c7a`;
-- prereg blob: `ec821b94fb16b2b2e8e66d0fe1d423c7f1d1aed5`;
-- final audit blob: `61c8431786aef7ca2dc55cb0329ed48675db1aba`;
-- workflow blob: `6a0846b1da1a16948f26d4f21572d8d4f4ab4169`;
-- final run/job: `34266340535 / 102196556716`;
-- branch/head: `main / 6fd55818814741677d2184b2c4ef8e5576f2b0cd`;
-- checkpoint namespace: N/A, hosted static/provenance support audit;
+## Newly closed process — Exp073IL
+- gate: C2 `G_ORDERED_JOIN` structural/provenance admission;
+- prospective definition commit/blob: `a2d4db0c1a0763d064ca4a47cf73aa9e6a4ea376 / b594579c9f95fdb5085f5e9ba09f4dbc383d719a`;
+- prereg creation commit/blob: `ae5d4aebab9467cd93fdbd594f8e940c50df6fc1 / 6da7eadd1d01344741c65d6e72a5fa02d7b35cc0`;
+- repaired workflow commit/blob: `d13d6ab2f99a632b434c8e6ecad821ddf0aead3e / cbb7a9cfe247ecf4b15a81138c1cc11f0d01446d`;
+- binding head/blob: `5bf6b492c3f4220a5c5aaf2276f6acd83507ad60 / d5a020b6c0e1acc2b6910265735d517059bca94d`;
+- valid run/job: `34271954072 / 102215439354`;
 - runner: GitHub-hosted `ubuntu-24.04`;
-- artifact ID: `10068463479`;
-- artifact digest: `sha256:57ee4e1bb04e7511bdc52cb200ce7bdde745a749f5f4f7be0df060e6e5b2c10b`;
-- exact terminal token: `PASS_EXP073IK_C2_SOURCE_BASIS_OBSERVABLE_ORDER_INVENTORY_V0_1`;
-- verified outputs: `source_basis_inventory_verified=true`, `observable_order_inventory_verified=true`, `prospective_ordered_join_contract_may_be_defined=true`;
-- scientific state: `G_DOMAIN_MAPPING=PASS`, `G_ANGULAR_AUTHORITY=PASS`, `G_ORDERED_JOIN=NOT_YET_TESTABLE`, `scientific_model_authority_created=false`, `overall_status=NOT_YET_TESTABLE`.
+- checkpoint namespace: N/A;
+- artifact ID: `10074157812`;
+- independently verified ZIP SHA256: `acaaf9c00a3654b5e59c190470325a92818e8f2f94296ee45bce1ecfd27baa9e`;
+- exact token: `PASS_EXP073IL_C2_ORDERED_JOIN_STRUCTURAL_ADMISSION_V0_1`;
+- classification: `SCIENTIFIC_GATE_PASS`;
+- durable authority commit/blob: `ad2768a11b306134129aca9f9f6639818b26d6f7 / 31bcde1737c782cbce16db2e447a76ab007d3bbb`;
+- scientific state: `G_DOMAIN_MAPPING=PASS`, `G_ANGULAR_AUTHORITY=PASS`, `G_ORDERED_JOIN=PASS`, `G_RADIAL_SUPPORT=NOT_YET_TESTABLE`, `scientific_model_authority_created=false`, `overall_status=NOT_YET_TESTABLE`.
 
-Historical IK run `34266137693 / 102195867755` failed on static `NSIDE` name resolution; `34266234477 / 102196195647` failed on frozen arithmetic expression `3 * NSIDE`. Both are infrastructure/implementation `+0/+0`; no science criterion changed. Minimal repair commits: `5196775e65e58ff116e4de5a7c2b20959d96b777` and `12ae5db48d6407be82c0bc872602e4bc5b78c269`.
+Historical Exp073IL run/job `34271889927 / 102215228801` is infrastructure/implementation `+0/+0`; first causal failure was a JSON literal-format mismatch in the static audit. No scientific criteria changed.
 
 ## Current process
 - workflow/run ID: none;
@@ -33,18 +32,18 @@ Historical IK run `34266137693 / 102195867755` failed on static `NSIDE` name res
 - checkpoint namespace: N/A;
 - start time: N/A;
 - expected gate/token: none currently executable;
-- current state: **BLOCKED / NOT_YET_TESTABLE at `G_ORDERED_JOIN` scientific-definition prerequisite**;
-- last durable checkpoint/result: Exp073IK support-only PASS above;
-- self-hosted/home ownership: none; runner free;
-- live Actions at ledger update: 0 queued, 0 in-progress.
+- current state: **BLOCKED / NOT_YET_TESTABLE at `G_RADIAL_SUPPORT` external radial-data/operator prerequisite**;
+- last durable result: Exp073IL authority above;
+- self-hosted/home ownership: none; runner free.
 
 ### Exact reason for BLOCKED state
-Exp073IK freezes source-basis and observable ordering but explicitly forbids inferring future C2 join membership from the historical 14-task angular manifest. Repository searches after the PASS did not locate an already-frozen machine-checkable ordered-join equation, exact domain membership, or redshift-edge contract. Inventing these now would be post-hoc science.
+The funnel requires radial multiplication/support construction, but the located angular evidence explicitly records `radial_kernel_read=False` and `physical_k_computed=False`. Current repository evidence does not contain a bound authoritative source `n(z)`/`dN/dz`, SOMPZ/source-window payload or equivalent radial-kernel data for S0..S3; angular `zbin_mcal` mask references are not radial distributions. The exact radial combination operator and Wm matter-side radial/LOS factor are therefore not yet bound.
+
+Prospective support prerequisite: `docs/dsir4/contracts/DSIR4_RADIAL_SUPPORT_INPUT_REQUIREMENTS_V0_1.md`, creation commit `9064b6e948e328df00439f31c54c6b08e8ea933e`, blob `3fa4a41b3c53f4d8e879a105f0f5621cc60a9f98`.
 
 ### Exact next permitted action
-Locate or derive from explicit pre-existing scientific premises a prospective ordered-join definition fixing: (1) exact input membership and order; (2) the join operator/equation; (3) domain/redshift coordinates or edges without invention; (4) required source/angular provenance; and (5) fail-closed interpretation/status rules. Freeze that definition before any join output is read or scored. Then, and only then, preregister and launch a separate ordered-join gate after checking the experiment-label namespace for collisions.
+Acquire or locate authoritative S0..S3 source-radial/redshift-distribution payloads and any Wm matter-side kernel, with exact coordinates/edges, units, normalization/weighting and immutable provenance/digests. Prospectively freeze the exact radial multiplication/support operator and coordinate compatibility rule. Only after those prerequisites exist may a new `G_RADIAL_SUPPORT` experiment be preregistered and launched.
 
-### On inability to recover a scientific definition
-Remain `G_ORDERED_JOIN=NOT_YET_TESTABLE`. Do not launch a surrogate, do not infer membership from the historical 14-task list, and do not alter existing admitted authorities.
+No seven-z proxy, angular-mask proxy, interpolation/extrapolation, smoothing, rounding, effective ell/z/k or fiducial-P substitution may be used.
 
 Global frozen DSIR boundaries remain unchanged: `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid<=0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; exact-threshold ambiguity `numerically_unresolved`; no tolerance, rounding, smoothing, averaging, effective ell/z/k or fiducial-P shortcut.
