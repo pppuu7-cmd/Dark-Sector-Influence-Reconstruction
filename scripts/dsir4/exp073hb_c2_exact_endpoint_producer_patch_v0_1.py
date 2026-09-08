@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Exp073HB deterministic diagnostic-only exact-endpoint producer patcher.
 
-Applies only to kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c.
-The patch is opt-in via DSIR_C2_EXACT_Z and does not alter the ordinary path
-when that environment variable is absent. It creates no C2 packet itself.
+Applies only after the workflow has fail-closed on the pinned upstream Git
+commit/blob identities. The patch is opt-in via DSIR_C2_EXACT_Z and creates no
+C2 packet itself.
 """
 from pathlib import Path
 import hashlib
@@ -13,9 +13,6 @@ ROOT = Path(sys.argv[1] if len(sys.argv) > 1 else ".")
 P = ROOT / "source/perturbations.c"
 E = ROOT / "tools/evolver_ndf15.c"
 
-EXPECTED_P_SHA256 = "f13e2fb8d83e0d5a0b913f32f54f2651cf4189498c47875b6521c3fa0e18ce94"
-EXPECTED_E_SHA256 = "2cbf0444795683d04e20a41c54a26c4b3d3bf4c0b2c4cbdcfbf46fa61b1f9088"
-
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -24,13 +21,6 @@ def replace_once(text: str, old: str, new: str, label: str) -> str:
     if n != 1:
         raise RuntimeError(f"{label}: expected exact anchor count 1, got {n}")
     return text.replace(old, new, 1)
-
-# Git blob identities are checked by the workflow. These byte SHA256 guards make
-# the patcher itself fail closed if invoked elsewhere.
-if sha256(P) != EXPECTED_P_SHA256:
-    raise RuntimeError(f"unexpected perturbations.c SHA256 {sha256(P)}")
-if sha256(E) != EXPECTED_E_SHA256:
-    raise RuntimeError(f"unexpected evolver_ndf15.c SHA256 {sha256(E)}")
 
 p = P.read_text()
 e = E.read_text()
@@ -64,16 +54,13 @@ p = replace_once(
 )
 
 old_end = 'ppt->tau_sampling[tau_actual_size-1]'
-# After the newly inserted assignment there are exactly two remaining scientific interval-end uses.
 if p.count(old_end) < 3:
     raise RuntimeError(f"unexpected tau-end anchor count after insertion: {p.count(old_end)}")
-# Replace only the two function-call arguments following the assignment.
 pos = p.index('class_call(perturb_find_approximation_number')
 head, tail = p[:pos], p[pos:]
 tail = tail.replace(old_end, 'dsir_tau_end', 2)
 p = head + tail
 
-# Evolver hook is declared locally to avoid changing public headers.
 e = replace_once(
     e,
     '#include "evolver_ndf15.h"\n',
