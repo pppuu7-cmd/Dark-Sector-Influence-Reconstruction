@@ -1,0 +1,123 @@
+name: Exp073HB C2 diagnostic exact-endpoint producer build audit v0.2
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073hb-c2-diagnostic-exact-endpoint-producer-build-audit-v0-2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-build-static-audit:
+    runs-on: ubuntu-latest
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify prospective authority chain and reconstruct admitted derivative
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_2.md)" = "514232fd1873600772e4eb1f6f59210b8ca6406b"
+          test "$(git hash-object docs/dsir4/results/EXP073HI_C2_PINNED_UPSTREAM_BUILD_COMPATIBILITY_ADMISSION_RECEIPT_V0_1.md)" = "8313779961a6addce71843fe8b101c81fdae3ad1"
+          test "$(git hash-object scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py)" = "b7fe663154519b605699c1fd622d0079a5f76772"
+          test "$(git hash-object scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py)" = "f3d3d80cda2f937f544722e684a44c649e771487"
+          grep -Fx -- '- final exact token `PASS_EXP073HI_C2_PINNED_UPSTREAM_BUILD_COMPATIBILITY_ADMISSION_V0_1`' docs/dsir4/results/EXP073HI_C2_PINNED_UPSTREAM_BUILD_COMPATIBILITY_ADMISSION_RECEIPT_V0_1.md
+          grep -Fx '`EXP073HI = SUPPORT_PLUS_0_PLUS_0 / BUILD_COMPATIBLE_DERIVATIVE_ADMITTED`.' docs/dsir4/results/EXP073HI_C2_PINNED_UPSTREAM_BUILD_COMPATIBILITY_ADMISSION_RECEIPT_V0_1.md
+
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C /tmp/class_iv rev-parse HEAD)" = "ac627d54e9ce196a08878d1ba33999819925d19c"
+          test "$(git -C /tmp/class_iv hash-object source/background.c)" = "310e0f5764ab41da3a886ed239db3fff2aac32ec"
+          test "$(git -C /tmp/class_iv hash-object Makefile)" = "45f912a2b8b2849998affb6857f49f5950fe9be5"
+          test "$(git -C /tmp/class_iv hash-object source/perturbations.c)" = "92a48331658c5941ed4eb43b0e98ee78e39b8385"
+          test "$(git -C /tmp/class_iv hash-object tools/evolver_ndf15.c)" = "790ced55f2eaa08e805d467734ad1435954bc5b7"
+
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py /tmp/class_iv | tee /tmp/compat.txt
+          grep -Fx 'EXP073HB_PINNED_UPSTREAM_STRAY_BRACE_REMOVED_EXACTLY_ONCE' /tmp/compat.txt
+          grep -Fx 'EXP073HB_PINNED_UPSTREAM_MODERN_LINK_COMPAT_APPLIED_EXACTLY' /tmp/compat.txt
+          test "$(sha256sum /tmp/class_iv/source/background.c | awk '{print $1}')" = "bc4053922ae984652f5858b2869e7bbbe8682ea502b88e485709e6828e059ce0"
+          test "$(sha256sum /tmp/class_iv/Makefile | awk '{print $1}')" = "2bb326590b3d0c3a23e984fc17cafce680674aa5234db15d35d72a06e1bfa87e"
+          echo 'PASS_EXP073HB_V0_2_EXP073HI_DERIVATIVE_IDENTITY_V0_1'
+
+      - name: Apply frozen diagnostic producer and verify hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py /tmp/class_iv | tee /tmp/producer.txt
+          grep -Fx 'EXP073HB_PATCH_APPLIED' /tmp/producer.txt
+          test "$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')" = "da7c427e383f1e9b83d7ff75ef82784c2fe89d91f9681e21e7805b7f354e7e79"
+          test "$(sha256sum /tmp/class_iv/tools/evolver_ndf15.c | awk '{print $1}')" = "b3967efaf7a45a3ec6c0144e892caab54f91c595bc726dc1704cfb812f9c0df6"
+          git -C /tmp/class_iv diff --check
+          echo 'PASS_EXP073HB_V0_2_PRODUCER_HASH_IDENTITY_V0_1'
+
+      - name: Static exact-endpoint semantic audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('/tmp/class_iv/source/perturbations.c').read_text()
+          e=Path('/tmp/class_iv/tools/evolver_ndf15.c').read_text()
+          assert 'getenv("DSIR_C2_EXACT_Z")' in p
+          assert 'if (ztext == NULL || *ztext == \'\\0\') return _SUCCESS_;' in p
+          assert 'OMP_NUM_THREADS' in p and 'strcmp(omp,"1")' in p
+          assert 'ppt->k_output_values_num != 1' in p
+          assert 'ppt->index_k_output_values[index_md*ppt->k_output_values_num]' in p
+          assert 'if (index_k != native_index) return _SUCCESS_;' in p
+          assert 'background_tau_of_z(pba,z,&dsir_c2_diag_tau_target)' in p
+          for z in ['0.295','0.51','0.706','0.934','1.317','1.491','2.33']:
+              assert f'"{z}"' in p
+          assert p.index('ppw->theta_m = rho_plus_p_theta_m/rho_plus_p_m;') < p.index('dsir_c2_diag_delta_m_raw = ppw->delta_m;') < p.index('int perturb_sources(')
+          assert 'dsir_c2_diag_theta_m_raw = ppw->theta_m;' in p
+          hook='if ((done==_TRUE_) && (dsir_c2_diag_enabled()!=0))'
+          assert hook in e
+          assert 'dsir_c2_diag_arm_terminal(tnew' in e
+          assert '(*derivs)(tnew,ynew+1,f0+1' in e
+          assert 'dsir_c2_diag_commit_terminal(tnew' in e
+          assert e.index(hook) > e.index('break; /* Succesfull step */')
+          assert e.index(hook) < e.index('interp_from_dif(t_vec[next]')
+          assert 'tnew = tfinal; /*Hit end point exactly. */' in e
+          assert 'DSIR_C2_EXACT_ENDPOINT z=%s tau=%a k=%a delta_m=%a theta_m=%a' in p
+          print('PASS_EXP073HB_V0_2_STATIC_EXACT_ENDPOINT_SEMANTICS_V0_1')
+          PY
+
+      - name: Install hosted build dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libgsl-dev
+
+      - name: Compile producer derivative without cosmological execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/class_iv
+          make -j2 class
+          test -x ./class
+          echo 'PASS_EXP073HB_V0_2_DIAGNOSTIC_PRODUCER_COMPILES_V0_1'
+
+      - name: Emit frozen support-only HB v0.2 token
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e /tmp/dsir_c2_records.bin
+          test ! -e /tmp/dsir_c2_payload.bin
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'exp073hi_build_compatible_derivative_verified=true'
+          echo 'diagnostic_producer_compile_verified=true'
+          echo 'cosmological_run_started=false'
+          echo 'record_payload_created=false'
+          echo 'runtime_record_count=0'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_2'
