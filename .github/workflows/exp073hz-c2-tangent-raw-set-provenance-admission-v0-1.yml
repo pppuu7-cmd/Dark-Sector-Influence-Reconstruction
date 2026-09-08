@@ -1,0 +1,93 @@
+name: Exp073HZ C2 Tangent Raw-Set Provenance Admission v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073hz-c2-tangent-raw-set-provenance-admission-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  admission:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen preregistration identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073HZ_C2_TANGENT_RAW_SET_PROVENANCE_ADMISSION_V0_1.md)" = 'a4be5047b2968e8b9bc844a3d2bdbd2bc3e6e966'
+      - name: Download and exactly admit frozen HY artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/hz
+          cat > /tmp/hz/manifest.tsv <<'EOF'
+          alpha_m1e4	-1e-4	0	102119471802	10064603451	009217562eab68c85a701b1a4b7de4dbe4f0f2d933a129e496336748aa01219b	1aa24586b57116ac126d314c389e13f8d3159826cc20edea1c8220b1ef69e6ba
+          alpha_m1e3	-1e-3	0	102119471057	10063499422	c74365587ec13b581e79f0cfb124d90db643a0cc6e3998d076ca9164b7dc1c7c	b4258528fffa8f115fa98ad9dedb29b8dc6ac8bd7b1710790dfde60776101797
+          alpha_m1e2	-1e-2	0	102119471655	10063491863	93df49f78bff19844d841008291284d82c3c77855a28be70333a6aa494ddc7f5	383b4afbf91d8caa30ed546e562da79a5ddaa35e6725627901b6bd2ff5b9f1c2
+          beta_p1e4	0	1e-4	102119471486	10063489526	146d7d9470f89367624030524108f4a5fe0a9ff6890d6b00cfb46732bcf355d0	d3f852986d23e3c527ca6da389af2e1b63f51c4af19588d33be31bcdd2a01c4e
+          beta_m1e4	0	-1e-4	102119471483	10063472739	dc470dce5f802ec57c1a8801cfc634d56fe597c1eb172cc32bf8ab6b40ace36c	13b80ab8f1d5c7d6a4402768c7a66a50376a7245b745cc76d55f7f63ecd2fe64
+          beta_p1e3	0	1e-3	102119471369	10063484506	d6b1064ef0ec1fd45a51a77ca1f919a071badda790aebd41b9a2373a2e0b47bb	77ef62e3d4e0670334245112612af043f38e0cd38262b14fd923e3446d94bc21
+          beta_m1e3	0	-1e-3	102119471373	10063583778	d78f45ab1d7405f969ea825cfaa670ff2b91e28f2d324e9639ce30a3ff79c607	0a06a4395e0050185790cecb6ee1091bb8249052b74125778bba1c0384fc284c
+          beta_p1e2	0	1e-2	102119471600	10063508302	176a2b209fef406f1dee72352ed8f6ac0331c5e81164cf015c627d7208210081	cc21ed6c8989b1e05db1184de400b25e866285790ba8089658eb211c79f52c44
+          beta_m1e2	0	-1e-2	102119471334	10063482583	18695bc1ab4e429d55723e44862b118e67ad2aa1ab7b6b3dbec266c976dbe873	cb9c076b54f8bc48a55f5a49a921e66021a9a59bba43be57aea07efc32d43954
+          EOF
+          python - <<'PY'
+          p='/tmp/hz/manifest.tsv'
+          s=open(p).read().replace('          ','')
+          open(p,'w').write(s)
+          PY
+          count=0
+          while IFS=$'\t' read -r model alpha beta job aid zipsha aggsha; do
+            count=$((count+1)); z=/tmp/hz/$model.zip; d=/tmp/hz/$model
+            curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/$aid/zip" -o "$z"
+            test "$(sha256sum "$z" | awk '{print $1}')" = "$zipsha"
+            mkdir "$d"; unzip -q "$z" -d "$d"
+            test "$(stat -c%s "$d/aggregate.bin")" -eq 1792
+            test "$(sha256sum "$d/aggregate.bin" | awk '{print $1}')" = "$aggsha"
+            test "$(cat "$d/aggregate.sha256" | awk '{print $1}')" = "$aggsha"
+            test "$(find "$d/packets" -maxdepth 1 -type f -name '*.bin' | wc -l)" -eq 28
+            : > "$d/rebuilt.bin"
+            for zi in 00 01 02 03 04 05 06; do for ki in 00 01 02 03; do
+              p="$d/packets/z${zi}k${ki}.bin"; test -f "$p"; test "$(stat -c%s "$p")" -eq 64; cat "$p" >> "$d/rebuilt.bin"
+            done; done
+            cmp -s "$d/rebuilt.bin" "$d/aggregate.bin"
+            R="$d/RECEIPT.txt"
+            grep -Fxq "hypothesis_id=C2_IDE_LOCAL_TANGENT_CONE" "$R"
+            grep -Fxq "model_point=$model" "$R"
+            grep -Fxq "alpha_idm_iv=$alpha" "$R"
+            grep -Fxq "beta_idm_iv=$beta" "$R"
+            grep -Fxq "solver_repo=kaeonikc/class_iv" "$R"
+            grep -Fxq "solver_commit=ac627d54e9ce196a08878d1ba33999819925d19c" "$R"
+            grep -Fxq "producer_head=ca3b6a1de8ff96dfc0525ef8485f1ad57e2976b8" "$R"
+            grep -Fxq "producer_run_id=34243515299" "$R"
+            grep -Fxq "producer_job_id=$job" "$R"
+            grep -Fxq "producer_run_attempt=1" "$R"
+            grep -Fxq "post_hs_perturbations_sha256=483b481b48e50a6afb396b15b85258ac6c5a7a39b38fb1c6192e7e4a95c139ae" "$R"
+            grep -Fxq "post_hs_ndf15_sha256=3f12121ce2de319453e1ff5fadae9391fd96747731c0df3fa05fae1cd2608aa9" "$R"
+            grep -Fxq "baseline_sha256=0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c" "$R"
+            grep -Fxq "precision_sha256=463a3960d6a955c1e2a561e988562a1fc5486b0b79f120eb634ccca6f86002f9" "$R"
+            grep -Fxq "packet_count=28" "$R"; grep -Fxq "packet_bytes=64" "$R"; grep -Fxq "aggregate_bytes=1792" "$R"
+            grep -Fxq "coordinate_order=z-major/k-minor" "$R"; grep -Fxq "aggregate_sha256=$aggsha" "$R"
+            grep -Fxq "complete_model_unit=true" "$R"; grep -Fxq "tangent_raw_set_admitted=false" "$R"
+            grep -Fxq "decoded=false" "$R"; grep -Fxq "mapped=false" "$R"; grep -Fxq "prediction_ready=false" "$R"; grep -Fxq "scientific_model_authority_created=false" "$R"
+            echo "EXP073HZ_ADMITTED_MODEL model=$model artifact_id=$aid job_id=$job aggregate_sha256=$aggsha"
+          done < /tmp/hz/manifest.tsv
+          test "$count" -eq 9
+          echo 'PASS_EXP073HZ_C2_TANGENT_RAW_SET_PROVENANCE_ADMISSION_V0_1'
+          echo 'classification=TANGENT_RAW_SET_ADMITTED_PLUS_0_PLUS_0'
+          echo 'tangent_raw_set_admitted=true'
+          echo 'decoded=false'
+          echo 'mapped=false'
+          echo 'tangent_response_ready=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
