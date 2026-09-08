@@ -5,34 +5,37 @@ Updated: 2026-09-08. Scope: **DSIR only**; RTK/RQIR excluded.
 ## Preserved authority
 All prior scientific authority is unchanged, including admitted `WW_S3_S3` from run `34218457380 / 102035691774`, GA artifact `10051382493`, digest `sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109`. No C2 scientific/model authority exists.
 
-Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-08_C2_HY_RAW_CANDIDATE_HZ_ADMISSION_FRONT_V45.md`, creation commit `c3d7e3d2b8852eef035ae9094f465cc7d83940ff`.
+Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-08_C2_HZ_IA_PASS_IBV02_MAP_PASS_IC_RESPONSE_FRONT_V46.md`, creation commit `f352ccb2ad11652a2b512c275bb6244a276332b7`.
 
-## Newly closed process — Exp073HY
-HY run `34243515299`, head `ca3b6a1de8ff96dfc0525ef8485f1ad57e2976b8`, all nine complete tangent model units plus manifest verifier terminal SUCCESS. Raw logs and all nine independently downloaded artifacts verify exact 28×64-byte packet sets, exact z-major/k-minor 1792-byte aggregate reassembly, receipts, source fingerprints, GitHub ZIP SHA256 and aggregate SHA256. Classification `RAW_RUNTIME_CANDIDATE_PLUS_0_PLUS_0`; `tangent_raw_set_admitted=false`, `decoded=false`, `mapped=false`, `tangent_response_ready=false`, `prediction_ready=false`, `scientific_model_authority_created=false`.
+## Newly closed C2 processes
+- HZ `34248477503 / 102136488451`: tangent raw-set provenance admission PASS; `tangent_raw_set_admitted=true`.
+- IA `34248722000 / 102137324616`: exact ABI decode PASS; artifact `10065081303`, ZIP SHA256 `6bf115c76d538f0691c1fcfa9d9a26721b9b593f26aceb2a7a59bdb7cc9aa0ce`.
+- IB v0.1 `34248841106 / 102137736842`: historical `IMPLEMENTATION_PROVENANCE_FAIL_PLUS_0_PLUS_0` because implementation did not explicitly preserve the authoritative HW operation-order lineage; 0/252 realized binary64 outputs differed, so this is not scientific FAIL.
+- IB v0.2 `34249229753 / 102139059309`: exact repaired mapping PASS; artifact `10065286473`, ZIP SHA256 `965e921224f516e76e9cf2d2ac84ed51a5027b97d79c73c87620d55a83011201`; exact HW operation order and 252/252 regression equality; `mapped_tangent_coordinate=true`, `tangent_response_ready=false`.
 
-## Current process — Exp073HZ tangent raw-set provenance admission v0.1
-- prereg: `docs/dsir4/prereg/EXP073HZ_C2_TANGENT_RAW_SET_PROVENANCE_ADMISSION_V0_1.md`;
-- prereg creation commit: `308a4acd0a4cc5dcc16175235dc2659a8c59cc37`;
-- prereg blob: `a4be5047b2968e8b9bc844a3d2bdbd2bc3e6e966`;
-- workflow: `.github/workflows/exp073hz-c2-tangent-raw-set-provenance-admission-v0-1.yml`;
-- workflow/head commit: `edaa94d42b18f45a6e0659dc23399793e0228830`;
-- workflow/run ID: `34248477503`;
-- job ID: `102136488451`;
-- branch/head: `main / edaa94d42b18f45a6e0659dc23399793e0228830`;
-- checkpoint namespace: N/A; hosted provenance-only admission over immutable HY artifacts;
-- start time: `2026-09-08T16:01:21Z`;
-- expected gate/token: `PASS_EXP073HZ_C2_TANGENT_RAW_SET_PROVENANCE_ADMISSION_V0_1`;
+## Current process — Exp073IC tangent finite-difference response candidate v0.1
+- prereg: `docs/dsir4/prereg/EXP073IC_C2_TANGENT_FINITE_DIFFERENCE_RESPONSE_CANDIDATE_V0_1.md`;
+- prereg creation commit: `7d94f9f9bfaa3b320250c7b046d2a6c7a37309b5`;
+- prereg blob: `9e1235a48a4288bb2083d69084f1cae7d79847bb`;
+- workflow: `.github/workflows/exp073ic-c2-tangent-finite-difference-response-candidate-v0-1.yml`;
+- workflow/head commit: `f3475f5d409a50c31fb1eda3870837542797e091`;
+- workflow/run ID: `34249380208`;
+- job ID: `102139612475`;
+- branch/head: `main / f3475f5d409a50c31fb1eda3870837542797e091`;
+- checkpoint namespace: N/A; GitHub-hosted deterministic transformation of immutable HW/IB v0.2 artifacts;
+- start time: `2026-09-08T16:10:03Z`;
+- expected gate/token: `PASS_EXP073IC_C2_TANGENT_FINITE_DIFFERENCE_RESPONSE_CANDIDATE_V0_1`;
 - runner ownership: GitHub-hosted `ubuntu-24.04`; self-hosted/home owner **none**;
-- state at ledger update: IN_PROGRESS;
-- last durable payload: nine independently validated HY complete model-point artifacts; exact IDs/digests/job IDs/aggregate SHA256 frozen in the HZ prereg and V45 note.
+- state at ledger update: QUEUED;
+- last durable payload: authoritative HW reference map and IB v0.2 9×28 tangent maps.
 
 ### Exact next action on SUCCESS
-Consume HZ raw log and require the exact PASS token plus `classification=TANGENT_RAW_SET_ADMITTED_PLUS_0_PLUS_0`, `tangent_raw_set_admitted=true`, `decoded=false`, `mapped=false`, `tangent_response_ready=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`. Only then prospectively freeze a **separate deterministic tangent ABI decode gate**. Do not calculate tangent derivatives yet.
+Consume IC raw log and artifact, verify source authority bindings, exact 28-row order, exact output SHA and finite binary64 response fields. Classify only `TANGENT_RESPONSE_CANDIDATE_PLUS_0_PLUS_0`; keep `tangent_response_ready=false`. Before inspecting scale relations for scientific acceptance, prospectively freeze a separate stability/admission rule. Never choose a favorable scale or threshold post hoc.
 
 ### Exact next action on FAIL
-Diagnose the first causal infrastructure/provenance mismatch. Preserve the validated HY artifacts. Do not alter model points, coordinate grid, solver/source fingerprints, packet ABI, aggregate ordering, or acceptance criteria.
+Diagnose the first causal infrastructure/provenance defect. Preserve HW, IA and IB v0.2 authorities and all frozen point definitions. Do not alter finite-difference definitions or scales to rescue the result.
 
 ### Exact next action on BLOCKED
-Preserve HY raw candidate and keep tangent derivatives/prediction forbidden.
+Preserve the mapped coordinate sets and keep tangent-response authority/prediction forbidden.
 
 Global frozen DSIR boundaries remain unchanged.
