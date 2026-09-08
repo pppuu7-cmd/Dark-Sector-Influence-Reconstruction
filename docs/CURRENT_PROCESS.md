@@ -32,7 +32,7 @@ Historical GA run `34189540992` remains implementation/infrastructure FAIL `+0/+
 
 Exp073GZ receipt-contract audit remains PASS `SUPPORT_PLUS_0_PLUS_0`.
 
-Exp073HA static audit is now **PASS `SUPPORT_PLUS_0_PLUS_0`**:
+Exp073HA static audit remains **PASS `SUPPORT_PLUS_0_PLUS_0`**:
 
 - prereg commit `33b7bc35401bef01f436b433e5c7ebf9bab0cb4f`, prereg blob `f970da98a91f541e62aa957b16aaf4ea12bd98a7`;
 - workflow implementation head `b02625a459dcc21f2497752becc5798a574db7b3`;
@@ -40,7 +40,15 @@ Exp073HA static audit is now **PASS `SUPPORT_PLUS_0_PLUS_0`**:
 - exact token `PASS_EXP073HA_C2_NATIVE_EXACT_ENDPOINT_EXTRACTION_STATIC_AUDIT_V0_1`;
 - `cosmological_run_started=false`, `record_payload_created=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`.
 
-Next C2 action: prospectively implement and hosted-build/static-audit a diagnostic-only exact-endpoint producer patch under the frozen HA architecture. Real 28-packet / 1792-byte runtime remains `BLOCKED_BY_HEAVY_RUN_EXCLUSIVITY` while GA owns the self-hosted runner. No home C2 job may be launched concurrently.
+Exp073HB diagnostic exact-endpoint producer build/static audit is now prospectively frozen:
+
+- prereg path `docs/dsir4/prereg/EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1.md`;
+- creation commit `4ca51c172c89c52a3f5a2613e30133a59d03d38e`;
+- prereg blob `fc5f08889f84e628cb789070abd9179a74ef7e04`;
+- expected PASS token `PASS_EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1`;
+- scientific ceiling `SUPPORT_PLUS_0_PLUS_0` with no cosmological run and zero runtime records.
+
+Next C2 action: implement a deterministic diagnostic-only producer patch and a hosted build/static audit bound exactly to the HB preregistration and the pinned upstream blobs. Real 28-packet / 1792-byte runtime remains `BLOCKED_BY_HEAVY_RUN_EXCLUSIVITY` while GA owns the self-hosted runner. No home C2 job may be launched concurrently.
 
 ## Frozen boundaries
 
