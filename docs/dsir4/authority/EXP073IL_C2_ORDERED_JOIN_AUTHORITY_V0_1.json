@@ -1,0 +1,16 @@
+{
+  "schema":"EXP073IL_C2_ORDERED_JOIN_AUTHORITY_V0_1",
+  "scope":"DSIR_ONLY",
+  "hypothesis_id":"C2_IDE_LOCAL_TANGENT_CONE",
+  "definition":{"path":"docs/dsir4/contracts/DSIR4_ORDERED_JOIN_DEFINITION_V0_1.md","blob":"b594579c9f95fdb5085f5e9ba09f4dbc383d719a","creation_commit":"a2d4db0c1a0763d064ca4a47cf73aa9e6a4ea376"},
+  "prereg":{"path":"docs/dsir4/prereg/EXP073IL_C2_ORDERED_JOIN_STRUCTURAL_ADMISSION_V0_1.md","blob":"6da7eadd1d01344741c65d6e72a5fa02d7b35cc0","creation_commit":"ae5d4aebab9467cd93fdbd594f8e940c50df6fc1"},
+  "workflow":{"path":".github/workflows/exp073il-c2-ordered-join-structural-admission-v0-1.yml","blob":"cbb7a9cfe247ecf4b15a81138c1cc11f0d01446d","repair_commit":"d13d6ab2f99a632b434c8e6ecad821ddf0aead3e"},
+  "binding":{"path":"docs/dsir4/contracts/EXP073IL_LAUNCH_BINDING_V0_1.txt","blob":"d5a020b6c0e1acc2b6910265735d517059bca94d","head":"5bf6b492c3f4220a5c5aaf2276f6acd83507ad60"},
+  "historical_infrastructure_failure":{"run":34271889927,"job":102215228801,"classification":"INFRASTRUCTURE_IMPLEMENTATION_PLUS_0_PLUS_0","first_causal_failure":"static audit searched G_DOMAIN_MAPPING=PASS in JSON authority instead of exact quoted-colon JSON literal","science_changed":false},
+  "admission":{"run":34271954072,"job":102215439354,"head":"5bf6b492c3f4220a5c5aaf2276f6acd83507ad60","token":"PASS_EXP073IL_C2_ORDERED_JOIN_STRUCTURAL_ADMISSION_V0_1","classification":"SCIENTIFIC_GATE_PASS"},
+  "artifact":{"id":10074157812,"name":"exp073il-c2-ordered-join-structural-admission-v0-1","size_bytes":370,"zip_sha256":"acaaf9c00a3654b5e59c190470325a92818e8f2f94296ee45bce1ecfd27baa9e"},
+  "receipt":{"schema":"EXP073IL_C2_ORDERED_JOIN_STRUCTURAL_ADMISSION_V0_1","run":34271954072,"job":"audit","head":"5bf6b492c3f4220a5c5aaf2276f6acd83507ad60"},
+  "ordered_slots":["Wm_S0","Wm_S1","Wm_S2","Wm_S3","WW_S0_S0","WW_S0_S1","WW_S0_S2","WW_S0_S3","WW_S1_S1","WW_S1_S2","WW_S1_S3","WW_S2_S2","WW_S2_S3","WW_S3_S3"],
+  "status":{"G_DOMAIN_MAPPING":"PASS","G_ANGULAR_AUTHORITY":"PASS","G_ORDERED_JOIN":"PASS","G_RADIAL_SUPPORT":"NOT_YET_TESTABLE","G_PHYSICAL_SUPPORT":"NOT_YET_TESTABLE","G_COV_WHITENING":"NOT_YET_TESTABLE","G_NUISANCE_QUOTIENT":"NOT_YET_TESTABLE","G_RELATION_NULL":"NOT_YET_TESTABLE","G_FINAL_MODEL":"NOT_YET_TESTABLE","scientific_model_authority_created":false,"overall_status":"NOT_YET_TESTABLE"},
+  "boundary":"This PASS is structural provenance/order only; it performs no radial multiplication, line-of-sight projection, covariance operation, nuisance fit, smoothing, interpolation, or model-output scoring."
+}
