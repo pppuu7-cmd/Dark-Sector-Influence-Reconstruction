@@ -18,13 +18,44 @@ EXPECTED_PAIRS = ['S0_S0','S0_S1','S0_S2','S0_S3','S1_S1','S1_S2','S1_S3','S2_S2
 EXPECTED_14 = ['Wm_S0','Wm_S1','Wm_S2','Wm_S3','WW_S0_S0','WW_S0_S1','WW_S0_S2','WW_S0_S3','WW_S1_S1','WW_S1_S2','WW_S1_S3','WW_S2_S2','WW_S2_S3','WW_S3_S3']
 
 
+def static_eval(node: ast.AST, env: dict[str, object]):
+    if isinstance(node, ast.Constant):
+        return node.value
+    if isinstance(node, ast.Name):
+        if node.id not in env:
+            raise ValueError(f'unresolved static name {node.id}')
+        return env[node.id]
+    if isinstance(node, ast.Dict):
+        return {static_eval(k, env): static_eval(v, env) for k, v in zip(node.keys, node.values)}
+    if isinstance(node, ast.List):
+        return [static_eval(x, env) for x in node.elts]
+    if isinstance(node, ast.Tuple):
+        return tuple(static_eval(x, env) for x in node.elts)
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+        val = static_eval(node.operand, env)
+        return +val if isinstance(node.op, ast.UAdd) else -val
+    raise ValueError(f'non-static node {ast.dump(node, include_attributes=False)}')
+
+
 def literal_assign(path: Path, name: str):
     tree = ast.parse(path.read_text(encoding='utf-8'), filename=str(path))
+    env: dict[str, object] = {}
     for node in tree.body:
-        if isinstance(node, ast.Assign):
-            for target in node.targets:
-                if isinstance(target, ast.Name) and target.id == name:
-                    return ast.literal_eval(node.value)
+        if not isinstance(node, ast.Assign):
+            continue
+        targets = [t for t in node.targets if isinstance(t, ast.Name)]
+        if not targets:
+            continue
+        try:
+            value = static_eval(node.value, env)
+        except ValueError:
+            if any(t.id == name for t in targets):
+                raise
+            continue
+        for target in targets:
+            env[target.id] = value
+            if target.id == name:
+                return value
     raise AssertionError(f'missing literal assignment {name} in {path}')
 
 
@@ -43,6 +74,7 @@ def main() -> None:
 
     # Independent source-basis recovery from frozen implementation sources.
     assert literal_assign(r1p, 'SELECTION') == EXPECTED_SELECTION
+    assert literal_assign(r1p, 'NSIDE') == 4096
     assert literal_assign(r1p, 'MAPPER') == EXPECTED_MAPPER
     assert literal_assign(aap, 'SOURCE') == EXPECTED_SOURCE
     assert literal_assign(aap, 'ALL_TASKS') == EXPECTED_14
