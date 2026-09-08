@@ -1,0 +1,72 @@
+name: Exp073HP C2 HO first request failure diagnostic v0.1
+
+on:
+  push:
+    paths:
+      - 'docs/dsir4/contracts/EXP073HP_DIAGNOSTIC_BINDING_V0_1.txt'
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+
+jobs:
+  hosted-first-request-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify diagnostic binding and frozen configs
+        shell: bash
+        run: |
+          set -euo pipefail
+          M=docs/dsir4/contracts/EXP073HP_DIAGNOSTIC_BINDING_V0_1.txt
+          get(){ awk -F= -v k="$1" '$1==k{print $2}' "$M"; }
+          test "$(git hash-object docs/dsir4/prereg/EXP073HP_C2_HO_FIRST_REQUEST_FAILURE_DIAGNOSTIC_V0_1.md)" = "$(get PREREG_BLOB)"
+          test "$(git hash-object .github/workflows/exp073hp-c2-ho-first-request-failure-diagnostic-v0-1.yml)" = "$(get WORKFLOW_BLOB)"
+          test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = "0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c"
+          test "$(sha256sum configs/dsir4/c2/dsir_ide_p8_v0_1.pre | awk '{print $1}')" = "463a3960d6a955c1e2a561e988562a1fc5486b0b79f120eb634ccca6f86002f9"
+      - name: Build exact post-HM solver
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libgsl-dev
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hj_c2_complete_native_record_observation_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hm_c2_mpk_native_theta_observer_guard_patch_v0_1.py /tmp/class_iv
+          test "$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')" = "8c76c0b0ba8de6c0528980569ae748b24ff1b790a9f752ac11e90ca71d5b63de"
+          test "$(sha256sum /tmp/class_iv/tools/evolver_ndf15.c | awk '{print $1}')" = "b3967efaf7a45a3ec6c0144e892caab54f91c595bc726dc1704cfb812f9c0df6"
+          make -C /tmp/class_iv -j2 class >/tmp/build.log 2>&1
+      - name: Expose first causal solver failure without endpoint values
+        shell: bash
+        run: |
+          set -euo pipefail
+          D=/tmp/hp; mkdir -p "$D/ide_outputs"
+          cp configs/dsir4/c2/ide0_reference_v0_1.ini "$D/ide0.ini"
+          printf '\nk_output_values = 0.00067\n' >> "$D/ide0.ini"
+          cp configs/dsir4/c2/dsir_ide_p8_v0_1.pre "$D/dsir_ide_p8.pre"
+          set +e
+          (cd "$D" && DSIR_C2_EXACT_Z=0.295 /tmp/class_iv/class ide0.ini dsir_ide_p8.pre >stdout.txt 2>stderr.txt)
+          RC=$?
+          set -e
+          echo "solver_exit_code=$RC"
+          if [ "$RC" -eq 0 ]; then
+            echo 'DIAGNOSTIC_UNEXPECTED_FIRST_REQUEST_SUCCESS'
+            exit 3
+          fi
+          echo '--- solver stdout diagnostic (endpoint lines removed) ---'
+          grep -v '^DSIR_C2_EXACT_ENDPOINT ' "$D/stdout.txt" || true
+          echo '--- solver stderr diagnostic (endpoint lines removed) ---'
+          grep -v '^DSIR_C2_EXACT_ENDPOINT ' "$D/stderr.txt" || true
+          echo 'classification=INFRASTRUCTURE_DIAGNOSTIC_PLUS_0_PLUS_0'
+          echo 'raw_record_set_admitted=false'
+          echo 'decoded=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'PASS_EXP073HP_C2_HO_FIRST_REQUEST_FAILURE_DIAGNOSTIC_V0_1'
