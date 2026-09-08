@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/exp073hb-c2-diagnostic-exact-endpoint-producer-build-audit-v0-1.yml'
       - 'scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py'
+      - 'scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py'
   workflow_dispatch:
 
 permissions:
@@ -22,25 +23,41 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Fail-closed identities and apply deterministic producer patch
+      - name: Fail-closed identities and apply exact build-compat plus producer patch
         shell: bash
         run: |
           set -euo pipefail
           test "$(git hash-object docs/dsir4/prereg/EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1.md)" = "fc5f08889f84e628cb789070abd9179a74ef7e04"
           test "$(git hash-object scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py)" = "f3d3d80cda2f937f544722e684a44c649e771487"
+          test "$(git hash-object scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py)" = "417ab6f99a00fda1e396aae68ca21fe24a7695e1"
 
           git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
           git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
           test "$(git -C /tmp/class_iv rev-parse HEAD)" = "ac627d54e9ce196a08878d1ba33999819925d19c"
           test "$(git -C /tmp/class_iv hash-object source/perturbations.c)" = "92a48331658c5941ed4eb43b0e98ee78e39b8385"
           test "$(git -C /tmp/class_iv hash-object tools/evolver_ndf15.c)" = "790ced55f2eaa08e805d467734ad1435954bc5b7"
+          test "$(git -C /tmp/class_iv hash-object source/background.c)" = "310e0f5764ab41da3a886ed239db3fff2aac32ec"
+
+          cp /tmp/class_iv/source/background.c /tmp/background.original.c
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py /tmp/class_iv | tee /tmp/build_compat_receipt.txt
+          grep -Fx 'EXP073HB_PINNED_UPSTREAM_STRAY_BRACE_REMOVED_EXACTLY_ONCE' /tmp/build_compat_receipt.txt
+          python - <<'PY'
+          from pathlib import Path
+          a=Path('/tmp/background.original.c').read_text()
+          b=Path('/tmp/class_iv/source/background.c').read_text()
+          old="    break;\n  }\n\n  case IDM_IV:"
+          new="    break;\n\n  case IDM_IV:"
+          assert a.count(old)==1
+          assert b == a.replace(old,new,1)
+          print('PASS_EXP073HB_PINNED_UPSTREAM_BUILD_COMPAT_EXACT_ONE_BRACE_V0_1')
+          PY
 
           python scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py /tmp/class_iv | tee /tmp/patch_receipt.txt
           grep -Fx 'EXP073HB_PATCH_APPLIED' /tmp/patch_receipt.txt
           git -C /tmp/class_iv diff --check
-          git -C /tmp/class_iv diff -- source/perturbations.c tools/evolver_ndf15.c > /tmp/exp073hb.patch
+          git -C /tmp/class_iv diff -- source/background.c source/perturbations.c tools/evolver_ndf15.c > /tmp/exp073hb.patch
           test -s /tmp/exp073hb.patch
-          sha256sum /tmp/exp073hb.patch /tmp/class_iv/source/perturbations.c /tmp/class_iv/tools/evolver_ndf15.c
+          sha256sum /tmp/exp073hb.patch /tmp/class_iv/source/background.c /tmp/class_iv/source/perturbations.c /tmp/class_iv/tools/evolver_ndf15.c
 
       - name: Static semantic audit of patched exact-endpoint route
         shell: bash
@@ -63,25 +80,20 @@ jobs:
           assert 'getenv("DSIR_C2_EXACT_Z")' in p
           assert 'if (ztext == NULL || *ztext == \'\\0\') return _SUCCESS_;' in p
           assert 'OMP_NUM_THREADS' in p and 'strcmp(omp,"1")' in p
-
           assert 'ppt->k_output_values_num != 1' in p
           assert 'ppt->index_k_output_values[index_md*ppt->k_output_values_num]' in p
           assert 'if (index_k != native_index) return _SUCCESS_;' in p
           assert 'background_tau_of_z(pba,z,&dsir_c2_diag_tau_target)' in p
           for z in ['0.295','0.51','0.706','0.934','1.317','1.491','2.33']:
               assert f'"{z}"' in p
-
           assert p.count('dsir_tau_end') >= 5
           assert 'perturb_find_approximation_number' in p
           assert 'perturb_find_approximation_switches' in p
-          assert 'dsir_c2_diag_tau_target' in p
-
           anchor_theta = 'ppw->theta_m = rho_plus_p_theta_m/rho_plus_p_m;'
           anchor_capture = 'dsir_c2_diag_delta_m_raw = ppw->delta_m;'
           anchor_source = 'int perturb_sources('
           assert p.index(anchor_theta) < p.index(anchor_capture) < p.index(anchor_source)
           assert 'dsir_c2_diag_theta_m_raw = ppw->theta_m;' in p
-
           hook = 'if ((done==_TRUE_) && (dsir_c2_diag_enabled()!=0))'
           assert hook in e
           assert 'dsir_c2_diag_arm_terminal(tnew' in e
@@ -90,7 +102,6 @@ jobs:
           assert e.index(hook) > e.index('break; /* Succesfull step */')
           assert e.index(hook) < e.index('interp_from_dif(t_vec[next]')
           assert 'tnew = tfinal; /*Hit end point exactly. */' in e
-
           assert 'DSIR_C2_EXACT_ENDPOINT z=%s tau=%a k=%a delta_m=%a theta_m=%a' in p
           assert 'fopen(' not in p[p.index('/* DSIR Exp073HB'):p.index('/**\n * Source function')]
           print('PASS_EXP073HB_STATIC_SEMANTICS_V0_1')
