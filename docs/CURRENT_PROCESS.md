@@ -8,55 +8,48 @@ Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted 
 
 Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-08_WW_S3_S3_ADMITTED_HB_V0_2_PASS_C2_RUNTIME_AUTHORIZED_V33.md`, creation commit `37acc422c8b3728abedfdd641f9cac9afe232c75`.
 
-## Exp073HI — closed prerequisite
+## Closed C2 prerequisites
 
-- prereg blob `030fac1023c1f811c1832cd0ec01060b27a613a7`;
-- run `34224810650`, job `102056219075 SUCCESS`, head `8afb6ddc421a996455c861797291e2d4c36f439a`;
-- exact token `PASS_EXP073HI_C2_PINNED_UPSTREAM_BUILD_COMPATIBILITY_ADMISSION_V0_1`;
-- validated receipt blob `8313779961a6addce71843fe8b101c81fdae3ad1`;
-- admitted derivative `source/background.c` SHA256 `bc4053922ae984652f5858b2869e7bbbe8682ea502b88e485709e6828e059ce0`;
-- admitted derivative `Makefile` SHA256 `2bb326590b3d0c3a23e984fc17cafce680674aa5234db15d35d72a06e1bfa87e`;
-- classification `SUPPORT_PLUS_0_PLUS_0`.
+Exp073HI is raw-log validated build-compatible derivative authority (`34224810650 / 102056219075 SUCCESS`, head `8afb6ddc421a996455c861797291e2d4c36f439a`, receipt blob `8313779961a6addce71843fe8b101c81fdae3ad1`). The immutable parent remains `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`; the derivative is separately provenance-bound and must never be represented as unmodified parent source.
 
-The immutable parent remains `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`; the derivative is separately provenance-bound and must never be represented as unmodified parent source.
+Exp073HB v0.2 is terminal-consumed support PASS (`34225024526 / 102056923363 SUCCESS`, head `506f9ce1a6e066e0ed190e94351f5cc9d51b72a8`) with exact token `PASS_EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_2`, full solver compile, no cosmological run and no payload. HB patched source identities remain `source/perturbations.c` SHA256 `da7c427e383f1e9b83d7ff75ef82784c2fe89d91f9681e21e7805b7f354e7e79` and `tools/evolver_ndf15.c` SHA256 `b3967efaf7a45a3ec6c0144e892caab54f91c595bc726dc1704cfb812f9c0df6`.
 
-## Exp073HB v0.2 — terminal consumed PASS
+## Newly closed implementation-fingerprint gate — Exp073HK
 
-- prereg `docs/dsir4/prereg/EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_2.md`, blob `514232fd1873600772e4eb1f6f59210b8ca6406b`;
-- workflow/head commit `506f9ce1a6e066e0ed190e94351f5cc9d51b72a8`;
-- run `34225024526`, job `102056923363 SUCCESS`;
-- runner ownership: GitHub-hosted only; self-hosted heavy owner **none**;
-- exact raw-log token `PASS_EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_2`;
+- prereg `docs/dsir4/prereg/EXP073HK_C2_HJ_OUTPUT_FINGERPRINT_DERIVATION_V0_1.md`, blob `2fa86e71ab01810914a2f869b7420be5f7fccdfe`;
+- run `34227090985`, job `102063746865 SUCCESS`, head `1a8110e84bda1152a94c56469db7ad3bc90d6ba2`;
+- raw-log exact token `PASS_EXP073HK_C2_HJ_OUTPUT_FINGERPRINT_DERIVATION_V0_1`;
 - `classification=SUPPORT_PLUS_0_PLUS_0`;
-- producer patch blob `f3d3d80cda2f937f544722e684a44c649e771487`;
-- patched `source/perturbations.c` SHA256 `da7c427e383f1e9b83d7ff75ef82784c2fe89d91f9681e21e7805b7f354e7e79`;
-- patched `tools/evolver_ndf15.c` SHA256 `b3967efaf7a45a3ec6c0144e892caab54f91c595bc726dc1704cfb812f9c0df6`;
-- full solver compile verified;
-- artifacts none, as required;
-- `cosmological_run_started=false`, `record_payload_created=false`, `runtime_record_count=0`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`.
+- HJ extension script blob `9096eddfb592703ef6a2adc82bf27db05bee9ee0`;
+- deterministic final HJ `source/perturbations.c` SHA256 `f1a5619ea2dfb60e4e236349485dcffb58c1c2ef96358bd59b8a1207d77248d2`;
+- no compile, cosmological run or record payload; no scientific authority.
 
-HB v0.2 closes the V32 build blocker prospectively. It is support-only, not a C2 scientific PASS.
+## Current process — Exp073HJ hosted complete-native-record build audit
 
-## Live process state
+- prereg `docs/dsir4/prereg/EXP073HJ_C2_COMPLETE_NATIVE_RECORD_PRODUCER_BUILD_AUDIT_V0_1.md`;
+- prereg blob `16009f3a0016dc0fb04c0271af954bd6fc76f9e8`;
+- prereg creation commit `d79784e1c980c879fe52d074e308e09347db0fee`;
+- extension implementation commit `50fc7378dfcae35df7a731c643098c205f00d30e`;
+- extension script blob `9096eddfb592703ef6a2adc82bf27db05bee9ee0`;
+- prospectively fingerprinted final source SHA256 `f1a5619ea2dfb60e4e236349485dcffb58c1c2ef96358bd59b8a1207d77248d2`;
+- workflow/head commit `f20bf0a0a3db41702ad30d1b44bf5b8ff0c4e900`;
+- workflow/run ID `34227197810`;
+- job ID `102064106469`;
+- runner ownership: GitHub-hosted only; self-hosted heavy owner **none**;
+- state at ledger update: **IN_PROGRESS**;
+- expected token `PASS_EXP073HJ_C2_COMPLETE_NATIVE_RECORD_PRODUCER_BUILD_AUDIT_V0_1`;
+- expected ceiling `SUPPORT_PLUS_0_PLUS_0`;
+- last durable checkpoint: not applicable; hosted static/build gate;
+- SUCCESS action: consume raw log and require exact eight-field/native-workspace/hash/build/negative markers, then prospectively freeze the real 64-byte runtime serializer/producer workflow under GR/GY/GZ; do not decode or map;
+- FAIL action: diagnose first causal implementation/build failure, preserve `+0/+0`, do not weaken HJ or scientific contracts.
 
-Latest Actions reconciliation: **0 queued, 0 in-progress** DSIR runs. No competing home-heavy process; runner ownership is **none**.
+HJ closes a concrete producer incompleteness discovered after HB: HB exposes only `tau,k,delta_m,theta_m`, whereas frozen runtime ABI requires `tau,k,a,H,delta_m,theta_m,rho_idm_iv,rho_iv`. HJ reads the four additional native background values from the already-refreshed exact-endpoint `ppw->pvecback`; it introduces no second background/interpolation call.
 
-## Exact next permitted transition — real C2 runtime producer
+## C2 runtime status
 
-The already-frozen runtime admission boundary is now eligible for implementation/dispatch:
+Real 28-packet / 1792-byte C2 extraction is **NOT YET RUNNING**. It remains forbidden until HJ raw-log PASS and a separately prospectively frozen binary serialization/runtime workflow bind exact model point, command/config, run/job/head/artifact/digest and aggregate SHA provenance. `prediction_ready=false`; `scientific_model_authority_created=false`; `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`.
 
-- receipt contract `docs/dsir4/mappings/C2_IDE_RUNTIME_ADMISSION_RECEIPT_CONTRACT_V0_1.md`, blob `1c2e30e6563efe3976ee0b1825dfb250a902a529`;
-- exact 7 z x 4 physical-k grid = 28 requests, ordering `z-major/k-minor`;
-- z `[0.295,0.51,0.706,0.934,1.317,1.491,2.33]`;
-- k `[0.00067,0.00201,0.0067,0.0201] Mpc^-1`;
-- 64 bytes/record, eight binary64 fields, aggregate exactly 1792 bytes;
-- raw records before decoding/mapping; `decoded=false`, `mapped=false`, `prediction_ready=false` at admission;
-- exact producer run/job/head/artifact/digest/aggregate-SHA binding required;
-- recovered tangent provenance is fixed: reference `(alpha,beta)=(0,0)`, alpha base direction `-1e-4`, beta `+/-1e-4`, baseline `h=0.67` cosmology and frozen p8 precision.
-
-Current state: **READY_FOR_PROSPECTIVE_RUNTIME_PRODUCER_IMPLEMENTATION**. No producer run is active yet because the collision-free runtime workflow and exact per-model-point runtime command/artifact binding are not yet committed. This is implementation work, not scientific BLOCKED/FAIL.
-
-SUCCESS: consume terminal raw artifact and admit only after exact coordinate/order/count/byte/SHA/provenance checks, without decoding. FAIL: diagnose first causal infrastructure/runtime/provenance error; preserve complete durable request/record checkpoints if self-hosted; never alter frozen science.
+No self-hosted heavy owner exists and no competing home task has been launched.
 
 ## Frozen boundaries
 
