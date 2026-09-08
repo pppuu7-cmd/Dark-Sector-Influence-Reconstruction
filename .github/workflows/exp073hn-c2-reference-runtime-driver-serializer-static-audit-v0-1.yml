@@ -1,0 +1,96 @@
+name: Exp073HN C2 reference runtime driver serializer static audit v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'docs/dsir4/contracts/EXP073HN_IMPLEMENTATION_BINDING_V0_1.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify prospective implementation binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          M=docs/dsir4/contracts/EXP073HN_IMPLEMENTATION_BINDING_V0_1.txt
+          test -f "$M"
+          get(){ awk -F= -v k="$1" '$1==k{print $2}' "$M"; }
+          test "$(git hash-object docs/dsir4/prereg/EXP073HN_C2_REFERENCE_RUNTIME_DRIVER_SERIALIZER_STATIC_AUDIT_V0_1.md)" = "$(get PREREG_BLOB)"
+          test "$(git hash-object scripts/dsir4/exp073hn_c2_reference_runtime_driver_v0_1.py)" = "$(get DRIVER_BLOB)"
+          test "$(git hash-object scripts/dsir4/exp073hn_c2_endpoint_serializer_v0_1.c)" = "$(get SERIALIZER_BLOB)"
+          test "$(git hash-object configs/dsir4/c2/ide0_reference_v0_1.ini)" = "$(get BASELINE_BLOB)"
+          test "$(git hash-object configs/dsir4/c2/dsir_ide_p8_v0_1.pre)" = "$(get P8_BLOB)"
+          test "$(git hash-object scripts/dsir4/fixtures/dsir_c2_recorder_v0_1.h)" = "$(get RECORDER_BLOB)"
+          test "$(git hash-object .github/workflows/exp073hn-c2-reference-runtime-driver-serializer-static-audit-v0-1.yml)" = "$(get WORKFLOW_BLOB)"
+          test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = "0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c"
+          test "$(sha256sum configs/dsir4/c2/dsir_ide_p8_v0_1.pre | awk '{print $1}')" = "463a3960d6a955c1e2a561e988562a1fc5486b0b79f120eb634ccca6f86002f9"
+      - name: Reconstruct exact post-HM source without cosmology
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hj_c2_complete_native_record_observation_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hm_c2_mpk_native_theta_observer_guard_patch_v0_1.py /tmp/class_iv
+          test "$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')" = "8c76c0b0ba8de6c0528980569ae748b24ff1b790a9f752ac11e90ca71d5b63de"
+          test "$(sha256sum /tmp/class_iv/tools/evolver_ndf15.c | awk '{print $1}')" = "b3967efaf7a45a3ec6c0144e892caab54f91c595bc726dc1704cfb812f9c0df6"
+      - name: Audit deterministic 28-request plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/dsir4/exp073hn_c2_reference_runtime_driver_v0_1.py --plan-only > /tmp/plan.jsonl
+          test "$(wc -l < /tmp/plan.jsonl)" -eq 28
+          python - <<'PY'
+          import json
+          p=[json.loads(x) for x in open('/tmp/plan.jsonl')]
+          Z=['0.295','0.51','0.706','0.934','1.317','1.491','2.33']; K=['0.00067','0.00201','0.0067','0.0201']
+          exp=[(f'z{zi:02d}k{ki:02d}',z,k) for zi,z in enumerate(Z) for ki,k in enumerate(K)]
+          assert [(r['request_id'],r['z_literal'],r['k_mpc_literal']) for r in p]==exp
+          assert all(r['model_point']=='reference_alpha0_beta0' for r in p)
+          assert all(r['invocation']==['./class','ide0.ini','dsir_ide_p8.pre'] for r in p)
+          assert all(r['diagnostic_env']['DSIR_C2_EXACT_Z']==r['z_literal'] for r in p)
+          assert all(r['native_k_output_values']==r['k_mpc_literal'] for r in p)
+          assert all(r['k_mpc_literal']!='0.067' for r in p)
+          print('PASS_EXP073HN_DETERMINISTIC_28_REQUEST_PLAN_V0_1')
+          PY
+      - name: Compile and test serializer on synthetic fixture only
+        shell: bash
+        run: |
+          set -euo pipefail
+          cc -std=c11 -O2 -Wall -Wextra -Werror -Iscripts/dsir4 scripts/dsir4/exp073hn_c2_endpoint_serializer_v0_1.c -lm -o /tmp/exp073hn_serializer
+          SYN='DSIR_C2_EXACT_ENDPOINT z=0.295 tau=0x1p+0 k=0x1p-10 a=0x1p-1 H=0x1p+0 delta_m=0x1p-2 theta_m=-0x1p-3 rho_idm_iv=0x1p+1 rho_iv=0x1p+2'
+          /tmp/exp073hn_serializer /tmp/synthetic.bin "$SYN" 2>/tmp/serializer.stderr
+          grep -F 'DSIR_C2_SYNTHETIC_SERIALIZER_OK z=0.295 bytes=64' /tmp/serializer.stderr
+          test "$(stat -c%s /tmp/synthetic.bin)" -eq 64
+          rm -f /tmp/synthetic.bin
+          test ! -e /tmp/dsir_c2_records.bin
+          echo 'PASS_EXP073HN_SYNTHETIC_SERIALIZER_64_BYTE_ABI_V0_1'
+      - name: Emit frozen support-only boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e /tmp/dsir_c2_records.bin
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'reference_model_point_frozen=true'
+          echo 'request_plan_count=28'
+          echo 'coordinate_order=z-major/k-minor'
+          echo 'serializer_64_byte_abi_verified=true'
+          echo 'cosmological_run_started=false'
+          echo 'real_runtime_payload_created=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073HN_C2_REFERENCE_RUNTIME_DRIVER_SERIALIZER_STATIC_AUDIT_V0_1'
