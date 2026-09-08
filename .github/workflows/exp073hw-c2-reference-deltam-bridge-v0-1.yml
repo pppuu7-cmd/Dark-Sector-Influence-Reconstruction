@@ -1,0 +1,142 @@
+name: Exp073HW C2 reference Delta_m bridge v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/contracts/EXP073HW_BRIDGE_BINDING_V0_1.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  hosted-reference-bridge:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify frozen HW binding and HV authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          M=docs/dsir4/contracts/EXP073HW_BRIDGE_BINDING_V0_1.txt
+          get(){ awk -F= -v k="$1" '$1==k{print $2}' "$M"; }
+          test "$(git hash-object docs/dsir4/prereg/EXP073HW_C2_REFERENCE_DELTAM_BRIDGE_V0_1.md)" = "$(get PREREG_BLOB)"
+          test "$(git hash-object .github/workflows/exp073hw-c2-reference-deltam-bridge-v0-1.yml)" = "$(get WORKFLOW_BLOB)"
+          test "$(git hash-object docs/dsir4/authority/EXP073HV_C2_RAW_RECORD_ABI_DECODE_AUTHORITY_V0_1.txt)" = '36df02975587d7c1b456cee982b01210185dbda2'
+          grep -qx 'RAW_RECORD_SET_ADMITTED=true' docs/dsir4/authority/EXP073HV_C2_RAW_RECORD_ABI_DECODE_AUTHORITY_V0_1.txt
+          grep -qx 'DECODED=true' docs/dsir4/authority/EXP073HV_C2_RAW_RECORD_ABI_DECODE_AUTHORITY_V0_1.txt
+          grep -qx 'MAPPED=false' docs/dsir4/authority/EXP073HV_C2_RAW_RECORD_ABI_DECODE_AUTHORITY_V0_1.txt
+
+      - name: Verify frozen bridge contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/mappings/C2_IDE_DELTAM_EXTRACTION_CONTRACT_V0_1.md)" = 'ce0f39023fd2141745f946bdffe8133755613bd3'
+          test "$(git hash-object docs/dsir4/mappings/C2_IDE_NATIVE_SOURCE_BINDING_AUDIT_V0_1.md)" = 'c5a4ea0131ac57dcb2df552c366da1e687f38015'
+          grep -Fq 'Delta_m = delta_m + 3 (1+w_m) Hconf theta_m/k^2' docs/dsir4/mappings/C2_IDE_DELTAM_EXTRACTION_CONTRACT_V0_1.md
+          grep -Fq 'For the current pressureless-matter C2 setup, `w_m=0`' docs/dsir4/mappings/C2_IDE_NATIVE_SOURCE_BINDING_AUDIT_V0_1.md
+
+      - name: Download and verify admitted decoded artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/hw
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            'https://api.github.com/repos/${{ github.repository }}/actions/artifacts/10062495891' > /tmp/hw/meta.json
+          python - <<'PY'
+          import json
+          m=json.load(open('/tmp/hw/meta.json'))
+          assert m['id']==10062495891
+          assert m['name']=='exp073hv-c2-decoded-record-set-v0-1'
+          assert m['digest']=='sha256:8ea9cf3baca04f181b97f58f19f04c798bfb14b02af271580c83e82f2900c49e'
+          assert m['workflow_run']['id']==34242333899
+          assert m['workflow_run']['head_sha']=='0687ca5ac973dc50340090213ceaaff70ecc6e04'
+          PY
+          curl -fsSL -L -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            'https://api.github.com/repos/${{ github.repository }}/actions/artifacts/10062495891/zip' -o /tmp/hw/hv.zip
+          test "$(sha256sum /tmp/hw/hv.zip | awk '{print $1}')" = '8ea9cf3baca04f181b97f58f19f04c798bfb14b02af271580c83e82f2900c49e'
+          mkdir /tmp/hw/hv
+          unzip -q /tmp/hw/hv.zip -d /tmp/hw/hv
+          test "$(sha256sum /tmp/hw/hv/dsir_c2_reference_decoded_v0_1.jsonl | awk '{print $1}')" = '95c5b71d5bbbe3492f5bddccaea572644ff84823b244c3c3bc46fd18b389d552'
+          test "$(cat /tmp/hw/hv/decoded.sha256)" = '95c5b71d5bbbe3492f5bddccaea572644ff84823b244c3c3bc46fd18b389d552'
+
+      - name: Apply frozen reference common-coordinate bridge
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,math,hashlib,pathlib,struct
+          src=pathlib.Path('/tmp/hw/hv/dsir_c2_reference_decoded_v0_1.jsonl')
+          rows=[json.loads(x) for x in src.read_text().splitlines() if x]
+          assert len(rows)==28
+          out=[]
+          for i,r in enumerate(rows):
+              assert r['request_id']==f'z{i//4:02d}k{i%4:02d}'
+              k=float.fromhex(r['k_hex']); a=float.fromhex(r['a_hex']); H=float.fromhex(r['H_hex'])
+              dm=float.fromhex(r['delta_m_hex']); tm=float.fromhex(r['theta_m_hex'])
+              ri=float.fromhex(r['rho_idm_iv_hex']); rv=float.fromhex(r['rho_iv_hex'])
+              assert all(math.isfinite(x) for x in (k,a,H,dm,tm,ri,rv))
+              assert k>0.0
+              # Frozen operation order. Separate Python operations; no tolerance/rounding rescue.
+              hconf=a*H
+              velocity_term=((3.0*hconf)*tm)/(k*k)
+              Delta_m=dm+velocity_term
+              assert all(math.isfinite(x) for x in (hconf,velocity_term,Delta_m))
+              idm_ok=ri>0.0; iv_ok=rv>=0.0
+              assert idm_ok and iv_ok
+              o={
+                'request_id':r['request_id'],'z_literal':r['z_literal'],'k_literal':r['k_literal'],
+                'k_hex':r['k_hex'],'a_hex':r['a_hex'],'H_hex':r['H_hex'],
+                'delta_m_hex':r['delta_m_hex'],'theta_m_hex':r['theta_m_hex'],
+                'hconf_hex':hconf.hex(),'velocity_term_hex':velocity_term.hex(),'Delta_m_hex':Delta_m.hex(),
+                'rho_idm_iv_hex':r['rho_idm_iv_hex'],'rho_iv_hex':r['rho_iv_hex'],
+                'node_rho_idm_positive':idm_ok,'node_rho_iv_nonnegative':iv_ok}
+              out.append(json.dumps(o,separators=(',',':'),ensure_ascii=True))
+          p=pathlib.Path('/tmp/hw/dsir_c2_reference_deltam_bridge_v0_1.jsonl')
+          p.write_text('\n'.join(out)+'\n',encoding='ascii')
+          sha=hashlib.sha256(p.read_bytes()).hexdigest()
+          pathlib.Path('/tmp/hw/bridge.sha256').write_text(sha+'\n')
+          pathlib.Path('/tmp/hw/BRIDGE_RECEIPT.txt').write_text(
+            'authority_kind=C2_REFERENCE_DELTAM_BRIDGE\n'
+            'upstream_hv_run=34242333899\nupstream_hv_job=102115404956\nupstream_hv_artifact_id=10062495891\n'
+            'upstream_decoded_jsonl_sha256=95c5b71d5bbbe3492f5bddccaea572644ff84823b244c3c3bc46fd18b389d552\n'
+            'bridge=Delta_m=delta_m+3*a*H*theta_m/k^2\noperation_order=hconf_then_velocity_term_then_add\n'
+            f'bridge_jsonl_sha256={sha}\nrecord_count=28\n'
+            'raw_record_set_admitted=true\ndecoded=true\nmapped_reference_coordinate=true\n'
+            'tangent_response_ready=false\nprediction_ready=false\nscientific_model_authority_created=false\n'
+          ,encoding='ascii')
+          print('bridge_jsonl_sha256='+sha)
+          PY
+
+      - name: Upload reference bridge support artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073hw-c2-reference-deltam-bridge-v0-1
+          path: |
+            /tmp/hw/dsir_c2_reference_deltam_bridge_v0_1.jsonl
+            /tmp/hw/bridge.sha256
+            /tmp/hw/BRIDGE_RECEIPT.txt
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Emit reference bridge boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'classification=REFERENCE_DELTAM_BRIDGE_PLUS_0_PLUS_0'
+          echo "bridge_jsonl_sha256=$(cat /tmp/hw/bridge.sha256)"
+          echo 'raw_record_set_admitted=true'
+          echo 'decoded=true'
+          echo 'mapped_reference_coordinate=true'
+          echo 'tangent_response_ready=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073HW_C2_REFERENCE_DELTAM_BRIDGE_V0_1'
