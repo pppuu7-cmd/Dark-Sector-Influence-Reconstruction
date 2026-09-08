@@ -1,0 +1,72 @@
+name: Exp073IL C2 ordered-join structural admission v0.1
+on:
+  push:
+    paths:
+      - 'docs/dsir4/contracts/EXP073IL_LAUNCH_BINDING_V0_1.txt'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen structural ordered join
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEF='docs/dsir4/contracts/DSIR4_ORDERED_JOIN_DEFINITION_V0_1.md'
+          PRE='docs/dsir4/prereg/EXP073IL_C2_ORDERED_JOIN_STRUCTURAL_ADMISSION_V0_1.md'
+          PRED='docs/dsir4/predictions/C2_IDE_LOCAL_TANGENT_CONE_PREDICTION_V0_1.md'
+          ANG='docs/dsir4/authority/C2_WW_ANGULAR_AUTHORITY_ADMITTED_V0_1.json'
+          IK='docs/recovery/RECOVERY_2026-09-08_C2_IK_INVENTORY_PASS_ORDERED_JOIN_DEFINITION_FRONT_V53.md'
+          for f in "$DEF" "$PRE" "$PRED" "$ANG" "$IK"; do test -s "$f"; done
+          grep -Fq 'J_j := (slot_id_j, source_labels_j, observable_semantics_j, P_identity, P_domain_coordinates, A_j_identity, A_j_angular_coordinates)' "$DEF"
+          grep -Fq 'J := ordered_tuple(J_1,...,J_14)' "$DEF"
+          grep -Fq 'Wm_S0' "$DEF"
+          grep -Fq 'WW_S3_S3' "$DEF"
+          grep -Fq 'Wm semantics are exactly `TE<-TE`' "$DEF"
+          grep -Fq 'WW semantics are exactly `EE<-EE`' "$DEF"
+          grep -Fq 'z = `[0.295,0.51,0.706,0.934,1.317,1.491,2.33]`' "$DEF"
+          grep -Fq 'k [Mpc^-1] = `[0.00067,0.00201,0.0067,0.0201]`' "$DEF"
+          grep -Fq 'DES NSIDE=4096' "$DEF"
+          grep -Fq 'canonical `<f8 [39,12288]`' "$DEF"
+          grep -Fq 'performs **no numerical multiplication between P and A_j**' "$DEF"
+          grep -Fq 'deferred to `G_RADIAL_SUPPORT`' "$DEF"
+          grep -Fq 'G_DOMAIN_MAPPING=PASS' "$ANG"
+          grep -Fq 'G_ANGULAR_AUTHORITY' "$ANG"
+          grep -Fq '"G_ORDERED_JOIN":"NOT_YET_TESTABLE"' "$ANG"
+          grep -Fq 'order: frozen `z-major / k-minor`' "$PRED"
+          grep -Fq 'source basis order `[S0,S1,S2,S3]`' "$IK"
+          grep -Fq 'historical 14-task angular order `Wm_S0,Wm_S1,Wm_S2,Wm_S3,WW_S0_S0,WW_S0_S1,WW_S0_S2,WW_S0_S3,WW_S1_S1,WW_S1_S2,WW_S1_S3,WW_S2_S2,WW_S2_S3,WW_S3_S3`' "$IK"
+          printf '%s\n' 'PASS_EXP073IL_C2_ORDERED_JOIN_STRUCTURAL_ADMISSION_V0_1'
+          printf '%s\n' 'classification=SCIENTIFIC_GATE_PASS'
+          printf '%s\n' 'G_DOMAIN_MAPPING=PASS'
+          printf '%s\n' 'G_ANGULAR_AUTHORITY=PASS'
+          printf '%s\n' 'G_ORDERED_JOIN=PASS'
+          printf '%s\n' 'G_RADIAL_SUPPORT=NOT_YET_TESTABLE'
+          printf '%s\n' 'scientific_model_authority_created=false'
+          printf '%s\n' 'overall_status=NOT_YET_TESTABLE'
+      - name: Write audit receipt
+        if: success()
+        shell: bash
+        run: |
+          mkdir -p out
+          cat > out/receipt.txt <<EOF
+          schema=EXP073IL_C2_ORDERED_JOIN_STRUCTURAL_ADMISSION_V0_1
+          run=${GITHUB_RUN_ID}
+          job=${GITHUB_JOB}
+          head=${GITHUB_SHA}
+          token=PASS_EXP073IL_C2_ORDERED_JOIN_STRUCTURAL_ADMISSION_V0_1
+          classification=SCIENTIFIC_GATE_PASS
+          G_ORDERED_JOIN=PASS
+          G_RADIAL_SUPPORT=NOT_YET_TESTABLE
+          scientific_model_authority_created=false
+          overall_status=NOT_YET_TESTABLE
+          EOF
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: exp073il-c2-ordered-join-structural-admission-v0-1
+          path: out/receipt.txt
+          if-no-files-found: error
