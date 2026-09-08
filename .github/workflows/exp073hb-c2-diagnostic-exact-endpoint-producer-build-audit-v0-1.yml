@@ -1,0 +1,132 @@
+name: Exp073HB C2 diagnostic exact-endpoint producer build audit v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073hb-c2-diagnostic-exact-endpoint-producer-build-audit-v0-1.yml'
+      - 'scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-build-static-audit:
+    runs-on: ubuntu-latest
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fail-closed identities and apply deterministic producer patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1.md)" = "fc5f08889f84e628cb789070abd9179a74ef7e04"
+          test "$(git hash-object scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py)" = "f3d3d80cda2f937f544722e684a44c649e771487"
+
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C /tmp/class_iv rev-parse HEAD)" = "ac627d54e9ce196a08878d1ba33999819925d19c"
+          test "$(git -C /tmp/class_iv hash-object source/perturbations.c)" = "92a48331658c5941ed4eb43b0e98ee78e39b8385"
+          test "$(git -C /tmp/class_iv hash-object tools/evolver_ndf15.c)" = "790ced55f2eaa08e805d467734ad1435954bc5b7"
+
+          python scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py /tmp/class_iv | tee /tmp/patch_receipt.txt
+          grep -Fx 'EXP073HB_PATCH_APPLIED' /tmp/patch_receipt.txt
+          git -C /tmp/class_iv diff --check
+          git -C /tmp/class_iv diff -- source/perturbations.c tools/evolver_ndf15.c > /tmp/exp073hb.patch
+          test -s /tmp/exp073hb.patch
+          sha256sum /tmp/exp073hb.patch /tmp/class_iv/source/perturbations.c /tmp/class_iv/tools/evolver_ndf15.c
+
+      - name: Static semantic audit of patched exact-endpoint route
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('/tmp/class_iv/source/perturbations.c').read_text()
+          e = Path('/tmp/class_iv/tools/evolver_ndf15.c').read_text()
+          r = Path('docs/dsir4/prereg/EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1.md').read_text()
+
+          # Frozen prereg and PASS ceiling.
+          for t in [
+              'PASS_EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1',
+              'SUPPORT_PLUS_0_PLUS_0', 'cosmological_run_started=false',
+              'record_payload_created=false', 'runtime_record_count=0',
+              'prediction_ready=false', 'scientific_model_authority_created=false',
+              'G_DOMAIN_MAPPING=NOT_YET_TESTABLE']:
+              assert t in r, t
+
+          # Opt-in only: no ordinary-path activation absent the diagnostic environment variable.
+          assert 'getenv("DSIR_C2_EXACT_Z")' in p
+          assert 'if (ztext == NULL || *ztext == \'\\0\') return _SUCCESS_;' in p
+          assert 'OMP_NUM_THREADS' in p and 'strcmp(omp,"1")' in p
+
+          # Native exact-k indexing, one requested k, literal-z authority only.
+          assert 'ppt->k_output_values_num != 1' in p
+          assert 'ppt->index_k_output_values[index_md*ppt->k_output_values_num]' in p
+          assert 'if (index_k != native_index) return _SUCCESS_;' in p
+          assert 'background_tau_of_z(pba,z,&dsir_c2_diag_tau_target)' in p
+          for z in ['0.295','0.51','0.706','0.934','1.317','1.491','2.33']:
+              assert f'"{z}"' in p
+
+          # Exact terminal endpoint is fed into the approximation interval construction.
+          assert p.count('dsir_tau_end') >= 5
+          assert 'perturb_find_approximation_number' in p
+          assert 'perturb_find_approximation_switches' in p
+          assert 'dsir_c2_diag_tau_target' in p
+
+          # Raw matter capture must occur immediately after native current-gauge construction,
+          # before downstream source construction / gauge-invariant delta_m use.
+          anchor_theta = 'ppw->theta_m = rho_plus_p_theta_m/rho_plus_p_m;'
+          anchor_capture = 'dsir_c2_diag_delta_m_raw = ppw->delta_m;'
+          anchor_source = 'int perturb_sources('
+          assert p.index(anchor_theta) < p.index(anchor_capture) < p.index(anchor_source)
+          assert 'dsir_c2_diag_theta_m_raw = ppw->theta_m;' in p
+
+          # Accepted NDF15 ynew only, after successful step and before interpolation output.
+          hook = 'if ((done==_TRUE_) && (dsir_c2_diag_enabled()!=0))'
+          assert hook in e
+          assert 'dsir_c2_diag_arm_terminal(tnew' in e
+          assert '(*derivs)(tnew,ynew+1,f0+1' in e
+          assert 'dsir_c2_diag_commit_terminal(tnew' in e
+          assert e.index(hook) > e.index('break; /* Succesfull step */')
+          assert e.index(hook) < e.index('interp_from_dif(t_vec[next]')
+          assert 'tnew = tfinal; /*Hit end point exactly. */' in e
+
+          # Producer emits exact hexadecimal float text only; frozen external recorder owns bytes.
+          assert 'DSIR_C2_EXACT_ENDPOINT z=%s tau=%a k=%a delta_m=%a theta_m=%a' in p
+          assert 'fopen(' not in p[p.index('/* DSIR Exp073HB'):p.index('/**\n * Source function')]
+
+          print('PASS_EXP073HB_STATIC_SEMANTICS_V0_1')
+          PY
+
+      - name: Compile patched pinned solver without cosmological execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/class_iv
+          make -j2 class
+          test -x ./class
+          echo 'PASS_EXP073HB_PATCHED_PINNED_SOLVER_COMPILES_V0_1'
+
+      - name: Fail closed on forbidden runtime payload and emit gate token
+        shell: bash
+        run: |
+          set -euo pipefail
+          # This hosted gate never invokes ./class. No cosmological run or C2 record producer executes.
+          ! grep -R --binary-files=without-match -l 'DSIR_C2_EXACT_ENDPOINT z=' /tmp/class_iv/output 2>/dev/null || false
+          test ! -e /tmp/dsir_c2_records.bin
+          test ! -e /tmp/dsir_c2_payload.bin
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'cosmological_run_started=false'
+          echo 'record_payload_created=false'
+          echo 'runtime_record_count=0'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1'
