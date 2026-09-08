@@ -38,17 +38,19 @@ jobs:
           test "$(git rev-parse HEAD:experiments/073he_ww_s3_s3_materialized_terminal_recompare_admission_v0_1_prereg.md)" = "$PREREG_BLOB"
           test "$(git rev-parse HEAD:ci/exp073ga_compare_terminal_receipts_v0_1.py)" = "$COMPARE_BLOB"
           test "$(git rev-parse HEAD:ci/exp073gb_verify_ga_candidate_v0_1.py)" = "$ADMIT_BLOB"
-          python3 -m pip install --disable-pip-version-check --no-input numpy==2.3.3
-          python3 - <<'PY'
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check --no-input numpy==2.3.3
+          .venv/bin/python - <<'PY'
           import numpy as np
           assert np.__version__ == '2.3.3'
+          print('PASS_EXP073HE_PINNED_NUMPY_VENV_V0_1')
           PY
           curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 2 \
             -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/jobs/$SOURCE_JOB/logs" -o source.log
-          grep -aFx 'PASS_EXP073GA_LIVE_EXCLUSIVITY' source.log >/dev/null
-          grep -aFx 'PASS_EXP073GA_REPLICA_A_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' source.log >/dev/null
-          grep -aFx 'PASS_EXP073GA_REPLICA_B_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' source.log >/dev/null
+          grep -aF 'PASS_EXP073GA_LIVE_EXCLUSIVITY' source.log >/dev/null
+          grep -aF 'PASS_EXP073GA_REPLICA_A_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' source.log >/dev/null
+          grep -aF 'PASS_EXP073GA_REPLICA_B_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' source.log >/dev/null
           curl --fail --silent --show-error --location --retry 8 --retry-all-errors --retry-delay 2 \
             -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" -o candidate.zip
@@ -62,9 +64,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 ci/exp073ga_compare_terminal_receipts_v0_1.py --root candidate --out candidate/terminal_receipt.json | tee compare.log
+          .venv/bin/python ci/exp073ga_compare_terminal_receipts_v0_1.py --root candidate --out candidate/terminal_receipt.json | tee compare.log
           grep -Fx 'PASS_EXP073GA_WW_S3_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1' compare.log >/dev/null
-          python3 - <<'PY'
+          .venv/bin/python - <<'PY'
           import json
           t=json.load(open('candidate/terminal_receipt.json'))
           assert t['classification']=='SCIENTIFIC_CANDIDATE_PASS_PENDING_PROVENANCE_ADMISSION'
@@ -83,7 +85,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 ci/exp073gb_verify_ga_candidate_v0_1.py --root candidate --log source.log | tee admission.log
+          .venv/bin/python ci/exp073gb_verify_ga_candidate_v0_1.py --root candidate --log source.log | tee admission.log
           grep -Fx 'PASS_EXP073GB_WW_S3_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1' admission.log >/dev/null
           grep -Fx 'classification=SCIENTIFIC_AUTHORITY_ADMITTED' admission.log >/dev/null
           grep -Fx 'ww_s3_s3_authority_created=true' admission.log >/dev/null
