@@ -1,0 +1,121 @@
+name: Exp073IA C2 Tangent Raw ABI Decode v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073ia-c2-tangent-raw-abi-decode-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  decode:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen IA prereg and HZ authority
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073IA_C2_TANGENT_RAW_ABI_DECODE_V0_1.md)" = '138627ebd0a53dc0118c8908e40d329427430e0e'
+          test "$(git hash-object scripts/dsir4/fixtures/dsir_c2_recorder_v0_1.h)" = 'c6144598b9f75908ee27a517d31eda509f7947f6'
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/34248477503" > /tmp/hzrun.json
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/hzrun.json'))
+          assert d['head_sha']=='edaa94d42b18f45a6e0659dc23399793e0228830'
+          assert d['status']=='completed' and d['conclusion']=='success'
+          PY
+          curl -fsSL -L -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/jobs/102136488451/logs" -o /tmp/hz.log
+          grep -aq '^.*PASS_EXP073HZ_C2_TANGENT_RAW_SET_PROVENANCE_ADMISSION_V0_1' /tmp/hz.log
+          grep -aq '^.*classification=TANGENT_RAW_SET_ADMITTED_PLUS_0_PLUS_0' /tmp/hz.log
+          grep -aq '^.*tangent_raw_set_admitted=true' /tmp/hz.log
+      - name: Decode admitted HY raw set exactly
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/ia/out
+          cat > /tmp/ia/manifest.tsv <<'EOF'
+          alpha_m1e4	10064603451	009217562eab68c85a701b1a4b7de4dbe4f0f2d933a129e496336748aa01219b	1aa24586b57116ac126d314c389e13f8d3159826cc20edea1c8220b1ef69e6ba
+          alpha_m1e3	10063499422	c74365587ec13b581e79f0cfb124d90db643a0cc6e3998d076ca9164b7dc1c7c	b4258528fffa8f115fa98ad9dedb29b8dc6ac8bd7b1710790dfde60776101797
+          alpha_m1e2	10063491863	93df49f78bff19844d841008291284d82c3c77855a28be70333a6aa494ddc7f5	383b4afbf91d8caa30ed546e562da79a5ddaa35e6725627901b6bd2ff5b9f1c2
+          beta_p1e4	10063489526	146d7d9470f89367624030524108f4a5fe0a9ff6890d6b00cfb46732bcf355d0	d3f852986d23e3c527ca6da389af2e1b63f51c4af19588d33be31bcdd2a01c4e
+          beta_m1e4	10063472739	dc470dce5f802ec57c1a8801cfc634d56fe597c1eb172cc32bf8ab6b40ace36c	13b80ab8f1d5c7d6a4402768c7a66a50376a7245b745cc76d55f7f63ecd2fe64
+          beta_p1e3	10063484506	d6b1064ef0ec1fd45a51a77ca1f919a071badda790aebd41b9a2373a2e0b47bb	77ef62e3d4e0670334245112612af043f38e0cd38262b14fd923e3446d94bc21
+          beta_m1e3	10063583778	d78f45ab1d7405f969ea825cfaa670ff2b91e28f2d324e9639ce30a3ff79c607	0a06a4395e0050185790cecb6ee1091bb8249052b74125778bba1c0384fc284c
+          beta_p1e2	10063508302	176a2b209fef406f1dee72352ed8f6ac0331c5e81164cf015c627d7208210081	cc21ed6c8989b1e05db1184de400b25e866285790ba8089658eb211c79f52c44
+          beta_m1e2	10063482583	18695bc1ab4e429d55723e44862b118e67ad2aa1ab7b6b3dbec266c976dbe873	cb9c076b54f8bc48a55f5a49a921e66021a9a59bba43be57aea07efc32d43954
+          EOF
+          python - <<'PY'
+          p='/tmp/ia/manifest.tsv'; s=open(p).read().replace('          ',''); open(p,'w').write(s)
+          PY
+          while IFS=$'\t' read -r model aid zipsha aggsha; do
+            z=/tmp/ia/$model.zip; d=/tmp/ia/$model; mkdir -p "$d"
+            curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/$aid/zip" -o "$z"
+            test "$(sha256sum "$z" | awk '{print $1}')" = "$zipsha"
+            unzip -q "$z" -d "$d"
+            test "$(sha256sum "$d/aggregate.bin" | awk '{print $1}')" = "$aggsha"
+            python - "$model" "$d" "/tmp/ia/out/$model.jsonl" <<'PY'
+          import sys,struct,json,math,hashlib,pathlib
+          model,d,out=sys.argv[1:]
+          assert sys.byteorder=='little'
+          assert struct.calcsize('=8d')==64
+          names=['tau','k','a','H','delta_m','theta_m','rho_idm_iv','rho_iv']
+          rows=[]
+          for zi in range(7):
+            for ki in range(4):
+              rid=f'z{zi:02d}k{ki:02d}'
+              b=pathlib.Path(d,'packets',rid+'.bin').read_bytes(); assert len(b)==64
+              vals=struct.unpack('=8d',b); assert all(math.isfinite(v) for v in vals)
+              packed=struct.pack('=8d',*vals); assert packed==b
+              row={'request_id':rid}
+              for n,v in zip(names,vals): row[n+'_hex']=v.hex()
+              vals2=[float.fromhex(row[n+'_hex']) for n in names]
+              assert struct.pack('=8d',*vals2)==b
+              rows.append(row)
+          with open(out,'w',encoding='utf-8',newline='\n') as f:
+            for r in rows: f.write(json.dumps(r,separators=(',',':'))+'\n')
+          assert len(rows)==28
+          print(model,hashlib.sha256(pathlib.Path(out).read_bytes()).hexdigest())
+          PY
+          done < /tmp/ia/manifest.tsv | tee /tmp/ia/out/decoded_sha256.tsv
+          cat > /tmp/ia/out/AUTHORITY.txt <<EOF
+          hypothesis_id=C2_IDE_LOCAL_TANGENT_CONE
+          source_hy_run=34243515299
+          admission_hz_run=34248477503
+          admission_hz_job=102136488451
+          ia_head=${GITHUB_SHA}
+          ia_run=${GITHUB_RUN_ID}
+          ia_prereg_blob=138627ebd0a53dc0118c8908e40d329427430e0e
+          abi_header_blob=c6144598b9f75908ee27a517d31eda509f7947f6
+          tangent_raw_set_admitted=true
+          decoded=true
+          mapped=false
+          tangent_response_ready=false
+          prediction_ready=false
+          scientific_model_authority_created=false
+          G_DOMAIN_MAPPING=NOT_YET_TESTABLE
+          EOF
+          echo 'PASS_EXP073IA_C2_TANGENT_RAW_ABI_DECODE_V0_1'
+          echo 'classification=TANGENT_DECODED_RECORD_SET_PLUS_0_PLUS_0'
+          echo 'tangent_raw_set_admitted=true'
+          echo 'decoded=true'
+          echo 'mapped=false'
+          echo 'tangent_response_ready=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ia-c2-tangent-decoded-v0-1
+          path: /tmp/ia/out/*
+          retention-days: 30
+          if-no-files-found: error
