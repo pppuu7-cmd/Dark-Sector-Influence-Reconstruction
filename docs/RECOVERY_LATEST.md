@@ -2,7 +2,7 @@
 
 Updated: 2026-09-08. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-08_HA_EXACT_ENDPOINT_STATIC_AUDIT_PASS_V29.md` (creation commit `f02ad2ff93f005c08ce3b7c17564bda490d3d3ea`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-08_HB_PROSPECTIVE_BUILD_AUDIT_V30.md` (creation commit `cf23007b16c27d9908a51b15eb76f92c0d29b83e`). Earlier recovery notes remain immutable history.
 
 ## Preserved scientific authority
 
@@ -20,11 +20,13 @@ Candidate token: `PASS_EXP073GA_WW_S3_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`
 
 Exp073GZ receipt-contract audit remains PASS `SUPPORT_PLUS_0_PLUS_0`.
 
-Exp073HA native exact-endpoint extraction static audit is now raw-log validated PASS: run **`34207078292`**, job **`101998967311 SUCCESS`**, workflow head **`b02625a459dcc21f2497752becc5798a574db7b3`**, exact token `PASS_EXP073HA_C2_NATIVE_EXACT_ENDPOINT_EXTRACTION_STATIC_AUDIT_V0_1`, classification `SUPPORT_PLUS_0_PLUS_0`, `cosmological_run_started=false`, `record_payload_created=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`.
+Exp073HA native exact-endpoint extraction static audit remains raw-log validated PASS `SUPPORT_PLUS_0_PLUS_0`: run `34207078292`, job `101998967311 SUCCESS`, exact token `PASS_EXP073HA_C2_NATIVE_EXACT_ENDPOINT_EXTRACTION_STATIC_AUDIT_V0_1`. HA produced no cosmological runtime or payload.
 
-HA verified pinned `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c` source blobs, native exact-k insertion route, solver-native literal-z coordinate resolution, standard nonzero-z interpolation route as forbidden for raw C2 records, and NDF15 terminal accepted-state mechanics. No runtime payload or science authority was produced.
+Exp073HB diagnostic exact-endpoint producer build/static audit is now prospectively frozen: prereg path `docs/dsir4/prereg/EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1.md`, creation commit `4ca51c172c89c52a3f5a2613e30133a59d03d38e`, prereg blob `fc5f08889f84e628cb789070abd9179a74ef7e04`, expected token `PASS_EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1`, scientific ceiling `SUPPORT_PLUS_0_PLUS_0`.
 
-HA PASS authorizes only prospective implementation and hosted build/static audit of the diagnostic-only exact-endpoint producer patch. Real 28-packet / 1792-byte C2 runtime remains blocked while GA owns the home-heavy runner.
+HB authorizes only deterministic diagnostic producer implementation plus hosted build/static audit. It must preserve native exact-k insertion, literal-z native coordinate resolution, terminal accepted `ynew`, pre-transform `delta_m/theta_m`, no perturbation-state interpolation/rescue, and no scientific-path changes. It forbids cosmological execution and runtime payload creation during the audit.
+
+Real 28-packet / 1792-byte C2 runtime remains `BLOCKED_BY_HEAVY_RUN_EXCLUSIVITY` while GA owns the home-heavy runner.
 
 ## Global frozen boundaries
 
