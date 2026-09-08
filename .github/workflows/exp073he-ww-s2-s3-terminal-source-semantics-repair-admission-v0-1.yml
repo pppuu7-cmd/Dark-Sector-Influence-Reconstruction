@@ -1,0 +1,71 @@
+name: Exp073HE WW_S2_S3 terminal source-semantics repair admission v0.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073he-ww-s2-s3-terminal-source-semantics-repair-admission-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  hosted-terminal-repair-admission:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PREREG_BLOB: '7b47a9f6acd588c0dddd176784077332b66846ac'
+      COMPARE_BLOB: '7698487dd137ec4c2b4f3f2faa158aeb6846ef78'
+      FZ_BLOB: 'c3f967c8fc9efed017bb6d5794d53433afefd4ac'
+      SOURCE_RUN: '34160898921'
+      SOURCE_JOB: '101862390771'
+      ARTIFACT_ID: '10040351900'
+      ARTIFACT_DIGEST: 'sha256:ebd1800b9f2b179305d8c1a83208c146915c492f0c3ae614f6ded6ab3be35ad6'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact comparator runtime dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check 'numpy==2.3.3'
+          python3 - <<'PY'
+          import numpy
+          assert numpy.__version__=='2.3.3'
+          print('PASS_EXP073HE_NUMPY_RUNTIME_V0_1')
+          PY
+      - name: Verify frozen evidence and admit exact S2-S3 candidate
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:experiments/073he_ww_s2_s3_terminal_source_semantics_repair_admission_v0_1_prereg.md)" = "$PREREG_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073he_compare_terminal_receipts_v0_1.py)" = "$COMPARE_BLOB"
+          test "$(git rev-parse HEAD:ci/exp073fz_verify_fy_candidate_v0_1.py)" = "$FZ_BLOB"
+          python3 -m py_compile ci/exp073he_compare_terminal_receipts_v0_1.py ci/exp073fz_verify_fy_candidate_v0_1.py
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN}" > source-run.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN}/jobs?per_page=100" > source-jobs.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_ID}" > artifact.json
+          python3 - <<'PY'
+          import json,os
+          r=json.load(open('source-run.json')); assert r['id']==int(os.environ['SOURCE_RUN']) and r['status']=='completed' and r['conclusion']=='failure'
+          js=json.load(open('source-jobs.json'))['jobs']; h=[j for j in js if j['id']==int(os.environ['SOURCE_JOB'])]; assert len(h)==1 and h[0]['name']=='home-science' and h[0]['status']=='completed' and h[0]['conclusion']=='failure'
+          a=json.load(open('artifact.json')); assert a['id']==int(os.environ['ARTIFACT_ID']) and a['name']=='exp073fy-ww-s2-s3-filebacked-ab-v0-1' and a.get('expired') is False and a.get('digest')==os.environ['ARTIFACT_DIGEST']
+          PY
+          gh api --allow-escape-sequences "repos/${GITHUB_REPOSITORY}/actions/jobs/${SOURCE_JOB}/logs" > source.log
+          grep -aF 'PASS_EXP073FY_LIVE_EXCLUSIVITY' source.log >/dev/null
+          grep -aF 'PASS_EXP073FY_REPLICA_A_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' source.log >/dev/null
+          grep -aF 'PASS_EXP073FY_REPLICA_B_FULL_CHAIN_VERIFIED_BEFORE_PRUNE_V0_1' source.log >/dev/null
+          grep -aF 'RuntimeError: fail-closed receipt identity A:checkpoint_namespace' source.log >/dev/null
+          mkdir artifact
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_ID}/zip" > artifact.zip
+          unzip -q artifact.zip -d artifact
+          python3 ci/exp073he_compare_terminal_receipts_v0_1.py --root artifact --out artifact/terminal_receipt.json | tee comparator.log
+          grep -Fx 'PASS_EXP073FY_WW_S2_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1' comparator.log >/dev/null
+          cat comparator.log >> source.log
+          python3 ci/exp073fz_verify_fy_candidate_v0_1.py --root artifact --log source.log | tee admission.log
+          grep -Fx 'PASS_EXP073FZ_WW_S2_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1' admission.log >/dev/null
+          grep -Fx 'classification=SCIENTIFIC_AUTHORITY_ADMITTED' admission.log >/dev/null
+          grep -Fx 'ww_s2_s3_authority_created=true' admission.log >/dev/null
+          echo PASS_EXP073HE_WW_S2_S3_TERMINAL_SOURCE_SEMANTICS_REPAIR_ADMISSION_V0_1
