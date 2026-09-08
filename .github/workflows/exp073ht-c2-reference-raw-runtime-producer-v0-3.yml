@@ -1,0 +1,181 @@
+name: Exp073HT C2 reference raw runtime producer v0.3
+
+on:
+  push:
+    paths:
+      - 'docs/dsir4/contracts/EXP073HT_RUNTIME_BINDING_V0_3.txt'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+
+jobs:
+  hosted-reference-runtime-v0-3:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen HT runtime binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          M=docs/dsir4/contracts/EXP073HT_RUNTIME_BINDING_V0_3.txt
+          get(){ awk -F= -v k="$1" '$1==k{print $2}' "$M"; }
+          test "$(git hash-object docs/dsir4/prereg/EXP073HT_C2_REFERENCE_RAW_RUNTIME_PRODUCER_V0_3.md)" = "$(get PREREG_BLOB)"
+          test "$(git hash-object scripts/dsir4/exp073hn_c2_reference_runtime_driver_v0_1.py)" = "$(get DRIVER_BLOB)"
+          test "$(git hash-object scripts/dsir4/exp073hn_c2_endpoint_serializer_v0_1.c)" = "$(get SERIALIZER_BLOB)"
+          test "$(git hash-object scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py)" = "$(get COMPAT_BLOB)"
+          test "$(git hash-object scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py)" = "$(get HB_PATCH_BLOB)"
+          test "$(git hash-object scripts/dsir4/exp073hj_c2_complete_native_record_observation_patch_v0_1.py)" = "$(get HJ_PATCH_BLOB)"
+          test "$(git hash-object scripts/dsir4/exp073hm_c2_mpk_native_theta_observer_guard_patch_v0_1.py)" = "$(get HM_PATCH_BLOB)"
+          test "$(git hash-object scripts/dsir4/exp073hq_c2_bit_exact_terminal_time_canonicalization_patch_v0_1.py)" = "$(get HQ_PATCH_BLOB)"
+          test "$(git hash-object scripts/dsir4/exp073hs_c2_final_approximation_interval_endpoint_guard_patch_v0_1.py)" = "$(get HS_PATCH_BLOB)"
+          test "$(git hash-object .github/workflows/exp073ht-c2-reference-raw-runtime-producer-v0-3.yml)" = "$(get WORKFLOW_BLOB)"
+          test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = "0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c"
+          test "$(sha256sum configs/dsir4/c2/dsir_ide_p8_v0_1.pre | awk '{print $1}')" = "463a3960d6a955c1e2a561e988562a1fc5486b0b79f120eb634ccca6f86002f9"
+      - name: Build exact post-HS solver and HN serializer
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libgsl-dev
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hj_c2_complete_native_record_observation_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hm_c2_mpk_native_theta_observer_guard_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hq_c2_bit_exact_terminal_time_canonicalization_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hs_c2_final_approximation_interval_endpoint_guard_patch_v0_1.py /tmp/class_iv
+          test "$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')" = "483b481b48e50a6afb396b15b85258ac6c5a7a39b38fb1c6192e7e4a95c139ae"
+          test "$(sha256sum /tmp/class_iv/tools/evolver_ndf15.c | awk '{print $1}')" = "3f12121ce2de319453e1ff5fadae9391fd96747731c0df3fa05fae1cd2608aa9"
+          make -C /tmp/class_iv -j2 class >/tmp/ht_build.log 2>&1
+          cc -std=c11 -O2 -Wall -Wextra -Werror -Iscripts/dsir4 scripts/dsir4/exp073hn_c2_endpoint_serializer_v0_1.c -lm -o /tmp/exp073hn_serializer
+      - name: Execute frozen 28-request raw producer v0.3
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/ht/packets /tmp/ht/raw /tmp/ht/work
+          python scripts/dsir4/exp073hn_c2_reference_runtime_driver_v0_1.py --plan-only > /tmp/ht/plan.jsonl
+          test "$(wc -l < /tmp/ht/plan.jsonl)" -eq 28
+          python - <<'PY' > /tmp/ht/requests.tsv
+          import json
+          for line in open('/tmp/ht/plan.jsonl'):
+              r=json.loads(line); print(r['request_id'],r['z_literal'],r['k_mpc_literal'],sep='\t')
+          PY
+          completed=0
+          while IFS=$'\t' read -r rid z k; do
+            d="/tmp/ht/work/$rid"; mkdir -p "$d/ide_outputs"
+            cp configs/dsir4/c2/ide0_reference_v0_1.ini "$d/ide0.ini"
+            printf '\nk_output_values = %s\n' "$k" >> "$d/ide0.ini"
+            cp configs/dsir4/c2/dsir_ide_p8_v0_1.pre "$d/dsir_ide_p8.pre"
+            set +e
+            (cd "$d" && DSIR_C2_EXACT_Z="$z" /tmp/class_iv/class ide0.ini dsir_ide_p8.pre >stdout.txt 2>stderr.txt)
+            rc=$?
+            set -e
+            if [ "$rc" -ne 0 ]; then
+              echo "EXP073HT_SOLVER_FAILURE request_id=$rid z=$z k=$k exit=$rc"
+              echo '--- non-endpoint stdout diagnostic ---'
+              grep -v '^DSIR_C2_EXACT_ENDPOINT ' "$d/stdout.txt" || true
+              echo '--- non-endpoint stderr diagnostic ---'
+              grep -v '^DSIR_C2_EXACT_ENDPOINT ' "$d/stderr.txt" || true
+              exit "$rc"
+            fi
+            cat "$d/stdout.txt" "$d/stderr.txt" > "/tmp/ht/raw/$rid.log"
+            grep '^DSIR_C2_EXACT_ENDPOINT ' "/tmp/ht/raw/$rid.log" > "/tmp/ht/raw/$rid.endpoint"
+            test "$(wc -l < /tmp/ht/raw/$rid.endpoint)" -eq 1
+            grep -q "^DSIR_C2_EXACT_ENDPOINT z=$z " "/tmp/ht/raw/$rid.endpoint"
+            line="$(cat /tmp/ht/raw/$rid.endpoint)"
+            /tmp/exp073hn_serializer "/tmp/ht/packets/$rid.bin" "$line" 2>>"/tmp/ht/raw/$rid.serializer.log"
+            test "$(stat -c%s /tmp/ht/packets/$rid.bin)" -eq 64
+            completed=$((completed+1))
+            echo "EXP073HT_REQUEST_COMPLETE request_id=$rid count=$completed"
+          done < /tmp/ht/requests.tsv
+          test "$completed" -eq 28
+          : > /tmp/ht/dsir_c2_reference_raw_v0_3.bin
+          while IFS=$'\t' read -r rid z k; do cat "/tmp/ht/packets/$rid.bin" >> /tmp/ht/dsir_c2_reference_raw_v0_3.bin; done < /tmp/ht/requests.tsv
+          test "$(stat -c%s /tmp/ht/dsir_c2_reference_raw_v0_3.bin)" -eq 1792
+          test "$(find /tmp/ht/packets -name '*.bin' -type f | wc -l)" -eq 28
+          sha256sum /tmp/ht/dsir_c2_reference_raw_v0_3.bin | awk '{print $1}' > /tmp/ht/aggregate.sha256
+      - name: Freeze producer provenance receipt
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          AGG="$(cat /tmp/ht/aggregate.sha256)"
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs?per_page=100" > /tmp/ht/jobs.json
+          JOB_ID="$(python - <<'PY'
+          import json
+          d=json.load(open('/tmp/ht/jobs.json'))
+          xs=[j['id'] for j in d['jobs'] if j['name']=='hosted-reference-runtime-v0-3']
+          assert len(xs)==1, xs
+          print(xs[0])
+          PY
+          )"
+          cat > /tmp/ht/RECEIPT.txt <<EOF
+          hypothesis_id=C2_IDE_LOCAL_TANGENT_CONE
+          model_point=reference_alpha0_beta0
+          solver_repo=kaeonikc/class_iv
+          solver_commit=ac627d54e9ce196a08878d1ba33999819925d19c
+          producer_head=${GITHUB_SHA}
+          producer_run_id=${GITHUB_RUN_ID}
+          producer_job_id=${JOB_ID}
+          producer_run_attempt=${GITHUB_RUN_ATTEMPT}
+          post_hs_perturbations_sha256=483b481b48e50a6afb396b15b85258ac6c5a7a39b38fb1c6192e7e4a95c139ae
+          post_hs_ndf15_sha256=3f12121ce2de319453e1ff5fadae9391fd96747731c0df3fa05fae1cd2608aa9
+          baseline_sha256=0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c
+          precision_sha256=463a3960d6a955c1e2a561e988562a1fc5486b0b79f120eb634ccca6f86002f9
+          packet_count=28
+          packet_bytes=64
+          aggregate_bytes=1792
+          coordinate_order=z-major/k-minor
+          aggregate_sha256=$AGG
+          raw_record_set_admitted=false
+          decoded=false
+          mapped=false
+          prediction_ready=false
+          scientific_model_authority_created=false
+          EOF
+          cp docs/dsir4/contracts/EXP073HN_IMPLEMENTATION_BINDING_V0_1.txt /tmp/ht/HN_BINDING.txt
+          cp docs/dsir4/contracts/EXP073HQ_IMPLEMENTATION_BINDING_V0_1.txt /tmp/ht/HQ_BINDING.txt
+          cp docs/dsir4/contracts/EXP073HS_IMPLEMENTATION_BINDING_V0_1.txt /tmp/ht/HS_BINDING.txt
+          cp docs/dsir4/contracts/EXP073HT_RUNTIME_BINDING_V0_3.txt /tmp/ht/HT_BINDING.txt
+      - name: Upload terminal raw candidate artifact v0.3
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ht-c2-reference-raw-runtime-v0-3
+          path: |
+            /tmp/ht/dsir_c2_reference_raw_v0_3.bin
+            /tmp/ht/aggregate.sha256
+            /tmp/ht/RECEIPT.txt
+            /tmp/ht/plan.jsonl
+            /tmp/ht/requests.tsv
+            /tmp/ht/packets/*.bin
+            /tmp/ht/raw/*.endpoint
+            /tmp/ht/HN_BINDING.txt
+            /tmp/ht/HQ_BINDING.txt
+            /tmp/ht/HS_BINDING.txt
+            /tmp/ht/HT_BINDING.txt
+          if-no-files-found: error
+          retention-days: 30
+      - name: Emit raw-candidate-only boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'classification=RAW_RUNTIME_CANDIDATE_PLUS_0_PLUS_0'
+          echo 'packet_count=28'
+          echo 'aggregate_bytes=1792'
+          echo "aggregate_sha256=$(cat /tmp/ht/aggregate.sha256)"
+          echo 'raw_record_set_admitted=false'
+          echo 'decoded=false'
+          echo 'mapped=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073HT_C2_REFERENCE_RAW_RUNTIME_PRODUCER_V0_3'
