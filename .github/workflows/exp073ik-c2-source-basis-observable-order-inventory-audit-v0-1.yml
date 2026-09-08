@@ -1,0 +1,63 @@
+name: Exp073IK C2 source-basis observable-order inventory audit v0.1
+
+on:
+  push:
+    paths:
+      - 'docs/dsir4/contracts/EXP073IK_IMPLEMENTATION_BINDING_V0_1.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  hosted-support-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen IK implementation binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          B=docs/dsir4/contracts/EXP073IK_IMPLEMENTATION_BINDING_V0_1.txt
+          test -f "$B"
+          get(){ awk -F= -v k="$1" '$1==k{print $2}' "$B"; }
+          test "$(git hash-object docs/dsir4/prereg/EXP073IK_C2_SOURCE_BASIS_OBSERVABLE_ORDER_INVENTORY_V0_1.md)" = "$(get PREREG_BLOB)"
+          test "$(git hash-object docs/dsir4/contracts/EXP073IK_SOURCE_BASIS_OBSERVABLE_ORDER_INVENTORY_V0_1.json)" = "$(get INVENTORY_BLOB)"
+          test "$(git hash-object ci/exp073ik_c2_source_basis_observable_order_inventory_audit_v0_1.py)" = "$(get AUDIT_BLOB)"
+          test "$(git hash-object .github/workflows/exp073ik-c2-source-basis-observable-order-inventory-audit-v0-1.yml)" = "$(get WORKFLOW_BLOB)"
+          test "$(git hash-object ci/exp073r1_sequential_wholestream_v0_5.py)" = "$(get R1_EVALUATOR_BLOB)"
+          test "$(git hash-object ci/exp073aa_article3_des_angular_task_runner_v0_1.py)" = "$(get ANGULAR_RUNNER_BLOB)"
+          test "$(git hash-object docs/dsir4/authority/C2_WW_ANGULAR_AUTHORITY_ADMITTED_V0_1.json)" = "$(get ANGULAR_AUTHORITY_BLOB)"
+      - name: Run frozen source-basis and observable-order audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/exp073ik_c2_source_basis_observable_order_inventory_audit_v0_1.py | tee /tmp/exp073ik.log
+          grep -Fx 'PASS_EXP073IK_C2_SOURCE_BASIS_OBSERVABLE_ORDER_INVENTORY_V0_1' /tmp/exp073ik.log
+          grep -Fx 'classification=SUPPORT_PLUS_0_PLUS_0' /tmp/exp073ik.log
+          grep -Fx 'source_basis_inventory_verified=true' /tmp/exp073ik.log
+          grep -Fx 'observable_order_inventory_verified=true' /tmp/exp073ik.log
+          grep -Fx 'prospective_ordered_join_contract_may_be_defined=true' /tmp/exp073ik.log
+          grep -Fx 'G_ORDERED_JOIN=NOT_YET_TESTABLE' /tmp/exp073ik.log
+          grep -Fx 'scientific_model_authority_created=false' /tmp/exp073ik.log
+      - name: Upload support evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073ik-c2-source-basis-observable-order-inventory-v0-1
+          path: |
+            /tmp/exp073ik.log
+            docs/dsir4/prereg/EXP073IK_C2_SOURCE_BASIS_OBSERVABLE_ORDER_INVENTORY_V0_1.md
+            docs/dsir4/contracts/EXP073IK_SOURCE_BASIS_OBSERVABLE_ORDER_INVENTORY_V0_1.json
+            docs/dsir4/contracts/EXP073IK_IMPLEMENTATION_BINDING_V0_1.txt
+          if-no-files-found: error
+          retention-days: 30
+      - name: Emit support-only boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'G_ORDERED_JOIN=NOT_YET_TESTABLE'
+          echo 'scientific_model_authority_created=false'
+          echo 'overall_status=NOT_YET_TESTABLE'
