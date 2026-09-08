@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import ast
 import json
+import operator
 from pathlib import Path
 
 PASS = 'PASS_EXP073IK_C2_SOURCE_BASIS_OBSERVABLE_ORDER_INVENTORY_V0_1'
@@ -34,6 +35,12 @@ def static_eval(node: ast.AST, env: dict[str, object]):
     if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
         val = static_eval(node.operand, env)
         return +val if isinstance(node.op, ast.UAdd) else -val
+    if isinstance(node, ast.BinOp):
+        ops = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.FloorDiv: operator.floordiv, ast.Div: operator.truediv, ast.Pow: operator.pow}
+        fn = ops.get(type(node.op))
+        if fn is None:
+            raise ValueError(f'unsupported static operator {type(node.op).__name__}')
+        return fn(static_eval(node.left, env), static_eval(node.right, env))
     raise ValueError(f'non-static node {ast.dump(node, include_attributes=False)}')
 
 
@@ -72,7 +79,6 @@ def main() -> None:
     inv = json.loads(invp.read_text(encoding='utf-8'))
     ang = json.loads(angp.read_text(encoding='utf-8'))
 
-    # Independent source-basis recovery from frozen implementation sources.
     assert literal_assign(r1p, 'SELECTION') == EXPECTED_SELECTION
     assert literal_assign(r1p, 'NSIDE') == 4096
     assert literal_assign(r1p, 'MAPPER') == EXPECTED_MAPPER
@@ -86,11 +92,7 @@ def main() -> None:
     assert [x['zbin_mcal'] for x in basis] == [0,1,2,3]
     for b, x in enumerate(basis):
         e = EXPECTED_SOURCE[b]
-        assert x == {
-            'name':f'S{b}','zbin_mcal':b,'selected':e['selected'],
-            'record_bytes':e['bytes'],'record_sha256':e['record_sha'],
-            'unique_pixels':e['unique'],'occupancy_sha256':e['occupancy_sha']
-        }
+        assert x == {'name':f'S{b}','zbin_mcal':b,'selected':e['selected'],'record_bytes':e['bytes'],'record_sha256':e['record_sha'],'unique_pixels':e['unique'],'occupancy_sha256':e['occupancy_sha']}
     assert inv['r1_source_authority']['selection'] == EXPECTED_SELECTION
     assert inv['r1_source_authority']['mapper'] == EXPECTED_MAPPER
     assert inv['r1_source_authority']['run'] == 33270843577
@@ -98,26 +100,17 @@ def main() -> None:
     assert inv['r1_source_authority']['artifact_id'] == 9720335366
     assert inv['r1_source_authority']['artifact_digest'] == 'sha256:ff87d8fc7d53b16b786a4eb3d6ffeb103676efb8a548223a187b9f59689f8abd'
 
-    # Independent order recovery: current C2 WW inventory versus historical full angular manifest.
     assert ang['bound_pair_count'] == 10
     assert ang['bound_pairs'] == EXPECTED_PAIRS
     assert inv['c2_required_ww_pair_order'] == EXPECTED_PAIRS
     assert inv['historical_14_angular_task_order'] == EXPECTED_14
-    assert ang['common'] == {
-        'semantics':'EE<-EE','dtype':'<f8','shape':[39,12288],
-        'des_nside':4096,'ell_min':0,'ell_max':12287,'bands':39,
-        'mcm_bytes':19327352832,'exact_equality_only':True
-    }
+    assert ang['common'] == {'semantics':'EE<-EE','dtype':'<f8','shape':[39,12288],'des_nside':4096,'ell_min':0,'ell_max':12287,'bands':39,'mcm_bytes':19327352832,'exact_equality_only':True}
     aa = aap.read_text(encoding='utf-8')
     assert "selected_semantics={'output':'TE','input':'TE','full_component_order':['TE','TB']}" in aa
     assert "selected_semantics={'output':'EE','input':'EE','full_component_order':['EE','EB','BE','BB']}" in aa
     assert "selected=np.ascontiguousarray(wins[0,:,0,:],dtype='<f8')" in aa
-    assert inv['angular_semantics'] == {
-        'nside':4096,'ell_min':0,'ell_max':12287,'bands':39,'dtype':'<f8',
-        'shape':[39,12288],'Wm':'TE<-TE','WW':'EE<-EE','exact_equality_only':True
-    }
+    assert inv['angular_semantics'] == {'nside':4096,'ell_min':0,'ell_max':12287,'bands':39,'dtype':'<f8','shape':[39,12288],'Wm':'TE<-TE','WW':'EE<-EE','exact_equality_only':True}
 
-    # Parent gate and fail-closed downstream boundary.
     assert ang['admission']['experiment'] == 'Exp073IJ'
     assert ang['admission']['version'] == 'v0.2'
     assert ang['admission']['run'] == 34255057685
@@ -130,14 +123,7 @@ def main() -> None:
     assert ang['status']['scientific_model_authority_created'] is False
 
     fw = inv['interpretation_firewall']
-    assert fw == {
-        'historical_14_manifest_implies_future_c2_join_membership':False,
-        'join_equation_defined':False,'scientific_values_read':False,
-        'radial_kernel_read':False,'physical_support_evaluated':False,
-        'covariance_read':False,'whitening_performed':False,
-        'nuisance_geometry_read':False,'relation_null_read':False,
-        'scientific_model_authority_created':False
-    }
+    assert fw == {'historical_14_manifest_implies_future_c2_join_membership':False,'join_equation_defined':False,'scientific_values_read':False,'radial_kernel_read':False,'physical_support_evaluated':False,'covariance_read':False,'whitening_performed':False,'nuisance_geometry_read':False,'relation_null_read':False,'scientific_model_authority_created':False}
     assert inv['status']['G_DOMAIN_MAPPING'] == 'PASS'
     assert inv['status']['G_ANGULAR_AUTHORITY'] == 'PASS'
     for key in ('G_ORDERED_JOIN','G_RADIAL_SUPPORT','G_PHYSICAL_SUPPORT','G_COV_WHITENING','G_NUISANCE_QUOTIENT','G_RELATION_NULL','G_FINAL_MODEL','overall_status'):
