@@ -1,0 +1,77 @@
+name: Exp073IF C2 Residual Mapping Artifact Admission v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073if-c2-residual-mapping-artifact-admission-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mapping-admission:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen repository identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073IF_C2_RESIDUAL_MAPPING_ARTIFACT_ADMISSION_V0_1.md)" = '52677fe6b0d73d62d01c1f39e8b434ceda0f7e01'
+          test "$(git hash-object docs/dsir4/mappings/C2_IDE_LOCAL_TANGENT_CONE_MAPPING_V0_1.md)" = '5f2b690e4f56fc0fd3109ff2bcdb53dd0eb806cc'
+          test "$(git hash-object docs/dsir4/DSIR4_COMMON_RESIDUAL_CONVENTION_V0_1.md)" = '9ab68fe254891a076e24757de724e32e2190bfb6'
+          test "$(git hash-object docs/dsir4/DSIR4_MODEL_MAPPING_ARTIFACT_CONTRACT_V0_1.md)" = '03fd11d8536b9743eb82f92f9a0d5386444079ed'
+          test "$(git hash-object configs/dsir4/c2/ide0_reference_v0_1.ini)" = 'cd2beb01ce6575f97f2e3203226ed6d4f048dcaa'
+          test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = '0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c'
+          grep -Eq '^gauge[[:space:]]*=[[:space:]]*synchronous$' configs/dsir4/c2/ide0_reference_v0_1.ini
+      - name: Verify exact pinned solver fingerprints
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C /tmp/class_iv rev-parse HEAD)" = 'ac627d54e9ce196a08878d1ba33999819925d19c'
+          test "$(sha256sum /tmp/class_iv/source/background.c | awk '{print $1}')" = '7a6ad5d44c316c886fc15c3439e04217c6c480f0dc251e8080aa64643ce1c6fc'
+          test "$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')" = '61e73ed7d5b785ea5f49620e782c58ec552d2735640a1c1241d5ef354e7e0cbe'
+      - name: Audit frozen six-component mapping artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          f=docs/dsir4/mappings/C2_IDE_LOCAL_TANGENT_CONE_MAPPING_V0_1.md
+          grep -Fq 'rho_X = rho_idm_iv + rho_iv' "$f"
+          grep -Fq 'p_X = -rho_iv' "$f"
+          grep -Fq 'delta_rho_X = rho_idm_iv * delta_idm_iv' "$f"
+          grep -Fq 'q_X = 0' "$f"
+          grep -Fq 'delta_p_X = 0' "$f"
+          grep -Fq 'pi_X = 0' "$f"
+          grep -Fq 'Q = alpha_idm_iv * H * rho_idm_iv + beta_idm_iv * H * rho_iv' "$f"
+          grep -Fq 'Candidate dark matter `idm_iv` and interacting vacuum `iv` are excluded from `T_known`' "$f"
+          grep -Fq 'the authoritative C2 residual is their **total** stress-energy' "$f"
+          grep -Fq 'synchronous-gauge implementation' "$f"
+          grep -Fq 'background.c=7a6ad5d44c316c886fc15c3439e04217c6c480f0dc251e8080aa64643ce1c6fc' "$f"
+          grep -Fq 'perturbations.c=61e73ed7d5b785ea5f49620e782c58ec552d2735640a1c1241d5ef354e7e0cbe' "$f"
+          grep -Fq 'z_min = 0.295' "$f"
+          grep -Fq 'z_max = 2.33' "$f"
+          grep -Fq 'k_min_exclusive_mpc_inv = 0' "$f"
+          grep -Fq 'k_max_mpc_inv = 0.06664762008318016' "$f"
+          grep -Fq 'No effective `z`, effective `k`, interpolation rescue or extrapolation is allowed.' "$f"
+          grep -Fq 'linear scalar perturbation regime' "$f"
+          grep -Fq 'local tangent hypothesis' "$f"
+          grep -Fq 'base step `1e-4`' "$f"
+          grep -Fq 'prediction_ready=false' "$f"
+          grep -Fq 'scientific_model_authority_created=false' "$f"
+      - name: Emit admission gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'PASS_EXP073IF_C2_RESIDUAL_MAPPING_ARTIFACT_ADMISSION_V0_1'
+          echo 'classification=MAPPING_ARTIFACT_ADMITTED_PLUS_0_PLUS_0'
+          echo 'six_component_source_mapping_ready=true'
+          echo 'mapping_artifact_created=true'
+          echo 'mapping_ready=true'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=TESTABLE_NOT_EVALUATED'
