@@ -1,0 +1,53 @@
+name: Exp073HP C2 HO first-request runtime diagnostic v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/exp073hp-c2-ho-first-request-runtime-diagnostic-v0-1.yml'
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+
+jobs:
+  hosted-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reconstruct exact frozen HO solver
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libgsl-dev
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hj_c2_complete_native_record_observation_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hm_c2_mpk_native_theta_observer_guard_patch_v0_1.py /tmp/class_iv
+          test "$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')" = "8c76c0b0ba8de6c0528980569ae748b24ff1b790a9f752ac11e90ca71d5b63de"
+          test "$(sha256sum /tmp/class_iv/tools/evolver_ndf15.c | awk '{print $1}')" = "b3967efaf7a45a3ec6c0144e892caab54f91c595bc726dc1704cfb812f9c0df6"
+          make -C /tmp/class_iv -j2 class
+      - name: Execute exact first frozen request and expose failure
+        shell: bash
+        run: |
+          set +e
+          d=/tmp/hp; mkdir -p "$d/ide_outputs"
+          cp configs/dsir4/c2/ide0_reference_v0_1.ini "$d/ide0.ini"
+          printf '\nk_output_values = 0.00067\n' >> "$d/ide0.ini"
+          cp configs/dsir4/c2/dsir_ide_p8_v0_1.pre "$d/dsir_ide_p8.pre"
+          (cd "$d" && DSIR_C2_EXACT_Z='0.295' /tmp/class_iv/class ide0.ini dsir_ide_p8.pre >stdout.txt 2>stderr.txt)
+          rc=$?
+          echo "EXP073HP_CLASS_EXIT=$rc"
+          echo '--- STDOUT ---'; cat "$d/stdout.txt" || true
+          echo '--- STDERR ---'; cat "$d/stderr.txt" || true
+          echo 'classification=INFRASTRUCTURE_RUNTIME_DIAGNOSTIC_PLUS_0_PLUS_0'
+          echo 'scientific_fail_created=false'
+          exit "$rc"
