@@ -1,0 +1,109 @@
+name: Exp073IB C2 Tangent Delta_m Common Coordinate Map v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073ib-c2-tangent-deltam-common-coordinate-map-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  map:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen IB prereg and IA authority artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073IB_C2_TANGENT_DELTAM_COMMON_COORDINATE_MAP_V0_1.md)" = 'a1e99ee6f85107055eeaf2b64a6af60f878dd715'
+          mkdir -p /tmp/ib/ia /tmp/ib/out
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10065081303/zip" -o /tmp/ib/ia.zip
+          test "$(sha256sum /tmp/ib/ia.zip | awk '{print $1}')" = '6bf115c76d538f0691c1fcfa9d9a26721b9b593f26aceb2a7a59bdb7cc9aa0ce'
+          unzip -q /tmp/ib/ia.zip -d /tmp/ib/ia
+          grep -Fxq 'ia_run=34248722000' /tmp/ib/ia/AUTHORITY.txt
+          grep -Fxq 'tangent_raw_set_admitted=true' /tmp/ib/ia/AUTHORITY.txt
+          grep -Fxq 'decoded=true' /tmp/ib/ia/AUTHORITY.txt
+          grep -Fxq 'mapped=false' /tmp/ib/ia/AUTHORITY.txt
+          cat > /tmp/ib/expected.tsv <<'EOF'
+          alpha_m1e4 6fa9d0b0bc106b554359bfcf98cf6b2b18ef7427f659f1a415bcc3a4fdb84bb1
+          alpha_m1e3 99983545cf0788c437eefcd0fce78b7ccfabd9b856ca0c799dd3fa84df86215c
+          alpha_m1e2 524e4fd59fd5183b5d805e4d2bf8a56222c2ee3cf34037aa8b69196124f175f8
+          beta_p1e4 29e5a714a5ae798c569dea790bbab23df8deae6cb6c98c1f09cc2269f02340b2
+          beta_m1e4 9e0bef37662f305265bd2462567368193014178fce1b12db3504e061cf7c491d
+          beta_p1e3 fa3e9049b8976ee7b94a04d70db52d99e5d0c3665e580977f6378b67a53d9287
+          beta_m1e3 f87dc82b2c2cec1d99cd1b92638a38b723f3b758a95421026e79b643aa983a8c
+          beta_p1e2 90fbbc7015ab92f9a3da7ee9f9b91cf86ee4bc0ae361c8e368cbed5581fbfe73
+          beta_m1e2 c17291f40156d769306288138847ec3fc09a00cd75abc137dafb1a1ba7b441a3
+          EOF
+          while read -r m s; do test "$(sha256sum /tmp/ib/ia/$m.jsonl | awk '{print $1}')" = "$s"; done < /tmp/ib/expected.tsv
+      - name: Apply frozen Delta_m bridge exactly once
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,math,hashlib,pathlib
+          root=pathlib.Path('/tmp/ib/ia'); out=pathlib.Path('/tmp/ib/out')
+          labels=['alpha_m1e4','alpha_m1e3','alpha_m1e2','beta_p1e4','beta_m1e4','beta_p1e3','beta_m1e3','beta_p1e2','beta_m1e2']
+          manifest=[]
+          for lab in labels:
+            rows=[]
+            for i,line in enumerate((root/(lab+'.jsonl')).read_text().splitlines()):
+              r=json.loads(line); assert r['request_id']==f'z{i//4:02d}k{i%4:02d}'
+              vals={k[:-4]:float.fromhex(v) for k,v in r.items() if k.endswith('_hex')}
+              assert all(math.isfinite(x) for x in vals.values())
+              k=vals['k']; assert k>0.0
+              assert vals['rho_idm_iv']>0.0 and vals['rho_iv']>=0.0
+              Delta=vals['delta_m'] + 3.0*vals['a']*vals['H']*vals['theta_m']/(k*k)
+              assert math.isfinite(Delta)
+              rows.append({'request_id':r['request_id'],'Delta_m_hex':Delta.hex()})
+            assert len(rows)==28
+            p=out/(lab+'.jsonl')
+            with p.open('w',encoding='utf-8',newline='\n') as f:
+              for r in rows: f.write(json.dumps(r,separators=(',',':'))+'\n')
+            sha=hashlib.sha256(p.read_bytes()).hexdigest(); manifest.append((lab,sha)); print(lab,sha)
+          with (out/'mapped_sha256.tsv').open('w') as f:
+            for lab,sha in manifest: f.write(f'{lab} {sha}\n')
+          PY
+          cat > /tmp/ib/out/AUTHORITY.txt <<EOF
+          hypothesis_id=C2_IDE_LOCAL_TANGENT_CONE
+          source_ia_run=34248722000
+          source_ia_job=102137324616
+          source_ia_artifact=10065081303
+          source_ia_zip_sha256=6bf115c76d538f0691c1fcfa9d9a26721b9b593f26aceb2a7a59bdb7cc9aa0ce
+          ib_head=${GITHUB_SHA}
+          ib_run=${GITHUB_RUN_ID}
+          ib_prereg_blob=a1e99ee6f85107055eeaf2b64a6af60f878dd715
+          bridge=Delta_m=delta_m+3*a*H*theta_m/(k*k)
+          tangent_raw_set_admitted=true
+          decoded=true
+          mapped=true
+          mapped_tangent_coordinate=true
+          tangent_response_ready=false
+          prediction_ready=false
+          scientific_model_authority_created=false
+          G_DOMAIN_MAPPING=NOT_YET_TESTABLE
+          EOF
+          echo 'PASS_EXP073IB_C2_TANGENT_DELTAM_COMMON_COORDINATE_MAP_V0_1'
+          echo 'classification=TANGENT_MAPPED_COMMON_COORDINATE_PLUS_0_PLUS_0'
+          echo 'tangent_raw_set_admitted=true'
+          echo 'decoded=true'
+          echo 'mapped=true'
+          echo 'mapped_tangent_coordinate=true'
+          echo 'tangent_response_ready=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ib-c2-tangent-mapped-v0-1
+          path: /tmp/ib/out/*
+          retention-days: 30
+          if-no-files-found: error
