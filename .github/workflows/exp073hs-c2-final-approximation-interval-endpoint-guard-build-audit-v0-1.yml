@@ -1,0 +1,75 @@
+name: Exp073HS C2 final approximation interval endpoint guard build audit v0.1
+
+on:
+  push:
+    paths:
+      - 'docs/dsir4/contracts/EXP073HS_IMPLEMENTATION_BINDING_V0_1.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-static-build-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify prospective HS binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          M=docs/dsir4/contracts/EXP073HS_IMPLEMENTATION_BINDING_V0_1.txt
+          get(){ awk -F= -v k="$1" '$1==k{print $2}' "$M"; }
+          test "$(git hash-object docs/dsir4/prereg/EXP073HS_C2_FINAL_APPROXIMATION_INTERVAL_ENDPOINT_GUARD_BUILD_AUDIT_V0_1.md)" = "$(get PREREG_BLOB)"
+          test "$(git hash-object scripts/dsir4/exp073hs_c2_final_approximation_interval_endpoint_guard_patch_v0_1.py)" = "$(get PATCH_BLOB)"
+          test "$(git hash-object .github/workflows/exp073hs-c2-final-approximation-interval-endpoint-guard-build-audit-v0-1.yml)" = "$(get WORKFLOW_BLOB)"
+      - name: Reconstruct exact post-HQ source and apply HS once
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libgsl-dev
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hj_c2_complete_native_record_observation_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hm_c2_mpk_native_theta_observer_guard_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hq_c2_bit_exact_terminal_time_canonicalization_patch_v0_1.py /tmp/class_iv
+          test "$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')" = "8c76c0b0ba8de6c0528980569ae748b24ff1b790a9f752ac11e90ca71d5b63de"
+          test "$(sha256sum /tmp/class_iv/tools/evolver_ndf15.c | awk '{print $1}')" = "7cfd7410b0abec61f679b365dde2af1b851843396aee5267de7873353b1e608b"
+          cp /tmp/class_iv/source/perturbations.c /tmp/pre_hs_perturbations.c
+          cp /tmp/class_iv/tools/evolver_ndf15.c /tmp/pre_hs_evolver_ndf15.c
+          python scripts/dsir4/exp073hs_c2_final_approximation_interval_endpoint_guard_patch_v0_1.py /tmp/class_iv | tee /tmp/hs_patch.log
+          grep -F 'PASS_EXP073HS_PATCH_APPLIED_EXACTLY_ONCE' /tmp/hs_patch.log
+      - name: Prove exact final-interval guard semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('/tmp/class_iv/source/perturbations.c').read_text()
+          e=Path('/tmp/class_iv/tools/evolver_ndf15.c').read_text()
+          assert p.count('int dsir_c2_diag_is_exact_terminal_target(double tau)')==1
+          assert p.count('tau == dsir_c2_diag_tau_target')==1
+          assert 'fabs(' not in p[p.index('int dsir_c2_diag_is_exact_terminal_target'):p.index('int dsir_c2_diag_arm_terminal')]
+          assert e.count('dsir_c2_diag_is_exact_terminal_target(tfinal)!=0')==1
+          assert e.count('dsir_c2_diag_arm_terminal(tfinal')==1
+          assert e.count('(*derivs)(tfinal,ynew+1,f0+1')==1
+          assert e.count('dsir_c2_diag_commit_terminal(tfinal')==1
+          assert 'dsir_c2_diag_arm_terminal(tnew' not in e
+          print('PASS_EXP073HS_EXACT_FINAL_INTERVAL_CONTROL_FLOW_STATIC_AUDIT_V0_1')
+          PY
+      - name: Full solver build only
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C /tmp/class_iv -j2 class >/tmp/hs_build.log 2>&1
+          test -x /tmp/class_iv/class
+          echo "post_hs_perturbations_sha256=$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')"
+          echo "post_hs_evolver_ndf15_sha256=$(sha256sum /tmp/class_iv/tools/evolver_ndf15.c | awk '{print $1}')"
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'cosmological_run_started=false'
+          echo 'raw_record_set_admitted=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'PASS_EXP073HS_C2_FINAL_APPROXIMATION_INTERVAL_ENDPOINT_GUARD_BUILD_AUDIT_V0_1'
