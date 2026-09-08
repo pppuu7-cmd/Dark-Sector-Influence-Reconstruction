@@ -6,52 +6,46 @@ Updated: 2026-09-08. Scope: **DSIR only**; RTK/RQIR excluded.
 
 Wm_S1 Track-A exact PASS and admitted Wm_S2/Wm_S3 remain preserved. WW admitted authorities are `S0_S0`, `S0_S1`, `S0_S2`, `S0_S3`, `S1_S1`, `S1_S2`, `S1_S3`, `S2_S2`, `S2_S3`, and **`S3_S3`**.
 
-Newest immutable note: `docs/recovery/RECOVERY_2026-09-08_WW_S3_S3_ADMITTED_C2_UNBLOCKED_V31.md` (creation commit `d99a6a3458402f3045cd4760c357046e7d516d3d`).
+Newest governing recovery authority at reconciliation start: `docs/recovery/RECOVERY_2026-09-08_WW_S3_S3_ADMITTED_HB_UPSTREAM_BUILD_BLOCK_V32.md` (creation commit `470561af192e311ce099c42db39025919fd0bc3c`). V32 expressly forbids retroactive promotion of an HB run that modifies the unadmitted pinned upstream baseline.
 
 ## Last heavy process — terminal and consumed
 
-- workflow/run: Exp073GA recovery **`34197207582`**;
-- head: `f6d8b429ac64643e7cb7766e0bfa2ab51abe751d`;
-- hosted job: `101967492875 SUCCESS`;
-- home job: `101967543808 FAILURE`, but both expensive replicas completed full-chain verification before the first causal failure;
-- first causal failure: terminal comparator stale hyphenated namespace expectation, `fail-closed receipt identity mismatch A:checkpoint_namespace`;
-- classification: **implementation/provenance FAIL `+0/+0`**, not scientific FAIL;
-- artifact: `10051382493`, digest `sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109`;
-- durable checkpoint root: `$HOME/.cache/dsir/exp073ga-ww-s3-s3-filebacked-ab-v0-1`;
-- verified completed stages: Replica A and Replica B through `replica_receipt_complete`, then post-receipt prune evidence;
-- repair: commit `becbbb58dc59a9f548ddb2c2628cbc5cb1404616`, comparator blob `6e7b45578c647a70233fec7db7d0a1d3c88d1774`.
+- Exp073GA recovery run `34197207582`; hosted job `101967492875 SUCCESS`; home job `101967543808 FAILURE` only after both expensive replicas completed full-chain verification;
+- artifact `10051382493`, digest `sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109`;
+- historical first causal defect: terminal comparator namespace expectation;
+- classification: implementation/provenance FAIL `+0/+0`, not scientific FAIL;
+- subsequent hosted recovery-admission run `34218457380`, job `102035691774 SUCCESS`, created `WW_S3_S3 = SCIENTIFIC_AUTHORITY_ADMITTED` without heavy recomputation.
 
-## WW_S3_S3 admission
+## Exp073HB historical build evidence — NOT authority
 
-Authoritative hosted recovery-admission run **`34218457380`**, job **`102035691774 SUCCESS`**, head `4e5514b6077e1d70537586b43c9b5ca0e51abcf2` consumed the exact GA artifact without heavy recomputation and emitted:
+Frozen HB prereg remains blob `fc5f08889f84e628cb789070abd9179a74ef7e04`.
 
-- `PASS_EXP073GA_WW_S3_S3_FILEBACKED_AB_EXACT_REPEATABILITY_V0_1`;
-- `PASS_EXP073GB_WW_S3_S3_FILEBACKED_PROVENANCE_ADMISSION_V0_1`;
-- `classification=SCIENTIFIC_AUTHORITY_ADMITTED`;
-- `ww_s3_s3_authority_created=true`;
-- `heavy_recompute_performed=false`.
+Hosted run `34224529036`, job `102055305534 SUCCESS`, head `7272e88c94744a9df15939305ee034232d1cb8fd`, demonstrated that a deterministic derivative can compile and emitted the HB support token. Its raw log contains exact build/static tokens and no cosmological execution or payload. However, V32 had not admitted any modification of `source/background.c` or the upstream build baseline. Therefore this run is **implementation evidence only** and MUST NOT be treated as the frozen HB PASS or used to authorize real C2 runtime.
 
-Therefore `WW_S3_S3` is admitted scientific authority. The redundant concurrently created Exp073HE hosted route is reconciliation-only and must not become a competing control plane.
+The derivative used there was generated from parent `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c` with exact build-compat script blob `b7fe663154519b605699c1fd622d0079a5f76772`; observed transformed hashes were `source/background.c=bc4053922ae984652f5858b2869e7bbbe8682ea502b88e485709e6828e059ce0` and `Makefile=2bb326590b3d0c3a23e984fc17cafce680674aa5234db15d35d72a06e1bfa87e`.
 
-## Current ownership
+## Current process — Exp073HI prospective build-compatible derivative admission
 
-Live Actions after admission: **0 queued, 0 in-progress**. Self-hosted heavy owner: **none**. Home runner is free.
+- prereg: `docs/dsir4/prereg/EXP073HI_C2_PINNED_UPSTREAM_BUILD_COMPATIBILITY_ADMISSION_V0_1.md`;
+- prereg blob: `030fac1023c1f811c1832cd0ec01060b27a613a7`;
+- prereg creation commit: `9e39633773bcdc8a133fdd3625a4569465044b2b`;
+- workflow/head commit: `8afb6ddc421a996455c861797291e2d4c36f439a`;
+- workflow/run ID: `34224810650`;
+- job ID: `102056219075`;
+- runner ownership: GitHub-hosted only; self-hosted heavy owner **none**;
+- state at ledger update: **IN_PROGRESS**;
+- expected token: `PASS_EXP073HI_C2_PINNED_UPSTREAM_BUILD_COMPATIBILITY_ADMISSION_V0_1`;
+- classification ceiling: `SUPPORT_PLUS_0_PLUS_0`;
+- frozen derivative identity: exact parent commit plus compatibility script blob and transformed hashes; it may never be represented as the unmodified upstream commit;
+- last durable checkpoint: not applicable (hosted static/build support gate; no scientific/heavy computation);
+- SUCCESS action: consume raw HI log, require all frozen identity/diff/hash/build/negative tokens, then prospectively rebind and rerun HB against the admitted derivative; do **not** reuse historical derivative HB run as authority;
+- FAIL action: diagnose first causal build/static/infrastructure failure and preserve `+0/+0`; do not weaken the derivative contract or science.
 
-## Current next gate — Exp073HB
+## C2 runtime status
 
-- prereg: `docs/dsir4/prereg/EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1.md`;
-- prereg blob: `fc5f08889f84e628cb789070abd9179a74ef7e04`;
-- upstream: `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`;
-- pinned `source/perturbations.c` blob: `92a48331658c5941ed4eb43b0e98ee78e39b8385`;
-- pinned `tools/evolver_ndf15.c` blob: `790ced55f2eaa08e805d467734ad1435954bc5b7`;
-- expected token: `PASS_EXP073HB_C2_DIAGNOSTIC_EXACT_ENDPOINT_PRODUCER_BUILD_AUDIT_V0_1`;
-- scientific ceiling: `SUPPORT_PLUS_0_PLUS_0`;
-- state: implementation/build audit **TO BE LAUNCHED**;
-- permitted execution: GitHub-hosted build/static audit only; no cosmological execution, no 28-record/1792-byte payload;
-- SUCCESS action: raw-log consume HB PASS and then prospectively dispatch the already frozen real C2 diagnostic extraction under GZ contract, subject to no new competing heavy owner;
-- FAIL action: classify implementation/infrastructure `+0/+0`, diagnose first causal patch/build/static defect, repair prospectively without changing science.
+Real 28-packet / 1792-byte C2 extraction remains **NOT_YET_AUTHORIZED**. It requires, in order: raw-log validated HI derivative admission; a new prospectively rebound HB run against that admitted derivative; raw-log validated HB support PASS; then the already frozen real-runtime contract may be considered, subject to live heavy-run exclusivity and checkpoint policy.
 
-The previous `BLOCKED_BY_HEAVY_RUN_EXCLUSIVITY` is released, but real C2 runtime remains `NOT_YET_AUTHORIZED` until HB PASS.
+`prediction_ready=false`; C2 `scientific_model_authority_created=false`; `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`.
 
 ## Frozen boundaries
 
