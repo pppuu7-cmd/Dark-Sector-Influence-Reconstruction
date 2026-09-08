@@ -38,9 +38,9 @@ jobs:
           c=R['common']; assert c=={'semantics':'EE<-EE','dtype':'<f8','shape':[39,12288],'des_nside':4096,'ell_min':0,'ell_max':12287,'bands':39,'mcm_bytes':19327352832,'exact_equality_only':True}
           expected=['S0_S0','S0_S1','S0_S2','S0_S3','S1_S1','S1_S2','S1_S3','S2_S2','S2_S3','S3_S3']
           assert [x['pair'] for x in R['authorities']]==expected
-          def req(url, binary=False):
+          def req(url):
               q=urllib.request.Request(url, headers={'Authorization':f'Bearer {tok}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'})
-              with urllib.request.urlopen(q, timeout=60) as r: return r.read() if binary else r.read().decode('utf-8','replace')
+              with urllib.request.urlopen(q, timeout=60) as r: return r.read().decode('utf-8','replace')
           ih=req(f'https://api.github.com/repos/{repo}/actions/jobs/102147505217/logs')
           assert 'PASS_EXP073IH_C2_G_DOMAIN_MAPPING_V0_1' in ih and 'G_DOMAIN_MAPPING=PASS' in ih
           for a in R['authorities']:
@@ -68,3 +68,4 @@ jobs:
           print('scientific_model_authority_created=false')
           print('overall_status=NOT_YET_TESTABLE')
           PY
+# launch binding v0.1
