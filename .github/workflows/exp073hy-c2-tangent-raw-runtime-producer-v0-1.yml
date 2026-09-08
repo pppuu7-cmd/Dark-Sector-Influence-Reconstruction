@@ -1,0 +1,241 @@
+name: Exp073HY C2 tangent raw runtime producer v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/contracts/EXP073HY_RUNTIME_BINDING_V0_1.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+
+jobs:
+  tangent-model:
+    name: tangent-${{ matrix.model }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {model: alpha_m1e4, alpha: '-1e-4', beta: '0'}
+          - {model: alpha_m1e3, alpha: '-1e-3', beta: '0'}
+          - {model: alpha_m1e2, alpha: '-1e-2', beta: '0'}
+          - {model: beta_p1e4, alpha: '0', beta: '1e-4'}
+          - {model: beta_m1e4, alpha: '0', beta: '-1e-4'}
+          - {model: beta_p1e3, alpha: '0', beta: '1e-3'}
+          - {model: beta_m1e3, alpha: '0', beta: '-1e-3'}
+          - {model: beta_p1e2, alpha: '0', beta: '1e-2'}
+          - {model: beta_m1e2, alpha: '0', beta: '-1e-2'}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify frozen HY runtime binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          M=docs/dsir4/contracts/EXP073HY_RUNTIME_BINDING_V0_1.txt
+          get(){ awk -F= -v k="$1" '$1==k{print $2}' "$M"; }
+          test "$(git hash-object docs/dsir4/prereg/EXP073HY_C2_TANGENT_RAW_RUNTIME_PRODUCER_V0_1.md)" = "$(get PREREG_BLOB)"
+          test "$(git hash-object docs/dsir4/prereg/EXP073HX_C2_TANGENT_RUNTIME_PLAN_STATIC_AUDIT_V0_1.md)" = "$(get HX_PREREG_BLOB)"
+          test "$(git hash-object scripts/dsir4/exp073hn_c2_reference_runtime_driver_v0_1.py)" = '2b0fdf27114cb8a067806b2b5fa163e006527e13'
+          test "$(git hash-object scripts/dsir4/exp073hn_c2_endpoint_serializer_v0_1.c)" = '40f361d06fc2732f5c0ad384ed729e5d483810f5'
+          test "$(git hash-object scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py)" = 'b7fe663154519b605699c1fd622d0079a5f76772'
+          test "$(git hash-object scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py)" = 'f3d3d80cda2f937f544722e684a44c649e771487'
+          test "$(git hash-object scripts/dsir4/exp073hj_c2_complete_native_record_observation_patch_v0_1.py)" = '9096eddfb592703ef6a2adc82bf27db05bee9ee0'
+          test "$(git hash-object scripts/dsir4/exp073hm_c2_mpk_native_theta_observer_guard_patch_v0_1.py)" = '5644611966af2c03ea9883f77b34aa7e88a3527d'
+          test "$(git hash-object scripts/dsir4/exp073hq_c2_bit_exact_terminal_time_canonicalization_patch_v0_1.py)" = '43e810eac1e46b58a70db1608ea3c0ae61e70064'
+          test "$(git hash-object scripts/dsir4/exp073hs_c2_final_approximation_interval_endpoint_guard_patch_v0_1.py)" = '57cd2b9c0e07c7e6c066cae46f6bc368f5086e35'
+          test "$(git hash-object .github/workflows/exp073hy-c2-tangent-raw-runtime-producer-v0-1.yml)" = "$(get WORKFLOW_BLOB)"
+          test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = '0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c'
+          test "$(sha256sum configs/dsir4/c2/dsir_ide_p8_v0_1.pre | awk '{print $1}')" = '463a3960d6a955c1e2a561e988562a1fc5486b0b79f120eb634ccca6f86002f9'
+
+      - name: Build exact post-HS solver and serializer
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libgsl-dev
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hb_c2_exact_endpoint_producer_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hj_c2_complete_native_record_observation_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hm_c2_mpk_native_theta_observer_guard_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hq_c2_bit_exact_terminal_time_canonicalization_patch_v0_1.py /tmp/class_iv
+          python scripts/dsir4/exp073hs_c2_final_approximation_interval_endpoint_guard_patch_v0_1.py /tmp/class_iv
+          test "$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')" = '483b481b48e50a6afb396b15b85258ac6c5a7a39b38fb1c6192e7e4a95c139ae'
+          test "$(sha256sum /tmp/class_iv/tools/evolver_ndf15.c | awk '{print $1}')" = '3f12121ce2de319453e1ff5fadae9391fd96747731c0df3fa05fae1cd2608aa9'
+          make -C /tmp/class_iv -j2 class >/tmp/hy_build.log 2>&1
+          cc -std=c11 -O2 -Wall -Wextra -Werror -Iscripts/dsir4 scripts/dsir4/exp073hn_c2_endpoint_serializer_v0_1.c -lm -o /tmp/exp073hn_serializer
+
+      - name: Execute complete frozen model point
+        shell: bash
+        env:
+          MODEL: ${{ matrix.model }}
+          ALPHA: ${{ matrix.alpha }}
+          BETA: ${{ matrix.beta }}
+        run: |
+          set -euo pipefail
+          ROOT="/tmp/hy/$MODEL"; mkdir -p "$ROOT/packets" "$ROOT/raw" "$ROOT/work"
+          python scripts/dsir4/exp073hn_c2_reference_runtime_driver_v0_1.py --plan-only > "$ROOT/plan.jsonl"
+          test "$(wc -l < "$ROOT/plan.jsonl")" -eq 28
+          python - "$ROOT/plan.jsonl" > "$ROOT/requests.tsv" <<'PY'
+          import json,sys
+          for line in open(sys.argv[1]):
+              r=json.loads(line); print(r['request_id'],r['z_literal'],r['k_mpc_literal'],sep='\t')
+          PY
+          completed=0
+          while IFS=$'\t' read -r rid z k; do
+            d="$ROOT/work/$rid"; mkdir -p "$d/ide_outputs"
+            cp configs/dsir4/c2/ide0_reference_v0_1.ini "$d/model.ini"
+            python - "$d/model.ini" "$ALPHA" "$BETA" <<'PY'
+          import pathlib,sys,re
+          p=pathlib.Path(sys.argv[1]); a=sys.argv[2]; b=sys.argv[3]; s=p.read_text()
+          s2,n1=re.subn(r'(?m)^alpha_idm_iv\s*=.*$',f'alpha_idm_iv = {a}',s)
+          s3,n2=re.subn(r'(?m)^beta_idm_iv\s*=.*$',f'beta_idm_iv = {b}',s2)
+          assert n1==1 and n2==1
+          p.write_text(s3)
+          PY
+            printf '\nk_output_values = %s\n' "$k" >> "$d/model.ini"
+            cp configs/dsir4/c2/dsir_ide_p8_v0_1.pre "$d/dsir_ide_p8.pre"
+            set +e
+            (cd "$d" && DSIR_C2_EXACT_Z="$z" /tmp/class_iv/class model.ini dsir_ide_p8.pre >stdout.txt 2>stderr.txt)
+            rc=$?
+            set -e
+            if [ "$rc" -ne 0 ]; then
+              echo "EXP073HY_SOLVER_FAILURE model=$MODEL request_id=$rid z=$z k=$k exit=$rc"
+              grep -v '^DSIR_C2_EXACT_ENDPOINT ' "$d/stdout.txt" || true
+              grep -v '^DSIR_C2_EXACT_ENDPOINT ' "$d/stderr.txt" || true
+              exit "$rc"
+            fi
+            cat "$d/stdout.txt" "$d/stderr.txt" > "$ROOT/raw/$rid.log"
+            grep '^DSIR_C2_EXACT_ENDPOINT ' "$ROOT/raw/$rid.log" > "$ROOT/raw/$rid.endpoint"
+            test "$(wc -l < "$ROOT/raw/$rid.endpoint")" -eq 1
+            grep -q "^DSIR_C2_EXACT_ENDPOINT z=$z " "$ROOT/raw/$rid.endpoint"
+            /tmp/exp073hn_serializer "$ROOT/packets/$rid.bin" "$(cat "$ROOT/raw/$rid.endpoint")" 2>>"$ROOT/raw/$rid.serializer.log"
+            test "$(stat -c%s "$ROOT/packets/$rid.bin")" -eq 64
+            completed=$((completed+1))
+            echo "EXP073HY_REQUEST_COMPLETE model=$MODEL request_id=$rid count=$completed"
+          done < "$ROOT/requests.tsv"
+          test "$completed" -eq 28
+          : > "$ROOT/aggregate.bin"
+          while IFS=$'\t' read -r rid z k; do cat "$ROOT/packets/$rid.bin" >> "$ROOT/aggregate.bin"; done < "$ROOT/requests.tsv"
+          test "$(stat -c%s "$ROOT/aggregate.bin")" -eq 1792
+          test "$(find "$ROOT/packets" -name '*.bin' -type f | wc -l)" -eq 28
+          sha256sum "$ROOT/aggregate.bin" | awk '{print $1}' > "$ROOT/aggregate.sha256"
+
+      - name: Freeze complete model-point receipt
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MODEL: ${{ matrix.model }}
+          ALPHA: ${{ matrix.alpha }}
+          BETA: ${{ matrix.beta }}
+        run: |
+          set -euo pipefail
+          ROOT="/tmp/hy/$MODEL"; AGG="$(cat "$ROOT/aggregate.sha256")"
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs?per_page=100" > /tmp/hy_jobs.json
+          JOB_ID="$(python - "$MODEL" <<'PY'
+          import json,sys
+          d=json.load(open('/tmp/hy_jobs.json')); name='tangent-'+sys.argv[1]
+          xs=[j['id'] for j in d['jobs'] if j['name']==name]
+          assert len(xs)==1,(name,xs); print(xs[0])
+          PY
+          )"
+          cat > "$ROOT/RECEIPT.txt" <<EOF
+          hypothesis_id=C2_IDE_LOCAL_TANGENT_CONE
+          model_point=$MODEL
+          alpha_idm_iv=$ALPHA
+          beta_idm_iv=$BETA
+          solver_repo=kaeonikc/class_iv
+          solver_commit=ac627d54e9ce196a08878d1ba33999819925d19c
+          producer_head=${GITHUB_SHA}
+          producer_run_id=${GITHUB_RUN_ID}
+          producer_job_id=${JOB_ID}
+          producer_run_attempt=${GITHUB_RUN_ATTEMPT}
+          post_hs_perturbations_sha256=483b481b48e50a6afb396b15b85258ac6c5a7a39b38fb1c6192e7e4a95c139ae
+          post_hs_ndf15_sha256=3f12121ce2de319453e1ff5fadae9391fd96747731c0df3fa05fae1cd2608aa9
+          baseline_sha256=0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c
+          precision_sha256=463a3960d6a955c1e2a561e988562a1fc5486b0b79f120eb634ccca6f86002f9
+          packet_count=28
+          packet_bytes=64
+          aggregate_bytes=1792
+          coordinate_order=z-major/k-minor
+          aggregate_sha256=$AGG
+          complete_model_unit=true
+          tangent_raw_set_admitted=false
+          decoded=false
+          mapped=false
+          prediction_ready=false
+          scientific_model_authority_created=false
+          EOF
+
+      - name: Upload complete model-point artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073hy-c2-tangent-${{ matrix.model }}-raw-v0-1
+          path: |
+            /tmp/hy/${{ matrix.model }}/aggregate.bin
+            /tmp/hy/${{ matrix.model }}/aggregate.sha256
+            /tmp/hy/${{ matrix.model }}/RECEIPT.txt
+            /tmp/hy/${{ matrix.model }}/plan.jsonl
+            /tmp/hy/${{ matrix.model }}/requests.tsv
+            /tmp/hy/${{ matrix.model }}/packets/*.bin
+            /tmp/hy/${{ matrix.model }}/raw/*.endpoint
+          retention-days: 30
+          if-no-files-found: error
+
+  manifest-verifier:
+    runs-on: ubuntu-24.04
+    needs: tangent-model
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: exp073hy-c2-tangent-*-raw-v0-1
+          path: /tmp/hy_all
+          merge-multiple: false
+      - name: Verify nine complete model units
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import pathlib,hashlib
+          root=pathlib.Path('/tmp/hy_all')
+          models=['alpha_m1e4','alpha_m1e3','alpha_m1e2','beta_p1e4','beta_m1e4','beta_p1e3','beta_m1e3','beta_p1e2','beta_m1e2']
+          dirs=sorted(p for p in root.iterdir() if p.is_dir())
+          assert len(dirs)==9,dirs
+          for m in models:
+              d=root/f'exp073hy-c2-tangent-{m}-raw-v0-1'; assert d.is_dir()
+              r={}
+              for line in (d/'RECEIPT.txt').read_text().splitlines():
+                  if line: k,v=line.split('=',1); r[k]=v
+              assert r['model_point']==m and r['packet_count']=='28' and r['packet_bytes']=='64'
+              assert r['aggregate_bytes']=='1792' and r['coordinate_order']=='z-major/k-minor'
+              assert r['complete_model_unit']=='true' and r['tangent_raw_set_admitted']=='false'
+              b=(d/'aggregate.bin').read_bytes(); assert len(b)==1792
+              h=hashlib.sha256(b).hexdigest(); assert h==r['aggregate_sha256']==(d/'aggregate.sha256').read_text().strip()
+              assert len(list((d/'packets').glob('*.bin')))==28
+              assert all(p.stat().st_size==64 for p in (d/'packets').glob('*.bin'))
+              assert len(list((d/'raw').glob('*.endpoint')))==28
+          PY
+      - name: Emit tangent raw candidate boundary
+        shell: bash
+        run: |
+          echo 'classification=TANGENT_RAW_RUNTIME_CANDIDATES_PLUS_0_PLUS_0'
+          echo 'model_point_count=9'
+          echo 'total_requests=252'
+          echo 'reference_recomputed=false'
+          echo 'tangent_raw_set_admitted=false'
+          echo 'tangent_response_ready=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073HY_C2_TANGENT_RAW_RUNTIME_CANDIDATES_V0_1'
