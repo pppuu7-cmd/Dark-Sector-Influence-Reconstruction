@@ -1,0 +1,149 @@
+name: Exp073HV C2 raw-record ABI decode v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/contracts/EXP073HV_DECODE_BINDING_V0_1.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  hosted-abi-decode:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify frozen HV binding and admitted authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          M=docs/dsir4/contracts/EXP073HV_DECODE_BINDING_V0_1.txt
+          get(){ awk -F= -v k="$1" '$1==k{print $2}' "$M"; }
+          test "$(git hash-object docs/dsir4/prereg/EXP073HV_C2_RAW_RECORD_ABI_DECODE_V0_1.md)" = "$(get PREREG_BLOB)"
+          test "$(git hash-object .github/workflows/exp073hv-c2-raw-record-abi-decode-v0-1.yml)" = "$(get WORKFLOW_BLOB)"
+          test "$(git hash-object docs/dsir4/authority/EXP073HU_C2_RAW_RECORD_SET_ADMISSION_AUTHORITY_V0_1.txt)" = 'dbcc251cb6534112929c937deb9da6323d3be4f7'
+          grep -qx 'RAW_RECORD_SET_ADMITTED=true' docs/dsir4/authority/EXP073HU_C2_RAW_RECORD_SET_ADMISSION_AUTHORITY_V0_1.txt
+          grep -qx 'DECODED=false' docs/dsir4/authority/EXP073HU_C2_RAW_RECORD_SET_ADMISSION_AUTHORITY_V0_1.txt
+
+      - name: Verify frozen producer ABI sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --quiet --depth=1 origin bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba
+          test "$(git rev-parse bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba:scripts/dsir4/fixtures/dsir_c2_recorder_v0_1.h)" = 'c6144598b9f75908ee27a517d31eda509f7947f6'
+          test "$(git rev-parse bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba:scripts/dsir4/exp073hn_c2_endpoint_serializer_v0_1.c)" = '40f361d06fc2732f5c0ad384ed729e5d483810f5'
+
+      - name: Download admitted HT artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/hv
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            'https://api.github.com/repos/${{ github.repository }}/actions/artifacts/10061693504' > /tmp/hv/meta.json
+          python - <<'PY'
+          import json
+          m=json.load(open('/tmp/hv/meta.json'))
+          assert m['id']==10061693504
+          assert m['name']=='exp073ht-c2-reference-raw-runtime-v0-3'
+          assert m['digest']=='sha256:9f544297b90d1fed51c78d98be4737b97e2066b2a06b96bb314ccc9b9c3242d0'
+          assert m['workflow_run']['id']==34235038323
+          assert m['workflow_run']['head_sha']=='bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba'
+          PY
+          curl -fsSL -L -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            'https://api.github.com/repos/${{ github.repository }}/actions/artifacts/10061693504/zip' -o /tmp/hv/ht.zip
+          test "$(sha256sum /tmp/hv/ht.zip | awk '{print $1}')" = '9f544297b90d1fed51c78d98be4737b97e2066b2a06b96bb314ccc9b9c3242d0'
+          mkdir /tmp/hv/art
+          unzip -q /tmp/hv/ht.zip -d /tmp/hv/art
+          test "$(stat -c%s /tmp/hv/art/dsir_c2_reference_raw_v0_3.bin)" -eq 1792
+          test "$(sha256sum /tmp/hv/art/dsir_c2_reference_raw_v0_3.bin | awk '{print $1}')" = '905d01d986e38baca0924937e7bd54db901a53853ffd138427e892fe25039fb4'
+
+      - name: Decode exact ABI and prove endpoint bit identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import sys, struct, math, json, hashlib, pathlib, re
+          assert sys.byteorder=='little'
+          assert struct.calcsize('d')==8
+          assert sys.float_info.mant_dig==53 and sys.float_info.max_exp==1024 and sys.float_info.radix==2
+          # Binary64 sanity probes, independent of payload values.
+          assert struct.pack('<d',1.0).hex()=='000000000000f03f'
+          assert float.fromhex('0x1.0000000000000p+0')==1.0
+          A=pathlib.Path('/tmp/hv/art')
+          req=[]
+          for line in (A/'requests.tsv').read_text().splitlines():
+              rid,z,k=line.split('\t'); req.append((rid,z,k))
+          assert len(req)==28
+          expected_ids=[f'z{zi:02d}k{ki:02d}' for zi in range(7) for ki in range(4)]
+          assert [r[0] for r in req]==expected_ids
+          fields=['tau','k','a','H','delta_m','theta_m','rho_idm_iv','rho_iv']
+          keys=['request_id','z_literal','k_literal','tau_hex','k_hex','a_hex','H_hex','delta_m_hex','theta_m_hex','rho_idm_iv_hex','rho_iv_hex']
+          out=[]
+          for rid,zlit,klit in req:
+              pb=(A/'packets'/f'{rid}.bin').read_bytes(); assert len(pb)==64
+              vals=struct.unpack('<8d',pb)
+              assert all(math.isfinite(x) for x in vals)
+              text=(A/'raw'/f'{rid}.endpoint').read_text().strip()
+              toks=text.split()
+              assert toks[0]=='DSIR_C2_EXACT_ENDPOINT' and toks[1]==f'z={zlit}'
+              kv={x.split('=',1)[0]:x.split('=',1)[1] for x in toks[2:]}
+              parsed=tuple(float.fromhex(kv[f]) for f in fields)
+              # Compare binary64 encodings, not approximate numeric tolerances.
+              assert struct.pack('<8d',*parsed)==pb
+              rec={
+                'request_id':rid,'z_literal':zlit,'k_literal':klit,
+                'tau_hex':vals[0].hex(),'k_hex':vals[1].hex(),'a_hex':vals[2].hex(),'H_hex':vals[3].hex(),
+                'delta_m_hex':vals[4].hex(),'theta_m_hex':vals[5].hex(),
+                'rho_idm_iv_hex':vals[6].hex(),'rho_iv_hex':vals[7].hex()
+              }
+              assert list(rec.keys())==keys
+              out.append(json.dumps(rec,separators=(',',':'),ensure_ascii=True))
+          p=pathlib.Path('/tmp/hv/dsir_c2_reference_decoded_v0_1.jsonl')
+          p.write_text('\n'.join(out)+'\n',encoding='ascii')
+          sha=hashlib.sha256(p.read_bytes()).hexdigest()
+          pathlib.Path('/tmp/hv/decoded.sha256').write_text(sha+'\n')
+          pathlib.Path('/tmp/hv/DECODE_RECEIPT.txt').write_text(
+              'authority_kind=C2_RAW_RECORD_ABI_DECODE\n'
+              'upstream_hu_run=34242025242\n'
+              'upstream_hu_job=102114346415\n'
+              'upstream_ht_artifact_id=10061693504\n'
+              'upstream_ht_aggregate_sha256=905d01d986e38baca0924937e7bd54db901a53853ffd138427e892fe25039fb4\n'
+              'record_count=28\nfields_per_record=8\nabi=ieee754-binary64-little-endian\n'
+              f'decoded_jsonl_sha256={sha}\n'
+              'raw_record_set_admitted=true\ndecoded=true\nmapped=false\nprediction_ready=false\nscientific_model_authority_created=false\n',
+              encoding='ascii')
+          print('decoded_jsonl_sha256='+sha)
+          PY
+
+      - name: Upload decoded support artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073hv-c2-decoded-record-set-v0-1
+          path: |
+            /tmp/hv/dsir_c2_reference_decoded_v0_1.jsonl
+            /tmp/hv/decoded.sha256
+            /tmp/hv/DECODE_RECEIPT.txt
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Emit decoded-record boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'classification=DECODED_RECORD_SET_PLUS_0_PLUS_0'
+          echo "decoded_jsonl_sha256=$(cat /tmp/hv/decoded.sha256)"
+          echo 'raw_record_set_admitted=true'
+          echo 'decoded=true'
+          echo 'mapped=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073HV_C2_RAW_RECORD_ABI_DECODE_V0_1'
