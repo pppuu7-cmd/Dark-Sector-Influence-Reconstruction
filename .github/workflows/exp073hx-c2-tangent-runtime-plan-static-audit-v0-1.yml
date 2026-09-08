@@ -1,0 +1,56 @@
+name: Exp073HX C2 tangent runtime plan static audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/contracts/EXP073HX_PLAN_BINDING_V0_1.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-plan-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen binding and plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          M=docs/dsir4/contracts/EXP073HX_PLAN_BINDING_V0_1.txt
+          get(){ awk -F= -v k="$1" '$1==k{print $2}' "$M"; }
+          test "$(git hash-object docs/dsir4/prereg/EXP073HX_C2_TANGENT_RUNTIME_PLAN_STATIC_AUDIT_V0_1.md)" = "$(get PREREG_BLOB)"
+          test "$(git hash-object .github/workflows/exp073hx-c2-tangent-runtime-plan-static-audit-v0-1.yml)" = "$(get WORKFLOW_BLOB)"
+          test "$(git hash-object docs/dsir4/authority/EXP073HW_C2_REFERENCE_DELTAM_BRIDGE_AUTHORITY_V0_1.txt)" = "$(get HW_AUTHORITY_BLOB)"
+          test "$(git hash-object docs/dsir4/mappings/C2_IDE_DELTAM_EXTRACTION_CONTRACT_V0_1.md)" = 'ce0f39023fd2141745f946bdffe8133755613bd3'
+          python - <<'PY'
+          models=[
+            ('alpha_m1e4','-1e-4','0'),('alpha_m1e3','-1e-3','0'),('alpha_m1e2','-1e-2','0'),
+            ('beta_p1e4','0','+1e-4'),('beta_m1e4','0','-1e-4'),
+            ('beta_p1e3','0','+1e-3'),('beta_m1e3','0','-1e-3'),
+            ('beta_p1e2','0','+1e-2'),('beta_m1e2','0','-1e-2')]
+          z=['0.295','0.51','0.706','0.934','1.317','1.491','2.33']
+          k=['0.00067','0.00201','0.0067','0.0201']
+          plan=[(m,a,b,zz,kk) for m,a,b in models for zz in z for kk in k]
+          assert len(models)==9 and len(plan)==252
+          assert len(set(plan))==252
+          assert all(x[4] != '0.067' for x in plan)
+          assert plan[0]==('alpha_m1e4','-1e-4','0','0.295','0.00067')
+          assert plan[-1]==('beta_m1e2','0','-1e-2','2.33','0.0201')
+          PY
+      - name: Emit plan audit boundary
+        shell: bash
+        run: |
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'model_point_count=9'
+          echo 'requests_per_model=28'
+          echo 'total_requests=252'
+          echo 'reference_recomputed=false'
+          echo 'tangent_runtime_started=false'
+          echo 'tangent_response_ready=false'
+          echo 'prediction_ready=false'
+          echo 'scientific_model_authority_created=false'
+          echo 'G_DOMAIN_MAPPING=NOT_YET_TESTABLE'
+          echo 'PASS_EXP073HX_C2_TANGENT_RUNTIME_PLAN_STATIC_AUDIT_V0_1'
