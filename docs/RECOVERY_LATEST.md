@@ -2,7 +2,7 @@
 
 Updated: 2026-09-08. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-08_C2_HR_INTERVAL_HOOK_FAIL_HS_GUARD_FRONT_V38.md` (creation commit `bf7b091e566bb47b1197d703e1e58bfb6fb79c6c`). Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-08_C2_HS_PASS_HT_RAW_RUNTIME_FRONT_V39.md` (creation commit `4b6742b7b9d42fa3965c9bff77d58ca64c34a99d`). Earlier recovery notes remain immutable history.
 
 ## Preserved scientific authority
 
@@ -10,32 +10,34 @@ All prior scientific authority remains unchanged. Wm_S1 Track-A exact PASS and a
 
 C2 remains `raw_record_set_admitted=false`, `decoded=false`, `mapped=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`.
 
-## Terminal runtime history
+## Newly validated support result — Exp073HS
 
-Exp073HO v0.1 `34229170304 / 102070681656` remains historical implementation/runtime exact-endpoint failure `+0/+0` with no raw artifact.
+Exp073HS `34230896860 / 102076459069` is terminal `SUCCESS`. The raw job log was inspected and contains exact frozen token `PASS_EXP073HS_C2_FINAL_APPROXIMATION_INTERVAL_ENDPOINT_GUARD_BUILD_AUDIT_V0_1`. Classification is strictly `SUPPORT_PLUS_0_PLUS_0`. HS is a build/static implementation gate only and creates no runtime payload or scientific/model authority.
 
-Exp073HR v0.2 `34230309394 / 102074480794`, head `acb71f5d0584c4b64a86cb691f9f28f1c1482037`, is also terminal `FAILURE`. Frozen binding, post-HQ reconstruction and build all passed. The unchanged first request `z00k00`, `z=0.295`, physical `k=0.00067 Mpc^-1` failed before serialization/receipt/artifact with exact chain `perturb_init -> perturb_solve -> evolver_ndf15 -> dsir_c2_diag_arm_terminal(tfinal,...)` and exact condition `tau != dsir_c2_diag_tau_target`.
+The earlier HR/HO failures remain historical implementation/runtime `+0/+0` results and are not rewritten.
 
-No raw candidate exists. HR is **implementation/control-flow FAIL `+0/+0`**, not scientific FAIL.
+## Current C2 frontier — Exp073HT raw reference runtime v0.3
 
-## Refined causal diagnosis
+A reconciled parallel DSIR process prospectively froze `docs/dsir4/prereg/EXP073HT_C2_REFERENCE_RAW_RUNTIME_PRODUCER_V0_3.md` in commit `7c745691c6a6370f120fe7c65ccdf30c072d8b9d`. This frozen gate was materialized without creating a competing DSIR control plane:
 
-Pinned `perturb_solve` invokes `generic_evolver` separately for every approximation interval and passes each interval's `interval_limit[index_interval+1]` as its `tfinal`. The diagnostic hook had been executing whenever each individual evolver call reached `done==_TRUE_`. Therefore the first non-final approximation-switch boundary was incorrectly treated as the overall literal-z terminal endpoint. This fully explains why HQ's per-evolver exact `tfinal` remained unequal to the frozen overall target without implicating numerical tolerance or physics.
+- workflow implementation commit `b75d7aa497beae88eaef3e8a353dc66c2249129e`;
+- workflow blob `9d99107f0dc309e5c05810085d92c5149531e0c0`;
+- runtime binding/head commit `bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba`;
+- run `34235038323`;
+- job `102090438079`;
+- branch/head `main / bc51e53188ee4fd8f0c507e2be9e5b4fc47640ba`;
+- GitHub-hosted `ubuntu-24.04`; self-hosted/home heavy owner **none**;
+- state at pointer update: **IN_PROGRESS**, runtime execution step;
+- frozen binding verification and exact post-HS solver/serializer build already passed.
 
-## Current C2 frontier — Exp073HS exact final-interval guard audit
+The HT gate keeps pinned solver `kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c`, reference `(alpha,beta)=(0,0)`, unchanged 28 z/k nodes in frozen z-major/k-minor order, exact native endpoint observation, one 64-byte packet per request and exact aggregate size 1792 bytes. Interpolation/tolerance/nearest-coordinate/effective-coordinate rescue is forbidden.
 
-Exp073HS is prospectively frozen in `docs/dsir4/prereg/EXP073HS_C2_FINAL_APPROXIMATION_INTERVAL_ENDPOINT_GUARD_BUILD_AUDIT_V0_1.md`, blob `d3a135cce56124ead0c4c5cc4a6a830767420be4`, creation commit `cdc89b729e04ea604d6d950fb3259605489e44c2`.
-
-Patch blob `57cd2b9c0e07c7e6c066cae46f6bc368f5086e35`; workflow blob `8e834ad1fceebb21d6d64f298f0d1f8301d4816b`; binding/head commit `68567340d5164d5554dbb5f770fe2d1b755227ba`.
-
-Authoritative process: run `34230896860`, job `102076459069`, GitHub-hosted `ubuntu-24.04`, state at pointer update **IN_PROGRESS**. No self-hosted/home heavy owner exists.
-
-HS changes diagnostic control flow only: it allows the endpoint hook only when `done==_TRUE_` and the current exact `tfinal == dsir_c2_diag_tau_target` by strict binary64 equality. Earlier approximation intervals are ignored as non-terminal observations. The already accepted `ynew`, equations, integration arithmetic, tolerances, model, frozen z/k grid, baseline, p8, packet ABI, field order and provenance rules remain unchanged. No tolerance, rounding, nearest-time or interpolation rescue is introduced.
-
-Expected exact token: `PASS_EXP073HS_C2_FINAL_APPROXIMATION_INTERVAL_ENDPOINT_GUARD_BUILD_AUDIT_V0_1`, classification ceiling `SUPPORT_PLUS_0_PLUS_0`; HS is build/static only and cannot create a raw record set or scientific authority.
+Frozen post-HS source/config identities: `perturbations.c sha256=483b481b48e50a6afb396b15b85258ac6c5a7a39b38fb1c6192e7e4a95c139ae`; `evolver_ndf15.c sha256=3f12121ce2de319453e1ff5fadae9391fd96747731c0df3fa05fae1cd2608aa9`; baseline `sha256=0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c`; precision `sha256=463a3960d6a955c1e2a561e988562a1fc5486b0b79f120eb634ccca6f86002f9`.
 
 ## Exact next transition
 
-On HS raw-log PASS, freeze a separately versioned raw `(0,0)` producer using exact post-HS source hashes and the unchanged 28-node model/grid/config/64-byte ABI, then execute it. On HS FAIL, diagnose and repair only the smallest causal implementation/static-build defect prospectively.
+Workflow SUCCESS alone is insufficient. On terminal HT, consume raw job log and artifact in the same iteration; verify GitHub digest, provenance/receipt run-job-head binding, source/config fingerprints, exactly 28 distinct ordered packets, exact 64-byte packet size, exact 1792-byte aggregate and aggregate SHA256. Only after all frozen checks may `PASS_EXP073HT_C2_REFERENCE_RAW_RUNTIME_PRODUCER_V0_3` be classified as `RAW_RUNTIME_CANDIDATE_PLUS_0_PLUS_0`.
+
+Even a validated HT candidate remains non-admitted and may not be decoded/mapped/interpreted. It can only authorize a separately prospectively frozen admission/receipt gate. On HT failure, diagnose only the first causal implementation/runtime/provenance defect and repair prospectively without altering scientific equations, arithmetic, model, grid, tolerances, ABI or provenance.
 
 Global frozen DSIR science boundaries remain unchanged: `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid<=0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; exact-threshold ambiguity `numerically_unresolved`; no tolerance, rounding, smoothing, averaging, effective ell/z/k or fiducial-P shortcut.
