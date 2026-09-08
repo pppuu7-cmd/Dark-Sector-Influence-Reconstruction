@@ -28,7 +28,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import hashlib,json,os,subprocess,tempfile,urllib.request,zipfile
+          import hashlib,json,os,re,subprocess,tempfile,urllib.request,zipfile
           from pathlib import Path
           repo=os.environ['GITHUB_REPOSITORY']; tok=os.environ['GH_TOKEN']
           R=json.loads(Path('docs/dsir4/authority/C2_WW_ANGULAR_AUTHORITY_RECEIPT_V0_3.json').read_text())
@@ -47,15 +47,19 @@ jobs:
           assert 'PASS_EXP073IH_C2_G_DOMAIN_MAPPING_V0_1' in ih and 'G_DOMAIN_MAPPING=PASS' in ih
           for a in R['authorities']:
             p=a['pair']; low=p.lower(); left,right=p.split('_')
-            assert a['relation']==('same_object' if left==right else 'ordered_distinct')
-            run=json.loads(api(f"https://api.github.com/repos/{repo}/actions/runs/{a['run']}")); assert run['head_sha']==a['head']
+            assert a['relation']==('same_object' if left==right else 'ordered_distinct'),(p,'relation')
+            run=json.loads(api(f"https://api.github.com/repos/{repo}/actions/runs/{a['run']}")); assert run['head_sha']==a['head'],(p,'head')
             jobs=json.loads(api(f"https://api.github.com/repos/{repo}/actions/runs/{a['run']}/jobs?per_page=100"))['jobs']
-            assert any(j['id']==a['job'] and j['status']=='completed' and j['conclusion']=='success' for j in jobs)
-            L=log(a['job']); assert a['token'] in L and 'SCIENTIFIC_AUTHORITY_ADMITTED' in L and f'ww_{low}_authority_created=true' in L.lower()
+            assert any(j['id']==a['job'] and j['status']=='completed' and j['conclusion']=='success' for j in jobs),(p,'job')
+            L=log(a['job'])
+            assert a['token'] in L,(p,'token')
+            assert 'SCIENTIFIC_AUTHORITY_ADMITTED' in L,(p,'classification')
+            pat=rf'["\s]*ww_{re.escape(low)}_authority_created["\s]*[:=][\s]*true'
+            assert re.search(pat,L,re.I),(p,'authority-created marker')
             meta=json.loads(api(f"https://api.github.com/repos/{repo}/actions/artifacts/{a['source_artifact']}"))
-            assert meta['id']==a['source_artifact'] and meta['digest']==a['source_artifact_digest'] and meta['expired'] is False
+            assert meta['id']==a['source_artifact'] and meta['digest']==a['source_artifact_digest'] and meta['expired'] is False,(p,'artifact metadata')
             raw=curl(f"https://api.github.com/repos/{repo}/actions/artifacts/{a['source_artifact']}/zip")
-            assert 'sha256:'+hashlib.sha256(raw).hexdigest()==a['source_artifact_digest']
+            assert 'sha256:'+hashlib.sha256(raw).hexdigest()==a['source_artifact_digest'],(p,'zip digest')
             with tempfile.NamedTemporaryFile(suffix='.zip') as f:
               f.write(raw); f.flush()
               with zipfile.ZipFile(f.name) as z:
@@ -63,13 +67,12 @@ jobs:
                 for n in z.namelist():
                   if n.endswith('/'):continue
                   info=z.getinfo(n)
-                  if info.file_size==39*12288*8 and n.endswith('selected_ee.bin'):
-                    hits.append(hashlib.sha256(z.read(n)).hexdigest())
+                  if info.file_size==39*12288*8 and n.endswith('selected_ee.bin'): hits.append(hashlib.sha256(z.read(n)).hexdigest())
                   if n.endswith('.json') and info.file_size<2000000:
                     b=z.read(n)
                     if b'19327352832' in b and (b'mcm_filebacked' in b or b'mcm_backing_bytes' in b):mcm=True
                     if b'EE<-EE' in b and b'39' in b and b'12288' in b:geom=True
-                assert hits and all(h==a['canonical_sha256'] for h in hits),(p,hits,a['canonical_sha256'])
+                assert hits and all(h==a['canonical_sha256'] for h in hits),(p,'canonical',hits,a['canonical_sha256'])
                 assert mcm,(p,'missing exact file-backed MCM evidence')
                 assert geom,(p,'missing canonical EE geometry evidence')
             print('BOUND',p,a['run'],a['job'],a['source_artifact'],a['canonical_sha256'],len(hits))
