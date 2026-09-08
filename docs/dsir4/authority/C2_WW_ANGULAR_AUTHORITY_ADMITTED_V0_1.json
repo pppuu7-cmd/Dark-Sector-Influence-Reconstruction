@@ -1,0 +1,15 @@
+{
+  "schema":"C2_WW_ANGULAR_AUTHORITY_ADMITTED_V0_1",
+  "scope":"DSIR_ONLY",
+  "hypothesis_id":"C2_IDE_LOCAL_TANGENT_CONE",
+  "angular_contract":{"path":"docs/dsir4/DSIR4_ANGULAR_AUTHORITY_BINDING_CONTRACT_V0_1.md","blob":"af2cdbfa03e0a68c24df8d1009c723d411d2d0a2"},
+  "funnel_contract":{"path":"docs/dsir4/DSIR4_MODEL_FUNNEL_MATRIX_CONTRACT_V0_1.md","blob":"2ad6d26381119442ccd3811b29f24522f5f6eeff"},
+  "admitted_input_receipt":{"path":"docs/dsir4/authority/C2_WW_ANGULAR_AUTHORITY_RECEIPT_V0_3.json","blob":"681503a7ac8376801e997f0e2e4ba2ebdace87da"},
+  "admission_prereg":{"path":"docs/dsir4/prereg/EXP073IJ_C2_WW_ANGULAR_AUTHORITY_ADMISSION_V0_2.md","blob":"119369e38465f101b2ff04dafd1fe933beeacaf7"},
+  "admission":{"experiment":"Exp073IJ","version":"v0.2","run":34255057685,"job":102158621226,"head":"fea645fc591863665f249ba4b74767f0f2d2b8bc","token":"PASS_EXP073IJ_C2_G_ANGULAR_AUTHORITY_V0_2","classification":"SCIENTIFIC_GATE_PASS"},
+  "bound_pair_count":10,
+  "bound_pairs":["S0_S0","S0_S1","S0_S2","S0_S3","S1_S1","S1_S2","S1_S3","S2_S2","S2_S3","S3_S3"],
+  "common":{"semantics":"EE<-EE","dtype":"<f8","shape":[39,12288],"des_nside":4096,"ell_min":0,"ell_max":12287,"bands":39,"mcm_bytes":19327352832,"exact_equality_only":true},
+  "status":{"G_DOMAIN_MAPPING":"PASS","G_ANGULAR_AUTHORITY":"PASS","angular_authority_receipt_created":true,"scientific_model_authority_created":false,"G_ORDERED_JOIN":"NOT_YET_TESTABLE","G_RADIAL_SUPPORT":"NOT_YET_TESTABLE","G_PHYSICAL_SUPPORT":"NOT_YET_TESTABLE","G_COV_WHITENING":"NOT_YET_TESTABLE","G_NUISANCE_QUOTIENT":"NOT_YET_TESTABLE","G_RELATION_NULL":"NOT_YET_TESTABLE","G_FINAL_MODEL":"NOT_YET_TESTABLE","overall_status":"NOT_YET_TESTABLE"},
+  "notes":["Raw admission log contains one BOUND line for each of the ten required source pairs and exact terminal PASS token.","Historical pair authorities are not rewritten by this receipt.","Candidate receipt metadata corrections for S1_S1 and S2_S3 were derived by exact SHA256 recomputation from the frozen historical source artifacts before admission.","No tolerance, rounding, smoothing, averaging, effective-coordinate, fiducial-P, source-pair substitution, or home recomputation was used."]
+}
