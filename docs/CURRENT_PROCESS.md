@@ -6,35 +6,38 @@ Updated: 2026-09-08. Scope: **DSIR only**; RTK/RQIR excluded.
 
 All prior scientific authority remains unchanged, including scientifically admitted `WW_S3_S3` from run `34218457380 / 102035691774`, GA artifact `10051382493`, digest `sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109`.
 
-Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-08_C2_HW_REFERENCE_PASS_HX_TANGENT_PLAN_FRONT_V43.md`, creation commit `a0244f2594a9590867d77d0ca62d5273983a8db9`.
+Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-08_C2_HX_PLAN_PASS_HY_TANGENT_RUNTIME_FRONT_V44.md`, creation commit `df69e399d812a1da9f72349215318308e7ad59cc`.
 
 ## Closed C2 front
 
-HT raw candidate, HU raw-set admission, HV exact ABI decode, and HW reference `Delta_m` bridge are all raw-log/artifact validated. Latest support authority is HW `34242852819 / 102117188431`, artifact `10062705321`, digest `sha256:7ea327f0d6e29e4b415c9f66201b266e9015d46a383e8867de94b05665517c00`, bridge JSONL SHA256 `2b6eb07c99273292bcb2cf929295071e401e81ed51cfe3f4c3b19d5a395518fb`, authority blob `69d617ebfc5c8184b602718d3dbf1a0cec228e1e`.
+HT/HU/HV/HW are validated through reference common-coordinate authority. HX `34243153985 / 102118219475` is raw-log validated `SUPPORT_PLUS_0_PLUS_0` with exact 9×28=252 tangent runtime plan and no reference recomputation.
 
 Current C2 boundary: `raw_record_set_admitted=true`, `decoded=true`, `mapped_reference_coordinate=true`, `tangent_response_ready=false`, `prediction_ready=false`, `scientific_model_authority_created=false`, `G_DOMAIN_MAPPING=NOT_YET_TESTABLE`.
 
-## Current process — Exp073HX tangent-runtime plan static audit v0.1
+## Current process — Exp073HY tangent raw runtime producer v0.1
 
-- prereg `docs/dsir4/prereg/EXP073HX_C2_TANGENT_RUNTIME_PLAN_STATIC_AUDIT_V0_1.md`;
-- prereg commit `63940da8955cddeba4e8f0f6cb3ac766baac6088`;
-- prereg blob `e00d972504abb2ec102f9fc09f0e57af1bccf33e`;
-- workflow `.github/workflows/exp073hx-c2-tangent-runtime-plan-static-audit-v0-1.yml`;
-- workflow implementation commit `24ee69be8574e4a5976e1bd4371e8bc69bbf4957`;
-- workflow blob `55b4d60d454c8f4c42f3646cfedb4cebf57deeaa`;
-- binding/head commit `dd25da6aa9363c3a279e894595106b472b2375ad`;
-- run `34243153985`;
-- job `102118219475`;
-- branch/head `main / dd25da6aa9363c3a279e894595106b472b2375ad`;
-- checkpoint namespace `N/A` — GitHub-hosted static plan audit;
-- start time `2026-09-08T15:11:31Z`;
+- prereg `docs/dsir4/prereg/EXP073HY_C2_TANGENT_RAW_RUNTIME_PRODUCER_V0_1.md`;
+- prereg commit `7ab623edfaa1fc27c62d020fc93d0679844286e6`;
+- prereg blob `5b7f9d3ce989f524e1d9555a219b692e44793821`;
+- workflow `.github/workflows/exp073hy-c2-tangent-raw-runtime-producer-v0-1.yml`;
+- workflow implementation commit `4a50791ce0493ee69084224a834ac2902f0580f5`;
+- workflow blob `93d476850f8c388d3e91f9f41283e7b436b99268`;
+- binding/head commit `ca3b6a1de8ff96dfc0525ef8485f1ad57e2976b8`;
+- workflow/run ID `34243515299`;
+- branch/head `main / ca3b6a1de8ff96dfc0525ef8485f1ad57e2976b8`;
+- checkpoint namespace: GitHub-hosted complete model-point artifacts, one namespace/artifact per frozen model point; no home checkpoint owner;
+- start time `2026-09-08T15:14:55Z`;
 - runner ownership GitHub-hosted `ubuntu-24.04`; self-hosted/home heavy owner **none**;
-- state at ledger update: `IN_PROGRESS`;
-- expected token `PASS_EXP073HX_C2_TANGENT_RUNTIME_PLAN_STATIC_AUDIT_V0_1`;
-- classification ceiling `SUPPORT_PLUS_0_PLUS_0`.
+- state at ledger update: matrix queued/in_progress;
+- known job IDs at first live reconciliation: `tangent-alpha_m1e3=102119471057` IN_PROGRESS; `beta_m1e2=102119471334`, `beta_p1e3=102119471369`, `beta_m1e3=102119471373`, `beta_m1e4=102119471483`, `beta_p1e4=102119471486`, `beta_p1e2=102119471600`, `alpha_m1e2=102119471655`, `alpha_m1e4=102119471802` queued;
+- final manifest-verifier job ID not yet allocated at this ledger snapshot;
+- expected terminal token `PASS_EXP073HY_C2_TANGENT_RAW_RUNTIME_CANDIDATES_V0_1`;
+- classification ceiling `TANGENT_RAW_RUNTIME_CANDIDATES_PLUS_0_PLUS_0`.
 
-Frozen plan contains exactly 9 nonzero tangent model points, 28 requests each, total 252; reference is not recomputed; excluded `0.067 Mpc^-1` remains forbidden. HX runs no cosmology.
+Each model job is a complete durable unit: exactly 28 endpoint records ×64 bytes, 1792-byte aggregate, digest and run/job/head/model receipt. `fail-fast:false` preserves successful model artifacts if another model fails. No reference recomputation, decoding, Delta_m mapping, derivative, response, prediction or science is allowed in HY.
 
 ### Exact next actions
 
-On HX terminal SUCCESS: inspect raw log and require exact plan token/boundaries. Only then implement and bind a tangent raw-runtime producer reusing validated HT exact-endpoint extraction/serializer architecture with complete per-model-point durable units. On HX failure: repair only causal plan/binding/static-audit defects prospectively. Global frozen DSIR boundaries remain unchanged.
+If HY is terminal, consume every matrix job plus manifest raw log immediately. On complete PASS, independently verify all nine GitHub artifact digests and receipts and only then preregister tangent raw-set provenance admission/decode/mapping. On a model FAIL, preserve all successful complete model artifacts, diagnose that model's first causal defect and repair prospectively without changing model points/grid/source/precision/ABI/endpoint criteria. If HY remains running, do not duplicate it.
+
+Global frozen DSIR boundaries remain unchanged.
