@@ -18,8 +18,19 @@ Classification: INFRASTRUCTURE/RUNTIME_OBSERVABILITY_FAILURE +0/+0. This is not 
 
 No retry with altered coordinates, tolerances, baseline, precision, hypothesis ID or scientific logic is permitted.
 
-## Safe diagnostic isolation
+## Safe diagnostic isolation and exact cause
 
-Added hosted-only exact first-request diagnostic workflow in commit 0d68fc61f58e5b7b9f46ca43f4ed32d7b4a34d92. Diagnostic run 34229365325 / job 102071344339 reconstructs the same pinned solver and exact post-HM patch chain, then executes only the first frozen request z=0.295, k=0.00067 Mpc^-1 with unchanged baseline and p8 precision while surfacing stdout/stderr. It creates no packet set and no scientific authority.
+Added hosted-only exact first-request diagnostic workflow in commit 0d68fc61f58e5b7b9f46ca43f4ed32d7b4a34d92. Diagnostic run 34229365325 / job 102071344339 reconstructed the same pinned solver and exact post-HM patch chain, then executed only the first frozen request z=0.295, k=0.00067 Mpc^-1 with unchanged baseline and p8 precision while surfacing stdout/stderr. It created no packet set and no scientific authority.
 
-At log creation this diagnostic job is IN_PROGRESS in the solver reconstruction step. No competing self-hosted heavy process exists. Do not launch another HO producer until this diagnostic reaches terminal state and the technical cause is isolated.
+The diagnostic deterministically reproduced CLASS exit 1 with the exact fail-closed chain:
+
+- perturb_init -> perturb_solve -> evolver_ndf15 -> dsir_c2_diag_arm_terminal;
+- terminal error: `condition (tau != dsir_c2_diag_tau_target) is true; DSIR C2 terminal tau is not the exact background_tau_of_z endpoint`.
+
+Therefore the physical solver did not produce an admitted endpoint record. This is an implementation/runtime exact-endpoint identity failure, not a scientific model FAIL. It is also not INVALID_FOR_SCIENCE evidence to be decoded: no raw candidate exists.
+
+Pinned NDF15 sets terminal h as `tfinal - t` when within the terminal stretch, while the patched diagnostic contract requires bit-exact `tnew == background_tau_of_z target`. The observed run shows that the frozen patched implementation does not satisfy its own exact-endpoint identity at runtime for the first frozen coordinate.
+
+A repair by tolerance, rounding, nearest-time acceptance, interpolation, or altered coordinate is explicitly forbidden. A prospective source change that canonicalizes terminal time identity would change the frozen post-HM source SHA / implementation contract and therefore is not applied under the current no-contract-change guard. Exp073HO remains BLOCKED_BY_FROZEN_IMPLEMENTATION_EXACT_ENDPOINT_IDENTITY +0/+0 until a separately authorized prospective contract/version transition is frozen before execution.
+
+No competing heavy/self-hosted run is active. Do not rerun Exp073HO v0.1 unchanged: it will deterministically repeat the same first-request failure.
