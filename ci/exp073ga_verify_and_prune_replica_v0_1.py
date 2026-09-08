@@ -9,7 +9,7 @@ def main():
  got=subprocess.check_output(['git','rev-parse','HEAD:ci/exp073fm_verify_and_prune_replica_v0_1.py'],text=True).strip()
  if got!=BASE_GIT_BLOB: raise RuntimeError(f'fail-closed FM pruner blob drift {got}')
  s=BASE.read_text()
- for old,new in [('exp073fm','exp073ga'),('EXP073FM','EXP073GA'),('ww_s1_s1','ww_s3_s3'),('ww-s1-s1','ww-s3-s3'),('WW_S1_S1','WW_S3_S3'),('S1->S1','S3->S3'),('[1,1]','[3,3]'),('s1_count_map','s3_count_map'),('S1 source','S3 source')]:
+ for old,new in [('exp073fm','exp073ga'),('EXP073FM','EXP073GA'),('ww_s1_s1','ww_s3_s3'),('ww-s1-s1','ww-s3-s3'),('S1->S1','S3->S3'),('[1,1]','[3,3]'),('s1_count_map','s3_count_map'),('S1 source','S3 source')]:
   if old not in s: raise RuntimeError(f'fail-closed missing GA pruner token {old!r}')
   s=s.replace(old,new)
  for old,new in [('p1','p3'),('h1','h3')]: s=re.sub(rf'\b{old}\b',new,s)
