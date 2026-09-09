@@ -1,0 +1,70 @@
+name: exp073im-c2-real-radial-support-v0-2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073im_c2_real_radial_support_v0_2.py'
+      - 'docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_3.json'
+      - 'docs/dsir4/contracts/DSIR4_C2_RADIAL_EXECUTOR_INTERFACE_V0_2.md'
+      - 'docs/dsir4/prereg/EXP073IM_C2_REAL_RADIAL_SUPPORT_V0_2.md'
+      - '.github/workflows/exp073im-c2-real-radial-support-v0-2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  real-radial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      MANIFEST: docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_3.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install numerical dependency
+        run: python -m pip install --disable-pip-version-check 'numpy>=1.26,<3'
+      - name: Download and byte-verify frozen authorities
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/presupport inputs/radial inputs/angular
+          get_artifact () {
+            local id="$1" digest="$2" dest="$3"
+            local zip="${dest}.zip"
+            mkdir -p "$dest"
+            gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "$zip"
+            local actual expected
+            actual="$(sha256sum "$zip" | awk '{print $1}')"
+            expected="${digest#sha256:}"
+            test "$actual" = "$expected" || { echo "artifact $id digest mismatch $actual != $expected"; exit 31; }
+            unzip -q "$zip" -d "$dest"
+          }
+          read -r id digest < <(jq -r '.presupport_order | "\(.artifact_id) \(.artifact_digest)"' "$MANIFEST")
+          get_artifact "$id" "$digest" inputs/presupport
+          read -r id digest < <(jq -r '.radial | "\(.artifact_id) \(.artifact_digest)"' "$MANIFEST")
+          get_artifact "$id" "$digest" inputs/radial
+          while IFS=$'\t' read -r slot id digest; do
+            get_artifact "$id" "$digest" "inputs/angular/$slot"
+          done < <(jq -r '.angular[] | [.slot, (.artifact_id|tostring), .artifact_digest] | @tsv' "$MANIFEST")
+      - name: Execute frozen real radial classification
+        run: |
+          mkdir -p artifacts
+          python ci/exp073im_c2_real_radial_support_v0_2.py \
+            --manifest "$MANIFEST" \
+            --inputs inputs \
+            --out artifacts/exp073im_c2_real_radial_support_v0_2.json
+      - name: Require a scientific PASS or scientific FAIL receipt
+        run: grep -Eq 'PASS_EXP073IM_C2_REAL_RADIAL_SUPPORT_V0_2|FAIL_EXP073IM_C2_REAL_RADIAL_SUPPORT_V0_2' artifacts/exp073im_c2_real_radial_support_v0_2.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073im-c2-real-radial-support-v0-2
+          path: artifacts/exp073im_c2_real_radial_support_v0_2.json
+          if-no-files-found: error
+          retention-days: 90
