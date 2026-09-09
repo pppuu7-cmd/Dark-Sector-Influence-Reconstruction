@@ -1,0 +1,44 @@
+name: DSIR2 G5 data-whitened cross-family synthetic QA v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/dsir2_g5_data_whitened_cross_family_synthetic_qa_v0_1.py'
+      - '.github/workflows/dsir2-g5-data-whitened-cross-family-synthetic-qa-v0-1.yml'
+      - 'docs/article2/DSIR2_G5_DATA_WHITENED_CROSS_FAMILY_STRESS_CONTRACT_V0_1.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install numerical dependency
+        run: python -m pip install --disable-pip-version-check numpy
+      - name: Run Article2 G5 synthetic QA
+        run: python ci/dsir2_g5_data_whitened_cross_family_synthetic_qa_v0_1.py
+      - name: Assert exact PASS token and non-science boundary
+        run: |
+          python - <<'PY'
+          import json
+          p='data/derived/article2/dsir2_g5_data_whitened_cross_family_synthetic_qa_v0_1.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_DSIR2_G5_DATA_WHITENED_CROSS_FAMILY_SYNTHETIC_QA_V0_1'
+          assert d['synthetic_only'] is True
+          assert d['science_gate_scored'] is False
+          assert d['rank_cutoff_inferred'] is False
+          assert d['covariance_real_data_read'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dsir2-g5-cross-family-synthetic-qa-${{ github.sha }}
+          path: data/derived/article2/dsir2_g5_data_whitened_cross_family_synthetic_qa_v0_1.json
+          if-no-files-found: error
