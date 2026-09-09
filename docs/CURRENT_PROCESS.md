@@ -1,6 +1,6 @@
 # DSIR current-process ledger
 
-Updated: 2026-09-08. Scope: **DSIR only**; RTK/RQIR excluded.
+Updated: 2026-09-09. Scope: **DSIR only**; RTK/RQIR excluded.
 
 ## Preserved authority
 All prior DSIR authority remains preserved. Scientifically admitted `WW_S3_S3` remains `34218457380 / 102035691774`, GA artifact `10051382493`, digest `sha256:a192f50de34dc74f575b86e8ff1e6f7c92b9a9bb009d9d0ea6ff4ff6208f4109`.
@@ -32,17 +32,24 @@ Historical Exp073IL run/job `34271889927 / 102215228801` is infrastructure/imple
 - checkpoint namespace: N/A;
 - start time: N/A;
 - expected gate/token: none currently executable;
-- current state: **BLOCKED / NOT_YET_TESTABLE at `G_RADIAL_SUPPORT` external radial-data/operator prerequisite**;
-- last durable result: Exp073IL authority above;
+- current state: **BLOCKED / NOT_YET_TESTABLE at `G_RADIAL_SUPPORT`, but the external source-payload search has materially advanced**;
+- last durable scientific result: Exp073IL authority above;
+- newest support audit: `docs/dsir4/audits/DSIR4_RADIAL_AUTHORITY_LOCATOR_AUDIT_V0_1.md`, creation commit `55e62ae8b721ee672ade3c1469ab7d53e120af84`;
 - self-hosted/home ownership: none; runner free.
 
-### Exact reason for BLOCKED state
-The funnel requires radial multiplication/support construction, but the located angular evidence explicitly records `radial_kernel_read=False` and `physical_k_computed=False`. Current repository evidence does not contain a bound authoritative source `n(z)`/`dN/dz`, SOMPZ/source-window payload or equivalent radial-kernel data for S0..S3; angular `zbin_mcal` mask references are not radial distributions. The exact radial combination operator and Wm matter-side radial/LOS factor are therefore not yet bound.
+### Narrowed blocker after radial-authority locator audit
+The funnel still requires radial multiplication/support construction and the admitted angular evidence still records `radial_kernel_read=False` and `physical_k_computed=False`. However, a concrete high-confidence external source-radial candidate has now been located:
 
-Prospective support prerequisite: `docs/dsir4/contracts/DSIR4_RADIAL_SUPPORT_INPUT_REQUIREMENTS_V0_1.md`, creation commit `9064b6e948e328df00439f31c54c6b08e8ea933e`, blob `3fa4a41b3c53f4d8e879a105f0f5621cc60a9f98`.
+`des-y3/2pt_NG_final_2ptunblind_02_24_21_wnz_covupdate.v2.fits`
+
+DES analysis code uses this exact file as a fiducial `DATAFILE`, and a public loader of the exact filename reads `nz_source/Z_MID` plus four source columns `BIN1..BIN4`. This materially narrows the S0..S3 data blocker, but no ordinal mapping is admitted yet: authoritative proof is still required that frozen `zbin_mcal=[0,1,2,3]` corresponds exactly to `BIN1..BIN4`, together with exact schema/edges, normalization/weighting convention and immutable payload digest.
+
+The WW two-source radial operator and the Wm matter-side radial/line-of-sight factor are still not bound. Existing angular `TE<-TE` / `EE<-EE` authority is insufficient to infer them.
+
+Prospective support prerequisite remains `docs/dsir4/contracts/DSIR4_RADIAL_SUPPORT_INPUT_REQUIREMENTS_V0_1.md`, creation commit `9064b6e948e328df00439f31c54c6b08e8ea933e`, blob `3fa4a41b3c53f4d8e879a105f0f5621cc60a9f98`.
 
 ### Exact next permitted action
-Acquire or locate authoritative S0..S3 source-radial/redshift-distribution payloads and any Wm matter-side kernel, with exact coordinates/edges, units, normalization/weighting and immutable provenance/digests. Prospectively freeze the exact radial multiplication/support operator and coordinate compatibility rule. Only after those prerequisites exist may a new `G_RADIAL_SUPPORT` experiment be preregistered and launched.
+Acquire/inspect the exact fiducial DES Y3 FITS bytes and authoritative DES metadata/code linking metacal source-bin labels to `nz_source/BIN1..BIN4`; record immutable digest/schema/coordinates/units/normalization. Locate and freeze the actual observation-model equations or implementation that constructs the WW weak-lensing radial kernels and the Wm matter-side LOS kernel. Only after those prerequisites are bound prospectively may a new `G_RADIAL_SUPPORT` experiment be preregistered and launched.
 
 No seven-z proxy, angular-mask proxy, interpolation/extrapolation, smoothing, rounding, effective ell/z/k or fiducial-P substitution may be used.
 
