@@ -1,0 +1,21 @@
+{
+  "schema": "EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_1",
+  "status": "PROSPECTIVE_TRANSPORT_ONLY_BINDING_AFTER_INVALID_EXP073IM_RUN_BEFORE_ANY_VALID_RADIAL_OUTPUT",
+  "slot": "Wm_S3",
+  "scientific_authority_unchanged": true,
+  "source_science_run": 33910213781,
+  "source_science_job": 101144660519,
+  "science_token": "PASS_EXP073BU_WM_S3_FRESH_AB_EXACT_REPEATABILITY_8CORE_V0_3",
+  "evidence_export_run": 33934918432,
+  "evidence_export_job": 101220868663,
+  "artifact_id": 9959830267,
+  "artifact_digest": "sha256:cc32969cba9802201ac8cf7eae32b430ec47285f3357a58d470850aff8ceb8ab",
+  "carriers": ["A/selected_te.bin", "B/selected_te.bin"],
+  "dtype": "<f8",
+  "shape": [39, 12288],
+  "canonical_sha256": "d282ebdf98dc04e41a8c85f487e209634a8324ce7677107112b8abfd1660f749",
+  "replicas_exact_array_equal": true,
+  "no_tolerance_rescue": true,
+  "radial_support_scored": false,
+  "downstream_reads": []
+}
