@@ -64,7 +64,6 @@ def find_npz_array(root: Path, name: str, spec: dict) -> np.ndarray:
                     matches.append((p, key, canonical(x, spec["dtype"])))
     if not matches:
         raise AssertionError(f"no exact radial array for {name} / {spec['sha256']}")
-    # Multiple byte-identical carriers are allowed; logical authority is the canonical bytes.
     return matches[0][2]
 
 
@@ -147,10 +146,9 @@ def main() -> int:
     out = Path(a.out)
     try:
         manifest = json.loads(Path(a.manifest).read_text(encoding="utf-8"))
-        assert manifest["schema"] == "EXP073IM_C2_REAL_INPUT_MANIFEST_V0_3"
+        assert manifest["schema"] == "EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4"
         root = Path(a.inputs)
 
-        # Exact inherited observation order from Exp073U.
         skel = load_json_candidate(root / "presupport", "ordered_coordinate_ids")
         ids = skel["ordered_coordinate_ids"]
         assert len(ids) == manifest["presupport_order"]["full_row_count"] == 1410
@@ -160,7 +158,6 @@ def main() -> int:
         assert sum(x.startswith("Wm|") for x in des_ids) == 780
         assert sum(x.startswith("WW|") for x in des_ids) == 390
 
-        # Exact Exp073Z2 arrays.
         rroot = root / "radial"
         rspec = manifest["radial"]["arrays"]
         z = find_npz_array(rroot, "z_fine", rspec["z_fine"])
@@ -174,7 +171,6 @@ def main() -> int:
         if np.any(wm < 0) or np.any(ww < 0):
             raise AssertionError("frozen positive radial envelope became negative")
 
-        # Verify all 14 immutable angular byte authorities, without recomputation.
         angular: dict[str, np.ndarray] = {}
         carriers = {}
         expected_slots = [x["slot"] for x in manifest["angular"]]
@@ -187,7 +183,6 @@ def main() -> int:
             carriers[slot] = hits
         assert list(angular) == expected_slots and len(angular) == 14
 
-        # Frozen pair/index ordering from Exp073Z2: lens-major Wm, i<=j WW.
         ww_pairs = [(i, j) for i in range(4) for j in range(i, 4)]
         pair_to_ww_index = {p: q for q, p in enumerate(ww_pairs)}
         rows = [parse_des_row(cid, q, pair_to_ww_index) for q, cid in enumerate(des_ids)]
@@ -202,8 +197,6 @@ def main() -> int:
         ww_norm = np.asarray(trapz(ww, z, axis=1), dtype=np.float64)
         radial_good = bool(np.isfinite(wm_norm).all() and np.isfinite(ww_norm).all() and np.all(wm_norm > 0) and np.all(ww_norm > 0))
 
-        # All released bands must have a nonempty exact angular envelope. This is an
-        # upstream-integrity diagnostic; no physical-domain cut is performed here.
         band_nonempty = {}
         for slot, x in angular.items():
             sums = np.sum(np.abs(x), axis=1)
@@ -211,8 +204,6 @@ def main() -> int:
         if not all(band_nonempty.values()):
             raise AssertionError("exact admitted angular authority contains empty/nonfinite band")
 
-        # Attach only authority pointers and radial normalizations. No scalar z/k and
-        # no physical-support score are emitted by this gate.
         angular_specs = {x["slot"]: x for x in manifest["angular"]}
         for r in rows:
             ri = r["radial_index"]
@@ -232,6 +223,7 @@ def main() -> int:
         result = {
             "experiment": "Exp073IM",
             "schema": "EXP073IM_C2_REAL_RADIAL_SUPPORT_RESULT_V0_2",
+            "input_manifest_schema": manifest["schema"],
             "status": status,
             "scientific_radial_pass": radial_good,
             "representation": REP,
