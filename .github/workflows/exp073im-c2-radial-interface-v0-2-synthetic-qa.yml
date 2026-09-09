@@ -1,0 +1,34 @@
+name: exp073im-c2-radial-interface-v0-2-synthetic-qa
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073im_c2_radial_interface_v0_2_qa.py'
+      - 'docs/dsir4/contracts/DSIR4_C2_RADIAL_EXECUTOR_INTERFACE_V0_2.md'
+      - 'docs/dsir4/prereg/EXP073IM_C2_REAL_RADIAL_SUPPORT_V0_2.md'
+      - '.github/workflows/exp073im-c2-radial-interface-v0-2-synthetic-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run frozen v0.2 synthetic QA
+        run: python ci/exp073im_c2_radial_interface_v0_2_qa.py
+      - name: Require non-classifying PASS token
+        run: grep -q 'PASS_EXP073IM_C2_RADIAL_INTERFACE_V0_2_SYNTHETIC_QA' artifacts/exp073im_v0_2_synthetic_qa.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073im-v0-2-synthetic-qa
+          path: artifacts/exp073im_v0_2_synthetic_qa.json
+          if-no-files-found: error
+          retention-days: 90
