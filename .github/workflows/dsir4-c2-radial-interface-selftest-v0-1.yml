@@ -1,0 +1,25 @@
+name: DSIR4 C2 radial interface synthetic QA v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/contracts/DSIR4_C2_RADIAL_EXECUTOR_INTERFACE_V0_1.md'
+      - 'ci/dsir4_c2_radial_interface_selftest_v0_1.py'
+      - '.github/workflows/dsir4-c2-radial-interface-selftest-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run fail-closed radial interface QA
+        run: python3 ci/dsir4_c2_radial_interface_selftest_v0_1.py
+      - name: Assert exact PASS token
+        run: |
+          token="$(python3 ci/dsir4_c2_radial_interface_selftest_v0_1.py | tail -n 1)"
+          test "$token" = "PASS_DSIR4_C2_RADIAL_INTERFACE_SYNTHETIC_QA_V0_1"
