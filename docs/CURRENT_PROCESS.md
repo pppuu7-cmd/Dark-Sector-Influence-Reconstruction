@@ -32,25 +32,38 @@ Historical Exp073IL run/job `34271889927 / 102215228801` is infrastructure/imple
 - checkpoint namespace: N/A;
 - start time: N/A;
 - expected gate/token: none currently executable;
-- current state: **BLOCKED / NOT_YET_TESTABLE at `G_RADIAL_SUPPORT`, but the external source-payload search has materially advanced**;
+- current state: **BLOCKED / NOT_YET_TESTABLE at `G_RADIAL_SUPPORT`, with DES-Y1 survey/bin identity and historical LOS methodology now recovered**;
 - last durable scientific result: Exp073IL authority above;
-- newest support audit: `docs/dsir4/audits/DSIR4_RADIAL_AUTHORITY_LOCATOR_AUDIT_V0_1.md`, creation commit `55e62ae8b721ee672ade3c1469ab7d53e120af84`;
+- newest support/provenance correction: `docs/dsir4/audits/DSIR4_RADIAL_AUTHORITY_DESY1_SUPERSESSION_V0_1.md`, creation commit `cf207b39b5f28accbb305b568604496005e425cf`;
 - self-hosted/home ownership: none; runner free.
 
-### Narrowed blocker after radial-authority locator audit
-The funnel still requires radial multiplication/support construction and the admitted angular evidence still records `radial_kernel_read=False` and `physical_k_computed=False`. However, a concrete high-confidence external source-radial candidate has now been located:
+### Corrected blocker after DES-Y1 supersession audit
+The funnel still requires a prospectively frozen radial multiplication/support interface, and the admitted angular evidence still records `radial_kernel_read=False` and `physical_k_computed=False`.
 
-`des-y3/2pt_NG_final_2ptunblind_02_24_21_wnz_covupdate.v2.fits`
+However, the survey/source identity is no longer unresolved. The current C2 source labels are DES Y1 Metacalibration bins, not DES Y3. Pinned Cosmotheka DES-Y1 code binds `zbin_mcal=0,1,2,3` directly to `y1_redshift_distributions_v1.fits` columns `BIN1..BIN4` through `BIN{zbin+1}`. Therefore the exact ordinal bridge is now recovered:
 
-DES analysis code uses this exact file as a fiducial `DATAFILE`, and a public loader of the exact filename reads `nz_source/Z_MID` plus four source columns `BIN1..BIN4`. This materially narrows the S0..S3 data blocker, but no ordinal mapping is admitted yet: authoritative proof is still required that frozen `zbin_mcal=[0,1,2,3]` corresponds exactly to `BIN1..BIN4`, together with exact schema/edges, normalization/weighting convention and immutable payload digest.
+`S0 -> BIN1`, `S1 -> BIN2`, `S2 -> BIN3`, `S3 -> BIN4`.
 
-The WW two-source radial operator and the Wm matter-side radial/line-of-sight factor are still not bound. Existing angular `TE<-TE` / `EE<-EE` authority is insufficient to infer them.
+The DES-Y3 payload previously located remains only a methodological analogue and is superseded as the active C2 radial candidate.
 
-Prospective support prerequisite remains `docs/dsir4/contracts/DSIR4_RADIAL_SUPPORT_INPUT_REQUIREMENTS_V0_1.md`, creation commit `9064b6e948e328df00439f31c54c6b08e8ea933e`, blob `3fa4a41b3c53f4d8e879a105f0f5621cc60a9f98`.
+Wm physical identity is also recovered from the historical Exp073O/Exp073P route: it is the signed DES-Y1 galaxy-density x galaxy-shear observable. The lens mapper uses the five DES-Y1 redMaGiC bins `[0.15,0.30)`, `[0.30,0.45)`, `[0.45,0.60)`, `[0.60,0.75)`, `[0.75,0.90)` and reads the lens `n(z)` from `2pt_NG_mcal_1110.fits`. WW is the DES-Y1 source shear x source shear block.
+
+Historical Exp073P additionally froze the physical support bookkeeping `k=(ell+1/2)/chi(z)`, positive absolute bandpower-response propagation, physical `k [Mpc^-1]`, and a strict prohibition on fiducial-`P(k)`, covariance, nuisance, relation/null or later-gate weighting. This methodology can constrain the current radial executor, but its historical `operator_f_invalid` statistic must not be aliased to the later Article-3 coordinate-count `f_invalid` statistic.
+
+### Remaining exact blocker
+Before a new C2 `G_RADIAL_SUPPORT` experiment can be preregistered and launched, the repository still needs:
+
+1. immutable byte identity/SHA256/schema for every DES-Y1 radial payload actually consumed by the new C2 route;
+2. exact source/lens normalization and allowed photo-z shift convention;
+3. one explicit current C2 radial executor interface consuming the admitted 14-slot ordered join and emitting pre-physical-support coordinates without reading covariance/nuisance/relation information;
+4. exact coordinate/ordinal schema connecting this radial output to the already-frozen later Article-3 `G_PHYSICAL_SUPPORT` contract;
+5. synthetic fail-closed tests for source-bin permutation, unit mixing, zero/non-finite kernels, forbidden interpolation/effective coordinates and downstream leakage.
+
+Prospective support prerequisite remains `docs/dsir4/contracts/DSIR4_RADIAL_SUPPORT_INPUT_REQUIREMENTS_V0_1.md`, creation commit `9064b6e948e328df00439f31c54c6b08e8ea933e`, blob `3fa4a41b3c53f4d8e879a105f0f5621cc60a9f98`, now interpreted together with the DES-Y1 supersession audit above.
 
 ### Exact next permitted action
-Acquire/inspect the exact fiducial DES Y3 FITS bytes and authoritative DES metadata/code linking metacal source-bin labels to `nz_source/BIN1..BIN4`; record immutable digest/schema/coordinates/units/normalization. Locate and freeze the actual observation-model equations or implementation that constructs the WW weak-lensing radial kernels and the Wm matter-side LOS kernel. Only after those prerequisites are bound prospectively may a new `G_RADIAL_SUPPORT` experiment be preregistered and launched.
+Freeze a current DES-Y1 C2 radial-input manifest around `y1_redshift_distributions_v1.fits`, `2pt_NG_mcal_1110.fits` and the already-admitted angular 14-slot order; bind exact bytes/schema/normalization and implement a non-classifying synthetic radial-interface self-test. Only after that interface is prospectively frozen may a real `G_RADIAL_SUPPORT` run be authorized.
 
-No seven-z proxy, angular-mask proxy, interpolation/extrapolation, smoothing, rounding, effective ell/z/k or fiducial-P substitution may be used.
+No seven-z proxy, DES-Y3 substitution, angular-mask proxy, interpolation/extrapolation, smoothing, rounding, effective ell/z/k or fiducial-P substitution may be used.
 
 Global frozen DSIR boundaries remain unchanged: `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid<=0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; exact-threshold ambiguity `numerically_unresolved`; no tolerance, rounding, smoothing, averaging, effective ell/z/k or fiducial-P shortcut.
