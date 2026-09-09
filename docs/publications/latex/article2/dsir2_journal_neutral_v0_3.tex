@@ -1,0 +1,218 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+
+\newcommand{\ttot}{t_{\rm tot}}
+\newcommand{\dln}{\Delta\ln}
+\newcommand{\figdir}{../../../../artifacts/publications/article2/figures}
+\newcommand{\placeholderfig}[1]{%
+  \fbox{\parbox[c][0.25\textheight][c]{0.88\textwidth}{\centering #1\\[4pt]Generate with \texttt{scripts/publications/make\_dsir2\_figures\_v0\_4.py}.}}%
+}
+
+\title{Dark-Sector Influence Reconstruction II:\\Falsifying Channel-Conditioned Specificity Across Static, Temporal, and Velocity Response Spaces}
+\author{Author metadata to be inserted at journal-format stage}
+\date{Working manuscript v0.5 / LaTeX assembly v0.3 --- 28 August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Physically distinct cosmological mechanisms can generate similar responses in restricted representations, so separation in an enlarged response space must itself be tested for physical specificity. We develop such a falsification hierarchy within Dark-Sector Influence Reconstruction (DSIR) using generalized-dark-matter (GDM) perturbations and two independent known-sector control families. A baryon/CDM redistribution at fixed total matter density (K2) reproduces a preregistered matter-response morphology criterion previously satisfied by dark-sector families, demonstrating that matter-only morphology is not generically dark-specific. Static Weyl and metric-slip information adds nonredundant structure, yet progressively richer static response combinations retain a sound-speed-like K2 ambiguity near $19^\circ$ under the frozen directional test.
+
+For the preregistered positive K2 displacement, a finite-bin temporal transform gives oriented angles of $138.10^\circ$ and $137.10^\circ$ to the tested GDM sound-speed and viscosity directions. A source-audited CLASS total-velocity-transfer response gives $165.95^\circ$ and $164.71^\circ$, and removal of scale-independent velocity amplitude leaves $166.44^\circ$ and $164.93^\circ$; all 24 leave-one-scale/redshift tests remain above $157.82^\circ$. These values establish robust separation of a selected oriented ray, but not of the corresponding two-sided nuisance freedom. The projected K2 velocity ray spans a line only $13.56^\circ$ and $15.07^\circ$ from the tested GDM directions. A prospectively generated negative K2 displacement validates this geometry: K2$-$ is $179.91^\circ$ from K2$+$ and lies $13.55^\circ$ and $15.07^\circ$ from the two GDM directions.
+
+A second known-sector family exposes an independent representation boundary. Primordial tilt K1 is exactly null in transfer-only $\ttot$, so no K1/GDM angle is scientifically defined in that representation. After restoring the missing primordial-spectrum contribution in the common linear velocity-power response, $\dln P_R+2\dln|\ttot|$, K1 becomes resolvable but its two-sided nuisance line still overlaps the tested GDM directions at $36.06^\circ$ and $37.85^\circ$, below the frozen $45^\circ$ separator. The projected K1 response retains $62.55\%$ of its raw norm and the fresh reference reproduces parent $P(k,z)$ and $\ttot$ with maximum relative difference $0.0$ against a $10^{-10}$ integrity threshold.
+
+The resulting hierarchy is methodological rather than diagnostic of new physics: response specificity depends on representation, resolvability, channel/operator, metric, and whether the physical comparison object is an oriented ray, a two-sided line, or a higher-dimensional nuisance subspace. Provider and finite-operator audits further show that theory-space response geometry does not guarantee observational admissibility. DSIR-2 therefore establishes a fail-closed ordering from representation to resolvability and nuisance geometry, while leaving covariance whitening and observational nuisance quotienting to downstream work.
+\end{abstract}
+
+\section{Introduction}
+Generalized dark matter (GDM) provides a phenomenological framework in which clustering properties are not restricted to pressureless cold matter. Its effective equation of state, sound speed, and viscosity allow perturbation responses to depart from the cold-dark-matter limit while remaining within a controlled fluid description \citep{Hu1998GDM,KoppSkordisThomas2016GDM,ThomasKoppSkordis2016CMB,KunzNesserisSawicki2016LSS}. Degeneracies among these effective parameters are established features of the GDM phenomenology. The problem addressed here is therefore not whether such degeneracies exist, but how strongly a response-space discriminator can be interpreted once ordinary known-sector variations are treated as adversarial controls.
+
+DSIR-1 established a common response-space bookkeeping architecture across heterogeneous dark-sector, dark-energy, interacting, and modified-gravity models while preserving solver provenance, exact nulls, unsupported domains, and failed tests. That first-stage atlas showed that equivalence is channel conditional: different response blocks and localization operators partition the same theory bank differently, and low-dimensional matter-response morphology can be informative without providing unique microscopic identification.
+
+DSIR-2 asks a stricter inverse-problem question. If a known-sector parameter deformation reproduces a response feature that appears characteristic of a dark-sector family, which added response channels genuinely remove the mimic, and does the apparent separation survive the full physically allowed nuisance freedom?
+
+The evidence chain begins with K2, a baryon/CDM redistribution at fixed total matter density. K2 passes the inherited matter-morphology F30 criterion even though it is not a dark-sector deformation. Static Weyl and metric-slip information adds independent structure, but the K2 direction remains close to the GDM sound-speed-like direction after two-channel and three-channel static augmentation. Dynamic channels initially appear more discriminating, yet the interpretation changes when the physically allowed two-sided nuisance line is tested. An independent primordial-tilt control then reveals a second failure mode: a nuisance may be physically active while exactly unresolved by the chosen intermediate representation.
+
+The hierarchy tested here is
+\begin{equation}
+\begin{gathered}
+\text{representation}\rightarrow\text{resolvability}\rightarrow\text{channel/operator}\rightarrow\text{ray/line/subspace},\\
+\text{metric}\rightarrow\text{physical support}\rightarrow\text{finite observation operator}\rightarrow\text{observational quotient}.
+\end{gathered}
+\end{equation}
+Article 2 closes the theory/provider and finite-support layers required for this methodological claim and explicitly stops before covariance whitening.
+
+\subsection{Relation to prior work and novelty boundary}
+Cosmological data compression, nuisance projection, and degeneracy geometry have substantial prior literature. MOPED established parameter-aware Fisher-preserving compression under its stated assumptions \citep{HeavensJimenezLahav2000MOPED}. Nuisance-hardened score compression explicitly projects leading nuisance sensitivities from compressed cosmological summaries \citep{AlsingWandelt2019NuisanceHardened}. Model-specific singular-value subspaces have been used to reduce cosmological observables and covariance noise \citep{PhilcoxEtAl2021Subspace}, and information-geometric approaches formulate cosmological degeneracies using the Fisher metric \citep{GieselEtAl2021InformationGeometry}. More recent machine-learning work likewise constructs cosmological summaries designed to be insensitive to prescribed nuisance variations \citep{AkhmetzhanovaMishraSharmaDvorkin2024}.
+
+A particularly close conceptual precedent is the observation that compression optimized for a baseline physical model can suppress or remove information needed to test non-standard physics \citep{HeavensSellentinJaffe2020NewPhysics}. Recent work also applies Fisher information geometry directly to dark-matter inference with nuisance absorption \citep{Adam2026DarkMatterInformationGeometry}. DSIR-2 therefore does not claim novelty for projection, principal-angle or subspace geometry, Fisher metrics, nuisance hardening, or the generic existence of representation-dependent information loss.
+
+The narrower contribution is the ordering imposed on these established ingredients. A physical response representation is declared before scoring; every candidate nuisance must pass a numerical resolvability gate before normalization; the allowed nuisance freedom is represented as an oriented ray, two-sided line, or higher-dimensional subspace according to its physical parameter freedom; and apparent specificity is retained only if it survives prospectively frozen known-sector controls. Our contribution is thus not a new projection or information-geometric formalism, but a fail-closed response-comparison workflow that makes representation resolvability and the physical nuisance object explicit before assigning specificity.
+
+\section{Response-space formalism}
+Let a physical parameter displacement induce a response vector
+\begin{equation}
+r(\theta)\in\mathbb{R}^n.
+\end{equation}
+A declared response representation is a map
+\begin{equation}
+s_A(\theta)=A r(\theta),
+\end{equation}
+where $A$ may select channels, form derived responses, apply a temporal transform, remove a scale-independent mode, or encode a finite measurement operator.
+
+For a nuisance response $n$, normalized angular geometry is scientifically meaningful only if
+\begin{equation}
+\|A n\|_M>\epsilon_{\rm num},
+\end{equation}
+for the declared positive-definite metric $M$ and numerical resolution floor $\epsilon_{\rm num}$. If $A n=0$, the nuisance lies in $\ker(A)$ and no normalized direction exists.
+
+For nonzero responses $u$ and $v$, define the metric-aware oriented angle
+\begin{equation}
+\cos\theta_{\rm ray}=\frac{u^T M v}{\|u\|_M\|v\|_M},\qquad \theta_{\rm ray}\in[0,\pi].
+\end{equation}
+The Exp071 chain uses $M=I$ and a frozen $45^\circ$ separator for its primary classifications. The separator is an experiment-specific decision rule, not a universal confidence threshold.
+
+For an interior scalar nuisance with both signs physically allowed, the relevant local object is the line
+\begin{equation}
+\mathcal{L}(n)=\{a n:a\in\mathbb{R}\},
+\end{equation}
+with sign-invariant angle
+\begin{equation}
+\theta_{\rm line}=\arccos\!\left(\frac{|u^T M n|}{\|u\|_M\|n\|_M}\right)
+=\min(\theta_{\rm ray},\pi-\theta_{\rm ray}).
+\end{equation}
+For a nuisance matrix $N$, the metric projector onto its span is
+\begin{equation}
+P_N=N(N^T M N)^+N^T M,
+\end{equation}
+and the nuisance-orthogonal fraction of a target response is
+\begin{equation}
+\eta_N=\frac{\|r-P_Nr\|_M}{\|r\|_M}.
+\end{equation}
+Article 2 states this local generalization but does not construct a covariance-weighted observational nuisance subspace.
+
+\section{Solver and response constructions}
+Certified C3 and C5 providers share the frozen signed $mm/Wm/WW$ domain; Exp071A retains 495/495 provider cells. Exp071E/F construct static Weyl/slip and matter--Weyl--slip comparisons. Exp071H applies a frozen finite-bin temporal transform to the matter response and is explicitly an oriented-ray experiment.
+
+Exp071I defines
+\begin{equation}
+r_{\ttot}=\dln|\ttot|,
+\end{equation}
+using source-audited CLASS total-velocity transfer on a frozen $7\times5$ $(z,k)$ grid. CLASS is cited according to the minimum solver citation recommendation \citep{BlasLesgourguesTram2011CLASSII}, while exact solver commits are pinned separately in the provenance ledger. The quantity $\ttot$ is not tracer RSD, $f\sigma_8$, or a survey observable.
+
+Exp071J removes the complete scale-independent constant-in-$k$ response separately at each frozen redshift,
+\begin{equation}
+x_z^\perp(k)=x_z(k)-\langle x_z\rangle_k,
+\end{equation}
+then renormalizes the remaining shape. Exp071K repeats the projected positive-K2 comparison under all frozen leave-one-$k$ and leave-one-$z$ deletions. Exp071L generates a fresh negative K2 displacement and applies the same construction.
+
+Exp071M varies $n_s$ around $0.965$ by $\pm0.005$. Both transfer-only K1 responses satisfy
+\begin{equation}
+\dln|\ttot|=0
+\end{equation}
+on the full frozen support, so the nonzero-vector integrity gate terminates the experiment as \texttt{INVALID\_FOR\_SCIENCE\_EXP071M}. Exp071N then introduces the physically complete common linear velocity-power response
+\begin{equation}
+r_{vv}(z,k)=\dln P_R(k)+2\dln|\ttot(z,k)|,
+\end{equation}
+with, for a pure tilt displacement,
+\begin{equation}
+\dln P_R(k)=\Delta n_s\ln(k_{\rm phys}/k_{\rm pivot}).
+\end{equation}
+
+\input{table1_terminal_comparison.tex}
+
+\section{Results}
+\subsection{Matter-only specificity is falsified}
+Exp071C applies the inherited F30 morphology criterion to known-sector controls. K2 fixed-total-matter baryon/CDM redistribution passes the full F30 gate and all leave-one-redshift gates, while K1 primordial tilt does not. Matter morphology is therefore an informative response descriptor but cannot be promoted to a generic dark-specific fingerprint.
+
+\subsection{Static augmentation is informative but incomplete}
+In the equalized $(r_W,\Delta_{\rm slip})$ response, Exp071E gives K2 angles $18.9257^\circ$ to GDM $c_s^2$ and $58.9127^\circ$ to GDM $c_{\rm vis}^2$. Exp071F gives matter-only angles $19.2231^\circ/19.0371^\circ$ and equalized three-channel angles $19.0749^\circ/50.1667^\circ$. Static metric information therefore separates the viscosity-like direction more effectively than the sound-speed-like ambiguity.
+
+\subsection{Selected positive K2 temporal and velocity rays}
+Exp071H gives oriented positive-K2 temporal angles $138.1006^\circ/137.0973^\circ$. Descriptively, the corresponding line angles are $41.8994^\circ/42.9027^\circ$; these retrospective values are not used to reclassify the preregistered result.
+
+Exp071I gives raw $\ttot$ angles $165.9455^\circ/164.7113^\circ$. Exp071J removes scale-independent velocity amplitude and retains $166.4387^\circ/164.9271^\circ$, while retaining roughly 83\% of each raw response norm. Exp071K performs 24 leave-one-scale/redshift tests; the smallest positive-oriented angle is $157.8212^\circ$.
+
+\subsection{The two-sided K2 nuisance line overlaps GDM}
+The sign-invariant line angles inferred from the projected positive K2 velocity response are $13.5613^\circ/15.0729^\circ$. Exp071L prospectively realizes K2$-$ and finds $13.5503^\circ/15.0709^\circ$. K2$-$ and K2$+$ are separated by $179.9078^\circ$, with nonlinear antisymmetry error $0.00299225$. Robust positive-ray separation therefore does not imply separation of the physical two-sided nuisance freedom.
+
+\begin{figure*}[t]
+\centering
+\IfFileExists{\figdir/dsir2_figure1_k2_specificity_hierarchy_v0_4.pdf}{\includegraphics[width=0.96\textwidth]{\figdir/dsir2_figure1_k2_specificity_hierarchy_v0_4.pdf}}{\placeholderfig{Figure 1: K2 static ambiguity, positive temporal/velocity ray separation, and nuisance-line reversal.}}
+\caption{K2 specificity is conditional on representation and nuisance geometry. Distinct response constructions are shown categorically rather than as a continuous physical trajectory.}
+\label{fig:k2-hierarchy}
+\end{figure*}
+
+\subsection{K1 representation kernel and physical recovery}
+Exp071M completes its source, build, binding, and fresh-run integrity chain, but both K1 signs have exactly zero transfer-only response. The correct terminal result is therefore $\mathrm{K1}\in\ker(A_{\ttot})$, not a K1/GDM PASS or FAIL.
+
+Exp071N restores the primordial-spectrum contribution. The oriented K1$+$ angles are $36.0622^\circ/37.8458^\circ$, K1$-$ gives $143.9378^\circ/142.1542^\circ$, and K1$+$ and K1$-$ are antiparallel to numerical precision. The physical line angles are therefore $36.0622^\circ/37.8458^\circ$, both below the frozen separator. The K1 response retains $0.6255$ of its raw projected norm, while the tested GDM directions retain $0.8272/0.8372$. Fresh parent $P(k,z)$ and $\ttot$ reproduce with maximum relative difference $0.0$ against $10^{-10}$.
+
+\begin{figure}[t]
+\centering
+\IfFileExists{\figdir/dsir2_figure2_k1_representation_kernel_v0_4.pdf}{\includegraphics[width=0.96\linewidth]{\figdir/dsir2_figure2_k1_representation_kernel_v0_4.pdf}}{\placeholderfig{Figure 2: K1 transfer-only exact kernel and velocity-power recovery.}}
+\caption{Representation precedes resolvability and normalized geometry. The transfer-only K1 response is exactly zero; restoring the primordial-power contribution resolves K1 but does not produce specificity.}
+\label{fig:k1-kernel}
+\end{figure}
+
+\subsection{Provider support is not observational admissibility}
+Exp071A establishes 495/495 frozen provider cells, but Exp072A retains 0/26 ACT$\times$unWISE observation coordinates under the frozen 5\% leakage criterion. Exp072C localizes the unique planning frontier near $z_{\min}=0.0087345858$ and $k_{\max}=4.8182610974\,\mathrm{Mpc}^{-1}$. Exp073A then shows that the current linear/no-CLEFT route remains ineligible even under the relaxed diagnostic $\Delta_m^2\le2$.
+
+Finite operators change the diagnosis. The BOSS finite-matrix component of Exp073J retains 54/240 rows, whereas the examined KiDS finite-theta absolute positive-support construction fails numerical completeness and is subsequently shown by Exp073L to be non-normalizable under the frozen extended asymptotic test. These are support/operator statements, not covariance-whitened likelihood results.
+
+\begin{figure}[t]
+\centering
+\IfFileExists{\figdir/dsir2_figure3_support_admissibility_v0_4.pdf}{\includegraphics[width=0.96\linewidth]{\figdir/dsir2_figure3_support_admissibility_v0_4.pdf}}{\placeholderfig{Figure 3: provider completeness versus finite-observation admissibility.}}
+\caption{Provider completeness and finite-operator admissibility are distinct gates. The BOSS and KiDS outcomes are alternative finite-operator branches rather than a monotonic sequence.}
+\label{fig:support}
+\end{figure}
+
+\section{Discussion}
+The Article-2 chain shows that statements such as ``velocity separates the models'' are incomplete unless the representation, support, metric, and physical comparison object are specified. The selected positive K2 ray is robustly far from the tested GDM rays in velocity coordinates, yet the K2 nuisance line is close to them. K1 supplies an independent failure mode: it is not represented at all in transfer-only $\ttot$ even though it is physically active through the primordial spectrum.
+
+Two questions must therefore be answered before a response-space discriminator is assigned specificity: (i) does the chosen representation resolve the physical nuisance response, and (ii) does the comparison include the complete physically allowed sign or subspace freedom? Failure at either stage invalidates a generic specificity claim.
+
+More channels do not automatically guarantee more identifiability. Exp071E/F show that correlated static augmentation leaves a sound-speed-like known-sector ambiguity. Likewise, a velocity representation can create a large oriented angle while leaving a small nuisance-line angle. Exp071M further demonstrates the distinction between ``no response in this representation'' and ``no physical effect.''
+
+Negative and invalid results are therefore part of the evidence rather than discarded failures. F30 loses generic dark specificity; static augmentation remains incomplete; positive temporal and velocity rays appear strongly distinct; the K2 nuisance line removes velocity specificity; K1 transfer-only response is unresolved; and physically complete K1 velocity-power remains overlapping.
+
+All Exp071 angles are theory/provider-space Euclidean quantities. They are not covariance-whitened distances or likelihood statements. The later support/applicability chain shows why observational promotion must wait until finite measurement operators, physical support, covariance, and the complete resolved signed nuisance basis are valid in the same observation space.
+
+\begin{figure}[t]
+\centering
+\IfFileExists{\figdir/dsir2_figure4_fail_closed_hierarchy_v0_4.pdf}{\includegraphics[width=0.96\linewidth]{\figdir/dsir2_figure4_fail_closed_hierarchy_v0_4.pdf}}{\placeholderfig{Figure 4: fail-closed DSIR response-specificity hierarchy.}}
+\caption{Fail-closed hierarchy for DSIR response-space specificity. Article 2 stops before covariance whitening and observational nuisance quotienting.}
+\label{fig:hierarchy}
+\end{figure}
+
+\section{Conclusions}
+DSIR-2 establishes a falsification-resistant hierarchy for response-space model comparison. A known-sector baryon/CDM redistribution reproduces the inherited F30 matter-response morphology, so that morphology is not generically dark-specific. Static Weyl and metric-slip information is nonredundant but does not automatically remove a sound-speed-like known-sector ambiguity. Finite-bin temporal and total-velocity responses strongly separate a selected positive K2 ray, and the velocity result survives amplitude and support controls. A fresh negative K2 displacement nevertheless validates that the physical two-sided K2 nuisance line overlaps both tested GDM directions.
+
+Primordial tilt supplies an independent control. K1 is exactly unresolved in transfer-only $\ttot$, so no scientifically meaningful normalized angle exists there. Restoring the primordial-power term resolves K1 in a physically complete common velocity-power response, but the resulting two-sided K1 line still overlaps both tested GDM directions. Response equivalence is therefore conditioned simultaneously on representation, resolvability, channel/operator, metric, and nuisance geometry.
+
+The methodological conclusion is fail-closed: specificity should not be assigned until the nuisance is physically represented, demonstrably resolved, and compared using its complete allowed geometric freedom. Complete provider-space geometry is not observational distinguishability; covariance whitening and observational nuisance quotienting remain downstream.
+
+\section{Reproducibility and provenance}
+Table~\ref{tab:provenance} records the manuscript-critical run/job/artifact provenance. The first Exp071A run, 33027159066, remains separately recorded as an infrastructure-packaging failure after completion of the unchanged evaluator; the final successful rerun is 33027562195 and must be used for the scientific artifact binding.
+
+The velocity chain binds exact CLASS source commits in the repository provenance ledger, while the literature citation uses CLASS II, arXiv:1104.2933 \citep{BlasLesgourguesTram2011CLASSII}. Figures are generated from \texttt{DSIR2\_FIGURE\_NUMERIC\_MANIFEST\_V0\_1.json}; the v0.4 generator reuses the accepted v0.3 visual construction and changes only serialization metadata/IDs to permit deterministic release QA. It does not alter scientific values, labels, thresholds, geometry, or classifications.
+
+\input{table2_provenance.tex}
+
+\section*{Interpretation boundary}
+This manuscript does not claim dark-sector or modified-gravity detection, unique microscopic identification, a unique dark-sector fingerprint, generic known-sector specificity of velocity or velocity-power shape, tracer RSD or $f\sigma_8$ from $\ttot$ or $r_{vv}$, survey distinguishability from theory-space angles, covariance-whitened or nuisance-marginalized observational separation, or closure of G7/G8/G9.
+
+\bibliographystyle{unsrtnat}
+\bibliography{../../DSIR2_REFERENCES_VERIFIED_V0_1}
+
+\end{document}
