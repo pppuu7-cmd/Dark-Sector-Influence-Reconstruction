@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - 'ci/exp073im_c2_real_radial_support_v0_2.py'
-      - 'docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_3.json'
+      - 'docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json'
       - 'docs/dsir4/contracts/DSIR4_C2_RADIAL_EXECUTOR_INTERFACE_V0_2.md'
       - 'docs/dsir4/prereg/EXP073IM_C2_REAL_RADIAL_SUPPORT_V0_2.md'
       - '.github/workflows/exp073im-c2-real-radial-support-v0-2.yml'
@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 45
     env:
       GH_TOKEN: ${{ github.token }}
-      MANIFEST: docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_3.json
+      MANIFEST: docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
