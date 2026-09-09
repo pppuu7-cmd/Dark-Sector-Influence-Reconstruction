@@ -6,6 +6,7 @@ on:
     paths:
       - 'ci/exp073im_c2_real_radial_support_v0_2.py'
       - 'docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json'
+      - 'docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_1.json'
       - 'docs/dsir4/contracts/DSIR4_C2_RADIAL_EXECUTOR_INTERFACE_V0_2.md'
       - 'docs/dsir4/prereg/EXP073IM_C2_REAL_RADIAL_SUPPORT_V0_2.md'
       - '.github/workflows/exp073im-c2-real-radial-support-v0-2.yml'
@@ -22,6 +23,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       MANIFEST: docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json
+      WM_S3_OVERRIDE: docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_1.json
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -52,6 +54,8 @@ jobs:
           while IFS=$'\t' read -r slot id digest; do
             get_artifact "$id" "$digest" "inputs/angular/$slot"
           done < <(jq -r '.angular[] | [.slot, (.artifact_id|tostring), .artifact_digest] | @tsv' "$MANIFEST")
+          read -r id digest < <(jq -r '"\(.artifact_id) \(.artifact_digest)"' "$WM_S3_OVERRIDE")
+          get_artifact "$id" "$digest" inputs/angular/Wm_S3/transport_override
       - name: Execute frozen real radial classification
         run: |
           mkdir -p artifacts
