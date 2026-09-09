@@ -2,7 +2,7 @@
 
 Date: 2026-09-09. Scope: DSIR Article 3 only.
 
-Status: SUPPORT / FAIL-CLOSED INPUT-MATERIALIZATION AUDIT. This does not alter `G_ORDERED_JOIN=PASS`, does not score `G_RADIAL_SUPPORT`, and does not inspect any Exp073IM real radial output.
+Status: SUPPORT / EXACT INPUT MATERIALIZATION PASS. This does not alter `G_ORDERED_JOIN=PASS`, does not score `G_RADIAL_SUPPORT`, and does not inspect any Exp073IM real radial output.
 
 ## Purpose
 
@@ -22,7 +22,7 @@ The admitted receipt `docs/dsir4/authority/C2_WW_ANGULAR_AUTHORITY_RECEIPT_V0_3.
 
 Thus the WW block is fully materializable for Exp073IM without recomputation or authority selection.
 
-## Wm block — recovered status
+## Wm block — 4/4 materializable
 
 ### Wm_S1
 
@@ -62,38 +62,39 @@ Exp073DJ/BU exact authority is admitted. Record binds:
 
 Status: MATERIALIZABLE.
 
-### Wm_S0 — unresolved canonical-authority selection
+### Wm_S0 — authority succession resolved by Exp073IN
 
-The Article-3 readiness ledger identifies `Wm_S0` as a complete controlled exact object from Exp073AM, but the detailed Exp073AM/AN recovery record preserves a material authority ambiguity:
+The earlier audit correctly preserved two exact-route identities and refused an ad-hoc numerical choice:
 
 - historical primary-P Wm_S0 canonical SHA256: `6ec29f6dbbcf0c29d7af9d6eb98d271bcd06e00d28cebe658b5e266f7ef18d0f`;
 - controlled single-thread Exp073AI/AM canonical SHA256: `8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220`;
-- controlled route was internally exact but differed from historical primary-P;
-- Exp073AN classification: `DETERMINISTIC_SINGLE_THREAD_ROUTE_BUT_EXACT_AUTHORITY_SHIFT_FROM_PRIMARY_P`;
-- the recovery record explicitly states that no new canonical production authority was selected at that stage.
+- Exp073AN preserved `DETERMINISTIC_SINGLE_THREAD_ROUTE_BUT_EXACT_AUTHORITY_SHIFT_FROM_PRIMARY_P` and explicitly did not select a new canonical production authority.
 
-This is not a failure of Wm_S0 physics and does not retroactively revoke `G_ORDERED_JOIN=PASS`. But Exp073IM requires one exact numerical byte object per slot. Choosing either Wm_S0 SHA ad hoc now would be a post-result authority selection not authorized by the structural join.
+The prospectively frozen `EXP073IN_C2_WM_S0_AUTHORITY_SUCCESSION_V0_1` protocol resolves succession from provenance only: absent an explicit admissible supersession event, historical primary-P remains production authority by continuity. No downstream radial/physical/covariance/nuisance/model information and no tolerance/ULP/rounding rule enters the decision.
 
-Status: **BLOCKED_FOR_REAL_MATERIALIZATION** until a prospectively frozen authority-succession/materialization rule identifies the exact existing Wm_S0 object to consume without rewriting historical classifications.
+Current materialization evidence binds primary-P to original Exp073X2 run `33300997298`, head `2403d9680e1d08a3853084034eb2878faa52b4e0`, with two still-unexpired immutable replica artifacts:
+
+- replica A artifact `9730411514`, digest `sha256:34530157cddf594c93728d5e092ab937d16a653665623f00513f4fd58df17555`;
+- replica B artifact `9730409129`, digest `sha256:36358663fb1980ad75cb71f7ca7149d06d357cf7de8b29feca4273f4f88c89e5`;
+- both expire no earlier than `2026-11-28T08:12:01Z` under current GitHub metadata.
+
+The previously frozen Exp073X2R repair workflow downloaded those exact artifact IDs/names, and the unchanged comparator loaded `exp073x2_replica_a_v0_1.npz` / `exp073x2_replica_b_v0_1.npz`, canonicalized `wm0_te_window` as `<f8 [39,12288]`, verified exact hash equality and `numpy.array_equal(A,B)==True`, producing canonical SHA `6ec29f6dbbcf0c29d7af9d6eb98d271bcd06e00d28cebe658b5e266f7ef18d0f`.
+
+Durable decision receipt: `docs/dsir4/authority/EXP073IN_C2_WM_S0_AUTHORITY_SUCCESSION_V0_1.json`.
+
+Classification: `PASS_EXP073IN_C2_WM_S0_AUTHORITY_SUCCESSION_V0_1`.
+
+Status: MATERIALIZABLE.
 
 ## Overall materialization result
 
 - WW: `10/10` exact byte authorities available;
-- Wm: `3/4` uniquely materializable;
-- total: `13/14` uniquely materializable;
+- Wm: `4/4` uniquely materializable;
+- total: `14/14` uniquely materializable;
 - `Exp073IM` preregistration remains valid;
-- real Exp073IM execution remains **NOT YET AUTHORIZED** solely because Wm_S0 numerical authority is not uniquely selected for machine consumption.
+- the sole prior Wm_S0 materialization blocker is closed;
+- real Exp073IM execution is now authorized with respect to angular-byte authority/materialization only.
 
-## Next admissible action
+## Downstream boundary
 
-Freeze a narrow Wm_S0 authority-succession/materialization decision protocol **before** inspecting any new Wm_S0 numerical output. Prefer selecting among already-existing immutable authorities using pre-result scientific/provenance rules; do not recompute Wm_S0 unless the prospective protocol explicitly concludes that neither historical object is admissible.
-
-The protocol must preserve:
-
-- historical primary-P authority and historical repeatability findings;
-- Exp073AM exact internal reproducibility result;
-- Exp073AN cross-route authority-shift classification;
-- no tolerance/ULP/rounding rescue;
-- no downstream radial/physical/covariance/nuisance information in the choice.
-
-Only after one exact Wm_S0 byte identity is prospectively admitted for current C2 downstream materialization may the Exp073IM executor be implemented/launched.
+This audit closure does **not** itself score `G_RADIAL_SUPPORT`, does not alter `G_ORDERED_JOIN=PASS`, and does not create a scientific model PASS. The next admissible step is to implement/launch the already-preregistered Exp073IM real radial executor using exactly these 14 admitted authorities and then classify its output under the frozen radial-support rule.
