@@ -1,0 +1,75 @@
+{
+  "experiment": "Exp073IN",
+  "scope": "DSIR Article 3 C2 Wm_S0 authority succession and exact-byte materialization",
+  "protocol": "docs/dsir4/prereg/EXP073IN_C2_WM_S0_AUTHORITY_SUCCESSION_V0_1.md",
+  "protocol_blob_sha": "87037697e78ffcd045b607a98cdc8e082da922dd",
+  "evaluated_against_main_parent": "864952e1520d82473a9e976edfeb69f9899d174d",
+  "status": "PASS_EXP073IN_C2_WM_S0_AUTHORITY_SUCCESSION_V0_1",
+  "authority_decision": {
+    "logical_slot": "Wm_S0",
+    "selected_authority": "historical_primary_P_Exp073X2R",
+    "selection_basis": "provenance_continuity_no_preserved_explicit_supersession",
+    "canonical_te_window_sha256": "6ec29f6dbbcf0c29d7af9d6eb98d271bcd06e00d28cebe658b5e266f7ef18d0f",
+    "canonical_dtype": "<f8",
+    "canonical_shape": [39, 12288],
+    "controlled_single_thread_candidate_sha256": "8ac59fc060195addcc5cd8b6d75e32fbc6dbfeea8456f4c83e8bf0cf034b9220",
+    "controlled_single_thread_candidate_role": "diagnostic_exact_route_evidence_not_production_authority",
+    "historical_cross_route_classification": "DETERMINISTIC_SINGLE_THREAD_ROUTE_BUT_EXACT_AUTHORITY_SHIFT_FROM_PRIMARY_P",
+    "explicit_new_canonical_authority_selected_by_Exp073AN": false
+  },
+  "materialization": {
+    "result": "MATERIALIZABLE_EXISTING_IMMUTABLE_PRIMARY_P_BYTES",
+    "source_run_id": 33300997298,
+    "source_head_sha": "2403d9680e1d08a3853084034eb2878faa52b4e0",
+    "primary_carrier": {
+      "replica": "A",
+      "artifact_id": 9730411514,
+      "artifact_name": "exp073x2-replica-A-2403d9680e1d08a3853084034eb2878faa52b4e0",
+      "artifact_digest": "sha256:34530157cddf594c93728d5e092ab937d16a653665623f00513f4fd58df17555",
+      "artifact_size_bytes": 3665730,
+      "expired_when_audited_2026_09_09": false,
+      "expires_at": "2026-11-28T08:12:01Z",
+      "numerical_file": "exp073x2_replica_a_v0_1.npz",
+      "array_key": "wm0_te_window"
+    },
+    "redundant_exact_carrier": {
+      "replica": "B",
+      "artifact_id": 9730409129,
+      "artifact_name": "exp073x2-replica-B-2403d9680e1d08a3853084034eb2878faa52b4e0",
+      "artifact_digest": "sha256:36358663fb1980ad75cb71f7ca7149d06d357cf7de8b29feca4273f4f88c89e5",
+      "artifact_size_bytes": 3665730,
+      "expired_when_audited_2026_09_09": false,
+      "expires_at": "2026-11-28T08:12:01Z",
+      "numerical_file": "exp073x2_replica_b_v0_1.npz",
+      "array_key": "wm0_te_window"
+    },
+    "historical_materialization_witness": {
+      "repair_run_id": 33305930375,
+      "repair_job_id": 99242380374,
+      "repair_artifact_id": 9730454167,
+      "repair_artifact_digest": "sha256:f054b7fb30935f77fe7b187ba5130d23ebc99185c482e3682ae56b840ed5fea0",
+      "comparator": "ci/exp073x2_compare_replicas_v0_1.py",
+      "comparator_result": "PASS_EXP073X2_DES_N4096_WM0_MASK_ONLY_REPEATABILITY_V0_1",
+      "canonical_sha_equality": true,
+      "numpy_array_equal": true
+    }
+  },
+  "firewall": {
+    "new_Wm_S0_numerical_output_inspected": false,
+    "radial_output_inspected": false,
+    "physical_support_inspected": false,
+    "covariance_inspected": false,
+    "nuisance_geometry_inspected": false,
+    "relation_null_inspected": false,
+    "model_comparison_inspected": false,
+    "tolerance_ulp_rounding_rescue_used": false,
+    "historical_classification_rewritten": false
+  },
+  "downstream_effect": {
+    "angular_materialization_slots": "14/14",
+    "G_ORDERED_JOIN": "PASS_UNCHANGED",
+    "G_RADIAL_SUPPORT_scored": false,
+    "scientific_model_pass_created": false,
+    "authorizes_next_step": "Exp073IM real radial executor may consume the inherited primary-P Wm_S0 canonical object together with the other 13 admitted exact authorities."
+  }
+}
