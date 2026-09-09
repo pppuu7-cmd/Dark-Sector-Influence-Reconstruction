@@ -78,7 +78,24 @@ Exp073P was preregistered on 2026-08-27 before any support fraction was evaluate
 
 This historical contract materially constrains the correct implementation of the new decomposed `G_RADIAL_SUPPORT` stage.
 
-## 5. Non-aliasing with later Article-3 physical-support statistic
+## 5. Immutable radial payload identities recovered from Exp073P
+
+The historical Exp073P checksum preflight already acquired exact full-file SHA256 for the two compact radial products required by a minimal current C2 radial executor:
+
+- `y1_redshift_distributions_v1.fits`
+  - bytes: `109440`
+  - SHA256: `b5d87138c35ae8bb4ecd02491972f544648398e606b3617039e6e54cb8ea943b`
+  - relevant source schema from pinned mapper: HDU 1, `Z_MID`, `BIN1..BIN4`;
+- `2pt_NG_mcal_1110.fits`
+  - bytes: `6600960`
+  - SHA256: `114035179b5a8e41090751e9a6478536d185128581d37b5a510eff5722f417ca`
+  - relevant lens schema from pinned mapper: HDU 7, `Z_MID`, `BIN1..BIN5`.
+
+These hashes were acquired before support scoring under the historical provenance-only Exp073P preflight. They may be reused as immutable identities only if the new C2 radial executor consumes those exact public objects byte-for-byte.
+
+The much larger Metacalibration and source-bin catalogues are not automatically required as runtime inputs to the new radial executor if the already-admitted angular authority and the code-level ordinal bridge are treated as upstream authority rather than recomputed inside `G_RADIAL_SUPPORT`.
+
+## 6. Non-aliasing with later Article-3 physical-support statistic
 
 Repository chronology later froze a distinct Article-3 coordinate-level physical-support statistic. The two must not be conflated:
 
@@ -91,7 +108,7 @@ The current route is therefore:
 
 `angular authority -> ordered join -> G_RADIAL_SUPPORT -> Article-3-style G_PHYSICAL_SUPPORT -> covariance/whitening -> nuisance quotient -> relation/null -> final observational validation`.
 
-## 6. What is now resolved for G_RADIAL_SUPPORT
+## 7. What is now resolved for G_RADIAL_SUPPORT
 
 Resolved at authority level:
 
@@ -102,17 +119,19 @@ Resolved at authority level:
 5. Wm field identity: DES-Y1 galaxy-density x galaxy-shear;
 6. Wm lens-bin redshift definition and lens radial source path;
 7. WW field identity: DES-Y1 source shear x source shear;
-8. historical physical mapping convention `k=(ell+1/2)/chi(z)` and no-downstream-leakage rule.
+8. historical physical mapping convention `k=(ell+1/2)/chi(z)` and no-downstream-leakage rule;
+9. exact bytes/SHA256 and relevant FITS-column binding for the two compact radial payloads needed by a minimal current executor.
 
 Still to freeze prospectively before `G_RADIAL_SUPPORT` can be scored:
 
-1. immutable byte identity/SHA256/schema for every actually consumed DES-Y1 radial payload in the new C2 route;
-2. exact normalization and photo-z shift convention used at the radial stage;
-3. one explicit current C2 radial executor interface consuming the admitted 14-slot ordered join and producing pre-physical-support coordinates without using covariance/nuisance/relation information;
-4. exact coordinate/ordinal schema passed to the already-frozen later physical-support gate;
-5. synthetic fail-closed tests for bin permutation, unit mixing, zero/non-finite kernels, forbidden interpolation/effective coordinates and downstream leakage.
+1. exact normalization and photo-z shift convention used at the radial stage;
+2. one explicit current C2 radial executor interface consuming the admitted 14-slot ordered join and producing pre-physical-support coordinates without using covariance/nuisance/relation information;
+3. exact coordinate/ordinal schema passed to the already-frozen later physical-support gate;
+4. synthetic fail-closed tests for bin permutation, unit mixing, zero/non-finite kernels, forbidden interpolation/effective coordinates and downstream leakage.
 
-## 7. Scientific state
+For project tracking only, the radial-prerequisite task is now `9/(9+4)=69.2%` resolved by checklist item count. This percentage is not a scientific gate state.
+
+## 8. Scientific state
 
 Unchanged:
 
@@ -123,4 +142,4 @@ Unchanged:
 - `scientific_model_authority_created=false`;
 - `overall_status=NOT_YET_TESTABLE`.
 
-The blocker is no longer survey/source identity. It is now the prospective freeze and execution of the exact DES-Y1 radial interface plus immutable payload binding.
+The blocker is no longer survey/source identity or compact radial-payload identity. It is now the prospective freeze and execution of the exact DES-Y1 radial interface, normalization convention and coordinate handoff.
