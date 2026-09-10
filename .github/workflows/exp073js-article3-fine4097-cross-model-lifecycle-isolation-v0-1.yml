@@ -40,7 +40,7 @@ jobs:
           test "$(git hash-object ci/exp073js_article3_fine4097_cross_model_lifecycle_isolation_v0_1.py)" = "$HELPER_BLOB"
           test "$(git hash-object docs/dsir4/audits/CLASSIV_C2_INSTANCE_LOCALITY_SOURCE_AUDIT_V0_1.md)" = "$SOURCE_AUDIT_BLOB"
           test "$(git hash-object docs/dsir4/authority/EXP073JR_COARSE_2049_SEQUENTIAL_EXACT_EQUIVALENCE_RECEIPT_V0_1.json)" = 'ee6526bd80daeac7990b2244b8ec2c8061a534c4'
-          test "$(git hash-object docs/dsir4/authority/EXP073JQ_ARTICLE3_SLOT20_SAME_RUN_HISTORY_INDEPENDENCE_V0_1.json)" = 'd712410f524dd6f2d47c43fc78e72ff5d4b43c95'
+          test "$(git hash-object docs/dsir4/authority/EXP073JQ_ARTICLE3_SLOT20_SAME_RUN_HISTORY_INDEPENDENCE_V0_1.json)" = 'a1c29c4ead5daee53a6fe82bc2b77a363a38b7a7'
           python -m py_compile ci/exp073js_article3_fine4097_cross_model_lifecycle_isolation_v0_1.py
       - name: Install frozen stack
         shell: bash
