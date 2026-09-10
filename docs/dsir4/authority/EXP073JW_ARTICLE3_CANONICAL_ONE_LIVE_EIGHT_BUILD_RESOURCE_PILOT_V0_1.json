@@ -1,0 +1,58 @@
+{
+  "Wm_S3_opened": false,
+  "all_instances_max_lookup": 1.6559173278185046e-16,
+  "all_instances_unsupported": 0,
+  "article3_repository_readiness_percent": 68,
+  "artifact_id": 10177418449,
+  "artifact_verified_independently": true,
+  "artifact_zip_sha256": "bd4f9047551a7ed69ef2e4a5fd39b5ceefec00f5d29e832b7a4312aec45d78ec",
+  "classification": "CANONICAL_ONE_LIVE_EIGHT_BUILD_RESOURCE_PILOT_PASS_PLUS_0_PLUS_0",
+  "coarse": {
+    "builds": 4,
+    "max_lookup": 1.6531028205966003e-16,
+    "node_sha256": "6305c95025e52296b6cb623903f82dc45bb66ac692708b242fc354862ac54c46",
+    "role_order": [
+      "reference",
+      "alpha_minus",
+      "beta_plus",
+      "beta_minus"
+    ],
+    "unsupported": 0
+  },
+  "covariance_restriction_authorized": false,
+  "decision_neutral_diagnostics": {
+    "A_max_relative": 7.998877458558089e-07,
+    "B_max_relative": 7.991362622744256e-06
+  },
+  "effect": "+0/+0",
+  "experiment": "Exp073JW",
+  "fine": {
+    "builds": 4,
+    "max_lookup": 1.6559173278185046e-16,
+    "node_sha256": "f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb",
+    "role_order": [
+      "reference",
+      "alpha_minus",
+      "beta_plus",
+      "beta_minus"
+    ],
+    "unsupported": 0
+  },
+  "frozen_class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+  "funnel_freeze_readiness_percent": 67,
+  "full_recovered_jl_preregistration_permitted": true,
+  "h": 0.0001,
+  "job_id": 103082427124,
+  "max_live_instances": 1,
+  "native_kpd": 20.0,
+  "rel_tol_lineage_only": 0.001,
+  "responses_finite": true,
+  "result_json_sha256": "dd9faef2df028fe6cb55bf0369da6ddc7cb72de700e3dee202323f97f0bb88ff",
+  "run_id": 34540689350,
+  "schema": "EXP073JW_ARTICLE3_CANONICAL_ONE_LIVE_EIGHT_BUILD_RESOURCE_PILOT_AUTHORITY_V0_1",
+  "scientific_authority_created": false,
+  "source_result_schema": "EXP073JW_ARTICLE3_CANONICAL_ONE_LIVE_EIGHT_BUILD_RESOURCE_PILOT_RESULT_V0_1",
+  "token": "CANONICAL_ONE_LIVE_EIGHT_BUILD_RESOURCE_PILOT_PASS_PLUS_0_PLUS_0",
+  "total_solver_constructions": 8,
+  "workflow_head_sha": "542fcdbbc506cf6b8d6013758e3553617ff0778e"
+}
