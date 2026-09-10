@@ -25,7 +25,8 @@ env:
   PREREG_BLOB: 'a6ba32cb5b9ebe73bd6e3cd03a22d3f51f8aa2ca'
   STATIC_AUTH_BLOB: '1b56f8d424a4e965db47272deab2e9128b04b2ac'
   JW_BLOB: '9af66950005a4c56e8f485358f85e834be017e16'
-  PLAN_AUTH_BLOB: 'a02c50749966ee29ff9507f7579542d8d3c330cb'
+  PLAN_AUTH_BLOB: '5992faa10b6d25d1503b287c19456fb36756caa4'
+  PACKAGING_AUTH_BLOB: '750250bbb0bc0d837ece6a9b7f7ac9ca2ef50fec'
   PLAN_SCRIPT_BLOB: '7180b74641acfa602c34db07ad6cc916c17ebd4f'
   JT_BLOB: '2ed0f4d0a99e31e4e8ddf5644a10fc0a688a4469'
   JV_BLOB: '113f18e416e9b40e336cf51353429378f3016cca'
@@ -55,7 +56,8 @@ jobs:
           test "$(git hash-object docs/dsir4/prereg/EXP073JL_ARTICLE3_CANONICAL_ONE_LIVE_RECOVERED_THIRD_REFINEMENT_CONVERGENCE_V0_2.md)" = "$PREREG_BLOB"
           test "$(git hash-object docs/dsir4/authority/RECOVERED_EXP073JL_STATIC_IMPLEMENTATION_AUDIT_V0_1.json)" = "$STATIC_AUTH_BLOB"
           test "$(git hash-object docs/dsir4/authority/EXP073JW_ARTICLE3_CANONICAL_ONE_LIVE_EIGHT_BUILD_RESOURCE_PILOT_V0_1.json)" = "$JW_BLOB"
-          test "$(git hash-object docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_1.json)" = "$PLAN_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json)" = "$PLAN_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/authority/RECOVERED_EXP073JL_REQUEST_PLAN_AUTHORITY_PACKAGING_AUDIT_V0_1.json)" = "$PACKAGING_AUTH_BLOB"
           test "$(git hash-object ci/recovered_exp073jl_response_blind_request_plan_audit_v0_1.py)" = "$PLAN_SCRIPT_BLOB"
           test "$(git hash-object docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json)" = "$JT_BLOB"
           test "$(git hash-object docs/dsir4/authority/EXP073JV_ARTICLE3_SEQUENTIAL_CANONICAL_JL_EXECUTION_AUTHORIZATION_AUDIT_V0_1.json)" = "$JV_BLOB"
@@ -78,19 +80,35 @@ jobs:
           assert s['classification']=='RECOVERED_EXP073JL_STATIC_IMPLEMENTATION_AUDIT_PASS_PLUS_0_PLUS_0'
           assert s['checks_all_pass'] is True and s['check_count']==35
           assert s['scientific_response_read'] is False and s['class_solver_invoked'] is False
+
           jw=json.load(open('docs/dsir4/authority/EXP073JW_ARTICLE3_CANONICAL_ONE_LIVE_EIGHT_BUILD_RESOURCE_PILOT_V0_1.json'))
           assert jw['artifact_verified_independently'] is True
           assert jw['classification']=='CANONICAL_ONE_LIVE_EIGHT_BUILD_RESOURCE_PILOT_PASS_PLUS_0_PLUS_0'
           assert jw['total_solver_constructions']==8 and jw['max_live_instances']==1
           assert jw['all_instances_unsupported']==0 and jw['all_instances_max_lookup']<=1e-12
-          p=json.load(open('docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_1.json'))
+
+          p=json.load(open('docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json'))
           assert p['artifact_verified_independently'] is True
           assert p['classification']=='RESPONSE_BLIND_REQUEST_PLAN_AUDITED_PLUS_0_PLUS_0'
+          assert p['scientific_response_read'] is False and p['class_solver_invoked'] is False
           assert p['coarse_common_plan_sha256']=='505716116cc385d5700e455017d8e541c5bba7774fa6647298392495c83ecfe0'
           assert p['fine_plan_with_gl128_sha256']=='0f7ce2e5fa459e15954268dfd46045eaa0ab6356dfdab5a2e282514e7a34ae4e'
+          assert p['boss']['retained_rows']==54
+          assert p['boss']['target_scalar_count_per_request']==297
+          assert p['boss']['gl64_z_count']==64 and p['boss']['gl128_z_count_fine_only']==128
           assert p['execution_shape_if_recovered_one_live']['total_get_transfer_calls_all_roles']==4040
           assert p['execution_shape_if_recovered_one_live']['total_solver_constructions']==8
           assert p['execution_shape_if_recovered_one_live']['max_live_instances']==1
+
+          pa=json.load(open('docs/dsir4/authority/RECOVERED_EXP073JL_REQUEST_PLAN_AUTHORITY_PACKAGING_AUDIT_V0_1.json'))
+          assert pa['artifact_verified_independently'] is True
+          assert pa['classification']=='REQUEST_PLAN_AUTHORITY_V0_2_LOSSLESS_TRANSCRIPTION_PASS_PLUS_0_PLUS_0'
+          assert pa['exact_compared_key_count']==18 and pa['boss_restored'] is True
+          assert pa['boss_target_scalar_count_per_request']==297
+          assert pa['source_artifact_id']==10177436665
+          assert pa['source_artifact_zip_sha256']=='eb92cd06a8d17d232450d1f8037efec9752a4a2204f38607acff4cc4c523d73b'
+          assert pa['source_result_json_sha256']=='b3c9d9be1a4a3f3b2800fd8445a0023650c4ad084df36a538cbb85f9e723aa92'
+          assert pa['scientific_response_read'] is False and pa['class_solver_invoked'] is False
           PY
 
       - name: Install frozen numerical/build stack
@@ -201,7 +219,7 @@ jobs:
             --jv-authority docs/dsir4/authority/EXP073JV_ARTICLE3_SEQUENTIAL_CANONICAL_JL_EXECUTION_AUTHORIZATION_AUDIT_V0_1.json \
             --jt-authority docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json \
             --jw-authority docs/dsir4/authority/EXP073JW_ARTICLE3_CANONICAL_ONE_LIVE_EIGHT_BUILD_RESOURCE_PILOT_V0_1.json \
-            --request-plan-authority docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_1.json \
+            --request-plan-authority docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json \
             --parent-root inputs/parent \
             --parent-authority docs/dsir4/authority/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_PASS_V0_1.json \
             --manifest "$MANIFEST" \
