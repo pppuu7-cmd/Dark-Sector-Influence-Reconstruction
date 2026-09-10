@@ -1,0 +1,148 @@
+name: exp073jm-response-blind-canonical-8193-anchor-selected-v0-2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073jm-response-blind-canonical-8193-anchor-selected-v0-2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+  EXISTING_FINE_BLOB: 'f5acd4a25068af22fbaca5fb35adf2afbf3a4be3'
+  EXISTING_FINE_NODE_SHA: 'f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'
+  EXISTING_FINE_TEXT_SHA: '290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7'
+
+jobs:
+  replica:
+    strategy:
+      fail-fast: false
+      matrix:
+        replica: [1, 2, 3, 4, 5, 6, 7, 8]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen source identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt)" = "$EXISTING_FINE_BLOB"
+          test "$(sha256sum docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt | awk '{print $1}')" = "$EXISTING_FINE_TEXT_SHA"
+      - name: Install exact NumPy
+        run: python -m pip install 'numpy==1.26.4' >/dev/null
+      - name: Emit anchor and 8193 candidate without branch activation
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          PYTHONPATH=ci python - <<'PY'
+          import hashlib,json,os,platform
+          from pathlib import Path
+          import numpy as np
+          import exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1 as jj
+
+          assert np.__version__=='1.26.4'
+          jj.CAPACITY=9216
+          def payload(nodes):
+              return np.ascontiguousarray(np.asarray(nodes,dtype='<f8')).tobytes()
+          def u64hex(nodes):
+              u=np.ascontiguousarray(np.asarray(nodes,dtype='<f8')).view('<u8')
+              return ''.join(f'{int(x):016x}\n' for x in u)
+          anchor,ra,la,ua=jj.guarded_lattice(4096)
+          cand,r,l,u=jj.guarded_lattice(8192)
+          assert (la,ua,len(anchor))==(0,1,4097)
+          assert (l,u,len(cand))==(0,1,8193)
+          atxt=u64hex(anchor); ctxt=u64hex(cand)
+          asha=hashlib.sha256(payload(anchor)).hexdigest(); atsha=hashlib.sha256(atxt.encode()).hexdigest()
+          csha=hashlib.sha256(payload(cand)).hexdigest(); ctsha=hashlib.sha256(ctxt.encode()).hexdigest()
+          anchor_match=(asha==os.environ['EXISTING_FINE_NODE_SHA'] and atsha==os.environ['EXISTING_FINE_TEXT_SHA'] and atxt==Path('docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt').read_text())
+          Path('out/candidate_8193.u64hex.txt').write_text(ctxt)
+          result={
+            'schema':'EXP073JM_RESPONSE_BLIND_CANONICAL_8193_ANCHOR_REPLICA_RESULT_V0_2',
+            'classification':'ANCHOR_MATCH_PLUS_0_PLUS_0' if anchor_match else 'HOST_VARIANT_NOT_ANCHOR_PLUS_0_PLUS_0',
+            'effect':'+0/+0','replica':int(os.environ['REPLICA']),
+            'numpy_version':np.__version__,'python_version':platform.python_version(),
+            'scientific_response_read':False,'class_solver_invoked':False,'branch_activated':False,'scientific_authority_created':False,
+            'anchor_4097_match':anchor_match,'anchor_4097_node_sha256':asha,'anchor_4097_u64hex_sha256':atsha,
+            'base_n':8192,'guard_counts':[l,u],'requested_node_count':8193,'ratio_binary64':float(r),
+            'extended_k_min':float(cand[0]),'extended_k_max':float(cand[-1]),
+            'candidate_8193_node_sha256':csha,'candidate_8193_u64hex_sha256':ctsha,
+            'token':'ANCHOR_MATCH_PLUS_0_PLUS_0' if anchor_match else 'HOST_VARIANT_NOT_ANCHOR_PLUS_0_PLUS_0'
+          }
+          Path('out/result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(result['token'],asha,csha,ctsha)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jm-canonical-8193-anchor-replica-${{ matrix.replica }}
+          path: out/
+          if-no-files-found: error
+          retention-days: 90
+
+  aggregate:
+    needs: replica
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: exp073jm-canonical-8193-anchor-replica-*
+          path: replicas
+      - name: Apply prospectively frozen anchor-selection rule
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          rows=[]
+          for i in range(1,9):
+              root=Path(f'replicas/exp073jm-canonical-8193-anchor-replica-{i}')
+              assert root.exists(), f'missing replica {i}'
+              d=json.load(open(root/'result.json')); assert d['replica']==i
+              txt=(root/'candidate_8193.u64hex.txt').read_bytes()
+              assert hashlib.sha256(txt).hexdigest()==d['candidate_8193_u64hex_sha256']
+              rows.append((d,txt))
+          matched=[x for x in rows if x[0]['anchor_4097_match']]
+          variants=[x[0] for x in rows if not x[0]['anchor_4097_match']]
+          if len(matched)<4:
+              raise SystemExit(f'anchor quorum not met: {len(matched)}/8')
+          node_shas={x[0]['candidate_8193_node_sha256'] for x in matched}
+          text_shas={x[0]['candidate_8193_u64hex_sha256'] for x in matched}
+          if len(node_shas)!=1 or len(text_shas)!=1 or not all(x[1]==matched[0][1] for x in matched):
+              raise SystemExit('anchor-matched 8193 candidates disagree')
+          Path('out/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_CANDIDATE_V0_2.txt').write_bytes(matched[0][1])
+          result={
+            'schema':'EXP073JM_RESPONSE_BLIND_CANONICAL_8193_ANCHOR_SELECTED_AGGREGATE_RESULT_V0_2',
+            'classification':'CANONICAL_8193_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0','scientific_response_read':False,'class_solver_invoked':False,'branch_activated':False,'scientific_authority_created':False,
+            'replica_count':8,'minimum_anchor_quorum':4,'anchor_match_count':len(matched),
+            'anchor_match_replicas':[x[0]['replica'] for x in matched],
+            'host_variant_count':len(variants),'host_variant_replicas':[x['replica'] for x in variants],
+            'host_variant_anchor_node_shas':sorted({x['anchor_4097_node_sha256'] for x in variants}),
+            'anchor_4097_node_sha256':'f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb',
+            'anchor_4097_u64hex_sha256':'290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7',
+            'base_n':8192,'guard_counts':[0,1],'requested_node_count':8193,
+            'candidate_8193_node_sha256':next(iter(node_shas)),'candidate_8193_u64hex_sha256':next(iter(text_shas)),
+            'all_anchor_matched_candidates_byte_identical':True,
+            'article3_repository_readiness_percent':68,'funnel_freeze_readiness_percent':67,
+            'token':'CANONICAL_8193_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0'
+          }
+          Path('out/result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(result['token'],result['anchor_match_count'],result['candidate_8193_node_sha256'],result['candidate_8193_u64hex_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jm-canonical-8193-anchor-selected-aggregate
+          path: out/
+          if-no-files-found: error
+          retention-days: 90
