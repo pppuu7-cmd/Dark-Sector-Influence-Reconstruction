@@ -2,33 +2,33 @@
 
 Updated: 2026-09-10. Scope: **DSIR only**; RTK/RQIR excluded.
 
-Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-10_ARTICLE3_JF_IMPORT_REPAIR_RERUNNING_V71.md`, creation commit `f223905c0a501aa5d6b6624353945f29e6f37647`.
+Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-10_ARTICLE3_JF_VALIDATED_JG_CURVATURE_RUNNING_V72.md`, creation commit `c9a8afa93abecfee282d1163cb4ee0b8e749436a`.
 
 ## Newly closed
 - Repaired Exp073IR `34432102035 / 102729564736` remains `NUMERICALLY_UNRESOLVED_EXP073IR`; exact convergence maximum `0.9998247463807295 > 1e-3`; 0 invalid rows, f_B=0, retained 107; covariance unauthorized.
-- Exp073JE `34474978911 / 102863474356` is validated support-only `SHARED_FIXED_K_GRID_SCALING_OBSERVED_PLUS_0_PLUS_0`, artifact `10151168583`, independently verified ZIP SHA256 `cf2e70a8bb35dcdb782d49fe5a29b908f6897169d6fe2c055c9b92eb1bfa01af`; durable authority commit `169da05db02bdeee7cccb3a62bd5aad4ca275cad`.
-- Exp073JF attempt 1 `34480017627 / 102880180988` is infrastructure/software failure `+0/+0`: all prerequisite/build steps succeeded, then direct script import failed with `ModuleNotFoundError: No module named 'ci'` before numerical execution/artifact creation.
-- Smallest import-only repair commit `1cd0692454e238162be0235f56e49453b4f40999`; workflow/import-regression launch commit `2e5e43de2abaec3be93f5fe1a2fbe909b6e86048`.
+- Exp073JF repaired run `34480349238 / 102881291672` is validated support-only `SHARED_FIXED_K_GRID_EXTENDED_DENSITY_OBSERVED_PLUS_0_PLUS_0`; artifact `10153458465`; independently verified ZIP SHA256 `f71c1603f46e622a6c71ebab6733d30e9633cc92e9dc50a98cecdf364b28fffb`; result JSON SHA256 `a18d46f6a6e62c3009df92344c97f8f41d8f61ebad172e18b0e519704398a3e6`; durable authority creation commit `ad335d5117125ff57354311eb491e1db8d163972`.
+- JF has no scaling candidate. N=384 errors `(alpha,beta)=(0.0007790941263871595,0.031479742832626514)` and N=512 `(0.00010245604306152275,0.026575285704422986)`; kpd10-vs-kpd20 discrepancy is exactly zero for both probes. Simple global geomspace density through N=512 is therefore inadequate under the unchanged frozen criterion.
 
-## Current authoritative process — repaired Exp073JF
-- workflow: `exp073jf-article3-layerb-shared-fixed-k-grid-extended-density-v0-1`;
-- run ID: `34480349238`;
-- job ID: `102881291672`;
-- branch/head: `main / 2e5e43de2abaec3be93f5fe1a2fbe909b6e86048`;
-- preregistration commit: `34136c87f49bf990d16670ca984c239194056db2`;
-- implementation original commit: `579dab75cd78d19ca05cb406c2c8852b52bc7f3e`;
-- import-only repair commit: `1cd0692454e238162be0235f56e49453b4f40999`;
-- workflow/launch commit: `2e5e43de2abaec3be93f5fe1a2fbe909b6e86048`;
+## Current authoritative process — Exp073JG
+- workflow: `exp073jg-article3-layerb-local-interpolation-curvature-v0-1`;
+- run ID: `34485992147`;
+- job ID: `102900288767`;
+- branch/head: `main / a89dd256644b2c2f7827372e43c43bdb9c5f0adf`;
+- preregistration commit: `3277273682e9fac01253160d089f987e09fa424e`;
+- implementation commit: `73d437963b8808e50ff80c67c75d7f06dcbab7e7`;
+- workflow/launch commit: `a89dd256644b2c2f7827372e43c43bdb9c5f0adf`;
 - checkpoint namespace / last durable checkpoint: N/A (GitHub-hosted support diagnostic);
-- start/registration: `2026-09-10T13:04:03Z`;
+- start/registration: `2026-09-10T13:58:15Z`;
 - runner ownership: GitHub-hosted `ubuntu-24.04`; home/self-hosted ownership none;
 - current state: IN_PROGRESS at last inspection;
-- expected support classifications: `SHARED_FIXED_K_GRID_EXTENDED_DENSITY_OBSERVED_PLUS_0_PLUS_0` or `INVALID_INFRA_PLUS_0_PLUS_0`;
-- frozen diagnostic: N={384,512}, same shared geomspace physical-k domain, same two historical probes, exact kpd={10,20}, exact h=1e-4, unchanged REL_TOL=1e-3;
+- last completed gate: prospective contract/JF-authority enforcement SUCCESS;
+- current step at last inspection: frozen stack/static audit;
+- expected support classifications: `LOCAL_INTERPOLATION_CURVATURE_OBSERVED_PLUS_0_PLUS_0` or `INVALID_INFRA_PLUS_0_PLUS_0`;
+- frozen diagnostic: N=512 shared physical-k grid; same two historical probes; exact kpd={10,20}; h=1e-4; unchanged REL_TOL=1e-3; local ln(k) rules linear bracket, left/right quadratic and centered cubic;
 - scientific effect: always +0/+0; no Layer-B/covariance/model/Wm_S3 authority.
 
 ### Exact next transitions
-Terminal valid observation: independently verify raw log and artifact ZIP/result hashes. If at least one N is a frozen scaling candidate, nominate the smallest N only for a new prospectively frozen full-support feasibility audit. If neither qualifies, declare the tested simple global geomspace density architecture numerically inadequate through current exact capacity and continue with interpolation phase/curvature or another grid-invariant mechanism diagnostic.
+Terminal valid observation: independently verify raw log and artifact ZIP/result hashes. Linear interpolation must exactly reproduce validated JF N=512. If one or more higher-order rules satisfy the frozen exact-reference and kpd criteria for both probes, only nominate a separate prospectively frozen full-support grid-invariant feasibility audit; do not promote JG itself. If no rule qualifies or the higher-order rules disagree/oscillate, continue mechanism isolation.
 
 Infrastructure invalid: diagnose the first causal defect and repair only the support diagnostic. Never alter Exp073IR science, REL_TOL=1e-3, h=1e-4, k/z domains, source definitions, atomization or covariance firewall.
 
