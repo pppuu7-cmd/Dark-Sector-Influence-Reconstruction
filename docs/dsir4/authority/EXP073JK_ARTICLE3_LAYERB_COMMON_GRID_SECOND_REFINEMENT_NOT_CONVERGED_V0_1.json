@@ -1,0 +1,41 @@
+{
+  "schema": "EXP073JK_ARTICLE3_LAYERB_COMMON_GRID_SECOND_REFINEMENT_AUTHORITY_V0_1",
+  "experiment": "Exp073JK",
+  "classification": "COMMON_GRID_SECOND_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "frozen_parent_status": "NUMERICALLY_UNRESOLVED_EXP073IR",
+  "rel_tol": 0.001,
+  "h": 0.0001,
+  "native_k_per_decade_for_pk_frozen": 20.0,
+  "run_id": 34495159732,
+  "job_id": 102931623100,
+  "head_sha": "6490000bd63b68f651c328382a36db03c42c8ccc",
+  "artifact_id": 10160083225,
+  "artifact_zip_sha256": "a58bedd36365bf8d7a99627b1a39d2bc83f3dae41e3d9a6d3351617caa00dd99",
+  "artifact_result_json_sha256": "53aeb88118c004be659755cf1cffa49bed347fe02193f3ef6c2729e102e31181",
+  "capacity_patch_json_sha256": "a0646cff6e8b18814646c9b82ec571c93fc687db62e54e9f71c7333c78f19035",
+  "artifact_verified_independently": true,
+  "raw_token": "PASS_EXP073JK_COMMON_GRID_SECOND_REFINEMENT_NOT_CONVERGED_V0_1",
+  "lattices": {
+    "coarse": {"base_n": 1024, "requested_node_count": 1025, "upper_guard_count": 1},
+    "fine": {"base_n": 2048, "requested_node_count": 2049, "upper_guard_count": 1}
+  },
+  "observations": {
+    "max_atomic_coarse_vs_fine_relative_component_difference": 0.016330535730270664,
+    "previous_jj_max_relative_component_difference": 0.037280144773915974,
+    "empirical_refinement_reduction_factor": 2.2828488538078164,
+    "empirical_order_from_ln_k_spacing_ratio": 1.1899964460080732,
+    "finite_nonzero_status_changed": false,
+    "row_label_changed": false,
+    "boss_dense_z_disagreement": false,
+    "unsupported_target_evaluations": 0,
+    "invalid_row_count": 0,
+    "invalid_row_fraction": 0.0,
+    "retained_after_layer_b": 107,
+    "max_requested_node_coordinate_rel_mismatch": 1.6531028205966003e-16
+  },
+  "interpretation": "The second sequential guarded shared-grid refinement preserves complete inherited support but remains above the prospectively frozen REL_TOL=1e-3: 0.016330535730270664. The empirical reduction factor from JJ is 2.2828488538078164, corresponding to an interpretation-level effective order about 1.19 under the exact ln(k) spacing ratio. This is valid numerical non-convergence, not infrastructure failure. It requires a separately prospectively frozen next sequential resolution gate; it does not authorize covariance restriction or Wm_S3.",
+  "frozen_science_unchanged": true
+}
