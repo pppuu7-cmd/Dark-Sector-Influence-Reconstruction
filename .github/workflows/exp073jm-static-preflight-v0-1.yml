@@ -15,6 +15,11 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+      - name: Install frozen minimal static stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install 'numpy==1.26.4'
       - name: Validate pre-result JM implementation and frozen geometry
         shell: bash
         run: |
