@@ -1,0 +1,92 @@
+name: exp073jo-persist-canonical-node-payload-v0-5
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073jo-persist-canonical-node-payload-v0-5.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  persist-canonical-payload:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_RUN: '34530311592'
+      SOURCE_JOB: '103049156874'
+      SOURCE_ARTIFACT: '10173203482'
+      ZIP_SHA256: '1f46f9df8a3a6cef3bb6f04bffe45c35d82bb29f95d739157419f8d2a2b20765'
+      NODE_SHA256: 'f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'
+      HEX_SHA256: '98cd360d0764a884471cb09b4504b79583e2ffaea4423389ec473e98b8656c2a'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify first-success source identity and artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e docs/dsir4/authority/EXP073JO_CANONICAL_4097_NODES_V0_5.f64
+          test ! -e docs/dsir4/authority/EXP073JO_CANONICAL_4097_NODES_V0_5.hex
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/jobs/${SOURCE_JOB}" > /tmp/job.json
+          python - <<'PY'
+          import json,os
+          d=json.load(open('/tmp/job.json'))
+          assert d['id']==int(os.environ['SOURCE_JOB'])
+          assert d['run_id']==int(os.environ['SOURCE_RUN'])
+          assert d['status']=='completed' and d['conclusion']=='success'
+          names={s['name']:s['conclusion'] for s in d['steps']}
+          for n in ['Enforce prospective response-blind contract identities','Install frozen grid software','Freeze first successful canonical node payload','Run actions/upload-artifact@v4']:
+              assert names.get(n)=='success',(n,names.get(n))
+          PY
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT}" > /tmp/artifact.json
+          python - <<'PY'
+          import json,os
+          d=json.load(open('/tmp/artifact.json'))
+          assert d['id']==int(os.environ['SOURCE_ARTIFACT'])
+          assert d['workflow_run']['id']==int(os.environ['SOURCE_RUN'])
+          assert d['digest']=='sha256:'+os.environ['ZIP_SHA256']
+          assert not d['expired']
+          PY
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT}/zip" > /tmp/canonical.zip
+          test "$(sha256sum /tmp/canonical.zip | awk '{print $1}')" = "$ZIP_SHA256"
+          mkdir -p /tmp/canonical
+          unzip -q /tmp/canonical.zip -d /tmp/canonical
+          test "$(sha256sum /tmp/canonical/canonical_nodes.f64 | awk '{print $1}')" = "$NODE_SHA256"
+          test "$(sha256sum /tmp/canonical/canonical_nodes.hex | awk '{print $1}')" = "$HEX_SHA256"
+          test "$(stat -c%s /tmp/canonical/canonical_nodes.f64)" = '32776'
+          test "$(wc -l < /tmp/canonical/canonical_nodes.hex)" = '4097'
+          python - <<'PY'
+          import hashlib,json,os,numpy as np
+          raw=open('/tmp/canonical/canonical_nodes.f64','rb').read()
+          hx=open('/tmp/canonical/canonical_nodes.hex').read().splitlines()
+          d=json.load(open('/tmp/canonical/grid_freeze.json'))
+          a=np.frombuffer(raw,dtype='<f8')
+          b=np.asarray([float.fromhex(x) for x in hx],dtype='<f8')
+          assert len(a)==4097 and np.array_equal(a,b)
+          assert np.all(np.isfinite(a)) and np.all(a>0) and np.all(np.diff(a)>0)
+          assert hashlib.sha256(raw).hexdigest()==os.environ['NODE_SHA256']==d['node_payload_sha256']
+          assert d['token']=='PASS_EXP073JO_CANONICAL_NODE_FREEZE_V0_5'
+          assert d['response_blind'] is True and d['class_imported_or_run'] is False
+          assert d['observational_artifacts_read'] is False and d['prior_response_artifacts_read'] is False
+          assert d['requested_node_count']==4097 and d['lower_guard_count']==0 and d['upper_guard_count']==1
+          PY
+
+      - name: Commit exact canonical payload bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/dsir4/authority
+          cp /tmp/canonical/canonical_nodes.f64 docs/dsir4/authority/EXP073JO_CANONICAL_4097_NODES_V0_5.f64
+          cp /tmp/canonical/canonical_nodes.hex docs/dsir4/authority/EXP073JO_CANONICAL_4097_NODES_V0_5.hex
+          cp /tmp/canonical/grid_freeze.json docs/dsir4/authority/EXP073JO_CANONICAL_4097_NODES_SOURCE_RECEIPT_V0_5.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/dsir4/authority/EXP073JO_CANONICAL_4097_NODES_V0_5.f64 docs/dsir4/authority/EXP073JO_CANONICAL_4097_NODES_V0_5.hex docs/dsir4/authority/EXP073JO_CANONICAL_4097_NODES_SOURCE_RECEIPT_V0_5.json
+          git commit -m 'Persist JO v0.5 canonical 4097-node payload'
+          git push origin HEAD:main
