@@ -1,0 +1,234 @@
+name: exp073jo-article3-jl-durable-response-checkpoint-recovery-v0-1
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: exp073jo-article3-jl-durable-response-checkpoint-recovery-v0-1
+  cancel-in-progress: false
+
+jobs:
+  recover-jl:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 110
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      MANIFEST: docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json
+      WM_S3_OVERRIDE: docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_2.json
+      CHECKPOINT_BRANCH: checkpoints/exp073jo-jl-response-v0-1
+      CHECKPOINT_NAMESPACE: checkpoints/exp073jo-jl-response-v0-1
+      JO_PREFLIGHT_AUTH: docs/dsir4/authority/EXP073JO_ARTICLE3_JL_DURABLE_RESPONSE_CHECKPOINT_PREFLIGHT_PASS_V0_1.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Enforce JO preflight authority and frozen JL lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "$JO_PREFLIGHT_AUTH"
+          test -f docs/dsir4/prereg/EXP073JO_ARTICLE3_JL_DURABLE_RESPONSE_CHECKPOINT_RECOVERY_V0_1.md
+          test -f docs/dsir4/prereg/EXP073JL_ARTICLE3_LAYERB_COMMON_GRID_THIRD_REFINEMENT_CONVERGENCE_V0_1.md
+          test -f docs/dsir4/authority/EXP073JK_ARTICLE3_LAYERB_COMMON_GRID_SECOND_REFINEMENT_NOT_CONVERGED_V0_1.json
+          test -f docs/dsir4/authority/EXP073JI_ARTICLE3_LAYERB_GUARD_NODE_FULL_SUPPORT_FEASIBLE_V0_1.json
+          python -m py_compile ci/exp073jo_article3_jl_durable_response_checkpoint_recovery_v0_1.py ci/exp073jl_article3_layerb_common_grid_third_refinement_convergence_v0_1.py ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py ci/exp073ir_article3_real_layerb_common_response_v0_1.py
+          python - <<'PY'
+          import json
+          a=json.load(open('docs/dsir4/authority/EXP073JO_ARTICLE3_JL_DURABLE_RESPONSE_CHECKPOINT_PREFLIGHT_PASS_V0_1.json'))
+          assert a['classification']=='DURABLE_RESPONSE_CHECKPOINT_PREFLIGHT_PASS_PLUS_0_PLUS_0'
+          assert a['artifact_verified_independently'] is True
+          assert a['contract_id']=='EXP073JO_ARTICLE3_JL_DURABLE_RESPONSE_CHECKPOINT_RECOVERY_V0_1'
+          assert a['flush_every_new_calls']==16 and a['capacity']==4608 and a['parser_capacity']==131072
+          assert a['scientific_authority_created'] is False and a['covariance_restriction_authorized'] is False
+          j=json.load(open('docs/dsir4/authority/EXP073JK_ARTICLE3_LAYERB_COMMON_GRID_SECOND_REFINEMENT_NOT_CONVERGED_V0_1.json'))
+          assert j['classification']=='COMMON_GRID_SECOND_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0'
+          assert j['artifact_verified_independently'] is True
+          assert j['artifact_zip_sha256']=='a58bedd36365bf8d7a99627b1a39d2bc83f3dae41e3d9a6d3351617caa00dd99'
+          assert j['observations']['max_atomic_coarse_vs_fine_relative_component_difference']==0.016330535730270664
+          i=json.load(open('docs/dsir4/authority/EXP073JI_ARTICLE3_LAYERB_GUARD_NODE_FULL_SUPPORT_FEASIBLE_V0_1.json'))
+          assert i['classification']=='GUARD_NODE_FULL_SUPPORT_FEASIBLE_PLUS_0_PLUS_0'
+          assert i['geometry']['stream_sha256']=='79bae6f3015ccf524402d7f0f357070a903126bfa8d3bd3f4cac5902afef093a'
+          PY
+          test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = '0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c'
+
+      - name: Install frozen numerical/build stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git unzip
+          python -m pip install --upgrade pip wheel 'setuptools<76'
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy
+
+      - name: Checkout exact frozen CAMB
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/camb
+          git -C external/camb init
+          git -C external/camb remote add origin https://github.com/cmbant/CAMB.git
+          git -C external/camb fetch --depth 1 origin fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          git -C external/camb checkout --detach FETCH_HEAD
+          test "$(git -C external/camb rev-parse HEAD)" = fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          python -m pip install ./external/camb
+
+      - name: Checkout capacity-patch and build exact pinned CLASS-IV
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          git clone https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
+          grep -F '#define _MAX_NUMBER_OF_K_FILES_ 30' external/class_iv/include/perturbations.h >/dev/null
+          grep -F '#define _ARGUMENT_LENGTH_MAX_ 1024' external/class_iv/include/parser.h >/dev/null
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('external/class_iv/include/perturbations.h'); b=p.read_bytes(); s=b.decode(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; new='#define _MAX_NUMBER_OF_K_FILES_ 4608'; assert s.count(old)==1
+          pre=hashlib.sha256(b).hexdigest(); p.write_text(s.replace(old,new,1)); post=hashlib.sha256(p.read_bytes()).hexdigest()
+          q=Path('external/class_iv/include/parser.h'); qb=q.read_bytes(); qs=qb.decode(); qold='#define _ARGUMENT_LENGTH_MAX_ 1024'; qnew='#define _ARGUMENT_LENGTH_MAX_ 131072'; assert qs.count(qold)==1
+          qpre=hashlib.sha256(qb).hexdigest(); q.write_text(qs.replace(qold,qnew,1)); qpost=hashlib.sha256(q.read_bytes()).hexdigest()
+          rec={'schema':'EXP073JO_CLASSIV_INPUT_CAPACITY_PATCH_V0_1','source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','old_capacity':30,'new_capacity':4608,'replacement_count':1,'pre_sha256':pre,'post_sha256':post,'parser_old_argument_capacity':1024,'parser_new_argument_capacity':131072,'parser_replacement_count':1,'parser_pre_sha256':qpre,'parser_post_sha256':qpost}
+          Path('artifacts/capacity_patch.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; new="extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,new,1))
+          PY
+          make -C external/class_iv -j2 all
+
+      - name: Download exact DES-Y1 radial payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/des_nz
+          curl --fail --location --retry 3 -o external/des_nz/source.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_redshift_distributions_v1.fits'
+          curl --fail --location --retry 3 -o external/des_nz/lens.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/chains/2pt_NG_mcal_1110.fits'
+          echo 'b5d87138c35ae8bb4ecd02491972f544648398e606b3617039e6e54cb8ea943b  external/des_nz/source.fits' | sha256sum -c -
+          echo '114035179b5a8e41090751e9a6478536d185128581d37b5a510eff5722f417ca  external/des_nz/lens.fits' | sha256sum -c -
+
+      - name: Download exact Layer-A parent angular and Exp073IM authorities
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/parent inputs/angular inputs/expim
+          get_artifact () {
+            local id="$1" digest="$2" dest="$3"; local zip="${dest}.zip"; mkdir -p "$dest"
+            gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "$zip"
+            local actual expected; actual="$(sha256sum "$zip" | awk '{print $1}')"; expected="${digest#sha256:}"
+            test "$actual" = "$expected" || { echo "artifact $id digest mismatch $actual != $expected"; exit 31; }
+            unzip -q "$zip" -d "$dest"
+          }
+          get_artifact 10131794281 'sha256:ac959926639d3b46ecfe114e396ce03cb20a0763ef2781db454408d8ad0759df' inputs/parent
+          while IFS=$'\t' read -r slot id digest; do get_artifact "$id" "$digest" "inputs/angular/$slot"; done < <(jq -r '.angular[] | [.slot, (.artifact_id|tostring), .artifact_digest] | @tsv' "$MANIFEST")
+          id="$(jq -r '.artifact_id' "$WM_S3_OVERRIDE")"; mkdir -p inputs/angular/Wm_S3/transport_override
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > inputs/angular/Wm_S3/transport_override.zip
+          unzip -q inputs/angular/Wm_S3/transport_override.zip -d inputs/angular/Wm_S3/transport_override
+          expected="$(jq -r '.required_each_canonical_sha256' "$WM_S3_OVERRIDE")"; nbytes="$(jq -r '.required_each_nbytes' "$WM_S3_OVERRIDE")"
+          for f in inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin; do test "$(stat -c%s "$f")" = "$nbytes"; test "$(sha256sum "$f" | awk '{print $1}')" = "$expected"; done
+          cmp -s inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin
+          get_artifact 10130241439 'sha256:3325bab0faa821c5ca3b13b4cd64d3d58c323e56a6f3e44952be84bfbc477156' inputs/expim
+
+      - name: Download exact frozen BOSS z3 operators
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/exp073w_boss; base='https://fbeutler.github.io/hub'
+          curl --fail --location --retry 3 -o external/exp073w_boss/W_NGC_z3.gz "$base/W_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073w_boss/W_SGC_z3.gz "$base/W_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073w_boss/M_NGC_z3.gz "$base/M_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073w_boss/M_SGC_z3.gz "$base/M_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          for f in external/exp073w_boss/*.gz; do gzip -t "$f"; gzip -dc "$f" > "${f%.gz}"; done
+          echo 'a308dc562d1a7224cefcf91d32580877929e0daa33806517e0d2d53710236827  external/exp073w_boss/W_NGC_z3' | sha256sum -c -
+          echo '2a542a2d48f3e8c8299f58a885d5273238e4ade32c0f0de020d8b9f23afe7759  external/exp073w_boss/W_SGC_z3' | sha256sum -c -
+          echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_NGC_z3' | sha256sum -c -
+          echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_SGC_z3' | sha256sum -c -
+
+      - name: Restore or initialize durable checkpoint worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --heads origin "refs/heads/${CHECKPOINT_BRANCH}" >/dev/null 2>&1; then
+            git fetch --depth=1 origin "refs/heads/${CHECKPOINT_BRANCH}:refs/remotes/origin/${CHECKPOINT_BRANCH}"
+            git worktree add --detach checkpoint_repo "refs/remotes/origin/${CHECKPOINT_BRANCH}"
+            echo "RESTORED_CHECKPOINT_BRANCH=${CHECKPOINT_BRANCH}"
+          else
+            git worktree add --detach checkpoint_repo "$GITHUB_SHA"
+            echo "INITIALIZED_CHECKPOINT_BRANCH=${CHECKPOINT_BRANCH}"
+          fi
+          git -C checkpoint_repo config user.name 'dsir-exp073jo-checkpoint-bot'
+          git -C checkpoint_repo config user.email 'dsir-exp073jo-checkpoint-bot@users.noreply.github.com'
+          mkdir -p "checkpoint_repo/${CHECKPOINT_NAMESPACE}"
+          find "checkpoint_repo/${CHECKPOINT_NAMESPACE}" -maxdepth 2 -type f -print | sort || true
+
+      - name: Execute exact frozen JL through JO durable response recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p scratch artifacts
+          python ci/exp073jo_article3_jl_durable_response_checkpoint_recovery_v0_1.py recover \
+            --jl-script ci/exp073jl_article3_layerb_common_grid_third_refinement_convergence_v0_1.py \
+            --preflight-authority "$JO_PREFLIGHT_AUTH" \
+            --checkpoint-root "checkpoint_repo/${CHECKPOINT_NAMESPACE}" \
+            --checkpoint-repo checkpoint_repo \
+            --checkpoint-branch "$CHECKPOINT_BRANCH" \
+            --process-receipt artifacts/exp073jo_process_receipt.json \
+            --ir-script ci/exp073ir_article3_real_layerb_common_response_v0_1.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --jk-authority docs/dsir4/authority/EXP073JK_ARTICLE3_LAYERB_COMMON_GRID_SECOND_REFINEMENT_NOT_CONVERGED_V0_1.json \
+            --ji-authority docs/dsir4/authority/EXP073JI_ARTICLE3_LAYERB_GUARD_NODE_FULL_SUPPORT_FEASIBLE_V0_1.json \
+            --parent-root inputs/parent \
+            --parent-authority docs/dsir4/authority/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_PASS_V0_1.json \
+            --manifest "$MANIFEST" \
+            --angular-root inputs/angular \
+            --expim-root inputs/expim \
+            --boss-root external/exp073w_boss \
+            --source external/des_nz/source.fits \
+            --lens external/des_nz/lens.fits \
+            --camb-root external/camb \
+            --expz2-script ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py \
+            --exp073iq-script ci/exp073iq_article3_real_layera_support_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --capacity-patch-record artifacts/capacity_patch.json \
+            --scratch scratch \
+            --out artifacts/exp073jl_result.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/exp073jl_result.json'))
+          r=json.load(open('artifacts/exp073jo_process_receipt.json'))
+          assert d['classification'] in {'COMMON_GRID_THIRD_REFINEMENT_CONVERGED_PLUS_0_PLUS_0','COMMON_GRID_THIRD_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0'}
+          assert d['scientific_authority_created'] is False and d['covariance_restriction_authorized'] is False
+          assert d['lattices']['coarse']['requested_node_count']==2049 and d['lattices']['fine']['requested_node_count']==4097
+          assert d['native_k_per_decade_for_pk_frozen']==20.0 and d['rel_tol']==1e-3 and d['h']==1e-4
+          assert r['classification']=='DURABLE_RESPONSE_CHECKPOINT_RECOVERY_COMPLETED_PLUS_0_PLUS_0'
+          assert r['contract_id']=='EXP073JO_ARTICLE3_JL_DURABLE_RESPONSE_CHECKPOINT_RECOVERY_V0_1'
+          assert r['final_checkpoint_commit']
+          print(d['token'])
+          print('CONVERGENCE',d['convergence'])
+          print('REDUCTION_FACTOR',d['empirical_refinement_reduction_factor'])
+          print('LAYER_B',d['layer_b'])
+          print('AUDIT',d['response_engine_audit'])
+          print('JO_RECEIPT',r)
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jo-jl-durable-response-recovery-v0-1
+          path: |
+            artifacts/exp073jl_result.json
+            artifacts/exp073jo_process_receipt.json
+            artifacts/capacity_patch.json
+          retention-days: 90
