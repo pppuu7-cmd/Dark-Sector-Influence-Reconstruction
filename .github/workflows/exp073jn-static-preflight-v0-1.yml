@@ -34,7 +34,9 @@ jobs:
           assert jn.CAPACITY == 4608 and jn.PARSER_CAPACITY == 131072
           assert jn.JL_CONVERGED == 'COMMON_GRID_THIRD_REFINEMENT_CONVERGED_PLUS_0_PLUS_0'
           assert jn.SCI_PASS == 'PASS_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_V0_1'
+          assert jn.SCI_FAIL == 'FAIL_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_V0_1'
           assert jn.NUM_UNRES == 'NUMERICALLY_UNRESOLVED_EXP073JN'
+          assert jn.INVALID_INFRA == 'INVALID_INFRA_PLUS_0_PLUS_0'
           jj.CAPACITY = jn.CAPACITY
           c, rc, lc, uc = jj.guarded_lattice(2048)
           f, rf, lf, uf = jj.guarded_lattice(4096)
@@ -43,7 +45,13 @@ jobs:
           sc = ','.join(format(float(x), '.17g') for x in c)
           sf = ','.join(format(float(x), '.17g') for x in f)
           assert len(sc) < jn.PARSER_CAPACITY and len(sf) < jn.PARSER_CAPACITY
+          source = open('ci/exp073jn_article3_layerb_shared_grid_scientific_closure_rerun_v0_1.py').read()
+          assert 'jo.get("invalid_row_fraction") != 0.0' not in source
+          assert 'jo.get("retained_after_layer_b") != 107' not in source
+          assert 'status = INVALID_INFRA' in source
+          assert 'downstream_covariance_whitening_stage_may_be_preregistered' in source
           print('JN_PRODUCTION_SERIALIZED_CHARS', len(sc))
           print('JN_DENSE_SERIALIZED_CHARS', len(sf))
-          print('PASS_EXP073JN_STATIC_PREFLIGHT_V0_1')
+          print('PASS_EXP073JN_PREREG_ALIGNMENT_STATIC_V0_1')
+          print('PASS_EXP073JN_STATIC_PREFLIGHT_V0_2')
           PY
