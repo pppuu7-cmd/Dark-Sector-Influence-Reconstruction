@@ -18,6 +18,35 @@
   "h": 0.0001,
   "execution_order": ["beta_minus", "reference", "alpha_minus", "beta_plus", "beta_minus"],
   "max_live_instances": 1,
+  "all_instances_unsupported": 0,
+  "all_instances_max_lookup": 1.6559173278185046e-16,
+  "before_unsupported": 0,
+  "after_unsupported": 0,
+  "before_max_lookup": 1.6559173278185046e-16,
+  "after_max_lookup": 1.6559173278185046e-16,
+  "canonical_lifecycle_coverage_after_pass": "4/4",
+  "requests": {
+    "A": {
+      "before_sha256": "221b4e7de8e51faa7ab75950648a28c3be9f4682ba20bf24465df8915b035bd3",
+      "after_sha256": "221b4e7de8e51faa7ab75950648a28c3be9f4682ba20bf24465df8915b035bd3",
+      "array_equal": true,
+      "byte_sha_equal": true,
+      "finite_masks_equal": true,
+      "positive_masks_equal": true,
+      "max_abs_diagnostic": 0.0,
+      "max_rel_diagnostic": 0.0
+    },
+    "B": {
+      "before_sha256": "824ea0558b6d7c190d65a0ebc7b66652039fecce2ef6a991cd643b62e2c63f73",
+      "after_sha256": "824ea0558b6d7c190d65a0ebc7b66652039fecce2ef6a991cd643b62e2c63f73",
+      "array_equal": true,
+      "byte_sha_equal": true,
+      "finite_masks_equal": true,
+      "positive_masks_equal": true,
+      "max_abs_diagnostic": 0.0,
+      "max_rel_diagnostic": 0.0
+    }
+  },
   "observations": {
     "all_instances_unsupported": 0,
     "all_instances_max_lookup": 1.6559173278185046e-16,
