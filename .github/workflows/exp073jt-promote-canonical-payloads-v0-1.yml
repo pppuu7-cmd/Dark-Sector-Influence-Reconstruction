@@ -1,0 +1,118 @@
+name: exp073jt-promote-canonical-payloads-v0-1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073jt-promote-canonical-payloads-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: exp073jt-promote-canonical-payloads-v0-1
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      JT_RUN_ID: '34537725440'
+      JT_AGG_JOB_ID: '103073186968'
+      JT_ARTIFACT_ID: '10176063866'
+      JT_ARTIFACT_ZIP_SHA256: '4e17994a81ce8e2f7b17be59e5add65ab766f1cfc46370d13b19054bda3efba3'
+      JT_RESULT_JSON_SHA256: '6a9805233e580f571f0572e29641b318f957f09b9642d7180d5c21a0898b77b0'
+      JT_HEAD_SHA: '7aca7f8096e7e4a4f4c6e5fd3016a1eae2b29783'
+      COARSE_NODE_SHA256: '6305c95025e52296b6cb623903f82dc45bb66ac692708b242fc354862ac54c46'
+      FINE_NODE_SHA256: 'f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'
+      COARSE_U64HEX_SHA256: '72c732a02b9f6f4adeab70c7792f16e4490f038544c221aed9b72a14e5b1ec47'
+      FINE_U64HEX_SHA256: '290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Verify frozen JT authorities before promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICE_MATERIALIZATION_V0_1.md)" = '72e6a55d7414f4b1653d6428d531e0d6e097e258'
+          test "$(git hash-object ci/exp073jt_article3_canonical_shared_lattice_materialization_v0_1.py)" = '8a9a6a3352125b140d3ba4c44bc6f70e371fce86'
+          test "$(git hash-object docs/dsir4/authority/EXP073JR_COARSE_2049_SEQUENTIAL_EXACT_EQUIVALENCE_RECEIPT_V0_1.json)" = 'ee6526bd80daeac7990b2244b8ec2c8061a534c4'
+          test "$(git hash-object docs/dsir4/authority/EXP073JQ_ARTICLE3_SLOT20_SAME_RUN_HISTORY_INDEPENDENCE_V0_1.json)" = 'a1c29c4ead5daee53a6fe82bc2b77a363a38b7a7'
+      - name: Download exact JT aggregate artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api -H 'Accept: application/vnd.github+json' \
+            "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${JT_ARTIFACT_ID}/zip" > /tmp/jt.zip
+          echo "${JT_ARTIFACT_ZIP_SHA256}  /tmp/jt.zip" | sha256sum -c -
+          rm -rf /tmp/jt && mkdir -p /tmp/jt
+          unzip -q /tmp/jt.zip -d /tmp/jt
+          echo "${JT_RESULT_JSON_SHA256}  /tmp/jt/result.json" | sha256sum -c -
+      - name: Independently verify and stage canonical payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,pathlib
+          import numpy as np
+          root=pathlib.Path('/tmp/jt')
+          out=pathlib.Path('docs/dsir4/canonical'); out.mkdir(parents=True,exist_ok=True)
+          agg=json.loads((root/'result.json').read_text())
+          assert agg['classification']=='CANONICAL_SHARED_LATTICES_MATERIALIZED_PASS_PLUS_0_PLUS_0'
+          assert agg['receipt_count']==8
+          assert agg['lattices']['coarse']['anchor_match_count']==2
+          assert agg['lattices']['coarse']['anchor_replicas']==[1,4]
+          assert agg['lattices']['coarse']['anchor_payloads_identical'] is True
+          assert agg['lattices']['fine']['anchor_match_count']==4
+          assert agg['lattices']['fine']['anchor_replicas']==[1,2,3,4]
+          assert agg['lattices']['fine']['anchor_payloads_identical'] is True
+          cfg={
+            'coarse':(2049,'6305c95025e52296b6cb623903f82dc45bb66ac692708b242fc354862ac54c46','72c732a02b9f6f4adeab70c7792f16e4490f038544c221aed9b72a14e5b1ec47'),
+            'fine':(4097,'f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb','290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7'),
+          }
+          staged={}
+          for lat,(count,node_sha,text_sha) in cfg.items():
+              src=root/f'canonical_{lat}_{count}.u64hex'
+              raw=src.read_bytes(); assert hashlib.sha256(raw).hexdigest()==text_sha
+              lines=raw.decode().splitlines(); assert len(lines)==count
+              words=np.asarray([int(x,16) for x in lines],dtype='<u8')
+              x=np.ascontiguousarray(words.view('<f8'),dtype='<f8')
+              assert hashlib.sha256(x.tobytes()).hexdigest()==node_sha
+              assert np.all(np.isfinite(x)) and np.all(x>0) and np.all(np.diff(x)>0)
+              dst=out/f'EXP073JL_CANONICAL_{lat.upper()}_{count}_NODES_U64HEX_V0_1.txt'
+              dst.write_bytes(raw); staged[lat]=str(dst)
+          authority={
+            'schema':'EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_AUTHORITY_V0_1',
+            'experiment':'Exp073JT','classification':'CANONICAL_SHARED_LATTICES_MATERIALIZED_PASS_PLUS_0_PLUS_0','effect':'+0/+0',
+            'run_id':34537725440,'aggregate_job_id':103073186968,'workflow_head_sha':'7aca7f8096e7e4a4f4c6e5fd3016a1eae2b29783',
+            'aggregate_artifact_id':10176063866,'aggregate_artifact_zip_sha256':'4e17994a81ce8e2f7b17be59e5add65ab766f1cfc46370d13b19054bda3efba3','aggregate_result_json_sha256':'6a9805233e580f571f0572e29641b318f957f09b9642d7180d5c21a0898b77b0',
+            'artifact_verified_independently':True,
+            'coarse':{'base_n':2048,'requested_node_count':2049,'guard_counts':[0,1],'node_payload_sha256':'6305c95025e52296b6cb623903f82dc45bb66ac692708b242fc354862ac54c46','u64hex_sha256':'72c732a02b9f6f4adeab70c7792f16e4490f038544c221aed9b72a14e5b1ec47','anchor_match_count':2,'anchor_replicas':[1,4],'canonical_file':staged['coarse']},
+            'fine':{'base_n':4096,'requested_node_count':4097,'guard_counts':[0,1],'node_payload_sha256':'f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb','u64hex_sha256':'290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7','anchor_match_count':4,'anchor_replicas':[1,2,3,4],'canonical_file':staged['fine']},
+            'coarse_observed_host_variant_sha256':'133a353c269461a4d39050ccb0588963f0a76648946a18c49fb06b35f3375bba',
+            'sequential_authorization_audit_permitted':True,'scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+            'article3_repository_readiness_percent':68,'funnel_freeze_readiness_percent':67,
+            'interpretation':'Exact lattice byte streams were materialized only from pre-existing JR/JQ authority SHAs. Host variants are recorded but never selected as canonical. This is process/reproducibility authority only.'
+          }
+          ap=pathlib.Path('docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json')
+          ap.write_text(json.dumps(authority,indent=2,sort_keys=True)+'\n')
+          PY
+          test "$(sha256sum docs/dsir4/canonical/EXP073JL_CANONICAL_COARSE_2049_NODES_U64HEX_V0_1.txt | awk '{print $1}')" = "$COARSE_U64HEX_SHA256"
+          test "$(sha256sum docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt | awk '{print $1}')" = "$FINE_U64HEX_SHA256"
+      - name: Commit exact canonical payload authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/dsir4/canonical/EXP073JL_CANONICAL_COARSE_2049_NODES_U64HEX_V0_1.txt \
+                  docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt \
+                  docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json
+          git diff --cached --quiet && { echo 'Nothing to commit'; exit 0; }
+          git commit -m 'Promote Exp073JT canonical shared lattices [skip ci]'
+          git push origin HEAD:main
