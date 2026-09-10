@@ -1,0 +1,49 @@
+{
+  "experiment": "Exp073IQ",
+  "schema": "EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_AUTHORITY_V0_1",
+  "status": "PASS_ARTICLE3_OPERATOR_SUPPORT_V0_1",
+  "workflow_run": 34423479633,
+  "workflow_job": 102703685034,
+  "head_sha": "20d428daef65a4c0d052b7526a4469f9b52f24af",
+  "artifact_id": 10131794281,
+  "artifact_digest": "sha256:ac959926639d3b46ecfe114e396ce03cb20a0763ef2781db454408d8ad0759df",
+  "parent_exp073im": {
+    "run": 34419165956,
+    "job": 102690618922,
+    "artifact": 10130241439,
+    "status": "PASS_EXP073IM_C2_REAL_RADIAL_SUPPORT_V0_2"
+  },
+  "candidate_count": 1410,
+  "des_candidate_count": 1170,
+  "boss_candidate_count": 240,
+  "des_retained_count": 53,
+  "boss_retained_count": 54,
+  "combined_retained_count": 107,
+  "retained_id_sha256": "44b57c6c910bc3612310ce415d773c8c180497528bfc5fc2927ce61da6ad40d7",
+  "full_order_sha256": "bfaf582518cdbfd34b1e8392da83dac6b0885948bc31f2c29d4e48247c23af75",
+  "des_coarse_fine": {
+    "changed_label_count": 0,
+    "max_abs_delta_f_invalid": 0.00018850596620431648,
+    "tolerance": 0.0005,
+    "pass": true
+  },
+  "frozen_domain": {
+    "z_min": 0.295,
+    "z_max": 2.33,
+    "k_positive": true,
+    "k_max_Mpc^-1": 0.06664762008318016,
+    "threshold": 0.05,
+    "minimum_retained": 15
+  },
+  "anti_leakage": {
+    "covariance_read": false,
+    "whitening_read": false,
+    "nuisance_read": false,
+    "relation_null_read": false,
+    "G8_read": false,
+    "selection_reads": []
+  },
+  "layer_b_evaluated": false,
+  "covariance_restriction_authorized": false,
+  "scientific_consequence": "Layer-A operator support PASS; freeze S_op of 107 inherited coordinates. Layer-B common-response integrity remains required before G_PHYSICAL_SUPPORT/covariance authorization."
+}
