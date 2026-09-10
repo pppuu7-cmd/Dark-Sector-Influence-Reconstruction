@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, json
+import argparse, json, sys
 from pathlib import Path
 import numpy as np
-import ci.exp073je_article3_layerb_shared_fixed_k_grid_scaling_v0_1 as je
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+import exp073je_article3_layerb_shared_fixed_k_grid_scaling_v0_1 as je
 
 NS=(384,512)
 
