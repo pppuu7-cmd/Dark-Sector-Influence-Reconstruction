@@ -78,7 +78,6 @@ jobs:
           print('EXP073IR_WRAPPER_LINK_COMPAT_EXACTLY_ONCE')
           PY
           make -C external/class_iv -j2 all
-          SETUPTOOLS_USE_DISTUTILS=local python -m pip install ./external/class_iv/python
           python - <<'PY'
           from classy import Class
           c=Class()
