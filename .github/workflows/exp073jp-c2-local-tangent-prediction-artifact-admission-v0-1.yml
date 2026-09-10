@@ -1,0 +1,155 @@
+name: exp073jp-c2-local-tangent-prediction-artifact-admission-v0-1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073jp-c2-local-tangent-prediction-artifact-admission-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  prediction-admission:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify frozen repository identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073JP_C2_LOCAL_TANGENT_PREDICTION_ARTIFACT_ADMISSION_V0_1.md)" = '5c6e6d4ddf4ef516081312c69fffb59e6710276d'
+          test "$(git hash-object docs/dsir4/prereg/EXP073IF_C2_RESIDUAL_MAPPING_ARTIFACT_ADMISSION_V0_1.md)" = '52677fe6b0d73d62d01c1f39e8b434ceda0f7e01'
+          test "$(git hash-object docs/dsir4/mappings/C2_IDE_LOCAL_TANGENT_CONE_MAPPING_V0_1.md)" = '5f2b690e4f56fc0fd3109ff2bcdb53dd0eb806cc'
+          test "$(git hash-object docs/dsir4/predictions/C2_IDE_LOCAL_TANGENT_CONE_PREDICTION_V0_1.md)" = '7e244010ca65050d0c8edff8fe90a9583845a568'
+          test "$(git hash-object docs/dsir4/predictions/C2_IDE_LOCAL_TANGENT_CONE_PREDICTION_BASIS_V0_1.jsonl)" = 'b3c5dc5ec6aefb79f215c5e01d7baef566cc5251'
+          test "$(git hash-object configs/dsir4/c2/ide0_reference_v0_1.ini)" = 'cd2beb01ce6575f97f2e3203226ed6d4f048dcaa'
+          test "$(sha256sum docs/dsir4/mappings/C2_IDE_LOCAL_TANGENT_CONE_MAPPING_V0_1.md | awk '{print $1}')" = '7f660b6806494b00d17caed50b7cc66d01d9d02bc4cb1d66f333c1c12e1386df'
+          test "$(sha256sum docs/dsir4/predictions/C2_IDE_LOCAL_TANGENT_CONE_PREDICTION_BASIS_V0_1.jsonl | awk '{print $1}')" = '2836a3665e6bab75587957228fbd3b9e152ef7d6e667966c308d81bf666c7c56'
+          test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = '0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c'
+
+      - name: Reverify frozen Exp073IF mapping admission
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/jobs/102144147469" > /tmp/if_job.json
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/if_job.json'))
+          assert d['id']==102144147469
+          assert d['run_id']==34250714613
+          assert d['status']=='completed' and d['conclusion']=='success'
+          names={s['name']:s['conclusion'] for s in d['steps']}
+          for n in ['Verify frozen repository identities','Verify exact pinned solver fingerprints','Audit frozen six-component mapping artifact','Emit admission gate']:
+              assert names.get(n)=='success', (n,names.get(n))
+          print('PASS_EXP073JP_UPSTREAM_EXP073IF_JOB_IDENTITY_V0_1')
+          PY
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/jobs/102144147469/logs" > /tmp/if_job.log
+          grep -Fq 'PASS_EXP073IF_C2_RESIDUAL_MAPPING_ARTIFACT_ADMISSION_V0_1' /tmp/if_job.log
+          grep -Fq 'classification=MAPPING_ARTIFACT_ADMITTED_PLUS_0_PLUS_0' /tmp/if_job.log
+          grep -Fq 'mapping_ready=true' /tmp/if_job.log
+          grep -Fq 'prediction_ready=false' /tmp/if_job.log
+          grep -Fq 'G_DOMAIN_MAPPING=TESTABLE_NOT_EVALUATED' /tmp/if_job.log
+
+      - name: Verify pinned solver source fingerprints
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/kaeonikc/class_iv.git /tmp/class_iv
+          git -C /tmp/class_iv checkout --quiet ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C /tmp/class_iv rev-parse HEAD)" = 'ac627d54e9ce196a08878d1ba33999819925d19c'
+          test "$(sha256sum /tmp/class_iv/source/background.c | awk '{print $1}')" = '7a6ad5d44c316c886fc15c3439e04217c6c480f0dc251e8080aa64643ce1c6fc'
+          test "$(sha256sum /tmp/class_iv/source/perturbations.c | awk '{print $1}')" = '61e73ed7d5b785ea5f49620e782c58ec552d2735640a1c1241d5ef354e7e0cbe'
+
+      - name: Audit exact prediction basis and local-regime contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,math,pathlib,re
+          p=pathlib.Path('docs/dsir4/predictions/C2_IDE_LOCAL_TANGENT_CONE_PREDICTION_BASIS_V0_1.jsonl')
+          rows=[json.loads(x) for x in p.read_text().splitlines() if x.strip()]
+          zs=['0.295','0.51','0.706','0.934','1.317','1.491','2.33']
+          ks=['0.00067','0.00201','0.0067','0.0201']
+          fields={'request_id','z_literal','k_literal','Delta_ref_hex','dDelta_dalpha_hex','dDelta_dbeta_hex'}
+          assert len(rows)==28
+          i=0
+          for iz,z in enumerate(zs):
+              for ik,k in enumerate(ks):
+                  r=rows[i]; i+=1
+                  assert set(r)==fields
+                  assert r['request_id']==f'z{iz:02d}k{ik:02d}'
+                  assert r['z_literal']==z and r['k_literal']==k
+                  for key in ['Delta_ref_hex','dDelta_dalpha_hex','dDelta_dbeta_hex']:
+                      v=float.fromhex(r[key]); assert math.isfinite(v); assert v.hex()==r[key]
+          d=pathlib.Path('docs/dsir4/predictions/C2_IDE_LOCAL_TANGENT_CONE_PREDICTION_V0_1.md').read_text()
+          required=[
+            'hypothesis_id: `C2_IDE_LOCAL_TANGENT_CONE`',
+            'mapping admission: Exp073IF run `34250714613`, job `102144147469`',
+            'kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c',
+            'admitted finite-difference base step `h=1e-4`',
+            'dDelta_dalpha = (Delta(alpha=-h,beta=0)-Delta_ref)/(-h)',
+            'dDelta_dbeta = (Delta(alpha=0,beta=+h)-Delta(alpha=0,beta=-h))/(2*h)',
+            'Delta_pred(alpha,beta;z,k) = Delta_ref(z,k) + alpha*dDelta_dalpha(z,k) + beta*dDelta_dbeta(z,k)',
+            'first-order local tangent approximation at `(0,0)` only',
+            'no smoothing, averaging, tolerance rescue, effective coordinates, fiducial-P shortcut, interpolation, or extrapolation',
+            'prediction_ready` may become true only after admission',
+            'numerically_evaluated=false for any DSIR observational gate',
+            'scientific_model_authority_created=false',
+            'G_DOMAIN_MAPPING=TESTABLE_NOT_EVALUATED'
+          ]
+          for x in required: assert x in d, x
+          print('PASS_EXP073JP_EXACT_PREDICTION_BASIS_AUDIT_V0_1')
+          PY
+
+      - name: Emit admission artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python - <<'PY'
+          import hashlib,json,pathlib,os
+          payload=pathlib.Path('docs/dsir4/predictions/C2_IDE_LOCAL_TANGENT_CONE_PREDICTION_BASIS_V0_1.jsonl').read_bytes()
+          out={
+            'schema':'EXP073JP_C2_LOCAL_TANGENT_PREDICTION_ARTIFACT_ADMISSION_RESULT_V0_1',
+            'experiment':'Exp073JP',
+            'classification':'PREDICTION_ARTIFACT_ADMITTED_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'mapping_ready':True,
+            'prediction_ready':True,
+            'prediction_scope':'LOCAL_TANGENT_BASIS_ONLY',
+            'numerically_evaluated':False,
+            'scientific_model_authority_created':False,
+            'G_DOMAIN_MAPPING':'TESTABLE_NOT_EVALUATED',
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+            'upstream_mapping_admission':{'run_id':34250714613,'job_id':102144147469,'token':'PASS_EXP073IF_C2_RESIDUAL_MAPPING_ARTIFACT_ADMISSION_V0_1'},
+            'mapping_blob':'5f2b690e4f56fc0fd3109ff2bcdb53dd0eb806cc',
+            'prediction_description_blob':'7e244010ca65050d0c8edff8fe90a9583845a568',
+            'prediction_basis_blob':'b3c5dc5ec6aefb79f215c5e01d7baef566cc5251',
+            'prediction_basis_sha256':hashlib.sha256(payload).hexdigest(),
+            'record_count':28,
+            'h':1e-4,
+            'solver':'kaeonikc/class_iv@ac627d54e9ce196a08878d1ba33999819925d19c',
+            'workflow_head_sha':os.environ['GITHUB_SHA'],
+            'forbidden_downstream_reads':[],
+            'token':'PASS_EXP073JP_C2_LOCAL_TANGENT_PREDICTION_ARTIFACT_ADMISSION_V0_1'
+          }
+          pathlib.Path('artifacts/exp073jp_prediction_admission.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          print('prediction_ready=true')
+          print('G_DOMAIN_MAPPING=TESTABLE_NOT_EVALUATED')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jp-c2-local-tangent-prediction-artifact-admission-v0-1
+          path: artifacts/exp073jp_prediction_admission.json
+          retention-days: 90
