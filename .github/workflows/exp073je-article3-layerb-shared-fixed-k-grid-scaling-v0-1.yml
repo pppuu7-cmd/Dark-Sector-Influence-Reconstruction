@@ -26,22 +26,33 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - name: Enforce prospective contract and JD lineage
+      - name: Enforce prospective contract, repair, and JD lineage
         shell: bash
         run: |
           set -euo pipefail
           test -f docs/dsir4/prereg/EXP073JE_ARTICLE3_LAYERB_SHARED_FIXED_K_GRID_SCALING_DIAGNOSTIC_V0_1.md
-          test -f docs/dsir4/authority/EXP073JD_ARTICLE3_LAYERB_EXACT_K_INJECTION_ORIGINAL_PAIR_OBSERVED_V0_1.json
+          test -f docs/dsir4/prereg/EXP073JE_ARTICLE3_LAYERB_SHARED_FIXED_K_GRID_SCALING_INFRA_REPAIR_V0_2.md
+          test -f docs/dsir4/authority/EXP073JD_ARTICLE3_LAYERB_EXACT_K_INJECTION_ORIGINAL_PAIR_OBSERVED_V0_2.json
           python -m py_compile ci/exp073je_article3_layerb_shared_fixed_k_grid_scaling_v0_1.py scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py
           python - <<'PY'
           import json
-          d=json.load(open('docs/dsir4/authority/EXP073JD_ARTICLE3_LAYERB_EXACT_K_INJECTION_ORIGINAL_PAIR_OBSERVED_V0_1.json'))
+          d=json.load(open('docs/dsir4/authority/EXP073JD_ARTICLE3_LAYERB_EXACT_K_INJECTION_ORIGINAL_PAIR_OBSERVED_V0_2.json'))
           assert d['classification']=='EXACT_K_ORIGINAL_PAIR_OBSERVED_PLUS_0_PLUS_0'
-          assert d['artifact_zip_sha256']=='1eb87185c6015277eeae72e3dd9017f48df03e8b166c05cde514330667189478'
+          assert d['independently_downloaded_artifact_zip_sha256']=='310939a4b4ef8d75cb027630e5f43f88003ab92045c0af6e83ab83764bcb6365'
+          assert d['artifact_result_json_sha256']=='ba26c2a89a41d67e65bbf0b630659fccae33d85a7d05c2d0d4d493f8b33dfccb'
           assert d['artifact_verified_independently'] is True
           assert d['observations']['alpha_left']['exact_k_10_to_20_relative_difference']==0.0
           assert d['observations']['beta_symmetric']['exact_k_10_to_20_relative_difference']==0.0
           assert d['covariance_restriction_authorized'] is False
+          PY
+          python - <<'PY'
+          import numpy as np
+          for n in (64,128,256):
+              nodes=np.geomspace(1e-4,0.06664762008318016,n,dtype=np.float64)
+              s=','.join(format(float(x),'.17g') for x in nodes)
+              assert len(s.encode()) < 32768
+              if n==256: assert len(s.encode()) > 1023
+              print('JE_SERIALIZED_K_BYTES', n, len(s.encode()))
           PY
           test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = '0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c'
       - name: Install frozen Python/build stack
@@ -62,6 +73,7 @@ jobs:
           test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
           test "$(git -C external/class_iv hash-object source/perturbations.c)" = 92a48331658c5941ed4eb43b0e98ee78e39b8385
           grep -F '#define _MAX_NUMBER_OF_K_FILES_ 30' external/class_iv/include/perturbations.h >/dev/null
+          grep -F '#define _ARGUMENT_LENGTH_MAX_ 1024' external/class_iv/include/parser.h >/dev/null
           python - <<'PY'
           from pathlib import Path
           import hashlib,json
@@ -69,10 +81,15 @@ jobs:
           old='#define _MAX_NUMBER_OF_K_FILES_ 30'; new='#define _MAX_NUMBER_OF_K_FILES_ 512'
           count=s.count(old); assert count==1
           pre=hashlib.sha256(b).hexdigest(); p.write_text(s.replace(old,new,1)); post=hashlib.sha256(p.read_bytes()).hexdigest()
-          rec={'schema':'EXP073JE_CLASSIV_K_OUTPUT_CAPACITY_PATCH_V0_1','source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','path':'include/perturbations.h','old_capacity':30,'new_capacity':512,'replacement_count':count,'pre_sha256':pre,'post_sha256':post}
+          q=Path('external/class_iv/include/parser.h'); qb=q.read_bytes(); qs=qb.decode()
+          qold='#define _ARGUMENT_LENGTH_MAX_ 1024'; qnew='#define _ARGUMENT_LENGTH_MAX_ 32768'
+          qcount=qs.count(qold); assert qcount==1
+          qpre=hashlib.sha256(qb).hexdigest(); q.write_text(qs.replace(qold,qnew,1)); qpost=hashlib.sha256(q.read_bytes()).hexdigest()
+          rec={'schema':'EXP073JE_CLASSIV_INPUT_CAPACITY_PATCH_V0_2','source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','path':'include/perturbations.h','old_capacity':30,'new_capacity':512,'replacement_count':count,'pre_sha256':pre,'post_sha256':post,'parser_path':'include/parser.h','parser_old_argument_capacity':1024,'parser_new_argument_capacity':32768,'parser_replacement_count':qcount,'parser_pre_sha256':qpre,'parser_post_sha256':qpost}
           Path('artifacts/capacity_patch.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
           PY
           grep -F '#define _MAX_NUMBER_OF_K_FILES_ 512' external/class_iv/include/perturbations.h >/dev/null
+          grep -F '#define _ARGUMENT_LENGTH_MAX_ 32768' external/class_iv/include/parser.h >/dev/null
           python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
           python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
           python - <<'PY'
