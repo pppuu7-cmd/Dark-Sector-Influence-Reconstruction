@@ -1,0 +1,54 @@
+name: Exp073JV Article III sequential canonical JL execution authorization audit v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073jv-article3-sequential-canonical-jl-execution-authorization-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exp073jv-static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify prospective JV authorization gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results/exp073jv
+          python3 ci/exp073jv_article3_sequential_canonical_jl_execution_authorization_audit_v0_1.py \
+            --jr docs/dsir4/authority/EXP073JR_COARSE_2049_SEQUENTIAL_EXACT_EQUIVALENCE_RECEIPT_V0_1.json \
+            --jq docs/dsir4/authority/EXP073JQ_ARTICLE3_SLOT20_SAME_RUN_HISTORY_INDEPENDENCE_V0_1.json \
+            --js docs/dsir4/authority/EXP073JS_ARTICLE3_LIFECYCLE_GEOMETRY_COVERAGE_AUDIT_V0_1.json \
+            --jt docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json \
+            --ju docs/dsir4/authority/EXP073JU_ARTICLE3_CANONICAL_FINE_BETA_MINUS_LIFECYCLE_ISOLATION_V0_1.json \
+            --coarse docs/dsir4/canonical/EXP073JL_CANONICAL_COARSE_2049_NODES_U64HEX_V0_1.txt \
+            --fine docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt \
+            --out results/exp073jv/exp073jv_article3_sequential_canonical_jl_execution_authorization_audit_v0_1.json
+          python3 - <<'PY'
+          import json
+          p='results/exp073jv/exp073jv_article3_sequential_canonical_jl_execution_authorization_audit_v0_1.json'
+          d=json.load(open(p))
+          assert d['classification']=='SEQUENTIAL_CANONICAL_JL_EXECUTION_AUTHORIZED_PLUS_0_PLUS_0', d
+          assert d['recovered_jl_preregistration_permitted'] is True
+          assert d['recovered_jl_execution_directly_authorized'] is False
+          assert d['scientific_authority_created'] is False
+          print(d['classification'])
+          PY
+          sha256sum results/exp073jv/exp073jv_article3_sequential_canonical_jl_execution_authorization_audit_v0_1.json
+      - name: Upload JV audit result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073jv-article3-sequential-canonical-jl-execution-authorization-audit-v0-1
+          path: results/exp073jv/exp073jv_article3_sequential_canonical_jl_execution_authorization_audit_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
