@@ -1,0 +1,154 @@
+name: recovered-exp073jl-response-blind-request-plan-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/recovered-exp073jl-response-blind-request-plan-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  SCRIPT_BLOB: '7180b74641acfa602c34db07ad6cc916c17ebd4f'
+  AUDIT_BLOB: '1d19098dffe5a20714e7c679e5cf9de376a3ecd7'
+  MANIFEST: docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json
+  WM_S3_OVERRIDE: docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_2.json
+
+concurrency:
+  group: recovered-exp073jl-response-blind-request-plan-audit-v0-1
+  cancel-in-progress: false
+
+jobs:
+  request-plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Enforce frozen response-blind audit identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/recovered_exp073jl_response_blind_request_plan_audit_v0_1.py)" = "$SCRIPT_BLOB"
+          test "$(git hash-object docs/dsir4/audits/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_AUDIT_V0_1.md)" = "$AUDIT_BLOB"
+          python3 -m py_compile ci/recovered_exp073jl_response_blind_request_plan_audit_v0_1.py
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('ci/recovered_exp073jl_response_blind_request_plan_audit_v0_1.py').read_text()
+          assert 'from classy import' not in s and 'import classy' not in s
+          assert 'Class()' not in s and '.get_transfer(' not in s
+          PY
+
+      - name: Install frozen geometry stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y gfortran python3-dev git unzip >/dev/null
+          python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          python -m pip install 'numpy==1.26.4' scipy astropy >/dev/null
+
+      - name: Checkout exact frozen CAMB
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/camb
+          git -C external/camb init -q
+          git -C external/camb remote add origin https://github.com/cmbant/CAMB.git
+          git -C external/camb fetch -q --depth 1 origin fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          git -C external/camb checkout -q --detach FETCH_HEAD
+          test "$(git -C external/camb rev-parse HEAD)" = fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          python -m pip install ./external/camb >/dev/null
+
+      - name: Download exact DES-Y1 radial payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/des_nz
+          curl --fail --location --retry 3 -sS -o external/des_nz/source.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_redshift_distributions_v1.fits'
+          curl --fail --location --retry 3 -sS -o external/des_nz/lens.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/chains/2pt_NG_mcal_1110.fits'
+          echo 'b5d87138c35ae8bb4ecd02491972f544648398e606b3617039e6e54cb8ea943b  external/des_nz/source.fits' | sha256sum -c -
+          echo '114035179b5a8e41090751e9a6478536d185128581d37b5a510eff5722f417ca  external/des_nz/lens.fits' | sha256sum -c -
+
+      - name: Download exact Layer-A parent angular and Exp073IM authorities
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/parent inputs/angular inputs/expim
+          get_artifact () {
+            local id="$1" digest="$2" dest="$3"; local zip="${dest}.zip"; mkdir -p "$dest"
+            gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "$zip"
+            local actual expected; actual="$(sha256sum "$zip" | awk '{print $1}')"; expected="${digest#sha256:}"
+            test "$actual" = "$expected" || { echo "artifact $id digest mismatch $actual != $expected"; exit 31; }
+            unzip -q "$zip" -d "$dest"
+          }
+          get_artifact 10131794281 'sha256:ac959926639d3b46ecfe114e396ce03cb20a0763ef2781db454408d8ad0759df' inputs/parent
+          while IFS=$'\t' read -r slot id digest; do get_artifact "$id" "$digest" "inputs/angular/$slot"; done < <(jq -r '.angular[] | [.slot, (.artifact_id|tostring), .artifact_digest] | @tsv' "$MANIFEST")
+          id="$(jq -r '.artifact_id' "$WM_S3_OVERRIDE")"; mkdir -p inputs/angular/Wm_S3/transport_override
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > inputs/angular/Wm_S3/transport_override.zip
+          unzip -q inputs/angular/Wm_S3/transport_override.zip -d inputs/angular/Wm_S3/transport_override
+          expected="$(jq -r '.required_each_canonical_sha256' "$WM_S3_OVERRIDE")"; nbytes="$(jq -r '.required_each_nbytes' "$WM_S3_OVERRIDE")"
+          for f in inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin; do test "$(stat -c%s "$f")" = "$nbytes"; test "$(sha256sum "$f" | awk '{print $1}')" = "$expected"; done
+          cmp -s inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin
+          get_artifact 10130241439 'sha256:3325bab0faa821c5ca3b13b4cd64d3d58c323e56a6f3e44952be84bfbc477156' inputs/expim
+
+      - name: Download exact frozen BOSS z3 operators
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/exp073w_boss; base='https://fbeutler.github.io/hub'
+          curl --fail --location --retry 3 -sS -o external/exp073w_boss/W_NGC_z3.gz "$base/W_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -sS -o external/exp073w_boss/W_SGC_z3.gz "$base/W_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -sS -o external/exp073w_boss/M_NGC_z3.gz "$base/M_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          curl --fail --location --retry 3 -sS -o external/exp073w_boss/M_SGC_z3.gz "$base/M_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          for f in external/exp073w_boss/*.gz; do gzip -t "$f"; gzip -dc "$f" > "${f%.gz}"; done
+          echo 'a308dc562d1a7224cefcf91d32580877929e0daa33806517e0d2d53710236827  external/exp073w_boss/W_NGC_z3' | sha256sum -c -
+          echo '2a542a2d48f3e8c8299f58a885d5273238e4ade32c0f0de020d8b9f23afe7759  external/exp073w_boss/W_SGC_z3' | sha256sum -c -
+          echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_NGC_z3' | sha256sum -c -
+          echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_SGC_z3' | sha256sum -c -
+
+      - name: Execute response-blind request-plan audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python ci/recovered_exp073jl_response_blind_request_plan_audit_v0_1.py \
+            --ir-script ci/exp073ir_article3_real_layerb_common_response_v0_1.py \
+            --parent-root inputs/parent \
+            --parent-authority docs/dsir4/authority/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_PASS_V0_1.json \
+            --manifest "$MANIFEST" \
+            --angular-root inputs/angular \
+            --expim-root inputs/expim \
+            --boss-root external/exp073w_boss \
+            --source external/des_nz/source.fits \
+            --lens external/des_nz/lens.fits \
+            --camb-root external/camb \
+            --expz2-script ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py \
+            --exp073iq-script ci/exp073iq_article3_real_layera_support_v0_1.py \
+            --out artifacts/request_plan.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/request_plan.json'))
+          assert d['classification']=='RESPONSE_BLIND_REQUEST_PLAN_AUDITED_PLUS_0_PLUS_0'
+          assert d['scientific_response_read'] is False and d['class_solver_invoked'] is False
+          assert d['scientific_authority_created'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False
+          assert d['parent_retained_count']==107 and d['des']['retained_rows']==53 and d['boss']['retained_rows']==54
+          assert d['boss']['gl64_z_count']==64 and d['boss']['gl128_z_count_fine_only']==128
+          assert d['execution_shape_if_recovered_one_live']['total_solver_constructions']==8
+          assert d['execution_shape_if_recovered_one_live']['max_live_instances']==1
+          PY
+
+      - name: Upload response-blind request-plan result
+        uses: actions/upload-artifact@v4
+        with:
+          name: recovered-exp073jl-response-blind-request-plan-audit
+          path: artifacts/request_plan.json
+          if-no-files-found: error
+          retention-days: 90
