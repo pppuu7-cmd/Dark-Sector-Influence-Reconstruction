@@ -21,7 +21,7 @@ def load_module(path):
 def sha(b): return hashlib.sha256(b).hexdigest()
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--lattice',choices=sorted(EXPECTED),required=True); ap.add_argument('--jj-script',required=True); ap.add_argument('--out-dir',required=True); a=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument('--lattice',choices=sorted(EXPECTED),required=True); ap.add_argument('--replica',type=int,choices=(1,2,3,4),required=True); ap.add_argument('--jj-script',required=True); ap.add_argument('--out-dir',required=True); a=ap.parse_args()
     e=EXPECTED[a.lattice]; jj=load_module(a.jj_script)
     frozen=(jj.KMIN,jj.KMAX,jj.TARGET_MIN,jj.TARGET_MAX)
     if frozen!=(KMIN,KMAX,TARGET_MIN,TARGET_MAX): raise SystemExit('JJ geometry constants mismatch')
@@ -33,7 +33,6 @@ def main():
     if float(nodes[nlo])!=KMIN or float(nodes[nlo+e['base_n']-1])!=KMAX: raise SystemExit('base endpoint mismatch')
     b=nodes.tobytes(); h=sha(b); words=nodes.view('<u8')
     text=''.join(f'{int(x):016x}\n' for x in words)
-    # Round-trip the lossless uint64 representation before writing any receipt.
     parsed=np.asarray([int(x,16) for x in text.splitlines()],dtype='<u8').view('<f8')
     if not np.array_equal(parsed,nodes) or parsed.tobytes()!=b: raise SystemExit('u64 roundtrip mismatch')
     out=Path(a.out_dir); out.mkdir(parents=True,exist_ok=True)
@@ -41,7 +40,7 @@ def main():
     cls='CANONICAL_ANCHOR_MATCH_PLUS_0_PLUS_0' if h==e['sha256'] else 'HOST_GEOMETRY_VARIANT_PLUS_0_PLUS_0'
     d={
       'schema':'EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICE_REPLICA_RESULT_V0_1',
-      'experiment':'Exp073JT','lattice':a.lattice,'classification':cls,'effect':'+0/+0',
+      'experiment':'Exp073JT','lattice':a.lattice,'replica':a.replica,'classification':cls,'effect':'+0/+0',
       'base_n':e['base_n'],'guard_counts':[nlo,nhi],'requested_node_count':len(nodes),
       'ratio_hex':float(r).hex(),'node_payload_sha256':h,'required_authority_sha256':e['sha256'],
       'u64hex_sha256':sha(text.encode()),'u64hex_line_count':len(words),
@@ -50,7 +49,7 @@ def main():
       'target_min':TARGET_MIN,'target_max':TARGET_MAX,
       'scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
       'article3_repository_readiness_percent':68,'funnel_freeze_readiness_percent':67,
-      'token':('PASS_EXP073JT_' if cls.startswith('CANONICAL_ANCHOR') else 'VARIANT_EXP073JT_')+a.lattice.upper(),
+      'token':('PASS_EXP073JT_' if cls.startswith('CANONICAL_ANCHOR') else 'VARIANT_EXP073JT_')+a.lattice.upper()+f'_R{a.replica}',
     }
     (out/'result.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
     print(d['token']); print(json.dumps(d,sort_keys=True)); return 0
