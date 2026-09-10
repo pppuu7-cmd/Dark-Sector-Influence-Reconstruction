@@ -1,0 +1,68 @@
+{
+  "schema": "EXP073JI_ARTICLE3_LAYERB_GEOMETRY_DERIVED_GUARD_NODE_AUTHORITY_V0_1",
+  "experiment": "Exp073JI",
+  "classification": "GUARD_NODE_FULL_SUPPORT_FEASIBLE_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "frozen_parent_status": "NUMERICALLY_UNRESOLVED_EXP073IR",
+  "run_id": 34488466425,
+  "job_id": 102908710275,
+  "head_sha": "0922a0a3c05015f4f9610ce2eca324cfbbc46483",
+  "artifact_id": 10156878354,
+  "artifact_zip_sha256": "f8492ca04ff3b159ffe28003d28c3756e428e9851f4a3af56e6f343666d1b0de",
+  "artifact_result_json_sha256": "c076af1fd5207d69c3fdc00f944ca2099aa4a4e82e31d0d0ce2877f3b679310a",
+  "artifact_capacity_patch_json_sha256": "c7d12d091c7112649e8273f567a17b10d89bd78ef2346aed1d429ac1c9a894e7",
+  "artifact_verified_independently": true,
+  "raw_token": "PASS_EXP073JI_GUARD_NODE_FULL_SUPPORT_FEASIBLE_V0_1",
+  "architecture": "GEOMETRY_DERIVED_GUARDED_SHARED_PHYSICAL_K_CUBIC_CENTERED_LN_K_V0_1",
+  "geometry": {
+    "total_target_evaluations": 205348,
+    "min_target_k": 0.00033800000000000003,
+    "max_target_k": 0.06664596609379447,
+    "stream_sha256": "79bae6f3015ccf524402d7f0f357070a903126bfa8d3bd3f4cac5902afef093a",
+    "base_node_count": 512,
+    "base_k_min": 0.0001,
+    "base_k_max": 0.06664762008318016,
+    "base_ratio_binary64": 1.012805374654349,
+    "lower_guard_count": 0,
+    "upper_guard_count": 1,
+    "extended_node_count": 513,
+    "extended_k_min": 0.0001,
+    "extended_k_max": 0.067501067828166,
+    "base_lattice_preserved_bitwise": true
+  },
+  "convergence": {
+    "maximum_relative_component_difference": 0.0,
+    "finite_nonzero_status_changed": false,
+    "row_label_changed": false,
+    "boss_dense_z_disagreement": false,
+    "pass": true,
+    "relative_tolerance": 0.001
+  },
+  "response_engine_audit": {
+    "10": {
+      "response_calls": 441,
+      "target_evaluations": 83666,
+      "unsupported_target_evaluations": 0,
+      "max_requested_node_coordinate_rel_mismatch": 1.6491595171051063e-16
+    },
+    "20": {
+      "response_calls": 569,
+      "target_evaluations": 121682,
+      "unsupported_target_evaluations": 0,
+      "max_requested_node_coordinate_rel_mismatch": 1.6491595171051063e-16
+    }
+  },
+  "layer_b_accounting": {
+    "invalid_row_count": 0,
+    "invalid_row_fraction": 0.0,
+    "retained_after_layer_b": 107,
+    "minimum_retained": 15,
+    "threshold_inclusive": 0.05
+  },
+  "inner_status_for_accounting_only": "PASS_PHYSICAL_SUPPORT_ARTICLE3",
+  "inner_covariance_authorization_ignored": true,
+  "interpretation": "A single response-blind upper guard node, derived solely from the inherited target geometry, removes all 3202 JH centered-cubic stencil boundary failures while preserving every original N=512 shared-grid node bit-for-bit. The full inherited 107-row atomic support then has zero unsupported evaluations, zero invalid rows, 107 retained rows, and exact kpd10-vs-kpd20 equality at every evaluated response component. This validates the guarded shared-grid architecture as full-support feasible, but does not yet establish absolute interpolation accuracy throughout the support. The inner parent script's covariance-authorization field is explicitly ignored because JI is support-only and cannot retroactively PASS Exp073IR.",
+  "frozen_science_unchanged": true
+}
