@@ -1,0 +1,6 @@
+Exp073IT launch binding v0.1
+prereg_commit=a46d3d8d04d3e94044e60a133f4583c7aa8ff2df
+workflow_commit=4b3fbda81d220f214d0ba1f0324087ab09f197bf
+pinned_class_iv=ac627d54e9ce196a08878d1ba33999819925d19c
+perturbations_blob=92a48331658c5941ed4eb43b0e98ee78e39b8385
+classification=SUPPORT_PLUS_0_PLUS_0
