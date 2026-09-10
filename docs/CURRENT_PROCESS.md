@@ -4,40 +4,35 @@ Updated: 2026-09-10. Scope: **DSIR only**; RTK/RQIR excluded.
 
 ## Preserved scientific authority
 - Exp073IR remains `NUMERICALLY_UNRESOLVED_EXP073IR`, native-grid max `0.9998247463807295`; retained 107; covariance restriction unauthorized.
-- Exp073JI full-support feasibility remains support-only; Exp073JJ/JK remain support-only NOT_CONVERGED at `0.037280144773915974` / `0.016330535730270664`.
+- Exp073JI remains support-only feasible; Exp073JJ/JK remain support-only NOT_CONVERGED at `0.037280144773915974` / `0.016330535730270664`.
 - Wm_S3 remains unopened. Frozen `REL_TOL=1e-3`, `h=1e-4`, masks/domain/traversal and anti-rescue rules unchanged.
-- Exp073JP separately retains validated support-only `PREDICTION_ARTIFACT_ADMITTED_PLUS_0_PLUS_0` authority at commit `de45b113ac34dcec30de29d6d583a1caad89fbb2`; it creates no scientific model PASS or Wm_S3 authority. Overall funnel readiness is 67%; Article III readiness remains 68%.
+- Exp073JP separately retains validated support-only `PREDICTION_ARTIFACT_ADMITTED_PLUS_0_PLUS_0`; no scientific model PASS/Wm_S3 authority.
 
-## Preserved JO v0.2 exact PASS receipts
-- `history_slot10`: run `34506027292`, artifact `10164136352`, ZIP SHA256 `0a06f375ba59f4da33172d3d9f742af7b29c82263c600c2e7696fd6676af41cc`.
-- `cache_roundtrip_slot10`: run `34506027292`, artifact `10164156389`, ZIP SHA256 `5facd22fbf6edca62b0ff37e7457d411d232525aeead20738de8cb68c9bca735`.
+## Preserved JO receipts
+JO v0.2 exact PASS: `history_slot10` artifact `10164136352`, ZIP SHA256 `0a06f375ba59f4da33172d3d9f742af7b29c82263c600c2e7696fd6676af41cc`; `cache_roundtrip_slot10` artifact `10164156389`, ZIP SHA256 `5facd22fbf6edca62b0ff37e7457d411d232525aeead20738de8cb68c9bca735`.
 
-## JO v0.3 consumed infrastructure state
-Run `34512184648`, frozen head `f82bb38b5ed4f9de45be9b8ce2bdae10d9040d52`.
-- original `slot20_after_history` job `102988758987`: external runner shutdown during exact numerical phase, exit 137, no result/artifact -> `INVALID_INFRA_PLUS_0_PLUS_0`.
-- original `slot20_fresh_tail` job `102988759155`: external runner shutdown during exact numerical phase, exit 143, no result/artifact -> `INVALID_INFRA_PLUS_0_PLUS_0`.
-- targeted `slot20_fresh_tail` recovery job `103005530198`: all frozen guards/build passed, then hosted shutdown/cancellation during exact numerical phase, no artifact -> `INVALID_INFRA_PLUS_0_PLUS_0`.
-- targeted `slot20_after_history` recovery job `103005532859`: all frozen guards/build passed, exact phase killed exit 137 under hosted shutdown, no artifact -> `INVALID_INFRA_PLUS_0_PLUS_0`.
-No exact-history negative and no scientific inference is authorized.
+## Newly consumed infrastructure state
+JO v0.3 run `34512184648`, frozen head `f82bb38b5ed4f9de45be9b8ce2bdae10d9040d52`: third required fresh-tail job `103026063803` passed frozen guards/dependencies/exact pinned CLASS-IV build, then received hosted-runner shutdown during the exact numerical phase; upload skipped, no artifact -> `INVALID_INFRA_PLUS_0_PLUS_0`. Repeating the same monolithic 4097-node hosted phase is now prospectively forbidden.
+
+JO v0.4 first launch run `34529306755`, head `fcc76f00e9a6f3b95f65ac5bd3b36aba9d18c8d6`, failed in static-equivalence before any shard because numpy was not installed -> infrastructure/software `+0/+0`. Minimal dependency-order repair only at commit `29be760cf0a78c99b19fd887fc8a4a7dda5a2c31`.
 
 ## Current authoritative process
-A targeted rerun request for only failed fresh-tail job `103005530198` was issued only after live Actions showed 0 queued / 0 in-progress DSIR runs. GitHub matrix rerun semantics unexpectedly recreated both matrix siblings; this is not a competing DSIR control plane.
-- workflow/run ID: `34512184648`;
-- current required job ID: `103026063803` (`phase (slot20_fresh_tail)`);
-- branch/frozen head: `main / f82bb38b5ed4f9de45be9b8ce2bdae10d9040d52`;
-- current state: IN_PROGRESS in `Execute exact frozen slot20 phase`; setup, checkout, frozen v0.3 contract/identity guards, dependency stack, and exact pinned capacity-patched CLASS-IV build are SUCCESS;
-- runner ownership: GitHub-hosted `ubuntu-24.04`; home/self-hosted ownership none;
-- checkpoint namespace reserved for later JL successor: `checkpoints/exp073jo-jl-response-v0-1`;
-- last durable scientific checkpoint: none required for this support-only phase receipt;
-- unintended rerun sibling job `103026065923` (`slot20_after_history`) is terminal infrastructure failure: all frozen guards/build passed, exact numerical phase killed exit 137 with hosted-runner shutdown, no artifact -> `INVALID_INFRA_PLUS_0_PLUS_0`.
-
-## Exact transition rules
-- On valid fresh-tail PASS: inspect raw log and independently verify phase artifact ZIP/JSON/response/capacity hashes; preserve the receipt; then recover only still-missing unchanged `slot20_after_history` without duplicating an active process.
-- On another hosted shutdown/kill before artifact: record `+0/+0`; do not blindly rerun the same 4097-node hosted architecture again. Prospectively redesign execution/resource architecture only, while preserving exact JO arithmetic/history semantics and adding a fail-closed equivalence/static guard.
-- On exact assertion FAIL: classify strictly under frozen JO v0.3 contract; checkpoint replay remains forbidden.
-
-## Recovery hardening retained
-Prepared JL recovery must retain source-bundle guard commit `be1687db88b35951cf3e813c64dbdd017af2802e`, wrapper blob `aa4c544c1e3e81137010fcdbd34f20567e1eb894`, and exact recovered topology slot10=441 calls/83666 targets, slot20=569 calls/121682 targets, unsupported=0. Heavy JL recovery remains forbidden until an independently verified JO aggregate PASS authority exists.
+- experiment/gate: Exp073JO v0.4 per-model sharded execution/resource repair;
+- prereg commit: `e509c0d8d9557dd0f945ae575c2229fa4ab7e3a3`;
+- helper commit/blob: `0b27e9496e49882053ce86a8430fed9b3bcacc3a / 9afb076a0744dd30d4e45d4090d16ef23cc501fa`;
+- workflow/run ID: `34529375485`;
+- current known job ID: `103046059313` (`static-equivalence`);
+- branch/head: `main / 29be760cf0a78c99b19fd887fc8a4a7dda5a2c31`;
+- start: 2026-09-10T20:57:03Z;
+- state at last inspection: `IN_PROGRESS`; checkout SUCCESS, repaired static/algebra equivalence guard executing;
+- expected static token: `PASS_EXP073JO_V04_STATIC_RECONSTRUCTION_EQUIVALENCE`;
+- on static PASS: launch matrix already encoded by GitHub dependency: 2 history phases x 4 exact model shards; each successful shard is an independent durable artifact unit;
+- on shard success: aggregate reconstructs the frozen `(4,2)` response algebra and requires exact array/finite/positive equality;
+- on exact aggregate PASS: independently verify artifacts/hashes, admit support-only JO aggregate authority, then permit exactly one checkpointed JL recovery;
+- on exact aggregate FAIL with valid provenance: record valid negative JO result; no scientific rescue;
+- on infrastructure FAIL: diagnose first causal defect and rerun only missing/failed shard where possible;
+- runner ownership: GitHub-hosted `ubuntu-24.04`; home/self-hosted none;
+- later JL checkpoint namespace remains `checkpoints/exp073jo-jl-response-v0-1` but JL is BLOCKED pending JO aggregate PASS.
 
 ## Frozen post-JL branch
 Valid recovered JL CONVERGED -> only Exp073JN. Valid recovered JL NOT_CONVERGED -> only Exp073JM. Infrastructure/process invalid -> neither.
