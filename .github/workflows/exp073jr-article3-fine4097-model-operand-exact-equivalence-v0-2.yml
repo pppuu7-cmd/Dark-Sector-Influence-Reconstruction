@@ -21,6 +21,7 @@ env:
   PREREG_BLOB: 'edaffcf8cd07817cba2bfd48791e752fcf02c5ab'
   HELPER_BLOB: '47e53f6ce429b94df25c2981dc81392c6834c957'
   COARSE_RECEIPT_BLOB: 'ee6526bd80daeac7990b2244b8ec2c8061a534c4'
+  DECOMP_BLOB: 'ef6abdb3df51091b3ba99d4f3ab07334f14a21fa'
 
 jobs:
   model:
@@ -39,7 +40,7 @@ jobs:
           test "$(git hash-object docs/dsir4/prereg/EXP073JR_ARTICLE3_FINE4097_MODEL_OPERAND_EXACT_EQUIVALENCE_V0_2.md)" = "$PREREG_BLOB"
           test "$(git hash-object ci/exp073jr_article3_fine4097_model_operand_exact_equivalence_v0_2.py)" = "$HELPER_BLOB"
           test "$(git hash-object docs/dsir4/authority/EXP073JR_COARSE_2049_SEQUENTIAL_EXACT_EQUIVALENCE_RECEIPT_V0_1.json)" = "$COARSE_RECEIPT_BLOB"
-          test "$(git hash-object docs/dsir4/methods/LAYERB_JR_MODEL_OPERAND_EQUIVALENCE_DECOMPOSITION_V0_1.md)" = '$(git hash-object docs/dsir4/methods/LAYERB_JR_MODEL_OPERAND_EQUIVALENCE_DECOMPOSITION_V0_1.md)'
+          test "$(git hash-object docs/dsir4/methods/LAYERB_JR_MODEL_OPERAND_EQUIVALENCE_DECOMPOSITION_V0_1.md)" = "$DECOMP_BLOB"
           test "$(git hash-object docs/dsir4/prereg/EXP073JL_ARTICLE3_LAYERB_COMMON_GRID_THIRD_REFINEMENT_CONVERGENCE_V0_1.md)" = '0c143dd5b3c1c38b24fbb5b529d03ff9a2afdc58'
           test "$(git hash-object ci/exp073jl_article3_layerb_common_grid_third_refinement_convergence_v0_1.py)" = '91723736fedd090fa1c81b1fcff4f1f3601d2ce2'
           python - <<'PY'
