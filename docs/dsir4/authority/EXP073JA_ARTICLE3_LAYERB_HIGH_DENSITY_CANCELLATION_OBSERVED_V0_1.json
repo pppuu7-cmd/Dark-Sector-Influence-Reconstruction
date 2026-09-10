@@ -1,0 +1,30 @@
+{
+  "schema": "EXP073JA_ARTICLE3_LAYERB_HIGH_DENSITY_CANCELLATION_AUTHORITY_V0_1",
+  "experiment": "Exp073JA",
+  "classification": "HIGH_DENSITY_CANCELLATION_OBSERVED_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "run_id": 34457952958,
+  "job_id": 102808675330,
+  "head_sha": "b510d33339530f7d0643e158ff0bf3200f869ee1",
+  "artifact_id": 10144467663,
+  "artifact_zip_sha256": "5cec1bc0a6d3c05b37fab53c4ad5f76d7ea079bf81066eed7145a31bfa8a71ed",
+  "raw_token": "PASS_EXP073JA_HIGH_DENSITY_CANCELLATION_OBSERVED_V0_1",
+  "frozen_parent_status": "NUMERICALLY_UNRESOLVED_EXP073IR",
+  "frozen_parent_rel_tol": 0.001,
+  "h": 0.0001,
+  "k_per_decade_ladder": [80.0, 160.0, 320.0, 640.0],
+  "alpha_left_adjacent_relative_differences": {
+    "80_to_160": 0.13578796082083944,
+    "160_to_320": 0.0628310090978744,
+    "320_to_640": 0.030272882346383527
+  },
+  "beta_symmetric_adjacent_relative_differences": {
+    "80_to_160": 0.6867141285588996,
+    "160_to_320": 0.5809273304446889,
+    "320_to_640": 0.42559958697775674
+  },
+  "interpretation": "Alpha response shows decreasing adjacent-density change, while beta remains strongly resolution-sensitive. In both probes a comparatively stable endpoint-value term is nearly cancelled by a large model-dependent native-grid term. This motivates a support-only common-physical-bracket transport diagnostic; it does not alter Exp073IR or authorize covariance restriction.",
+  "validated_from": "raw job log plus independently downloaded artifact ZIP with exact SHA256 match"
+}
