@@ -2,23 +2,25 @@
 
 Updated: 2026-09-10. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-10_ARTICLE3_JH_BOUNDARY_LIMITED_JI_GUARD_RUNNING_V74.md`, creation commit `1177cdbdfdbec8a48a38dbbdcfa76a1f417eca1c`. Earlier notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-10_ARTICLE3_JI_FEASIBLE_JJ_RESOLUTION_RUNNING_V75.md`, creation commit `831c1ee06e286241689a080cfda120676757c499`. Earlier notes remain immutable history.
 
 ## Preserved authority
 All prior admitted DSIR scientific authority remains unchanged. Repaired Exp073IR run/job `34432102035 / 102729564736` remains `NUMERICALLY_UNRESOLVED_EXP073IR`: original retained 107 coordinate rows, atomic native production-vs-dense maximum `0.9998247463807295 > REL_TOL=1e-3`; covariance restriction unauthorized. Historical Exp073CM remains resource/performance `+0/+0`; Wm_S3 remains unopened.
 
-## Exp073JH validated boundary-limited support result
-Exp073JH run/job `34487047656 / 102903883547`, head `0834a45f5e767d411ce694d081069403ea6fd908`, is validated support-only `FULL_SUPPORT_GRID_INVARIANT_NOT_FEASIBLE_PLUS_0_PLUS_0`. Artifact `10156346630`; independently verified ZIP SHA256 `c89fbebde6e9a635614cdebe7a82b088d3224183d82c6361e8133c8923b04edd`; result JSON SHA256 `cb88bd2570b668ea751a4536392e3d8f80349db707f5efe90f24bda360222ed6`.
+## Exp073JI validated full-support feasibility
+Exp073JI run/job `34488466425 / 102908710275`, head `0922a0a3c05015f4f9610ce2eca324cfbbc46483`, is validated support-only `GUARD_NODE_FULL_SUPPORT_FEASIBLE_PLUS_0_PLUS_0`. Artifact `10156878354`; independently verified ZIP SHA256 `f8492ca04ff3b159ffe28003d28c3756e428e9851f4a3af56e6f343666d1b0de`; result JSON SHA256 `c076af1fd5207d69c3fdc00f944ca2099aa4a4e82e31d0d0ce2877f3b679310a`. Durable authority commit `bba2701467e8fce6bf41369c23e64be4d16f78f9`.
 
-JH shared-grid convergence is exact wherever the centered-cubic stencil exists: kpd10-vs20 maximum relative component difference `0.0`, no finite/nonzero or row-label change and no BOSS dense-z disagreement. Non-feasibility is solely the finite evaluation lattice: 3202 inherited target evaluations are unsupported, causing NaNs and therefore all 107 rows to fail accounting. Durable JH authority commit `33e294932fd91fcf245db97f48b37a835e9c38ed`. Independent pre-terminal static boundary audit commit `29f081089bd6ce174285446a266dbc59baeed15e` permits only same-ratio response-blind guard-node repair.
+JI response-blind geometry requires exactly one upper same-ratio guard node: N=512 -> 513 nodes, with all original nodes preserved bitwise. All inherited target evaluations are supported; kpd10-vs20 maximum relative component difference is `0.0`; Layer-B invalid-row fraction is `0.0`; all 107 rows remain. JI remains +0/+0 and does not authorize covariance/Wm_S3.
 
-## Current process — Exp073JI
-Exp073JI prospectively tests that repair. Phase A traverses the unchanged Exp073IR atom geometry with discarded dummy positive responses, derives the minimum lower/upper whole-ratio guard counts solely from target geometry, proves stencil coverage and bitwise preservation of all original 512 JH nodes, with total node count capped at 640. Phase B reruns the unchanged full 107-row atomic accounting with the same centered-cubic rule, h=1e-4, kpd10/20, judged domain and REL_TOL=1e-3.
+## Current process — Exp073JJ
+Exp073JJ is the prospectively frozen independent shared-grid resolution-refinement convergence test. Preregistration commit `aaf5ccb8860b95310bb19450cf5af533383e897b`; implementation `f9b4ddf8fd778098c9874469ea328c6b93a56149`; workflow/launch head `f47683ebda4f00e536c2e630930d3e3b76fed80f`.
 
-Preregistration commit `e11bfc91fda03303e12cf038b7cb19ca3c003acc`; implementation `99d38309e709eafb5cf2450e9f898ef2f1015dea`; launch head `0922a0a3c05015f4f9610ce2eca324cfbbc46483`. Workflow/run/job `exp073ji-article3-layerb-geometry-derived-guard-node-feasibility-v0-1 / 34488466425 / 102908710275`; last observed state IN_PROGRESS.
+JJ freezes native CLASS `k_per_decade_for_pk=20` for both suites while comparing guarded shared requested lattices: coarse 513 nodes (base N=512 + one upper guard) versus fine 1025 nodes (base N=1024 + one upper guard). The centered-cubic ln(k) interpolation, h=1e-4, REL_TOL=1e-3, full inherited 107-row support, atom traversal and judged physical domain remain unchanged.
 
-JI is support-only `+0/+0`. Feasibility requires zero unsupported target evaluations, unchanged status/labels, atomic kpd10-vs20 max relative difference `<1e-3`, Layer-B invalid-row fraction `<=0.05` and retained dimension `>=15`. Even a feasibility PASS only permits a separately prospectively frozen absolute-accuracy/calibration or scientific Layer-B convergence gate; it does not retroactively PASS Exp073IR or authorize covariance/Wm_S3.
+Workflow/run/job `exp073jj-article3-layerb-common-grid-resolution-refinement-convergence-v0-1 / 34492300395 / 102921844345`; last observed state IN_PROGRESS on GitHub-hosted `ubuntu-24.04`. Prospective contract/JI authority enforcement passed; frozen numerical/build stack installation was in progress. Self-hosted ownership none; checkpoint N/A.
 
-Exact next action: terminal-consume `34488466425`, verify guard geometry/provenance first, then full-support convergence/accounting and independent artifact digest.
+JJ is support-only +0/+0 in every valid outcome. A convergence PASS only permits a separately prospectively frozen scientific Layer-B numerical rerun; it does not retroactively PASS Exp073IR or authorize covariance/Wm_S3.
+
+Exact next action: terminal-consume `34492300395`, inspect raw logs, independently verify artifact ZIP/result/capacity hashes, classify against the frozen JJ contract, then launch the next permitted nonduplicating gate in the same iteration when possible.
 
 Global frozen boundaries remain unchanged: `0.295<=z<=2.33`; judged `0<k<=0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid<=0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; `REL_TOL=1e-3`; `h=1e-4`; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging/effective-coordinate/fiducial-P rescue.
