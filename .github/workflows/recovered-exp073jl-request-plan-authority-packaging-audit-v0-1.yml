@@ -1,0 +1,126 @@
+name: recovered-exp073jl-request-plan-authority-packaging-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/recovered-exp073jl-request-plan-authority-packaging-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: recovered-exp073jl-request-plan-authority-packaging-audit-v0-1
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  AUTHORITY: docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json
+  AUTHORITY_BLOB: '5992faa10b6d25d1503b287c19456fb36756caa4'
+  SOURCE_ARTIFACT_ID: '10177436665'
+  SOURCE_ZIP_SHA256: 'eb92cd06a8d17d232450d1f8037efec9752a4a2204f38607acff4cc4c523d73b'
+  SOURCE_JSON_SHA256: 'b3c9d9be1a4a3f3b2800fd8445a0023650c4ad084df36a538cbb85f9e723aa92'
+
+jobs:
+  packaging-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enforce repaired authority identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUTHORITY")" = "$AUTHORITY_BLOB"
+
+      - name: Download and verify original response-blind artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p source artifacts
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT_ID}/zip" > source/source.zip
+          test "$(sha256sum source/source.zip | awk '{print $1}')" = "$SOURCE_ZIP_SHA256"
+          unzip -q source/source.zip -d source/unpacked
+          test "$(find source/unpacked -type f | wc -l)" = 1
+          test -f source/unpacked/request_plan.json
+          test "$(sha256sum source/unpacked/request_plan.json | awk '{print $1}')" = "$SOURCE_JSON_SHA256"
+
+      - name: Prove V0.2 is a lossless authority transcription
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, hashlib
+          from pathlib import Path
+
+          src=json.load(open('source/unpacked/request_plan.json'))
+          auth=json.load(open('docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json'))
+
+          exact_keys=[
+              'Wm_S3_opened','article3_repository_readiness_percent','boss',
+              'class_solver_invoked','classification','coarse_common_plan_sha256',
+              'covariance_restriction_authorized','des','effect',
+              'execution_shape_if_recovered_one_live','fine_plan_with_gl128_sha256',
+              'funnel_freeze_readiness_percent','parent_full_order_sha256',
+              'parent_retained_count','parent_retained_id_sha256',
+              'scientific_authority_created','scientific_response_read','token'
+          ]
+          mismatches={k:(src.get(k),auth.get(k)) for k in exact_keys if src.get(k)!=auth.get(k)}
+          assert not mismatches, mismatches
+
+          assert auth['schema']=='RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_AUTHORITY_V0_2'
+          assert auth['artifact_id']==10177436665
+          assert auth['run_id']==34541423516
+          assert auth['job_id']==103084699643
+          assert auth['artifact_verified_independently'] is True
+          assert auth['artifact_zip_sha256']=='eb92cd06a8d17d232450d1f8037efec9752a4a2204f38607acff4cc4c523d73b'
+          assert auth['result_json_sha256']=='b3c9d9be1a4a3f3b2800fd8445a0023650c4ad084df36a538cbb85f9e723aa92'
+          assert auth['boss']=={
+              'gl128_z_count_fine_only':128,
+              'gl64_z_count':64,
+              'retained_rows':54,
+              'target_scalar_count_per_request':297,
+          }
+          assert auth['des']['retained_rows']==53
+          assert auth['execution_shape_if_recovered_one_live']['total_solver_constructions']==8
+          assert auth['execution_shape_if_recovered_one_live']['max_live_instances']==1
+          assert auth['execution_shape_if_recovered_one_live']['total_get_transfer_calls_all_roles']==4040
+
+          result={
+              'schema':'RECOVERED_EXP073JL_REQUEST_PLAN_AUTHORITY_PACKAGING_AUDIT_RESULT_V0_1',
+              'classification':'REQUEST_PLAN_AUTHORITY_V0_2_LOSSLESS_TRANSCRIPTION_PASS_PLUS_0_PLUS_0',
+              'effect':'+0/+0',
+              'scientific_response_read':False,
+              'class_solver_invoked':False,
+              'scientific_authority_created':False,
+              'covariance_restriction_authorized':False,
+              'Wm_S3_opened':False,
+              'source_artifact_id':10177436665,
+              'source_artifact_zip_sha256':'eb92cd06a8d17d232450d1f8037efec9752a4a2204f38607acff4cc4c523d73b',
+              'source_result_json_sha256':'b3c9d9be1a4a3f3b2800fd8445a0023650c4ad084df36a538cbb85f9e723aa92',
+              'authority_git_blob':'5992faa10b6d25d1503b287c19456fb36756caa4',
+              'exact_compared_keys':exact_keys,
+              'exact_compared_key_count':len(exact_keys),
+              'boss_restored':True,
+              'boss_target_scalar_count_per_request':297,
+              'total_solver_constructions':8,
+              'max_live_instances':1,
+              'total_get_transfer_calls_all_roles':4040,
+              'article3_repository_readiness_percent':68,
+              'funnel_freeze_readiness_percent':67,
+              'token':'REQUEST_PLAN_AUTHORITY_V0_2_LOSSLESS_TRANSCRIPTION_PASS_PLUS_0_PLUS_0'
+          }
+          Path('artifacts/packaging_audit.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(result['token'])
+          PY
+
+      - name: Upload packaging audit result
+        uses: actions/upload-artifact@v4
+        with:
+          name: recovered-exp073jl-request-plan-authority-packaging-audit
+          path: artifacts/packaging_audit.json
+          if-no-files-found: error
+          retention-days: 90
