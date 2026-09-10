@@ -1,0 +1,192 @@
+name: exp073jo-article3-jl-durable-response-checkpoint-preflight-v0-2
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073jo-article3-jl-durable-response-checkpoint-preflight-v0-2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: exp073jo-article3-jl-durable-response-checkpoint-preflight-v0-2
+  cancel-in-progress: false
+
+jobs:
+  part:
+    strategy:
+      fail-fast: false
+      matrix:
+        part: [history_slot10, history_slot20, cache_roundtrip_slot10]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      WRAPPER_BLOB_SHA: aa4c544c1e3e81137010fcdbd34f20567e1eb894
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Enforce frozen split contract and wrapper identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f docs/dsir4/prereg/EXP073JO_ARTICLE3_JL_DURABLE_RESPONSE_CHECKPOINT_RECOVERY_V0_1.md
+          test -f docs/dsir4/prereg/EXP073JO_ARTICLE3_JL_CHECKPOINT_PREFLIGHT_SPLIT_RECOVERY_V0_2.md
+          test -f docs/dsir4/prereg/EXP073JO_ARTICLE3_JL_CHECKPOINT_WRAPPER_IDENTITY_AMENDMENT_V0_1.md
+          test "$(git hash-object ci/exp073jo_article3_jl_durable_response_checkpoint_recovery_v0_1.py)" = "$WRAPPER_BLOB_SHA"
+          python -m py_compile ci/exp073jo_article3_jl_durable_response_checkpoint_recovery_v0_1.py ci/exp073jo_preflight_parts_v0_2.py ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py
+          python - <<'PY'
+          import pathlib
+          s=pathlib.Path('docs/dsir4/prereg/EXP073JO_ARTICLE3_JL_CHECKPOINT_PREFLIGHT_SPLIT_RECOVERY_V0_2.md').read_text()
+          for x in ['history_slot10','history_slot20','cache_roundtrip_slot10','aa4c544c1e3e81137010fcdbd34f20567e1eb894','REL_TOL=1e-3','h=1e-4']:
+              assert x in s, x
+          PY
+
+      - name: Install frozen numerical and build stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git
+          python -m pip install --upgrade pip wheel 'setuptools<76'
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy
+
+      - name: Checkout capacity-patch and build exact pinned CLASS-IV
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          git clone https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
+          grep -F '#define _MAX_NUMBER_OF_K_FILES_ 30' external/class_iv/include/perturbations.h >/dev/null
+          grep -F '#define _ARGUMENT_LENGTH_MAX_ 1024' external/class_iv/include/parser.h >/dev/null
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('external/class_iv/include/perturbations.h'); b=p.read_bytes(); s=b.decode(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; new='#define _MAX_NUMBER_OF_K_FILES_ 4608'; assert s.count(old)==1
+          pre=hashlib.sha256(b).hexdigest(); p.write_text(s.replace(old,new,1)); post=hashlib.sha256(p.read_bytes()).hexdigest()
+          q=Path('external/class_iv/include/parser.h'); qb=q.read_bytes(); qs=qb.decode(); qold='#define _ARGUMENT_LENGTH_MAX_ 1024'; qnew='#define _ARGUMENT_LENGTH_MAX_ 131072'; assert qs.count(qold)==1
+          qpre=hashlib.sha256(qb).hexdigest(); q.write_text(qs.replace(qold,qnew,1)); qpost=hashlib.sha256(q.read_bytes()).hexdigest()
+          rec={'schema':'EXP073JO_CLASSIV_INPUT_CAPACITY_PATCH_V0_2','source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','old_capacity':30,'new_capacity':4608,'replacement_count':1,'pre_sha256':pre,'post_sha256':post,'parser_old_argument_capacity':1024,'parser_new_argument_capacity':131072,'parser_replacement_count':1,'parser_pre_sha256':qpre,'parser_post_sha256':qpost}
+          Path('artifacts/capacity_patch.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; new="extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,new,1))
+          PY
+          make -C external/class_iv -j2 all
+
+      - name: Execute exact frozen preflight part
+        shell: bash
+        run: |
+          set -euo pipefail
+          python ci/exp073jo_preflight_parts_v0_2.py \
+            --part '${{ matrix.part }}' \
+            --wrapper-script ci/exp073jo_article3_jl_durable_response_checkpoint_recovery_v0_1.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --out artifacts/part_result.json
+          python - <<'PY'
+          import json,os
+          d=json.load(open('artifacts/part_result.json'))
+          part=os.environ['MATRIX_PART']
+          assert d['part']==part
+          assert d['effect']=='+0/+0'
+          assert d['scientific_authority_created'] is False and d['covariance_restriction_authorized'] is False
+          if part.startswith('history_'):
+              assert d['classification']=='HISTORY_INDEPENDENCE_PART_PASS_PLUS_0_PLUS_0'
+              assert d['exact_array_equal'] is True and d['exact_finite_pattern_equal'] is True and d['exact_positive_pattern_equal'] is True
+          else:
+              assert d['classification']=='CACHE_ROUNDTRIP_PART_PASS_PLUS_0_PLUS_0'
+              assert d['exact_response_bytes_equal'] is True and d['exact_audit_restoration'] is True
+          print(d['token'])
+          PY
+        env:
+          MATRIX_PART: ${{ matrix.part }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jo-preflight-part-${{ matrix.part }}-v0-2
+          path: |
+            artifacts/part_result.json
+            artifacts/capacity_patch.json
+          retention-days: 90
+
+  aggregate:
+    needs: part
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: exp073jo-preflight-part-*-v0-2
+          path: parts
+
+      - name: Aggregate exact part receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python - <<'PY'
+          import glob,hashlib,json,os,pathlib
+          paths=sorted(glob.glob('parts/*/part_result.json'))
+          if len(paths)!=3: raise SystemExit(f'expected 3 part results, got {paths}')
+          expected={'history_slot10','history_slot20','cache_roundtrip_slot10'}
+          got={}
+          for p in paths:
+              raw=pathlib.Path(p).read_bytes(); d=json.loads(raw)
+              part=d['part']
+              if part in got: raise SystemExit(f'duplicate part {part}')
+              if d.get('split_version')!='EXP073JO_SPLIT_EXACT_BUILD_PREFLIGHT_V0_2': raise SystemExit('split version mismatch')
+              if d.get('contract_id')!='EXP073JO_ARTICLE3_JL_DURABLE_RESPONSE_CHECKPOINT_RECOVERY_V0_1': raise SystemExit('contract mismatch')
+              if d.get('scientific_authority_created') is not False or d.get('covariance_restriction_authorized') is not False: raise SystemExit('authority leakage')
+              if part.startswith('history_'):
+                  if d.get('classification')!='HISTORY_INDEPENDENCE_PART_PASS_PLUS_0_PLUS_0' or not d.get('exact_array_equal') or not d.get('exact_finite_pattern_equal') or not d.get('exact_positive_pattern_equal'): raise SystemExit(f'history fail {part}')
+              elif part=='cache_roundtrip_slot10':
+                  if d.get('classification')!='CACHE_ROUNDTRIP_PART_PASS_PLUS_0_PLUS_0' or not d.get('exact_response_bytes_equal') or not d.get('exact_audit_restoration'): raise SystemExit('roundtrip fail')
+              else: raise SystemExit(f'unexpected part {part}')
+              got[part]={'json_sha256':hashlib.sha256(raw).hexdigest(),'result':d}
+          if set(got)!=expected: raise SystemExit(f'part set mismatch {set(got)}')
+          out={
+            'schema':'EXP073JO_ARTICLE3_JL_DURABLE_RESPONSE_CHECKPOINT_PREFLIGHT_RESULT_V0_2',
+            'experiment':'Exp073JO',
+            'split_version':'EXP073JO_SPLIT_EXACT_BUILD_PREFLIGHT_V0_2',
+            'contract_id':'EXP073JO_ARTICLE3_JL_DURABLE_RESPONSE_CHECKPOINT_RECOVERY_V0_1',
+            'classification':'DURABLE_RESPONSE_CHECKPOINT_PREFLIGHT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'scientific_authority_created':False,
+            'covariance_restriction_authorized':False,
+            'wrapper_blob_sha':'aa4c544c1e3e81137010fcdbd34f20567e1eb894',
+            'flush_every_new_calls':16,
+            'capacity':4608,
+            'parser_capacity':131072,
+            'native_kpd':20.0,
+            'h':1e-4,
+            'rel_tol':1e-3,
+            'workflow_head_sha':os.environ['GITHUB_SHA'],
+            'parts':got,
+            'token':'PASS_EXP073JO_DURABLE_RESPONSE_CHECKPOINT_PREFLIGHT_V0_2'
+          }
+          pathlib.Path('artifacts/exp073jo_preflight_result_v0_2.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jo-durable-response-checkpoint-preflight-v0-2
+          path: artifacts/exp073jo_preflight_result_v0_2.json
+          retention-days: 90
