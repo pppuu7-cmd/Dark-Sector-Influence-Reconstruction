@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  AUDIT_BLOB: 'cbd32bb2a20f9fdc10805819627b29aa52fa5f54'
+  AUDIT_BLOB: '9f5ca673545dbc88749091a50c94a567326a7cd9'
   HELPER_BLOB: '5f8475b961db20bef5f4b8a2eb7c99d9f7c722e2'
   PREREG_BLOB: 'a6ba32cb5b9ebe73bd6e3cd03a22d3f51f8aa2ca'
   JW_BLOB: '9af66950005a4c56e8f485358f85e834be017e16'
