@@ -1,0 +1,27 @@
+{
+  "schema": "EXP073JB_ARTICLE3_LAYERB_COMMON_BRACKET_TRANSPORT_AUTHORITY_V0_1",
+  "experiment": "Exp073JB",
+  "classification": "COMMON_BRACKET_TRANSPORT_OBSERVED_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "frozen_parent_status": "NUMERICALLY_UNRESOLVED_EXP073IR",
+  "frozen_parent_rel_tol": 0.001,
+  "h": 0.0001,
+  "run_id": 34463544046,
+  "job_id": 102826719366,
+  "head_sha": "1be9887d1d6cebc3d21879ec573ce77ad5ba12b2",
+  "artifact_id": 10146735382,
+  "artifact_zip_sha256": "974e08c04c82c052d216a0de95a19cc0345f8845735769dc725955629cc8f991",
+  "raw_token": "PASS_EXP073JB_COMMON_BRACKET_TRANSPORT_OBSERVED_V0_1",
+  "k_per_decade_ladder": [80.0, 160.0, 320.0, 640.0],
+  "observations": {
+    "alpha_common_adjacent_relative_differences": [0.137840524063642, 0.06371919421837689, 0.030687430736039467],
+    "alpha_native_adjacent_relative_differences": [0.13578796082083944, 0.0628310090978744, 0.030272882346383527],
+    "beta_common_adjacent_relative_differences": [0.1110926819783811, 0.04102242339585067, 0.0029800645293267063],
+    "beta_native_adjacent_relative_differences": [0.6867141285588996, 0.5809273304446889, 0.42559958697775674],
+    "interpretation": "At the beta probe, transporting perturbed models onto the reference model's physical bracket strongly suppresses the high-density resolution sensitivity, while alpha changes little. This supports model-dependent native-grid motion as a dominant beta instability mechanism. It does not authorize replacing the frozen Layer-B estimator."
+  },
+  "artifact_verified_independently": true,
+  "frozen_science_unchanged": true
+}
