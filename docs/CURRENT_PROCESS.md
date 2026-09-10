@@ -21,8 +21,10 @@ The failed job only was re-run through GitHub Actions job recovery; frozen workf
 - run ID: `34506027292`;
 - current job ID: `102985819424` (`part (history_slot20)`);
 - branch/head: `main / f13c827bf265e1329e7d0502f1da12e2fa723d07`;
-- state at dispatch: QUEUED;
-- runner ownership: GitHub-hosted when assigned; home/self-hosted ownership none;
+- state: IN_PROGRESS;
+- completed in current attempt: setup, checkout, frozen split contract/wrapper identity, frozen numerical/build stack;
+- current step: exact pinned capacity-patched CLASS-IV build;
+- runner ownership: GitHub-hosted; home/self-hosted ownership none;
 - expected token: `PASS_EXP073JO_HISTORY_SLOT20_EXACT_V0_2`;
 - checkpoint namespace reserved for later JL successor: `checkpoints/exp073jo-jl-response-v0-1`;
 - last durable scientific checkpoint: none required for this support-only control;
