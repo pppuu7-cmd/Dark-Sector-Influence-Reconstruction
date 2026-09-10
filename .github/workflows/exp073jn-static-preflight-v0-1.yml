@@ -1,0 +1,49 @@
+name: exp073jn-static-preflight-v0-1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073jn-static-preflight-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install frozen minimal static stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install 'numpy==1.26.4'
+      - name: Validate conditional JN architecture and science contract constants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile ci/exp073jn_article3_layerb_shared_grid_scientific_closure_rerun_v0_1.py ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py
+          test -f docs/dsir4/prereg/EXP073JN_ARTICLE3_LAYERB_SHARED_GRID_SCIENTIFIC_CLOSURE_RERUN_V0_1.md
+          PYTHONPATH=ci python - <<'PY'
+          import exp073jn_article3_layerb_shared_grid_scientific_closure_rerun_v0_1 as jn
+          import exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1 as jj
+          assert jn.H == 1e-4 and jn.REL_TOL == 1e-3
+          assert jn.NATIVE_KPD == 20.0
+          assert jn.CAPACITY == 4608 and jn.PARSER_CAPACITY == 131072
+          assert jn.JL_CONVERGED == 'COMMON_GRID_THIRD_REFINEMENT_CONVERGED_PLUS_0_PLUS_0'
+          assert jn.SCI_PASS == 'PASS_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_V0_1'
+          assert jn.NUM_UNRES == 'NUMERICALLY_UNRESOLVED_EXP073JN'
+          jj.CAPACITY = jn.CAPACITY
+          c, rc, lc, uc = jj.guarded_lattice(2048)
+          f, rf, lf, uf = jj.guarded_lattice(4096)
+          assert (lc, uc, len(c)) == (0, 1, 2049)
+          assert (lf, uf, len(f)) == (0, 1, 4097)
+          sc = ','.join(format(float(x), '.17g') for x in c)
+          sf = ','.join(format(float(x), '.17g') for x in f)
+          assert len(sc) < jn.PARSER_CAPACITY and len(sf) < jn.PARSER_CAPACITY
+          print('JN_PRODUCTION_SERIALIZED_CHARS', len(sc))
+          print('JN_DENSE_SERIALIZED_CHARS', len(sf))
+          print('PASS_EXP073JN_STATIC_PREFLIGHT_V0_1')
+          PY
