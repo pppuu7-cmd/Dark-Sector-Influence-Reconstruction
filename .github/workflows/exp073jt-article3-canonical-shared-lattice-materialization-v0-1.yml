@@ -1,0 +1,143 @@
+name: exp073jt-article3-canonical-shared-lattice-materialization-v0-1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073jt-article3-canonical-shared-lattice-materialization-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: exp073jt-article3-canonical-shared-lattice-materialization-v0-1
+  cancel-in-progress: false
+
+env:
+  PREREG_BLOB: '72e6a55d7414f4b1653d6428d531e0d6e097e258'
+  HELPER_BLOB: '8a9a6a3352125b140d3ba4c44bc6f70e371fce86'
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+  JR_COARSE_AUTH_BLOB: 'ee6526bd80daeac7990b2244b8ec2c8061a534c4'
+  JQ_FINE_AUTH_BLOB: 'a1c29c4ead5daee53a6fe82bc2b77a363a38b7a7'
+
+jobs:
+  replica:
+    strategy:
+      fail-fast: false
+      matrix:
+        lattice: [coarse, fine]
+        replica: [1, 2, 3, 4]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen Exp073JT identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICE_MATERIALIZATION_V0_1.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073jt_article3_canonical_shared_lattice_materialization_v0_1.py)" = "$HELPER_BLOB"
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          test "$(git hash-object docs/dsir4/authority/EXP073JR_COARSE_2049_SEQUENTIAL_EXACT_EQUIVALENCE_RECEIPT_V0_1.json)" = "$JR_COARSE_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/authority/EXP073JQ_ARTICLE3_SLOT20_SAME_RUN_HISTORY_INDEPENDENCE_V0_1.json)" = "$JQ_FINE_AUTH_BLOB"
+          python - <<'PY'
+          import json
+          c=json.load(open('docs/dsir4/authority/EXP073JR_COARSE_2049_SEQUENTIAL_EXACT_EQUIVALENCE_RECEIPT_V0_1.json'))
+          f=json.load(open('docs/dsir4/authority/EXP073JQ_ARTICLE3_SLOT20_SAME_RUN_HISTORY_INDEPENDENCE_V0_1.json'))
+          assert c['artifact_verified_independently'] is True
+          assert c['node_payload_sha256']=='6305c95025e52296b6cb623903f82dc45bb66ac692708b242fc354862ac54c46'
+          assert c['requested_node_count']==2049 and c['guard_counts']==[0,1]
+          assert f['artifact_verified_independently'] is True
+          assert f['canonical_node_sha256']=='f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'
+          assert f['observations']['requested_node_count']==4097
+          PY
+          python -m py_compile ci/exp073jt_article3_canonical_shared_lattice_materialization_v0_1.py
+      - name: Install frozen geometry stack
+        run: python -m pip install 'numpy==1.26.4' >/dev/null
+      - name: Materialize frozen lattice replica
+        shell: bash
+        run: |
+          set -euo pipefail
+          python ci/exp073jt_article3_canonical_shared_lattice_materialization_v0_1.py \
+            --lattice '${{ matrix.lattice }}' \
+            --replica '${{ matrix.replica }}' \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --out-dir artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jt-${{ matrix.lattice }}-r${{ matrix.replica }}
+          path: artifacts/
+          retention-days: 90
+
+  aggregate:
+    if: always()
+    needs: replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: exp073jt-*
+          path: parts
+          merge-multiple: false
+      - name: Install aggregate stack
+        run: python -m pip install 'numpy==1.26.4' >/dev/null
+      - name: Aggregate fixed replication and materialize canonical streams
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python - <<'PY'
+          import glob,hashlib,json,pathlib,shutil
+          import numpy as np
+          expected={
+            'coarse':(2049,'6305c95025e52296b6cb623903f82dc45bb66ac692708b242fc354862ac54c46'),
+            'fine':(4097,'f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'),
+          }
+          def sha(b): return hashlib.sha256(b).hexdigest()
+          rows=[]; paths={}
+          for p in sorted(glob.glob('parts/exp073jt-*')):
+              q=pathlib.Path(p)/'result.json'; u=pathlib.Path(p)/'nodes.u64hex'
+              if q.exists() and u.exists():
+                  d=json.load(open(q)); rows.append(d); paths[(d.get('lattice'),d.get('replica'))]=u
+          schema='EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICE_REPLICA_RESULT_V0_1'
+          basic=(len(rows)==8 and all(d.get('schema')==schema for d in rows) and
+                 {(d.get('lattice'),d.get('replica')) for d in rows}=={(l,r) for l in expected for r in range(1,5)})
+          invalid=False; summaries={}; selected={}
+          for lat,(count,required) in expected.items():
+              rr=sorted([d for d in rows if d.get('lattice')==lat],key=lambda x:x.get('replica',99))
+              matches=[]; variants=[]
+              for d in rr:
+                  key=(lat,d.get('replica')); p=paths.get(key)
+                  if p is None: invalid=True; continue
+                  lines=p.read_text().splitlines()
+                  try:
+                      w=np.asarray([int(x,16) for x in lines],dtype='<u8'); x=np.ascontiguousarray(w.view('<f8'),dtype='<f8')
+                  except Exception:
+                      invalid=True; continue
+                  h=sha(x.tobytes())
+                  valid=(len(x)==count and h==d.get('node_payload_sha256') and len(lines)==d.get('u64hex_line_count') and
+                         sha(p.read_bytes())==d.get('u64hex_sha256') and np.all(np.isfinite(x)) and np.all(x>0) and np.all(np.diff(x)>0))
+                  if not valid: invalid=True; continue
+                  if h==required and d.get('classification')=='CANONICAL_ANCHOR_MATCH_PLUS_0_PLUS_0': matches.append((d,p,x.tobytes()))
+                  elif h!=required and d.get('classification')=='HOST_GEOMETRY_VARIANT_PLUS_0_PLUS_0': variants.append(h)
+                  else: invalid=True
+              same=bool(matches) and all(b==matches[0][2] for _,_,b in matches)
+              summaries[lat]={'receipt_count':len(rr),'anchor_match_count':len(matches),'anchor_replicas':[d['replica'] for d,_,_ in matches],'variant_sha256':variants,'anchor_payloads_identical':same,'required_authority_sha256':required}
+              if len(matches)>=2 and same:
+                  dst=pathlib.Path('artifacts')/f'canonical_{lat}_{count}.u64hex'; shutil.copyfile(matches[0][1],dst); selected[lat]=dst
+          complete=basic and not invalid and all(summaries[l]['anchor_match_count']>=2 and summaries[l]['anchor_payloads_identical'] for l in expected)
+          if invalid: cls='INVALID_INFRA_PLUS_0_PLUS_0'
+          elif complete: cls='CANONICAL_SHARED_LATTICES_MATERIALIZED_PASS_PLUS_0_PLUS_0'
+          else: cls='CANONICAL_SHARED_LATTICES_MATERIALIZATION_INCOMPLETE_PLUS_0_PLUS_0'
+          out={'schema':'EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICE_AGGREGATE_V0_1','experiment':'Exp073JT','classification':cls,'effect':'+0/+0','fixed_replica_count_expected':8,'receipt_count':len(rows),'lattices':summaries,'canonical_payload_files':{k:str(v) for k,v in selected.items()},'sequential_authorization_audit_permitted':cls=='CANONICAL_SHARED_LATTICES_MATERIALIZED_PASS_PLUS_0_PLUS_0','scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,'article3_repository_readiness_percent':68,'funnel_freeze_readiness_percent':67,'token':('PASS_EXP073JT_' if cls.startswith('CANONICAL_SHARED_LATTICES_MATERIALIZED_PASS') else 'FAIL_EXP073JT_')+cls}
+          pathlib.Path('artifacts/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token']); print(json.dumps(out,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jt-aggregate
+          path: artifacts/
+          retention-days: 90
