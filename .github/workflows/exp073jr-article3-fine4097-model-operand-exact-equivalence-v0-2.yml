@@ -1,0 +1,162 @@
+name: exp073jr-article3-fine4097-model-operand-exact-equivalence-v0-2
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073jr-article3-fine4097-model-operand-exact-equivalence-v0-2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: exp073jr-article3-fine4097-model-operand-exact-equivalence-v0-2
+  cancel-in-progress: false
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  PREREG_BLOB: 'edaffcf8cd07817cba2bfd48791e752fcf02c5ab'
+  HELPER_BLOB: '47e53f6ce429b94df25c2981dc81392c6834c957'
+  COARSE_RECEIPT_BLOB: 'ee6526bd80daeac7990b2244b8ec2c8061a534c4'
+
+jobs:
+  model:
+    strategy:
+      fail-fast: false
+      matrix:
+        model: [reference, alpha_minus, beta_plus, beta_minus]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen JR v0.2 identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073JR_ARTICLE3_FINE4097_MODEL_OPERAND_EXACT_EQUIVALENCE_V0_2.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073jr_article3_fine4097_model_operand_exact_equivalence_v0_2.py)" = "$HELPER_BLOB"
+          test "$(git hash-object docs/dsir4/authority/EXP073JR_COARSE_2049_SEQUENTIAL_EXACT_EQUIVALENCE_RECEIPT_V0_1.json)" = "$COARSE_RECEIPT_BLOB"
+          test "$(git hash-object docs/dsir4/methods/LAYERB_JR_MODEL_OPERAND_EQUIVALENCE_DECOMPOSITION_V0_1.md)" = '$(git hash-object docs/dsir4/methods/LAYERB_JR_MODEL_OPERAND_EQUIVALENCE_DECOMPOSITION_V0_1.md)'
+          test "$(git hash-object docs/dsir4/prereg/EXP073JL_ARTICLE3_LAYERB_COMMON_GRID_THIRD_REFINEMENT_CONVERGENCE_V0_1.md)" = '0c143dd5b3c1c38b24fbb5b529d03ff9a2afdc58'
+          test "$(git hash-object ci/exp073jl_article3_layerb_common_grid_third_refinement_convergence_v0_1.py)" = '91723736fedd090fa1c81b1fcff4f1f3601d2ce2'
+          python - <<'PY'
+          import json
+          c=json.load(open('docs/dsir4/authority/EXP073JR_COARSE_2049_SEQUENTIAL_EXACT_EQUIVALENCE_RECEIPT_V0_1.json'))
+          assert c['artifact_verified_independently'] is True
+          assert c['classification']=='SAME_RUN_SEQUENTIAL_RESPONSE_ENGINE_EXACT_EQUIVALENCE_PASS_PLUS_0_PLUS_0'
+          assert c['requested_node_count']==2049 and c['request_A_exact'] is True and c['request_B_exact'] is True
+          q=json.load(open('docs/dsir4/authority/EXP073JQ_ARTICLE3_SLOT20_SAME_RUN_HISTORY_INDEPENDENCE_V0_1.json'))
+          assert q['classification']=='SAME_RUN_HISTORY_INDEPENDENCE_PASS_PLUS_0_PLUS_0'
+          assert q['artifact_verified_independently'] is True
+          assert q['checkpointed_JL_replay_authorized'] is False
+          PY
+          python -m py_compile ci/exp073jr_article3_fine4097_model_operand_exact_equivalence_v0_2.py
+
+      - name: Install frozen stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git >/dev/null
+          python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy >/dev/null
+
+      - name: Build exact pinned capacity-patched CLASS-IV
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 4608',1))
+          q=Path('external/class_iv/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 131072',1))
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+
+      - name: Execute fine-4097 model-operand exact control
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python ci/exp073jr_article3_fine4097_model_operand_exact_equivalence_v0_2.py \
+            --model '${{ matrix.model }}' \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --jq-authority docs/dsir4/authority/EXP073JQ_ARTICLE3_SLOT20_SAME_RUN_HISTORY_INDEPENDENCE_V0_1.json \
+            --coarse-receipt docs/dsir4/authority/EXP073JR_COARSE_2049_SEQUENTIAL_EXACT_EQUIVALENCE_RECEIPT_V0_1.json \
+            --out artifacts/result.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jr-v02-${{ matrix.model }}
+          path: artifacts/result.json
+          retention-days: 90
+
+  aggregate:
+    if: always()
+    needs: model
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: exp073jr-v02-*
+          path: parts
+      - name: Aggregate frozen JR v0.2 classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python - <<'PY'
+          import glob,json,pathlib
+          coarse=json.load(open('docs/dsir4/authority/EXP073JR_COARSE_2049_SEQUENTIAL_EXACT_EQUIVALENCE_RECEIPT_V0_1.json'))
+          assert coarse['artifact_verified_independently'] is True
+          assert coarse['classification']=='SAME_RUN_SEQUENTIAL_RESPONSE_ENGINE_EXACT_EQUIVALENCE_PASS_PLUS_0_PLUS_0'
+          rows=[]
+          for p in glob.glob('parts/exp073jr-v02-*'):
+              q=pathlib.Path(p)/'result.json'
+              if q.exists(): rows.append(json.load(open(q)))
+          valid_schema=all(d.get('schema')=='EXP073JR_ARTICLE3_FINE4097_MODEL_OPERAND_EXACT_EQUIVALENCE_RESULT_V0_2' for d in rows)
+          roles={d.get('model') for d in rows}
+          complete=(len(rows)==4 and roles=={'reference','alpha_minus','beta_plus','beta_minus'} and valid_schema)
+          pass_cls='FINE4097_MODEL_OPERAND_EXACT_EQUIVALENCE_PASS_PLUS_0_PLUS_0'
+          neg_cls='FINE4097_MODEL_OPERAND_NOT_EXACT_PLUS_0_PLUS_0'
+          if not complete:
+              cls='INVALID_INFRA_PLUS_0_PLUS_0'
+          elif any(d.get('classification')==neg_cls for d in rows):
+              cls='SAME_RUN_SEQUENTIAL_RESPONSE_ENGINE_NOT_EXACT_PLUS_0_PLUS_0'
+          elif all(d.get('classification')==pass_cls for d in rows):
+              cls='SAME_RUN_SEQUENTIAL_RESPONSE_ENGINE_EXACT_EQUIVALENCE_PASS_PLUS_0_PLUS_0'
+          else:
+              cls='INVALID_INFRA_PLUS_0_PLUS_0'
+          out={
+            'schema':'EXP073JR_COMBINED_ATOMIC_ARCHITECTURE_PREFLIGHT_RESULT_V0_2',
+            'experiment':'Exp073JR','classification':cls,'effect':'+0/+0',
+            'coarse_v01_independently_verified_pass':True,'fine_v02_receipt_count':len(rows),
+            'fine_model_classifications':{d.get('model'):d.get('classification') for d in rows},
+            'operand_decomposition_used':True,'scientific_authority_created':False,
+            'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+            'recovered_JL_preregistration_permitted': cls=='SAME_RUN_SEQUENTIAL_RESPONSE_ENGINE_EXACT_EQUIVALENCE_PASS_PLUS_0_PLUS_0',
+            'article3_readiness_percent':68,'funnel_freeze_readiness_percent':67,
+            'token':('PASS_EXP073JR_V02_' if cls=='SAME_RUN_SEQUENTIAL_RESPONSE_ENGINE_EXACT_EQUIVALENCE_PASS_PLUS_0_PLUS_0' else 'FAIL_EXP073JR_V02_')+cls
+          }
+          pathlib.Path('artifacts/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token']); print(json.dumps(out,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jr-v02-aggregate
+          path: artifacts/result.json
+          retention-days: 90
