@@ -1,0 +1,112 @@
+name: exp073iq-article3-real-layera-support-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/prereg/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_V0_1.md'
+      - 'ci/exp073iq_article3_real_layera_support_v0_1.py'
+      - '.github/workflows/exp073iq-article3-real-layera-support-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  layera:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+      MANIFEST: docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json
+      WM_S3_OVERRIDE: docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_2.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install frozen numerical stack
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gfortran
+          python -m pip install --upgrade pip wheel
+          python -m pip install 'numpy<2.4' scipy astropy
+      - name: Checkout exact frozen CAMB
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/camb
+          git -C external/camb init
+          git -C external/camb remote add origin https://github.com/cmbant/CAMB.git
+          git -C external/camb fetch --depth 1 origin fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          git -C external/camb checkout --detach FETCH_HEAD
+          test "$(git -C external/camb rev-parse HEAD)" = fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          python -m pip install ./external/camb
+      - name: Download exact DES-Y1 radial payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/des_nz
+          curl --fail --location --retry 3 -o external/des_nz/source.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_redshift_distributions_v1.fits'
+          curl --fail --location --retry 3 -o external/des_nz/lens.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/chains/2pt_NG_mcal_1110.fits'
+          echo 'b5d87138c35ae8bb4ecd02491972f544648398e606b3617039e6e54cb8ea943b  external/des_nz/source.fits' | sha256sum -c -
+          echo '114035179b5a8e41090751e9a6478536d185128581d37b5a510eff5722f417ca  external/des_nz/lens.fits' | sha256sum -c -
+      - name: Download exact angular, Exp073IM and BOSS authorities
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/angular inputs/expim inputs/boss
+          get_artifact () {
+            local id="$1" digest="$2" dest="$3"
+            local zip="${dest}.zip"
+            mkdir -p "$dest"
+            gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "$zip"
+            local actual expected
+            actual="$(sha256sum "$zip" | awk '{print $1}')"; expected="${digest#sha256:}"
+            test "$actual" = "$expected" || { echo "artifact $id digest mismatch $actual != $expected"; exit 31; }
+            unzip -q "$zip" -d "$dest"
+          }
+          while IFS=$'\t' read -r slot id digest; do
+            get_artifact "$id" "$digest" "inputs/angular/$slot"
+          done < <(jq -r '.angular[] | [.slot, (.artifact_id|tostring), .artifact_digest] | @tsv' "$MANIFEST")
+
+          # Exact current Wm_S3 scientific bytes are carried by the Exp073DL evidence export.
+          id="$(jq -r '.artifact_id' "$WM_S3_OVERRIDE")"
+          mkdir -p inputs/angular/Wm_S3/transport_override
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > inputs/angular/Wm_S3/transport_override.zip
+          unzip -q inputs/angular/Wm_S3/transport_override.zip -d inputs/angular/Wm_S3/transport_override
+          expected="$(jq -r '.required_each_canonical_sha256' "$WM_S3_OVERRIDE")"
+          nbytes="$(jq -r '.required_each_nbytes' "$WM_S3_OVERRIDE")"
+          for f in inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin; do
+            test "$(stat -c%s "$f")" = "$nbytes"
+            test "$(sha256sum "$f" | awk '{print $1}')" = "$expected"
+          done
+          cmp -s inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin
+
+          get_artifact 10130241439 'sha256:3325bab0faa821c5ca3b13b4cd64d3d58c323e56a6f3e44952be84bfbc477156' inputs/expim
+
+          # Exp073W carrier: bind artifact ID, then verify logical arrays inside evaluator.
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/9721800577/zip" > inputs/boss.zip
+          unzip -q inputs/boss.zip -d inputs/boss
+      - name: Execute frozen Layer-A classification
+        run: |
+          mkdir -p artifacts
+          python ci/exp073iq_article3_real_layera_support_v0_1.py \
+            --manifest "$MANIFEST" \
+            --inputs inputs/angular \
+            --expim-result-root inputs/expim \
+            --boss-root inputs/boss \
+            --source external/des_nz/source.fits \
+            --lens external/des_nz/lens.fits \
+            --camb-root external/camb \
+            --expz2-script ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py \
+            --out artifacts/exp073iq_article3_real_layera_support_v0_1.json
+      - name: Require classifying Layer-A outcome
+        run: grep -Eq 'PASS_ARTICLE3_OPERATOR_SUPPORT_V0_1|FAIL_ARTICLE3_OPERATOR_SUPPORT_V0_1' artifacts/exp073iq_article3_real_layera_support_v0_1.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073iq-article3-real-layera-support-v0-1
+          path: artifacts/exp073iq_article3_real_layera_support_v0_1.json
+          if-no-files-found: error
+          retention-days: 90
