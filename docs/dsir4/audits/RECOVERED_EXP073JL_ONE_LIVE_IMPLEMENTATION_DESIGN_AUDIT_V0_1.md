@@ -23,6 +23,7 @@ A recovered JL must preserve the original prospectively frozen scientific contra
 - centered-cubic interpolation in `ln(k)` with stencil `{j-2,j-1,j,j+1}`;
 - requested-node lookup mismatch ceiling `1e-12`;
 - same Exp073IR parent identity, 53 DES + 54 BOSS retained coordinates, DES/BOSS geometry, radial/angular authorities, BOSS dense-z logic, atom traversal, finite/nonzero logic, row-label accounting, Layer-B invalid-row fraction and retained-dimension rules;
+- exact original BOSS control structure: coarse and fine both use GL64 for the direct coarse/fine comparison, while fine additionally uses GL128 for the dense-z stability/row-label control;
 - convergence criterion strictly `max_atomic_coarse_vs_fine_relative_component_difference < 1e-3`;
 - no tolerance, averaging, smoothing, clipping, masking, effective-coordinate, fiducial-P, support-domain or estimator rescue;
 - covariance restriction remains unauthorized and Wm_S3 remains unopened by support-only JL.
@@ -33,14 +34,15 @@ The recovered implementation should invert only the solver/request loop nesting 
 
 ### 1. Compile a response-blind request plan
 
-Before any CLASS response is inspected, deterministically reconstruct the same Exp073IR inputs and traversal geometry and compile an immutable request plan containing the exact sequence/identity of all solver evaluations needed by the 107 retained rows:
+Before any CLASS response is inspected, deterministically reconstruct the same Exp073IR inputs and traversal geometry and compile immutable request plans containing the exact sequence/identity of all solver evaluations needed by the 107 retained rows:
 
 - DES z grid and, for each z, the exact union target-k coordinates that the unchanged angular/radial masks request;
 - row-to-active-target mappings needed to replay `update_summary` exactly;
-- BOSS GL64 z nodes, exact needed target-k coordinates, and row masks;
-- stable offsets/shapes for flattening each request payload.
+- BOSS GL64 z nodes, exact needed target-k coordinates and row masks for both coarse and fine;
+- BOSS GL128 z nodes, the same frozen needed target-k coordinates and row masks for the fine suite only, exactly as in the original parent dense-z control;
+- stable offsets/shapes for flattening every request payload, with suite/phase identity explicit so GL64 comparison payloads cannot be confused with GL128 dense-z-control payloads.
 
-The plan is derived solely from already-authorized geometry/selection inputs, not from CLASS response values. Its canonical identity should be recorded by SHA256 over an explicit binary/JSON manifest before solver evaluation.
+The plans are derived solely from already-authorized geometry/selection inputs, not from CLASS response values. Their canonical identities should be recorded by SHA256 over explicit binary/JSON manifests before solver evaluation.
 
 ### 2. Role-major one-live evaluation
 
@@ -51,13 +53,13 @@ For each lattice independently, use model order exactly:
 For each role:
 
 1. construct exactly one CLASS instance using the frozen baseline/precision and the committed canonical lattice;
-2. evaluate every request in the immutable request plan in the same target order;
+2. evaluate every request in that suite's immutable request plan in the same target order;
 3. recover exact requested shared-grid nodes and apply the unchanged centered-cubic interpolation;
 4. write only the interpolated raw role operands into process-local temporary storage indexed by the frozen request-plan offsets;
 5. record lookup/provenance receipts;
 6. call solver cleanup before constructing the next role.
 
-At every instant `max_live_instances` must be 1. Across both lattices the full run therefore performs exactly eight CLASS constructions, matching the lifecycle proven by JW if JW passes.
+At every instant `max_live_instances` must be 1. Across both lattices the full run therefore performs exactly eight CLASS constructions, matching the lifecycle proven by JW if JW passes. The fine role traversals must include both their GL64 comparison requests and GL128 dense-z-control requests before that role's solver is cleaned up; this preserves eight total builds rather than creating extra GL128-only solver constructions.
 
 Raw role operands must remain inside the same Python process. They may be process-local NumPy arrays or local scratch memmaps used as memory backing, but must never be uploaded, transferred to another run/process, or treated as independent scientific artifacts.
 
@@ -69,16 +71,17 @@ The recovered code should preferably call one shared frozen estimator function u
 
 ### 4. Replay unchanged Exp073IR accounting
 
-Using the response-blind plan's row/target mapping, replay the same row summaries and Layer-B accounting as Exp073IR. The implementation must reproduce:
+Using the response-blind plans' row/target mappings, replay the same row summaries and Layer-B accounting as Exp073IR. The implementation must reproduce:
 
 - atom counts;
 - finite/nonzero status;
 - row labels;
-- BOSS dense-z agreement;
+- direct coarse-vs-fine comparison over DES and BOSS GL64 only;
+- BOSS GL128 dense-z control on the fine suite and the resulting `boss_dense_z_disagreement` comparison against coarse/production labels;
 - parent retained identity/order;
 - invalid-row fraction and retained count.
 
-For the coarse suite, retain only the data needed for the later exact coarse/fine atomic comparison. After fine responses are formed, compute the original relative-component diagnostic with the same arithmetic and aggregate maximum.
+For the coarse suite, retain only the data needed for the later exact coarse/fine atomic comparison. After fine GL64 responses are formed, compute the original relative-component diagnostic with the same arithmetic and aggregate maximum. Fine GL128 outputs are not part of that relative-component maximum; they serve only the inherited dense-z stability/row-label control, exactly as in Exp073IR.
 
 ### 5. Result classification remains original JL
 
@@ -95,20 +98,21 @@ A valid independently verified JW PASS may authorize preregistration/launch prep
 
 1. committed coarse/fine text and decoded-node SHA identities match Exp073JT authority;
 2. valid JV/JW authority identity and artifact provenance are enforced;
-3. request-plan identity is produced before solver response evaluation;
+3. request-plan identities are produced before solver response evaluation;
 4. exactly 8 solver constructions and `max_live_instances=1` are machine-counted;
-5. every role visits the exact same request-plan offsets and shapes;
+5. every role for a suite visits the exact same plan offsets/shapes, including fine GL128 offsets;
 6. unsupported-target count is zero and max requested-node mismatch <= `1e-12`;
 7. estimator source/hash or exact arithmetic audit is frozen;
 8. parent retained-ID/full-order hashes match Exp073IR authority;
-9. all forbidden downstream reads (`covariance`, `whitening`, `nuisance`, `relation/null`) remain false;
-10. no raw role-operand scientific combination crosses a Python process boundary.
+9. GL64-only direct comparison and fine-only GL128 dense-z control are separated exactly as in the parent;
+10. all forbidden downstream reads (`covariance`, `whitening`, `nuisance`, `relation/null`) remain false;
+11. no raw role-operand scientific combination crosses a Python process boundary.
 
 ## Resource shape and implementation implication
 
-The safest recovered architecture is not a drop-in `ResponseSuite.response()` that creates/tears down four solvers per call. Exp073IR invokes response evaluation across many DES/BOSS requests, so such a design would multiply solver constructions far beyond the frozen eight-build lifecycle and would test a different resource problem.
+The safest recovered architecture is not a drop-in `ResponseSuite.response()` that creates/tears down four solvers per call. Exp073IR invokes response evaluation across 2001 DES redshifts plus BOSS quadrature requests, so such a design would multiply solver constructions far beyond the frozen eight-build lifecycle and would test a different resource problem.
 
-Instead, the recovered helper should own the traversal, compile the request plan once, evaluate it role-major once per solver, and replay the existing Exp073IR accounting. This changes execution scheduling only; it must not change what physical atoms are evaluated or how their responses are classified.
+Instead, the recovered helper should own the traversal, compile the response-blind plans once, evaluate them role-major once per solver, and replay the existing Exp073IR accounting. This changes execution scheduling only; it must not change what physical atoms are evaluated or how their responses are classified.
 
 ## Authority boundary
 
