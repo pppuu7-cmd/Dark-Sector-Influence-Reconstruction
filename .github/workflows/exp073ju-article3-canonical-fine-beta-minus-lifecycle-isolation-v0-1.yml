@@ -1,0 +1,101 @@
+name: exp073ju-article3-canonical-fine-beta-minus-lifecycle-isolation-v0-1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073ju-article3-canonical-fine-beta-minus-lifecycle-isolation-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: exp073ju-article3-canonical-fine-beta-minus-lifecycle-isolation-v0-1
+  cancel-in-progress: false
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  PREREG_BLOB: '63ee0146247c3bc35ea3c1d83be50318537244b4'
+  HELPER_BLOB: 'ebeff6a760ce6f5ecf952d1258f7065439915cba'
+  JT_AUTH_BLOB: '2ed0f4d0a99e31e4e8ddf5644a10fc0a688a4469'
+  JS_AUDIT_BLOB: '3c8b14e703bcde04407d52d9d1b6c5ff0da092cf'
+  CANONICAL_FINE_BLOB: 'f5acd4a25068af22fbaca5fb35adf2afbf3a4be3'
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+
+jobs:
+  canonical-beta-minus:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen Exp073JU identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073JU_ARTICLE3_CANONICAL_FINE_BETA_MINUS_LIFECYCLE_ISOLATION_V0_1.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073ju_article3_canonical_fine_beta_minus_lifecycle_isolation_v0_1.py)" = "$HELPER_BLOB"
+          test "$(git hash-object docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json)" = "$JT_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/authority/EXP073JS_ARTICLE3_LIFECYCLE_GEOMETRY_COVERAGE_AUDIT_V0_1.json)" = "$JS_AUDIT_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt)" = "$CANONICAL_FINE_BLOB"
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          python - <<'PY'
+          import hashlib,json,numpy as np
+          p='docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt'
+          raw=open(p,'rb').read()
+          assert hashlib.sha256(raw).hexdigest()=='290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7'
+          lines=raw.decode().splitlines(); assert len(lines)==4097
+          x=np.asarray([int(q,16) for q in lines],dtype='<u8').view('<f8')
+          assert hashlib.sha256(x.tobytes()).hexdigest()=='f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'
+          jt=json.load(open('docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json'))
+          js=json.load(open('docs/dsir4/authority/EXP073JS_ARTICLE3_LIFECYCLE_GEOMETRY_COVERAGE_AUDIT_V0_1.json'))
+          assert jt['artifact_verified_independently'] is True and jt['classification']=='CANONICAL_SHARED_LATTICES_MATERIALIZED_PASS_PLUS_0_PLUS_0'
+          assert js['artifact_verified_independently'] is True and js['canonical_geometry_roles_missing']==['beta_minus']
+          PY
+          python -m py_compile ci/exp073ju_article3_canonical_fine_beta_minus_lifecycle_isolation_v0_1.py
+      - name: Install frozen stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git >/dev/null
+          python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy >/dev/null
+      - name: Build exact pinned capacity-patched CLASS-IV
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 4608',1))
+          q=Path('external/class_iv/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 131072',1))
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+      - name: Execute canonical beta-minus lifecycle control
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python ci/exp073ju_article3_canonical_fine_beta_minus_lifecycle_isolation_v0_1.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --canonical-fine docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt \
+            --jt-authority docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json \
+            --js-audit docs/dsir4/authority/EXP073JS_ARTICLE3_LIFECYCLE_GEOMETRY_COVERAGE_AUDIT_V0_1.json \
+            --out artifacts/result.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073ju-canonical-beta-minus-lifecycle
+          path: artifacts/result.json
+          retention-days: 90
