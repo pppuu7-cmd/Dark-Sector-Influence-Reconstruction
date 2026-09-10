@@ -1,0 +1,68 @@
+name: exp073jo-article3-jl-slot20-canonical-node-freeze-v0-5
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073jo-article3-jl-slot20-canonical-node-freeze-v0-5.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  canonical-grid-freeze:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      OMP_NUM_THREADS: 1
+      OPENBLAS_NUM_THREADS: 1
+      MKL_NUM_THREADS: 1
+      NUMEXPR_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Enforce prospective response-blind contract identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073JO_ARTICLE3_JL_SLOT20_CANONICAL_NODE_SHARD_RECOVERY_V0_5.md)" = '3f9514f9f18ffd5e28e2ef54d132759cbe9333a1'
+          test "$(git hash-object ci/exp073jo_canonical_node_freeze_v0_5.py)" = '7aabce5b88634aac7dac1a6fdb9aa003747da6f4'
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+          ! grep -Fq 'from classy' ci/exp073jo_canonical_node_freeze_v0_5.py
+          ! grep -Fq 'import classy' ci/exp073jo_canonical_node_freeze_v0_5.py
+          ! grep -Fq 'get_transfer' ci/exp073jo_canonical_node_freeze_v0_5.py
+          ! grep -Fq 'inputs/angular' ci/exp073jo_canonical_node_freeze_v0_5.py
+          ! grep -Fq 'tail.f64' ci/exp073jo_canonical_node_freeze_v0_5.py
+
+      - name: Install frozen grid software
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check 'numpy==1.26.4'
+          python - <<'PY'
+          import numpy as np
+          assert np.__version__=='1.26.4'
+          print('NUMPY',np.__version__)
+          PY
+
+      - name: Freeze first successful canonical node payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python ci/exp073jo_canonical_node_freeze_v0_5.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --out-bin artifacts/canonical_nodes.f64 \
+            --out-hex artifacts/canonical_nodes.hex \
+            --out-json artifacts/grid_freeze.json
+          test "$(stat -c%s artifacts/canonical_nodes.f64)" = '32776'
+          test "$(wc -l < artifacts/canonical_nodes.hex)" = '4097'
+          grep -Fq 'PASS_EXP073JO_CANONICAL_NODE_FREEZE_V0_5' artifacts/grid_freeze.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jo-v05-canonical-node-freeze
+          path: artifacts/
+          retention-days: 90
