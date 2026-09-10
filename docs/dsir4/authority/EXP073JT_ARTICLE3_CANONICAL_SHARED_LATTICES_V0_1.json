@@ -1,0 +1,55 @@
+{
+  "Wm_S3_opened": false,
+  "aggregate_artifact_id": 10176063866,
+  "aggregate_artifact_zip_sha256": "4e17994a81ce8e2f7b17be59e5add65ab766f1cfc46370d13b19054bda3efba3",
+  "aggregate_job_id": 103073186968,
+  "aggregate_result_json_sha256": "6a9805233e580f571f0572e29641b318f957f09b9642d7180d5c21a0898b77b0",
+  "article3_repository_readiness_percent": 68,
+  "artifact_verified_independently": true,
+  "classification": "CANONICAL_SHARED_LATTICES_MATERIALIZED_PASS_PLUS_0_PLUS_0",
+  "coarse": {
+    "anchor_match_count": 2,
+    "anchor_replicas": [
+      1,
+      4
+    ],
+    "base_n": 2048,
+    "canonical_file": "docs/dsir4/canonical/EXP073JL_CANONICAL_COARSE_2049_NODES_U64HEX_V0_1.txt",
+    "guard_counts": [
+      0,
+      1
+    ],
+    "node_payload_sha256": "6305c95025e52296b6cb623903f82dc45bb66ac692708b242fc354862ac54c46",
+    "requested_node_count": 2049,
+    "u64hex_sha256": "72c732a02b9f6f4adeab70c7792f16e4490f038544c221aed9b72a14e5b1ec47"
+  },
+  "coarse_observed_host_variant_sha256": "133a353c269461a4d39050ccb0588963f0a76648946a18c49fb06b35f3375bba",
+  "covariance_restriction_authorized": false,
+  "effect": "+0/+0",
+  "experiment": "Exp073JT",
+  "fine": {
+    "anchor_match_count": 4,
+    "anchor_replicas": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "base_n": 4096,
+    "canonical_file": "docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt",
+    "guard_counts": [
+      0,
+      1
+    ],
+    "node_payload_sha256": "f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb",
+    "requested_node_count": 4097,
+    "u64hex_sha256": "290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7"
+  },
+  "funnel_freeze_readiness_percent": 67,
+  "interpretation": "Exact lattice byte streams were materialized only from pre-existing JR/JQ authority SHAs. Host variants are recorded but never selected as canonical. This is process/reproducibility authority only.",
+  "run_id": 34537725440,
+  "schema": "EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_AUTHORITY_V0_1",
+  "scientific_authority_created": false,
+  "sequential_authorization_audit_permitted": true,
+  "workflow_head_sha": "7aca7f8096e7e4a4f4c6e5fd3016a1eae2b29783"
+}
