@@ -33,6 +33,7 @@ jobs:
           test "$(git hash-object ci/exp073jo_slot20_per_model_shard_v0_4.py)" = "$SHARD_HELPER_BLOB_SHA"
           test -f docs/dsir4/prereg/EXP073JO_ARTICLE3_JL_SLOT20_PER_MODEL_SHARDED_RECOVERY_V0_4.md
           python -m py_compile ci/exp073jo_slot20_per_model_shard_v0_4.py ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py
+          python -m pip install 'numpy==1.26.4' >/dev/null
           python - <<'PY'
           import numpy as np
           h=1e-4
@@ -139,7 +140,7 @@ jobs:
               ref=rec[p,'reference'][1]; am=rec[p,'alpha_minus'][1]; bp=rec[p,'beta_plus'][1]; bm=rec[p,'beta_minus'][1]
               outresp[p]=np.ascontiguousarray(np.column_stack((np.abs((am-ref)/(-H)),np.abs((bp-bm)/(2*H)))),dtype='<f8')
           A=outresp['slot20_after_history']; F=outresp['slot20_fresh_tail']
-          exact=bool(np.array_equal(A,F)); finite=bool(np.array_equal(np.isfinite(A),np.isfinite(F))); positive=bool(np.array_equal(A>0,A>0) and np.array_equal(A>0,F>0))
+          exact=bool(np.array_equal(A,F)); finite=bool(np.array_equal(np.isfinite(A),np.isfinite(F))); positive=bool(np.array_equal(A>0,F>0))
           result={'schema':'EXP073JO_SLOT20_PER_MODEL_SHARDED_AGGREGATE_RESULT_V0_4','experiment':'Exp073JO','classification':'SLOT20_SHARDED_HISTORY_EXACT_PASS_PLUS_0_PLUS_0' if exact and finite and positive else 'SLOT20_SHARDED_HISTORY_EXACT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','scientific_authority_created':False,'covariance_restriction_authorized':False,'exact_array_equal':exact,'exact_finite_pattern_equal':finite,'exact_positive_pattern_equal':positive,'after_history_response_sha256':hashlib.sha256(A.tobytes()).hexdigest(),'fresh_tail_response_sha256':hashlib.sha256(F.tobytes()).hexdigest(),'node_sha256':first['node_sha256'],'token':'PASS_EXP073JO_SLOT20_SHARDED_HISTORY_EXACT_V0_4' if exact and finite and positive else 'FAIL_EXP073JO_SLOT20_SHARDED_HISTORY_EXACT_V0_4'}
           pathlib.Path('artifacts/result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n'); pathlib.Path('artifacts/after_history.f64').write_bytes(A.tobytes()); pathlib.Path('artifacts/fresh_tail.f64').write_bytes(F.tobytes()); print(result['token']); print(json.dumps(result,sort_keys=True))
           if not (exact and finite and positive): raise SystemExit('VALID_NEGATIVE: exact sharded history equality failed')
