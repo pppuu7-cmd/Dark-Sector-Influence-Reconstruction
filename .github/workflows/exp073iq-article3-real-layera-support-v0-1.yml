@@ -85,7 +85,16 @@ jobs:
 
           get_artifact 10130241439 'sha256:3325bab0faa821c5ca3b13b4cd64d3d58c323e56a6f3e44952be84bfbc477156' inputs/expim
           gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/9721800577/zip" > inputs/boss.zip
+          echo 'b4d6207bda8f7fd9f446609faecfba9adb8fe1783f0e84ec3814be06f3fcac8b  inputs/boss.zip' | sha256sum -c -
           unzip -q inputs/boss.zip -d inputs/boss
+
+          # Reader-only schema adapter frozen in EXP073IQ_BOSS_ARTIFACT_SCHEMA_REPAIR_V0_1.md.
+          boss_json="$(find inputs/boss -type f -name '*.json' -print -quit)"
+          test -n "$boss_json"
+          jq -e '.classification == "PASS_EXP073W_BOSS_LOWER_K_COMPATIBILITY_V0_1" and .candidate_count == 240 and .controls.z3_interval_subset_verified == true and .controls.effective_z_used == false' "$boss_json" >/dev/null
+          tmp="${boss_json}.adapted"
+          jq '. + {radial_support:{sample:"BOSS_DR12_z3",selection:"0.5<z<0.75",entire_selection_inside_article3_domain:.controls.z3_interval_subset_verified,effective_z_used:.controls.effective_z_used}}' "$boss_json" > "$tmp"
+          mv "$tmp" "$boss_json"
       - name: Execute frozen Layer-A classification
         run: |
           mkdir -p artifacts
