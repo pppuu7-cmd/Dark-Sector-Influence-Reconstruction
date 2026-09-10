@@ -1,0 +1,45 @@
+{
+  "schema": "EXP073JD_ARTICLE3_LAYERB_EXACT_K_INJECTION_ORIGINAL_PAIR_AUTHORITY_V0_2",
+  "experiment": "Exp073JD",
+  "supersedes_provenance_metadata_only": "EXP073JD_ARTICLE3_LAYERB_EXACT_K_INJECTION_ORIGINAL_PAIR_AUTHORITY_V0_1",
+  "supersession_reason": "V0_1 recorded incorrect artifact SHA256 values despite correct run/job/artifact identity and correct scientific observations. V0_2 corrects provenance metadata only from an independently downloaded GitHub Actions artifact; V0_1 remains immutable history.",
+  "classification": "EXACT_K_ORIGINAL_PAIR_OBSERVED_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "frozen_parent_status": "NUMERICALLY_UNRESOLVED_EXP073IR",
+  "frozen_parent_rel_tol": 0.001,
+  "h": 0.0001,
+  "run_id": 34472918931,
+  "job_id": 102856790715,
+  "head_sha": "00994fba5f77100a3ffff11f205abb3be5e1a1dc",
+  "artifact_id": 10150322510,
+  "github_artifact_digest": "sha256:310939a4b4ef8d75cb027630e5f43f88003ab92045c0af6e83ab83764bcb6365",
+  "independently_downloaded_artifact_zip_sha256": "310939a4b4ef8d75cb027630e5f43f88003ab92045c0af6e83ab83764bcb6365",
+  "artifact_result_json_sha256": "ba26c2a89a41d67e65bbf0b630659fccae33d85a7d05c2d0d4d493f8b33dfccb",
+  "artifact_verified_independently": true,
+  "raw_token": "PASS_EXP073JD_EXACT_K_ORIGINAL_PAIR_OBSERVED_V0_1",
+  "k_per_decade_ladder": [10.0, 20.0],
+  "interpolation_in_k_used": false,
+  "max_coordinate_relative_mismatch": 0.0,
+  "observations": {
+    "alpha_left": {
+      "z": 0.7000000000000001,
+      "k_mpc_inv": 0.002502504647141259,
+      "exact_k_response_kpd10": 11.514018402323245,
+      "exact_k_response_kpd20": 11.514018402323245,
+      "exact_k_10_to_20_relative_difference": 0.0,
+      "below_historical_rel_tol_reference": true
+    },
+    "beta_symmetric": {
+      "z": 0.9351,
+      "k_mpc_inv": 0.01860440444314368,
+      "exact_k_response_kpd10": 1.9210920856949087,
+      "exact_k_response_kpd20": 1.9210920856949087,
+      "exact_k_10_to_20_relative_difference": 0.0,
+      "below_historical_rel_tol_reference": true
+    }
+  },
+  "interpretation": "At both historically worst original-pair probes, exact internal-k injection removes the k_per_decade_for_pk=10 versus 20 discrepancy completely while preserving the same public gauge-invariant d_m and frozen finite-difference h. This is support-only mechanism evidence; it does not retroactively PASS Exp073IR or authorize covariance restriction.",
+  "frozen_science_unchanged": true
+}
