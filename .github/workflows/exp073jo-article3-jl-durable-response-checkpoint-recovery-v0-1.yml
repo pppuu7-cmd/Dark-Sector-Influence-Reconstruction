@@ -26,6 +26,7 @@ jobs:
       CHECKPOINT_BRANCH: checkpoints/exp073jo-jl-response-v0-1
       CHECKPOINT_NAMESPACE: checkpoints/exp073jo-jl-response-v0-1
       JO_PREFLIGHT_AUTH: docs/dsir4/authority/EXP073JO_ARTICLE3_JL_DURABLE_RESPONSE_CHECKPOINT_PREFLIGHT_PASS_V0_1.json
+      SCIENCE_REFERENCE_COMMIT: 374184d1b2e9f31628ab930bc271951569ce2bf9
     steps:
       - uses: actions/checkout@v4
         with:
@@ -59,6 +60,39 @@ jobs:
           assert i['geometry']['stream_sha256']=='79bae6f3015ccf524402d7f0f357070a903126bfa8d3bd3f4cac5902afef093a'
           PY
           test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = '0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c'
+
+          # Process-only hardening: every scientific/traversal/config source used by
+          # recovered JL must be byte-identical to the exact-build preflight head.
+          # This closes resume/source-head drift without freezing recovery-only code.
+          git fetch --no-tags --depth=1 origin "$SCIENCE_REFERENCE_COMMIT"
+          science_paths=(
+            ci/exp073jl_article3_layerb_common_grid_third_refinement_convergence_v0_1.py
+            ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py
+            ci/exp073ir_article3_real_layerb_common_response_v0_1.py
+            ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py
+            ci/exp073iq_article3_real_layera_support_v0_1.py
+            scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py
+            scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py
+            configs/dsir4/c2/ide0_reference_v0_1.ini
+            configs/dsir4/c2/dsir_ide_p8_v0_1.pre
+            docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json
+            docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_2.json
+            docs/dsir4/authority/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_PASS_V0_1.json
+            docs/dsir4/authority/EXP073JI_ARTICLE3_LAYERB_GUARD_NODE_FULL_SUPPORT_FEASIBLE_V0_1.json
+            docs/dsir4/authority/EXP073JK_ARTICLE3_LAYERB_COMMON_GRID_SECOND_REFINEMENT_NOT_CONVERGED_V0_1.json
+            docs/dsir4/prereg/EXP073JL_ARTICLE3_LAYERB_COMMON_GRID_THIRD_REFINEMENT_CONVERGENCE_V0_1.md
+            docs/dsir4/prereg/EXP073JO_ARTICLE3_JL_DURABLE_RESPONSE_CHECKPOINT_RECOVERY_V0_1.md
+          )
+          for p in "${science_paths[@]}"; do
+            test -f "$p"
+            ref_blob="$(git rev-parse "${SCIENCE_REFERENCE_COMMIT}:${p}")"
+            cur_blob="$(git hash-object "$p")"
+            test "$cur_blob" = "$ref_blob" || {
+              echo "FROZEN_SOURCE_BUNDLE_MISMATCH path=$p current=$cur_blob reference=$ref_blob" >&2
+              exit 42
+            }
+          done
+          echo "PASS_EXP073JO_FROZEN_SOURCE_BUNDLE_GUARD_V0_1 reference=${SCIENCE_REFERENCE_COMMIT} count=${#science_paths[@]}"
 
       - name: Install frozen numerical/build stack
         shell: bash
