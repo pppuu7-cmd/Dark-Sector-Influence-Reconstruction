@@ -51,7 +51,7 @@ jobs:
               assert names.get(n)=='success', (n,names.get(n))
           print('PASS_EXP073JP_UPSTREAM_EXP073IF_JOB_IDENTITY_V0_1')
           PY
-          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/jobs/102144147469/logs" > /tmp/if_job.log
+          gh api --allow-escape-sequences -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/jobs/102144147469/logs" > /tmp/if_job.log
           grep -Fq 'PASS_EXP073IF_C2_RESIDUAL_MAPPING_ARTIFACT_ADMISSION_V0_1' /tmp/if_job.log
           grep -Fq 'classification=MAPPING_ARTIFACT_ADMITTED_PLUS_0_PLUS_0' /tmp/if_job.log
           grep -Fq 'mapping_ready=true' /tmp/if_job.log
@@ -73,7 +73,7 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-          import hashlib,json,math,pathlib,re
+          import json,math,pathlib
           p=pathlib.Path('docs/dsir4/predictions/C2_IDE_LOCAL_TANGENT_CONE_PREDICTION_BASIS_V0_1.jsonl')
           rows=[json.loads(x) for x in p.read_text().splitlines() if x.strip()]
           zs=['0.295','0.51','0.706','0.934','1.317','1.491','2.33']
