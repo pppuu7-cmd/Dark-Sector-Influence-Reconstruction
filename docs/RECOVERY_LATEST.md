@@ -2,26 +2,27 @@
 
 Updated: 2026-09-11. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-11_ARTICLE3_JR_V02_INFRA_JS_ACTIVE_V95.md`, creation commit `e0503a0c264ca946018bc81b0fe3bb53e8ec0bee`. Earlier recovery notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-11_ARTICLE3_JT_CANONICAL_JU_ACTIVE_V96.md`, creation commit `b6142ecad665892dfef66c597bcd49bc99119ddd`. Earlier recovery notes remain immutable history.
 
 ## Preserved scientific authority
-Exp073IR remains `NUMERICALLY_UNRESOLVED_EXP073IR`; Exp073JI support remains feasible; Exp073JJ/JK remain support-only NOT_CONVERGED at `0.037280144773915974` / `0.016330535730270664`. Frozen Exp073JL science remains the unchanged guarded 2049->4097 comparison with `REL_TOL=1e-3`, `h=1e-4`, native kpd20, centered-cubic interpolation, same domain/masks/107-row traversal/accounting and anti-rescue rules. Covariance restriction remains unauthorized; Wm_S3 unopened.
+Exp073IR remains `NUMERICALLY_UNRESOLVED_EXP073IR`; Exp073JI support remains feasible; Exp073JJ/JK remain support-only NOT_CONVERGED at `0.037280144773915974` / `0.016330535730270664`. Frozen Exp073JL science remains the unchanged canonical 2049->4097 comparison with `REL_TOL=1e-3`, `h=1e-4`, native kpd20, centered-cubic interpolation, same domain/masks/107-row traversal/accounting and anti-rescue rules. Covariance restriction remains unauthorized; Wm_S3 unopened.
 
-## JQ/JR process authority
-Exp073JQ remains independently verified same-run history-independent, durable authority commit `3bdba4626ab12994c9d27a16a4446fd2bf79512b`. JR v0.1 coarse-2049 remains independently verified direct four-live-vs-sequential exact PASS, durable receipt commit `208980760b7008798700d16037e81497ab3dc1c4`.
+## Canonical execution/reproducibility authority
+Exp073JQ remains independently verified same-run history/fresh-repeat exact PASS on the fine architecture. Exp073JR v0.1 coarse-2049 remains independently verified direct four-live-vs-sequential exact PASS. JR v0.2 fine four-live attempts remain infrastructure-invalid with zero numerical receipts and must not be treated as NOT_EXACT.
 
-Corrected JR v0.2 run `34534521584` is terminal infrastructure-invalid. All four fine-4097 jobs passed identities/stack/pinned build and then terminated during the numerical four-live context before producing a model result. Aggregate job `103065497724` emitted `INVALID_INFRA_PLUS_0_PLUS_0` with zero fine receipts; artifact `10175154654`, independently verified ZIP SHA256 `c4905bf5429ea17d677f3e1303d08d25596579d5495a964690c30f447707aacf`, result JSON SHA256 `981dfb43778b741df2de8043c387c03e3ee8b7140f4e7324774a12d011623ab9`. No fine numerical inequality exists; do not blindly rerun four-live 4097 on the same hosted class.
+Corrected Exp073JS run `34535674581` proved local one-live cross-model lifecycle isolation exactly for all four roles, but independent artifact audit found host-dependent last-bit geometry generation: canonical fine coverage is conservatively 3/4 (`reference`, `alpha_minus`, `beta_plus`), with only `beta_minus` missing. Durable audit: `docs/dsir4/authority/EXP073JS_ARTICLE3_LIFECYCLE_GEOMETRY_COVERAGE_AUDIT_V0_1.json`, commit `36aa369f57ca043e6242eb8c9ada993f6c1ad70c`.
 
-## Source isolation audit
-Pinned CLASS-IV C2 instance-locality audit commit `02bfefb9e04b837e8f04350d533be46331197a78`, blob `f4c9b7b241f22985b2c38bc3dcae8f9fda07267a`. Principal CLASS solver structures are per Python `Class` instance. A file-scope Romberg workspace exists in the fork but is used only for `fluid_equation_of_state==IDM_IV`; frozen C2 does not set this option and remains on default `CLP`, while `f_idm_iv/f_iv` only alter interacting densities. Thus that specific shared workspace path is inactive for frozen C2. This is not used to explain the runner shutdown.
+Exp073JT prospectively materialized the pre-existing JR/JQ geometry anchors. Run `34537725440`, aggregate job `103073186968`, artifact `10176063866`, independently verified classification `CANONICAL_SHARED_LATTICES_MATERIALIZED_PASS_PLUS_0_PLUS_0`. Coarse authority SHA `6305c95025e52296b6cb623903f82dc45bb66ac692708b242fc354862ac54c46` reproduced in 2/4 fixed replicas; fine authority SHA `f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb` reproduced in 4/4. Exact canonical u64hex streams are committed in main by bot commit `6f59a22b6f391e2dd16ca8d0dae81c8bd3ad8c07`; durable authority `docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json`.
 
-## Exp073JS active
-Prospective JS prereg commit/blob `c10afa7a392354722f7467cc90de777e30517cce / 73bac6764a62f3de6cbf2c7fec3fa987fb648ecc`; helper commit/blob `25cd585f4b09c09a762a50ad39841ad5733f66f0 / 70a38a45d6d743878e1b5d8a8c2d14630bf3ee80`. JS tests fine-4097 cross-model lifecycle isolation with at most one CLASS instance live and exact before/after equality for each selected role.
+Future recovered-JL execution must read these committed canonical grids, not regenerate `np.geomspace` on a host.
 
-Initial JS run `34535627564`, head `b2ebbe5719500d550a50e2c9d6835da17eaa340f`, is infrastructure-only: wrong JQ authority blob caused all four jobs to fail identity guard; numerical steps were skipped. Corrected workflow/head `7676f64e811520e96a09b76c35c2bf3d49b0cf01` binds actual JQ authority blob `a1c29c4ead5daee53a6fe82bc2b77a363a38b7a7`. Corrected run `34535674581` is the sole authoritative active JS run. Do not duplicate it.
+## Exp073JU active
+Exp073JU closes only the missing canonical-fine lifecycle role `beta_minus` using the committed exact 4097-node grid. Prospective prereg commit `19c38f5cfb9d72f214f4e94774c6dde1a6006375`; helper commit `2eea658656f1a5bf9917f9401f21ba21132c3136`. Initial run `34538264386` failed at a pre-install NumPy identity helper and never reached install/build/numerical work; pure infrastructure +0/+0. Pre-result guard repair commit `d31bf42744ef501e8520fd4af8e9b34aed123cb3` uses stdlib binary packing instead.
+
+Corrected authoritative run `34538302756`, job `103074914132`, is the only permitted JU numerical execution. At the V96 checkpoint it passed identities, stack and pinned build and is executing the canonical beta-minus lifecycle control. Do not duplicate it.
 
 ## Stable readiness telemetry
-Article III repository readiness: **68%**. Overall funnel readiness for methodology freeze: **67%**. Process/source/diagnostic work alone does not increase scores.
+**ARTICLE3_REPOSITORY_READINESS: 68%.** This means readiness of the DSIR repository as the scientific basis for preparing Article III; it is not manuscript-writing completion. Funnel-freeze readiness: **67%**. Process/reproducibility work alone does not increase either score.
 
 ## Exact next action
-Terminal-consume corrected JS run `34535674581` and independently verify all model receipts plus aggregate. A valid 4/4 exact JS PASS permits only a separate prospective sequential-execution authorization audit over JR coarse + JQ fine + pinned source audit + JS fine. Only that later authorization may permit preregistration of a one-live fixed-chunk execution of unchanged Exp073JL. Numerical JS FAIL forbids that route; infrastructure invalidity permits only minimal infrastructure repair. No tolerance/grid/science rescue.
+Terminal-consume JU `34538302756` and independently verify its artifact against the frozen exact-bit gate. A valid JU PASS closes canonical lifecycle coverage to 4/4 and permits only a separate sequential-execution authorization audit over JR/JQ/source/JS/JT/JU/estimator-invariance evidence. Only that later audit may authorize preregistration of a recovered one-live canonical Exp073JL execution. Valid JU bitwise inequality blocks that route; infrastructure invalidity permits only minimal repair. No tolerance/grid/science rescue; covariance restriction and Wm_S3 remain closed.
