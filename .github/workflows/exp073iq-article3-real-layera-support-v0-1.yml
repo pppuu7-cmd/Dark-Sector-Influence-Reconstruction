@@ -6,6 +6,7 @@ on:
     paths:
       - 'docs/dsir4/prereg/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_V0_1.md'
       - 'ci/exp073iq_article3_real_layera_support_v0_1.py'
+      - 'ci/exp073iq_article3_real_layera_support_v0_1.trigger'
       - '.github/workflows/exp073iq-article3-real-layera-support-v0-1.yml'
   workflow_dispatch:
 
@@ -70,7 +71,6 @@ jobs:
             get_artifact "$id" "$digest" "inputs/angular/$slot"
           done < <(jq -r '.angular[] | [.slot, (.artifact_id|tostring), .artifact_digest] | @tsv' "$MANIFEST")
 
-          # Exact current Wm_S3 scientific bytes are carried by the Exp073DL evidence export.
           id="$(jq -r '.artifact_id' "$WM_S3_OVERRIDE")"
           mkdir -p inputs/angular/Wm_S3/transport_override
           gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > inputs/angular/Wm_S3/transport_override.zip
@@ -84,8 +84,6 @@ jobs:
           cmp -s inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin
 
           get_artifact 10130241439 'sha256:3325bab0faa821c5ca3b13b4cd64d3d58c323e56a6f3e44952be84bfbc477156' inputs/expim
-
-          # Exp073W carrier: bind artifact ID, then verify logical arrays inside evaluator.
           gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/9721800577/zip" > inputs/boss.zip
           unzip -q inputs/boss.zip -d inputs/boss
       - name: Execute frozen Layer-A classification
