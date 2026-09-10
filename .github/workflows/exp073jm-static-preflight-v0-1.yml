@@ -1,0 +1,53 @@
+name: exp073jm-static-preflight-v0-1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073jm-static-preflight-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate pre-result JM implementation and frozen geometry
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile ci/exp073jm_article3_layerb_common_grid_fourth_refinement_convergence_v0_1.py ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py
+          test -f docs/dsir4/prereg/EXP073JM_ARTICLE3_LAYERB_COMMON_GRID_FOURTH_REFINEMENT_CONVERGENCE_V0_1.md
+          test -f docs/dsir4/methods/LAYERB_CONVERGENCE_ARGMAX_DIAGNOSTIC_STANDARD_V0_1.md
+          PYTHONPATH=ci python - <<'PY'
+          import numpy as np
+          import exp073jm_article3_layerb_common_grid_fourth_refinement_convergence_v0_1 as jm
+          import exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1 as jj
+          assert jm.H == 1e-4 and jm.REL_TOL == 1e-3
+          assert jm.NATIVE_KPD == 20.0
+          assert jm.CAPACITY == 9216 and jm.PARSER_CAPACITY == 262144
+          jj.CAPACITY = jm.CAPACITY
+          c, rc, lc, uc = jj.guarded_lattice(4096)
+          f, rf, lf, uf = jj.guarded_lattice(8192)
+          assert (lc, uc, len(c)) == (0, 1, 4097)
+          assert (lf, uf, len(f)) == (0, 1, 8193)
+          sc = ','.join(format(float(x), '.17g') for x in c)
+          sf = ','.join(format(float(x), '.17g') for x in f)
+          assert len(sc) < jm.PARSER_CAPACITY
+          assert len(sf) < jm.PARSER_CAPACITY
+          # Unit check: diagnostic accumulator observes the same frozen relative statistic.
+          acc = jm.DiagnosticAccumulator()
+          ctx = {'slot':20.0,'z':0.7,'targets':np.array([0.001,0.002],dtype=np.float64)}
+          a = np.array([[1.0,2.0],[3.0,4.0]],dtype=np.float64)
+          b = np.array([[1.001,2.0],[3.0,4.02]],dtype=np.float64)
+          acc.consume(ctx,a,b)
+          expected = float(np.max(np.abs(a-b)/np.maximum(np.abs(a),np.abs(b))))
+          got = acc.summary()['relative_argmax']['relative_difference']
+          assert got == expected
+          print('JM_COARSE_SERIALIZED_CHARS',len(sc))
+          print('JM_FINE_SERIALIZED_CHARS',len(sf))
+          print('PASS_EXP073JM_STATIC_PREFLIGHT_V0_1')
+          PY
