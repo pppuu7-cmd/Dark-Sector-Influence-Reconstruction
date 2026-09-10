@@ -1,0 +1,103 @@
+name: exp073jw-article3-canonical-one-live-eight-build-resource-pilot-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073jw-article3-canonical-one-live-eight-build-resource-pilot-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: exp073jw-article3-canonical-one-live-eight-build-resource-pilot-v0-1
+  cancel-in-progress: false
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  PREREG_BLOB: '5c7b0a9583b5d1e7c151397454c7490e63dfe68b'
+  HELPER_BLOB: 'c1bddfea7a9f9a1c2a177a0c34600a85e3cd650e'
+  JV_AUTH_BLOB: '113f18e416e9b40e336cf51353429378f3016cca'
+  JT_AUTH_BLOB: '2ed0f4d0a99e31e4e8ddf5644a10fc0a688a4469'
+  COARSE_BLOB: '2284bc287613940ae61de8cb1ae41fb60f917f56'
+  FINE_BLOB: 'f5acd4a25068af22fbaca5fb35adf2afbf3a4be3'
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+
+jobs:
+  canonical-one-live-eight-build-resource-pilot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen Exp073JW identities and authorization
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073JW_ARTICLE3_CANONICAL_ONE_LIVE_EIGHT_BUILD_RESOURCE_PILOT_V0_1.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073jw_article3_canonical_one_live_eight_build_resource_pilot_v0_1.py)" = "$HELPER_BLOB"
+          test "$(git hash-object docs/dsir4/authority/EXP073JV_ARTICLE3_SEQUENTIAL_CANONICAL_JL_EXECUTION_AUTHORIZATION_AUDIT_V0_1.json)" = "$JV_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json)" = "$JT_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/EXP073JL_CANONICAL_COARSE_2049_NODES_U64HEX_V0_1.txt)" = "$COARSE_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt)" = "$FINE_BLOB"
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          python3 - <<'PY'
+          import json
+          j=json.load(open('docs/dsir4/authority/EXP073JV_ARTICLE3_SEQUENTIAL_CANONICAL_JL_EXECUTION_AUTHORIZATION_AUDIT_V0_1.json'))
+          assert j['artifact_verified_independently'] is True
+          assert j['classification']=='SEQUENTIAL_CANONICAL_JL_EXECUTION_AUTHORIZED_PLUS_0_PLUS_0'
+          assert j['recovered_jl_preregistration_permitted'] is True
+          assert j['recovered_jl_execution_directly_authorized'] is False
+          PY
+          python3 -m py_compile ci/exp073jw_article3_canonical_one_live_eight_build_resource_pilot_v0_1.py
+      - name: Install frozen stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git >/dev/null
+          python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy >/dev/null
+      - name: Build exact pinned capacity-patched CLASS-IV
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 4608',1))
+          q=Path('external/class_iv/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 131072',1))
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+      - name: Execute exact eight-build one-live resource pilot
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}" python ci/exp073jw_article3_canonical_one_live_eight_build_resource_pilot_v0_1.py \
+            --jv-authority docs/dsir4/authority/EXP073JV_ARTICLE3_SEQUENTIAL_CANONICAL_JL_EXECUTION_AUTHORIZATION_AUDIT_V0_1.json \
+            --jt-authority docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json \
+            --coarse docs/dsir4/canonical/EXP073JL_CANONICAL_COARSE_2049_NODES_U64HEX_V0_1.txt \
+            --fine docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --out artifacts/result.json
+      - name: Upload JW result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073jw-canonical-one-live-eight-build-resource-pilot
+          path: artifacts/result.json
+          if-no-files-found: error
+          retention-days: 90
