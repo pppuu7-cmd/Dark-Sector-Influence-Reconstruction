@@ -43,7 +43,7 @@ jobs:
           assert d['covariance_restriction_authorized'] is False
           PY
           test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = '0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c'
-      - name: Install frozen stack and capacity regression
+      - name: Install frozen stack and capacity/import regression
         shell: bash
         run: |
           set -euo pipefail
@@ -51,6 +51,11 @@ jobs:
           sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git
           python -m pip install --upgrade pip wheel 'setuptools<76'
           python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy
+          PYTHONPATH=ci python - <<'PY'
+          import exp073jf_article3_layerb_shared_fixed_k_grid_extended_density_v0_1 as jf
+          assert jf.NS==(384,512)
+          print('PASS_EXP073JF_LOCAL_IMPORT_REGRESSION_V0_1')
+          PY
           python - <<'PY'
           import numpy as np
           for n in (384,512):
