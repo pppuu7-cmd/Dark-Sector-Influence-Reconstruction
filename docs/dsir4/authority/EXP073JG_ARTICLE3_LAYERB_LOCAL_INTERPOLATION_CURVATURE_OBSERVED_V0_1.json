@@ -1,0 +1,31 @@
+{
+  "artifact_id": 10155745915,
+  "artifact_name": "exp073jg-local-interpolation-curvature-v0-1",
+  "artifact_verified_independently": true,
+  "artifact_zip_sha256": "e3282ea5f145a273aff63cd70ff74e23cbf6f19960bb83f8390c2c855ae70dbb",
+  "capacity_patch_json_sha256": "f7d8d33232908f5f90f557ef42eeead4acc9dcc58a92f69629857aece2e1889b",
+  "classification": "LOCAL_INTERPOLATION_CURVATURE_OBSERVED_PLUS_0_PLUS_0",
+  "covariance_restriction_authorized": false,
+  "curvature_candidates": ["quadratic_left", "quadratic_right", "cubic_centered"],
+  "effect": "+0/+0",
+  "experiment": "Exp073JG",
+  "head_sha": "a89dd256644b2c2f7827372e43c43bdb9c5f0adf",
+  "job_id": 102900288767,
+  "kpd10_vs_kpd20_relative_difference": {
+    "cubic_centered": {"alpha_left": 0.0, "beta_symmetric": 0.0},
+    "linear_bracket": {"alpha_left": 0.0, "beta_symmetric": 0.0},
+    "quadratic_left": {"alpha_left": 0.0, "beta_symmetric": 0.0},
+    "quadratic_right": {"alpha_left": 0.0, "beta_symmetric": 0.0}
+  },
+  "relative_error_to_exact_k": {
+    "cubic_centered": {"alpha_left": 1.2105247820888992e-07, "beta_symmetric": 0.00016088505716613062},
+    "linear_bracket": {"alpha_left": 0.00010245604306152275, "beta_symmetric": 0.026575285704422986},
+    "quadratic_left": {"alpha_left": 1.6655427759553507e-06, "beta_symmetric": 6.801424456717797e-05},
+    "quadratic_right": {"alpha_left": 2.7311728168928298e-06, "beta_symmetric": 0.0002303585618472267}
+  },
+  "rel_tol": 0.001,
+  "result_json_sha256": "3e9cd6c4395e4fc67fafd4805b8e1a0ade7e6f4239a1234be50910ff021869cf",
+  "run_id": 34485992147,
+  "scientific_authority_created": false,
+  "token": "PASS_EXP073JG_LOCAL_INTERPOLATION_CURVATURE_OBSERVED_V0_1"
+}
