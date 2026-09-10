@@ -1,0 +1,194 @@
+name: exp073ir-article3-real-layerb-common-response-v0-1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073ir_article3_real_layerb_common_response_v0_1.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  layerb:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      MANIFEST: docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json
+      WM_S3_OVERRIDE: docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_2.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce prospective Exp073IR lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f docs/dsir4/prereg/EXP073IR_ARTICLE3_REAL_LAYERB_COMMON_RESPONSE_V0_1.md
+          test -f docs/dsir4/contracts/EXP073IR_IMPLEMENTATION_CONTROL_V0_1.md
+          test -f ci/exp073ir_article3_real_layerb_common_response_v0_1.py
+          python -m py_compile ci/exp073ir_article3_real_layerb_common_response_v0_1.py
+          test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = '0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c'
+
+      - name: Install frozen numerical/build stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git unzip
+          python -m pip install --upgrade pip wheel 'setuptools<76'
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy
+
+      - name: Checkout exact frozen CAMB
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/camb
+          git -C external/camb init
+          git -C external/camb remote add origin https://github.com/cmbant/CAMB.git
+          git -C external/camb fetch --depth 1 origin fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          git -C external/camb checkout --detach FETCH_HEAD
+          test "$(git -C external/camb rev-parse HEAD)" = fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          python -m pip install ./external/camb
+
+      - name: Checkout and build exact pinned CLASS-IV
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py')
+          s=p.read_text()
+          old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"
+          new="extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']"
+          assert s.count(old)==1
+          p.write_text(s.replace(old,new,1))
+          print('EXP073IR_WRAPPER_LINK_COMPAT_EXACTLY_ONCE')
+          PY
+          make -C external/class_iv -j2 all
+          SETUPTOOLS_USE_DISTUTILS=local python -m pip install ./external/class_iv/python
+          python - <<'PY'
+          from classy import Class
+          c=Class()
+          print('CLASSY_IMPORT_OK')
+          PY
+
+      - name: Download exact DES-Y1 radial payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/des_nz
+          curl --fail --location --retry 3 -o external/des_nz/source.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_redshift_distributions_v1.fits'
+          curl --fail --location --retry 3 -o external/des_nz/lens.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/chains/2pt_NG_mcal_1110.fits'
+          echo 'b5d87138c35ae8bb4ecd02491972f544648398e606b3617039e6e54cb8ea943b  external/des_nz/source.fits' | sha256sum -c -
+          echo '114035179b5a8e41090751e9a6478536d185128581d37b5a510eff5722f417ca  external/des_nz/lens.fits' | sha256sum -c -
+
+      - name: Download exact Layer-A parent, angular and Exp073IM authorities
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/parent inputs/angular inputs/expim
+          get_artifact () {
+            local id="$1" digest="$2" dest="$3"
+            local zip="${dest}.zip"
+            mkdir -p "$dest"
+            gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "$zip"
+            local actual expected
+            actual="$(sha256sum "$zip" | awk '{print $1}')"; expected="${digest#sha256:}"
+            test "$actual" = "$expected" || { echo "artifact $id digest mismatch $actual != $expected"; exit 31; }
+            unzip -q "$zip" -d "$dest"
+          }
+          get_artifact 10131794281 'sha256:ac959926639d3b46ecfe114e396ce03cb20a0763ef2781db454408d8ad0759df' inputs/parent
+          while IFS=$'\t' read -r slot id digest; do
+            get_artifact "$id" "$digest" "inputs/angular/$slot"
+          done < <(jq -r '.angular[] | [.slot, (.artifact_id|tostring), .artifact_digest] | @tsv' "$MANIFEST")
+          id="$(jq -r '.artifact_id' "$WM_S3_OVERRIDE")"
+          mkdir -p inputs/angular/Wm_S3/transport_override
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > inputs/angular/Wm_S3/transport_override.zip
+          unzip -q inputs/angular/Wm_S3/transport_override.zip -d inputs/angular/Wm_S3/transport_override
+          expected="$(jq -r '.required_each_canonical_sha256' "$WM_S3_OVERRIDE")"
+          nbytes="$(jq -r '.required_each_nbytes' "$WM_S3_OVERRIDE")"
+          for f in inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin; do
+            test "$(stat -c%s "$f")" = "$nbytes"
+            test "$(sha256sum "$f" | awk '{print $1}')" = "$expected"
+          done
+          cmp -s inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin
+          get_artifact 10130241439 'sha256:3325bab0faa821c5ca3b13b4cd64d3d58c323e56a6f3e44952be84bfbc477156' inputs/expim
+
+      - name: Download exact frozen BOSS z3 operators
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/exp073w_boss
+          base='https://fbeutler.github.io/hub'
+          curl --fail --location --retry 3 -o external/exp073w_boss/W_NGC_z3.gz "$base/W_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073w_boss/W_SGC_z3.gz "$base/W_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073w_boss/M_NGC_z3.gz "$base/M_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073w_boss/M_SGC_z3.gz "$base/M_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          for f in external/exp073w_boss/*.gz; do gzip -t "$f"; gzip -dc "$f" > "${f%.gz}"; done
+          echo 'a308dc562d1a7224cefcf91d32580877929e0daa33806517e0d2d53710236827  external/exp073w_boss/W_NGC_z3' | sha256sum -c -
+          echo '2a542a2d48f3e8c8299f58a885d5273238e4ade32c0f0de020d8b9f23afe7759  external/exp073w_boss/W_SGC_z3' | sha256sum -c -
+          echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_NGC_z3' | sha256sum -c -
+          echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_SGC_z3' | sha256sum -c -
+
+      - name: Execute frozen real Layer-B common-response gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts scratch
+          python ci/exp073ir_article3_real_layerb_common_response_v0_1.py \
+            --parent-root inputs/parent \
+            --parent-authority docs/dsir4/authority/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_PASS_V0_1.json \
+            --manifest "$MANIFEST" \
+            --angular-root inputs/angular \
+            --expim-root inputs/expim \
+            --boss-root external/exp073w_boss \
+            --source external/des_nz/source.fits \
+            --lens external/des_nz/lens.fits \
+            --camb-root external/camb \
+            --expz2-script ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py \
+            --exp073iq-script ci/exp073iq_article3_real_layera_support_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --scratch scratch \
+            --out artifacts/exp073ir_article3_real_layerb_common_response_v0_1.json
+
+      - name: Require admissible Exp073IR accounting token
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/exp073ir_article3_real_layerb_common_response_v0_1.json'))
+          allowed={'PASS_PHYSICAL_SUPPORT_ARTICLE3','FAIL_PHYSICAL_SUPPORT_ARTICLE3','NUMERICALLY_UNRESOLVED_EXP073IR','INVALID_FOR_SCIENCE_ARTICLE3_SUPPORT'}
+          assert d['status'] in allowed
+          assert d.get('covariance_read') is False and d.get('whitening_read') is False and d.get('nuisance_read') is False and d.get('relation_null_read') is False
+          if d['status']=='PASS_PHYSICAL_SUPPORT_ARTICLE3':
+              assert d['covariance_restriction_authorized'] is True
+              assert d['layer_b']['invalid_row_fraction'] <= 0.05
+              assert d['layer_b']['retained_after_layer_b'] >= 15
+              assert d['convergence']['pass'] is True
+          else:
+              assert d.get('covariance_restriction_authorized',False) is False
+          print('EXP073IR_RESULT',d['status'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073ir-article3-real-layerb-common-response-v0-1
+          path: artifacts/exp073ir_article3_real_layerb_common_response_v0_1.json
+          if-no-files-found: warn
+          retention-days: 90
