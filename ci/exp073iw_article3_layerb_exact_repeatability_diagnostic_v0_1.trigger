@@ -1,0 +1,3 @@
+Exp073IW exact repeatability diagnostic trigger v0.1
+Preregistration commit: 577e41714b813142113a0cacfbed93272b30c0a4
+Workflow commit: a173451f5a3836bcf27cb53e33360497bdd86fc3
