@@ -1,0 +1,38 @@
+{
+  "schema": "EXP073JQ_ARTICLE3_SLOT20_SAME_RUN_HISTORY_INDEPENDENCE_AUTHORITY_V0_1",
+  "experiment": "Exp073JQ",
+  "run_id": 34531670122,
+  "workflow_head_sha": "8058c212372862c9dc59fa6fceb8defb17e22d93",
+  "aggregate_job_id": 103055501260,
+  "classification": "SAME_RUN_HISTORY_INDEPENDENCE_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "artifact_verified_independently": true,
+  "canonical_node_sha256": "f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb",
+  "canonical_hex_sha256": "98cd360d0764a884471cb09b4504b79583e2ffaea4423389ec473e98b8656c2a",
+  "model_artifacts": {
+    "reference": {"job_id": 103053605850, "artifact_id": 10173947598, "zip_sha256": "73869241f165682d20a8ee628ee7525088ecba08bf551707b2c1df682463ba5d", "result_json_sha256": "70f34a582f7d47f097dc8728eb5c3775d2947d47a1afa019ed7b53b8ee99c463", "tail_payload_sha256": "cea9dabf673861e910e7c56a86e748878848d30453657aea61974faf3fb03b31"},
+    "alpha_minus": {"job_id": 103053605627, "artifact_id": 10173933797, "zip_sha256": "54dc9719079aee45c36bfc8d4c4607c54b6d0566f3ee98f50a715e0611da38bc", "result_json_sha256": "044540b096d29bb683606c6ac35e268bb264cc26d03b6c9402093de2016dc923", "tail_payload_sha256": "3f3aaa23c3c8b0fd17b67c89065faa5b7525277d57687f68d5a8b2c6c98b580d"},
+    "beta_plus": {"job_id": 103053606048, "artifact_id": 10173948139, "zip_sha256": "0a93171c2344588ea86f12aaf7daf4b8e1f1d43f6745e5cddadfa1726fc13032", "result_json_sha256": "340fe6d0631e196026a865adafee48a72efca02f52f9928113d17687a58db34a", "tail_payload_sha256": "6da22504e26ec44223473b6c5debd379152d4074e612f05dd9abb4bf829d059b"},
+    "beta_minus": {"job_id": 103053605929, "artifact_id": 10173913061, "zip_sha256": "4ba2d130b79d3ebabc644efb405a34e942ce987f21a368eec48c914e84fb9d8c", "result_json_sha256": "c878bd7ca04c736e9ea75c8e57c8b2a25145120b82d282cc5d1f9baae7301c34", "tail_payload_sha256": "44b9c9f83c0c1c072c48cb94de5b251d9bfcd56868626eab4d331c65fe927965"}
+  },
+  "aggregate_artifact": {"artifact_id": 10173953963, "zip_sha256": "fcc2b4e5f08761ebca8f6ba1d44e460b3d024843f166fc5bddff6f1c2d7d516b", "result_json_sha256": "0ad0f7e780f040c96dbcc3b58dede885f89ba364c0f7cf0f713ef8a3d5c72b92"},
+  "observations": {
+    "all_four_models_valid": true,
+    "fresh_A_equals_after_history_exact_for_all_models": true,
+    "fresh_A_equals_fresh_B_exact_for_all_models": true,
+    "finite_masks_all_equal": true,
+    "positive_masks_all_equal": true,
+    "max_same_run_absolute_difference": 0.0,
+    "max_same_run_relative_difference": 0.0,
+    "requested_node_count": 4097,
+    "native_k_per_decade_for_pk": 20.0,
+    "h": 0.0001
+  },
+  "interpretation": "Within a single hosted runner/job, repeated fresh execution and pre-query history do not alter the frozen slot20 tail payload for any of the four models. The JO v0.5 cross-execution exact mismatch therefore cannot be attributed to query history; cross-run/process last-bit variability remains the identified confounder. Future scientific comparison operands must not cross runner/process boundaries.",
+  "checkpointed_JL_replay_authorized": false,
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "article3_readiness_percent": 68,
+  "funnel_freeze_readiness_percent": 67
+}
