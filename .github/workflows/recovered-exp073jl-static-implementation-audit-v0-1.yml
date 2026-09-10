@@ -1,0 +1,71 @@
+name: recovered-exp073jl-static-implementation-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/recovered-exp073jl-static-implementation-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: recovered-exp073jl-static-implementation-audit-v0-1
+  cancel-in-progress: false
+
+env:
+  AUDIT_BLOB: 'cbd32bb2a20f9fdc10805819627b29aa52fa5f54'
+  HELPER_BLOB: '5f8475b961db20bef5f4b8a2eb7c99d9f7c722e2'
+  PREREG_BLOB: 'a6ba32cb5b9ebe73bd6e3cd03a22d3f51f8aa2ca'
+  JW_BLOB: '9af66950005a4c56e8f485358f85e834be017e16'
+  PLAN_BLOB: 'a02c50749966ee29ff9507f7579542d8d3c330cb'
+  JT_BLOB: '2ed0f4d0a99e31e4e8ddf5644a10fc0a688a4469'
+  JV_BLOB: '113f18e416e9b40e336cf51353429378f3016cca'
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/recovered_exp073jl_static_implementation_audit_v0_1.py)" = "$AUDIT_BLOB"
+          test "$(git hash-object ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py)" = "$HELPER_BLOB"
+          test "$(git hash-object docs/dsir4/prereg/EXP073JL_ARTICLE3_CANONICAL_ONE_LIVE_RECOVERED_THIRD_REFINEMENT_CONVERGENCE_V0_2.md)" = "$PREREG_BLOB"
+          test "$(git hash-object docs/dsir4/authority/EXP073JW_ARTICLE3_CANONICAL_ONE_LIVE_EIGHT_BUILD_RESOURCE_PILOT_V0_1.json)" = "$JW_BLOB"
+          test "$(git hash-object docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_1.json)" = "$PLAN_BLOB"
+          test "$(git hash-object docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json)" = "$JT_BLOB"
+          test "$(git hash-object docs/dsir4/authority/EXP073JV_ARTICLE3_SEQUENTIAL_CANONICAL_JL_EXECUTION_AUTHORIZATION_AUDIT_V0_1.json)" = "$JV_BLOB"
+          python3 -m py_compile ci/recovered_exp073jl_static_implementation_audit_v0_1.py ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py
+      - name: Run no-science static implementation audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 ci/recovered_exp073jl_static_implementation_audit_v0_1.py \
+            --helper ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py \
+            --prereg docs/dsir4/prereg/EXP073JL_ARTICLE3_CANONICAL_ONE_LIVE_RECOVERED_THIRD_REFINEMENT_CONVERGENCE_V0_2.md \
+            --jw docs/dsir4/authority/EXP073JW_ARTICLE3_CANONICAL_ONE_LIVE_EIGHT_BUILD_RESOURCE_PILOT_V0_1.json \
+            --plan docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_1.json \
+            --jt docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json \
+            --jv docs/dsir4/authority/EXP073JV_ARTICLE3_SEQUENTIAL_CANONICAL_JL_EXECUTION_AUTHORIZATION_AUDIT_V0_1.json \
+            --out artifacts/static_audit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('artifacts/static_audit.json'))
+          assert d['classification']=='RECOVERED_EXP073JL_STATIC_IMPLEMENTATION_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['scientific_response_read'] is False and d['class_solver_invoked'] is False
+          assert d['scientific_authority_created'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False
+          assert all(d['checks'].values())
+          PY
+      - name: Upload static audit result
+        uses: actions/upload-artifact@v4
+        with:
+          name: recovered-exp073jl-static-implementation-audit
+          path: artifacts/static_audit.json
+          if-no-files-found: error
+          retention-days: 90
