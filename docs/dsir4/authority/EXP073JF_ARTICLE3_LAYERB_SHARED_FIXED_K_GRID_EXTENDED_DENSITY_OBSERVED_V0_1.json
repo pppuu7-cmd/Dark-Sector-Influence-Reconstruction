@@ -1,0 +1,36 @@
+{
+  "artifact_id": 10153458465,
+  "artifact_name": "exp073jf-shared-fixed-k-extended-density-v0-1",
+  "artifact_verified_independently": true,
+  "artifact_zip_sha256": "f71c1603f46e622a6c71ebab6733d30e9633cc92e9dc50a98cecdf364b28fffb",
+  "capacity_patch_json_sha256": "f7d8d33232908f5f90f557ef42eeead4acc9dcc58a92f69629857aece2e1889b",
+  "classification": "SHARED_FIXED_K_GRID_EXTENDED_DENSITY_OBSERVED_PLUS_0_PLUS_0",
+  "covariance_restriction_authorized": false,
+  "effect": "+0/+0",
+  "experiment": "Exp073JF",
+  "head_sha": "2e5e43de2abaec3be93f5fe1a2fbe909b6e86048",
+  "job_id": 102881291672,
+  "node_results": {
+    "384": {
+      "alpha_relative_error": 0.0007790941263871595,
+      "beta_relative_error": 0.031479742832626514,
+      "kpd10_vs_kpd20_alpha_relative_difference": 0.0,
+      "kpd10_vs_kpd20_beta_relative_difference": 0.0,
+      "scaling_candidate": false
+    },
+    "512": {
+      "alpha_relative_error": 0.00010245604306152275,
+      "beta_relative_error": 0.026575285704422986,
+      "kpd10_vs_kpd20_alpha_relative_difference": 0.0,
+      "kpd10_vs_kpd20_beta_relative_difference": 0.0,
+      "scaling_candidate": false
+    }
+  },
+  "rel_tol": 0.001,
+  "result_json_sha256": "a18d46f6a6e62c3009df92344c97f8f41d8f61ebad172e18b0e519704398a3e6",
+  "run_id": 34480349238,
+  "scaling_candidates": [],
+  "scientific_authority_created": false,
+  "smallest_scaling_candidate": null,
+  "token": "PASS_EXP073JF_SHARED_FIXED_K_GRID_EXTENDED_DENSITY_OBSERVED_V0_1"
+}
