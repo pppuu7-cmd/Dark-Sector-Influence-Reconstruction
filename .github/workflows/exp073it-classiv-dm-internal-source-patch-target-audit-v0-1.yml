@@ -1,0 +1,48 @@
+name: exp073it-classiv-dm-internal-source-patch-target-audit-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/bindings/EXP073IT_LAUNCH_V0_1.txt'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce prospective Exp073IT lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f docs/dsir4/prereg/EXP073IT_CLASSIV_DM_INTERNAL_SOURCE_PATCH_TARGET_AUDIT_V0_1.md
+          grep -Fq 'PASS_EXP073IT_CLASSIV_DM_INTERNAL_SOURCE_PATCH_TARGET_AUDIT_V0_1' docs/dsir4/prereg/EXP073IT_CLASSIV_DM_INTERNAL_SOURCE_PATCH_TARGET_AUDIT_V0_1.md
+      - name: Checkout exact pinned CLASS-IV and audit source semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv hash-object source/perturbations.c)" = 92a48331658c5941ed4eb43b0e98ee78e39b8385
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/source/perturbations.c').read_text()
+          h=Path('external/class_iv/include/perturbations.h').read_text()
+          assert 'index_tp_delta_m' in h and 'index_tp_delta_tot' in h
+          assert 'total matter overdensity (gauge-invariant, defined as in arXiv:1307.1459)' in p
+          assert '_set_source_(ppt->index_tp_delta_m) = ppw->delta_m;' in p
+          assert 'class_define_index(ppt->index_tp_delta_m' in p
+          assert 'class_define_index(ppt->index_tp_delta_tot' in p
+          assert '"d_m"' not in p
+          assert 'tk[ppt->index_tp_delta_m]' not in p
+          assert '"d_tot"' in p
+          assert 'tk[ppt->index_tp_delta_tot]' in p
+          print('patch_target=index_tp_delta_m<-ppw->delta_m')
+          print('forbidden_alias=index_tp_delta_tot/d_tot')
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('cosmological_run_started=false')
+          print('scientific_authority_created=false')
+          print('PASS_EXP073IT_CLASSIV_DM_INTERNAL_SOURCE_PATCH_TARGET_AUDIT_V0_1')
+          PY
