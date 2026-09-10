@@ -1,0 +1,100 @@
+name: exp073jb-article3-layerb-common-physical-bracket-transport-v0-1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073jb-article3-layerb-common-physical-bracket-transport-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: exp073jb-article3-layerb-common-physical-bracket-transport-v0-1
+  cancel-in-progress: false
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Enforce prospective contract and lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f docs/dsir4/prereg/EXP073JB_ARTICLE3_LAYERB_COMMON_PHYSICAL_BRACKET_TRANSPORT_DIAGNOSTIC_V0_1.md
+          test -f docs/dsir4/authority/EXP073JA_ARTICLE3_LAYERB_HIGH_DENSITY_CANCELLATION_OBSERVED_V0_1.json
+          python -m py_compile ci/exp073jb_article3_layerb_common_physical_bracket_transport_v0_1.py scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py
+          python - <<'PY'
+          import json
+          d=json.load(open('docs/dsir4/authority/EXP073JA_ARTICLE3_LAYERB_HIGH_DENSITY_CANCELLATION_OBSERVED_V0_1.json'))
+          assert d['classification']=='HIGH_DENSITY_CANCELLATION_OBSERVED_PLUS_0_PLUS_0'
+          assert d['artifact_zip_sha256']=='5cec1bc0a6d3c05b37fab53c4ad5f76d7ea079bf81066eed7145a31bfa8a71ed'
+          assert d['frozen_parent_status']=='NUMERICALLY_UNRESOLVED_EXP073IR'
+          assert d['frozen_parent_rel_tol']==0.001
+          assert d['covariance_restriction_authorized'] is False
+          PY
+          test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = '0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c'
+      - name: Install frozen Python/build stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git
+          python -m pip install --upgrade pip wheel 'setuptools<76'
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy
+      - name: Checkout and build exact patched CLASS-IV
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv hash-object source/perturbations.c)" = 92a48331658c5941ed4eb43b0e98ee78e39b8385
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text()
+          old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"
+          new="extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']"
+          assert s.count(old)==1; p.write_text(s.replace(old,new,1))
+          PY
+          make -C external/class_iv -j2 all
+          python - <<'PY'
+          import classy,hashlib,pathlib
+          p=pathlib.Path(classy.__file__)
+          print('CLASSY_FILE',p)
+          print('CLASSY_SHA256',hashlib.sha256(p.read_bytes()).hexdigest())
+          PY
+      - name: Execute frozen common physical bracket diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python ci/exp073jb_article3_layerb_common_physical_bracket_transport_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --out artifacts/exp073jb_result.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/exp073jb_result.json'))
+          assert d['classification']=='COMMON_BRACKET_TRANSPORT_OBSERVED_PLUS_0_PLUS_0'
+          assert d['scientific_authority_created'] is False
+          assert d['covariance_restriction_authorized'] is False
+          assert d['k_per_decade_ladder']==[80.0,160.0,320.0,640.0]
+          print(d['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jb-common-bracket-transport-v0-1
+          path: artifacts/exp073jb_result.json
+          retention-days: 90
