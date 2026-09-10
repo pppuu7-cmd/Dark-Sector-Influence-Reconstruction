@@ -1,0 +1,38 @@
+{
+  "schema": "EXP073IY_ARTICLE3_LAYERB_CROSS_BUILD_REPRODUCIBILITY_AUTHORITY_V0_1",
+  "experiment": "Exp073IY",
+  "classification": "CROSS_BUILD_EXACT_PLUS_0_PLUS_0",
+  "token": "PASS_EXP073IY_CROSS_BUILD_EXACT_V0_1",
+  "workflow_run": 34447756148,
+  "workflow_head_sha": "c210f15138b4597de13edd21ee124272529227c7",
+  "jobs": {
+    "replica_A": 102776221732,
+    "replica_B": 102776221490,
+    "verifier": 102776946041
+  },
+  "artifacts": {
+    "replica_A": {"id": 10140370989, "zip_sha256": "bb22031b82e5ca8425bb7944d91aba187280912b79d4715454705e46f499e701"},
+    "replica_B": {"id": 10140372425, "zip_sha256": "fa76d5fa6cd9ac9783881b0ebb62288ca80ff135649bd07287fb34457f476fc6"},
+    "verdict": {"id": 10140382915, "zip_sha256": "625075318e1b1166a861decd495700f4a501506215cabaa9b1b2838e10a2851e"},
+    "authoritative_parent": {"id": 10134905199, "zip_sha256": "165a85c8348fc4fc4c52f3926aa1a46989179efc8413a059f9fc2d6aa9dfbb21"}
+  },
+  "exact_output_sha256": "6dea43dcc0eadaf91887f181732d20dceef04866d5687aa231b747312fec0cb1",
+  "exact_output_nbytes": 35137,
+  "exact_max_relative_component_difference": 0.9998247463807295,
+  "replica_A_byte_identical_to_B": true,
+  "replica_A_byte_identical_to_parent": true,
+  "replica_B_byte_identical_to_parent": true,
+  "replica_A_runner": {"os": "Ubuntu 24.04.5", "image": "20260907.300.1"},
+  "replica_B_runner": {"os": "Ubuntu 24.04.4", "image": "20260831.293.1"},
+  "common_built_binaries": {
+    "camb_camblib_so_sha256": "2a49b376c6fc1e1da177090bc58defced2e90563c04d20359a357fec1e888a68",
+    "classy_module_sha256": "76b142d4f308248fc61ebb6d635e65ba07326ee553a0394799359b40ef44f38a"
+  },
+  "camb_source_sha": "fa3f097343fbbe427cc04b4f5f0041c22c6ec764",
+  "class_iv_source_sha": "ac627d54e9ce196a08878d1ba33999819925d19c",
+  "parent_status_preserved": "NUMERICALLY_UNRESOLVED_EXP073IR",
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "effect": "+0/+0",
+  "next_permitted_work": "Prospectively freeze the smallest uninstrumented numerical-resolution mechanism diagnostic for the genuine Exp073IR production-vs-dense convergence failure; REL_TOL=1e-3 and all frozen science remain unchanged."
+}
