@@ -20,16 +20,18 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip install 'numpy==1.26.4'
-      - name: Validate pre-result JM implementation and frozen geometry
+      - name: Validate pre-result JM implementation, frozen geometry and contract finalizer
         shell: bash
         run: |
           set -euo pipefail
-          python -m py_compile ci/exp073jm_article3_layerb_common_grid_fourth_refinement_convergence_v0_1.py ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py
+          python -m py_compile ci/exp073jm_article3_layerb_common_grid_fourth_refinement_convergence_v0_1.py ci/exp073jm_contract_finalizer_v0_1.py ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py
           test -f docs/dsir4/prereg/EXP073JM_ARTICLE3_LAYERB_COMMON_GRID_FOURTH_REFINEMENT_CONVERGENCE_V0_1.md
           test -f docs/dsir4/methods/LAYERB_CONVERGENCE_ARGMAX_DIAGNOSTIC_STANDARD_V0_1.md
           PYTHONPATH=ci python - <<'PY'
+          import copy
           import numpy as np
           import exp073jm_article3_layerb_common_grid_fourth_refinement_convergence_v0_1 as jm
+          import exp073jm_contract_finalizer_v0_1 as fin
           import exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1 as jj
           assert jm.H == 1e-4 and jm.REL_TOL == 1e-3
           assert jm.NATIVE_KPD == 20.0
@@ -43,7 +45,6 @@ jobs:
           sf = ','.join(format(float(x), '.17g') for x in f)
           assert len(sc) < jm.PARSER_CAPACITY
           assert len(sf) < jm.PARSER_CAPACITY
-          # Unit check: diagnostic accumulator observes the same frozen relative statistic.
           acc = jm.DiagnosticAccumulator()
           ctx = {'slot':20.0,'z':0.7,'targets':np.array([0.001,0.002],dtype=np.float64)}
           a = np.array([[1.0,2.0],[3.0,4.0]],dtype=np.float64)
@@ -52,7 +53,30 @@ jobs:
           expected = float(np.max(np.abs(a-b)/np.maximum(np.abs(a),np.abs(b))))
           got = acc.summary()['relative_argmax']['relative_difference']
           assert got == expected
+
+          base = {
+            'schema':'EXP073JM_ARTICLE3_LAYERB_COMMON_GRID_FOURTH_REFINEMENT_CONVERGENCE_RESULT_V0_1',
+            'classification':fin.NOT_CONVERGED,
+            'scientific_authority_created':False,'covariance_restriction_authorized':False,
+            'rel_tol':1e-3,'h':1e-4,'native_k_per_decade_for_pk_frozen':20.0,
+            'lattices':{
+              'coarse':{'base_n':4096,'lower_guard_count':0,'upper_guard_count':1,'requested_node_count':4097},
+              'fine':{'base_n':8192,'lower_guard_count':0,'upper_guard_count':1,'requested_node_count':8193}},
+            'parent_identity_preserved':True,
+            'unsupported_target_evaluations':0,
+            'response_engine_audit':{'10':{'max_requested_node_coordinate_rel_mismatch':1e-16},'20':{'max_requested_node_coordinate_rel_mismatch':1e-16}},
+            'convergence':{'max_relative_component_difference':0.005},
+            'diagnostic':{'decision_neutral':True,'relative_argmax':{'relative_difference':0.005}}
+          }
+          o = fin.finalize(copy.deepcopy(base)); assert o['classification'] == fin.NOT_CONVERGED and o['contract_finalizer']['infra_ok'] is True
+          bad = copy.deepcopy(base); bad['parent_identity_preserved'] = False
+          o = fin.finalize(bad); assert o['classification'] == fin.INVALID_INFRA and o['contract_finalizer']['infra_ok'] is False
+          bad = copy.deepcopy(base); bad['unsupported_target_evaluations'] = 1
+          o = fin.finalize(bad); assert o['classification'] == fin.INVALID_INFRA
+          bad = copy.deepcopy(base); bad['response_engine_audit']['20']['max_requested_node_coordinate_rel_mismatch'] = 1e-9
+          o = fin.finalize(bad); assert o['classification'] == fin.INVALID_INFRA
           print('JM_COARSE_SERIALIZED_CHARS',len(sc))
           print('JM_FINE_SERIALIZED_CHARS',len(sf))
-          print('PASS_EXP073JM_STATIC_PREFLIGHT_V0_1')
+          print('PASS_EXP073JM_CONTRACT_FINALIZER_STATIC_V0_1')
+          print('PASS_EXP073JM_STATIC_PREFLIGHT_V0_2')
           PY
