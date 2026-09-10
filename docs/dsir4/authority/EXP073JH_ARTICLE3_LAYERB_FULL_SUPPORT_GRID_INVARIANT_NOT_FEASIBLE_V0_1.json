@@ -1,0 +1,58 @@
+{
+  "schema": "EXP073JH_ARTICLE3_LAYERB_FULL_SUPPORT_GRID_INVARIANT_AUTHORITY_V0_1",
+  "experiment": "Exp073JH",
+  "classification": "FULL_SUPPORT_GRID_INVARIANT_NOT_FEASIBLE_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "frozen_parent_status": "NUMERICALLY_UNRESOLVED_EXP073IR",
+  "run_id": 34487047656,
+  "job_id": 102903883547,
+  "head_sha": "0834a45f5e767d411ce694d081069403ea6fd908",
+  "artifact_id": 10156346630,
+  "artifact_zip_sha256": "c89fbebde6e9a635614cdebe7a82b088d3224183d82c6361e8133c8923b04edd",
+  "artifact_result_json_sha256": "cb88bd2570b668ea751a4536392e3d8f80349db707f5efe90f24bda360222ed6",
+  "artifact_capacity_patch_json_sha256": "f7d8d33232908f5f90f557ef42eeead4acc9dcc58a92f69629857aece2e1889b",
+  "artifact_verified_independently": true,
+  "raw_token": "PASS_EXP073JH_FULL_SUPPORT_GRID_INVARIANT_NOT_FEASIBLE_V0_1",
+  "architecture": "N512_SHARED_PHYSICAL_K_CUBIC_CENTERED_LN_K_V0_1",
+  "node_count": 512,
+  "fixed_k_min": 0.0001,
+  "fixed_k_max": 0.06664762008318016,
+  "h": 0.0001,
+  "rel_tol": 0.001,
+  "convergence": {
+    "production_k_per_decade_for_pk": 10.0,
+    "dense_k_per_decade_for_pk": 20.0,
+    "max_relative_component_difference": 0.0,
+    "finite_nonzero_status_changed": false,
+    "row_label_changed": false,
+    "boss_dense_z_disagreement": false,
+    "pass": true
+  },
+  "response_engine_audit": {
+    "10": {
+      "response_calls": 441,
+      "target_evaluations": 83666,
+      "unsupported_target_evaluations": 1217,
+      "max_requested_node_coordinate_rel_mismatch": 1.6491595171051063e-16
+    },
+    "20": {
+      "response_calls": 569,
+      "target_evaluations": 121682,
+      "unsupported_target_evaluations": 1985,
+      "max_requested_node_coordinate_rel_mismatch": 1.6491595171051063e-16
+    }
+  },
+  "unsupported_target_evaluations": 3202,
+  "layer_b_accounting": {
+    "invalid_row_count": 107,
+    "invalid_row_fraction": 1.0,
+    "retained_after_layer_b": 0,
+    "minimum_retained": 15,
+    "threshold_inclusive": 0.05
+  },
+  "interpretation": "The centered-cubic shared-grid architecture is exactly invariant between the frozen kpd=10 and 20 evaluations wherever a complete stencil exists (maximum relative component difference 0.0, no finite/nonzero, row-label, or BOSS dense-z disagreement). JH is not feasible only because 3202 inherited atomic target evaluations lack the complete centered-cubic stencil on the finite [1e-4,KMAX] evaluation lattice; those NaNs propagate to all 107 row labels. This is an evaluation-support boundary failure, not evidence of same-k solver or interpolation-convergence failure. A later support-only repair may extend the same geometric lattice with response-blind guard nodes while preserving the judged physical domain and all original 512 interior nodes. Exp073IR is not retroactively passed.",
+  "static_boundary_audit_commit": "29f081089bd6ce174285446a266dbc59baeed15e",
+  "frozen_science_unchanged": true
+}
