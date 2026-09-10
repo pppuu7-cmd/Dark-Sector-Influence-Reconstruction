@@ -51,7 +51,8 @@ JV PASS permits only **preregistration** of a recovered Exp073JL execution satis
 - at most one CLASS instance is live at a time;
 - the four model roles and their parameters remain exactly `(0,0),(-1e-4,0),(0,+1e-4),(0,-1e-4)`;
 - for every scientific coarse/fine comparison atom, all raw target vectors required to form that atom are produced and combined within one runner/process execution domain; raw scientific operands may not cross runner/process boundaries;
-- complete fixed chunks may persist only exact raw/sufficient data whose within-process provenance is bound to the canonical lattice, model role, z/target stream and frozen contract; cross-chunk aggregation may use only the already audited associative frozen summaries;
+- raw model/response operands may exist on local disk only transiently inside the same running job/process domain that will consume them. They may not be uploaded, checkpointed, restored, or consumed by a different runner/process to form a scientific coarse/fine comparison;
+- a completed fixed chunk may persist across process boundaries only the already audited decision-neutral associative summaries, counters, row/status receipts and provenance needed for exact final reduction. No raw operand or partially formed cross-lattice comparison may be reconstructed from different processes;
 - no tolerance, ULP allowance, rounding, smoothing, averaging, effective coordinate, changed finite-difference step, changed grid density, changed interpolation, changed native kpd, or fiducial-P rescue is allowed;
 - the ordinary recovered output must be judged by the original JL scientific classifier, not a new JV-specific convergence criterion.
 
