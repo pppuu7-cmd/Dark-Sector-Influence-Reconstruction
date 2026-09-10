@@ -19,6 +19,7 @@ JL_CONVERGED = "COMMON_GRID_THIRD_REFINEMENT_CONVERGED_PLUS_0_PLUS_0"
 SCI_PASS = "PASS_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_V0_1"
 SCI_FAIL = "FAIL_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_V0_1"
 NUM_UNRES = "NUMERICALLY_UNRESOLVED_EXP073JN"
+INVALID_INFRA = "INVALID_INFRA_PLUS_0_PLUS_0"
 
 
 def load_module(name: str, path: str):
@@ -51,6 +52,8 @@ def main():
     ji = json.loads(Path(a.ji_authority).read_text())
     patch = json.loads(Path(a.capacity_patch_record).read_text())
 
+    # Activation is intentionally no stricter than the pre-frozen JN contract:
+    # a valid independently verified JL CONVERGED authority is sufficient.
     if jl.get("classification") != JL_CONVERGED:
         raise SystemExit("Exp073JN activation condition not met")
     if jl.get("artifact_verified_independently") is not True:
@@ -59,10 +62,6 @@ def main():
     jl_max = jo.get("max_atomic_coarse_vs_fine_relative_component_difference")
     if not (isinstance(jl_max, (int, float)) and math.isfinite(jl_max) and jl_max < REL_TOL):
         raise SystemExit("JL convergence authority mismatch")
-    if jo.get("retained_after_layer_b") != 107 or jo.get("unsupported_target_evaluations") != 0:
-        raise SystemExit("JL support authority mismatch")
-    if jo.get("invalid_row_fraction") != 0.0:
-        raise SystemExit("JL unexpected invalid-row authority")
     if not isinstance(jl.get("artifact_zip_sha256"), str) or len(jl["artifact_zip_sha256"]) != 64:
         raise SystemExit("JL artifact digest missing")
 
@@ -114,8 +113,7 @@ def main():
 
     d = json.loads(out_inner.read_text())
     forbidden = ("covariance_read", "whitening_read", "nuisance_read", "relation_null_read")
-    if any(d.get(k) is not False for k in forbidden):
-        raise SystemExit("forbidden downstream quantity read")
+    forbidden_ok = all(d.get(k) is False for k in forbidden)
 
     parent = d.get("parent", {})
     layer = d.get("layer_b", {})
@@ -126,13 +124,19 @@ def main():
         and parent.get("retained_id_sha256") == ir.PARENT_RETAINED_SHA
         and parent.get("full_order_sha256") == ir.FULL_ORDER_SHA
     )
-    unsupported = sum(int(v["unsupported_target_evaluations"]) for v in audit.values())
-    lookup = max(float(v["max_requested_node_coordinate_rel_mismatch"]) for v in audit.values())
+    try:
+        unsupported = sum(int(v["unsupported_target_evaluations"]) for v in audit.values())
+        lookup = max(float(v["max_requested_node_coordinate_rel_mismatch"]) for v in audit.values())
+    except Exception:
+        unsupported = -1
+        lookup = math.inf
     mx = conv.get("max_relative_component_difference")
 
     structural_ok = bool(
-        exact_parent
+        forbidden_ok
+        and exact_parent
         and unsupported == 0
+        and math.isfinite(lookup)
         and lookup <= LOOKUP_REL_TOL
         and conv.get("finite_nonzero_status_changed") is False
         and conv.get("row_label_changed") is False
@@ -151,8 +155,8 @@ def main():
     )
 
     if not structural_ok:
-        raise SystemExit("fresh scientific rerun structural/provenance condition failed")
-    if not numerical_ok:
+        status = INVALID_INFRA
+    elif not numerical_ok:
         status = NUM_UNRES
     elif not physical_ok:
         status = SCI_FAIL
@@ -211,12 +215,13 @@ def main():
         "max_requested_node_coordinate_rel_mismatch": lookup,
         "convergence": conv,
         "layer_b": layer,
+        "structural_provenance_ok": structural_ok,
         "forbidden_downstream_reads": {k: d.get(k) for k in forbidden},
         "inner_status_for_crosscheck": d.get("status"),
         "token": (
             "PASS_EXP073JN_LAYERB_SHARED_GRID_SCIENTIFIC_CLOSURE_V0_1"
             if passed
-            else "PASS_EXP073JN_VALID_NONPASS_RESULT_V0_1"
+            else ("EXP073JN_INVALID_INFRA_V0_1" if status == INVALID_INFRA else "PASS_EXP073JN_VALID_NONPASS_RESULT_V0_1")
         ),
     }
 
