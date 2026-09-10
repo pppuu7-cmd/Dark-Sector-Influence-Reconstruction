@@ -1,0 +1,54 @@
+name: exp073is-classiv-dm-public-exposure-audit-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/bindings/EXP073IS_LAUNCH_V0_1.txt'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen preregistration
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f docs/dsir4/prereg/EXP073IS_CLASSIV_DM_PUBLIC_EXPOSURE_AUDIT_V0_1.md
+          grep -Fq 'PASS_EXP073IS_CLASSIV_DM_PUBLIC_EXPOSURE_AUDIT_V0_1' docs/dsir4/prereg/EXP073IS_CLASSIV_DM_PUBLIC_EXPOSURE_AUDIT_V0_1.md
+      - name: Checkout exact pinned CLASS-IV
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv hash-object source/perturbations.c)" = 92a48331658c5941ed4eb43b0e98ee78e39b8385
+      - name: Audit exact d_m source and public exposure route
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/source/perturbations.c').read_text()
+          h=Path('external/class_iv/include/perturbations.h').read_text()
+          checks={
+            'distinct_indices': 'index_tp_delta_m' in h and 'index_tp_delta_tot' in h,
+            'nc_density_enables_dm': 'if (ppt->has_nc_density == _TRUE_)' in p and 'ppt->has_source_delta_m = _TRUE_;' in p,
+            'dm_index_defined': 'class_define_index(ppt->index_tp_delta_m' in p,
+            'dtot_index_defined': 'class_define_index(ppt->index_tp_delta_tot' in p,
+            'dm_public_title': '"d_m"' in p,
+            'dtot_public_title': '"d_tot"' in p,
+            'dm_public_data': 'tk[ppt->index_tp_delta_m]' in p,
+            'dtot_public_data': 'tk[ppt->index_tp_delta_tot]' in p,
+          }
+          for k,v in checks.items(): print(f'{k}={v}')
+          assert all(checks.values()), checks
+          assert p.find('tk[ppt->index_tp_delta_m]') != p.find('tk[ppt->index_tp_delta_tot]')
+          print('classification=SUPPORT_PLUS_0_PLUS_0')
+          print('layerb_numerical_run_started=false')
+          print('scientific_authority_created=false')
+          print('PASS_EXP073IS_CLASSIV_DM_PUBLIC_EXPOSURE_AUDIT_V0_1')
+          PY
