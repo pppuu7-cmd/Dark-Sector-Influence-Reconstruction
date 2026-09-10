@@ -101,7 +101,7 @@ jobs:
             'first-order local tangent approximation at `(0,0)` only',
             'no smoothing, averaging, tolerance rescue, effective coordinates, fiducial-P shortcut, interpolation, or extrapolation',
             'prediction_ready` may become true only after admission',
-            'numerically_evaluated=false for any DSIR observational gate',
+            '`numerically_evaluated=false` for any DSIR observational gate',
             'scientific_model_authority_created=false',
             'G_DOMAIN_MAPPING=TESTABLE_NOT_EVALUATED'
           ]
