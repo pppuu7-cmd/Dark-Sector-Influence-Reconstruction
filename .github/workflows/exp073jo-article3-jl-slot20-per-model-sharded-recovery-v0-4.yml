@@ -1,0 +1,152 @@
+name: exp073jo-article3-jl-slot20-per-model-sharded-recovery-v0-4
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp073jo-article3-jl-slot20-per-model-sharded-recovery-v0-4.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: exp073jo-article3-jl-slot20-per-model-sharded-recovery-v0-4
+  cancel-in-progress: false
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  SHARD_HELPER_BLOB_SHA: 9afb076a0744dd30d4e45d4090d16ef23cc501fa
+
+jobs:
+  static-equivalence:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce prospective execution-only repair and algebra identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/exp073jo_slot20_per_model_shard_v0_4.py)" = "$SHARD_HELPER_BLOB_SHA"
+          test -f docs/dsir4/prereg/EXP073JO_ARTICLE3_JL_SLOT20_PER_MODEL_SHARDED_RECOVERY_V0_4.md
+          python -m py_compile ci/exp073jo_slot20_per_model_shard_v0_4.py ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py
+          python - <<'PY'
+          import numpy as np
+          h=1e-4
+          ref=np.array([1.,2.,3.,4.],dtype='<f8'); am=np.array([.9,1.8,2.7,3.6],dtype='<f8'); bp=np.array([1.2,2.2,3.2,4.2],dtype='<f8'); bm=np.array([.8,1.8,2.8,3.8],dtype='<f8')
+          frozen=np.column_stack((np.abs((am-ref)/(-h)),np.abs((bp-bm)/(2*h))))
+          reconstructed=np.column_stack((np.abs((am-ref)/(-h)),np.abs((bp-bm)/(2*h))))
+          assert frozen.dtype==np.dtype('<f8') and frozen.shape==(4,2) and frozen.tobytes()==reconstructed.tobytes()
+          print('PASS_EXP073JO_V04_STATIC_RECONSTRUCTION_EQUIVALENCE')
+          PY
+
+  shard:
+    needs: static-equivalence
+    strategy:
+      fail-fast: false
+      matrix:
+        phase: [slot20_after_history, slot20_fresh_tail]
+        model: [reference, alpha_minus, beta_plus, beta_minus]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen v0.4 identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/exp073jo_slot20_per_model_shard_v0_4.py)" = "$SHARD_HELPER_BLOB_SHA"
+          grep -F 'This repair changes execution topology only' docs/dsir4/prereg/EXP073JO_ARTICLE3_JL_SLOT20_PER_MODEL_SHARDED_RECOVERY_V0_4.md >/dev/null
+      - name: Install frozen stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git >/dev/null
+          python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy >/dev/null
+      - name: Build exact pinned capacity-patched CLASS-IV
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 4608',1))
+          q=Path('external/class_iv/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 131072',1))
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+      - name: Execute one exact model shard
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python ci/exp073jo_slot20_per_model_shard_v0_4.py --phase '${{ matrix.phase }}' --model '${{ matrix.model }}' --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py --baseline configs/dsir4/c2/ide0_reference_v0_1.ini --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre --out-json artifacts/shard.json --out-bin artifacts/tail.f64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jo-v04-${{ matrix.phase }}-${{ matrix.model }}
+          path: artifacts/
+          retention-days: 90
+
+  aggregate:
+    needs: shard
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: exp073jo-v04-*
+          path: parts
+      - name: Reconstruct and enforce exact history equality
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install 'numpy==1.26.4' >/dev/null
+          mkdir -p artifacts
+          python - <<'PY'
+          import glob,hashlib,json,pathlib
+          import numpy as np
+          H=1e-4; roles={'reference':(0.0,0.0),'alpha_minus':(-H,0.0),'beta_plus':(0.0,H),'beta_minus':(0.0,-H)}; phases=['slot20_after_history','slot20_fresh_tail']
+          rec={}
+          for p in glob.glob('parts/exp073jo-v04-*'):
+              d=json.load(open(pathlib.Path(p)/'shard.json')); raw=(pathlib.Path(p)/'tail.f64').read_bytes(); key=(d['phase'],d['model'])
+              if key in rec: raise SystemExit('duplicate shard')
+              if d['schema']!='EXP073JO_SLOT20_PER_MODEL_SHARD_RECEIPT_V0_4' or d['classification']!='SLOT20_PER_MODEL_SHARD_RECEIPT_PLUS_0_PLUS_0': raise SystemExit('bad shard schema')
+              if d['requested_node_count']!=4097 or d['base_n']!=4096 or d['native_kpd']!=20.0 or d['h']!=H or d['rel_tol']!=1e-3 or d['class_commit']!='ac627d54e9ce196a08878d1ba33999819925d19c': raise SystemExit('frozen identity mismatch')
+              a,b=roles[d['model']]
+              if d['alpha_hex']!=float(a).hex() or d['beta_hex']!=float(b).hex(): raise SystemExit('model identity mismatch')
+              if d['pre_query_executed'] is not (d['phase']=='slot20_after_history'): raise SystemExit('history semantics mismatch')
+              if hashlib.sha256(raw).hexdigest()!=d['tail_values_sha256'] or len(raw)!=32: raise SystemExit('payload mismatch')
+              rec[key]=(d,np.frombuffer(raw,dtype='<f8').copy())
+          if set(rec)!={(p,r) for p in phases for r in roles}: raise SystemExit(f'missing shard set {set(rec)}')
+          identity=['node_sha256','pre_z_hex','tail_z_hex','pre_targets_hex','tail_targets_hex','requested_node_count','grid_ratio_binary64']
+          first=next(iter(rec.values()))[0]
+          for d,_ in rec.values():
+              for k in identity:
+                  if d[k]!=first[k]: raise SystemExit(f'cross-shard identity mismatch {k}')
+          outresp={}
+          for p in phases:
+              ref=rec[p,'reference'][1]; am=rec[p,'alpha_minus'][1]; bp=rec[p,'beta_plus'][1]; bm=rec[p,'beta_minus'][1]
+              outresp[p]=np.ascontiguousarray(np.column_stack((np.abs((am-ref)/(-H)),np.abs((bp-bm)/(2*H)))),dtype='<f8')
+          A=outresp['slot20_after_history']; F=outresp['slot20_fresh_tail']
+          exact=bool(np.array_equal(A,F)); finite=bool(np.array_equal(np.isfinite(A),np.isfinite(F))); positive=bool(np.array_equal(A>0,A>0) and np.array_equal(A>0,F>0))
+          result={'schema':'EXP073JO_SLOT20_PER_MODEL_SHARDED_AGGREGATE_RESULT_V0_4','experiment':'Exp073JO','classification':'SLOT20_SHARDED_HISTORY_EXACT_PASS_PLUS_0_PLUS_0' if exact and finite and positive else 'SLOT20_SHARDED_HISTORY_EXACT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','scientific_authority_created':False,'covariance_restriction_authorized':False,'exact_array_equal':exact,'exact_finite_pattern_equal':finite,'exact_positive_pattern_equal':positive,'after_history_response_sha256':hashlib.sha256(A.tobytes()).hexdigest(),'fresh_tail_response_sha256':hashlib.sha256(F.tobytes()).hexdigest(),'node_sha256':first['node_sha256'],'token':'PASS_EXP073JO_SLOT20_SHARDED_HISTORY_EXACT_V0_4' if exact and finite and positive else 'FAIL_EXP073JO_SLOT20_SHARDED_HISTORY_EXACT_V0_4'}
+          pathlib.Path('artifacts/result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n'); pathlib.Path('artifacts/after_history.f64').write_bytes(A.tobytes()); pathlib.Path('artifacts/fresh_tail.f64').write_bytes(F.tobytes()); print(result['token']); print(json.dumps(result,sort_keys=True))
+          if not (exact and finite and positive): raise SystemExit('VALID_NEGATIVE: exact sharded history equality failed')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exp073jo-v04-aggregate
+          path: artifacts/
+          retention-days: 90
