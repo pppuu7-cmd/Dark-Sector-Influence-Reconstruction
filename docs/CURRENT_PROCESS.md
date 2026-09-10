@@ -2,32 +2,32 @@
 
 Updated: 2026-09-10. Scope: **DSIR only**; RTK/RQIR excluded.
 
-Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-10_ARTICLE3_JA_OBSERVED_JB_RUNNING_V64.md`, creation commit `40b1ea75c2d35ba29f9cc6e990eab31a4c8e544e`.
+Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-10_ARTICLE3_JB_OBSERVED_JC_RUNNING_V65.md`, creation commit `78d093c1166cbcc6fca5a9cadead93a3d2273c90`.
 
 ## Newly closed
 - Earlier admitted DSIR scientific authority remains preserved.
 - Repaired Exp073IR `34432102035 / 102729564736` remains `NUMERICALLY_UNRESOLVED_EXP073IR`; exact convergence maximum `0.9998247463807295 > 1e-3`; 0 invalid rows, f_B=0, retained 107; covariance unauthorized.
-- Exp073JA `34457952958 / 102808675330` is validated `HIGH_DENSITY_CANCELLATION_OBSERVED_PLUS_0_PLUS_0`, raw token `PASS_EXP073JA_HIGH_DENSITY_CANCELLATION_OBSERVED_V0_1`. Artifact `10144467663`, independently verified ZIP SHA256 `5cec1bc0a6d3c05b37fab53c4ad5f76d7ea079bf81066eed7145a31bfa8a71ed`; durable authority commit `d838cfe908d4069845c0ec4cac2aa80326b04dca`.
-- JA establishes decreasing alpha high-density step changes but persistent beta resolution sensitivity, with large cancellation between stable endpoint-value response and model-dependent native-grid motion. Support interpretation only.
+- Exp073JB `34463544046 / 102826719366` is validated support-only `COMMON_BRACKET_TRANSPORT_OBSERVED_PLUS_0_PLUS_0`, artifact `10146735382`, independently verified ZIP SHA256 `974e08c04c82c052d216a0de95a19cc0345f8845735769dc725955629cc8f991`; durable authority commit `71ebd787102dd59483e702256d8b40f8cdbd03c6`.
+- JB shows strong suppression of beta high-density sensitivity under common reference-bracket transport, with common `320->640 = 0.0029800645293267063` versus native `0.42559958697775674`. Support interpretation only.
 
-## Current authoritative process — Exp073JB
-- workflow: `exp073jb-article3-layerb-common-physical-bracket-transport-v0-1`;
-- run ID: `34463544046`;
-- job ID: `102826719366`;
-- branch/head: `main / 1be9887d1d6cebc3d21879ec573ce77ad5ba12b2`;
-- preregistration commit: `181626cffef1a7216ac3a1f46ab869f63ae77715`;
-- implementation commit: `3f040796b2da1e1d1532cd7b6b080abd875ab5ba`;
-- workflow/launch commit: `1be9887d1d6cebc3d21879ec573ce77ad5ba12b2`;
+## Current authoritative process — Exp073JC
+- workflow: `exp073jc-article3-layerb-reference-bracket-original-pair-v0-1`;
+- run ID: `34468721378`;
+- job ID: `102843338789`;
+- branch/head: `main / b2a3bf38f66435ca0ef7b94d757f7afbd451aa3e`;
+- preregistration commit: `600922731fef32b66f48727884af456939842eb6`;
+- implementation commit: `4d5871104999400a2351a1957792ad9d8c1fdef0`;
+- workflow/launch commit: `b2a3bf38f66435ca0ef7b94d757f7afbd451aa3e`;
 - checkpoint namespace / last durable checkpoint: N/A (GitHub-hosted support diagnostic);
-- start/registration: `2026-09-10T09:58:13Z`;
+- start/registration: `2026-09-10T10:57:09Z`;
 - runner ownership: GitHub-hosted `ubuntu-24.04`; home/self-hosted ownership none;
-- current state: IN_PROGRESS; prospective contract/lineage audit SUCCESS and frozen stack installation active at last inspection;
-- expected support classifications: `COMMON_BRACKET_TRANSPORT_OBSERVED_PLUS_0_PLUS_0` or `INVALID_INFRA_PLUS_0_PLUS_0`;
-- frozen diagnostic: same two probes, kpd `{80,160,320,640}`, exact `h=1e-4`; compare ordinary native-grid interpolation with counterfactual common physical reference bracket transport;
+- current state: IN_PROGRESS; prospective contract/lineage SUCCESS and frozen stack installation active at last inspection;
+- expected support classifications: `ORIGINAL_PAIR_REFERENCE_BRACKET_OBSERVED_PLUS_0_PLUS_0` or `INVALID_INFRA_PLUS_0_PLUS_0`;
+- frozen diagnostic: same two historical probes, exact kpd `{10,20}`, exact `h=1e-4`; compare ordinary native-grid interpolation with common physical reference-bracket transport;
 - scientific effect: always `+0/+0`; no Layer-B/covariance/model authority.
 
 ### Exact next transitions
-Terminal valid observation: verify raw log and artifact ZIP digest/provenance; inspect all native/common-bracket responses and adjacent-density differences. If the common-bracket sequence removes the dominant sensitivity, prospectively investigate a grid-invariant evaluation architecture without redefining the physical estimator. If not, continue mechanism isolation. Historical Exp073IR and `REL_TOL=1e-3` remain untouched.
+Terminal valid observation: verify raw log and artifact ZIP digest/provenance; inspect native and common-bracket 10-vs-20 relative discrepancies. If common-bracket transport materially suppresses the original-pair discrepancy, prospectively design a full-row grid-invariant evaluation architecture audit before any scientific rerun. If not, continue mechanism isolation. Historical Exp073IR and `REL_TOL=1e-3` remain untouched.
 
 Infrastructure invalid: diagnose the first causal defect and repair only the support diagnostic. Never alter Exp073IR science, `REL_TOL=1e-3`, `h=1e-4`, k/z domains, source definitions, atomization or covariance firewall.
 
