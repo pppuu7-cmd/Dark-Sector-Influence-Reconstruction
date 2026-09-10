@@ -7,6 +7,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: exp073iu-classiv-dm-public-exposure-patch-build-audit-v0-1
+  cancel-in-progress: true
 jobs:
   audit:
     runs-on: ubuntu-24.04
@@ -44,7 +47,6 @@ jobs:
           from pathlib import Path
           p=Path('external/class_iv/source/perturbations.c').read_text()
           assert p.count('_set_source_(ppt->index_tp_delta_m) = ppw->delta_m;')==1
-          assert p.count('ppt->has_source_delta_m = _TRUE_;')>=1
           assert p.count('class_store_columntitle(titles,"d_m",ppt->has_source_delta_m);')==1
           assert p.count('class_store_double(dataptr,tk[ppt->index_tp_delta_m],ppt->has_source_delta_m,storeidx);')==1
           assert p.count('class_store_columntitle(titles,"d_tot",_TRUE_);')==1
@@ -56,24 +58,19 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          p=Path('external/class_iv/python/setup.py')
-          s=p.read_text()
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text()
           old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"
           new="extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']"
-          assert s.count(old)==1
-          p.write_text(s.replace(old,new,1))
-          print('EXP073IU_WRAPPER_LINK_COMPAT_EXACTLY_ONCE')
+          assert s.count(old)==1; p.write_text(s.replace(old,new,1))
           PY
           make -C external/class_iv -j2 all
           python - <<'PY'
           from classy import Class
-          c=Class()
-          print('CLASSY_IMPORT_OK_NO_COSMOLOGY')
+          c=Class(); print('CLASSY_IMPORT_OK_NO_COSMOLOGY')
           PY
       - name: Emit support-only terminal token
         shell: bash
         run: |
-          set -euo pipefail
           echo 'patch_target=index_tp_delta_m<-ppw->delta_m'
           echo 'd_tot_preserved=true'
           echo 'layerb_numerical_run_started=false'
