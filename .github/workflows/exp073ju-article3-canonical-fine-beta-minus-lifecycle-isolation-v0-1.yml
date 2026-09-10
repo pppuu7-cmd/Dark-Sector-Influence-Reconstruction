@@ -42,13 +42,13 @@ jobs:
           test "$(git hash-object docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt)" = "$CANONICAL_FINE_BLOB"
           test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
           python - <<'PY'
-          import hashlib,json,numpy as np
+          import hashlib,json,struct
           p='docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt'
           raw=open(p,'rb').read()
           assert hashlib.sha256(raw).hexdigest()=='290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7'
           lines=raw.decode().splitlines(); assert len(lines)==4097
-          x=np.asarray([int(q,16) for q in lines],dtype='<u8').view('<f8')
-          assert hashlib.sha256(x.tobytes()).hexdigest()=='f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'
+          binary=b''.join(struct.pack('<Q',int(q,16)) for q in lines)
+          assert hashlib.sha256(binary).hexdigest()=='f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'
           jt=json.load(open('docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json'))
           js=json.load(open('docs/dsir4/authority/EXP073JS_ARTICLE3_LIFECYCLE_GEOMETRY_COVERAGE_AUDIT_V0_1.json'))
           assert jt['artifact_verified_independently'] is True and jt['classification']=='CANONICAL_SHARED_LATTICES_MATERIALIZED_PASS_PLUS_0_PLUS_0'
