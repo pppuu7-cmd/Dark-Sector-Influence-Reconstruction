@@ -11,6 +11,10 @@ permissions:
   contents: read
   actions: read
 
+concurrency:
+  group: exp073ir-article3-real-layerb-common-response-v0-1
+  cancel-in-progress: false
+
 jobs:
   layerb:
     runs-on: ubuntu-24.04
@@ -33,9 +37,10 @@ jobs:
         run: |
           set -euo pipefail
           test -f docs/dsir4/prereg/EXP073IR_ARTICLE3_REAL_LAYERB_COMMON_RESPONSE_V0_1.md
-          test -f docs/dsir4/contracts/EXP073IR_IMPLEMENTATION_CONTROL_V0_1.md
+          test -f docs/dsir4/contracts/EXP073IR_IMPLEMENTATION_CONTROL_V0_2.md
           test -f ci/exp073ir_article3_real_layerb_common_response_v0_1.py
-          python -m py_compile ci/exp073ir_article3_real_layerb_common_response_v0_1.py
+          test -f scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py
+          python -m py_compile ci/exp073ir_article3_real_layerb_common_response_v0_1.py scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py
           test "$(sha256sum configs/dsir4/c2/ide0_reference_v0_1.ini | awk '{print $1}')" = '0a68f4af6ead7ee69c75f1867f60914a40d4f7ff1219b965a0ae38186ca5c65c'
 
       - name: Install frozen numerical/build stack
@@ -59,18 +64,30 @@ jobs:
           test "$(git -C external/camb rev-parse HEAD)" = fa3f097343fbbe427cc04b4f5f0041c22c6ec764
           python -m pip install ./external/camb
 
-      - name: Checkout and build exact pinned CLASS-IV
+      - name: Checkout, patch and build exact pinned CLASS-IV
         shell: bash
         run: |
           set -euo pipefail
           git clone https://github.com/kaeonikc/class_iv.git external/class_iv
           git -C external/class_iv checkout ac627d54e9ce196a08878d1ba33999819925d19c
           test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv hash-object source/perturbations.c)" = 92a48331658c5941ed4eb43b0e98ee78e39b8385
+          grep -Fq '/* total matter overdensity (gauge-invariant, defined as in arXiv:1307.1459) */' external/class_iv/source/perturbations.c
+          grep -Fq '_set_source_(ppt->index_tp_delta_m) = ppw->delta_m;' external/class_iv/source/perturbations.c
           python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
           python - <<'PY'
           from pathlib import Path
-          p=Path('external/class_iv/python/setup.py')
-          s=p.read_text()
+          p=Path('external/class_iv/source/perturbations.c').read_text()
+          assert p.count('_set_source_(ppt->index_tp_delta_m) = ppw->delta_m;')==1
+          assert p.count('class_store_columntitle(titles,"d_m",ppt->has_source_delta_m);')==1
+          assert p.count('class_store_double(dataptr,tk[ppt->index_tp_delta_m],ppt->has_source_delta_m,storeidx);')==1
+          assert p.count('class_store_columntitle(titles,"d_tot",_TRUE_);')==1
+          assert p.count('class_store_double(dataptr,tk[ppt->index_tp_delta_tot],ppt->has_source_delta_tot,storeidx);')==1
+          PY
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text()
           old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"
           new="extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']"
           assert s.count(old)==1
@@ -80,8 +97,7 @@ jobs:
           make -C external/class_iv -j2 all
           python - <<'PY'
           from classy import Class
-          c=Class()
-          print('CLASSY_IMPORT_OK')
+          c=Class(); print('CLASSY_IMPORT_OK_WITH_AUDITED_DM_INTERFACE_PATCH')
           PY
 
       - name: Download exact DES-Y1 radial payloads
@@ -100,29 +116,19 @@ jobs:
           set -euo pipefail
           mkdir -p inputs/parent inputs/angular inputs/expim
           get_artifact () {
-            local id="$1" digest="$2" dest="$3"
-            local zip="${dest}.zip"
-            mkdir -p "$dest"
+            local id="$1" digest="$2" dest="$3"; local zip="${dest}.zip"; mkdir -p "$dest"
             gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "$zip"
-            local actual expected
-            actual="$(sha256sum "$zip" | awk '{print $1}')"; expected="${digest#sha256:}"
+            local actual expected; actual="$(sha256sum "$zip" | awk '{print $1}')"; expected="${digest#sha256:}"
             test "$actual" = "$expected" || { echo "artifact $id digest mismatch $actual != $expected"; exit 31; }
             unzip -q "$zip" -d "$dest"
           }
           get_artifact 10131794281 'sha256:ac959926639d3b46ecfe114e396ce03cb20a0763ef2781db454408d8ad0759df' inputs/parent
-          while IFS=$'\t' read -r slot id digest; do
-            get_artifact "$id" "$digest" "inputs/angular/$slot"
-          done < <(jq -r '.angular[] | [.slot, (.artifact_id|tostring), .artifact_digest] | @tsv' "$MANIFEST")
-          id="$(jq -r '.artifact_id' "$WM_S3_OVERRIDE")"
-          mkdir -p inputs/angular/Wm_S3/transport_override
+          while IFS=$'\t' read -r slot id digest; do get_artifact "$id" "$digest" "inputs/angular/$slot"; done < <(jq -r '.angular[] | [.slot, (.artifact_id|tostring), .artifact_digest] | @tsv' "$MANIFEST")
+          id="$(jq -r '.artifact_id' "$WM_S3_OVERRIDE")"; mkdir -p inputs/angular/Wm_S3/transport_override
           gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > inputs/angular/Wm_S3/transport_override.zip
           unzip -q inputs/angular/Wm_S3/transport_override.zip -d inputs/angular/Wm_S3/transport_override
-          expected="$(jq -r '.required_each_canonical_sha256' "$WM_S3_OVERRIDE")"
-          nbytes="$(jq -r '.required_each_nbytes' "$WM_S3_OVERRIDE")"
-          for f in inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin; do
-            test "$(stat -c%s "$f")" = "$nbytes"
-            test "$(sha256sum "$f" | awk '{print $1}')" = "$expected"
-          done
+          expected="$(jq -r '.required_each_canonical_sha256' "$WM_S3_OVERRIDE")"; nbytes="$(jq -r '.required_each_nbytes' "$WM_S3_OVERRIDE")"
+          for f in inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin; do test "$(stat -c%s "$f")" = "$nbytes"; test "$(sha256sum "$f" | awk '{print $1}')" = "$expected"; done
           cmp -s inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin
           get_artifact 10130241439 'sha256:3325bab0faa821c5ca3b13b4cd64d3d58c323e56a6f3e44952be84bfbc477156' inputs/expim
 
@@ -130,8 +136,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p external/exp073w_boss
-          base='https://fbeutler.github.io/hub'
+          mkdir -p external/exp073w_boss; base='https://fbeutler.github.io/hub'
           curl --fail --location --retry 3 -o external/exp073w_boss/W_NGC_z3.gz "$base/W_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
           curl --fail --location --retry 3 -o external/exp073w_boss/W_SGC_z3.gz "$base/W_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
           curl --fail --location --retry 3 -o external/exp073w_boss/M_NGC_z3.gz "$base/M_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
@@ -142,27 +147,12 @@ jobs:
           echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_NGC_z3' | sha256sum -c -
           echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_SGC_z3' | sha256sum -c -
 
-      - name: Execute frozen real Layer-B common-response gate
+      - name: Execute unchanged frozen real Layer-B common-response gate
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p artifacts scratch
-          python ci/exp073ir_article3_real_layerb_common_response_v0_1.py \
-            --parent-root inputs/parent \
-            --parent-authority docs/dsir4/authority/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_PASS_V0_1.json \
-            --manifest "$MANIFEST" \
-            --angular-root inputs/angular \
-            --expim-root inputs/expim \
-            --boss-root external/exp073w_boss \
-            --source external/des_nz/source.fits \
-            --lens external/des_nz/lens.fits \
-            --camb-root external/camb \
-            --expz2-script ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py \
-            --exp073iq-script ci/exp073iq_article3_real_layera_support_v0_1.py \
-            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
-            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
-            --scratch scratch \
-            --out artifacts/exp073ir_article3_real_layerb_common_response_v0_1.json
+          python ci/exp073ir_article3_real_layerb_common_response_v0_1.py --parent-root inputs/parent --parent-authority docs/dsir4/authority/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_PASS_V0_1.json --manifest "$MANIFEST" --angular-root inputs/angular --expim-root inputs/expim --boss-root external/exp073w_boss --source external/des_nz/source.fits --lens external/des_nz/lens.fits --camb-root external/camb --expz2-script ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py --exp073iq-script ci/exp073iq_article3_real_layera_support_v0_1.py --baseline configs/dsir4/c2/ide0_reference_v0_1.ini --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre --scratch scratch --out artifacts/exp073ir_article3_real_layerb_common_response_v0_1.json
 
       - name: Require admissible Exp073IR accounting token
         shell: bash
