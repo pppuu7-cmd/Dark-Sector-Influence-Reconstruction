@@ -53,6 +53,8 @@ jobs:
           rm -rf /tmp/jt && mkdir -p /tmp/jt
           unzip -q /tmp/jt.zip -d /tmp/jt
           echo "${JT_RESULT_JSON_SHA256}  /tmp/jt/result.json" | sha256sum -c -
+      - name: Install frozen promotion verification stack
+        run: python -m pip install 'numpy==1.26.4' >/dev/null
       - name: Independently verify and stage canonical payloads
         shell: bash
         run: |
@@ -99,8 +101,7 @@ jobs:
             'article3_repository_readiness_percent':68,'funnel_freeze_readiness_percent':67,
             'interpretation':'Exact lattice byte streams were materialized only from pre-existing JR/JQ authority SHAs. Host variants are recorded but never selected as canonical. This is process/reproducibility authority only.'
           }
-          ap=pathlib.Path('docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json')
-          ap.write_text(json.dumps(authority,indent=2,sort_keys=True)+'\n')
+          pathlib.Path('docs/dsir4/authority/EXP073JT_ARTICLE3_CANONICAL_SHARED_LATTICES_V0_1.json').write_text(json.dumps(authority,indent=2,sort_keys=True)+'\n')
           PY
           test "$(sha256sum docs/dsir4/canonical/EXP073JL_CANONICAL_COARSE_2049_NODES_U64HEX_V0_1.txt | awk '{print $1}')" = "$COARSE_U64HEX_SHA256"
           test "$(sha256sum docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt | awk '{print $1}')" = "$FINE_U64HEX_SHA256"
