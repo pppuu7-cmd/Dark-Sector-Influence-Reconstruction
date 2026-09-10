@@ -72,7 +72,7 @@ def main():
     ck('replay_bit_identity', 'assert_call_equal' in rtxt)
 
     for name,text in {
-      'prereg_rel_tol':'REL_TOL=1e-3',
+      'prereg_rel_tol':'strict relative tolerance of `1e-3`',
       'prereg_h':'H=1e-4',
       'prereg_native':'k_per_decade_for_pk=20.0',
       'prereg_eight':'Exactly eight CLASS constructions',
