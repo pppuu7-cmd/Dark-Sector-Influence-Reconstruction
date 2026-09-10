@@ -1,0 +1,50 @@
+{
+  "schema": "EXP073IZ_ARTICLE3_LAYERB_NATIVE_GRID_MECHANISM_AUTHORITY_V0_1",
+  "experiment": "Exp073IZ",
+  "classification": "NATIVE_GRID_MECHANISM_OBSERVED_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "run_id": 34452935477,
+  "job_id": 102792610244,
+  "head_sha": "2367abfb48538cac0750c024eebf77d47b4e057d",
+  "artifact_id": 10142351750,
+  "artifact_zip_sha256": "2d479e359b82ce735d5b630610836598a1cc510d7a605f99e5bf40b5bc914748",
+  "raw_token": "PASS_EXP073IZ_NATIVE_GRID_MECHANISM_OBSERVED_V0_1",
+  "h": 0.0001,
+  "k_per_decade_ladder": [10, 20, 40, 80],
+  "observed_responses": {
+    "alpha_left": {
+      "z": 0.7000000000000001,
+      "k_mpc_inv": 0.002502504647141259,
+      "response_by_kpd": {"10": 15.004842009744834, "20": 0.0026296528687907994, "40": 6.017543332745845, "80": 8.879123658118715},
+      "adjacent_relative_differences": {"10_to_20": 0.9998247463807295, "20_to_40": 0.9995630022546774, "40_to_80": 0.3222818417171559}
+    },
+    "beta_symmetric": {
+      "z": 0.9351,
+      "k_mpc_inv": 0.01860440444314368,
+      "response_by_kpd": {"10": 12.060403107625461, "20": 0.003871989520121133, "40": 6.347953676595353, "80": 0.6721100135109737},
+      "adjacent_relative_differences": {"10_to_20": 0.9996789502402558, "20_to_40": 0.9993900413082097, "40_to_80": 0.8941217835301767}
+    }
+  },
+  "posthoc_exact_decomposition_for_mechanism_selection_only": {
+    "definition": "For alpha, decompose perturbed-minus-reference interpolation into endpoint-value change evaluated at the reference interpolation fraction plus the perturbation-induced interpolation-fraction shift. For beta, analogously decompose plus-minus using the minus interpolation fraction. This is algebra on the validated Exp073IZ artifact only and creates no scientific authority.",
+    "alpha_left": {
+      "10": {"endpoint_value_term_signed": -118.40109350217176, "grid_fraction_term_signed": 103.39625149242693, "total_signed": -15.004842009744834},
+      "20": {"endpoint_value_term_signed": -114.33387581874399, "grid_fraction_term_signed": 114.33650547161278, "total_signed": 0.0026296528687907994},
+      "40": {"endpoint_value_term_signed": -114.32039190609089, "grid_fraction_term_signed": 108.30284857334505, "total_signed": -6.017543332745845},
+      "80": {"endpoint_value_term_signed": -114.31410690192934, "grid_fraction_term_signed": 105.43498324381062, "total_signed": -8.879123658118715}
+    },
+    "beta_symmetric": {
+      "10": {"endpoint_value_term_signed": -626.65546443327, "grid_fraction_term_signed": 638.7158675408955, "total_signed": 12.060403107625461},
+      "20": {"endpoint_value_term_signed": -617.9812704067444, "grid_fraction_term_signed": 617.9773984172243, "total_signed": -0.003871989520121133},
+      "40": {"endpoint_value_term_signed": -613.9518232782848, "grid_fraction_term_signed": 607.6038696016894, "total_signed": -6.347953676595353},
+      "80": {"endpoint_value_term_signed": -613.7185496311304, "grid_fraction_term_signed": 613.0464396176194, "total_signed": -0.6721100135109737}
+    }
+  },
+  "interpretation": "The failure is not a monotone coarse-grid effect. The endpoint-value derivative component is already comparatively stable from kpd 20 through 80, while a large model-dependent native-grid interpolation-fraction term nearly cancels it and remains resolution-sensitive. The next admissible support test is therefore a higher-density cancellation/decomposition diagnostic, not a relaxation of the original 10-vs-20 REL_TOL=1e-3 gate.",
+  "frozen_parent_status": "NUMERICALLY_UNRESOLVED_EXP073IR",
+  "frozen_parent_exact_max_relative_component_difference": 0.9998247463807295,
+  "frozen_parent_rel_tol": 0.001,
+  "frozen_parent_covariance_restriction_authorized": false
+}
