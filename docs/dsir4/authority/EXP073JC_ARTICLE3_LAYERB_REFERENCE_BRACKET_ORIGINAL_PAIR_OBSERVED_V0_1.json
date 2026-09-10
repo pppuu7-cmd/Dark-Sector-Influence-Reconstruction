@@ -1,0 +1,40 @@
+{
+  "schema": "EXP073JC_ARTICLE3_LAYERB_REFERENCE_BRACKET_ORIGINAL_PAIR_AUTHORITY_V0_1",
+  "experiment": "Exp073JC",
+  "classification": "ORIGINAL_PAIR_REFERENCE_BRACKET_OBSERVED_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "frozen_parent_status": "NUMERICALLY_UNRESOLVED_EXP073IR",
+  "frozen_parent_rel_tol": 0.001,
+  "h": 0.0001,
+  "run_id": 34468721378,
+  "job_id": 102843338789,
+  "head_sha": "b2a3bf38f66435ca0ef7b94d757f7afbd451aa3e",
+  "artifact_id": 10148654192,
+  "artifact_zip_sha256": "d6c89ed81e20feb952b4c2d6290e37f66e2a931929b4aa2d5b11fd32a128132d",
+  "artifact_result_json_sha256": "a15070c8cb8c835b52d7b05b424984f30cf4e301e53c1f8b66f819b92567481f",
+  "artifact_verified_independently": true,
+  "raw_token": "PASS_EXP073JC_ORIGINAL_PAIR_REFERENCE_BRACKET_OBSERVED_V0_1",
+  "k_per_decade_ladder": [10.0, 20.0],
+  "observations": {
+    "alpha_left": {
+      "native_response_kpd10": 15.004842009744834,
+      "native_response_kpd20": 0.0026296528687907994,
+      "common_bracket_response_kpd10": 12.100070370735239,
+      "common_bracket_response_kpd20": 0.15672938516786417,
+      "native_10_to_20_relative_difference": 0.9998247463807295,
+      "common_10_to_20_relative_difference": 0.9870472335808126
+    },
+    "beta_symmetric": {
+      "native_response_kpd10": 12.060403107625461,
+      "native_response_kpd20": 0.003871989520121133,
+      "common_bracket_response_kpd10": 12.1035481834042,
+      "common_bracket_response_kpd20": 3.510779149564769,
+      "native_10_to_20_relative_difference": 0.9996789502402558,
+      "common_10_to_20_relative_difference": 0.7099380201271409
+    },
+    "interpretation": "Reference-bracket transport suppresses part of the original-pair discrepancy, especially for beta, but the remaining discrepancies are still orders of magnitude above REL_TOL=1e-3. Therefore model-dependent native-grid motion is a real contributor but is not sufficient to explain or cure the coarse-grid instability. Exp073IR remains numerically unresolved and covariance restriction remains unauthorized."
+  },
+  "frozen_science_unchanged": true
+}
