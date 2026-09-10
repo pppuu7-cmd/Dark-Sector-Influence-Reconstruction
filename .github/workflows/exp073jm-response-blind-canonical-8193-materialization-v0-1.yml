@@ -1,0 +1,173 @@
+name: exp073jm-response-blind-canonical-8193-materialization-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073jm-response-blind-canonical-8193-materialization-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: exp073jm-response-blind-canonical-8193-materialization-v0-1
+  cancel-in-progress: false
+
+env:
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+  EXISTING_FINE_BLOB: 'f5acd4a25068af22fbaca5fb35adf2afbf3a4be3'
+  EXISTING_FINE_NODE_SHA: 'f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'
+  KMIN: '0.0001'
+  KMAX: '0.06664762008318016'
+
+jobs:
+  replica:
+    strategy:
+      fail-fast: false
+      matrix:
+        replica: [1, 2, 3, 4]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen generator anchor
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt)" = "$EXISTING_FINE_BLOB"
+      - name: Install exact NumPy
+        run: python -m pip install 'numpy==1.26.4' >/dev/null
+      - name: Reproduce 4097 anchor and materialize 8193 candidate
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          PYTHONPATH=ci python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          import numpy as np
+          import exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1 as jj
+
+          assert np.__version__=='1.26.4'
+          assert jj.KMIN==1e-4 and jj.KMAX==0.06664762008318016
+          jj.CAPACITY=9216
+
+          def u64hex(nodes):
+              u=np.ascontiguousarray(np.asarray(nodes,dtype='<f8')).view('<u8')
+              return ''.join(f'{int(x):016x}\n' for x in u)
+          def node_sha(nodes):
+              return hashlib.sha256(np.ascontiguousarray(np.asarray(nodes,dtype='<f8')).tobytes()).hexdigest()
+
+          anchor,ra,la,ua=jj.guarded_lattice(4096)
+          assert (la,ua,len(anchor))==(0,1,4097)
+          anchor_text=u64hex(anchor)
+          existing=Path('docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt').read_text()
+          assert anchor_text==existing
+          assert node_sha(anchor)==os.environ['EXISTING_FINE_NODE_SHA']
+
+          cand,r,l,u=jj.guarded_lattice(8192)
+          assert (l,u,len(cand))==(0,1,8193)
+          assert np.array_equal(cand[l:l+8192],np.geomspace(jj.KMIN,jj.KMAX,8192,dtype=np.float64))
+          txt=u64hex(cand)
+          Path('out/candidate_8193.u64hex.txt').write_text(txt)
+          result={
+              'schema':'EXP073JM_RESPONSE_BLIND_CANONICAL_8193_REPLICA_RESULT_V0_1',
+              'classification':'CANONICAL_8193_REPLICA_MATCHED_ANCHOR_PLUS_0_PLUS_0',
+              'effect':'+0/+0',
+              'replica':int(os.environ['REPLICA']),
+              'numpy_version':np.__version__,
+              'scientific_response_read':False,
+              'class_solver_invoked':False,
+              'branch_activated':False,
+              'scientific_authority_created':False,
+              'anchor_4097_node_sha256':node_sha(anchor),
+              'anchor_4097_text_sha256':hashlib.sha256(existing.encode()).hexdigest(),
+              'base_n':8192,
+              'guard_counts':[l,u],
+              'requested_node_count':len(cand),
+              'ratio_binary64':float(r),
+              'extended_k_min':float(cand[0]),
+              'extended_k_max':float(cand[-1]),
+              'node_payload_sha256':node_sha(cand),
+              'u64hex_sha256':hashlib.sha256(txt.encode()).hexdigest(),
+              'token':'CANONICAL_8193_REPLICA_MATCHED_ANCHOR_PLUS_0_PLUS_0'
+          }
+          Path('out/result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(result['token'],result['node_payload_sha256'],result['u64hex_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jm-canonical-8193-replica-${{ matrix.replica }}
+          path: out/
+          if-no-files-found: error
+          retention-days: 90
+
+  aggregate:
+    needs: replica
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: exp073jm-canonical-8193-replica-*
+          path: replicas
+      - name: Require four exact replicas
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          rs=[]
+          for i in range(1,5):
+              root=Path(f'replicas/exp073jm-canonical-8193-replica-{i}')
+              d=json.load(open(root/'result.json'))
+              assert d['replica']==i
+              assert d['classification']=='CANONICAL_8193_REPLICA_MATCHED_ANCHOR_PLUS_0_PLUS_0'
+              assert d['scientific_response_read'] is False and d['class_solver_invoked'] is False
+              assert d['branch_activated'] is False and d['scientific_authority_created'] is False
+              assert d['anchor_4097_node_sha256']=='f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'
+              assert d['base_n']==8192 and d['guard_counts']==[0,1] and d['requested_node_count']==8193
+              txt=(root/'candidate_8193.u64hex.txt').read_bytes()
+              assert hashlib.sha256(txt).hexdigest()==d['u64hex_sha256']
+              rs.append((d,txt))
+          node={d['node_payload_sha256'] for d,_ in rs}; text={d['u64hex_sha256'] for d,_ in rs}
+          assert len(node)==1 and len(text)==1
+          assert all(t==rs[0][1] for _,t in rs)
+          Path('out/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_CANDIDATE_V0_1.txt').write_bytes(rs[0][1])
+          result={
+              'schema':'EXP073JM_RESPONSE_BLIND_CANONICAL_8193_AGGREGATE_RESULT_V0_1',
+              'classification':'CANONICAL_8193_FOUR_REPLICA_MATERIALIZATION_PASS_PLUS_0_PLUS_0',
+              'effect':'+0/+0',
+              'scientific_response_read':False,
+              'class_solver_invoked':False,
+              'branch_activated':False,
+              'scientific_authority_created':False,
+              'replica_count':4,
+              'anchor_4097_node_sha256':'f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb',
+              'base_n':8192,
+              'guard_counts':[0,1],
+              'requested_node_count':8193,
+              'node_payload_sha256':next(iter(node)),
+              'u64hex_sha256':next(iter(text)),
+              'all_replicas_byte_identical':True,
+              'article3_repository_readiness_percent':68,
+              'funnel_freeze_readiness_percent':67,
+              'token':'CANONICAL_8193_FOUR_REPLICA_MATERIALIZATION_PASS_PLUS_0_PLUS_0'
+          }
+          Path('out/result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(result['token'],result['node_payload_sha256'],result['u64hex_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jm-canonical-8193-aggregate
+          path: out/
+          if-no-files-found: error
+          retention-days: 90
