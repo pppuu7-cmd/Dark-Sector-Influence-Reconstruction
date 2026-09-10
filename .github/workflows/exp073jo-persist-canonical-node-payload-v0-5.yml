@@ -61,6 +61,7 @@ jobs:
           test "$(sha256sum /tmp/canonical/canonical_nodes.hex | awk '{print $1}')" = "$HEX_SHA256"
           test "$(stat -c%s /tmp/canonical/canonical_nodes.f64)" = '32776'
           test "$(wc -l < /tmp/canonical/canonical_nodes.hex)" = '4097'
+          python -m pip install --disable-pip-version-check 'numpy==1.26.4' >/dev/null
           python - <<'PY'
           import hashlib,json,os,numpy as np
           raw=open('/tmp/canonical/canonical_nodes.f64','rb').read()
