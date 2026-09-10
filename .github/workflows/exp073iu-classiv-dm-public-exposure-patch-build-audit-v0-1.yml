@@ -1,0 +1,82 @@
+name: exp073iu-classiv-dm-public-exposure-patch-build-audit-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/bindings/EXP073IU_LAUNCH_V0_1.txt'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce prospective Exp073IU lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f docs/dsir4/prereg/EXP073IU_CLASSIV_DM_PUBLIC_EXPOSURE_PATCH_BUILD_AUDIT_V0_1.md
+          test -f scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py
+          python -m py_compile scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py
+          grep -Fq 'PASS_EXP073IU_CLASSIV_DM_PUBLIC_EXPOSURE_PATCH_BUILD_AUDIT_V0_1' docs/dsir4/prereg/EXP073IU_CLASSIV_DM_PUBLIC_EXPOSURE_PATCH_BUILD_AUDIT_V0_1.md
+      - name: Install build-only dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y build-essential libgsl-dev python3-dev
+          python -m pip install --upgrade pip wheel 'setuptools<76'
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six
+      - name: Checkout exact pinned CLASS-IV and apply exact interface patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv hash-object source/perturbations.c)" = 92a48331658c5941ed4eb43b0e98ee78e39b8385
+          grep -Fq '/* total matter overdensity (gauge-invariant, defined as in arXiv:1307.1459) */' external/class_iv/source/perturbations.c
+          grep -Fq '_set_source_(ppt->index_tp_delta_m) = ppw->delta_m;' external/class_iv/source/perturbations.c
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/source/perturbations.c').read_text()
+          assert p.count('_set_source_(ppt->index_tp_delta_m) = ppw->delta_m;')==1
+          assert p.count('ppt->has_source_delta_m = _TRUE_;')>=1
+          assert p.count('class_store_columntitle(titles,"d_m",ppt->has_source_delta_m);')==1
+          assert p.count('class_store_double(dataptr,tk[ppt->index_tp_delta_m],ppt->has_source_delta_m,storeidx);')==1
+          assert p.count('class_store_columntitle(titles,"d_tot",_TRUE_);')==1
+          assert p.count('class_store_double(dataptr,tk[ppt->index_tp_delta_tot],ppt->has_source_delta_tot,storeidx);')==1
+          PY
+      - name: Build patched pinned CLASS-IV without cosmological execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py')
+          s=p.read_text()
+          old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"
+          new="extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']"
+          assert s.count(old)==1
+          p.write_text(s.replace(old,new,1))
+          print('EXP073IU_WRAPPER_LINK_COMPAT_EXACTLY_ONCE')
+          PY
+          make -C external/class_iv -j2 all
+          python - <<'PY'
+          from classy import Class
+          c=Class()
+          print('CLASSY_IMPORT_OK_NO_COSMOLOGY')
+          PY
+      - name: Emit support-only terminal token
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'patch_target=index_tp_delta_m<-ppw->delta_m'
+          echo 'd_tot_preserved=true'
+          echo 'layerb_numerical_run_started=false'
+          echo 'scientific_authority_created=false'
+          echo 'classification=SUPPORT_PLUS_0_PLUS_0'
+          echo 'PASS_EXP073IU_CLASSIV_DM_PUBLIC_EXPOSURE_PATCH_BUILD_AUDIT_V0_1'
