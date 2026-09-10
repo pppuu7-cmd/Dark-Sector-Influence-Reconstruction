@@ -2,37 +2,48 @@
 
 Updated: 2026-09-10. Scope: **DSIR only**; RTK/RQIR excluded.
 
-Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-10_ARTICLE3_JI_FEASIBLE_JJ_RESOLUTION_RUNNING_V75.md`, creation commit `831c1ee06e286241689a080cfda120676757c499`.
+Newest immutable recovery authority: `docs/recovery/RECOVERY_2026-09-10_ARTICLE3_JL_INFRA_SHUTDOWN_RERUN_V79.md`, creation commit `523309bb176633f93a7a721e0220454b4093fdf1`.
 
-## Newly closed
-- Repaired Exp073IR `34432102035 / 102729564736` remains `NUMERICALLY_UNRESOLVED_EXP073IR`; exact convergence maximum `0.9998247463807295 > 1e-3`; 0 invalid rows, f_B=0, retained 107; covariance unauthorized.
-- Exp073JH `34487047656 / 102903883547` is validated support-only `FULL_SUPPORT_GRID_INVARIANT_NOT_FEASIBLE_PLUS_0_PLUS_0`; failure was only finite centered-cubic boundary support.
-- Exp073JI `34488466425 / 102908710275` is validated support-only `GUARD_NODE_FULL_SUPPORT_FEASIBLE_PLUS_0_PLUS_0`; artifact `10156878354`; independently verified ZIP SHA256 `f8492ca04ff3b159ffe28003d28c3756e428e9851f4a3af56e6f343666d1b0de`; result SHA256 `c076af1fd5207d69c3fdc00f944ca2099aa4a4e82e31d0d0ce2877f3b679310a`; durable authority commit `bba2701467e8fce6bf41369c23e64be4d16f78f9`.
-- JI geometry requires lower guards 0, upper guards 1, total requested nodes 513, and preserves the N=512 base lattice bitwise. Unsupported evaluations 0; kpd10-vs20 max relative difference 0.0; invalid rows 0; retained 107.
+## Preserved scientific authority
+- Repaired Exp073IR remains `NUMERICALLY_UNRESOLVED_EXP073IR`; exact native production-vs-dense convergence maximum `0.9998247463807295 > 1e-3`; retained 107; covariance unauthorized.
+- Exp073JI remains validated support-only full-support feasibility with 107 retained, invalid fraction 0 and shared-grid native kpd10-vs20 discrepancy 0.0.
+- Exp073JJ remains validated support-only NOT_CONVERGED, maximum `0.037280144773915974`.
+- Exp073JK remains validated support-only NOT_CONVERGED, maximum `0.016330535730270664`.
 
-## Current authoritative process — Exp073JJ
-- workflow: `exp073jj-article3-layerb-common-grid-resolution-refinement-convergence-v0-1`;
-- run ID: `34492300395`;
-- job ID: `102921844345`;
-- branch/head: `main / f47683ebda4f00e536c2e630930d3e3b76fed80f`;
-- preregistration commit: `aaf5ccb8860b95310bb19450cf5af533383e897b`;
-- implementation commit: `f9b4ddf8fd778098c9874469ea328c6b93a56149`;
-- workflow/launch commit: `f47683ebda4f00e536c2e630930d3e3b76fed80f`;
-- checkpoint namespace / last durable checkpoint: N/A (GitHub-hosted support-only convergence audit);
-- start/registration: `2026-09-10T14:55:55Z`;
+## Newly closed — Exp073JL attempt 1 infrastructure failure +0/+0
+- run ID: `34497160814`, attempt 1;
+- job ID: `102938434376`;
+- workflow/head: `exp073jl-article3-layerb-common-grid-third-refinement-convergence-v0-1 / d556db87763637dd90ed919dbe5d85ef95b4beb1`;
+- first causal failure: GitHub-hosted runner received shutdown signal at `2026-09-10T15:56:49Z` during frozen numerical execution;
+- all prospective contract/lineage, frozen stack, CAMB, pinned CLASS-IV build, DES, inherited authority and BOSS input gates had already succeeded;
+- scientific artifact: none; upload skipped;
+- classification: infrastructure failure `+0/+0`, neither CONVERGED nor NOT_CONVERGED; JM/JN not activated.
+
+## Current authoritative process — Exp073JL rerun attempt 2
+- workflow: `exp073jl-article3-layerb-common-grid-third-refinement-convergence-v0-1`;
+- run ID: `34497160814`;
+- run attempt: `2`;
+- job ID: `102944693569`;
+- branch/head: `main / d556db87763637dd90ed919dbe5d85ef95b4beb1`;
+- preregistration commit: `608fbf5fd9912b9f0244283d940a7adfecc41ac8`;
+- implementation commit: `43e1d74e8216c1ff66bfe4d0eed372673d0e5b1b`;
+- workflow/launch commit: `d556db87763637dd90ed919dbe5d85ef95b4beb1`;
+- checkpoint namespace / last durable checkpoint: N/A (GitHub-hosted support-only convergence audit; no valid numerical checkpoint from attempt 1);
+- rerun started: `2026-09-10T15:57:20Z`;
 - runner ownership: GitHub-hosted `ubuntu-24.04`; home/self-hosted ownership none;
-- current state: IN_PROGRESS at last inspection;
-- last completed gate: prospective JJ contract and exact JI authority enforcement SUCCESS;
+- latest state: IN_PROGRESS;
+- last completed gate: prospective JL contract and JK/JI authority enforcement SUCCESS;
 - current step at last inspection: install frozen numerical/build stack;
-- architecture: coarse guarded shared physical-k lattice = 513 nodes; fine guarded shared physical-k lattice = 1025 nodes; native CLASS kpd fixed to 20 for both; centered cubic in ln(k);
-- expected classifications: `COMMON_GRID_RESOLUTION_REFINEMENT_CONVERGED_PLUS_0_PLUS_0`, `COMMON_GRID_RESOLUTION_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`, or infrastructure invalid;
-- scientific effect: always +0/+0; no Layer-B/covariance/model/Wm_S3 authority.
+- architecture: guarded base N=2048 (2049 requested) versus base N=4096 (4097 requested), native CLASS kpd=20 for both, centered cubic ln(k), h=1e-4, REL_TOL=1e-3;
+- infrastructure capacities only: `_MAX_NUMBER_OF_K_FILES_=4608`, `_ARGUMENT_LENGTH_MAX_=131072`;
+- expected valid classifications: `COMMON_GRID_THIRD_REFINEMENT_CONVERGED_PLUS_0_PLUS_0` or `COMMON_GRID_THIRD_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`;
+- scientific effect: JL itself always +0/+0; no covariance/model/Wm_S3 authority.
 
 ### Exact next transitions
-Terminal valid CONVERGED: independently verify raw log and artifact ZIP/result/capacity hashes; then only prospectively freeze a separate scientific Layer-B rerun using a predeclared guarded shared-grid architecture. JJ itself never authorizes covariance.
+Valid independently verified CONVERGED: instantiate only pre-frozen Exp073JN scientific Layer-B closure rerun (`ee35861a7e383749288b61133bffaca333c60ced`).
 
-Terminal valid NOT_CONVERGED: preserve as +0/+0 and isolate the shared-grid resolution/interpolation mechanism without weakening REL_TOL, h, physical domain, atomization or source definitions.
+Valid independently verified NOT_CONVERGED: instantiate only pre-frozen Exp073JM fourth refinement (`440e430465b783365a66c715c7a08e8c1c3a45f8`).
 
-Infrastructure invalid: diagnose the first causal defect, make the smallest infrastructure-only repair, add a reproducible regression where practical, and resume without altering frozen science.
+Infrastructure invalid: diagnose first causal failure; preserve all valid authority; smallest infrastructure-only repair/resume; neither JM nor JN activates.
 
 Global frozen boundaries remain unchanged: `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid<=0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; REL_TOL=1e-3; h=1e-4; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging/effective ell/z/k/fiducial-P shortcut.
