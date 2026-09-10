@@ -2,29 +2,26 @@
 
 Updated: 2026-09-10. Scope: **DSIR only**. Never mix RTK or RQIR.
 
-Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-10_ARTICLE3_JD_OBSERVED_JE_RUNNING_V67.md`, creation commit `718eb747fcec93eab883bda0ee60593cc8f8fec5`. Earlier notes remain immutable history.
+Newest immutable authority note: `docs/recovery/RECOVERY_2026-09-10_ARTICLE3_JE_INFRA_REPAIRED_RERUNNING_V68.md`, creation commit `3ad9b6159d419f3a9dc2ba290c0703795b05614d`. Earlier notes remain immutable history.
 
 ## Preserved authority
 All earlier admitted DSIR scientific authority remains unchanged. Repaired Exp073IR run/job `34432102035 / 102729564736` remains `NUMERICALLY_UNRESOLVED_EXP073IR`: 0 invalid rows, `f_B=0`, retained 107 coordinate rows, atomic production-vs-dense maximum `0.9998247463807295 > REL_TOL=1e-3`; covariance restriction unauthorized. No tolerance rescue.
 
-The 107 retained objects are coordinate rows containing many atomic `(z,k)` response samples, not 107 single k points. The frozen IR criterion compares atomic responses and finite/nonzero/label status before the row-level `f_B`/retained decision.
+Historical Exp073CM remains resource/performance `+0/+0`, not Wm_S3 scientific arithmetic authority. Wm_S3 remains unopened.
 
-Historical Exp073CM remains resource/performance `+0/+0`, not Wm_S3 scientific arithmetic authority. Wm_S3 remains unopened pending its separately prospectively versioned resource gate and lawful science path.
+## Exp073JD — validated support result with corrected provenance
+Exp073JD run/job `34472918931 / 102856790715`, artifact `10150322510`, raw token `PASS_EXP073JD_EXACT_K_ORIGINAL_PAIR_OBSERVED_V0_1`, remains support-only `EXACT_K_ORIGINAL_PAIR_OBSERVED_PLUS_0_PLUS_0`. Authority V0_1 had incorrect SHA256 provenance fields; immutable V0_2 in commit `1fcc02d6d252d3f47184be565218cf29355c3c8c` corrects metadata only. Correct GitHub/downloaded ZIP SHA256: `310939a4b4ef8d75cb027630e5f43f88003ab92045c0af6e83ab83764bcb6365`; contained JSON SHA256: `ba26c2a89a41d67e65bbf0b630659fccae33d85a7d05c2d0d4d493f8b33dfccb`. JD numerical observations/classification are unchanged.
 
-## Closed — Exp073JD exact-k mechanism diagnostic
-Validated support-only `EXACT_K_ORIGINAL_PAIR_OBSERVED_PLUS_0_PLUS_0`, run/job `34472918931 / 102856790715`, head `00994fba5f77100a3ffff11f205abb3be5e1a1dc`, artifact `10150322510`, independently verified ZIP SHA256 `1eb87185c6015277eeae72e3dd9017f48df03e8b166c05cde514330667189478`.
+## Exp073JE attempt 1 — infrastructure failure
+Run/job `34474514433 / 102861967751`, head `257ef3295e09870df02e681275f828c9bceab8bf`, failed at first diagnostic execution with raw `malloc(): corrupted top size`, exit 134, before result artifact creation. Contract, dependencies and pinned CLASS-IV build had succeeded. This is infrastructure/software failure `+0/+0`, not scientific PASS/FAIL.
 
-Exact internal-k responses are identical for kpd 10 and 20 at both historical worst probes: alpha-left `11.514018402323245`, beta-symmetric `1.9210920856949087`; both relative discrepancies `0.0`, all injected coordinate mismatches `0.0`. This strongly localizes the historical failure at those probes to k-grid/interpolation/evaluation architecture, not same-physical-k finite-difference response. Exp073IR is not retroactively passed.
+First causal architecture defect: JE enlarged `_MAX_NUMBER_OF_K_FILES_ 30 -> 512` while CLASS-IV parser `FileArg` remained `_ARGUMENT_LENGTH_MAX_=1024`; the exact N=256 comma-separated `k_output_values` serialization exceeds the original parser capacity.
 
-## Current — Exp073JE shared fixed-k scaling diagnostic
-Pinned CLASS-IV limits `k_output_values` to 30. Direct exact injection of the full DES atomic support is therefore not a scalable unmodified production architecture. Exp073JE prospectively tests shared model-invariant fixed physical-k grids `N={64,128,256}` over `[1e-4,0.06664762008318016] Mpc^-1`, using only interpolation between requested common nodes and comparing against the exact JD responses at the two worst probes. Historical target k values are forbidden from being inserted explicitly. Cross-check native kpd `{10,20}`; frozen `REL_TOL=1e-3`, `h=1e-4`.
+## Current — prospectively repaired Exp073JE
+Repair preregistration commit `16f984a9a81ac5e3d559d67e191f7bb9f6ffd85b`; workflow repair/head `6090af1b41b86bd878c4e348874a496c04a09053`. The added infrastructure-only patch is exactly `_ARGUMENT_LENGTH_MAX_ 1024 -> 32768`, with replacement/hash checks and a static serialized-length regression. Original JE node grids N={64,128,256}, physical domain, kpd={10,20}, interpolation, `h=1e-4`, `REL_TOL=1e-3`, source definitions and all science criteria are unchanged.
 
-The only CLASS capacity change is a declared infrastructure enlargement `_MAX_NUMBER_OF_K_FILES_ 30 -> 512`, with pre/post source SHA recorded; no equations, transfer definitions, tolerances or physical operator may change.
+Authoritative current workflow/run/job: `exp073je-article3-layerb-shared-fixed-k-grid-scaling-v0-1 / 34474839354 / 102863020808`; GitHub-hosted `ubuntu-24.04`; checkpoint N/A; home/self-hosted ownership none; last observed state IN_PROGRESS.
 
-Preregistration commit `2cb38664443bd17dfc2d304c1ecb21ed32b0e1dd`; implementation `67ce16ca1e92adbb98117dd5786fd179e793c929`; launch head `257ef3295e09870df02e681275f828c9bceab8bf`. Workflow/run/job `exp073je-article3-layerb-shared-fixed-k-grid-scaling-v0-1 / 34474514433 / 102861967751`; last observed state IN_PROGRESS.
-
-A node count is only a scaling candidate if both probes at both kpd values have relative error to exact JD `<1e-3` and kpd10-vs20 discrepancy `<1e-3`. Any candidate can only nominate a later full atomic-support audit; JE is support-only `+0/+0` and cannot authorize covariance restriction, Wm_S3, model or manuscript authority.
-
-Exact next action: terminal-consume run `34474514433`; verify patch/node/artifact provenance. If a scaling candidate exists, prospectively design the full atomic-support shared-grid feasibility/audit preserving the exact IR atomic criterion. If none exists, continue scaling/mechanism isolation without tolerance rescue.
+Exact next action: terminal-consume `34474839354`. On success, independently verify artifact/hash/patch provenance and every frozen scaling-candidate condition. On failure, diagnose the first causal defect before any rerun. A JE candidate only nominates a separately preregistered full atomic-support audit; it cannot retroactively PASS Exp073IR or authorize covariance restriction/Wm_S3/model/manuscript authority.
 
 Global frozen boundaries remain unchanged: `0.295<=z<=2.33`; `0<k<=0.06664762008318016 Mpc^-1`; Layer-A `operator_f_invalid<=0.05`; Layer-B invalid-row fraction `<=0.05`; retained dimension `>=15`; DES NSIDE=4096; ell `0..12287`; 39 bands; Wm `TE<-TE`; WW `EE<-EE`; canonical `<f8 [39,12288]`; `REL_TOL=1e-3`; `h=1e-4`; exact-threshold ambiguity `numerically_unresolved`; no tolerance/rounding/smoothing/averaging/effective-coordinate/fiducial-P rescue.
