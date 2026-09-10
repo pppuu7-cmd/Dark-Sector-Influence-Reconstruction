@@ -1,0 +1,21 @@
+{
+  "experiment": "Exp073IX",
+  "scope": "DSIR Article 3 / C2 support-only",
+  "classification": "INSTRUMENTATION_NEUTRAL_PLUS_0_PLUS_0",
+  "token": "PASS_EXP073IX_INSTRUMENTATION_NEUTRAL_V0_1",
+  "run_id": 34443359314,
+  "job_id": 102762823702,
+  "head_sha": "b05ce738c904cc49e683570868edccf2cf3eb610",
+  "artifact_id": 10138827841,
+  "artifact_digest": "sha256:4b855d37c36bb1d066f8688f8933e3f6397f85d1bf2ab039e2cb425bb8e8f588",
+  "direct_sha256": "6dea43dcc0eadaf91887f181732d20dceef04866d5687aa231b747312fec0cb1",
+  "instrumented_sha256": "6dea43dcc0eadaf91887f181732d20dceef04866d5687aa231b747312fec0cb1",
+  "byte_identical": true,
+  "direct_max_relative_component_difference": 0.9998247463807295,
+  "instrumented_max_relative_component_difference": 0.9998247463807295,
+  "authoritative_parent_max_relative_component_difference": 0.9998247463807295,
+  "exp073ir_status_preserved": "NUMERICALLY_UNRESOLVED_EXP073IR",
+  "covariance_restriction_authorized": false,
+  "scientific_authority_created": false,
+  "interpretation": "Same-job direct and Exp073IV-wrapped executions are exact byte-identical. The historical Exp073IV parent mismatch is not reproduced; observational instrumentation is not causal under this frozen environment. Environment/build provenance must be isolated further before numerical-resolution work."
+}
