@@ -1,0 +1,83 @@
+name: layerb-32769-v03-downstream-chain-finalizer-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/layerb-32769-v03-downstream-chain-finalizer-v0-1.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  PRIOR_AUDIT_RUN_ID: '34654898436'
+  CANDIDATE_WORKFLOW_BLOB: '9977781cce13e84489203e89b4d11182a835a3a9'
+
+jobs:
+  candidate-static-repair:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify candidate workflow with literal run-id expression
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('.github/workflows/layerb-32769-resource-authority-candidate-packaging-v0-1.yml'); b=p.read_bytes(); s=b.decode(); blob=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest(); assert blob=='9977781cce13e84489203e89b4d11182a835a3a9'
+          tokens=["PACKAGING_CONTRACT_BLOB: '71d77aa4d074bba1a2f53e7f9299a9db32e93ffc'","PACKAGER_BLOB: 'c38bf9a0108ab3ef50f1abec513fa2f6ff0373a4'","MATERIALIZATION_CONTRACT_BLOB: '3e53992864ad10f23752df03a653f8073cc18ffa'","MATERIALIZER_BLOB: '8a4e03848694a59550460e9866d0aeaec747780e'","SOURCE_WORKFLOW_NAME: 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3'","SOURCE_ARTIFACT_NAME: 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3'"]
+          for x in tokens: assert x in s,x
+          needle='name: layerb-32769-resource-authority-candidate-packaging-v0-1-'+'${'+'{ github.run_id }}'
+          assert needle in s,needle
+          assert 'contents: read' in s and 'contents: write' not in s and 'git push' not in s
+          out={'schema':'LAYERB_32769_V03_CANDIDATE_WORKFLOW_STATIC_AUDIT_V0_1','classification':'LAYERB_32769_V03_CANDIDATE_WORKFLOW_STATIC_AUDIT_PASS_PLUS_0_PLUS_0','candidate_workflow_git_blob':blob,'v03_source_bound':True,'v02_contracts_replaced':True,'candidate_artifact_bound_to_candidate_run_id':True,'repository_write_forbidden':True,'scientific_execution_authorized':False}; out['token']=out['classification']; Path('candidate_static.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: v03-candidate-workflow-static-repair, path: candidate_static.json}
+
+  independent-finalizer:
+    needs: candidate-static-repair
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: v03-event-chain-static
+          path: prior/event
+          run-id: ${{ env.PRIOR_AUDIT_RUN_ID }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: v03-packager-synthetic
+          path: prior/packager
+          run-id: ${{ env.PRIOR_AUDIT_RUN_ID }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: v03-materializer-synthetic
+          path: prior/materializer
+          run-id: ${{ env.PRIOR_AUDIT_RUN_ID }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: v03-candidate-workflow-static-repair
+          path: current/candidate
+      - name: Verify four-lane closure across exact prior/current artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          checks=[('prior/event/event.json','LAYERB_32769_V03_EVENT_CHAIN_STATIC_AUDIT_PASS_PLUS_0_PLUS_0'),('prior/packager/summary.json','LAYERB_32769_V03_PACKAGER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'),('prior/materializer/summary.json','LAYERB_32769_V03_MATERIALIZER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'),('current/candidate/candidate_static.json','LAYERB_32769_V03_CANDIDATE_WORKFLOW_STATIC_AUDIT_PASS_PLUS_0_PLUS_0')]
+          hashes={}
+          for p,c in checks:
+              q=Path(p); d=json.loads(q.read_text()); assert d['classification']==c,(p,d); hashes[p]=hashlib.sha256(q.read_bytes()).hexdigest()
+          out={'schema':'LAYERB_32769_V03_DOWNSTREAM_CHAIN_FINAL_AUDIT_V0_1','classification':'LAYERB_32769_V03_DOWNSTREAM_CHAIN_FINAL_AUDIT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','prior_audit_run_id':34654898436,'four_required_receipts_verified':True,'receipt_sha256':hashes,'actual_high_memory_resource_pass':False,'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}; out['token']=out['classification']; Path('final.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['classification'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: v03-downstream-chain-final-audit, path: final.json}
