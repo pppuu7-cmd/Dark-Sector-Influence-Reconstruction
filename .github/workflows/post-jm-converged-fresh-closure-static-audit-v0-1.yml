@@ -1,0 +1,66 @@
+name: post-jm-converged-fresh-closure-static-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/post-jm-converged-fresh-closure-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit dormant fresh closure without JM result or CLASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/post_jm_converged_fresh_layerb_scientific_closure_v0_1.py)" = '5db3340392341f8c1c93b018d628dfab15701f9d'
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import ast,json
+          from pathlib import Path
+          s=Path('ci/post_jm_converged_fresh_layerb_scientific_closure_v0_1.py').read_text(); ast.parse(s)
+          p=json.load(open('docs/dsir4/authority/POST_JM_CONVERGED_CLOSURE_IMPLEMENTATION_PLAN_V0_1.json'))
+          c=json.load(open('docs/dsir4/authority/POST_JM_CONVERGED_CLOSURE_CLASSIFIER_UNIT_AUDIT_V0_1.json'))
+          legacy=json.load(open('docs/dsir4/authority/POST_JM_LEGACY_JN_INCOMPATIBILITY_AUDIT_V0_1.json'))
+          checks={
+            'activation_exact':'JM_CONVERGED = "COMMON_GRID_FOURTH_REFINEMENT_CONVERGED_PLUS_0_PLUS_0"' in s,
+            'activation_independent_verification':'artifact_verified_independently' in s,
+            'exact_coarse_hash':'f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb' in s,
+            'exact_fine_hash':'6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515' in s,
+            'exact_load_counts':'engine.load_nodes(a.coarse, 4097' in s and 'engine.load_nodes(a.fine, 8193' in s,
+            'no_grid_regeneration':'geomspace(' not in s and 'guarded_lattice(' not in s,
+            'fresh_two_evaluations':s.count('engine.evaluate_lattice(')==2,
+            'eight_one_live':'tracker != {"constructions": 8, "live": 0, "max_live": 1}' in s,
+            'no_response_reuse':'"response_values_reused": False' in s,
+            'strict_tol':'float(mx) < REL_TOL' in s and 'REL_TOL = 1e-3' in s,
+            'h_exact':'H = 1e-4' in s,
+            'kpd_exact':'NATIVE_KPD = 20.0' in s,
+            'capacity_exact':'CAPACITY = 9216' in s and 'PARSER_CAPACITY = 262144' in s,
+            'pass_token':'PASS_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_POST_JM_V0_1' in s,
+            'unresolved_token':'NUMERICALLY_UNRESOLVED_POST_JM_LAYERB_CLOSURE_V0_1' in s,
+            'physical_fail_token':'FAIL_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_POST_JM_V0_1' in s,
+            'raw_not_authority':'"scientific_authority_created": False' in s,
+            'covariance_closed':'"covariance_restriction_authorized": False' in s,
+            'wm_closed':'"Wm_S3_opened": False' in s,
+            'plan_verified':p.get('artifact_verified_independently') is True and p.get('classification')=='POST_JM_CONVERGED_CLOSURE_PLAN_FROZEN_PASS_PLUS_0_PLUS_0',
+            'classifier_verified':c.get('artifact_verified_independently') is True and c.get('exact_threshold_is_unresolved') is True,
+            'legacy_forbidden':legacy.get('artifact_verified_independently') is True and legacy.get('post_jm_use_forbidden') is True,
+          }
+          assert all(checks.values()),[k for k,v in checks.items() if not v]
+          out={'schema':'POST_JM_CONVERGED_FRESH_CLOSURE_STATIC_AUDIT_V0_1','classification':'POST_JM_CONVERGED_FRESH_CLOSURE_STATIC_PASS_PLUS_0_PLUS_0','effect':'+0/+0','check_count':len(checks),'checks':checks,'checks_all_pass':True,'helper_git_blob':'5db3340392341f8c1c93b018d628dfab15701f9d','jm_result_read':False,'scientific_response_read':False,'class_solver_invoked':False,'branch_activated':False,'scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,'token':'POST_JM_CONVERGED_FRESH_CLOSURE_STATIC_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'],out['check_count'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-jm-converged-fresh-closure-static-audit-v0-1
+          path: artifacts/result.json
+          if-no-files-found: error
+          retention-days: 90
