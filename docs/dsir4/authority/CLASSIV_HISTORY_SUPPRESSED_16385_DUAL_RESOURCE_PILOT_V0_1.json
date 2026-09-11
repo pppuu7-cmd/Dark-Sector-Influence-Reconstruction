@@ -1,0 +1,73 @@
+{
+  "schema": "CLASSIV_HISTORY_SUPPRESSED_16385_DUAL_RESOURCE_PILOT_AUTHORITY_V0_1",
+  "classification": "CLASSIV_HISTORY_SUPPRESSED_16385_DUAL_RESOURCE_PILOT_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "artifact_verified_independently": true,
+  "run_id": 34552645551,
+  "workflow_head_sha": "182d9dac9dabe8855e885749f4835a7ed589f5fe",
+  "source_equivalence_run_id": 34551841749,
+  "source_equivalence_replica_1_artifact_id": 10181363100,
+  "source_equivalence_replica_1_zip_sha256": "4d59f4f1add8bb2c730c6558291dd8340a57d884c6c3ab47716e5ae4a5062d5b",
+  "source_equivalence_replica_2_artifact_id": 10181345079,
+  "source_equivalence_replica_2_zip_sha256": "ac0f671684a8d0f7f4b9d6a60f93d1c844dc217a152dd1702b1104edfcfe4b23",
+  "history_suppression_patch_git_blob": "e20687e933d665973c3be40598180587701fa8e0",
+  "history_suppression_patch": {
+    "source_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+    "path": "source/perturbations.c",
+    "replacement_count": 1,
+    "pre_sha256": "cde27a3c0b75e8ad7907a7ccb45cd6d4af477338569bffbdf0a5eb84b30f7856",
+    "post_sha256": "4e9a419d46471ffab74df3d14239e000bf92f2e198edad4d2c7b82f1335f7a4b",
+    "old_assignment": "perhaps_print_variables = perturb_print_variables;",
+    "new_assignment": "perhaps_print_variables = NULL;",
+    "k_output_values_still_inserted_into_solver_grid": true,
+    "scientific_parameters_changed": false
+  },
+  "canonical_16385": {
+    "requested_node_count": 16385,
+    "node_sha256": "3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975",
+    "text_sha256": "7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69"
+  },
+  "capacity": 18432,
+  "parser_capacity": 524288,
+  "replicas": [
+    {
+      "replica": 1,
+      "job_id": 103118559536,
+      "artifact_id": 10181859106,
+      "artifact_zip_sha256": "1c1eb4fa591eb5d868aacdd7c7885f4780015b671942a6727ffc343eb26515e7",
+      "resource_receipt_json_sha256": "7be201d3ae1436547a40d06ef6ea9e0f5e7a5dcd94d764fb7af363b6b23abeb9",
+      "result_json_sha256": "cb4906b8be9fe29ac139a0e3c81062e8cbaf8a58c56e4e7a3a7d3159858744ff",
+      "peak_top_process_rss_kb": 8975032,
+      "total_solver_constructions": 4,
+      "max_live_instances": 1,
+      "final_live_instances": 0,
+      "unsupported_target_evaluations": 0,
+      "max_requested_node_coordinate_rel_mismatch": 1.657034302538322e-16
+    },
+    {
+      "replica": 2,
+      "job_id": 103118559274,
+      "artifact_id": 10181735051,
+      "artifact_zip_sha256": "8c18af5e4f022600764153dde74cd52bbf0ca75a2b21e5d21ae355851289b4c2",
+      "resource_receipt_json_sha256": "6eb6fb4cba7c175e9aa4119604535fbfd54e564fe11f14a39de5207189a9a80a",
+      "result_json_sha256": "96d6c2fc5e85e74cf656086e24258ff7e2cf036ee4bb469d0ba6d0a07b99d32c",
+      "peak_top_process_rss_kb": 9231552,
+      "total_solver_constructions": 4,
+      "max_live_instances": 1,
+      "final_live_instances": 0,
+      "unsupported_target_evaluations": 0,
+      "max_requested_node_coordinate_rel_mismatch": 1.657034302538322e-16
+    }
+  ],
+  "resource_feasibility_pass": true,
+  "full_8193_to_16385_support_execution_permitted": true,
+  "resource_pilot_response_hashes_are_scientific_authority": false,
+  "cross_replica_pilot_response_hash_equality_required": false,
+  "reason_response_hashes_not_promoted": "These are resource-only pilots on independent hosted VMs. Their pilot response/operand hashes differed across replicas, so no response value or response hash from either pilot is used for the scientific 8193->16385 convergence decision. The full support run must recompute fresh operands in one process under the frozen classifier.",
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "article3_repository_readiness_percent": 68,
+  "funnel_freeze_readiness_percent": 67,
+  "token": "CLASSIV_HISTORY_SUPPRESSED_16385_DUAL_RESOURCE_PILOT_PASS_PLUS_0_PLUS_0"
+}
