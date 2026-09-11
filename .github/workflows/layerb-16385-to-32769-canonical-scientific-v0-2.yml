@@ -1,0 +1,216 @@
+name: layerb-16385-to-32769-canonical-scientific-v0-2
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: layerb-16385-to-32769-canonical-scientific-v0-2
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  SCI_ENGINE_BLOB: 'bee4fe7f9d78024410629627694cc69ea1d3cef7'
+  SCI_PARENT_BLOB: '5ae2068d65dd45e0813c75fb795e55aa1bda1d5e'
+  TERMINAL_CONSUMER_BLOB: '661e0a69b7110fb0c0fcbb27fd6413456bb01ae2'
+  ONE_LIVE_GUARD_BLOB: 'ed703767e15a47bce8390fe7071f90968b9dacd0'
+  ONE_LIVE_CONTRACT_BLOB: '9e20a5f3a6cb36c185edf48ad74857f20e8f62d8'
+  ONE_RUN_AUTHORIZER_BLOB: '40717ac4a0131e6b2bb3af1a87070f1b7cbf5913'
+  ONE_RUN_CONTRACT_BLOB: 'a4e8b58711f520946d1195f739f111225d840ef8'
+  TERMINAL_CONTRACT_BLOB: 'e441c54f8ad4a0590ad521710d4b9dbf37f111ba'
+  PARENT_REFINEMENT_AUTH_BLOB: '7958e1f44c0224e1828f89b1472aa33226c61886'
+  BUILD_AUTH_BLOB: 'b5cd7304c110962dc3baef8d04ef67d5a8042e5f'
+  CANON32769_AUTH_BLOB: 'dddf7b0f8596506b9e792186d8ebaf14ff789f4c'
+  PLAN_AUTH_BLOB: '5992faa10b6d25d1503b287c19456fb36756caa4'
+  ENGINE_BLOB: '5f8475b961db20bef5f4b8a2eb7c99d9f7c722e2'
+  PLAN_SCRIPT_BLOB: '7180b74641acfa602c34db07ad6cc916c17ebd4f'
+  IR_BLOB: '6ef2516dfcae8a8ae92f5b7dbe792274138c0f6f'
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+  COARSE16385_BLOB: 'fc4eb1e7f51a0ad3773b8be13c477652b1f71368'
+  FINE32769_BLOB: '7b67706156d7d2016ecba0628210fb08f6f05616'
+  BUILD_COMPAT_BLOB: 'b7fe663154519b605699c1fd622d0079a5f76772'
+  PUBLIC_EXPOSURE_BLOB: 'e5afe14eccf531d3e5b9de09b19d34df431a08b9'
+  RESOURCE_AUTHORITY: docs/dsir4/authority/LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_V0_1.json
+  MANIFEST: docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json
+  WM_S3_OVERRIDE: docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_2.json
+
+jobs:
+  canonical-science:
+    runs-on: [dsir-32769-highmem]
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Fail closed unless parser-corrected frozen prerequisites exist
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/runtime scratch external inputs
+          test "$(git hash-object ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_2.py)" = "$SCI_ENGINE_BLOB"
+          test "$(git hash-object ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py)" = "$SCI_PARENT_BLOB"
+          test "$(git hash-object ci/layerb_16385_to_32769_terminal_consumer_v0_2.py)" = "$TERMINAL_CONSUMER_BLOB"
+          test "$(git hash-object ci/layerb_32769_one_live_guard_v0_2.py)" = "$ONE_LIVE_GUARD_BLOB"
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_ONE_LIVE_GUARD_CONTRACT_V0_2.json)" = "$ONE_LIVE_CONTRACT_BLOB"
+          test "$(git hash-object ci/layerb_16385_to_32769_one_run_authorizer_v0_2.py)" = "$ONE_RUN_AUTHORIZER_BLOB"
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZATION_CONTRACT_V0_2.json)" = "$ONE_RUN_CONTRACT_BLOB"
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_16385_TO_32769_TERMINAL_RESULT_CONTRACT_V0_2.json)" = "$TERMINAL_CONTRACT_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json)" = "$PARENT_REFINEMENT_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json)" = "$BUILD_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json)" = "$CANON32769_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json)" = "$PLAN_AUTH_BLOB"
+          test "$(git hash-object ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py)" = "$ENGINE_BLOB"
+          test "$(git hash-object ci/recovered_exp073jl_response_blind_request_plan_audit_v0_1.py)" = "$PLAN_SCRIPT_BLOB"
+          test "$(git hash-object ci/exp073ir_article3_real_layerb_common_response_v0_1.py)" = "$IR_BLOB"
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt)" = "$COARSE16385_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt)" = "$FINE32769_BLOB"
+          test "$(git hash-object scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py)" = "$BUILD_COMPAT_BLOB"
+          test "$(git hash-object scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py)" = "$PUBLIC_EXPOSURE_BLOB"
+          test -f "$RESOURCE_AUTHORITY" || { echo MEASURED_RESOURCE_AUTHORITY_MISSING; exit 41; }
+          python3 -m py_compile ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_2.py ci/layerb_16385_to_32769_terminal_consumer_v0_2.py ci/layerb_32769_one_live_guard_v0_2.py ci/layerb_16385_to_32769_one_run_authorizer_v0_2.py
+          python3 - <<'PY'
+          import json,os
+          r=json.load(open(os.environ['RESOURCE_AUTHORITY']))
+          assert r['classification']=='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0'
+          assert r['artifact_verified_independently'] is True and r['high_memory_resource_lifecycle_preflight_pass'] is True
+          assert r['candidate_memtotal_kb']>16373452 and r['parser_capacity']==1048576
+          assert r['class_build_authority_git_blob']=='b5cd7304c110962dc3baef8d04ef67d5a8042e5f'
+          assert r['execution_lifecycle']['total_solver_constructions']==4 and r['execution_lifecycle']['max_live_instances']==1 and r['execution_lifecycle']['final_live_instances']==0
+          assert r['scientific_response_read'] is False and r['scientific_authority_created'] is False
+          PY
+      - name: Generate immediate parser-corrected live anti-duplication guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/workflows/layerb-16385-to-32769-canonical-scientific-v0-2.yml/runs?per_page=100" > artifacts/runtime/production_runs.json
+          python3 ci/layerb_32769_one_live_guard_v0_2.py --runs-json artifacts/runtime/production_runs.json --contract docs/dsir4/contracts/LAYERB_32769_ONE_LIVE_GUARD_CONTRACT_V0_2.json --current-run-id "$GITHUB_RUN_ID" --out artifacts/runtime/one_live_guard.json
+      - name: Generate current-run-only parser-corrected authorization
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/layerb_16385_to_32769_one_run_authorizer_v0_2.py --contract docs/dsir4/contracts/LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZATION_CONTRACT_V0_2.json --resource-authority "$RESOURCE_AUTHORITY" --one-live-guard artifacts/runtime/one_live_guard.json --current-run-id "$GITHUB_RUN_ID" --out artifacts/runtime/one_run_authorization.json
+          test "$(jq -r .classification artifacts/runtime/one_run_authorization.json)" = LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZED_PLUS_0_PLUS_0
+      - name: Verify native prerequisites and create isolated Python stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v python3; command -v gcc; command -v g++; command -v gfortran; command -v make; command -v git; command -v curl; command -v gzip; command -v unzip
+          pkg-config --exists gsl || { echo GSL_DEV_NOT_AVAILABLE; exit 31; }
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy >/dev/null
+      - name: Checkout exact frozen CAMB
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/camb; git -C external/camb init -q; git -C external/camb remote add origin https://github.com/cmbant/CAMB.git
+          git -C external/camb fetch -q --depth 1 origin fa3f097343fbbe427cc04b4f5f0041c22c6ec764; git -C external/camb checkout -q --detach FETCH_HEAD
+          test "$(git -C external/camb rev-parse HEAD)" = fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          .venv/bin/python -m pip install ./external/camb >/dev/null
+      - name: Build exact pinned CLASS-IV 32769/1048576 envelope
+        shell: bash
+        run: |
+          set -euo pipefail; export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv; git -C external/class_iv checkout -q "$CLASS_COMMIT"; test "$(git -C external/class_iv rev-parse HEAD)" = "$CLASS_COMMIT"
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('external/class_iv/include/perturbations.h'); b=p.read_bytes(); s=b.decode(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; new='#define _MAX_NUMBER_OF_K_FILES_ 32769'; assert s.count(old)==1; pre=hashlib.sha256(b).hexdigest(); p.write_text(s.replace(old,new,1)); post=hashlib.sha256(p.read_bytes()).hexdigest()
+          q=Path('external/class_iv/include/parser.h'); qb=q.read_bytes(); qs=qb.decode(); qold='#define _ARGUMENT_LENGTH_MAX_ 1024'; qnew='#define _ARGUMENT_LENGTH_MAX_ 1048576'; assert qs.count(qold)==1; qpre=hashlib.sha256(qb).hexdigest(); q.write_text(qs.replace(qold,qnew,1)); qpost=hashlib.sha256(q.read_bytes()).hexdigest()
+          assert pre=='c83749338e435d85caf8f0cfb713aa9a77782a91072de93633187d9dc53a0876' and post=='e6221887e19c0a576f77bbfcb2a030ff9cf8d84c62a2193ce52b8e3b541a8f0a'
+          assert qpre=='2c17690a5549e12c8fac485281ca214a20c376e1e3beba714af0e1b84cdbb0eb' and qpost=='2d775ca12da2c79b3700672fa66d290d5a06458a5253ea1e2c51b44ac2374092'
+          rec={'schema':'LAYERB_16385_TO_32769_PRODUCTION_CLASS_CAPACITY_PATCH_V0_2','source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','old_capacity':30,'new_capacity':32769,'replacement_count':1,'pre_sha256':pre,'post_sha256':post,'parser_old_argument_capacity':1024,'parser_new_argument_capacity':1048576,'parser_replacement_count':1,'parser_pre_sha256':qpre,'parser_post_sha256':qpost}
+          Path('artifacts/capacity_patch.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+          test "$(sha256sum external/class_iv/class | awk '{print $1}')" = 68a533463bc63f75dc81e09bda060c2f6758daaeaec632537ce116a003706abf
+      - name: Download exact DES-Y1 radial payloads
+        shell: bash
+        run: |
+          set -euo pipefail; mkdir -p external/des_nz
+          curl --fail --location --retry 3 -sS -o external/des_nz/source.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_redshift_distributions_v1.fits'
+          curl --fail --location --retry 3 -sS -o external/des_nz/lens.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/chains/2pt_NG_mcal_1110.fits'
+          echo 'b5d87138c35ae8bb4ecd02491972f544648398e606b3617039e6e54cb8ea943b  external/des_nz/source.fits' | sha256sum -c -
+          echo '114035179b5a8e41090751e9a6478536d185128581d37b5a510eff5722f417ca  external/des_nz/lens.fits' | sha256sum -c -
+      - name: Download exact Layer-A parent, angular and Exp073IM authorities
+        shell: bash
+        run: |
+          set -euo pipefail; mkdir -p inputs/parent inputs/angular inputs/expim
+          get_artifact () { local id="$1" digest="$2" dest="$3"; local zip="${dest}.zip"; mkdir -p "$dest"; gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "$zip"; local actual expected; actual="$(sha256sum "$zip" | awk '{print $1}')"; expected="${digest#sha256:}"; test "$actual" = "$expected" || exit 31; unzip -q "$zip" -d "$dest"; }
+          get_artifact 10131794281 'sha256:ac959926639d3b46ecfe114e396ce03cb20a0763ef2781db454408d8ad0759df' inputs/parent
+          while IFS=$'\t' read -r slot id digest; do get_artifact "$id" "$digest" "inputs/angular/$slot"; done < <(jq -r '.angular[] | [.slot, (.artifact_id|tostring), .artifact_digest] | @tsv' "$MANIFEST")
+          id="$(jq -r '.artifact_id' "$WM_S3_OVERRIDE")"; mkdir -p inputs/angular/Wm_S3/transport_override; gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > inputs/angular/Wm_S3/transport_override.zip; unzip -q inputs/angular/Wm_S3/transport_override.zip -d inputs/angular/Wm_S3/transport_override
+          expected="$(jq -r '.required_each_canonical_sha256' "$WM_S3_OVERRIDE")"; nbytes="$(jq -r '.required_each_nbytes' "$WM_S3_OVERRIDE")"; for f in inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin; do test "$(stat -c%s "$f")" = "$nbytes"; test "$(sha256sum "$f" | awk '{print $1}')" = "$expected"; done; cmp -s inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin
+          get_artifact 10130241439 'sha256:3325bab0faa821c5ca3b13b4cd64d3d58c323e56a6f3e44952be84bfbc477156' inputs/expim
+      - name: Download exact frozen BOSS z3 operators
+        shell: bash
+        run: |
+          set -euo pipefail; mkdir -p external/exp073w_boss; base='https://fbeutler.github.io/hub'
+          curl --fail --location --retry 3 -sS -o external/exp073w_boss/W_NGC_z3.gz "$base/W_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"; curl --fail --location --retry 3 -sS -o external/exp073w_boss/W_SGC_z3.gz "$base/W_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"; curl --fail --location --retry 3 -sS -o external/exp073w_boss/M_NGC_z3.gz "$base/M_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"; curl --fail --location --retry 3 -sS -o external/exp073w_boss/M_SGC_z3.gz "$base/M_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          for f in external/exp073w_boss/*.gz; do gzip -t "$f"; gzip -dc "$f" > "${f%.gz}"; done
+          echo 'a308dc562d1a7224cefcf91d32580877929e0daa33806517e0d2d53710236827  external/exp073w_boss/W_NGC_z3' | sha256sum -c -; echo '2a542a2d48f3e8c8299f58a885d5273238e4ade32c0f0de020d8b9f23afe7759  external/exp073w_boss/W_SGC_z3' | sha256sum -c -; echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_NGC_z3' | sha256sum -c -; echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_SGC_z3' | sha256sum -c -
+      - name: Execute exactly one authorized parser-corrected canonical 16385 to 32769 refinement
+        shell: bash
+        run: |
+          set -euo pipefail; : > artifacts/telemetry.log
+          ( while true; do printf 'TELEMETRY ts=%s ' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> artifacts/telemetry.log; awk '/^(MemTotal|MemFree|MemAvailable|SwapTotal|SwapFree):/ {printf "%s=%s%s ",$1,$2,$3} END {print ""}' /proc/meminfo >> artifacts/telemetry.log; ps -eo pid,ppid,rss,vsz,%cpu,%mem,etime,comm --sort=-rss | head -n 8 >> artifacts/telemetry.log || true; sleep 10; done ) & MON=$!; cleanup_mon() { kill "$MON" 2>/dev/null || true; wait "$MON" 2>/dev/null || true; }; trap cleanup_mon EXIT INT TERM
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}" .venv/bin/python ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_2.py \
+            --current-run-id "$GITHUB_RUN_ID" --parent-refinement-authority docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json --class-build-authority docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json --canonical-32769-authority docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json --resource-authority "$RESOURCE_AUTHORITY" --one-live-guard artifacts/runtime/one_live_guard.json --one-run-authorization artifacts/runtime/one_run_authorization.json \
+            --recovered-jl-script ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py --ir-script ci/exp073ir_article3_real_layerb_common_response_v0_1.py --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py --request-plan-script ci/recovered_exp073jl_response_blind_request_plan_audit_v0_1.py --request-plan-authority docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json \
+            --parent-root inputs/parent --parent-authority docs/dsir4/authority/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_PASS_V0_1.json --manifest "$MANIFEST" --angular-root inputs/angular --expim-root inputs/expim --boss-root external/exp073w_boss --source external/des_nz/source.fits --lens external/des_nz/lens.fits --camb-root external/camb --expz2-script ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py --exp073iq-script ci/exp073iq_article3_real_layera_support_v0_1.py --baseline configs/dsir4/c2/ide0_reference_v0_1.ini --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre --coarse docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt --fine docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt --capacity-patch-record artifacts/capacity_patch.json --scratch scratch --out artifacts/result.json
+          cleanup_mon; trap - EXIT INT TERM
+      - name: Upload raw parser-corrected canonical result and runtime bindings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-to-32769-canonical-scientific-v0-2
+          path: |
+            artifacts/result.json
+            artifacts/capacity_patch.json
+            artifacts/telemetry.log
+            artifacts/runtime/production_runs.json
+            artifacts/runtime/one_live_guard.json
+            artifacts/runtime/one_run_authorization.json
+          if-no-files-found: warn
+          retention-days: 90
+
+  independent-terminal-consumer:
+    needs: canonical-science
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: '${{ github.sha }}', fetch-depth: 1}
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with: {name: layerb-16385-to-32769-canonical-scientific-v0-2, path: source}
+      - name: Independently consume raw result under parser-corrected frozen terminal contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_16385_to_32769_terminal_consumer_v0_2.py)" = "$TERMINAL_CONSUMER_BLOB"
+          test -f "$RESOURCE_AUTHORITY" || { echo MEASURED_RESOURCE_AUTHORITY_MISSING; exit 41; }
+          python3 ci/layerb_16385_to_32769_terminal_consumer_v0_2.py --input source/result.json --resource-authority "$RESOURCE_AUTHORITY" --one-live-guard source/runtime/one_live_guard.json --one-run-authorization source/runtime/one_run_authorization.json --out terminal/terminal_validation.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-16385-to-32769-independent-terminal-validation-v0-2
+          path: terminal/terminal_validation.json
+          if-no-files-found: warn
+          retention-days: 90
