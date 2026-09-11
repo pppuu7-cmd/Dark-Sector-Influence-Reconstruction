@@ -1,0 +1,131 @@
+name: layerb-post-jm-16385-selfhosted-resource-pilot-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-post-jm-16385-selfhosted-resource-pilot-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: layerb-post-jm-16385-selfhosted-resource-pilot-v0-1
+  cancel-in-progress: false
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  PILOT_BLOB: '00d8cb7d7dd6f5fa84aa0a8ddd3ea1c8ed3f81cb'
+  JO_BLOB: 'c975a964805919cd61e3c028305ad3945773377f'
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+  CANON_AUTH_BLOB: '50aa473299c82c857921a083f7d4de652ba476a4'
+  CANON_FILE_BLOB: 'fc4eb1e7f51a0ad3773b8be13c477652b1f71368'
+
+jobs:
+  resource-pilot-selfhosted:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce exact response-blind identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_post_jm_16385_one_live_resource_pilot_v0_1.py)" = "$PILOT_BLOB"
+          test "$(git hash-object ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py)" = "$JO_BLOB"
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json)" = "$CANON_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt)" = "$CANON_FILE_BLOB"
+      - name: Verify self-hosted native build prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v python3
+          command -v gcc
+          command -v g++
+          command -v gfortran
+          command -v make
+          pkg-config --exists gsl || { echo 'GSL_DEV_NOT_AVAILABLE'; exit 31; }
+      - name: Create isolated Python stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+      - name: Build exact pinned CLASS-IV 18432/524288
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          mkdir -p artifacts
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('external/class_iv/include/perturbations.h'); b=p.read_bytes(); s=b.decode(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; new='#define _MAX_NUMBER_OF_K_FILES_ 18432'; assert s.count(old)==1
+          pre=hashlib.sha256(b).hexdigest(); p.write_text(s.replace(old,new,1)); post=hashlib.sha256(p.read_bytes()).hexdigest()
+          q=Path('external/class_iv/include/parser.h'); qb=q.read_bytes(); qs=qb.decode(); qold='#define _ARGUMENT_LENGTH_MAX_ 1024'; qnew='#define _ARGUMENT_LENGTH_MAX_ 524288'; assert qs.count(qold)==1
+          qpre=hashlib.sha256(qb).hexdigest(); q.write_text(qs.replace(qold,qnew,1)); qpost=hashlib.sha256(q.read_bytes()).hexdigest()
+          rec={'schema':'LAYERB_16385_SELFHOSTED_CLASS_CAPACITY_PATCH_V0_1','source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','old_capacity':30,'new_capacity':18432,'replacement_count':1,'pre_sha256':pre,'post_sha256':post,'parser_old_argument_capacity':1024,'parser_new_argument_capacity':524288,'parser_replacement_count':1,'parser_pre_sha256':qpre,'parser_post_sha256':qpost}
+          Path('artifacts/capacity_patch.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+      - name: Record host resource envelope
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          { echo 'uname:'; uname -a; echo 'meminfo:'; grep -E 'MemTotal|MemAvailable|SwapTotal|SwapFree' /proc/meminfo; echo 'cpu:'; nproc; } > artifacts/host_envelope.txt
+          cat artifacts/host_envelope.txt
+      - name: Execute exact same-process canonical 16385 resource pilot
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          date -u +PILOT_START_%Y-%m-%dT%H:%M:%SZ
+          PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}" python ci/layerb_post_jm_16385_one_live_resource_pilot_v0_1.py \
+            --canonical-authority docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json \
+            --fine docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt \
+            --jo-script ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --capacity-patch-record artifacts/capacity_patch.json \
+            --out artifacts/result.json
+          date -u +PILOT_END_%Y-%m-%dT%H:%M:%SZ
+          python - <<'PY'
+          import json,sys
+          d=json.load(open('artifacts/result.json'))
+          if d.get('classification')!='CANONICAL_16385_ONE_LIVE_FOUR_BUILD_RESOURCE_PILOT_PASS_PLUS_0_PLUS_0':
+              print('SELFHOSTED_RESOURCE_PREFLIGHT_NOT_PASS',d.get('classification'),d.get('error')); sys.exit(31)
+          assert d['branch_activated'] is False and d['jm_result_read'] is False
+          assert d['execution_lifecycle']['total_solver_constructions']==4
+          assert d['execution_lifecycle']['max_live_instances']==1 and d['execution_lifecycle']['final_live_instances']==0
+          assert d['unsupported_target_evaluations']==0
+          assert d['max_requested_node_coordinate_rel_mismatch']<=1e-12
+          assert d['scientific_authority_created'] is False and d['next_rung_execution_authorized'] is False
+          print(d['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-16385-selfhosted-resource-pilot-v0-1
+          path: |
+            artifacts/result.json
+            artifacts/capacity_patch.json
+            artifacts/host_envelope.txt
+          if-no-files-found: warn
+          retention-days: 90
