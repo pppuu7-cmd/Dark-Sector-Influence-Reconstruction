@@ -1,0 +1,284 @@
+name: layerb-16385-to-32769-terminal-contract-synthetic-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-16385-to-32769-terminal-contract-synthetic-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-terminal-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce prospective terminal identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_16385_TO_32769_TERMINAL_RESULT_CONTRACT_V0_1.json)" = 'c2f4ff4bb6d3555f78d80503ac5bc73c15ebc4d5'
+          test "$(git hash-object ci/layerb_16385_to_32769_terminal_consumer_v0_1.py)" = '1ce035030e275effa0a323881cb7e13f54395a10'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json)" = '7958e1f44c0224e1828f89b1472aa33226c61886'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_1.json)" = 'ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json)" = 'dddf7b0f8596506b9e792186d8ebaf14ff789f4c'
+          test "$(git hash-object docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json)" = '5992faa10b6d25d1503b287c19456fb36756caa4'
+
+      - name: Generate synthetic authority bindings and boundary fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/fixtures artifacts/out
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+
+          ROOT=Path('artifacts/fixtures')
+          ROOT.mkdir(parents=True,exist_ok=True)
+
+          def write(name,obj):
+              p=ROOT/name
+              p.write_text(json.dumps(obj,indent=2,sort_keys=True)+'\n')
+              return p
+          def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+          def blob(p):
+              b=p.read_bytes()
+              return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+
+          resource={
+            'schema':'SYNTHETIC_RESOURCE_AUTHORITY_FIXTURE_V0_1',
+            'synthetic_fixture':True,
+            'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0',
+            'artifact_verified_independently':True,
+            'high_memory_resource_lifecycle_preflight_pass':True,
+            'candidate_memtotal_kb':33554432,
+            'scientific_response_read':False,
+            'scientific_authority_created':False,
+            'execution_lifecycle':{'total_solver_constructions':4,'max_live_instances':1,'final_live_instances':0},
+          }
+          rp=write('resource.json',resource); rsha,rblob=sha(rp),blob(rp)
+
+          guard={
+            'schema':'SYNTHETIC_ONE_LIVE_GUARD_FIXTURE_V0_1',
+            'synthetic_fixture':True,
+            'classification':'LAYERB_32769_ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS_PLUS_0_PLUS_0',
+            'guard_pass':True,
+            'matching_other_live_authoritative_runs':0,
+            'canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599',
+            'parent_authority_git_blob':'7958e1f44c0224e1828f89b1472aa33226c61886',
+          }
+          gp=write('guard.json',guard); gsha,gblob=sha(gp),blob(gp)
+
+          auth={
+            'schema':'SYNTHETIC_ONE_RUN_AUTHORIZATION_FIXTURE_V0_1',
+            'synthetic_fixture':True,
+            'classification':'LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZED_PLUS_0_PLUS_0',
+            'execution_authorized':True,
+            'authorized_canonical_run_count':1,
+            'canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599',
+            'class_build_authority_git_blob':'ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d',
+            'resource_authority_json_sha256':rsha,
+            'one_live_guard_json_sha256':gsha,
+          }
+          ap=write('authorization.json',auth); asha,ablob=sha(ap),blob(ap)
+
+          base={
+            'schema':'SYNTHETIC_LAYERB_16385_TO_32769_SCIENTIFIC_RESULT_FIXTURE_V0_1',
+            'synthetic_fixture':True,
+            'h':0.0001,
+            'rel_tol':0.001,
+            'native_k_per_decade_for_pk_frozen':20.0,
+            'activation_authority':{
+              'classification':'COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0',
+              'authority_git_blob':'7958e1f44c0224e1828f89b1472aa33226c61886',
+              'response_values_reused':False,
+            },
+            'canonical_lattices':{
+              'coarse':{'requested_node_count':16385,'text_sha256':'7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69','node_sha256':'3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975'},
+              'fine':{'requested_node_count':32769,'text_sha256':'7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2','node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599'},
+            },
+            'class_build_authority':{
+              'authority_git_blob':'ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d',
+              'classification':'LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_PASS_PLUS_0_PLUS_0',
+              'class_commit':'ac627d54e9ce196a08878d1ba33999819925d19c',
+              'capacity':32769,'parser_capacity':524288,
+            },
+            'canonical_32769_authority':{
+              'authority_git_blob':'dddf7b0f8596506b9e792186d8ebaf14ff789f4c',
+              'classification':'CANONICAL_32769_STATIC_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0',
+            },
+            'request_plan_authority':{
+              'authority_git_blob':'5992faa10b6d25d1503b287c19456fb36756caa4',
+              'classification':'RESPONSE_BLIND_REQUEST_PLAN_AUDITED_PLUS_0_PLUS_0',
+              'coarse_common_plan_sha256':'505716116cc385d5700e455017d8e541c5bba7774fa6647298392495c83ecfe0',
+              'fine_plan_with_gl128_sha256':'0f7ce2e5fa459e15954268dfd46045eaa0ab6356dfdab5a2e282514e7a34ae4e',
+              'coarse_calls_per_role':441,'fine_calls_per_role':569,'total_get_transfer_calls':4040,
+            },
+            'resource_authority_binding':{'classification':resource['classification'],'json_sha256':rsha,'git_blob':rblob},
+            'one_live_guard_binding':{'classification':guard['classification'],'json_sha256':gsha,'git_blob':gblob},
+            'one_run_authorization_binding':{'classification':auth['classification'],'json_sha256':asha,'git_blob':ablob},
+            'execution_lifecycle':{'total_solver_constructions':8,'max_live_instances':1,'final_live_instances':0,'cross_process_raw_operand_combination':False},
+            'parent_identity_preserved':True,
+            'parent':{'retained_count':107,'retained_id_sha256':'44b57c6c910bc3612310ce415d773c8c180497528bfc5fc2927ce61da6ad40d7','full_order_sha256':'bfaf582518cdbfd34b1e8392da83dac6b0885948bc31f2c29d4e48247c23af75'},
+            'unsupported_target_evaluations':0,
+            'max_requested_node_coordinate_rel_mismatch':1e-16,
+            'covariance_read':False,'whitening_read':False,'nuisance_read':False,'relation_null_read':False,
+            'scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+            'layer_b':{'invalid_row_fraction':0.0,'retained_after_layer_b':107},
+          }
+
+          def fixture(name,classification,mx):
+              d=json.loads(json.dumps(base))
+              d['classification']=classification
+              d['convergence']={
+                'max_relative_component_difference':mx,
+                'finite_nonzero_status_changed':False,
+                'row_label_changed':False,
+                'boss_dense_z_disagreement':False,
+              }
+              return write(name,d)
+
+          fixture('converged.json','COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0',0.000999)
+          fixture('not_converged_boundary.json','COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0',0.001)
+          fixture('bad_classifier.json','COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0',0.001)
+
+          manifest={
+            'resource_sha256':rsha,'resource_git_blob':rblob,
+            'guard_sha256':gsha,'guard_git_blob':gblob,
+            'authorization_sha256':asha,'authorization_git_blob':ablob,
+          }
+          write('manifest.json',manifest)
+          PY
+
+      - name: Require PASS below threshold and at NOT_CONVERGED boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in converged.json not_converged_boundary.json; do
+            python3 ci/layerb_16385_to_32769_terminal_consumer_v0_1.py \
+              --input "artifacts/fixtures/$f" \
+              --resource-authority artifacts/fixtures/resource.json \
+              --one-live-guard artifacts/fixtures/guard.json \
+              --one-run-authorization artifacts/fixtures/authorization.json \
+              --out "artifacts/out/${f%.json}_validation.json"
+          done
+          python3 - <<'PY'
+          import json
+          for p in ['artifacts/out/converged_validation.json','artifacts/out/not_converged_boundary_validation.json']:
+              d=json.load(open(p))
+              assert d['classification']=='LAYERB_16385_TO_32769_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0'
+              assert d['validation']['valid'] is True and d['validation']['errors']==[]
+          assert json.load(open('artifacts/out/converged_validation.json'))['validation']['classification']=='COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0'
+          assert json.load(open('artifacts/out/not_converged_boundary_validation.json'))['validation']['classification']=='COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0'
+          PY
+
+      - name: Require FAIL for post-hoc classifier mismatch
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python3 ci/layerb_16385_to_32769_terminal_consumer_v0_1.py \
+            --input artifacts/fixtures/bad_classifier.json \
+            --resource-authority artifacts/fixtures/resource.json \
+            --one-live-guard artifacts/fixtures/guard.json \
+            --one-run-authorization artifacts/fixtures/authorization.json \
+            --out artifacts/out/bad_classifier_validation.json
+          rc=$?
+          set -e
+          test "$rc" -eq 31
+          python3 - <<'PY'
+          import json
+          d=json.load(open('artifacts/out/bad_classifier_validation.json'))
+          assert d['classification']=='LAYERB_16385_TO_32769_TERMINAL_VALIDATION_FAIL_PLUS_0_PLUS_0'
+          assert d['validation']['valid'] is False
+          assert d['validation']['errors']==['strict_classifier'],d['validation']['errors']
+          PY
+
+      - name: Emit synthetic audit summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          c=json.load(open('artifacts/out/converged_validation.json'))
+          n=json.load(open('artifacts/out/not_converged_boundary_validation.json'))
+          b=json.load(open('artifacts/out/bad_classifier_validation.json'))
+          out={
+            'schema':'LAYERB_16385_TO_32769_TERMINAL_CONTRACT_SYNTHETIC_AUDIT_V0_1',
+            'classification':'LAYERB_16385_TO_32769_TERMINAL_CONTRACT_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'scientific_response_read':False,
+            'scientific_solver_invoked':False,
+            'synthetic_only':True,
+            'converged_fixture_validation_pass':c['validation']['valid'] is True,
+            'not_converged_boundary_fixture_validation_pass':n['validation']['valid'] is True,
+            'bad_classifier_rejected':b['validation']['errors']==['strict_classifier'],
+            'strict_relative_tolerance':0.001,
+            'converged_test_value':0.000999,
+            'not_converged_boundary_test_value':0.001,
+            'terminal_contract_git_blob':'c2f4ff4bb6d3555f78d80503ac5bc73c15ebc4d5',
+            'terminal_consumer_git_blob':'1ce035030e275effa0a323881cb7e13f54395a10',
+            'converged_validation_sha256':sha('artifacts/out/converged_validation.json'),
+            'not_converged_validation_sha256':sha('artifacts/out/not_converged_boundary_validation.json'),
+            'bad_classifier_validation_sha256':sha('artifacts/out/bad_classifier_validation.json'),
+            'terminal_schema_and_independent_consumer_frozen':True,
+            'scientific_execution_authorized':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+          }
+          out['token']=out['classification']
+          Path('artifacts/summary.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-to-32769-terminal-contract-synthetic-audit-v0-1
+          path: |
+            artifacts/summary.json
+            artifacts/out/*.json
+            artifacts/fixtures/manifest.json
+          if-no-files-found: error
+          retention-days: 90
+
+  independent-static-verifier:
+    needs: synthetic-terminal-audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-to-32769-terminal-contract-synthetic-audit-v0-1
+          path: evidence
+      - name: Independently verify terminal audit summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_16385_TO_32769_TERMINAL_RESULT_CONTRACT_V0_1.json)" = 'c2f4ff4bb6d3555f78d80503ac5bc73c15ebc4d5'
+          test "$(git hash-object ci/layerb_16385_to_32769_terminal_consumer_v0_1.py)" = '1ce035030e275effa0a323881cb7e13f54395a10'
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          d=json.load(open('evidence/summary.json'))
+          assert d['classification']=='LAYERB_16385_TO_32769_TERMINAL_CONTRACT_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['synthetic_only'] is True and d['scientific_solver_invoked'] is False and d['scientific_response_read'] is False
+          assert d['converged_fixture_validation_pass'] is True
+          assert d['not_converged_boundary_fixture_validation_pass'] is True
+          assert d['bad_classifier_rejected'] is True
+          assert d['strict_relative_tolerance']==0.001
+          assert d['converged_test_value']==0.000999 and d['not_converged_boundary_test_value']==0.001
+          assert d['terminal_schema_and_independent_consumer_frozen'] is True
+          assert d['scientific_execution_authorized'] is False
+          assert d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False
+          assert d['converged_validation_sha256']==sha('evidence/out/converged_validation.json')
+          assert d['not_converged_validation_sha256']==sha('evidence/out/not_converged_boundary_validation.json')
+          assert d['bad_classifier_validation_sha256']==sha('evidence/out/bad_classifier_validation.json')
+          print('LAYERB_16385_TO_32769_TERMINAL_CONTRACT_INDEPENDENT_STATIC_VALIDATION_PASS_PLUS_0_PLUS_0')
+          PY
