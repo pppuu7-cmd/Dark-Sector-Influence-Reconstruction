@@ -1,0 +1,114 @@
+name: post-16385-outcome-response-blind-parallel-audit-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/post-16385-outcome-response-blind-parallel-audit-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  converged-closure-compatibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit prospective CONVERGED closure adapter requirements without science
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import ast,json,hashlib
+          from pathlib import Path
+          old=Path('ci/post_jm_converged_fresh_layerb_scientific_closure_v0_1.py'); nxt=Path('ci/post_jm_next_support_canonical_one_live_refinement_v0_1.py')
+          os=old.read_text(); ns=nxt.read_text(); ast.parse(os); ast.parse(ns)
+          checks={
+            'old_activation_is_direct_jm':'JM_CONVERGED = "COMMON_GRID_FOURTH_REFINEMENT_CONVERGED_PLUS_0_PLUS_0"' in os,
+            'next_converged_token_exists':'COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0' in ns,
+            'old_grid_4097_8193':'COARSE_NODE_SHA = "f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb"' in os and 'FINE_NODE_SHA = "6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515"' in os,
+            'next_grid_8193_16385':'COARSE_NODE_SHA = "6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515"' in ns and 'FINE_NODE_SHA = "3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975"' in ns,
+            'old_capacity_9216':'CAPACITY = 9216' in os and 'PARSER_CAPACITY = 262144' in os,
+            'next_capacity_18432':'CAPACITY = 18432' in ns and 'PARSER_CAPACITY = 524288' in ns,
+            'same_h':'H = 1e-4' in os and 'H = 1e-4' in ns,
+            'same_tol':'REL_TOL = 1e-3' in os and 'REL_TOL = 1e-3' in ns,
+            'same_lookup':'LOOKUP_REL_TOL = 1e-12' in os and 'LOOKUP_REL_TOL = 1e-12' in ns,
+            'same_kpd':'NATIVE_KPD = 20.0' in os and 'NATIVE_KPD = 20.0' in ns,
+            'same_plan_hashes':'505716116cc385d5700e455017d8e541c5bba7774fa6647298392495c83ecfe0' in os and '505716116cc385d5700e455017d8e541c5bba7774fa6647298392495c83ecfe0' in ns and '0f7ce2e5fa459e15954268dfd46045eaa0ab6356dfdab5a2e282514e7a34ae4e' in os and '0f7ce2e5fa459e15954268dfd46045eaa0ab6356dfdab5a2e282514e7a34ae4e' in ns,
+          }
+          assert all(checks.values()),[k for k,v in checks.items() if not v]
+          out={'schema':'POST_16385_CONVERGED_CLOSURE_COMPATIBILITY_AUDIT_V0_1','classification':'POST_16385_CONVERGED_CLOSURE_REQUIRES_PROSPECTIVE_ADAPTER_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'check_count':len(checks),'old_closure_helper_blob':'5db3340392341f8c1c93b018d628dfab15701f9d','next_support_helper_blob':'10492520b4a0eb8992e9ccb101a4ccd26127be82','required_adapter_changes':['activation token must bind to COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0','coarse/fine canonical grids must move 4097/8193 -> 8193/16385','capacity/parser envelope must move 9216/262144 -> 18432/524288','proven history-suppression execution patch must be required'],'science_changes_forbidden':['REL_TOL','h','native_kpd','lookup ceiling','request-plan hashes','physical masks/domain/accounting','estimator'],'current_scientific_result_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'token':'POST_16385_CONVERGED_CLOSURE_REQUIRES_PROSPECTIVE_ADAPTER_PLUS_0_PLUS_0'}
+          Path('artifacts/converged.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-16385-converged-closure-compatibility-v0-1
+          path: artifacts/converged.json
+          if-no-files-found: error
+          retention-days: 90
+
+  not-converged-successor-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit prospectively frozen successor availability without science
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          hits=[]
+          for root in ('docs/dsir4/prereg','docs/dsir4/authority','ci'):
+            for p in Path(root).rglob('*'):
+              if p.is_file() and p.suffix in {'.md','.json','.py'}:
+                try:s=p.read_text()
+                except:continue
+                if '32769' in s: hits.append(str(p))
+          out={'schema':'POST_16385_NOT_CONVERGED_SUCCESSOR_AUDIT_V0_1','classification':'NO_PROSPECTIVELY_FROZEN_32769_SUCCESSOR_PLUS_0_PLUS_0' if not hits else 'PROSPECTIVE_32769_SUCCESSOR_FOUND_PLUS_0_PLUS_0','effect':'+0/+0','matching_files':hits,'successor_science_authorized':False,'current_scientific_result_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'rule':'If 8193->16385 is NOT_CONVERGED, do not invent or launch 32769 from the result. A new rung requires a separately prospective scientific justification and preregistration.','token':'NO_PROSPECTIVELY_FROZEN_32769_SUCCESSOR_PLUS_0_PLUS_0' if not hits else 'PROSPECTIVE_32769_SUCCESSOR_FOUND_PLUS_0_PLUS_0'}
+          Path('artifacts/not_converged.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token'],len(hits))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-16385-not-converged-successor-audit-v0-1
+          path: artifacts/not_converged.json
+          if-no-files-found: error
+          retention-days: 90
+
+  provenance-chain-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit current 16385 authority chain without CLASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          jm=json.load(open('docs/dsir4/authority/EXP073JM_ARTICLE3_RECOVERED_CANONICAL_ONE_LIVE_FOURTH_REFINEMENT_NOT_CONVERGED_V0_2.json'))
+          rr=json.load(open('docs/dsir4/authority/CLASSIV_HISTORY_SUPPRESSED_16385_DUAL_RESOURCE_PILOT_V0_1.json'))
+          va=json.load(open('docs/dsir4/authority/POST_JM_NEXT_SUPPORT_TERMINAL_VALIDATOR_STATIC_V0_1.json'))
+          ca=json.load(open('docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json'))
+          checks={
+            'jm_verified':jm.get('artifact_verified_independently') is True and jm.get('validated_branch_selected')=='NOT_CONVERGED_8193_TO_16385',
+            'resource_verified':rr.get('artifact_verified_independently') is True and rr.get('resource_feasibility_pass') is True and len(rr.get('replicas',[]))==2,
+            'resource_not_science':rr.get('resource_pilot_response_hashes_are_scientific_authority') is False,
+            'validator_verified':va.get('artifact_verified_independently') is True and va.get('all_pass') is True and va.get('case_count')==13,
+            'canonical_verified':ca.get('artifact_verified_independently') is True and ca.get('requested_node_count')==16385 and ca.get('node_payload_sha256')=='3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975',
+            'science_still_closed':jm.get('scientific_authority_created') is False and rr.get('scientific_authority_created') is False and va.get('scientific_authority_created') is False,
+          }
+          assert all(checks.values()),[k for k,v in checks.items() if not v]
+          out={'schema':'POST_16385_PRE_RESULT_PROVENANCE_CHAIN_AUDIT_V0_1','classification':'POST_16385_PRE_RESULT_PROVENANCE_CHAIN_PASS_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'check_count':len(checks),'current_scientific_result_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'token':'POST_16385_PRE_RESULT_PROVENANCE_CHAIN_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/provenance.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-16385-pre-result-provenance-chain-v0-1
+          path: artifacts/provenance.json
+          if-no-files-found: error
+          retention-days: 90
