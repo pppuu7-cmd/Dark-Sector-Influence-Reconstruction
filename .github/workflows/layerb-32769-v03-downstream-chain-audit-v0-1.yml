@@ -1,0 +1,178 @@
+name: layerb-32769-v03-downstream-chain-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/layerb-32769-v03-downstream-chain-audit-v0-1.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  EVENT_CHAIN_BLOB: '7f6d31b2a208dd1c052286aa1f116963001f52ae'
+  CANDIDATE_WORKFLOW_BLOB: '9977781cce13e84489203e89b4d11182a835a3a9'
+  PACKAGING_CONTRACT_BLOB: '71d77aa4d074bba1a2f53e7f9299a9db32e93ffc'
+  PACKAGER_BLOB: 'c38bf9a0108ab3ef50f1abec513fa2f6ff0373a4'
+  MATERIALIZATION_CONTRACT_BLOB: '3e53992864ad10f23752df03a653f8073cc18ffa'
+  MATERIALIZER_BLOB: '8a4e03848694a59550460e9866d0aeaec747780e'
+
+jobs:
+  event-chain-static:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify V0.3 event routing and consumer identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('.github/workflows/layerb-32769-resource-lifecycle-independent-consumer-v0-1.yml'); b=p.read_bytes(); s=b.decode()
+          blob=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest(); assert blob=='7f6d31b2a208dd1c052286aa1f116963001f52ae'
+          assert 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3' in s
+          assert "RESOURCE_CONSUMER_BLOB: 'cb9e83377f7f7c0498f0b2bfc3b8b06c2683d9ab'" in s
+          assert "SOURCE_WORKFLOW_BLOB: 'e55c0ab05c6b7eb0d622eadba25d7e20cdc4ce16'" in s
+          assert 'ci/layerb_32769_resource_lifecycle_independent_consumer_v0_3.py' in s
+          assert 'Fail closed if independent V0.3 validation did not pass' in s
+          out={'schema':'LAYERB_32769_V03_EVENT_CHAIN_STATIC_AUDIT_V0_1','classification':'LAYERB_32769_V03_EVENT_CHAIN_STATIC_AUDIT_PASS_PLUS_0_PLUS_0','event_chain_git_blob':blob,'v03_source_trigger_bound':True,'v03_consumer_bound':True,'invalid_consumer_fails_workflow':True,'scientific_execution_authorized':False}; out['token']=out['classification']; Path('event.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: v03-event-chain-static, path: event.json}
+
+  candidate-workflow-static:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify V0.3 candidate workflow identities and read-only semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('.github/workflows/layerb-32769-resource-authority-candidate-packaging-v0-1.yml'); b=p.read_bytes(); s=b.decode(); blob=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest(); assert blob=='9977781cce13e84489203e89b4d11182a835a3a9'
+          for token in ["PACKAGING_CONTRACT_BLOB: '71d77aa4d074bba1a2f53e7f9299a9db32e93ffc'","PACKAGER_BLOB: 'c38bf9a0108ab3ef50f1abec513fa2f6ff0373a4'","MATERIALIZATION_CONTRACT_BLOB: '3e53992864ad10f23752df03a653f8073cc18ffa'","MATERIALIZER_BLOB: '8a4e03848694a59550460e9866d0aeaec747780e'","SOURCE_WORKFLOW_NAME: 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3'","SOURCE_ARTIFACT_NAME: 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3'","name: layerb-32769-resource-authority-candidate-packaging-v0-1-${{ github.run_id }}"]: assert token in s,token
+          assert 'contents: read' in s and 'contents: write' not in s and 'git push' not in s
+          out={'schema':'LAYERB_32769_V03_CANDIDATE_WORKFLOW_STATIC_AUDIT_V0_1','classification':'LAYERB_32769_V03_CANDIDATE_WORKFLOW_STATIC_AUDIT_PASS_PLUS_0_PLUS_0','candidate_workflow_git_blob':blob,'v03_source_bound':True,'v02_contracts_replaced':True,'candidate_artifact_bound_to_candidate_run_id':True,'repository_write_forbidden':True,'scientific_execution_authorized':False}; out['token']=out['classification']; Path('candidate_static.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: v03-candidate-workflow-static, path: candidate_static.json}
+
+  packager-synthetic:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build V0.3 API-backed synthetic packaging fixture
+        shell: bash
+        run: |
+          set -euo pipefail; mkdir -p fx/out
+          python3 - <<'PY'
+          import hashlib,json,zipfile
+          from pathlib import Path
+          r=Path('fx')
+          def dump(n,d): (r/n).write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          src={'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0','capacity':32769,'parser_capacity':1048576,'build_authority_classification':'LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_PASS_PLUS_0_PLUS_0','candidate_memtotal_kb':33554432,'candidate_strictly_higher_memory_than_exhausted_hosted':True,'runner_registration_evidence_valid':True,'runner_agent_id':4242,'runner_name':'fixture-highmem','scientific_response_read':False,'scientific_authority_created':False,'successor_execution_authorized':False}
+          dump('source_result.json',src); ssha=hashlib.sha256((r/'source_result.json').read_bytes()).hexdigest()
+          ind={'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0','valid':True,'errors':[],'source_result_sha256':ssha,'parser_capacity':1048576,'candidate_memtotal_kb':33554432,'runner_agent_id':4242,'runner_name':'fixture-highmem'}
+          dump('ind.json',ind); isha=hashlib.sha256((r/'ind.json').read_bytes()).hexdigest()
+          dump('source_run.json',{'id':7001,'name':'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3','path':'.github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3.yml','status':'completed','conclusion':'success','head_sha':'a'*40})
+          dump('source_jobs.json',{'jobs':[{'id':7101,'name':'resource-lifecycle-pilot','status':'completed','conclusion':'success'}]})
+          dump('ind_run.json',{'id':7002,'name':'layerb-32769-resource-lifecycle-independent-consumer-v0-1','path':'.github/workflows/layerb-32769-resource-lifecycle-independent-consumer-v0-1.yml','status':'completed','conclusion':'success','head_sha':'a'*40})
+          dump('ind_jobs.json',{'jobs':[{'id':7102,'name':'independent-consumer','status':'completed','conclusion':'success'}]})
+          dump('chain.json',{'classification':ind['classification'],'consumer_execution_completed':True,'independent_valid':True,'independent_errors':[],'scientific_response_read':False,'scientific_execution_authorized':False,'source_run_id':7001,'source_head_sha':'a'*40,'source_conclusion':'success','independent_validation_sha256':isha})
+          with zipfile.ZipFile(r/'source.zip','w') as z:z.write(r/'source_result.json','result.json')
+          with zipfile.ZipFile(r/'ind.zip','w') as z:z.write(r/'ind.json','independent_validation.json');z.write(r/'chain.json','chain_receipt.json')
+          sz=hashlib.sha256((r/'source.zip').read_bytes()).hexdigest(); iz=hashlib.sha256((r/'ind.zip').read_bytes()).hexdigest()
+          dump('source_artifacts.json',{'artifacts':[{'id':7201,'name':'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3','expired':False,'digest':'sha256:'+sz}]})
+          dump('ind_artifacts.json',{'artifacts':[{'id':7202,'name':'layerb-32769-resource-lifecycle-independent-consumer-v0-1-7001','expired':False,'digest':'sha256:'+iz}]})
+          PY
+      - name: Require valid parser-corrected package PASS and stale variants FAIL
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_CONTRACT_V0_2.json --source-run fx/source_run.json --source-jobs fx/source_jobs.json --source-artifacts fx/source_artifacts.json --source-artifact-zip fx/source.zip --source-result fx/source_result.json --independent-run fx/ind_run.json --independent-jobs fx/ind_jobs.json --independent-artifacts fx/ind_artifacts.json --independent-artifact-zip fx/ind.zip --independent-validation fx/ind.json --chain-receipt fx/chain.json)
+          python3 ci/layerb_32769_resource_authority_candidate_packager_v0_2.py "${args[@]}" --out fx/out/pass.json
+          test "$(jq -r .classification fx/out/pass.json)" = LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_PASS_PLUS_0_PLUS_0
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.load(open('fx/source_result.json')); d['parser_capacity']=524288; Path('fx/source_oldparser.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          d=json.load(open('fx/source_run.json')); d['name']='layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2'; Path('fx/source_oldrun.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+          set +e; python3 ci/layerb_32769_resource_authority_candidate_packager_v0_2.py "${args[@]/fx\/source_result.json/fx\/source_oldparser.json}" --out fx/out/oldparser.json; a=$?; set -e; test "$a" -eq 31
+          set +e; python3 ci/layerb_32769_resource_authority_candidate_packager_v0_2.py --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_CONTRACT_V0_2.json --source-run fx/source_oldrun.json --source-jobs fx/source_jobs.json --source-artifacts fx/source_artifacts.json --source-artifact-zip fx/source.zip --source-result fx/source_result.json --independent-run fx/ind_run.json --independent-jobs fx/ind_jobs.json --independent-artifacts fx/ind_artifacts.json --independent-artifact-zip fx/ind.zip --independent-validation fx/ind.json --chain-receipt fx/chain.json --out fx/out/oldrun.json; b=$?; set -e; test "$b" -eq 31
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('fx/out/pass.json'); d={'schema':'LAYERB_32769_V03_PACKAGER_SYNTHETIC_AUDIT_V0_1','classification':'LAYERB_32769_V03_PACKAGER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0','valid_fixture_passed':True,'old_parser_rejected':True,'old_source_workflow_rejected':True,'pass_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'scientific_execution_authorized':False}; d['token']=d['classification']; Path('fx/out/summary.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: v03-packager-synthetic, path: fx/out/}
+
+  materializer-synthetic:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate valid V0.3 materialization fixture
+        shell: bash
+        run: |
+          set -euo pipefail; mkdir -p mx/out
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          r=Path('mx'); roles=['reference','alpha_minus','beta_plus','beta_minus']; life={'total_solver_constructions':4,'max_live_instances':1,'final_live_instances':0,'cross_process_scientific_operand_combination':False}
+          def dump(n,d): (r/n).write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          src={'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0','canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599','canonical_32769_text_sha256':'7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2','capacity':32769,'parser_capacity':1048576,'build_authority_classification':'LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_PASS_PLUS_0_PLUS_0','runner_isolation_contract_git_blob':'d9d910d89889f6d3a27461a73c3dd72c2a9d2096','required_custom_label':'dsir-32769-highmem','runner_registration_evidence_valid':True,'runner_agent_id':4242,'runner_name':'fixture-highmem','candidate_memtotal_kb':33554432,'candidate_strictly_higher_memory_than_exhausted_hosted':True,'execution_lifecycle':life,'role_order':roles,'role_receipts':[{'role':x,'compute_completed':True,'ru_maxrss_kb_after_compute':12000000+i,'scientific_transfer_values_read':False,'scientific_response_computed':False,'scientific_response_serialized':False} for i,x in enumerate(roles)],'scientific_transfer_values_read':False,'scientific_response_read':False,'scientific_response_computed':False,'convergence_metric_computed':False,'convergence_classification_created':False,'scientific_authority_created':False,'successor_execution_authorized':False}
+          dump('source.json',src); ssha=hashlib.sha256((r/'source.json').read_bytes()).hexdigest()
+          ind={'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0','valid':True,'errors':[],'source_result_sha256':ssha,'candidate_memtotal_kb':33554432,'execution_lifecycle':life,'parser_capacity':1048576,'runner_agent_id':4242,'runner_name':'fixture-highmem','telemetry_summary':{'sample_count':10},'scientific_response_read':False,'scientific_authority_created':False,'successor_execution_authorized':False}
+          dump('ind.json',ind); isha=hashlib.sha256((r/'ind.json').read_bytes()).hexdigest()
+          prov={'classification':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_PASS_PLUS_0_PLUS_0','valid':True,'errors':[],'packaging_contract_git_blob':'71d77aa4d074bba1a2f53e7f9299a9db32e93ffc','source_run_id':7001,'source_job_id':7101,'source_head_sha':'a'*40,'source_artifact_id':7201,'source_artifact_zip_sha256':'1'*64,'source_result_sha256':ssha,'independent_run_id':7002,'independent_job_id':7102,'independent_head_sha':'a'*40,'independent_artifact_id':7202,'independent_artifact_zip_sha256':'2'*64,'independent_validation_sha256':isha,'parser_capacity':1048576,'class_build_authority_git_blob':'b5cd7304c110962dc3baef8d04ef67d5a8042e5f','candidate_memtotal_kb':33554432}
+          dump('prov.json',prov)
+          PY
+      - name: Require valid materialization PASS and stale/tampered variants FAIL
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=(--contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_2.json --source-result mx/source.json --independent-validation mx/ind.json --provenance mx/prov.json)
+          python3 ci/layerb_32769_resource_authority_materializer_v0_2.py "${base[@]}" --out mx/out/pass.json
+          test "$(jq -r .parser_capacity mx/out/pass.json)" -eq 1048576; test "$(jq -r .class_build_authority_git_blob mx/out/pass.json)" = b5cd7304c110962dc3baef8d04ef67d5a8042e5f
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name,srcfile,mut in [('oldparser','source.json',lambda d:d.update(parser_capacity=524288)),('threshold','source.json',lambda d:d.update(candidate_memtotal_kb=16373452)),('synthetic','source.json',lambda d:d.update(synthetic_fixture=True)),('badprov','prov.json',lambda d:d.update(classification='LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_FAIL_PLUS_0_PLUS_0'))]:
+              d=json.load(open('mx/'+srcfile)); mut(d); Path('mx/'+name+'.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+          for case in oldparser threshold synthetic; do set +e; python3 ci/layerb_32769_resource_authority_materializer_v0_2.py --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_2.json --source-result "mx/$case.json" --independent-validation mx/ind.json --provenance mx/prov.json --out "mx/out/$case.json"; rc=$?; set -e; test "$rc" -eq 31; done
+          set +e; python3 ci/layerb_32769_resource_authority_materializer_v0_2.py --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_2.json --source-result mx/source.json --independent-validation mx/ind.json --provenance mx/badprov.json --out mx/out/badprov.json; rc=$?; set -e; test "$rc" -eq 31
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('mx/out/pass.json'); d={'schema':'LAYERB_32769_V03_MATERIALIZER_SYNTHETIC_AUDIT_V0_1','classification':'LAYERB_32769_V03_MATERIALIZER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0','valid_fixture_passed':True,'old_parser_rejected':True,'hosted_threshold_rejected':True,'synthetic_input_rejected':True,'invalid_provenance_rejected':True,'pass_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'scientific_execution_authorized':False}; d['token']=d['classification']; Path('mx/out/summary.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: v03-materializer-synthetic, path: mx/out/}
+
+  independent-verifier:
+    needs: [event-chain-static, candidate-workflow-static, packager-synthetic, materializer-synthetic]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with: {name: v03-event-chain-static, path: a}
+      - uses: actions/download-artifact@v4
+        with: {name: v03-candidate-workflow-static, path: b}
+      - uses: actions/download-artifact@v4
+        with: {name: v03-packager-synthetic, path: c}
+      - uses: actions/download-artifact@v4
+        with: {name: v03-materializer-synthetic, path: d}
+      - name: Independently verify all four downstream repairs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          checks=[('a/event.json','LAYERB_32769_V03_EVENT_CHAIN_STATIC_AUDIT_PASS_PLUS_0_PLUS_0'),('b/candidate_static.json','LAYERB_32769_V03_CANDIDATE_WORKFLOW_STATIC_AUDIT_PASS_PLUS_0_PLUS_0'),('c/summary.json','LAYERB_32769_V03_PACKAGER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'),('d/summary.json','LAYERB_32769_V03_MATERIALIZER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0')]
+          for p,c in checks: assert json.load(open(p))['classification']==c,(p,c)
+          print('LAYERB_32769_V03_DOWNSTREAM_CHAIN_INDEPENDENT_AUDIT_PASS')
+          PY
