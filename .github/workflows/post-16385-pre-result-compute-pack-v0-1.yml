@@ -1,0 +1,128 @@
+name: post-16385-pre-result-compute-pack-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/post-16385-pre-result-compute-pack-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dormant-closure-source-synthesis:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Synthesize and statically audit dormant next-CONVERGED closure source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import ast,hashlib,json
+          from pathlib import Path
+          srcp=Path('ci/post_jm_converged_fresh_layerb_scientific_closure_v0_1.py')
+          specp=Path('docs/dsir4/prereg/POST_16385_CONVERGED_FRESH_CLOSURE_ADAPTER_SPEC_V0_1.md')
+          s=srcp.read_text(); spec=specp.read_text()
+          original_sha=hashlib.sha256(srcp.read_bytes()).hexdigest()
+          assert original_sha
+          repl=[
+            ('JM_CONVERGED = "COMMON_GRID_FOURTH_REFINEMENT_CONVERGED_PLUS_0_PLUS_0"','NEXT_REFINEMENT_CONVERGED = "COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0"'),
+            ('JM_CONVERGED','NEXT_REFINEMENT_CONVERGED'),
+            ('CAPACITY = 9216','CAPACITY = 18432'),
+            ('PARSER_CAPACITY = 262144','PARSER_CAPACITY = 524288'),
+            ('COARSE_TEXT_SHA = "290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7"','COARSE_TEXT_SHA = "90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6"'),
+            ('COARSE_NODE_SHA = "f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb"','COARSE_NODE_SHA = "6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515"'),
+            ('FINE_TEXT_SHA = "90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6"','FINE_TEXT_SHA = "7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69"'),
+            ('FINE_NODE_SHA = "6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515"','FINE_NODE_SHA = "3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975"'),
+            ('CANONICAL_8193_AUTH_CLASS = "CANONICAL_8193_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0"','CANONICAL_16385_AUTH_CLASS = "CANONICAL_16385_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0"'),
+            ('CANONICAL_8193_AUTH_CLASS','CANONICAL_16385_AUTH_CLASS'),
+            ('validate_canonical_8193','validate_canonical_16385'),
+            ('canonical_8193','canonical_16385'),
+            ('canonical-8193','canonical-16385'),
+            ('"branch_activated") is not False','"successor_branch_activated") is not False'),
+            ('d.get("requested_node_count") != 8193','d.get("requested_node_count") != 16385'),
+            ('d.get("anchor_4097_node_sha256")','d.get("anchor_8193_node_sha256")'),
+            ('d.get("anchor_4097_u64hex_sha256")','d.get("anchor_8193_u64hex_sha256")'),
+            ('engine.load_nodes(a.coarse, 4097, COARSE_TEXT_SHA, COARSE_NODE_SHA)','engine.load_nodes(a.coarse, 8193, COARSE_TEXT_SHA, COARSE_NODE_SHA)'),
+            ('engine.load_nodes(a.fine, 8193, FINE_TEXT_SHA, FINE_NODE_SHA)','engine.load_nodes(a.fine, 16385, FINE_TEXT_SHA, FINE_NODE_SHA)'),
+          ]
+          counts=[]
+          for old,new in repl:
+            n=s.count(old); counts.append((old,n)); assert n>=1,(old,n); s=s.replace(old,new)
+          # Add the second dormant-canonical guard required by the 16385 authority.
+          needle='or d.get("successor_branch_activated") is not False\n'
+          assert needle in s
+          s=s.replace(needle,needle+'        or d.get("successor_execution_authorized") is not False\n',1)
+          ast.parse(s)
+          checks={
+            'prospective_spec_frozen':'COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0' in spec and 'DORMANT / response-blind' in spec,
+            'activation_next_token':'NEXT_REFINEMENT_CONVERGED = "COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0"' in s,
+            'capacity_18432':'CAPACITY = 18432' in s and 'PARSER_CAPACITY = 524288' in s,
+            'coarse_8193':'engine.load_nodes(a.coarse, 8193, COARSE_TEXT_SHA, COARSE_NODE_SHA)' in s,
+            'fine_16385':'engine.load_nodes(a.fine, 16385, FINE_TEXT_SHA, FINE_NODE_SHA)' in s,
+            'canonical_16385_class':'CANONICAL_16385_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0' in s,
+            'canonical_dormant_guards':'successor_branch_activated' in s and 'successor_execution_authorized' in s,
+            'h_unchanged':'H = 1e-4' in s,
+            'tol_unchanged':'REL_TOL = 1e-3' in s,
+            'lookup_unchanged':'LOOKUP_REL_TOL = 1e-12' in s,
+            'kpd_unchanged':'NATIVE_KPD = 20.0' in s,
+            'plan_hashes_unchanged':'505716116cc385d5700e455017d8e541c5bba7774fa6647298392495c83ecfe0' in s and '0f7ce2e5fa459e15954268dfd46045eaa0ab6356dfdab5a2e282514e7a34ae4e' in s,
+          }
+          assert all(checks.values()),[k for k,v in checks.items() if not v]
+          Path('artifacts/synthesized_helper.py').write_text(s)
+          out={'schema':'POST_16385_DORMANT_CONVERGED_CLOSURE_SOURCE_SYNTHESIS_AUDIT_V0_1','classification':'POST_16385_DORMANT_CONVERGED_CLOSURE_SOURCE_SYNTHESIS_PASS_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'check_count':len(checks),'source_helper_sha256':original_sha,'synthesized_helper_sha256':hashlib.sha256(s.encode()).hexdigest(),'replacement_counts':[{'pattern':x,'count':n} for x,n in counts],'current_scientific_result_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'synthesized_source_is_execution_authority':False,'token':'POST_16385_DORMANT_CONVERGED_CLOSURE_SOURCE_SYNTHESIS_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/audit.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token'],out['synthesized_helper_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-16385-dormant-converged-closure-source-synthesis-v0-1
+          path: |
+            artifacts/audit.json
+            artifacts/synthesized_helper.py
+          if-no-files-found: error
+          retention-days: 90
+
+  convergence-model-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fit zero-limit and offset-power descriptive convergence models
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -q 'numpy==1.26.4' 'scipy==1.14.1'
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import json,math
+          import numpy as np
+          from scipy.optimize import least_squares
+          from pathlib import Path
+          y=np.array([0.037280144773915974,0.016330535730270664,0.012273497268380687,0.01070806986822778],float)
+          n=np.arange(len(y),dtype=float)
+          def fit_zero():
+            def r(th):
+              A,p=th; return A*np.power(2.0,-p*n)-y
+            q=least_squares(r,[y[0],1.0],bounds=([0,0],[1,10]))
+            return q.x,q.fun
+          def fit_offset():
+            def r(th):
+              c,A,p=th; return c+A*np.power(2.0,-p*n)-y
+            q=least_squares(r,[0.009,y[0]-0.009,1.0],bounds=([0,0,0],[min(y)*0.999999,1,10]),xtol=1e-14,ftol=1e-14,gtol=1e-14,max_nfev=200000)
+            return q.x,q.fun
+          z,zr=fit_zero(); o,orr=fit_offset()
+          def bic(res,k):
+            rss=float(np.dot(res,res)); N=len(y); return N*math.log(max(rss,1e-300)/N)+k*math.log(N),rss
+          bz,rz=bic(zr,2); bo,ro=bic(orr,3)
+          pred_zero=float(z[0]*2**(-z[1]*4))
+          pred_offset=float(o[0]+o[1]*2**(-o[2]*4))
+          out={'schema':'LAYERB_CONVERGENCE_MODEL_DIAGNOSTIC_V0_1','classification':'LAYERB_CONVERGENCE_MODEL_DIAGNOSTIC_PASS_PLUS_0_PLUS_0','effect':'+0/+0','validated_input_sequence':y.tolist(),'zero_limit_power_fit':{'A':float(z[0]),'p':float(z[1]),'rss':rz,'bic':bz,'next_rung_prediction':pred_zero},'offset_power_fit':{'c':float(o[0]),'A':float(o[1]),'p':float(o[2]),'rss':ro,'bic':bo,'next_rung_prediction':pred_offset,'asymptotic_floor_over_tolerance':float(o[0]/1e-3)},'delta_bic_offset_minus_zero':float(bo-bz),'strict_tolerance':1e-3,'interpretation_only':True,'current_16385_result_read':False,'stopping_rule_changed':False,'next_rung_authorized':False,'scientific_authority_created':False,'token':'LAYERB_CONVERGENCE_MODEL_DIAGNOSTIC_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/model_diagnostic.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(json.dumps(out,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-convergence-model-diagnostic-v0-1
+          path: artifacts/model_diagnostic.json
+          if-no-files-found: error
+          retention-days: 90
