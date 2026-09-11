@@ -1,0 +1,88 @@
+name: layerb-32769-resource-event-chain-static-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-resource-event-chain-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-event-chain-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify event-chained resource consumer is fail-closed and non-scientific
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          test "$(git hash-object .github/workflows/layerb-32769-resource-lifecycle-independent-consumer-v0-1.yml)" = '57de31379acda2777684e41ff3818f704a82c9ec'
+          test "$(git hash-object ci/layerb_32769_resource_lifecycle_independent_consumer_v0_1.py)" = 'e533fb0e5f6ee1cdb28dc06774e432afe7717cd5'
+          test "$(git hash-object .github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2.yml)" = '8ec0027d6fb45f3f12aa5f410de62093a7144924'
+          python3 - <<'PY'
+          import ast,json
+          from pathlib import Path
+          wf=Path('.github/workflows/layerb-32769-resource-lifecycle-independent-consumer-v0-1.yml').read_text()
+          py=Path('ci/layerb_32769_resource_lifecycle_independent_consumer_v0_1.py').read_text()
+
+          assert 'workflow_run:' in wf
+          assert 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2' in wf
+          assert 'types:' in wf and '- completed' in wf
+          assert '\n  push:' not in wf
+          assert '\n  schedule:' not in wf
+          assert '\n  workflow_dispatch:' not in wf
+          assert 'contents: read' in wf and 'actions: read' in wf
+          assert 'contents: write' not in wf and 'actions: write' not in wf
+          assert 'run-id: ${{ github.event.workflow_run.id }}' in wf
+          assert 'ref: ${{ github.event.workflow_run.head_sha }}' in wf
+          assert "SOURCE_ARTIFACT_NAME: 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2'" in wf
+          assert 'continue-on-error: true' in wf
+          assert '--artifact-dir source' in wf
+          assert '--out evidence/independent_validation.json' in wf
+          assert 'scientific_execution_authorized' in wf and "'scientific_execution_authorized':False" in wf
+          assert "'scientific_response_read':False" in wf
+
+          tree=ast.parse(py)
+          call_attrs=[]
+          call_names=[]
+          for n in ast.walk(tree):
+              if isinstance(n,ast.Call):
+                  if isinstance(n.func,ast.Attribute): call_attrs.append(n.func.attr)
+                  elif isinstance(n.func,ast.Name): call_names.append(n.func.id)
+          for forbidden in ('compute','get_transfer','class_params','evaluate_lattice'):
+              assert forbidden not in call_attrs and forbidden not in call_names,forbidden
+
+          out={
+            'schema':'LAYERB_32769_RESOURCE_EVENT_CHAIN_STATIC_AUDIT_V0_1',
+            'classification':'LAYERB_32769_RESOURCE_EVENT_CHAIN_STATIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'source_workflow_name_bound':True,
+            'workflow_run_completed_only':True,
+            'triggering_run_id_bound':True,
+            'triggering_head_sha_bound':True,
+            'source_artifact_name_bound':True,
+            'read_only_permissions':True,
+            'source_download_failure_classified_fail_closed':True,
+            'independent_consumer_only':True,
+            'scientific_solver_invoked':False,
+            'scientific_response_read':False,
+            'scientific_execution_authorized':False,
+            'high_memory_resource_lifecycle_preflight_pass':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+          }
+          out['token']=out['classification']
+          Path('artifacts/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-resource-event-chain-static-audit-v0-1
+          path: artifacts/result.json
+          if-no-files-found: error
+          retention-days: 90
