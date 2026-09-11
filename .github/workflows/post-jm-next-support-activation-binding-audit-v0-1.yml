@@ -1,0 +1,57 @@
+name: post-jm-next-support-activation-binding-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/post-jm-next-support-activation-binding-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit activation binding without CLASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import importlib.util,json,hashlib
+          from pathlib import Path
+          hp=Path('ci/post_jm_next_support_canonical_one_live_refinement_v0_1.py')
+          spec=importlib.util.spec_from_file_location('h',hp); h=importlib.util.module_from_spec(spec); spec.loader.exec_module(h)
+          jm_path=Path('docs/dsir4/authority/EXP073JM_ARTICLE3_RECOVERED_CANONICAL_ONE_LIVE_FOURTH_REFINEMENT_NOT_CONVERGED_V0_2.json')
+          ca_path=Path('docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json')
+          jm=h.validate_activation(jm_path)
+          ca=h.validate_canonical_16385(ca_path)
+          checks={
+            'jm_classification_exact':jm['classification']=='COMMON_GRID_FOURTH_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0',
+            'jm_independently_verified':jm['artifact_verified_independently'] is True,
+            'jm_branch_exact':jm['validated_branch_selected']=='NOT_CONVERGED_8193_TO_16385',
+            'jm_next_rung_active':jm['next_support_rung_activated'] is True and jm['next_support_rung']=='CANONICAL_8193_TO_16385',
+            'jm_fresh_closure_closed':jm['fresh_closure_branch_activated'] is False,
+            'canonical_count':ca['requested_node_count']==16385,
+            'canonical_node_sha':ca['node_payload_sha256']=='3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975',
+            'canonical_text_sha':ca['u64hex_sha256']=='7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69',
+            'helper_h':h.H==1e-4,
+            'helper_tol':h.REL_TOL==1e-3,
+            'helper_kpd':h.NATIVE_KPD==20.0,
+            'helper_capacities':h.CAPACITY==18432 and h.PARSER_CAPACITY==524288,
+          }
+          assert all(checks.values()),[k for k,v in checks.items() if not v]
+          out={'schema':'POST_JM_NEXT_SUPPORT_ACTIVATION_BINDING_AUDIT_V0_1','classification':'POST_JM_NEXT_SUPPORT_ACTIVATION_BINDING_PASS_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'check_count':len(checks),'jm_result_read':False,'class_solver_invoked':False,'scientific_response_read':False,'scientific_authority_created':False,'helper_git_blob':'10492520b4a0eb8992e9ccb101a4ccd26127be82','helper_sha256':hashlib.sha256(hp.read_bytes()).hexdigest(),'jm_authority_sha256':hashlib.sha256(jm_path.read_bytes()).hexdigest(),'canonical_authority_sha256':hashlib.sha256(ca_path.read_bytes()).hexdigest(),'token':'POST_JM_NEXT_SUPPORT_ACTIVATION_BINDING_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/audit.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'],out['check_count'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-jm-next-support-activation-binding-audit-v0-1
+          path: artifacts/audit.json
+          if-no-files-found: error
+          retention-days: 90
