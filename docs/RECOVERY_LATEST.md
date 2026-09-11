@@ -2,51 +2,48 @@
 
 Updated: 2026-09-11. Scope: **DSIR only**. Never mix RTK, RQIR, KMQGB or KMDSB.
 
-Newest immutable current-front recovery note: `docs/recovery/RECOVERY_2026-09-11_ARTICLE3_32769_CLASS_CAPACITY_CLOSED_V127.md`, creation commit `385cc752641dca04c0928763809c825d983eeaa7`. V126 and all earlier recovery notes remain immutable history; V127 supersedes them for current-front recovery.
+Newest immutable current-front recovery note: `docs/recovery/RECOVERY_2026-09-11_ARTICLE3_32769_TERMINAL_CONTRACT_CLOSED_V128.md`, creation commit `e8b55c733103f060609baef18c03b83124949664`. V127 and all earlier recovery notes remain immutable history; V128 supersedes them for current-front recovery.
 
 ## Scientific frontier — unchanged
-Canonical 8193->16385 remains independently verified `COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`, max relative component difference `0.012484060640679777` versus frozen strict `<1e-3`. Frozen `REL_TOL=1e-3`, `h=1e-4`, native kpd20, centered-cubic interpolation, physical domain/masks/107-row accounting, invalid fraction `<=0.05`, retained `>=15`, unsupported=0 and lookup `<=1e-12` remain unchanged.
+Canonical 8193->16385 remains independently verified `COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`, max relative component difference `0.012484060640679777` versus frozen strict `<1e-3`. No 16385->32769 scientific execution is authorized. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
 
-No 16385->32769 scientific execution is authorized. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
+## Closed 32769 prerequisites
+The following are now closed and durable:
+- canonical response-blind 32769 bytes + static consumer;
+- CLASS point capacity `32769` on pinned CLASS commit `ac627d54e9ce196a08878d1ba33999819925d19c`;
+- parser/build parity at `524288`;
+- static scientific-equivalence audit (only capacity constant changes versus validated 18432 tree);
+- prospective terminal result schema + independent terminal consumer.
 
-## 32769 prerequisites closed through V127
-Response-blind canonical 32769 bytes are frozen and independently validated under V126.
+CLASS/build authority: `docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_1.json`, Git blob `ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d`.
 
-V127 additionally closes the CLASS capacity-only build, parser/build parity and static scientific-equivalence prerequisites. Workflow `.github/workflows/layerb-32769-class-capacity-build-audit-v0-1.yml`, head `a8347b14cea754448960e0bc51ae35b7851bd9cd`, run `34632293214`, completed build job `103371777163` and independent consumer job `103372066383` successfully.
+Terminal contract: `docs/dsir4/contracts/LAYERB_16385_TO_32769_TERMINAL_RESULT_CONTRACT_V0_1.json`, Git blob `c2f4ff4bb6d3555f78d80503ac5bc73c15ebc4d5`. Terminal consumer: `ci/layerb_16385_to_32769_terminal_consumer_v0_1.py`, Git blob `1ce035030e275effa0a323881cb7e13f54395a10`.
 
-Pinned CLASS source: `ac627d54e9ce196a08878d1ba33999819925d19c`. New point capacity: `32769`. Parser capacity: `524288`. Reconstructed old-18432 and new-32769 patched source trees differ only in `include/perturbations.h`, and only by `_MAX_NUMBER_OF_K_FILES_ 18432 -> 32769`. Clean build executable SHA256: `9958099b0a45f364affabe46d4fd32568db5d4867bc48b82a9b3170ae351203d`.
+Synthetic terminal audit run `34633253098` passed both job `103374944658` and independent verifier `103374993793`. Artifact `10276822455`, ZIP SHA256 `50a0603c85bce78ef361917a6d6bbcac7f0280492c321cedec704de063352e76`, summary SHA256 `ea7b47da886a493e6dbed445d062dcbf53071780cacba6e0e6e0f786f9ba4e4b`. It prospectively proves unchanged strict semantics: `0.000999` can be CONVERGED, exact `0.001` must be NOT_CONVERGED, and a forced CONVERGED label at `0.001` is rejected with `strict_classifier`.
 
-Source artifact `10276911032`, ZIP SHA256 `5e59eb4d1020bcb06adbe932bf9dca31867741d7ff989ff24b34c85052f440e1`, result SHA256 `9080212ad6523fd95772b170c689ab7d63b51d1656b0c9e286a3b3f30465b96e`.
+Durable terminal authority: `docs/dsir4/authority/LAYERB_16385_TO_32769_TERMINAL_CONTRACT_V0_1.json`, creation commit `add05df55267ab0e4bbc01de104c501fe427d197`.
 
-Independent artifact `10276239911`, ZIP SHA256 `a35f9db309a81f3a617e318ba74b471c0567799b576bb6f813db7e205927be34`, result SHA256 `326417b0f814e803e1aae03300defc04c9644f98087e3fca2762e9ddbf16c35c`.
+Therefore `TERMINAL_SCHEMA_AND_INDEPENDENT_CONSUMER_FROZEN=TRUE`.
 
-Durable authority: `docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_1.json`, creation commit `e791ab69e014a225d24d532dcdc94899687ccbe6`, Git blob `ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d`.
+## Resource/lifecycle front
+The exact exhausted hosted 16385 topology is frozen at `MemTotal=16372440 kB`, `SwapTotal=3145724 kB`, terminal `MemAvailable=0`, `SwapFree=0`; no 32769 memory requirement is extrapolated. Topology authority: `docs/dsir4/authority/LAYERB_CANONICAL_16385_GITHUB_HOSTED_TOPOLOGY_ENVELOPE_V0_1.json`, Git blob `ea97e50650a85d70356d8529673396090980130a`.
 
-Closed bits:
-- `CANONICAL_32769_BYTES_FROZEN=TRUE`;
-- `CANONICAL_32769_STATIC_CONSUMER_PASS=TRUE`;
-- `CLASS_32769_CAPACITY_BUILD_AUDIT_PASS=TRUE`;
-- `PARSER_BUILD_PARITY_AUDIT_PASS=TRUE`;
-- `SCIENTIFIC_EQUIVALENCE_STATIC_AUDIT_PASS=TRUE`.
+A response-blind 32769 high-memory lifecycle pilot is frozen but not dispatched as scientific work. Static audit run `34632908128`, job `103373820112`, passed; artifact `10277300894`, ZIP SHA256 `511e0800f7edeafacb2bf91d28c07305b8dad04e84249bcf311a76ad328d0963`, result SHA256 `c4015bc359ffac0cde1b69a3c5979c16e282bbd6cf1f852860f92c9dd2c929cf`. Durable static authority `docs/dsir4/authority/LAYERB_32769_RESOURCE_CONTRACT_STATIC_AUDIT_V0_1.json`, creation commit `9fb6e7997a28668fbe2deec89a574486eee2e1e6`.
 
-All remain support-only `+0/+0`; no 32769 scientific response was invoked/read.
+`HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS=FALSE` until a real measured response-blind 32769 lifecycle pilot succeeds on a candidate with `MemTotal > 16372440 kB`, max one live solver and final live zero.
 
-## Current production blockers
-Ordinary GitHub-hosted `ubuntu-24.04` remains inadmissible as an inferred production topology because canonical 16385 resource evidence exhausted memory across all four roles at approximately 15.4--15.7 GB Python RSS. A narrower history-suppressed 16385 resource pilot passed at roughly 8.98--9.23 GB with one live solver instance, but it is not promoted or extrapolated to 32769.
-
-The stale self-hosted 16385 run `34550495778 / 103112190909` remains queued/superseded; it must not be promoted as 32769 authority or receive production ownership.
-
-Still open:
+## Remaining blockers
 - `HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS=FALSE`;
-- `ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS=FALSE`;
-- `TERMINAL_SCHEMA_AND_INDEPENDENT_CONSUMER_FROZEN=FALSE`.
+- `ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS=FALSE` (must be generated immediately before future production dispatch).
 
-`32769_EXECUTION_AUTHORIZED=FALSE` until all remaining prerequisites close under the non-triggering preflight contract.
+Stale superseded generic self-hosted 16385 run `34550495778 / 103112190909` remains queued and must not receive home-runner or future high-memory runner ownership. This is an operational runner-isolation problem, not a scientific route change.
+
+`32769_EXECUTION_AUTHORIZED=FALSE` until the measured resource gate and immediate one-live gate close, followed by a separate one-run authorization.
 
 ## Readiness
 Frozen repository/publication rubric remains **ARTICLE3_REPOSITORY_READINESS: 68%** and funnel-freeze readiness **67%**.
 
-Operational roadmap tracking is now **WORKING_PLAN_COMPLETION: 73%**, because the planned CLASS capacity/parser parity/static-equivalence block is closed. The working-plan percentage is not the frozen publication-readiness percentage.
+Operational roadmap tracking is now **WORKING_PLAN_COMPLETION: 75%**. This working-plan number does not rewrite the frozen publication-readiness percentage.
 
 ## Exact next action
-Freeze a 32769-specific response-blind high-memory resource/lifecycle pilot contract and freeze the future 32769 scientific terminal-result schema/independent consumer in parallel where this cannot bias science. Do not dispatch scientific 16385->32769 convergence yet. Do not reuse the stale superseded 16385 self-hosted run as current authority.
+Resolve runner isolation/cancellation for stale run `34550495778`, then execute exactly one response-blind 32769 resource/lifecycle pilot on a qualifying higher-memory topology. Prepare the one-live anti-duplication guard/dormant production bindings in parallel, but do not mark them PASS before the immediate pre-dispatch check. Do not execute scientific 16385->32769 convergence yet.
