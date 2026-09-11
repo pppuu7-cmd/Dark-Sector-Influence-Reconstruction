@@ -19,15 +19,16 @@
   "selected_atom": {
     "block": "DES",
     "call_index": 204,
+    "coarse_value": 0.09512399628874846,
+    "component": "abs_dDelta_m_dbeta_symmetric",
+    "component_index": 1,
+    "fine_value": 0.09632654268898477,
+    "relative_difference": 0.012484060640679777,
     "target_index": 44,
     "target_k": 0.01698756109424023,
     "target_k_binary64_hex": "0x1.1652fed5ab075p-6",
     "z": 0.7475,
-    "z_binary64_hex": "0x1.7eb851eb851ecp-1",
-    "component": "abs_dDelta_m_dbeta_symmetric",
-    "coarse_value": 0.09512399628874846,
-    "fine_value": 0.09632654268898477,
-    "relative_difference": 0.012484060640679777
+    "z_binary64_hex": "0x1.7eb851eb851ecp-1"
   },
   "alpha_response_cross_grid_relative_difference": 1.0480254398386888e-07,
   "beta_response_cross_grid_relative_difference": 0.012484060640679777,
