@@ -2,7 +2,7 @@
 
 Updated: 2026-09-11. Scope: **DSIR only**. Never mix RTK, RQIR, KMQGB or KMDSB.
 
-Newest immutable current-front recovery note: `docs/recovery/RECOVERY_2026-09-11_ARTICLE3_32769_RESOURCE_AUTHORITY_CANDIDATE_CHAIN_V132.md`, creation commit `0798019c9f3b7d9c60e85303195c7241333ce772`. V131 and all earlier recovery notes remain immutable history; V132 supersedes them for current-front recovery.
+Newest immutable current-front recovery note: `docs/recovery/RECOVERY_2026-09-11_ARTICLE3_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_V133.md`, creation commit `de0796d825bcd159a99bf6ca701a9fa9bd67e3f1`. V132 and all earlier recovery notes remain immutable history; V133 supersedes them for current-front recovery.
 
 ## Scientific frontier — unchanged
 Canonical 8193->16385 remains independently verified `COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`, max relative component difference `0.012484060640679777` versus frozen strict `<1e-3`. No 16385->32769 scientific execution is authorized or has occurred. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
@@ -19,34 +19,37 @@ Durably closed and independently checked:
 - one-run authorizer implementation;
 - dormant 16385->32769 scientific engine + static scientific-core equivalence;
 - dormant dispatch-only production workflow + static orchestration audit;
-- API-backed real-resource authority candidate provenance packager;
-- read-only independent-consumer -> resource-authority-candidate event chain.
+- API-backed real-resource authority candidate provenance/packaging chain;
+- exact-byte resource-authority promotion reviewer + independent synthetic fail-closed audit;
+- manual-dispatch/read-only real promotion-review workflow + independent static audit.
 
-## V132 resource-authority candidate packaging closure
-Packaging contract `docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_CONTRACT_V0_1.json`, Git blob `ade2fd2d43ce7e556bf473f93ae8491a694e868f`.
+## V133 exact-byte promotion review closure
+Promotion-review contract `docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_CONTRACT_V0_1.json`, Git blob `7abd3b1d2a04161ef1012726668db0a8d4e02af7`.
 
-Packager `ci/layerb_32769_resource_authority_candidate_packager_v0_1.py`, Git blob `c92ffc97c04c27ff6cdbf05b7f84527884848f40`.
+Reviewer `ci/layerb_32769_resource_authority_promotion_reviewer_v0_1.py`, Git blob `5c6ea5d2603d03625e13ad1f0534ecea8a2ba199`.
 
-Synthetic packager audit run `34637254849` passed source job `103388059249` and independent verifier `103388098677`; artifact `10278453264`, ZIP SHA256 `7c21596f22fd19987aedd0def81cdcf6f8e64fae4359e35569584a4022bde9c3`, summary SHA256 `e71946167b9b2b91362e575e357d009248d6f7ad6c221f0acabfa344392a660f`, pass receipt SHA256 `9831cf697adba335f53bee073fff34c2854b9ddfef982f80ef4780569dbb7639`.
+Synthetic audit run `34639405093` passed source job `103395140406` and independent verifier `103395196951`; artifact `10279332147`, ZIP SHA256 `b04d00c3a860419c5ff3a683f602edafe2e22719a4953a1e61b23c303111dc54`, summary SHA256 `af062e4eff3c0a157cf5aeb6be61e10f8175d2de646f9a7f33d1fe0e7adb629c`, PASS receipt SHA256 `a3b4e80aa4fb6f6f6d0557c3ccbb75f0a3fcce0a5194cee82439c27d719cbb2e`.
 
-It verifies exact single jobs/artifacts, downloaded ZIP hashes against GitHub artifact digest when present, source-result SHA against independent validation, and chain-receipt binding to the same source run/independent validation. Digest mismatch, duplicate artifact, chain mismatch and source-result binding mismatch fail closed.
+The reviewer accepted the exact unmarked candidate shape and rejected synthetic candidate marking, receipt candidate-SHA mismatch, duplicate candidate artifact, downloaded ZIP digest mismatch, and a downstream scientific-authorization bit.
 
-Durable synthetic authority: `docs/dsir4/authority/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGER_SYNTHETIC_AUDIT_V0_1.json`, creation commit `e0b2ee3847c998cee065e60fa53c7b37a8f6552b`.
+Durable synthetic authority: `docs/dsir4/authority/LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEWER_SYNTHETIC_AUDIT_V0_1.json`, creation commit `6af7d91a347e91954dbc161251716c5b85b153b1`.
 
-Real read-only candidate workflow `.github/workflows/layerb-32769-resource-authority-candidate-packaging-v0-1.yml`, creation commit `5478e7e3976338ee30cd22f4de1beb2ab58ae5c3`, Git blob `93dc50385c4b126b91d384e79f6b7079bae283a6`. It triggers only after the exact independent resource consumer completes, collects source/independent API provenance and exact ZIPs, runs the packager, and runs the hardened materializer only after provenance PASS. It uploads a candidate artifact; repository permissions remain strictly read-only and no commit/push path exists.
+Real promotion-review workflow `.github/workflows/layerb-32769-resource-authority-promotion-review-v0-1.yml`, creation commit `4a6d1bca9c6df21c517e28bc7c7a5cbb62c12c0f`, Git blob `3b1de80ae99aae6925411737f821c04f3ff6cf95`.
 
-Static packaging audit run `34637435128` passed source job `103388656014` and independent verifier `103388709957`; artifact `10278693444`, ZIP SHA256 `b14abf859ea61bc35dbe04d6fef6b83ab312b3af41e0dbff50b2e3e366c54bbb`, result SHA256 `2322299bd4205e22308214ca62340de100132a155c4b1592c93dbf7ab0fbfa68`.
+It is manual-dispatch only, read-only, accepts an exact candidate run ID, requires no pre-existing durable target authority, retrieves exactly one candidate artifact through the Actions API, downloads/manifests the exact bytes, runs the frozen reviewer and uploads only review evidence. It has no repository-write path and no scientific execution path.
 
-Durable static authority: `docs/dsir4/authority/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_STATIC_AUDIT_V0_1.json`, creation commit `ebd12c93dfc6ffccd3bfff27f756805056cd3ffb`.
+Static audit run `34639622299` passed source job `103395846351` and independent verifier `103395881837`; artifact `10280210112`, ZIP SHA256 `8ad67432ae09453be4098cffc49a9e2f27d84706355573840ecc8f37485d9741`, result SHA256 `f0220d5ee425ddc17689c3661c1b485ac5feb6e62bc55df8c7a165f1b01ccb12`.
 
-The future successful chain is therefore prospectively frozen through a read-only resource-authority candidate. Deliberate verification/promotion to `docs/dsir4/authority/LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_V0_1.json` remains intentionally separate and has not occurred.
+Durable static authority: `docs/dsir4/authority/LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_WORKFLOW_STATIC_AUDIT_V0_1.json`, creation commit `a6a9c7c3486c33a23b44285c1cc61e9c3bd15d45`.
+
+A future promotion-review PASS permits only a deliberate **exact-byte copy** of the reviewed `resource_authority_candidate.json` into `docs/dsir4/authority/LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_V0_1.json`. The reviewer/workflow do not create that durable authority and do not authorize science.
 
 ## Remaining true blockers
 1. Real isolated runner `dsir-32769-highmem`, no default labels, physical `MemTotal > 16372440 kB`.
 2. Exactly one measured response-blind V0.2 32769 lifecycle pilot PASS.
-3. Successful automatic independent-consumer/candidate-packaging chain, then deliberate durable resource-authority promotion.
-4. Actual immediate one-live PASS against live first-production state.
-5. Real current-run-only one-run authorization.
+3. Successful automatic independent-consumer/candidate chain.
+4. Real candidate must pass V133 promotion review and then be deliberately copied byte-for-byte to the durable resource-authority path.
+5. Actual immediate one-live PASS and real current-run-only one-run authorization.
 6. Only then the dormant canonical scientific 16385->32769 workflow may execute and be independently terminal-consumed.
 
 No available GitHub connector capability can enumerate/reconfigure the physical self-hosted runner; no runner state is invented.
@@ -54,7 +57,7 @@ No available GitHub connector capability can enumerate/reconfigure the physical 
 ## Readiness
 Frozen repository/publication rubric remains **ARTICLE3_REPOSITORY_READINESS: 68%** and funnel-freeze readiness **67%**.
 
-Operational roadmap tracking is **WORKING_PLAN_COMPLETION: 81%**. Candidate provenance/packaging is closed prospectively; measured resource execution and scientific convergence remain open.
+Operational roadmap tracking is **WORKING_PLAN_COMPLETION: 82%**. Exact-byte promotion review is closed prospectively; measured resource execution and scientific convergence remain open.
 
 ## Exact next action
-Attach/use a qualifying runner under dedicated label `dsir-32769-highmem` with no default labels and dispatch exactly one response-blind V0.2 lifecycle pilot. Do not dispatch scientific production until the resulting real resource-authority candidate has been checked and deliberately promoted to the durable repository authority path.
+Attach/use a qualifying runner under dedicated label `dsir-32769-highmem` with no default labels and dispatch exactly one response-blind V0.2 lifecycle pilot. Do not dispatch scientific production until the resulting real candidate passes V133 promotion review and the exact reviewed bytes have been deliberately stored as the durable resource authority.
