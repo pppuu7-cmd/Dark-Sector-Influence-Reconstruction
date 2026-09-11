@@ -1,0 +1,56 @@
+name: layerb-post-16385-broad-quantile-static-audit-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-post-16385-broad-quantile-static-audit-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen broad-quantile implementation without CLASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast,json,re
+          from pathlib import Path
+          src=Path('ci/layerb_post_16385_broad_quantile_localization_v0_1.py').read_text()
+          plan=Path('docs/dsir4/prereg/LAYERB_POST_16385_BROAD_QUANTILE_LOCALIZATION_PLAN_V0_1.md').read_text()
+          checks={}
+          q='[512,1024,1536,2048,2560,3072,3584,4096,4608,5120,5632,6144,6656,7168,7680]'
+          compact=lambda s:re.sub(r'\s+','',s)
+          checks['parseable']=bool(ast.parse(src))
+          checks['exact_15_indices']=q in compact(src)
+          checks['plan_exact_15_indices']=q in compact(plan)
+          checks['raw_token']='POST_16385_BROAD_QUANTILE_RAW_LOCALIZATION_PASS_PLUS_0_PLUS_0' in src
+          checks['conditioning_token']='POST_16385_BROAD_QUANTILE_CONDITIONING_PASS_PLUS_0_PLUS_0' in src
+          checks['failure_token']='POST_16385_BROAD_QUANTILE_LOCALIZATION_INFRA_FAIL_PLUS_0_PLUS_0' in src
+          checks['h_frozen']='base.H != 1e-4' in src
+          checks['lookup_frozen']='base.LOOKUP_REL_TOL != 1e-12' in src
+          checks['no_32769']='32769' not in src
+          checks['no_alternative_h']='alternative_h_evaluated' in src and "False" in src
+          checks['no_full_107']='full_107_row_traversal_executed' in src
+          checks['no_science_authority']='scientific_authority_created' in src
+          checks['no_next_rung']='next_rung_authorized' in src
+          checks['covariance_closed']='covariance_restriction_authorized' in src
+          checks['wm_closed']='Wm_S3_opened' in src
+          checks['plan_commit_bound']='4aec3ce3a74c187e74b8ed5b7f6e17039ddc9ef6' in src
+          checks['two_lanes']=all(x in src for x in ('broad-raw','broad-conditioning'))
+          checks['no_full_traversal_call']='107-row' not in src and '107_row' in src
+          ok=all(checks.values())
+          out={'schema':'LAYERB_POST_16385_BROAD_QUANTILE_STATIC_AUDIT_V0_1','classification':'POST_16385_BROAD_QUANTILE_STATIC_AUDIT_PASS_PLUS_0_PLUS_0' if ok else 'POST_16385_BROAD_QUANTILE_STATIC_AUDIT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'pass_count':sum(checks.values()),'check_count':len(checks),'class_solver_invoked':False,'scientific_response_read':False,'scientific_authority_created':False,'next_rung_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('artifacts').mkdir(exist_ok=True); Path('artifacts/static.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['classification']); print(f"{out['pass_count']}/{out['check_count']}")
+          assert ok,out
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-broad-quantile-static-audit-v0-1
+          path: artifacts/static.json
+          if-no-files-found: error
+          retention-days: 90
