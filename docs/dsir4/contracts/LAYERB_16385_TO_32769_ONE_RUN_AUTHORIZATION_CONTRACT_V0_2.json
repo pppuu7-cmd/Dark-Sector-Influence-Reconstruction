@@ -5,27 +5,8 @@
   "production_workflow_path": ".github/workflows/layerb-16385-to-32769-canonical-scientific-v0-2.yml",
   "authorization_pass_classification": "LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZED_PLUS_0_PLUS_0",
   "authorization_fail_classification": "LAYERB_16385_TO_32769_ONE_RUN_NOT_AUTHORIZED_PLUS_0_PLUS_0",
-  "required_resource_authority": {
-    "classification": "LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0",
-    "artifact_verified_independently": true,
-    "high_memory_resource_lifecycle_preflight_pass": true,
-    "candidate_memtotal_kb_must_be_strictly_greater_than": 16373452,
-    "parser_capacity": 1048576,
-    "total_solver_constructions": 4,
-    "max_live_instances": 1,
-    "final_live_instances": 0,
-    "scientific_response_read": false,
-    "scientific_authority_created": false
-  },
-  "required_live_guard": {
-    "classification": "LAYERB_32769_ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS_PLUS_0_PLUS_0",
-    "guard_pass": true,
-    "matching_other_live_authoritative_runs": 0,
-    "matching_other_all_status_runs": 0,
-    "current_run_id_must_equal_authorized_run_id": true,
-    "production_workflow_path_must_match": true,
-    "parser_capacity": 1048576
-  },
+  "required_resource_authority": {"classification":"LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0","artifact_verified_independently":true,"high_memory_resource_lifecycle_preflight_pass":true,"candidate_memtotal_kb_must_be_strictly_greater_than":16373452,"parser_capacity":1048576,"total_solver_constructions":4,"max_live_instances":1,"final_live_instances":0,"scientific_response_read":false,"scientific_authority_created":false},
+  "required_live_guard": {"classification":"LAYERB_32769_ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS_PLUS_0_PLUS_0","guard_pass":true,"matching_other_live_authoritative_runs":0,"matching_other_all_status_runs":0,"current_run_id_must_equal_authorized_run_id":true,"production_workflow_path_must_match":true,"parser_capacity":1048576},
   "bound_scientific_identity": {
     "parent_authority_git_blob": "7958e1f44c0224e1828f89b1472aa33226c61886",
     "parent_classification": "COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0",
@@ -33,8 +14,8 @@
     "canonical_32769_node_sha256": "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599",
     "canonical_32769_text_sha256": "7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2",
     "class_build_authority_git_blob": "b5cd7304c110962dc3baef8d04ef67d5a8042e5f",
-    "terminal_contract_git_blob": "c2f4ff4bb6d3555f78d80503ac5bc73c15ebc4d5",
-    "terminal_consumer_git_blob": "1ce035030e275effa0a323881cb7e13f54395a10"
+    "terminal_contract_git_blob": "e441c54f8ad4a0590ad521710d4b9dbf37f111ba",
+    "terminal_consumer_git_blob": "661e0a69b7110fb0c0fcbb27fd6413456bb01ae2"
   },
   "authorized_canonical_run_count_if_pass": 1,
   "retry_inference_forbidden": true,
