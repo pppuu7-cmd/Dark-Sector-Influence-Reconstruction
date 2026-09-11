@@ -1,0 +1,162 @@
+name: layerb-16385-to-32769-production-workflow-static-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-16385-to-32769-production-workflow-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  production-workflow-static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify dormant production workflow is gated and non-triggering
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          test "$(git hash-object .github/workflows/layerb-16385-to-32769-canonical-scientific-v0-1.yml)" = '765abe3f6ec0c47392328678fffd5417f2ae4b43'
+          test "$(git hash-object ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py)" = '5ae2068d65dd45e0813c75fb795e55aa1bda1d5e'
+          test "$(git hash-object ci/layerb_16385_to_32769_terminal_consumer_v0_1.py)" = '1ce035030e275effa0a323881cb7e13f54395a10'
+          test "$(git hash-object ci/layerb_32769_one_live_guard_v0_1.py)" = 'a1f2fa6b38ed95c1873be644b6377f481ffe8bff'
+          test "$(git hash-object ci/layerb_16385_to_32769_one_run_authorizer_v0_1.py)" = '10ec642675763fe3664b2f8ff8f21e8c7927421f'
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('.github/workflows/layerb-16385-to-32769-canonical-scientific-v0-1.yml')
+          s=p.read_text()
+
+          # Creation must never auto-launch science.
+          assert '\non:\n  workflow_dispatch:\n' in s
+          for forbidden in ('\n  push:', '\n  schedule:', '\n  workflow_run:', '\n  pull_request:'):
+              assert forbidden not in s,forbidden
+          assert 'runs-on: [dsir-32769-highmem]' in s
+          assert 'runs-on: [self-hosted, Linux, X64]' not in s
+          assert 'RESOURCE_AUTHORITY: docs/dsir4/authority/LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_V0_1.json' in s
+          assert "test -f \"$RESOURCE_AUTHORITY\"" in s
+          assert "r['high_memory_resource_lifecycle_preflight_pass'] is True" in s
+          assert "r['candidate_memtotal_kb']>16372440" in s
+          assert "r['execution_lifecycle']['max_live_instances']==1" in s
+          assert "r['execution_lifecycle']['final_live_instances']==0" in s
+
+          # Immediate live state must be checked before authorization and before science.
+          i_resource=s.index('Fail closed unless all frozen code and durable prerequisites exist')
+          i_guard=s.index('Generate immediate live anti-duplication guard for this run')
+          i_auth=s.index('Generate current-run-only authorization')
+          i_build=s.index('Build exact pinned CLASS-IV 32769/524288 envelope')
+          i_science=s.index('Execute exactly one authorized canonical 16385 to 32769 refinement')
+          i_upload=s.index('Upload raw canonical result and runtime bindings')
+          assert i_resource < i_guard < i_auth < i_build < i_science < i_upload
+          assert '--current-run-id "$GITHUB_RUN_ID"' in s
+          assert '--resource-authority "$RESOURCE_AUTHORITY"' in s
+          assert '--one-live-guard artifacts/runtime/one_live_guard.json' in s
+          assert '--one-run-authorization artifacts/runtime/one_run_authorization.json' in s
+          assert "authorized_canonical_run_count']==1" in s
+
+          # Production build must match the measured/build envelope: capacity-only plus
+          # frozen compatibility/public-exposure/setup patches; no history-suppression delta.
+          assert "new='#define _MAX_NUMBER_OF_K_FILES_ 32769'" in s
+          assert "qnew='#define _ARGUMENT_LENGTH_MAX_ 524288'" in s
+          assert 'e6221887e19c0a576f77bbfcb2a030ff9cf8d84c62a2193ce52b8e3b541a8f0a' in s
+          assert 'e35d53f58e0c00fa66c12d92903eb46a0862beca25167a140f0ad5ae236c25d2' in s
+          assert '9958099b0a45f364affabe46d4fd32568db5d4867bc48b82a9b3170ae351203d' in s
+          assert 'classiv_k_output_history_suppression_patch' not in s
+
+          # Exact scientific support identities and inherited scripts.
+          for x in (
+            '--coarse docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt',
+            '--fine docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt',
+            '--parent-refinement-authority docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json',
+            '--class-build-authority docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_1.json',
+            '--canonical-32769-authority docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json',
+            '--recovered-jl-script ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py',
+            '--ir-script ci/exp073ir_article3_real_layerb_common_response_v0_1.py',
+            '--jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py',
+          ):
+              assert x in s,x
+
+          # Scientific output must be consumed by a separate hosted job under the frozen terminal consumer.
+          assert '\n  independent-terminal-consumer:\n' in s
+          i_terminal=s.index('independent-terminal-consumer:')
+          assert i_terminal > i_upload
+          terminal=s[i_terminal:]
+          assert 'runs-on: ubuntu-24.04' in terminal
+          assert 'needs: canonical-science' in terminal
+          assert 'if: always()' in terminal
+          assert 'ci/layerb_16385_to_32769_terminal_consumer_v0_1.py' in terminal
+          assert '--input source/result.json' in terminal
+          assert '--one-live-guard source/runtime/one_live_guard.json' in terminal
+          assert '--one-run-authorization source/runtime/one_run_authorization.json' in terminal
+
+          out={
+            'schema':'LAYERB_16385_TO_32769_PRODUCTION_WORKFLOW_STATIC_AUDIT_V0_1',
+            'classification':'LAYERB_16385_TO_32769_PRODUCTION_WORKFLOW_STATIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'production_workflow_git_blob':'765abe3f6ec0c47392328678fffd5417f2ae4b43',
+            'workflow_dispatch_only':True,
+            'isolated_high_memory_label_only':True,
+            'measured_resource_authority_required':True,
+            'live_guard_before_authorizer':True,
+            'one_run_authorizer_before_science':True,
+            'authorized_canonical_run_count':1,
+            'production_class_build_matches_frozen_envelope':True,
+            'history_suppression_not_added':True,
+            'canonical_16385_to_32769_identities_bound':True,
+            'separate_hosted_terminal_consumer':True,
+            'scientific_execution_performed_by_audit':False,
+            'scientific_execution_authorized_now':False,
+            'high_memory_resource_lifecycle_preflight_pass_now':False,
+            'one_live_anti_duplication_guard_pass_now':False,
+            'actual_one_run_authorization_exists_now':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+          }
+          out['token']=out['classification']
+          Path('artifacts/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-to-32769-production-workflow-static-audit-v0-1
+          path: artifacts/result.json
+          if-no-files-found: error
+          retention-days: 90
+
+  independent-static-verifier:
+    needs: production-workflow-static-audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-to-32769-production-workflow-static-audit-v0-1
+          path: evidence
+      - name: Independently verify dormant production workflow receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object .github/workflows/layerb-16385-to-32769-canonical-scientific-v0-1.yml)" = '765abe3f6ec0c47392328678fffd5417f2ae4b43'
+          python3 - <<'PY'
+          import json
+          d=json.load(open('evidence/result.json'))
+          assert d['classification']=='LAYERB_16385_TO_32769_PRODUCTION_WORKFLOW_STATIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['workflow_dispatch_only'] is True
+          assert d['isolated_high_memory_label_only'] is True
+          assert d['measured_resource_authority_required'] is True
+          assert d['live_guard_before_authorizer'] is True
+          assert d['one_run_authorizer_before_science'] is True
+          assert d['authorized_canonical_run_count']==1
+          assert d['production_class_build_matches_frozen_envelope'] is True
+          assert d['history_suppression_not_added'] is True
+          assert d['separate_hosted_terminal_consumer'] is True
+          assert d['scientific_execution_performed_by_audit'] is False
+          assert d['scientific_execution_authorized_now'] is False
+          print('LAYERB_16385_TO_32769_PRODUCTION_WORKFLOW_INDEPENDENT_STATIC_VALIDATION_PASS_PLUS_0_PLUS_0')
+          PY
