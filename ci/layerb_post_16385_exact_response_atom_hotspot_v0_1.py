@@ -77,7 +77,10 @@ def execute(a):
     heap=[]; callmax=[]; status_changed=0; compared_atoms=0
     for i,((z,t),x,y) in enumerate(zip(coarse_calls,cr,fr)):
         if x.shape!=y.shape or x.shape!=(len(t),2): raise RuntimeError(f'response shape mismatch call {i}')
-        good=np.isfinite(x)&np.isfinite(y)&(x>0)&(y>0); status_changed += int(np.count_nonzero((np.isfinite(x)&(x>0))!=(np.isfinite(y)&(y>0)))
+        status_x=np.isfinite(x)&(x>0)
+        status_y=np.isfinite(y)&(y>0)
+        status_changed += int(np.count_nonzero(status_x != status_y))
+        good=status_x&status_y
         rel=np.full(x.shape,np.nan,dtype=np.float64); rel[good]=np.abs(x[good]-y[good])/np.maximum(np.abs(x[good]),np.abs(y[good])); compared_atoms+=int(np.count_nonzero(good))
         if np.any(good):
             flat=int(np.nanargmax(rel)); ti,ci=np.unravel_index(flat,rel.shape); mv=float(rel[ti,ci]); callmax.append(atom_record(mv,i,ti,ci,z,t[ti],x[ti,ci],y[ti,ci]))
