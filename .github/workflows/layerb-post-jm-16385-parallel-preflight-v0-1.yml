@@ -1,0 +1,215 @@
+name: layerb-post-jm-16385-parallel-preflight-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-post-jm-16385-parallel-preflight-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: layerb-post-jm-16385-parallel-preflight-v0-1
+  cancel-in-progress: false
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  PILOT_BLOB: '00d8cb7d7dd6f5fa84aa0a8ddd3ea1c8ed3f81cb'
+  JO_BLOB: 'c975a964805919cd61e3c028305ad3945773377f'
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+  CANON_AUTH_BLOB: '50aa473299c82c857921a083f7d4de652ba476a4'
+  CANON_FILE_BLOB: 'fc4eb1e7f51a0ad3773b8be13c477652b1f71368'
+  BASELINE_BLOB: 'cd2beb01ce6575f97f2e3203226ed6d4f048dcaa'
+  PRECISION_BLOB: 'fea602547cfb74e187cf9aedd5a9b0c316c626be'
+
+jobs:
+  static-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce branch-blind identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_post_jm_16385_one_live_resource_pilot_v0_1.py)" = "$PILOT_BLOB"
+          test "$(git hash-object ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py)" = "$JO_BLOB"
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json)" = "$CANON_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt)" = "$CANON_FILE_BLOB"
+          test "$(git hash-object configs/dsir4/c2/ide0_reference_v0_1.ini)" = "$BASELINE_BLOB"
+          test "$(git hash-object configs/dsir4/c2/dsir_ide_p8_v0_1.pre)" = "$PRECISION_BLOB"
+          python3 -m py_compile ci/layerb_post_jm_16385_one_live_resource_pilot_v0_1.py
+      - name: Audit no-JM-result static contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import ast,hashlib,json
+          from pathlib import Path
+          p=Path('ci/layerb_post_jm_16385_one_live_resource_pilot_v0_1.py')
+          s=p.read_text(); ast.parse(s)
+          a=json.load(open('docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json'))
+          checks={
+            'capacity_18432':'CAPACITY = 18432' in s,
+            'parser_524288':'PARSER_CAPACITY = 524288' in s,
+            'count_16385':'NODE_COUNT = 16385' in s,
+            'node_sha':'3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975' in s,
+            'text_sha':'7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69' in s,
+            'strict_lookup':'LOOKUP_REL_TOL = 1e-12' in s,
+            'h':'H = 1e-4' in s,
+            'kpd':'NATIVE_KPD = 20.0' in s,
+            'branch_false':'"branch_activated": False' in s,
+            'jm_result_false':'"jm_result_read": False' in s,
+            'no_next_execution':'"next_rung_execution_authorized": False' in s,
+            'no_science_auth':'"scientific_authority_created": False' in s,
+            'no_covariance':'"covariance_restriction_authorized": False' in s,
+            'canonical_pass':a.get('classification')=='CANONICAL_16385_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0',
+            'canonical_verified':a.get('artifact_verified_independently') is True,
+            'canonical_dormant':a.get('successor_branch_activated') is False and a.get('successor_execution_authorized') is False,
+            'canonical_no_science':a.get('scientific_response_read') is False and a.get('class_solver_invoked') is False,
+            'quorum':a.get('anchor_match_count',0)>=a.get('minimum_anchor_quorum',999),
+          }
+          assert all(checks.values()), [k for k,v in checks.items() if not v]
+          out={'schema':'LAYERB_16385_RESOURCE_PREFLIGHT_STATIC_AUDIT_V0_1','classification':'LAYERB_16385_RESOURCE_PREFLIGHT_STATIC_PASS_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'check_count':len(checks),'checks_all_pass':True,'jm_result_read':False,'class_solver_invoked':False,'scientific_response_read':False,'scientific_authority_created':False,'token':'LAYERB_16385_RESOURCE_PREFLIGHT_STATIC_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/static.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'],len(checks))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-static-contract-v0-1
+          path: artifacts/static.json
+          if-no-files-found: error
+          retention-days: 90
+
+  build-envelope:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build exact 18432/524288 CLASS envelope
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git >/dev/null
+          python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six >/dev/null
+          mkdir -p artifacts
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('external/class_iv/include/perturbations.h'); b=p.read_bytes(); s=b.decode(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; new='#define _MAX_NUMBER_OF_K_FILES_ 18432'; assert s.count(old)==1
+          pre=hashlib.sha256(b).hexdigest(); p.write_text(s.replace(old,new,1)); post=hashlib.sha256(p.read_bytes()).hexdigest()
+          q=Path('external/class_iv/include/parser.h'); qb=q.read_bytes(); qs=qb.decode(); qold='#define _ARGUMENT_LENGTH_MAX_ 1024'; qnew='#define _ARGUMENT_LENGTH_MAX_ 524288'; assert qs.count(qold)==1
+          qpre=hashlib.sha256(qb).hexdigest(); q.write_text(qs.replace(qold,qnew,1)); qpost=hashlib.sha256(q.read_bytes()).hexdigest()
+          Path('artifacts/build.json').write_text(json.dumps({'schema':'LAYERB_16385_CLASS_BUILD_ENVELOPE_V0_1','classification':'LAYERB_16385_CLASS_BUILD_ENVELOPE_PASS_PLUS_0_PLUS_0','effect':'+0/+0','class_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','old_capacity':30,'new_capacity':18432,'replacement_count':1,'pre_sha256':pre,'post_sha256':post,'parser_old_argument_capacity':1024,'parser_new_argument_capacity':524288,'parser_replacement_count':1,'parser_pre_sha256':qpre,'parser_post_sha256':qpost,'jm_result_read':False,'scientific_response_read':False,'scientific_authority_created':False,'token':'LAYERB_16385_CLASS_BUILD_ENVELOPE_PASS_PLUS_0_PLUS_0'},indent=2,sort_keys=True)+'\n')
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+          python - <<'PY'
+          import json
+          p='artifacts/build.json'; d=json.load(open(p)); d['build_completed']=True; open(p,'w').write(json.dumps(d,indent=2,sort_keys=True)+'\n'); print(d['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-build-envelope-v0-1
+          path: artifacts/build.json
+          if-no-files-found: error
+          retention-days: 90
+
+  resource-pilot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce exact resource-pilot identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_post_jm_16385_one_live_resource_pilot_v0_1.py)" = "$PILOT_BLOB"
+          test "$(git hash-object ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py)" = "$JO_BLOB"
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json)" = "$CANON_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt)" = "$CANON_FILE_BLOB"
+      - name: Install exact numerical/build stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git >/dev/null
+          python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+      - name: Build exact pinned CLASS-IV with 16385 envelope
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('external/class_iv/include/perturbations.h'); b=p.read_bytes(); s=b.decode(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; new='#define _MAX_NUMBER_OF_K_FILES_ 18432'; assert s.count(old)==1
+          pre=hashlib.sha256(b).hexdigest(); p.write_text(s.replace(old,new,1)); post=hashlib.sha256(p.read_bytes()).hexdigest()
+          q=Path('external/class_iv/include/parser.h'); qb=q.read_bytes(); qs=qb.decode(); qold='#define _ARGUMENT_LENGTH_MAX_ 1024'; qnew='#define _ARGUMENT_LENGTH_MAX_ 524288'; assert qs.count(qold)==1
+          qpre=hashlib.sha256(qb).hexdigest(); q.write_text(qs.replace(qold,qnew,1)); qpost=hashlib.sha256(q.read_bytes()).hexdigest()
+          rec={'schema':'LAYERB_16385_CLASS_CAPACITY_PATCH_V0_1','source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','old_capacity':30,'new_capacity':18432,'replacement_count':1,'pre_sha256':pre,'post_sha256':post,'parser_old_argument_capacity':1024,'parser_new_argument_capacity':524288,'parser_replacement_count':1,'parser_pre_sha256':qpre,'parser_post_sha256':qpost}
+          Path('artifacts/capacity_patch.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+      - name: Execute branch-blind canonical 16385 resource pilot
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}" python ci/layerb_post_jm_16385_one_live_resource_pilot_v0_1.py \
+            --canonical-authority docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json \
+            --fine docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt \
+            --jo-script ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --capacity-patch-record artifacts/capacity_patch.json \
+            --out artifacts/result.json
+          python - <<'PY'
+          import json,sys
+          d=json.load(open('artifacts/result.json'))
+          if d.get('classification')!='CANONICAL_16385_ONE_LIVE_FOUR_BUILD_RESOURCE_PILOT_PASS_PLUS_0_PLUS_0':
+              print('RESOURCE_PREFLIGHT_NOT_PASS',d.get('classification'),d.get('error')); sys.exit(31)
+          assert d['branch_activated'] is False and d['jm_result_read'] is False
+          assert d['execution_lifecycle']['total_solver_constructions']==4
+          assert d['execution_lifecycle']['max_live_instances']==1 and d['execution_lifecycle']['final_live_instances']==0
+          assert d['unsupported_target_evaluations']==0
+          assert d['max_requested_node_coordinate_rel_mismatch']<=1e-12
+          assert d['scientific_authority_created'] is False and d['next_rung_execution_authorized'] is False
+          print(d['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-16385-resource-pilot-v0-1
+          path: |
+            artifacts/result.json
+            artifacts/capacity_patch.json
+          if-no-files-found: warn
+          retention-days: 90
