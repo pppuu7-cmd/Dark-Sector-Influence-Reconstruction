@@ -1,0 +1,88 @@
+name: post-jm-branch-static-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/post-jm-branch-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CONVERGED_PREREG_BLOB: '8e990660fb7864f5e04fa53a852e540af161ea8a'
+  NOT_CONVERGED_PREREG_BLOB: '9fd1ff34f240b4ed6252c7b83b3c5d7fe9d47b98'
+  DORMANT_16385_AUTH_BLOB: '50aa473299c82c857921a083f7d4de652ba476a4'
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce prospective branch identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/POST_JM_CONVERGED_LAYERB_SCIENTIFIC_CLOSURE_V0_1.md)" = "$CONVERGED_PREREG_BLOB"
+          test "$(git hash-object docs/dsir4/prereg/POST_JM_NOT_CONVERGED_NEXT_SUPPORT_RUNG_V0_1.md)" = "$NOT_CONVERGED_PREREG_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json)" = "$DORMANT_16385_AUTH_BLOB"
+      - name: Audit mutually exclusive frozen branches without science
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          c=Path('docs/dsir4/prereg/POST_JM_CONVERGED_LAYERB_SCIENTIFIC_CLOSURE_V0_1.md').read_text()
+          n=Path('docs/dsir4/prereg/POST_JM_NOT_CONVERGED_NEXT_SUPPORT_RUNG_V0_1.md').read_text()
+          a=json.loads(Path('docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json').read_text())
+          checks={
+            'converged_activation_exact':'COMMON_GRID_FOURTH_REFINEMENT_CONVERGED_PLUS_0_PLUS_0' in c,
+            'not_converged_activation_exact':'COMMON_GRID_FOURTH_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0' in n,
+            'closure_uses_4097':'4097' in c and 'f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb' in c,
+            'closure_uses_8193':'8193' in c and '6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515' in c,
+            'closure_strict_tol':'strictly `<1e-3`' in c,
+            'closure_science_token':'PASS_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_POST_JM_V0_1' in c,
+            'closure_covariance_separate':'separately frozen covariance-restriction/whitening stage' in c,
+            'next_coarse_8193':'coarse: exact existing canonical 8193' in n,
+            'next_fine_16385':'fine: exact dormant response-blind canonical 16385' in n,
+            'next_16385_node_sha':'3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975' in n,
+            'next_16385_text_sha':'7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69' in n,
+            'next_capacity_18432':'_MAX_NUMBER_OF_K_FILES_ = 18432' in n,
+            'next_parser_524288':'_ARGUMENT_LENGTH_MAX_ = 524288' in n,
+            'next_requires_static_resource':'separate no-science static audit and resource-only pilot are mandatory' in n,
+            'same_h':'`h=1e-4`' in c and '`h=1e-4`' in n,
+            'same_native_kpd':'k_per_decade_for_pk=20' in c and 'k_per_decade_for_pk=20' in n,
+            'same_lookup':'`<=1e-12`' in c and '`<=1e-12`' in n,
+            'dormant_authority_verified':a.get('artifact_verified_independently') is True,
+            'dormant_branch_false':a.get('successor_branch_activated') is False and a.get('successor_execution_authorized') is False,
+            'dormant_no_science':a.get('scientific_response_read') is False and a.get('class_solver_invoked') is False and a.get('scientific_authority_created') is False,
+            'dormant_exact_16385':a.get('requested_node_count')==16385 and a.get('guard_counts')==[0,1],
+            'dormant_exact_shas':a.get('node_payload_sha256')=='3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975' and a.get('u64hex_sha256')=='7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69',
+            'no_result_value_in_branch_docs':'0.012273497268380687' not in c and '0.012273497268380687' not in n,
+          }
+          assert all(checks.values()), [k for k,v in checks.items() if not v]
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          out={
+            'schema':'POST_JM_BRANCH_STATIC_AUDIT_RESULT_V0_1',
+            'classification':'POST_JM_BRANCHES_PROSPECTIVELY_FROZEN_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0','check_count':len(checks),'checks':checks,
+            'class_solver_invoked':False,'scientific_response_read':False,'jm_result_read':False,'scientific_authority_created':False,
+            'converged_prereg_sha256':sha('docs/dsir4/prereg/POST_JM_CONVERGED_LAYERB_SCIENTIFIC_CLOSURE_V0_1.md'),
+            'not_converged_prereg_sha256':sha('docs/dsir4/prereg/POST_JM_NOT_CONVERGED_NEXT_SUPPORT_RUNG_V0_1.md'),
+            'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+            'article3_repository_readiness_percent':68,'funnel_freeze_readiness_percent':67,
+            'token':'POST_JM_BRANCHES_PROSPECTIVELY_FROZEN_PASS_PLUS_0_PLUS_0'
+          }
+          Path('artifacts/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'],out['check_count'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-jm-branch-static-audit-v0-1
+          path: artifacts/result.json
+          if-no-files-found: error
+          retention-days: 90
