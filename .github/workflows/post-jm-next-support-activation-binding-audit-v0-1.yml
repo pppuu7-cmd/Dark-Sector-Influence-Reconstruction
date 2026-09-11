@@ -16,6 +16,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+      - name: Install audit-only import prerequisite
+        shell: bash
+        run: python3 -m pip install -q 'numpy==1.26.4'
       - name: Audit activation binding without CLASS
         shell: bash
         run: |
