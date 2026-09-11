@@ -1,0 +1,143 @@
+name: layerb-32769-hosted-extra-swap-resource-feasibility-v0-2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-hosted-extra-swap-resource-feasibility-v0-2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  PROBE_BLOB: 'f8776ae1e9e0c325f1a3f5f01b4388e1c93ef7e2'
+  BUILD_AUTH_BLOB: 'b5cd7304c110962dc3baef8d04ef67d5a8042e5f'
+  REPAIR_CONTRACT_BLOB: '8da137f5ee260fc0aede75c22ed292e47d32157b'
+
+jobs:
+  resource-lane:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {lane: reference-swap8, role: reference, swap_gib: 8}
+          - {lane: alpha-minus-swap8, role: alpha_minus, swap_gib: 8}
+          - {lane: beta-plus-swap8, role: beta_plus, swap_gib: 8}
+          - {lane: beta-minus-swap8, role: beta_minus, swap_gib: 8}
+          - {lane: reference-swap12, role: reference, swap_gib: 12}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen repair identities and enable extra swap
+        shell: bash
+        env: {LANE: '${{ matrix.lane }}', ROLE: '${{ matrix.role }}', SWAP_GIB: '${{ matrix.swap_gib }}'}
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          test "$(git hash-object ci/layerb_32769_parser_1mib_single_role_candidate_probe_v0_2.py)" = "$PROBE_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json)" = "$BUILD_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_HOSTED_EXTRA_SWAP_RESOURCE_FEASIBILITY_REPAIR_CONTRACT_V0_2.json)" = "$REPAIR_CONTRACT_BLOB"
+          {
+            echo "lane=$LANE"; echo "role=$ROLE"; echo "requested_extra_swap_gib=$SWAP_GIB"
+            echo before_meminfo; grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree):' /proc/meminfo
+          } > evidence/setup.txt
+          SWAPFILE="/mnt/dsir-extra-${SWAP_GIB}g.swap"
+          sudo fallocate -l "${SWAP_GIB}G" "$SWAPFILE"
+          sudo chmod 600 "$SWAPFILE"
+          sudo mkswap "$SWAPFILE" >> evidence/setup.txt 2>&1
+          sudo swapon "$SWAPFILE" >> evidence/setup.txt 2>&1
+          { echo after_meminfo; grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree):' /proc/meminfo; sudo swapon --show --bytes; echo SWAP_SETUP_PASS_PLUS_0_PLUS_0; } >> evidence/setup.txt
+
+      - name: Build exact source tree and record toolchain-dependent executable identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git >/dev/null
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q "$CLASS_COMMIT"
+          test "$(git -C external/class_iv rev-parse HEAD)" = "$CLASS_COMMIT"
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          p=Path('external/class_iv/include/perturbations.h'); b=p.read_bytes(); s=b.decode(); a='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(a)==1; assert hashlib.sha256(b).hexdigest()=='c83749338e435d85caf8f0cfb713aa9a77782a91072de93633187d9dc53a0876'; p.write_text(s.replace(a,'#define _MAX_NUMBER_OF_K_FILES_ 32769',1)); assert hashlib.sha256(p.read_bytes()).hexdigest()=='e6221887e19c0a576f77bbfcb2a030ff9cf8d84c62a2193ce52b8e3b541a8f0a'
+          q=Path('external/class_iv/include/parser.h'); b=q.read_bytes(); s=b.decode(); a='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(a)==1; assert hashlib.sha256(b).hexdigest()=='2c17690a5549e12c8fac485281ca214a20c376e1e3beba714af0e1b84cdbb0eb'; q.write_text(s.replace(a,'#define _ARGUMENT_LENGTH_MAX_ 1048576',1)); assert hashlib.sha256(q.read_bytes()).hexdigest()=='2d775ca12da2c79b3700672fa66d290d5a06458a5253ea1e2c51b44ac2374092'
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+          { gcc --version | head -1; gfortran --version | head -1; python --version; echo -n 'class_sha256='; sha256sum external/class_iv/class | awk '{print $1}'; echo -n 'class_size_bytes='; stat -c%s external/class_iv/class; } > evidence/build_identity.txt
+
+      - name: Run response-blind resource probe with telemetry
+        shell: bash
+        env: {LANE: '${{ matrix.lane }}', ROLE: '${{ matrix.role }}', SWAP_GIB: '${{ matrix.swap_gib }}'}
+        run: |
+          set -u
+          export PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}"
+          : > evidence/telemetry.log
+          PYTHONFAULTHANDLER=1 .venv/bin/python -u ci/layerb_32769_parser_1mib_single_role_candidate_probe_v0_2.py --role "$ROLE" --canonical-authority docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json --build-authority docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json --fine docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt --jo-script ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py --baseline configs/dsir4/c2/ide0_reference_v0_1.ini --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre --out evidence/result.json > evidence/probe.stdout 2> evidence/probe.stderr &
+          CHILD=$!
+          while kill -0 "$CHILD" 2>/dev/null; do
+            ts=$(date -u +%Y-%m-%dT%H:%M:%SZ); mem=$(awk '/^MemAvailable:/ {print $2}' /proc/meminfo); swap=$(awk '/^SwapFree:/ {print $2}' /proc/meminfo); rss=$(ps -o rss= -p "$CHILD" 2>/dev/null | tr -d ' ' || true); [ -n "$rss" ] || rss=NA
+            echo "TELEMETRY lane=$LANE role=$ROLE swap_gib=$SWAP_GIB ts=$ts rss_kb=$rss memavailable_kb=$mem swapfree_kb=$swap" >> evidence/telemetry.log
+            sleep 5
+          done
+          wait "$CHILD"; rc=$?; echo "$rc" > evidence/process_rc.txt; grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree):' /proc/meminfo > evidence/final_meminfo.txt || true; exit "$rc"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-32769-extra-swap-v02-${{ matrix.lane }}
+          path: evidence/
+          if-no-files-found: warn
+          retention-days: 90
+
+  independent-finalizer:
+    needs: resource-lane
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: layerb-32769-extra-swap-v02-*
+          path: collected
+      - name: Frozen resource-only classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p final
+          python3 - <<'PY'
+          import json,pathlib
+          pass_token='LAYERB_32769_PARSER_1MIB_SINGLE_ROLE_CANDIDATE_V02_PASS_PLUS_0_PLUS_0'; roles=['reference','alpha_minus','beta_plus','beta_minus']; root=pathlib.Path('collected'); results={}
+          for p in root.glob('**/result.json'):
+            d=json.loads(p.read_text()); lane=p.parent.parent.name.replace('layerb-32769-extra-swap-v02-',''); results[lane]={'classification':d.get('classification'),'compute_completed':d.get('compute_completed'),'role':d.get('role'),'ru_maxrss_kb_after_compute':d.get('ru_maxrss_kb_after_compute')}
+          role8={d['role']:True for lane,d in results.items() if lane.endswith('swap8') and d.get('role') in roles and d.get('classification')==pass_token and d.get('compute_completed') is True}
+          all4=all(role8.get(r,False) for r in roles); ref12=any(lane=='reference-swap12' and d.get('classification')==pass_token and d.get('compute_completed') is True for lane,d in results.items())
+          if all4: cls='LAYERB_32769_HOSTED_EXTRA_SWAP_ALL_FOUR_ROLES_FEASIBLE_PLUS_0_PLUS_0'
+          elif ref12: cls='LAYERB_32769_HOSTED_EXTRA_SWAP_REFERENCE_ONLY_FEASIBLE_PLUS_0_PLUS_0'
+          elif results: cls='LAYERB_32769_HOSTED_EXTRA_SWAP_NO_COMPLETED_ROLE_PLUS_0_PLUS_0'
+          else: cls='LAYERB_32769_HOSTED_EXTRA_SWAP_INFRASTRUCTURE_FAIL_PLUS_0_PLUS_0'
+          out={'schema':'LAYERB_32769_HOSTED_EXTRA_SWAP_RESOURCE_FEASIBILITY_V0_2','classification':cls,'effect':'+0/+0','results':results,'all_four_roles_pass_at_extra_swap_8gib':all4,'reference_pass_at_extra_swap_12gib':ref12,'scientific_transfer_values_read':False,'scientific_response_read':False,'scientific_response_computed':False,'convergence_metric_computed':False,'scientific_authority_created':False,'high_memory_resource_lifecycle_preflight_pass_created':False,'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,'token':cls}
+          pathlib.Path('final/feasibility.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(cls)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-hosted-extra-swap-resource-feasibility-final-v0-2
+          path: final/feasibility.json
+          retention-days: 90
