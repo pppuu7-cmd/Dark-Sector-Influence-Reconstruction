@@ -1,0 +1,82 @@
+name: layerb-32769-resource-pilot-v02-static-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-resource-pilot-v02-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify V0.2 remains response-blind and frozen-science-equivalent
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          python3 - <<'PY'
+          import ast,hashlib,json
+          from pathlib import Path
+          p=Path('ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_2.py'); b=p.read_bytes(); s=b.decode(); tree=ast.parse(s)
+          vals={}
+          for node in tree.body:
+              if isinstance(node,ast.Assign) and len(node.targets)==1 and isinstance(node.targets[0],ast.Name):
+                  name=node.targets[0].id
+                  try: vals[name]=ast.literal_eval(node.value)
+                  except Exception: pass
+          checks={
+            'git_blob': hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()=='100f871822e69cfde7730aba4f6a9ff59c6ad9aa',
+            'H': vals.get('H')==1e-4,
+            'REL_TOL': vals.get('REL_TOL_LINEAGE_ONLY')==1e-3,
+            'LOOKUP_REL_TOL': vals.get('LOOKUP_REL_TOL')==1e-12,
+            'NATIVE_KPD': vals.get('NATIVE_KPD')==20.0,
+            'CAPACITY': vals.get('CAPACITY')==32769,
+            'PARSER_CAPACITY': vals.get('PARSER_CAPACITY')==1048576,
+            'NODE_COUNT': vals.get('NODE_COUNT')==32769,
+            'BUILD_AUTH_V02': vals.get('BUILD_AUTH_PASS')=='LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_PASS_PLUS_0_PLUS_0',
+            'compute_transfer_only': 'c.compute(["transfer"])' in s,
+            'no_get_transfer': '.get_transfer(' not in s,
+            'no_evaluate': '.evaluate(' not in s,
+            'no_response_metric': 'max_relative_component' not in s and 'convergence_metric' in s,
+            'four_roles_parented': 'for role, alpha, beta in jo.MODELS:' in s,
+            'one_live_cleanup': 'tracker["max_live"]' in s and 'c.struct_cleanup()' in s and 'c = None' in s,
+            'payload_guard': 'payload_bytes > PARSER_CAPACITY' in s,
+          }
+          out={'schema':'LAYERB_32769_RESOURCE_PILOT_V02_STATIC_AUDIT_V0_1','classification':'LAYERB_32769_RESOURCE_PILOT_V02_STATIC_AUDIT_PASS_PLUS_0_PLUS_0' if all(checks.values()) else 'LAYERB_32769_RESOURCE_PILOT_V02_STATIC_AUDIT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'all_pass':all(checks.values()),'pilot_git_blob':hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest(),'build_authority_git_blob':None,'scientific_response_read':False,'scientific_execution_authorized':False,'high_memory_resource_lifecycle_preflight_pass_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          ba=Path('docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json').read_bytes(); out['build_authority_git_blob']=hashlib.sha1(b'blob '+str(len(ba)).encode()+b'\0'+ba).hexdigest(); out['token']=out['classification']; Path('evidence/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); assert out['all_pass'],checks
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-resource-pilot-v02-static-audit-v0-1
+          path: evidence/result.json
+          retention-days: 90
+
+  independent-verifier:
+    needs: static-audit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-resource-pilot-v02-static-audit-v0-1
+          path: evidence
+      - name: Verify static receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('evidence/result.json'); d=json.loads(p.read_text()); assert d['classification']=='LAYERB_32769_RESOURCE_PILOT_V02_STATIC_AUDIT_PASS_PLUS_0_PLUS_0' and d['all_pass'] is True
+          out={'schema':'LAYERB_32769_RESOURCE_PILOT_V02_STATIC_AUDIT_INDEPENDENT_VERIFICATION_V0_1','classification':'LAYERB_32769_RESOURCE_PILOT_V02_STATIC_AUDIT_INDEPENDENT_VERIFICATION_PASS_PLUS_0_PLUS_0','effect':'+0/+0','source_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'scientific_execution_authorized':False,'token':'LAYERB_32769_RESOURCE_PILOT_V02_STATIC_AUDIT_INDEPENDENT_VERIFICATION_PASS_PLUS_0_PLUS_0'}; Path('verification.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-resource-pilot-v02-static-audit-independent-v0-1
+          path: verification.json
+          retention-days: 90
