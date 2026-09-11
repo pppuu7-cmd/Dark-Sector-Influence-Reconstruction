@@ -1,0 +1,163 @@
+name: layerb-32769-resource-to-authorizer-interface-synthetic-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-resource-to-authorizer-interface-synthetic-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  resource-to-authorizer-interface:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce exact frozen interface implementations
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_1.json)" = '933a2ed268cb2a2724252a2ef9799d0946e281ce'
+          test "$(git hash-object ci/layerb_32769_resource_authority_materializer_v0_1.py)" = '8000bd563eab5744ad8f7e2af36ca19721566922'
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_ONE_LIVE_GUARD_CONTRACT_V0_1.json)" = 'c88836865879e164d5f4599b5e586f148bc2d524'
+          test "$(git hash-object ci/layerb_32769_one_live_guard_v0_1.py)" = 'a1f2fa6b38ed95c1873be644b6377f481ffe8bff'
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZATION_CONTRACT_V0_1.json)" = 'b9fd5fe557641e06effbdbd1563b12823fa8f51c'
+          test "$(git hash-object ci/layerb_16385_to_32769_one_run_authorizer_v0_1.py)" = '10ec642675763fe3664b2f8ff8f21e8c7927421f'
+
+      - name: Generate exact unmarked resource inputs and first-run snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/fixture artifacts/out
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path('artifacts/fixture')
+          roles=['reference','alpha_minus','beta_plus','beta_minus']
+          life={'total_solver_constructions':4,'max_live_instances':1,'final_live_instances':0,'cross_process_scientific_operand_combination':False}
+          source={
+            'schema':'INTERFACE_AUDIT_RESOURCE_RESULT_V0_1','classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0','effect':'+0/+0',
+            'canonical_32769_text_sha256':'7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2','canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599',
+            'capacity':32769,'parser_capacity':524288,'runner_isolation_contract_git_blob':'d9d910d89889f6d3a27461a73c3dd72c2a9d2096','required_custom_label':'dsir-32769-highmem',
+            'candidate_memtotal_kb':33554432,'candidate_strictly_higher_memory_than_exhausted_hosted':True,'execution_lifecycle':life,'role_order':roles,
+            'role_receipts':[{'role':r,'compute_completed':True,'ru_maxrss_kb_before':100000+i*1000,'ru_maxrss_kb_after_compute':12000000+i*100000,'scientific_transfer_values_read':False,'scientific_response_computed':False,'scientific_response_serialized':False} for i,r in enumerate(roles)],
+            'scientific_transfer_values_read':False,'scientific_response_read':False,'scientific_response_computed':False,'convergence_metric_computed':False,'convergence_classification_created':False,
+            'scientific_authority_created':False,'successor_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+          }
+          sp=root/'source.json'; sp.write_text(json.dumps(source,indent=2,sort_keys=True)+'\n'); ssha=hashlib.sha256(sp.read_bytes()).hexdigest()
+          independent={
+            'schema':'INTERFACE_AUDIT_INDEPENDENT_VALIDATION_V0_1','classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0','valid':True,'errors':[],
+            'source_result_sha256':ssha,'candidate_memtotal_kb':33554432,'candidate_strictly_higher_memory_than_exhausted_hosted':True,'required_custom_label':'dsir-32769-highmem','execution_lifecycle':life,
+            'peak_role_ru_maxrss_kb':12300000,'telemetry_summary':{'sample_count':10,'memtotal_min_kb':33554432,'memtotal_max_kb':33554432,'memavailable_min_kb':18000000,'swapfree_min_kb':4000000},
+            'canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599','class_build_authority_git_blob':'ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d',
+            'runner_isolation_contract_git_blob':'d9d910d89889f6d3a27461a73c3dd72c2a9d2096','scientific_response_read':False,'scientific_authority_created':False,'successor_execution_authorized':False,
+          }
+          ip=root/'independent.json'; ip.write_text(json.dumps(independent,indent=2,sort_keys=True)+'\n'); isha=hashlib.sha256(ip.read_bytes()).hexdigest()
+          provenance={'schema':'INTERFACE_AUDIT_RESOURCE_PROVENANCE_V0_1','source_run_id':40001,'source_job_id':50001,'source_head_sha':'a'*40,'source_artifact_id':60001,'source_artifact_zip_sha256':'b'*64,'independent_run_id':40002,'independent_job_id':50002,'independent_head_sha':'c'*40,'independent_artifact_id':60002,'independent_artifact_zip_sha256':'d'*64,'source_result_sha256':ssha,'independent_validation_sha256':isha}
+          (root/'provenance.json').write_text(json.dumps(provenance,indent=2,sort_keys=True)+'\n')
+          P='.github/workflows/layerb-16385-to-32769-canonical-scientific-v0-1.yml'
+          current={'id':7001,'path':P,'status':'in_progress','conclusion':None,'head_sha':'e'*40,'run_attempt':1}
+          unrelated={'id':9000,'path':'.github/workflows/unrelated.yml','status':'in_progress','conclusion':None,'head_sha':'f'*40,'run_attempt':1}
+          (root/'production_runs.json').write_text(json.dumps({'total_count':2,'workflow_runs':[current,unrelated]},indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Materialize exact resource authority bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/layerb_32769_resource_authority_materializer_v0_1.py \
+            --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_1.json \
+            --source-result artifacts/fixture/source.json --independent-validation artifacts/fixture/independent.json --provenance artifacts/fixture/provenance.json \
+            --out artifacts/out/resource_authority.json
+          test "$(jq -r .classification artifacts/out/resource_authority.json)" = 'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0'
+
+      - name: Generate exact first-run one-live guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/layerb_32769_one_live_guard_v0_1.py \
+            --runs-json artifacts/fixture/production_runs.json --contract docs/dsir4/contracts/LAYERB_32769_ONE_LIVE_GUARD_CONTRACT_V0_1.json \
+            --current-run-id 7001 --out artifacts/out/one_live_guard.json
+          test "$(jq -r .classification artifacts/out/one_live_guard.json)" = 'LAYERB_32769_ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS_PLUS_0_PLUS_0'
+
+      - name: Feed materializer bytes directly to exact one-run authorizer
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRE="$(sha256sum artifacts/out/resource_authority.json | awk '{print $1}')"
+          python3 ci/layerb_16385_to_32769_one_run_authorizer_v0_1.py \
+            --contract docs/dsir4/contracts/LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZATION_CONTRACT_V0_1.json \
+            --resource-authority artifacts/out/resource_authority.json --one-live-guard artifacts/out/one_live_guard.json \
+            --current-run-id 7001 --out artifacts/out/one_run_authorization.json
+          POST="$(sha256sum artifacts/out/resource_authority.json | awk '{print $1}')"
+          test "$PRE" = "$POST"
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          r=json.load(open('artifacts/out/resource_authority.json'))
+          a=json.load(open('artifacts/out/one_run_authorization.json'))
+          assert a['classification']=='LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZED_PLUS_0_PLUS_0'
+          assert a['execution_authorized'] is True and a['authorized_canonical_run_count']==1 and a['current_run_id']==7001 and a['errors']==[]
+          assert a['resource_authority_json_sha256']==hashlib.sha256(Path('artifacts/out/resource_authority.json').read_bytes()).hexdigest()
+          assert a['resource_authority_git_blob']==hashlib.sha1(b'blob '+str(Path('artifacts/out/resource_authority.json').stat().st_size).encode()+b'\0'+Path('artifacts/out/resource_authority.json').read_bytes()).hexdigest()
+          assert r['scientific_response_read'] is False and r['successor_execution_authorized'] is False
+          PY
+
+      - name: Emit exact interface audit receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          out={
+            'schema':'LAYERB_32769_RESOURCE_TO_ONE_RUN_AUTHORIZER_INTERFACE_SYNTHETIC_AUDIT_V0_1',
+            'classification':'LAYERB_32769_RESOURCE_TO_ONE_RUN_AUTHORIZER_INTERFACE_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','synthetic_only':True,
+            'materializer_output_consumed_without_transformation':True,'resource_authority_sha256':sha('artifacts/out/resource_authority.json'),
+            'one_live_guard_sha256':sha('artifacts/out/one_live_guard.json'),'one_run_authorization_sha256':sha('artifacts/out/one_run_authorization.json'),
+            'authorized_canonical_run_count_in_fixture':1,'actual_resource_authority_exists':False,'actual_one_live_guard_pass':False,'actual_one_run_authorization_exists':False,
+            'scientific_response_read':False,'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+          }
+          out['token']=out['classification']
+          Path('artifacts/out/interface_summary.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['classification'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-resource-to-authorizer-interface-synthetic-audit-v0-1
+          path: artifacts/out/
+          retention-days: 90
+
+  independent-verifier:
+    needs: resource-to-authorizer-interface
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-resource-to-authorizer-interface-synthetic-audit-v0-1
+          path: consumed
+      - name: Independently verify exact resource-to-authorizer interface
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          s=json.load(open('consumed/interface_summary.json')); r=json.load(open('consumed/resource_authority.json')); a=json.load(open('consumed/one_run_authorization.json'))
+          assert s['classification']=='LAYERB_32769_RESOURCE_TO_ONE_RUN_AUTHORIZER_INTERFACE_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert s['materializer_output_consumed_without_transformation'] is True
+          assert s['resource_authority_sha256']==sha('consumed/resource_authority.json')
+          assert s['one_live_guard_sha256']==sha('consumed/one_live_guard.json')
+          assert s['one_run_authorization_sha256']==sha('consumed/one_run_authorization.json')
+          assert r['classification']=='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0'
+          assert a['classification']=='LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZED_PLUS_0_PLUS_0' and a['authorized_canonical_run_count']==1
+          assert s['actual_resource_authority_exists'] is False and s['actual_one_run_authorization_exists'] is False and s['scientific_execution_authorized'] is False
+          print('INDEPENDENT_RESOURCE_TO_AUTHORIZER_INTERFACE_PASS')
+          PY
