@@ -1,0 +1,45 @@
+{
+  "schema": "LAYERB_32769_HIGH_MEMORY_RUNNER_ISOLATION_CONTRACT_V0_1",
+  "status": "PROSPECTIVE_NONTRIGGERING",
+  "scope": "DSIR Article III Layer-B 32769 resource/lifecycle preflight only",
+  "required_custom_label": "dsir-32769-highmem",
+  "runner_configuration_requirement": {
+    "no_default_labels": true,
+    "reason": "The stale superseded 16385 job 34550495778 / 103112190909 is queued for generic [self-hosted, Linux, X64]. A qualifying 32769 runner must therefore not expose those default labels and must be routable only by the dedicated custom label.",
+    "generic_self_hosted_label_forbidden": true,
+    "generic_linux_label_forbidden": true,
+    "generic_x64_label_forbidden": true
+  },
+  "workflow_routing_requirement": {
+    "runs_on_labels": [
+      "dsir-32769-highmem"
+    ],
+    "generic_self_hosted_labels_in_runs_on_forbidden": true
+  },
+  "memory_ordering_guard": {
+    "candidate_memtotal_kb_must_be_strictly_greater_than": 16372440,
+    "numeric_32769_memory_requirement_extrapolated": false,
+    "hosted_topology_authority_git_blob": "ea97e50650a85d70356d8529673396090980130a"
+  },
+  "resource_science_separation": {
+    "scientific_transfer_values_read": false,
+    "scientific_response_read": false,
+    "scientific_response_computed": false,
+    "convergence_metric_computed": false,
+    "convergence_classification_created": false
+  },
+  "required_lifecycle": {
+    "max_live_instances": 1,
+    "final_live_instances": 0
+  },
+  "stale_superseded_job": {
+    "run_id": 34550495778,
+    "job_id": 103112190909,
+    "must_not_receive_runner_ownership": true,
+    "scientific_authority": false
+  },
+  "scientific_execution_authorized": false,
+  "high_memory_resource_lifecycle_preflight_pass": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false
+}
