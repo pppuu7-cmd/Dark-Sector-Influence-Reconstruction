@@ -37,6 +37,7 @@
     "resource_authority_candidate.json",
     "candidate_receipt.json"
   ],
+  "promotion_review_requires_real_non_synthetic_candidate": true,
   "candidate_receipt_must_bind_candidate_sha256": true,
   "candidate_receipt_must_bind_provenance_sha256": true,
   "candidate_artifact_api_digest_must_match_downloaded_zip_when_present": true,
