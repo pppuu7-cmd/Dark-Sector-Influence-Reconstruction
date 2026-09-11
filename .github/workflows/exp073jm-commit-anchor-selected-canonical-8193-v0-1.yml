@@ -1,0 +1,118 @@
+name: exp073jm-commit-anchor-selected-canonical-8193-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073jm-commit-anchor-selected-canonical-8193-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  SOURCE_ARTIFACT_ID: '10178532354'
+  SOURCE_ZIP_SHA256: '7461fccd210f8b6214880f53d64e23c5fe3b3915d33dde51582a2838ecf217e5'
+  SOURCE_RESULT_SHA256: 'dbd7e70f2b27bd9780a806232b1930fff6819bc8c0c3aa3ff8b01eadb274167d'
+  CANONICAL_TEXT_SHA256: '90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6'
+  CANONICAL_NODE_SHA256: '6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515'
+  CANONICAL_PATH: docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt
+  AUTHORITY_PATH: docs/dsir4/authority/EXP073JM_RESPONSE_BLIND_CANONICAL_FINE_8193_V0_1.json
+
+jobs:
+  commit-canonical:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Require target paths absent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e "$CANONICAL_PATH"
+          test ! -e "$AUTHORITY_PATH"
+      - name: Download and independently revalidate aggregate artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p source
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT_ID}/zip" > source/source.zip
+          test "$(sha256sum source/source.zip | awk '{print $1}')" = "$SOURCE_ZIP_SHA256"
+          unzip -q source/source.zip -d source/unpacked
+          test "$(sha256sum source/unpacked/result.json | awk '{print $1}')" = "$SOURCE_RESULT_SHA256"
+          test "$(sha256sum source/unpacked/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_CANDIDATE_V0_2.txt | awk '{print $1}')" = "$CANONICAL_TEXT_SHA256"
+          python3 - <<'PY'
+          import hashlib,json,struct
+          from pathlib import Path
+          d=json.load(open('source/unpacked/result.json'))
+          assert d['classification']=='CANONICAL_8193_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0'
+          assert d['scientific_response_read'] is False and d['class_solver_invoked'] is False and d['branch_activated'] is False
+          assert d['replica_count']==8 and d['minimum_anchor_quorum']==4 and d['anchor_match_count']==6
+          assert d['anchor_match_replicas']==[2,4,5,6,7,8]
+          assert d['host_variant_count']==2 and d['host_variant_replicas']==[1,3]
+          assert d['anchor_4097_node_sha256']=='f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'
+          assert d['candidate_8193_node_sha256']=='6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515'
+          assert d['candidate_8193_u64hex_sha256']=='90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6'
+          lines=Path('source/unpacked/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_CANDIDATE_V0_2.txt').read_text().splitlines()
+          assert len(lines)==8193
+          raw=b''.join(struct.pack('<Q',int(x,16)) for x in lines)
+          assert hashlib.sha256(raw).hexdigest()=='6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515'
+          PY
+      - name: Materialize immutable canonical file and authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$(dirname "$CANONICAL_PATH")" "$(dirname "$AUTHORITY_PATH")"
+          cp source/unpacked/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_CANDIDATE_V0_2.txt "$CANONICAL_PATH"
+          cat > "$AUTHORITY_PATH" <<'JSON'
+          {
+            "Wm_S3_opened": false,
+            "anchor_4097_node_sha256": "f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb",
+            "anchor_4097_u64hex_sha256": "290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7",
+            "anchor_match_count": 6,
+            "anchor_match_replicas": [2, 4, 5, 6, 7, 8],
+            "article3_repository_readiness_percent": 68,
+            "artifact_id": 10178532354,
+            "artifact_verified_independently": true,
+            "artifact_zip_sha256": "7461fccd210f8b6214880f53d64e23c5fe3b3915d33dde51582a2838ecf217e5",
+            "base_n": 8192,
+            "branch_activated": false,
+            "canonical_file": "docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt",
+            "class_solver_invoked": false,
+            "classification": "CANONICAL_8193_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0",
+            "effect": "+0/+0",
+            "funnel_freeze_readiness_percent": 67,
+            "guard_counts": [0, 1],
+            "host_variant_anchor_node_sha256": "80d5a13c9fa32e77a248b5a835ecf210b9e6afdda27decaffba27b829c261a92",
+            "host_variant_count": 2,
+            "host_variant_replicas": [1, 3],
+            "job_id": 103094331612,
+            "minimum_anchor_quorum": 4,
+            "node_payload_sha256": "6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515",
+            "replica_count": 8,
+            "requested_node_count": 8193,
+            "result_json_sha256": "dbd7e70f2b27bd9780a806232b1930fff6819bc8c0c3aa3ff8b01eadb274167d",
+            "run_id": 34544561155,
+            "schema": "EXP073JM_RESPONSE_BLIND_CANONICAL_FINE_8193_AUTHORITY_V0_1",
+            "scientific_authority_created": false,
+            "scientific_response_read": false,
+            "token": "CANONICAL_8193_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0",
+            "u64hex_sha256": "90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6",
+            "workflow_head_sha": "0050b0cdf67735319334786899912ffa6e67cbda"
+          }
+          JSON
+          test "$(sha256sum "$CANONICAL_PATH" | awk '{print $1}')" = "$CANONICAL_TEXT_SHA256"
+      - name: Commit only canonical materialization
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'dsir-automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add "$CANONICAL_PATH" "$AUTHORITY_PATH"
+          git diff --cached --quiet && { echo 'nothing to commit'; exit 31; }
+          git commit -m 'Materialize response-blind canonical JM 8193 lattice'
+          git push origin HEAD:main
