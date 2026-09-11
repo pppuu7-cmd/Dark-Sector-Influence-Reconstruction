@@ -49,8 +49,10 @@ Durable combined authority: `docs/dsir4/authority/LAYERB_16385_REPRO_AND_NOISE_D
 ### Diagnostic interpretation boundary
 The sampled cross-VM variability is many orders of magnitude too small by itself to explain the historical ~1e-2 adjacent-grid plateau, while same-VM repeatability is exact. Ordinary VM nondeterminism is therefore strongly disfavored as the dominant mechanism. Finite-difference amplification can still magnify larger structured grid-to-grid/raw-solver discrepancies if such discrepancies exist. This interpretation is response-blind and cannot change the frozen classifier.
 
-## Current independent compute lanes
-At the latest live reconciliation, the three diagnostic runs above are terminal and consumed. The singular authoritative science run `34555022975 / 103125734913` is the only useful active heavy lane. No self-hosted/home runner ownership is required. Additional work is not launched merely to occupy runners; new independent lanes must have a prospective non-biasing purpose.
+## Current compute ownership
+- Useful active hosted lane: exactly one, authoritative science run/job `34555022975 / 103125734913`.
+- Stale queued self-hosted run/job `34550495778 / 103112190909` (`layerb-post-jm-16385-selfhosted-resource-pilot-v0-1`, head `0eb93a45abe1d3431a1c6aa814108cb96aef5a28`) remains queued from the superseded resource-pilot stage. It must **not** receive home-runner ownership because canonical-16385 resource feasibility is already durably closed by hosted dual PASS run `34552645551`. Do not start a self-hosted runner for this queued job and do not treat it as current authority.
+- Cross-VM, intra-VM and noise-budget diagnostic runs are terminal and consumed. Additional work is not launched merely to occupy runners; new independent lanes require a prospective non-biasing purpose.
 
 ## Exact transitions
 On independently validated CONVERGED: use only the prospectively frozen/static-audited post-16385 fresh closure adapter, then one fresh closure computation with unchanged science.
