@@ -1,0 +1,47 @@
+{
+  "schema": "POST_16385_OUTCOME_RESPONSE_BLIND_PARALLEL_AUDIT_AUTHORITY_V0_1",
+  "classification": "POST_16385_OUTCOME_RESPONSE_BLIND_PARALLEL_AUDIT_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "artifact_verified_independently": true,
+  "run_id": 34555255416,
+  "workflow_head_sha": "4dfb16dc1ceacb7c67acb6ca25f9d36101813701",
+  "converged_compatibility": {
+    "job_id": 103126463908,
+    "artifact_id": 10182293436,
+    "artifact_zip_sha256": "cd4dac764af5943db447163d1101f4fc41983c83784780d1a4ec8842f5559f0e",
+    "result_json_sha256": "dc3f1e47f633676cc99aa3824da35945f60dd0382659605103f1b74f5c48072f",
+    "classification": "POST_16385_CONVERGED_CLOSURE_REQUIRES_PROSPECTIVE_ADAPTER_PLUS_0_PLUS_0",
+    "check_count": 11,
+    "required_adapter_changes": [
+      "activation token must bind to COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0",
+      "coarse/fine canonical grids must move 4097/8193 to 8193/16385",
+      "capacity/parser envelope must move 9216/262144 to 18432/524288",
+      "proven history-suppression execution patch must be required"
+    ]
+  },
+  "not_converged_successor": {
+    "job_id": 103126463746,
+    "artifact_id": 10182293503,
+    "artifact_zip_sha256": "e0c8c1ba4dbaf0c644c575c50b5ee2eef75bce9d3d593eaa8183990611c5ad7b",
+    "result_json_sha256": "dd78b20b0cf75905a7d2a3721fbfacab4c91a06fd6f7f11a2ba5a954bbab07dc",
+    "classification": "NO_PROSPECTIVELY_FROZEN_32769_SUCCESSOR_PLUS_0_PLUS_0",
+    "matching_files": [],
+    "successor_science_authorized": false
+  },
+  "provenance_chain": {
+    "job_id": 103126463905,
+    "artifact_id": 10182294358,
+    "artifact_zip_sha256": "ce34eafdd72c48c5a7c442326f31284ab42d14c2f3b9f0ec2fad2819aa9d7830",
+    "result_json_sha256": "d5a8436ceaab37fcc7144953ea328f0f67036d344c29512714ca9a3f8833bb66",
+    "classification": "POST_16385_PRE_RESULT_PROVENANCE_CHAIN_PASS_PLUS_0_PLUS_0",
+    "check_count": 6
+  },
+  "current_scientific_result_read": false,
+  "class_solver_invoked": false,
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "article3_repository_readiness_percent": 68,
+  "funnel_freeze_readiness_percent": 67,
+  "token": "POST_16385_OUTCOME_RESPONSE_BLIND_PARALLEL_AUDIT_PASS_PLUS_0_PLUS_0"
+}
