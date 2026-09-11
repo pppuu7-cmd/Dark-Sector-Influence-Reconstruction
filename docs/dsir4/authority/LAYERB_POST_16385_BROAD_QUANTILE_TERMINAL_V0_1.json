@@ -19,7 +19,7 @@
   "max_cancellation_amplification_indicator": 3442722.6399590056,
   "full_traversal_plateau_reference": 0.012484060640679777,
   "response_to_full_plateau_ratio": 0.01302869463596828,
-  "full_plateau_to_broad_response_ratio": 76.75375593741427,
+  "full_plateau_to_broad_response_ratio": 76.75366012795348,
   "raw_to_full_plateau_ratio": 1.2775740102541907e-8,
   "coarse_node_sha256": "6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515",
   "fine_node_sha256": "3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975",
