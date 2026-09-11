@@ -1,0 +1,29 @@
+{
+  "schema": "LAYERB_32769_ONE_LIVE_GUARD_CONTRACT_V0_2",
+  "status": "PROSPECTIVE_FROZEN_INITIAL_CANONICAL_RUN_ONLY",
+  "scope": "DSIR Article III Layer-B parser-corrected canonical 16385-to-32769 production anti-duplication guard",
+  "production_workflow_path": ".github/workflows/layerb-16385-to-32769-canonical-scientific-v0-2.yml",
+  "guard_classification_pass": "LAYERB_32769_ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS_PLUS_0_PLUS_0",
+  "guard_classification_fail": "LAYERB_32769_ONE_LIVE_ANTI_DUPLICATION_GUARD_FAIL_PLUS_0_PLUS_0",
+  "initial_run_rule": {
+    "exclude_current_run_id": true,
+    "allowed_other_matching_workflow_runs": 0,
+    "matching_statuses_considered": ["queued","in_progress","completed"],
+    "any_prior_matching_production_run_blocks_initial_authorization": true,
+    "reason": "First parser-corrected canonical scientific run only; any retry requires a separately frozen retry contract."
+  },
+  "bound_scientific_identity": {
+    "parent_authority_git_blob": "7958e1f44c0224e1828f89b1472aa33226c61886",
+    "parent_classification": "COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0",
+    "canonical_32769_node_sha256": "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599",
+    "canonical_32769_text_sha256": "7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2",
+    "class_build_authority_git_blob": "b5cd7304c110962dc3baef8d04ef67d5a8042e5f",
+    "parser_capacity": 1048576,
+    "terminal_contract_git_blob": "c2f4ff4bb6d3555f78d80503ac5bc73c15ebc4d5"
+  },
+  "required_pass_receipt_fields": ["classification","guard_pass","current_run_id","production_workflow_path","matching_other_live_authoritative_runs","matching_other_all_status_runs","parent_authority_git_blob","canonical_32769_node_sha256","class_build_authority_git_blob","queried_run_ids"],
+  "one_live_anti_duplication_guard_pass": false,
+  "scientific_execution_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false
+}
