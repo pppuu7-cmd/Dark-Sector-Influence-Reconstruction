@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
 import re
 from pathlib import Path
 
@@ -22,6 +21,7 @@ EXPECTED_CAPACITY_PRE_SHA = "c83749338e435d85caf8f0cfb713aa9a77782a91072de936331
 EXPECTED_CAPACITY_POST_SHA = "e6221887e19c0a576f77bbfcb2a030ff9cf8d84c62a2193ce52b8e3b541a8f0a"
 EXPECTED_PARSER_PRE_SHA = "2c17690a5549e12c8fac485281ca214a20c376e1e3beba714af0e1b84cdbb0eb"
 EXPECTED_PARSER_POST_SHA = "e35d53f58e0c00fa66c12d92903eb46a0862beca25167a140f0ad5ae236c25d2"
+EXPECTED_ROLES = ["reference", "alpha_minus", "beta_plus", "beta_minus"]
 
 
 def sha256(path: Path) -> str:
@@ -38,6 +38,11 @@ def parse_key_values(path: Path) -> dict[str, str]:
 
 
 def parse_telemetry(path: Path) -> dict:
+    """Parse both the already frozen V0.2 telemetry spelling
+    (`MemTotal:32768000=kB`) and the cleaner future spelling
+    (`MemTotal=32768000kB`). This avoids changing scientific/resource
+    semantics merely because a receipt delimiter is awkward.
+    """
     text = path.read_text(errors="replace")
     samples = []
     for line in text.splitlines():
@@ -45,7 +50,9 @@ def parse_telemetry(path: Path) -> dict:
             continue
         vals = {}
         for key in ("MemTotal", "MemAvailable", "SwapTotal", "SwapFree"):
-            m = re.search(rf"{key}:=(\d+)kB", line)
+            m = re.search(rf"{key}=(\d+)kB", line)
+            if m is None:
+                m = re.search(rf"{key}:(\d+)=kB", line)
             if m:
                 vals[key] = int(m.group(1))
         if vals:
@@ -135,7 +142,7 @@ def main() -> int:
         receipts = []
     else:
         roles = [x.get("role") for x in receipts]
-        if roles != ["reference", "alpha_plus", "alpha_minus", "beta_plus"]:
+        if roles != EXPECTED_ROLES:
             errors.append("role_order")
         for x in receipts:
             if x.get("compute_completed") is not True:
