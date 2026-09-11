@@ -1,0 +1,52 @@
+name: layerb-post-16385-exact-hotspot-terminal-consumer-v0-1
+on:
+  workflow_run:
+    workflows: ['layerb-post-16385-exact-response-atom-hotspot-v0-1']
+    types: [completed]
+permissions:
+  actions: read
+  contents: read
+jobs:
+  consume:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_sha == '5f202de811c07c020100055a63391b7225358670' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 0d608bc21a5f336b6f4ed0d9965633b5fb2c21b0
+      - name: Verify frozen validator identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_post_16385_exact_hotspot_terminal_validator_v0_1.py)" = 'af90fc027ab25deab640cf88ca6ed07a70423f25'
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-exact-response-atom-hotspot-v0-1
+          path: source
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Validate terminal hotspot artifact without launching science
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python ci/layerb_post_16385_exact_hotspot_terminal_validator_v0_1.py \
+            --result source/result.json --capacity source/capacity_patch.json --history source/history_patch.json \
+            --out artifacts/validation.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/validation.json'))
+          assert d['classification']=='POST_16385_EXACT_HOTSPOT_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0',d
+          assert d['structural_valid'] is True and d['exact_hotspot_provenance_reproduced'] is True,d
+          assert d['relative_reproduction_error']<=1e-12,d
+          assert d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False,d
+          assert d['scientific_authority_created'] is False,d
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-exact-hotspot-terminal-consumer-v0-1
+          path: artifacts/validation.json
+          if-no-files-found: error
+          retention-days: 90
