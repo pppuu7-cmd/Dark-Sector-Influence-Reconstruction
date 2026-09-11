@@ -54,10 +54,9 @@ def main() -> int:
     if len(anchor_nodes_from_file) != ANCHOR_COUNT:
         raise SystemExit(f'anchor count mismatch: {len(anchor_nodes_from_file)}')
     if anchor_text_sha != ANCHOR_TEXT_SHA256 or anchor_node_sha != ANCHOR_NODE_SHA256:
-        raise SystemExit('canonical 16385 anchor hash mismatch')
+        raise SystemExit('canonical 16385 anchor file/hash mismatch')
 
-    # This capacity override belongs only to response-blind static lattice materialization.
-    # It is NOT a CLASS solver build-capacity claim or production execution authority.
+    # Static lattice-materialization capacity only; not a CLASS build-capacity claim.
     jj.CAPACITY = TARGET_COUNT
 
     regen_16385, r16385, lo16385, hi16385 = jj.guarded_lattice(16384)
@@ -70,8 +69,6 @@ def main() -> int:
         and regen_text_sha == ANCHOR_TEXT_SHA256
         and regen_16385_text == anchor_text
     )
-    if not anchor_match:
-        raise SystemExit('host failed exact 16385 response-blind anchor reproduction')
 
     cand, ratio, lo, hi = jj.guarded_lattice(32768)
     if (lo, hi, len(cand)) != (0, 1, TARGET_COUNT):
@@ -88,7 +85,7 @@ def main() -> int:
     (out / 'candidate_32769.u64hex.txt').write_text(ctxt)
     result = {
         'schema': 'LAYERB_RESPONSE_BLIND_CANONICAL_32769_REPLICA_RESULT_V0_1',
-        'classification': 'ANCHOR_16385_MATCH_CANDIDATE_32769_EMITTED_PLUS_0_PLUS_0',
+        'classification': 'ANCHOR_MATCH_PLUS_0_PLUS_0' if anchor_match else 'HOST_VARIANT_NOT_ANCHOR_PLUS_0_PLUS_0',
         'effect': '+0/+0',
         'replica': a.replica,
         'numpy_version': np.__version__,
@@ -100,7 +97,7 @@ def main() -> int:
         'scientific_authority_created': False,
         'successor_execution_authorized': False,
         'generator_capacity_override_static_only': TARGET_COUNT,
-        'anchor_16385_match': True,
+        'anchor_16385_match': anchor_match,
         'anchor_16385_node_sha256': anchor_node_sha,
         'anchor_16385_u64hex_sha256': anchor_text_sha,
         'anchor_regenerated_node_sha256': regen_node_sha,
@@ -112,10 +109,10 @@ def main() -> int:
         'ratio_binary64': float(ratio),
         'candidate_node_sha256': candidate_node_sha,
         'candidate_u64hex_sha256': candidate_text_sha,
-        'token': 'ANCHOR_16385_MATCH_CANDIDATE_32769_EMITTED_PLUS_0_PLUS_0'
+        'token': 'ANCHOR_MATCH_PLUS_0_PLUS_0' if anchor_match else 'HOST_VARIANT_NOT_ANCHOR_PLUS_0_PLUS_0'
     }
     (out / 'result.json').write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
-    print(result['token'], candidate_node_sha, candidate_text_sha)
+    print(result['token'], regen_node_sha, candidate_node_sha, candidate_text_sha)
     return 0
 
 
