@@ -1,0 +1,99 @@
+name: layerb-32769-isolated-runner-contract-static-audit-v0-2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-isolated-runner-contract-static-audit-v0-2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-isolation-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify dedicated-label/no-default-label routing contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_HIGH_MEMORY_RUNNER_ISOLATION_CONTRACT_V0_1.json)" = 'd9d910d89889f6d3a27461a73c3dd72c2a9d2096'
+          test "$(git hash-object .github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2.yml)" = '8ec0027d6fb45f3f12aa5f410de62093a7144924'
+          test "$(git hash-object ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_1.py)" = '11c7d9a1f95d7c1c394dd520f1c4340a4ce397b4'
+          python3 - <<'PY'
+          import ast,json,re
+          from pathlib import Path
+          c=json.load(open('docs/dsir4/contracts/LAYERB_32769_HIGH_MEMORY_RUNNER_ISOLATION_CONTRACT_V0_1.json'))
+          wf=Path('.github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2.yml').read_text()
+          py=Path('ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_1.py').read_text()
+
+          assert c['required_custom_label']=='dsir-32769-highmem'
+          assert c['runner_configuration_requirement']['no_default_labels'] is True
+          assert c['runner_configuration_requirement']['generic_self_hosted_label_forbidden'] is True
+          assert c['runner_configuration_requirement']['generic_linux_label_forbidden'] is True
+          assert c['runner_configuration_requirement']['generic_x64_label_forbidden'] is True
+          assert c['workflow_routing_requirement']['runs_on_labels']==['dsir-32769-highmem']
+          assert c['memory_ordering_guard']['candidate_memtotal_kb_must_be_strictly_greater_than']==16372440
+
+          # V0.2 is dispatch-only and routes only to the dedicated custom label.
+          assert 'workflow_dispatch:' in wf
+          assert '\n  push:' not in wf and '\n  schedule:' not in wf
+          m=re.search(r'^\s*runs-on:\s*\[([^\]]+)\]\s*$',wf,re.M)
+          assert m,m
+          labels=[x.strip().strip("'\"") for x in m.group(1).split(',')]
+          assert labels==['dsir-32769-highmem'],labels
+          lowered={x.lower() for x in labels}
+          assert 'self-hosted' not in lowered and 'linux' not in lowered and 'x64' not in lowered
+          assert '--no-default-labels' in wf
+          assert 'actions/jobs/103112190909' in wf
+          assert "if status=='in_progress'" in wf
+          assert 'MEMTOTAL_KB" -le "$HOSTED_EXHAUSTED_MEMTOTAL_KB' in wf
+
+          tree=ast.parse(py)
+          attrs=[]
+          calls=[]
+          for n in ast.walk(tree):
+              if isinstance(n,ast.Call):
+                  calls.append(n)
+                  if isinstance(n.func,ast.Attribute): attrs.append(n.func.attr)
+                  elif isinstance(n.func,ast.Name): attrs.append(n.func.id)
+          assert 'get_transfer' not in attrs and 'evaluate' not in attrs
+          compute=[n for n in calls if isinstance(n.func,ast.Attribute) and n.func.attr=='compute']
+          assert len(compute)==1
+          assert 'scientific_response_read": False' in py
+          assert 'convergence_metric_computed": False' in py
+
+          out={
+            'schema':'LAYERB_32769_ISOLATED_RUNNER_CONTRACT_STATIC_AUDIT_V0_2',
+            'classification':'LAYERB_32769_ISOLATED_RUNNER_CONTRACT_STATIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'dispatch_only':True,
+            'dedicated_custom_label':'dsir-32769-highmem',
+            'workflow_generic_default_labels_absent':True,
+            'runner_no_default_labels_required':True,
+            'stale_generic_job_id':103112190909,
+            'stale_job_in_progress_fail_closed':True,
+            'higher_memory_ordering_guard_kb':16372440,
+            'numeric_32769_memory_requirement_extrapolated':False,
+            'scientific_transfer_values_read':False,
+            'scientific_response_read':False,
+            'convergence_metric_computed':False,
+            'scientific_execution_authorized':False,
+            'high_memory_resource_lifecycle_preflight_pass':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+          }
+          out['token']=out['classification']
+          Path('artifacts/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-isolated-runner-contract-static-audit-v0-2
+          path: artifacts/result.json
+          if-no-files-found: error
+          retention-days: 90
