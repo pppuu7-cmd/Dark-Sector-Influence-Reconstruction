@@ -1,0 +1,249 @@
+name: layerb-32769-hosted-single-role-resource-probe-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-hosted-single-role-resource-probe-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  PROBE_BLOB: 'e5ccc7ef8a6b42209497805e5a9b7de900a17c76'
+  PARENT_BLOB: '11c7d9a1f95d7c1c394dd520f1c4340a4ce397b4'
+  JO_BLOB: 'c975a964805919cd61e3c028305ad3945773377f'
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+  CANON_AUTH_BLOB: 'dddf7b0f8596506b9e792186d8ebaf14ff789f4c'
+  CANON_FILE_BLOB: '7b67706156d7d2016ecba0628210fb08f6f05616'
+  BUILD_AUTH_BLOB: 'ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d'
+  BUILD_COMPAT_BLOB: 'b7fe663154519b605699c1fd622d0079a5f76772'
+  PUBLIC_EXPOSURE_BLOB: 'e5afe14eccf531d3e5b9de09b19d34df431a08b9'
+
+jobs:
+  single-role-probe:
+    strategy:
+      fail-fast: false
+      matrix:
+        role: [reference, alpha_minus, beta_plus, beta_minus]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enforce exact frozen identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_32769_hosted_single_role_resource_probe_v0_1.py)" = "$PROBE_BLOB"
+          test "$(git hash-object ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_1.py)" = "$PARENT_BLOB"
+          test "$(git hash-object ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py)" = "$JO_BLOB"
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json)" = "$CANON_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt)" = "$CANON_FILE_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_1.json)" = "$BUILD_AUTH_BLOB"
+          test "$(git hash-object scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py)" = "$BUILD_COMPAT_BLOB"
+          test "$(git hash-object scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py)" = "$PUBLIC_EXPOSURE_BLOB"
+
+      - name: Prepare exact CLASS-IV 32769 stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v python3; command -v gcc; command -v g++; command -v gfortran; command -v make
+          pkg-config --exists gsl
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q "$CLASS_COMMIT"
+          test "$(git -C external/class_iv rev-parse HEAD)" = "$CLASS_COMMIT"
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('external/class_iv/include/perturbations.h'); b=p.read_bytes(); s=b.decode(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; new='#define _MAX_NUMBER_OF_K_FILES_ 32769'; assert s.count(old)==1
+          pre=hashlib.sha256(b).hexdigest(); p.write_text(s.replace(old,new,1)); post=hashlib.sha256(p.read_bytes()).hexdigest()
+          q=Path('external/class_iv/include/parser.h'); qb=q.read_bytes(); qs=qb.decode(); qold='#define _ARGUMENT_LENGTH_MAX_ 1024'; qnew='#define _ARGUMENT_LENGTH_MAX_ 524288'; assert qs.count(qold)==1
+          qpre=hashlib.sha256(qb).hexdigest(); q.write_text(qs.replace(qold,qnew,1)); qpost=hashlib.sha256(q.read_bytes()).hexdigest()
+          rec={'schema':'LAYERB_32769_HOSTED_SINGLE_ROLE_CAPACITY_PATCH_V0_1','source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','old_capacity':30,'new_capacity':32769,'replacement_count':1,'pre_sha256':pre,'post_sha256':post,'parser_old_argument_capacity':1024,'parser_new_argument_capacity':524288,'parser_replacement_count':1,'parser_pre_sha256':qpre,'parser_post_sha256':qpost}
+          Path('capacity_patch.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+
+      - name: Run response-blind single-role probe with telemetry
+        id: probe
+        shell: bash
+        env:
+          ROLE: ${{ matrix.role }}
+        run: |
+          set -u
+          mkdir -p evidence
+          grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree):' /proc/meminfo > evidence/host_before.txt
+          nproc > evidence/cpu_count.txt
+          (
+            while true; do
+              printf 'TELEMETRY ts=%s ' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> evidence/telemetry.log
+              awk '/^(MemTotal|MemAvailable|SwapTotal|SwapFree):/ {printf "%s%s=%s%s ",$1,$2,$3,$4} END {print ""}' /proc/meminfo >> evidence/telemetry.log
+              ps -eo pid,ppid,rss,vsz,%cpu,%mem,etime,comm --sort=-rss | head -n 8 >> evidence/telemetry.log || true
+              sleep 5
+            done
+          ) &
+          MON_PID=$!
+          cleanup_mon() { kill "$MON_PID" 2>/dev/null || true; wait "$MON_PID" 2>/dev/null || true; }
+          trap cleanup_mon EXIT INT TERM
+          set +e
+          PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}" .venv/bin/python ci/layerb_32769_hosted_single_role_resource_probe_v0_1.py \
+            --role "$ROLE" \
+            --canonical-authority docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json \
+            --build-authority docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_1.json \
+            --fine docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt \
+            --parent-script ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_1.py \
+            --jo-script ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --out evidence/result.json
+          rc=$?
+          set -e
+          cleanup_mon; trap - EXIT INT TERM
+          grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree):' /proc/meminfo > evidence/host_after.txt
+          echo "$rc" > evidence/process_rc.txt
+          python3 - "$ROLE" "$rc" <<'PY'
+          import json,sys
+          from pathlib import Path
+          role=sys.argv[1]; rc=int(sys.argv[2]); p=Path('evidence/result.json')
+          result=json.loads(p.read_text()) if p.is_file() else None
+          receipt={'schema':'LAYERB_32769_HOSTED_SINGLE_ROLE_WRAPPER_RECEIPT_V0_1','role':role,'process_rc':rc,'result_present':result is not None,'source_classification':None if result is None else result.get('classification'),'compute_completed':False if result is None else bool(result.get('compute_completed')),'effect':'+0/+0','scientific_transfer_values_read':False,'scientific_response_read':False,'scientific_response_computed':False,'scientific_authority_created':False,'high_memory_resource_lifecycle_preflight_pass_created':False,'successor_execution_authorized':False}
+          receipt['classification']='LAYERB_32769_HOSTED_SINGLE_ROLE_WRAPPER_COMPLETED_PLUS_0_PLUS_0'
+          receipt['token']=receipt['classification']
+          Path('evidence/wrapper_receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-32769-hosted-single-role-${{ matrix.role }}-v0-1
+          path: |
+            evidence/
+            capacity_patch.json
+          if-no-files-found: warn
+          retention-days: 90
+
+  v135-chain-drift-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify current V135 chain remains interface-compatible
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p drift
+          python3 - <<'PY'
+          import hashlib,json,re
+          from pathlib import Path
+          def blob(path):
+              b=Path(path).read_bytes(); return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          checks={
+            'source_workflow': blob('.github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2.yml')=='3297a556299daf75e4c7ff15f8e56586e45ebdf0',
+            'independent_consumer': blob('ci/layerb_32769_resource_lifecycle_independent_consumer_v0_2.py')=='e08f15394ba3b16222b62d061a621e24f3a857ec',
+            'independent_event_chain': blob('.github/workflows/layerb-32769-resource-lifecycle-independent-consumer-v0-1.yml')=='a68148e6826cda223368f8a624014a873cd1dc44',
+            'packager': blob('ci/layerb_32769_resource_authority_candidate_packager_v0_1.py')=='c92ffc97c04c27ff6cdbf05b7f84527884848f40',
+            'materializer': blob('ci/layerb_32769_resource_authority_materializer_v0_1.py')=='8000bd563eab5744ad8f7e2af36ca19721566922',
+            'production_engine': blob('ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py')=='5ae2068d65dd45e0813c75fb795e55aa1bda1d5e',
+            'production_workflow': blob('.github/workflows/layerb-16385-to-32769-canonical-scientific-v0-1.yml')=='765abe3f6ec0c47392328678fffd5417f2ae4b43',
+          }
+          p=Path('ci/layerb_32769_resource_authority_candidate_packager_v0_1.py').read_text()
+          checks['packager_not_schema_locked_to_v01']=('LAYERB_32769_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_V0_1' not in p)
+          checks['packager_classification_binding']=('independent_validation.get("classification")' in p and 'independent_validation.get("valid") is not True' in p)
+          w=Path('.github/workflows/layerb-32769-resource-authority-candidate-packaging-v0-1.yml').read_text()
+          checks['packaging_chain_name_retained']=("INDEPENDENT_WORKFLOW_NAME: 'layerb-32769-resource-lifecycle-independent-consumer-v0-1'" in w)
+          out={'schema':'LAYERB_32769_V135_CHAIN_DRIFT_AUDIT_V0_1','classification':'LAYERB_32769_V135_CHAIN_DRIFT_AUDIT_PASS_PLUS_0_PLUS_0' if all(checks.values()) else 'LAYERB_32769_V135_CHAIN_DRIFT_AUDIT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'all_pass':all(checks.values()),'scientific_execution_authorized':False,'scientific_response_read':False,'high_memory_resource_lifecycle_preflight_pass_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          out['token']=out['classification']; Path('drift/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          assert out['all_pass'],checks
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-v135-chain-drift-audit-v0-1
+          path: drift/result.json
+          retention-days: 90
+
+  aggregate:
+    needs: [single-role-probe]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-32769-hosted-single-role-*-v0-1
+          path: roles
+      - name: Aggregate all four role resource receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          roles=['reference','alpha_minus','beta_plus','beta_minus']
+          rows=[]
+          for role in roles:
+              d=Path('roles')/f'layerb-32769-hosted-single-role-{role}-v0-1'
+              w=json.load(open(d/'evidence/wrapper_receipt.json'))
+              p=d/'evidence/result.json'; r=json.load(open(p)) if p.is_file() else None
+              tele=(d/'evidence/telemetry.log').read_text(errors='replace') if (d/'evidence/telemetry.log').is_file() else ''
+              rows.append({'role':role,'process_rc':w['process_rc'],'result_present':w['result_present'],'source_classification':w['source_classification'],'compute_completed':w['compute_completed'],'ru_maxrss_kb_after_compute':None if r is None else r.get('ru_maxrss_kb_after_compute'),'result_sha256':None if r is None else hashlib.sha256(p.read_bytes()).hexdigest(),'telemetry_sha256':hashlib.sha256(tele.encode()).hexdigest() if tele else None})
+          completed=[x['role'] for x in rows if x['compute_completed']]
+          out={'schema':'LAYERB_32769_HOSTED_SINGLE_ROLE_RESOURCE_AGGREGATE_V0_1','classification':'LAYERB_32769_ALL_HOSTED_SINGLE_ROLES_COMPUTE_PASS_PLUS_0_PLUS_0' if len(completed)==4 else 'LAYERB_32769_ONE_OR_MORE_HOSTED_SINGLE_ROLES_RESOURCE_LIMIT_PLUS_0_PLUS_0','effect':'+0/+0','roles':rows,'completed_roles':completed,'completed_role_count':len(completed),'all_four_single_role_compute_completed':len(completed)==4,'cross_role_scientific_combination_performed':False,'scientific_transfer_values_read':False,'scientific_response_read':False,'scientific_response_computed':False,'convergence_metric_computed':False,'convergence_classification_created':False,'scientific_authority_created':False,'high_memory_resource_lifecycle_preflight_pass_created':False,'successor_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          out['token']=out['classification']; Path('aggregate.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['classification'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-hosted-single-role-resource-aggregate-v0-1
+          path: aggregate.json
+          retention-days: 90
+
+  independent-verifier:
+    needs: [aggregate, v135-chain-drift-audit]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-hosted-single-role-resource-aggregate-v0-1
+          path: aggregate
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-v135-chain-drift-audit-v0-1
+          path: drift
+      - name: Independently verify resource-only semantics and V135 drift closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.load(open('aggregate/aggregate.json')); d=json.load(open('drift/result.json'))
+          assert [x['role'] for x in a['roles']]==['reference','alpha_minus','beta_plus','beta_minus']
+          assert d['classification']=='LAYERB_32769_V135_CHAIN_DRIFT_AUDIT_PASS_PLUS_0_PLUS_0' and d['all_pass'] is True
+          for k in ['scientific_transfer_values_read','scientific_response_read','scientific_response_computed','convergence_metric_computed','convergence_classification_created','scientific_authority_created','high_memory_resource_lifecycle_preflight_pass_created','successor_execution_authorized','covariance_restriction_authorized','Wm_S3_opened']:
+              assert a[k] is False,k
+          out={'schema':'LAYERB_32769_HOSTED_SINGLE_ROLE_RESOURCE_INDEPENDENT_VERIFICATION_V0_1','classification':'LAYERB_32769_HOSTED_SINGLE_ROLE_RESOURCE_INDEPENDENT_VERIFICATION_PASS_PLUS_0_PLUS_0','effect':'+0/+0','aggregate_classification':a['classification'],'completed_roles':a['completed_roles'],'completed_role_count':a['completed_role_count'],'v135_chain_drift_all_pass':True,'scientific_execution_authorized':False,'scientific_response_read':False,'high_memory_resource_lifecycle_preflight_pass_created':False,'token':'LAYERB_32769_HOSTED_SINGLE_ROLE_RESOURCE_INDEPENDENT_VERIFICATION_PASS_PLUS_0_PLUS_0'}
+          Path('verification.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['classification'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-hosted-single-role-resource-independent-verification-v0-1
+          path: verification.json
+          retention-days: 90
