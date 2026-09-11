@@ -1,0 +1,149 @@
+name: layerb-post-16385-top1-role-cancellation-chain-v0-1
+on:
+  workflow_run:
+    workflows: ['layerb-post-16385-exact-hotspot-terminal-consumer-v0-1']
+    types: [completed]
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: layerb-post-16385-top1-role-cancellation-chain-v0-1
+  cancel-in-progress: false
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+jobs:
+  decompose:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 029db882c1d4162734c83f6086e413df84920877
+          fetch-depth: 1
+      - name: Enforce frozen helper, prereg and static authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_post_16385_top1_role_cancellation_decomposition_v0_1.py)" = '76624d9a4b59d6e1ead02e22ead774135a799bbc'
+          test "$(git hash-object docs/dsir4/prereg/LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_DECOMPOSITION_V0_1.md)" = 'a75eccff06c410646c5a813f288a6cf78cb11577'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_STATIC_AUDIT_V0_2.json)" = '84cbcbf28aafd4b1cd65a07a4b69e3d422e31329'
+          test "$(git hash-object ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py)" = '5f8475b961db20bef5f4b8a2eb7c99d9f7c722e2'
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+          test "$(git hash-object docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt)" = 'bc9a6e59fb27d7510796c1cb2d5470dfe8a5294b'
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt)" = 'fc4eb1e7f51a0ad3773b8be13c477652b1f71368'
+          python - <<'PY'
+          import json
+          a=json.load(open('docs/dsir4/authority/LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_STATIC_AUDIT_V0_2.json'))
+          assert a['artifact_verified_independently'] is True
+          assert a['classification']=='POST_16385_TOP1_ROLE_CANCELLATION_STATIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert a['pass_count']==a['check_count']==18
+          assert a['class_solver_invoked'] is False and a['scientific_response_read'] is False and a['hotspot_result_read'] is False
+          assert a['execution_authorized'] is False and a['next_rung_authorized'] is False
+          assert a['covariance_restriction_authorized'] is False and a['Wm_S3_opened'] is False
+          PY
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-exact-response-atom-hotspot-v0-1
+          path: source
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 34592951737
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-exact-hotspot-terminal-consumer-v0-1
+          path: validation
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Revalidate terminal source and deterministic activation gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          s=json.load(open('source/result.json')); v=json.load(open('validation/validation.json'))
+          assert s['classification']=='POST_16385_EXACT_RESPONSE_ATOM_HOTSPOT_LOCALIZATION_PASS_PLUS_0_PLUS_0',s
+          assert s['shared_call_count']==441 and s['des_call_count']==377 and s['boss_gl64_call_count']==64,s
+          assert s['shared_plan_bitwise_identical'] is True and s['execution_lifecycle']=={'constructions':8,'live':0,'max_live':1},s
+          assert s['unsupported_target_evaluations']==0 and s['max_requested_node_coordinate_rel_mismatch']<=1e-12,s
+          assert len(s['top_64_response_atoms'])==64 and len(s['call_maxima'])==441,s
+          assert s['top_64_response_atoms'][0]['relative_difference']==s['recomputed_shared_atom_global_max'],s
+          assert abs(s['recomputed_shared_atom_global_max']-0.012484060640679777)/0.012484060640679777<=1e-12,s
+          assert v['classification']=='POST_16385_EXACT_HOTSPOT_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0',v
+          assert v['structural_valid'] is True and v['exact_hotspot_provenance_reproduced'] is True and v['relative_reproduction_error']<=1e-12,v
+          assert all(x.get('next_rung_authorized') is False and x.get('covariance_restriction_authorized') is False and x.get('Wm_S3_opened') is False for x in (s,v))
+          PY
+      - name: Install frozen numerical/build stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git >/dev/null
+          python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy >/dev/null
+      - name: Build exact pinned CLASS-IV with frozen execution-only patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('external/class_iv/include/perturbations.h'); b=p.read_bytes(); s=b.decode(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1
+          pre=hashlib.sha256(b).hexdigest(); p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 18432',1)); post=hashlib.sha256(p.read_bytes()).hexdigest()
+          q=Path('external/class_iv/include/parser.h'); qb=q.read_bytes(); qs=qb.decode(); qold='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert qs.count(qold)==1
+          qpre=hashlib.sha256(qb).hexdigest(); q.write_text(qs.replace(qold,'#define _ARGUMENT_LENGTH_MAX_ 524288',1)); qpost=hashlib.sha256(q.read_bytes()).hexdigest()
+          Path('artifacts/capacity_patch.json').write_text(json.dumps({'schema':'POST_16385_TOP1_ROLE_CANCELLATION_CLASSIV_INPUT_CAPACITY_PATCH_V0_1','source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','old_capacity':30,'new_capacity':18432,'replacement_count':1,'pre_sha256':pre,'post_sha256':post,'parser_old_argument_capacity':1024,'parser_new_argument_capacity':524288,'parser_replacement_count':1,'parser_pre_sha256':qpre,'parser_post_sha256':qpost},indent=2,sort_keys=True)+'\n')
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python scripts/dsir4/classiv_k_output_history_suppression_patch_v0_1.py external/class_iv artifacts/history_patch.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.load(open('artifacts/history_patch.json')); assert d['replacement_count']==1 and d['k_output_values_still_inserted_into_solver_grid'] is True and d['scientific_parameters_changed'] is False
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+      - name: Execute prospectively frozen top-1 role cancellation decomposition
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}" python ci/layerb_post_16385_top1_role_cancellation_decomposition_v0_1.py \
+            --source-result source/result.json \
+            --terminal-validation validation/validation.json \
+            --engine-script ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --coarse docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt \
+            --fine docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --out artifacts/decomposition.json
+          python - <<'PY'
+          import json,math
+          d=json.load(open('artifacts/decomposition.json'))
+          assert d['classification']=='POST_16385_TOP1_ROLE_CANCELLATION_DECOMPOSITION_PASS_PLUS_0_PLUS_0',d
+          assert d['selection_rule']=='exact_hotspot.top_64_response_atoms[0]',d
+          assert d['execution_lifecycle']=={'constructions':8,'live':0,'max_live':1},d
+          assert d['alternative_h_evaluated'] is False and d['scientific_107_row_replay_executed'] is False,d
+          assert d['scientific_classification_created'] is False and d['scientific_authority_created'] is False,d
+          assert d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False,d
+          assert d['primary_component_metric'] in ('alpha_response_cross_grid_relative_difference','beta_response_cross_grid_relative_difference'),d
+          assert d['primary_component_relative_difference'] is not None and math.isfinite(float(d['primary_component_relative_difference'])),d
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top1-role-cancellation-decomposition-v0-1
+          path: |
+            artifacts/decomposition.json
+            artifacts/capacity_patch.json
+            artifacts/history_patch.json
+          if-no-files-found: error
+          retention-days: 90
