@@ -1,0 +1,177 @@
+name: layerb-32769-one-live-guard-synthetic-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-one-live-guard-synthetic-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  guard-synthetic-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce prospective guard identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_ONE_LIVE_GUARD_CONTRACT_V0_1.json)" = 'c88836865879e164d5f4599b5e586f148bc2d524'
+          test "$(git hash-object ci/layerb_32769_one_live_guard_v0_1.py)" = 'a1f2fa6b38ed95c1873be644b6377f481ffe8bff'
+
+      - name: Generate synthetic workflow-run snapshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/fixtures artifacts/out
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          P='.github/workflows/layerb-16385-to-32769-canonical-scientific-v0-1.yml'
+          current={'id':7001,'path':P,'status':'in_progress','conclusion':None,'head_sha':'a'*40,'run_attempt':1}
+          other_queued={'id':7002,'path':P,'status':'queued','conclusion':None,'head_sha':'a'*40,'run_attempt':1}
+          other_running={'id':7003,'path':P,'status':'in_progress','conclusion':None,'head_sha':'a'*40,'run_attempt':1}
+          prior={'id':6999,'path':P,'status':'completed','conclusion':'success','head_sha':'a'*40,'run_attempt':1}
+          unrelated={'id':9000,'path':'.github/workflows/unrelated.yml','status':'in_progress','conclusion':None,'head_sha':'b'*40,'run_attempt':1}
+          cases={
+            'pass_current_only': [current,unrelated],
+            'fail_other_queued': [current,other_queued,unrelated],
+            'fail_other_running': [current,other_running],
+            'fail_prior_completed': [current,prior],
+            'fail_current_missing': [unrelated],
+          }
+          for name,runs in cases.items():
+              Path(f'artifacts/fixtures/{name}.json').write_text(json.dumps({'total_count':len(runs),'workflow_runs':runs},indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Require PASS for first canonical run only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/layerb_32769_one_live_guard_v0_1.py \
+            --runs-json artifacts/fixtures/pass_current_only.json \
+            --contract docs/dsir4/contracts/LAYERB_32769_ONE_LIVE_GUARD_CONTRACT_V0_1.json \
+            --current-run-id 7001 \
+            --out artifacts/out/pass.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('artifacts/out/pass.json'))
+          assert d['classification']=='LAYERB_32769_ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS_PLUS_0_PLUS_0'
+          assert d['guard_pass'] is True
+          assert d['errors']==[]
+          assert d['matching_other_live_authoritative_runs']==0
+          assert d['matching_other_all_status_runs']==0
+          assert d['queried_run_ids']==[]
+          PY
+
+      - name: Require FAIL for duplicates, prior run, or invalid snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          for case in fail_other_queued fail_other_running fail_prior_completed fail_current_missing; do
+            set +e
+            python3 ci/layerb_32769_one_live_guard_v0_1.py \
+              --runs-json "artifacts/fixtures/${case}.json" \
+              --contract docs/dsir4/contracts/LAYERB_32769_ONE_LIVE_GUARD_CONTRACT_V0_1.json \
+              --current-run-id 7001 \
+              --out "artifacts/out/${case}.json"
+            rc=$?
+            set -e
+            test "$rc" -eq 31
+          done
+          python3 - <<'PY'
+          import json
+          q=json.load(open('artifacts/out/fail_other_queued.json'))
+          r=json.load(open('artifacts/out/fail_other_running.json'))
+          p=json.load(open('artifacts/out/fail_prior_completed.json'))
+          m=json.load(open('artifacts/out/fail_current_missing.json'))
+          assert q['errors']==['other_live_matching_run'] and q['queried_run_ids']==[7002]
+          assert r['errors']==['other_live_matching_run'] and r['queried_run_ids']==[7003]
+          assert p['errors']==['prior_matching_production_run'] and p['queried_run_ids']==[6999]
+          assert m['errors']==['current_run_not_seen'] and m['queried_run_ids']==[]
+          for d in (q,r,p,m):
+              assert d['classification']=='LAYERB_32769_ONE_LIVE_ANTI_DUPLICATION_GUARD_FAIL_PLUS_0_PLUS_0'
+              assert d['guard_pass'] is False
+          PY
+
+      - name: Emit guard synthetic audit summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          out={
+            'schema':'LAYERB_32769_ONE_LIVE_GUARD_SYNTHETIC_AUDIT_V0_1',
+            'classification':'LAYERB_32769_ONE_LIVE_GUARD_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'synthetic_only':True,
+            'guard_contract_git_blob':'c88836865879e164d5f4599b5e586f148bc2d524',
+            'guard_script_git_blob':'a1f2fa6b38ed95c1873be644b6377f481ffe8bff',
+            'current_only_passed':True,
+            'other_queued_rejected':True,
+            'other_running_rejected':True,
+            'prior_completed_rejected':True,
+            'missing_current_rejected':True,
+            'pass_receipt_sha256':sha('artifacts/out/pass.json'),
+            'scientific_response_read':False,
+            'scientific_execution_authorized':False,
+            'actual_one_live_guard_pass':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+          }
+          out['token']=out['classification']
+          Path('artifacts/summary.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-one-live-guard-synthetic-audit-v0-1
+          path: |
+            artifacts/summary.json
+            artifacts/out/*.json
+          if-no-files-found: error
+          retention-days: 90
+
+  independent-verifier:
+    needs: guard-synthetic-audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-one-live-guard-synthetic-audit-v0-1
+          path: evidence
+      - name: Independently verify synthetic anti-duplication receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_ONE_LIVE_GUARD_CONTRACT_V0_1.json)" = 'c88836865879e164d5f4599b5e586f148bc2d524'
+          test "$(git hash-object ci/layerb_32769_one_live_guard_v0_1.py)" = 'a1f2fa6b38ed95c1873be644b6377f481ffe8bff'
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          s=json.load(open('evidence/summary.json'))
+          assert s['classification']=='LAYERB_32769_ONE_LIVE_GUARD_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert s['synthetic_only'] is True
+          assert s['current_only_passed'] is True
+          assert s['other_queued_rejected'] is True
+          assert s['other_running_rejected'] is True
+          assert s['prior_completed_rejected'] is True
+          assert s['missing_current_rejected'] is True
+          assert s['actual_one_live_guard_pass'] is False
+          assert s['scientific_execution_authorized'] is False
+          assert s['pass_receipt_sha256']==sha('evidence/out/pass.json')
+          p=json.load(open('evidence/out/pass.json'))
+          assert p['classification']=='LAYERB_32769_ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS_PLUS_0_PLUS_0'
+          assert p['guard_pass'] is True and p['matching_other_all_status_runs']==0
+          print('LAYERB_32769_ONE_LIVE_GUARD_INDEPENDENT_SYNTHETIC_VALIDATION_PASS_PLUS_0_PLUS_0')
+          PY
