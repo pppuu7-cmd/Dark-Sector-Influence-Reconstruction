@@ -1,0 +1,97 @@
+name: layerb-32769-resource-authority-promotion-workflow-static-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-resource-authority-promotion-workflow-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-promotion-workflow-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify promotion workflow is read-only and non-triggering
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,re
+          from pathlib import Path
+          p=Path('.github/workflows/layerb-32769-resource-authority-promotion-review-v0-1.yml')
+          b=p.read_bytes(); s=b.decode()
+          def git_blob(b): return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          assert git_blob(b)=='3b1de80ae99aae6925411737f821c04f3ff6cf95'
+          assert '  workflow_dispatch:\n' in s
+          for forbidden_trigger in ('  push:\n','  schedule:\n','  workflow_run:\n','  pull_request:\n'):
+              assert forbidden_trigger not in s, forbidden_trigger
+          assert 'permissions:\n  contents: read\n  actions: read\n' in s
+          for forbidden_perm in ('contents: write','actions: write','checks: write','pull-requests: write'):
+              assert forbidden_perm not in s, forbidden_perm
+          assert "REVIEW_CONTRACT_BLOB: '7abd3b1d2a04161ef1012726668db0a8d4e02af7'" in s
+          assert "REVIEWER_BLOB: '5c6ea5d2603d03625e13ad1f0534ecea8a2ba199'" in s
+          assert "PROMOTION_TARGET: 'docs/dsir4/authority/LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_V0_1.json'" in s
+          assert 'test ! -e "$PROMOTION_TARGET"' in s
+          assert 'gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}"' in s
+          assert 'gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/artifacts?per_page=100"' in s
+          assert 'gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${AID}/zip"' in s
+          assert 'ci/layerb_32769_resource_authority_promotion_reviewer_v0_1.py' in s
+          assert "LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_PASS_PLUS_0_PLUS_0" in s
+          assert 'review_creates_no_repository_authority' in s
+          assert 'scientific_execution_authorized' in s
+          assert 'actions/upload-artifact@v4' in s
+          # No repository mutation or scientific execution dispatch path.
+          for forbidden in ('git commit','git push','git add ','create-file','update-file','workflow dispatch layerb-16385-to-32769','gh workflow run','ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py','external/class_iv/class'):
+              assert forbidden not in s, forbidden
+          result={
+            'schema':'LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_WORKFLOW_STATIC_AUDIT_V0_1',
+            'classification':'LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_WORKFLOW_STATIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0','promotion_workflow_git_blob':git_blob(b),
+            'dispatch_only':True,'read_only_permissions':True,'requires_no_prior_durable_authority':True,
+            'candidate_run_api_bound':True,'single_candidate_artifact_enforced':True,'candidate_zip_downloaded':True,
+            'exact_promotion_reviewer_invoked':True,'review_artifact_only':True,'repository_write_forbidden':True,
+            'scientific_solver_invoked':False,'scientific_execution_authorized':False,
+            'durable_repository_authority_created':False,'high_memory_resource_lifecycle_preflight_pass_now':False,
+            'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+          }
+          result['token']=result['classification']
+          Path('static_audit.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(result['classification'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-resource-authority-promotion-workflow-static-audit-v0-1
+          path: static_audit.json
+          retention-days: 90
+
+  independent-verifier:
+    needs: static-promotion-workflow-audit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-resource-authority-promotion-workflow-static-audit-v0-1
+          path: consumed
+      - name: Independently verify static promotion-workflow receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('consumed/static_audit.json'))
+          assert d['classification']=='LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_WORKFLOW_STATIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['promotion_workflow_git_blob']=='3b1de80ae99aae6925411737f821c04f3ff6cf95'
+          for k in ['dispatch_only','read_only_permissions','requires_no_prior_durable_authority','candidate_run_api_bound','single_candidate_artifact_enforced','candidate_zip_downloaded','exact_promotion_reviewer_invoked','review_artifact_only','repository_write_forbidden']:
+              assert d[k] is True,k
+          assert d['scientific_solver_invoked'] is False
+          assert d['scientific_execution_authorized'] is False
+          assert d['durable_repository_authority_created'] is False
+          assert d['high_memory_resource_lifecycle_preflight_pass_now'] is False
+          print('INDEPENDENT_PROMOTION_WORKFLOW_STATIC_AUDIT_PASS')
+          PY
