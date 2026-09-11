@@ -1,0 +1,157 @@
+name: layerb-post-16385-top1-parallel-decomposition-arithmetic-v0-1
+on:
+  push:
+    paths:
+      - '.github/workflows/layerb-post-16385-top1-parallel-decomposition-arithmetic-v0-1.yml'
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: layerb-post-16385-top1-parallel-decomposition-arithmetic-v0-1
+  cancel-in-progress: false
+
+env:
+  ARTIFACT_ID: '10268078468'
+  ARTIFACT_SHA256: 'c0363cb45a54ed9ff634548bd96c539d55757a646d014f83ddd74f10bf62ddb0'
+
+jobs:
+  condition-number:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify authority and fetch immutable decomposition
+        env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/authority/LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_AUTHORITY_V0_1.json)" = 'cb0b07bd75208619e681f02528fb0c761ddedabb'
+          mkdir -p source artifacts
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/artifacts/$ARTIFACT_ID/zip" -o source.zip
+          test "$(sha256sum source.zip | awk '{print $1}')" = "$ARTIFACT_SHA256"
+          unzip -q source.zip -d source
+      - name: Compute subtraction condition numbers
+        run: |
+          python - <<'PY'
+          import json, math
+          from pathlib import Path
+          ds=[]
+          for p in Path('source').rglob('*.json'):
+              try:d=json.loads(p.read_text())
+              except Exception:continue
+              if d.get('schema')=='LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_DECOMPOSITION_V0_1': ds.append((p,d))
+          assert len(ds)==1,ds
+          p,d=ds[0]
+          assert d['classification']=='POST_16385_TOP1_ROLE_CANCELLATION_DECOMPOSITION_PASS_PLUS_0_PLUS_0'
+          grids={}
+          for key in ('canonical_8193','canonical_16385'):
+              g=d[key]; r=g['raw_roles']
+              bn=float(g['beta_numerator']); an=float(g['alpha_numerator'])
+              assert bn==float(r['beta_plus'])-float(r['beta_minus'])
+              assert an==float(r['alpha_minus'])-float(r['reference'])
+              grids[key]={
+                'beta_subtraction_condition_l1':(abs(float(r['beta_plus']))+abs(float(r['beta_minus'])))/abs(bn),
+                'alpha_subtraction_condition_l1':(abs(float(r['alpha_minus']))+abs(float(r['reference'])))/abs(an),
+                'beta_cancellation_scale':abs(bn)/max(abs(float(r['beta_plus'])),abs(float(r['beta_minus']))),
+                'alpha_cancellation_scale':abs(an)/max(abs(float(r['alpha_minus'])),abs(float(r['reference']))) }
+              assert grids[key]['beta_subtraction_condition_l1']>1e8
+          out={'schema':'LAYERB_POST_16385_TOP1_SUBTRACTION_CONDITION_AUDIT_V0_1','classification':'POST_16385_TOP1_SUBTRACTION_CONDITION_AUDIT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','source_artifact_id':10268078468,'source_zip_sha256':'c0363cb45a54ed9ff634548bd96c539d55757a646d014f83ddd74f10bf62ddb0','grids':grids,'class_solver_invoked':False,'scientific_classification_created':False,'scientific_authority_created':False,'next_rung_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('artifacts/condition_number.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top1-subtraction-condition-audit-v0-1
+          path: artifacts/condition_number.json
+          if-no-files-found: error
+          retention-days: 90
+
+  signed-attribution:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch and hash immutable decomposition
+        env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: |
+          set -euo pipefail
+          mkdir -p source artifacts
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/artifacts/$ARTIFACT_ID/zip" -o source.zip
+          test "$(sha256sum source.zip | awk '{print $1}')" = "$ARTIFACT_SHA256"
+          unzip -q source.zip -d source
+      - name: Attribute cross-grid numerator change to signed role shifts
+        run: |
+          python - <<'PY'
+          import json, math
+          from pathlib import Path
+          hits=[]
+          for p in Path('source').rglob('*.json'):
+              try:d=json.loads(p.read_text())
+              except Exception:continue
+              if d.get('schema')=='LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_DECOMPOSITION_V0_1': hits.append(d)
+          assert len(hits)==1
+          d=hits[0]; assert d['classification']=='POST_16385_TOP1_ROLE_CANCELLATION_DECOMPOSITION_PASS_PLUS_0_PLUS_0'
+          c=d['canonical_8193']; f=d['canonical_16385']
+          cr=c['raw_roles']; fr=f['raw_roles']
+          dp=float(fr['beta_plus'])-float(cr['beta_plus'])
+          dm=float(fr['beta_minus'])-float(cr['beta_minus'])
+          dnum=float(f['beta_numerator'])-float(c['beta_numerator'])
+          recombined=dp-dm
+          scale=max(abs(dnum),abs(recombined),1e-300)
+          residual=abs(recombined-dnum)/scale
+          out={'schema':'LAYERB_POST_16385_TOP1_SIGNED_ROLE_ATTRIBUTION_AUDIT_V0_1','classification':'POST_16385_TOP1_SIGNED_ROLE_ATTRIBUTION_AUDIT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','beta_plus_cross_grid_shift':dp,'beta_minus_cross_grid_shift':dm,'beta_numerator_cross_grid_shift':dnum,'role_shift_recombination':recombined,'role_shift_recombination_relative_residual':residual,'role_shifts_reinforce_in_difference':(dp*dm<0.0),'absolute_beta_plus_shift_share':abs(dp)/(abs(dp)+abs(dm)),'absolute_beta_minus_shift_share':abs(dm)/(abs(dp)+abs(dm)),'class_solver_invoked':False,'scientific_classification_created':False,'scientific_authority_created':False,'next_rung_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          assert math.isfinite(residual)
+          Path('artifacts/signed_attribution.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top1-signed-role-attribution-audit-v0-1
+          path: artifacts/signed_attribution.json
+          if-no-files-found: error
+          retention-days: 90
+
+  decimal-subtraction:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch and hash immutable decomposition
+        env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: |
+          set -euo pipefail
+          mkdir -p source artifacts
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/artifacts/$ARTIFACT_ID/zip" -o source.zip
+          test "$(sha256sum source.zip | awk '{print $1}')" = "$ARTIFACT_SHA256"
+          unzip -q source.zip -d source
+      - name: Replay subtraction from exact binary64 values with Decimal
+        run: |
+          python - <<'PY'
+          import json
+          from decimal import Decimal, getcontext
+          from pathlib import Path
+          getcontext().prec=100
+          hits=[]
+          for p in Path('source').rglob('*.json'):
+              try:d=json.loads(p.read_text())
+              except Exception:continue
+              if d.get('schema')=='LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_DECOMPOSITION_V0_1': hits.append(d)
+          assert len(hits)==1
+          d=hits[0]; rows={}
+          for key in ('canonical_8193','canonical_16385'):
+              g=d[key]; r=g['raw_roles']; bp=float(r['beta_plus']); bm=float(r['beta_minus']); bn=float(g['beta_numerator'])
+              exact=Decimal.from_float(bp)-Decimal.from_float(bm)
+              rounded=Decimal.from_float(bn)
+              err=abs(exact-rounded)
+              rel=(err/abs(exact)) if exact else Decimal(0)
+              rows[key]={'exact_difference_of_binary64_operands_decimal':str(exact),'stored_binary64_difference_decimal':str(rounded),'subtraction_rounding_absolute_error_decimal':str(err),'subtraction_rounding_relative_error_decimal':str(rel)}
+              assert rel < Decimal('1e-12')
+          out={'schema':'LAYERB_POST_16385_TOP1_DECIMAL_SUBTRACTION_REPLAY_AUDIT_V0_1','classification':'POST_16385_TOP1_DECIMAL_SUBTRACTION_REPLAY_AUDIT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','grids':rows,'class_solver_invoked':False,'scientific_classification_created':False,'scientific_authority_created':False,'next_rung_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('artifacts/decimal_subtraction.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top1-decimal-subtraction-replay-audit-v0-1
+          path: artifacts/decimal_subtraction.json
+          if-no-files-found: error
+          retention-days: 90
