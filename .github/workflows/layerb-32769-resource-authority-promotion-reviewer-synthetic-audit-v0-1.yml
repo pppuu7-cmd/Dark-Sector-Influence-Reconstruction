@@ -1,0 +1,220 @@
+name: layerb-32769-resource-authority-promotion-reviewer-synthetic-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-resource-authority-promotion-reviewer-synthetic-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-review-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen reviewer identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_CONTRACT_V0_1.json)" = '7abd3b1d2a04161ef1012726668db0a8d4e02af7'
+          test "$(git hash-object ci/layerb_32769_resource_authority_promotion_reviewer_v0_1.py)" = '5c6ea5d2603d03625e13ad1f0534ecea8a2ba199'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_STATIC_AUDIT_V0_1.json)" != ''
+          test "$(git hash-object docs/dsir4/authority/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZER_SYNTHETIC_AUDIT_V0_1.json)" != ''
+
+      - name: Generate exact unmarked promotion-review fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p fixture/candidate fixture/meta fixture/out
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def dump(p,d): Path(p).write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          prov={
+            'schema':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PROVENANCE_V0_1',
+            'classification':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0','valid':True,'errors':[],'candidate_only':True,
+            'durable_repository_authority_created':False,
+            'source_run_id':101,'source_job_id':102,'source_head_sha':'a'*40,'source_artifact_id':103,
+            'source_artifact_zip_sha256':'1'*64,'source_result_sha256':'2'*64,
+            'independent_run_id':201,'independent_job_id':202,'independent_head_sha':'b'*40,'independent_artifact_id':203,
+            'independent_artifact_zip_sha256':'3'*64,'independent_validation_sha256':'4'*64,
+            'scientific_response_read':False,'scientific_execution_authorized':False,
+            'high_memory_resource_lifecycle_preflight_pass_created_by_packaging':False,
+            'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+          }
+          dump('fixture/candidate/provenance.json',prov)
+          psha=sha('fixture/candidate/provenance.json')
+          candidate={
+            'schema':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_AUTHORITY_V0_1',
+            'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0','artifact_verified_independently':True,
+            'high_memory_resource_lifecycle_preflight_pass':True,'materialization_errors':[],
+            'materialization_contract_git_blob':'933a2ed268cb2a2724252a2ef9799d0946e281ce',
+            'provenance_receipt_json_sha256':psha,
+            'source_run_id':101,'source_job_id':102,'source_head_sha':'a'*40,'source_artifact_id':103,
+            'source_artifact_zip_sha256':'1'*64,
+            'independent_run_id':201,'independent_job_id':202,'independent_head_sha':'b'*40,'independent_artifact_id':203,
+            'independent_artifact_zip_sha256':'3'*64,
+            'candidate_memtotal_kb':32768000,
+            'execution_lifecycle':{'total_solver_constructions':4,'max_live_instances':1,'final_live_instances':0},
+            'role_order':['reference','alpha_minus','beta_plus','beta_minus'],
+            'required_custom_label':'dsir-32769-highmem',
+            'canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599',
+            'canonical_32769_text_sha256':'7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2',
+            'class_build_authority_git_blob':'ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d',
+            'runner_isolation_contract_git_blob':'d9d910d89889f6d3a27461a73c3dd72c2a9d2096',
+            'scientific_transfer_values_read':False,'scientific_response_read':False,'scientific_response_computed':False,
+            'convergence_metric_computed':False,'convergence_classification_created':False,
+            'scientific_authority_created':False,'successor_execution_authorized':False,
+            'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+          }
+          dump('fixture/candidate/resource_authority_candidate.json',candidate)
+          csha=sha('fixture/candidate/resource_authority_candidate.json')
+          receipt={
+            'schema':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_RECEIPT_V0_1',
+            'classification':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_READY_PLUS_0_PLUS_0',
+            'effect':'+0/+0','candidate_only':True,'durable_repository_authority_created':False,
+            'provenance_sha256':psha,'resource_authority_candidate_sha256':csha,
+            'candidate_classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0',
+            'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+          }
+          dump('fixture/candidate/candidate_receipt.json',receipt)
+          run={'id':424242,'name':'layerb-32769-resource-authority-candidate-packaging-v0-1','path':'.github/workflows/layerb-32769-resource-authority-candidate-packaging-v0-1.yml','status':'completed','conclusion':'success','head_sha':'c'*40}
+          dump('fixture/meta/run.json',run)
+          dump('fixture/meta/manifest.json',{'files':['candidate/provenance.json','candidate/resource_authority_candidate.json','candidate/candidate_receipt.json']})
+          PY
+          (cd fixture && zip -q candidate.zip candidate/provenance.json candidate/resource_authority_candidate.json candidate/candidate_receipt.json)
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          z=hashlib.sha256(Path('fixture/candidate.zip').read_bytes()).hexdigest()
+          d={'artifacts':[{'id':515151,'name':'layerb-32769-resource-authority-candidate-packaging-v0-1-424242','expired':False,'digest':'sha256:'+z}]}
+          Path('fixture/meta/artifacts.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Require exact fixture to pass promotion review
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/layerb_32769_resource_authority_promotion_reviewer_v0_1.py \
+            --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_CONTRACT_V0_1.json \
+            --candidate-run fixture/meta/run.json --candidate-artifacts fixture/meta/artifacts.json \
+            --candidate-artifact-zip fixture/candidate.zip --artifact-manifest fixture/meta/manifest.json \
+            --candidate-receipt fixture/candidate/candidate_receipt.json \
+            --resource-candidate fixture/candidate/resource_authority_candidate.json \
+            --provenance fixture/candidate/provenance.json \
+            --packaging-static-authority docs/dsir4/authority/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_STATIC_AUDIT_V0_1.json \
+            --materializer-synthetic-authority docs/dsir4/authority/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZER_SYNTHETIC_AUDIT_V0_1.json \
+            --out fixture/out/pass.json
+          test "$(jq -r .classification fixture/out/pass.json)" = 'LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_PASS_PLUS_0_PLUS_0'
+          test "$(jq -r .valid fixture/out/pass.json)" = true
+          test "$(jq -r .review_creates_no_repository_authority fixture/out/pass.json)" = true
+          test "$(jq -r .scientific_execution_authorized fixture/out/pass.json)" = false
+
+      - name: Require promotion defects to fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p fixture/neg
+          python3 - <<'PY'
+          import copy,hashlib,json
+          from pathlib import Path
+          def load(p): return json.loads(Path(p).read_text())
+          def dump(p,d): Path(p).write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          cand=load('fixture/candidate/resource_authority_candidate.json'); rec=load('fixture/candidate/candidate_receipt.json'); arts=load('fixture/meta/artifacts.json')
+          c=copy.deepcopy(cand); c['synthetic_fixture']=True; dump('fixture/neg/candidate_synthetic.json',c)
+          r=copy.deepcopy(rec); r['resource_authority_candidate_sha256']=sha('fixture/neg/candidate_synthetic.json'); dump('fixture/neg/receipt_for_synthetic.json',r)
+          r=copy.deepcopy(rec); r['resource_authority_candidate_sha256']='0'*64; dump('fixture/neg/receipt_bad_hash.json',r)
+          a=copy.deepcopy(arts); a['artifacts'].append(copy.deepcopy(a['artifacts'][0])); a['artifacts'][1]['id']=515152; dump('fixture/neg/artifacts_duplicate.json',a)
+          a=copy.deepcopy(arts); a['artifacts'][0]['digest']='sha256:'+'0'*64; dump('fixture/neg/artifacts_bad_digest.json',a)
+          c=copy.deepcopy(cand); c['successor_execution_authorized']=True; dump('fixture/neg/candidate_science.json',c)
+          r=copy.deepcopy(rec); r['resource_authority_candidate_sha256']=sha('fixture/neg/candidate_science.json'); dump('fixture/neg/receipt_for_science.json',r)
+          PY
+          run_review () {
+            local name="$1" arts="$2" rec="$3" cand="$4"
+            set +e
+            python3 ci/layerb_32769_resource_authority_promotion_reviewer_v0_1.py \
+              --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_CONTRACT_V0_1.json \
+              --candidate-run fixture/meta/run.json --candidate-artifacts "$arts" \
+              --candidate-artifact-zip fixture/candidate.zip --artifact-manifest fixture/meta/manifest.json \
+              --candidate-receipt "$rec" --resource-candidate "$cand" --provenance fixture/candidate/provenance.json \
+              --packaging-static-authority docs/dsir4/authority/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_STATIC_AUDIT_V0_1.json \
+              --materializer-synthetic-authority docs/dsir4/authority/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZER_SYNTHETIC_AUDIT_V0_1.json \
+              --out "fixture/out/${name}.json"
+            rc=$?; set -e
+            test "$rc" -eq 31
+            test "$(jq -r .classification "fixture/out/${name}.json")" = 'LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_FAIL_PLUS_0_PLUS_0'
+          }
+          run_review synthetic_candidate fixture/meta/artifacts.json fixture/neg/receipt_for_synthetic.json fixture/neg/candidate_synthetic.json
+          run_review bad_receipt_hash fixture/meta/artifacts.json fixture/neg/receipt_bad_hash.json fixture/candidate/resource_authority_candidate.json
+          run_review duplicate_artifact fixture/neg/artifacts_duplicate.json fixture/candidate/candidate_receipt.json fixture/candidate/resource_authority_candidate.json
+          run_review bad_zip_digest fixture/neg/artifacts_bad_digest.json fixture/candidate/candidate_receipt.json fixture/candidate/resource_authority_candidate.json
+          run_review downstream_science_bit fixture/meta/artifacts.json fixture/neg/receipt_for_science.json fixture/neg/candidate_science.json
+
+      - name: Emit synthetic promotion-review audit summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          out={
+            'schema':'LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEWER_SYNTHETIC_AUDIT_V0_1',
+            'classification':'LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEWER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0','synthetic_audit_only':True,
+            'exact_shape_passed':True,'synthetic_candidate_rejected':True,'receipt_hash_mismatch_rejected':True,
+            'duplicate_artifact_rejected':True,'zip_digest_mismatch_rejected':True,'downstream_science_bit_rejected':True,
+            'pass_receipt_sha256':sha('fixture/out/pass.json'),
+            'promotion_review_creates_authority':False,'scientific_execution_authorized':False,
+            'high_memory_resource_lifecycle_preflight_pass_now':False,
+            'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+          }
+          out['token']=out['classification']
+          Path('fixture/out/summary.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['classification'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-resource-authority-promotion-reviewer-synthetic-audit-v0-1
+          path: fixture/out/
+          retention-days: 90
+
+  independent-verifier:
+    needs: synthetic-review-audit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-resource-authority-promotion-reviewer-synthetic-audit-v0-1
+          path: consumed
+      - name: Independently verify promotion-review audit receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          s=json.load(open('consumed/summary.json'))
+          assert s['classification']=='LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEWER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          for k in ['exact_shape_passed','synthetic_candidate_rejected','receipt_hash_mismatch_rejected','duplicate_artifact_rejected','zip_digest_mismatch_rejected','downstream_science_bit_rejected']:
+              assert s[k] is True,k
+          assert s['promotion_review_creates_authority'] is False
+          assert s['scientific_execution_authorized'] is False
+          assert s['high_memory_resource_lifecycle_preflight_pass_now'] is False
+          p=Path('consumed/pass.json')
+          assert hashlib.sha256(p.read_bytes()).hexdigest()==s['pass_receipt_sha256']
+          d=json.loads(p.read_text())
+          assert d['classification']=='LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_PASS_PLUS_0_PLUS_0'
+          assert d['review_creates_no_repository_authority'] is True
+          print('INDEPENDENT_PROMOTION_REVIEWER_SYNTHETIC_AUDIT_PASS')
+          PY
