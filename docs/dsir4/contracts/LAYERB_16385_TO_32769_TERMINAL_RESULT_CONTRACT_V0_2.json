@@ -1,0 +1,27 @@
+{
+  "schema": "LAYERB_16385_TO_32769_TERMINAL_RESULT_CONTRACT_V0_2",
+  "status": "PROSPECTIVE_FROZEN_BEFORE_32769_SCIENTIFIC_EXECUTION",
+  "scope": "DSIR Article III Layer-B parser-corrected canonical 16385-to-32769 support refinement only",
+  "allowed_scientific_classifications": ["COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0","COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0"],
+  "strict_classifier": {"relative_tolerance":0.001,"converged_iff":"max_relative_component_difference < 0.001 and all frozen validity guards pass","not_converged_iff":"max_relative_component_difference >= 0.001 with all frozen validity guards pass","tolerance_rescue_forbidden":true},
+  "frozen_constants": {"h":0.0001,"native_k_per_decade_for_pk":20.0,"lookup_relative_tolerance_max":1e-12,"layer_b_invalid_row_fraction_max":0.05,"minimum_retained_after_layer_b":15,"unsupported_target_evaluations_required":0,"parent_retained_count":107,"parent_retained_id_sha256":"44b57c6c910bc3612310ce415d773c8c180497528bfc5fc2927ce61da6ad40d7","parent_full_order_sha256":"bfaf582518cdbfd34b1e8392da83dac6b0885948bc31f2c29d4e48247c23af75"},
+  "activation_parent": {"authority_path":"docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json","authority_git_blob":"7958e1f44c0224e1828f89b1472aa33226c61886","classification":"COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0","max_relative_component_difference":0.012484060640679777},
+  "canonical_lattices": {
+    "coarse":{"requested_node_count":16385,"text_sha256":"7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69","node_sha256":"3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975"},
+    "fine":{"requested_node_count":32769,"text_sha256":"7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2","node_sha256":"82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599"}
+  },
+  "class_build_authority": {"path":"docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json","git_blob":"b5cd7304c110962dc3baef8d04ef67d5a8042e5f","classification":"LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_PASS_PLUS_0_PLUS_0","class_commit":"ac627d54e9ce196a08878d1ba33999819925d19c","capacity":32769,"parser_capacity":1048576},
+  "request_plan_authority": {"path":"docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json","git_blob":"5992faa10b6d25d1503b287c19456fb36756caa4","classification":"RESPONSE_BLIND_REQUEST_PLAN_AUDITED_PLUS_0_PLUS_0","coarse_common_plan_sha256":"505716116cc385d5700e455017d8e541c5bba7774fa6647298392495c83ecfe0","fine_plan_with_gl128_sha256":"0f7ce2e5fa459e15954268dfd46045eaa0ab6356dfdab5a2e282514e7a34ae4e","coarse_get_transfer_calls_per_role":441,"fine_get_transfer_calls_per_role":569,"total_get_transfer_calls_all_roles":4040,"total_solver_constructions":8,"max_live_instances":1},
+  "required_execution_lifecycle": {"total_solver_constructions":8,"max_live_instances":1,"final_live_instances":0,"cross_process_raw_operand_combination":false},
+  "dynamic_authority_bindings": {
+    "resource_authority_binding":{"required_classification":"LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0","must_be_independently_verified":true,"must_bind_file_sha256_and_git_blob":true,"scientific_response_read_required":false,"candidate_memtotal_kb_must_be_strictly_greater_than":16373452,"parser_capacity":1048576,"class_build_authority_git_blob":"b5cd7304c110962dc3baef8d04ef67d5a8042e5f","max_live_instances":1,"final_live_instances":0},
+    "one_live_guard_binding":{"required_classification":"LAYERB_32769_ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS_PLUS_0_PLUS_0","must_bind_file_sha256_and_git_blob":true,"matching_other_live_authoritative_runs_required":0,"parser_capacity":1048576},
+    "one_run_authorization_binding":{"required_classification":"LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZED_PLUS_0_PLUS_0","must_bind_file_sha256_and_git_blob":true,"authorized_canonical_run_count":1,"parser_capacity":1048576}
+  },
+  "forbidden_downstream_reads_during_layer_b":{"covariance_read":false,"whitening_read":false,"nuisance_read":false,"relation_null_read":false},
+  "downstream_authority_bits_in_raw_result":{"scientific_authority_created":false,"covariance_restriction_authorized":false,"Wm_S3_opened":false},
+  "terminal_consumer_rule":"Independent terminal consumer recomputes strict classifier and rejects authority/lifecycle/validity/mask/lookup/tolerance mismatches; parser-capacity migration changes infrastructure identity only.",
+  "scientific_execution_authorized_by_this_contract": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false
+}
