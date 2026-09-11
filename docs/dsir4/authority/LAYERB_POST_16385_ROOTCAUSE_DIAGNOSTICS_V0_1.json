@@ -1,0 +1,46 @@
+{
+  "schema": "LAYERB_POST_16385_ROOTCAUSE_DIAGNOSTICS_AUTHORITY_V0_1",
+  "scope": "DSIR Article III support-only",
+  "run_id": 34577119805,
+  "head_sha": "257ddd3bf3310a8913deb6c60d078a6ac5d4211c",
+  "raw_localization": {
+    "job_id": 103192003971,
+    "artifact_id": 10191158698,
+    "artifact_zip_sha256": "7425f42b37198f5fee7bdddfa71758f574a12a5e666ddac9812d5ce280c209a3",
+    "result_sha256": "9b458393930bd6b1ca609cb5de2cd5ede97332c84835de75b473c5d97ebc0633",
+    "classification": "POST_16385_FIXED_NODE_RAW_LOCALIZATION_PASS_PLUS_0_PLUS_0",
+    "max_raw_symmetric_relative_difference": 1.5949311416969764e-10,
+    "max_requested_node_coordinate_rel_mismatch": 1.657034302538322e-16,
+    "unsupported_target_evaluations": 0,
+    "lifecycle_8193": {"constructions": 4, "live": 0, "max_live": 1},
+    "lifecycle_16385": {"constructions": 4, "live": 0, "max_live": 1}
+  },
+  "cancellation_conditioning": {
+    "job_id": 103192003878,
+    "artifact_id": 10190966126,
+    "artifact_zip_sha256": "a53f1857fb6a27010fde82ae5884104385b63e8d567db2c48ca892c33a33bfc6",
+    "result_sha256": "341f25fb6d20e3e1d5e8c733de30c8c1a17024fdd3822de01aa32ebf8b2ed3f9",
+    "classification": "POST_16385_FIXED_H_CANCELLATION_AUDIT_PASS_PLUS_0_PLUS_0",
+    "h": 0.0001,
+    "max_cancellation_amplification_indicator": 465188.89721799345,
+    "max_cross_grid_response_relative_difference_at_preregistered_requests": 5.808781687987132e-06,
+    "max_requested_node_coordinate_rel_mismatch": 1.657034302538322e-16,
+    "unsupported_target_evaluations": 0,
+    "alternative_h_evaluated": false
+  },
+  "static_interpolation_control": {
+    "job_id": 103192003676,
+    "artifact_id": 10190073447,
+    "artifact_zip_sha256": "42ae9f7f454271782492ab3af81f2f5db6f0a2e51e70646e59e3747d25e90a72",
+    "result_sha256": "56f9d53c014d868b92d1ffab98b83508b440a2bbb7fa2fd43bc5bef4980332ea",
+    "classification": "POST_16385_CANONICAL_INTERPOLATION_CONTROL_PASS_PLUS_0_PLUS_0",
+    "exact_binary64_shared_node_count": 2,
+    "max_cross_grid_control_difference": 8.881784197001252e-16
+  },
+  "interpretation": "At the prospectively selected fixed requests, raw grid-to-grid differences and frozen-h response differences are many orders of magnitude below the independently validated full-traversal plateau 0.012484060640679777. Strong cancellation exists but does not amplify the measured local raw discrepancy to plateau scale at these requests. Exact non-nesting plus centered-cubic arithmetic alone is therefore not sufficient evidence for the plateau mechanism. Broader response-blind localization is justified; no denser science rung is authorized.",
+  "effect": "+0/+0",
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "next_rung_authorized": false
+}
