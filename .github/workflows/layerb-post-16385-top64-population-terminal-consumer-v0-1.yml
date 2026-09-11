@@ -1,0 +1,99 @@
+name: layerb-post-16385-top64-population-terminal-consumer-v0-1
+on:
+  push:
+    paths:
+      - '.github/workflows/layerb-post-16385-top64-population-terminal-consumer-v0-1.yml'
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: layerb-post-16385-top64-population-terminal-consumer-v0-1
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce immutable top64 authority
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/authority/LAYERB_POST_16385_TOP64_ROLE_CANCELLATION_TERMINAL_AUTHORITY_V0_1.json)" = '5e16e8a793a81bf1692df92d8e24459e03fd4838'
+      - name: Independently download and hash all population artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p incoming/strat incoming/corr incoming/amp artifacts
+          fetch_one () {
+            local id="$1" expected="$2" outdir="$3"
+            curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+              "https://api.github.com/repos/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/artifacts/${id}/zip" -o "${outdir}.zip"
+            test "$(sha256sum "${outdir}.zip" | awk '{print $1}')" = "$expected"
+            unzip -q "${outdir}.zip" -d "$outdir"
+          }
+          fetch_one 10274188316 b3f90e93683fc54f1d8b035cde002be024a02ddce6347b79854449b223f58640 incoming/strat
+          fetch_one 10273747777 f1ecedca281146c4d00a8c48bc5204f6b5091e8786f2d3b01941e5956905912f incoming/corr
+          fetch_one 10273887690 debbec0a9d73a94d887de6fbf7ebad3c188683fc9d3e55ff83da82d11f6481a3 incoming/amp
+      - name: Validate payloads and create terminal receipt
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,math
+          from pathlib import Path
+          s=json.load(open('incoming/strat/threshold_stratification.json'))
+          c=json.load(open('incoming/corr/correlation_robustness.json'))
+          a=json.load(open('incoming/amp/amplification_population.json'))
+          assert s['classification']=='POST_16385_TOP64_THRESHOLD_STRATIFICATION_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert c['classification']=='POST_16385_TOP64_CORRELATION_ROBUSTNESS_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert a['classification']=='POST_16385_TOP64_AMPLIFICATION_POPULATION_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert s['atom_count']==c['atom_count']==a['atom_count']==64
+          assert s['threshold_counts']['ge_1e_3']==21
+          assert abs(float(c['full_spearman']) - (-0.5341210955390676)) < 1e-15
+          for d in (s,c,a):
+              assert d['class_solver_invoked'] is False
+              assert d['scientific_classification_created'] is False
+              assert d['scientific_authority_created'] is False
+              assert d['next_rung_authorized'] is False
+              assert d['covariance_restriction_authorized'] is False
+              assert d['Wm_S3_opened'] is False
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          out={
+            'schema':'LAYERB_POST_16385_TOP64_POPULATION_TERMINAL_VALIDATION_V0_1',
+            'classification':'POST_16385_TOP64_POPULATION_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'source_run_id':34625839966,
+            'source_head_sha':'8cb0711940a94b8da0eaf33f793035ee9102cb7b',
+            'artifact_zip_sha256':{
+              'threshold_stratification':'b3f90e93683fc54f1d8b035cde002be024a02ddce6347b79854449b223f58640',
+              'correlation_robustness':'f1ecedca281146c4d00a8c48bc5204f6b5091e8786f2d3b01941e5956905912f',
+              'amplification_population':'debbec0a9d73a94d887de6fbf7ebad3c188683fc9d3e55ff83da82d11f6481a3'},
+            'payload_sha256':{
+              'threshold_stratification':sha('incoming/strat/threshold_stratification.json'),
+              'correlation_robustness':sha('incoming/corr/correlation_robustness.json'),
+              'amplification_population':sha('incoming/amp/amplification_population.json')},
+            'threshold_counts':s['threshold_counts'],
+            'quantiles':s['quantiles'],
+            'by_block':s['by_block'],
+            'by_component':s['by_component'],
+            'full_spearman':c['full_spearman'],
+            'leave_one_out_spearman':c['leave_one_out_spearman'],
+            'top_rank_exclusions':c['top_rank_exclusions'],
+            'amplification_distribution':a['amplification_distribution'],
+            'amplification_threshold_counts':a['threshold_counts'],
+            'top10_by_amplification':a['top10_by_amplification'],
+            'class_solver_invoked':False,
+            'scientific_classification_created':False,
+            'scientific_authority_created':False,
+            'next_rung_authorized':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False}
+          Path('artifacts/terminal_validation.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top64-population-terminal-validation-v0-1
+          path: artifacts/terminal_validation.json
+          if-no-files-found: error
+          retention-days: 90
