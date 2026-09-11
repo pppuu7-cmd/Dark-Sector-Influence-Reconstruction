@@ -17,8 +17,13 @@ First causal fail-closed error: `RuntimeError: atom 0 primary reproduction 2.812
 
 The helper/prereg/science settings remain unchanged. Comparison against the independently validated top-1 implementation found the same response formulas and frozen numerical choices; the top-1 run reproduced the source hotspot metric exactly on a different hosted VM. Therefore no tolerance/h/grid/interpolation/estimator repair is authorized.
 
-## Active process / exact self-heal
-The only permitted resume is one exact unchanged GitHub Actions job retry of failed job `103311649147`. This is an infrastructure retry under the already frozen contract, not a new scientific computation. No duplicate top-64 execution may coexist.
+## Active process — exact unchanged attempt 2
+Run: `34614119149`, run attempt: `2`.
+Current job: `103331912096` (`census`).
+Launch head remains `6b684ac91c7a261e6b588da1a4922a411bd65614`; execution checkout/static-authority head remains `717a15a615061cea441910d03fdda1f9a4a2b2c2`.
+Current state at ledger update: **IN_PROGRESS** on GitHub-hosted ubuntu-24.04.
+Checkpoint namespace: none (hosted support computation; exactly 8 role-major constructions).
+This is the single permitted unchanged infrastructure retry. No duplicate top-64 execution may coexist.
 
 Expected PASS token remains `POST_16385_TOP64_ROLE_CANCELLATION_CENSUS_PASS_PLUS_0_PLUS_0` with exact 64 ordered source atoms, lifecycle 8/max1/final0, unsupported=0, lookup<=1e-12, and every primary reproduction error<=1e-12.
 
@@ -29,7 +34,7 @@ Independently download/hash `census.json`, capacity/history receipts; verify sou
 Do not relax the gate and do not keep retrying. Record the top-64 census as BLOCKED by hosted numerical reproducibility; prospectively freeze a separate support-only cross-VM hotspot reproducibility diagnostic. Scientific frontier remains unchanged.
 
 ## Runner ownership / anti-duplication
-Top-64 retry owns at most one GitHub-hosted lane. Stale self-hosted run `34550495778 / 103112190909` remains superseded and must not receive home-runner ownership.
+Exactly one useful hosted lane is owned by top-64 retry attempt 2: `34614119149 / 103331912096`. Stale self-hosted run `34550495778 / 103112190909` remains superseded and must not receive home-runner ownership.
 
 ## Recovery authority
 Newest immutable note: `docs/recovery/RECOVERY_2026-09-11_ARTICLE3_TOP64_CENSUS_INFRA_RETRY_V122.md`, creation commit `460ff572adeb18c86fde880430af17bfbb34af95`. `docs/RECOVERY_LATEST.md` advances to V122 at commit `eb971b4fb7a51b383541f6d313b18cebe3ed4de8`.
