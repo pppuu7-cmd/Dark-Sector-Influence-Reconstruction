@@ -1,0 +1,56 @@
+name: layerb-post-16385-top1-role-cancellation-terminal-consumer-static-audit-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-post-16385-top1-role-cancellation-terminal-consumer-static-audit-v0-1.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit terminal consumer without reading scientific artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          test "$(git hash-object .github/workflows/layerb-post-16385-top1-role-cancellation-terminal-consumer-v0-1.yml)" = '11410edc681ee495d17614977d7aef1514620c46'
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('.github/workflows/layerb-post-16385-top1-role-cancellation-terminal-consumer-v0-1.yml').read_text()
+          checks={
+            'workflow_run_trigger':"workflows: ['layerb-post-16385-top1-role-cancellation-chain-v0-1']" in p,
+            'success_gate':"github.event.workflow_run.conclusion == 'success'" in p,
+            'fixed_checkout':'ref: ee9e27d73a7124f0ca4b8cef95432c491903002c' in p,
+            'validator_blob':'af20444b44137e03a7b778835dc97305b8004769' in p,
+            'validator_static_authority_blob':'8df22086f608805605aef67658c3b98afa9e740f' in p,
+            'validator_static_pass':'POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_VALIDATOR_STATIC_AUDIT_PASS_PLUS_0_PLUS_0' in p,
+            'fixed_source_run':'run-id: 34592951737' in p,
+            'source_artifact':'layerb-post-16385-exact-response-atom-hotspot-v0-1' in p,
+            'decomposition_artifact':'layerb-post-16385-top1-role-cancellation-decomposition-v0-1' in p,
+            'event_run_for_decomposition':'run-id: ${{ github.event.workflow_run.id }}' in p,
+            'terminal_validator':'layerb_post_16385_top1_role_cancellation_terminal_validator_v0_1.py' in p,
+            'terminal_pass':'POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0' in p,
+            'structural_valid':"d['structural_valid'] is True" in p,
+            'primary_reproduced':"d['primary_component_reproduced'] is True" in p,
+            'repro_tol':"d['relative_reproduction_error']<=1e-12" in p,
+            'no_science_authority':"d['scientific_authority_created'] is False" in p,
+            'downstream_closed':all(x in p for x in ("d['next_rung_authorized'] is False","d['covariance_restriction_authorized'] is False","d['Wm_S3_opened'] is False")),
+            'no_successor_launch':'workflow_dispatch' not in p and 'gh workflow run' not in p and 'createWorkflowDispatch' not in p,
+          }
+          ok=all(checks.values())
+          out={'schema':'LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_CONSUMER_STATIC_AUDIT_V0_1','classification':'POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_CONSUMER_STATIC_AUDIT_PASS_PLUS_0_PLUS_0' if ok else 'POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_CONSUMER_STATIC_AUDIT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'pass_count':sum(checks.values()),'check_count':len(checks),'hotspot_result_read':False,'decomposition_result_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'next_rung_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('artifacts/static.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['classification'],f"{out['pass_count']}/{out['check_count']}")
+          assert ok,out
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top1-role-cancellation-terminal-consumer-static-audit-v0-1
+          path: artifacts/static.json
+          if-no-files-found: error
+          retention-days: 90
