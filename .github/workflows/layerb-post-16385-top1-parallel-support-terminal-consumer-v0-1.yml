@@ -1,0 +1,98 @@
+name: layerb-post-16385-top1-parallel-support-terminal-consumer-v0-1
+on:
+  push:
+    paths:
+      - '.github/workflows/layerb-post-16385-top1-parallel-support-terminal-consumer-v0-1.yml'
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: layerb-post-16385-top1-parallel-support-terminal-consumer-v0-1
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce immutable top1 authority
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/authority/LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_AUTHORITY_V0_1.json)" = 'cb0b07bd75208619e681f02528fb0c761ddedabb'
+      - name: Independently download and hash all three source artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p incoming/amplification incoming/binary64 incoming/ulp artifacts
+          fetch_one () {
+            local id="$1" expected="$2" outdir="$3"
+            curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+              "https://api.github.com/repos/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/artifacts/${id}/zip" -o "${outdir}.zip"
+            test "$(sha256sum "${outdir}.zip" | awk '{print $1}')" = "$expected"
+            unzip -q "${outdir}.zip" -d "$outdir"
+          }
+          fetch_one 10273825514 5d5a3ef079bff829dcdbb37f6daab6c812e20491920d8d8a6083090cd6b09df8 incoming/amplification
+          fetch_one 10274180314 63e8ea8c79c51a1ff6e5ea171c75999904a36c7dbc3e2eb7b88827bb2f03f41d incoming/binary64
+          fetch_one 10274265218 313aa832ece4f720bc3946515bab80da9e4310afbdf645223504fc84d8fb44bb incoming/ulp
+      - name: Validate machine payloads and create combined terminal receipt
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, math, hashlib
+          from pathlib import Path
+          amp=json.load(open('incoming/amplification/cancellation_amplification.json'))
+          b64=json.load(open('incoming/binary64/binary64_replay.json'))
+          ulp=json.load(open('incoming/ulp/ulp_sensitivity.json'))
+          assert amp['classification']=='POST_16385_TOP1_CANCELLATION_AMPLIFICATION_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert b64['classification']=='POST_16385_TOP1_BINARY64_REPLAY_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert ulp['classification']=='POST_16385_TOP1_ULP_SENSITIVITY_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert amp['class_solver_invoked'] is False and b64['class_solver_invoked'] is False and ulp['class_solver_invoked'] is False
+          assert b64['bitwise_binary64_metric_reproduced'] is True
+          assert b64['relative_difference_replayed']==0.012484060640679777
+          assert b64['ratio_to_strict_science_tolerance']==12.484060640679777
+          assert ulp['all_nine_neighbor_metrics_remain_above_tolerance'] is True
+          assert ulp['nine_neighbor_min_relative_difference']>1e-3
+          assert ulp['max_absolute_metric_shift_under_endpoint_plusminus_one_ulp']<1e-12
+          assert amp['beta_response_cross_grid_relative_difference']==0.012484060640679777
+          assert amp['response_to_max_raw_role_amplification_factor']>1e8
+          for d in (amp,b64,ulp):
+              assert d['scientific_authority_created'] is False
+              assert d['next_rung_authorized'] is False
+              assert d['covariance_restriction_authorized'] is False
+              assert d['Wm_S3_opened'] is False
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          out={
+            'schema':'LAYERB_POST_16385_TOP1_PARALLEL_SUPPORT_TERMINAL_VALIDATION_V0_1',
+            'classification':'POST_16385_TOP1_PARALLEL_SUPPORT_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'source_run_id':34624187060,
+            'source_head_sha':'56f9152f4fa775439365a88ea5c2e7b502f1f5eb',
+            'artifact_zip_sha256':{
+              'cancellation_amplification':'5d5a3ef079bff829dcdbb37f6daab6c812e20491920d8d8a6083090cd6b09df8',
+              'binary64_replay':'63e8ea8c79c51a1ff6e5ea171c75999904a36c7dbc3e2eb7b88827bb2f03f41d',
+              'ulp_sensitivity':'313aa832ece4f720bc3946515bab80da9e4310afbdf645223504fc84d8fb44bb'},
+            'payload_sha256':{
+              'cancellation_amplification':sha('incoming/amplification/cancellation_amplification.json'),
+              'binary64_replay':sha('incoming/binary64/binary64_replay.json'),
+              'ulp_sensitivity':sha('incoming/ulp/ulp_sensitivity.json')},
+            'beta_response_cross_grid_relative_difference':amp['beta_response_cross_grid_relative_difference'],
+            'response_to_max_raw_role_amplification_factor':amp['response_to_max_raw_role_amplification_factor'],
+            'binary64_metric_reproduced':b64['bitwise_binary64_metric_reproduced'],
+            'max_absolute_metric_shift_under_endpoint_plusminus_one_ulp':ulp['max_absolute_metric_shift_under_endpoint_plusminus_one_ulp'],
+            'all_nine_neighbor_metrics_remain_above_tolerance':ulp['all_nine_neighbor_metrics_remain_above_tolerance'],
+            'class_solver_invoked':False,
+            'scientific_classification_created':False,
+            'scientific_authority_created':False,
+            'next_rung_authorized':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False}
+          Path('artifacts/terminal_validation.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top1-parallel-support-terminal-validation-v0-1
+          path: artifacts/terminal_validation.json
+          if-no-files-found: error
+          retention-days: 90
