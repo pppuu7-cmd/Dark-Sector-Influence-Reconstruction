@@ -1,0 +1,21 @@
+{
+  "schema": "LAYERB_POST_16385_BROAD_QUANTILE_STATIC_AUDIT_AUTHORITY_V0_1",
+  "classification": "POST_16385_BROAD_QUANTILE_STATIC_AUDIT_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "workflow_run_id": 34585938900,
+  "artifact_id": 10193569682,
+  "head_sha": "b5300df08e8a313e781811940438af345302f13c",
+  "artifact_zip_sha256": "8d88e5b0ca8983f90fdda73604a99fce7e32439a04cea00b6b565e6ba2fd9e80",
+  "static_result_sha256": "275027c2701457700cc3e24c03ab43f701223e27dbd3f3808429b8942306e065",
+  "artifact_verified_independently": true,
+  "pass_count": 18,
+  "check_count": 18,
+  "class_solver_invoked": false,
+  "scientific_response_read": false,
+  "scientific_authority_created": false,
+  "next_rung_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "article3_repository_readiness_percent": 68,
+  "funnel_freeze_readiness_percent": 67
+}
