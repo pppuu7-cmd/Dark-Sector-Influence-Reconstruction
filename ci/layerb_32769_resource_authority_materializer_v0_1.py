@@ -40,6 +40,10 @@ def is_git_sha(x) -> bool:
     return isinstance(x, str) and len(x) == 40 and all(c in "0123456789abcdef" for c in x)
 
 
+def marked_synthetic(d: dict) -> bool:
+    return d.get("synthetic_fixture") is True or d.get("synthetic_only") is True
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--contract", required=True)
@@ -63,6 +67,14 @@ def main() -> int:
         errors.append("contract_input_classifications")
     if contract.get("authority_created_by_contract_file_itself") is not False or contract.get("high_memory_resource_lifecycle_preflight_pass") is not False:
         errors.append("contract_nontriggering")
+    if contract.get("materialization_requires_real_non_synthetic_inputs") is not True:
+        errors.append("contract_real_input_requirement")
+    if marked_synthetic(source):
+        errors.append("source_marked_synthetic")
+    if marked_synthetic(independent):
+        errors.append("independent_marked_synthetic")
+    if marked_synthetic(provenance):
+        errors.append("provenance_marked_synthetic")
 
     if source.get("classification") != RESOURCE_PASS:
         errors.append("source_classification")
