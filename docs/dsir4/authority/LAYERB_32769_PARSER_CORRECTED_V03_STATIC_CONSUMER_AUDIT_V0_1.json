@@ -1,0 +1,47 @@
+{
+  "schema": "LAYERB_32769_PARSER_CORRECTED_V03_STATIC_CONSUMER_AUDIT_AUTHORITY_V0_1",
+  "classification": "LAYERB_32769_PARSER_CORRECTED_V03_STATIC_CONSUMER_AUDIT_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scope": "DSIR Article III Layer-B response-blind resource-path static validation only; no scientific response and no scientific execution authorization",
+  "source_workflow": ".github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3.yml",
+  "source_workflow_git_blob": "e55c0ab05c6b7eb0d622eadba25d7e20cdc4ce16",
+  "independent_consumer": "ci/layerb_32769_resource_lifecycle_independent_consumer_v0_3.py",
+  "independent_consumer_git_blob": "cb9e83377f7f7c0498f0b2bfc3b8b06c2683d9ab",
+  "audit_workflow_commit": "1c87daaf339ff9dcf0dc40133e5252d9af341ea0",
+  "audit_run_id": 34651919554,
+  "jobs": {
+    "static_audit": 103435803834,
+    "independent_verifier": 103435832681
+  },
+  "artifacts": {
+    "static": {
+      "artifact_id": 10284595346,
+      "zip_sha256": "7f52b57ae576d8d7bec537e137eb7983afb34e8a91e5bed52eb0e36e37288b05"
+    },
+    "independent": {
+      "artifact_id": 10283663788,
+      "zip_sha256": "237bae6bdc4f63e47c39d718135316683b99942ee988ef5018166cfb9deef330"
+    }
+  },
+  "validated_bindings": {
+    "parser_capacity": 1048576,
+    "point_capacity": 32769,
+    "canonical_payload_bytes_including_nul": 719273,
+    "exhausted_hosted_memtotal_kb": 16373452,
+    "preferred_high_memory_ram_kb": 33554432,
+    "required_custom_label": "dsir-32769-highmem",
+    "registration_configurator_sha256": "2cd02d1a7ac58ea3945a435272f03ea1abe2d7e3410191b5a17a9c62e0a297ce",
+    "role_order": ["reference", "alpha_minus", "beta_plus", "beta_minus"]
+  },
+  "scientific_transfer_values_read": false,
+  "scientific_response_read": false,
+  "scientific_response_computed": false,
+  "convergence_metric_computed": false,
+  "convergence_classification_created": false,
+  "scientific_authority_created": false,
+  "high_memory_resource_lifecycle_preflight_pass_created": false,
+  "scientific_execution_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "token": "LAYERB_32769_PARSER_CORRECTED_V03_STATIC_CONSUMER_AUDIT_PASS_PLUS_0_PLUS_0"
+}
