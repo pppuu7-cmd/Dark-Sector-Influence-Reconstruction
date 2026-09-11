@@ -1,0 +1,74 @@
+name: layerb-post-16385-top64-role-cancellation-terminal-consumer-v0-1
+on:
+  workflow_run:
+    workflows: ['layerb-post-16385-top64-role-cancellation-census-v0-1']
+    types: [completed]
+permissions:
+  actions: read
+  contents: read
+jobs:
+  consume:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_sha == '6b684ac91c7a261e6b588da1a4922a411bd65614' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 877fdf40308b1d67de6db39b8e44b8d730672002
+          fetch-depth: 1
+      - name: Enforce frozen validator and independent static authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_post_16385_top64_role_cancellation_terminal_validator_v0_1.py)" = 'b687bc3a73c3f5d3c61d02a8c3fdf1988b0f396e'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_POST_16385_TOP64_TERMINAL_VALIDATOR_STATIC_AUDIT_V0_1.json)" = 'c4a40edbb123d815d9185216353fcdf4a7d5a45b'
+          python - <<'PY'
+          import json
+          a=json.load(open('docs/dsir4/authority/LAYERB_POST_16385_TOP64_TERMINAL_VALIDATOR_STATIC_AUDIT_V0_1.json'))
+          assert a['artifact_verified_independently'] is True
+          assert a['classification']=='POST_16385_TOP64_TERMINAL_VALIDATOR_STATIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert a['pass_count']==a['check_count']==15
+          assert a['class_solver_invoked'] is False and a['census_result_read'] is False
+          assert a['execution_authorized'] is True
+          assert a['next_rung_authorized'] is False and a['covariance_restriction_authorized'] is False and a['Wm_S3_opened'] is False
+          PY
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-exact-response-atom-hotspot-v0-1
+          path: source
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 34592951737
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-top64-role-cancellation-census-v0-1
+          path: census
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Independently validate frozen top-64 census terminal artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python ci/layerb_post_16385_top64_role_cancellation_terminal_validator_v0_1.py \
+            --source source/result.json \
+            --census census/census.json \
+            --capacity census/capacity_patch.json \
+            --history census/history_patch.json \
+            --out artifacts/validation.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/validation.json'))
+          assert d['classification']=='POST_16385_TOP64_ROLE_CANCELLATION_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0',d
+          assert d['structural_valid'] is True and d['errors']==[],d
+          assert d['atom_count']==64 and float(d['max_primary_reproduction_relative_error'])<=1e-12,d
+          assert d['scientific_authority_created'] is False,d
+          assert d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False,d
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top64-role-cancellation-terminal-consumer-v0-1
+          path: artifacts/validation.json
+          if-no-files-found: error
+          retention-days: 90
