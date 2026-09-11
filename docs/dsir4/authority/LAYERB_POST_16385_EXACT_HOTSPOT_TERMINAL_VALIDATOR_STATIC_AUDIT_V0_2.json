@@ -1,0 +1,22 @@
+{
+  "schema": "LAYERB_POST_16385_EXACT_HOTSPOT_TERMINAL_VALIDATOR_STATIC_AUDIT_AUTHORITY_V0_2",
+  "artifact_verified_independently": true,
+  "workflow_run_id": 34593210669,
+  "job_id": 103242995096,
+  "workflow_head_sha": "4c1b447ae73e9163762a7c2348109dee678d746b",
+  "artifact_id": 10196459062,
+  "artifact_zip_sha256": "e023f0d2a7d5bdc1a8bd7177758dba8e0dc9c3d10112ac108e4c4f673dde7e95",
+  "static_json_sha256": "cf490241c00eea28b4ada0572e731c88a4f8c7f9f9229f934165c83a3af6823d",
+  "classification": "POST_16385_EXACT_HOTSPOT_TERMINAL_VALIDATOR_STATIC_AUDIT_PASS_PLUS_0_PLUS_0",
+  "pass_count": 22,
+  "check_count": 22,
+  "validator_blob_sha": "af90fc027ab25deab640cf88ca6ed07a70423f25",
+  "class_solver_invoked": false,
+  "scientific_response_read": false,
+  "hotspot_result_read": false,
+  "scientific_authority_created": false,
+  "effect": "+0/+0",
+  "next_rung_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false
+}
