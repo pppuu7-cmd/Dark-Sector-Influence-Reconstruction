@@ -5,32 +5,28 @@ Updated: 2026-09-11. Scope: **DSIR only**; KMDSB/RTK/RQIR excluded.
 ## Scientific frontier
 Canonical 8193->16385 is independently verified `COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`, max relative component difference `0.012484060640679777` versus strict `<1e-3`. Frozen `REL_TOL=1e-3`, `h=1e-4`, native kpd20, centered-cubic interpolation, physical domain/masks/107-row accounting, invalid fraction `<=0.05`, retained `>=15`, unsupported=0 and lookup `<=1e-12` remain unchanged. Covariance restriction remains unauthorized; Wm_S3 remains unopened; no 32769 execution is authorized.
 
-## Active process
-Frozen plan: `docs/dsir4/prereg/LAYERB_POST_16385_BROAD_QUANTILE_LOCALIZATION_PLAN_V0_1.md`, commit `4aec3ce3a74c187e74b8ed5b7f6e17039ddc9ef6`.
-Active repaired run: `layerb-post-16385-broad-quantile-localization-v0-2 / 34585873905`, head `ef7f12195b4bc491c09f107fcba58e2bdf350881`.
-- `103219830602`, broad-raw: **IN_PROGRESS**, GitHub-hosted ubuntu-24.04; identity, numerical stack and pinned CLASS-IV build PASS; frozen numerical lane executing.
-- `103219831011`, broad-conditioning: **IN_PROGRESS**, separate GitHub-hosted ubuntu-24.04; same prerequisite stages PASS; frozen numerical lane executing.
-Expected tokens remain support-only +0/+0 and cannot authorize 32769, covariance restriction or Wm_S3.
+## Newly closed broad support stage
+Broad run `34585873905` is terminal and independently verified/consumed. Broad raw max `1.5949311416969764e-10`; broad finite-difference response max `0.00016265101390432733`; maximum cancellation amplification indicator `3442722.6399590056`; full plateau/broad response ratio `76.75366012795348`. Broad therefore demonstrates strong response-construction amplification but does not reproduce the full `0.012484060640679777` plateau. Durable authorities are `LAYERB_POST_16385_BROAD_QUANTILE_TERMINAL_V0_1.json` and `LAYERB_POST_16385_BROAD_TERMINAL_CONSUMER_V0_1.json`. Effect remains +0/+0.
 
-## Newly closed independent support lane
-Response-blind stencil geometry census is independently consumed and durable under `docs/dsir4/authority/LAYERB_POST_16385_STENCIL_GEOMETRY_CENSUS_V0_1.json`, commit `dc4c545348f9c05d724b1f4b113977b5fe7c48ad`.
-Initial v0.1 run `34586420903` failed at its shallow-history identity guard before numerical execution: infrastructure/software +0/+0. Minimal v0.2 exact-blob identity repair head `68fc951fd90cd74f6232ad813973da8119eb41a0` produced valid run `34586460549`.
-- full `103221704310 / 10193782924`: ZIP `de6de7a539e4a599874bfc1eda47986bf57fc3052d1f9dd9de6bca36588037cb`; result `16e1127f9e16cb1e21c8571f73b7c92d0beb907e1d81d4aec3a4c8066f1d93a0`; 8189 targets; no exact target membership in 16385; max nearest-coordinate rel mismatch `0.00019843299880114518`; max 16385 cubic weight L1 `1.2499999962738002`.
-- edge `103221704104 / 10193782592`: ZIP `f69a4fbfb7bd4e746f1ae1d7e04869093f54f029d081cc6a0b37919665681de2`; result `6c641bb466f80782c9c79e61e911a43a816163b687adb944729f5076408b95fc`; 512 targets; no exact target membership in 16385; max nearest-coordinate rel mismatch `0.00001245223543421322`; max 16385 cubic weight L1 `1.0303914532525047`.
-Classification: `POST_16385_STENCIL_GEOMETRY_CENSUS_PASS_PLUS_0_PLUS_0`; no CLASS invocation, no scientific authority, no next rung/covariance/Wm_S3 authority.
+## Active main process
+Prospectively frozen exact response-atom hotspot contract: `docs/dsir4/prereg/LAYERB_POST_16385_EXACT_RESPONSE_ATOM_HOTSPOT_LOCALIZATION_V0_1.md`, blob `66a84ab1492824cf4851a592d3e1d1bb2c29a2f0`. Helper blob `6ee1243adf626a6e0f10883fcccef0f8b04141a3`. Static audit 22/22 PASS; authority-binding audit 17/17 PASS; broad terminal artifacts consumed; fresh anti-dup clean for hosted hotspot work.
+
+Active workflow/run/job: `layerb-post-16385-exact-response-atom-hotspot-v0-1 / 34592951737 / 103242180883`, head `5f202de811c07c020100055a63391b7225358670`, GitHub-hosted ubuntu-24.04, timeout 240 min. Latest verified steps: checkout PASS; prospective activation/frozen identity gate PASS; numerical/build stack installation active at the time of ledger update. Do not duplicate this heavy run.
+
+Frozen execution target: exact 441 shared response calls = 377 DES + 64 BOSS GL64; canonical 8193 and 16385; bitwise-identical shared request plan; 8 total role-major CLASS constructions, max one live; unchanged h=1e-4/native kpd20/centered-cubic/lookup<=1e-12. Record top-64 response atoms plus all 441 call maxima. Fine-only GL128 128 calls are excluded from direct atom comparison exactly as preregistered. No 107-row scientific rerun or downstream authority is permitted.
 
 ## Runner ownership / anti-idle
-Useful hosted numerical lanes: **2 IN_PROGRESS**. No home runner ownership. Do not duplicate either broad lane. Stale self-hosted `34550495778 / 103112190909` remains superseded and must not receive ownership. Other result-dependent diagnostics remain blocked until both broad artifacts are independently consumed; do not create filler work.
+The exact-hotspot job `34592951737 / 103242180883` owns the useful heavy hosted DSIR process. Do not launch another exact-hotspot or full 8193->16385 run while active. Stale self-hosted `34550495778 / 103112190909` remains superseded and must not receive ownership. Independent response-blind/static side work is allowed only if scientifically useful and nonduplicating.
 
 ## Recovery authority
-Newest immutable note: `docs/recovery/RECOVERY_2026-09-11_ARTICLE3_BROAD_PLUS_STENCIL_ACTIVE_V118.md`, creation commit `207e2aaae45010e6c457db1d46d0e657e10d492b`. `docs/RECOVERY_LATEST.md` points to V118 via commit `7fef7dd102c3538598dec5557495ad7e08f09c4e`.
+Newest immutable note: `docs/recovery/RECOVERY_2026-09-11_ARTICLE3_EXACT_HOTSPOT_ACTIVE_V119.md`, creation commit `43a391f3391bc48d370950034eae1c4bc5f45ebf`. `docs/RECOVERY_LATEST.md` points to V119 via commit `09aa20e7ab553a7d04dbd84f8affa903eecdccf3`.
 
 ## Readiness
 **ARTICLE3_REPOSITORY_READINESS: 68%.** Funnel-freeze readiness: **67%**.
 
 ## Exact next actions
-1. Do not duplicate broad-raw or broad-conditioning.
-2. On terminal completion independently verify artifact ZIP/result hashes, exact 15-index/z identities, lifecycle, unsupported/lookup and downstream-closed flags.
-3. Use the stencil census only as support evidence; it creates no scientific branch authority.
-4. If broad differences remain far below plateau, prospectively freeze the next z/row-aggregation or edge/stencil-mechanism diagnostic before execution; if a large deterministic hotspot appears, separately preregister its follow-up.
-5. Do not rerun full 8193->16385 and do not execute 32769.
+1. Query `34592951737 / 103242180883`; no duplicate and no partial-response inspection.
+2. If terminal, independently download/verify artifact ZIP and internal result/capacity/history hashes.
+3. Require exact PASS token, shared-call count 441, DES 377, BOSS GL64 64, bitwise plan identity, lifecycle 8/max1/final0, unsupported=0, lookup<=1e-12 and closed downstream flags.
+4. Only after independent validation inspect top-64 `(call,z,k,component)` hotspots and prospectively freeze any result-dependent follow-up before execution.
+5. Do not execute 32769.
