@@ -1,0 +1,77 @@
+{
+  "schema": "LAYERB_32769_PARSER_1MIB_STANDARD_HOSTED_MEMORY_EXHAUSTION_AUTHORITY_V0_1",
+  "classification": "LAYERB_32769_PARSER_1MIB_STANDARD_HOSTED_MEMORY_EXHAUSTION_CONFIRMED_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scope": "DSIR Article III Layer-B resource-only execution envelope after parser undercapacity was corrected; no scientific response",
+  "parser_root_cause_authority": "docs/dsir4/authority/LAYERB_32769_PARSER_UNDERCAPACITY_CRASH_ROOT_CAUSE_V0_1.json",
+  "build_authority_v02": "docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json",
+  "parser_capacity": 1048576,
+  "canonical_payload_bytes_including_nul": 719273,
+  "reference_live_memory_evidence": {
+    "workflow": ".github/workflows/layerb-32769-parser-1mib-live-memory-telemetry-v0-1.yml",
+    "workflow_git_blob": "82cde20f5e2c2fdac8386d9990c82cc759bd1210",
+    "run_id": 34649988416,
+    "job_id": 103429640299,
+    "runner_image": "ubuntu-24.04",
+    "runner_region": "centralus",
+    "memtotal_kb": 16373452,
+    "swap_total_kb": 3145724,
+    "initial_memavailable_kb": 15142112,
+    "initial_swapfree_kb": 3145724,
+    "last_pre_kill_sample": {
+      "timestamp_utc": "2026-09-11T21:37:30Z",
+      "python_rss_kb": 15663444,
+      "memavailable_kb": 0,
+      "swapfree_kb": 240
+    },
+    "python_process_killed": true,
+    "runner_shutdown_signal_after_exhaustion": true,
+    "artifact_upload_completed": false
+  },
+  "compile_capacity_dominated_subset_checks": {
+    "workflow": ".github/workflows/layerb-32769-parser-1mib-memory-scaling-v0-1.yml",
+    "workflow_git_blob": "43706922d61c278f18039cc3650d690030744fa8",
+    "compiled_point_capacity": 32769,
+    "requested_subset_20481": {
+      "run_id": 34650179321,
+      "job_id": 103430236804,
+      "last_observed_python_rss_kb": 15292544,
+      "last_observed_memavailable_kb": 156992,
+      "last_observed_swapfree_kb": 0,
+      "runner_shutdown_received": true,
+      "compute_completed": false
+    },
+    "requested_subset_24577": {
+      "run_id": 34650179321,
+      "job_id": 103430237028,
+      "last_observed_python_rss_kb": 15518164,
+      "last_observed_memavailable_kb": 60600,
+      "last_observed_swapfree_kb": 4,
+      "runner_shutdown_received": true,
+      "python_process_killed": true,
+      "compute_completed": false
+    },
+    "interpretation": "With CLASS compiled at _MAX_NUMBER_OF_K_FILES_=32769, reducing requested-node count to 20481 or 24577 did not materially avoid the near-15.3-to-15.5-GB resident-memory ceiling; these probes are therefore not valid linear scaling points for extrapolating requested-node memory."
+  },
+  "interpretation": {
+    "old_parser_sigsegv_is_not_the_remaining_blocker": true,
+    "parser_1mib_clears_input_buffer_limit": true,
+    "standard_hosted_16gb_plus_approximately_3gb_swap_is_insufficient": true,
+    "memory_exhaustion_directly_observed": true,
+    "high_memory_runner_required": true,
+    "preferred_isolated_runner_ram_gib": 32,
+    "preferred_value_is_execution_guidance_not_a_frozen_scientific_parameter": true,
+    "24gib_may_be_testable_but_is_not_proven_sufficient": true
+  },
+  "scientific_transfer_values_read": false,
+  "scientific_response_read": false,
+  "scientific_response_computed": false,
+  "convergence_metric_computed": false,
+  "convergence_classification_created": false,
+  "scientific_authority_created": false,
+  "high_memory_resource_lifecycle_preflight_pass_created": false,
+  "scientific_execution_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "token": "LAYERB_32769_PARSER_1MIB_STANDARD_HOSTED_MEMORY_EXHAUSTION_CONFIRMED_PLUS_0_PLUS_0"
+}
