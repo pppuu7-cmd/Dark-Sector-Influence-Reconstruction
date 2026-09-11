@@ -1,0 +1,123 @@
+name: layerb-post-16385-top64-confounder-terminal-consumer-v0-1
+on:
+  push:
+    paths:
+      - '.github/workflows/layerb-post-16385-top64-confounder-terminal-consumer-v0-1.yml'
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: layerb-post-16385-top64-confounder-terminal-consumer-v0-1
+  cancel-in-progress: false
+
+env:
+  SOURCE_RUN: '34628562363'
+  TOP64_AUTH: docs/dsir4/authority/LAYERB_POST_16385_TOP64_ROLE_CANCELLATION_TERMINAL_AUTHORITY_V0_1.json
+  POP_AUTH: docs/dsir4/authority/LAYERB_POST_16385_TOP64_POPULATION_TERMINAL_AUTHORITY_V0_1.json
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce immutable parent authorities
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$TOP64_AUTH")" = '5e16e8a793a81bf1692df92d8e24459e03fd4838'
+          test "$(git hash-object "$POP_AUTH")" = 'fd6e43459f6e322631a1445ede0c5b0ec8b17380'
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-top64-duplicate-collapse-audit-v0-1
+          path: source/duplicate
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: ${{ env.SOURCE_RUN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-top64-block-correlation-audit-v0-1
+          path: source/block
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: ${{ env.SOURCE_RUN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-top64-cancellation-quartile-enrichment-audit-v0-1
+          path: source/quartile
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: ${{ env.SOURCE_RUN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify payloads and emit terminal receipt
+        run: |
+          set -euo pipefail
+          test "$(sha256sum source/duplicate/duplicate_collapse.json | awk '{print $1}')" = '986fd021071a633b50d80295cc9cbde3a2c3e5a92de8ff2d0f701dbee54fd740'
+          test "$(sha256sum source/block/block_correlation.json | awk '{print $1}')" = 'c6f66ff9fdbb1b6c33696ad0dbf725431c6d556de5e54392b8a925cb67469ff9'
+          test "$(sha256sum source/quartile/quartile_enrichment.json | awk '{print $1}')" = '1448f06dc62cca6fb3e2f6a99a8ec90a95905e90356b063c85eeb3ab34d31bbd'
+          mkdir -p artifacts
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          dup=json.load(open('source/duplicate/duplicate_collapse.json'))
+          blk=json.load(open('source/block/block_correlation.json'))
+          q=json.load(open('source/quartile/quartile_enrichment.json'))
+
+          assert dup['classification']=='POST_16385_TOP64_DUPLICATE_COLLAPSE_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert dup['source_atom_count']==64 and dup['unique_physical_atom_count']==58 and dup['duplicate_group_count']==3
+          assert dup['collapsed_count_ge_1e_3']==19
+          assert abs(dup['collapsed_spearman'] - (-0.5163800793626381)) < 1e-15
+
+          assert blk['classification']=='POST_16385_TOP64_BLOCK_CORRELATION_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert blk['blocks']['DES']['raw_count']==55 and blk['blocks']['DES']['raw_count_ge_1e_3']==18
+          assert abs(blk['blocks']['DES']['raw_spearman'] - (-0.5078643578643579)) < 1e-15
+          assert blk['blocks']['BOSS_GL64']['raw_count']==9 and blk['blocks']['BOSS_GL64']['unique_physical_count']==3
+          assert blk['blocks']['BOSS_GL64']['unique_count_ge_1e_3']==1
+
+          assert q['classification']=='POST_16385_TOP64_CANCELLATION_QUARTILE_ENRICHMENT_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert q['high_discrepancy_count']==21 and q['low_discrepancy_count']==43
+          assert q['cancellation_scale_quartiles_low_to_high'][0]['count_ge_1e_3']==13
+          assert q['cancellation_scale_quartiles_low_to_high'][3]['count_ge_1e_3']==1
+          assert abs(q['high_to_low_median_cancellation_scale_ratio'] - 0.13484119009229173) < 1e-15
+
+          for d in (dup, blk, q):
+              assert d['effect']=='+0/+0'
+              assert d['class_solver_invoked'] is False
+              assert d['scientific_classification_created'] is False
+              assert d['next_rung_authorized'] is False
+              assert d['covariance_restriction_authorized'] is False
+              assert d['Wm_S3_opened'] is False
+
+          receipt={
+            'schema':'LAYERB_POST_16385_TOP64_CONFOUNDER_TERMINAL_RECEIPT_V0_1',
+            'classification':'POST_16385_TOP64_CONFOUNDER_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'source_run_id':34628562363,
+            'source_head_sha':'d1f47cec82b3305a53ebe72c3daf9a015ee06ef3',
+            'payload_sha256':{
+              'duplicate_collapse':'986fd021071a633b50d80295cc9cbde3a2c3e5a92de8ff2d0f701dbee54fd740',
+              'block_correlation':'c6f66ff9fdbb1b6c33696ad0dbf725431c6d556de5e54392b8a925cb67469ff9',
+              'quartile_enrichment':'1448f06dc62cca6fb3e2f6a99a8ec90a95905e90356b063c85eeb3ab34d31bbd'
+            },
+            'duplicate_collapse':{
+              'unique_physical_atom_count':58,
+              'collapsed_count_ge_1e_3':19,
+              'collapsed_spearman':dup['collapsed_spearman']
+            },
+            'block_correlation':blk['blocks'],
+            'quartile_enrichment':{
+              'quartiles':q['cancellation_scale_quartiles_low_to_high'],
+              'median_scale_ratio_high_to_low':q['high_to_low_median_cancellation_scale_ratio']
+            },
+            'scientific_classification_created':False,
+            'next_rung_authorized':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False
+          }
+          Path('artifacts/terminal_receipt.json').write_text(json.dumps(receipt, indent=2, sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top64-confounder-terminal-receipt-v0-1
+          path: artifacts/terminal_receipt.json
+          if-no-files-found: error
+          retention-days: 90
