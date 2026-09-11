@@ -1,0 +1,128 @@
+name: layerb-32769-parser-1mib-memory-scaling-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-parser-1mib-memory-scaling-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+
+jobs:
+  scaling-probe:
+    strategy:
+      fail-fast: false
+      matrix:
+        node_count: [20481, 24577, 28673]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build exact 32769-capacity / 1MiB parser CLASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git >/dev/null
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q "$CLASS_COMMIT"
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/include/perturbations.h'); s=p.read_text(); a='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(a)==1; p.write_text(s.replace(a,'#define _MAX_NUMBER_OF_K_FILES_ 32769',1))
+          q=Path('external/class_iv/include/parser.h'); s=q.read_text(); a='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(a)==1; q.write_text(s.replace(a,'#define _ARGUMENT_LENGTH_MAX_ 1048576',1))
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+
+      - name: Execute deterministic subset resource probe with live telemetry
+        shell: bash
+        env:
+          NODE_COUNT: ${{ matrix.node_count }}
+        run: |
+          set -u
+          mkdir -p evidence
+          export PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}"
+          cat > evidence/probe.py <<'PY'
+          import gc, importlib.util, json, os, resource
+          from pathlib import Path
+          import numpy as np
+          n=int(os.environ['NODE_COUNT'])
+          raw=Path('docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt').read_text().splitlines()
+          full=np.ascontiguousarray(np.asarray([int(x,16) for x in raw],dtype='<u8').view('<f8'),dtype=np.float64)
+          idx=np.rint(np.linspace(0,len(full)-1,n)).astype(np.int64)
+          assert len(idx)==n and len(np.unique(idx))==n and idx[0]==0 and idx[-1]==len(full)-1
+          nodes=full[idx]
+          spec=importlib.util.spec_from_file_location('jj','ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py'); jj=importlib.util.module_from_spec(spec); spec.loader.exec_module(jj); jj.CAPACITY=32769
+          params=jj.class_params(Path('configs/dsir4/c2/ide0_reference_v0_1.ini'),Path('configs/dsir4/c2/dsir_ide_p8_v0_1.pre'),0.0,0.0,nodes)
+          payload=len(params['k_output_values'].encode())+1
+          assert payload<=1048576
+          from classy import Class
+          before=int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss); c=Class(); c.set(params); c.compute(['transfer']); after=int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+          try: c.struct_cleanup()
+          finally: c=None; gc.collect()
+          out={'schema':'LAYERB_32769_PARSER_1MIB_MEMORY_SCALING_POINT_V0_1','classification':'LAYERB_32769_PARSER_1MIB_MEMORY_SCALING_POINT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','requested_node_count':n,'subset_method':'ROUND_LINSPACE_INDICES_OVER_CANONICAL_32769_ENDPOINT_PRESERVING','k_output_values_bytes_including_nul':payload,'parser_capacity':1048576,'ru_maxrss_kb_before':before,'ru_maxrss_kb_after_compute':after,'compute_completed':True,'scientific_transfer_values_read':False,'scientific_response_read':False,'scientific_response_computed':False,'scientific_authority_created':False,'successor_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}; out['token']=out['classification']; Path('evidence/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token'],after,flush=True)
+          PY
+          PYTHONFAULTHANDLER=1 .venv/bin/python -u evidence/probe.py > evidence/probe.stdout 2> evidence/probe.stderr &
+          CHILD=$!
+          trap 'echo "SCALING_SIGNAL n=$NODE_COUNT ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)"; grep -E "^(MemTotal|MemAvailable|SwapTotal|SwapFree):" /proc/meminfo || true' TERM INT
+          while kill -0 "$CHILD" 2>/dev/null; do
+            mem=$(awk '/^MemAvailable:/ {print $2}' /proc/meminfo); swap=$(awk '/^SwapFree:/ {print $2}' /proc/meminfo); rss=$(ps -o rss= -p "$CHILD" 2>/dev/null | tr -d ' ' || true); [ -n "$rss" ] || rss=NA
+            echo "SCALING_TELEMETRY n=$NODE_COUNT ts=$(date -u +%Y-%m-%dT%H:%M:%SZ) rss_kb=$rss memavailable_kb=$mem swapfree_kb=$swap"
+            sleep 5
+          done
+          wait "$CHILD"; rc=$?; echo "$rc" > evidence/process_rc.txt; echo "SCALING_END n=$NODE_COUNT rc=$rc"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-32769-parser-1mib-memory-scaling-${{ matrix.node_count }}-v0-1
+          path: evidence/
+          if-no-files-found: warn
+          retention-days: 90
+
+  aggregate:
+    needs: scaling-probe
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-32769-parser-1mib-memory-scaling-*-v0-1
+          path: points
+      - name: Aggregate completed scaling points
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          rows=[]
+          for n in [20481,24577,28673]:
+              root=Path('points')/f'layerb-32769-parser-1mib-memory-scaling-{n}-v0-1'/'evidence'
+              p=root/'result.json'
+              rows.append(json.load(open(p)) if p.is_file() else {'requested_node_count':n,'compute_completed':False})
+          completed=[r for r in rows if r.get('compute_completed')]
+          out={'schema':'LAYERB_32769_PARSER_1MIB_MEMORY_SCALING_AGGREGATE_V0_1','classification':'LAYERB_32769_PARSER_1MIB_MEMORY_SCALING_AGGREGATE_PLUS_0_PLUS_0','effect':'+0/+0','points':rows,'completed_point_count':len(completed),'scientific_response_read':False,'scientific_authority_created':False,'successor_execution_authorized':False}; out['token']=out['classification']; Path('aggregate.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-parser-1mib-memory-scaling-aggregate-v0-1
+          path: aggregate.json
+          retention-days: 90
