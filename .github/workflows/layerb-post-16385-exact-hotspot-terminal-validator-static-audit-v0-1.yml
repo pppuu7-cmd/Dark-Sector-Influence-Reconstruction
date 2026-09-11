@@ -1,0 +1,56 @@
+name: layerb-post-16385-exact-hotspot-terminal-validator-static-audit-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-post-16385-exact-hotspot-terminal-validator-static-audit-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen terminal validator without scientific response
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_post_16385_exact_hotspot_terminal_validator_v0_1.py)" = 'af90fc027ab25deab640cf88ca6ed07a70423f25'
+          mkdir -p artifacts
+          python - <<'PY'
+          import ast,json
+          from pathlib import Path
+          s=Path('ci/layerb_post_16385_exact_hotspot_terminal_validator_v0_1.py').read_text()
+          checks={
+            'parseable':bool(ast.parse(s)),
+            'auth_max':'AUTH_MAX = 0.012484060640679777' in s,
+            'repro_tol':'REPRO_REL_TOL = 1e-12' in s,
+            'result_token':'POST_16385_EXACT_RESPONSE_ATOM_HOTSPOT_LOCALIZATION_PASS_PLUS_0_PLUS_0' in s,
+            'calls_441':"d.get('shared_call_count')==441" in s,
+            'des_377':"d.get('des_call_count')==377" in s,
+            'boss_64':"d.get('boss_gl64_call_count')==64" in s,
+            'gl128_128':"d.get('fine_only_gl128_excluded_call_count')==128" in s,
+            'plan_bitwise':"d.get('shared_plan_bitwise_identical') is True" in s,
+            'lifecycle_8':"{'constructions':8,'live':0,'max_live':1}" in s,
+            'top64':"len(top)==64" in s,
+            'callmax_441':"len(calls)==441" in s,
+            'full_index_coverage':"list(range(441))" in s,
+            'status_zero':"finite_nonzero_status_change_count" in s,
+            'capacity_18432':'18432' in s,
+            'parser_524288':'524288' in s,
+            'no_107':"scientific_107_row_replay_executed" in s,
+            'downstream_closed':all(x in s for x in ("next_rung_authorized','False","covariance_restriction_authorized","Wm_S3_opened")),
+            'no_class_import':'from classy' not in s and 'Class()' not in s,
+          }
+          ok=all(checks.values())
+          out={'schema':'LAYERB_POST_16385_EXACT_HOTSPOT_TERMINAL_VALIDATOR_STATIC_AUDIT_V0_1','classification':'POST_16385_EXACT_HOTSPOT_TERMINAL_VALIDATOR_STATIC_AUDIT_PASS_PLUS_0_PLUS_0' if ok else 'POST_16385_EXACT_HOTSPOT_TERMINAL_VALIDATOR_STATIC_AUDIT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'pass_count':sum(checks.values()),'check_count':len(checks),'class_solver_invoked':False,'scientific_response_read':False,'hotspot_result_read':False,'scientific_authority_created':False,'next_rung_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('artifacts/static.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['classification'],f"{out['pass_count']}/{out['check_count']}"); assert ok,out
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-exact-hotspot-terminal-validator-static-audit-v0-1
+          path: artifacts/static.json
+          if-no-files-found: error
+          retention-days: 90
