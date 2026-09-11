@@ -1,0 +1,242 @@
+name: layerb-32769-resource-authority-candidate-packager-synthetic-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-resource-authority-candidate-packager-synthetic-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-packager-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen candidate-packager identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_CONTRACT_V0_1.json)" = 'ade2fd2d43ce7e556bf473f93ae8491a694e868f'
+          test "$(git hash-object ci/layerb_32769_resource_authority_candidate_packager_v0_1.py)" = 'c92ffc97c04c27ff6cdbf05b7f84527884848f40'
+
+      - name: Generate bound API/artifact fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/fixtures artifacts/out
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          r=Path('artifacts/fixtures')
+          source_run_id=41001
+          independent_run_id=41002
+          source_head='a'*40
+          independent_head='b'*40
+          source_run={
+            'id':source_run_id,'name':'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2',
+            'path':'.github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2.yml',
+            'status':'completed','conclusion':'success','head_sha':source_head,'run_attempt':1,
+          }
+          independent_run={
+            'id':independent_run_id,'name':'layerb-32769-resource-lifecycle-independent-consumer-v0-1',
+            'path':'.github/workflows/layerb-32769-resource-lifecycle-independent-consumer-v0-1.yml',
+            'status':'completed','conclusion':'success','head_sha':independent_head,'run_attempt':1,
+          }
+          (r/'source_run.json').write_text(json.dumps(source_run,indent=2,sort_keys=True)+'\n')
+          (r/'independent_run.json').write_text(json.dumps(independent_run,indent=2,sort_keys=True)+'\n')
+          source_jobs={'total_count':1,'jobs':[{'id':51001,'name':'resource-lifecycle-pilot','status':'completed','conclusion':'success','run_id':source_run_id}]}
+          independent_jobs={'total_count':1,'jobs':[{'id':51002,'name':'independent-consumer','status':'completed','conclusion':'success','run_id':independent_run_id}]}
+          (r/'source_jobs.json').write_text(json.dumps(source_jobs,indent=2,sort_keys=True)+'\n')
+          (r/'independent_jobs.json').write_text(json.dumps(independent_jobs,indent=2,sort_keys=True)+'\n')
+
+          source_result={
+            'schema':'SYNTHETIC_SOURCE_RESOURCE_RESULT_V0_1',
+            'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0',
+            'scientific_response_read':False,'scientific_authority_created':False,
+          }
+          sp=r/'source_result.json'; sp.write_text(json.dumps(source_result,indent=2,sort_keys=True)+'\n')
+          source_result_sha=hashlib.sha256(sp.read_bytes()).hexdigest()
+          independent={
+            'schema':'SYNTHETIC_INDEPENDENT_RESOURCE_VALIDATION_V0_1',
+            'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0',
+            'valid':True,'errors':[],'source_result_sha256':source_result_sha,
+          }
+          ip=r/'independent_validation.json'; ip.write_text(json.dumps(independent,indent=2,sort_keys=True)+'\n')
+          independent_sha=hashlib.sha256(ip.read_bytes()).hexdigest()
+          chain={
+            'schema':'SYNTHETIC_EVENT_CHAIN_RECEIPT_V0_1',
+            'classification':independent['classification'],'source_run_id':source_run_id,'source_head_sha':source_head,
+            'source_conclusion':'success','independent_validation_sha256':independent_sha,'independent_valid':True,
+            'independent_errors':[],'consumer_execution_completed':True,'scientific_response_read':False,
+            'scientific_execution_authorized':False,
+          }
+          (r/'chain_receipt.json').write_text(json.dumps(chain,indent=2,sort_keys=True)+'\n')
+
+          (r/'source_artifact.zip').write_bytes(b'SYNTHETIC SOURCE ZIP BYTES V0_1\n')
+          (r/'independent_artifact.zip').write_bytes(b'SYNTHETIC INDEPENDENT ZIP BYTES V0_1\n')
+          source_zip_sha=hashlib.sha256((r/'source_artifact.zip').read_bytes()).hexdigest()
+          independent_zip_sha=hashlib.sha256((r/'independent_artifact.zip').read_bytes()).hexdigest()
+          source_artifacts={'total_count':1,'artifacts':[{
+            'id':61001,'name':'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2','expired':False,'digest':'sha256:'+source_zip_sha,
+            'workflow_run':{'id':source_run_id}
+          }]}
+          independent_artifacts={'total_count':1,'artifacts':[{
+            'id':61002,'name':f'layerb-32769-resource-lifecycle-independent-consumer-v0-1-{source_run_id}','expired':False,'digest':'sha256:'+independent_zip_sha,
+            'workflow_run':{'id':independent_run_id}
+          }]}
+          (r/'source_artifacts.json').write_text(json.dumps(source_artifacts,indent=2,sort_keys=True)+'\n')
+          (r/'independent_artifacts.json').write_text(json.dumps(independent_artifacts,indent=2,sort_keys=True)+'\n')
+
+          bad_digest=json.loads(json.dumps(source_artifacts)); bad_digest['artifacts'][0]['digest']='sha256:'+'0'*64
+          (r/'source_artifacts_bad_digest.json').write_text(json.dumps(bad_digest,indent=2,sort_keys=True)+'\n')
+          duplicate=json.loads(json.dumps(source_artifacts)); x=json.loads(json.dumps(duplicate['artifacts'][0])); x['id']=61003; duplicate['artifacts'].append(x); duplicate['total_count']=2
+          (r/'source_artifacts_duplicate.json').write_text(json.dumps(duplicate,indent=2,sort_keys=True)+'\n')
+          bad_chain=json.loads(json.dumps(chain)); bad_chain['source_run_id']=49999
+          (r/'chain_receipt_bad_run.json').write_text(json.dumps(bad_chain,indent=2,sort_keys=True)+'\n')
+          bad_independent=json.loads(json.dumps(independent)); bad_independent['source_result_sha256']='f'*64
+          (r/'independent_validation_bad_source.json').write_text(json.dumps(bad_independent,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Require PASS only for exact provenance chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/layerb_32769_resource_authority_candidate_packager_v0_1.py \
+            --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_CONTRACT_V0_1.json \
+            --source-run artifacts/fixtures/source_run.json \
+            --source-jobs artifacts/fixtures/source_jobs.json \
+            --source-artifacts artifacts/fixtures/source_artifacts.json \
+            --source-artifact-zip artifacts/fixtures/source_artifact.zip \
+            --source-result artifacts/fixtures/source_result.json \
+            --independent-run artifacts/fixtures/independent_run.json \
+            --independent-jobs artifacts/fixtures/independent_jobs.json \
+            --independent-artifacts artifacts/fixtures/independent_artifacts.json \
+            --independent-artifact-zip artifacts/fixtures/independent_artifact.zip \
+            --independent-validation artifacts/fixtures/independent_validation.json \
+            --chain-receipt artifacts/fixtures/chain_receipt.json \
+            --out artifacts/out/pass.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('artifacts/out/pass.json'))
+          assert d['classification']=='LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_PASS_PLUS_0_PLUS_0'
+          assert d['valid'] is True and d['errors']==[]
+          assert d['candidate_only'] is True and d['durable_repository_authority_created'] is False
+          assert d['source_run_id']==41001 and d['source_job_id']==51001 and d['source_artifact_id']==61001
+          assert d['independent_run_id']==41002 and d['independent_job_id']==51002 and d['independent_artifact_id']==61002
+          assert d['scientific_execution_authorized'] is False
+          PY
+
+      - name: Require provenance defects to fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_fail () {
+            name="$1"; sa="$2"; iv="$3"; cr="$4"
+            set +e
+            python3 ci/layerb_32769_resource_authority_candidate_packager_v0_1.py \
+              --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_CONTRACT_V0_1.json \
+              --source-run artifacts/fixtures/source_run.json --source-jobs artifacts/fixtures/source_jobs.json \
+              --source-artifacts "$sa" --source-artifact-zip artifacts/fixtures/source_artifact.zip \
+              --source-result artifacts/fixtures/source_result.json \
+              --independent-run artifacts/fixtures/independent_run.json --independent-jobs artifacts/fixtures/independent_jobs.json \
+              --independent-artifacts artifacts/fixtures/independent_artifacts.json --independent-artifact-zip artifacts/fixtures/independent_artifact.zip \
+              --independent-validation "$iv" --chain-receipt "$cr" --out "artifacts/out/${name}.json"
+            rc=$?
+            set -e
+            test "$rc" -eq 31
+          }
+          run_fail bad_digest artifacts/fixtures/source_artifacts_bad_digest.json artifacts/fixtures/independent_validation.json artifacts/fixtures/chain_receipt.json
+          run_fail duplicate artifacts/fixtures/source_artifacts_duplicate.json artifacts/fixtures/independent_validation.json artifacts/fixtures/chain_receipt.json
+          run_fail bad_chain artifacts/fixtures/source_artifacts.json artifacts/fixtures/independent_validation.json artifacts/fixtures/chain_receipt_bad_run.json
+          run_fail bad_source_binding artifacts/fixtures/source_artifacts.json artifacts/fixtures/independent_validation_bad_source.json artifacts/fixtures/chain_receipt.json
+          python3 - <<'PY'
+          import json
+          expected={
+            'bad_digest':'source_artifact_digest',
+            'duplicate':'source_artifact_count_2',
+            'bad_chain':'chain_source_run_binding',
+            'bad_source_binding':'source_result_independent_binding',
+          }
+          for name,needle in expected.items():
+              d=json.load(open(f'artifacts/out/{name}.json'))
+              assert d['classification']=='LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_FAIL_PLUS_0_PLUS_0'
+              assert d['valid'] is False and needle in d['errors'],(name,d['errors'])
+              assert d['durable_repository_authority_created'] is False
+          PY
+
+      - name: Emit synthetic packaging audit summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          out={
+            'schema':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGER_SYNTHETIC_AUDIT_V0_1',
+            'classification':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0','synthetic_only':True,
+            'packaging_contract_git_blob':'ade2fd2d43ce7e556bf473f93ae8491a694e868f',
+            'packager_git_blob':'c92ffc97c04c27ff6cdbf05b7f84527884848f40',
+            'exact_provenance_chain_accepted':True,
+            'artifact_digest_mismatch_rejected':True,
+            'duplicate_exact_artifact_rejected':True,
+            'chain_run_mismatch_rejected':True,
+            'source_result_binding_mismatch_rejected':True,
+            'pass_receipt_sha256':sha('artifacts/out/pass.json'),
+            'candidate_only':True,'durable_repository_authority_created':False,
+            'actual_resource_authority_exists':False,
+            'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+          }
+          out['token']=out['classification']
+          Path('artifacts/summary.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-resource-authority-candidate-packager-synthetic-audit-v0-1
+          path: |
+            artifacts/summary.json
+            artifacts/out/*.json
+          if-no-files-found: error
+          retention-days: 90
+
+  independent-verifier:
+    needs: synthetic-packager-audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-resource-authority-candidate-packager-synthetic-audit-v0-1
+          path: evidence
+      - name: Independently verify candidate-packager receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_CONTRACT_V0_1.json)" = 'ade2fd2d43ce7e556bf473f93ae8491a694e868f'
+          test "$(git hash-object ci/layerb_32769_resource_authority_candidate_packager_v0_1.py)" = 'c92ffc97c04c27ff6cdbf05b7f84527884848f40'
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          s=json.load(open('evidence/summary.json'))
+          assert s['classification']=='LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert s['exact_provenance_chain_accepted'] is True
+          assert s['artifact_digest_mismatch_rejected'] is True
+          assert s['duplicate_exact_artifact_rejected'] is True
+          assert s['chain_run_mismatch_rejected'] is True
+          assert s['source_result_binding_mismatch_rejected'] is True
+          assert s['candidate_only'] is True and s['durable_repository_authority_created'] is False
+          assert s['actual_resource_authority_exists'] is False
+          assert s['pass_receipt_sha256']==sha('evidence/out/pass.json')
+          p=json.load(open('evidence/out/pass.json'))
+          assert p['classification']=='LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_PASS_PLUS_0_PLUS_0'
+          assert p['valid'] is True and p['errors']==[]
+          print('LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGER_INDEPENDENT_SYNTHETIC_VALIDATION_PASS_PLUS_0_PLUS_0')
+          PY
