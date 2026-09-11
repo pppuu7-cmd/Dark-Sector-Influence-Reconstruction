@@ -1,0 +1,43 @@
+{
+  "schema": "LAYERB_POST_16385_TOP1_DECOMPOSITION_ARITHMETIC_TERMINAL_AUTHORITY_V0_1",
+  "classification": "POST_16385_TOP1_DECOMPOSITION_ARITHMETIC_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "decomposition_source_run_id": 34608169257,
+  "decomposition_source_artifact_id": 10268078468,
+  "decomposition_source_zip_sha256": "c0363cb45a54ed9ff634548bd96c539d55757a646d014f83ddd74f10bf62ddb0",
+  "parallel_arithmetic_run_id": 34624525157,
+  "parallel_arithmetic_head_sha": "107b453d485a14f8a812539d04abbbf9c63d8885",
+  "source_artifacts": {
+    "subtraction_condition": {
+      "artifact_id": 10274091055,
+      "zip_sha256": "d5d196ebb2b63e86a5e750e26f75bc029de410b1c4bfe4725317ebf7a1d11f19"
+    },
+    "signed_role_attribution": {
+      "artifact_id": 10274026180,
+      "zip_sha256": "946342a64a6ae041ac81d1aa85fef5fe7f6a1c2314d03f2dfad4544186b4ada4"
+    },
+    "decimal_subtraction_replay": {
+      "artifact_id": 10274565598,
+      "zip_sha256": "35a0ed4aeaab9e1ba7c8f3573e124249752716380960893b4e943bf1b17970c8"
+    }
+  },
+  "terminal_consumer_run_id": 34624598782,
+  "terminal_consumer_job_id": 103346512972,
+  "terminal_consumer_head_sha": "664c68b0e306e4e28518e73383a67d4dfb5afa46",
+  "terminal_validation_artifact_id": 10273886027,
+  "terminal_validation_zip_sha256": "72e2fb96df45ddb05d49bcd215618a366a08df62c5b386ca88c9ab6118593c26",
+  "verified_predicates": {
+    "beta_subtraction_condition_l1_gt_1e8_on_8193": true,
+    "beta_subtraction_condition_l1_gt_1e8_on_16385": true,
+    "decimal_replay_subtraction_rounding_relative_error_lt_1e12_inverse_on_8193": true,
+    "decimal_replay_subtraction_rounding_relative_error_lt_1e12_inverse_on_16385": true,
+    "signed_role_recombination_relative_residual_lt_1e6_inverse": true
+  },
+  "class_solver_invoked_by_audits": false,
+  "scientific_classification_created": false,
+  "scientific_authority_created": false,
+  "next_rung_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "interpretation": "The immutable top-1 decomposition was analyzed without rerunning CLASS. Both canonical grids have beta finite-difference subtraction condition number above 1e8, while Decimal replay of subtraction from the exact binary64 role operands shows relative arithmetic-rounding error below 1e-12. The cross-grid beta-numerator change is also reproduced from the signed role shifts to the preregistered fail-closed residual bound. This supports ill-conditioning/cancellation amplification rather than ordinary floating-point subtraction error as the local mechanism. Support-only +0/+0; no frozen science gate changes."
+}
