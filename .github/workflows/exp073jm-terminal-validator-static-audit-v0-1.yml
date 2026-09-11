@@ -1,0 +1,86 @@
+name: exp073jm-terminal-validator-static-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073jm-terminal-validator-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  VALIDATOR_BLOB: '8388199349d32a79e467bab940403570ddd3730e'
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen validator identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/exp073jm_terminal_result_validator_v0_1.py)" = "$VALIDATOR_BLOB"
+          python3 -m py_compile ci/exp073jm_terminal_result_validator_v0_1.py
+      - name: Exercise response-blind terminal cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import copy, importlib.util
+          from pathlib import Path
+          p=Path('ci/exp073jm_terminal_result_validator_v0_1.py')
+          s=importlib.util.spec_from_file_location('v',p); v=importlib.util.module_from_spec(s); s.loader.exec_module(v)
+          base={
+            'schema':'EXP073JM_ARTICLE3_RECOVERED_CANONICAL_ONE_LIVE_FOURTH_REFINEMENT_RESULT_V0_2','experiment':'Exp073JM',
+            'classification':v.CONVERGED,'effect':'+0/+0','scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+            'h':v.H,'rel_tol':v.REL_TOL,'native_k_per_decade_for_pk_frozen':20.0,
+            'canonical_lattices':{
+              'coarse':{'requested_node_count':4097,'text_sha256':v.COARSE_TEXT_SHA,'node_sha256':v.COARSE_NODE_SHA},
+              'fine':{'requested_node_count':8193,'text_sha256':v.FINE_TEXT_SHA,'node_sha256':v.FINE_NODE_SHA}},
+            'request_plan_authority':{'coarse_common_plan_sha256':v.COARSE_PLAN_SHA,'fine_plan_with_gl128_sha256':v.FINE_PLAN_SHA,'coarse_calls_per_role':441,'fine_calls_per_role':569,'total_get_transfer_calls':4040},
+            'execution_lifecycle':{'total_solver_constructions':8,'max_live_instances':1,'final_live_instances':0,'cross_process_raw_operand_combination':False},
+            'parent_identity_preserved':True,'unsupported_target_evaluations':0,'max_requested_node_coordinate_rel_mismatch':1e-16,
+            'convergence':{'max_relative_component_difference':5e-4,'finite_nonzero_status_changed':False,'row_label_changed':False,'boss_dense_z_disagreement':False},
+            'layer_b':{'invalid_row_fraction':0.0,'retained_after_layer_b':107},
+            'token':'PASS_EXP073JM_RECOVERED_CANONICAL_ONE_LIVE_FOURTH_REFINEMENT_CONVERGED_V0_2'}
+          assert v.validate(copy.deepcopy(base))['branch_selected']=='CONVERGED_FRESH_CLOSURE'
+          x=copy.deepcopy(base); x['convergence']['max_relative_component_difference']=1e-3; x['classification']=v.NOT_CONVERGED; x['token']='PASS_EXP073JM_RECOVERED_CANONICAL_ONE_LIVE_FOURTH_REFINEMENT_NOT_CONVERGED_V0_2'; assert v.validate(x)['branch_selected']=='NOT_CONVERGED_8193_TO_16385'
+          x=copy.deepcopy(base); x['layer_b']['invalid_row_fraction']=0.05; assert v.validate(x)['validated_jm_classification']==v.CONVERGED
+          x=copy.deepcopy(base); x['layer_b']['retained_after_layer_b']=15; assert v.validate(x)['validated_jm_classification']==v.CONVERGED
+          for mutate in ['bad_grid','bad_calls','max_live','unsupported','lookup','wm','wrong_exact_boundary']:
+            x=copy.deepcopy(base)
+            if mutate=='bad_grid': x['canonical_lattices']['fine']['node_sha256']='0'*64
+            elif mutate=='bad_calls': x['request_plan_authority']['total_get_transfer_calls']=4039
+            elif mutate=='max_live': x['execution_lifecycle']['max_live_instances']=2
+            elif mutate=='unsupported': x['unsupported_target_evaluations']=1
+            elif mutate=='lookup': x['max_requested_node_coordinate_rel_mismatch']=2e-12
+            elif mutate=='wm': x['Wm_S3_opened']=True
+            elif mutate=='wrong_exact_boundary': x['convergence']['max_relative_component_difference']=1e-3
+            try: v.validate(x)
+            except RuntimeError: pass
+            else: raise AssertionError('validator failed to reject '+mutate)
+          for field,value in [('invalid_row_fraction',0.0500000001),('retained_after_layer_b',14)]:
+            x=copy.deepcopy(base); x['layer_b'][field]=value; x['classification']=v.NOT_CONVERGED; x['token']='PASS_EXP073JM_RECOVERED_CANONICAL_ONE_LIVE_FOURTH_REFINEMENT_NOT_CONVERGED_V0_2'; assert v.validate(x)['validated_jm_classification']==v.NOT_CONVERGED
+          print('EXP073JM_TERMINAL_VALIDATOR_STATIC_AUDIT_PASS_PLUS_0_PLUS_0')
+          PY
+      - name: Write audit receipt
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('ci/exp073jm_terminal_result_validator_v0_1.py')
+          d={'schema':'EXP073JM_TERMINAL_VALIDATOR_STATIC_AUDIT_RESULT_V0_1','classification':'EXP073JM_TERMINAL_VALIDATOR_STATIC_AUDIT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','jm_result_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'validator_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'synthetic_case_count':13,'exact_threshold_1e_3_is_not_converged':True,'invalid_row_fraction_0_05_is_inclusive':True,'retained_dimension_15_is_inclusive':True,'token':'EXP073JM_TERMINAL_VALIDATOR_STATIC_AUDIT_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/static.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jm-terminal-validator-static-audit-v0-1
+          path: artifacts/static.json
+          if-no-files-found: error
+          retention-days: 90
