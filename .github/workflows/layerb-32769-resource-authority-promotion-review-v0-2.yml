@@ -1,0 +1,78 @@
+name: layerb-32769-resource-authority-promotion-review-v0-2
+
+on:
+  workflow_dispatch:
+    inputs:
+      candidate_run_id:
+        description: Exact successful parser-corrected candidate-packaging workflow run id
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  CONTRACT_BLOB: '331cf499627a3673ce88c483e7afcfd4f731d105'
+  REVIEWER_BLOB: '36e0549b86436bcafe7c98f10c0a404b97eeebdc'
+  DOWNSTREAM_AUTH_BLOB: '49e3ee100a4a24a2e26ea929e7c62285d70bef82'
+
+jobs:
+  review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen parser-corrected promotion identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_CONTRACT_V0_2.json)" = "$CONTRACT_BLOB"
+          test "$(git hash-object ci/layerb_32769_resource_authority_promotion_reviewer_v0_2.py)" = "$REVIEWER_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_32769_V03_DOWNSTREAM_CHAIN_REPAIR_AUDIT_V0_1.json)" = "$DOWNSTREAM_AUTH_BLOB"
+          mkdir -p meta download candidate review
+      - name: Retrieve exact candidate workflow run and artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          RID='${{ inputs.candidate_run_id }}'; [[ "$RID" =~ ^[0-9]+$ ]]
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${RID}" > meta/run.json
+          test "$(jq -r .name meta/run.json)" = layerb-32769-resource-authority-candidate-packaging-v0-1
+          test "$(jq -r .path meta/run.json)" = .github/workflows/layerb-32769-resource-authority-candidate-packaging-v0-1.yml
+          test "$(jq -r .status meta/run.json)" = completed; test "$(jq -r .conclusion meta/run.json)" = success
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${RID}/artifacts?per_page=100" > meta/artifacts.json
+          python3 - "$RID" <<'PY'
+          import json,sys
+          rid=sys.argv[1]; d=json.load(open('meta/artifacts.json')); name='layerb-32769-resource-authority-candidate-packaging-v0-1-'+rid
+          xs=[x for x in d.get('artifacts',[]) if x.get('name')==name]; assert len(xs)==1 and xs[0].get('expired') is False,xs
+          open('meta/artifact_id','w').write(str(xs[0]['id']))
+          PY
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/$(cat meta/artifact_id)/zip" > download/candidate.zip
+          unzip -q download/candidate.zip -d candidate
+          find candidate -type f -printf '%P\n' | sort > meta/files.txt
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          Path('meta/manifest.json').write_text(json.dumps({'files':Path('meta/files.txt').read_text().splitlines()},indent=2,sort_keys=True)+'\n')
+          PY
+          mapfile -t A < <(find candidate -type f -name resource_authority_candidate.json); mapfile -t P < <(find candidate -type f -name provenance.json); mapfile -t R < <(find candidate -type f -name candidate_receipt.json)
+          test "${#A[@]}" -eq 1; test "${#P[@]}" -eq 1; test "${#R[@]}" -eq 1
+          cp "${A[0]}" meta/resource.json; cp "${P[0]}" meta/provenance.json; cp "${R[0]}" meta/receipt.json
+      - name: Exact-byte parser-corrected promotion review
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/layerb_32769_resource_authority_promotion_reviewer_v0_2.py \
+            --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_CONTRACT_V0_2.json \
+            --candidate-run meta/run.json --candidate-artifacts meta/artifacts.json --candidate-artifact-zip download/candidate.zip --artifact-manifest meta/manifest.json \
+            --candidate-receipt meta/receipt.json --resource-candidate meta/resource.json --provenance meta/provenance.json \
+            --downstream-repair-authority docs/dsir4/authority/LAYERB_32769_V03_DOWNSTREAM_CHAIN_REPAIR_AUDIT_V0_1.json --out review/promotion_review.json
+          test "$(jq -r .classification review/promotion_review.json)" = LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_PASS_PLUS_0_PLUS_0
+          cp meta/resource.json review/exact_resource_authority_candidate.json
+          test "$(sha256sum review/exact_resource_authority_candidate.json | cut -d' ' -f1)" = "$(jq -r .exact_resource_authority_candidate_sha256 review/promotion_review.json)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-resource-authority-promotion-review-v0-2-${{ inputs.candidate_run_id }}
+          path: review/
+          retention-days: 90
