@@ -1,0 +1,52 @@
+name: layerb-refinement-sequence-descriptive-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-refinement-sequence-descriptive-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce descriptive-audit identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_refinement_sequence_descriptive_audit_v0_1.py)" = '732520a205764b1a5608beb7358bf0bf655b9548'
+          python3 -m py_compile ci/layerb_refinement_sequence_descriptive_audit_v0_1.py
+      - name: Run descriptive audit only
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 ci/layerb_refinement_sequence_descriptive_audit_v0_1.py \
+            --jj docs/dsir4/authority/EXP073JJ_ARTICLE3_LAYERB_COMMON_GRID_RESOLUTION_REFINEMENT_NOT_CONVERGED_V0_1.json \
+            --jk docs/dsir4/authority/EXP073JK_ARTICLE3_LAYERB_COMMON_GRID_SECOND_REFINEMENT_NOT_CONVERGED_V0_1.json \
+            --jl docs/dsir4/authority/EXP073JL_ARTICLE3_RECOVERED_CANONICAL_ONE_LIVE_THIRD_REFINEMENT_NOT_CONVERGED_V0_2.json \
+            --jm docs/dsir4/authority/EXP073JM_ARTICLE3_RECOVERED_CANONICAL_ONE_LIVE_FOURTH_REFINEMENT_NOT_CONVERGED_V0_2.json \
+            --out artifacts/descriptive.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('artifacts/descriptive.json'))
+          assert d['classification']=='LAYERB_REFINEMENT_SEQUENCE_DESCRIPTIVE_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['monotonically_decreasing'] is True
+          assert d['successive_reduction_factors_decreasing'] is True
+          assert d['effective_orders_decreasing'] is True
+          assert d['stopping_rule_changed'] is False and d['next_rung_changed'] is False
+          assert d['scientific_authority_created'] is False
+          print('DESCRIPTIVE_AUDIT latest_Aitken',d['aitken_estimate_JK_JL_JM'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-refinement-sequence-descriptive-audit-v0-1
+          path: artifacts/descriptive.json
+          if-no-files-found: error
+          retention-days: 90
