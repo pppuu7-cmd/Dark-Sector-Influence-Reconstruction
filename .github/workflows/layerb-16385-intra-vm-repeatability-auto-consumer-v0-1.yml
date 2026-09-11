@@ -1,0 +1,79 @@
+name: layerb-16385-intra-vm-repeatability-auto-consumer-v0-1
+on:
+  workflow_run:
+    workflows: ["layerb-16385-intra-vm-role-repeatability-v0-1"]
+    types: [completed]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  aggregate:
+    if: >-
+      ${{ github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.head_sha == '58839fbc7efd594572d3a63a0b019c080196a687' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Download exact four role artifacts from source run
+        uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-intra-vm-repeatability-reference-v0-1
+          path: inputs/reference
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-intra-vm-repeatability-alpha_minus-v0-1
+          path: inputs/alpha_minus
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-intra-vm-repeatability-beta_plus-v0-1
+          path: inputs/beta_plus
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-intra-vm-repeatability-beta_minus-v0-1
+          path: inputs/beta_minus
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - name: Independently aggregate intra-VM repeatability receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          roles=['reference','alpha_minus','beta_plus','beta_minus']
+          PASS='LAYERB_16385_INTRA_VM_ROLE_REPEATABILITY_PASS_PLUS_0_PLUS_0'
+          rows={}; all_bitwise=True; max_abs=0.0; max_rel=0.0
+          source_run='${{ github.event.workflow_run.id }}'
+          for role in roles:
+            p=Path('inputs')/role/'result.json'; b=p.read_bytes(); d=json.loads(b)
+            assert d['classification']==PASS,d
+            assert d['role']==role
+            assert d['current_16385_scientific_result_read'] is False
+            assert d['full_107_row_traversal_executed'] is False
+            assert d['scientific_authority_created'] is False
+            assert d['stopping_rule_changed'] is False
+            assert d['next_rung_authorized'] is False
+            assert d['total_solver_constructions']==2 and d['max_live_instances']==1 and d['final_live_instances']==0
+            assert d['unsupported_target_evaluations']==0 and d['max_requested_node_coordinate_rel_mismatch']<=1e-12
+            comps=d['repeat_comparison']; bit=bool(d['all_operand_hashes_equal_between_repeats']); all_bitwise &= bit
+            role_abs=max(float(comps[q]['max_absolute_difference']) for q in ('A','B'))
+            role_rel=max(float(comps[q]['max_symmetric_relative_difference']) for q in ('A','B'))
+            max_abs=max(max_abs,role_abs); max_rel=max(max_rel,role_rel)
+            rows[role]={'result_json_sha256':hashlib.sha256(b).hexdigest(),'all_operand_hashes_equal_between_repeats':bit,'max_absolute_difference':role_abs,'max_symmetric_relative_difference':role_rel,'repeat_comparison':comps}
+          out={'schema':'LAYERB_16385_INTRA_VM_REPEATABILITY_AGGREGATE_V0_1','classification':'LAYERB_16385_INTRA_VM_REPEATABILITY_AGGREGATE_DIAGNOSTIC_PASS_PLUS_0_PLUS_0','effect':'+0/+0','source_run_id':int(source_run),'source_head_sha':'${{ github.event.workflow_run.head_sha }}','roles':rows,'all_four_roles_bitwise_repeatable':all_bitwise,'global_max_absolute_difference':max_abs,'global_max_symmetric_relative_difference':max_rel,'current_16385_scientific_result_read':False,'full_107_row_traversal_executed':False,'scientific_authority_created':False,'stopping_rule_changed':False,'next_rung_authorized':False,'token':'LAYERB_16385_INTRA_VM_REPEATABILITY_AGGREGATE_DIAGNOSTIC_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/aggregate.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token']); print('all_bitwise',all_bitwise,'max_abs',max_abs,'max_rel',max_rel)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-intra-vm-repeatability-aggregate-v0-1
+          path: artifacts/aggregate.json
+          if-no-files-found: error
+          retention-days: 90
