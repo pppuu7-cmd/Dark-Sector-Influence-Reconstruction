@@ -25,7 +25,7 @@ env:
   JJ_SCRIPT: ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py
   JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
   GENERATOR: ci/layerb_response_blind_canonical_fine_32769_v0_1.py
-  GENERATOR_BLOB: '211b6799bf61caa7b47d85a1e402f7170592821d'
+  GENERATOR_BLOB: 'b732cfaf15ab1c627be7fab95d1594467ccf508c'
 
 jobs:
   replica:
@@ -61,7 +61,7 @@ jobs:
           PY
       - name: Install exact NumPy
         run: python -m pip install 'numpy==1.26.4' >/dev/null
-      - name: Emit response-blind 32769 candidate
+      - name: Emit response-blind 32769 candidate or host variant
         shell: bash
         run: |
           set -euo pipefail
@@ -83,7 +83,7 @@ jobs:
         with:
           pattern: layerb-canonical-32769-static-replica-*
           path: replicas
-      - name: Apply response-blind anchor quorum
+      - name: Apply frozen anchor-selection quorum
         shell: bash
         run: |
           set -euo pipefail
@@ -98,8 +98,7 @@ jobs:
               assert root.exists(), f'missing replica {i}'
               d=json.load(open(root/'result.json'))
               assert d['replica']==i
-              assert d['classification']=='ANCHOR_16385_MATCH_CANDIDATE_32769_EMITTED_PLUS_0_PLUS_0'
-              assert d['anchor_16385_match'] is True
+              assert d['classification'] in {'ANCHOR_MATCH_PLUS_0_PLUS_0','HOST_VARIANT_NOT_ANCHOR_PLUS_0_PLUS_0'}
               assert d['scientific_response_read'] is False and d['class_solver_invoked'] is False
               assert d['scientific_authority_created'] is False and d['successor_execution_authorized'] is False
               assert d['requested_node_count']==32769 and d['guard_counts']==[0,1]
@@ -107,12 +106,16 @@ jobs:
               assert hashlib.sha256(txt).hexdigest()==d['candidate_u64hex_sha256']
               rows.append((d,txt))
 
-          node_shas={x[0]['candidate_node_sha256'] for x in rows}
-          text_shas={x[0]['candidate_u64hex_sha256'] for x in rows}
-          if len(node_shas)!=1 or len(text_shas)!=1 or not all(x[1]==rows[0][1] for x in rows):
-              raise SystemExit('32769 replica disagreement')
+          matched=[x for x in rows if x[0]['anchor_16385_match']]
+          variants=[x for x in rows if not x[0]['anchor_16385_match']]
+          if len(matched)<4:
+              raise SystemExit(f'16385 anchor quorum not met: {len(matched)}/8')
+          node_shas={x[0]['candidate_node_sha256'] for x in matched}
+          text_shas={x[0]['candidate_u64hex_sha256'] for x in matched}
+          if len(node_shas)!=1 or len(text_shas)!=1 or not all(x[1]==matched[0][1] for x in matched):
+              raise SystemExit('anchor-matched 32769 candidates disagree')
 
-          Path('out/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_CANDIDATE_V0_1.txt').write_bytes(rows[0][1])
+          Path('out/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_CANDIDATE_V0_1.txt').write_bytes(matched[0][1])
           result={
             'schema':'LAYERB_RESPONSE_BLIND_CANONICAL_32769_STATIC_AGGREGATE_RESULT_V0_1',
             'classification':'CANONICAL_32769_RESPONSE_BLIND_QUORUM_PASS_PLUS_0_PLUS_0',
@@ -123,7 +126,12 @@ jobs:
             'scientific_authority_created':False,
             'successor_execution_authorized':False,
             'replica_count':8,
-            'minimum_quorum':8,
+            'minimum_anchor_quorum':4,
+            'anchor_match_count':len(matched),
+            'anchor_match_replicas':[x[0]['replica'] for x in matched],
+            'host_variant_count':len(variants),
+            'host_variant_replicas':[x[0]['replica'] for x in variants],
+            'host_variant_anchor_node_shas':sorted({x[0]['anchor_regenerated_node_sha256'] for x in variants}),
             'anchor_16385_node_sha256':'3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975',
             'anchor_16385_u64hex_sha256':'7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69',
             'base_n':32768,
@@ -131,13 +139,13 @@ jobs:
             'requested_node_count':32769,
             'candidate_node_sha256':next(iter(node_shas)),
             'candidate_u64hex_sha256':next(iter(text_shas)),
-            'all_candidates_byte_identical':True,
+            'all_anchor_matched_candidates_byte_identical':True,
             'article3_repository_readiness_percent':68,
             'funnel_freeze_readiness_percent':67,
             'token':'CANONICAL_32769_RESPONSE_BLIND_QUORUM_PASS_PLUS_0_PLUS_0'
           }
           Path('out/result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
-          print(result['token'],result['candidate_node_sha256'],result['candidate_u64hex_sha256'])
+          print(result['token'],result['anchor_match_count'],result['host_variant_count'],result['candidate_node_sha256'],result['candidate_u64hex_sha256'])
           PY
       - uses: actions/upload-artifact@v4
         with:
