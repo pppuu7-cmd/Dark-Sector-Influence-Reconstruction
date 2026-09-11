@@ -1,0 +1,117 @@
+name: layerb-canonical-grid-surrogate-controls-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-canonical-grid-surrogate-controls-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  analytic-interpolation-scaling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test exact cubic-centered interpolation scaling on canonical lattices
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -q 'numpy==1.26.4'
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import importlib.util,json,math,hashlib
+          from pathlib import Path
+          import numpy as np
+          def mod(name,path):
+            s=importlib.util.spec_from_file_location(name,path); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); return m
+          jj=mod('jj','ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py')
+          eng=mod('eng','ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py')
+          grids=[
+            ('2049','docs/dsir4/canonical/EXP073JL_CANONICAL_COARSE_2049_NODES_U64HEX_V0_1.txt',2049,'72c732a02b9f6f4adeab70c7792f16e4490f038544c221aed9b72a14e5b1ec47','6305c95025e52296b6cb623903f82dc45bb66ac692708b242fc354862ac54c46'),
+            ('4097','docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt',4097,'290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7','f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'),
+            ('8193','docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt',8193,'90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6','6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515'),
+            ('16385','docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt',16385,'7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69','3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975')]
+          nodes={k:eng.load_nodes(p,n,ts,ns) for k,p,n,ts,ns in grids}
+          targets=np.geomspace(jj.TARGET_MIN,jj.TARGET_MAX,12001,dtype=np.float64)
+          x0=float(np.mean(np.log(targets)))
+          funcs={
+            'cubic_log':lambda x: 2.0+0.2*(x-x0)-0.03*(x-x0)**2+0.004*(x-x0)**3,
+            'smooth_wave':lambda x: 2.0+0.15*np.sin(6.0*(x-x0))+0.04*np.cos(13.0*(x-x0)),
+            'smooth_exp_wave':lambda x: np.exp(0.12*(x-x0))*(1.3+0.05*np.cos(17.0*(x-x0))),
+            'steep_sigmoid':lambda x: 0.4+1.0/(1.0+np.exp(-7.0*(x-x0)))
+          }
+          per_func={}
+          for fname,f in funcs.items():
+            truth=f(np.log(targets)); vals={}; errs={}
+            for label in nodes:
+              yn=f(np.log(nodes[label])); yhat,valid=jj.cubic_centered(nodes[label],yn,targets)
+              assert np.all(valid), (fname,label,int(np.count_nonzero(~valid)))
+              rel=np.abs(yhat-truth)/np.maximum(np.abs(truth),1e-14)
+              vals[label]=yhat; errs[label]={'max_relative_error':float(np.max(rel)),'rms_relative_error':float(np.sqrt(np.mean(rel*rel)))}
+            adjacent=[]
+            labels=list(nodes)
+            for a,b in zip(labels[:-1],labels[1:]):
+              rel=np.abs(vals[a]-vals[b])/np.maximum(np.abs(vals[b]),1e-14)
+              adjacent.append({'coarse':a,'fine':b,'max_relative_difference':float(np.max(rel)),'rms_relative_difference':float(np.sqrt(np.mean(rel*rel)))})
+            ratios=[]
+            for u,v in zip(adjacent[:-1],adjacent[1:]):
+              ratios.append(float(u['max_relative_difference']/max(v['max_relative_difference'],np.finfo(float).tiny)))
+            per_func[fname]={'errors_vs_truth':errs,'adjacent_grid_differences':adjacent,'successive_reduction_factors':ratios}
+          out={'schema':'LAYERB_CANONICAL_GRID_ANALYTIC_INTERPOLATION_SCALING_V0_1','classification':'LAYERB_CANONICAL_GRID_ANALYTIC_INTERPOLATION_SCALING_PASS_PLUS_0_PLUS_0','effect':'+0/+0','target_count':len(targets),'functions':per_func,'jj_cubic_centered_git_blob':'ee8fd0650a2a1322fab83a86bb06a219e84ca434','canonical_grid_counts':[2049,4097,8193,16385],'current_16385_scientific_result_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'stopping_rule_changed':False,'next_rung_authorized':False,'token':'LAYERB_CANONICAL_GRID_ANALYTIC_INTERPOLATION_SCALING_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/interpolation.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token']); print(json.dumps(per_func,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-canonical-grid-analytic-interpolation-scaling-v0-1
+          path: artifacts/interpolation.json
+          if-no-files-found: error
+          retention-days: 90
+
+  canonical-grid-geometry:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Quantify binary64 nesting and log-grid phase geometry
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -q 'numpy==1.26.4'
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import importlib.util,json
+          from pathlib import Path
+          import numpy as np
+          def mod(name,path):
+            s=importlib.util.spec_from_file_location(name,path); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); return m
+          e=mod('e','ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py')
+          specs=[
+            ('2049','docs/dsir4/canonical/EXP073JL_CANONICAL_COARSE_2049_NODES_U64HEX_V0_1.txt',2049,'72c732a02b9f6f4adeab70c7792f16e4490f038544c221aed9b72a14e5b1ec47','6305c95025e52296b6cb623903f82dc45bb66ac692708b242fc354862ac54c46'),
+            ('4097','docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt',4097,'290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7','f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'),
+            ('8193','docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt',8193,'90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6','6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515'),
+            ('16385','docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt',16385,'7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69','3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975')]
+          g={k:e.load_nodes(p,n,ts,ns) for k,p,n,ts,ns in specs}
+          stats={}
+          for k,a in g.items():
+            dx=np.diff(np.log(a)); stats[k]={'count':len(a),'k_min':float(a[0]),'k_max':float(a[-1]),'log_spacing_min':float(dx.min()),'log_spacing_max':float(dx.max()),'log_spacing_mean':float(dx.mean()),'log_spacing_std':float(dx.std())}
+          pairs=[]
+          labels=list(g)
+          for ca,fi in zip(labels[:-1],labels[1:]):
+            c=g[ca]; f=g[fi]
+            p=np.searchsorted(f,c); p=np.clip(p,0,len(f)-1); pm=np.maximum(p-1,0)
+            idx=np.where(np.abs(f[pm]-c)<np.abs(f[p]-c),pm,p); near=f[idx]
+            rel=np.abs(near-c)/c
+            exact=np.count_nonzero(near.view('<u8')==c.view('<u8'))
+            dxf=float(np.mean(np.diff(np.log(f))))
+            log_phase=np.abs(np.log(near)-np.log(c))/dxf
+            pairs.append({'coarse':ca,'fine':fi,'coarse_count':len(c),'exact_bitwise_node_matches':int(exact),'exact_match_fraction':float(exact/len(c)),'max_nearest_relative_mismatch':float(rel.max()),'median_nearest_relative_mismatch':float(np.median(rel)),'max_nearest_log_offset_in_fine_spacings':float(log_phase.max()),'median_nearest_log_offset_in_fine_spacings':float(np.median(log_phase))})
+          out={'schema':'LAYERB_CANONICAL_GRID_BINARY64_GEOMETRY_AUDIT_V0_1','classification':'LAYERB_CANONICAL_GRID_BINARY64_GEOMETRY_PASS_PLUS_0_PLUS_0','effect':'+0/+0','grid_stats':stats,'adjacent_nesting':pairs,'current_16385_scientific_result_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'stopping_rule_changed':False,'next_rung_authorized':False,'token':'LAYERB_CANONICAL_GRID_BINARY64_GEOMETRY_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/geometry.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token']); print(json.dumps(pairs,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-canonical-grid-binary64-geometry-v0-1
+          path: artifacts/geometry.json
+          if-no-files-found: error
+          retention-days: 90
