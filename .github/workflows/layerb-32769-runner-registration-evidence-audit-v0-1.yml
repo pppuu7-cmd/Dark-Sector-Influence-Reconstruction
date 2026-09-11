@@ -1,0 +1,188 @@
+name: layerb-32769-runner-registration-evidence-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-runner-registration-evidence-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-consumer-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate exact valid registration-bound resource fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p fixture/base fixture/out
+          test "$(git hash-object ci/layerb_32769_resource_lifecycle_independent_consumer_v0_2.py)" = 'e08f15394ba3b16222b62d061a621e24f3a857ec'
+          test "$(sha256sum scripts/dsir4/configure_layerb_32769_highmem_runner_v0_1.sh | awk '{print $1}')" = '2cd02d1a7ac58ea3945a435272f03ea1abe2d7e3410191b5a17a9c62e0a297ce'
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          r=Path('fixture/base')
+          def dump(n,d): (r/n).write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          def sha(n): return hashlib.sha256((r/n).read_bytes()).hexdigest()
+          registration={
+            'schema':'LAYERB_32769_HIGH_MEMORY_RUNNER_REGISTRATION_RECEIPT_V0_1',
+            'classification':'LAYERB_32769_HIGH_MEMORY_RUNNER_REGISTRATION_CONFIGURED_PLUS_0_PLUS_0',
+            'effect':'+0/+0','configuration_method':'FROZEN_CONFIGURATOR_SCRIPT',
+            'configuration_script_sha256':'2cd02d1a7ac58ea3945a435272f03ea1abe2d7e3410191b5a17a9c62e0a297ce',
+            'runner_isolation_contract_git_blob':'d9d910d89889f6d3a27461a73c3dd72c2a9d2096',
+            'runner_name':'dsir-highmem-fixture','runner_agent_id':4242,
+            'configured_labels':['dsir-32769-highmem'],'required_custom_label':'dsir-32769-highmem','no_default_labels':True,
+            'forbidden_default_labels':['self-hosted','Linux','X64'],'configured_at_utc':'2026-09-11T20:00:00+00:00',
+            'registration_token_recorded':False,'credentials_recorded':False,'scientific_response_read':False,
+            'scientific_execution_authorized':False,'high_memory_resource_lifecycle_preflight_pass_created':False,
+            'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+          }
+          registration['token']=registration['classification']; dump('runner_registration_receipt.json',registration)
+          runtime={'schema':'LAYERB_32769_SOURCE_JOB_RUNTIME_BINDING_V0_1','run_id':7001,'job_id':8001,'name':'resource-lifecycle-pilot','status_at_capture':'in_progress','runner_id':4242,'runner_name':'dsir-highmem-fixture','labels':['dsir-32769-highmem'],'head_sha':'a'*40,'scientific_execution_authorized':False}
+          dump('source_job_runtime.json',runtime)
+          roles=['reference','alpha_minus','beta_plus','beta_minus']
+          life={'total_solver_constructions':4,'max_live_instances':1,'final_live_instances':0,'cross_process_scientific_operand_combination':False}
+          src={
+            'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0',
+            'canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599',
+            'canonical_32769_text_sha256':'7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2',
+            'build_authority_classification':'LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_PASS_PLUS_0_PLUS_0',
+            'runner_isolation_contract_git_blob':'d9d910d89889f6d3a27461a73c3dd72c2a9d2096','required_custom_label':'dsir-32769-highmem',
+            'capacity':32769,'parser_capacity':524288,'candidate_memtotal_kb':33554432,'candidate_strictly_higher_memory_than_exhausted_hosted':True,
+            'execution_lifecycle':life,'role_receipts':[{'role':x,'compute_completed':True,'ru_maxrss_kb_after_compute':12000000+i*1000,'scientific_transfer_values_read':False,'scientific_response_computed':False,'scientific_response_serialized':False} for i,x in enumerate(roles)],
+            'runner_registration_receipt_sha256':sha('runner_registration_receipt.json'),'source_job_runtime_sha256':sha('source_job_runtime.json'),
+            'runner_registration_evidence_valid':True,'runner_agent_id':4242,'runner_name':'dsir-highmem-fixture',
+            'scientific_transfer_values_read':False,'scientific_response_read':False,'scientific_response_computed':False,'convergence_metric_computed':False,'convergence_classification_created':False,'scientific_authority_created':False,'successor_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+          }
+          dump('result.json',src)
+          patch={'source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','new_capacity':32769,'parser_new_argument_capacity':524288,'pre_sha256':'c83749338e435d85caf8f0cfb713aa9a77782a91072de93633187d9dc53a0876','post_sha256':'e6221887e19c0a576f77bbfcb2a030ff9cf8d84c62a2193ce52b8e3b541a8f0a','parser_pre_sha256':'2c17690a5549e12c8fac485281ca214a20c376e1e3beba714af0e1b84cdbb0eb','parser_post_sha256':'e35d53f58e0c00fa66c12d92903eb46a0862beca25167a140f0ad5ae236c25d2'}
+          dump('capacity_patch.json',patch)
+          dump('stale_job_snapshot.json',{'id':103112190909,'status':'queued','conclusion':None})
+          (r/'candidate_memtotal_kb.txt').write_text('33554432\n')
+          (r/'host_envelope_before.txt').write_text('runner_name=dsir-highmem-fixture\nrunner_os=Linux\nrunner_arch=X64\nrequired_custom_label=dsir-32769-highmem\ncandidate_memtotal_kb=33554432\n')
+          (r/'host_envelope_after.txt').write_text('MemTotal:       33554432 kB\nMemAvailable:   12000000 kB\nSwapTotal:       4000000 kB\nSwapFree:        3000000 kB\n')
+          (r/'telemetry.log').write_text('TELEMETRY ts=2026-09-11T20:00:00Z MemTotal=33554432kB MemAvailable=12000000kB SwapTotal=4000000kB SwapFree=3000000kB\n')
+          PY
+      - name: Require exact valid fixture to PASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/layerb_32769_resource_lifecycle_independent_consumer_v0_2.py --artifact-dir fixture/base --out fixture/out/pass.json
+          test "$(jq -r .classification fixture/out/pass.json)" = 'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0'
+          test "$(jq -r .runner_registration_evidence_valid fixture/out/pass.json)" = true
+      - name: Require registration defects to fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,shutil
+          from pathlib import Path
+          base=Path('fixture/base')
+          cases={
+            'default_labels':('runner_registration_receipt.json',lambda d:d.update(no_default_labels=False)),
+            'wrong_configurator':('runner_registration_receipt.json',lambda d:d.update(configuration_script_sha256='0'*64)),
+            'generic_label':('runner_registration_receipt.json',lambda d:d.update(configured_labels=['dsir-32769-highmem','self-hosted'])),
+            'runner_id_mismatch':('source_job_runtime.json',lambda d:d.update(runner_id=9999)),
+            'routing_label_mismatch':('source_job_runtime.json',lambda d:d.update(labels=['self-hosted','Linux','X64'])),
+          }
+          for name,(target,mut) in cases.items():
+              dst=Path('fixture')/name
+              shutil.copytree(base,dst)
+              p=dst/target; d=json.loads(p.read_text()); mut(d); p.write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+          for case in default_labels wrong_configurator generic_label runner_id_mismatch routing_label_mismatch; do
+            set +e
+            python3 ci/layerb_32769_resource_lifecycle_independent_consumer_v0_2.py --artifact-dir "fixture/$case" --out "fixture/out/$case.json"
+            rc=$?
+            set -e
+            test "$rc" -eq 31
+            test "$(jq -r .classification "fixture/out/$case.json")" = 'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_FAIL_PLUS_0_PLUS_0'
+          done
+      - name: Emit synthetic audit summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('fixture/out/pass.json')
+          d={'schema':'LAYERB_32769_RUNNER_REGISTRATION_EVIDENCE_SYNTHETIC_AUDIT_V0_1','classification':'LAYERB_32769_RUNNER_REGISTRATION_EVIDENCE_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','exact_registration_bound_fixture_passed':True,'no_default_false_rejected':True,'wrong_configurator_rejected':True,'generic_label_rejected':True,'runner_id_mismatch_rejected':True,'routing_label_mismatch_rejected':True,'pass_receipt_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'real_runner_evidence_created':False,'scientific_execution_authorized':False,'high_memory_resource_lifecycle_preflight_pass_now':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          d['token']=d['classification']; Path('fixture/out/summary.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-runner-registration-evidence-synthetic-audit-v0-1
+          path: fixture/out/
+          retention-days: 90
+
+  static-source-workflow-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prove source scientific core unchanged and registration gate present
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('.github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2.yml'); b=p.read_bytes(); s=b.decode()
+          def blob(x): return hashlib.sha1(b'blob '+str(len(x)).encode()+b'\0'+x).hexdigest()
+          assert blob(b)=='3297a556299daf75e4c7ff15f8e56586e45ebdf0'
+          assert "PILOT_BLOB: '11c7d9a1f95d7c1c394dd520f1c4340a4ce397b4'" in s
+          assert "JO_BLOB: 'c975a964805919cd61e3c028305ad3945773377f'" in s
+          assert "JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'" in s
+          assert "CANON_FILE_BLOB: '7b67706156d7d2016ecba0628210fb08f6f05616'" in s
+          assert "BUILD_AUTH_BLOB: 'ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d'" in s
+          assert "CONFIGURATOR_SHA256: '2cd02d1a7ac58ea3945a435272f03ea1abe2d7e3410191b5a17a9c62e0a297ce'" in s
+          assert 'runs-on: [dsir-32769-highmem]' in s
+          assert 'runner_registration_receipt.json' in s and 'source_job_runtime.json' in s
+          assert '/actions/runs/${GITHUB_RUN_ID}/jobs?per_page=100' in s
+          assert "j.get('runner_id')==agent_id" in s and "j.get('runner_name')==agent_name" in s
+          assert "j.get('labels')==[os.environ['REQUIRED_CUSTOM_LABEL']]" in s
+          assert "d['runner_registration_evidence_valid']=True" in s
+          out={'schema':'LAYERB_32769_RUNNER_REGISTRATION_SOURCE_WORKFLOW_STATIC_AUDIT_V0_1','classification':'LAYERB_32769_RUNNER_REGISTRATION_SOURCE_WORKFLOW_STATIC_AUDIT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','source_workflow_git_blob':blob(b),'scientific_core_blobs_unchanged':True,'registration_receipt_required':True,'runtime_job_runner_id_bound':True,'runtime_job_runner_name_bound':True,'dedicated_routing_label_bound':True,'source_result_hash_binds_registration_evidence':True,'scientific_execution_authorized':False,'high_memory_resource_lifecycle_preflight_pass_now':False}
+          out['token']=out['classification']; Path('static_source_audit.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-runner-registration-source-workflow-static-audit-v0-1
+          path: static_source_audit.json
+          retention-days: 90
+
+  independent-verifier:
+    needs: [synthetic-consumer-audit, static-source-workflow-audit]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-runner-registration-evidence-synthetic-audit-v0-1
+          path: synthetic
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-runner-registration-source-workflow-static-audit-v0-1
+          path: static
+      - name: Independently verify both registration-provenance receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          s=json.load(open('synthetic/summary.json')); p=json.load(open('synthetic/pass.json')); w=json.load(open('static/static_source_audit.json'))
+          assert s['classification']=='LAYERB_32769_RUNNER_REGISTRATION_EVIDENCE_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          for k in ['exact_registration_bound_fixture_passed','no_default_false_rejected','wrong_configurator_rejected','generic_label_rejected','runner_id_mismatch_rejected','routing_label_mismatch_rejected']:
+              assert s[k] is True,k
+          assert s['pass_receipt_sha256']==hashlib.sha256(Path('synthetic/pass.json').read_bytes()).hexdigest()
+          assert p['runner_registration_evidence_valid'] is True
+          assert w['classification']=='LAYERB_32769_RUNNER_REGISTRATION_SOURCE_WORKFLOW_STATIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert w['scientific_core_blobs_unchanged'] is True and w['registration_receipt_required'] is True
+          assert w['runtime_job_runner_id_bound'] is True and w['dedicated_routing_label_bound'] is True
+          assert s['real_runner_evidence_created'] is False and w['high_memory_resource_lifecycle_preflight_pass_now'] is False
+          print('INDEPENDENT_RUNNER_REGISTRATION_PROVENANCE_AUDIT_PASS')
+          PY
