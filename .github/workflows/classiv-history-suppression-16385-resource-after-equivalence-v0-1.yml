@@ -1,0 +1,172 @@
+name: classiv-history-suppression-16385-resource-after-equivalence-v0-1
+
+on:
+  workflow_run:
+    workflows: ["classiv-k-output-history-suppression-8193-equivalence-v0-1"]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  EXPECTED_SOURCE_RUN: '34551841749'
+  EXPECTED_SOURCE_HEAD: '225c51fc0db4822703c24fb5743ad32b6214b4b8'
+  PATCH_BLOB: 'e20687e933d665973c3be40598180587701fa8e0'
+  PILOT_BLOB: '00d8cb7d7dd6f5fa84aa0a8ddd3ea1c8ed3f81cb'
+  JO_BLOB: 'c975a964805919cd61e3c028305ad3945773377f'
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+  CANON_AUTH_BLOB: '50aa473299c82c857921a083f7d4de652ba476a4'
+  CANON_FILE_BLOB: 'fc4eb1e7f51a0ad3773b8be13c477652b1f71368'
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+
+concurrency:
+  group: classiv-history-suppression-16385-resource-after-equivalence-v0-1
+  cancel-in-progress: false
+
+jobs:
+  resource-replica:
+    if: ${{ github.event.workflow_run.id == 34551841749 && github.event.workflow_run.head_sha == '225c51fc0db4822703c24fb5743ad32b6214b4b8' && github.event.workflow_run.conclusion == 'success' }}
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        replica: [1, 2]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Independently verify both exact-equivalence source artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ github.event.workflow_run.id }}" = "$EXPECTED_SOURCE_RUN"
+          test "${{ github.event.workflow_run.head_sha }}" = "$EXPECTED_SOURCE_HEAD"
+          mkdir -p source
+          meta="$(gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/runs/${EXPECTED_SOURCE_RUN}/artifacts")"
+          for rep in 1 2; do
+            name="classiv-history-suppression-8193-equivalence-replica-${rep}"
+            count="$(jq --arg n "$name" '[.artifacts[]|select(.name==$n)]|length' <<<"$meta")"
+            test "$count" = 1
+            id="$(jq -r --arg n "$name" '.artifacts[]|select(.name==$n)|.id' <<<"$meta")"
+            digest="$(jq -r --arg n "$name" '.artifacts[]|select(.name==$n)|.digest' <<<"$meta")"
+            gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "source/rep${rep}.zip"
+            actual="$(sha256sum "source/rep${rep}.zip"|awk '{print $1}')"
+            test "$actual" = "${digest#sha256:}"
+            mkdir -p "source/rep${rep}"
+            unzip -q "source/rep${rep}.zip" -d "source/rep${rep}"
+            test -f "source/rep${rep}/equivalence.json"
+            jq -e '.classification=="CLASSIV_K_OUTPUT_HISTORY_SUPPRESSION_8193_EXACT_EQUIVALENCE_PASS_PLUS_0_PLUS_0" and .exact_raw_operand_hash_match==true and .exact_pilot_response_hash_match==true and .canonical_node_hash_match==true and .unsupported_target_evaluations==0 and .max_requested_node_coordinate_rel_mismatch<=1e-12 and .scientific_authority_created==false' "source/rep${rep}/equivalence.json" >/dev/null
+          done
+          test "$(jq -r .replica source/rep1/equivalence.json)" = 1
+          test "$(jq -r .replica source/rep2/equivalence.json)" = 2
+          echo TWO_INDEPENDENT_8193_EXACT_EQUIVALENCE_ARTIFACTS_VERIFIED
+
+      - name: Enforce patched-16385 frozen identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object scripts/dsir4/classiv_k_output_history_suppression_patch_v0_1.py)" = "$PATCH_BLOB"
+          test "$(git hash-object ci/layerb_post_jm_16385_one_live_resource_pilot_v0_1.py)" = "$PILOT_BLOB"
+          test "$(git hash-object ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py)" = "$JO_BLOB"
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json)" = "$CANON_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt)" = "$CANON_FILE_BLOB"
+
+      - name: Install exact numerical/build stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git procps >/dev/null
+          python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+
+      - name: Build pinned CLASS-IV with 18432/524288 and history suppression
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('external/class_iv/include/perturbations.h'); b=p.read_bytes(); s=b.decode(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; new='#define _MAX_NUMBER_OF_K_FILES_ 18432'; assert s.count(old)==1
+          pre=hashlib.sha256(b).hexdigest(); p.write_text(s.replace(old,new,1)); post=hashlib.sha256(p.read_bytes()).hexdigest()
+          q=Path('external/class_iv/include/parser.h'); qb=q.read_bytes(); qs=qb.decode(); qold='#define _ARGUMENT_LENGTH_MAX_ 1024'; qnew='#define _ARGUMENT_LENGTH_MAX_ 524288'; assert qs.count(qold)==1
+          qpre=hashlib.sha256(qb).hexdigest(); q.write_text(qs.replace(qold,qnew,1)); qpost=hashlib.sha256(q.read_bytes()).hexdigest()
+          Path('artifacts/capacity_patch.json').write_text(json.dumps({'schema':'LAYERB_16385_CLASS_CAPACITY_PATCH_V0_1','source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','old_capacity':30,'new_capacity':18432,'replacement_count':1,'pre_sha256':pre,'post_sha256':post,'parser_old_argument_capacity':1024,'parser_new_argument_capacity':524288,'parser_replacement_count':1,'parser_pre_sha256':qpre,'parser_post_sha256':qpost},indent=2,sort_keys=True)+'\n')
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python scripts/dsir4/classiv_k_output_history_suppression_patch_v0_1.py external/class_iv artifacts/history_patch.json
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+
+      - name: Execute patched canonical-16385 four-role resource pilot with telemetry
+        shell: bash
+        run: |
+          set -euo pipefail
+          : > artifacts/telemetry.log
+          (
+            while true; do
+              ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+              mem="$(awk '/^(MemTotal|MemFree|MemAvailable|SwapTotal|SwapFree):/ {printf "%s%s=%s%s ",$1,$2,$3,$4} END {print ""}' /proc/meminfo)"
+              top="$(ps -eo rss,comm --sort=-rss | sed -n '2p' | xargs)"
+              echo "TELEMETRY replica=${{ matrix.replica }} ts=$ts $mem top=$top" | tee -a artifacts/telemetry.log
+              sleep 5
+            done
+          ) & MON=$!
+          trap 'kill $MON 2>/dev/null || true' EXIT
+          PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}" python ci/layerb_post_jm_16385_one_live_resource_pilot_v0_1.py \
+            --canonical-authority docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json \
+            --fine docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt \
+            --jo-script ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --capacity-patch-record artifacts/capacity_patch.json \
+            --out artifacts/result.json
+          kill $MON 2>/dev/null || true; wait $MON 2>/dev/null || true; trap - EXIT
+          python - <<'PY'
+          import json,re
+          from pathlib import Path
+          d=json.load(open('artifacts/result.json'))
+          assert d['classification']=='CANONICAL_16385_ONE_LIVE_FOUR_BUILD_RESOURCE_PILOT_PASS_PLUS_0_PLUS_0',d
+          assert d['branch_activated'] is False and d['jm_result_read'] is False
+          assert d['execution_lifecycle']['total_solver_constructions']==4
+          assert d['execution_lifecycle']['max_live_instances']==1 and d['execution_lifecycle']['final_live_instances']==0
+          assert d['unsupported_target_evaluations']==0
+          assert d['max_requested_node_coordinate_rel_mismatch']<=1e-12
+          assert d['scientific_authority_created'] is False and d['next_rung_execution_authorized'] is False
+          peak=0
+          for line in Path('artifacts/telemetry.log').read_text().splitlines():
+              m=re.search(r'top=(\d+)\s+',line)
+              if m: peak=max(peak,int(m.group(1)))
+          receipt={'schema':'CLASSIV_HISTORY_SUPPRESSED_16385_RESOURCE_REPLICA_RESULT_V0_1','classification':'CLASSIV_HISTORY_SUPPRESSED_16385_RESOURCE_REPLICA_PASS_PLUS_0_PLUS_0','effect':'+0/+0','replica':${{ matrix.replica }},'resource_pilot_classification':d['classification'],'total_solver_constructions':4,'max_live_instances':1,'unsupported_target_evaluations':0,'max_requested_node_coordinate_rel_mismatch':d['max_requested_node_coordinate_rel_mismatch'],'peak_top_process_rss_kb':peak,'scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,'token':'CLASSIV_HISTORY_SUPPRESSED_16385_RESOURCE_REPLICA_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/resource_receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          print(receipt['token'],'replica',receipt['replica'],'peak_rss_kb',peak)
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: classiv-history-suppressed-16385-resource-replica-${{ matrix.replica }}
+          path: |
+            artifacts/resource_receipt.json
+            artifacts/result.json
+            artifacts/capacity_patch.json
+            artifacts/history_patch.json
+            artifacts/telemetry.log
+          if-no-files-found: warn
+          retention-days: 90
