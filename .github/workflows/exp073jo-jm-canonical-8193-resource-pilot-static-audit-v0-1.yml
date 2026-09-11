@@ -1,0 +1,107 @@
+name: exp073jo-jm-canonical-8193-resource-pilot-static-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073jo-jm-canonical-8193-resource-pilot-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/EXP073JO_ARTICLE3_JM_CANONICAL_8193_ONE_LIVE_RESOURCE_PILOT_V0_1.md)" = '75a9076573d5b168a4ad072c0a43d5d42a3d7642'
+          test "$(git hash-object ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py)" = 'c975a964805919cd61e3c028305ad3945773377f'
+          test "$(git hash-object docs/dsir4/authority/EXP073JL_ARTICLE3_RECOVERED_CANONICAL_ONE_LIVE_THIRD_REFINEMENT_NOT_CONVERGED_V0_2.json)" = 'aca79d6596f49ced9fe9d965059a2352447f13b4'
+          test "$(git hash-object docs/dsir4/authority/EXP073JM_RECOVERED_STATIC_IMPLEMENTATION_AUDIT_V0_2.json)" = '98e5d43686500ff8044f3197e646364afbf50006'
+          test "$(git hash-object docs/dsir4/authority/EXP073JM_RESPONSE_BLIND_CANONICAL_FINE_8193_V0_1.json)" = 'ab25bdc60aa1538ffd5383ce8c43372b2e402406'
+          test "$(git hash-object docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt)" = 'bc9a6e59fb27d7510796c1cb2d5470dfe8a5294b'
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+          test "$(git hash-object ci/exp073jw_article3_canonical_one_live_eight_build_resource_pilot_v0_1.py)" = 'c1bddfea7a9f9a1c2a177a0c34600a85e3cd650e'
+          python3 -m py_compile ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py
+      - name: Run no-CLASS no-science static audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import ast,hashlib,json
+          from pathlib import Path
+          hp=Path('ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py')
+          pp=Path('docs/dsir4/prereg/EXP073JO_ARTICLE3_JM_CANONICAL_8193_ONE_LIVE_RESOURCE_PILOT_V0_1.md')
+          wp=Path('ci/exp073jw_article3_canonical_one_live_eight_build_resource_pilot_v0_1.py')
+          s=hp.read_text(); p=pp.read_text(); w=wp.read_text(); ast.parse(s)
+          checks={
+            'class_import_scoped_to_execute': s.count('from classy import Class')==1,
+            'no_grid_regeneration': 'geomspace(' not in s and 'guarded_lattice(' not in s,
+            'canonical_node_count': 'NODE_COUNT = 8193' in s,
+            'canonical_text_sha': '90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6' in s,
+            'canonical_node_sha': '6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515' in s,
+            'capacity_9216': 'CAPACITY = 9216' in s,
+            'parser_262144': 'PARSER_CAPACITY = 262144' in s,
+            'native_kpd20': 'NATIVE_KPD = 20.0' in s,
+            'h_exact': 'H = 1e-4' in s,
+            'lookup_exact': 'LOOKUP_REL_TOL = 1e-12' in s,
+            'jl_not_converged_activation': 'jl.get("classification") != JL_NOT_CONVERGED' in s and 'jl.get("artifact_verified_independently") is not True' in s,
+            'jm_static_pass_required': 'jm.get("classification") != JM_STATIC_PASS' in s and 'jm.get("artifact_verified_independently") is not True' in s,
+            'canonical_authority_required': 'ca.get("classification") != CANONICAL_AUTH_PASS' in s and 'ca.get("artifact_verified_independently") is not True' in s,
+            'fixed_A_z': '0x1.3851eb851eb85p-1' in s,
+            'fixed_B_z': '0x1.1c28f5c28f5c3p+0' in s,
+            'fixed_A_targets': '[0.0013, 0.0047, 0.013, 0.041]' in s,
+            'fixed_B_targets': '[0.0019, 0.0073, 0.021, 0.057]' in s,
+            'jw_A_z_same': '0x1.3851eb851eb85p-1' in w,
+            'jw_B_z_same': '0x1.1c28f5c28f5c3p+0' in w,
+            'jw_A_targets_same': '[0.0013,0.0047,0.013,0.041]' in w,
+            'jw_B_targets_same': '[0.0019,0.0073,0.021,0.057]' in w,
+            'role_order_exact': '("reference", 0.0, 0.0)' in s and '("alpha_minus", -H, 0.0)' in s and '("beta_plus", 0.0, H)' in s and '("beta_minus", 0.0, -H)' in s,
+            'requested_values_reused': 'jj.requested_values(k, y, nodes)' in s,
+            'cubic_centered_reused': 'jj.cubic_centered(nodes, yn, targets)' in s,
+            'alpha_formula_exact': 'np.abs((al - ref) / (-H))' in s,
+            'beta_formula_exact': 'np.abs((bp - bm) / (2 * H))' in s,
+            'four_build_guard': 'tracker == {"constructions": 4, "live": 0, "max_live": 1}' in s,
+            'unsupported_zero': 'unsupported == 0' in s,
+            'lookup_ceiling': 'max_lookup <= LOOKUP_REL_TOL' in s,
+            'response_shape': 'v["shape"] == [4, 2]' in s,
+            'full_jm_false': '"full_jm_107_row_traversal_executed": False' in s,
+            'jm_classifier_false': '"jm_convergence_classification_created": False' in s,
+            'science_authority_false': '"scientific_authority_created": False' in s,
+            'covariance_false': '"covariance_restriction_authorized": False' in s,
+            'wm_false': '"Wm_S3_opened": False' in s,
+            'same_process_receipt': '"cross_process_raw_operand_combination": False' in s,
+            'pass_token_exact': 'CANONICAL_8193_ONE_LIVE_FOUR_BUILD_RESOURCE_PILOT_PASS_PLUS_0_PLUS_0' in s,
+            'fail_token_distinct': 'CANONICAL_8193_RESOURCE_OR_INFRA_NOT_FEASIBLE_PLUS_0_PLUS_0' in s,
+            'prereg_no_full_jm': 'does not execute the full 107-row DES+BOSS traversal' in p,
+            'prereg_fixed_jw_requests': 'inherited unchanged from JW' in p,
+            'prereg_four_lifetimes': 'exactly four solver constructions' in p,
+            'prereg_no_convergence_stat': 'No coarse/fine convergence statistic is defined or allowed' in p,
+          }
+          assert all(checks.values()), [k for k,v in checks.items() if not v]
+          def sha(x): return hashlib.sha256(x.read_bytes()).hexdigest()
+          result={
+            'schema':'EXP073JO_JM_CANONICAL_8193_RESOURCE_PILOT_STATIC_AUDIT_RESULT_V0_1',
+            'classification':'EXP073JO_RESOURCE_PILOT_STATIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0','class_solver_invoked':False,'scientific_response_read':False,'jm_production_executed':False,'scientific_authority_created':False,
+            'check_count':len(checks),'checks':checks,
+            'prereg_sha256':sha(pp),'helper_sha256':sha(hp),'jw_helper_sha256':sha(wp),
+            'article3_repository_readiness_percent':68,'funnel_freeze_readiness_percent':67,
+            'token':'EXP073JO_RESOURCE_PILOT_STATIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          }
+          Path('artifacts/result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(result['token'],result['check_count'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jo-jm-canonical-8193-resource-pilot-static-audit
+          path: artifacts/result.json
+          if-no-files-found: error
+          retention-days: 90
