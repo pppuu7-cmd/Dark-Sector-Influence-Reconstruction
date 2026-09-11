@@ -1,0 +1,183 @@
+name: post-jm-parallel-branch-plans-and-grid-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/post-jm-parallel-branch-plans-and-grid-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: post-jm-parallel-branch-plans-and-grid-audit-v0-1
+  cancel-in-progress: false
+
+env:
+  JM_HELPER_BLOB: '4ba4868d751b95b97b2ac7f18701f5349e70c950'
+  CONV_PREREG_BLOB: '8e990660fb7864f5e04fa53a852e540af161ea8a'
+  NOTCONV_PREREG_BLOB: '9fd1ff34f240b4ed6252c7b83b3c5d7fe9d47b98'
+  CANON8193_BLOB: 'bc9a6e59fb27d7510796c1cb2d5470dfe8a5294b'
+  CANON16385_BLOB: 'fc4eb1e7f51a0ad3773b8be13c477652b1f71368'
+  CANON16385_AUTH_BLOB: '50aa473299c82c857921a083f7d4de652ba476a4'
+  STATIC16385_AUTH_BLOB: 'f0543ad63bff079c1d59c972dadbdebcd0f4df61'
+  BUILD16385_AUTH_BLOB: '3c1d26f9208056835261a8551386276d626c063d'
+
+jobs:
+  converged-closure-plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze exact CONVERGED closure implementation plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/exp073jm_article3_recovered_canonical_one_live_fourth_refinement_v0_2.py)" = "$JM_HELPER_BLOB"
+          test "$(git hash-object docs/dsir4/prereg/POST_JM_CONVERGED_LAYERB_SCIENTIFIC_CLOSURE_V0_1.md)" = "$CONV_PREREG_BLOB"
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          s=Path('ci/exp073jm_article3_recovered_canonical_one_live_fourth_refinement_v0_2.py').read_text()
+          p=Path('docs/dsir4/prereg/POST_JM_CONVERGED_LAYERB_SCIENTIFIC_CLOSURE_V0_1.md').read_text()
+          checks={
+            'jm_engine_h':'H = 1e-4' in s,
+            'jm_engine_tol':'REL_TOL = 1e-3' in s,
+            'jm_engine_kpd':'NATIVE_KPD = 20.0' in s,
+            'jm_engine_capacity':'CAPACITY = 9216' in s and 'PARSER_CAPACITY = 262144' in s,
+            'jm_engine_counts':'requested_node_count": 4097' in s and 'requested_node_count": 8193' in s,
+            'jm_engine_one_live':'tracker != {"constructions": 8, "live": 0, "max_live": 1}' in s,
+            'prereg_exact_grids':'canonical 4097' in p and 'canonical 8193' in p,
+            'prereg_fresh':'fresh science-authorizing' in p,
+            'prereg_no_covariance':'does not itself perform covariance restriction' in p,
+            'prereg_strict_tol':'strictly `<1e-3`' in p,
+          }
+          assert all(checks.values()), [k for k,v in checks.items() if not v]
+          out={
+            'schema':'POST_JM_CONVERGED_CLOSURE_IMPLEMENTATION_PLAN_V0_1',
+            'classification':'POST_JM_CONVERGED_CLOSURE_PLAN_FROZEN_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0','checks':checks,'check_count':len(checks),'checks_all_pass':True,
+            'source_engine_blob':'4ba4868d751b95b97b2ac7f18701f5349e70c950',
+            'activation_token':'COMMON_GRID_FOURTH_REFINEMENT_CONVERGED_PLUS_0_PLUS_0',
+            'fresh_execution_required':True,'response_values_reused':False,
+            'coarse_requested_nodes':4097,'fine_requested_nodes':8193,'capacity':9216,'parser_capacity':262144,
+            'h':1e-4,'rel_tol':1e-3,'native_kpd':20.0,'max_live_instances':1,'solver_constructions':8,
+            'scientific_pass_token':'PASS_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_POST_JM_V0_1',
+            'jm_result_read':False,'scientific_response_read':False,'class_solver_invoked':False,
+            'scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+            'token':'POST_JM_CONVERGED_CLOSURE_PLAN_FROZEN_PASS_PLUS_0_PLUS_0'
+          }
+          Path('artifacts/plan.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-jm-converged-closure-plan-v0-1
+          path: artifacts/plan.json
+          if-no-files-found: error
+          retention-days: 90
+
+  not-converged-next-rung-plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze exact NOT_CONVERGED next-rung implementation plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/POST_JM_NOT_CONVERGED_NEXT_SUPPORT_RUNG_V0_1.md)" = "$NOTCONV_PREREG_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json)" = "$CANON16385_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_16385_RESOURCE_PREFLIGHT_STATIC_AUDIT_V0_1.json)" = "$STATIC16385_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_16385_CLASS_BUILD_ENVELOPE_V0_1.json)" = "$BUILD16385_AUTH_BLOB"
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('docs/dsir4/prereg/POST_JM_NOT_CONVERGED_NEXT_SUPPORT_RUNG_V0_1.md').read_text()
+          ca=json.load(open('docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json'))
+          sa=json.load(open('docs/dsir4/authority/LAYERB_16385_RESOURCE_PREFLIGHT_STATIC_AUDIT_V0_1.json'))
+          ba=json.load(open('docs/dsir4/authority/LAYERB_16385_CLASS_BUILD_ENVELOPE_V0_1.json'))
+          checks={
+            'activation':'COMMON_GRID_FOURTH_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0' in p,
+            'grid_pair':'8193' in p and '16385' in p,
+            'capacity':'18432' in p and '524288' in p,
+            'strict_tol':'strict convergence rule `max_atomic_coarse_vs_fine_relative_component_difference < 1e-3`' in p,
+            'canonical_verified':ca.get('artifact_verified_independently') is True,
+            'canonical_dormant':ca.get('successor_branch_activated') is False and ca.get('successor_execution_authorized') is False,
+            'static_pass':sa.get('classification')=='LAYERB_16385_RESOURCE_PREFLIGHT_STATIC_PASS_PLUS_0_PLUS_0' and sa.get('artifact_verified_independently') is True,
+            'build_pass':ba.get('classification')=='LAYERB_16385_CLASS_BUILD_ENVELOPE_PASS_PLUS_0_PLUS_0' and ba.get('artifact_verified_independently') is True,
+          }
+          assert all(checks.values()), [k for k,v in checks.items() if not v]
+          out={
+            'schema':'POST_JM_NOT_CONVERGED_NEXT_RUNG_IMPLEMENTATION_PLAN_V0_1',
+            'classification':'POST_JM_NOT_CONVERGED_NEXT_RUNG_PLAN_FROZEN_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0','checks':checks,'check_count':len(checks),'checks_all_pass':True,
+            'activation_token':'COMMON_GRID_FOURTH_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0',
+            'coarse_requested_nodes':8193,'fine_requested_nodes':16385,
+            'coarse_node_sha256':'6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515',
+            'fine_node_sha256':'3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975',
+            'capacity':18432,'parser_capacity':524288,'h':1e-4,'rel_tol':1e-3,'native_kpd':20.0,
+            'max_live_instances':1,'solver_constructions':8,'total_get_transfer_calls':4040,
+            'jm_result_read':False,'scientific_response_read':False,'class_solver_invoked':False,
+            'branch_activated':False,'next_rung_execution_authorized':False,'scientific_authority_created':False,
+            'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+            'token':'POST_JM_NOT_CONVERGED_NEXT_RUNG_PLAN_FROZEN_PASS_PLUS_0_PLUS_0'
+          }
+          Path('artifacts/plan.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-jm-not-converged-next-rung-plan-v0-1
+          path: artifacts/plan.json
+          if-no-files-found: error
+          retention-days: 90
+
+  canonical-grid-nesting-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compute exact 8193 to 16385 bitwise nesting diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt)" = "$CANON8193_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt)" = "$CANON16385_BLOB"
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import hashlib,json,math,struct
+          from pathlib import Path
+          def load(path):
+              lines=Path(path).read_text().splitlines(); words=[int(x,16) for x in lines]; vals=[struct.unpack('<d',struct.pack('<Q',w))[0] for w in words]; return lines,words,vals
+          l8,w8,x8=load('docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt')
+          l16,w16,x16=load('docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt')
+          assert len(w8)==8193 and len(w16)==16385
+          assert all(math.isfinite(x) and x>0 for x in x8+x16)
+          assert all(a<b for a,b in zip(x8,x8[1:])) and all(a<b for a,b in zip(x16,x16[1:]))
+          every_other=w16[::2]
+          exact_every_other=sum(a==b for a,b in zip(w8,every_other))
+          set16=set(w16); exact_membership=sum(w in set16 for w in w8)
+          rel=[abs(a-b)/max(abs(a),abs(b)) for a,b in zip(x8,x16[::2])]
+          classification='CANONICAL_8193_16385_NESTING_EXACT_PLUS_0_PLUS_0' if exact_every_other==8193 else 'CANONICAL_8193_16385_NESTING_DIAGNOSTIC_NONEXACT_PLUS_0_PLUS_0'
+          out={
+            'schema':'LAYERB_CANONICAL_8193_16385_NESTING_DIAGNOSTIC_V0_1','classification':classification,'effect':'+0/+0',
+            'coarse_count':8193,'fine_count':16385,'exact_every_other_match_count':exact_every_other,'exact_membership_count':exact_membership,
+            'max_every_other_relative_coordinate_difference':max(rel),'mean_every_other_relative_coordinate_difference':sum(rel)/len(rel),
+            'coarse_first_hex':l8[0],'coarse_last_hex':l8[-1],'fine_first_hex':l16[0],'fine_last_hex':l16[-1],
+            'decision_neutral':True,'density_change_authorized':False,'tolerance_change_authorized':False,
+            'jm_result_read':False,'scientific_response_read':False,'class_solver_invoked':False,'scientific_authority_created':False,
+            'covariance_restriction_authorized':False,'Wm_S3_opened':False,'token':classification
+          }
+          Path('artifacts/nesting.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(classification, exact_every_other, max(rel))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-canonical-8193-16385-nesting-diagnostic-v0-1
+          path: artifacts/nesting.json
+          if-no-files-found: error
+          retention-days: 90
