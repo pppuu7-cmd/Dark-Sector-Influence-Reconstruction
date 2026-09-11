@@ -1,0 +1,58 @@
+name: layerb-post-16385-exact-hotspot-authority-binding-audit-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-post-16385-exact-hotspot-authority-binding-audit-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install -q 'numpy==1.26.4'
+      - name: Import helper and validate exact authority schemas without CLASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python - <<'PY'
+          import importlib.util,json
+          from pathlib import Path
+          hp='ci/layerb_post_16385_exact_response_atom_hotspot_v0_1.py'
+          spec=importlib.util.spec_from_file_location('h',hp); h=importlib.util.module_from_spec(spec); spec.loader.exec_module(h)
+          terminal='docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json'
+          plan='docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json'
+          td=h.validate_terminal(terminal); pd=h.validate_plan(plan)
+          checks={
+            'helper_imported': True,
+            'terminal_class_exact': td['classification']==h.TERMINAL_CLASS,
+            'terminal_max_exact': td['max_relative_component_difference']==h.AUTH_MAX,
+            'terminal_tol_exact': td['relative_tolerance']==h.REL_TOL,
+            'terminal_32769_false': td['denser_successor_32769_authorized'] is False,
+            'terminal_coarse_sha_exact': td['coarse_node_sha256']==h.COARSE_NODE_SHA,
+            'terminal_fine_sha_exact': td['fine_node_sha256']==h.FINE_NODE_SHA,
+            'plan_class_exact': pd['classification']==h.PLAN_CLASS,
+            'plan_coarse_sha_exact': pd['coarse_common_plan_sha256']=='505716116cc385d5700e455017d8e541c5bba7774fa6647298392495c83ecfe0',
+            'plan_fine_sha_exact': pd['fine_plan_with_gl128_sha256']=='0f7ce2e5fa459e15954268dfd46045eaa0ab6356dfdab5a2e282514e7a34ae4e',
+            'plan_des_calls_exact': pd['des']['nonempty_solver_request_count_per_role']==377,
+            'plan_gl64_exact': pd['boss']['gl64_z_count']==64,
+            'plan_coarse_calls_exact': pd['execution_shape_if_recovered_one_live']['coarse_get_transfer_calls_per_role']==441,
+            'plan_fine_calls_exact': pd['execution_shape_if_recovered_one_live']['fine_get_transfer_calls_per_role']==569,
+            'topn_exact': h.TOPN==64,
+            'h_exact': h.H==1e-4,
+            'tol_exact': h.REL_TOL==1e-3,
+          }
+          ok=all(checks.values())
+          out={'schema':'LAYERB_POST_16385_EXACT_HOTSPOT_AUTHORITY_BINDING_AUDIT_V0_1','classification':'POST_16385_EXACT_HOTSPOT_AUTHORITY_BINDING_AUDIT_PASS_PLUS_0_PLUS_0' if ok else 'POST_16385_EXACT_HOTSPOT_AUTHORITY_BINDING_AUDIT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'pass_count':sum(checks.values()),'check_count':len(checks),'class_solver_invoked':False,'scientific_response_read':False,'current_broad_result_read':False,'hotspot_execution_authorized':False,'scientific_authority_created':False,'next_rung_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('artifacts/audit.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['classification'],f"{out['pass_count']}/{out['check_count']}"); assert ok,out
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-exact-hotspot-authority-binding-audit-v0-1
+          path: artifacts/audit.json
+          if-no-files-found: error
+          retention-days: 90
