@@ -1,0 +1,125 @@
+name: layerb-consume-canonical-16385-anchor-authority-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-consume-canonical-16385-anchor-authority-v0-1.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: layerb-consume-canonical-16385-anchor-authority-v0-1
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  SOURCE_RUN: '34546913426'
+  SOURCE_JOB: '103101486773'
+  SOURCE_ARTIFACT: '10179350755'
+  SOURCE_ZIP_SHA: '1f2c2e338ad1946aa96af6711d5a687feb614a6377329522835fa51418eac8d7'
+  SOURCE_RESULT_SHA: '26f0c937b03e108a080fb719c41db9c4af9e0a845335d98740cabe668fb773e9'
+  CANDIDATE_TEXT_SHA: '7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69'
+  CANDIDATE_NODE_SHA: '3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975'
+  PREREG_BLOB: 'bea159b5568783220c41a7241f60e77e9b29fe11'
+
+jobs:
+  consume-and-commit-dormant-authority:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download and independently verify aggregate artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/LAYERB_RESPONSE_BLIND_CANONICAL_16385_ANCHOR_MATERIALIZATION_V0_1.md)" = "$PREREG_BLOB"
+          test ! -e docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt
+          test ! -e docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json
+          mkdir -p consume
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT}/zip" > consume/source.zip
+          echo "$SOURCE_ZIP_SHA  consume/source.zip" | sha256sum -c -
+          unzip -q consume/source.zip -d consume/payload
+          test "$(find consume/payload -maxdepth 1 -type f | wc -l)" -eq 2
+          echo "$SOURCE_RESULT_SHA  consume/payload/result.json" | sha256sum -c -
+          echo "$CANDIDATE_TEXT_SHA  consume/payload/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_CANDIDATE_V0_1.txt" | sha256sum -c -
+          python3 - <<'PY'
+          import hashlib,json,struct
+          from pathlib import Path
+          d=json.load(open('consume/payload/result.json'))
+          assert d['classification']=='CANONICAL_16385_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0'
+          assert d['replica_count']==8 and d['minimum_anchor_quorum']==4 and d['anchor_match_count']==5
+          assert d['anchor_match_replicas']==[1,3,4,7,8]
+          assert d['host_variant_count']==3 and d['host_variant_replicas']==[2,5,6]
+          assert d['anchor_8193_node_sha256']=='6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515'
+          assert d['anchor_8193_u64hex_sha256']=='90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6'
+          assert d['base_n']==16384 and d['guard_counts']==[0,1] and d['requested_node_count']==16385
+          assert d['candidate_node_sha256']=='3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975'
+          assert d['candidate_u64hex_sha256']=='7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69'
+          assert d['all_anchor_matched_candidates_byte_identical'] is True
+          assert d['scientific_response_read'] is False and d['class_solver_invoked'] is False
+          assert d['branch_activated'] is False and d['scientific_authority_created'] is False
+          assert d['successor_branch_activated'] is False and d['successor_execution_authorized'] is False
+          lines=Path('consume/payload/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_CANDIDATE_V0_1.txt').read_text().splitlines()
+          assert len(lines)==16385
+          raw=b''.join(struct.pack('<Q',int(x,16)) for x in lines)
+          assert hashlib.sha256(raw).hexdigest()=='3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975'
+          PY
+      - name: Materialize dormant canonical bytes and authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp consume/payload/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_CANDIDATE_V0_1.txt docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt
+          cat > docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json <<'JSON'
+          {
+            "schema": "LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_AUTHORITY_V0_1",
+            "classification": "CANONICAL_16385_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0",
+            "effect": "+0/+0",
+            "artifact_verified_independently": true,
+            "run_id": 34546913426,
+            "job_id": 103101486773,
+            "workflow_head_sha": "c0c7856af2de0f0a126bf3653fa4af0581811081",
+            "artifact_id": 10179350755,
+            "artifact_zip_sha256": "1f2c2e338ad1946aa96af6711d5a687feb614a6377329522835fa51418eac8d7",
+            "result_json_sha256": "26f0c937b03e108a080fb719c41db9c4af9e0a845335d98740cabe668fb773e9",
+            "anchor_8193_node_sha256": "6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515",
+            "anchor_8193_u64hex_sha256": "90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6",
+            "replica_count": 8,
+            "minimum_anchor_quorum": 4,
+            "anchor_match_count": 5,
+            "anchor_match_replicas": [1, 3, 4, 7, 8],
+            "host_variant_count": 3,
+            "host_variant_replicas": [2, 5, 6],
+            "base_n": 16384,
+            "guard_counts": [0, 1],
+            "requested_node_count": 16385,
+            "node_payload_sha256": "3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975",
+            "u64hex_sha256": "7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69",
+            "canonical_file": "docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt",
+            "scientific_response_read": false,
+            "class_solver_invoked": false,
+            "successor_branch_activated": false,
+            "successor_execution_authorized": false,
+            "scientific_authority_created": false,
+            "covariance_restriction_authorized": false,
+            "Wm_S3_opened": false,
+            "article3_repository_readiness_percent": 68,
+            "funnel_freeze_readiness_percent": 67,
+            "token": "CANONICAL_16385_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0"
+          }
+          JSON
+          echo "$CANDIDATE_TEXT_SHA  docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt" | sha256sum -c -
+      - name: Commit dormant authority without branch activation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json
+          git commit -m 'Materialize dormant response-blind canonical 16385 authority'
+          git pull --rebase origin main
+          git push origin HEAD:main
