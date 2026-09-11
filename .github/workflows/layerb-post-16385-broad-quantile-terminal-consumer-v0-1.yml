@@ -1,0 +1,88 @@
+name: layerb-post-16385-broad-quantile-terminal-consumer-v0-1
+on:
+  workflow_run:
+    workflows: ['layerb-post-16385-broad-quantile-localization-v0-2']
+    types: [completed]
+permissions:
+  actions: read
+  contents: read
+jobs:
+  consume:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_sha == 'ef7f12195b4bc491c09f107fcba58e2bdf350881' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-broad-raw-v0-2
+          path: raw
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-broad-conditioning-v0-2
+          path: conditioning
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Independently validate terminal support artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          plateau=0.012484060640679777
+          idx=[512,1024,1536,2048,2560,3072,3584,4096,4608,5120,5632,6144,6656,7168,7680]
+          r=json.load(open('raw/result.json')); c=json.load(open('conditioning/result.json'))
+          assert r['classification']=='POST_16385_BROAD_QUANTILE_RAW_LOCALIZATION_PASS_PLUS_0_PLUS_0',r
+          assert c['classification']=='POST_16385_BROAD_QUANTILE_CONDITIONING_PASS_PLUS_0_PLUS_0',c
+          for d in (r,c):
+            assert d['selected_indices_8193']==idx,d
+            assert d['broad_quantile_count']==15,d
+            assert d['plan_commit']=='4aec3ce3a74c187e74b8ed5b7f6e17039ddc9ef6',d
+            assert d['lifecycle_8193']=={'constructions':4,'live':0,'max_live':1},d
+            assert d['lifecycle_16385']=={'constructions':4,'live':0,'max_live':1},d
+            assert d['unsupported_target_evaluations']==0,d
+            assert d['max_requested_node_coordinate_rel_mismatch']<=1e-12,d
+            assert d['full_107_row_traversal_executed'] is False,d
+            assert d['scientific_authority_created'] is False,d
+            assert d['next_rung_authorized'] is False,d
+            assert d['covariance_restriction_authorized'] is False,d
+            assert d['Wm_S3_opened'] is False,d
+          assert c['alternative_h_evaluated'] is False,c
+          raw=float(r['max_raw_symmetric_relative_difference'])
+          resp=float(c['max_cross_grid_response_symmetric_relative_difference'])
+          sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          out={
+            'schema':'LAYERB_POST_16385_BROAD_QUANTILE_TERMINAL_CONSUMER_V0_1',
+            'classification':'POST_16385_BROAD_QUANTILE_TERMINAL_ARTIFACTS_VALIDATED_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'source_run_id':int('${{ github.event.workflow_run.id }}'),
+            'source_head_sha':'${{ github.event.workflow_run.head_sha }}',
+            'raw_result_sha256':sha('raw/result.json'),
+            'conditioning_result_sha256':sha('conditioning/result.json'),
+            'full_traversal_plateau_reference':plateau,
+            'max_broad_raw_symmetric_relative_difference':raw,
+            'max_broad_response_symmetric_relative_difference':resp,
+            'raw_to_full_plateau_ratio':raw/plateau,
+            'response_to_full_plateau_ratio':resp/plateau,
+            'interpretive_branch_selected':False,
+            'next_scientific_run_launched':False,
+            'scientific_authority_created':False,
+            'next_rung_authorized':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+            'token':'POST_16385_BROAD_QUANTILE_TERMINAL_ARTIFACTS_VALIDATED_PLUS_0_PLUS_0'
+          }
+          Path('artifacts/consumer.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token']); print(json.dumps({'raw_ratio':out['raw_to_full_plateau_ratio'],'response_ratio':out['response_to_full_plateau_ratio']},sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-broad-quantile-terminal-consumer-v0-1
+          path: artifacts/consumer.json
+          if-no-files-found: error
+          retention-days: 90
