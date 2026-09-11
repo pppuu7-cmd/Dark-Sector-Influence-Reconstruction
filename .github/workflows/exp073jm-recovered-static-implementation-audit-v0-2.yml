@@ -1,0 +1,122 @@
+name: exp073jm-recovered-static-implementation-audit-v0-2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/exp073jm-recovered-static-implementation-audit-v0-2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  HELPER_BLOB: '4ba4868d751b95b97b2ac7f18701f5349e70c950'
+  ALIGNMENT_BLOB: '19f648a9a99dfbb1cb7a36f067becc431adabb5b'
+  ORIGINAL_PREREG_BLOB: 'c429891bcd949ffbc3fc13e02fa66656ac16ea11'
+  ENGINE_BLOB: '5f8475b961db20bef5f4b8a2eb7c99d9f7c722e2'
+  CANON8193_AUTH_BLOB: 'ab25bdc60aa1538ffd5383ce8c43372b2e402406'
+  CANON8193_FILE_BLOB: 'bc9a6e59fb27d7510796c1cb2d5470dfe8a5294b'
+  CANON4097_FILE_BLOB: 'f5acd4a25068af22fbaca5fb35adf2afbf3a4be3'
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce response-blind frozen identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/exp073jm_article3_recovered_canonical_one_live_fourth_refinement_v0_2.py)" = "$HELPER_BLOB"
+          test "$(git hash-object docs/dsir4/prereg/EXP073JM_RECOVERED_CANONICAL_ONE_LIVE_EXECUTION_ALIGNMENT_V0_2.md)" = "$ALIGNMENT_BLOB"
+          test "$(git hash-object docs/dsir4/prereg/EXP073JM_ARTICLE3_LAYERB_COMMON_GRID_FOURTH_REFINEMENT_CONVERGENCE_V0_1.md)" = "$ORIGINAL_PREREG_BLOB"
+          test "$(git hash-object ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py)" = "$ENGINE_BLOB"
+          test "$(git hash-object docs/dsir4/authority/EXP073JM_RESPONSE_BLIND_CANONICAL_FINE_8193_V0_1.json)" = "$CANON8193_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt)" = "$CANON8193_FILE_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt)" = "$CANON4097_FILE_BLOB"
+          python3 -m py_compile ci/exp073jm_article3_recovered_canonical_one_live_fourth_refinement_v0_2.py
+
+      - name: Audit implementation without importing CLASS or reading JL result
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import ast,hashlib,json
+          from pathlib import Path
+
+          hp=Path('ci/exp073jm_article3_recovered_canonical_one_live_fourth_refinement_v0_2.py')
+          ap=Path('docs/dsir4/prereg/EXP073JM_RECOVERED_CANONICAL_ONE_LIVE_EXECUTION_ALIGNMENT_V0_2.md')
+          pp=Path('docs/dsir4/prereg/EXP073JM_ARTICLE3_LAYERB_COMMON_GRID_FOURTH_REFINEMENT_CONVERGENCE_V0_1.md')
+          ep=Path('ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py')
+          cp=Path('docs/dsir4/authority/EXP073JM_RESPONSE_BLIND_CANONICAL_FINE_8193_V0_1.json')
+          s=hp.read_text(); a=ap.read_text(); p=pp.read_text(); e=ep.read_text(); ast.parse(s)
+          c=json.loads(cp.read_text())
+
+          checks={
+            'no_class_import': 'from classy import' not in s and 'import classy' not in s,
+            'no_runtime_grid_regeneration': 'guarded_lattice(' not in s and 'geomspace(' not in s,
+            'activation_exact_not_converged': 'jl.get("classification") != JL_NOT_CONVERGED' in s,
+            'activation_independent_verification': 'jl.get("artifact_verified_independently") is not True' in s,
+            'old_extra_activation_107_absent': 'retained_after_layer_b") != 107' not in s,
+            'old_extra_activation_unsupported_absent': 'unsupported_target_evaluations") != 0' not in s,
+            'activation_no_observations_dependency': 'observations' not in s,
+            'activating_response_not_reused': '"response_values_reused": False' in s,
+            'canonical_4097_node_sha': 'f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb' in s,
+            'canonical_8193_node_sha': '6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515' in s,
+            'canonical_4097_text_sha': '290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7' in s,
+            'canonical_8193_text_sha': '90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6' in s,
+            'canonical_8193_authority_pass': c.get('classification')=='CANONICAL_8193_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0' and c.get('artifact_verified_independently') is True,
+            'canonical_8193_branch_blind': c.get('branch_activated') is False and c.get('scientific_response_read') is False and c.get('class_solver_invoked') is False,
+            'canonical_8193_quorum': c.get('anchor_match_count')==6 and c.get('minimum_anchor_quorum')==4,
+            'h_exact': 'H = 1e-4' in s,
+            'rel_tol_exact': 'REL_TOL = 1e-3' in s,
+            'lookup_exact': 'LOOKUP_REL_TOL = 1e-12' in s,
+            'native_kpd_exact': 'NATIVE_KPD = 20.0' in s,
+            'capacity_9216': 'CAPACITY = 9216' in s,
+            'parser_262144': 'PARSER_CAPACITY = 262144' in s,
+            'plan_coarse_sha': '505716116cc385d5700e455017d8e541c5bba7774fa6647298392495c83ecfe0' in s,
+            'plan_fine_sha': '0f7ce2e5fa459e15954268dfd46045eaa0ab6356dfdab5a2e282514e7a34ae4e' in s,
+            'request_counts': 'len(coarse_calls) != 441 or len(fine_calls) != 569' in s,
+            'reuse_audited_evaluator': 'engine.evaluate_lattice(' in s,
+            'reuse_planner': 'engine.PlannerSuite' in s,
+            'reuse_replay': 'engine.ReplaySuite' in s,
+            'eight_constructions': 'tracker != {"constructions": 8, "live": 0, "max_live": 1}' in s,
+            'coarse_four_constructions': 'tracker != {"constructions": 4, "live": 0, "max_live": 1}' in s,
+            'same_process_receipt': '"cross_process_raw_operand_combination": False' in s,
+            'strict_less_than': 'float(mx) < REL_TOL' in s,
+            'own_unsupported_zero': 'unsupported == 0' in s,
+            'own_invalid_fraction': 'float(layer["invalid_row_fraction"]) <= ir.FB_MAX' in s,
+            'own_retained_dimension': 'layer["retained_after_layer_b"] >= ir.MIN_RETAINED' in s,
+            'fourth_converged_token': 'COMMON_GRID_FOURTH_REFINEMENT_CONVERGED_PLUS_0_PLUS_0' in s,
+            'fourth_not_converged_token': 'COMMON_GRID_FOURTH_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0' in s,
+            'infra_distinct': 'INVALID_INFRA_PLUS_0_PLUS_0' in s,
+            'original_activation_preserved': 'valid, independently verified `COMMON_GRID_THIRD_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`' in p,
+            'alignment_science_unchanged': 'scientific contract remains `EXP073JM_ARTICLE3_LAYERB_COMMON_GRID_FOURTH_REFINEMENT_CONVERGENCE_V0_1.md` unchanged' in a,
+            'alignment_requires_resource_pilot': 'Mandatory 8193 resource gate before production' in a,
+            'engine_has_planner_replay': 'class PlannerSuite' in e and 'class ReplaySuite' in e,
+          }
+          assert all(checks.values()), [k for k,v in checks.items() if not v]
+          def sha(x): return hashlib.sha256(x.read_bytes()).hexdigest()
+          result={
+            'schema':'EXP073JM_RECOVERED_STATIC_IMPLEMENTATION_AUDIT_RESULT_V0_2',
+            'classification':'EXP073JM_RECOVERED_STATIC_IMPLEMENTATION_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0','branch_activated':False,'scientific_response_read':False,'class_solver_invoked':False,'scientific_authority_created':False,
+            'check_count':len(checks),'checks':checks,
+            'helper_sha256':sha(hp),'alignment_sha256':sha(ap),'original_prereg_sha256':sha(pp),'recovered_engine_sha256':sha(ep),'canonical_8193_authority_sha256':sha(cp),
+            'resource_pilot_still_required':True,
+            'article3_repository_readiness_percent':68,'funnel_freeze_readiness_percent':67,
+            'token':'EXP073JM_RECOVERED_STATIC_IMPLEMENTATION_AUDIT_PASS_PLUS_0_PLUS_0'
+          }
+          Path('artifacts/result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(result['token'],result['check_count'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp073jm-recovered-static-implementation-audit-v0-2
+          path: artifacts/result.json
+          if-no-files-found: error
+          retention-days: 90
