@@ -1,0 +1,177 @@
+name: layerb-32769-selfhosted-resource-lifecycle-pilot-v0-1
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: layerb-32769-selfhosted-resource-lifecycle-pilot-v0-1
+  cancel-in-progress: false
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  HOSTED_EXHAUSTED_MEMTOTAL_KB: '16372440'
+  PILOT_BLOB: '11c7d9a1f95d7c1c394dd520f1c4340a4ce397b4'
+  JO_BLOB: 'c975a964805919cd61e3c028305ad3945773377f'
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+  CANON_AUTH_BLOB: 'dddf7b0f8596506b9e792186d8ebaf14ff789f4c'
+  CANON_FILE_BLOB: '7b67706156d7d2016ecba0628210fb08f6f05616'
+  BUILD_AUTH_BLOB: 'ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d'
+  BUILD_COMPAT_BLOB: 'b7fe663154519b605699c1fd622d0079a5f76772'
+  PUBLIC_EXPOSURE_BLOB: 'e5afe14eccf531d3e5b9de09b19d34df431a08b9'
+
+jobs:
+  resource-lifecycle-pilot:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enforce exact response-blind identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_1.py)" = "$PILOT_BLOB"
+          test "$(git hash-object ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py)" = "$JO_BLOB"
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json)" = "$CANON_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt)" = "$CANON_FILE_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_1.json)" = "$BUILD_AUTH_BLOB"
+          test "$(git hash-object scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py)" = "$BUILD_COMPAT_BLOB"
+          test "$(git hash-object scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py)" = "$PUBLIC_EXPOSURE_BLOB"
+
+      - name: Fail closed unless candidate has strictly more physical memory than exhausted hosted topology
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          MEMTOTAL_KB=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo)
+          test -n "$MEMTOTAL_KB"
+          echo "$MEMTOTAL_KB" > artifacts/candidate_memtotal_kb.txt
+          {
+            echo "uname=$(uname -a)"
+            echo "cpu_count=$(nproc)"
+            echo "candidate_memtotal_kb=$MEMTOTAL_KB"
+            echo "exhausted_hosted_memtotal_kb=$HOSTED_EXHAUSTED_MEMTOTAL_KB"
+            grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree):' /proc/meminfo
+          } > artifacts/host_envelope_before.txt
+          cat artifacts/host_envelope_before.txt
+          if [ "$MEMTOTAL_KB" -le "$HOSTED_EXHAUSTED_MEMTOTAL_KB" ]; then
+            echo "CANDIDATE_NOT_HIGHER_MEMORY_THAN_EXHAUSTED_HOSTED_TOPOLOGY"
+            exit 41
+          fi
+
+      - name: Verify native build prerequisites and create isolated Python stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v python3
+          command -v gcc
+          command -v g++
+          command -v gfortran
+          command -v make
+          pkg-config --exists gsl || { echo 'GSL_DEV_NOT_AVAILABLE'; exit 31; }
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+
+      - name: Build exact pinned CLASS-IV 32769/524288
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q "$CLASS_COMMIT"
+          test "$(git -C external/class_iv rev-parse HEAD)" = "$CLASS_COMMIT"
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('external/class_iv/include/perturbations.h'); b=p.read_bytes(); s=b.decode(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; new='#define _MAX_NUMBER_OF_K_FILES_ 32769'; assert s.count(old)==1
+          pre=hashlib.sha256(b).hexdigest(); p.write_text(s.replace(old,new,1)); post=hashlib.sha256(p.read_bytes()).hexdigest()
+          q=Path('external/class_iv/include/parser.h'); qb=q.read_bytes(); qs=qb.decode(); qold='#define _ARGUMENT_LENGTH_MAX_ 1024'; qnew='#define _ARGUMENT_LENGTH_MAX_ 524288'; assert qs.count(qold)==1
+          qpre=hashlib.sha256(qb).hexdigest(); q.write_text(qs.replace(qold,qnew,1)); qpost=hashlib.sha256(q.read_bytes()).hexdigest()
+          rec={'schema':'LAYERB_32769_SELFHOSTED_CLASS_CAPACITY_PATCH_V0_1','source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','old_capacity':30,'new_capacity':32769,'replacement_count':1,'pre_sha256':pre,'post_sha256':post,'parser_old_argument_capacity':1024,'parser_new_argument_capacity':524288,'parser_replacement_count':1,'parser_pre_sha256':qpre,'parser_post_sha256':qpost}
+          Path('artifacts/capacity_patch.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+
+      - name: Execute response-blind one-live 32769 lifecycle with telemetry
+        shell: bash
+        run: |
+          set -uo pipefail
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          mkdir -p artifacts
+          (
+            while true; do
+              printf 'TELEMETRY ts=%s ' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> artifacts/telemetry.log
+              awk '/^(MemTotal|MemAvailable|SwapTotal|SwapFree):/ {printf "%s%s=%s%s ",$1,$2,$3,$4} END {print ""}' /proc/meminfo >> artifacts/telemetry.log
+              ps -eo pid,ppid,rss,vsz,%cpu,%mem,etime,comm --sort=-rss | head -n 8 >> artifacts/telemetry.log || true
+              sleep 10
+            done
+          ) &
+          MON_PID=$!
+          cleanup_mon() { kill "$MON_PID" 2>/dev/null || true; wait "$MON_PID" 2>/dev/null || true; }
+          trap cleanup_mon EXIT INT TERM
+          set -e
+          PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}" .venv/bin/python ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_1.py \
+            --canonical-authority docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json \
+            --build-authority docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_1.json \
+            --fine docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt \
+            --jo-script ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --out artifacts/result.json
+          cleanup_mon
+          trap - EXIT INT TERM
+          grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree):' /proc/meminfo > artifacts/host_envelope_after.txt
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.load(open('artifacts/result.json'))
+          mem=int(Path('artifacts/candidate_memtotal_kb.txt').read_text().strip())
+          d['candidate_memtotal_kb']=mem
+          d['exhausted_hosted_memtotal_kb']=16372440
+          d['candidate_strictly_higher_memory_than_exhausted_hosted']=mem>16372440
+          assert d['classification']=='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0',d
+          assert d['candidate_strictly_higher_memory_than_exhausted_hosted'] is True
+          assert d['execution_lifecycle']['total_solver_constructions']==4
+          assert d['execution_lifecycle']['max_live_instances']==1
+          assert d['execution_lifecycle']['final_live_instances']==0
+          assert d['scientific_transfer_values_read'] is False
+          assert d['scientific_response_read'] is False
+          assert d['scientific_response_computed'] is False
+          assert d['convergence_metric_computed'] is False
+          assert d['convergence_classification_created'] is False
+          assert d['scientific_authority_created'] is False
+          assert d['successor_execution_authorized'] is False
+          Path('artifacts/result.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          print(d['token'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-32769-selfhosted-resource-lifecycle-pilot-v0-1
+          path: |
+            artifacts/result.json
+            artifacts/capacity_patch.json
+            artifacts/candidate_memtotal_kb.txt
+            artifacts/host_envelope_before.txt
+            artifacts/host_envelope_after.txt
+            artifacts/telemetry.log
+          if-no-files-found: warn
+          retention-days: 90
