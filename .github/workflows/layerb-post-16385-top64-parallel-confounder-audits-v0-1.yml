@@ -1,0 +1,128 @@
+name: layerb-post-16385-top64-parallel-confounder-audits-v0-1
+on:
+  push:
+    paths:
+      - '.github/workflows/layerb-post-16385-top64-parallel-confounder-audits-v0-1.yml'
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: layerb-post-16385-top64-parallel-confounder-audits-v0-1
+  cancel-in-progress: false
+
+env:
+  TOP64_AUTH: docs/dsir4/authority/LAYERB_POST_16385_TOP64_ROLE_CANCELLATION_TERMINAL_AUTHORITY_V0_1.json
+  POP_AUTH: docs/dsir4/authority/LAYERB_POST_16385_TOP64_POPULATION_TERMINAL_AUTHORITY_V0_1.json
+  CENSUS_SHA256: 9f1a44706148550658a600886eecb385af8b0a85e5c4becb76d8b70c4f29618e
+
+jobs:
+  duplicate-collapse:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce authority lineage
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$TOP64_AUTH")" = '5e16e8a793a81bf1692df92d8e24459e03fd4838'
+          test "$(git log -1 --format=%H -- "$POP_AUTH")" = '917d8730e4727826f6a676973298c31ef20e60cd'
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-top64-role-cancellation-census-v0-1
+          path: source
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 34614119149
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Collapse duplicate physical atoms
+        run: |
+          set -euo pipefail
+          test "$(sha256sum source/census.json | awk '{print $1}')" = "$CENSUS_SHA256"
+          mkdir -p artifacts
+          python ci/layerb_post_16385_top64_duplicate_collapse_audit_v0_1.py --census source/census.json --out artifacts/duplicate_collapse.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/duplicate_collapse.json'))
+          assert d['classification']=='POST_16385_TOP64_DUPLICATE_COLLAPSE_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['source_atom_count']==64 and d['unique_physical_atom_count']==58 and d['duplicate_group_count']==3
+          assert d['class_solver_invoked'] is False and d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top64-duplicate-collapse-audit-v0-1
+          path: artifacts/duplicate_collapse.json
+          if-no-files-found: error
+          retention-days: 90
+
+  block-correlation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce authority lineage
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$TOP64_AUTH")" = '5e16e8a793a81bf1692df92d8e24459e03fd4838'
+          test "$(git log -1 --format=%H -- "$POP_AUTH")" = '917d8730e4727826f6a676973298c31ef20e60cd'
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-top64-role-cancellation-census-v0-1
+          path: source
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 34614119149
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Compute block-stratified correlations
+        run: |
+          set -euo pipefail
+          test "$(sha256sum source/census.json | awk '{print $1}')" = "$CENSUS_SHA256"
+          mkdir -p artifacts
+          python ci/layerb_post_16385_top64_block_correlation_audit_v0_1.py --census source/census.json --out artifacts/block_correlation.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/block_correlation.json'))
+          assert d['classification']=='POST_16385_TOP64_BLOCK_CORRELATION_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['blocks']['DES']['raw_count']==55 and d['blocks']['BOSS_GL64']['unique_physical_count']==3
+          assert d['class_solver_invoked'] is False and d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top64-block-correlation-audit-v0-1
+          path: artifacts/block_correlation.json
+          if-no-files-found: error
+          retention-days: 90
+
+  quartile-enrichment:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce authority lineage
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$TOP64_AUTH")" = '5e16e8a793a81bf1692df92d8e24459e03fd4838'
+          test "$(git log -1 --format=%H -- "$POP_AUTH")" = '917d8730e4727826f6a676973298c31ef20e60cd'
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-top64-role-cancellation-census-v0-1
+          path: source
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 34614119149
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Quantify cancellation quartile enrichment
+        run: |
+          set -euo pipefail
+          test "$(sha256sum source/census.json | awk '{print $1}')" = "$CENSUS_SHA256"
+          mkdir -p artifacts
+          python ci/layerb_post_16385_top64_cancellation_quartile_enrichment_audit_v0_1.py --census source/census.json --out artifacts/quartile_enrichment.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/quartile_enrichment.json'))
+          assert d['classification']=='POST_16385_TOP64_CANCELLATION_QUARTILE_ENRICHMENT_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['high_discrepancy_count']==21 and d['low_discrepancy_count']==43
+          assert d['class_solver_invoked'] is False and d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top64-cancellation-quartile-enrichment-audit-v0-1
+          path: artifacts/quartile_enrichment.json
+          if-no-files-found: error
+          retention-days: 90
