@@ -1,0 +1,52 @@
+name: layerb-response-blind-canonical-32769-materialize-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-response-blind-canonical-32769-materialize-v0-1.yml'
+permissions:
+  actions: read
+  contents: write
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-canonical-32769-static-aggregate-v0-1
+          path: source
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 34630453409
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify and materialize exact validated bytes
+        run: |
+          set -euo pipefail
+          SRC=source/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_CANDIDATE_V0_1.txt
+          DST=docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt
+          test "$(sha256sum "$SRC" | awk '{print $1}')" = '7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2'
+          test "$(sha256sum source/result.json | awk '{print $1}')" = '389c4f97548fdff5131d56f189bb1ce099a63caa5b3d42e37ae90759cd9fe322'
+          python - <<'PY'
+          import json
+          d=json.load(open('source/result.json'))
+          assert d['classification']=='CANONICAL_32769_RESPONSE_BLIND_QUORUM_PASS_PLUS_0_PLUS_0'
+          assert d['anchor_match_count']==5 and d['minimum_anchor_quorum']==4
+          assert d['candidate_node_sha256']=='82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599'
+          assert d['scientific_response_read'] is False and d['class_solver_invoked'] is False
+          assert d['successor_execution_authorized'] is False
+          PY
+          mkdir -p "$(dirname "$DST")"
+          cp "$SRC" "$DST"
+          test "$(sha256sum "$DST" | awk '{print $1}')" = '7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2'
+      - name: Commit canonical bytes only
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt
+          git diff --cached --quiet && exit 0
+          git commit -m 'Materialize response-blind canonical 32769 nodes'
+          git push origin HEAD:main
