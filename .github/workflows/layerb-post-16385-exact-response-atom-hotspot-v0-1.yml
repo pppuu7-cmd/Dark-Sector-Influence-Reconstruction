@@ -1,0 +1,181 @@
+name: layerb-post-16385-exact-response-atom-hotspot-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-post-16385-exact-response-atom-hotspot-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: layerb-post-16385-exact-response-atom-hotspot-v0-1
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  MANIFEST: docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json
+  WM_S3_OVERRIDE: docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_2.json
+jobs:
+  exact-hotspot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce prospective activation and frozen identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_post_16385_exact_response_atom_hotspot_v0_1.py)" = '6ee1243adf626a6e0f10883fcccef0f8b04141a3'
+          test "$(git hash-object docs/dsir4/prereg/LAYERB_POST_16385_EXACT_RESPONSE_ATOM_HOTSPOT_LOCALIZATION_V0_1.md)" = '66a84ab1492824cf4851a592d3e1d1bb2c29a2f0'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_POST_16385_EXACT_HOTSPOT_AUTHORITY_BINDING_AUDIT_V0_1.json)" = 'b6d31c60d961a85679b3bbeb269869d187cc446e'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_POST_16385_BROAD_TERMINAL_CONSUMER_V0_1.json)" = 'e64c9b4f94bdccb4d1e923abb515f9a3e46adaab'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_POST_16385_BROAD_QUANTILE_TERMINAL_V0_1.json)" = '9585e46b9e9ff43195ca042037bc229994cf1385'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json)" = '7958e1f44c0224e1828f89b1472aa33226c61886'
+          test "$(git hash-object docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json)" = '5992faa10b6d25d1503b287c19456fb36756caa4'
+          test "$(git hash-object ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py)" = '5f8475b961db20bef5f4b8a2eb7c99d9f7c722e2'
+          test "$(git hash-object ci/exp073ir_article3_real_layerb_common_response_v0_1.py)" = '6ef2516dfcae8a8ae92f5b7dbe792274138c0f6f'
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+          test "$(git hash-object docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt)" = 'bc9a6e59fb27d7510796c1cb2d5470dfe8a5294b'
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt)" = 'fc4eb1e7f51a0ad3773b8be13c477652b1f71368'
+          python3 -m py_compile ci/layerb_post_16385_exact_response_atom_hotspot_v0_1.py ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py ci/exp073ir_article3_real_layerb_common_response_v0_1.py ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py
+          python3 - <<'PY'
+          import json
+          b=json.load(open('docs/dsir4/authority/LAYERB_POST_16385_BROAD_QUANTILE_TERMINAL_V0_1.json'))
+          c=json.load(open('docs/dsir4/authority/LAYERB_POST_16385_BROAD_TERMINAL_CONSUMER_V0_1.json'))
+          a=json.load(open('docs/dsir4/authority/LAYERB_POST_16385_EXACT_HOTSPOT_AUTHORITY_BINDING_AUDIT_V0_1.json'))
+          t=json.load(open('docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json'))
+          assert b['artifact_verified_independently'] is True and b['max_cross_grid_response_symmetric_relative_difference']==0.00016265101390432733
+          assert b['response_to_full_plateau_ratio'] < 0.02 and b['scientific_authority_created'] is False
+          assert c['artifact_verified_independently'] is True and c['classification']=='POST_16385_BROAD_QUANTILE_TERMINAL_ARTIFACTS_VALIDATED_PLUS_0_PLUS_0'
+          assert a['artifact_verified_independently'] is True and a['classification']=='POST_16385_EXACT_HOTSPOT_AUTHORITY_BINDING_AUDIT_PASS_PLUS_0_PLUS_0' and a['pass_count']==a['check_count']==17
+          assert t['artifact_verified_independently'] is True and t['classification']=='COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0'
+          assert t['max_relative_component_difference']==0.012484060640679777 and t['denser_successor_32769_authorized'] is False
+          assert all(x.get('next_rung_authorized') is False and x.get('covariance_restriction_authorized') is False and x.get('Wm_S3_opened') is False for x in (b,c,a))
+          PY
+      - name: Install frozen numerical/build stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git unzip procps >/dev/null
+          python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy >/dev/null
+      - name: Checkout exact frozen CAMB
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/camb
+          git -C external/camb init -q
+          git -C external/camb remote add origin https://github.com/cmbant/CAMB.git
+          git -C external/camb fetch -q --depth 1 origin fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          git -C external/camb checkout -q --detach FETCH_HEAD
+          test "$(git -C external/camb rev-parse HEAD)" = fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          python -m pip install ./external/camb >/dev/null
+      - name: Build exact pinned CLASS-IV with frozen execution-only patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv rev-parse HEAD)" = ac627d54e9ce196a08878d1ba33999819925d19c
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('external/class_iv/include/perturbations.h'); b=p.read_bytes(); s=b.decode(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1
+          pre=hashlib.sha256(b).hexdigest(); p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 18432',1)); post=hashlib.sha256(p.read_bytes()).hexdigest()
+          q=Path('external/class_iv/include/parser.h'); qb=q.read_bytes(); qs=qb.decode(); qold='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert qs.count(qold)==1
+          qpre=hashlib.sha256(qb).hexdigest(); q.write_text(qs.replace(qold,'#define _ARGUMENT_LENGTH_MAX_ 524288',1)); qpost=hashlib.sha256(q.read_bytes()).hexdigest()
+          Path('artifacts/capacity_patch.json').write_text(json.dumps({'schema':'POST_16385_EXACT_HOTSPOT_CLASSIV_INPUT_CAPACITY_PATCH_V0_1','source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','old_capacity':30,'new_capacity':18432,'replacement_count':1,'pre_sha256':pre,'post_sha256':post,'parser_old_argument_capacity':1024,'parser_new_argument_capacity':524288,'parser_replacement_count':1,'parser_pre_sha256':qpre,'parser_post_sha256':qpost},indent=2,sort_keys=True)+'\n')
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python scripts/dsir4/classiv_k_output_history_suppression_patch_v0_1.py external/class_iv artifacts/history_patch.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.load(open('artifacts/history_patch.json')); assert d['replacement_count']==1 and d['k_output_values_still_inserted_into_solver_grid'] is True and d['scientific_parameters_changed'] is False
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+      - name: Download exact DES-Y1 radial payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/des_nz
+          curl --fail --location --retry 3 -sS -o external/des_nz/source.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_redshift_distributions_v1.fits'
+          curl --fail --location --retry 3 -sS -o external/des_nz/lens.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/chains/2pt_NG_mcal_1110.fits'
+          echo 'b5d87138c35ae8bb4ecd02491972f544648398e606b3617039e6e54cb8ea943b  external/des_nz/source.fits' | sha256sum -c -
+          echo '114035179b5a8e41090751e9a6478536d185128581d37b5a510eff5722f417ca  external/des_nz/lens.fits' | sha256sum -c -
+      - name: Download exact Layer-A parent, angular and Exp073IM authorities
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/parent inputs/angular inputs/expim
+          get_artifact () { local id="$1" digest="$2" dest="$3"; local zip="${dest}.zip"; mkdir -p "$dest"; gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "$zip"; local actual expected; actual="$(sha256sum "$zip" | awk '{print $1}')"; expected="${digest#sha256:}"; test "$actual" = "$expected" || exit 31; unzip -q "$zip" -d "$dest"; }
+          get_artifact 10131794281 'sha256:ac959926639d3b46ecfe114e396ce03cb20a0763ef2781db454408d8ad0759df' inputs/parent
+          while IFS=$'\t' read -r slot id digest; do get_artifact "$id" "$digest" "inputs/angular/$slot"; done < <(jq -r '.angular[] | [.slot, (.artifact_id|tostring), .artifact_digest] | @tsv' "$MANIFEST")
+          id="$(jq -r '.artifact_id' "$WM_S3_OVERRIDE")"; mkdir -p inputs/angular/Wm_S3/transport_override
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > inputs/angular/Wm_S3/transport_override.zip
+          unzip -q inputs/angular/Wm_S3/transport_override.zip -d inputs/angular/Wm_S3/transport_override
+          expected="$(jq -r '.required_each_canonical_sha256' "$WM_S3_OVERRIDE")"; nbytes="$(jq -r '.required_each_nbytes' "$WM_S3_OVERRIDE")"
+          for f in inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin; do test "$(stat -c%s "$f")" = "$nbytes"; test "$(sha256sum "$f" | awk '{print $1}')" = "$expected"; done
+          cmp -s inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin
+          get_artifact 10130241439 'sha256:3325bab0faa821c5ca3b13b4cd64d3d58c323e56a6f3e44952be84bfbc477156' inputs/expim
+      - name: Download exact frozen BOSS z3 operators
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/exp073w_boss; base='https://fbeutler.github.io/hub'
+          curl --fail --location --retry 3 -sS -o external/exp073w_boss/W_NGC_z3.gz "$base/W_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -sS -o external/exp073w_boss/W_SGC_z3.gz "$base/W_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -sS -o external/exp073w_boss/M_NGC_z3.gz "$base/M_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          curl --fail --location --retry 3 -sS -o external/exp073w_boss/M_SGC_z3.gz "$base/M_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          for f in external/exp073w_boss/*.gz; do gzip -t "$f"; gzip -dc "$f" > "${f%.gz}"; done
+          echo 'a308dc562d1a7224cefcf91d32580877929e0daa33806517e0d2d53710236827  external/exp073w_boss/W_NGC_z3' | sha256sum -c -
+          echo '2a542a2d48f3e8c8299f58a885d5273238e4ade32c0f0de020d8b9f23afe7759  external/exp073w_boss/W_SGC_z3' | sha256sum -c -
+          echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_NGC_z3' | sha256sum -c -
+          echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_SGC_z3' | sha256sum -c -
+      - name: Execute frozen exact 441-call response-atom hotspot localization
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p scratch artifacts
+          PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}" python ci/layerb_post_16385_exact_response_atom_hotspot_v0_1.py \
+            --terminal-authority docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json \
+            --request-plan-authority docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json \
+            --engine-script ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py \
+            --ir-script ci/exp073ir_article3_real_layerb_common_response_v0_1.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --coarse docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt \
+            --fine docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --parent-root inputs/parent --parent-authority docs/dsir4/authority/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_PASS_V0_1.json --manifest "$MANIFEST" --angular-root inputs/angular --expim-root inputs/expim --boss-root external/exp073w_boss \
+            --source external/des_nz/source.fits --lens external/des_nz/lens.fits --camb-root external/camb --expz2-script ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py --exp073iq-script ci/exp073iq_article3_real_layera_support_v0_1.py \
+            --scratch scratch --out artifacts/result.json
+          python - <<'PY'
+          import json,math
+          d=json.load(open('artifacts/result.json'))
+          assert d['classification']=='POST_16385_EXACT_RESPONSE_ATOM_HOTSPOT_LOCALIZATION_PASS_PLUS_0_PLUS_0',d
+          assert d['shared_call_count']==441 and d['des_call_count']==377 and d['boss_gl64_call_count']==64 and d['fine_only_gl128_excluded_call_count']==128,d
+          assert d['shared_plan_bitwise_identical'] is True,d
+          assert d['execution_lifecycle']=={'constructions':8,'live':0,'max_live':1},d
+          assert d['unsupported_target_evaluations']==0 and d['max_requested_node_coordinate_rel_mismatch']<=1e-12,d
+          assert len(d['top_64_response_atoms'])==64 and len(d['call_maxima'])==441,d
+          assert math.isfinite(d['recomputed_shared_atom_global_max']) and d['recomputed_shared_atom_global_max']>=0,d
+          assert d['scientific_107_row_replay_executed'] is False and d['scientific_classification_created'] is False and d['scientific_authority_created'] is False,d
+          assert d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False,d
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-exact-response-atom-hotspot-v0-1
+          path: |
+            artifacts/result.json
+            artifacts/capacity_patch.json
+            artifacts/history_patch.json
+          if-no-files-found: error
+          retention-days: 90
