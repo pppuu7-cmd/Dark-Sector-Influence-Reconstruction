@@ -1,0 +1,94 @@
+{
+  "schema": "LAYERB_POST_16385_TOP64_POPULATION_TERMINAL_AUTHORITY_V0_1",
+  "classification": "POST_16385_TOP64_POPULATION_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "parent_top64_authority": "docs/dsir4/authority/LAYERB_POST_16385_TOP64_ROLE_CANCELLATION_TERMINAL_AUTHORITY_V0_1.json",
+  "parent_top64_authority_git_blob": "5e16e8a793a81bf1692df92d8e24459e03fd4838",
+  "parallel_population_run_id": 34625839966,
+  "parallel_population_head_sha": "8cb0711940a94b8da0eaf33f793035ee9102cb7b",
+  "parallel_population_jobs": {
+    "amplification_population": 103350598119,
+    "threshold_stratification": 103350598348,
+    "correlation_robustness": 103350598428
+  },
+  "source_artifacts": {
+    "threshold_stratification": {
+      "artifact_id": 10274188316,
+      "zip_sha256": "b3f90e93683fc54f1d8b035cde002be024a02ddce6347b79854449b223f58640",
+      "payload_sha256": "3215678694d206b8221cb605bc91d99b52b439f4b432390de257ec2e384bde13"
+    },
+    "correlation_robustness": {
+      "artifact_id": 10273747777,
+      "zip_sha256": "f1ecedca281146c4d00a8c48bc5204f6b5091e8786f2d3b01941e5956905912f",
+      "payload_sha256": "559ac9f873c0b020efd42eb17b885268c91ac413785979f78a9bdc04b43dc635"
+    },
+    "amplification_population": {
+      "artifact_id": 10273887690,
+      "zip_sha256": "debbec0a9d73a94d887de6fbf7ebad3c188683fc9d3e55ff83da82d11f6481a3",
+      "payload_sha256": "6c1e9169022e9bee0db69a6fdd614b32f4deb2b1aa91d38942aa4a21abe72d9a"
+    }
+  },
+  "terminal_consumer_run_id": 34625929650,
+  "terminal_consumer_job_id": 103350897643,
+  "terminal_consumer_head_sha": "f80f4307caa43240abf02f0814fa10d739728c35",
+  "terminal_validation_artifact_id": 10274328302,
+  "terminal_validation_zip_sha256": "9cf5234e5e4bed35a112974c79788dc159c9480be9e4145b7ce75c8637d7c23e",
+  "terminal_validation_payload_sha256": "0c32c8d6c2b3fc008e490653c9fc56f9edd04f6ac155b6041a833d13ff3c72e0",
+  "threshold_counts": {
+    "ge_1e_3": 21,
+    "ge_2e_3": 13,
+    "ge_5e_3": 3,
+    "ge_1e_2": 1
+  },
+  "primary_discrepancy_quantiles": {
+    "q00": 0.0003026605810724342,
+    "q25": 0.0003935572568389372,
+    "q50": 0.0006447461247893445,
+    "q75": 0.0014441406091192594,
+    "q90": 0.002835220679884887,
+    "q95": 0.004601834140347759,
+    "q100": 0.012484060640679777
+  },
+  "block_stratification": {
+    "DES": {"count": 55, "count_ge_1e_3": 18, "median": 0.0006093646933772282, "max": 0.012484060640679777},
+    "BOSS_GL64": {"count": 9, "count_ge_1e_3": 3, "median": 0.0007368403528706602, "max": 0.0025710087675622053}
+  },
+  "component_stratification": {
+    "abs_dDelta_m_dbeta_symmetric": {"count": 63, "count_ge_1e_3": 21, "median": 0.0006716328707910157, "max": 0.012484060640679777},
+    "abs_dDelta_m_dalpha_left": {"count": 1, "count_ge_1e_3": 0, "median": 0.0005639074531707005, "max": 0.0005639074531707005}
+  },
+  "full_spearman_log10_cancellation_scale_vs_log10_discrepancy": -0.5341210955390675,
+  "leave_one_out_spearman": {
+    "minimum": -0.5893594545279939,
+    "median": -0.5332276961490444,
+    "maximum": -0.5134447325458561,
+    "all_negative": true
+  },
+  "top_rank_exclusion_spearman": {
+    "exclude_top1": -0.5134447325458561,
+    "exclude_top3": -0.5583474396953025,
+    "exclude_top5": -0.5137979420018709
+  },
+  "amplification_distribution": {
+    "minimum": 47364.52653208188,
+    "q25": 5349932.409825895,
+    "median": 9078269.977646992,
+    "q75": 26810059.95923413,
+    "q90": 57336293.520150445,
+    "maximum": 271400999.1345982
+  },
+  "amplification_threshold_counts": {
+    "ge_1e4": 64,
+    "ge_1e5": 59,
+    "ge_1e6": 55,
+    "ge_1e7": 29,
+    "ge_1e8": 3
+  },
+  "class_solver_invoked": false,
+  "scientific_classification_created": false,
+  "scientific_authority_created": false,
+  "next_rung_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "interpretation": "The population-level support diagnosis is robust to single-atom removal and removal of the largest one, three, or five discrepancy-ranked atoms. All 64 selected hotspots show response/raw-role amplification above 4.7e4; 55/64 exceed 1e6. The cancellation-scale/discrepancy Spearman association remains negative in every leave-one-out sample. This materially strengthens the diagnosis that finite-difference cancellation amplification is distributed across the selected hotspot population rather than being a top-1-only artifact. Support-only +0/+0; no scientific gate is changed."
+}
