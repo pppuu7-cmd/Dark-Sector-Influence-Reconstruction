@@ -1,0 +1,68 @@
+name: layerb-post-16385-top1-role-cancellation-terminal-validator-static-audit-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-post-16385-top1-role-cancellation-terminal-validator-static-audit-v0-1.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen decomposition terminal validator without scientific response
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          test "$(git hash-object ci/layerb_post_16385_top1_role_cancellation_terminal_validator_v0_1.py)" = 'af20444b44137e03a7b778835dc97305b8004769'
+          python3 -m py_compile ci/layerb_post_16385_top1_role_cancellation_terminal_validator_v0_1.py
+          python - <<'PY'
+          import ast,json
+          from pathlib import Path
+          s=Path('ci/layerb_post_16385_top1_role_cancellation_terminal_validator_v0_1.py').read_text()
+          checks={
+            'parseable':bool(ast.parse(s)),
+            'source_pass':'POST_16385_EXACT_RESPONSE_ATOM_HOTSPOT_LOCALIZATION_PASS_PLUS_0_PLUS_0' in s,
+            'decomp_pass':'POST_16385_TOP1_ROLE_CANCELLATION_DECOMPOSITION_PASS_PLUS_0_PLUS_0' in s,
+            'validator_pass':'POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0' in s,
+            'mismatch_token':'POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_PROVENANCE_MISMATCH_PLUS_0_PLUS_0' in s,
+            'rel_tol':'REL_TOL=1e-12' in s,
+            'lookup_tol':'LOOKUP_TOL=1e-12' in s,
+            'source_441':"s.get('shared_call_count')==441" in s,
+            'source_377':"s.get('des_call_count')==377" in s,
+            'source_64':"s.get('boss_gl64_call_count')==64" in s,
+            'source_plan_identity':"s.get('shared_plan_bitwise_identical') is True" in s,
+            'source_lifecycle':"{'constructions':8,'live':0,'max_live':1}" in s,
+            'top64':'len(top)==64' in s,
+            'deterministic_selection':"d.get('selection_rule')=='exact_hotspot.top_64_response_atoms[0]'" in s,
+            'selected_identity_fields':all(x in s for x in ('call_index','block','z_binary64_hex','target_index','target_k_binary64_hex','component_index','component')),
+            'two_lattices':all(x in s for x in ("'canonical_8193'","'canonical_16385'")),
+            'four_roles':all(x in s for x in ("'reference'","'alpha_minus'","'beta_plus'","'beta_minus'")),
+            'alpha_beta_components':all(x in s for x in ('alpha_numerator','alpha_response','beta_numerator','beta_response')),
+            'primary_metric':'primary_component_relative_difference' in s,
+            'source_global':'recomputed_shared_atom_global_max' in s,
+            'reproduction_check':'repro_rel<=REL_TOL' in s,
+            'class_commit':'ac627d54e9ce196a08878d1ba33999819925d19c' in s,
+            'capacity_18432':'18432' in s,
+            'parser_524288':'524288' in s,
+            'history_no_science':"hist.get('scientific_parameters_changed') is False" in s,
+            'no_alt_h':"d.get('alternative_h_evaluated') is False" in s,
+            'no_107':"d.get('scientific_107_row_replay_executed') is False" in s,
+            'downstream_closed':all(x in s for x in ("d.get('next_rung_authorized') is False","d.get('covariance_restriction_authorized') is False","d.get('Wm_S3_opened') is False")),
+            'no_class_import':'from classy' not in s and 'Class()' not in s,
+          }
+          ok=all(checks.values())
+          out={'schema':'LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_VALIDATOR_STATIC_AUDIT_V0_1','classification':'POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_VALIDATOR_STATIC_AUDIT_PASS_PLUS_0_PLUS_0' if ok else 'POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_VALIDATOR_STATIC_AUDIT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'pass_count':sum(checks.values()),'check_count':len(checks),'class_solver_invoked':False,'hotspot_result_read':False,'decomposition_result_read':False,'scientific_authority_created':False,'next_rung_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('artifacts/static.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['classification'],f"{out['pass_count']}/{out['check_count']}")
+          assert ok,out
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top1-role-cancellation-terminal-validator-static-audit-v0-1
+          path: artifacts/static.json
+          if-no-files-found: error
+          retention-days: 90
