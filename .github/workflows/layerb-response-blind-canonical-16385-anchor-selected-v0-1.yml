@@ -1,0 +1,158 @@
+name: layerb-response-blind-canonical-16385-anchor-selected-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-response-blind-canonical-16385-anchor-selected-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PREREG_BLOB: 'bea159b5568783220c41a7241f60e77e9b29fe11'
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+  ANCHOR_FILE_BLOB: 'bc9a6e59fb27d7510796c1cb2d5470dfe8a5294b'
+  ANCHOR_AUTH_BLOB: 'ab25bdc60aa1538ffd5383ce8c43372b2e402406'
+  ANCHOR_NODE_SHA: '6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515'
+  ANCHOR_TEXT_SHA: '90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6'
+
+jobs:
+  replica:
+    strategy:
+      fail-fast: false
+      matrix:
+        replica: [1, 2, 3, 4, 5, 6, 7, 8]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce response-blind anchor authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/prereg/LAYERB_RESPONSE_BLIND_CANONICAL_16385_ANCHOR_MATERIALIZATION_V0_1.md)" = "$PREREG_BLOB"
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt)" = "$ANCHOR_FILE_BLOB"
+          test "$(git hash-object docs/dsir4/authority/EXP073JM_RESPONSE_BLIND_CANONICAL_FINE_8193_V0_1.json)" = "$ANCHOR_AUTH_BLOB"
+          test "$(sha256sum docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt | awk '{print $1}')" = "$ANCHOR_TEXT_SHA"
+          python3 - <<'PY'
+          import json
+          d=json.load(open('docs/dsir4/authority/EXP073JM_RESPONSE_BLIND_CANONICAL_FINE_8193_V0_1.json'))
+          assert d['artifact_verified_independently'] is True
+          assert d['classification']=='CANONICAL_8193_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0'
+          assert d['node_payload_sha256']=='6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515'
+          assert d['u64hex_sha256']=='90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6'
+          assert d['scientific_response_read'] is False and d['class_solver_invoked'] is False
+          PY
+      - name: Install exact NumPy
+        run: python -m pip install 'numpy==1.26.4' >/dev/null
+      - name: Emit anchor and dormant 16385 candidate
+        shell: bash
+        env:
+          REPLICA: ${{ matrix.replica }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          PYTHONPATH=ci python - <<'PY'
+          import hashlib,json,os,platform
+          from pathlib import Path
+          import numpy as np
+          import exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1 as jj
+          assert np.__version__=='1.26.4'
+          jj.CAPACITY=18432
+          def payload(nodes): return np.ascontiguousarray(np.asarray(nodes,dtype='<f8')).tobytes()
+          def u64hex(nodes):
+              u=np.ascontiguousarray(np.asarray(nodes,dtype='<f8')).view('<u8')
+              return ''.join(f'{int(x):016x}\n' for x in u)
+          anchor,ar,alo,ahi=jj.guarded_lattice(8192)
+          cand,r,lo,hi=jj.guarded_lattice(16384)
+          assert (alo,ahi,len(anchor))==(0,1,8193)
+          assert (lo,hi,len(cand))==(0,1,16385)
+          atxt=u64hex(anchor); ctxt=u64hex(cand)
+          asha=hashlib.sha256(payload(anchor)).hexdigest(); atsha=hashlib.sha256(atxt.encode()).hexdigest()
+          csha=hashlib.sha256(payload(cand)).hexdigest(); ctsha=hashlib.sha256(ctxt.encode()).hexdigest()
+          anchor_match=(asha==os.environ['ANCHOR_NODE_SHA'] and atsha==os.environ['ANCHOR_TEXT_SHA'] and atxt==Path('docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt').read_text())
+          Path('out/candidate_16385.u64hex.txt').write_text(ctxt)
+          result={
+            'schema':'LAYERB_RESPONSE_BLIND_CANONICAL_16385_ANCHOR_REPLICA_RESULT_V0_1',
+            'classification':'ANCHOR_MATCH_PLUS_0_PLUS_0' if anchor_match else 'HOST_VARIANT_NOT_ANCHOR_PLUS_0_PLUS_0',
+            'effect':'+0/+0','replica':int(os.environ['REPLICA']),
+            'numpy_version':np.__version__,'python_version':platform.python_version(),
+            'scientific_response_read':False,'class_solver_invoked':False,'branch_activated':False,'scientific_authority_created':False,
+            'anchor_8193_match':anchor_match,'anchor_8193_node_sha256':asha,'anchor_8193_u64hex_sha256':atsha,
+            'base_n':16384,'guard_counts':[lo,hi],'requested_node_count':len(cand),'ratio_binary64':float(r),
+            'candidate_node_sha256':csha,'candidate_u64hex_sha256':ctsha,
+            'token':'ANCHOR_MATCH_PLUS_0_PLUS_0' if anchor_match else 'HOST_VARIANT_NOT_ANCHOR_PLUS_0_PLUS_0'
+          }
+          Path('out/result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(result['token'],asha,csha,ctsha)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-canonical-16385-anchor-replica-${{ matrix.replica }}
+          path: out/
+          if-no-files-found: error
+          retention-days: 90
+
+  aggregate:
+    needs: replica
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-canonical-16385-anchor-replica-*
+          path: replicas
+      - name: Apply frozen anchor-selection quorum
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          rows=[]
+          for i in range(1,9):
+              root=Path(f'replicas/layerb-canonical-16385-anchor-replica-{i}')
+              assert root.exists(), f'missing replica {i}'
+              d=json.load(open(root/'result.json')); assert d['replica']==i
+              txt=(root/'candidate_16385.u64hex.txt').read_bytes()
+              assert hashlib.sha256(txt).hexdigest()==d['candidate_u64hex_sha256']
+              rows.append((d,txt))
+          matched=[x for x in rows if x[0]['anchor_8193_match']]
+          variants=[x[0] for x in rows if not x[0]['anchor_8193_match']]
+          if len(matched)<4: raise SystemExit(f'anchor quorum not met: {len(matched)}/8')
+          counts={x[0]['requested_node_count'] for x in matched}; guards={tuple(x[0]['guard_counts']) for x in matched}
+          node_shas={x[0]['candidate_node_sha256'] for x in matched}; text_shas={x[0]['candidate_u64hex_sha256'] for x in matched}
+          if counts!={16385} or guards!={(0,1)}: raise SystemExit(f'candidate geometry disagreement counts={counts} guards={guards}')
+          if len(node_shas)!=1 or len(text_shas)!=1 or not all(x[1]==matched[0][1] for x in matched): raise SystemExit('anchor-matched 16385 candidates disagree')
+          Path('out/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_CANDIDATE_V0_1.txt').write_bytes(matched[0][1])
+          result={
+            'schema':'LAYERB_RESPONSE_BLIND_CANONICAL_16385_ANCHOR_SELECTED_AGGREGATE_RESULT_V0_1',
+            'classification':'CANONICAL_16385_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0','scientific_response_read':False,'class_solver_invoked':False,'branch_activated':False,'scientific_authority_created':False,
+            'replica_count':8,'minimum_anchor_quorum':4,'anchor_match_count':len(matched),
+            'anchor_match_replicas':[x[0]['replica'] for x in matched],
+            'host_variant_count':len(variants),'host_variant_replicas':[x['replica'] for x in variants],
+            'host_variant_anchor_node_shas':sorted({x['anchor_8193_node_sha256'] for x in variants}),
+            'anchor_8193_node_sha256':'6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515',
+            'anchor_8193_u64hex_sha256':'90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6',
+            'base_n':16384,'guard_counts':[0,1],'requested_node_count':16385,
+            'candidate_node_sha256':next(iter(node_shas)),'candidate_u64hex_sha256':next(iter(text_shas)),
+            'all_anchor_matched_candidates_byte_identical':True,
+            'successor_branch_activated':False,'successor_execution_authorized':False,
+            'article3_repository_readiness_percent':68,'funnel_freeze_readiness_percent':67,
+            'token':'CANONICAL_16385_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0'
+          }
+          Path('out/result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(result['token'],result['anchor_match_count'],result['candidate_node_sha256'],result['candidate_u64hex_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-canonical-16385-anchor-selected-aggregate
+          path: out/
+          if-no-files-found: error
+          retention-days: 90
