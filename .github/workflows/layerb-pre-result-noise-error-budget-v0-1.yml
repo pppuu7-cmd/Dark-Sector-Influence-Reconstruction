@@ -1,0 +1,90 @@
+name: layerb-pre-result-noise-error-budget-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-pre-result-noise-error-budget-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  amplification-table:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Quantify finite-difference raw-noise amplification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -q 'numpy==1.26.4'
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import json, math
+          from pathlib import Path
+          H=1e-4
+          historical=[0.012273497268380687,0.01070806986822778]
+          derivative_scales=[1e-3,1e-2,1e-1,1.0,10.0]
+          rows=[]
+          for rel in historical:
+            for D in derivative_scales:
+              # One-sided alpha response: |noise_a-noise_ref|/h; for equal independent raw sigma, rms numerator=sqrt(2)sigma.
+              sigma_alpha=rel*D*H/math.sqrt(2.0)
+              # Centered beta response: |noise_plus-noise_minus|/(2h); rms derivative noise=sigma/(sqrt(2)h).
+              sigma_beta=rel*D*H*math.sqrt(2.0)
+              rows.append({'target_relative_derivative_disagreement':rel,'assumed_derivative_scale':D,'raw_sigma_per_operand_alpha_independent_rms':sigma_alpha,'raw_sigma_per_operand_beta_independent_rms':sigma_beta})
+          out={'schema':'LAYERB_PRE_RESULT_FINITE_DIFFERENCE_NOISE_AMPLIFICATION_V0_1','classification':'LAYERB_PRE_RESULT_NOISE_AMPLIFICATION_DIAGNOSTIC_PASS_PLUS_0_PLUS_0','effect':'+0/+0','h':H,'historical_adjacent_grid_maxima':historical,'rows':rows,'interpretation_only':True,'current_16385_result_read':False,'scientific_authority_created':False,'stopping_rule_changed':False,'next_rung_authorized':False,'token':'LAYERB_PRE_RESULT_NOISE_AMPLIFICATION_DIAGNOSTIC_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/amplification.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-pre-result-noise-amplification-v0-1
+          path: artifacts/amplification.json
+          if-no-files-found: error
+          retention-days: 90
+
+  correlation-monte-carlo:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Map adjacent-grid derivative plateau versus raw-noise correlation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -q 'numpy==1.26.4'
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import json, math
+          from pathlib import Path
+          import numpy as np
+          rng=np.random.default_rng(73016385)
+          H=1e-4
+          # Interpretation-only normalized derivative D=1. Smooth grid truncation follows the independently verified ~4th-order surrogate scaling.
+          grid_errors=[2e-3,2e-3/16,2e-3/16**2,2e-3/16**3]
+          sigmas=[1e-8,3e-8,1e-7,3e-7,1e-6]
+          rhos=[0.0,0.25,0.5,0.75,0.9,0.99]
+          n=200000
+          rows=[]
+          for sigma in sigmas:
+            for rho in rhos:
+              # Correlated raw response noise between adjacent grid evaluations. Difference sigma is sqrt(2(1-rho))*sigma; derivative divides by h.
+              z1=rng.standard_normal(n); z2=rng.standard_normal(n)
+              e1=sigma*z1
+              e2=sigma*(rho*z1+math.sqrt(max(0.0,1-rho*rho))*z2)
+              rawdiff=e2-e1
+              derivative_noise=rawdiff/H
+              rms=float(np.sqrt(np.mean(derivative_noise**2)))
+              p95=float(np.quantile(np.abs(derivative_noise),0.95))
+              rows.append({'raw_sigma':sigma,'adjacent_grid_raw_noise_correlation':rho,'derivative_difference_rms_for_D1':rms,'absolute_derivative_difference_p95_for_D1':p95,'analytic_rms':math.sqrt(2*(1-rho))*sigma/H})
+          out={'schema':'LAYERB_PRE_RESULT_NOISE_CORRELATION_MONTE_CARLO_V0_1','classification':'LAYERB_PRE_RESULT_NOISE_CORRELATION_DIAGNOSTIC_PASS_PLUS_0_PLUS_0','effect':'+0/+0','rng_seed':73016385,'samples_per_cell':n,'h':H,'independent_smooth_grid_error_sequence':grid_errors,'rows':rows,'interpretation_only':True,'current_16385_result_read':False,'scientific_authority_created':False,'stopping_rule_changed':False,'next_rung_authorized':False,'token':'LAYERB_PRE_RESULT_NOISE_CORRELATION_DIAGNOSTIC_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/correlation.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-pre-result-noise-correlation-v0-1
+          path: artifacts/correlation.json
+          if-no-files-found: error
+          retention-days: 90
