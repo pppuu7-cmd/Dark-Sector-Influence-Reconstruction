@@ -12,32 +12,43 @@ Patched canonical-16385 resource feasibility: two independent PASS replicas, run
 
 Pre-result terminal validator: run `34554969959`, artifact `10182188577`, 13/13 synthetic cases PASS, durable authority commit `3e23fa7a686921f83c83a95d7383bb4581fbca83`.
 
+Dormant post-16385 CONVERGED closure helper passed corrected static audit 30/30 and remains dormant until an independently verified CONVERGED activation token. No current 16385 scientific response was read; it creates no authority and does not open covariance/Wm.
+
 ## Primary authoritative computation
 Workflow/run/job: `post-jm-next-support-canonical-8193-to-16385-v0-1` / `34555022975 / 103125734913`.
 Head SHA: `c56940a0093fc6769b9a48cb3d5056b70075130c`.
 Checkpoint namespace: none; hosted full same-process support traversal.
 Expected terminal classification: exactly one of `COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0`, `COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`, or infrastructure-invalid under the frozen helper.
-Current state: **IN_PROGRESS**.
+Current state: **IN_PROGRESS**. Latest check: exact authority/resource inputs, numerical stack, CAMB/CLASS-IV build, DES/BOSS input download and frozen build gates are PASS; step `Execute frozen canonical 8193 to 16385 support refinement with telemetry` is in progress.
 
 Frozen execution: canonical 8193 coarse / 16385 fine; exact request-plan hashes; eight sequential role-major CLASS lifetimes; max one live; 4040 transfer calls; pinned CAMB/CLASS-IV; CLASS capacity/parser 18432/524288; proven requested-k history-suppression execution patch; fresh same-process operands; memory-only telemetry. Partial scientific values must not be used for tuning.
-
-At the latest live check, authority/resource identities, numerical stack, exact CAMB and pinned CLASS-IV history-suppressed build were PASS; input downloads were progressing toward numerical execution.
 
 ## Terminal consumption
 Event-driven consumer `.github/workflows/post-jm-next-support-terminal-auto-consumer-v0-1.yml`, creation commit `1abaac0e88b66af4cea2496b79f2f87a9ac84dea`, is restricted to exact source run/head. It may hash/download/revalidate/upload a receipt only. It cannot launch downstream science.
 
-## Parallel independent hosted work
-Response-blind outcome audit run `34555255416` completed PASS in three independent jobs. Durable authority commit `fcef5b7e3d0131e53c95da2e8b767efc541bf038` records:
-- CONVERGED branch requires a new prospective closure adapter bound to the next-refinement token and 8193/16385 grids;
-- NOT_CONVERGED branch has no prospectively frozen 32769 successor;
-- current JM/resource/validator/canonical provenance chain is clean.
+## Parallel independent hosted work — no-idle mode
+Independent GitHub-hosted work is intentionally parallelized whenever tasks are scientifically independent. The rule is: keep several useful lanes active/queued, refill freed runners promptly, but never duplicate the authoritative heavy science and never launch a dependent scientific branch before its independently verified prerequisite gate.
 
-Dormant CONVERGED fresh-closure adapter specification was frozen before current science at commit `ee82955b95c869ce0d59844b3725f9e99f891590`.
+Current parallel lanes:
 
-Independent pre-result compute pack run `34555398459`, head `c208eaf183925b58f1c989fd1e82e197f47a59b2`, contains two lanes: dormant closure-source synthesis/static audit and descriptive convergence-model diagnostic. No current 16385 scientific response may be read by either lane.
+1. **Cross-VM canonical-16385 numeric reproducibility** — workflow/run `layerb-16385-cross-vm-numeric-repro-v0-1` / `34556173778`, head `79dd7a1fcb70157b2955f6d83cc302578ccface0`.
+   - probe replica 2 job `103129226591`: completed SUCCESS;
+   - probe replica 1 job `103129226488`: IN_PROGRESS in the four-role/two-request CLASS probe;
+   - final compare job is dependency-gated on both replicas;
+   - purpose: quantify actual cross-VM raw operand and derivative-response differences; +0/+0 only; no full 107-row traversal; current 16385 science result unread.
+
+2. **Intra-VM canonical-16385 repeatability matrix** — workflow/run `layerb-16385-intra-vm-role-repeatability-v0-1` / `34557144684`, head `58839fbc7efd594572d3a63a0b019c080196a687`.
+   Four independent hosted role jobs are simultaneously IN_PROGRESS: `reference`, `alpha_minus`, `beta_plus`, `beta_minus` (jobs `103132094675`, `103132094630`, `103132094483`, `103132094595`). Each builds the same role twice on one VM and compares raw operands. This distinguishes intra-VM repeatability from cross-VM variability. No current 16385 science result is read; +0/+0 only.
+
+3. **Pre-result finite-difference/noise error budget** — workflow/run `layerb-pre-result-noise-error-budget-v0-1` / `34557228533`, head `6df3df9c314360dccb340991a21e3580fdb249b1`, currently QUEUED behind occupied hosted capacity. It contains two independent jobs: finite-difference raw-noise amplification table and adjacent-grid noise-correlation Monte Carlo. It uses only historical/pre-result constants, keeps `h=1e-4`, is interpretation-only, and cannot change stopping rules or authorize a successor rung.
+
+Previously closed independent controls remain preserved: response-blind outcome audit/provenance chain; canonical-grid smooth-surrogate interpolation scaling (~fourth-order under doubling); binary64 grid geometry audit; finite-difference conditioning controls; descriptive zero-limit versus offset/plateau fit. These are diagnostic only and do not supersede the frozen scientific classifier.
+
+## Parallel runner-utilization governance
+`DSIR Continuous Research` hourly automation was updated on 2026-09-11 to make parallel runner utilization explicit: normally keep multiple independent lanes (practical target 3–5 or more when provider concurrency permits), queue useful independent backlog before current lanes finish, consume terminal artifacts immediately, and refill freed slots in the same iteration. Exactly one authoritative copy of a scientific heavy computation is allowed unless a prospectively frozen replication experiment explicitly requires replicas. Provider queueing is acceptable; artificial/meaningless work is not.
 
 ## Exact transitions
-On independently validated CONVERGED: do not use old direct-JM closure helper as-is. First freeze/verify the prospective adapter under the pre-result spec, then run one fresh closure computation with no response reuse.
+On independently validated CONVERGED: do not use old direct-JM closure helper as-is. Use only the prospectively frozen/verified post-16385 adapter, then run one fresh closure computation with no response reuse and unchanged frozen science.
 
 On independently validated NOT_CONVERGED: no 32769 execution is authorized. Do not create a post-result density rescue. Enter a separately prospective plateau/root-cause decision stage and justify any future rung independently.
 
