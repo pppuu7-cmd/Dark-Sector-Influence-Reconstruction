@@ -18,8 +18,8 @@ env:
   GH_TOKEN: ${{ github.token }}
   PACKAGING_CONTRACT_BLOB: '71d77aa4d074bba1a2f53e7f9299a9db32e93ffc'
   PACKAGER_BLOB: 'c38bf9a0108ab3ef50f1abec513fa2f6ff0373a4'
-  MATERIALIZATION_CONTRACT_BLOB: 'd33e3341ea2617779fdd3701b2d24abf6b2bcd61'
-  MATERIALIZER_BLOB: '6cd911723e54040439879a06b615c4106e228735'
+  MATERIALIZATION_CONTRACT_BLOB: '3e53992864ad10f23752df03a653f8073cc18ffa'
+  MATERIALIZER_BLOB: '8a4e03848694a59550460e9866d0aeaec747780e'
   INDEPENDENT_WORKFLOW_NAME: 'layerb-32769-resource-lifecycle-independent-consumer-v0-1'
   SOURCE_WORKFLOW_NAME: 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3'
   SOURCE_ARTIFACT_NAME: 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3'
