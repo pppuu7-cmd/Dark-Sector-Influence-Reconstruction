@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Verify V0.3 orchestration is parser-corrected and response-blind
+      - name: Verify V0.3 orchestration and consumer are parser-corrected and response-blind
         shell: bash
         run: |
           set -euo pipefail
@@ -23,25 +23,37 @@ jobs:
           python3 - <<'PY'
           import hashlib,json
           from pathlib import Path
-          p=Path('.github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3.yml'); b=p.read_bytes(); s=b.decode()
+          wf=Path('.github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3.yml')
+          consumer=Path('ci/layerb_32769_resource_lifecycle_independent_consumer_v0_3.py')
+          wb=wf.read_bytes(); ws=wb.decode(); cb=consumer.read_bytes(); cs=cb.decode()
           def blob(data): return hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
           checks={
-            'workflow_blob': blob(b)=='e55c0ab05c6b7eb0d622eadba25d7e20cdc4ce16',
-            'dispatch_only': 'workflow_dispatch:' in s and 'push:' not in s,
-            'dedicated_label_only': 'runs-on: [dsir-32769-highmem]' in s,
-            'pilot_v02': "PILOT_BLOB: '100f871822e69cfde7730aba4f6a9ff59c6ad9aa'" in s and 'layerb_32769_response_blind_resource_lifecycle_pilot_v0_2.py' in s,
-            'build_authority_v02': "BUILD_AUTH_V02_BLOB: 'b5cd7304c110962dc3baef8d04ef67d5a8042e5f'" in s and 'LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json' in s,
-            'parser_1mib_patch': "#define _ARGUMENT_LENGTH_MAX_ 1048576" in s,
-            'parser_524288_execution_absent': "#define _ARGUMENT_LENGTH_MAX_ 524288" not in s and 'parser_new_argument_capacity\':524288' not in s,
-            'new_parser_post_hash': '2d775ca12da2c79b3700672fa66d290d5a06458a5253ea1e2c51b44ac2374092' in s,
-            'registration_binding': 'runner_registration_receipt.json' in s and "j.get('runner_id')==agent_id" in s and "j.get('labels')==[os.environ['REQUIRED_CUSTOM_LABEL']]" in s,
-            'stale_job_guard': '103112190909' in s and "d.get('status')=='in_progress'" in s,
-            'memory_guard': 'HOSTED_EXHAUSTED_MEMTOTAL_KB' in s and 'PREFERRED_RAM_KB' in s,
-            'no_scientific_get_transfer': '.get_transfer(' not in s,
-            'no_evaluate': '.evaluate(' not in s,
-            'artifact_always': 'if: always()' in s,
+            'workflow_blob': blob(wb)=='e55c0ab05c6b7eb0d622eadba25d7e20cdc4ce16',
+            'consumer_blob': blob(cb)=='cb9e83377f7f7c0498f0b2bfc3b8b06c2683d9ab',
+            'dispatch_only': 'workflow_dispatch:' in ws and 'push:' not in ws,
+            'dedicated_label_only': 'runs-on: [dsir-32769-highmem]' in ws,
+            'pilot_v02': "PILOT_BLOB: '100f871822e69cfde7730aba4f6a9ff59c6ad9aa'" in ws and 'layerb_32769_response_blind_resource_lifecycle_pilot_v0_2.py' in ws,
+            'build_authority_v02': "BUILD_AUTH_V02_BLOB: 'b5cd7304c110962dc3baef8d04ef67d5a8042e5f'" in ws and 'LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json' in ws,
+            'parser_1mib_patch': "#define _ARGUMENT_LENGTH_MAX_ 1048576" in ws,
+            'parser_524288_execution_absent': "#define _ARGUMENT_LENGTH_MAX_ 524288" not in ws and "parser_new_argument_capacity':524288" not in ws,
+            'new_parser_post_hash': '2d775ca12da2c79b3700672fa66d290d5a06458a5253ea1e2c51b44ac2374092' in ws,
+            'registration_binding': 'runner_registration_receipt.json' in ws and "j.get('runner_id')==agent_id" in ws and "j.get('labels')==[os.environ['REQUIRED_CUSTOM_LABEL']]" in ws,
+            'stale_job_guard': '103112190909' in ws and "d.get('status')=='in_progress'" in ws,
+            'memory_guard_current': "HOSTED_EXHAUSTED_MEMTOTAL_KB: '16373452'" in ws and "PREFERRED_RAM_KB: '33554432'" in ws,
+            'no_scientific_get_transfer': '.get_transfer(' not in ws,
+            'no_evaluate': '.evaluate(' not in ws,
+            'artifact_always': 'if: always()' in ws,
+            'consumer_schema_v03': 'LAYERB_32769_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_V0_3' in cs,
+            'consumer_parser_capacity_1mib': 'PARSER_CAPACITY = 1048576' in cs,
+            'consumer_hosted_memtotal_current': 'HOSTED_MEMTOTAL_KB = 16373452' in cs,
+            'consumer_point_capacity': 'POINT_CAPACITY = 32769' in cs,
+            'consumer_payload_bytes': 'PAYLOAD_BYTES = 719273' in cs,
+            'consumer_registration_configurator': 'CONFIGURATOR_SHA256 = "2cd02d1a7ac58ea3945a435272f03ea1abe2d7e3410191b5a17a9c62e0a297ce"' in cs,
+            'consumer_dedicated_label': 'REQUIRED_LABEL = "dsir-32769-highmem"' in cs,
+            'consumer_role_order': 'ROLES = ["reference", "alpha_minus", "beta_plus", "beta_minus"]' in cs,
+            'consumer_response_blind': 'scientific_transfer_values_read' in cs and 'scientific_response_computed' in cs and 'successor_execution_authorized' in cs,
           }
-          out={'schema':'LAYERB_32769_ISOLATED_HIGHMEM_V03_STATIC_AUDIT_V0_1','classification':'LAYERB_32769_ISOLATED_HIGHMEM_V03_STATIC_AUDIT_PASS_PLUS_0_PLUS_0' if all(checks.values()) else 'LAYERB_32769_ISOLATED_HIGHMEM_V03_STATIC_AUDIT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'all_pass':all(checks.values()),'workflow_git_blob':blob(b),'real_highmem_run_created':False,'scientific_response_read':False,'scientific_execution_authorized':False,'high_memory_resource_lifecycle_preflight_pass_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          out={'schema':'LAYERB_32769_ISOLATED_HIGHMEM_V03_STATIC_AUDIT_V0_2','classification':'LAYERB_32769_ISOLATED_HIGHMEM_V03_STATIC_AUDIT_PASS_PLUS_0_PLUS_0' if all(checks.values()) else 'LAYERB_32769_ISOLATED_HIGHMEM_V03_STATIC_AUDIT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'all_pass':all(checks.values()),'workflow_git_blob':blob(wb),'consumer_git_blob':blob(cb),'real_highmem_run_created':False,'scientific_response_read':False,'scientific_execution_authorized':False,'high_memory_resource_lifecycle_preflight_pass_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
           out['token']=out['classification']; Path('evidence/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); assert out['all_pass'],checks
           PY
       - uses: actions/upload-artifact@v4
@@ -67,8 +79,10 @@ jobs:
           from pathlib import Path
           p=Path('evidence/result.json'); d=json.loads(p.read_text())
           assert d['classification']=='LAYERB_32769_ISOLATED_HIGHMEM_V03_STATIC_AUDIT_PASS_PLUS_0_PLUS_0' and d['all_pass'] is True
+          assert d['workflow_git_blob']=='e55c0ab05c6b7eb0d622eadba25d7e20cdc4ce16'
+          assert d['consumer_git_blob']=='cb9e83377f7f7c0498f0b2bfc3b8b06c2683d9ab'
           assert d['real_highmem_run_created'] is False and d['scientific_execution_authorized'] is False
-          out={'schema':'LAYERB_32769_ISOLATED_HIGHMEM_V03_STATIC_AUDIT_INDEPENDENT_VERIFICATION_V0_1','classification':'LAYERB_32769_ISOLATED_HIGHMEM_V03_STATIC_AUDIT_INDEPENDENT_VERIFICATION_PASS_PLUS_0_PLUS_0','effect':'+0/+0','source_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'scientific_execution_authorized':False,'token':'LAYERB_32769_ISOLATED_HIGHMEM_V03_STATIC_AUDIT_INDEPENDENT_VERIFICATION_PASS_PLUS_0_PLUS_0'}
+          out={'schema':'LAYERB_32769_ISOLATED_HIGHMEM_V03_STATIC_AUDIT_INDEPENDENT_VERIFICATION_V0_2','classification':'LAYERB_32769_ISOLATED_HIGHMEM_V03_STATIC_AUDIT_INDEPENDENT_VERIFICATION_PASS_PLUS_0_PLUS_0','effect':'+0/+0','source_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'scientific_execution_authorized':False,'token':'LAYERB_32769_ISOLATED_HIGHMEM_V03_STATIC_AUDIT_INDEPENDENT_VERIFICATION_PASS_PLUS_0_PLUS_0'}
           Path('verification.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
           PY
       - uses: actions/upload-artifact@v4
