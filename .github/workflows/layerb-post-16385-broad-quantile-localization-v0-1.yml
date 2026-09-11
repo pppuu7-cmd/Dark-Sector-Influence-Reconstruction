@@ -1,0 +1,108 @@
+name: layerb-post-16385-broad-quantile-localization-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-post-16385-broad-quantile-localization-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+
+jobs:
+  broad-localization:
+    strategy:
+      fail-fast: false
+      matrix:
+        lane: [broad-raw, broad-conditioning]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen plan and implementation identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git log -1 --format=%H -- docs/dsir4/prereg/LAYERB_POST_16385_BROAD_QUANTILE_LOCALIZATION_PLAN_V0_1.md)" = '4aec3ce3a74c187e74b8ed5b7f6e17039ddc9ef6'
+          test "$(git log -1 --format=%H -- ci/layerb_post_16385_broad_quantile_localization_v0_1.py)" = '799bdf1c916d2a5777bc21e95103474c8676c0ac'
+          test "$(git log -1 --format=%H -- ci/layerb_post_16385_plateau_rootcause_probe_v0_1.py)" = 'f23ed0d16fb7b54bb812bb91c9e0e8a8e04cf171'
+          test "$(git hash-object docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt)" = 'bc9a6e59fb27d7510796c1cb2d5470dfe8a5294b'
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt)" = 'fc4eb1e7f51a0ad3773b8be13c477652b1f71368'
+          test "$(git hash-object ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py)" = 'c975a964805919cd61e3c028305ad3945773377f'
+          test "$(git hash-object ci/layerb_post_jm_16385_one_live_resource_pilot_v0_1.py)" = '00d8cb7d7dd6f5fa84aa0a8ddd3ea1c8ed3f81cb'
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+      - name: Install exact numerical/build stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git >/dev/null
+          python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+      - name: Build pinned CLASS-IV with proven execution-only patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q ac627d54e9ce196a08878d1ba33999819925d19c
+          test "$(git -C external/class_iv rev-parse HEAD)" = 'ac627d54e9ce196a08878d1ba33999819925d19c'
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 18432',1))
+          q=Path('external/class_iv/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 524288',1))
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python scripts/dsir4/classiv_k_output_history_suppression_patch_v0_1.py external/class_iv artifacts/history_patch.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.load(open('artifacts/history_patch.json'))
+          assert d['replacement_count']==1 and d['scientific_parameters_changed'] is False
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+      - name: Execute frozen broad quantile lane
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}" python ci/layerb_post_16385_broad_quantile_localization_v0_1.py \
+            --lane '${{ matrix.lane }}' \
+            --base-script ci/layerb_post_16385_plateau_rootcause_probe_v0_1.py \
+            --resource-script ci/layerb_post_jm_16385_one_live_resource_pilot_v0_1.py \
+            --coarse docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt \
+            --fine docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt \
+            --jo-script ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --out artifacts/result.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/result.json'))
+          assert d['broad_quantile_count']==15,d
+          assert d['selected_indices_8193']==[512,1024,1536,2048,2560,3072,3584,4096,4608,5120,5632,6144,6656,7168,7680],d
+          assert d['unsupported_target_evaluations']==0,d
+          assert d['max_requested_node_coordinate_rel_mismatch']<=1e-12,d
+          assert d['lifecycle_8193']=={'constructions':4,'live':0,'max_live':1},d
+          assert d['lifecycle_16385']=={'constructions':4,'live':0,'max_live':1},d
+          assert d['full_107_row_traversal_executed'] is False and d['scientific_authority_created'] is False and d['next_rung_authorized'] is False,d
+          assert d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False,d
+          lane='${{ matrix.lane }}'
+          expected='POST_16385_BROAD_QUANTILE_RAW_LOCALIZATION_PASS_PLUS_0_PLUS_0' if lane=='broad-raw' else 'POST_16385_BROAD_QUANTILE_CONDITIONING_PASS_PLUS_0_PLUS_0'
+          assert d['classification']==expected,d
+          if lane=='broad-conditioning': assert d['alternative_h_evaluated'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-${{ matrix.lane }}-v0-1
+          path: |
+            artifacts/result.json
+            artifacts/history_patch.json
+          if-no-files-found: error
+          retention-days: 90
