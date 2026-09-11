@@ -1,0 +1,213 @@
+name: layerb-16385-to-32769-one-run-authorizer-synthetic-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-16385-to-32769-one-run-authorizer-synthetic-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-authorizer-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen authorizer identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZATION_CONTRACT_V0_1.json)" = 'b9fd5fe557641e06effbdbd1563b12823fa8f51c'
+          test "$(git hash-object ci/layerb_16385_to_32769_one_run_authorizer_v0_1.py)" = '10ec642675763fe3664b2f8ff8f21e8c7927421f'
+
+      - name: Generate synthetic resource authority and live guard fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/fixtures artifacts/out
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('artifacts/fixtures'); root.mkdir(parents=True,exist_ok=True)
+          resource={
+            'schema':'SYNTHETIC_32769_RESOURCE_AUTHORITY_FIXTURE_V0_1',
+            'synthetic_fixture':True,
+            'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0',
+            'artifact_verified_independently':True,
+            'high_memory_resource_lifecycle_preflight_pass':True,
+            'candidate_memtotal_kb':33554432,
+            'execution_lifecycle':{'total_solver_constructions':4,'max_live_instances':1,'final_live_instances':0},
+            'scientific_response_read':False,
+            'scientific_authority_created':False,
+            'canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599',
+            'class_build_authority_git_blob':'ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d',
+          }
+          guard={
+            'schema':'SYNTHETIC_32769_ONE_LIVE_GUARD_FIXTURE_V0_1',
+            'synthetic_fixture':True,
+            'classification':'LAYERB_32769_ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS_PLUS_0_PLUS_0',
+            'guard_pass':True,
+            'errors':[],
+            'current_run_id':7001,
+            'production_workflow_path':'.github/workflows/layerb-16385-to-32769-canonical-scientific-v0-1.yml',
+            'matching_other_live_authoritative_runs':0,
+            'matching_other_all_status_runs':0,
+            'matching_other_completed_runs':0,
+            'parent_authority_git_blob':'7958e1f44c0224e1828f89b1472aa33226c61886',
+            'canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599',
+            'class_build_authority_git_blob':'ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d',
+            'queried_run_ids':[],
+            'scientific_response_read':False,
+            'scientific_execution_authorized':False,
+          }
+          (root/'resource.json').write_text(json.dumps(resource,indent=2,sort_keys=True)+'\n')
+          (root/'guard.json').write_text(json.dumps(guard,indent=2,sort_keys=True)+'\n')
+          bad_low=json.loads(json.dumps(resource)); bad_low['candidate_memtotal_kb']=16000000
+          (root/'resource_low_memory.json').write_text(json.dumps(bad_low,indent=2,sort_keys=True)+'\n')
+          bad_unverified=json.loads(json.dumps(resource)); bad_unverified['artifact_verified_independently']=False
+          (root/'resource_unverified.json').write_text(json.dumps(bad_unverified,indent=2,sort_keys=True)+'\n')
+          bad_dup=json.loads(json.dumps(guard)); bad_dup['matching_other_live_authoritative_runs']=1; bad_dup['matching_other_all_status_runs']=1; bad_dup['queried_run_ids']=[7002]
+          (root/'guard_duplicate.json').write_text(json.dumps(bad_dup,indent=2,sort_keys=True)+'\n')
+          bad_run=json.loads(json.dumps(guard)); bad_run['current_run_id']=7999
+          (root/'guard_wrong_run.json').write_text(json.dumps(bad_run,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Require PASS only for exact resource plus live guard binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/layerb_16385_to_32769_one_run_authorizer_v0_1.py \
+            --contract docs/dsir4/contracts/LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZATION_CONTRACT_V0_1.json \
+            --resource-authority artifacts/fixtures/resource.json \
+            --one-live-guard artifacts/fixtures/guard.json \
+            --current-run-id 7001 \
+            --out artifacts/out/pass.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('artifacts/out/pass.json'))
+          assert d['classification']=='LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZED_PLUS_0_PLUS_0'
+          assert d['execution_authorized'] is True
+          assert d['authorized_canonical_run_count']==1
+          assert d['current_run_id']==7001
+          assert d['errors']==[]
+          assert d['scientific_response_read'] is False
+          assert d['scientific_authority_created'] is False
+          PY
+
+      - name: Require fail-closed rejection of incomplete prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_fail () {
+            name="$1"; resource="$2"; guard="$3"; runid="$4"
+            set +e
+            python3 ci/layerb_16385_to_32769_one_run_authorizer_v0_1.py \
+              --contract docs/dsir4/contracts/LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZATION_CONTRACT_V0_1.json \
+              --resource-authority "$resource" \
+              --one-live-guard "$guard" \
+              --current-run-id "$runid" \
+              --out "artifacts/out/${name}.json"
+            rc=$?
+            set -e
+            test "$rc" -eq 31
+          }
+          run_fail low_memory artifacts/fixtures/resource_low_memory.json artifacts/fixtures/guard.json 7001
+          run_fail unverified artifacts/fixtures/resource_unverified.json artifacts/fixtures/guard.json 7001
+          run_fail duplicate artifacts/fixtures/resource.json artifacts/fixtures/guard_duplicate.json 7001
+          run_fail wrong_run artifacts/fixtures/resource.json artifacts/fixtures/guard_wrong_run.json 7001
+          python3 - <<'PY'
+          import json
+          checks={
+            'low_memory':'resource_memory',
+            'unverified':'resource_verification',
+            'duplicate':'guard_duplicate_count',
+            'wrong_run':'guard_current_run',
+          }
+          for name,needle in checks.items():
+              d=json.load(open(f'artifacts/out/{name}.json'))
+              assert d['classification']=='LAYERB_16385_TO_32769_ONE_RUN_NOT_AUTHORIZED_PLUS_0_PLUS_0'
+              assert d['execution_authorized'] is False
+              assert d['authorized_canonical_run_count']==0
+              assert needle in d['errors'],(name,d['errors'])
+          PY
+
+      - name: Emit synthetic authorizer audit summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          out={
+            'schema':'LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZER_SYNTHETIC_AUDIT_V0_1',
+            'classification':'LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'synthetic_only':True,
+            'authorization_contract_git_blob':'b9fd5fe557641e06effbdbd1563b12823fa8f51c',
+            'authorizer_git_blob':'10ec642675763fe3664b2f8ff8f21e8c7927421f',
+            'valid_resource_and_guard_authorized_once':True,
+            'low_memory_rejected':True,
+            'unverified_resource_rejected':True,
+            'duplicate_guard_rejected':True,
+            'wrong_run_id_rejected':True,
+            'pass_receipt_sha256':sha('artifacts/out/pass.json'),
+            'actual_one_run_authorization_exists':False,
+            'scientific_response_read':False,
+            'scientific_execution_authorized':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+          }
+          out['token']=out['classification']
+          Path('artifacts/summary.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-to-32769-one-run-authorizer-synthetic-audit-v0-1
+          path: |
+            artifacts/summary.json
+            artifacts/out/*.json
+          if-no-files-found: error
+          retention-days: 90
+
+  independent-verifier:
+    needs: synthetic-authorizer-audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-to-32769-one-run-authorizer-synthetic-audit-v0-1
+          path: evidence
+      - name: Independently verify one-run authorization semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZATION_CONTRACT_V0_1.json)" = 'b9fd5fe557641e06effbdbd1563b12823fa8f51c'
+          test "$(git hash-object ci/layerb_16385_to_32769_one_run_authorizer_v0_1.py)" = '10ec642675763fe3664b2f8ff8f21e8c7927421f'
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          s=json.load(open('evidence/summary.json'))
+          assert s['classification']=='LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert s['synthetic_only'] is True
+          assert s['valid_resource_and_guard_authorized_once'] is True
+          assert s['low_memory_rejected'] is True
+          assert s['unverified_resource_rejected'] is True
+          assert s['duplicate_guard_rejected'] is True
+          assert s['wrong_run_id_rejected'] is True
+          assert s['actual_one_run_authorization_exists'] is False
+          assert s['scientific_execution_authorized'] is False
+          assert s['pass_receipt_sha256']==sha('evidence/out/pass.json')
+          p=json.load(open('evidence/out/pass.json'))
+          assert p['classification']=='LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZED_PLUS_0_PLUS_0'
+          assert p['execution_authorized'] is True and p['authorized_canonical_run_count']==1 and p['errors']==[]
+          print('LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZER_INDEPENDENT_SYNTHETIC_VALIDATION_PASS_PLUS_0_PLUS_0')
+          PY
