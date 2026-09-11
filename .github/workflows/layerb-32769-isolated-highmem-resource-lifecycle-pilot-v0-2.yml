@@ -21,6 +21,7 @@ env:
   HOSTED_EXHAUSTED_MEMTOTAL_KB: '16372440'
   REQUIRED_CUSTOM_LABEL: 'dsir-32769-highmem'
   ISOLATION_CONTRACT_BLOB: 'd9d910d89889f6d3a27461a73c3dd72c2a9d2096'
+  CONFIGURATOR_SHA256: '2cd02d1a7ac58ea3945a435272f03ea1abe2d7e3410191b5a17a9c62e0a297ce'
   PILOT_BLOB: '11c7d9a1f95d7c1c394dd520f1c4340a4ce397b4'
   JO_BLOB: 'c975a964805919cd61e3c028305ad3945773377f'
   JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
@@ -32,9 +33,8 @@ env:
 
 jobs:
   resource-lifecycle-pilot:
-    # This runner must be configured prospectively with --no-default-labels
-    # and the dedicated label dsir-32769-highmem. Do not add self-hosted/Linux/X64
-    # to this runs-on list: the stale superseded 16385 job uses those generic labels.
+    # This runner must be configured by the frozen configurator with
+    # --no-default-labels and exactly the dedicated dsir-32769-highmem label.
     runs-on: [dsir-32769-highmem]
     timeout-minutes: 180
     steps:
@@ -44,7 +44,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p artifacts
+          mkdir -p artifacts external
           test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_HIGH_MEMORY_RUNNER_ISOLATION_CONTRACT_V0_1.json)" = "$ISOLATION_CONTRACT_BLOB"
           test "$(git hash-object ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_1.py)" = "$PILOT_BLOB"
           test "$(git hash-object ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py)" = "$JO_BLOB"
@@ -54,6 +54,7 @@ jobs:
           test "$(git hash-object docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_1.json)" = "$BUILD_AUTH_BLOB"
           test "$(git hash-object scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py)" = "$BUILD_COMPAT_BLOB"
           test "$(git hash-object scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py)" = "$PUBLIC_EXPOSURE_BLOB"
+          test "$(sha256sum scripts/dsir4/configure_layerb_32769_highmem_runner_v0_1.sh | awk '{print $1}')" = "$CONFIGURATOR_SHA256"
           python3 - <<'PY'
           import json
           d=json.load(open('docs/dsir4/contracts/LAYERB_32769_HIGH_MEMORY_RUNNER_ISOLATION_CONTRACT_V0_1.json'))
@@ -61,6 +62,61 @@ jobs:
           assert d['runner_configuration_requirement']['no_default_labels'] is True
           assert d['workflow_routing_requirement']['runs_on_labels']==['dsir-32769-highmem']
           assert d['memory_ordering_guard']['candidate_memtotal_kb_must_be_strictly_greater_than']==16372440
+          PY
+
+      - name: Bind current Actions job to frozen runner registration receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${RUNNER_TEMP:-}"
+          RUNNER_ROOT="$(cd "$(dirname "$(dirname "$RUNNER_TEMP")")" && pwd -P)"
+          RECEIPT="$RUNNER_ROOT/.dsir32769-registration-receipt.json"
+          SETTINGS="$RUNNER_ROOT/.runner"
+          test -f "$RECEIPT"
+          test -f "$SETTINGS"
+          cp "$RECEIPT" artifacts/runner_registration_receipt.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs?per_page=100" > artifacts/current_run_jobs.json
+          python3 - "$SETTINGS" <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          receipt=json.load(open('artifacts/runner_registration_receipt.json'))
+          settings=json.loads(Path(sys.argv[1]).read_text())
+          agent_name=settings.get('agentName') or settings.get('AgentName')
+          agent_id=settings.get('agentId') or settings.get('AgentId')
+          assert receipt['schema']=='LAYERB_32769_HIGH_MEMORY_RUNNER_REGISTRATION_RECEIPT_V0_1'
+          assert receipt['classification']=='LAYERB_32769_HIGH_MEMORY_RUNNER_REGISTRATION_CONFIGURED_PLUS_0_PLUS_0'
+          assert receipt['configuration_method']=='FROZEN_CONFIGURATOR_SCRIPT'
+          assert receipt['configuration_script_sha256']==os.environ['CONFIGURATOR_SHA256']
+          assert receipt['runner_isolation_contract_git_blob']==os.environ['ISOLATION_CONTRACT_BLOB']
+          assert receipt['configured_labels']==[os.environ['REQUIRED_CUSTOM_LABEL']]
+          assert receipt['required_custom_label']==os.environ['REQUIRED_CUSTOM_LABEL']
+          assert receipt['no_default_labels'] is True
+          assert receipt['forbidden_default_labels']==['self-hosted','Linux','X64']
+          assert receipt['registration_token_recorded'] is False and receipt['credentials_recorded'] is False
+          assert receipt['runner_name']==agent_name==os.environ.get('RUNNER_NAME')
+          assert receipt['runner_agent_id']==agent_id and isinstance(agent_id,int) and agent_id>0
+          jobs=json.load(open('artifacts/current_run_jobs.json')).get('jobs',[])
+          matches=[j for j in jobs if j.get('name')=='resource-lifecycle-pilot']
+          assert len(matches)==1,matches
+          j=matches[0]
+          assert j.get('runner_id')==agent_id,(j.get('runner_id'),agent_id)
+          assert j.get('runner_name')==agent_name,(j.get('runner_name'),agent_name)
+          assert j.get('labels')==[os.environ['REQUIRED_CUSTOM_LABEL']],j.get('labels')
+          assert j.get('status') in {'in_progress','completed'},j.get('status')
+          safe={
+            'schema':'LAYERB_32769_SOURCE_JOB_RUNTIME_BINDING_V0_1',
+            'run_id':j.get('run_id'),
+            'job_id':j.get('id'),
+            'name':j.get('name'),
+            'status_at_capture':j.get('status'),
+            'runner_id':j.get('runner_id'),
+            'runner_name':j.get('runner_name'),
+            'labels':j.get('labels'),
+            'head_sha':j.get('head_sha'),
+            'scientific_execution_authorized':False,
+          }
+          Path('artifacts/source_job_runtime.json').write_text(json.dumps(safe,indent=2,sort_keys=True)+'\n')
+          print('RUNNER_REGISTRATION_AND_RUNTIME_BINDING_PASS',agent_id,agent_name)
           PY
 
       - name: Verify stale generic job is not concurrently owning a runner
@@ -73,8 +129,6 @@ jobs:
           d=json.load(open('artifacts/stale_job_snapshot.json'))
           assert d['id']==103112190909
           status=d.get('status')
-          # queued is expected; terminal is also safe. in_progress would mean a generic
-          # runner has picked up the superseded job and this pilot must fail closed.
           if status=='in_progress':
               raise SystemExit('stale generic 16385 job is in_progress; fail closed')
           assert status in {'queued','completed'},status
@@ -175,15 +229,23 @@ jobs:
           trap - EXIT INT TERM
           grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree):' /proc/meminfo > artifacts/host_envelope_after.txt
           python - <<'PY'
-          import json
+          import hashlib,json
           from pathlib import Path
           d=json.load(open('artifacts/result.json'))
           mem=int(Path('artifacts/candidate_memtotal_kb.txt').read_text().strip())
+          registration=json.load(open('artifacts/runner_registration_receipt.json'))
+          runtime=json.load(open('artifacts/source_job_runtime.json'))
           d['candidate_memtotal_kb']=mem
           d['exhausted_hosted_memtotal_kb']=16372440
           d['candidate_strictly_higher_memory_than_exhausted_hosted']=mem>16372440
           d['runner_isolation_contract_git_blob']='d9d910d89889f6d3a27461a73c3dd72c2a9d2096'
           d['required_custom_label']='dsir-32769-highmem'
+          d['runner_registration_receipt_sha256']=hashlib.sha256(Path('artifacts/runner_registration_receipt.json').read_bytes()).hexdigest()
+          d['source_job_runtime_sha256']=hashlib.sha256(Path('artifacts/source_job_runtime.json').read_bytes()).hexdigest()
+          d['runner_registration_evidence_valid']=True
+          d['runner_agent_id']=registration['runner_agent_id']
+          d['runner_name']=registration['runner_name']
+          d['source_job_routing_labels']=runtime['labels']
           assert d['classification']=='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0',d
           assert d['candidate_strictly_higher_memory_than_exhausted_hosted'] is True
           assert d['execution_lifecycle']['total_solver_constructions']==4
@@ -212,5 +274,7 @@ jobs:
             artifacts/host_envelope_after.txt
             artifacts/stale_job_snapshot.json
             artifacts/telemetry.log
+            artifacts/runner_registration_receipt.json
+            artifacts/source_job_runtime.json
           if-no-files-found: warn
           retention-days: 90
