@@ -1,0 +1,69 @@
+{
+  "schema": "LAYERB_16385_REPRO_AND_NOISE_DIAGNOSTICS_V0_1",
+  "scope": "DSIR only",
+  "date": "2026-09-11",
+  "effect": "+0/+0",
+  "scientific_authority_created": false,
+  "stopping_rule_changed": false,
+  "next_rung_authorized": false,
+  "current_16385_scientific_result_read": false,
+  "cross_vm_repro": {
+    "run_id": 34556173778,
+    "head_sha": "79dd7a1fcb70157b2955f6d83cc302578ccface0",
+    "jobs": {
+      "replica_1": 103129226488,
+      "replica_2": 103129226591,
+      "compare": 103133339788
+    },
+    "comparison_artifact_id": 10183110033,
+    "comparison_zip_sha256": "169c5d03f5dceeba444c87f830a99d24ffeda845c65344db51f4a96a44309be1",
+    "comparison_json_sha256": "9d56c990ff54e9ebaf326257a72bec5c712ac25d38d4d583e27c357d80f7a40f",
+    "classification": "LAYERB_16385_CROSS_VM_NUMERIC_REPRO_DIAGNOSTIC_PASS_PLUS_0_PLUS_0",
+    "all_operand_hashes_equal": false,
+    "all_response_hashes_equal": false,
+    "max_role_request_absolute_difference": 2.7284841053187847e-12,
+    "max_role_request_symmetric_relative_difference": 1.494084432755005e-15,
+    "pilot_response_A_max_absolute_difference": 9.094947017729282e-09,
+    "pilot_response_A_max_symmetric_relative_difference": 1.6693951949245102e-11,
+    "pilot_response_B_max_absolute_difference": 9.094947017729282e-09,
+    "pilot_response_B_max_symmetric_relative_difference": 3.285358946556587e-11
+  },
+  "intra_vm_repeatability": {
+    "source_run_id": 34557144684,
+    "source_head_sha": "58839fbc7efd594572d3a63a0b019c080196a687",
+    "jobs": {
+      "reference": 103132094675,
+      "alpha_minus": 103132094630,
+      "beta_plus": 103132094483,
+      "beta_minus": 103132094595
+    },
+    "aggregate_run_id": 34557921258,
+    "aggregate_job_id": 103134458183,
+    "aggregate_artifact_id": 10183242971,
+    "aggregate_zip_sha256": "b063651e237ac5954cdcf95670c4cb913199c8ef8c70bebb71108c77dcb56eaf",
+    "aggregate_json_sha256": "dc175a82f698782178ce6e3a4520ba27c6994f7bf4a13ee13032bb72dc90501a",
+    "classification": "LAYERB_16385_INTRA_VM_REPEATABILITY_AGGREGATE_DIAGNOSTIC_PASS_PLUS_0_PLUS_0",
+    "all_four_roles_bitwise_repeatable": true,
+    "global_max_absolute_difference": 0.0,
+    "global_max_symmetric_relative_difference": 0.0
+  },
+  "pre_result_noise_budget": {
+    "run_id": 34557228533,
+    "head_sha": "6df3df9c314360dccb340991a21e3580fdb249b1",
+    "amplification_job_id": 103132351219,
+    "correlation_job_id": 103132351356,
+    "amplification_artifact_id": 10182994471,
+    "amplification_zip_sha256": "cc9aa2908fa94b849c2edf51e241ca39786ae998bb3ce2aef8b6cf5ea8b208c7",
+    "amplification_json_sha256": "1ff3907f3b2d10870efc5d6ad7291833ed4c2e4d6c3c8cdb919fb16969c49616",
+    "correlation_artifact_id": 10182995486,
+    "correlation_zip_sha256": "c387ccb94f6ab62e606ab06db554c77efe59ab9963029f6df4e3760520d509c2",
+    "correlation_json_sha256": "2783741de80169a915578858d19a8844464fe917f27044c334b30182a2a60390",
+    "amplification_classification": "LAYERB_PRE_RESULT_NOISE_AMPLIFICATION_DIAGNOSTIC_PASS_PLUS_0_PLUS_0",
+    "correlation_classification": "LAYERB_PRE_RESULT_NOISE_CORRELATION_DIAGNOSTIC_PASS_PLUS_0_PLUS_0",
+    "h": 0.0001,
+    "historical_adjacent_grid_maxima": [0.012273497268380687, 0.01070806986822778],
+    "interpretation": "At h=1e-4, finite-difference amplification can turn raw operand noise at roughly 1e-7 to 1e-6 scale (depending derivative scale and correlation) into percent-level derivative disagreement. This is an interpretation-only mechanism, not evidence that the active 16385 scientific traversal will pass or fail."
+  },
+  "joint_interpretation": "Canonical-16385 operands are bitwise repeatable within one VM but differ across VMs only at about 1e-15 relative at the sampled raw operand level; pilot derivative responses differ at about 1e-11 relative. This substantially weakens ordinary VM nondeterminism as an explanation for the historical ~1e-2 adjacent-grid plateau, while finite-difference conditioning remains a plausible amplification mechanism only if grid-to-grid/raw-solver discrepancies are much larger than the observed cross-VM differences or are structured/correlated differently. The active 8193->16385 scientific result remains unread and singular.",
+  "token": "LAYERB_16385_REPRO_AND_NOISE_DIAGNOSTICS_AUTHORITY_PLUS_0_PLUS_0"
+}
