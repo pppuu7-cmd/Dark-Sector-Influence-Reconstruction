@@ -1,0 +1,134 @@
+name: layerb-32769-resource-lifecycle-independent-consumer-v0-1
+
+on:
+  workflow_run:
+    workflows:
+      - layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2
+    types:
+      - completed
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: layerb-32769-resource-lifecycle-independent-consumer-v0-1-${{ github.event.workflow_run.id }}
+  cancel-in-progress: false
+
+env:
+  RESOURCE_CONSUMER_BLOB: 'e533fb0e5f6ee1cdb28dc06774e432afe7717cd5'
+  SOURCE_WORKFLOW_BLOB: '8ec0027d6fb45f3f12aa5f410de62093a7144924'
+  SOURCE_PILOT_BLOB: '11c7d9a1f95d7c1c394dd520f1c4340a4ce397b4'
+  ISOLATION_CONTRACT_BLOB: 'd9d910d89889f6d3a27461a73c3dd72c2a9d2096'
+  SOURCE_ARTIFACT_NAME: 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2'
+
+jobs:
+  independent-consumer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Record triggering source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          python3 - <<'PY'
+          import json,os
+          e=json.load(open(os.environ['GITHUB_EVENT_PATH']))
+          w=e['workflow_run']
+          out={
+            'source_run_id':w['id'],
+            'source_name':w['name'],
+            'source_path':w.get('path'),
+            'source_head_sha':w['head_sha'],
+            'source_conclusion':w.get('conclusion'),
+            'source_run_attempt':w.get('run_attempt'),
+          }
+          assert out['source_name']=='layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2',out
+          assert out['source_path']=='.github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2.yml',out
+          open('evidence/source_workflow_run.json','w').write(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,sort_keys=True))
+          PY
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 1
+
+      - name: Enforce frozen source/consumer identities at triggering commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_32769_resource_lifecycle_independent_consumer_v0_1.py)" = "$RESOURCE_CONSUMER_BLOB"
+          test "$(git hash-object .github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2.yml)" = "$SOURCE_WORKFLOW_BLOB"
+          test "$(git hash-object ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_1.py)" = "$SOURCE_PILOT_BLOB"
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_HIGH_MEMORY_RUNNER_ISOLATION_CONTRACT_V0_1.json)" = "$ISOLATION_CONTRACT_BLOB"
+
+      - name: Download exact triggering resource artifact
+        id: download
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SOURCE_ARTIFACT_NAME }}
+          path: source
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Classify triggering artifact with frozen independent consumer
+        shell: bash
+        run: |
+          set -u
+          mkdir -p evidence
+          set +e
+          python3 ci/layerb_32769_resource_lifecycle_independent_consumer_v0_1.py \
+            --artifact-dir source \
+            --out evidence/independent_validation.json
+          rc=$?
+          set -e
+          python3 - "$rc" <<'PY'
+          import hashlib,json,sys
+          from pathlib import Path
+          rc=int(sys.argv[1])
+          p=Path('evidence/independent_validation.json')
+          assert p.is_file(), 'independent consumer did not emit result'
+          d=json.loads(p.read_text())
+          PASS='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0'
+          FAIL='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_FAIL_PLUS_0_PLUS_0'
+          assert d['classification'] in {PASS,FAIL},d
+          if d['classification']==PASS:
+              assert rc==0 and d['valid'] is True and d['errors']==[],(rc,d)
+          else:
+              assert rc==31 and d['valid'] is False and isinstance(d['errors'],list) and d['errors'],(rc,d)
+          source=json.load(open('evidence/source_workflow_run.json'))
+          summary={
+            'schema':'LAYERB_32769_RESOURCE_LIFECYCLE_EVENT_CHAIN_CONSUMER_RECEIPT_V0_1',
+            'classification':d['classification'],
+            'effect':'+0/+0',
+            'source_run_id':source['source_run_id'],
+            'source_head_sha':source['source_head_sha'],
+            'source_conclusion':source['source_conclusion'],
+            'independent_validation_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+            'independent_valid':d['valid'],
+            'independent_errors':d['errors'],
+            'consumer_execution_completed':True,
+            'scientific_response_read':False,
+            'scientific_execution_authorized':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+          }
+          summary['token']=summary['classification']
+          Path('evidence/chain_receipt.json').write_text(json.dumps(summary,indent=2,sort_keys=True)+'\n')
+          print(summary['classification'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-32769-resource-lifecycle-independent-consumer-v0-1-${{ github.event.workflow_run.id }}
+          path: |
+            evidence/source_workflow_run.json
+            evidence/independent_validation.json
+            evidence/chain_receipt.json
+          if-no-files-found: warn
+          retention-days: 90
