@@ -5,8 +5,9 @@ from pathlib import Path
 
 RESOURCE_PASS="LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0"
 IND_PASS="LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0"
+PROV_PASS="LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_PASS_PLUS_0_PLUS_0"
 FAIL="LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_NOT_VALID_PLUS_0_PLUS_0"
-CONTRACT_BLOB="d33e3341ea2617779fdd3701b2d24abf6b2bcd61"
+CONTRACT_BLOB="3e53992864ad10f23752df03a653f8073cc18ffa"
 ROLES=["reference","alpha_minus","beta_plus","beta_minus"]
 
 def bound(p):
@@ -46,6 +47,8 @@ def main():
     if ind.get("source_result_sha256")!=ssha or ind.get("candidate_memtotal_kb")!=mem or ind.get("execution_lifecycle")!=life or ind.get("parser_capacity")!=ident["parser_capacity"]: e.append("independent_binding")
     if ind.get("runner_agent_id")!=src.get("runner_agent_id") or ind.get("runner_name")!=src.get("runner_name"): e.append("independent_runner_binding")
     if ind.get("scientific_response_read") is not False or ind.get("scientific_authority_created") is not False or ind.get("successor_execution_authorized") is not False: e.append("independent_response_blind")
+    if prov.get("classification")!=c.get("required_provenance_classification",PROV_PASS) or prov.get("valid") is not True or prov.get("errors")!=[]: e.append("provenance_validity")
+    if prov.get("packaging_contract_git_blob")!=c.get("required_provenance_packaging_contract_git_blob"): e.append("provenance_contract_binding")
     req=c.get("required_provenance_receipt_fields",[])
     if any(k not in prov for k in req): e.append("provenance_fields")
     for k in ("source_run_id","source_job_id","source_artifact_id","independent_run_id","independent_job_id","independent_artifact_id"):
