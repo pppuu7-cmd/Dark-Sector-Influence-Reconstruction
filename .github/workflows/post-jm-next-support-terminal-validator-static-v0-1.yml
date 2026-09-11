@@ -1,0 +1,61 @@
+name: post-jm-next-support-terminal-validator-static-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/post-jm-next-support-terminal-validator-static-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen validator with synthetic terminal receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/post_jm_next_support_terminal_validator_v0_1.py)" = 'd8eece64d6b2b7ab162fc3a4e6a9981bde604e08'
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import copy,importlib.util,json,hashlib
+          from pathlib import Path
+          p=Path('ci/post_jm_next_support_terminal_validator_v0_1.py')
+          s=importlib.util.spec_from_file_location('v',p); v=importlib.util.module_from_spec(s); s.loader.exec_module(v)
+          base={
+            'classification':v.NOT,'scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+            'h':1e-4,'rel_tol':1e-3,'native_k_per_decade_for_pk_frozen':20.0,
+            'activation_authority':{'jm_classification':v.JM_CLASS,'response_values_reused':False},
+            'canonical_lattices':{'coarse':{'requested_node_count':8193,'node_sha256':v.COARSE_NODE,'text_sha256':v.COARSE_TEXT},'fine':{'requested_node_count':16385,'node_sha256':v.FINE_NODE,'text_sha256':v.FINE_TEXT}},
+            'request_plan_authority':{'coarse_common_plan_sha256':v.PLAN_C,'fine_plan_with_gl128_sha256':v.PLAN_F,'total_get_transfer_calls':4040},
+            'execution_lifecycle':{'total_solver_constructions':8,'max_live_instances':1,'final_live_instances':0,'cross_process_raw_operand_combination':False},
+            'parent_identity_preserved':True,'unsupported_target_evaluations':0,'max_requested_node_coordinate_rel_mismatch':1e-16,
+            'convergence':{'max_relative_component_difference':0.01,'finite_nonzero_status_changed':False,'row_label_changed':False,'boss_dense_z_disagreement':False},
+            'layer_b':{'invalid_row_fraction':0.0,'retained_after_layer_b':107}}
+          cases=[]
+          def run(name,d,expect):
+            r=v.validate(d); assert r['valid'] is expect,(name,r); cases.append({'name':name,'expected_valid':expect,'actual_valid':r['valid'],'errors':r['errors']})
+          run('valid_not',copy.deepcopy(base),True)
+          d=copy.deepcopy(base); d['classification']=v.CONV; d['convergence']['max_relative_component_difference']=0.000999999; run('valid_converged',d,True)
+          d=copy.deepcopy(base); d['convergence']['max_relative_component_difference']=0.001; run('exact_threshold_is_not_converged',d,True)
+          d=copy.deepcopy(base); d['classification']=v.CONV; d['convergence']['max_relative_component_difference']=0.001; run('reject_converged_at_exact_threshold',d,False)
+          d=copy.deepcopy(base); d['layer_b']['invalid_row_fraction']=0.05; run('invalid_fraction_inclusive',d,True)
+          d=copy.deepcopy(base); d['layer_b']['invalid_row_fraction']=0.0500001; run('reject_invalid_fraction_above',d,False)
+          d=copy.deepcopy(base); d['layer_b']['retained_after_layer_b']=15; run('retained_inclusive',d,True)
+          d=copy.deepcopy(base); d['layer_b']['retained_after_layer_b']=14; run('reject_retained_below',d,False)
+          d=copy.deepcopy(base); d['execution_lifecycle']['max_live_instances']=2; run('reject_multilive',d,False)
+          d=copy.deepcopy(base); d['canonical_lattices']['fine']['node_sha256']='0'*64; run('reject_wrong_fine_grid',d,False)
+          d=copy.deepcopy(base); d['request_plan_authority']['total_get_transfer_calls']=4039; run('reject_wrong_calls',d,False)
+          d=copy.deepcopy(base); d['max_requested_node_coordinate_rel_mismatch']=1.1e-12; run('reject_lookup',d,False)
+          d=copy.deepcopy(base); d['Wm_S3_opened']=True; run('reject_Wm',d,False)
+          out={'schema':'POST_JM_NEXT_SUPPORT_TERMINAL_VALIDATOR_STATIC_AUDIT_V0_1','classification':'POST_JM_NEXT_SUPPORT_TERMINAL_VALIDATOR_STATIC_PASS_PLUS_0_PLUS_0','effect':'+0/+0','validator_git_blob':'d8eece64d6b2b7ab162fc3a4e6a9981bde604e08','validator_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'case_count':len(cases),'cases':cases,'all_pass':True,'scientific_response_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'token':'POST_JM_NEXT_SUPPORT_TERMINAL_VALIDATOR_STATIC_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/static.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token'],len(cases))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-jm-next-support-terminal-validator-static-v0-1
+          path: artifacts/static.json
+          if-no-files-found: error
+          retention-days: 90
