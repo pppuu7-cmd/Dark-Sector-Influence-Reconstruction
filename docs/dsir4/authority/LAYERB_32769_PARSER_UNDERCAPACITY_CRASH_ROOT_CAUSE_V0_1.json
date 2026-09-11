@@ -1,0 +1,84 @@
+{
+  "schema": "LAYERB_32769_PARSER_UNDERCAPACITY_CRASH_ROOT_CAUSE_AUTHORITY_V0_1",
+  "classification": "LAYERB_32769_PARSER_UNDERCAPACITY_ROOT_CAUSE_CONFIRMED_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scope": "DSIR Article III Layer-B canonical 32769 technical parser/input envelope only",
+  "frozen_science_changed": false,
+  "old_parser_capacity": 524288,
+  "payload_length_audit": {
+    "run_id": 34649452402,
+    "artifact_id": 10283034117,
+    "artifact_zip_sha256": "a1d700303f064c85c4353a4af15a59950dc0d36bb4a696332481545139ffd67c",
+    "receipt_sha256": "5bfe347e9a7dce31641fc07213dd69e0ba579d315127cd2d8f559099afc89d3d",
+    "16385": {
+      "node_count": 16385,
+      "k_output_values_bytes": 359728,
+      "bytes_including_nul": 359729,
+      "fits_524288": true,
+      "overflow_bytes": 0
+    },
+    "32769": {
+      "node_count": 32769,
+      "k_output_values_bytes": 719272,
+      "bytes_including_nul": 719273,
+      "fits_524288": false,
+      "overflow_bytes": 194985
+    }
+  },
+  "four_role_reproduction": {
+    "run_id": 34649101555,
+    "workflow_git_blob": "347564b1a01e0b27c707e133f76c09cd978d90c9",
+    "probe_git_blob": "e5ccc7ef8a6b42209497805e5a9b7de900a17c76",
+    "roles": [
+      "reference",
+      "alpha_minus",
+      "beta_plus",
+      "beta_minus"
+    ],
+    "all_process_rc": 139,
+    "completed_role_count": 0,
+    "aggregate_artifact_id": 10283158449,
+    "aggregate_artifact_zip_sha256": "6744c3b945b646cf500ead7ba41b495331d67afaf025fa91d498b2a300a58844",
+    "aggregate_receipt_sha256": "5b38610b3d7a0811bc72ff752c2c87e23584e192d4fabaf992e1e734c5d9a235",
+    "independent_verification_artifact_id": 10282997318,
+    "independent_verification_artifact_zip_sha256": "10a8d0db2aa4326d9cd71271e5e3b355ed047fa7cf5ccca7088f7640cf9433ed",
+    "independent_verification_receipt_sha256": "6dcbdc814200c67ea8957ff1f0f110aeb66e4eb1c30fa01c03e994405811e3cf"
+  },
+  "cause_discrimination": {
+    "run_id": 34649452402,
+    "workflow_git_blob": "3bd5f44f356e37d6a2ae5dd88a47a401d421017f",
+    "stage_probe_git_blob": "2c7e0c41f5d3269de14d129b00046e349ec41f96",
+    "diagnostic_summary_artifact_id": 10282679646,
+    "diagnostic_summary_artifact_zip_sha256": "cae5c0fd53c8427354da82777b1e1851435029315949c336869f34ed713e9021",
+    "diagnostic_summary_sha256": "19e27d6e2bb5083f564579ac0c726947e71ce89eacdaed8f091a261f05f0c83b",
+    "faulthandler_last_stage": "class_set_complete",
+    "faulthandler_process_rc": 139,
+    "unlimited_stack_last_stage": "class_set_complete",
+    "unlimited_stack_process_rc": 139,
+    "gdb_last_stage": "class_set_complete",
+    "gdb_artifact_id": 10282304914,
+    "gdb_artifact_zip_sha256": "9f87122694f2e2c4248e3903df60d18ff181c48efa02a3944f00301ef24a2ac3",
+    "gdb_observation": "compute raised CosmoSevereError containing a truncated/misaligned tail of k_output_values, followed by heap-corruption SIGSEGV during Class deallocation/free",
+    "unlimited_stack_changes_outcome": false,
+    "memory_pressure_at_initial_crash_supported": false
+  },
+  "interpretation": {
+    "prior_524288_build_audit_scope": "build/parser-patch parity only",
+    "prior_524288_functional_32769_sufficiency_proven": false,
+    "canonical_32769_payload_exceeds_old_parser_buffer": true,
+    "old_parser_capacity_must_not_be_used_for_future_32769_resource_or_scientific_execution": true,
+    "high_memory_runner_alone_cannot_repair_this_parser_overflow": true
+  },
+  "next_required_step": "validate a larger parser-capacity candidate without changing canonical nodes, physics parameters, response engine, convergence criterion, masks, row accounting or scientific tolerances",
+  "scientific_transfer_values_read": false,
+  "scientific_response_read": false,
+  "scientific_response_computed": false,
+  "convergence_metric_computed": false,
+  "convergence_classification_created": false,
+  "scientific_authority_created": false,
+  "high_memory_resource_lifecycle_preflight_pass_created": false,
+  "scientific_execution_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "token": "LAYERB_32769_PARSER_UNDERCAPACITY_ROOT_CAUSE_CONFIRMED_PLUS_0_PLUS_0"
+}
