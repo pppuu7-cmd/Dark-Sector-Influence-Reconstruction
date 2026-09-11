@@ -1,0 +1,73 @@
+{
+  "schema": "LAYERB_PRE_RESULT_NUMERICAL_ROOT_CAUSE_CONTROLS_AUTHORITY_V0_1",
+  "classification": "LAYERB_PRE_RESULT_NUMERICAL_ROOT_CAUSE_CONTROLS_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "artifact_verified_independently": true,
+  "canonical_grid_controls": {
+    "run_id": 34555932824,
+    "workflow_head_sha": "0937ebce351d774c1bd661f78370fb9cca8fc591",
+    "analytic_interpolation": {
+      "job_id": 103128508131,
+      "artifact_id": 10182545558,
+      "artifact_zip_sha256": "f53252f8e3a9d16fc38fc8e54a428fdb9592c80aaf0edc3d56b6bba524ddee79",
+      "result_json_sha256": "37fdb6af6a3b69664ffcd5f6f5da81c6e5181fa97c3a3530d67676f7b5c34162",
+      "classification": "LAYERB_CANONICAL_GRID_ANALYTIC_INTERPOLATION_SCALING_PASS_PLUS_0_PLUS_0",
+      "smooth_wave_adjacent_max_rel": [1.6536506942507457e-9, 1.0329051249407144e-10, 6.4403838921236285e-12],
+      "smooth_wave_reduction_factors": [16.009705580129253, 16.037943424520428],
+      "smooth_exp_wave_adjacent_max_rel": [7.931510767363568e-9, 4.944116335117203e-10, 3.092441567497803e-11],
+      "smooth_exp_wave_reduction_factors": [16.0423222872557, 15.987743752641544],
+      "steep_sigmoid_adjacent_max_rel": [9.961916273840652e-10, 6.20981074861032e-11, 3.88346414227542e-12],
+      "steep_sigmoid_reduction_factors": [16.042222021130044, 15.99039033477939],
+      "cubic_log_adjacent_max_rel_order_roundoff": [8.57556255725432e-16, 8.454565958548125e-16, 8.499064387820318e-16],
+      "interpretation": "On exact canonical 2049/4097/8193/16385 grids, the frozen centered-cubic interpolation shows approximately fourth-order adjacent-grid convergence for smooth analytic controls and roundoff-level error for a cubic polynomial in log(k). Pure interpolation truncation does not reproduce the observed scientific plateau pattern."
+    },
+    "binary64_geometry": {
+      "job_id": 103128508243,
+      "artifact_id": 10182545316,
+      "artifact_zip_sha256": "e82842eb390bbd27a78f89828e5078ba07daf80e519b4270cea7fcc17d5e5b6e",
+      "result_json_sha256": "a6ef44e3db2fa281ec87bf0b79f6442ca36dcf19b3fa7249dbf12a8b1b12a3af",
+      "classification": "LAYERB_CANONICAL_GRID_BINARY64_GEOMETRY_PASS_PLUS_0_PLUS_0",
+      "adjacent_exact_bitwise_node_matches": [2,2,2],
+      "adjacent_exact_match_fractions": [0.0009760858955588092,0.000488162069807176,0.00024411082631514708],
+      "median_nearest_log_offset_in_fine_spacings": [0.2501221299459224,0.2500610500610753,0.25003052130335196],
+      "interpretation": "Adjacent canonical lattices are intentionally almost entirely non-bitwise-nested, but smooth analytic controls still converge at the expected interpolation order. Non-nesting alone is therefore not sufficient to explain the plateau."
+    }
+  },
+  "finite_difference_controls": {
+    "run_id": 34555994587,
+    "workflow_head_sha": "11b0e771c9ea037b3fd437cd3292a0e386a3c4fe",
+    "conditioning_table": {
+      "artifact_id": 10182567485,
+      "artifact_zip_sha256": "35ffebdd4c876d15c36405ff175ca87aa453b1f5f82c424ec59aee4115d4666d",
+      "result_json_sha256": "8b1963f509809f5f05143f3c1703281afec52da9f48322dbbbf3b384e6582e3b",
+      "classification": "LAYERB_FINITE_DIFFERENCE_CONDITIONING_TABLE_PASS_PLUS_0_PLUS_0",
+      "frozen_h": 0.0001,
+      "one_sided_relative_error_bound_for_raw_noise_1e_7_and_unit_derivative": 0.002,
+      "central_relative_error_bound_for_raw_noise_1e_7_and_unit_derivative": 0.001,
+      "one_sided_relative_error_bound_for_raw_noise_1e_6_and_unit_derivative": 0.02,
+      "central_relative_error_bound_for_raw_noise_1e_6_and_unit_derivative": 0.01
+    },
+    "composite_surrogate": {
+      "artifact_id": 10182567399,
+      "artifact_zip_sha256": "7ff75eec7197f849e2246e23eda65377a74ce187be172d3022a9c406791061b8",
+      "result_json_sha256": "3f5cc6352fda09f4f9f17b597c30f12d6a511a6df948b29829d4f17f4a7db2a7",
+      "classification": "LAYERB_FINITE_DIFFERENCE_COMPOSITE_SURROGATE_PASS_PLUS_0_PLUS_0",
+      "synthetic_raw_noise_1e_8_adjacent_max_rel": [0.0008915253063712745,0.0007921280339479309,0.00077943218107325],
+      "synthetic_raw_noise_1e_7_adjacent_max_rel": [0.008877403349678164,0.00788793460727944,0.00782796310539227],
+      "synthetic_raw_noise_1e_6_adjacent_max_rel": [0.08964661787519107,0.08031345743024343,0.08181068628527682],
+      "zero_noise_adjacent_max_rel": [5.006238186366227e-11,1.380226522840143e-11,1.3537096256283049e-11],
+      "interpretation": "With the frozen h=1e-4, grid-independent synthetic raw response noise produces a refinement plateau: 1e-7 raw noise yields O(0.8%) max derivative disagreement, while 1e-6 yields O(8%). This is a conditioning mechanism demonstration only; it does not measure actual CLASS noise."
+    }
+  },
+  "combined_interpretation": "The response-blind controls disfavor pure canonical-grid geometry or centered-cubic interpolation truncation as a sufficient explanation for the observed plateau and identify finite-difference amplification of small raw-response discrepancies as a plausible mechanism requiring direct 16385 cross-VM magnitude measurement.",
+  "current_16385_scientific_result_read": false,
+  "class_solver_invoked_by_these_controls": false,
+  "scientific_authority_created": false,
+  "stopping_rule_changed": false,
+  "next_rung_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "article3_repository_readiness_percent": 68,
+  "funnel_freeze_readiness_percent": 67,
+  "token": "LAYERB_PRE_RESULT_NUMERICAL_ROOT_CAUSE_CONTROLS_PASS_PLUS_0_PLUS_0"
+}
