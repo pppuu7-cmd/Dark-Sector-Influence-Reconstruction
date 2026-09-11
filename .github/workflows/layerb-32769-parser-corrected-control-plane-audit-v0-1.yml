@@ -1,0 +1,198 @@
+name: layerb-32769-parser-corrected-control-plane-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/layerb-32769-parser-corrected-control-plane-audit-v0-1.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  promotion-synthetic:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exercise parser-corrected promotion reviewer fail-closed
+        shell: bash
+        run: |
+          set -euo pipefail; mkdir -p p/out
+          python3 - <<'PY'
+          import hashlib,json,zipfile
+          from pathlib import Path
+          r=Path('p')
+          def dump(n,d): (r/n).write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          prov={'classification':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_PASS_PLUS_0_PLUS_0','valid':True,'errors':[],'candidate_only':True,'durable_repository_authority_created':False,'packaging_contract_git_blob':'71d77aa4d074bba1a2f53e7f9299a9db32e93ffc','parser_capacity':1048576,'class_build_authority_git_blob':'b5cd7304c110962dc3baef8d04ef67d5a8042e5f','scientific_execution_authorized':False,'source_run_id':7001,'source_job_id':7101,'source_artifact_id':7201,'independent_run_id':7002,'independent_job_id':7102,'independent_artifact_id':7202,'source_artifact_zip_sha256':'1'*64,'independent_artifact_zip_sha256':'2'*64,'source_head_sha':'a'*40,'independent_head_sha':'b'*40}
+          dump('provenance.json',prov); psha=hashlib.sha256((r/'provenance.json').read_bytes()).hexdigest()
+          bits={'artifact_verified_independently':True,'high_memory_resource_lifecycle_preflight_pass':True,'materialization_errors':[],'scientific_transfer_values_read':False,'scientific_response_read':False,'scientific_response_computed':False,'convergence_metric_computed':False,'convergence_classification_created':False,'scientific_authority_created':False,'successor_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          cand={'schema':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_AUTHORITY_V0_1','classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0','materialization_contract_git_blob':'3e53992864ad10f23752df03a653f8073cc18ffa','provenance_receipt_json_sha256':psha,'required_custom_label':'dsir-32769-highmem','candidate_memtotal_kb':33554432,'parser_capacity':1048576,'class_build_authority_git_blob':'b5cd7304c110962dc3baef8d04ef67d5a8042e5f',**bits,**{k:prov[k] for k in ['source_run_id','source_job_id','source_artifact_id','independent_run_id','independent_job_id','independent_artifact_id','source_artifact_zip_sha256','independent_artifact_zip_sha256','source_head_sha','independent_head_sha']}}
+          dump('resource_authority_candidate.json',cand); csha=hashlib.sha256((r/'resource_authority_candidate.json').read_bytes()).hexdigest()
+          rec={'classification':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_READY_PLUS_0_PLUS_0','candidate_only':True,'durable_repository_authority_created':False,'resource_authority_candidate_sha256':csha,'provenance_sha256':psha,'candidate_classification':cand['classification'],'parser_capacity':1048576,'class_build_authority_git_blob':cand['class_build_authority_git_blob'],'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}; dump('candidate_receipt.json',rec)
+          with zipfile.ZipFile(r/'candidate.zip','w') as z:
+            for n in ['provenance.json','resource_authority_candidate.json','candidate_receipt.json']:z.write(r/n,n)
+          zsha=hashlib.sha256((r/'candidate.zip').read_bytes()).hexdigest()
+          dump('run.json',{'id':8001,'name':'layerb-32769-resource-authority-candidate-packaging-v0-1','path':'.github/workflows/layerb-32769-resource-authority-candidate-packaging-v0-1.yml','status':'completed','conclusion':'success','head_sha':'c'*40})
+          dump('arts.json',{'artifacts':[{'id':8101,'name':'layerb-32769-resource-authority-candidate-packaging-v0-1-8001','expired':False,'digest':'sha256:'+zsha}]}); dump('manifest.json',{'files':['provenance.json','resource_authority_candidate.json','candidate_receipt.json']})
+          PY
+          args=(--contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_CONTRACT_V0_2.json --candidate-run p/run.json --candidate-artifacts p/arts.json --candidate-artifact-zip p/candidate.zip --artifact-manifest p/manifest.json --candidate-receipt p/candidate_receipt.json --resource-candidate p/resource_authority_candidate.json --provenance p/provenance.json --downstream-repair-authority docs/dsir4/authority/LAYERB_32769_V03_DOWNSTREAM_CHAIN_REPAIR_AUDIT_V0_1.json)
+          python3 ci/layerb_32769_resource_authority_promotion_reviewer_v0_2.py "${args[@]}" --out p/out/pass.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.load(open('p/resource_authority_candidate.json')); d['parser_capacity']=524288; Path('p/old.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+          set +e; python3 ci/layerb_32769_resource_authority_promotion_reviewer_v0_2.py --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_CONTRACT_V0_2.json --candidate-run p/run.json --candidate-artifacts p/arts.json --candidate-artifact-zip p/candidate.zip --artifact-manifest p/manifest.json --candidate-receipt p/candidate_receipt.json --resource-candidate p/old.json --provenance p/provenance.json --downstream-repair-authority docs/dsir4/authority/LAYERB_32769_V03_DOWNSTREAM_CHAIN_REPAIR_AUDIT_V0_1.json --out p/out/old.json; rc=$?; set -e; test "$rc" -eq 31
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          q=Path('p/out/pass.json'); d={'classification':'LAYERB_32769_PROMOTION_V02_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0','valid_candidate_passed':True,'old_parser_rejected':True,'pass_sha256':hashlib.sha256(q.read_bytes()).hexdigest(),'scientific_execution_authorized':False}; Path('p/out/summary.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: promotion-v02-audit, path: p/out/}
+
+  guard-synthetic:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check first-run, duplicate and prior-run guard semantics
+        shell: bash
+        run: |
+          set -euo pipefail; mkdir -p g
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          w='.github/workflows/layerb-16385-to-32769-canonical-scientific-v0-2.yml'
+          for n,runs in [('first',[{'id':9001,'path':w,'status':'in_progress'}]),('live',[{'id':9001,'path':w,'status':'in_progress'},{'id':9002,'path':w,'status':'queued'}]),('prior',[{'id':9001,'path':w,'status':'in_progress'},{'id':9000,'path':w,'status':'completed','conclusion':'failure'}])]: Path('g/'+n+'.json').write_text(json.dumps({'workflow_runs':runs})+'\n')
+          PY
+          python3 ci/layerb_32769_one_live_guard_v0_2.py --runs-json g/first.json --contract docs/dsir4/contracts/LAYERB_32769_ONE_LIVE_GUARD_CONTRACT_V0_2.json --current-run-id 9001 --out g/pass.json
+          for c in live prior; do set +e; python3 ci/layerb_32769_one_live_guard_v0_2.py --runs-json g/$c.json --contract docs/dsir4/contracts/LAYERB_32769_ONE_LIVE_GUARD_CONTRACT_V0_2.json --current-run-id 9001 --out g/$c.out.json; rc=$?; set -e; test "$rc" -eq 31; done
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d={'classification':'LAYERB_32769_GUARD_V02_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0','first_run_passed':True,'duplicate_live_rejected':True,'prior_completed_rejected':True,'scientific_execution_authorized':False}; Path('g/summary.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: guard-v02-audit, path: g/}
+
+  authorizer-synthetic:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check parser-corrected current-run-only authorization
+        shell: bash
+        run: |
+          set -euo pipefail; mkdir -p u
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          life={'total_solver_constructions':4,'max_live_instances':1,'final_live_instances':0}
+          r={'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0','artifact_verified_independently':True,'high_memory_resource_lifecycle_preflight_pass':True,'candidate_memtotal_kb':33554432,'parser_capacity':1048576,'execution_lifecycle':life,'scientific_response_read':False,'scientific_authority_created':False,'canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599','class_build_authority_git_blob':'b5cd7304c110962dc3baef8d04ef67d5a8042e5f'}
+          g={'classification':'LAYERB_32769_ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS_PLUS_0_PLUS_0','guard_pass':True,'errors':[],'current_run_id':9001,'production_workflow_path':'.github/workflows/layerb-16385-to-32769-canonical-scientific-v0-2.yml','matching_other_live_authoritative_runs':0,'matching_other_all_status_runs':0,'parent_authority_git_blob':'7958e1f44c0224e1828f89b1472aa33226c61886','canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599','class_build_authority_git_blob':'b5cd7304c110962dc3baef8d04ef67d5a8042e5f','parser_capacity':1048576,'scientific_response_read':False,'scientific_execution_authorized':False}
+          Path('u/resource.json').write_text(json.dumps(r,indent=2,sort_keys=True)+'\n'); Path('u/guard.json').write_text(json.dumps(g,indent=2,sort_keys=True)+'\n')
+          for n,k,v in [('oldparser','parser_capacity',524288),('threshold','candidate_memtotal_kb',16373452),('oldbuild','class_build_authority_git_blob','ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d')]: d=dict(r); d[k]=v; Path('u/'+n+'.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+          base=(--contract docs/dsir4/contracts/LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZATION_CONTRACT_V0_2.json --one-live-guard u/guard.json --current-run-id 9001)
+          python3 ci/layerb_16385_to_32769_one_run_authorizer_v0_2.py "${base[@]}" --resource-authority u/resource.json --out u/pass.json
+          for c in oldparser threshold oldbuild; do set +e; python3 ci/layerb_16385_to_32769_one_run_authorizer_v0_2.py "${base[@]}" --resource-authority u/$c.json --out u/$c.out.json; rc=$?; set -e; test "$rc" -eq 31; done
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d={'classification':'LAYERB_32769_AUTHORIZER_V02_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0','valid_current_run_passed':True,'old_parser_rejected':True,'threshold_equality_rejected':True,'old_build_rejected':True,'real_authorization_created':False}; Path('u/summary.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: authorizer-v02-audit, path: u/}
+
+  engine-production-static:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prove frozen scientific core reuse and dormant orchestration
+        shell: bash
+        run: |
+          set -euo pipefail; mkdir -p e
+          python3 - <<'PY'
+          import ast,hashlib,json
+          from pathlib import Path
+          parent=Path('ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py'); wrapper=Path('ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_2.py'); wf=Path('.github/workflows/layerb-16385-to-32769-canonical-scientific-v0-2.yml')
+          def blob(p): b=p.read_bytes(); return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          assert blob(parent)=='5ae2068d65dd45e0813c75fb795e55aa1bda1d5e'; assert blob(wrapper)=='bee4fe7f9d78024410629627694cc69ea1d3cef7'; assert blob(wf)=='049f15ba4bb22fd8d9725263d88d54b3f2e7994a'
+          tree=ast.parse(wrapper.read_text()); funcs={n.name for n in ast.walk(tree) if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef))}; assert 'execute' not in funcs and funcs=={'load_parent','validate_build_v02','main'}
+          s=wrapper.read_text(); assert "with_name('layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py')" in s and 'm.validate_build=validate_build_v02' in s and 'return m.main()' in s
+          w=wf.read_text(); assert 'workflow_dispatch:' in w and 'push:' not in w and 'schedule:' not in w and 'runs-on: [dsir-32769-highmem]' in w
+          assert 'parser_new_argument_capacity\':1048576' in w and '68a533463bc63f75dc81e09bda060c2f6758daaeaec632537ce116a003706abf' in w
+          assert 'ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_2.py' in w and 'ci/layerb_16385_to_32769_terminal_consumer_v0_2.py' in w
+          out={'classification':'LAYERB_32769_ENGINE_PRODUCTION_V02_STATIC_AUDIT_PASS_PLUS_0_PLUS_0','parent_scientific_engine_git_blob':blob(parent),'wrapper_git_blob':blob(wrapper),'production_workflow_git_blob':blob(wf),'scientific_execute_redefined':False,'frozen_parent_main_reused':True,'parser_capacity':1048576,'dispatch_only':True,'dedicated_highmem_only':True,'scientific_execution_authorized_now':False}; Path('e/summary.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: engine-production-v02-audit, path: e/}
+
+  terminal-contract-static:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prove strict classifier unchanged across parser migration
+        shell: bash
+        run: |
+          set -euo pipefail; mkdir -p t
+          python3 - <<'PY'
+          import ast,json,hashlib
+          from pathlib import Path
+          a=json.load(open('docs/dsir4/contracts/LAYERB_16385_TO_32769_TERMINAL_RESULT_CONTRACT_V0_1.json')); b=json.load(open('docs/dsir4/contracts/LAYERB_16385_TO_32769_TERMINAL_RESULT_CONTRACT_V0_2.json'))
+          assert a['strict_classifier']==b['strict_classifier']; assert a['frozen_constants']==b['frozen_constants']; assert a['canonical_lattices']==b['canonical_lattices']; assert a['request_plan_authority']==b['request_plan_authority']; assert a['required_execution_lifecycle']==b['required_execution_lifecycle']
+          assert b['class_build_authority']['parser_capacity']==1048576 and b['class_build_authority']['git_blob']=='b5cd7304c110962dc3baef8d04ef67d5a8042e5f'
+          s=Path('ci/layerb_16385_to_32769_terminal_consumer_v0_2.py').read_text(); tree=ast.parse(s); funcs={n.name for n in ast.walk(tree) if isinstance(n,ast.FunctionDef)}; assert funcs=={'load_old','main'} and "with_name('layerb_16385_to_32769_terminal_consumer_v0_1.py')" in s and 'old.validate(' in s
+          out={'classification':'LAYERB_32769_TERMINAL_V02_STATIC_EQUIVALENCE_PASS_PLUS_0_PLUS_0','strict_classifier_byte_equal_as_json_object':True,'frozen_constants_equal':True,'canonical_lattices_equal':True,'request_plan_equal':True,'lifecycle_equal':True,'v01_validator_reused':True,'parser_capacity':1048576,'scientific_execution_authorized':False}; Path('t/summary.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: terminal-v02-audit, path: t/}
+
+  promotion-workflow-static:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify manual read-only promotion workflow
+        shell: bash
+        run: |
+          set -euo pipefail; mkdir -p pw
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('.github/workflows/layerb-32769-resource-authority-promotion-review-v0-2.yml'); b=p.read_bytes(); s=b.decode(); blob=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          assert 'workflow_dispatch:' in s and 'push:' not in s and 'schedule:' not in s; assert 'contents: read' in s and 'contents: write' not in s and 'git push' not in s
+          assert "CONTRACT_BLOB: '331cf499627a3673ce88c483e7afcfd4f731d105'" in s and "REVIEWER_BLOB: '36e0549b86436bcafe7c98f10c0a404b97eeebdc'" in s
+          out={'classification':'LAYERB_32769_PROMOTION_WORKFLOW_V02_STATIC_AUDIT_PASS_PLUS_0_PLUS_0','workflow_git_blob':blob,'manual_dispatch_only':True,'repository_write_forbidden':True,'scientific_dispatch_absent':True}; Path('pw/summary.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: promotion-workflow-v02-audit, path: pw/}
+
+  independent-verifier:
+    needs: [promotion-synthetic, guard-synthetic, authorizer-synthetic, engine-production-static, terminal-contract-static, promotion-workflow-static]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with: {name: promotion-v02-audit, path: a}
+      - uses: actions/download-artifact@v4
+        with: {name: guard-v02-audit, path: b}
+      - uses: actions/download-artifact@v4
+        with: {name: authorizer-v02-audit, path: c}
+      - uses: actions/download-artifact@v4
+        with: {name: engine-production-v02-audit, path: d}
+      - uses: actions/download-artifact@v4
+        with: {name: terminal-v02-audit, path: e}
+      - uses: actions/download-artifact@v4
+        with: {name: promotion-workflow-v02-audit, path: f}
+      - name: Verify complete parser-corrected control plane
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          checks=[('a/summary.json','LAYERB_32769_PROMOTION_V02_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'),('b/summary.json','LAYERB_32769_GUARD_V02_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'),('c/summary.json','LAYERB_32769_AUTHORIZER_V02_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'),('d/summary.json','LAYERB_32769_ENGINE_PRODUCTION_V02_STATIC_AUDIT_PASS_PLUS_0_PLUS_0'),('e/summary.json','LAYERB_32769_TERMINAL_V02_STATIC_EQUIVALENCE_PASS_PLUS_0_PLUS_0'),('f/summary.json','LAYERB_32769_PROMOTION_WORKFLOW_V02_STATIC_AUDIT_PASS_PLUS_0_PLUS_0')]
+          hs={}
+          for p,c in checks: q=Path(p); d=json.loads(q.read_text()); assert d['classification']==c,(p,d); hs[p]=hashlib.sha256(q.read_bytes()).hexdigest()
+          out={'schema':'LAYERB_32769_PARSER_CORRECTED_CONTROL_PLANE_AUDIT_V0_1','classification':'LAYERB_32769_PARSER_CORRECTED_CONTROL_PLANE_AUDIT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','six_independent_prerequisites_verified':True,'receipt_sha256':hs,'actual_high_memory_resource_pass':False,'actual_one_live_guard_pass':False,'actual_one_run_authorization_exists':False,'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}; out['token']=out['classification']; Path('final.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: parser-corrected-control-plane-final, path: final.json}
