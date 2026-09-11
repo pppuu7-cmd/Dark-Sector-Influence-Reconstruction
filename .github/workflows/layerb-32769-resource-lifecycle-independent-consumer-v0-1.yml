@@ -16,8 +16,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  RESOURCE_CONSUMER_BLOB: 'e533fb0e5f6ee1cdb28dc06774e432afe7717cd5'
-  SOURCE_WORKFLOW_BLOB: '8ec0027d6fb45f3f12aa5f410de62093a7144924'
+  RESOURCE_CONSUMER_BLOB: 'e08f15394ba3b16222b62d061a621e24f3a857ec'
+  SOURCE_WORKFLOW_BLOB: '3297a556299daf75e4c7ff15f8e56586e45ebdf0'
   SOURCE_PILOT_BLOB: '11c7d9a1f95d7c1c394dd520f1c4340a4ce397b4'
   ISOLATION_CONTRACT_BLOB: 'd9d910d89889f6d3a27461a73c3dd72c2a9d2096'
   SOURCE_ARTIFACT_NAME: 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2'
@@ -59,7 +59,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git hash-object ci/layerb_32769_resource_lifecycle_independent_consumer_v0_1.py)" = "$RESOURCE_CONSUMER_BLOB"
+          test "$(git hash-object ci/layerb_32769_resource_lifecycle_independent_consumer_v0_2.py)" = "$RESOURCE_CONSUMER_BLOB"
           test "$(git hash-object .github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2.yml)" = "$SOURCE_WORKFLOW_BLOB"
           test "$(git hash-object ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_1.py)" = "$SOURCE_PILOT_BLOB"
           test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_HIGH_MEMORY_RUNNER_ISOLATION_CONTRACT_V0_1.json)" = "$ISOLATION_CONTRACT_BLOB"
@@ -75,13 +75,13 @@ jobs:
           repository: ${{ github.repository }}
           run-id: ${{ github.event.workflow_run.id }}
 
-      - name: Classify triggering artifact with frozen independent consumer
+      - name: Classify triggering artifact with registration-aware independent consumer
         shell: bash
         run: |
           set -u
           mkdir -p evidence
           set +e
-          python3 ci/layerb_32769_resource_lifecycle_independent_consumer_v0_1.py \
+          python3 ci/layerb_32769_resource_lifecycle_independent_consumer_v0_2.py \
             --artifact-dir source \
             --out evidence/independent_validation.json
           rc=$?
@@ -98,11 +98,12 @@ jobs:
           assert d['classification'] in {PASS,FAIL},d
           if d['classification']==PASS:
               assert rc==0 and d['valid'] is True and d['errors']==[],(rc,d)
+              assert d['runner_registration_evidence_valid'] is True,d
           else:
               assert rc==31 and d['valid'] is False and isinstance(d['errors'],list) and d['errors'],(rc,d)
           source=json.load(open('evidence/source_workflow_run.json'))
           summary={
-            'schema':'LAYERB_32769_RESOURCE_LIFECYCLE_EVENT_CHAIN_CONSUMER_RECEIPT_V0_1',
+            'schema':'LAYERB_32769_RESOURCE_LIFECYCLE_EVENT_CHAIN_CONSUMER_RECEIPT_V0_2',
             'classification':d['classification'],
             'effect':'+0/+0',
             'source_run_id':source['source_run_id'],
@@ -111,6 +112,9 @@ jobs:
             'independent_validation_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
             'independent_valid':d['valid'],
             'independent_errors':d['errors'],
+            'runner_registration_evidence_valid':d.get('runner_registration_evidence_valid',False),
+            'runner_agent_id':d.get('runner_agent_id'),
+            'runner_name':d.get('runner_name'),
             'consumer_execution_completed':True,
             'scientific_response_read':False,
             'scientific_execution_authorized':False,
