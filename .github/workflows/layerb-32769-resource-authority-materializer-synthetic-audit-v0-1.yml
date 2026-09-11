@@ -1,0 +1,226 @@
+name: layerb-32769-resource-authority-materializer-synthetic-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-resource-authority-materializer-synthetic-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-materializer-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen materializer identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_1.json)" = '933a2ed268cb2a2724252a2ef9799d0946e281ce'
+          test "$(git hash-object ci/layerb_32769_resource_authority_materializer_v0_1.py)" = '8000bd563eab5744ad8f7e2af36ca19721566922'
+
+      - name: Generate emulated real-shape and explicitly synthetic fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/fixtures artifacts/out
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path('artifacts/fixtures')
+          roles=['reference','alpha_minus','beta_plus','beta_minus']
+          life={'total_solver_constructions':4,'max_live_instances':1,'final_live_instances':0,'cross_process_scientific_operand_combination':False}
+          source={
+            'schema':'EMULATED_REAL_SHAPE_RESOURCE_RESULT_V0_1',
+            'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'canonical_32769_text_sha256':'7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2',
+            'canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599',
+            'capacity':32769,'parser_capacity':524288,
+            'runner_isolation_contract_git_blob':'d9d910d89889f6d3a27461a73c3dd72c2a9d2096',
+            'required_custom_label':'dsir-32769-highmem',
+            'candidate_memtotal_kb':33554432,
+            'candidate_strictly_higher_memory_than_exhausted_hosted':True,
+            'execution_lifecycle':life,
+            'role_order':roles,
+            'role_receipts':[
+              {'role':r,'compute_completed':True,'ru_maxrss_kb_before':100000+i*1000,'ru_maxrss_kb_after_compute':12000000+i*100000,'scientific_transfer_values_read':False,'scientific_response_computed':False,'scientific_response_serialized':False}
+              for i,r in enumerate(roles)
+            ],
+            'scientific_transfer_values_read':False,'scientific_response_read':False,'scientific_response_computed':False,
+            'convergence_metric_computed':False,'convergence_classification_created':False,'scientific_authority_created':False,
+            'successor_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+          }
+          sp=root/'source.json'; sp.write_text(json.dumps(source,indent=2,sort_keys=True)+'\n')
+          source_sha=hashlib.sha256(sp.read_bytes()).hexdigest()
+          independent={
+            'schema':'EMULATED_REAL_SHAPE_INDEPENDENT_VALIDATION_V0_1',
+            'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0',
+            'valid':True,'errors':[],
+            'source_result_sha256':source_sha,
+            'candidate_memtotal_kb':33554432,
+            'candidate_strictly_higher_memory_than_exhausted_hosted':True,
+            'required_custom_label':'dsir-32769-highmem',
+            'execution_lifecycle':life,
+            'peak_role_ru_maxrss_kb':12300000,
+            'telemetry_summary':{'sample_count':10,'memtotal_min_kb':33554432,'memtotal_max_kb':33554432,'memavailable_min_kb':18000000,'swapfree_min_kb':4000000},
+            'canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599',
+            'class_build_authority_git_blob':'ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d',
+            'runner_isolation_contract_git_blob':'d9d910d89889f6d3a27461a73c3dd72c2a9d2096',
+            'scientific_response_read':False,'scientific_authority_created':False,'successor_execution_authorized':False,
+          }
+          ip=root/'independent.json'; ip.write_text(json.dumps(independent,indent=2,sort_keys=True)+'\n')
+          independent_sha=hashlib.sha256(ip.read_bytes()).hexdigest()
+          provenance={
+            'schema':'EMULATED_REAL_SHAPE_RESOURCE_PROVENANCE_V0_1',
+            'source_run_id':40001,'source_job_id':50001,'source_head_sha':'a'*40,'source_artifact_id':60001,'source_artifact_zip_sha256':'b'*64,
+            'independent_run_id':40002,'independent_job_id':50002,'independent_head_sha':'c'*40,'independent_artifact_id':60002,'independent_artifact_zip_sha256':'d'*64,
+            'source_result_sha256':source_sha,'independent_validation_sha256':independent_sha,
+          }
+          pp=root/'provenance.json'; pp.write_text(json.dumps(provenance,indent=2,sort_keys=True)+'\n')
+          # Explicit synthetic marks must be rejected by the hardened materializer.
+          for stem,obj in [('source_synthetic',source),('independent_synthetic',independent),('provenance_synthetic',provenance)]:
+              x=json.loads(json.dumps(obj)); x['synthetic_fixture']=True
+              (root/f'{stem}.json').write_text(json.dumps(x,indent=2,sort_keys=True)+'\n')
+          bad_bind=json.loads(json.dumps(independent)); bad_bind['source_result_sha256']='0'*64
+          (root/'independent_bad_binding.json').write_text(json.dumps(bad_bind,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Require PASS for exact non-synthetic-shaped binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/layerb_32769_resource_authority_materializer_v0_1.py \
+            --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_1.json \
+            --source-result artifacts/fixtures/source.json \
+            --independent-validation artifacts/fixtures/independent.json \
+            --provenance artifacts/fixtures/provenance.json \
+            --out artifacts/out/pass.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('artifacts/out/pass.json'))
+          assert d['classification']=='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0'
+          assert d['artifact_verified_independently'] is True
+          assert d['high_memory_resource_lifecycle_preflight_pass'] is True
+          assert d['materialization_errors']==[]
+          assert d['candidate_memtotal_kb']==33554432
+          assert d['execution_lifecycle']['max_live_instances']==1 and d['execution_lifecycle']['final_live_instances']==0
+          assert d['scientific_response_read'] is False and d['successor_execution_authorized'] is False
+          PY
+
+      - name: Require explicit synthetic and binding defects to fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_fail () {
+            name="$1"; source="$2"; indep="$3"; prov="$4"
+            set +e
+            python3 ci/layerb_32769_resource_authority_materializer_v0_1.py \
+              --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_1.json \
+              --source-result "$source" --independent-validation "$indep" --provenance "$prov" \
+              --out "artifacts/out/${name}.json"
+            rc=$?
+            set -e
+            test "$rc" -eq 31
+          }
+          run_fail synthetic_source artifacts/fixtures/source_synthetic.json artifacts/fixtures/independent.json artifacts/fixtures/provenance.json
+          run_fail synthetic_independent artifacts/fixtures/source.json artifacts/fixtures/independent_synthetic.json artifacts/fixtures/provenance.json
+          run_fail synthetic_provenance artifacts/fixtures/source.json artifacts/fixtures/independent.json artifacts/fixtures/provenance_synthetic.json
+          run_fail bad_binding artifacts/fixtures/source.json artifacts/fixtures/independent_bad_binding.json artifacts/fixtures/provenance.json
+          python3 - <<'PY'
+          import json
+          expected={
+            'synthetic_source':'source_marked_synthetic',
+            'synthetic_independent':'independent_marked_synthetic',
+            'synthetic_provenance':'provenance_marked_synthetic',
+            'bad_binding':'independent_source_binding',
+          }
+          for n,e in expected.items():
+              d=json.load(open(f'artifacts/out/{n}.json'))
+              assert d['classification']=='LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_NOT_VALID_PLUS_0_PLUS_0'
+              assert d['artifact_verified_independently'] is False
+              assert d['high_memory_resource_lifecycle_preflight_pass'] is False
+              assert e in d['materialization_errors'],(n,d['materialization_errors'])
+          PY
+
+      - name: Emit materializer synthetic audit summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          out={
+            'schema':'LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZER_SYNTHETIC_AUDIT_V0_1',
+            'classification':'LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'synthetic_audit_only':True,
+            'materialization_contract_git_blob':'933a2ed268cb2a2724252a2ef9799d0946e281ce',
+            'materializer_git_blob':'8000bd563eab5744ad8f7e2af36ca19721566922',
+            'exact_binding_shape_accepted':True,
+            'synthetic_source_rejected':True,
+            'synthetic_independent_rejected':True,
+            'synthetic_provenance_rejected':True,
+            'source_sha_mismatch_rejected':True,
+            'pass_receipt_sha256':sha('artifacts/out/pass.json'),
+            'actual_resource_authority_exists':False,
+            'high_memory_resource_lifecycle_preflight_pass':False,
+            'scientific_execution_authorized':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+          }
+          out['token']=out['classification']
+          Path('artifacts/summary.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-resource-authority-materializer-synthetic-audit-v0-1
+          path: |
+            artifacts/summary.json
+            artifacts/out/*.json
+          if-no-files-found: error
+          retention-days: 90
+
+  independent-verifier:
+    needs: synthetic-materializer-audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-resource-authority-materializer-synthetic-audit-v0-1
+          path: evidence
+      - name: Independently verify materializer fail-closed semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_1.json)" = '933a2ed268cb2a2724252a2ef9799d0946e281ce'
+          test "$(git hash-object ci/layerb_32769_resource_authority_materializer_v0_1.py)" = '8000bd563eab5744ad8f7e2af36ca19721566922'
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          s=json.load(open('evidence/summary.json'))
+          assert s['classification']=='LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert s['synthetic_audit_only'] is True
+          assert s['exact_binding_shape_accepted'] is True
+          assert s['synthetic_source_rejected'] is True
+          assert s['synthetic_independent_rejected'] is True
+          assert s['synthetic_provenance_rejected'] is True
+          assert s['source_sha_mismatch_rejected'] is True
+          assert s['actual_resource_authority_exists'] is False
+          assert s['high_memory_resource_lifecycle_preflight_pass'] is False
+          assert s['pass_receipt_sha256']==sha('evidence/out/pass.json')
+          p=json.load(open('evidence/out/pass.json'))
+          assert p['classification']=='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0'
+          assert p['artifact_verified_independently'] is True and p['materialization_errors']==[]
+          print('LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZER_INDEPENDENT_SYNTHETIC_VALIDATION_PASS_PLUS_0_PLUS_0')
+          PY
