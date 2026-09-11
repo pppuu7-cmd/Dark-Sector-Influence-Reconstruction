@@ -25,7 +25,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git hash-object "$TOP64_AUTH")" = '5e16e8a793a81bf1692df92d8e24459e03fd4838'
-          test "$(git log -1 --format=%H -- "$POP_AUTH")" = '917d8730e4727826f6a676973298c31ef20e60cd'
+          test "$(git hash-object "$POP_AUTH")" = 'fd6e43459f6e322631a1445ede0c5b0ec8b17380'
       - uses: actions/download-artifact@v4
         with:
           name: layerb-post-16385-top64-role-cancellation-census-v0-1
@@ -62,7 +62,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git hash-object "$TOP64_AUTH")" = '5e16e8a793a81bf1692df92d8e24459e03fd4838'
-          test "$(git log -1 --format=%H -- "$POP_AUTH")" = '917d8730e4727826f6a676973298c31ef20e60cd'
+          test "$(git hash-object "$POP_AUTH")" = 'fd6e43459f6e322631a1445ede0c5b0ec8b17380'
       - uses: actions/download-artifact@v4
         with:
           name: layerb-post-16385-top64-role-cancellation-census-v0-1
@@ -99,7 +99,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git hash-object "$TOP64_AUTH")" = '5e16e8a793a81bf1692df92d8e24459e03fd4838'
-          test "$(git log -1 --format=%H -- "$POP_AUTH")" = '917d8730e4727826f6a676973298c31ef20e60cd'
+          test "$(git hash-object "$POP_AUTH")" = 'fd6e43459f6e322631a1445ede0c5b0ec8b17380'
       - uses: actions/download-artifact@v4
         with:
           name: layerb-post-16385-top64-role-cancellation-census-v0-1
