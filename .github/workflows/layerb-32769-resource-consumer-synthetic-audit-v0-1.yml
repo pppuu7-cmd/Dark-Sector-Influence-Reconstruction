@@ -1,0 +1,237 @@
+name: layerb-32769-resource-consumer-synthetic-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-resource-consumer-synthetic-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  resource-consumer-synthetic-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enforce corrected consumer and frozen source identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_32769_resource_lifecycle_independent_consumer_v0_1.py)" = 'e533fb0e5f6ee1cdb28dc06774e432afe7717cd5'
+          test "$(git hash-object ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_1.py)" = '11c7d9a1f95d7c1c394dd520f1c4340a4ce397b4'
+          test "$(git hash-object .github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2.yml)" = '8ec0027d6fb45f3f12aa5f410de62093a7144924'
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_HIGH_MEMORY_RUNNER_ISOLATION_CONTRACT_V0_1.json)" = 'd9d910d89889f6d3a27461a73c3dd72c2a9d2096'
+
+      - name: Generate realistic V0.2 synthetic resource artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/base artifacts/out
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('artifacts/base')
+          root.mkdir(parents=True,exist_ok=True)
+          roles=['reference','alpha_minus','beta_plus','beta_minus']
+          result={
+            'schema':'LAYERB_32769_RESPONSE_BLIND_RESOURCE_LIFECYCLE_PILOT_RESULT_V0_1',
+            'classification':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'canonical_authority_classification':'CANONICAL_32769_STATIC_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0',
+            'build_authority_classification':'LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_PASS_PLUS_0_PLUS_0',
+            'canonical_32769_text_sha256':'7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2',
+            'canonical_32769_node_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599',
+            'canonical_32769_requested_node_count':32769,
+            'capacity':32769,
+            'parser_capacity':524288,
+            'role_order':roles,
+            'role_receipts':[
+              {'role':r,'compute_completed':True,'ru_maxrss_kb_before':120000+i*1000,'ru_maxrss_kb_after_compute':12000000+i*100000,'scientific_transfer_values_read':False,'scientific_response_computed':False,'scientific_response_serialized':False}
+              for i,r in enumerate(roles)
+            ],
+            'execution_lifecycle':{'total_solver_constructions':4,'max_live_instances':1,'final_live_instances':0,'cross_process_scientific_operand_combination':False},
+            'scientific_transfer_values_read':False,
+            'scientific_response_read':False,
+            'scientific_response_computed':False,
+            'convergence_metric_computed':False,
+            'convergence_classification_created':False,
+            'scientific_authority_created':False,
+            'successor_execution_authorized':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+            'candidate_memtotal_kb':33554432,
+            'exhausted_hosted_memtotal_kb':16372440,
+            'candidate_strictly_higher_memory_than_exhausted_hosted':True,
+            'runner_isolation_contract_git_blob':'d9d910d89889f6d3a27461a73c3dd72c2a9d2096',
+            'required_custom_label':'dsir-32769-highmem',
+            'token':'LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0'
+          }
+          (root/'result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          patch={
+            'schema':'LAYERB_32769_ISOLATED_SELFHOSTED_CLASS_CAPACITY_PATCH_V0_2',
+            'source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c',
+            'old_capacity':30,'new_capacity':32769,'replacement_count':1,
+            'pre_sha256':'c83749338e435d85caf8f0cfb713aa9a77782a91072de93633187d9dc53a0876',
+            'post_sha256':'e6221887e19c0a576f77bbfcb2a030ff9cf8d84c62a2193ce52b8e3b541a8f0a',
+            'parser_old_argument_capacity':1024,'parser_new_argument_capacity':524288,'parser_replacement_count':1,
+            'parser_pre_sha256':'2c17690a5549e12c8fac485281ca214a20c376e1e3beba714af0e1b84cdbb0eb',
+            'parser_post_sha256':'e35d53f58e0c00fa66c12d92903eb46a0862beca25167a140f0ad5ae236c25d2'
+          }
+          (root/'capacity_patch.json').write_text(json.dumps(patch,indent=2,sort_keys=True)+'\n')
+          (root/'candidate_memtotal_kb.txt').write_text('33554432\n')
+          (root/'host_envelope_before.txt').write_text(
+            'runner_name=synthetic-highmem\nrunner_os=Linux\nrunner_arch=X64\nrequired_custom_label=dsir-32769-highmem\n'
+            'uname=Linux synthetic\ncpu_count=16\ncandidate_memtotal_kb=33554432\nexhausted_hosted_memtotal_kb=16372440\n'
+            'MemTotal:       33554432 kB\nMemAvailable:   30000000 kB\nSwapTotal:       4194304 kB\nSwapFree:        4194304 kB\n')
+          (root/'host_envelope_after.txt').write_text('MemTotal:       33554432 kB\nMemAvailable:   29500000 kB\nSwapTotal:       4194304 kB\nSwapFree:        4194304 kB\n')
+          stale={'id':103112190909,'status':'queued','conclusion':None,'name':'resource-pilot'}
+          (root/'stale_job_snapshot.json').write_text(json.dumps(stale,indent=2,sort_keys=True)+'\n')
+          # Exact awkward V0.2 telemetry spelling is intentional.
+          (root/'telemetry.log').write_text(
+            'TELEMETRY ts=2026-09-11T18:00:00Z MemTotal:33554432=kB MemAvailable:30000000=kB SwapTotal:4194304=kB SwapFree:4194304=kB \n'
+            '  100 1 12000000 14000000 100.0 35.8 00:01 python\n'
+            'TELEMETRY ts=2026-09-11T18:00:10Z MemTotal:33554432=kB MemAvailable:25000000=kB SwapTotal:4194304=kB SwapFree:4194304=kB \n'
+          )
+          PY
+
+      - name: Require PASS on exact V0.2 receipt spelling and frozen role order
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/layerb_32769_resource_lifecycle_independent_consumer_v0_1.py \
+            --artifact-dir artifacts/base \
+            --out artifacts/out/pass.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('artifacts/out/pass.json'))
+          assert d['classification']=='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0'
+          assert d['valid'] is True and d['errors']==[]
+          assert d['candidate_memtotal_kb']==33554432
+          assert d['execution_lifecycle']=={'total_solver_constructions':4,'max_live_instances':1,'final_live_instances':0,'cross_process_scientific_operand_combination':False}
+          assert d['telemetry_summary']['sample_count']==2
+          assert d['telemetry_summary']['memtotal_min_kb']==33554432
+          assert d['telemetry_summary']['memavailable_min_kb']==25000000
+          assert d['peak_role_ru_maxrss_kb']==12300000
+          PY
+
+      - name: Require fail-closed rejection of receipt defects
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -a artifacts/base artifacts/bad_role
+          cp -a artifacts/base artifacts/bad_stale
+          cp -a artifacts/base artifacts/bad_telemetry
+          cp -a artifacts/base artifacts/bad_memory
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('artifacts/bad_role/result.json'); d=json.loads(p.read_text()); d['role_receipts'][1],d['role_receipts'][2]=d['role_receipts'][2],d['role_receipts'][1]; p.write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          p=Path('artifacts/bad_stale/stale_job_snapshot.json'); d=json.loads(p.read_text()); d['status']='in_progress'; p.write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          Path('artifacts/bad_telemetry/telemetry.log').write_text('no telemetry samples here\n')
+          p=Path('artifacts/bad_memory/result.json'); d=json.loads(p.read_text()); d['candidate_memtotal_kb']=16000000; d['candidate_strictly_higher_memory_than_exhausted_hosted']=False; p.write_text(json.dumps(d,indent=2,sort_keys=True)+'\n'); Path('artifacts/bad_memory/candidate_memtotal_kb.txt').write_text('16000000\n')
+          PY
+          for case in bad_role bad_stale bad_telemetry bad_memory; do
+            set +e
+            python3 ci/layerb_32769_resource_lifecycle_independent_consumer_v0_1.py \
+              --artifact-dir "artifacts/$case" \
+              --out "artifacts/out/${case}.json"
+            rc=$?
+            set -e
+            test "$rc" -eq 31
+          done
+          python3 - <<'PY'
+          import json
+          assert 'role_order' in json.load(open('artifacts/out/bad_role.json'))['errors']
+          assert 'stale_job_ownership' in json.load(open('artifacts/out/bad_stale.json'))['errors']
+          assert 'telemetry_missing' in json.load(open('artifacts/out/bad_telemetry.json'))['errors']
+          m=json.load(open('artifacts/out/bad_memory.json'))['errors']
+          assert 'candidate_memory' in m and 'higher_memory_guard' in m
+          for name in ('bad_role','bad_stale','bad_telemetry','bad_memory'):
+              d=json.load(open(f'artifacts/out/{name}.json'))
+              assert d['classification']=='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_FAIL_PLUS_0_PLUS_0'
+              assert d['valid'] is False
+          PY
+
+      - name: Emit synthetic consumer audit summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          p=json.load(open('artifacts/out/pass.json'))
+          out={
+            'schema':'LAYERB_32769_RESOURCE_CONSUMER_SYNTHETIC_AUDIT_V0_1',
+            'classification':'LAYERB_32769_RESOURCE_CONSUMER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'synthetic_only':True,
+            'resource_consumer_git_blob':'e533fb0e5f6ee1cdb28dc06774e432afe7717cd5',
+            'source_resource_pilot_git_blob':'11c7d9a1f95d7c1c394dd520f1c4340a4ce397b4',
+            'isolated_resource_workflow_git_blob':'8ec0027d6fb45f3f12aa5f410de62093a7144924',
+            'frozen_v0_2_telemetry_spelling_accepted':True,
+            'frozen_role_order_accepted':['reference','alpha_minus','beta_plus','beta_minus'],
+            'wrong_role_order_rejected':True,
+            'stale_in_progress_rejected':True,
+            'missing_telemetry_rejected':True,
+            'insufficient_memory_rejected':True,
+            'pass_receipt_sha256':sha('artifacts/out/pass.json'),
+            'scientific_response_read':False,
+            'scientific_execution_authorized':False,
+            'high_memory_resource_lifecycle_preflight_pass':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+          }
+          out['token']=out['classification']
+          Path('artifacts/summary.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-resource-consumer-synthetic-audit-v0-1
+          path: |
+            artifacts/summary.json
+            artifacts/out/*.json
+          if-no-files-found: error
+          retention-days: 90
+
+  independent-verifier:
+    needs: resource-consumer-synthetic-audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-resource-consumer-synthetic-audit-v0-1
+          path: evidence
+      - name: Independently verify corrected consumer behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_32769_resource_lifecycle_independent_consumer_v0_1.py)" = 'e533fb0e5f6ee1cdb28dc06774e432afe7717cd5'
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          s=json.load(open('evidence/summary.json'))
+          assert s['classification']=='LAYERB_32769_RESOURCE_CONSUMER_SYNTHETIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert s['synthetic_only'] is True
+          assert s['frozen_v0_2_telemetry_spelling_accepted'] is True
+          assert s['frozen_role_order_accepted']==['reference','alpha_minus','beta_plus','beta_minus']
+          assert s['wrong_role_order_rejected'] is True
+          assert s['stale_in_progress_rejected'] is True
+          assert s['missing_telemetry_rejected'] is True
+          assert s['insufficient_memory_rejected'] is True
+          assert s['high_memory_resource_lifecycle_preflight_pass'] is False
+          assert s['pass_receipt_sha256']==sha('evidence/out/pass.json')
+          p=json.load(open('evidence/out/pass.json'))
+          assert p['classification']=='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0'
+          assert p['valid'] is True and p['errors']==[]
+          print('LAYERB_32769_RESOURCE_CONSUMER_INDEPENDENT_SYNTHETIC_VALIDATION_PASS_PLUS_0_PLUS_0')
+          PY
