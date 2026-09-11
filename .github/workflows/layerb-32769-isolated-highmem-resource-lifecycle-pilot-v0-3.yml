@@ -1,0 +1,227 @@
+name: layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  HOSTED_EXHAUSTED_MEMTOTAL_KB: '16373452'
+  PREFERRED_RAM_KB: '33554432'
+  REQUIRED_CUSTOM_LABEL: 'dsir-32769-highmem'
+  ISOLATION_CONTRACT_BLOB: 'd9d910d89889f6d3a27461a73c3dd72c2a9d2096'
+  CONFIGURATOR_SHA256: '2cd02d1a7ac58ea3945a435272f03ea1abe2d7e3410191b5a17a9c62e0a297ce'
+  PILOT_BLOB: '100f871822e69cfde7730aba4f6a9ff59c6ad9aa'
+  JO_BLOB: 'c975a964805919cd61e3c028305ad3945773377f'
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+  CANON_AUTH_BLOB: 'dddf7b0f8596506b9e792186d8ebaf14ff789f4c'
+  CANON_FILE_BLOB: '7b67706156d7d2016ecba0628210fb08f6f05616'
+  BUILD_AUTH_V02_BLOB: 'b5cd7304c110962dc3baef8d04ef67d5a8042e5f'
+  ROOT_CAUSE_AUTH_PATH: 'docs/dsir4/authority/LAYERB_32769_PARSER_UNDERCAPACITY_CRASH_ROOT_CAUSE_V0_1.json'
+  HOSTED_MEMORY_AUTH_PATH: 'docs/dsir4/authority/LAYERB_32769_PARSER_1MIB_STANDARD_HOSTED_MEMORY_EXHAUSTION_V0_1.json'
+
+jobs:
+  resource-lifecycle-pilot:
+    runs-on: [dsir-32769-highmem]
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enforce parser-corrected response-blind identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts external
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_HIGH_MEMORY_RUNNER_ISOLATION_CONTRACT_V0_1.json)" = "$ISOLATION_CONTRACT_BLOB"
+          test "$(git hash-object ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_2.py)" = "$PILOT_BLOB"
+          test "$(git hash-object ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py)" = "$JO_BLOB"
+          test "$(git hash-object ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py)" = "$JJ_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json)" = "$CANON_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt)" = "$CANON_FILE_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json)" = "$BUILD_AUTH_V02_BLOB"
+          test -f "$ROOT_CAUSE_AUTH_PATH"
+          test -f "$HOSTED_MEMORY_AUTH_PATH"
+          test "$(sha256sum scripts/dsir4/configure_layerb_32769_highmem_runner_v0_1.sh | awk '{print $1}')" = "$CONFIGURATOR_SHA256"
+          python3 - <<'PY'
+          import json,os
+          iso=json.load(open('docs/dsir4/contracts/LAYERB_32769_HIGH_MEMORY_RUNNER_ISOLATION_CONTRACT_V0_1.json'))
+          build=json.load(open('docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json'))
+          root=json.load(open(os.environ['ROOT_CAUSE_AUTH_PATH']))
+          mem=json.load(open(os.environ['HOSTED_MEMORY_AUTH_PATH']))
+          assert iso['required_custom_label']=='dsir-32769-highmem'
+          assert iso['runner_configuration_requirement']['no_default_labels'] is True
+          assert build['parser_new_argument_capacity']==1048576 and build['artifact_verified_independently'] is True
+          assert root['interpretation']['old_parser_capacity_must_not_be_used_for_future_32769_resource_or_scientific_execution'] is True
+          assert mem['interpretation']['high_memory_runner_required'] is True
+          PY
+
+      - name: Bind live job to frozen dedicated-runner registration receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${RUNNER_TEMP:-}"
+          RUNNER_ROOT="$(cd "$(dirname "$(dirname "$RUNNER_TEMP")")" && pwd -P)"
+          RECEIPT="$RUNNER_ROOT/.dsir32769-registration-receipt.json"
+          SETTINGS="$RUNNER_ROOT/.runner"
+          test -f "$RECEIPT"; test -f "$SETTINGS"
+          cp "$RECEIPT" artifacts/runner_registration_receipt.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs?per_page=100" > artifacts/current_run_jobs.json
+          python3 - "$SETTINGS" <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          receipt=json.load(open('artifacts/runner_registration_receipt.json'))
+          settings=json.loads(Path(sys.argv[1]).read_text())
+          agent_name=settings.get('agentName') or settings.get('AgentName')
+          agent_id=settings.get('agentId') or settings.get('AgentId')
+          assert receipt['configuration_script_sha256']==os.environ['CONFIGURATOR_SHA256']
+          assert receipt['runner_isolation_contract_git_blob']==os.environ['ISOLATION_CONTRACT_BLOB']
+          assert receipt['configured_labels']==[os.environ['REQUIRED_CUSTOM_LABEL']]
+          assert receipt['no_default_labels'] is True
+          assert receipt['runner_name']==agent_name==os.environ.get('RUNNER_NAME')
+          assert receipt['runner_agent_id']==agent_id
+          jobs=json.load(open('artifacts/current_run_jobs.json')).get('jobs',[])
+          matches=[j for j in jobs if j.get('name')=='resource-lifecycle-pilot']
+          assert len(matches)==1,matches
+          j=matches[0]
+          assert j.get('runner_id')==agent_id and j.get('runner_name')==agent_name
+          assert j.get('labels')==[os.environ['REQUIRED_CUSTOM_LABEL']],j.get('labels')
+          safe={'schema':'LAYERB_32769_SOURCE_JOB_RUNTIME_BINDING_V0_2','run_id':j.get('run_id'),'job_id':j.get('id'),'name':j.get('name'),'status_at_capture':j.get('status'),'runner_id':j.get('runner_id'),'runner_name':j.get('runner_name'),'labels':j.get('labels'),'head_sha':j.get('head_sha'),'scientific_execution_authorized':False}
+          Path('artifacts/source_job_runtime.json').write_text(json.dumps(safe,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Fail closed if superseded generic job owns a runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/jobs/103112190909" > artifacts/stale_job_snapshot.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('artifacts/stale_job_snapshot.json'))
+          assert d['id']==103112190909
+          if d.get('status')=='in_progress': raise SystemExit('superseded generic job is in_progress')
+          assert d.get('status') in {'queued','completed'}
+          PY
+
+      - name: Record and gate physical memory envelope
+        shell: bash
+        run: |
+          set -euo pipefail
+          MEMTOTAL_KB=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo)
+          test -n "$MEMTOTAL_KB"
+          echo "$MEMTOTAL_KB" > artifacts/candidate_memtotal_kb.txt
+          {
+            echo "runner_name=${RUNNER_NAME:-unknown}"
+            echo "runner_os=${RUNNER_OS:-unknown}"
+            echo "runner_arch=${RUNNER_ARCH:-unknown}"
+            echo "required_custom_label=$REQUIRED_CUSTOM_LABEL"
+            echo "candidate_memtotal_kb=$MEMTOTAL_KB"
+            echo "exhausted_hosted_memtotal_kb=$HOSTED_EXHAUSTED_MEMTOTAL_KB"
+            echo "preferred_ram_kb=$PREFERRED_RAM_KB"
+            grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree):' /proc/meminfo
+          } > artifacts/host_envelope_before.txt
+          cat artifacts/host_envelope_before.txt
+          if [ "$MEMTOTAL_KB" -le "$HOSTED_EXHAUSTED_MEMTOTAL_KB" ]; then exit 41; fi
+          if [ "$MEMTOTAL_KB" -lt "$PREFERRED_RAM_KB" ]; then echo 'WARNING_BELOW_PREFERRED_32GIB_NOT_PROVEN_INSUFFICIENT'; fi
+
+      - name: Verify native prerequisites and create isolated Python stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v python3; command -v gcc; command -v g++; command -v gfortran; command -v make
+          pkg-config --exists gsl || { echo 'GSL_DEV_NOT_AVAILABLE'; exit 31; }
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+
+      - name: Build pinned CLASS-IV 32769 with independently validated 1MiB parser
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q "$CLASS_COMMIT"
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('external/class_iv/include/perturbations.h'); b=p.read_bytes(); s=b.decode(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 32769',1))
+          q=Path('external/class_iv/include/parser.h'); qb=q.read_bytes(); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 1048576',1))
+          rec={'schema':'LAYERB_32769_ISOLATED_CLASS_CAPACITY_PATCH_V0_3','source_commit':'ac627d54e9ce196a08878d1ba33999819925d19c','new_capacity':32769,'parser_new_argument_capacity':1048576,'point_pre_sha256':hashlib.sha256(b).hexdigest(),'point_post_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'parser_pre_sha256':hashlib.sha256(qb).hexdigest(),'parser_post_sha256':hashlib.sha256(q.read_bytes()).hexdigest()}
+          assert rec['parser_post_sha256']=='2d775ca12da2c79b3700672fa66d290d5a06458a5253ea1e2c51b44ac2374092'
+          Path('artifacts/capacity_patch.json').write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+
+      - name: Execute response-blind four-role lifecycle with telemetry
+        shell: bash
+        run: |
+          set -uo pipefail
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          (
+            while true; do
+              printf 'TELEMETRY ts=%s ' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> artifacts/telemetry.log
+              awk '/^(MemTotal|MemAvailable|SwapTotal|SwapFree):/ {printf "%s%s=%s%s ",$1,$2,$3,$4} END {print ""}' /proc/meminfo >> artifacts/telemetry.log
+              ps -eo pid,ppid,rss,vsz,%cpu,%mem,etime,comm --sort=-rss | head -n 8 >> artifacts/telemetry.log || true
+              sleep 10
+            done
+          ) &
+          MON=$!; cleanup(){ kill "$MON" 2>/dev/null || true; wait "$MON" 2>/dev/null || true; }; trap cleanup EXIT INT TERM
+          set +e
+          PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}" .venv/bin/python ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_2.py \
+            --canonical-authority docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json \
+            --build-authority docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json \
+            --fine docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt \
+            --jo-script ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --out artifacts/result.json
+          rc=$?
+          set -e; cleanup; trap - EXIT INT TERM
+          grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree):' /proc/meminfo > artifacts/host_envelope_after.txt
+          python3 - "$rc" <<'PY'
+          import hashlib,json,sys
+          from pathlib import Path
+          rc=int(sys.argv[1]); p=Path('artifacts/result.json'); assert p.is_file()
+          d=json.loads(p.read_text()); mem=int(Path('artifacts/candidate_memtotal_kb.txt').read_text().strip())
+          reg=Path('artifacts/runner_registration_receipt.json'); runtime=Path('artifacts/source_job_runtime.json')
+          d['candidate_memtotal_kb']=mem
+          d['exhausted_hosted_memtotal_kb']=16373452
+          d['preferred_ram_kb']=33554432
+          d['candidate_strictly_higher_memory_than_exhausted_hosted']=mem>16373452
+          d['runner_registration_receipt_sha256']=hashlib.sha256(reg.read_bytes()).hexdigest()
+          d['source_job_runtime_sha256']=hashlib.sha256(runtime.read_bytes()).hexdigest()
+          d['runner_registration_evidence_valid']=True
+          registration=json.loads(reg.read_text())
+          d['runner_agent_id']=registration['runner_agent_id']; d['runner_name']=registration['runner_name']
+          d['runner_isolation_contract_git_blob']='d9d910d89889f6d3a27461a73c3dd72c2a9d2096'
+          d['required_custom_label']='dsir-32769-highmem'
+          Path('artifacts/result.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          if d.get('classification')=='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0': assert rc==0
+          else: raise SystemExit(31)
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 90
