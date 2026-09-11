@@ -1,0 +1,53 @@
+{
+  "schema": "LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_AUTHORITY_V0_2",
+  "classification": "LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scope": "DSIR Article III Layer-B canonical 32769 CLASS build/input envelope; no scientific response",
+  "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+  "new_capacity": 32769,
+  "parser_new_argument_capacity": 1048576,
+  "supersedes_parser_capacity_for_32769_execution": 524288,
+  "canonical_32769_payload_bytes_including_nul": 719273,
+  "parser_margin_bytes": 329303,
+  "clean_build_pass": true,
+  "only_delta_from_v0_1_32769_tree_is_parser_capacity_constant": true,
+  "changed_files_old32769_to_new32769": [
+    "include/parser.h"
+  ],
+  "point_patch": {
+    "point_pre_sha256": "c83749338e435d85caf8f0cfb713aa9a77782a91072de93633187d9dc53a0876",
+    "point_post_sha256": "e6221887e19c0a576f77bbfcb2a030ff9cf8d84c62a2193ce52b8e3b541a8f0a",
+    "parser_pre_sha256": "2c17690a5549e12c8fac485281ca214a20c376e1e3beba714af0e1b84cdbb0eb",
+    "parser_post_sha256": "2d775ca12da2c79b3700672fa66d290d5a06458a5253ea1e2c51b44ac2374092"
+  },
+  "executable_size_bytes": 3073528,
+  "executable_sha256": "68a533463bc63f75dc81e09bda060c2f6758daaeaec632537ce116a003706abf",
+  "audit": {
+    "workflow": ".github/workflows/layerb-32769-class-parser-1mib-build-audit-v0-2.yml",
+    "workflow_git_blob": "2a27940dd237f082f19e5ff56fd97708884b2ca5",
+    "run_id": 34650050481,
+    "build_job_id": 103429835633,
+    "independent_verifier_job_id": 103430164513,
+    "source_artifact_id": 10283705732,
+    "source_artifact_zip_sha256": "5d704aadcf3a085b5da3c5940b26148b663206974b2ca06fb050307b4a72a6b1",
+    "independent_artifact_id": 10282344020,
+    "independent_artifact_zip_sha256": "f3d0c12179ba87584a6d26d814e3d3327a1f06686d3d0bb8617da93b7e5cce1b",
+    "source_audit_sha256": "ff13dc75dfc9532e0b03739d328710aa89602b5837039df81a29b4bda26915da",
+    "result_sha256": "a1f09b457d3efc51dcbbd41755b60aff1f58a0ecaf37649d2c1e75171c03f9be",
+    "independent_verification_sha256": "834198dde20a55e681ac0b7b98bc935ec1687dcf8db83b796867bed7890daecc"
+  },
+  "artifact_verified_independently": true,
+  "functional_payload_sufficiency_static": true,
+  "single_role_32769_resource_sufficiency_on_standard_hosted_proven": false,
+  "high_memory_resource_lifecycle_preflight_pass": false,
+  "scientific_transfer_values_read": false,
+  "scientific_response_read": false,
+  "scientific_response_computed": false,
+  "convergence_metric_computed": false,
+  "convergence_classification_created": false,
+  "scientific_authority_created": false,
+  "scientific_execution_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "token": "LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_PASS_PLUS_0_PLUS_0"
+}
