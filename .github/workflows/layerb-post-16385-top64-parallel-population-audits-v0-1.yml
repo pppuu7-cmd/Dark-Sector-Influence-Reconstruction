@@ -1,0 +1,128 @@
+name: layerb-post-16385-top64-parallel-population-audits-v0-1
+on:
+  push:
+    paths:
+      - '.github/workflows/layerb-post-16385-top64-parallel-population-audits-v0-1.yml'
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: layerb-post-16385-top64-parallel-population-audits-v0-1
+  cancel-in-progress: false
+
+env:
+  AUTHORITY: docs/dsir4/authority/LAYERB_POST_16385_TOP64_ROLE_CANCELLATION_TERMINAL_AUTHORITY_V0_1.json
+  AUTHORITY_BLOB: 5e16e8a793a81bf1692df92d8e24459e03fd4838
+  CENSUS_SHA256: 9f1a44706148550658a600886eecb385af8b0a85e5c4becb76d8b70c4f29618e
+
+jobs:
+  threshold-stratification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce immutable authority
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUTHORITY")" = "$AUTHORITY_BLOB"
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-top64-role-cancellation-census-v0-1
+          path: source
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 34614119149
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify census and stratify population
+        run: |
+          set -euo pipefail
+          test "$(sha256sum source/census.json | awk '{print $1}')" = "$CENSUS_SHA256"
+          mkdir -p artifacts
+          python ci/layerb_post_16385_top64_threshold_stratification_audit_v0_1.py --census source/census.json --authority "$AUTHORITY" --out artifacts/threshold_stratification.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/threshold_stratification.json'))
+          assert d['classification']=='POST_16385_TOP64_THRESHOLD_STRATIFICATION_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['atom_count']==64 and d['threshold_counts']['ge_1e_3']==21
+          assert d['class_solver_invoked'] is False
+          assert d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top64-threshold-stratification-audit-v0-1
+          path: artifacts/threshold_stratification.json
+          if-no-files-found: error
+          retention-days: 90
+
+  correlation-robustness:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce immutable authority
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUTHORITY")" = "$AUTHORITY_BLOB"
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-top64-role-cancellation-census-v0-1
+          path: source
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 34614119149
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify census and test correlation robustness
+        run: |
+          set -euo pipefail
+          test "$(sha256sum source/census.json | awk '{print $1}')" = "$CENSUS_SHA256"
+          mkdir -p artifacts
+          python ci/layerb_post_16385_top64_correlation_robustness_audit_v0_1.py --census source/census.json --authority "$AUTHORITY" --out artifacts/correlation_robustness.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/correlation_robustness.json'))
+          assert d['classification']=='POST_16385_TOP64_CORRELATION_ROBUSTNESS_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['atom_count']==64
+          assert d['class_solver_invoked'] is False
+          assert d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top64-correlation-robustness-audit-v0-1
+          path: artifacts/correlation_robustness.json
+          if-no-files-found: error
+          retention-days: 90
+
+  amplification-population:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce immutable authority
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUTHORITY")" = "$AUTHORITY_BLOB"
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-top64-role-cancellation-census-v0-1
+          path: source
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 34614119149
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify census and quantify amplification population
+        run: |
+          set -euo pipefail
+          test "$(sha256sum source/census.json | awk '{print $1}')" = "$CENSUS_SHA256"
+          mkdir -p artifacts
+          python ci/layerb_post_16385_top64_amplification_population_audit_v0_1.py --census source/census.json --authority "$AUTHORITY" --out artifacts/amplification_population.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/amplification_population.json'))
+          assert d['classification']=='POST_16385_TOP64_AMPLIFICATION_POPULATION_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['atom_count']==64
+          assert d['class_solver_invoked'] is False
+          assert d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top64-amplification-population-audit-v0-1
+          path: artifacts/amplification_population.json
+          if-no-files-found: error
+          retention-days: 90
