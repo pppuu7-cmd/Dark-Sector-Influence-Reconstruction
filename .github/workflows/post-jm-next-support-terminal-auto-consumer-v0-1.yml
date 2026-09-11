@@ -1,0 +1,104 @@
+name: post-jm-next-support-terminal-auto-consumer-v0-1
+on:
+  workflow_run:
+    workflows: ["post-jm-next-support-canonical-8193-to-16385-v0-1"]
+    types: [completed]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  consume:
+    if: ${{ github.event.workflow_run.id == 34555022975 && github.event.workflow_run.head_sha == 'c56940a0093fc6769b9a48cb3d5056b70075130c' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_RUN_ID: '34555022975'
+      SOURCE_HEAD: 'c56940a0093fc6769b9a48cb3d5056b70075130c'
+      VALIDATOR_BLOB: 'd8eece64d6b2b7ab162fc3a4e6a9981bde604e08'
+      VALIDATOR_AUTH_BLOB: 'd3f595cdba69f66b30f285789c17be0758a3ff8d'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce exact source and frozen validator authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ github.event.workflow_run.id }}" = "$SOURCE_RUN_ID"
+          test "${{ github.event.workflow_run.head_sha }}" = "$SOURCE_HEAD"
+          test "${{ github.event.workflow_run.conclusion }}" = 'success'
+          test "$(git hash-object ci/post_jm_next_support_terminal_validator_v0_1.py)" = "$VALIDATOR_BLOB"
+          test "$(git hash-object docs/dsir4/authority/POST_JM_NEXT_SUPPORT_TERMINAL_VALIDATOR_STATIC_V0_1.json)" = "$VALIDATOR_AUTH_BLOB"
+          python3 - <<'PY'
+          import json
+          a=json.load(open('docs/dsir4/authority/POST_JM_NEXT_SUPPORT_TERMINAL_VALIDATOR_STATIC_V0_1.json'))
+          assert a['artifact_verified_independently'] is True and a['all_pass'] is True and a['case_count']==13
+          assert a['classification']=='POST_JM_NEXT_SUPPORT_TERMINAL_VALIDATOR_STATIC_PASS_PLUS_0_PLUS_0'
+          assert a['validator_git_blob']=='d8eece64d6b2b7ab162fc3a4e6a9981bde604e08'
+          PY
+      - name: Download and hash exact source terminal artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p source artifacts
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN_ID}/artifacts" > artifacts/list.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('artifacts/list.json'))
+          xs=[x for x in d.get('artifacts',[]) if x.get('name')=='post-jm-next-support-canonical-8193-to-16385-v0-1' and not x.get('expired')]
+          assert len(xs)==1,xs
+          open('artifacts/artifact_id','w').write(str(xs[0]['id']))
+          open('artifacts/github_digest','w').write(xs[0].get('digest',''))
+          PY
+          id="$(cat artifacts/artifact_id)"
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > artifacts/source.zip
+          sha256sum artifacts/source.zip | awk '{print $1}' > artifacts/source_zip_sha256
+          gd="$(cat artifacts/github_digest)"; actual="$(cat artifacts/source_zip_sha256)"; test "${gd#sha256:}" = "$actual"
+          unzip -q artifacts/source.zip -d source
+          test -f source/result.json
+          test -f source/terminal_validation.json
+      - name: Revalidate terminal result against frozen validator
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/post_jm_next_support_terminal_validator_v0_1.py --input source/result.json --out artifacts/revalidation.json
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          src=json.load(open('source/terminal_validation.json'))
+          rev=json.load(open('artifacts/revalidation.json'))
+          assert src['classification']=='POST_JM_NEXT_SUPPORT_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0',src
+          assert rev['classification']=='POST_JM_NEXT_SUPPORT_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0',rev
+          assert src['validation']==rev['validation'],(src,rev)
+          result=json.load(open('source/result.json'))
+          receipt={
+            'schema':'POST_JM_NEXT_SUPPORT_TERMINAL_AUTO_CONSUMER_RECEIPT_V0_1',
+            'classification':'POST_JM_NEXT_SUPPORT_TERMINAL_AUTO_CONSUMER_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'source_run_id':34555022975,
+            'source_head_sha':'c56940a0093fc6769b9a48cb3d5056b70075130c',
+            'source_artifact_id':int(Path('artifacts/artifact_id').read_text()),
+            'source_artifact_zip_sha256':Path('artifacts/source_zip_sha256').read_text().strip(),
+            'source_result_json_sha256':hashlib.sha256(Path('source/result.json').read_bytes()).hexdigest(),
+            'source_terminal_validation_json_sha256':hashlib.sha256(Path('source/terminal_validation.json').read_bytes()).hexdigest(),
+            'source_classification':result.get('classification'),
+            'source_max_relative_component_difference':result.get('convergence',{}).get('max_relative_component_difference'),
+            'validated_branch':'CONVERGED' if result.get('classification')=='COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0' else 'NOT_CONVERGED',
+            'validator_git_blob':'d8eece64d6b2b7ab162fc3a4e6a9981bde604e08',
+            'validator_authority_git_blob':'d3f595cdba69f66b30f285789c17be0758a3ff8d',
+            'scientific_authority_created':False,
+            'downstream_science_launched':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+            'token':'POST_JM_NEXT_SUPPORT_TERMINAL_AUTO_CONSUMER_PASS_PLUS_0_PLUS_0'
+          }
+          Path('artifacts/receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          print(receipt['token'],receipt['source_classification'],receipt['source_max_relative_component_difference'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-jm-next-support-terminal-auto-consumer-v0-1
+          path: |
+            artifacts/receipt.json
+            artifacts/revalidation.json
+          if-no-files-found: error
+          retention-days: 90
