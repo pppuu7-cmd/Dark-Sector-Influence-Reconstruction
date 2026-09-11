@@ -1,0 +1,62 @@
+name: layerb-post-16385-top64-unique-association-exploratory-audit-v0-1
+on:
+  push:
+    paths:
+      - '.github/workflows/layerb-post-16385-top64-unique-association-exploratory-audit-v0-1.yml'
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: layerb-post-16385-top64-unique-association-exploratory-audit-v0-1
+  cancel-in-progress: false
+
+env:
+  CENSUS_SHA256: 9f1a44706148550658a600886eecb385af8b0a85e5c4becb76d8b70c4f29618e
+  CONFOUNDER_AUTH: docs/dsir4/authority/LAYERB_POST_16385_TOP64_CONFOUNDER_TERMINAL_AUTHORITY_V0_1.json
+  AUDIT_SCRIPT: ci/layerb_post_16385_top64_unique_association_exploratory_audit_v0_1.py
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen support lineage
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$CONFOUNDER_AUTH")" = 'e45e978a63e85dce5ede38bcaedb59b50991c208'
+          test "$(git hash-object "$AUDIT_SCRIPT")" = '018f06b41b2e75270116d7652952baf6e661fea2'
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-post-16385-top64-role-cancellation-census-v0-1
+          path: source
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 34614119149
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Execute exploratory unique-atom association audit
+        run: |
+          set -euo pipefail
+          test "$(sha256sum source/census.json | awk '{print $1}')" = "$CENSUS_SHA256"
+          mkdir -p artifacts
+          python "$AUDIT_SCRIPT" --census source/census.json --out artifacts/unique_association.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/unique_association.json'))
+          assert d['classification']=='POST_16385_TOP64_UNIQUE_ASSOCIATION_EXPLORATORY_PASS_PLUS_0_PLUS_0'
+          assert d['exploratory_post_hoc'] is True
+          assert d['unique_physical_atom_count']==58 and d['unique_count_ge_1e_3']==19
+          assert d['lowest_scale_quartile_vs_rest']['table_high_low']==[[12,3],[7,36]]
+          assert d['lowest_scale_quartile_vs_rest']['odds_ratio'] > 20
+          assert d['lowest_scale_quartile_vs_rest']['fisher_exact_one_sided_p'] < 2e-5
+          assert d['lower_half_vs_upper_half']['table_high_low']==[[17,12],[2,27]]
+          assert d['lower_half_vs_upper_half']['odds_ratio'] > 19
+          assert d['lower_half_vs_upper_half']['fisher_exact_one_sided_p'] < 3e-5
+          assert d['class_solver_invoked'] is False and d['scientific_classification_created'] is False
+          assert d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top64-unique-association-exploratory-audit-v0-1
+          path: artifacts/unique_association.json
+          if-no-files-found: error
+          retention-days: 90
