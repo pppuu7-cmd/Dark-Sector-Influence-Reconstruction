@@ -1,0 +1,97 @@
+name: generate-post-jm-next-support-helper-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/generate-post-jm-next-support-helper-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate-and-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate deterministic next-rung helper from frozen JM engine
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/exp073jm_article3_recovered_canonical_one_live_fourth_refinement_v0_2.py)" = '4ba4868d751b95b97b2ac7f18701f5349e70c950'
+          test "$(git hash-object docs/dsir4/authority/POST_JM_NOT_CONVERGED_NEXT_RUNG_IMPLEMENTATION_PLAN_V0_1.json)" = "$(git hash-object docs/dsir4/authority/POST_JM_NOT_CONVERGED_NEXT_RUNG_IMPLEMENTATION_PLAN_V0_1.json)"
+          mkdir -p artifacts
+          python3 - <<'PY'
+          from pathlib import Path
+          import ast,hashlib,json
+          src=Path('ci/exp073jm_article3_recovered_canonical_one_live_fourth_refinement_v0_2.py').read_text()
+          s=src
+          def once(old,new):
+              global s
+              n=s.count(old)
+              assert n==1,(old,n)
+              s=s.replace(old,new,1)
+          once('CAPACITY = 9216','CAPACITY = 18432')
+          once('PARSER_CAPACITY = 262144','PARSER_CAPACITY = 524288')
+          once('JL_NOT_CONVERGED = "COMMON_GRID_THIRD_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0"','JL_NOT_CONVERGED = "COMMON_GRID_FOURTH_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0"')
+          once('CONVERGED = "COMMON_GRID_FOURTH_REFINEMENT_CONVERGED_PLUS_0_PLUS_0"','CONVERGED = "COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0"')
+          once('NOT_CONVERGED = "COMMON_GRID_FOURTH_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0"','NOT_CONVERGED = "COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0"')
+          once('COARSE_TEXT_SHA = "290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7"','COARSE_TEXT_SHA = "90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6"')
+          once('COARSE_NODE_SHA = "f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb"','COARSE_NODE_SHA = "6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515"')
+          once('FINE_TEXT_SHA = "90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6"','FINE_TEXT_SHA = "7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69"')
+          once('FINE_NODE_SHA = "6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515"','FINE_NODE_SHA = "3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975"')
+          once('CANONICAL_8193_AUTH_CLASS = "CANONICAL_8193_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0"','CANONICAL_8193_AUTH_CLASS = "CANONICAL_16385_ANCHOR_SELECTED_QUORUM_PASS_PLUS_0_PLUS_0"')
+          s=s.replace('validate_canonical_8193','validate_canonical_16385')
+          once('d.get("branch_activated") is not False','d.get("successor_branch_activated") is not False\n        or d.get("successor_execution_authorized") is not False')
+          once('d.get("requested_node_count") != 8193','d.get("requested_node_count") != 16385')
+          once('d.get("anchor_4097_node_sha256") != COARSE_NODE_SHA','d.get("anchor_8193_node_sha256") != COARSE_NODE_SHA')
+          once('d.get("anchor_4097_u64hex_sha256") != COARSE_TEXT_SHA','d.get("anchor_8193_u64hex_sha256") != COARSE_TEXT_SHA')
+          s=s.replace('canonical 8193 authority','canonical 16385 authority')
+          once('canon8193 = validate_canonical_16385(a.canonical_8193_authority)','canon8193 = validate_canonical_16385(a.canonical_16385_authority)')
+          once('engine.load_nodes(a.coarse, 4097, COARSE_TEXT_SHA, COARSE_NODE_SHA)','engine.load_nodes(a.coarse, 8193, COARSE_TEXT_SHA, COARSE_NODE_SHA)')
+          once('engine.load_nodes(a.fine, 8193, FINE_TEXT_SHA, FINE_NODE_SHA)','engine.load_nodes(a.fine, 16385, FINE_TEXT_SHA, FINE_NODE_SHA)')
+          s=s.replace('"requested_node_count": 4097','"requested_node_count": 8193')
+          s=s.replace('"requested_node_count": 8193','"requested_node_count": 16385',1)
+          s=s.replace('"canonical_8193_authority"','"canonical_16385_authority"')
+          once('ap.add_argument("--jl-authority", required=True)','ap.add_argument("--jm-authority", required=True)')
+          once('ap.add_argument("--canonical-8193-authority", required=True)','ap.add_argument("--canonical-16385-authority", required=True)')
+          once('jl = validate_activation(a.jl_authority)','jl = validate_activation(a.jm_authority)')
+          s=s.replace('"jl_classification"','"jm_classification"').replace('"jl_run_id"','"jm_run_id"').replace('"jl_job_id"','"jm_job_id"').replace('"jl_workflow_head_sha"','"jm_workflow_head_sha"').replace('"jl_artifact_id"','"jm_artifact_id"').replace('"jl_artifact_zip_sha256"','"jm_artifact_zip_sha256"').replace('"jl_result_json_sha256"','"jm_result_json_sha256"')
+          s=s.replace('"schema": "EXP073JM_ARTICLE3_RECOVERED_CANONICAL_ONE_LIVE_FOURTH_REFINEMENT_RESULT_V0_2"','"schema": "POST_JM_NEXT_SUPPORT_CANONICAL_ONE_LIVE_REFINEMENT_RESULT_V0_1"')
+          s=s.replace('"experiment": "Exp073JM"','"experiment": "PostJMNextSupport"')
+          s=s.replace('PASS_EXP073JM_RECOVERED_CANONICAL_ONE_LIVE_FOURTH_REFINEMENT_CONVERGED_V0_2','PASS_POST_JM_NEXT_SUPPORT_CONVERGED_V0_1')
+          s=s.replace('PASS_EXP073JM_RECOVERED_CANONICAL_ONE_LIVE_FOURTH_REFINEMENT_NOT_CONVERGED_V0_2','PASS_POST_JM_NEXT_SUPPORT_NOT_CONVERGED_V0_1')
+          s=s.replace('EXP073JM_RECOVERED_INVALID_INFRA_V0_2','POST_JM_NEXT_SUPPORT_INVALID_INFRA_V0_1')
+          ast.parse(s)
+          checks={
+            'activation_token':'COMMON_GRID_FOURTH_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0' in s,
+            'next_tokens':'COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0' in s and 'COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0' in s,
+            'capacity':'CAPACITY = 18432' in s and 'PARSER_CAPACITY = 524288' in s,
+            'coarse_hash':'6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515' in s,
+            'fine_hash':'3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975' in s,
+            'load_8193':'engine.load_nodes(a.coarse, 8193' in s,
+            'load_16385':'engine.load_nodes(a.fine, 16385' in s,
+            'independent_evaluations':s.count('engine.evaluate_lattice(')==2,
+            'no_grid_regeneration':'geomspace(' not in s and 'guarded_lattice(' not in s,
+            'max_one_live':'tracker != {"constructions": 8, "live": 0, "max_live": 1}' in s,
+            'strict_tol':'float(mx) < REL_TOL' in s,
+            'jm_arg':'--jm-authority' in s,
+            'canonical_16385_arg':'--canonical-16385-authority' in s,
+            'no_scientific_authority':'"scientific_authority_created": False' in s,
+          }
+          assert all(checks.values()),[k for k,v in checks.items() if not v]
+          outp=Path('artifacts/post_jm_next_support_helper_v0_1.py'); outp.write_text(s)
+          audit={'schema':'POST_JM_NEXT_SUPPORT_HELPER_GENERATION_AUDIT_V0_1','classification':'POST_JM_NEXT_SUPPORT_HELPER_GENERATED_STATIC_PASS_PLUS_0_PLUS_0','effect':'+0/+0','source_blob':'4ba4868d751b95b97b2ac7f18701f5349e70c950','generated_sha256':hashlib.sha256(s.encode()).hexdigest(),'check_count':len(checks),'checks':checks,'checks_all_pass':True,'jm_result_read':False,'scientific_response_read':False,'class_solver_invoked':False,'branch_activated':False,'next_rung_execution_authorized':False,'scientific_authority_created':False,'token':'POST_JM_NEXT_SUPPORT_HELPER_GENERATED_STATIC_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/audit.json').write_text(json.dumps(audit,indent=2,sort_keys=True)+'\n')
+          print(audit['token'],audit['generated_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-jm-next-support-helper-generated-v0-1
+          path: |
+            artifacts/post_jm_next_support_helper_v0_1.py
+            artifacts/audit.json
+          if-no-files-found: error
+          retention-days: 90
