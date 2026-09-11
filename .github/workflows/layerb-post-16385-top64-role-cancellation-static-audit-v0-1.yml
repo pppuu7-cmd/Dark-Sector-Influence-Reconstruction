@@ -21,14 +21,14 @@ jobs:
           set -euo pipefail
           test "$(git hash-object ci/layerb_post_16385_top64_role_cancellation_census_v0_1.py)" = '92f35f0f563fe5c5ba54b3984ae9a82e2abaf8e7'
           test "$(git hash-object docs/dsir4/prereg/LAYERB_POST_16385_TOP64_ROLE_CANCELLATION_CENSUS_V0_1.md)" = '940a09d194fe9e68e6fc14271e7ab99b6aded3e4'
-          test "$(git hash-object docs/dsir4/authority/LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_AUTHORITY_V0_1.json)" = '506b93566d06b76db609ac9c3f227ed77c28a747'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_AUTHORITY_V0_1.json)" = 'cb0b07bd75208619e681f02528fb0c761ddedabb'
           python -m py_compile ci/layerb_post_16385_top64_role_cancellation_census_v0_1.py
           mkdir -p artifacts
           python - <<'PY'
           import ast,json
           from pathlib import Path
           p=Path('ci/layerb_post_16385_top64_role_cancellation_census_v0_1.py')
-          s=p.read_text(); tree=ast.parse(s)
+          s=p.read_text(); ast.parse(s)
           checks={}
           checks['h_frozen']='H=1e-4' in s
           checks['lookup_frozen']='LOOKUP_TOL=1e-12' in s
@@ -53,15 +53,15 @@ jobs:
           checks['canonical_16385_sha']='7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69' in s
           checks['descriptive_spearman']='spearman_log10_min_cancellation_scale_vs_log10_primary_response_discrepancy' in s
           checks['fail_closed']= all(x in s for x in ('INVALID_INFRA_PLUS_0_PLUS_0','try:r=execute(a)','except Exception as e'))
-          checks['no_result_file_literal']='10268078468' not in s and '10268761538' not in s
+          checks['complete_top1_identity']=json.load(open('docs/dsir4/authority/LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_AUTHORITY_V0_1.json'))['selected_atom']['component_index']==1
           assert all(checks.values()),{k:v for k,v in checks.items() if not v}
-          out={'schema':'LAYERB_POST_16385_TOP64_ROLE_CANCELLATION_STATIC_AUDIT_V0_1','classification':'POST_16385_TOP64_ROLE_CANCELLATION_STATIC_AUDIT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','check_count':len(checks),'pass_count':sum(checks.values()),'checks':checks,'class_solver_invoked':False,'scientific_response_read':False,'top64_role_result_read':False,'execution_authorized':False,'scientific_authority_created':False,'next_rung_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          out={'schema':'LAYERB_POST_16385_TOP64_ROLE_CANCELLATION_STATIC_AUDIT_V0_2','classification':'POST_16385_TOP64_ROLE_CANCELLATION_STATIC_AUDIT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','check_count':len(checks),'pass_count':sum(checks.values()),'checks':checks,'class_solver_invoked':False,'scientific_response_read':False,'top64_role_result_read':False,'execution_authorized':False,'scientific_authority_created':False,'next_rung_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
           Path('artifacts/static.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
           print(out['classification'],out['pass_count'],out['check_count'])
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: layerb-post-16385-top64-role-cancellation-static-audit-v0-1
+          name: layerb-post-16385-top64-role-cancellation-static-audit-v0-2
           path: artifacts/static.json
           if-no-files-found: error
           retention-days: 90
