@@ -1,0 +1,37 @@
+{
+  "schema": "LAYERB_POST_16385_TOP64_UNIQUE_ASSOCIATION_EXPLORATORY_AUTHORITY_V0_1",
+  "classification": "POST_16385_TOP64_UNIQUE_ASSOCIATION_EXPLORATORY_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "exploratory_post_hoc": true,
+  "parent_confounder_authority": "docs/dsir4/authority/LAYERB_POST_16385_TOP64_CONFOUNDER_TERMINAL_AUTHORITY_V0_1.json",
+  "parent_confounder_authority_git_blob": "e45e978a63e85dce5ede38bcaedb59b50991c208",
+  "source_run_id": 34628932658,
+  "source_head_sha": "df4038415c2264059a34069e9b55aeef893137c4",
+  "source_artifact_id": 10275591835,
+  "source_artifact_zip_sha256": "6400383a913a83409484a30793e4dab1e95ea3d6bad55b912c75767fa253d2bb",
+  "source_payload_sha256": "0b6211e86a8603abbcdaf77583371a9678e6161ee485d167bfd9cfd4b82ecc50",
+  "source_atom_count": 64,
+  "unique_physical_atom_count": 58,
+  "unique_count_ge_1e_3": 19,
+  "unique_spearman": -0.5163800793626381,
+  "lowest_scale_quartile_vs_rest": {
+    "table_high_low": [[12, 3], [7, 36]],
+    "odds_ratio": 20.571428571428573,
+    "fisher_exact_one_sided_p": 1.6168593301143046e-05
+  },
+  "lower_half_vs_upper_half": {
+    "table_high_low": [[17, 12], [2, 27]],
+    "odds_ratio": 19.125,
+    "fisher_exact_one_sided_p": 2.3321946203480245e-05
+  },
+  "median_cancellation_scale_ge_1e_3": 2.0405678567052762e-08,
+  "median_cancellation_scale_lt_1e_3": 1.6946720130939314e-07,
+  "median_scale_ratio_high_to_low": 0.12041078397110301,
+  "class_solver_invoked": false,
+  "scientific_classification_created": false,
+  "scientific_authority_created": false,
+  "next_rung_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "interpretation": "Exploratory/post-hoc support only. After exact physical duplicate collapse, strict-threshold exceedances remain strongly enriched among the smallest cancellation scales. The lowest-scale quartile has odds about 20.6 times the rest of exceeding 1e-3, and the lower half has odds about 19.1 times the upper half. These p-values are descriptive stress-test evidence selected after inspection of the population structure, not preregistered confirmatory inference. They strengthen the numerical-conditioning diagnosis but do not change the frozen scientific convergence gate, authorize 32769, authorize covariance restriction, or open Wm_S3."
+}
