@@ -57,6 +57,8 @@ jobs:
         run: |
           set -euo pipefail
           command -v python3; command -v gcc; command -v g++; command -v gfortran; command -v make
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git >/dev/null
           pkg-config --exists gsl
           python3 -m venv .venv
           .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
@@ -152,7 +154,7 @@ jobs:
           set -euo pipefail
           mkdir -p drift
           python3 - <<'PY'
-          import hashlib,json,re
+          import hashlib,json
           from pathlib import Path
           def blob(path):
               b=Path(path).read_bytes(); return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
