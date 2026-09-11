@@ -1,0 +1,100 @@
+name: layerb-finite-difference-conditioning-controls-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-finite-difference-conditioning-controls-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  conditioning-table:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Quantify frozen-h raw-response noise amplification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -q 'numpy==1.26.4'
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          import numpy as np
+          H=1e-4
+          eps=np.array([1e-12,3e-12,1e-11,3e-11,1e-10,3e-10,1e-9,3e-9,1e-8,3e-8,1e-7,3e-7,1e-6,3e-6,1e-5],float)
+          rows=[]
+          for e in eps:
+            rows.append({'raw_absolute_response_noise':float(e),'one_sided_derivative_absolute_error_bound_e_over_h':float(2*e/H),'central_derivative_absolute_error_bound_e_over_h':float(e/H),'relative_error_if_true_derivative_scale_1_one_sided':float(2*e/H),'relative_error_if_true_derivative_scale_1_central':float(e/H)})
+          out={'schema':'LAYERB_FINITE_DIFFERENCE_CONDITIONING_TABLE_V0_1','classification':'LAYERB_FINITE_DIFFERENCE_CONDITIONING_TABLE_PASS_PLUS_0_PLUS_0','effect':'+0/+0','frozen_h':H,'rows':rows,'interpretation':'For O(1) derivative scale, independent raw response errors around 1e-6 can be amplified to O(1e-2) in a one-sided h=1e-4 derivative. This is a conditioning diagnostic only, not evidence that CLASS raw error actually has that magnitude.','current_16385_scientific_result_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'h_changed':False,'next_rung_authorized':False,'token':'LAYERB_FINITE_DIFFERENCE_CONDITIONING_TABLE_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/conditioning.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-finite-difference-conditioning-table-v0-1
+          path: artifacts/conditioning.json
+          if-no-files-found: error
+          retention-days: 90
+
+  composite-surrogate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Propagate controlled response noise through canonical interpolation and frozen derivatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -q 'numpy==1.26.4'
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import importlib.util,json
+          from pathlib import Path
+          import numpy as np
+          def mod(name,path):
+            s=importlib.util.spec_from_file_location(name,path); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); return m
+          jj=mod('jj','ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py')
+          e=mod('e','ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py')
+          H=1e-4
+          specs=[
+            ('2049','docs/dsir4/canonical/EXP073JL_CANONICAL_COARSE_2049_NODES_U64HEX_V0_1.txt',2049,'72c732a02b9f6f4adeab70c7792f16e4490f038544c221aed9b72a14e5b1ec47','6305c95025e52296b6cb623903f82dc45bb66ac692708b242fc354862ac54c46'),
+            ('4097','docs/dsir4/canonical/EXP073JL_CANONICAL_FINE_4097_NODES_U64HEX_V0_1.txt',4097,'290075f777c88964aa6b670694063e9b4ad0d5d4dcb16ee12adad5103ca1b6c7','f30556be2547732ed0b87b56368e01e46504a975f94fcbbc5e7bc8cfc525e5eb'),
+            ('8193','docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt',8193,'90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6','6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515'),
+            ('16385','docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt',16385,'7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69','3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975')]
+          grids={k:e.load_nodes(p,n,ts,ns) for k,p,n,ts,ns in specs}
+          targets=np.geomspace(jj.TARGET_MIN,jj.TARGET_MAX,8001,dtype=np.float64); xt=np.log(targets); xc=float(np.mean(xt))
+          def F(x,a,b):
+            base=1.8+0.08*np.sin(2.5*(x-xc))+0.02*np.cos(7*(x-xc))
+            ga=0.9+0.1*np.sin(3*(x-xc)); gb=1.1+0.08*np.cos(4*(x-xc))
+            return base+a*ga+b*gb+0.1*a*a*np.cos(x-xc)+0.07*b*b*np.sin(2*(x-xc))
+          levels=[0.0,1e-9,1e-8,1e-7,1e-6,3e-6]
+          outlev={}
+          for noise in levels:
+            deriv={}
+            for gi,(label,nodes) in enumerate(grids.items()):
+              x=np.log(nodes); roles=[]
+              pars=[(0.,0.),(-H,0.),(0.,H),(0.,-H)]
+              for ri,(a,b) in enumerate(pars):
+                y=F(x,a,b)
+                if noise:
+                  rng=np.random.default_rng(100000*gi+ri+37)
+                  y=y+rng.normal(0.0,noise,size=y.shape)
+                yh,valid=jj.cubic_centered(nodes,y,targets); assert np.all(valid); roles.append(yh)
+              ref,am,bp,bm=roles
+              deriv[label]=np.column_stack((np.abs((am-ref)/(-H)),np.abs((bp-bm)/(2*H))))
+            adj=[]; labs=list(grids)
+            for ca,fi in zip(labs[:-1],labs[1:]):
+              a=deriv[ca]; b=deriv[fi]; rel=np.abs(a-b)/np.maximum(np.abs(b),1e-14)
+              adj.append({'coarse':ca,'fine':fi,'max_relative_component_difference':float(np.max(rel)),'p99_relative_component_difference':float(np.quantile(rel,0.99)),'rms_relative_component_difference':float(np.sqrt(np.mean(rel*rel)))})
+            outlev[format(noise,'.1e')]=adj
+          out={'schema':'LAYERB_FINITE_DIFFERENCE_COMPOSITE_SURROGATE_V0_1','classification':'LAYERB_FINITE_DIFFERENCE_COMPOSITE_SURROGATE_PASS_PLUS_0_PLUS_0','effect':'+0/+0','frozen_h':H,'noise_is_synthetic_and_not_measured_class_noise':True,'noise_levels':levels,'adjacent_refinement_diagnostics':outlev,'current_16385_scientific_result_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'h_changed':False,'stopping_rule_changed':False,'next_rung_authorized':False,'token':'LAYERB_FINITE_DIFFERENCE_COMPOSITE_SURROGATE_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/composite.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token']); print(json.dumps(outlev,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-finite-difference-composite-surrogate-v0-1
+          path: artifacts/composite.json
+          if-no-files-found: error
+          retention-days: 90
