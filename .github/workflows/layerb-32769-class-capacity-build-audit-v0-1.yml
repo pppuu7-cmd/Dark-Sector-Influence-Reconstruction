@@ -1,0 +1,315 @@
+name: layerb-32769-class-capacity-build-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-class-capacity-build-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: layerb-32769-class-capacity-build-audit-v0-1
+  cancel-in-progress: false
+
+env:
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  OLD_CAPACITY: '18432'
+  NEW_CAPACITY: '32769'
+  PARSER_CAPACITY: '524288'
+  OLD_BUILD_AUTH_BLOB: '3c1d26f9208056835261a8551386276d626c063d'
+  CANON_32769_AUTH_BLOB: 'dddf7b0f8596506b9e792186d8ebaf14ff789f4c'
+  PREFLIGHT_SPEC_BLOB: '6c25bcd8dce0c9d6bdabb183f57af469609cbb41'
+  BUILD_COMPAT_BLOB: 'b7fe663154519b605699c1fd622d0079a5f76772'
+  PUBLIC_EXPOSURE_BLOB: 'e5afe14eccf531d3e5b9de09b19d34df431a08b9'
+
+jobs:
+  build-envelope:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enforce immutable DSIR parent identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/authority/LAYERB_16385_CLASS_BUILD_ENVELOPE_V0_1.json)" = "$OLD_BUILD_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json)" = "$CANON_32769_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/methods/LAYERB_32769_NONTRIGGERING_PREFLIGHT_SPEC_V0_1.md)" = "$PREFLIGHT_SPEC_BLOB"
+          test "$(git hash-object scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py)" = "$BUILD_COMPAT_BLOB"
+          test "$(git hash-object scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py)" = "$PUBLIC_EXPOSURE_BLOB"
+          python3 - <<'PY'
+          import json
+          old=json.load(open('docs/dsir4/authority/LAYERB_16385_CLASS_BUILD_ENVELOPE_V0_1.json'))
+          new=json.load(open('docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json'))
+          assert old['classification']=='LAYERB_16385_CLASS_BUILD_ENVELOPE_PASS_PLUS_0_PLUS_0'
+          assert old['artifact_verified_independently'] is True
+          assert old['class_commit']=='ac627d54e9ce196a08878d1ba33999819925d19c'
+          assert old['new_capacity']==18432
+          assert old['parser_new_argument_capacity']==524288
+          assert new['classification']=='CANONICAL_32769_STATIC_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0'
+          assert new['artifact_verified_independently'] is True
+          assert new['requested_node_count']==32769
+          assert new['scientific_response_read'] is False
+          assert new['class_solver_invoked'] is False
+          assert new['successor_execution_authorized'] is False
+          PY
+
+      - name: Install exact numerical and build stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git >/dev/null
+          python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          python -m pip install 'numpy==1.26.4' 'Cython<3' six >/dev/null
+
+      - name: Reconstruct old and new capacity-only CLASS trees
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts external
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv_old
+          git -C external/class_iv_old checkout -q "$CLASS_COMMIT"
+          test "$(git -C external/class_iv_old rev-parse HEAD)" = "$CLASS_COMMIT"
+          cp -a external/class_iv_old external/class_iv_new
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, json, os
+
+          CLASS_COMMIT=os.environ['CLASS_COMMIT']
+          OLD_CAP=int(os.environ['OLD_CAPACITY'])
+          NEW_CAP=int(os.environ['NEW_CAPACITY'])
+          PARSER_CAP=int(os.environ['PARSER_CAPACITY'])
+          assert NEW_CAP >= 32769
+
+          def sha(b): return hashlib.sha256(b).hexdigest()
+          def patch(root, cap):
+              root=Path(root)
+              p=root/'include/perturbations.h'
+              b=p.read_bytes(); s=b.decode()
+              old='#define _MAX_NUMBER_OF_K_FILES_ 30'
+              new=f'#define _MAX_NUMBER_OF_K_FILES_ {cap}'
+              assert s.count(old)==1
+              p.write_text(s.replace(old,new,1))
+              q=root/'include/parser.h'
+              qb=q.read_bytes(); qs=qb.decode()
+              qold='#define _ARGUMENT_LENGTH_MAX_ 1024'
+              qnew=f'#define _ARGUMENT_LENGTH_MAX_ {PARSER_CAP}'
+              assert qs.count(qold)==1
+              q.write_text(qs.replace(qold,qnew,1))
+              return {
+                  'capacity_pre_sha256':sha(b),
+                  'capacity_post_sha256':sha(p.read_bytes()),
+                  'capacity_replacement_count':1,
+                  'parser_pre_sha256':sha(qb),
+                  'parser_post_sha256':sha(q.read_bytes()),
+                  'parser_replacement_count':1,
+              }
+
+          rec_old=patch('external/class_iv_old', OLD_CAP)
+          rec_new=patch('external/class_iv_new', NEW_CAP)
+          assert rec_old['capacity_pre_sha256']==rec_new['capacity_pre_sha256']
+          assert rec_old['parser_pre_sha256']==rec_new['parser_pre_sha256']
+          assert rec_old['parser_post_sha256']==rec_new['parser_post_sha256']
+          out={
+              'schema':'LAYERB_32769_CLASS_CAPACITY_BUILD_AUDIT_V0_1',
+              'classification':'PENDING_BUILD_AND_EQUIVALENCE_AUDIT',
+              'effect':'+0/+0',
+              'class_commit':CLASS_COMMIT,
+              'old_validated_capacity':OLD_CAP,
+              'new_capacity':NEW_CAP,
+              'requested_node_count':32769,
+              'capacity_sufficient':NEW_CAP>=32769,
+              'parser_old_argument_capacity':1024,
+              'parser_new_argument_capacity':PARSER_CAP,
+              'old_reconstruction':rec_old,
+              'new_reconstruction':rec_new,
+              'scientific_response_read':False,
+              'class_solver_scientific_response_invoked':False,
+              'scientific_authority_created':False,
+              'successor_execution_authorized':False,
+              'covariance_restriction_authorized':False,
+              'Wm_S3_opened':False,
+          }
+          Path('artifacts/build.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+
+          for root in external/class_iv_old external/class_iv_new; do
+            python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py "$root"
+            python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py "$root"
+            ROOT="$root" python3 - <<'PY'
+          from pathlib import Path
+          import os
+          p=Path(os.environ['ROOT'])/'python/setup.py'
+          s=p.read_text()
+          old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"
+          new="extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']"
+          assert s.count(old)==1
+          p.write_text(s.replace(old,new,1))
+          PY
+          done
+
+      - name: Prove old-vs-new tree scientific equivalence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, json
+
+          old=Path('external/class_iv_old')
+          new=Path('external/class_iv_new')
+          def files(root):
+              out={}
+              for p in root.rglob('*'):
+                  if not p.is_file() or '.git' in p.parts:
+                      continue
+                  out[str(p.relative_to(root))]=p.read_bytes()
+              return out
+          a,b=files(old),files(new)
+          assert set(a)==set(b)
+          changed=sorted(k for k in a if a[k]!=b[k])
+          assert changed==['include/perturbations.h'], changed
+          ao=a['include/perturbations.h'].decode()
+          bn=b['include/perturbations.h'].decode()
+          old_line='#define _MAX_NUMBER_OF_K_FILES_ 18432'
+          new_line='#define _MAX_NUMBER_OF_K_FILES_ 32769'
+          assert ao.count(old_line)==1
+          assert bn.count(new_line)==1
+          assert ao.replace(old_line,new_line,1)==bn
+          assert a['include/parser.h']==b['include/parser.h']
+          assert b['include/parser.h'].decode().count('#define _ARGUMENT_LENGTH_MAX_ 524288')==1
+
+          p='artifacts/build.json'
+          d=json.load(open(p))
+          d['old_vs_new_changed_files']=changed
+          d['old_vs_new_changed_file_count']=len(changed)
+          d['only_change_is_capacity_constant']=True
+          d['parser_build_parity_static_pass']=True
+          d['scientific_equivalence_static_audit_pass']=True
+          d['capacity_patch_exact_old_line']=old_line
+          d['capacity_patch_exact_new_line']=new_line
+          d['classification']='LAYERB_32769_CLASS_CAPACITY_STATIC_EQUIVALENCE_PASS_PLUS_0_PLUS_0'
+          open(p,'w').write(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          print(d['classification'])
+          PY
+
+      - name: Clean-build new 32769 capacity envelope
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C external/class_iv_new clean >/dev/null || true
+          make -C external/class_iv_new -j2 all >/dev/null
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          exe=Path('external/class_iv_new/class')
+          assert exe.is_file() and exe.stat().st_size>0
+          d=json.load(open('artifacts/build.json'))
+          d['build_completed']=True
+          d['class_executable_size_bytes']=exe.stat().st_size
+          d['class_executable_sha256']=hashlib.sha256(exe.read_bytes()).hexdigest()
+          d['classification']='LAYERB_32769_CLASS_CAPACITY_BUILD_PASS_PLUS_0_PLUS_0'
+          d['token']=d['classification']
+          Path('artifacts/build.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          print(d['token'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-class-capacity-build-v0-1
+          path: artifacts/build.json
+          if-no-files-found: error
+          retention-days: 90
+
+  independent-static-consumer:
+    needs: build-envelope
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-class-capacity-build-v0-1
+          path: artifacts/source
+
+      - name: Independently reconstruct capacity and parser hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv_consumer
+          git -C external/class_iv_consumer checkout -q "$CLASS_COMMIT"
+          test "$(git -C external/class_iv_consumer rev-parse HEAD)" = "$CLASS_COMMIT"
+          mkdir -p artifacts/consumer
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os
+
+          src=json.load(open('artifacts/source/build.json'))
+          assert src['classification']=='LAYERB_32769_CLASS_CAPACITY_BUILD_PASS_PLUS_0_PLUS_0'
+          assert src['class_commit']==os.environ['CLASS_COMMIT']
+          assert src['old_validated_capacity']==18432
+          assert src['new_capacity']==32769
+          assert src['requested_node_count']==32769
+          assert src['capacity_sufficient'] is True
+          assert src['old_vs_new_changed_files']==['include/perturbations.h']
+          assert src['old_vs_new_changed_file_count']==1
+          assert src['only_change_is_capacity_constant'] is True
+          assert src['parser_build_parity_static_pass'] is True
+          assert src['scientific_equivalence_static_audit_pass'] is True
+          assert src['build_completed'] is True
+          assert src['scientific_response_read'] is False
+          assert src['scientific_authority_created'] is False
+          assert src['successor_execution_authorized'] is False
+
+          root=Path('external/class_iv_consumer')
+          def sha(b): return hashlib.sha256(b).hexdigest()
+          p=root/'include/perturbations.h'; pb=p.read_bytes(); ps=pb.decode()
+          old='#define _MAX_NUMBER_OF_K_FILES_ 30'; new='#define _MAX_NUMBER_OF_K_FILES_ 32769'
+          assert ps.count(old)==1
+          expected_capacity_post=sha(ps.replace(old,new,1).encode())
+          q=root/'include/parser.h'; qb=q.read_bytes(); qs=qb.decode()
+          qold='#define _ARGUMENT_LENGTH_MAX_ 1024'; qnew='#define _ARGUMENT_LENGTH_MAX_ 524288'
+          assert qs.count(qold)==1
+          expected_parser_post=sha(qs.replace(qold,qnew,1).encode())
+
+          assert src['new_reconstruction']['capacity_pre_sha256']==sha(pb)
+          assert src['new_reconstruction']['capacity_post_sha256']==expected_capacity_post
+          assert src['new_reconstruction']['parser_pre_sha256']==sha(qb)
+          assert src['new_reconstruction']['parser_post_sha256']==expected_parser_post
+          assert src['old_reconstruction']['parser_post_sha256']==expected_parser_post
+
+          out={
+            'schema':'LAYERB_32769_CLASS_CAPACITY_INDEPENDENT_CONSUMER_V0_1',
+            'classification':'LAYERB_32769_CLASS_CAPACITY_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'class_commit':src['class_commit'],
+            'new_capacity':src['new_capacity'],
+            'requested_node_count':src['requested_node_count'],
+            'capacity_build_audit_pass':True,
+            'parser_build_parity_audit_pass':True,
+            'scientific_equivalence_static_audit_pass':True,
+            'build_completed':True,
+            'scientific_response_read':False,
+            'class_solver_scientific_response_invoked':False,
+            'scientific_authority_created':False,
+            'successor_execution_authorized':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+            'source_result_sha256':hashlib.sha256(Path('artifacts/source/build.json').read_bytes()).hexdigest(),
+          }
+          out['token']=out['classification']
+          Path('artifacts/consumer/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-class-capacity-independent-consumer-v0-1
+          path: artifacts/consumer/result.json
+          if-no-files-found: error
+          retention-days: 90
