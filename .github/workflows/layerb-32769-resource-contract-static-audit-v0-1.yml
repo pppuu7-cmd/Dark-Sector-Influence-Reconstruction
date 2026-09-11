@@ -1,0 +1,102 @@
+name: layerb-32769-resource-contract-static-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-resource-contract-static-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen 32769 resource contract is non-triggering and response-blind
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          test "$(git hash-object ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_1.py)" = '11c7d9a1f95d7c1c394dd520f1c4340a4ce397b4'
+          test "$(git hash-object .github/workflows/layerb-32769-selfhosted-resource-lifecycle-pilot-v0-1.yml)" = '2a5ba7d979c87fcd222179c7276b5fcd507b384f'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_CANONICAL_16385_GITHUB_HOSTED_TOPOLOGY_ENVELOPE_V0_1.json)" = 'ea97e50650a85d70356d8529673396090980130a'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_1.json)" = 'ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json)" = 'dddf7b0f8596506b9e792186d8ebaf14ff789f4c'
+          python3 - <<'PY'
+          import ast,json
+          from pathlib import Path
+
+          py=Path('ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_1.py').read_text()
+          wf=Path('.github/workflows/layerb-32769-selfhosted-resource-lifecycle-pilot-v0-1.yml').read_text()
+          topo=json.loads(Path('docs/dsir4/authority/LAYERB_CANONICAL_16385_GITHUB_HOSTED_TOPOLOGY_ENVELOPE_V0_1.json').read_text())
+          build=json.loads(Path('docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_1.json').read_text())
+          canon=json.loads(Path('docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json').read_text())
+
+          assert topo['mem_total_kb']==16372440
+          assert topo['numeric_32769_memory_requirement_extrapolated'] is False
+          assert build['new_capacity']==32769 and build['parser_new_argument_capacity']==524288
+          assert build['scientific_equivalence_static_audit_pass'] is True
+          assert canon['requested_node_count']==32769 and canon['scientific_response_read'] is False
+
+          # Dispatch-only: creating or modifying this resource workflow must not launch it.
+          assert 'workflow_dispatch:' in wf
+          assert '\n  push:' not in wf and '\n  schedule:' not in wf
+          assert 'runs-on: [self-hosted, Linux, X64]' in wf
+          assert "HOSTED_EXHAUSTED_MEMTOTAL_KB: '16372440'" in wf
+          assert 'MEMTOTAL_KB" -le "$HOSTED_EXHAUSTED_MEMTOTAL_KB' in wf
+
+          tree=ast.parse(py)
+          attrs=[]
+          calls=[]
+          for n in ast.walk(tree):
+              if isinstance(n,ast.Call):
+                  if isinstance(n.func,ast.Attribute):
+                      attrs.append(n.func.attr)
+                      calls.append(n)
+                  elif isinstance(n.func,ast.Name):
+                      attrs.append(n.func.id)
+          assert 'get_transfer' not in attrs
+          assert 'evaluate' not in attrs
+          compute=[n for n in calls if isinstance(n.func,ast.Attribute) and n.func.attr=='compute']
+          assert len(compute)==1
+          assert 'scientific_response_read": False' in py
+          assert 'scientific_response_computed": False' in py
+          assert 'convergence_metric_computed": False' in py
+          assert 'convergence_classification_created": False' in py
+          assert '"max_live_instances": tracker["max_live"]' in py
+          assert '"final_live_instances": tracker["live"]' in py
+
+          out={
+            'schema':'LAYERB_32769_RESOURCE_CONTRACT_STATIC_AUDIT_V0_1',
+            'classification':'LAYERB_32769_RESOURCE_CONTRACT_STATIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'dispatch_only':True,
+            'self_hosted_linux_x64':True,
+            'higher_memory_ordering_guard_kb':16372440,
+            'numeric_32769_memory_requirement_extrapolated':False,
+            'canonical_32769_bound':True,
+            'class_32769_build_bound':True,
+            'scientific_transfer_values_read':False,
+            'scientific_response_read':False,
+            'convergence_metric_computed':False,
+            'convergence_classification_created':False,
+            'scientific_authority_created':False,
+            'high_memory_resource_lifecycle_preflight_pass':False,
+            'successor_execution_authorized':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+          }
+          out['token']=out['classification']
+          Path('artifacts/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-resource-contract-static-audit-v0-1
+          path: artifacts/result.json
+          if-no-files-found: error
+          retention-days: 90
