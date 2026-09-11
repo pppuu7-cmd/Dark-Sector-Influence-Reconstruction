@@ -1,0 +1,66 @@
+{
+  "schema": "LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_CONTRACT_V0_2",
+  "status": "PROSPECTIVE_FROZEN_BEFORE_MEASURED_RESOURCE_PASS",
+  "scope": "DSIR Article III Layer-B parser-corrected real 32769 resource authority candidate provenance packaging only",
+  "source_workflow": {
+    "name": "layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3",
+    "path": ".github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3.yml",
+    "git_blob": "e55c0ab05c6b7eb0d622eadba25d7e20cdc4ce16",
+    "job_name": "resource-lifecycle-pilot",
+    "artifact_name": "layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3",
+    "required_conclusion": "success"
+  },
+  "independent_workflow": {
+    "name": "layerb-32769-resource-lifecycle-independent-consumer-v0-1",
+    "path": ".github/workflows/layerb-32769-resource-lifecycle-independent-consumer-v0-1.yml",
+    "job_name": "independent-consumer",
+    "artifact_name_template": "layerb-32769-resource-lifecycle-independent-consumer-v0-1-{source_run_id}",
+    "required_conclusion": "success"
+  },
+  "required_source_classification": "LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0",
+  "required_independent_classification": "LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0",
+  "required_parser_capacity": 1048576,
+  "required_point_capacity": 32769,
+  "required_build_authority_classification": "LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_PASS_PLUS_0_PLUS_0",
+  "required_build_authority_git_blob": "b5cd7304c110962dc3baef8d04ef67d5a8042e5f",
+  "candidate_memtotal_kb_must_be_strictly_greater_than": 16373452,
+  "required_source_conditions": {
+    "runner_registration_evidence_valid": true,
+    "scientific_response_read": false,
+    "scientific_authority_created": false,
+    "successor_execution_authorized": false
+  },
+  "required_chain_conditions": {
+    "consumer_execution_completed": true,
+    "independent_valid": true,
+    "independent_errors": [],
+    "scientific_response_read": false,
+    "scientific_execution_authorized": false
+  },
+  "provenance_must_bind": [
+    "source_run_id",
+    "source_job_id",
+    "source_head_sha",
+    "source_artifact_id",
+    "source_artifact_zip_sha256",
+    "source_result_sha256",
+    "independent_run_id",
+    "independent_job_id",
+    "independent_head_sha",
+    "independent_artifact_id",
+    "independent_artifact_zip_sha256",
+    "independent_validation_sha256"
+  ],
+  "single_exact_job_required_per_workflow": true,
+  "single_exact_artifact_required_per_workflow": true,
+  "api_artifact_digest_must_match_downloaded_zip_when_present": true,
+  "source_result_hash_must_match_independent_validation_binding": true,
+  "chain_receipt_hash_must_match_independent_validation": true,
+  "packaging_output_is_candidate_only": true,
+  "durable_repository_authority_created_by_packaging": false,
+  "contents_write_permission_forbidden": true,
+  "high_memory_resource_lifecycle_preflight_pass_created_by_contract": false,
+  "scientific_execution_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false
+}
