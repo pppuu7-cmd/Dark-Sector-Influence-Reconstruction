@@ -7,65 +7,59 @@ Canonical 8193->16385 remains independently verified `COMMON_GRID_NEXT_REFINEMEN
 
 No 16385->32769 scientific execution is authorized. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
 
-## Closed prerequisites
-The following 32769 prerequisites are now durable and independently checked:
+## Closed 32769 prerequisites and dormant wiring
+Durably closed and independently checked:
 - response-blind canonical 32769 bytes + static consumer;
 - CLASS point capacity `32769` on pinned commit `ac627d54e9ce196a08878d1ba33999819925d19c`;
-- parser capacity/parity `524288`;
-- static scientific-equivalence audit: only the capacity constant differs from the validated 18432 tree;
-- prospective terminal result schema + independent terminal consumer.
+- parser/build parity `524288` and static scientific equivalence;
+- prospective terminal result schema + independent terminal consumer;
+- isolated high-memory route using custom label `dsir-32769-highmem`, no default labels, with physical `MemTotal > 16372440 kB` required;
+- one-live guard implementation + independent synthetic audit;
+- independent resource/lifecycle consumer implementation + synthetic regression audit;
+- GitHub-native completion-event chain from isolated pilot to hosted independent consumer;
+- measured-resource authority materializer implementation + independent synthetic fail-closed audit;
+- first-run one-run authorizer implementation + independent synthetic fail-closed audit.
 
-`TERMINAL_SCHEMA_AND_INDEPENDENT_CONSUMER_FROZEN=TRUE`.
+`TERMINAL_SCHEMA_AND_INDEPENDENT_CONSUMER_FROZEN=TRUE` remains closed.
 
-## Resource/lifecycle gate — implementation ready, measured PASS still open
-The exhausted hosted 16385 topology is frozen at `MemTotal=16372440 kB`, `SwapTotal=3145724 kB`, terminal `MemAvailable=0`, `SwapFree=0`. No 32769 memory requirement is extrapolated.
+## Resource/lifecycle gate — execution physically blocked, machinery ready
+The exhausted hosted 16385 topology remains frozen at `MemTotal=16372440 kB`, `SwapTotal=3145724 kB`, terminal `MemAvailable=0`, `SwapFree=0`. No 32769 memory requirement is extrapolated.
 
-A response-blind 32769 lifecycle engine is frozen at `ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_1.py`, Git blob `11c7d9a1f95d7c1c394dd520f1c4340a4ce397b4`. It constructs four roles sequentially, requires `max_live_instances=1` and final live zero, reads no transfer values, computes no scientific response and no convergence metric/classification.
+The isolated dispatch-only resource workflow remains `.github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2.yml`, Git blob `8ec0027d6fb45f3f12aa5f410de62093a7144924`, with `runs-on: [dsir-32769-highmem]` only and physical `MemTotal > 16372440 kB` required.
 
-### Isolated runner routing — V129 prepared
-Stale superseded generic self-hosted run `34550495778 / 103112190909` remains queued. To prevent a future higher-memory runner from being captured by that generic `[self-hosted, Linux, X64]` job, V129 freezes a dedicated-label route:
-- isolation contract `docs/dsir4/contracts/LAYERB_32769_HIGH_MEMORY_RUNNER_ISOLATION_CONTRACT_V0_1.json`, Git blob `d9d910d89889f6d3a27461a73c3dd72c2a9d2096`;
-- required custom label `dsir-32769-highmem`;
-- runner configuration requires no default labels;
-- isolated dispatch-only workflow `.github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2.yml`, Git blob `8ec0027d6fb45f3f12aa5f410de62093a7144924`;
-- workflow `runs-on` contains only `dsir-32769-highmem`;
-- it fails closed if stale job `103112190909` is concurrently `in_progress`;
-- it still requires physical `MemTotal > 16372440 kB`.
+`HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS=FALSE` until an actual qualifying isolated runner executes the measured pilot successfully.
 
-Static isolation audit run `34633703412`, job `103376415501`, SUCCESS. Artifact `10277616865`, ZIP SHA256 `48261fd0da92726eedf3987aa1888510716603222bf6f42ea12d685bec9173d2`, result SHA256 `22c9f5f191f3feae0e481f4c0e3f84ad33f03dae944a145507729ca21f00f363`. Durable authority `docs/dsir4/authority/LAYERB_32769_ISOLATED_RUNNER_CONTRACT_STATIC_AUDIT_V0_2.json`, creation commit `8f059f3960192f6d7b546be9402e41ffdd792328`.
+Independent consumer authority: `docs/dsir4/authority/LAYERB_32769_RESOURCE_CONSUMER_SYNTHETIC_AUDIT_V0_1.json`, creation commit `84246c4038f599246346ebe908583587295a51d5`; source run `34634540227`, artifact `10276978722`, ZIP SHA256 `f21252c1f36927ce88ba12c9ad0dd61d1f35168f70e71b51633d231882f10c74`.
 
-`HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS=FALSE` until an actual isolated higher-memory runner executes the measured pilot successfully.
+Event-chain authority: `docs/dsir4/authority/LAYERB_32769_RESOURCE_EVENT_CHAIN_STATIC_AUDIT_V0_1.json`, creation commit `bac1dfd064e338ac119a2bdc754a15a3f799ccf0`; source run `34635474683`, artifact `10278660102`, ZIP SHA256 `0698491a857a780b3f4ce389767d2d86d3d863921ff9d22f950270d6e9251aa4`.
 
-## One-live anti-duplication guard — implementation frozen, actual PASS open
-Prospective initial-run contract `docs/dsir4/contracts/LAYERB_32769_ONE_LIVE_GUARD_CONTRACT_V0_1.json`, Git blob `c88836865879e164d5f4599b5e586f148bc2d524`, freezes future production workflow path `.github/workflows/layerb-16385-to-32769-canonical-scientific-v0-1.yml`. V0.1 is first-run only: any other matching queued, in-progress or completed production run blocks it; retries require a separate future retry contract.
+Measured-resource materializer authority: `docs/dsir4/authority/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZER_SYNTHETIC_AUDIT_V0_1.json`, creation commit `1fc8b84e8b3f0b9e2de6a32e3fc4a0e0c97a88ef`; run `34636032375`, jobs `103384017602` + `103384081084`, artifact `10279000641`, ZIP SHA256 `1bbbd2b11131b71d665baeaf501c9643105242c821c984624cb09995139c057e`, summary SHA256 `31288a256a0f8906023b49c37df281e95c12a2293a0052258602b622669d245c`. Independent rehash reproduced these values. This audit is synthetic only; `actual_resource_authority_exists=false`.
 
-Guard implementation `ci/layerb_32769_one_live_guard_v0_1.py`, Git blob `a1f2fa6b38ed95c1873be644b6377f481ffe8bff`.
+## One-live + one-run authorization — implementation ready, real PASS open
+One-live synthetic authority remains `docs/dsir4/authority/LAYERB_32769_ONE_LIVE_GUARD_SYNTHETIC_AUDIT_V0_1.json`, creation commit `4933f03398ccfbc49b90d8255ba4e91c1d7a45dc`. `ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS=FALSE` until it runs against real live production state.
 
-Synthetic audit run `34633976800`: job `103377302152` SUCCESS, independent verifier `103377345283` SUCCESS. Artifact `10277072929`, ZIP SHA256 `57fbcfcdb05085e8135aff4136ab7727bd6ddc057f7efeca6078be8e3a82555f`, summary SHA256 `778c5433a326e2904c3ad38e7fdabae4c79546139a4e7ca8c2af91a26885d4b5`.
+One-run authorizer authority: `docs/dsir4/authority/LAYERB_16385_TO_32769_ONE_RUN_AUTHORIZER_SYNTHETIC_AUDIT_V0_1.json`, creation commit `ea810aa8363b7543ba88476e0cc860d409db8875`; run `34635692929`, jobs `103382890526` + `103382929964`, artifact `10278610547`, ZIP SHA256 `b5666dd53718ecd479ace0f3da418ca4f3796c8fb95f4228b84ac6cbcf6804da`, summary SHA256 `c5cb633160de4dd3ade91bd068ea6f59fec06e26db11e895033c554add50693c`. Independent rehash reproduced these values. It permits exactly one bound canonical run only when exact real resource authority and exact live one-live guard are both valid; low memory, unverified resource, duplicate live state and wrong run identity fail closed. Synthetic-only audit means `actual_one_run_authorization_exists=false` and `scientific_execution_authorized=false`.
 
-Synthetic behavior is fail-closed: current-run-only passes; any second queued/in-progress matching run, any prior completed matching production run, or a snapshot missing the current run fails. Durable synthetic authority `docs/dsir4/authority/LAYERB_32769_ONE_LIVE_GUARD_SYNTHETIC_AUDIT_V0_1.json`, creation commit `4933f03398ccfbc49b90d8255ba4e91c1d7a45dc`.
-
-Important: `ONE_LIVE_ANTI_DUPLICATION_GUARD_PASS=FALSE`. Only implementation readiness is closed; actual PASS must be created from live GitHub state in the future first production run.
+## Live ownership
+Current live Actions reconciliation: zero useful `in_progress` runs. Exactly one queued run remains, stale superseded self-hosted `34550495778 / 103112190909`; it must not receive runner ownership. No duplicate heavy science lane is authorized.
 
 ## Remaining true blockers
-1. A real runner isolated under `dsir-32769-highmem`, with no default labels and physical `MemTotal > 16372440 kB`.
-2. Measured response-blind 32769 lifecycle PASS and durable independent resource authority.
-3. Actual immediate one-live PASS against live production state.
-4. Separate one-run authorization binding the real resource + guard authorities.
-5. Only then: one canonical scientific 16385->32769 run and independent terminal consumption.
+1. A real runner isolated under `dsir-32769-highmem`, configured without default labels, with physical `MemTotal > 16372440 kB`.
+2. Exactly one response-blind measured 32769 lifecycle pilot must PASS there.
+3. Hosted independent consumer + measured-resource materializer must produce durable real resource authority.
+4. Actual one-live guard must PASS against live first-production state.
+5. One-run authorizer must bind those real authorities to exactly one canonical production run.
+6. Only then may one canonical scientific 16385->32769 run execute and be independently terminal-consumed.
 
-No available repository/API capability in this research cycle can enumerate or reconfigure the user's self-hosted runner registration, so physical-runner facts are not invented.
+No available repository/API capability in this cycle can enumerate or reconfigure the user's physical self-hosted runner registration, so no runner fact is invented.
 
-### Exact next action
-Attach/use a qualifying isolated `dsir-32769-highmem` runner and dispatch exactly one V0.2 response-blind lifecycle pilot. Until such a runner exists, only non-biasing dormant production/authorization preparation is permitted. Do not manufacture resource/one-live PASS values and do not execute scientific convergence.
-
-## Automation / ownership
-`DSIR Continuous Research` remains enabled hourly. No duplicate heavy science lane is authorized.
+## Exact next action
+Attach/use a qualifying isolated `dsir-32769-highmem` runner and dispatch exactly one V0.2 response-blind lifecycle pilot. Until such a runner exists, only non-biasing dormant production wiring/static auditing is permitted. Do not manufacture resource/one-live/authorization PASS values and do not execute scientific convergence.
 
 ## Recovery authority
-Newest immutable note: `docs/recovery/RECOVERY_2026-09-11_ARTICLE3_32769_RUNNER_ISOLATION_GUARD_PREP_V129.md`, creation commit `84cce92ed48986e7ae0bc4d30885fa52400b08b0`.
+Newest immutable note: `docs/recovery/RECOVERY_2026-09-11_ARTICLE3_32769_DORMANT_RESOURCE_AUTHORIZATION_CHAIN_V130.md`, creation commit `29598a0c0998faeb6fa214adf6f7e76d58eb00b2`.
 
 ## Readiness
 Frozen publication rubric remains **ARTICLE3_REPOSITORY_READINESS: 68%** and funnel-freeze readiness **67%** because the scientific convergence gate is unchanged.
 
-Operational roadmap tracking: **WORKING_PLAN_COMPLETION: 76%**. The additional point reflects completed isolated-runner routing and one-live guard implementation preparation; measured resource PASS and actual one-live PASS remain open.
+Operational roadmap tracking: **WORKING_PLAN_COMPLETION: 78%**. Dormant consumption/materialization/authorization machinery is now prospectively closed; measured high-memory execution and real live authorization remain open.
