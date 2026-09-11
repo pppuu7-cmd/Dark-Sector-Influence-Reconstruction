@@ -1,0 +1,47 @@
+{
+  "schema": "LAYERB_POST_16385_TOP1_PARALLEL_SUPPORT_TERMINAL_AUTHORITY_V0_1",
+  "classification": "POST_16385_TOP1_PARALLEL_SUPPORT_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "source_terminal_authority": "docs/dsir4/authority/LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_AUTHORITY_V0_1.json",
+  "source_terminal_authority_git_blob": "cb0b07bd75208619e681f02528fb0c761ddedabb",
+  "parallel_support_run_id": 34624187060,
+  "parallel_support_head_sha": "56f9152f4fa775439365a88ea5c2e7b502f1f5eb",
+  "source_artifacts": {
+    "cancellation_amplification": {
+      "artifact_id": 10273825514,
+      "zip_sha256": "5d5a3ef079bff829dcdbb37f6daab6c812e20491920d8d8a6083090cd6b09df8"
+    },
+    "binary64_replay": {
+      "artifact_id": 10274180314,
+      "zip_sha256": "63e8ea8c79c51a1ff6e5ea171c75999904a36c7dbc3e2eb7b88827bb2f03f41d"
+    },
+    "ulp_sensitivity": {
+      "artifact_id": 10274265218,
+      "zip_sha256": "313aa832ece4f720bc3946515bab80da9e4310afbdf645223504fc84d8fb44bb"
+    }
+  },
+  "terminal_consumer_run_id": 34624280381,
+  "terminal_consumer_job_id": 103345478391,
+  "terminal_consumer_head_sha": "9c462e3ba8308450a7103a0b0770992676090b19",
+  "terminal_validation_artifact_id": 10273496144,
+  "terminal_validation_zip_sha256": "0bb033efea6350679c14d2e53c8e416be17c65633bbc602dda4499c8b3f22f84",
+  "beta_response_cross_grid_relative_difference": 0.012484060640679777,
+  "max_raw_role_relative_difference": 6.885687402119481e-11,
+  "response_to_max_raw_role_amplification_factor": 181304493.09733495,
+  "response_to_min_raw_role_amplification_factor": 3194801920.626294,
+  "beta_cancellation_scale_relative_difference": 0.0124840605726825,
+  "binary64_metric_reproduced_exactly": true,
+  "nine_neighbor_ulp_metric_min": 0.01248406064067949,
+  "nine_neighbor_ulp_metric_max": 0.012484060640680063,
+  "max_absolute_metric_shift_under_endpoint_plusminus_one_ulp": 2.8622937353617317e-16,
+  "all_nine_neighbor_metrics_remain_above_strict_1e_3_tolerance": true,
+  "class_solver_invoked": false,
+  "alternative_h_evaluated": false,
+  "scientific_107_row_replay_executed": false,
+  "scientific_classification_created": false,
+  "scientific_authority_created": false,
+  "next_rung_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "interpretation": "Independent support-only audits quantify the already-authorized top-1 diagnosis. The beta response discrepancy is about 1.813e8 times the largest raw-role relative cross-grid shift, consistent with strong finite-difference cancellation amplification. Exact binary64 replay reproduces the recorded hotspot metric, while perturbing each already-rounded coarse/fine endpoint by plus/minus one ULP changes that metric by at most about 2.86e-16; endpoint binary64 rounding therefore cannot account for the ~1.248e-2 plateau. This authority changes no scientific gate or frozen numerical setting."
+}
