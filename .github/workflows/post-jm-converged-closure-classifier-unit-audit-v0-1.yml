@@ -1,0 +1,67 @@
+name: post-jm-converged-closure-classifier-unit-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/post-jm-converged-closure-classifier-unit-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  classifier-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen fresh-closure decision table without science
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          prereg=Path('docs/dsir4/prereg/POST_JM_CONVERGED_LAYERB_SCIENTIFIC_CLOSURE_V0_1.md').read_text()
+          assert 'PASS_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_POST_JM_V0_1' in prereg
+          assert 'NUMERICALLY_UNRESOLVED_POST_JM_LAYERB_CLOSURE_V0_1' in prereg
+          assert 'FAIL_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_POST_JM_V0_1' in prereg
+          REL_TOL=1e-3; FB_MAX=.05; MIN_RETAINED=15
+          def classify(*,structural=True,mx=5e-4,invalid=.0,retained=107):
+              if not structural: return 'INVALID_INFRA_PLUS_0_PLUS_0'
+              if not (mx < REL_TOL): return 'NUMERICALLY_UNRESOLVED_POST_JM_LAYERB_CLOSURE_V0_1'
+              if invalid > FB_MAX or retained < MIN_RETAINED: return 'FAIL_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_POST_JM_V0_1'
+              return 'PASS_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_POST_JM_V0_1'
+          cases={
+            'pass': classify(),
+            'exact_threshold_unresolved': classify(mx=1e-3),
+            'above_threshold_unresolved': classify(mx=1.0001e-3),
+            'invalid_fraction_boundary_pass': classify(invalid=.05),
+            'invalid_fraction_fail': classify(invalid=.0500001),
+            'retained_boundary_pass': classify(retained=15),
+            'retained_fail': classify(retained=14),
+            'structural_invalid': classify(structural=False),
+          }
+          expected={
+            'pass':'PASS_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_POST_JM_V0_1',
+            'exact_threshold_unresolved':'NUMERICALLY_UNRESOLVED_POST_JM_LAYERB_CLOSURE_V0_1',
+            'above_threshold_unresolved':'NUMERICALLY_UNRESOLVED_POST_JM_LAYERB_CLOSURE_V0_1',
+            'invalid_fraction_boundary_pass':'PASS_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_POST_JM_V0_1',
+            'invalid_fraction_fail':'FAIL_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_POST_JM_V0_1',
+            'retained_boundary_pass':'PASS_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_POST_JM_V0_1',
+            'retained_fail':'FAIL_PHYSICAL_SUPPORT_ARTICLE3_SHARED_GRID_POST_JM_V0_1',
+            'structural_invalid':'INVALID_INFRA_PLUS_0_PLUS_0',
+          }
+          assert cases==expected
+          out={'schema':'POST_JM_CONVERGED_CLOSURE_CLASSIFIER_UNIT_AUDIT_V0_1','classification':'POST_JM_CONVERGED_CLOSURE_CLASSIFIER_FROZEN_PASS_PLUS_0_PLUS_0','effect':'+0/+0','case_count':len(cases),'cases':cases,'strict_relative_tolerance':REL_TOL,'invalid_fraction_max_inclusive':FB_MAX,'retained_dimension_min_inclusive':MIN_RETAINED,'exact_threshold_is_unresolved':True,'jm_result_read':False,'scientific_response_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,'token':'POST_JM_CONVERGED_CLOSURE_CLASSIFIER_FROZEN_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'],out['case_count'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-jm-converged-closure-classifier-unit-audit-v0-1
+          path: artifacts/result.json
+          if-no-files-found: error
+          retention-days: 90
