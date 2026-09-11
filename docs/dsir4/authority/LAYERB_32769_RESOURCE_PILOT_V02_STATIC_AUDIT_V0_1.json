@@ -1,0 +1,41 @@
+{
+  "schema": "LAYERB_32769_RESOURCE_PILOT_V02_STATIC_AUDIT_AUTHORITY_V0_1",
+  "classification": "LAYERB_32769_RESOURCE_PILOT_V02_STATIC_AUDIT_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "pilot_path": "ci/layerb_32769_response_blind_resource_lifecycle_pilot_v0_2.py",
+  "pilot_git_blob": "100f871822e69cfde7730aba4f6a9ff59c6ad9aa",
+  "build_authority_path": "docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json",
+  "build_authority_git_blob": "b5cd7304c110962dc3baef8d04ef67d5a8042e5f",
+  "frozen_constants": {
+    "h": 0.0001,
+    "rel_tol": 0.001,
+    "lookup_rel_tol": 1e-12,
+    "native_kpd": 20.0,
+    "point_capacity": 32769,
+    "parser_capacity": 1048576,
+    "node_count": 32769
+  },
+  "response_blind_guards": {
+    "compute_transfer_only": true,
+    "get_transfer_absent": true,
+    "evaluate_absent": true,
+    "scientific_response_read": false,
+    "scientific_response_computed": false
+  },
+  "audit": {
+    "workflow_git_blob": "c3f68e72524617e91bdd96e8ddb8192e481fcd6d",
+    "run_id": 34650386601,
+    "static_job_id": 103430909765,
+    "independent_verifier_job_id": 103430945384,
+    "static_artifact_id": 10282938755,
+    "static_artifact_zip_sha256": "8a272bf06ccc67e5bdc9752cf01bcb9cd7ca503ff3545e9451a2a8115f760167",
+    "independent_artifact_id": 10283203691,
+    "independent_artifact_zip_sha256": "b1c318a60c175360b80bee62383e985d1c22807e792e498194abd13ab3292f74"
+  },
+  "artifact_verified_independently": true,
+  "high_memory_resource_lifecycle_preflight_pass": false,
+  "scientific_execution_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "token": "LAYERB_32769_RESOURCE_PILOT_V02_STATIC_AUDIT_PASS_PLUS_0_PLUS_0"
+}
