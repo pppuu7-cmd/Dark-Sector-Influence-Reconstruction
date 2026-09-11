@@ -1,0 +1,41 @@
+{
+  "schema": "LAYERB_REFINEMENT_SEQUENCE_DESCRIPTIVE_AUDIT_AUTHORITY_V0_1",
+  "classification": "LAYERB_REFINEMENT_SEQUENCE_DESCRIPTIVE_AUDIT_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "artifact_verified_independently": true,
+  "run_id": 34552559346,
+  "artifact_id": 10181337896,
+  "artifact_zip_sha256": "338bde15c44367faaedf7fe0bd8eb4c00d7985913f46eca2b9fafcf2f0b50646",
+  "result_json_sha256": "f51251a70c070e7e91c836384e0a7fe7b12ccb1bce4bfadb2a3ab552208ca5b4",
+  "sequence": [
+    0.037280144773915974,
+    0.016330535730270664,
+    0.012273497268380687,
+    0.01070806986822778
+  ],
+  "successive_reduction_factors": [
+    2.2828488538078164,
+    1.3305527652938685,
+    1.1461913696321435
+  ],
+  "effective_orders_if_zero_limit_assumed": [
+    1.1908353426635783,
+    0.4120257239778395,
+    0.19684793848397697
+  ],
+  "aitken_estimate_JJ_JK_JL": 0.011299130400911055,
+  "aitken_estimate_JK_JL_JM": 0.009724544396382654,
+  "latest_aitken_over_threshold_factor": 9.724544396382655,
+  "monotonically_decreasing": true,
+  "successive_reduction_factors_decreasing": true,
+  "effective_orders_decreasing": true,
+  "interpretation_only": true,
+  "stopping_rule_changed": false,
+  "next_rung_changed": false,
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "article3_repository_readiness_percent": 68,
+  "funnel_freeze_readiness_percent": 67,
+  "token": "LAYERB_REFINEMENT_SEQUENCE_DESCRIPTIVE_AUDIT_PASS_PLUS_0_PLUS_0"
+}
