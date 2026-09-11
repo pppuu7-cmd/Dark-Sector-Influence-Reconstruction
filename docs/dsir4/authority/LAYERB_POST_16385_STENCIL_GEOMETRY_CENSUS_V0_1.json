@@ -1,0 +1,41 @@
+{
+  "schema": "LAYERB_POST_16385_STENCIL_GEOMETRY_CENSUS_AUTHORITY_V0_1",
+  "classification": "POST_16385_STENCIL_GEOMETRY_CENSUS_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "workflow_run_id": 34586460549,
+  "workflow_head_sha": "68fc951fd90cd74f6232ad813973da8119eb41a0",
+  "helper_blob_sha": "d9e65765b1782764955854ed8d304a42bdf150a2",
+  "full": {
+    "job_id": 103221704310,
+    "artifact_id": 10193782924,
+    "artifact_zip_sha256": "de6de7a539e4a599874bfc1eda47986bf57fc3052d1f9dd9de6bca36588037cb",
+    "result_json_sha256": "16e1127f9e16cb1e21c8571f73b7c92d0beb907e1d81d4aec3a4c8066f1d93a0",
+    "target_count": 8189,
+    "exact_target_membership_count_in_16385": 0,
+    "max_nearest_16385_coordinate_rel_mismatch": 0.00019843299880114518,
+    "max_16385_cubic_weight_l1": 1.2499999962738002,
+    "max_cross_grid_weight_l1_abs_difference": 0.2499999962738002
+  },
+  "edge": {
+    "job_id": 103221704104,
+    "artifact_id": 10193782592,
+    "artifact_zip_sha256": "f69a4fbfb7bd4e746f1ae1d7e04869093f54f029d081cc6a0b37919665681de2",
+    "result_json_sha256": "6c641bb466f80782c9c79e61e911a43a816163b687adb944729f5076408b95fc",
+    "target_count": 512,
+    "exact_target_membership_count_in_16385": 0,
+    "max_nearest_16385_coordinate_rel_mismatch": 0.00001245223543421322,
+    "max_16385_cubic_weight_l1": 1.0303914532525047,
+    "max_cross_grid_weight_l1_abs_difference": 0.030391453252504697
+  },
+  "artifact_verified_independently": true,
+  "science_result_read": false,
+  "class_solver_invoked": false,
+  "full_107_row_traversal_executed": false,
+  "scientific_authority_created": false,
+  "next_rung_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "interpretation_scope": "support-only geometry evidence; no scientific branch authority",
+  "article3_repository_readiness_percent": 68,
+  "funnel_freeze_readiness_percent": 67
+}
