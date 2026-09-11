@@ -1,0 +1,23 @@
+{
+  "schema": "LAYERB_POST_16385_TOP64_TERMINAL_VALIDATOR_STATIC_AUDIT_AUTHORITY_V0_1",
+  "classification": "POST_16385_TOP64_TERMINAL_VALIDATOR_STATIC_AUDIT_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "run_id": 34614362688,
+  "job_id": 103312468990,
+  "artifact_id": 10269782268,
+  "head_sha": "bc4242392fc3958cc2e24d9e7d8b2c87476572c5",
+  "artifact_zip_sha256": "a46a59207e6da30603d4303d5a54534ed4d7a8f2864b757864cfaf9f8a81edf2",
+  "static_json_sha256": "be572b3072963d69c82886b4660c588cea659e5e3d35e3a0b0df55021716022b",
+  "validator_blob": "b687bc3a73c3f5d3c61d02a8c3fdf1988b0f396e",
+  "check_count": 15,
+  "pass_count": 15,
+  "artifact_verified_independently": true,
+  "class_solver_invoked": false,
+  "census_result_read": false,
+  "execution_authorized": true,
+  "execution_authorization_scope": "Validate exactly the single frozen top-64 census run 34614119149 after successful terminal completion; no scientific successor is authorized.",
+  "scientific_authority_created": false,
+  "next_rung_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false
+}
