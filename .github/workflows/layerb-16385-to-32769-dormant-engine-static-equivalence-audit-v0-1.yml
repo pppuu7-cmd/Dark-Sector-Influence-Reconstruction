@@ -1,0 +1,154 @@
+name: layerb-16385-to-32769-dormant-engine-static-equivalence-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-16385-to-32769-dormant-engine-static-equivalence-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dormant-engine-static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce parent/new engine identities and scientific-core equivalence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          test "$(git hash-object ci/post_jm_next_support_canonical_one_live_refinement_v0_1.py)" = '10492520b4a0eb8992e9ccb101a4ccd26127be82'
+          test "$(git hash-object ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py)" = '5ae2068d65dd45e0813c75fb795e55aa1bda1d5e'
+          python3 -m py_compile ci/post_jm_next_support_canonical_one_live_refinement_v0_1.py ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py
+          python3 - <<'PY'
+          import ast,json
+          from pathlib import Path
+          old=Path('ci/post_jm_next_support_canonical_one_live_refinement_v0_1.py').read_text()
+          new=Path('ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py').read_text()
+
+          # Frozen scalar/scientific constants and plan identities must remain literal.
+          required_new=[
+            'H = 1e-4', 'REL_TOL = 1e-3', 'LOOKUP_REL_TOL = 1e-12', 'NATIVE_KPD = 20.0',
+            'CAPACITY = 32769', 'PARSER_CAPACITY = 524288',
+            'COARSE_TEXT_SHA = "7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69"',
+            'COARSE_NODE_SHA = "3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975"',
+            'FINE_TEXT_SHA = "7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2"',
+            'FINE_NODE_SHA = "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599"',
+            'COARSE_PLAN_SHA = "505716116cc385d5700e455017d8e541c5bba7774fa6647298392495c83ecfe0"',
+            'FINE_PLAN_SHA = "0f7ce2e5fa459e15954268dfd46045eaa0ab6356dfdab5a2e282514e7a34ae4e"',
+            'PARENT_RETAINED_SHA = "44b57c6c910bc3612310ce415d773c8c180497528bfc5fc2927ce61da6ad40d7"',
+            'FULL_ORDER_SHA = "bfaf582518cdbfd34b1e8392da83dac6b0885948bc31f2c29d4e48247c23af75"',
+          ]
+          for x in required_new: assert x in new,x
+
+          # Compare the actual request/evaluate/replay/classify core. The ONLY normalized
+          # differences permitted are the two canonical support node counts.
+          start='    engine.PlannerSuite.reset()\n'
+          end='    classification = CONVERGED if converged else NOT_CONVERGED\n'
+          def fragment(s):
+              i=s.index(start); j=s.index(end,i)+len(end); return s[i:j]
+          of=fragment(old)
+          nf=fragment(new)
+          normalized=nf.replace(
+            'coarse = engine.load_nodes(a.coarse, 16385, COARSE_TEXT_SHA, COARSE_NODE_SHA)',
+            'coarse = engine.load_nodes(a.coarse, 8193, COARSE_TEXT_SHA, COARSE_NODE_SHA)'
+          ).replace(
+            'fine = engine.load_nodes(a.fine, 32769, FINE_TEXT_SHA, FINE_NODE_SHA)',
+            'fine = engine.load_nodes(a.fine, 16385, FINE_TEXT_SHA, FINE_NODE_SHA)'
+          )
+          assert normalized==of, 'scientific core differs beyond support-rung node counts'
+
+          # Strong invariants around the inherited classifier and accounting.
+          for x in (
+            'float(mx) < REL_TOL',
+            'float(layer["invalid_row_fraction"]) <= ir.FB_MAX',
+            'layer["retained_after_layer_b"] >= ir.MIN_RETAINED',
+            'unsupported == 0',
+            'lookup <= LOOKUP_REL_TOL',
+            'conv.get("finite_nonzero_status_changed") is False',
+            'conv.get("row_label_changed") is False',
+            'conv.get("boss_dense_z_disagreement") is False',
+            'tracker != {"constructions": 8, "live": 0, "max_live": 1}',
+            'engine.calls_scalar_count(coarse_calls) != 83666',
+            'engine.calls_scalar_count(fine_calls) != 121682',
+          ):
+              assert x in new,x
+
+          # New layer must add authority prerequisites, not remove scientific guards.
+          for fn in ('validate_parent','validate_build','validate_canonical_32769','validate_plan','validate_resource','validate_guard','validate_authorization'):
+              assert f'def {fn}(' in new,fn
+          for x in (
+            'resource_authority_binding', 'one_live_guard_binding', 'one_run_authorization_binding',
+            'canonical_32769_authority', 'class_build_authority', 'request_plan_authority',
+            '"covariance_read": False', '"whitening_read": False', '"nuisance_read": False', '"relation_null_read": False',
+          ):
+              assert x in new,x
+
+          # Static only: this audit never imports/executes execute(), CLASS, or transfer calls.
+          tree=ast.parse(new)
+          execute_fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='execute')
+          assert execute_fn is not None
+          out={
+            'schema':'LAYERB_16385_TO_32769_DORMANT_ENGINE_STATIC_EQUIVALENCE_AUDIT_V0_1',
+            'classification':'LAYERB_16385_TO_32769_DORMANT_ENGINE_STATIC_EQUIVALENCE_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'parent_engine_git_blob':'10492520b4a0eb8992e9ccb101a4ccd26127be82',
+            'dormant_engine_git_blob':'5ae2068d65dd45e0813c75fb795e55aa1bda1d5e',
+            'scientific_core_identical_after_only_support_count_normalization':True,
+            'normalized_support_changes':{'coarse':[8193,16385],'fine':[16385,32769]},
+            'strict_relative_tolerance':0.001,
+            'h':0.0001,
+            'native_k_per_decade_for_pk':20.0,
+            'request_plan_hashes_unchanged':True,
+            'request_scalar_counts_unchanged':True,
+            'parent_107_row_accounting_unchanged':True,
+            'runtime_resource_guard_authorization_required':True,
+            'scientific_solver_invoked':False,
+            'scientific_response_read':False,
+            'scientific_execution_authorized':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False,
+          }
+          out['token']=out['classification']
+          Path('artifacts/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-to-32769-dormant-engine-static-equivalence-audit-v0-1
+          path: artifacts/result.json
+          if-no-files-found: error
+          retention-days: 90
+
+  independent-static-verifier:
+    needs: dormant-engine-static-audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-to-32769-dormant-engine-static-equivalence-audit-v0-1
+          path: evidence
+      - name: Independently verify dormant engine equivalence receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/post_jm_next_support_canonical_one_live_refinement_v0_1.py)" = '10492520b4a0eb8992e9ccb101a4ccd26127be82'
+          test "$(git hash-object ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py)" = '5ae2068d65dd45e0813c75fb795e55aa1bda1d5e'
+          python3 - <<'PY'
+          import json
+          d=json.load(open('evidence/result.json'))
+          assert d['classification']=='LAYERB_16385_TO_32769_DORMANT_ENGINE_STATIC_EQUIVALENCE_PASS_PLUS_0_PLUS_0'
+          assert d['scientific_core_identical_after_only_support_count_normalization'] is True
+          assert d['normalized_support_changes']=={'coarse':[8193,16385],'fine':[16385,32769]}
+          assert d['strict_relative_tolerance']==0.001 and d['h']==0.0001 and d['native_k_per_decade_for_pk']==20.0
+          assert d['request_plan_hashes_unchanged'] is True and d['request_scalar_counts_unchanged'] is True
+          assert d['runtime_resource_guard_authorization_required'] is True
+          assert d['scientific_solver_invoked'] is False and d['scientific_execution_authorized'] is False
+          print('LAYERB_16385_TO_32769_DORMANT_ENGINE_INDEPENDENT_STATIC_VALIDATION_PASS_PLUS_0_PLUS_0')
+          PY
