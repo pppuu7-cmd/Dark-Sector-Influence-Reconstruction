@@ -1,0 +1,56 @@
+{
+  "schema": "LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_1",
+  "status": "PROSPECTIVE_FROZEN_BEFORE_MEASURED_RESOURCE_PASS",
+  "scope": "DSIR Article III Layer-B 32769 high-memory response-blind resource/lifecycle authority only",
+  "output_classification_if_all_checks_pass": "LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0",
+  "required_source_result_classification": "LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0",
+  "required_independent_validation_classification": "LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0",
+  "required_source_identity": {
+    "canonical_32769_node_sha256": "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599",
+    "canonical_32769_text_sha256": "7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2",
+    "class_build_authority_git_blob": "ec773d9f5cbed652c52c52b5a4fae74efd5ecd0d",
+    "runner_isolation_contract_git_blob": "d9d910d89889f6d3a27461a73c3dd72c2a9d2096",
+    "required_custom_label": "dsir-32769-highmem",
+    "candidate_memtotal_kb_must_be_strictly_greater_than": 16372440,
+    "total_solver_constructions": 4,
+    "max_live_instances": 1,
+    "final_live_instances": 0
+  },
+  "required_response_blind_bits": {
+    "scientific_transfer_values_read": false,
+    "scientific_response_read": false,
+    "scientific_response_computed": false,
+    "convergence_metric_computed": false,
+    "convergence_classification_created": false,
+    "scientific_authority_created": false,
+    "successor_execution_authorized": false
+  },
+  "required_independent_binding": {
+    "independent_valid": true,
+    "errors": [],
+    "source_result_sha256_must_match_source_bytes": true,
+    "candidate_memtotal_must_match_source": true,
+    "execution_lifecycle_must_match_source": true,
+    "canonical_identity_must_match_source": true,
+    "class_build_identity_must_match_source": true,
+    "runner_isolation_identity_must_match_source": true
+  },
+  "required_provenance_receipt_fields": [
+    "source_run_id",
+    "source_job_id",
+    "source_head_sha",
+    "source_artifact_id",
+    "source_artifact_zip_sha256",
+    "independent_run_id",
+    "independent_job_id",
+    "independent_head_sha",
+    "independent_artifact_id",
+    "independent_artifact_zip_sha256"
+  ],
+  "materialization_requires_real_non_synthetic_inputs": true,
+  "authority_created_by_contract_file_itself": false,
+  "high_memory_resource_lifecycle_preflight_pass": false,
+  "scientific_execution_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false
+}
