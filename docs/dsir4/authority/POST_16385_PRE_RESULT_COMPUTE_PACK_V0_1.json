@@ -1,0 +1,66 @@
+{
+  "schema": "POST_16385_PRE_RESULT_COMPUTE_PACK_AUTHORITY_V0_1",
+  "classification": "POST_16385_PRE_RESULT_COMPUTE_PACK_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "artifact_verified_independently": true,
+  "run_id": 34555398459,
+  "workflow_head_sha": "c208eaf183925b58f1c989fd1e82e197f47a59b2",
+  "source_synthesis": {
+    "job_id": 103126908462,
+    "artifact_id": 10182351271,
+    "artifact_zip_sha256": "b1da72e65378f576e339ae019397c1f48a5f20c665375ed60db99d7711ba7209",
+    "audit_json_sha256": "b2fe639f29ad013129c7c7bae523f56c0bb8b1f6d8f84aff418d526cee89c752",
+    "synthesized_helper_sha256": "9d77798839c5978fae8f0a1b5b40eaf8a34f53c4db1f09d1d436a21c5ffd2670",
+    "classification": "POST_16385_DORMANT_CONVERGED_CLOSURE_SOURCE_SYNTHESIS_PASS_PLUS_0_PLUS_0",
+    "check_count": 12,
+    "synthesized_source_is_execution_authority": false,
+    "known_metadata_defect": "Raw synthesized artifact retained old output requested_node_count metadata 4097/8193 despite loading canonical 8193/16385. It is not executable authority.",
+    "prospective_corrected_helper": "ci/post_16385_converged_fresh_layerb_scientific_closure_v0_1.py",
+    "prospective_corrected_helper_creation_commit": "e66c1dff436aa508e45b6787f5838b8ac203d988",
+    "prospective_corrected_helper_git_blob": "ebd572a74b25a6b120ef6a5479aaa78d742594bd",
+    "prospective_corrected_helper_sha256": "e57b2301a1e6d4562f160a88f4a5753dec2c51450c3eb54b2d50bd5ca7f00b44",
+    "corrected_helper_execution_authorized": false
+  },
+  "convergence_model_diagnostic": {
+    "job_id": 103126908593,
+    "artifact_id": 10182370413,
+    "artifact_zip_sha256": "cb465c161a59229414ee6eec38ae8838e02026746527c882ef35f45bb679eb2a",
+    "result_json_sha256": "a896bd854db1bb71dbb8f11b2909e35f769a8ef622c7c0411409cb8f7b9e63ae",
+    "classification": "LAYERB_CONVERGENCE_MODEL_DIAGNOSTIC_PASS_PLUS_0_PLUS_0",
+    "validated_input_sequence": [
+      0.037280144773915974,
+      0.016330535730270664,
+      0.012273497268380687,
+      0.01070806986822778
+    ],
+    "zero_limit_power_fit": {
+      "A": 0.03567705587957941,
+      "p": 0.7921403654868776,
+      "rss": 0.00003568878911749023,
+      "bic": -43.7352845175155,
+      "descriptive_next_rung_prediction": 0.003967865711340089
+    },
+    "offset_power_fit": {
+      "c": 0.010677008828290866,
+      "A": 0.026591816373460142,
+      "p": 2.2045400099659487,
+      "rss": 1.9025661784524488e-7,
+      "bic": -63.28586258437943,
+      "descriptive_next_rung_prediction": 0.010735922667428057,
+      "asymptotic_floor_over_tolerance": 10.677008828290866
+    },
+    "delta_bic_offset_minus_zero": -19.550578066863928,
+    "interpretation_only": true,
+    "current_16385_result_read": false,
+    "next_rung_authorized": false,
+    "stopping_rule_changed": false
+  },
+  "current_16385_result_read": false,
+  "class_solver_invoked_by_compute_pack": false,
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "article3_repository_readiness_percent": 68,
+  "funnel_freeze_readiness_percent": 67,
+  "token": "POST_16385_PRE_RESULT_COMPUTE_PACK_PASS_PLUS_0_PLUS_0"
+}
