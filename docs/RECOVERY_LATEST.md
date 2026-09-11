@@ -2,30 +2,45 @@
 
 Updated: 2026-09-11. Scope: **DSIR only**. Never mix RTK, RQIR, KMQGB or KMDSB.
 
-Newest immutable current-front recovery note: `docs/recovery/RECOVERY_2026-09-11_ARTICLE3_CANCELLATION_DIAGNOSIS_CLOSED_TOP64_RETRY_ACTIVE_V124.md`, creation commit `63ceb148870ab75c0057a223e8c7142eaa4a0fbd`. The two concurrently created V123 notes and all earlier recovery notes remain immutable history; V124 reconciles and supersedes them for current-front recovery.
+Newest immutable current-front recovery note: `docs/recovery/RECOVERY_2026-09-11_ARTICLE3_TOP64_CONFOUNDER_ROBUSTNESS_CLOSED_V125.md`, creation commit `2f518aaf0b7e9dc96925bec962dbc3e528f43b4c`. V124 and all earlier recovery notes remain immutable history; V125 supersedes them for current-front recovery.
 
-## Scientific frontier
-Canonical 8193->16385 remains independently verified `COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`, max relative component difference `0.012484060640679777` versus strict `<1e-3`. Frozen `REL_TOL=1e-3`, `h=1e-4`, native kpd20, centered-cubic interpolation, physical domain/masks/107-row accounting, invalid fraction `<=0.05`, retained `>=15`, unsupported=0 and lookup `<=1e-12` remain unchanged. No 32769 execution is authorized; covariance restriction remains unauthorized; Wm_S3 remains unopened.
+## Scientific frontier — unchanged
+Canonical 8193->16385 remains independently verified `COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`, max relative component difference `0.012484060640679777` versus strict `<1e-3`. Frozen `REL_TOL=1e-3`, `h=1e-4`, native kpd20, centered-cubic interpolation, physical domain/masks/107-row accounting, invalid fraction `<=0.05`, retained `>=15`, unsupported=0 and lookup `<=1e-12` remain unchanged.
 
-## Closed top-1 cancellation diagnosis
-Exact-hotspot/top-1 authority remains support-only `+0/+0`. Two additional independent support packages are now terminal and durable:
+No 32769 execution is authorized. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
 
-- `LAYERB_POST_16385_TOP1_PARALLEL_SUPPORT_TERMINAL_AUTHORITY_V0_1.json`, creation commit `d46ae6e2175502ed9b74444dc8f91fdc48cedb05`: beta-response discrepancy `0.012484060640679777` is `181304493.09733495` times the largest raw-role relative cross-grid shift; ±1 ULP perturbations of the already-rounded endpoint response values move the metric by at most `2.8622937353617317e-16`.
-- `LAYERB_POST_16385_TOP1_DECOMPOSITION_ARITHMETIC_TERMINAL_AUTHORITY_V0_1.json`, creation commit `4392df8fe76680ee6e4bfed7e073263e4729e39f`: beta subtraction condition numbers are `207066036.01189664` on 8193 and `204481011.0632948` on 16385; exact Decimal replay from stored binary64 role operands has zero subtraction replay rounding-relative error and signed role shifts exactly reproduce the beta-numerator shift.
+## Top-64 support branch — terminal for this cycle
+The single permitted unchanged retry of run `34614119149` passed on attempt 2/job `103331912096`. All 64 ordered atoms were exactly reproduced at the primary guard; `21/64` have cross-grid discrepancy `>=1e-3`.
 
-Combined interpretation: the local hotspot is strongly ill-conditioned and exhibits finite-difference cancellation amplification; ordinary endpoint binary64 rounding and ordinary arithmetic rounding of the subtraction do not explain the plateau. This is diagnostic support only and changes no scientific gate.
+Population/confounder robustness was then independently closed. Corrected source run `34628562363` and terminal consumer run `34628673923` establish:
+- `64 -> 58` unique physical atoms after exact duplicate collapse;
+- Spearman cancellation-scale/discrepancy `-0.5341210955390675` before collapse and `-0.5163800793626381` after collapse;
+- DES-only Spearman `-0.5078643578643579` with `18/55` atoms `>=1e-3`;
+- strict-threshold exceedances by cancellation-scale quartile `13/16`, `6/16`, `1/16`, `1/16` from lowest to highest scale;
+- high/low discrepancy median cancellation-scale ratio `0.13484119009229173`.
 
-## Top-64 census retry
-Attempt 1 of run `34614119149` remains infrastructure/numerical-reproducibility FAIL `+0/+0` at atom-0 exact reproduction. The single permitted unchanged retry is run attempt 2, job `103331912096`, launch head `6b684ac91c7a261e6b588da1a4922a411bd65614`; at the V124 update it remains **IN_PROGRESS**. No duplicate top-64 run is authorized.
+Durable confounder authority:
+`docs/dsir4/authority/LAYERB_POST_16385_TOP64_CONFOUNDER_TERMINAL_AUTHORITY_V0_1.json`, creation commit `be81a67ed93f4e640e79532f85fda90d32c33afe`.
 
-If retry PASSes, independently consume/hash all artifacts and enforce exact source/provenance identity, 64 ordering, lifecycle `8/max1/final0`, unsupported=0, lookup `<=1e-12`, every primary reproduction error `<=1e-12`, and downstream-closed flags. If reproduction fails again, stop retries and classify the census BLOCKED by hosted numerical reproducibility; freeze a separate support-only cross-VM reproducibility diagnostic instead of relaxing the gate.
+A separate post-hoc/exploratory unique-atom stress test, run `34628932658`, gives lowest-scale quartile vs rest odds ratio `20.571428571428573` with one-sided Fisher `p=1.6168593301143046e-05`, and lower-half vs upper-half odds ratio `19.125` with `p=2.3321946203480245e-05`. This is descriptive support only, not preregistered confirmatory inference.
 
-`DSIR Continuous Research` remains enabled hourly and aligned with this same repository-first, fail-closed, anti-idle front.
+Durable exploratory authority:
+`docs/dsir4/authority/LAYERB_POST_16385_TOP64_UNIQUE_ASSOCIATION_EXPLORATORY_AUTHORITY_V0_1.json`, creation commit `629ca6dd4bec25e374467b7d06a2d555354688f8`.
+
+## Interpretation / boundary
+The finite-difference cancellation/ill-conditioning diagnosis is now population-distributed rather than a top-1 anecdote: it survives duplicate collapse, DES-only stratification and cancellation-scale enrichment tests. This materially strengthens the numerical-conditioning explanation for the observed plateau.
+
+It remains support-only `+0/+0`. It does not change the canonical non-convergence classification, authorize 32769, authorize covariance restriction or open Wm_S3.
+
+## Automation
+`DSIR Continuous Research` remains enabled hourly and was rechecked during V125. It must resume from V125/current repository state and must not duplicate the now-closed top-64 support branch.
 
 Stale superseded self-hosted run `34550495778 / 103112190909` must not receive home-runner ownership.
 
 ## Readiness
 **ARTICLE3_REPOSITORY_READINESS: 68%.** Funnel-freeze readiness: **67%**.
 
+The percentages intentionally stay unchanged because the new results are diagnostic support-only `+0/+0`; the frozen scientific frontier did not move.
+
 ## Exact next action
-Track only the single unchanged top-64 retry `34614119149 / 103331912096`. On terminal state, consume and independently verify its artifact in the same iteration. Never execute 32769, covariance restriction or Wm_S3, and never alter frozen science to rescue this support gate.
+Treat the top-64 cancellation/confounder branch as support-complete for the current Article III cycle. Integrate the validated distributed cancellation-conditioning failure mode into the Article III methods/limitations/funnel ledger, then audit remaining repository-readiness blockers and separate documentary/reproducibility gaps from any still-missing scientific gate. Any new numerical discriminant must be prospectively frozen before execution and may not alter the frozen `h`, tolerance, grid family, interpolation, masks or estimator to rescue the gate.
