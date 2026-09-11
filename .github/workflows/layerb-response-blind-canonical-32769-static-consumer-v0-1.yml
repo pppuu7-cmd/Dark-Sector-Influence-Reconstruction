@@ -1,0 +1,69 @@
+name: layerb-response-blind-canonical-32769-static-consumer-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-response-blind-canonical-32769-static-consumer-v0-1.yml'
+permissions:
+  actions: read
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce frozen parents
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json)" = '7958e1f44c0224e1828f89b1472aa33226c61886'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json)" = '50aa473299c82c857921a083f7d4de652ba476a4'
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-canonical-32769-static-aggregate-v0-1
+          path: source
+          repository: pppuu7-cmd/Dark-Sector-Influence-Reconstruction
+          run-id: 34630453409
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Independently verify frozen candidate
+        run: |
+          set -euo pipefail
+          test "$(sha256sum source/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_CANDIDATE_V0_1.txt | awk '{print $1}')" = '7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2'
+          test "$(sha256sum source/result.json | awk '{print $1}')" = '389c4f97548fdff5131d56f189bb1ce099a63caa5b3d42e37ae90759cd9fe322'
+          python - <<'PY'
+          import hashlib,json,struct
+          from pathlib import Path
+          d=json.load(open('source/result.json'))
+          assert d['classification']=='CANONICAL_32769_RESPONSE_BLIND_QUORUM_PASS_PLUS_0_PLUS_0'
+          assert d['anchor_match_count']==5 and d['host_variant_count']==3
+          assert d['anchor_match_replicas']==[1,4,5,7,8]
+          assert d['host_variant_replicas']==[2,3,6]
+          assert d['requested_node_count']==32769 and d['guard_counts']==[0,1]
+          assert d['candidate_node_sha256']=='82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599'
+          assert d['candidate_u64hex_sha256']=='7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2'
+          assert d['scientific_response_read'] is False and d['class_solver_invoked'] is False
+          assert d['scientific_authority_created'] is False and d['successor_execution_authorized'] is False
+          lines=[x.strip() for x in Path('source/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_CANDIDATE_V0_1.txt').read_text().splitlines() if x.strip()]
+          assert len(lines)==32769 and all(len(x)==16 for x in lines)
+          vals=[struct.unpack('<d',int(x,16).to_bytes(8,'little'))[0] for x in lines]
+          assert all(vals[i] < vals[i+1] for i in range(len(vals)-1))
+          payload=b''.join(int(x,16).to_bytes(8,'little') for x in lines)
+          assert hashlib.sha256(payload).hexdigest()=='82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599'
+          out={
+            'schema':'LAYERB_RESPONSE_BLIND_CANONICAL_32769_STATIC_CONSUMER_RESULT_V0_1',
+            'classification':'CANONICAL_32769_STATIC_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0','source_run_id':34630453409,
+            'node_payload_sha256':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599',
+            'u64hex_sha256':'7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2',
+            'requested_node_count':32769,'scientific_response_read':False,'class_solver_invoked':False,
+            'scientific_authority_created':False,'successor_execution_authorized':False,
+            'covariance_restriction_authorized':False,'Wm_S3_opened':False
+          }
+          Path('terminal.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-canonical-32769-static-consumer-v0-1
+          path: terminal.json
+          if-no-files-found: error
+          retention-days: 90
