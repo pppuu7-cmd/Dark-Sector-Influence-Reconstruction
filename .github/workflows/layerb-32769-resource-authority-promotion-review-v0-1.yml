@@ -1,0 +1,124 @@
+name: layerb-32769-resource-authority-promotion-review-v0-1
+
+on:
+  workflow_dispatch:
+    inputs:
+      candidate_run_id:
+        description: 'Completed resource-authority candidate packaging workflow run ID'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: layerb-32769-resource-authority-promotion-review-v0-1-${{ inputs.candidate_run_id }}
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  REVIEW_CONTRACT_BLOB: '7abd3b1d2a04161ef1012726668db0a8d4e02af7'
+  REVIEWER_BLOB: '5c6ea5d2603d03625e13ad1f0534ecea8a2ba199'
+  CANDIDATE_WORKFLOW_NAME: 'layerb-32769-resource-authority-candidate-packaging-v0-1'
+  CANDIDATE_WORKFLOW_PATH: '.github/workflows/layerb-32769-resource-authority-candidate-packaging-v0-1.yml'
+  CANDIDATE_ARTIFACT_PREFIX: 'layerb-32769-resource-authority-candidate-packaging-v0-1-'
+  PROMOTION_TARGET: 'docs/dsir4/authority/LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_V0_1.json'
+
+jobs:
+  promotion-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Enforce frozen review identities and no prior durable authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_CONTRACT_V0_1.json)" = "$REVIEW_CONTRACT_BLOB"
+          test "$(git hash-object ci/layerb_32769_resource_authority_promotion_reviewer_v0_1.py)" = "$REVIEWER_BLOB"
+          test ! -e "$PROMOTION_TARGET"
+          mkdir -p metadata download extracted review
+
+      - name: Fetch exact candidate workflow run and artifact metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          RUN_ID='${{ inputs.candidate_run_id }}'
+          [[ "$RUN_ID" =~ ^[1-9][0-9]*$ ]]
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}" > metadata/candidate_run.json
+          test "$(jq -r '.name' metadata/candidate_run.json)" = "$CANDIDATE_WORKFLOW_NAME"
+          test "$(jq -r '.path' metadata/candidate_run.json)" = "$CANDIDATE_WORKFLOW_PATH"
+          test "$(jq -r '.status' metadata/candidate_run.json)" = completed
+          test "$(jq -r '.conclusion' metadata/candidate_run.json)" = success
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/artifacts?per_page=100" > metadata/candidate_artifacts.json
+          python3 - <<'PY'
+          import json,os
+          d=json.load(open('metadata/candidate_artifacts.json'))
+          rid=json.load(open('metadata/candidate_run.json'))['id']
+          pref=os.environ['CANDIDATE_ARTIFACT_PREFIX']
+          xs=[x for x in d.get('artifacts',[]) if isinstance(x,dict) and str(x.get('name','')).startswith(pref)]
+          assert len(xs)==1,xs
+          assert xs[0].get('name')==f'{pref}{rid}'
+          assert xs[0].get('expired') is False
+          open('metadata/candidate_artifact_id.txt','w').write(str(xs[0]['id'])+'\n')
+          PY
+
+      - name: Download exact candidate artifact and bind file manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          AID="$(cat metadata/candidate_artifact_id.txt)"
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${AID}/zip" > download/candidate.zip
+          unzip -q download/candidate.zip -d extracted
+          find extracted -type f -printf '%P\n' | sort > metadata/file_manifest.txt
+          python3 - <<'PY'
+          import json
+          files=[x.strip() for x in open('metadata/file_manifest.txt') if x.strip()]
+          open('metadata/artifact_manifest.json','w').write(json.dumps({'files':files},indent=2,sort_keys=True)+'\n')
+          PY
+          mapfile -t P < <(find extracted -type f -name provenance.json)
+          mapfile -t C < <(find extracted -type f -name resource_authority_candidate.json)
+          mapfile -t R < <(find extracted -type f -name candidate_receipt.json)
+          test "${#P[@]}" -eq 1; test "${#C[@]}" -eq 1; test "${#R[@]}" -eq 1
+          cp "${P[0]}" review/provenance.json
+          cp "${C[0]}" review/resource_authority_candidate.json
+          cp "${R[0]}" review/candidate_receipt.json
+
+      - name: Review exact bytes for deliberate promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/layerb_32769_resource_authority_promotion_reviewer_v0_1.py \
+            --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_CONTRACT_V0_1.json \
+            --candidate-run metadata/candidate_run.json \
+            --candidate-artifacts metadata/candidate_artifacts.json \
+            --candidate-artifact-zip download/candidate.zip \
+            --artifact-manifest metadata/artifact_manifest.json \
+            --candidate-receipt review/candidate_receipt.json \
+            --resource-candidate review/resource_authority_candidate.json \
+            --provenance review/provenance.json \
+            --packaging-static-authority docs/dsir4/authority/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_STATIC_AUDIT_V0_1.json \
+            --materializer-synthetic-authority docs/dsir4/authority/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZER_SYNTHETIC_AUDIT_V0_1.json \
+            --out review/promotion_review.json
+          test "$(jq -r '.classification' review/promotion_review.json)" = 'LAYERB_32769_RESOURCE_AUTHORITY_PROMOTION_REVIEW_PASS_PLUS_0_PLUS_0'
+          test "$(jq -r '.valid' review/promotion_review.json)" = true
+          test "$(jq -r '.promotion_target_path' review/promotion_review.json)" = "$PROMOTION_TARGET"
+          test "$(jq -r '.review_creates_no_repository_authority' review/promotion_review.json)" = true
+          test "$(jq -r '.scientific_execution_authorized' review/promotion_review.json)" = false
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-resource-authority-promotion-review-v0-1-${{ inputs.candidate_run_id }}
+          path: |
+            review/promotion_review.json
+            review/resource_authority_candidate.json
+            review/candidate_receipt.json
+            review/provenance.json
+            metadata/candidate_run.json
+            metadata/candidate_artifacts.json
+            metadata/artifact_manifest.json
+          retention-days: 90
