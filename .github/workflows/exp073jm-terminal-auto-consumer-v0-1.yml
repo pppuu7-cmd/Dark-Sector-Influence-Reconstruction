@@ -1,0 +1,96 @@
+name: exp073jm-terminal-auto-consumer-v0-1
+
+on:
+  workflow_run:
+    workflows: ["exp073jm-article3-recovered-canonical-one-live-fourth-refinement-v0-2"]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: exp073jm-terminal-auto-consumer-v0-1
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  EXPECTED_RUN_ID: '34548136827'
+  EXPECTED_HEAD_SHA: 'ab9e29234781c94b80280aa0d7b16245a3e31804'
+  VALIDATOR_BLOB: '8388199349d32a79e467bab940403570ddd3730e'
+  VALIDATOR_AUTH_BLOB: '5c43a8df9ce03b7d67a2e7f95163b926a4264590'
+  SOURCE_ARTIFACT_NAME: 'exp073jm-recovered-canonical-one-live-fourth-refinement-v0-2'
+
+jobs:
+  consume:
+    if: ${{ github.event.workflow_run.id == 34548136827 && github.event.workflow_run.head_sha == 'ab9e29234781c94b80280aa0d7b16245a3e31804' && github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enforce frozen consumer identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ github.event.workflow_run.id }}" = "$EXPECTED_RUN_ID"
+          test "${{ github.event.workflow_run.head_sha }}" = "$EXPECTED_HEAD_SHA"
+          test "$(git hash-object ci/exp073jm_terminal_result_validator_v0_1.py)" = "$VALIDATOR_BLOB"
+          test "$(git hash-object docs/dsir4/authority/EXP073JM_TERMINAL_VALIDATOR_STATIC_AUDIT_V0_1.json)" = "$VALIDATOR_AUTH_BLOB"
+          python3 - <<'PY'
+          import json
+          d=json.load(open('docs/dsir4/authority/EXP073JM_TERMINAL_VALIDATOR_STATIC_AUDIT_V0_1.json'))
+          assert d['artifact_verified_independently'] is True
+          assert d['classification']=='EXP073JM_TERMINAL_VALIDATOR_STATIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['jm_result_read'] is False and d['class_solver_invoked'] is False
+          assert d['synthetic_case_count']==13
+          PY
+
+      - name: Download and hash exact source artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p source artifacts
+          meta="$(gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/runs/${EXPECTED_RUN_ID}/artifacts")"
+          count="$(jq --arg n "$SOURCE_ARTIFACT_NAME" '[.artifacts[]|select(.name==$n)]|length' <<<"$meta")"
+          test "$count" = 1
+          id="$(jq -r --arg n "$SOURCE_ARTIFACT_NAME" '.artifacts[]|select(.name==$n)|.id' <<<"$meta")"
+          digest="$(jq -r --arg n "$SOURCE_ARTIFACT_NAME" '.artifacts[]|select(.name==$n)|.digest' <<<"$meta")"
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > source/source.zip
+          actual="$(sha256sum source/source.zip|awk '{print $1}')"
+          test "$actual" = "${digest#sha256:}"
+          unzip -q source/source.zip -d source/unpacked
+          test -f source/unpacked/result.json
+          test -f source/unpacked/capacity_patch.json
+          jq -n --argjson run "$EXPECTED_RUN_ID" --arg id "$id" --arg digest "$digest" --arg sha "$actual" '{source_run_id:$run,artifact_id:($id|tonumber),artifact_digest:$digest,downloaded_zip_sha256:$sha}' > artifacts/source_receipt.json
+
+      - name: Validate terminal JM result against pre-result frozen validator
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/exp073jm_terminal_result_validator_v0_1.py \
+            --result source/unpacked/result.json \
+            --out artifacts/validation.json
+          python3 - <<'PY'
+          import json
+          v=json.load(open('artifacts/validation.json'))
+          assert v['classification']=='EXP073JM_TERMINAL_RESULT_INDEPENDENT_VALIDATION_PASS_PLUS_0_PLUS_0'
+          p=json.load(open('source/unpacked/capacity_patch.json'))
+          assert p['old_capacity']==30 and p['new_capacity']==9216 and p['replacement_count']==1
+          assert p['parser_old_argument_capacity']==1024 and p['parser_new_argument_capacity']==262144 and p['parser_replacement_count']==1
+          print('AUTO_CONSUMER_BRANCH',v['branch_selected'])
+          print('AUTO_CONSUMER_JM_CLASSIFICATION',v['validated_jm_classification'])
+          print('AUTO_CONSUMER_MAX_REL',v['max_relative_component_difference'])
+          PY
+          sha256sum source/unpacked/result.json source/unpacked/capacity_patch.json artifacts/validation.json artifacts/source_receipt.json > artifacts/sha256sums.txt
+
+      - name: Upload validated terminal receipt only
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp073jm-terminal-auto-consumer-v0-1
+          path: |
+            artifacts/validation.json
+            artifacts/source_receipt.json
+            artifacts/sha256sums.txt
+          if-no-files-found: error
+          retention-days: 90
