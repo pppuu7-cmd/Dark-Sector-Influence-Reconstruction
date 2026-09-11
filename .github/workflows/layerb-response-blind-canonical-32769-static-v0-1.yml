@@ -1,0 +1,147 @@
+name: layerb-response-blind-canonical-32769-static-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-response-blind-canonical-32769-static-v0-1.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: layerb-response-blind-canonical-32769-static-v0-1
+  cancel-in-progress: false
+
+env:
+  PARENT_AUTH: docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json
+  PARENT_AUTH_BLOB: '7958e1f44c0224e1828f89b1472aa33226c61886'
+  ANCHOR_AUTH: docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json
+  ANCHOR_AUTH_BLOB: '50aa473299c82c857921a083f7d4de652ba476a4'
+  ANCHOR_FILE: docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt
+  ANCHOR_FILE_BLOB: 'fc4eb1e7f51a0ad3773b8be13c477652b1f71368'
+  ANCHOR_NODE_SHA: '3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975'
+  ANCHOR_TEXT_SHA: '7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69'
+  JJ_SCRIPT: ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py
+  JJ_BLOB: 'ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+  GENERATOR: ci/layerb_response_blind_canonical_fine_32769_v0_1.py
+  GENERATOR_BLOB: '211b6799bf61caa7b47d85a1e402f7170592821d'
+
+jobs:
+  replica:
+    strategy:
+      fail-fast: false
+      matrix:
+        replica: [1, 2, 3, 4, 5, 6, 7, 8]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce immutable response-blind lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$PARENT_AUTH")" = "$PARENT_AUTH_BLOB"
+          test "$(git hash-object "$ANCHOR_AUTH")" = "$ANCHOR_AUTH_BLOB"
+          test "$(git hash-object "$ANCHOR_FILE")" = "$ANCHOR_FILE_BLOB"
+          test "$(git hash-object "$JJ_SCRIPT")" = "$JJ_BLOB"
+          test "$(git hash-object "$GENERATOR")" = "$GENERATOR_BLOB"
+          test "$(sha256sum "$ANCHOR_FILE" | awk '{print $1}')" = "$ANCHOR_TEXT_SHA"
+          python3 - <<'PY'
+          import json
+          p=json.load(open('docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json'))
+          a=json.load(open('docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json'))
+          assert p['classification']=='COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0'
+          assert p['denser_successor_32769_authorized'] is False
+          assert p['covariance_restriction_authorized'] is False
+          assert p['Wm_S3_opened'] is False
+          assert a['scientific_response_read'] is False and a['class_solver_invoked'] is False
+          assert a['node_payload_sha256']=='3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975'
+          assert a['u64hex_sha256']=='7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69'
+          PY
+      - name: Install exact NumPy
+        run: python -m pip install 'numpy==1.26.4' >/dev/null
+      - name: Emit response-blind 32769 candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH=ci python "$GENERATOR" --anchor "$ANCHOR_FILE" --replica "${{ matrix.replica }}" --out-dir out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-canonical-32769-static-replica-${{ matrix.replica }}
+          path: out/
+          if-no-files-found: error
+          retention-days: 90
+
+  aggregate:
+    needs: replica
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-canonical-32769-static-replica-*
+          path: replicas
+      - name: Apply response-blind anchor quorum
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+
+          rows=[]
+          for i in range(1,9):
+              root=Path(f'replicas/layerb-canonical-32769-static-replica-{i}')
+              assert root.exists(), f'missing replica {i}'
+              d=json.load(open(root/'result.json'))
+              assert d['replica']==i
+              assert d['classification']=='ANCHOR_16385_MATCH_CANDIDATE_32769_EMITTED_PLUS_0_PLUS_0'
+              assert d['anchor_16385_match'] is True
+              assert d['scientific_response_read'] is False and d['class_solver_invoked'] is False
+              assert d['scientific_authority_created'] is False and d['successor_execution_authorized'] is False
+              assert d['requested_node_count']==32769 and d['guard_counts']==[0,1]
+              txt=(root/'candidate_32769.u64hex.txt').read_bytes()
+              assert hashlib.sha256(txt).hexdigest()==d['candidate_u64hex_sha256']
+              rows.append((d,txt))
+
+          node_shas={x[0]['candidate_node_sha256'] for x in rows}
+          text_shas={x[0]['candidate_u64hex_sha256'] for x in rows}
+          if len(node_shas)!=1 or len(text_shas)!=1 or not all(x[1]==rows[0][1] for x in rows):
+              raise SystemExit('32769 replica disagreement')
+
+          Path('out/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_CANDIDATE_V0_1.txt').write_bytes(rows[0][1])
+          result={
+            'schema':'LAYERB_RESPONSE_BLIND_CANONICAL_32769_STATIC_AGGREGATE_RESULT_V0_1',
+            'classification':'CANONICAL_32769_RESPONSE_BLIND_QUORUM_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'scientific_response_read':False,
+            'class_solver_invoked':False,
+            'branch_activated':False,
+            'scientific_authority_created':False,
+            'successor_execution_authorized':False,
+            'replica_count':8,
+            'minimum_quorum':8,
+            'anchor_16385_node_sha256':'3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975',
+            'anchor_16385_u64hex_sha256':'7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69',
+            'base_n':32768,
+            'guard_counts':[0,1],
+            'requested_node_count':32769,
+            'candidate_node_sha256':next(iter(node_shas)),
+            'candidate_u64hex_sha256':next(iter(text_shas)),
+            'all_candidates_byte_identical':True,
+            'article3_repository_readiness_percent':68,
+            'funnel_freeze_readiness_percent':67,
+            'token':'CANONICAL_32769_RESPONSE_BLIND_QUORUM_PASS_PLUS_0_PLUS_0'
+          }
+          Path('out/result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(result['token'],result['candidate_node_sha256'],result['candidate_u64hex_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-canonical-32769-static-aggregate-v0-1
+          path: out/
+          if-no-files-found: error
+          retention-days: 90
