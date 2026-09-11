@@ -1,0 +1,55 @@
+name: layerb-post-16385-convergence-localization-source-audit-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-post-16385-convergence-localization-source-audit-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prove convergence maximum is raw response-atom level
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/exp073ir_article3_real_layerb_common_response_v0_1.py)" = '6ef2516dfcae8a8ae92f5b7dbe792274138c0f6f'
+          test "$(git hash-object ci/post_jm_next_support_canonical_one_live_refinement_v0_1.py)" = '10492520b4a0eb8992e9ccb101a4ccd26127be82'
+          mkdir -p artifacts
+          python - <<'PY'
+          import ast,json
+          from pathlib import Path
+          ir=Path('ci/exp073ir_article3_real_layerb_common_response_v0_1.py').read_text()
+          helper=Path('ci/post_jm_next_support_canonical_one_live_refinement_v0_1.py').read_text()
+          checks={}
+          checks['ir_parseable']=bool(ast.parse(ir))
+          checks['helper_parseable']=bool(ast.parse(helper))
+          checks['raw_relative_formula']='rel=np.abs(prod[m]-dense[m])/np.maximum(np.abs(prod[m]),np.abs(dense[m]))' in ir
+          checks['max_updated_from_raw_rel']='conv["max_relative_component_difference"]=max(conv["max_relative_component_difference"],float(np.max(rel)))' in ir
+          des='compare_response(np.asarray(prod_store[iz][union]),rr[union],conv)'
+          boss='compare_response(bprod[float(z)],rr,conv)'
+          checks['des_compare_on_union_response_atoms']=des in ir
+          checks['boss_compare_on_direct_response_arrays']=boss in ir
+          checks['des_compare_precedes_row_summary']=ir.index(des) < ir.index('for cid,active in active_by_row.items(): update_summary(dense_rows[cid],rr[active])',ir.index(des))
+          checks['row_summary_does_not_enter_compare_response']='update_summary' not in ir[ir.index('def compare_response'):ir.index('def gl_nodes')]
+          checks['replay_uses_frozen_ir']='run_ir_with_suite(ir, engine.ReplaySuite' in helper
+          checks['helper_does_not_override_compare_response']='compare_response =' not in helper and '.compare_response' not in helper
+          checks['classification_uses_ir_convergence_max']='mx = conv.get("max_relative_component_difference")' in helper and 'float(mx) < REL_TOL' in helper
+          checks['row_labels_separate_gate']='conv.get("row_label_changed") is False' in helper
+          checks['no_current_broad_result_read']='broad' not in helper.lower()
+          ok=all(checks.values())
+          out={'schema':'LAYERB_POST_16385_CONVERGENCE_LOCALIZATION_SOURCE_AUDIT_V0_1','classification':'POST_16385_CONVERGENCE_LOCALIZATION_SOURCE_AUDIT_PASS_PLUS_0_PLUS_0' if ok else 'POST_16385_CONVERGENCE_LOCALIZATION_SOURCE_AUDIT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'pass_count':sum(checks.values()),'check_count':len(checks),'conclusion_scope':'The frozen max_relative_component_difference is computed on raw response atoms at DES z/k union targets and direct BOSS response arrays before row-summary aggregation. Row validity/labels are separate gates and cannot create the numerical maximum itself.','class_solver_invoked':False,'scientific_response_read':False,'current_broad_result_read':False,'scientific_authority_created':False,'next_rung_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('artifacts/source_audit.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['classification'],f"{out['pass_count']}/{out['check_count']}")
+          assert ok,out
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-convergence-localization-source-audit-v0-1
+          path: artifacts/source_audit.json
+          if-no-files-found: error
+          retention-days: 90
