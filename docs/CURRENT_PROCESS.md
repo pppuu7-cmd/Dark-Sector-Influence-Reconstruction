@@ -16,8 +16,17 @@ Recovered JM v0.2 static audit run/job/artifact `34545274582 / 103096420233 / 10
 
 Exp073JO resource-pilot static audit run/job/artifact `34545848379 / 103098154578 / 10178961999` is independently verified 42/42 `EXP073JO_RESOURCE_PILOT_STATIC_AUDIT_PASS_PLUS_0_PLUS_0`. ZIP SHA256 `eecb62871b31370b3820b2e0c971811df5f143eb229de4e7c83d821f1c493cfa`; result SHA256 `fd9e083114fe9979811a2d7f1dfddde4fcaf16b5ca2549eaec9bb1d81e381975`; no CLASS, no scientific response, no JM production. Durable static authority commit `a91e4c814c3b093740e512921446ee801913ff99`.
 
+## Dormant next-rung canonical authority
+The pre-verdict deterministic ladder already fixes the successor of a hypothetical valid JM NOT_CONVERGED result to base 8192 -> 16384. While JO was running and before any JM production response existed, a response-blind no-CLASS 16385 materialization gate was run solely to remove future host-grid ambiguity.
+
+Run `34546913426`, aggregate job `103101486773`, artifact `10179350755`, head `c0c7856af2de0f0a126bf3653fa4af0581811081`. Independent artifact verification: ZIP SHA256 `1f2c2e338ad1946aa96af6711d5a687feb614a6377329522835fa51418eac8d7`, result SHA256 `26f0c937b03e108a080fb719c41db9c4af9e0a845335d98740cabe668fb773e9`. Five of eight replicas `[1,3,4,7,8]` exactly reproduced the authoritative 8193 anchor; all five emitted byte-identical 16385 candidates. Three host variants `[2,5,6]` were excluded from voting.
+
+Dormant canonical 16385: decoded SHA256 `3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975`, text/u64hex SHA256 `7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69`, guard counts `(0,1)`. Materialized commit `490ccf8ad081fbd16820c9a2155a5e5ec28c3cdd` in `docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt` with authority `docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json`.
+
+This object is **dormant**: `successor_branch_activated=false`, `successor_execution_authorized=false`; no CLASS/scientific response was read. It must not be used unless a future independently verified JM NOT_CONVERGED activates the deterministic successor and all later static/resource gates pass.
+
 ## Current authoritative process
-Fresh pre-launch anti-dup checks found zero queued and zero in-progress Actions. Exactly one Exp073JO resource pilot is active:
+Fresh pre-launch anti-dup checks found zero queued and zero in-progress Actions. Exactly one Exp073JO resource pilot is the current scientific-process gate:
 
 - workflow: `exp073jo-article3-jm-canonical-8193-one-live-resource-pilot-v0-1`;
 - run/job: `34546569386 / 103100379621`;
@@ -31,7 +40,7 @@ Fresh pre-launch anti-dup checks found zero queued and zero in-progress Actions.
 - exactly four sequential roles `reference`, `alpha_minus`, `beta_plus`, `beta_minus`, max one live;
 - no full 107-row JM traversal; no coarse/fine JM convergence classification.
 
-Latest verified state: identity/authority gate PASS and frozen stack installation in progress. Do not duplicate this run and do not use partial pilot response magnitudes for adaptation.
+Latest verified state: authority/identity, frozen stack and exact CLASS build stages PASS; frozen canonical-8193 resource execution is in progress. Do not duplicate this run and do not use partial pilot response magnitudes for adaptation.
 
 ## Terminal transition
 On terminal completion independently verify artifact ZIP/result/capacity receipt, canonical 8193 SHA, source commit, exact 9216/262144 replacements, 4 constructions, max-live=1, final-live=0, unsupported=0, lookup<=1e-12, finite operands/responses, same-process raw combination, and explicit no-JM-production flags.
@@ -39,4 +48,4 @@ On terminal completion independently verify artifact ZIP/result/capacity receipt
 Only independently verified `CANONICAL_8193_ONE_LIVE_FOUR_BUILD_RESOURCE_PILOT_PASS_PLUS_0_PLUS_0` plus a fresh anti-dup check may authorize one full recovered Exp073JM 4097->8193 convergence run under the unchanged original classifier. Resource/infrastructure failure permits only minimal process repair; no grid/tolerance/estimator rescue.
 
 ## Stable readiness
-**ARTICLE3_REPOSITORY_READINESS: 68%.** Funnel-freeze readiness: **67%**. Exp073JO is process/resource `+0/+0` and cannot change scientific readiness.
+**ARTICLE3_REPOSITORY_READINESS: 68%.** Funnel-freeze readiness: **67%**. Exp073JO and dormant canonicalization are process/reproducibility `+0/+0` and cannot change scientific readiness.
