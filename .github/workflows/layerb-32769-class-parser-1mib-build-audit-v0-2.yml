@@ -1,0 +1,110 @@
+name: layerb-32769-class-parser-1mib-build-audit-v0-2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-class-parser-1mib-build-audit-v0-2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  POINT_CAPACITY: '32769'
+  OLD_PARSER_CAPACITY: '524288'
+  NEW_PARSER_CAPACITY: '1048576'
+  REQUIRED_PAYLOAD_BYTES: '719273'
+
+jobs:
+  build-envelope:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reconstruct old/new trees and prove exact source delta
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence external
+          git clone -q https://github.com/kaeonikc/class_iv.git external/base
+          git -C external/base checkout -q "$CLASS_COMMIT"
+          cp -a external/base external/old
+          cp -a external/base external/new
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os
+          def patch(root, parser):
+              p=root/'include/perturbations.h'; b=p.read_bytes(); s=b.decode(); x='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(x)==1; p.write_text(s.replace(x,'#define _MAX_NUMBER_OF_K_FILES_ 32769',1))
+              q=root/'include/parser.h'; qb=q.read_bytes(); s=qb.decode(); x='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(x)==1; q.write_text(s.replace(x,f'#define _ARGUMENT_LENGTH_MAX_ {parser}',1))
+              return {'point_pre':hashlib.sha256(b).hexdigest(),'point_post':hashlib.sha256(p.read_bytes()).hexdigest(),'parser_pre':hashlib.sha256(qb).hexdigest(),'parser_post':hashlib.sha256(q.read_bytes()).hexdigest()}
+          old=patch(Path('external/old'),int(os.environ['OLD_PARSER_CAPACITY']))
+          new=patch(Path('external/new'),int(os.environ['NEW_PARSER_CAPACITY']))
+          def files(root): return {str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file() and '.git' not in p.parts}
+          a=files(Path('external/old')); b=files(Path('external/new')); assert set(a)==set(b)
+          changed=sorted(k for k in a if a[k]!=b[k]); assert changed==['include/parser.h'],changed
+          ao=a['include/parser.h'].decode(); bn=b['include/parser.h'].decode(); o='#define _ARGUMENT_LENGTH_MAX_ 524288'; n='#define _ARGUMENT_LENGTH_MAX_ 1048576'; assert ao.count(o)==1 and bn.count(n)==1 and ao.replace(o,n,1)==bn
+          payload=int(os.environ['REQUIRED_PAYLOAD_BYTES']); cap=int(os.environ['NEW_PARSER_CAPACITY']); assert payload<=cap
+          result={'schema':'LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_BUILD_RECEIPT','classification':'LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_SOURCE_AUDIT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','class_commit':os.environ['CLASS_COMMIT'],'point_capacity':32769,'old_parser_capacity':524288,'new_parser_capacity':1048576,'canonical_32769_payload_bytes_including_nul':payload,'parser_margin_bytes':cap-payload,'changed_files_old32769_to_new32769':changed,'only_delta_is_parser_capacity_constant':True,'point_patch_same_old_new':old['point_post']==new['point_post'],'point_patch':new,'scientific_response_read':False,'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          result['token']=result['classification']; Path('evidence/source_audit.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          PY
+      - name: Build exact new tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y build-essential gfortran libgsl-dev python3-dev git >/dev/null
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/new
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/new
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/new/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/new -j2 all >/dev/null
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          s=json.load(open('evidence/source_audit.json'))
+          exe=Path('external/new/class')
+          out={'schema':'LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_RESULT','classification':'LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_PASS_PLUS_0_PLUS_0','effect':'+0/+0','class_commit':s['class_commit'],'new_capacity':32769,'parser_new_argument_capacity':1048576,'canonical_32769_payload_bytes_including_nul':s['canonical_32769_payload_bytes_including_nul'],'parser_margin_bytes':s['parser_margin_bytes'],'only_delta_from_v0_1_32769_tree_is_parser_capacity_constant':True,'clean_build_pass':True,'executable_size_bytes':exe.stat().st_size,'executable_sha256':hashlib.sha256(exe.read_bytes()).hexdigest(),'point_patch':s['point_patch'],'scientific_response_read':False,'scientific_execution_authorized':False,'artifact_verified_independently':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          out['token']=out['classification']; Path('evidence/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-class-parser-1mib-build-audit-v0-2
+          path: evidence/
+          retention-days: 90
+
+  independent-verifier:
+    needs: build-envelope
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-32769-class-parser-1mib-build-audit-v0-2
+          path: evidence
+      - name: Independently verify build envelope semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          s=json.load(open('evidence/source_audit.json')); r=json.load(open('evidence/result.json'))
+          assert s['classification']=='LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_SOURCE_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert s['changed_files_old32769_to_new32769']==['include/parser.h'] and s['only_delta_is_parser_capacity_constant'] is True
+          assert r['classification']=='LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_PASS_PLUS_0_PLUS_0'
+          assert r['new_capacity']==32769 and r['parser_new_argument_capacity']==1048576
+          assert r['canonical_32769_payload_bytes_including_nul']==719273 and r['parser_margin_bytes']==329303
+          out={'schema':'LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_INDEPENDENT_VERIFICATION','classification':'LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2_INDEPENDENT_VERIFICATION_PASS_PLUS_0_PLUS_0','effect':'+0/+0','source_audit_sha256':hashlib.sha256(Path('evidence/source_audit.json').read_bytes()).hexdigest(),'result_sha256':hashlib.sha256(Path('evidence/result.json').read_bytes()).hexdigest(),'artifact_verified_independently':True,'only_delta_is_parser_capacity_constant':True,'canonical_payload_fits':True,'scientific_response_read':False,'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          out['token']=out['classification']; Path('verification.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-class-parser-1mib-build-audit-v0-2-independent
+          path: verification.json
+          retention-days: 90
