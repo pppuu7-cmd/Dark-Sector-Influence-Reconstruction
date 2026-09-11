@@ -1,0 +1,48 @@
+name: post-jm-legacy-jn-incompatibility-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/post-jm-legacy-jn-incompatibility-audit-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prove legacy JN is not post-JM executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import ast,json
+          from pathlib import Path
+          s=Path('ci/exp073jn_article3_layerb_shared_grid_scientific_closure_rerun_v0_1.py').read_text(); ast.parse(s)
+          p=Path('docs/dsir4/prereg/POST_JM_CONVERGED_LAYERB_SCIENTIFIC_CLOSURE_V0_1.md').read_text()
+          checks={
+            'legacy_activation_is_jl':'JL_CONVERGED = "COMMON_GRID_THIRD_REFINEMENT_CONVERGED_PLUS_0_PLUS_0"' in s,
+            'required_activation_is_jm':'COMMON_GRID_FOURTH_REFINEMENT_CONVERGED_PLUS_0_PLUS_0' in p,
+            'legacy_regenerates_grids':'jj.guarded_lattice(2048)' in s and 'jj.guarded_lattice(4096)' in s,
+            'legacy_counts_old':'2049' in s and '4097' in s,
+            'required_exact_canonical_counts':'canonical 4097' in p and 'canonical 8193' in p,
+            'legacy_capacity_old':'CAPACITY = 4608' in s and 'PARSER_CAPACITY = 131072' in s,
+            'required_capacity_new':'9216' in p and '262144' in p,
+          }
+          assert all(checks.values()),[k for k,v in checks.items() if not v]
+          out={'schema':'POST_JM_LEGACY_JN_INCOMPATIBILITY_AUDIT_V0_1','classification':'LEGACY_JN_NOT_ELIGIBLE_FOR_POST_JM_CLOSURE_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'check_count':len(checks),'checks_all_pass':True,'legacy_helper_git_blob':'f8498b0790cbfdc584fa16bca50301f42cbd1e7a','post_jm_use_forbidden':True,'replacement_helper_required':True,'jm_result_read':False,'scientific_response_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,'token':'LEGACY_JN_NOT_ELIGIBLE_FOR_POST_JM_CLOSURE_PLUS_0_PLUS_0'}
+          Path('artifacts/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-jm-legacy-jn-incompatibility-audit-v0-1
+          path: artifacts/result.json
+          if-no-files-found: error
+          retention-days: 90
