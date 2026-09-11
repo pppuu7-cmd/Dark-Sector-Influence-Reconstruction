@@ -1,0 +1,85 @@
+name: layerb-post-16385-top1-decomposition-arithmetic-terminal-consumer-v0-1
+on:
+  push:
+    paths:
+      - '.github/workflows/layerb-post-16385-top1-decomposition-arithmetic-terminal-consumer-v0-1.yml'
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: layerb-post-16385-top1-decomposition-arithmetic-terminal-consumer-v0-1
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and hash all arithmetic artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p incoming/condition incoming/attribution incoming/decimal artifacts
+          get () {
+            local id="$1" sha="$2" dst="$3"
+            curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/pppuu7-cmd/Dark-Sector-Influence-Reconstruction/actions/artifacts/${id}/zip" -o "${dst}.zip"
+            test "$(sha256sum "${dst}.zip" | awk '{print $1}')" = "$sha"
+            unzip -q "${dst}.zip" -d "$dst"
+          }
+          get 10274091055 d5d196ebb2b63e86a5e750e26f75bc029de410b1c4bfe4725317ebf7a1d11f19 incoming/condition
+          get 10274026180 946342a64a6ae041ac81d1aa85fef5fe7f6a1c2314d03f2dfad4544186b4ada4 incoming/attribution
+          get 10274565598 35a0ed4aeaab9e1ba7c8f3573e124249752716380960893b4e943bf1b17970c8 incoming/decimal
+      - name: Validate arithmetic payloads and emit terminal receipt
+        run: |
+          python - <<'PY'
+          import json, hashlib
+          from decimal import Decimal
+          from pathlib import Path
+          c=json.load(open('incoming/condition/condition_number.json'))
+          a=json.load(open('incoming/attribution/signed_attribution.json'))
+          d=json.load(open('incoming/decimal/decimal_subtraction.json'))
+          assert c['classification']=='POST_16385_TOP1_SUBTRACTION_CONDITION_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert a['classification']=='POST_16385_TOP1_SIGNED_ROLE_ATTRIBUTION_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['classification']=='POST_16385_TOP1_DECIMAL_SUBTRACTION_REPLAY_AUDIT_PASS_PLUS_0_PLUS_0'
+          for x in (c,a,d):
+              assert x['class_solver_invoked'] is False
+              assert x['scientific_authority_created'] is False
+              assert x['next_rung_authorized'] is False and x['covariance_restriction_authorized'] is False and x['Wm_S3_opened'] is False
+          for key in ('canonical_8193','canonical_16385'):
+              assert c['grids'][key]['beta_subtraction_condition_l1']>1e8
+              assert Decimal(d['grids'][key]['subtraction_rounding_relative_error_decimal']) < Decimal('1e-12')
+          assert a['role_shift_recombination_relative_residual'] < 1e-6
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          out={
+            'schema':'LAYERB_POST_16385_TOP1_DECOMPOSITION_ARITHMETIC_TERMINAL_VALIDATION_V0_1',
+            'classification':'POST_16385_TOP1_DECOMPOSITION_ARITHMETIC_TERMINAL_VALIDATION_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'source_run_id':34624525157,
+            'source_head_sha':'107b453d485a14f8a812539d04abbbf9c63d8885',
+            'source_zip_sha256':{
+              'condition':'d5d196ebb2b63e86a5e750e26f75bc029de410b1c4bfe4725317ebf7a1d11f19',
+              'attribution':'946342a64a6ae041ac81d1aa85fef5fe7f6a1c2314d03f2dfad4544186b4ada4',
+              'decimal':'35a0ed4aeaab9e1ba7c8f3573e124249752716380960893b4e943bf1b17970c8'},
+            'payload_sha256':{
+              'condition':sha('incoming/condition/condition_number.json'),
+              'attribution':sha('incoming/attribution/signed_attribution.json'),
+              'decimal':sha('incoming/decimal/decimal_subtraction.json')},
+            'condition_numbers':c['grids'],
+            'signed_attribution':{k:a[k] for k in ('beta_plus_cross_grid_shift','beta_minus_cross_grid_shift','beta_numerator_cross_grid_shift','role_shift_recombination','role_shift_recombination_relative_residual','role_shifts_reinforce_in_difference','absolute_beta_plus_shift_share','absolute_beta_minus_shift_share')},
+            'decimal_subtraction':d['grids'],
+            'class_solver_invoked':False,
+            'scientific_classification_created':False,
+            'scientific_authority_created':False,
+            'next_rung_authorized':False,
+            'covariance_restriction_authorized':False,
+            'Wm_S3_opened':False}
+          Path('artifacts/terminal_validation.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top1-decomposition-arithmetic-terminal-validation-v0-1
+          path: artifacts/terminal_validation.json
+          if-no-files-found: error
+          retention-days: 90
