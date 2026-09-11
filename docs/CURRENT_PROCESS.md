@@ -5,36 +5,39 @@ Updated: 2026-09-11. Scope: **DSIR only**; KMDSB/RTK/RQIR excluded.
 ## Current scientific frontier
 Recovered Exp073JM canonical 4097->8193 is independently verified `COMMON_GRID_FOURTH_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`, run/job `34548136827 / 103105092111`, durable authority commit `24b55a087b3bc81c406978511e9ad47c90431a27`.
 
-Observed maximum coarse/fine relative component difference is `0.01070806986822778` versus strict `1e-3`. Parent/Layer-B accounting remains clean: 107 retained, invalid=0, unsupported=0, lookup mismatch `1.6569708505745155e-16`, exact 4097/8193 canonical grids and request-plan identities, 8 constructions/max-one/final-zero, 4040 calls. Pre-result consumer independently selected `NOT_CONVERGED_8193_TO_16385`.
+Observed maximum coarse/fine relative component difference remains `0.01070806986822778` versus strict `1e-3`. Parent/Layer-B accounting remains clean: retained 107, invalid 0, unsupported 0, lookup mismatch `1.6569708505745155e-16`, exact canonical/request-plan identities, eight constructions/max-one/final-zero and 4040 calls. The active scientific-support continuation is therefore canonical 8193->16385 only. Covariance restriction remains unauthorized; Wm_S3 remains unopened.
 
-Therefore only the canonical 8193->16385 support rung is scientifically activated. The CONVERGED fresh-closure branch is closed for this JM outcome. Frozen tolerance, h, estimator, interpolation, physical domain and accounting remain unchanged. Covariance restriction unauthorized; Wm_S3 unopened.
+## Closed execution-equivalence gate
+The prospectively frozen CLASS-IV k-output-history suppression patch is now independently exact-equivalent at canonical 8193 in two replicas. Source workflow run `34551841749`, head `225c51fc0db4822703c24fb5743ad32b6214b4b8`; jobs `103116205677` and `103116205843`; artifacts `10181363100` and `10181345079`.
 
-## Current execution blocker: canonical 16385 hosted-memory exhaustion
-Canonical 16385 decoded SHA `3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975`, text SHA `7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69`.
+Both reproduce exactly all eight raw Exp073JO operand SHA256 values and both A/B pilot-response SHA256 values. Artifact ZIP SHA256 values are `4d59f4f1add8bb2c730c6558291dd8340a57d884c6c3ab47716e5ae4a5062d5b` and `ac0f671684a8d0f7f4b9d6a60f93d1c844dc217a152dd1702b1104edfcfe4b23`; shared result SHA256 is `55f30427ddd867b30cd529ab6d954064d928dcf25b7fa35dfccd0012cb6092c9`. Durable equivalence authority commit: `600c5567f8fe3f42901e7034372b8e3849050eb0`.
 
-Four independent hosted telemetry roles now establish memory exhaustion with the unmodified k-output-history path. Python RSS reaches ~15.4–15.7 GB while MemAvailable and swap approach zero before kill. Durable resource authority commit `9a2a580c078e89bcf9dca058069e756406c82a92`. This is resource `+0/+0`, never science.
+This authorizes the patch only for canonical-16385 resource testing. It creates no scientific authority.
 
-Pinned CLASS-IV source audit identifies full perturbation-history accumulation for every `k_output_values` requested node as the dominant avoidable allocation. Root-cause audit commit `a8ecf4b7070068ff7efed788e9d69a253ce4ff21`.
+## Current authoritative process: patched canonical-16385 resource gate
+Workflow/run: `classiv-history-suppression-16385-resource-after-equivalence-v0-1` / `34552645551`.
+Head SHA: `182d9dac9dabe8855e885749f4835a7ed589f5fe`.
+Checkpoint namespace: none; hosted resource pilots are independent complete four-role units.
+Start time: `2026-09-11T01:56:13Z`.
+Expected gate/token: patched canonical-16385 replicated resource feasibility under unchanged canonical/scientific arithmetic.
+Current state: **IN_PROGRESS**.
 
-## Current authoritative process: no-history exact-equivalence gate
-A prospectively frozen execution-only patch suppresses only `perturb_print_variables` history accumulation for requested k-output nodes while retaining exact canonical k insertion/integration and transfer output. Patch script blob `e20687e933d665973c3be40598180587701fa8e0`.
+Jobs:
+- resource replica 1: `103118559536` — frozen equivalence-source verification PASS, frozen identities PASS, numerical/build stack PASS, pinned CLASS-IV 18432/524288 + history suppression build PASS, resource pilot IN_PROGRESS;
+- resource replica 2: `103118559274` — same prerequisite stages PASS, resource pilot IN_PROGRESS.
 
-Two independent 8193 equivalence replicas are active in workflow run `34551841749`, head `225c51fc0db4822703c24fb5743ad32b6214b4b8`:
-- replica 1 job `103116205677`;
-- replica 2 job `103116205843`.
+Current runner ownership: GitHub-hosted runners for these two independent resource replicas. No competing DSIR scientific heavy run is authorized or launched.
 
-Each must exactly reproduce all 8 raw Exp073JO A/B operand SHA256 values and both A/B pilot-response SHA256 values, plus canonical-node/lifecycle/lookup/support receipts. Memory reduction alone cannot authorize the patch. One-bit mismatch rejects it.
+Last durable checkpoint/authority: canonical-8193 exact-equivalence aggregate authority commit `600c5567f8fe3f42901e7034372b8e3849050eb0`.
 
-Only two independently verified exact PASS replicas may authorize patched canonical-16385 resource pilots. Only patched 16385 resource PASS may authorize the activated full 8193->16385 scientific-support run.
+Exact next action on resource PASS: independently verify both terminal artifacts/logs/hashes/telemetry, record durable resource authority, then authorize exactly one same-process/max-one-live canonical 8193->16385 scientific-support traversal under the unchanged frozen classifier.
+
+Exact next action on resource/infrastructure FAIL: classify `+0/+0`, diagnose the first causal resource/software failure, preserve all exact-equivalence authority, repair only execution architecture if prospectively justified, and do not alter frozen science.
+
+Exact next action on BLOCKED: keep scientific 8193->16385 unopened and perform only independent non-biasing audit/preparation work.
 
 ## Additional queued diagnostic
-Self-hosted unpatched 16385 run `34550495778`, head `0eb93a45abe1d3431a1c6aa814108cb96aef5a28`, remains queued awaiting repository Linux/X64 runner. It is diagnostic only and cannot override the hosted-memory authority.
+Self-hosted unpatched canonical-16385 run `34550495778`, head `0eb93a45abe1d3431a1c6aa814108cb96aef5a28`, may remain queued awaiting repository Linux/X64 runner. It is historical diagnostic only and cannot supersede the hosted-memory authority or patched resource gate.
 
 ## Readiness
 **ARTICLE3_REPOSITORY_READINESS: 68%.** Funnel-freeze readiness: **67%**. The next scientific rung is selected but unresolved.
-
-## Immediate next actions
-1. Terminal-consume both exact-equivalence replicas.
-2. If and only if both are exact PASS, launch multiple independent patched-16385 resource replicas in parallel.
-3. If patched resource feasibility is established, launch exactly one same-process/max-one-live full 8193->16385 science run.
-4. No tolerance/grid/domain/mask/interpolation/estimator rescue; covariance restriction and Wm_S3 remain closed.
