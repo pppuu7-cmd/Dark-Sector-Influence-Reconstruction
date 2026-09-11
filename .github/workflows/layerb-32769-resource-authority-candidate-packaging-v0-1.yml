@@ -4,8 +4,7 @@ on:
   workflow_run:
     workflows:
       - layerb-32769-resource-lifecycle-independent-consumer-v0-1
-    types:
-      - completed
+    types: [completed]
 
 permissions:
   contents: read
@@ -17,13 +16,13 @@ concurrency:
 
 env:
   GH_TOKEN: ${{ github.token }}
-  PACKAGING_CONTRACT_BLOB: 'ade2fd2d43ce7e556bf473f93ae8491a694e868f'
-  PACKAGER_BLOB: 'c92ffc97c04c27ff6cdbf05b7f84527884848f40'
-  MATERIALIZATION_CONTRACT_BLOB: '933a2ed268cb2a2724252a2ef9799d0946e281ce'
-  MATERIALIZER_BLOB: '8000bd563eab5744ad8f7e2af36ca19721566922'
+  PACKAGING_CONTRACT_BLOB: '71d77aa4d074bba1a2f53e7f9299a9db32e93ffc'
+  PACKAGER_BLOB: 'c38bf9a0108ab3ef50f1abec513fa2f6ff0373a4'
+  MATERIALIZATION_CONTRACT_BLOB: 'd33e3341ea2617779fdd3701b2d24abf6b2bcd61'
+  MATERIALIZER_BLOB: '6cd911723e54040439879a06b615c4106e228735'
   INDEPENDENT_WORKFLOW_NAME: 'layerb-32769-resource-lifecycle-independent-consumer-v0-1'
-  SOURCE_WORKFLOW_NAME: 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2'
-  SOURCE_ARTIFACT_NAME: 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2'
+  SOURCE_WORKFLOW_NAME: 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3'
+  SOURCE_ARTIFACT_NAME: 'layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3'
 
 jobs:
   package-candidate:
@@ -35,170 +34,109 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 1
 
-      - name: Enforce read-only candidate packaging identities
+      - name: Enforce parser-corrected candidate-chain identities
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p metadata downloads source independent candidate
-          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_CONTRACT_V0_1.json)" = "$PACKAGING_CONTRACT_BLOB"
-          test "$(git hash-object ci/layerb_32769_resource_authority_candidate_packager_v0_1.py)" = "$PACKAGER_BLOB"
-          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_1.json)" = "$MATERIALIZATION_CONTRACT_BLOB"
-          test "$(git hash-object ci/layerb_32769_resource_authority_materializer_v0_1.py)" = "$MATERIALIZER_BLOB"
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_CONTRACT_V0_2.json)" = "$PACKAGING_CONTRACT_BLOB"
+          test "$(git hash-object ci/layerb_32769_resource_authority_candidate_packager_v0_2.py)" = "$PACKAGER_BLOB"
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_2.json)" = "$MATERIALIZATION_CONTRACT_BLOB"
+          test "$(git hash-object ci/layerb_32769_resource_authority_materializer_v0_2.py)" = "$MATERIALIZER_BLOB"
 
-      - name: Record triggering independent run and retrieve its exact evidence artifact
+      - name: Retrieve exact successful independent-consumer evidence
         shell: bash
         run: |
           set -euo pipefail
           jq '.workflow_run' "$GITHUB_EVENT_PATH" > metadata/independent_run.json
-          INDEPENDENT_RUN_ID="$(jq -r '.id' metadata/independent_run.json)"
-          test "$(jq -r '.name' metadata/independent_run.json)" = "$INDEPENDENT_WORKFLOW_NAME"
-          test "$(jq -r '.path' metadata/independent_run.json)" = '.github/workflows/layerb-32769-resource-lifecycle-independent-consumer-v0-1.yml'
-          test "$(jq -r '.status' metadata/independent_run.json)" = completed
-          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${INDEPENDENT_RUN_ID}/jobs?per_page=100" > metadata/independent_jobs.json
-          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${INDEPENDENT_RUN_ID}/artifacts?per_page=100" > metadata/independent_artifacts.json
+          IID="$(jq -r .id metadata/independent_run.json)"
+          test "$(jq -r .name metadata/independent_run.json)" = "$INDEPENDENT_WORKFLOW_NAME"
+          test "$(jq -r .path metadata/independent_run.json)" = '.github/workflows/layerb-32769-resource-lifecycle-independent-consumer-v0-1.yml'
+          test "$(jq -r .status metadata/independent_run.json)" = completed
+          test "$(jq -r .conclusion metadata/independent_run.json)" = success
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${IID}/jobs?per_page=100" > metadata/independent_jobs.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${IID}/artifacts?per_page=100" > metadata/independent_artifacts.json
           python3 - <<'PY'
           import json
-          d=json.load(open('metadata/independent_artifacts.json'))
-          xs=[x for x in d.get('artifacts',[]) if isinstance(x,dict) and str(x.get('name','')).startswith('layerb-32769-resource-lifecycle-independent-consumer-v0-1-')]
-          assert len(xs)==1,xs
-          assert xs[0].get('expired') is False
-          open('metadata/independent_artifact_id.txt','w').write(str(xs[0]['id'])+'\n')
+          d=json.load(open('metadata/independent_artifacts.json')); xs=[x for x in d.get('artifacts',[]) if str(x.get('name','')).startswith('layerb-32769-resource-lifecycle-independent-consumer-v0-1-')]
+          assert len(xs)==1 and xs[0].get('expired') is False,xs
+          open('metadata/independent_artifact_id.txt','w').write(str(xs[0]['id']))
           PY
-          INDEPENDENT_ARTIFACT_ID="$(cat metadata/independent_artifact_id.txt)"
-          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${INDEPENDENT_ARTIFACT_ID}/zip" > downloads/independent.zip
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/$(cat metadata/independent_artifact_id.txt)/zip" > downloads/independent.zip
           unzip -q downloads/independent.zip -d independent
-          mapfile -t SFILES < <(find independent -type f -name source_workflow_run.json)
-          mapfile -t VFILES < <(find independent -type f -name independent_validation.json)
-          mapfile -t CFILES < <(find independent -type f -name chain_receipt.json)
-          test "${#SFILES[@]}" -eq 1; test "${#VFILES[@]}" -eq 1; test "${#CFILES[@]}" -eq 1
-          cp "${SFILES[0]}" metadata/source_workflow_run_receipt.json
-          cp "${VFILES[0]}" independent/independent_validation.bound.json
-          cp "${CFILES[0]}" independent/chain_receipt.bound.json
+          mapfile -t S < <(find independent -type f -name source_workflow_run.json); mapfile -t V < <(find independent -type f -name independent_validation.json); mapfile -t C < <(find independent -type f -name chain_receipt.json)
+          test "${#S[@]}" -eq 1; test "${#V[@]}" -eq 1; test "${#C[@]}" -eq 1
+          cp "${S[0]}" metadata/source_workflow_run_receipt.json; cp "${V[0]}" independent/independent_validation.bound.json; cp "${C[0]}" independent/chain_receipt.bound.json
 
-      - name: Retrieve exact source run metadata and source artifact
+      - name: Retrieve exact successful V0.3 source evidence
         shell: bash
         run: |
           set -euo pipefail
-          SOURCE_RUN_ID="$(jq -r '.source_run_id' metadata/source_workflow_run_receipt.json)"
-          test "$SOURCE_RUN_ID" != null
-          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN_ID}" > metadata/source_run.json
-          test "$(jq -r '.name' metadata/source_run.json)" = "$SOURCE_WORKFLOW_NAME"
-          test "$(jq -r '.path' metadata/source_run.json)" = '.github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2.yml'
-          test "$(jq -r '.head_sha' metadata/source_run.json)" = "$(jq -r '.source_head_sha' metadata/source_workflow_run_receipt.json)"
-          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN_ID}/jobs?per_page=100" > metadata/source_jobs.json
-          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN_ID}/artifacts?per_page=100" > metadata/source_artifacts.json
+          SID="$(jq -r .source_run_id metadata/source_workflow_run_receipt.json)"
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${SID}" > metadata/source_run.json
+          test "$(jq -r .name metadata/source_run.json)" = "$SOURCE_WORKFLOW_NAME"
+          test "$(jq -r .path metadata/source_run.json)" = '.github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3.yml'
+          test "$(jq -r .status metadata/source_run.json)" = completed
+          test "$(jq -r .conclusion metadata/source_run.json)" = success
+          test "$(jq -r .head_sha metadata/source_run.json)" = "$(jq -r .source_head_sha metadata/source_workflow_run_receipt.json)"
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${SID}/jobs?per_page=100" > metadata/source_jobs.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${SID}/artifacts?per_page=100" > metadata/source_artifacts.json
           python3 - <<'PY'
           import json
-          d=json.load(open('metadata/source_artifacts.json'))
-          xs=[x for x in d.get('artifacts',[]) if isinstance(x,dict) and x.get('name')=='layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-2']
-          assert len(xs)==1,xs
-          assert xs[0].get('expired') is False
-          open('metadata/source_artifact_id.txt','w').write(str(xs[0]['id'])+'\n')
+          d=json.load(open('metadata/source_artifacts.json')); xs=[x for x in d.get('artifacts',[]) if x.get('name')=='layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3']
+          assert len(xs)==1 and xs[0].get('expired') is False,xs
+          open('metadata/source_artifact_id.txt','w').write(str(xs[0]['id']))
           PY
-          SOURCE_ARTIFACT_ID="$(cat metadata/source_artifact_id.txt)"
-          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT_ID}/zip" > downloads/source.zip
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/$(cat metadata/source_artifact_id.txt)/zip" > downloads/source.zip
           unzip -q downloads/source.zip -d source
-          mapfile -t RFILES < <(find source -type f -name result.json)
-          test "${#RFILES[@]}" -eq 1
-          cp "${RFILES[0]}" source/result.bound.json
+          mapfile -t R < <(find source -type f -name result.json); test "${#R[@]}" -eq 1; cp "${R[0]}" source/result.bound.json
 
-      - name: Freeze API-backed candidate provenance
+      - name: Freeze API-backed parser-corrected candidate provenance
         id: package
         shell: bash
         run: |
-          set -uo pipefail
-          set +e
-          python3 ci/layerb_32769_resource_authority_candidate_packager_v0_1.py \
-            --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_CONTRACT_V0_1.json \
-            --source-run metadata/source_run.json \
-            --source-jobs metadata/source_jobs.json \
-            --source-artifacts metadata/source_artifacts.json \
-            --source-artifact-zip downloads/source.zip \
-            --source-result source/result.bound.json \
-            --independent-run metadata/independent_run.json \
-            --independent-jobs metadata/independent_jobs.json \
-            --independent-artifacts metadata/independent_artifacts.json \
-            --independent-artifact-zip downloads/independent.zip \
-            --independent-validation independent/independent_validation.bound.json \
-            --chain-receipt independent/chain_receipt.bound.json \
+          set -uo pipefail; set +e
+          python3 ci/layerb_32769_resource_authority_candidate_packager_v0_2.py \
+            --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_CONTRACT_V0_2.json \
+            --source-run metadata/source_run.json --source-jobs metadata/source_jobs.json --source-artifacts metadata/source_artifacts.json --source-artifact-zip downloads/source.zip --source-result source/result.bound.json \
+            --independent-run metadata/independent_run.json --independent-jobs metadata/independent_jobs.json --independent-artifacts metadata/independent_artifacts.json --independent-artifact-zip downloads/independent.zip --independent-validation independent/independent_validation.bound.json --chain-receipt independent/chain_receipt.bound.json \
             --out candidate/provenance.json
-          rc=$?
-          set -e
-          echo "packager_rc=$rc" >> "$GITHUB_OUTPUT"
-          test -f candidate/provenance.json
-          cls="$(jq -r '.classification' candidate/provenance.json)"
-          if [ "$cls" = 'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_PASS_PLUS_0_PLUS_0' ]; then
-            test "$rc" -eq 0
-            echo 'candidate_ready=true' >> "$GITHUB_OUTPUT"
-          else
-            test "$rc" -eq 31
-            echo 'candidate_ready=false' >> "$GITHUB_OUTPUT"
-          fi
+          rc=$?; set -e; cls="$(jq -r .classification candidate/provenance.json)"
+          if [ "$cls" = LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_PASS_PLUS_0_PLUS_0 ]; then test "$rc" -eq 0; echo candidate_ready=true >> "$GITHUB_OUTPUT"; else test "$rc" -eq 31; echo candidate_ready=false >> "$GITHUB_OUTPUT"; fi
 
-      - name: Materialize read-only resource authority candidate
+      - name: Materialize read-only parser-corrected authority candidate
         if: steps.package.outputs.candidate_ready == 'true'
         shell: bash
         run: |
           set -euo pipefail
-          python3 ci/layerb_32769_resource_authority_materializer_v0_1.py \
-            --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_1.json \
-            --source-result source/result.bound.json \
-            --independent-validation independent/independent_validation.bound.json \
-            --provenance candidate/provenance.json \
-            --out candidate/resource_authority_candidate.json
+          python3 ci/layerb_32769_resource_authority_materializer_v0_2.py \
+            --contract docs/dsir4/contracts/LAYERB_32769_RESOURCE_AUTHORITY_MATERIALIZATION_CONTRACT_V0_2.json \
+            --source-result source/result.bound.json --independent-validation independent/independent_validation.bound.json --provenance candidate/provenance.json --out candidate/resource_authority_candidate.json
           python3 - <<'PY'
           import hashlib,json
           from pathlib import Path
-          a=Path('candidate/resource_authority_candidate.json')
-          p=Path('candidate/provenance.json')
-          d=json.loads(a.read_text())
-          assert d['classification']=='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0'
-          assert d['artifact_verified_independently'] is True
-          assert d['high_memory_resource_lifecycle_preflight_pass'] is True
-          assert d['materialization_errors']==[]
-          receipt={
-            'schema':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_RECEIPT_V0_1',
-            'classification':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_READY_PLUS_0_PLUS_0',
-            'effect':'+0/+0','candidate_only':True,'durable_repository_authority_created':False,
-            'provenance_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
-            'resource_authority_candidate_sha256':hashlib.sha256(a.read_bytes()).hexdigest(),
-            'candidate_classification':d['classification'],
-            'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
-          }
-          receipt['token']=receipt['classification']
-          Path('candidate/candidate_receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
-          print(receipt['classification'])
+          a=Path('candidate/resource_authority_candidate.json'); p=Path('candidate/provenance.json'); d=json.loads(a.read_text())
+          assert d['classification']=='LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS_PLUS_0_PLUS_0' and d['artifact_verified_independently'] is True and d['parser_capacity']==1048576 and d['class_build_authority_git_blob']=='b5cd7304c110962dc3baef8d04ef67d5a8042e5f'
+          r={'schema':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_RECEIPT_V0_1','classification':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_READY_PLUS_0_PLUS_0','effect':'+0/+0','candidate_only':True,'durable_repository_authority_created':False,'provenance_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'resource_authority_candidate_sha256':hashlib.sha256(a.read_bytes()).hexdigest(),'candidate_classification':d['classification'],'parser_capacity':d['parser_capacity'],'class_build_authority_git_blob':d['class_build_authority_git_blob'],'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          r['token']=r['classification']; Path('candidate/candidate_receipt.json').write_text(json.dumps(r,indent=2,sort_keys=True)+'\n')
           PY
 
-      - name: Emit not-ready receipt when provenance fails closed
+      - name: Emit not-ready receipt
         if: steps.package.outputs.candidate_ready != 'true'
         shell: bash
         run: |
-          set -euo pipefail
           python3 - <<'PY'
           import json
           from pathlib import Path
-          p=json.load(open('candidate/provenance.json'))
-          out={
-            'schema':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_RECEIPT_V0_1',
-            'classification':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_NOT_READY_PLUS_0_PLUS_0',
-            'effect':'+0/+0','candidate_only':True,'durable_repository_authority_created':False,
-            'packager_classification':p.get('classification'),'packager_errors':p.get('errors'),
-            'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
-          }
-          out['token']=out['classification']
-          Path('candidate/candidate_receipt.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
-          print(out['classification'])
+          p=json.load(open('candidate/provenance.json')); r={'schema':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_PACKAGING_RECEIPT_V0_1','classification':'LAYERB_32769_RESOURCE_AUTHORITY_CANDIDATE_NOT_READY_PLUS_0_PLUS_0','effect':'+0/+0','candidate_only':True,'durable_repository_authority_created':False,'packager_classification':p.get('classification'),'packager_errors':p.get('errors'),'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}; r['token']=r['classification']; Path('candidate/candidate_receipt.json').write_text(json.dumps(r,indent=2,sort_keys=True)+'\n')
           PY
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: layerb-32769-resource-authority-candidate-packaging-v0-1-${{ github.event.workflow_run.id }}
+          name: layerb-32769-resource-authority-candidate-packaging-v0-1-${{ github.run_id }}
           path: |
-            candidate/provenance.json
-            candidate/resource_authority_candidate.json
-            candidate/candidate_receipt.json
+            candidate/
             metadata/source_run.json
             metadata/source_jobs.json
             metadata/source_artifacts.json
@@ -209,7 +147,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 90
 
-      - name: Fail workflow if candidate provenance was not ready
+      - name: Fail closed if candidate not ready
         if: steps.package.outputs.candidate_ready != 'true'
         shell: bash
         run: exit 31
