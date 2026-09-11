@@ -1,0 +1,98 @@
+name: layerb-post-16385-top1-parallel-support-audits-v0-1
+on:
+  push:
+    paths:
+      - '.github/workflows/layerb-post-16385-top1-parallel-support-audits-v0-1.yml'
+permissions:
+  contents: read
+concurrency:
+  group: layerb-post-16385-top1-parallel-support-audits-v0-1
+  cancel-in-progress: false
+
+env:
+  AUTHORITY: docs/dsir4/authority/LAYERB_POST_16385_TOP1_ROLE_CANCELLATION_TERMINAL_AUTHORITY_V0_1.json
+
+jobs:
+  cancellation-amplification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce immutable source authority
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUTHORITY")" = 'cb0b07bd75208619e681f02528fb0c761ddedabb'
+      - name: Compute cancellation amplification audit
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python ci/layerb_post_16385_top1_cancellation_amplification_audit_v0_1.py --authority "$AUTHORITY" --out artifacts/cancellation_amplification.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/cancellation_amplification.json'))
+          assert d['classification']=='POST_16385_TOP1_CANCELLATION_AMPLIFICATION_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['class_solver_invoked'] is False
+          assert d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top1-cancellation-amplification-audit-v0-1
+          path: artifacts/cancellation_amplification.json
+          if-no-files-found: error
+          retention-days: 90
+
+  binary64-replay:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce immutable source authority
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUTHORITY")" = 'cb0b07bd75208619e681f02528fb0c761ddedabb'
+      - name: Replay exact binary64 metric
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python ci/layerb_post_16385_top1_binary64_replay_audit_v0_1.py --authority "$AUTHORITY" --out artifacts/binary64_replay.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/binary64_replay.json'))
+          assert d['classification']=='POST_16385_TOP1_BINARY64_REPLAY_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['bitwise_binary64_metric_reproduced'] is True
+          assert d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top1-binary64-replay-audit-v0-1
+          path: artifacts/binary64_replay.json
+          if-no-files-found: error
+          retention-days: 90
+
+  ulp-sensitivity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce immutable source authority
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUTHORITY")" = 'cb0b07bd75208619e681f02528fb0c761ddedabb'
+      - name: Compute endpoint ULP sensitivity
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python ci/layerb_post_16385_top1_ulp_sensitivity_audit_v0_1.py --authority "$AUTHORITY" --out artifacts/ulp_sensitivity.json
+          python - <<'PY'
+          import json
+          d=json.load(open('artifacts/ulp_sensitivity.json'))
+          assert d['classification']=='POST_16385_TOP1_ULP_SENSITIVITY_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert d['all_nine_neighbor_metrics_remain_above_tolerance'] is True
+          assert d['next_rung_authorized'] is False and d['covariance_restriction_authorized'] is False and d['Wm_S3_opened'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top1-ulp-sensitivity-audit-v0-1
+          path: artifacts/ulp_sensitivity.json
+          if-no-files-found: error
+          retention-days: 90
