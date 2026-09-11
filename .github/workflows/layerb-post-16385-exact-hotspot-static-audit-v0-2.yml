@@ -1,0 +1,59 @@
+name: layerb-post-16385-exact-hotspot-static-audit-v0-2
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-post-16385-exact-hotspot-static-audit-v0-2.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit dormant exact response-atom localizer without CLASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_post_16385_exact_response_atom_hotspot_v0_1.py)" = 'f4be1ffc7a5c4e9aef5381e103c94c385fdc03a9'
+          mkdir -p artifacts
+          python - <<'PY'
+          import ast,json
+          from pathlib import Path
+          s=Path('ci/layerb_post_16385_exact_response_atom_hotspot_v0_1.py').read_text()
+          p=Path('docs/dsir4/prereg/LAYERB_POST_16385_EXACT_RESPONSE_ATOM_HOTSPOT_LOCALIZATION_V0_1.md').read_text()
+          checks={
+            'parseable':bool(ast.parse(s)),
+            'frozen_h':'H=1e-4' in s,
+            'frozen_tol':'REL_TOL=1e-3' in s,
+            'authoritative_max':'AUTH_MAX=0.012484060640679777' in s,
+            'terminal_not_converged_required':'COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0' in s,
+            'exact_441_shared_calls':'len(coarse_calls)!=441 or len(fine_common)!=441' in s,
+            'planner_shape_frozen':'counts!=[377,64,441,128]' in s,
+            'bitwise_plan_identity':'call_equal(x,y)' in s and "view('<u8')" in s,
+            'des_boss_split':"'DES' if call_index<377 else 'BOSS_GL64'" in s,
+            'top64':'TOPN=64' in s and 'top_64_response_atoms' in s,
+            'gl128_excluded':'fine_only_gl128_excluded_call_count' in s and "'fine_only_gl128_excluded_call_count':128" in s,
+            'same_response_formula':'np.abs(x[good]-y[good])/np.maximum(np.abs(x[good]),np.abs(y[good]))' in s,
+            'eight_constructions':"tracker!={'constructions':8,'live':0,'max_live':1}" in s,
+            'terminal_32769_must_be_false':"d.get('denser_successor_32769_authorized') is False" in s,
+            'output_next_rung_false':"'next_rung_authorized':False" in s,
+            'no_science_replay':'scientific_107_row_replay_executed' in s and "'scientific_107_row_replay_executed':False" in s,
+            'no_science_classification':"'scientific_classification_created':False" in s,
+            'downstream_closed':all(x in s for x in ("'next_rung_authorized':False","'covariance_restriction_authorized':False","'Wm_S3_opened':False")),
+            'no_active_broad_read':'broad' not in s.lower(),
+            'prereg_dormant':'DORMANT / NOT EXECUTION-AUTHORIZED' in p,
+            'prereg_requires_broad_terminal':'only after the active broad-quantile artifacts are terminal and independently consumed' in p,
+          }
+          ok=all(checks.values())
+          out={'schema':'LAYERB_POST_16385_EXACT_HOTSPOT_STATIC_AUDIT_V0_2','classification':'POST_16385_EXACT_HOTSPOT_STATIC_AUDIT_PASS_PLUS_0_PLUS_0' if ok else 'POST_16385_EXACT_HOTSPOT_STATIC_AUDIT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','checks':checks,'pass_count':sum(checks.values()),'check_count':len(checks),'class_solver_invoked':False,'scientific_response_read':False,'current_broad_result_read':False,'hotspot_execution_authorized':False,'scientific_authority_created':False,'next_rung_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('artifacts/static.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['classification'],f"{out['pass_count']}/{out['check_count']}"); assert ok,out
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-exact-hotspot-static-audit-v0-2
+          path: artifacts/static.json
+          if-no-files-found: error
+          retention-days: 90
