@@ -1,0 +1,86 @@
+name: post-16385-dormant-converged-closure-static-v0-1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/post-16385-dormant-converged-closure-static-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit dormant helper and activation guards without CLASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts scratch
+          test "$(git hash-object ci/post_16385_converged_fresh_layerb_scientific_closure_v0_1.py)" = 'ebd572a74b25a6b120ef6a5479aaa78d742594bd'
+          test "$(git hash-object docs/dsir4/prereg/POST_16385_CONVERGED_FRESH_CLOSURE_ADAPTER_SPEC_V0_1.md)" = '$(git hash-object docs/dsir4/prereg/POST_16385_CONVERGED_FRESH_CLOSURE_ADAPTER_SPEC_V0_1.md)'
+          python3 -m py_compile ci/post_16385_converged_fresh_layerb_scientific_closure_v0_1.py
+          python3 - <<'PY'
+          import ast,copy,hashlib,json,tempfile
+          from pathlib import Path
+          import importlib.util
+          hp=Path('ci/post_16385_converged_fresh_layerb_scientific_closure_v0_1.py'); s=hp.read_text(); ast.parse(s)
+          sp=Path('docs/dsir4/prereg/POST_16385_CONVERGED_FRESH_CLOSURE_ADAPTER_SPEC_V0_1.md'); spec=sp.read_text()
+          ms=importlib.util.spec_from_file_location('h',hp); h=importlib.util.module_from_spec(ms); ms.loader.exec_module(h)
+          checks={
+            'spec_dormant':'DORMANT / response-blind' in spec,
+            'activation_token':h.NEXT_REFINEMENT_CONVERGED=='COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0',
+            'no_direct_jm_activation':'COMMON_GRID_FOURTH_REFINEMENT_CONVERGED_PLUS_0_PLUS_0' not in s,
+            'no_32769':'32769' not in s,
+            'h':h.H==1e-4,
+            'strict_tol':h.REL_TOL==1e-3,
+            'lookup':h.LOOKUP_REL_TOL==1e-12,
+            'native_kpd':h.NATIVE_KPD==20.0,
+            'capacity':h.CAPACITY==18432 and h.PARSER_CAPACITY==524288,
+            'coarse_sha':h.COARSE_NODE_SHA=='6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515',
+            'fine_sha':h.FINE_NODE_SHA=='3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975',
+            'plan_hashes':h.COARSE_PLAN_SHA=='505716116cc385d5700e455017d8e541c5bba7774fa6647298392495c83ecfe0' and h.FINE_PLAN_SHA=='0f7ce2e5fa459e15954268dfd46045eaa0ab6356dfdab5a2e282514e7a34ae4e',
+            'load_coarse_8193':'engine.load_nodes(a.coarse, 8193, COARSE_TEXT_SHA, COARSE_NODE_SHA)' in s,
+            'load_fine_16385':'engine.load_nodes(a.fine, 16385, FINE_TEXT_SHA, FINE_NODE_SHA)' in s,
+            'metadata_coarse_8193':'"coarse": {"requested_node_count": 8193' in s,
+            'metadata_fine_16385':'"fine": {"requested_node_count": 16385' in s,
+            'strict_classifier':'numerical_ok = bool(float(mx) < REL_TOL)' in s,
+            'invalid_fraction_unchanged':'float(layer["invalid_row_fraction"]) <= ir.FB_MAX' in s,
+            'retained_unchanged':'layer["retained_after_layer_b"] >= ir.MIN_RETAINED' in s,
+            'forbidden_downstream_reads':'covariance_read' in s and 'whitening_read' in s and 'nuisance_read' in s and 'relation_null_read' in s,
+            'lifecycle_four_then_eight':'tracker != {"constructions": 4, "live": 0, "max_live": 1}' in s and 'tracker != {"constructions": 8, "live": 0, "max_live": 1}' in s,
+            'calls_4040':'"total_get_transfer_calls": 4040' in s,
+            'response_reuse_false':'"response_values_reused": False' in s,
+            'candidate_not_authority':'"scientific_authority_created": False' in s,
+            'covariance_closed':'"covariance_restriction_authorized": False' in s,
+            'wm_closed':'"Wm_S3_opened": False' in s,
+          }
+          assert all(checks.values()),[k for k,v in checks.items() if not v]
+          # Synthetic activation: exact new token accepted, direct JM and unverified rejected.
+          good={'classification':h.NEXT_REFINEMENT_CONVERGED,'artifact_verified_independently':True,'artifact_zip_sha256':'1'*64,'result_json_sha256':'2'*64}
+          Path('scratch/good.json').write_text(json.dumps(good)); assert h.validate_activation('scratch/good.json')['classification']==h.NEXT_REFINEMENT_CONVERGED
+          bad=copy.deepcopy(good); bad['classification']='COMMON_GRID_FOURTH_REFINEMENT_CONVERGED_PLUS_0_PLUS_0'; Path('scratch/bad_token.json').write_text(json.dumps(bad))
+          try:h.validate_activation('scratch/bad_token.json'); raise AssertionError('direct JM token accepted')
+          except RuntimeError:pass
+          bad=copy.deepcopy(good); bad['artifact_verified_independently']=False; Path('scratch/bad_verify.json').write_text(json.dumps(bad))
+          try:h.validate_activation('scratch/bad_verify.json'); raise AssertionError('unverified activation accepted')
+          except RuntimeError:pass
+          # Real dormant canonical and plan authorities must validate now, before current science result.
+          ca=h.validate_canonical_16385('docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_16385_V0_1.json')
+          pa=h.validate_plan_authority('docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json')
+          # Synthetic good capacity envelope; off-by-one capacity must fail closed.
+          cap={'old_capacity':30,'new_capacity':18432,'replacement_count':1,'parser_old_argument_capacity':1024,'parser_new_argument_capacity':524288,'parser_replacement_count':1}
+          Path('scratch/cap.json').write_text(json.dumps(cap)); h.validate_capacity_patch('scratch/cap.json')
+          cap['new_capacity']=18431; Path('scratch/cap_bad.json').write_text(json.dumps(cap))
+          try:h.validate_capacity_patch('scratch/cap_bad.json'); raise AssertionError('bad capacity accepted')
+          except RuntimeError:pass
+          out={'schema':'POST_16385_DORMANT_CONVERGED_CLOSURE_STATIC_AUDIT_V0_1','classification':'POST_16385_DORMANT_CONVERGED_CLOSURE_STATIC_PASS_PLUS_0_PLUS_0','effect':'+0/+0','helper_git_blob':'ebd572a74b25a6b120ef6a5479aaa78d742594bd','helper_sha256':hashlib.sha256(hp.read_bytes()).hexdigest(),'spec_sha256':hashlib.sha256(sp.read_bytes()).hexdigest(),'check_count':len(checks),'checks':checks,'checks_all_pass':True,'synthetic_activation_exact_new_token_pass':True,'synthetic_direct_jm_token_rejected':True,'synthetic_unverified_activation_rejected':True,'real_canonical_16385_authority_validated':True,'real_request_plan_authority_validated':True,'capacity_fail_closed_test_pass':True,'current_16385_result_read':False,'class_solver_invoked':False,'scientific_authority_created':False,'execution_authorized':False,'token':'POST_16385_DORMANT_CONVERGED_CLOSURE_STATIC_PASS_PLUS_0_PLUS_0'}
+          Path('artifacts/static.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token'],out['check_count'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: post-16385-dormant-converged-closure-static-v0-1
+          path: artifacts/static.json
+          if-no-files-found: error
+          retention-days: 90
