@@ -1,0 +1,55 @@
+name: layerb-post-16385-top64-terminal-validator-static-audit-v0-1
+on:
+  push:
+    paths:
+      - '.github/workflows/layerb-post-16385-top64-terminal-validator-static-audit-v0-1.yml'
+permissions:
+  contents: read
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      - name: Static audit only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_post_16385_top64_role_cancellation_terminal_validator_v0_1.py)" = 'b687bc3a73c3f5d3c61d02a8c3fdf1988b0f396e'
+          python -m py_compile ci/layerb_post_16385_top64_role_cancellation_terminal_validator_v0_1.py
+          mkdir -p artifacts
+          python - <<'PY'
+          import ast,json
+          from pathlib import Path
+          s=Path('ci/layerb_post_16385_top64_role_cancellation_terminal_validator_v0_1.py').read_text(); ast.parse(s)
+          checks={
+            'source_sha':'4023403aaae03481507f778ce4a85c119160cebd785c9c91a534260783049394' in s,
+            'source_441':"s.get('shared_call_count')==441" in s,
+            'source_377':"s.get('des_call_count')==377" in s,
+            'source_boss64':"s.get('boss_gl64_call_count')==64" in s,
+            'census_pass':'POST_16385_TOP64_ROLE_CANCELLATION_CENSUS_PASS_PLUS_0_PLUS_0' in s,
+            'exact_atom_count':"c.get('atom_count')!=64" in s and 'len(rows)!=64' in s,
+            'ordered_identity':"r.get('source_atom')!=t" in s and "r.get('rank')!=i+1" in s,
+            'lifecycle':"{'constructions':8,'live':0,'max_live':1}" in s,
+            'lookup_tol':'LOOKUP_TOL=1e-12' in s,
+            'repro_tol':'REPRO_TOL=1e-12' in s,
+            'capacity_receipt':'parser_new_argument_capacity' in s and "new_capacity')!=18432" in s,
+            'history_receipt':'k_output_values_still_inserted_into_solver_grid' in s and 'scientific_parameters_changed' in s,
+            'downstream_closed':all(x in s for x in ("'scientific_authority_created':False","'next_rung_authorized':False","'covariance_restriction_authorized':False","'Wm_S3_opened':False")),
+            'fail_closed':'INVALID_INFRA_PLUS_0_PLUS_0' in s,
+            'no_class_import':'from classy import Class' not in s and 'Class()' not in s,
+          }
+          assert all(checks.values()),{k:v for k,v in checks.items() if not v}
+          out={'schema':'LAYERB_POST_16385_TOP64_TERMINAL_VALIDATOR_STATIC_AUDIT_V0_1','classification':'POST_16385_TOP64_TERMINAL_VALIDATOR_STATIC_AUDIT_PASS_PLUS_0_PLUS_0','effect':'+0/+0','check_count':len(checks),'pass_count':sum(checks.values()),'checks':checks,'class_solver_invoked':False,'census_result_read':False,'execution_authorized':False,'scientific_authority_created':False,'next_rung_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('artifacts/static.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['classification'],out['pass_count'],out['check_count'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-post-16385-top64-terminal-validator-static-audit-v0-1
+          path: artifacts/static.json
+          if-no-files-found: error
+          retention-days: 90
