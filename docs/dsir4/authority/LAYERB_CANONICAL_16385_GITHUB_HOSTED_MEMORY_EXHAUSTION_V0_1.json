@@ -1,0 +1,56 @@
+{
+  "schema": "LAYERB_CANONICAL_16385_GITHUB_HOSTED_MEMORY_EXHAUSTION_AUTHORITY_V0_1",
+  "classification": "CANONICAL_16385_GITHUB_HOSTED_MEMORY_EXHAUSTION_ESTABLISHED_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "resource_authority_created": true,
+  "scientific_authority_created": false,
+  "source_workflow_run_id": 34551218708,
+  "source_workflow_head_sha": "4132278b18fa8527a7c9ad8026119b8d35249b96",
+  "runner_image": "ubuntu-24.04",
+  "canonical_16385_node_sha256": "3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975",
+  "canonical_16385_text_sha256": "7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69",
+  "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+  "capacity": 18432,
+  "parser_capacity": 524288,
+  "roles": {
+    "reference": {
+      "job_id": 103114347218,
+      "terminal_mode": "process_killed_after_memory_exhaustion",
+      "observed_peak_python_rss_kb": 15664784,
+      "mem_available_reached_kb": 0,
+      "swap_free_reached_kb": 0
+    },
+    "alpha_minus": {
+      "job_id": 103114346998,
+      "terminal_mode": "process_killed_after_memory_exhaustion",
+      "observed_peak_python_rss_kb": 15407312,
+      "mem_available_last_low_kb": 141616,
+      "swap_free_last_low_kb": 4
+    },
+    "beta_plus": {
+      "job_id": 103114347209,
+      "terminal_mode": "process_killed_exit_137_after_memory_exhaustion",
+      "observed_peak_python_rss_kb": 15612020,
+      "mem_available_reached_kb": 0,
+      "swap_free_last_low_kb": 40
+    },
+    "beta_minus": {
+      "job_id": 103114347191,
+      "terminal_mode": "process_killed_after_memory_exhaustion",
+      "observed_peak_python_rss_kb": 15515908,
+      "mem_available_last_low_kb": 61944,
+      "swap_free_last_low_kb": 152
+    }
+  },
+  "role_count": 4,
+  "all_roles_reproduce_memory_exhaustion": true,
+  "role_specific_physics_failure_supported": false,
+  "hosted_resource_feasibility": false,
+  "scientific_not_converged_inferred": false,
+  "scientific_converged_inferred": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "article3_repository_readiness_percent": 68,
+  "funnel_freeze_readiness_percent": 67,
+  "token": "CANONICAL_16385_GITHUB_HOSTED_MEMORY_EXHAUSTION_ESTABLISHED_PLUS_0_PLUS_0"
+}
