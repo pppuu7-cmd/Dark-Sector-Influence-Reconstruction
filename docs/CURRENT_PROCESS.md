@@ -2,55 +2,91 @@
 
 Updated: 2026-09-12. Scope: **DSIR only**; RTK/RQIR/KMQGB/KMDSB excluded.
 
-## Scientific frontier — production run active, terminal result not yet known
+## Scientific frontier — V146 recovery active, terminal result not yet known
+
 Canonical 8193->16385 remains independently verified `COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`, max relative component difference `0.012484060640679777` versus frozen strict `<1e-3`.
 
-Frozen science remains unchanged: `REL_TOL=1e-3`, `h=1e-4`, native kpd20, centered-cubic interpolation, same physical domain/masks/107-row accounting, invalid fraction `<=0.05`, retained `>=15`, unsupported=0 and lookup mismatch `<=1e-12`.
+Frozen science is unchanged: `REL_TOL=1e-3` strict `<`, `h=1e-4`, native kpd20, centered-cubic interpolation, same physical domain/masks/107-row accounting, invalid fraction `<=0.05`, retained `>=15`, unsupported=0, lookup mismatch `<=1e-12`. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
 
-Exactly one authorized canonical 16385->32769 chunk-production workflow is now active: run `34695347893`, launch commit `646d93a7cb0e38dc8b3d358f737e47655567055b`. No terminal convergence classification has yet been consumed. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
+No independently verified terminal 16385->32769 classification exists yet.
 
-## V141 retained — exact 8193 monolithic/chunk equivalence
-Run `34666328865` closed exact monolithic-vs-four-chunk equivalence for all four frozen roles under distinct verified CLASS builds. Frozen tolerance remained `1e-12`; max normalized and absolute differences are `0.0`; exact binary64 fraction is `1.0`. Authority: `docs/dsir4/authority/LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V0_3.json`.
+## V141–V143 retained
 
-## V142 retained — 32769 response-blind chunk resource PASS
-Run `34667210456` completed all eight low-capacity canonical chunks plus independent finalizer. Aggregate classification `LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_ALL_PASS_PLUS_0_PLUS_0`; peak RSS `11865712 kB`, no observed swap consumption. Authority: `docs/dsir4/authority/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_V0_1.json`.
+V141 exact 8193 monolithic/chunk equivalence PASS: all four roles max normalized/absolute difference `0.0`, exact binary64 fraction `1.0`.
 
-## V143 retained — exact 32769 partition invariance
-Run `34667606794` closed the blinded two-partition numerical-method bridge. Across all four frozen roles and six z probes: exact coordinate order, max requested-node mismatch `1.656870599154541e-16`, max normalized/absolute response difference `0.0`, exact binary64 fraction `1.0`. Authority: `docs/dsir4/authority/LAYERB_32769_BLINDED_PARTITION_INVARIANCE_V0_1.json`.
+V142 canonical 32769 eight-chunk response-blind resource PASS: peak RSS `11865712 kB`, no observed swap consumption.
 
-## V144 — production control plane independently PASS and exactly one science run active
-Static production audit run `34695256186` at head `55283ec18d9ca4b12c09097eada4ea43a37ff749` is terminal PASS.
+V143 canonical 32769 two-partition invariance PASS: all four roles/six z probes max normalized/absolute difference `0.0`, exact binary64 fraction `1.0`.
 
-Jobs: source identities `103557525777`, compile/synthetic `103557525909`, workflow topology `103557525929`, acquisition-only scientific delta `103557525943`, independent finalizer `103557551483`.
+## V144 initial production — incomplete infrastructure result, not science FAIL
 
-Final artifact `10298507794`, ZIP SHA256 `24b3a5d38198b5e403535e4db8306c2272d6fe1908a0cec8242e5981650631f5`; independently consumed raw static result SHA256 `b9547d407023b5e51a4d91a7764c594a5a61df0fe0bdf7ef16eb229d99353b39`, classification `LAYERB_16385_TO_32769_CHUNK_PRODUCTION_STATIC_AUDIT_PASS_PLUS_0_PLUS_0`, missing receipts `[]`.
+Run `34695347893` had PASS authorization and exact response-blind plan. All four fine-32769 operands succeeded and are retained by exact artifact/operand hashes. All four coarse-16385 jobs were interrupted by hosted-runner shutdown during acquisition. Final classifier and independent verifier were skipped.
 
-Durable static authority: `docs/dsir4/authority/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_STATIC_AUDIT_V0_1.json`, creation commit `f194ae32e03fe321ea787633a74b61782605fe0a`.
+Durable authority: `docs/dsir4/authority/LAYERB_16385_32769_INITIAL_PRODUCTION_INFRA_FAILURE_V0_1.json`.
 
-One-shot launch sentinel `docs/dsir4/launch/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_LAUNCH_V0_1.json` was created once at commit `646d93a7cb0e38dc8b3d358f737e47655567055b`, triggering run `34695347893`.
+The successful fine operands are frozen and must not be recomputed in recovery.
 
-Current-run authorize job `103557768980` is PASS. Independently consumed artifact `10298499340` verifies `authorized_canonical_run_count=1`, exact V141/V142/V143/parent/request-plan authority bindings, one-live guard with current=1 and other live/all-status=0, frozen `<1e-3`, `h=1e-4`, kpd20, covariance=false, Wm_S3=false, errors `[]`.
+## V145 recovery V0.1 — fail-closed control-path defect
 
-At the current snapshot, materialize-plan job `103557768867` is in progress. After PASS, the same workflow automatically fans out to the prospectively frozen 8-way matrix: roles `[reference, alpha_minus, beta_plus, beta_minus]` x grids `[coarse, fine]`, `max-parallel: 8`. Fine uses validated eight-chunk 32769 acquisition; coarse uses canonical 16385 monolithic acquisition. Each operand computes no convergence metric; only the downstream frozen classifier may do so.
+Run `34702716166` passed preflight and built all four canonical 16385 CLASS envelopes with the exact previously independently validated history-suppression patch. Each coarse job then failed before `Class.compute` because the control artifact stored the plan at `inputs/control/plan/plan.json` while the worker argument used `inputs/control/plan.json`.
 
-Silent science retry is forbidden. Any infrastructure failure before a terminal science receipt requires a separately prospectively frozen retry rule; no manual rerun of science is authorized by V144.
+Reference exception: `FileNotFoundError: [Errno 2] No such file or directory: 'inputs/control/plan.json'`.
+
+Classifier/verifier skipped; no science response/convergence result created. Durable authority: `docs/dsir4/authority/LAYERB_16385_32769_COARSE_RECOVERY_V01_CONTROL_PATH_FAILURE_V0_1.json`.
+
+No silent rerun was used.
+
+## V146 recovery V0.2 — active
+
+Prospectively frozen contract: `docs/dsir4/contracts/LAYERB_16385_32769_COARSE_RECOVERY_CONTRACT_V0_2.json`, blob `732fa2668bfc7af66131cc1cab5e6db793637e5e`, creation commit `91cd509cb0d46726b173a33b8a6a1aefb0957531`.
+
+Recovery workflow: `.github/workflows/layerb-16385-32769-coarse-recovery-v0-2.yml`, launch-time blob `52ebb19ef4c6cff894336258e76489101f0ee9b1`.
+
+One-shot launch commit `5e9adb306a3f9541afed236553926229ecc09ca9` triggered exactly one run: `34702943923`.
+
+Preflight `103577799082` PASS. Four coarse jobs run in parallel:
+- beta_plus `103577831090`
+- reference `103577831101`
+- alpha_minus `103577831124`
+- beta_minus `103577831283`
+
+All four have passed build/runtime setup and entered `Verify binding and acquire exactly one coarse operand`.
+
+Each uses canonical 16385, point capacity 16385, parser 524288, pinned CLASS commit `ac627d54e9ce196a08878d1ba33999819925d19c`, and exact history-suppression post-SHA256 `4e9a419d46471ffab74df3d14239e000bf92f2e198edad4d2c7b82f1335f7a4b`. That patch keeps `k_output_values` in the solver grid and records `scientific_parameters_changed=false`.
+
+V146 changes only the plan path (`inputs/control/plan.json` -> `inputs/control/plan/plan.json`) plus retry-run guard semantics. Fine recomputation is forbidden. Fine response/valid-mask payload hashes must remain unchanged through provenance-only rebind.
+
+## Independent V146 static audit
+
+Run `34703048335` at repaired audit head `4671539e43339afddfaedf91e487063d3e793b4b` is terminal PASS: source/science `103578077138`, topology `103578077136`, V145 failure binding `103578077009`, independent finalizer `103578093809`.
+
+Aggregate artifact `10301255917`, ZIP SHA256 `1cca5ae736c90e9ebf6f1630dfc4c892c18cbb73f9245622f27ce084a3cce899`; independently consumed raw `static.json` SHA256 `bd2d0a2009179eed8f6e80a81847ba1de8d4d15cb994be342ea9da6f1f0a8b03`, missing receipts `[]`.
+
+Durable authority: `docs/dsir4/authority/LAYERB_16385_32769_COARSE_RECOVERY_V02_STATIC_AUDIT_V0_1.json`, creation commit `05a4d8391a0d61c70d5e9aec0d5117fe3a4b1a4a`.
 
 ## Exact remaining order
-1. Let active run `34695347893` finish plan materialization and all 8 role/grid operand jobs.
-2. Consume operand artifacts only as required by the same run's final classifier; no duplicate science lane.
-3. Let frozen final classifier produce exactly one terminal 16385->32769 classification under strict `<1e-3`.
-4. Independently consume the terminal artifact and fresh-runner verifier before changing scientific/publication readiness.
-5. Covariance/Wm_S3 remain closed regardless of result until separate downstream authorization.
+
+1. Continue only run `34702943923`; no duplicate science/recovery run.
+2. Require all four coarse operands PASS; inspect raw artifacts and resource telemetry.
+3. Provenance-rebind the four retained fine operands without changing scientific payload hashes.
+4. Run exactly one frozen final classifier under strict `<1e-3`.
+5. Require fresh-runner independent terminal verifier PASS.
+6. Independently consume terminal artifacts before creating scientific authority or changing scientific/publication readiness.
+7. No silent retry after V0.2. Further infrastructure failure requires another prospective contract.
+8. Covariance/Wm_S3 remain closed regardless of convergence outcome until separate gates.
 
 ## Recovery authority
-Newest immutable note: `docs/recovery/RECOVERY_2026-09-12_ARTICLE3_CHUNK_PRODUCTION_LAUNCHED_V144.md`, creation commit `9b7d2e3c07e70362bbc2fbcad89c3f753fcf9332`.
+
+Newest immutable note: `docs/recovery/RECOVERY_2026-09-12_ARTICLE3_COARSE_RECOVERY_V146.md`, creation commit `88cac599075fed2eb5b0bc82dfcb8608e3264f6b`.
 
 ## Readiness
-`ARTICLE3_REPOSITORY_READINESS: 68%`.
 
-Funnel-freeze/scientific frontier: `67%`.
+`ARTICLE3_REPOSITORY_READINESS: 68%`
 
-Operational roadmap: `WORKING_PLAN_COMPLETION: 94%`. Increase from V143 is operational only: production static control plane is independently PASS, current-run authorization is raw-verified, and exactly one canonical production run is active. Scientific convergence is still unresolved.
+Funnel-freeze/scientific frontier: `67%`
+
+Operational roadmap: `WORKING_PLAN_COMPLETION: 95%`.
 
 ## Automation / ownership
-`DSIR Continuous Research` remains disabled because the five active task slots are occupied. GitHub-native workflow run `34695347893` owns the single authoritative production science execution. Do not launch a duplicate.
+
+`DSIR Continuous Research` remains disabled because all five automation task slots are occupied. GitHub-native recovery run `34702943923` is the single active authoritative DSIR computation. Do not launch a duplicate.
