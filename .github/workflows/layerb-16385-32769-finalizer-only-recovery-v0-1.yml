@@ -1,0 +1,294 @@
+name: layerb-16385-32769-finalizer-only-recovery-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_LAUNCH_V0_1.json'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: layerb-16385-32769-finalizer-only-recovery-v0-1
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json'
+  CONTRACT_BLOB: 'e3c20076a61551d082eb8ea4dc2f372cfc5fb50d'
+  FAILURE_AUTH: 'docs/dsir4/authority/LAYERB_16385_32769_V146_FINALIZER_INPUT_ENV_FAILURE_V0_1.json'
+  HISTORY_AUTH: 'docs/dsir4/authority/LAYERB_8193_HISTORY_SUPPRESSION_EXACT_EQUIVALENCE_V0_1.json'
+  V146_STATIC: 'docs/dsir4/authority/LAYERB_16385_32769_COARSE_RECOVERY_V02_STATIC_AUDIT_V0_1.json'
+  FINE_REBIND: 'docs/dsir4/authority/LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_CONTROL_V0_1.json'
+  PROMOTION_GATE: 'docs/dsir4/contracts/LAYERB_16385_32769_V146_TERMINAL_PROMOTION_GATE_CONTRACT_V0_1.json'
+  PRODUCTION_CONTRACT: 'docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1.json'
+  TERMINAL_CONTRACT: 'docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_TERMINAL_RESULT_CONTRACT_V0_1.json'
+  V141: 'docs/dsir4/authority/LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V0_3.json'
+  V142: 'docs/dsir4/authority/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_V0_1.json'
+  V143: 'docs/dsir4/authority/LAYERB_32769_BLINDED_PARTITION_INVARIANCE_V0_1.json'
+  PARENT_REFINEMENT: 'docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json'
+  REQUEST_PLAN_AUTH: 'docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json'
+  CANON32769_AUTH: 'docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json'
+  MANIFEST: 'docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json'
+  WM_S3_OVERRIDE: 'docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_2.json'
+  COARSE_CANONICAL: 'docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt'
+  FINE_CANONICAL: 'docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt'
+  BASELINE: 'configs/dsir4/c2/ide0_reference_v0_1.ini'
+  PRECISION: 'configs/dsir4/c2/dsir_ide_p8_v0_1.pre'
+
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify finalizer-only contract, controls and exact one-run ownership
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p safe/plan safe/original_control
+          test "$(git hash-object "$CONTRACT")" = "$CONTRACT_BLOB"
+          python3 - <<'PY'
+          import json,subprocess
+          c=json.load(open('docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json'))
+          def blob(p): return subprocess.check_output(['git','hash-object',p],text=True).strip()
+          assert c['schema']=='LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1' and c['frozen_before_terminal_16385_to_32769_result'] is True
+          assert blob(c['v146_failure_authority']['path'])==c['v146_failure_authority']['git_blob']
+          f=json.load(open(c['v146_failure_authority']['path'])); assert f['classification']==c['v146_failure_authority']['classification'] and f['causal_failure']['frozen_classifier_reached'] is False and f['causal_failure']['terminal_scientific_classification_created'] is False
+          for key,x in c['required_method_controls'].items():
+              assert blob(x['path'])==x['git_blob'],key
+              d=json.load(open(x['path'])); assert d['classification']==x['classification'],key
+          h=json.load(open(c['required_method_controls']['history_suppression_exact_equivalence']['path']))
+          assert h['max_absolute_response_difference']==0.0 and h['max_normalized_response_difference']==0.0 and h['minimum_exact_binary64_fraction']==1.0 and h['failures']==[]
+          assert blob(c['prospective_promotion_gate']['path'])==c['prospective_promotion_gate']['git_blob']
+          for key,x in c['frozen_sources'].items(): assert blob(x['path'])==x['git_blob'],key
+          assert blob(c['required_environment_repair']['WM_S3_OVERRIDE'])==c['required_environment_repair']['WM_S3_OVERRIDE_git_blob']
+          ex=c['execution']; assert ex['coarse_recompute_authorized'] is False and ex['fine_recompute_authorized'] is False and ex['CLASS_solver_invocation_authorized_in_finalizer'] is False and ex['exactly_one_finalizer_run_authorized'] is True
+          s=c['scientific_semantics']; assert s['relative_tolerance']==0.001 and s['strict_less_than'] is True and s['h']==0.0001 and s['native_k_per_decade_for_pk']==20.0 and s['lookup_relative_tolerance']==1e-12 and s['covariance_restriction_authorized'] is False and s['Wm_S3_opened'] is False
+          PY
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/workflows/layerb-16385-32769-finalizer-only-recovery-v0-1.yml/runs?per_page=100" > safe/runs.json
+          python3 - <<'PY'
+          import json,os
+          run=int(os.environ['GITHUB_RUN_ID']); rows=json.load(open('safe/runs.json'))['workflow_runs']
+          current=[x for x in rows if int(x['id'])==run]; others=[x for x in rows if int(x['id'])!=run]
+          live=[x for x in others if x['status'] in ('queued','in_progress','waiting','pending')]
+          assert len(current)==1 and len(others)==0 and len(live)==0,(len(current),len(others),len(live))
+          PY
+      - name: Recover exact V146 response-blind plan and create current-run finalizer authorization
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/10300881526/zip" > safe/control.zip
+          test "$(sha256sum safe/control.zip | awk '{print $1}')" = '7582d99e521a9c38087fd0bb01e2f132bec23795b535d1e2b9923c75979c438b'
+          unzip -q safe/control.zip -d safe/original_control
+          test "$(sha256sum safe/original_control/plan/plan.json | awk '{print $1}')" = 'c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064'
+          cp safe/original_control/plan/plan.json safe/plan/plan.json
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          run=int(os.environ['GITHUB_RUN_ID'])
+          workflow='.github/workflows/layerb-16385-to-32769-canonical-chunk-scientific-v0-1.yml'
+          recovery='.github/workflows/layerb-16385-32769-finalizer-only-recovery-v0-1.yml'
+          guard={'schema':'LAYERB_32769_CHUNK_ONE_LIVE_GUARD_V0_1','effect':'+0/+0','classification':'LAYERB_32769_CHUNK_ONE_LIVE_GUARD_PASS_PLUS_0_PLUS_0','guard_pass':True,'errors':[],'current_run_id':run,'production_workflow_path':workflow,'recovery_workflow_path':recovery,'matching_current_runs':1,'matching_other_live_authoritative_runs':0,'matching_other_all_status_runs':0,'scientific_response_read':False,'scientific_execution_authorized':False,'scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,'token':'LAYERB_32769_CHUNK_ONE_LIVE_GUARD_PASS_PLUS_0_PLUS_0'}
+          Path('safe/guard.json').write_text(json.dumps(guard,indent=2,sort_keys=True)+'\n')
+          v142=Path('docs/dsir4/authority/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_V0_1.json').read_bytes(); gb=Path('safe/guard.json').read_bytes()
+          auth={'schema':'LAYERB_16385_TO_32769_CHUNK_ONE_RUN_AUTHORIZATION_V0_1','effect':'+0/+0','classification':'LAYERB_16385_TO_32769_CHUNK_ONE_RUN_AUTHORIZED_PLUS_0_PLUS_0','execution_authorized':True,'authorized_canonical_run_count':1,'current_run_id':run,'production_workflow_path':workflow,'recovery_workflow_path':recovery,'scientific_response_persistence_authorized':True,'scientific_result_classification_authorized':True,'relative_tolerance':0.001,'strict_less_than':True,'h':0.0001,'native_k_per_decade_for_pk':20.0,'guard_json_sha256':hashlib.sha256(gb).hexdigest(),'authority_bindings_observed':{'v142_resource':{'sha256':hashlib.sha256(v142).hexdigest()}},'errors':[],'scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,'finalizer_only_recovery_authorized':True,'fine_recompute_authorized':False,'coarse_recompute_authorized':False,'token':'LAYERB_16385_TO_32769_CHUNK_ONE_RUN_AUTHORIZED_PLUS_0_PLUS_0'}
+          Path('safe/authorization.json').write_text(json.dumps(auth,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-32769-finalizer-only-control-v0-1
+          path: |
+            safe/authorization.json
+            safe/guard.json
+            safe/plan/plan.json
+          if-no-files-found: error
+          retention-days: 90
+
+  final-classifier:
+    needs: [preflight]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-32769-finalizer-only-control-v0-1
+          path: inputs/control
+      - name: Download and verify all eight retained scientific operands
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/original inputs/operands
+          python3 - <<'PY' > /tmp/operands.tsv
+          import json
+          c=json.load(open('docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json'))
+          for grid in ('coarse','fine'):
+            for role,x in c['retained_operands'][grid].items(): print(grid,role,x['source_run_id'],x['artifact_id'],x['zip_sha256'],x['operand_sha256'],sep='\t')
+          PY
+          while IFS=$'\t' read -r grid role source_run id zsha osha; do
+            mkdir -p "inputs/original/$grid/$role" "inputs/operands/${grid}-${role}"
+            gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "inputs/original/$grid/$role.zip"
+            test "$(sha256sum "inputs/original/$grid/$role.zip" | awk '{print $1}')" = "$zsha"
+            unzip -q "inputs/original/$grid/$role.zip" -d "inputs/original/$grid/$role"
+            test "$(sha256sum "inputs/original/$grid/$role/operand.json" | awk '{print $1}')" = "$osha"
+          done < /tmp/operands.tsv
+      - name: Provenance-rebind all eight operands with exact scientific payload preservation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import copy,hashlib,json,os
+          from pathlib import Path
+          c=json.load(open('docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json'))
+          authb=Path('inputs/control/authorization.json').read_bytes(); authsha=hashlib.sha256(authb).hexdigest(); run=int(os.environ['GITHUB_RUN_ID'])
+          expected={'coarse':{'count':16385,'node':'3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975','calls':441,'digest':'9e829d5127457085f18d79901d4aa621a050ce8406ff30c4d7e157dd069b80b4'},'fine':{'count':32769,'node':'82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599','calls':569,'digest':'9f5f85e92570b68576bae91f52163cb0c005a1e003bfc09b8ccc80b332f79b36'}}
+          receipts=[]
+          for grid in ('coarse','fine'):
+            for role,x in c['retained_operands'][grid].items():
+              p=Path('inputs/original')/grid/role/'operand.json'; raw=p.read_bytes(); d=json.loads(raw); e=expected[grid]
+              assert hashlib.sha256(raw).hexdigest()==x['operand_sha256']
+              assert d['token']=='LAYERB_16385_32769_CHUNK_ROLE_OPERAND_PASS_PLUS_0_PLUS_0' and d['grid']==grid and d['role']==role and int(d['current_run_id'])==int(x['source_run_id'])
+              assert d['canonical_node_count']==e['count'] and d['canonical_node_sha256']==e['node'] and d['call_count']==e['calls'] and d['calls_digest']==e['digest']
+              assert d['convergence_metric_computed'] is False and d['scientific_classification_computed'] is False and d['Wm_S3_opened'] is False
+              payload=json.dumps({'responses':d['responses_f8_b64'],'valids':d['valid_masks_packbits_b64']},separators=(',',':'),sort_keys=True).encode(); ph=hashlib.sha256(payload).hexdigest()
+              q=copy.deepcopy(d); q['current_run_id']=run; q['authorization_json_sha256']=authsha; q['recovery_provenance_rebind_only']=True; q['recovery_original_run_id']=int(x['source_run_id']); q['recovery_original_operand_sha256']=x['operand_sha256']; q['recovery_response_payload_sha256']=ph
+              payload2=json.dumps({'responses':q['responses_f8_b64'],'valids':q['valid_masks_packbits_b64']},separators=(',',':'),sort_keys=True).encode(); assert hashlib.sha256(payload2).hexdigest()==ph
+              out=Path('inputs/operands')/(grid+'-'+role)/'operand.json'; out.write_text(json.dumps(q,separators=(',',':'),sort_keys=True)+'\n')
+              receipts.append({'grid':grid,'role':role,'source_run_id':x['source_run_id'],'source_operand_sha256':x['operand_sha256'],'scientific_payload_sha256':ph,'payload_unchanged':True})
+          Path('inputs/operands/rebind_receipts.json').write_text(json.dumps({'schema':'LAYERB_FINALIZER_ONLY_EIGHT_OPERAND_REBIND_V0_1','current_run_id':run,'authorization_json_sha256':authsha,'receipts':receipts,'all_payloads_unchanged':True,'class_solver_invoked':False,'convergence_metric_computed':False},indent=2,sort_keys=True)+'\n')
+          PY
+      - name: Install exact replay stack and prepare frozen external inputs
+        shell: bash
+        env:
+          PYTHON_BIN: '${{ github.workspace }}/.venv_final/bin/python'
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv_final
+          .venv_final/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv_final/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy >/dev/null
+          test "$WM_S3_OVERRIDE" = 'docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_2.json'
+          test "$(git hash-object "$WM_S3_OVERRIDE")" = '66550fb71b7705279c5ffdbd12e974dbb9320563'
+          test "$(git hash-object scripts/dsir4/prepare_layerb_chunk_science_inputs_v0_1.sh)" = '458fa7bc29ec3290db357431723f7580bf4044b6'
+          bash scripts/dsir4/prepare_layerb_chunk_science_inputs_v0_1.sh
+      - name: Run frozen classifier and terminal consumer without any operand recomputation
+        shell: bash
+        env:
+          DSIR_CHUNK_OPERANDS_ROOT: '${{ github.workspace }}/inputs/operands'
+          DSIR_CHUNK_PLAN: '${{ github.workspace }}/inputs/control/plan/plan.json'
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts scratch_final
+          .venv_final/bin/python ci/layerb_16385_to_32769_canonical_chunk_recovery_v0_1.py \
+            --current-run-id "$GITHUB_RUN_ID" --parent-refinement-authority "$PARENT_REFINEMENT" --class-build-authority "$V143" --canonical-32769-authority "$CANON32769_AUTH" --resource-authority "$V142" --one-live-guard inputs/control/guard.json --one-run-authorization inputs/control/authorization.json \
+            --recovered-jl-script ci/layerb_16385_32769_chunk_operand_adapter_v0_1.py --ir-script ci/exp073ir_article3_real_layerb_common_response_v0_1.py --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py --request-plan-script ci/recovered_exp073jl_response_blind_request_plan_audit_v0_1.py --request-plan-authority "$REQUEST_PLAN_AUTH" \
+            --parent-root inputs/parent --parent-authority docs/dsir4/authority/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_PASS_V0_1.json --manifest "$MANIFEST" --angular-root inputs/angular --expim-root inputs/expim --boss-root external/exp073w_boss --source external/des_nz/source.fits --lens external/des_nz/lens.fits --camb-root external/camb --expz2-script ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py --exp073iq-script ci/exp073iq_article3_real_layera_support_v0_1.py --baseline "$BASELINE" --precision "$PRECISION" --coarse "$COARSE_CANONICAL" --fine "$FINE_CANONICAL" --capacity-patch-record "$PRODUCTION_CONTRACT" --scratch scratch_final --out artifacts/science_result.json
+          .venv_final/bin/python ci/layerb_16385_to_32769_chunk_terminal_consumer_v0_1.py --result artifacts/science_result.json --contract "$TERMINAL_CONTRACT" --authorization inputs/control/authorization.json --v141-authority "$V141" --v142-authority "$V142" --v143-authority "$V143" --out artifacts/terminal_candidate.json
+          cp inputs/operands/rebind_receipts.json artifacts/rebind_receipts.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-32769-finalizer-only-terminal-v0-1
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Enforce terminal science only after evidence upload
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          r=json.load(open('artifacts/science_result.json')); t=json.load(open('artifacts/terminal_candidate.json')); b=json.load(open('artifacts/rebind_receipts.json'))
+          assert t['terminal_science_valid'] is True and t['errors']==[] and t['scientific_authority_created'] is True
+          assert r['classification'] in ('COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0','COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0')
+          assert r['fine_operands_recomputed'] is False and r['coarse_history_suppression_scientific_parameters_changed'] is False
+          assert b['all_payloads_unchanged'] is True and len(b['receipts'])==8 and b['class_solver_invoked'] is False
+          assert r['covariance_restriction_authorized'] is False and r['Wm_S3_opened'] is False
+          PY
+
+  independent-terminal-verifier:
+    needs: [final-classifier]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-32769-finalizer-only-terminal-v0-1
+          path: inputs/terminal
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-32769-finalizer-only-control-v0-1
+          path: inputs/control
+      - name: Independently reclassify raw terminal science on fresh runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p independent
+          python3 ci/layerb_16385_to_32769_chunk_terminal_consumer_v0_1.py --result inputs/terminal/science_result.json --contract "$TERMINAL_CONTRACT" --authorization inputs/control/authorization.json --v141-authority "$V141" --v142-authority "$V142" --v143-authority "$V143" --out independent/terminal_independent.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('independent/terminal_independent.json')); assert d['terminal_science_valid'] is True and d['errors']==[] and d['scientific_authority_created'] is True
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-32769-finalizer-only-independent-terminal-v0-1
+          path: independent/terminal_independent.json
+          if-no-files-found: error
+          retention-days: 90
+
+  prospective-promotion-gate:
+    needs: [final-classifier, independent-terminal-verifier]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-32769-finalizer-only-terminal-v0-1
+          path: inputs/terminal
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-32769-finalizer-only-independent-terminal-v0-1
+          path: inputs/independent
+      - name: Apply preregistered method and terminal promotion gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p promotion
+          python3 - <<'PY'
+          import json,math
+          from pathlib import Path
+          gate=json.load(open('docs/dsir4/contracts/LAYERB_16385_32769_V146_TERMINAL_PROMOTION_GATE_CONTRACT_V0_1.json'))
+          hist=json.load(open('docs/dsir4/authority/LAYERB_8193_HISTORY_SUPPRESSION_EXACT_EQUIVALENCE_V0_1.json'))
+          static=json.load(open('docs/dsir4/authority/LAYERB_16385_32769_COARSE_RECOVERY_V02_STATIC_AUDIT_V0_1.json'))
+          fine=json.load(open('docs/dsir4/authority/LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_CONTROL_V0_1.json'))
+          r=json.load(open('inputs/terminal/science_result.json')); c=json.load(open('inputs/terminal/terminal_candidate.json')); i=json.load(open('inputs/independent/terminal_independent.json')); b=json.load(open('inputs/terminal/rebind_receipts.json'))
+          errors=[]
+          hp=gate['required_pending_authority']['history_suppression_exact_equivalence']
+          if hist.get('classification')!=hp['required_classification'] or hist.get('max_absolute_response_difference')!=0.0 or hist.get('max_normalized_response_difference')!=0.0 or hist.get('minimum_exact_binary64_fraction')!=1.0: errors.append('history suppression exact-equivalence gate failed')
+          if static.get('classification')!='LAYERB_16385_32769_RECOVERY_V02_STATIC_AUDIT_PASS_PLUS_0_PLUS_0': errors.append('V146 static gate failed')
+          if fine.get('classification')!='LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_ALL_ROLES_PASS_PLUS_0_PLUS_0' or fine.get('all_response_payloads_exactly_unchanged') is not True: errors.append('fine rebind gate failed')
+          if c.get('terminal_science_valid') is not True or i.get('terminal_science_valid') is not True: errors.append('terminal validity mismatch')
+          if c.get('classification')!=i.get('classification') or c.get('classification')!=r.get('classification'): errors.append('terminal classification mismatch')
+          if c.get('max_relative_component_difference')!=i.get('max_relative_component_difference'): errors.append('terminal metric mismatch')
+          if r.get('classification') not in gate['terminal_result_requirements']['allowed_classifications']: errors.append('classification outside prospective gate')
+          if r.get('rel_tol')!=0.001 or r.get('h')!=0.0001 or r.get('native_k_per_decade_for_pk_frozen')!=20.0: errors.append('frozen science mismatch')
+          if r.get('fine_operands_recomputed') is not False or b.get('all_payloads_unchanged') is not True: errors.append('operand preservation gate failed')
+          if r.get('coarse_history_suppression_scientific_parameters_changed') is not False: errors.append('history patch semantics mismatch')
+          if r.get('covariance_restriction_authorized') is not False or r.get('Wm_S3_opened') is not False: errors.append('forbidden downstream gate opened')
+          out={'schema':'LAYERB_16385_32769_FINALIZER_ONLY_PROMOTION_CANDIDATE_V0_1','classification':'LAYERB_16385_32769_FINALIZER_ONLY_PROMOTION_GATE_PASS_PLUS_0_PLUS_0' if not errors else 'LAYERB_16385_32769_FINALIZER_ONLY_PROMOTION_GATE_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','errors':errors,'terminal_classification':r.get('classification'),'max_relative_component_difference':c.get('max_relative_component_difference'),'relative_tolerance':0.001,'strict_less_than':True,'candidate_terminal_science_valid':c.get('terminal_science_valid'),'independent_terminal_science_valid':i.get('terminal_science_valid'),'raw_artifact_independent_consumption_still_required':True,'durable_scientific_authority_created':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('promotion/promotion_candidate.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['classification']); raise SystemExit(0 if not errors else 61)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-32769-finalizer-only-promotion-candidate-v0-1
+          path: promotion/promotion_candidate.json
+          if-no-files-found: error
+          retention-days: 90
