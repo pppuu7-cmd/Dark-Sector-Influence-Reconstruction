@@ -1,0 +1,268 @@
+name: Layer-B exact operand localization v0.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_OPERAND_LOCALIZATION_LAUNCH_V0_2.json'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  RECOVERY_CONTRACT: docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json
+  LOCAL_CONTRACT: docs/dsir4/contracts/LAYERB_OPERAND_LOCALIZATION_V0_2.json
+  CODEC: ci/layerb_chunk_call_codec_v0_1.py
+
+jobs:
+  exact-atomic-localization:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and verify frozen plan and all eight retained operands
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p control operands
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/10303091059/zip" > control.zip
+          test "$(sha256sum control.zip | awk '{print $1}')" = '50e74dace4a017a664077dbc71e5027c69e65757e61f8485fd707f6148613310'
+          unzip -q control.zip -d control
+          test "$(sha256sum control/plan/plan.json | awk '{print $1}')" = 'c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064'
+          python3 - <<'PY' > /tmp/operands.tsv
+          import json
+          c=json.load(open('docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json'))
+          for grid in ('coarse','fine'):
+            for role,x in c['retained_operands'][grid].items():
+              print(grid,role,x['artifact_id'],x['zip_sha256'],x['operand_sha256'],sep='\t')
+          PY
+          while IFS=$'\t' read -r grid role id zsha osha; do
+            mkdir -p "operands/$grid/$role"
+            gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "/tmp/${grid}-${role}.zip"
+            test "$(sha256sum "/tmp/${grid}-${role}.zip" | awk '{print $1}')" = "$zsha"
+            unzip -q "/tmp/${grid}-${role}.zip" -d "operands/$grid/$role"
+            test "$(sha256sum "operands/$grid/$role/operand.json" | awk '{print $1}')" = "$osha"
+          done < /tmp/operands.tsv
+      - name: Reconstruct exact atomic discrepancy and argmax
+        shell: bash
+        run: |
+          mkdir -p out
+          python3 - <<'PY'
+          import importlib.util,json,math,pathlib,numpy as np
+          spec=importlib.util.spec_from_file_location('codec','ci/layerb_chunk_call_codec_v0_1.py'); codec=importlib.util.module_from_spec(spec); spec.loader.exec_module(codec)
+          roles=('reference','alpha_minus','beta_plus','beta_minus'); H=1e-4
+          labels=('abs_dDelta_m_dalpha_left','abs_dDelta_m_dbeta_symmetric')
+          rc=json.load(open('docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json'))
+          lc=json.load(open('docs/dsir4/contracts/LAYERB_OPERAND_LOCALIZATION_V0_2.json'))
+          def grid(g):
+            ds={r:json.load(open(f'operands/{g}/{r}/operand.json')) for r in roles}
+            lengths=[int(x) for x in ds['reference']['lengths']]
+            assert all([int(x) for x in ds[r]['lengths']]==lengths for r in roles)
+            raw={r:[codec.b64_f8(s,n) for s,n in zip(ds[r]['responses_f8_b64'],lengths)] for r in roles}
+            vm={r:[codec.b64_bool(s,n) for s,n in zip(ds[r]['valid_masks_packbits_b64'],lengths)] for r in roles}
+            resp=[]; valid=[]
+            for i,n in enumerate(lengths):
+              v=vm['reference'][i]
+              assert all(np.array_equal(v,vm[r][i]) for r in roles[1:])
+              ref,al,bp,bm=(raw[r][i] for r in roles)
+              assert ref.shape==al.shape==bp.shape==bm.shape==(n,)
+              resp.append(np.column_stack((np.abs((al-ref)/(-H)),np.abs((bp-bm)/(2*H)))))
+              valid.append(v)
+            return ds,lengths,raw,resp,valid
+          cds,clen,craw,cresp,cvalid=grid('coarse'); fds,flen,fraw,fresp,fvalid=grid('fine')
+          assert len(clen)==441 and len(flen)==569 and clen==flen[:441]
+          plan=json.load(open('control/plan/plan.json'))
+          found={}
+          def walk(o,path='$'):
+            if isinstance(o,list):
+              if o and all(isinstance(x,dict) and 'z_u64hex' in x and 'targets_u64hex' in x for x in o):
+                calls=codec.decode_calls(o); found.setdefault(codec.calls_digest(calls),[]).append((path,calls))
+              for i,x in enumerate(o): walk(x,f'{path}/{i}')
+            elif isinstance(o,dict):
+              for k,v in o.items(): walk(v,f'{path}/{k}')
+          walk(plan)
+          cd=rc['retained_control']['coarse_calls_digest']; fd=rc['retained_control']['fine_calls_digest']
+          assert cd in found and fd in found, (list(found),cd,fd)
+          cc=found[cd][0][1]; fc=found[fd][0][1]
+          assert len(cc)==441 and len(fc)==569
+          for i in range(441):
+            assert np.asarray([cc[i][0]],dtype='<f8').view('<u8')[0]==np.asarray([fc[i][0]],dtype='<f8').view('<u8')[0]
+            assert np.array_equal(np.asarray(cc[i][1],dtype='<f8').view('<u8'),np.asarray(fc[i][1],dtype='<f8').view('<u8'))
+          records=[]; max_by_component={}; max_by_domain={}; counts={str(t):0 for t in (0.001,0.002,0.005)}
+          total_atoms=0; status_changes=0
+          for i in range(441):
+            C=np.asarray(cresp[i]); F=np.asarray(fresp[i]); assert C.shape==F.shape and C.shape[0]==clen[i]
+            cv=np.asarray(cvalid[i]); fv=np.asarray(fvalid[i]); assert np.array_equal(cv,fv)
+            fp=np.isfinite(C); ff=np.isfinite(F); pp=C>0.; pf=F>0.
+            status_changes += int(np.count_nonzero(fp!=ff))+int(np.count_nonzero(pp!=pf))
+            good=cv[:,None]&fp&ff&pp&pf
+            rel=np.full(C.shape,np.nan)
+            rel[good]=np.abs(C[good]-F[good])/np.maximum(np.abs(C[good]),np.abs(F[good]))
+            total_atoms += int(np.count_nonzero(good))
+            domain='DES' if i<377 else 'BOSS_GL64'
+            for t in (0.001,0.002,0.005): counts[str(t)]+=int(np.count_nonzero(rel>t))
+            for comp in range(2):
+              a=rel[:,comp]; valid_idx=np.flatnonzero(np.isfinite(a))
+              if not valid_idx.size: continue
+              j=int(valid_idx[np.argmax(a[valid_idx])]); val=float(a[j])
+              r={'relative_difference':val,'call_index':i,'domain':domain,'component_index':comp,'component':labels[comp],'target_index':j,'z':float(cc[i][0]),'target_k_Mpc^-1':float(cc[i][1][j]),'coarse_response':float(C[j,comp]),'fine_response':float(F[j,comp])}
+              if val>max_by_component.get(labels[comp],{}).get('relative_difference',-1): max_by_component[labels[comp]]=r
+              if val>max_by_domain.get(domain,{}).get('relative_difference',-1): max_by_domain[domain]=r
+              for jj in valid_idx:
+                records.append((float(a[jj]),i,domain,comp,int(jj),float(cc[i][0]),float(cc[i][1][jj]),float(C[jj,comp]),float(F[jj,comp])))
+          records.sort(reverse=True,key=lambda x:x[0]); top=[]
+          for val,i,domain,comp,j,z,k,cr,fr in records[:30]:
+            top.append({'relative_difference':val,'call_index':i,'domain':domain,'component_index':comp,'component':labels[comp],'target_index':j,'z':z,'target_k_Mpc^-1':k,'coarse_response':cr,'fine_response':fr})
+          g=top[0]; expected=float(lc['expected_authoritative_max_relative_component_difference'])
+          reproduced=abs(g['relative_difference']-expected)<=5e-15
+          assert reproduced,(g['relative_difference'],expected)
+          out={'schema':'LAYERB_EXACT_ATOMIC_OPERAND_LOCALIZATION_V0_2','classification':'EXACT_AUTHORITATIVE_MAX_REPRODUCED_AND_LOCALIZED','authoritative_max_expected':expected,'authoritative_max_reproduced':g['relative_difference'],'absolute_reproduction_error':abs(g['relative_difference']-expected),'global_argmax':g,'max_by_component':max_by_component,'max_by_domain':max_by_domain,'counts_above_threshold':counts,'finite_positive_compared_atoms':total_atoms,'finite_or_positive_status_change_count':status_changes,'coarse_plan_path':found[cd][0][0],'fine_plan_path':found[fd][0][0],'common_plan_bitwise_identical':True,'top_30':top,'class_solver_invoked':False,'scientific_operand_recomputed':False,'denser_successor_65537_authorized':False,'effect':'+0/+0'}
+          pathlib.Path('out/atomic_localization.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: operand-localization-atomic
+          path: out/atomic_localization.json
+
+  independent-role-attribution:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Independently download exact retained operands
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p operands
+          python3 - <<'PY' > /tmp/operands.tsv
+          import json
+          c=json.load(open('docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json'))
+          for g in ('coarse','fine'):
+            for r,x in c['retained_operands'][g].items(): print(g,r,x['artifact_id'],x['zip_sha256'],x['operand_sha256'],sep='\t')
+          PY
+          while IFS=$'\t' read -r g r id zsha osha; do
+            mkdir -p "operands/$g/$r"
+            gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "/tmp/${g}-${r}.zip"
+            test "$(sha256sum "/tmp/${g}-${r}.zip" | awk '{print $1}')" = "$zsha"
+            unzip -q "/tmp/${g}-${r}.zip" -d "operands/$g/$r"
+            test "$(sha256sum "operands/$g/$r/operand.json" | awk '{print $1}')" = "$osha"
+          done < /tmp/operands.tsv
+      - name: Independent role-wise reconstruction
+        shell: bash
+        run: |
+          mkdir -p out
+          python3 - <<'PY'
+          import importlib.util,json,pathlib,numpy as np
+          spec=importlib.util.spec_from_file_location('codec','ci/layerb_chunk_call_codec_v0_1.py'); codec=importlib.util.module_from_spec(spec); spec.loader.exec_module(codec)
+          R=('reference','alpha_minus','beta_plus','beta_minus'); H=1e-4; labels=('abs_dDelta_m_dalpha_left','abs_dDelta_m_dbeta_symmetric')
+          def load(g):
+            ds={r:json.load(open(f'operands/{g}/{r}/operand.json')) for r in R}; L=list(map(int,ds['reference']['lengths']))
+            raw={r:[codec.b64_f8(s,n) for s,n in zip(ds[r]['responses_f8_b64'],L)] for r in R}
+            return L,raw
+          CL,C=load('coarse'); FL,F=load('fine'); assert CL==FL[:441]
+          best=(-1,None); compbest=[(-1,None),(-1,None)]
+          for i,n in enumerate(CL):
+            cr=np.column_stack((np.abs((C['alpha_minus'][i]-C['reference'][i])/(-H)),np.abs((C['beta_plus'][i]-C['beta_minus'][i])/(2*H))))
+            fr=np.column_stack((np.abs((F['alpha_minus'][i]-F['reference'][i])/(-H)),np.abs((F['beta_plus'][i]-F['beta_minus'][i])/(2*H))))
+            good=np.isfinite(cr)&np.isfinite(fr)&(cr>0)&(fr>0); rel=np.full(cr.shape,np.nan); rel[good]=np.abs(cr[good]-fr[good])/np.maximum(np.abs(cr[good]),np.abs(fr[good]))
+            for q in range(2):
+              ids=np.flatnonzero(np.isfinite(rel[:,q]));
+              if not ids.size: continue
+              j=int(ids[np.argmax(rel[ids,q])]); v=float(rel[j,q])
+              rec={'relative_difference':v,'call_index':i,'target_index':j,'component_index':q,'component':labels[q],'coarse_response':float(cr[j,q]),'fine_response':float(fr[j,q]),'coarse_roles':{r:float(C[r][i][j]) for r in R},'fine_roles':{r:float(F[r][i][j]) for r in R}}
+              if v>compbest[q][0]: compbest[q]=(v,rec)
+              if v>best[0]: best=(v,rec)
+          expected=0.007384797439715474; assert abs(best[0]-expected)<=5e-15,(best[0],expected)
+          out={'schema':'LAYERB_INDEPENDENT_ROLE_ATTRIBUTION_V0_2','classification':'INDEPENDENT_ROLE_RECONSTRUCTION_REPRODUCES_AUTHORITATIVE_MAX','global_argmax':best[1],'max_by_component':{labels[i]:compbest[i][1] for i in range(2)},'authoritative_max_expected':expected,'absolute_reproduction_error':abs(best[0]-expected),'class_solver_invoked':False,'scientific_operand_recomputed':False,'denser_successor_65537_authorized':False,'effect':'+0/+0'}
+          pathlib.Path('out/role_attribution.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: operand-localization-role
+          path: out/role_attribution.json
+
+  plan-identity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact common request-plan identity and segment geometry
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p control out
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/10303091059/zip" > control.zip
+          test "$(sha256sum control.zip | awk '{print $1}')" = '50e74dace4a017a664077dbc71e5027c69e65757e61f8485fd707f6148613310'
+          unzip -q control.zip -d control
+          test "$(sha256sum control/plan/plan.json | awk '{print $1}')" = 'c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064'
+          python3 - <<'PY'
+          import importlib.util,json,pathlib,numpy as np
+          spec=importlib.util.spec_from_file_location('codec','ci/layerb_chunk_call_codec_v0_1.py'); codec=importlib.util.module_from_spec(spec); spec.loader.exec_module(codec)
+          rc=json.load(open('docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json')); p=json.load(open('control/plan/plan.json'))
+          found={}
+          def walk(o,path='$'):
+            if isinstance(o,list):
+              if o and all(isinstance(x,dict) and 'z_u64hex' in x and 'targets_u64hex' in x for x in o):
+                c=codec.decode_calls(o); found.setdefault(codec.calls_digest(c),[]).append((path,c))
+              for i,x in enumerate(o): walk(x,f'{path}/{i}')
+            elif isinstance(o,dict):
+              for k,v in o.items(): walk(v,f'{path}/{k}')
+          walk(p); cd=rc['retained_control']['coarse_calls_digest']; fd=rc['retained_control']['fine_calls_digest']; assert cd in found and fd in found
+          c=found[cd][0][1]; f=found[fd][0][1]; assert len(c)==441 and len(f)==569
+          common=True
+          for i in range(441):
+            common &= bool(np.asarray([c[i][0]],dtype='<f8').view('<u8')[0]==np.asarray([f[i][0]],dtype='<f8').view('<u8')[0] and np.array_equal(np.asarray(c[i][1],dtype='<f8').view('<u8'),np.asarray(f[i][1],dtype='<f8').view('<u8')))
+          assert common
+          def seg(xs,a,b,name):
+            zs=np.asarray([xs[i][0] for i in range(a,b)],float); ts=np.concatenate([np.asarray(xs[i][1],float) for i in range(a,b)])
+            return {'name':name,'call_start':a,'call_stop_exclusive':b,'call_count':b-a,'target_scalar_count':int(ts.size),'unique_z_count':int(np.unique(zs).size),'z_min':float(zs.min()),'z_max':float(zs.max()),'target_k_min_Mpc^-1':float(ts.min()),'target_k_max_Mpc^-1':float(ts.max())}
+          out={'schema':'LAYERB_COMMON_PLAN_IDENTITY_V0_2','classification':'COARSE_PLAN_BITWISE_IDENTICAL_TO_FINE_COMMON_PREFIX','coarse_digest':cd,'fine_digest':fd,'coarse_plan_path':found[cd][0][0],'fine_plan_path':found[fd][0][0],'coarse_call_count':len(c),'fine_call_count':len(f),'common_prefix_call_count':441,'common_prefix_bitwise_identical':common,'segments':[seg(c,0,377,'DES_COMMON'),seg(c,377,441,'BOSS_GL64_COMMON'),seg(f,441,569,'BOSS_GL128_FINE_ONLY')],'coarse_target_scalar_count':int(sum(len(x[1]) for x in c)),'fine_target_scalar_count':int(sum(len(x[1]) for x in f)),'class_solver_invoked':False,'denser_successor_65537_authorized':False,'effect':'+0/+0'}
+          pathlib.Path('out/plan_identity.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: operand-localization-plan
+          path: out/plan_identity.json
+
+  decision:
+    if: always()
+    needs: [exact-atomic-localization, independent-role-attribution, plan-identity]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: operand-localization-*
+          merge-multiple: true
+          path: combined
+      - name: Conservative localization decision
+        shell: bash
+        run: |
+          mkdir -p out
+          python3 - <<'PY'
+          import json,pathlib
+          def load(n):
+            p=pathlib.Path('combined')/n; return json.load(open(p)) if p.exists() else None
+          a=load('atomic_localization.json'); r=load('role_attribution.json'); p=load('plan_identity.json')
+          all_present=all(x is not None for x in (a,r,p)); agree=False
+          if all_present:
+            ga=a['global_argmax']; gr=r['global_argmax']
+            agree=(ga['call_index']==gr['call_index'] and ga['target_index']==gr['target_index'] and ga['component_index']==gr['component_index'] and abs(ga['relative_difference']-gr['relative_difference'])<=5e-15 and p['common_prefix_bitwise_identical'] is True)
+          if all_present and agree:
+            cls='EXACT_OPERAND_LEVEL_DISCREPANCY_LOCALIZED_WITHOUT_SOLVER_RECOMPUTE'
+            loc=a['global_argmax']; next_stage=('TARGETED_DES_EXISTING_OPERAND_DIAGNOSTIC' if loc['domain']=='DES' else 'TARGETED_BOSS_EXISTING_OPERAND_DIAGNOSTIC')
+          elif all_present:
+            cls='OPERAND_LOCALIZATION_STREAM_DISAGREEMENT_REQUIRES_AUDIT'; loc=None; next_stage='AUDIT_LOCALIZATION_STREAM_DISAGREEMENT'
+          else:
+            cls='OPERAND_LOCALIZATION_INFRASTRUCTURE_INCOMPLETE'; loc=None; next_stage='REPAIR_LOCALIZATION_INFRASTRUCTURE_ONLY'
+          out={'schema':'LAYERB_OPERAND_LOCALIZATION_DECISION_V0_2','classification':cls,'all_streams_present':all_present,'independent_streams_agree':agree,'localized_global_argmax':loc,'next_permitted_stage':next_stage,'class_solver_invoked':False,'scientific_operand_recomputed':False,'criterion_mutated':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,'denser_successor_65537_authorized':False,'requires_separate_prospective_authorization_for_any_heavy_rung':True,'effect':'+0/+0'}
+          pathlib.Path('out/operand_localization_decision.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: operand-localization-decision
+          path: out/operand_localization_decision.json
