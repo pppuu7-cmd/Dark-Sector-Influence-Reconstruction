@@ -1,0 +1,19 @@
+{
+  "schema": "LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_CONTROL_V0_1",
+  "scope": "Independent response-preservation audit of the four already-successful fine-32769 production operands when rebound to V146 recovery provenance; no CLASS call and no convergence calculation.",
+  "effect": "+0/+0",
+  "v146_control": {"artifact_id": 10300881526, "zip_sha256": "7582d99e521a9c38087fd0bb01e2f132bec23795b535d1e2b9923c75979c438b", "authorization_json_sha256": "602879e17afc39a50775562ff2a6e1b3970ec909ece3af84f6e4c7318ad2aa85", "guard_json_sha256": "3d66ee8f71afdf228711a5a9cd4fd3d1bb754d0f2db15345f15e143840ef16fd", "plan_json_sha256": "c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064", "current_run_id": 34702943923},
+  "fine_operands": {
+    "reference": {"artifact_id": 10299405397, "zip_sha256": "dfed6f05ae09b04d5b2691c649a1a7dd18e2dfb709374a5ed0495d65958e5591", "operand_json_sha256": "a710600cf4ab61180e0f5c4319deb0f56fee4cf9e3e952a3f9ddeadfdf9a355a"},
+    "alpha_minus": {"artifact_id": 10298479524, "zip_sha256": "602240ec256fbf38b3fde1b3a150ed78dc1216e552db804582745673b6215ce0", "operand_json_sha256": "ce4ee784619d9a9d57b3be266722892eb2d592b9abebf38ccdb09dd79f11519e"},
+    "beta_plus": {"artifact_id": 10298822640, "zip_sha256": "c7a85a453f06e1927a1a91a4a6c5aee1bd35ce0e8735e68a9fc740ee91cb8ab7", "operand_json_sha256": "8e28d6ace0be71db00252f3fbf1a2ff5be62f64b07c08a4dc52b3ecc40162bfc"},
+    "beta_minus": {"artifact_id": 10299311082, "zip_sha256": "16dc6dd98741b84b8f0b71a26d62f4556d33b978b278e91a3d8e248af918c910", "operand_json_sha256": "63505dea0ff87b5cc4881c630504aa9dcfca221a4adbfc7e0088bd045d410f12"}
+  },
+  "frozen_invariants": {"original_run_id": 34695347893, "original_authorization_json_sha256": "5a0eb2851e38eabcb693e978803794b77df0bea74bc9de78bee912f472547680", "grid": "fine", "call_count": 569, "target_scalar_count": 121682, "calls_digest": "9f5f85e92570b68576bae91f52163cb0c005a1e003bfc09b8ccc80b332f79b36", "canonical_node_count": 32769, "canonical_node_sha256": "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599"},
+  "prospective_acceptance": {"all_four_roles_required": true, "response_payload_sha256_before_equals_after": true, "responses_f8_b64_exactly_unchanged": true, "valid_masks_packbits_b64_exactly_unchanged": true, "only_allowed_changed_fields": ["current_run_id","authorization_json_sha256","recovery_provenance_rebind_only","recovery_original_run_id","recovery_original_operand_sha256","recovery_response_payload_sha256"]},
+  "class_solver_invoked": false,
+  "convergence_metric_computed": false,
+  "scientific_authority": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false
+}
