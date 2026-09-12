@@ -1,0 +1,184 @@
+name: layerb-8193-monolithic-vs-chunked-equivalence-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-8193-monolithic-vs-chunked-equivalence-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: layerb-8193-monolithic-vs-chunked-equivalence-v0-1
+  cancel-in-progress: false
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  CONTRACT_PATH: docs/dsir4/contracts/LAYERB_8193_MONOLITHIC_VS_CHUNKED_REQUEST_EQUIVALENCE_CONTRACT_V0_1.json
+  CANONICAL_PATH: docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt
+  BASELINE: configs/dsir4/c2/ide0_reference_v0_1.ini
+  PRECISION: configs/dsir4/c2/dsir_ide_p8_v0_1.pre
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen prospective identities
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,struct
+          from pathlib import Path
+          c=json.load(open('docs/dsir4/contracts/LAYERB_8193_MONOLITHIC_VS_CHUNKED_REQUEST_EQUIVALENCE_CONTRACT_V0_1.json'))
+          assert c['schema']=='LAYERB_8193_MONOLITHIC_VS_CHUNKED_REQUEST_EQUIVALENCE_CONTRACT_V0_1'
+          assert c['scientific_authority'] is False and c['successor_32769_chunked_execution_authorized'] is False
+          assert c['class_commit']=='ac627d54e9ce196a08878d1ba33999819925d19c'
+          assert c['monolithic_build']=={'point_capacity':8193,'parser_capacity':262144,'request_slices':[[0,8193]]}
+          assert c['chunked_build']['point_capacity']==2304 and c['chunked_build']['parser_capacity']==65536
+          assert c['chunked_build']['request_slices']==[[0,2049],[2049,4097],[4097,6145],[6145,8193]]
+          assert c['acceptance']['lookup_relative_tolerance']==1e-12
+          assert c['acceptance']['max_normalized_response_difference']==1e-12
+          p=Path(c['canonical']['path']); raw=p.read_bytes()
+          assert hashlib.sha256(raw).hexdigest()==c['canonical']['text_sha256']
+          lines=raw.decode().splitlines(); assert len(lines)==8193
+          nodebytes=b''.join(struct.pack('<Q',int(x,16)) for x in lines)
+          assert hashlib.sha256(nodebytes).hexdigest()==c['canonical']['node_payload_sha256']
+          for q in ['ci/layerb_8193_chunk_equivalence_response_dump_v0_1.py','ci/layerb_8193_chunk_equivalence_compare_v0_1.py']:
+              s=Path(q).read_text(); assert '32769 chunked execution' not in s.lower()
+          print('STATIC_AUDIT_PASS_PLUS_0_PLUS_0')
+          PY
+
+  role-equivalence:
+    needs: [static-audit]
+    strategy:
+      fail-fast: false
+      matrix:
+        role: [reference, alpha_minus, beta_plus, beta_minus]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact native prerequisites
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+      - name: Build monolithic 8193-capacity CLASS
+        run: |
+          set -euo pipefail
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          git clone -q https://github.com/kaeonikc/class_iv.git external_mono
+          git -C external_mono checkout -q "$CLASS_COMMIT"
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external_mono/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 8193',1))
+          q=Path('external_mono/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 262144',1))
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external_mono
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external_mono
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external_mono/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external_mono -j2 all >/dev/null
+      - name: Build low-capacity chunk CLASS
+        run: |
+          set -euo pipefail
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          git clone -q https://github.com/kaeonikc/class_iv.git external_chunk
+          git -C external_chunk checkout -q "$CLASS_COMMIT"
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external_chunk/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 2304',1))
+          q=Path('external_chunk/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 65536',1))
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external_chunk
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external_chunk
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external_chunk/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external_chunk -j2 all >/dev/null
+      - name: Dump monolithic and four chunk responses
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          PYTHONPATH="$GITHUB_WORKSPACE/external_mono/python" .venv/bin/python ci/layerb_8193_chunk_equivalence_response_dump_v0_1.py --role '${{ matrix.role }}' --canonical "$CANONICAL_PATH" --baseline "$BASELINE" --precision "$PRECISION" --slice-start 0 --slice-end 8193 --expected-point-capacity 8193 --expected-parser-capacity 262144 --out artifacts/mono.json
+          for spec in '0 2049 0' '2049 4097 1' '4097 6145 2' '6145 8193 3'; do
+            set -- $spec
+            PYTHONPATH="$GITHUB_WORKSPACE/external_chunk/python" .venv/bin/python ci/layerb_8193_chunk_equivalence_response_dump_v0_1.py --role '${{ matrix.role }}' --canonical "$CANONICAL_PATH" --baseline "$BASELINE" --precision "$PRECISION" --slice-start "$1" --slice-end "$2" --expected-point-capacity 2304 --expected-parser-capacity 65536 --out "artifacts/chunk_$3.json"
+          done
+      - name: Compare against frozen 1e-12 equivalence gate
+        id: compare
+        continue-on-error: true
+        run: |
+          set +e
+          .venv/bin/python ci/layerb_8193_chunk_equivalence_compare_v0_1.py --contract "$CONTRACT_PATH" --monolithic artifacts/mono.json --chunks artifacts/chunk_0.json artifacts/chunk_1.json artifacts/chunk_2.json artifacts/chunk_3.json --out artifacts/result.json
+          rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          exit 0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-8193-chunk-equivalence-${{ matrix.role }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Enforce comparator terminal status after artifact upload
+        if: always()
+        run: |
+          test '${{ steps.compare.outputs.rc }}' = '0'
+
+  independent-finalizer:
+    needs: [static-audit, role-equivalence]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-8193-chunk-equivalence-*
+          path: gathered
+      - name: Independently aggregate raw role results
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          roles=['reference','alpha_minus','beta_plus','beta_minus']
+          vals={}; missing=[]
+          for r in roles:
+              p=Path('gathered')/f'layerb-8193-chunk-equivalence-{r}'/'result.json'
+              if not p.exists(): missing.append(r); continue
+              d=json.load(open(p)); vals[r]=d
+          if missing:
+              classification='LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_INFRASTRUCTURE_FAIL_PLUS_0_PLUS_0'
+          elif all(vals[r].get('classification')=='LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_PASS_PLUS_0_PLUS_0' for r in roles):
+              classification='LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_ALL_ROLES_PASS_PLUS_0_PLUS_0'
+          else:
+              classification='LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_ONE_OR_MORE_ROLES_FAIL_PLUS_0_PLUS_0'
+          out={'schema':'LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_AGGREGATE_V0_1','classification':classification,'effect':'+0/+0','missing_roles':missing,'roles':{r:{'classification':vals[r].get('classification'),'max_normalized_response_difference':vals[r].get('max_normalized_response_difference'),'exact_binary64_fraction':vals[r].get('exact_binary64_fraction'),'worst':vals[r].get('worst')} for r in vals},'scientific_authority':False,'scientific_execution_authorized':False,'successor_32769_chunked_execution_authorized':False,'convergence_metric_computed':False,'Wm_S3_opened':False}
+          Path('artifacts/aggregate.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(classification)
+          if classification.endswith('INFRASTRUCTURE_FAIL_PLUS_0_PLUS_0'): raise SystemExit(41)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-8193-monolithic-vs-chunked-equivalence-aggregate-v0-1
+          path: artifacts/aggregate.json
+          if-no-files-found: error
+          retention-days: 90
