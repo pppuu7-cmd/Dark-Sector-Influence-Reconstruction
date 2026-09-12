@@ -1,0 +1,67 @@
+{
+  "schema": "LAYERB_16385_32769_V146_FINALIZER_INPUT_ENV_FAILURE_AUTHORITY_V0_1",
+  "classification": "LAYERB_16385_32769_V146_FINALIZER_INPUT_ENV_FAIL_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scope": "Terminal infrastructure/control-plane classification for V146 after all four coarse-16385 operands completed successfully but the final classifier job exited during replay-input preparation before the frozen scientific classifier ran.",
+  "workflow_run_id": 34702943923,
+  "workflow_head_sha": "5e9adb306a3f9541afed236553926229ecc09ca9",
+  "preflight_job_id": 103577799082,
+  "final_classifier_job_id": 103582735518,
+  "independent_terminal_verifier_job_id": 103582868798,
+  "causal_failure": {
+    "stage": "Install and prepare exact frozen replay inputs",
+    "error": "scripts/dsir4/prepare_layerb_chunk_science_inputs_v0_1.sh: line 3: WM_S3_OVERRIDE: parameter null or not set",
+    "missing_environment_variable": "WM_S3_OVERRIDE",
+    "required_value": "docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_2.json",
+    "required_value_git_blob": "66550fb71b7705279c5ffdbd12e974dbb9320563",
+    "prepare_script_git_blob": "458fa7bc29ec3290db357431723f7580bf4044b6",
+    "frozen_classifier_reached": false,
+    "convergence_metric_computed": false,
+    "terminal_scientific_classification_created": false,
+    "scientific_failure_established": false
+  },
+  "control_artifact": {
+    "artifact_id": 10300881526,
+    "zip_sha256": "7582d99e521a9c38087fd0bb01e2f132bec23795b535d1e2b9923c75979c438b",
+    "authorization_json_sha256": "602879e17afc39a50775562ff2a6e1b3970ec909ece3af84f6e4c7318ad2aa85",
+    "plan_json_sha256": "c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064",
+    "coarse_calls_digest": "9e829d5127457085f18d79901d4aa621a050ce8406ff30c4d7e157dd069b80b4",
+    "fine_calls_digest": "9f5f85e92570b68576bae91f52163cb0c005a1e003bfc09b8ccc80b332f79b36"
+  },
+  "coarse_operands": {
+    "reference": {"job_id": 103577831101, "artifact_id": 10301667425, "artifact_zip_sha256": "7fef5d0a7592feefccf3a869b73f42195db405be5f8aefbc378db7e9da039ee5", "operand_json_sha256": "2e2c11654364bb883b52ef10d3ef91c211eb785da31fc8b2754726dc3a4bd2ce", "ru_maxrss_kb": 9490480},
+    "alpha_minus": {"job_id": 103577831124, "artifact_id": 10301253331, "artifact_zip_sha256": "28a3457428d40aff85a7ea48969ddb077c167f94a340498774961a7f128dfcb8", "operand_json_sha256": "a57a4f161d48b2733ffe8751798cc0d28f28984527744826688b0f6a5390f38b", "ru_maxrss_kb": 9490356},
+    "beta_plus": {"job_id": 103577831090, "artifact_id": 10301268201, "artifact_zip_sha256": "518023cc6f1d989295bd415bfb5415d3582f7a0d119f6e82146cb1658ac8524d", "operand_json_sha256": "00dbcf810a2420baaf21c421b4dbe56838452d2b2feb273cc7c7e11e30a71cb6", "ru_maxrss_kb": 9490160},
+    "beta_minus": {"job_id": 103577831283, "artifact_id": 10301537673, "artifact_zip_sha256": "b72551294dfca981190fa35258bbbd6259c9abdcf5b743b389e764c095606eee", "operand_json_sha256": "21103a12777d7b72793449152400bda7f9bffd4cdf5bc7e8c4fedf67d7170b28", "ru_maxrss_kb": 9490212}
+  },
+  "coarse_common": {
+    "current_run_id": 34702943923,
+    "authorization_json_sha256": "602879e17afc39a50775562ff2a6e1b3970ec909ece3af84f6e4c7318ad2aa85",
+    "call_count": 441,
+    "target_scalar_count": 83666,
+    "calls_digest": "9e829d5127457085f18d79901d4aa621a050ce8406ff30c4d7e157dd069b80b4",
+    "canonical_node_count": 16385,
+    "canonical_node_sha256": "3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975",
+    "all_role_jobs_terminal_success": true,
+    "all_role_receipts_independently_consumed": true,
+    "unsupported_target_evaluations": 0,
+    "max_requested_node_coordinate_rel_mismatch": 1.657034302538322e-16,
+    "history_suppression_post_sha256": "4e9a419d46471ffab74df3d14239e000bf92f2e198edad4d2c7b82f1335f7a4b",
+    "history_suppression_scientific_parameters_changed": false,
+    "convergence_metric_computed": false,
+    "scientific_classification_computed": false
+  },
+  "retained_fine_operands": {
+    "reference": {"source_run_id": 34695347893, "artifact_id": 10299405397, "artifact_zip_sha256": "dfed6f05ae09b04d5b2691c649a1a7dd18e2dfb709374a5ed0495d65958e5591", "operand_json_sha256": "a710600cf4ab61180e0f5c4319deb0f56fee4cf9e3e952a3f9ddeadfdf9a355a"},
+    "alpha_minus": {"source_run_id": 34695347893, "artifact_id": 10298479524, "artifact_zip_sha256": "602240ec256fbf38b3fde1b3a150ed78dc1216e552db804582745673b6215ce0", "operand_json_sha256": "ce4ee784619d9a9d57b3be266722892eb2d592b9abebf38ccdb09dd79f11519e"},
+    "beta_plus": {"source_run_id": 34695347893, "artifact_id": 10298822640, "artifact_zip_sha256": "c7a85a453f06e1927a1a91a4a6c5aee1bd35ce0e8735e68a9fc740ee91cb8ab7", "operand_json_sha256": "8e28d6ace0be71db00252f3fbf1a2ff5be62f64b07c08a4dc52b3ecc40162bfc"},
+    "beta_minus": {"source_run_id": 34695347893, "artifact_id": 10299311082, "artifact_zip_sha256": "16dc6dd98741b84b8f0b71a26d62f4556d33b978b278e91a3d8e248af918c910", "operand_json_sha256": "63505dea0ff87b5cc4881c630504aa9dcfca221a4adbfc7e0088bd045d410f12"}
+  },
+  "fine_recompute_authorized": false,
+  "coarse_recompute_authorized": false,
+  "finalizer_only_recovery_requires_prospective_contract": true,
+  "silent_retry_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "token": "LAYERB_16385_32769_V146_FINALIZER_INPUT_ENV_FAIL_PLUS_0_PLUS_0"
+}
