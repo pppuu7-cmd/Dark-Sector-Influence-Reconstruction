@@ -1,0 +1,109 @@
+{
+  "schema": "LAYERB_BETA_SOLVER_CONDITIONING_AUDIT_CONTRACT_V0_7",
+  "status": "PROSPECTIVELY_FROZEN_BEFORE_EXECUTION",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_FD_REPAIR_V0_6.json",
+  "parent_authority_commit": "4b62f4bf4057d34eff2b7cc1ceef98d63f8eafa7",
+  "parent_classification": "FOURTH_ORDER_FD_REPAIR_NOT_SUPPORTED",
+  "authorized_parent_next_stage": "PROSPECTIVELY_FROZEN_UPSTREAM_RESPONSE_SOLVER_CONDITIONING_AUDIT",
+  "parent_science_run_id": 34719180791,
+  "parent_domain_artifacts": {
+    "D": {"artifact_id": 10305697116, "sha256": "c436bcdeca01901d232ee3d536e98bd51989a2e0ac24300a04eddd67b4936be5"},
+    "B": {"artifact_id": 10305163923, "sha256": "ab020aec4a0d243c3ed03a970a2ed1c1ee6525170698fd1e3b063dd79cd14efc"}
+  },
+  "expected_parent_h_unstable_failure_coordinates": 20,
+  "probe_manifest": "docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4.json",
+  "probe_manifest_sha256": "6ec35db06d66ac7d03f97f57f9d270d84804ee264508d4601ae33c4175a903d4",
+  "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+  "baseline": "configs/dsir4/c2/ide0_reference_v0_1.ini",
+  "baseline_git_blob_sha1": "cd2beb01ce6575f97f2e3203226ed6d4f048dcaa",
+  "production_precision": "configs/dsir4/c2/dsir_ide_p8_v0_1.pre",
+  "production_precision_git_blob_sha1": "fea602547cfb74e187cf9aedd5a9b0c316c626be",
+  "production_tol_perturb_integration": 3e-10,
+  "production_perturb_sampling_stepsize": 0.00035,
+  "frozen_response_engine_source": "ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py",
+  "frozen_response_engine_git_blob_sha1": "ee8fd0650a2a1322fab83a86bb06a219e84ca434",
+  "executor": "ci/layerb_beta_solver_conditioning_v0_7.py",
+  "executor_commit": "234d64345674ddd2f4d9793d7315460e26efefa9",
+  "executor_git_blob_sha1": "efdc1899a00f3c490f9dec1de030b671f36d4705",
+  "native_k_per_decade_for_pk": 20.0,
+  "production_h": 0.0001,
+  "h_values": [0.0004, 0.0002, 0.0001, 0.00005, 0.000025],
+  "relative_tolerance": 0.001,
+  "exact_target_binding_tolerance": 1e-12,
+  "profiles": {
+    "TOL10": {
+      "axis": "perturbation_integration_tolerance",
+      "overrides": {"tol_perturb_integration": "3e-11"}
+    },
+    "TOL100": {
+      "axis": "perturbation_integration_tolerance",
+      "overrides": {"tol_perturb_integration": "3e-12"}
+    },
+    "SAMP2": {
+      "axis": "perturbation_sampling_density",
+      "overrides": {"perturb_sampling_stepsize": "0.000175"}
+    },
+    "SAMP4": {
+      "axis": "perturbation_sampling_density",
+      "overrides": {"perturb_sampling_stepsize": "0.0000875"}
+    },
+    "JOINT100_S4": {
+      "axis": "joint_tolerance_and_sampling",
+      "overrides": {
+        "tol_perturb_integration": "3e-12",
+        "perturb_sampling_stepsize": "0.0000875"
+      }
+    }
+  },
+  "probe_counts": {
+    "unique_failing_zk_coordinates": 23,
+    "unique_control_zk_coordinates": 23,
+    "unique_all_zk_coordinates": 46
+  },
+  "parallel_partitions": [
+    "TOL10_D", "TOL10_B",
+    "TOL100_D", "TOL100_B",
+    "SAMP2_D", "SAMP2_B",
+    "SAMP4_D", "SAMP4_B",
+    "JOINT100_S4_D", "JOINT100_S4_B"
+  ],
+  "response_definition": "signed D2(h)=(d_m(beta=+h)-d_m(beta=-h))/(2*h) at exact requested target k inserted via CLASS k_output_values; conditioning metric uses abs(D2) h-spread over the frozen five-h ladder",
+  "parent_unstable_subset_definition": "Exactly the 20 parent V0.6 failure coordinates whose production-precision raw_magnitude_h_spread is >=1e-3.",
+  "strong_recovery_fraction": 0.75,
+  "partial_recovery_fraction": 0.25,
+  "strong_median_reduction_factor": 4.0,
+  "partial_median_reduction_factor": 2.0,
+  "axis_material_reduction_factor": 2.0,
+  "joint_pathology_factor": 1.25,
+  "pre_registered_decision": {
+    "strongly_supported": "All invariants pass and all controls stay below 1e-3 in every profile; JOINT100_S4 recovers >=75% of the frozen 20-coordinate parent-unstable subset and reduces its median h-spread by >=4x; at least one frozen single-knob axis is monotonic; and JOINT100_S4 median is no worse than 1.25x the better aggressive single-axis median.",
+    "partially_supported": "All invariants pass, strong support is not met, and JOINT100_S4 either recovers >=25% of the frozen parent-unstable subset or reduces its median h-spread by >=2x.",
+    "not_supported": "All invariants pass, JOINT100_S4 recovery is <25%, and JOINT100_S4 median reduction is <2x.",
+    "inconclusive": "Any invariant/control/exact-target failure, coordinate-set mismatch, nonfinite result, or a preregistered strong single-profile recovery accompanied by pathological joint-profile interaction."
+  },
+  "axis_attribution": {
+    "tolerance_sensitive": "TOL100 median <= TOL10 median <= parent median and TOL100 gives >=2x median reduction.",
+    "sampling_sensitive": "SAMP4 median <= SAMP2 median <= parent median and SAMP4 gives >=2x median reduction.",
+    "both": "Both attribution rules hold.",
+    "none": "Neither attribution rule holds at the preregistered scales."
+  },
+  "forbidden": {
+    "retune_profiles_after_results": true,
+    "mutate_production_h": true,
+    "change_relative_tolerance": true,
+    "launch_global_65537": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "open_science_gate": true
+  },
+  "effect": "+0/+0",
+  "authorized_next_stage_only_after_terminal_decision": {
+    "strong": "PROSPECTIVELY_FROZEN_STABILIZED_SOLVER_PROFILE_LOCAL_COMMON_GRID_VALIDATION",
+    "partial": "PROSPECTIVELY_FROZEN_LOCALIZED_SOLVER_KNOB_ISOLATION_AUDIT",
+    "not_supported": "PROSPECTIVELY_FROZEN_RESPONSE_PARAMETERIZATION_OR_MODEL_REGULARITY_AUDIT",
+    "inconclusive": "NO_SCIENTIFIC_PROMOTION_DIAGNOSE_PROFILE_INTERACTION_OR_INVARIANT_FAILURE"
+  }
+}
