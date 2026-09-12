@@ -1,0 +1,82 @@
+{
+  "schema": "LAYERB_BETA_FINITE_DIFFERENCE_REPAIR_VALIDATION_CONTRACT_V0_6",
+  "status": "PROSPECTIVELY_FROZEN_BEFORE_EXECUTOR_COMMIT_AND_EXECUTION",
+  "parent_run_id": 34717972131,
+  "parent_classification": "H_DEPENDENT_CONDITIONING_STRONGLY_SUPPORTED",
+  "parent_effect": "+0/+0",
+  "parent_observed_failure_fraction_with_h_spread_ge_1e-3": 0.8695652173913043,
+  "expected_parent_h_unstable_failure_coordinates": 20,
+  "probe_manifest": "docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4.json",
+  "probe_manifest_sha256": "6ec35db06d66ac7d03f97f57f9d270d84804ee264508d4601ae33c4175a903d4",
+  "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+  "baseline": "configs/dsir4/c2/ide0_reference_v0_1.ini",
+  "baseline_git_blob_sha1": "cd2beb01ce6575f97f2e3203226ed6d4f048dcaa",
+  "precision": "configs/dsir4/c2/dsir_ide_p8_v0_1.pre",
+  "precision_git_blob_sha1": "fea602547cfb74e187cf9aedd5a9b0c316c626be",
+  "frozen_response_engine_source": "ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py",
+  "frozen_response_engine_git_blob_sha1": "ee8fd0650a2a1322fab83a86bb06a219e84ca434",
+  "executor": "ci/layerb_beta_fd_repair_v0_6.py",
+  "executor_sha256": "0366087de06bea6ca48cf16b09a2a595376693a2ebc590f09041f863b639c5bc",
+  "native_k_per_decade_for_pk": 20.0,
+  "production_h": 0.0001,
+  "h_values": [
+    0.0004,
+    0.0002,
+    0.0001,
+    0.00005,
+    0.000025
+  ],
+  "relative_tolerance": 0.001,
+  "exact_target_binding_tolerance": 1e-12,
+  "strict_less_than": true,
+  "strong_support_fraction": 0.75,
+  "mixed_support_fraction": 0.25,
+  "probe_counts": {
+    "unique_failing_zk_coordinates": 23,
+    "unique_control_zk_coordinates": 23,
+    "unique_all_zk_coordinates": 46
+  },
+  "parallel_partitions": [
+    "DES",
+    "BOSS_GL64",
+    "INVARIANT_AUDIT"
+  ],
+  "raw_centered_definition": "signed D2(h)=(d_m(beta=+h)-d_m(beta=-h))/(2*h) at exact requested target k inserted via CLASS k_output_values",
+  "repair_definition": "signed D4(h)=(4*D2(h/2)-D2(h))/3; science-facing diagnostic magnitude is abs(D4)",
+  "candidate_repair": "D4(production_h) uses h=1e-4 and h/2=5e-5; this does not mutate production h",
+  "local_validation": "compare abs(D4(1e-4)) with abs(D4(5e-5)), where D4(5e-5) uses h/2=5e-5 and h/4=2.5e-5",
+  "relative_difference_definition": "abs(a-b)/max(abs(a),abs(b),binary64_tiny)",
+  "pre_registered_decision": {
+    "strongly_supported": "Exact-target and frozen identities pass; V0.5 raw h-instability reproduces exactly 20/23 failure coordinates; control raw and repaired local max spreads are both <1e-3; and >=75% of those 20 raw-unstable failures have repaired local spread <1e-3.",
+    "partially_supported": "All invariants and controls pass and recovery fraction is >=25% but <75%.",
+    "not_supported": "All invariants and controls pass and recovery fraction is <25%.",
+    "inconclusive": "Any frozen identity mismatch, nonfinite value, exact-target mismatch >1e-12, failure to reproduce exactly 20 raw-unstable failure coordinates, control raw spread >=1e-3, or control repaired local spread >=1e-3."
+  },
+  "mandatory_reports": [
+    "reproduced_parent_h_unstable_failure_coordinates",
+    "recovered_h_unstable_failure_coordinates",
+    "recovery_fraction",
+    "failure_median_raw_h_spread",
+    "failure_median_repair_local_spread",
+    "failure_max_repair_local_spread",
+    "control_max_raw_h_spread",
+    "control_max_repair_local_spread",
+    "repaired_closer_to_fine_fraction_all_failures",
+    "per_coordinate_signed_D2_and_D4",
+    "production_h_retained_unchanged"
+  ],
+  "forbidden": {
+    "mutate_production_h": true,
+    "change_relative_tolerance": true,
+    "retune_support_thresholds_after_results": true,
+    "launch_global_65537": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "open_science_gate": true
+  },
+  "effect": "+0/+0",
+  "authorized_next_stage_only_after_terminal_decision": "Strong support authorizes only a separately frozen repaired direct-k to common-grid LOCAL validation. Partial/not-supported authorizes only a separately frozen response-solver conditioning audit. No V0.6 outcome directly opens covariance, Wm_S3, or a science gate."
+}
