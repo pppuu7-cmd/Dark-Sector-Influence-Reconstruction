@@ -22,63 +22,45 @@ Independent finalizer job `103461606069` classified `LAYERB_32769_HOSTED_EXTRA_S
 V138 therefore rules out only the specific tested standard-hosted added-swap configurations as successful resource routes. It does **not** establish failure on a sufficiently large physical-RAM machine and does not establish an exact RAM minimum.
 
 ## V139 clean-RAM reference control — prepared and independently audited
-Because added swap can create paging/thrashing and confound infrastructure interpretation, V139 inserts one cleaner control before the full four-role high-memory lifecycle.
+V139 inserts one cleaner control before the full four-role high-memory lifecycle.
 
-Frozen contract:
-- `docs/dsir4/contracts/LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_CONTRACT_V0_1.json`;
-- Git blob `eec2eed8dc9af0b1bf0320ef310fe362e8172910`.
+Frozen contract `docs/dsir4/contracts/LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_CONTRACT_V0_1.json`, blob `eec2eed8dc9af0b1bf0320ef310fe362e8172910`; dormant workflow `.github/workflows/layerb-32769-clean-ram-reference-control-v0-1.yml`, blob `59dcf6886512f5f6a1076c9196801477c0642347`, routed only to `[dsir-32769-highmem]`.
 
-Dormant manual workflow:
-- `.github/workflows/layerb-32769-clean-ram-reference-control-v0-1.yml`;
-- Git blob `59dcf6886512f5f6a1076c9196801477c0642347`;
-- routed only to `[dsir-32769-highmem]`.
+Requirements: exactly one `reference` role; frozen dedicated-runner provenance; `MemTotal >= 62914560 kB` as a nominal-64-GiB-class control envelope, not an inferred minimum; `SwapTotal == 0`; no swap mutation; same canonical 32769/parser-corrected build identities; no scientific response read and no successor authorization.
 
-Clean control requirements:
-- exactly one role: `reference`;
-- isolated runner registered with frozen configurator and `--no-default-labels`;
-- `MemTotal >= 62914560 kB` (guard for a nominal 64-GiB-class machine, **not** an inferred minimum-RAM claim);
-- `SwapTotal == 0` before compute;
-- workflow itself must not create, enable, disable or resize swap;
-- same frozen canonical 32769 nodes, CLASS commit, point capacity `32769`, parser capacity `1048576`, compatibility/public-exposure patches and single-role probe blob `f8776ae1e9e0c325f1a3f5f01b4388e1c93ef7e2`;
-- no `get_transfer`, no scientific response read, no convergence metric, no scientific authority and no successor authorization.
+Static/synthetic audit run `34663080404` passed three independent hosted lanes plus finalizer. Artifact `10287942224`, ZIP SHA256 `ff80beaa01c62fd5ae471255da38eca534f70e80f96366596804f2d7a1ae3161`; `summary.json` SHA256 `cdbbde5ea8d6ff6a534d8cd8fbd7ca0e0aa6795e3f75c54bba4868be894ff718`. Durable authority: `docs/dsir4/authority/LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_STATIC_AUDIT_V0_1.json`.
 
-Static/synthetic audit run `34663080404` ran three independent hosted lanes plus an independent barrier finalizer:
-- contract/negative gates job `103469460283`: SUCCESS;
-- workflow/no-swap-mutation job `103469460241`: SUCCESS;
-- frozen probe identity job `103469460205`: SUCCESS;
-- finalizer job `103469483188`: SUCCESS.
+## V140 home runner profile — useful low-memory pool, excluded from 32769
+The user brought `DSIR-HOME-PC` online under WSL2, runner version `2.337.0`. The previously queued superseded generic run `34550495778` was picked up but the latest attempt job `103470879253` failed at native prerequisite checking before any heavy compute because `gfortran` was missing. The stale queued ownership hazard is therefore now terminal and closed; no scientific/resource result was created.
 
-Raw artifact was consumed after CI completion:
-- artifact `10287942224`;
-- ZIP SHA256 `ff80beaa01c62fd5ae471255da38eca534f70e80f96366596804f2d7a1ae3161`;
-- `summary.json` SHA256 `cdbbde5ea8d6ff6a534d8cd8fbd7ca0e0aa6795e3f75c54bba4868be894ff718`;
-- classification `LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_STATIC_AUDIT_PASS_PLUS_0_PLUS_0`;
-- artifact explicitly records `requires_real_runner=true`, `clean_reference_execution_authorized=false`, `scientific_execution_authorized=false`.
+Environment probe run `34663628847`, job `103471030533`, artifact `10288042655`, ZIP SHA256 `dcc543bd160857ec62985c57f07f0280201c14c01bb79351dd49821fab037b71`, measured WSL `MemTotal=6067840 kB`, `MemAvailable=5382384 kB`, `SwapTotal=16777216 kB`, 8 logical CPUs, Intel i5-1235U. Python/GCC/G++/make/pkg-config/cmake/git are present; `gfortran` and GSL pkg-config are absent; non-interactive sudo is unavailable.
 
-Durable authority: `docs/dsir4/authority/LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_STATIC_AUDIT_V0_1.json`, creation commit `b30cde8957583258e8cfa0cd9daf908352ee838e`, Git blob `3ddf7095540129febcb0c5612f00970e32b214c2`.
+Host-memory probe run `34663666364`, job `103471138939`, artifact `10288262607`, ZIP SHA256 `ec01e9d561bed83397ffda320c4fef4b42b0ab505239e57a38bf619827bfc88d`, measured Windows total physical memory `8245334016` bytes (~7.68 GiB). Existing `.wslconfig`: `memory=6GB`, `processors=8`, `swap=16GB`.
+
+Durable authority: `docs/dsir4/authority/DSIR_HOME_PC_RESOURCE_PROFILE_V0_1.json`.
+
+Policy: `DSIR-HOME-PC` may be used for scientifically admissible independent tasks that fit the ~6 GiB WSL RAM envelope after required dependencies are available. It MUST NOT run the V139 clean-RAM 32769 reference, V0.3 32769 four-role lifecycle, or 16385->32769 production science. The physical Windows host itself is far below the V139 control envelope, so this is not merely a WSL configuration issue.
 
 ## Exact remaining order
-1. Attach/configure one real isolated runner with unique name, frozen configurator, `--no-default-labels`, exact label `dsir-32769-highmem`, `MemTotal >= 62914560 kB`, and `SwapTotal == 0` before runner start.
-2. Dispatch **exactly one** dormant `layerb-32769-clean-ram-reference-control-v0-1` run.
-3. Consume and independently classify its artifact. PASS only establishes that parser-corrected canonical 32769 `reference` can complete under clean high-physical-RAM conditions.
-4. Only after that PASS decide prospectively whether to dispatch the existing V0.3 four-role response-blind resource lifecycle on the same machine. The clean-reference result does not auto-authorize it.
-5. A real four-role PASS must then traverse independent consumer V0.3 -> candidate packaging/materialization V0.2 -> promotion V0.2 -> exact durable resource authority.
+1. For lower-memory independent DSIR work, the home runner can be used after dependencies are available and only when the task fits its measured resource envelope.
+2. For the 32769 path, attach/configure one separate isolated nominal-64-GiB-class runner with unique name, frozen configurator, `--no-default-labels`, exact label `dsir-32769-highmem`, `MemTotal >= 62914560 kB`, and `SwapTotal == 0` before runner start.
+3. Dispatch **exactly one** dormant clean-RAM `reference` control and independently classify its artifact.
+4. Only after clean-reference PASS decide prospectively whether to dispatch V0.3 four-role response-blind resource lifecycle on that machine.
+5. A real four-role PASS must traverse independent consumer V0.3 -> candidate packaging/materialization V0.2 -> promotion V0.2 -> exact durable resource authority.
 6. Only then may immediate live guard V0.2/current-run authorizer V0.2 permit exactly one dormant scientific 16385->32769 run, followed by strict terminal consumer V0.2.
 
-Old superseded run `34550495778` / job `103112190909` remains queued on generic `[self-hosted, Linux, X64]` and must not receive the dedicated runner.
-
 ## Recovery authority
-Newest immutable note: `docs/recovery/RECOVERY_2026-09-12_ARTICLE3_CLEAN_RAM_REFERENCE_CONTROL_V139.md`, creation commit `48d684ce3ac0285fa9b1fcc1ca5444771664cd34`.
+Newest immutable note: `docs/recovery/RECOVERY_2026-09-12_ARTICLE3_HOME_RUNNER_PROFILE_V140.md`, creation commit `da23d4c0b5ac39fd5b241ba30c064946e59089d9`.
 
 ## Readiness
 `ARTICLE3_REPOSITORY_READINESS: 68%`.
 
 Funnel-freeze/scientific frontier: `67%`.
 
-Operational roadmap: `WORKING_PLAN_COMPLETION: 89%`. Increase from V138 is operational only: the swap-confound concern has been converted into a prospectively frozen, independently audited clean-RAM reference control. Scientific convergence has not advanced.
+Operational roadmap: `WORKING_PLAN_COMPLETION: 90%`. Increase from V139 is operational only: the available home runner was physically profiled, its proper low-memory scope was established, and the stale generic queued-run ownership hazard became terminal. Scientific convergence has not advanced.
 
 ## Exact next action
-Do not run more standard-hosted swap experiments and do not run the four-role lifecycle first. Attach a qualifying high-physical-RAM runner with swap disabled and execute exactly one clean-RAM `reference` control. Production science remains forbidden.
+Use `DSIR-HOME-PC` only for lower-memory independent tasks that fit its envelope. Do not send 32769 to it. The 32769 frontier remains one clean-RAM reference on a separate physical high-memory runner with swap disabled. Production science remains forbidden before the real resource chain passes.
 
 ## Automation / ownership
 `DSIR Continuous Research` is enabled hourly. Repository state and live Actions ownership are authoritative. No duplicate heavy science lane is authorized.
