@@ -1,0 +1,136 @@
+name: layerb-beta-fd-repair-v0-6
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_BETA_FD_REPAIR_V0_6_LAUNCH.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_FINITE_DIFFERENCE_REPAIR_VALIDATION_V0_6.json'
+  PROBES: 'docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4.json'
+  EXECUTOR: 'ci/layerb_beta_fd_repair_v0_6.py'
+  JJ: 'ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py'
+  BASELINE: 'configs/dsir4/c2/ide0_reference_v0_1.ini'
+  PRECISION: 'configs/dsir4/c2/dsir_ide_p8_v0_1.pre'
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+
+jobs:
+  invariant-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify prospectively frozen V0.6 identities and thresholds
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def blobsha(path):
+              b=Path(path).read_bytes()
+              return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          C=json.load(open('docs/dsir4/contracts/LAYERB_BETA_FINITE_DIFFERENCE_REPAIR_VALIDATION_V0_6.json'))
+          assert C['status']=='PROSPECTIVELY_FROZEN_BEFORE_EXECUTOR_COMMIT_AND_EXECUTION'
+          assert C['parent_run_id']==34717972131 and C['parent_classification']=='H_DEPENDENT_CONDITIONING_STRONGLY_SUPPORTED'
+          assert C['expected_parent_h_unstable_failure_coordinates']==20
+          assert C['production_h']==1e-4 and C['h_values']==[4e-4,2e-4,1e-4,5e-5,2.5e-5]
+          assert C['relative_tolerance']==1e-3 and C['exact_target_binding_tolerance']==1e-12
+          assert C['strong_support_fraction']==0.75 and C['mixed_support_fraction']==0.25
+          assert all(C['forbidden'].values())
+          assert hashlib.sha256(Path(C['probe_manifest']).read_bytes()).hexdigest()==C['probe_manifest_sha256']=='6ec35db06d66ac7d03f97f57f9d270d84804ee264508d4601ae33c4175a903d4'
+          assert hashlib.sha256(Path(C['executor']).read_bytes()).hexdigest()==C['executor_sha256']=='0366087de06bea6ca48cf16b09a2a595376693a2ebc590f09041f863b639c5bc'
+          assert blobsha(C['baseline'])==C['baseline_git_blob_sha1']=='cd2beb01ce6575f97f2e3203226ed6d4f048dcaa'
+          assert blobsha(C['precision'])==C['precision_git_blob_sha1']=='fea602547cfb74e187cf9aedd5a9b0c316c626be'
+          assert blobsha(C['frozen_response_engine_source'])==C['frozen_response_engine_git_blob_sha1']=='ee8fd0650a2a1322fab83a86bb06a219e84ca434'
+          P=json.load(open(C['probe_manifest']))
+          assert P['unique_failure_coordinates']==23 and P['unique_all_coordinates']==46
+          out={'schema':'LAYERB_BETA_FD_REPAIR_INVARIANT_AUDIT_V0_6','pass':True,'parent_run_id':C['parent_run_id'],'executor_sha256':C['executor_sha256'],'production_h':C['production_h'],'h_values':C['h_values'],'relative_tolerance':C['relative_tolerance'],'expected_parent_h_unstable_failure_coordinates':20,'effect':'+0/+0','covariance_read':False,'Wm_S3_opened':False,'science_gate_opened':False,'token':'PASS_LAYERB_BETA_FD_REPAIR_INVARIANTS_V0_6'}
+          Path('safe/invariant.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-fd-repair-invariant-v0-6
+          path: safe/invariant.json
+          retention-days: 90
+
+  fd-repair-domain:
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        domain: [D, B]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact production numerical stack
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          git clone -q https://github.com/kaeonikc/class_iv.git external_class
+          git -C external_class checkout -q "$CLASS_COMMIT"
+      - name: Reproduce production CLASS exposure and non-scientific capacity/history patches
+        run: |
+          set -euo pipefail
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 128',1))
+          q=Path('external_class/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 16384',1))
+          r=Path('external_class/source/perturbations.c'); s=r.read_text(); old='perhaps_print_variables = perturb_print_variables;'; assert s.count(old)==1; r.write_text(s.replace(old,'perhaps_print_variables = NULL;',1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external_class
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external_class
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" make -C external_class -j2 all >/dev/null
+      - name: Run frozen exact-target-k fourth-order FD repair validation
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          .venv/bin/python "$EXECUTOR" --mode domain --domain '${{ matrix.domain }}' --probes "$PROBES" --contract "$CONTRACT" --jj-script "$JJ" --baseline "$BASELINE" --precision "$PRECISION" --executor "$EXECUTOR" --out safe/fd_${{ matrix.domain }}.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-fd-repair-${{ matrix.domain }}-v0-6
+          path: safe/fd_${{ matrix.domain }}.json
+          retention-days: 90
+
+  decision:
+    needs: [invariant-audit, fd-repair-domain]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-fd-repair-*-v0-6
+          path: inputs
+          merge-multiple: true
+      - name: Apply pre-registered V0.6 decision rule
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import json
+          d=json.load(open('inputs/invariant.json'))
+          assert d['pass'] is True and d['token']=='PASS_LAYERB_BETA_FD_REPAIR_INVARIANTS_V0_6'
+          PY
+          python3 "$EXECUTOR" --mode decision --contract "$CONTRACT" --executor "$EXECUTOR" --inputs inputs/fd_D.json inputs/fd_B.json --out safe/decision.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-fd-repair-decision-v0-6
+          path: safe/decision.json
+          retention-days: 90
