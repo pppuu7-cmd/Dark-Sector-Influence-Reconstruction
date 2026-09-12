@@ -1,0 +1,34 @@
+{
+  "schema": "LAYERB_16385_TO_32769_CHUNK_TERMINAL_RESULT_CONTRACT_V0_1",
+  "scope": "Exactly one authorized canonical DSIR Article III 16385-to-32769 refinement using validated chunk acquisition and the frozen legacy replay/classifier",
+  "scientific_semantics": {
+    "h": 0.0001,
+    "relative_tolerance": 0.001,
+    "strict_less_than": true,
+    "native_k_per_decade_for_pk": 20.0,
+    "lookup_relative_tolerance": 1e-12,
+    "interpolation": "centered-cubic",
+    "parent_retained_count": 107,
+    "invalid_row_fraction_max": 0.05,
+    "retained_after_layer_b_min": 15,
+    "unsupported_target_evaluations_required": 0,
+    "finite_nonzero_status_changed_required": false,
+    "row_label_changed_required": false,
+    "boss_dense_z_disagreement_required": false
+  },
+  "accepted_terminal_classifications": [
+    "COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0",
+    "COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0"
+  ],
+  "infrastructure_classification": "INVALID_INFRA_PLUS_0_PLUS_0",
+  "converged_rule": "All frozen structural gates pass and max_relative_component_difference < 0.001",
+  "not_converged_rule": "A valid terminal scientific execution whose frozen convergence predicate is false",
+  "post_result_tolerance_change_forbidden": true,
+  "silent_science_retry_forbidden": true,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "terminal_result_must_bind_current_run_authorization": true,
+  "terminal_result_must_bind_V141_V142_V143": true,
+  "terminal_result_must_preserve_parent_identity": true,
+  "terminal_result_must_report_actual_chunk_acquisition_lifecycle": true
+}
