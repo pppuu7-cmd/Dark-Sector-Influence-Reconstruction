@@ -1,0 +1,38 @@
+{
+  "schema": "LAYERB_BETA_FD_REPAIR_V0_6R1_INFRA_RECOVERY_CONTRACT",
+  "status": "PROSPECTIVELY_FROZEN_BEFORE_RECOVERY_EXECUTION",
+  "parent_science_run_id": 34719180791,
+  "parent_science_head_sha": "614b1dd660dbc2dbe53fb5597dbfb2cc5df3a106",
+  "parent_science_contract": "docs/dsir4/contracts/LAYERB_BETA_FINITE_DIFFERENCE_REPAIR_VALIDATION_V0_6.json",
+  "parent_science_contract_commit": "228f8b9ede9a4e79db06acc59392fc46ccfdb87c",
+  "frozen_executor": "ci/layerb_beta_fd_repair_v0_6.py",
+  "frozen_executor_commit": "9a72c63f059e7ce41bd2d6aa2cee49c445f57cd3",
+  "frozen_executor_sha256": "0366087de06bea6ca48cf16b09a2a595376693a2ebc590f09041f863b639c5bc",
+  "failure_class": "INFRASTRUCTURE_ONLY_DECISION_ENVIRONMENT_MISSING_NUMPY",
+  "failed_decision_job_id": 103621943295,
+  "failed_before_scientific_decision": true,
+  "reuse_only_existing_science_artifacts": true,
+  "recompute_domain_science": false,
+  "artifacts": {
+    "D": {
+      "artifact_id": 10305697116,
+      "sha256": "c436bcdeca01901d232ee3d536e98bd51989a2e0ac24300a04eddd67b4936be5"
+    },
+    "B": {
+      "artifact_id": 10305163923,
+      "sha256": "ab020aec4a0d243c3ed03a970a2ed1c1ee6525170698fd1e3b063dd79cd14efc"
+    },
+    "invariant": {
+      "artifact_id": 10304899548,
+      "sha256": "b491e8f945a6eedabd474205e03eef1a0e90b39db1ea9ef52b8e746844004d46"
+    }
+  },
+  "environment_only_fix": "Install numpy==1.26.4 in the recovery decision job before invoking the unchanged frozen executor.",
+  "decision_rule_changed": false,
+  "thresholds_changed": false,
+  "production_h_changed": false,
+  "effect": "+0/+0",
+  "covariance_authorized": false,
+  "Wm_S3_authorized": false,
+  "science_gate_authorized": false
+}
