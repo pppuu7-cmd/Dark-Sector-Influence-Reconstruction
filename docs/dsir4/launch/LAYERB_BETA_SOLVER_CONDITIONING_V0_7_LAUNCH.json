@@ -1,0 +1,22 @@
+{
+  "schema": "LAYERB_BETA_SOLVER_CONDITIONING_V0_7_LAUNCH",
+  "status": "AUTHORIZED_AFTER_TERMINAL_V0_6_AUTHORITY",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_FD_REPAIR_V0_6.json",
+  "parent_authority_commit": "4b62f4bf4057d34eff2b7cc1ceef98d63f8eafa7",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_SOLVER_CONDITIONING_AUDIT_V0_7.json",
+  "contract_commit": "0d8fa43eb93d4879bdc91aa59a3e8a3fb06314e5",
+  "executor": "ci/layerb_beta_solver_conditioning_v0_7.py",
+  "executor_commit": "234d64345674ddd2f4d9793d7315460e26efefa9",
+  "executor_git_blob_sha1": "efdc1899a00f3c490f9dec1de030b671f36d4705",
+  "workflow": ".github/workflows/layerb-beta-solver-conditioning-v0-7.yml",
+  "workflow_commit": "abb7faf9aadba1ed4e143a75dc9309627d6d06e5",
+  "parallel_science_jobs": 10,
+  "profiles": ["TOL10", "TOL100", "SAMP2", "SAMP4", "JOINT100_S4"],
+  "domains": ["D", "B"],
+  "effect": "+0/+0",
+  "production_h_mutated": false,
+  "global_65537_authorized": false,
+  "covariance_authorized": false,
+  "Wm_S3_authorized": false,
+  "science_gate_authorized": false
+}
