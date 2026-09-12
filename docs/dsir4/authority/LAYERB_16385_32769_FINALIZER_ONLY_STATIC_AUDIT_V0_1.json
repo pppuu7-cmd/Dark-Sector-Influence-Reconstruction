@@ -1,0 +1,35 @@
+{
+  "schema": "LAYERB_16385_32769_FINALIZER_ONLY_STATIC_AUDIT_AUTHORITY_V0_1",
+  "classification": "LAYERB_16385_32769_FINALIZER_ONLY_STATIC_AUDIT_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "artifact_verified_independently": true,
+  "run_id": 34708835644,
+  "head_sha": "bbfa98ddc7a7d90da1a826ae9305a1ba55385c93",
+  "jobs": {
+    "source_contract_audit": 103593736543,
+    "topology_audit": 103593736625,
+    "artifact_binding_audit": 103593736584,
+    "independent_finalizer": 103593756511
+  },
+  "aggregate_artifact_id": 10301879270,
+  "aggregate_artifact_zip_sha256": "08faaca1d6351e5b30abeea6ff3baf336b9db62906aa9b5a3daab1dcdd4ec0c7",
+  "aggregate_json_sha256": "6a89203e05f528d9dcedb0f6b929df0db935873f75ca80adf59778d077bfad40",
+  "missing_or_duplicate_receipts": [],
+  "verified": {
+    "v146_failed_before_frozen_classifier": true,
+    "history_suppression_exact_equivalence_pass": true,
+    "eight_retained_operand_identities_bound": true,
+    "coarse_recompute_absent": true,
+    "fine_recompute_absent": true,
+    "WM_S3_OVERRIDE_exact_env_repair_present": true,
+    "frozen_classifier_and_terminal_consumer_bound": true,
+    "independent_terminal_verifier_present": true,
+    "prospective_promotion_gate_present": true
+  },
+  "scientific_response_read": false,
+  "scientific_execution_authorized_by_this_authority": false,
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "token": "LAYERB_16385_32769_FINALIZER_ONLY_STATIC_AUDIT_PASS_PLUS_0_PLUS_0"
+}
