@@ -1,0 +1,82 @@
+{
+  "schema": "LAYERB_16385_32769_COARSE_RECOVERY_CONTRACT_V0_2",
+  "scope": "Exactly one prospectively frozen repair execution after V0.1 recovery run 34702716166 failed before Class.compute because the downloaded control artifact preserved plan/plan.json while the worker argument addressed plan.json.",
+  "effect": "+0/+0 until independently verified terminal classifier",
+  "v01_contract": {"path": "docs/dsir4/contracts/LAYERB_16385_32769_COARSE_RECOVERY_CONTRACT_V0_1.json", "git_blob": "480e5a76c66a7c0fcaa58564910150abea624899"},
+  "v01_control_path_failure": {"path": "docs/dsir4/authority/LAYERB_16385_32769_COARSE_RECOVERY_V01_CONTROL_PATH_FAILURE_V0_1.json", "git_blob": "c0b55fc826dd1c35388b26a30b3b8147cfe1fc84", "classification": "LAYERB_16385_32769_COARSE_RECOVERY_V01_CONTROL_PATH_FAIL_PLUS_0_PLUS_0", "run_id": 34702716166},
+  "allowed_executable_delta": {
+    "worker_plan_argument_from": "inputs/control/plan.json",
+    "worker_plan_argument_to": "inputs/control/plan/plan.json",
+    "finalizer_plan_environment_from": "inputs/control/plan.json",
+    "finalizer_plan_environment_to": "inputs/control/plan/plan.json",
+    "retry_guard_change": "require exactly one prior recovery run, id 34702716166, completed with failure, and zero other prior/live recovery runs",
+    "all_other_scientific_and_operand_logic_must_be_identical_to_v01": true
+  },
+  "forbidden_changes": [
+    "scientific response values in retained fine operands",
+    "fine operand recomputation",
+    "coarse canonical lattice",
+    "fine canonical lattice",
+    "CLASS commit",
+    "history-suppression patch",
+    "h",
+    "native k_per_decade_for_pk",
+    "interpolation",
+    "lookup tolerance",
+    "invalid-row rule",
+    "retained-row rule",
+    "terminal convergence threshold or strictness",
+    "covariance or Wm_S3 authorization"
+  ],
+  "retained_v01_science_contract": {
+    "initial_failure_authority_git_blob": "506febe5db4335453595b7ce9d82afcad872e5de",
+    "history_suppressed_resource_authority_git_blob": "a1e38e6c77452836315e8ab5b2403b55279f4be8",
+    "history_suppression_patch_git_blob": "e20687e933d665973c3be40598180587701fa8e0",
+    "history_suppression_post_sha256": "4e9a419d46471ffab74df3d14239e000bf92f2e198edad4d2c7b82f1335f7a4b",
+    "recovery_classifier_wrapper_git_blob": "d196dd0e8e44a6b0c93689a7074655bd98b0e616",
+    "role_operand_worker_git_blob": "472a1b7364fc8ca4f7c86e79f336fde702329f8c",
+    "operand_adapter_git_blob": "798e83c56d50babbdcab1a57f27662b847b653b4",
+    "terminal_consumer_git_blob": "00d36e4d0cf34e37c4090effe9e3eef6737bb13b",
+    "terminal_contract_git_blob": "76816b105cb72194107cf7eadffc192900fad6f5",
+    "production_contract_git_blob": "1ab0f5b164727bb0c2c7f42ce3a82a1ebb77678d"
+  },
+  "original_production_inputs": {
+    "plan_artifact_id": 10298655751,
+    "plan_zip_sha256": "9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7",
+    "plan_json_sha256": "c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064",
+    "retained_fine_operand_artifact_ids": [10299405397,10298479524,10298822640,10299311082]
+  },
+  "coarse_recompute": {
+    "roles": ["reference","alpha_minus","beta_plus","beta_minus"],
+    "parallel_jobs": 4,
+    "canonical_node_count": 16385,
+    "canonical_node_sha256": "3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975",
+    "point_capacity": 16385,
+    "parser_capacity": 524288,
+    "history_suppression_required": true,
+    "solver_constructions_per_role": 1,
+    "max_live_instances": 1
+  },
+  "scientific_semantics": {
+    "h": 0.0001,
+    "relative_tolerance": 0.001,
+    "strict_less_than": true,
+    "native_k_per_decade_for_pk": 20.0,
+    "lookup_relative_tolerance": 1e-12,
+    "interpolation": "centered-cubic",
+    "parent_retained_count": 107,
+    "invalid_row_fraction_max": 0.05,
+    "retained_after_layer_b_min": 15,
+    "unsupported_target_evaluations_required": 0,
+    "covariance_restriction_authorized": false,
+    "Wm_S3_opened": false
+  },
+  "authorization": {
+    "exactly_one_v02_recovery_workflow_run": true,
+    "fine_recompute_authorized": false,
+    "coarse_recompute_authorized": true,
+    "silent_retry_after_v02_forbidden": true,
+    "post_result_threshold_change_forbidden": true,
+    "independent_terminal_reclassification_required": true
+  }
+}
