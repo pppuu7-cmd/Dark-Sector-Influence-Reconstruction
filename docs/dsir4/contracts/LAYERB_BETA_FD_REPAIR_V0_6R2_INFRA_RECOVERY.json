@@ -1,0 +1,29 @@
+{
+  "schema": "LAYERB_BETA_FD_REPAIR_V0_6R2_INFRA_RECOVERY_CONTRACT",
+  "status": "PROSPECTIVELY_FROZEN_BEFORE_RECOVERY_EXECUTION",
+  "parent_science_run_id": 34719180791,
+  "parent_recovery_run_id": 34719312994,
+  "parent_recovery_failure": "ARTIFACT_DIGEST_STRING_HAS_SHA256_PREFIX",
+  "parent_recovery_failed_before_artifact_download": true,
+  "science_data_consumed_by_parent_recovery": false,
+  "source_artifacts_unchanged": true,
+  "source_artifact_ids": [10305697116, 10305163923, 10304899548],
+  "source_artifact_sha256_hex": [
+    "c436bcdeca01901d232ee3d536e98bd51989a2e0ac24300a04eddd67b4936be5",
+    "ab020aec4a0d243c3ed03a970a2ed1c1ee6525170698fd1e3b063dd79cd14efc",
+    "b491e8f945a6eedabd474205e03eef1a0e90b39db1ea9ef52b8e746844004d46"
+  ],
+  "metadata_only_fix": "Normalize GitHub API artifact digest by removing an optional literal sha256: prefix before comparing to the frozen hexadecimal digest.",
+  "frozen_executor": "ci/layerb_beta_fd_repair_v0_6.py",
+  "frozen_executor_sha256": "0366087de06bea6ca48cf16b09a2a595376693a2ebc590f09041f863b639c5bc",
+  "install_numpy_1_26_4": true,
+  "reuse_only_existing_science_artifacts": true,
+  "recompute_domain_science": false,
+  "decision_rule_changed": false,
+  "thresholds_changed": false,
+  "production_h_changed": false,
+  "effect": "+0/+0",
+  "covariance_authorized": false,
+  "Wm_S3_authorized": false,
+  "science_gate_authorized": false
+}
