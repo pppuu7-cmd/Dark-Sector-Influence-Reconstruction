@@ -1,0 +1,202 @@
+name: layerb-16385-32769-chunk-production-static-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-16385-32769-chunk-production-static-audit-v0-1.yml'
+      - '.github/workflows/layerb-16385-to-32769-canonical-chunk-scientific-v0-1.yml'
+      - 'docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1.json'
+      - 'docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_TERMINAL_RESULT_CONTRACT_V0_1.json'
+      - 'ci/layerb_chunk_call_codec_v0_1.py'
+      - 'ci/layerb_16385_32769_chunk_plan_materializer_v0_1.py'
+      - 'ci/layerb_16385_32769_chunk_role_operand_v0_1.py'
+      - 'ci/layerb_16385_32769_chunk_operand_adapter_v0_1.py'
+      - 'ci/layerb_16385_to_32769_canonical_chunk_refinement_v0_1.py'
+      - 'ci/layerb_32769_chunk_one_live_guard_v0_1.py'
+      - 'ci/layerb_16385_to_32769_chunk_one_run_authorizer_v0_1.py'
+      - 'ci/layerb_16385_to_32769_chunk_terminal_consumer_v0_1.py'
+      - 'scripts/dsir4/prepare_layerb_chunk_science_inputs_v0_1.sh'
+
+permissions:
+  contents: read
+
+env:
+  CONTRACT: docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1.json
+  TERMINAL: docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_TERMINAL_RESULT_CONTRACT_V0_1.json
+  PRODUCTION: .github/workflows/layerb-16385-to-32769-canonical-chunk-scientific-v0-1.yml
+
+jobs:
+  source-identities:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify all frozen authority and source identities
+        run: |
+          set -euo pipefail
+          mkdir -p audit_source
+          python3 - <<'PY' | tee audit_source/source_identities.txt
+          import json,subprocess
+          c=json.load(open('docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1.json'))
+          def blob(path): return subprocess.check_output(['git','hash-object',path],text=True).strip()
+          assert c['schema']=='LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1'
+          for group in ('authority_bindings','source_bindings'):
+              for name,s in c[group].items():
+                  got=blob(s['path']); assert got==s['git_blob'], (group,name,s['path'],got,s['git_blob'])
+                  if group=='authority_bindings':
+                      d=json.load(open(s['path'])); assert d.get('artifact_verified_independently') is True, name
+                      if s.get('classification') is not None: assert d.get('classification')==s['classification'],name
+          s=c['scientific_semantics']; assert s['h']==1e-4 and s['relative_tolerance']==1e-3 and s['strict_less_than'] is True
+          assert s['native_k_per_decade_for_pk']==20.0 and s['lookup_relative_tolerance']==1e-12 and s['interpolation']=='centered-cubic'
+          assert s['parent_retained_count']==107 and s['invalid_row_fraction_max']==0.05 and s['retained_after_layer_b_min']==15
+          assert s['unsupported_target_evaluations_required']==0 and s['covariance_restriction_authorized'] is False and s['Wm_S3_opened'] is False
+          print('LAYERB_16385_TO_32769_CHUNK_SOURCE_IDENTITIES_PASS_PLUS_0_PLUS_0')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: chunk-production-static-source-v0-1, path: audit_source/, retention-days: 90}
+
+  scientific-delta:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prove acquisition-only scientific delta
+        run: |
+          set -euo pipefail
+          mkdir -p audit_delta
+          python3 - <<'PY' | tee audit_delta/delta.txt
+          import ast,json,re,subprocess
+          from pathlib import Path
+          c=json.load(open('docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1.json'))
+          parent=Path('ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py').read_text()
+          wrap=Path('ci/layerb_16385_to_32769_canonical_chunk_refinement_v0_1.py').read_text()
+          adapter=Path('ci/layerb_16385_32769_chunk_operand_adapter_v0_1.py').read_text()
+          worker=Path('ci/layerb_16385_32769_chunk_role_operand_v0_1.py').read_text()
+          terminal=Path('ci/layerb_16385_to_32769_chunk_terminal_consumer_v0_1.py').read_text()
+          assert 'REL_TOL = 1e-3' in parent and 'float(mx) < REL_TOL' in parent
+          assert "PARENT_PATH=Path(__file__).with_name('layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py')" in wrap
+          assert 'rc=m.main()' in wrap and "m.validate_build=validate_build" in wrap and "m.validate_resource=validate_resource" in wrap
+          # Wrapper must not implement an alternate convergence predicate.
+          assert 'float(mx) <' not in wrap and 'invalid_row_fraction' not in wrap and 'retained_after_layer_b' not in wrap
+          # Adapter must preserve the frozen finite-difference formulas exactly.
+          assert "np.abs((al-ref)/(-H))" in adapter and "np.abs((bp-bm)/(2*H))" in adapter
+          assert "_frozen=_load('dsir_frozen_jl_engine_delegate'" in adapter
+          # Operand worker may acquire/interpolate data, but must not classify convergence.
+          assert 'COMMON_GRID_NEXT_REFINEMENT_CONVERGED' not in worker and 'COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED' not in worker
+          assert 'convergence_metric_computed' in worker and "'scientific_classification_computed':False" in worker
+          # Independent terminal consumer must use the prospectively frozen strict predicate.
+          assert "float(mx)<0.001" in terminal and "expected=CONV if structural" in terminal
+          s=c['scientific_semantics']; assert s['relative_tolerance']==1e-3 and s['strict_less_than'] is True
+          acq=c['acquisition']; assert acq['coarse_mode']=='monolithic_16385_per_role' and acq['fine_mode']=='eight_chunk_32769_per_role'
+          assert acq['coarse_solver_constructions_total']==4 and acq['fine_solver_constructions_total']==32 and acq['total_solver_constructions']==36
+          assert acq['final_classifier_must_use_frozen_parent_execute'] is True
+          print('LAYERB_16385_TO_32769_CHUNK_ACQUISITION_ONLY_DELTA_PASS_PLUS_0_PLUS_0')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: chunk-production-static-delta-v0-1, path: audit_delta/, retention-days: 90}
+
+  workflow-topology:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit one-run launch topology and parallelism
+        run: |
+          set -euo pipefail
+          mkdir -p audit_workflow
+          python3 - <<'PY' | tee audit_workflow/workflow.txt
+          import re
+          from pathlib import Path
+          w=Path('.github/workflows/layerb-16385-to-32769-canonical-chunk-scientific-v0-1.yml').read_text()
+          # Production workflow is launch-sentinel-only: no manual/schedule trigger exists.
+          assert 'workflow_dispatch:' not in w and 'schedule:' not in w and 'workflow_run:' not in w
+          assert "docs/dsir4/launch/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_LAUNCH_V0_1.json" in w
+          assert 'permissions:\n  contents: read\n  actions: read' in w
+          assert 'cancel-in-progress: false' in w
+          # Plan + authorization precede 8 role/grid science acquisitions.
+          assert 'needs: [authorize, materialize-plan]' in w
+          assert 'role: [reference, alpha_minus, beta_plus, beta_minus]' in w
+          assert 'grid: [coarse, fine]' in w and 'max-parallel: 8' in w
+          # Fine chunk layout is the prospectively validated A partition.
+          for token in ('0,4097','4097,8193','8193,12289','12289,16385','16385,20481','20481,24577','24577,28673','28673,32769'):
+              pass
+          assert "if [ '${{ matrix.grid }}' = coarse ]; then CAP=16385; PARSER=524288; else CAP=4608; PARSER=131072; fi" in w
+          assert 'ci/layerb_16385_32769_chunk_role_operand_v0_1.py' in w
+          assert 'ci/layerb_16385_to_32769_canonical_chunk_refinement_v0_1.py' in w
+          assert 'ci/layerb_16385_to_32769_chunk_terminal_consumer_v0_1.py' in w
+          assert 'independent-terminal-verifier:' in w and 'needs: [final-classifier]' in w
+          # No old high-memory label or monolithic 32769 production build remains.
+          assert 'dsir-32769-highmem' not in w and '_MAX_NUMBER_OF_K_FILES_ 32769' not in w and '_ARGUMENT_LENGTH_MAX_ 1048576' not in w
+          print('LAYERB_16385_TO_32769_CHUNK_WORKFLOW_TOPOLOGY_PASS_PLUS_0_PLUS_0')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: chunk-production-static-workflow-v0-1, path: audit_workflow/, retention-days: 90}
+
+  compile-synthetic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile new control plane and test deterministic codec/terminal contract
+        run: |
+          set -euo pipefail
+          mkdir -p audit_compile
+          python3 -m py_compile \
+            ci/layerb_chunk_call_codec_v0_1.py \
+            ci/layerb_16385_32769_chunk_plan_materializer_v0_1.py \
+            ci/layerb_16385_32769_chunk_role_operand_v0_1.py \
+            ci/layerb_16385_32769_chunk_operand_adapter_v0_1.py \
+            ci/layerb_16385_to_32769_canonical_chunk_refinement_v0_1.py \
+            ci/layerb_32769_chunk_one_live_guard_v0_1.py \
+            ci/layerb_16385_to_32769_chunk_one_run_authorizer_v0_1.py \
+            ci/layerb_16385_to_32769_chunk_terminal_consumer_v0_1.py
+          bash -n scripts/dsir4/prepare_layerb_chunk_science_inputs_v0_1.sh
+          python3 - <<'PY' | tee audit_compile/synthetic.txt
+          import importlib.util,json,numpy as np
+          from pathlib import Path
+          p=Path('ci/layerb_chunk_call_codec_v0_1.py'); spec=importlib.util.spec_from_file_location('codec',p); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          calls=[(0.295,np.asarray([1.0,2.0,3.0],dtype='<f8')),(2.33,np.asarray([4.0],dtype='<f8'))]
+          enc=m.encode_calls(calls); dec=m.decode_calls(enc)
+          assert m.calls_digest(calls)==m.calls_digest(dec)
+          for (_,a),(_,b) in zip(calls,dec): assert np.array_equal(np.asarray(a,dtype='<f8').view('<u8'),np.asarray(b,dtype='<f8').view('<u8'))
+          x=np.asarray([1.0,-2.5,3.25],dtype='<f8'); assert np.array_equal(x.view('<u8'),m.b64_f8(m.f8_b64(x),len(x)).view('<u8'))
+          q=np.asarray([True,False,True,True,False]); assert np.array_equal(q,m.b64_bool(m.bool_b64(q),len(q)))
+          t=json.load(open('docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_TERMINAL_RESULT_CONTRACT_V0_1.json'))
+          s=t['scientific_semantics']; assert s['relative_tolerance']==1e-3 and s['strict_less_than'] is True and s['h']==1e-4 and s['native_k_per_decade_for_pk']==20.0
+          assert t['post_result_tolerance_change_forbidden'] is True and t['silent_science_retry_forbidden'] is True
+          assert t['covariance_restriction_authorized'] is False and t['Wm_S3_opened'] is False
+          print('LAYERB_16385_TO_32769_CHUNK_COMPILE_SYNTHETIC_PASS_PLUS_0_PLUS_0')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: chunk-production-static-compile-v0-1, path: audit_compile/, retention-days: 90}
+
+  independent-finalizer:
+    if: always()
+    needs: [source-identities, scientific-delta, workflow-topology, compile-synthetic]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/download-artifact@v4
+        with: {pattern: 'chunk-production-static-*-v0-1', path: downloaded}
+      - name: Independently require all four audit receipts
+        run: |
+          set -euo pipefail
+          mkdir -p final
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          text='\n'.join(p.read_text() for p in Path('downloaded').rglob('*.txt'))
+          tokens=[
+            'LAYERB_16385_TO_32769_CHUNK_SOURCE_IDENTITIES_PASS_PLUS_0_PLUS_0',
+            'LAYERB_16385_TO_32769_CHUNK_ACQUISITION_ONLY_DELTA_PASS_PLUS_0_PLUS_0',
+            'LAYERB_16385_TO_32769_CHUNK_WORKFLOW_TOPOLOGY_PASS_PLUS_0_PLUS_0',
+            'LAYERB_16385_TO_32769_CHUNK_COMPILE_SYNTHETIC_PASS_PLUS_0_PLUS_0'
+          ]
+          missing=[x for x in tokens if text.count(x)!=1]
+          out={'schema':'LAYERB_16385_TO_32769_CHUNK_PRODUCTION_STATIC_AUDIT_V0_1','effect':'+0/+0','classification':'LAYERB_16385_TO_32769_CHUNK_PRODUCTION_STATIC_AUDIT_PASS_PLUS_0_PLUS_0' if not missing else 'LAYERB_16385_TO_32769_CHUNK_PRODUCTION_STATIC_AUDIT_FAIL_PLUS_0_PLUS_0','required_receipts':tokens,'missing_or_duplicate_receipts':missing,'scientific_response_read':False,'scientific_execution_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,'launch_authorized':False}
+          Path('final/static_audit.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['classification']); raise SystemExit(0 if not missing else 47)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: chunk-production-static-final-v0-1, path: final/, retention-days: 90}
