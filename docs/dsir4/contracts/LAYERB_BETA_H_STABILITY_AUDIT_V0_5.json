@@ -1,0 +1,55 @@
+{
+  "schema": "LAYERB_BETA_H_STABILITY_AUDIT_CONTRACT_V0_5",
+  "status": "PROSPECTIVELY_FROZEN_BEFORE_H_SWEEP_EXECUTION",
+  "parent_run_id": 34716548551,
+  "parent_classification": "DIRECT_K_DOES_NOT_SUPPORT_INTERPOLATION_DOMINANCE_H_STABILITY_NEXT",
+  "parent_decision_artifact_id": 10305170560,
+  "probe_manifest": "docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4.json",
+  "probe_manifest_sha256": "6ec35db06d66ac7d03f97f57f9d270d84804ee264508d4601ae33c4175a903d4",
+  "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+  "baseline": "configs/dsir4/c2/ide0_reference_v0_1.ini",
+  "precision": "configs/dsir4/c2/dsir_ide_p8_v0_1.pre",
+  "frozen_response_engine_source": "ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py",
+  "native_k_per_decade_for_pk": 20.0,
+  "production_h": 0.0001,
+  "h_values": [0.0004, 0.0002, 0.0001, 0.00005, 0.000025],
+  "relative_tolerance": 0.001,
+  "strict_less_than": true,
+  "probe_counts": {
+    "unique_failing_zk_coordinates": 23,
+    "unique_control_zk_coordinates": 23,
+    "unique_all_zk_coordinates": 46
+  },
+  "parallel_partitions": ["DES", "BOSS_GL64", "INVARIANT_AUDIT"],
+  "direct_beta_definition_at_each_h": "abs((d_m(beta=+h)-d_m(beta=-h))/(2*h)) at exact requested target k inserted via CLASS k_output_values",
+  "relative_difference_definition": "abs(a-b)/max(abs(a),abs(b),binary64_tiny)",
+  "coordinate_h_spread_definition": "max pairwise relative difference among the five pre-registered direct-beta responses at a fixed (z,k)",
+  "pre_registered_decision": {
+    "h_dependent_conditioning_strongly_supported": "Exact target-k binding and invariants pass; matched-control max h-spread is < 0.001; and at least 75 percent of unique failing coordinates have h-spread >= 0.001.",
+    "h_stable_direct_response": "Exact target-k binding and invariants pass; matched-control max h-spread is < 0.001; and max h-spread over unique failing coordinates is < 0.001.",
+    "mixed_h_dependence": "Exact target-k binding and invariants pass and matched controls pass, but neither strong h-dependence nor full h-stability rule is met.",
+    "inconclusive": "Any source/probe identity mismatch, nonfinite response, duplicate-coordinate disagreement, exact target-k binding mismatch > 1e-12, or matched-control max h-spread >= 0.001 makes the audit diagnostic-inconclusive."
+  },
+  "mandatory_reports": [
+    "failure_fraction_with_h_spread_ge_1e-3",
+    "failure_max_h_spread",
+    "failure_median_h_spread",
+    "control_max_h_spread",
+    "control_median_h_spread",
+    "per_h_response_by_coordinate",
+    "production_h_response_retained_unchanged"
+  ],
+  "forbidden": {
+    "mutate_production_h": true,
+    "change_relative_tolerance": true,
+    "launch_global_65537": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "open_science_gate": true
+  },
+  "effect": "+0/+0",
+  "authorized_next_stage_only_after_terminal_decision": "Use V0.5 only to choose a separately frozen numerical repair/validation path; do not promote a scientific gate directly from this audit."
+}
