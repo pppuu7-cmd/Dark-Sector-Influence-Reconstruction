@@ -1,0 +1,201 @@
+name: layerb-32769-clean-ram-reference-control-v0-1
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: layerb-32769-clean-ram-reference-control-v0-1
+  cancel-in-progress: false
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  MIN_MEMTOTAL_KB: '62914560'
+  REQUIRED_CUSTOM_LABEL: 'dsir-32769-highmem'
+  CONTRACT_BLOB: 'eec2eed8dc9af0b1bf0320ef310fe362e8172910'
+  PROBE_BLOB: 'f8776ae1e9e0c325f1a3f5f01b4388e1c93ef7e2'
+  BUILD_AUTH_BLOB: 'b5cd7304c110962dc3baef8d04ef67d5a8042e5f'
+  CANON_AUTH_BLOB: 'dddf7b0f8596506b9e792186d8ebaf14ff789f4c'
+  CANON_FILE_BLOB: '7b67706156d7d2016ecba0628210fb08f6f05616'
+  ISOLATION_CONTRACT_BLOB: 'd9d910d89889f6d3a27461a73c3dd72c2a9d2096'
+  CONFIGURATOR_SHA256: '2cd02d1a7ac58ea3945a435272f03ea1abe2d7e3410191b5a17a9c62e0a297ce'
+
+jobs:
+  clean-ram-reference:
+    runs-on: [dsir-32769-highmem]
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify frozen identities and clean-RAM contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts external
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_CONTRACT_V0_1.json)" = "$CONTRACT_BLOB"
+          test "$(git hash-object ci/layerb_32769_parser_1mib_single_role_candidate_probe_v0_2.py)" = "$PROBE_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json)" = "$BUILD_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json)" = "$CANON_AUTH_BLOB"
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt)" = "$CANON_FILE_BLOB"
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_32769_HIGH_MEMORY_RUNNER_ISOLATION_CONTRACT_V0_1.json)" = "$ISOLATION_CONTRACT_BLOB"
+          test "$(sha256sum scripts/dsir4/configure_layerb_32769_highmem_runner_v0_1.sh | awk '{print $1}')" = "$CONFIGURATOR_SHA256"
+          python3 - <<'PY'
+          import json
+          c=json.load(open('docs/dsir4/contracts/LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_CONTRACT_V0_1.json'))
+          assert c['required_role']=='reference'
+          assert c['runner_requirements']['min_memtotal_kb']==62914560
+          assert c['runner_requirements']['required_swap_total_kb']==0
+          assert c['runner_requirements']['workflow_must_not_enable_or_create_swap'] is True
+          assert c['scientific_authority'] is False
+          assert c['scientific_execution_authorized'] is False
+          assert c['successor_execution_authorized'] is False
+          PY
+
+      - name: Bind live job to dedicated-runner registration receipt
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test -n "${RUNNER_TEMP:-}"
+          RUNNER_ROOT="$(cd "$(dirname "$(dirname "$RUNNER_TEMP")")" && pwd -P)"
+          RECEIPT="$RUNNER_ROOT/.dsir32769-registration-receipt.json"
+          SETTINGS="$RUNNER_ROOT/.runner"
+          test -f "$RECEIPT"; test -f "$SETTINGS"
+          cp "$RECEIPT" artifacts/runner_registration_receipt.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs?per_page=100" > artifacts/current_run_jobs.json
+          python3 - "$SETTINGS" <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          receipt=json.load(open('artifacts/runner_registration_receipt.json'))
+          settings=json.loads(Path(sys.argv[1]).read_text())
+          agent_name=settings.get('agentName') or settings.get('AgentName')
+          agent_id=settings.get('agentId') or settings.get('AgentId')
+          assert receipt['configuration_script_sha256']==os.environ['CONFIGURATOR_SHA256']
+          assert receipt['runner_isolation_contract_git_blob']==os.environ['ISOLATION_CONTRACT_BLOB']
+          assert receipt['configured_labels']==[os.environ['REQUIRED_CUSTOM_LABEL']]
+          assert receipt['no_default_labels'] is True
+          assert receipt['runner_name']==agent_name==os.environ.get('RUNNER_NAME')
+          assert receipt['runner_agent_id']==agent_id
+          jobs=json.load(open('artifacts/current_run_jobs.json')).get('jobs',[])
+          matches=[j for j in jobs if j.get('name')=='clean-ram-reference']
+          assert len(matches)==1,matches
+          j=matches[0]
+          assert j.get('runner_id')==agent_id and j.get('runner_name')==agent_name
+          assert j.get('labels')==[os.environ['REQUIRED_CUSTOM_LABEL']],j.get('labels')
+          PY
+
+      - name: Enforce physical-RAM-only envelope
+        shell: bash
+        run: |
+          set -euo pipefail
+          MEMTOTAL_KB=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo)
+          SWAPTOTAL_KB=$(awk '/^SwapTotal:/ {print $2}' /proc/meminfo)
+          SWAPFREE_KB=$(awk '/^SwapFree:/ {print $2}' /proc/meminfo)
+          test -n "$MEMTOTAL_KB"; test -n "$SWAPTOTAL_KB"; test -n "$SWAPFREE_KB"
+          {
+            echo "memtotal_kb=$MEMTOTAL_KB"
+            echo "swaptotal_kb=$SWAPTOTAL_KB"
+            echo "swapfree_kb=$SWAPFREE_KB"
+            echo "min_memtotal_kb=$MIN_MEMTOTAL_KB"
+            echo "swap_was_modified_by_workflow=false"
+          } > artifacts/clean_ram_envelope_before.txt
+          cat artifacts/clean_ram_envelope_before.txt
+          if [ "$MEMTOTAL_KB" -lt "$MIN_MEMTOTAL_KB" ]; then echo 'INSUFFICIENT_PHYSICAL_RAM_FOR_CLEAN_CONTROL'; exit 61; fi
+          if [ "$SWAPTOTAL_KB" -ne 0 ]; then echo 'SWAP_MUST_BE_DISABLED_BEFORE_RUNNER_START'; exit 62; fi
+
+      - name: Verify native prerequisites and create isolated Python stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v python3; command -v gcc; command -v g++; command -v gfortran; command -v make
+          pkg-config --exists gsl || { echo 'GSL_DEV_NOT_AVAILABLE'; exit 31; }
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+
+      - name: Build pinned CLASS-IV parser-corrected 32769 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          git clone -q https://github.com/kaeonikc/class_iv.git external/class_iv
+          git -C external/class_iv checkout -q "$CLASS_COMMIT"
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 32769',1))
+          q=Path('external/class_iv/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 1048576',1))
+          assert __import__('hashlib').sha256(q.read_bytes()).hexdigest()=='2d775ca12da2c79b3700672fa66d290d5a06458a5253ea1e2c51b44ac2374092'
+          PY
+          python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external/class_iv
+          python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external/class_iv
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('external/class_iv/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          make -C external/class_iv -j2 all >/dev/null
+
+      - name: Execute exactly one response-blind reference compute with telemetry
+        shell: bash
+        run: |
+          set -uo pipefail
+          export PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH"
+          (
+            while true; do
+              printf 'TELEMETRY ts=%s ' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> artifacts/telemetry.log
+              awk '/^(MemTotal|MemAvailable|SwapTotal|SwapFree):/ {printf "%s%s=%s%s ",$1,$2,$3,$4} END {print ""}' /proc/meminfo >> artifacts/telemetry.log
+              ps -eo pid,ppid,rss,vsz,%cpu,%mem,etime,comm --sort=-rss | head -n 8 >> artifacts/telemetry.log || true
+              sleep 10
+            done
+          ) &
+          MON=$!; cleanup(){ kill "$MON" 2>/dev/null || true; wait "$MON" 2>/dev/null || true; }; trap cleanup EXIT INT TERM
+          set +e
+          PYTHONPATH="$GITHUB_WORKSPACE/external/class_iv/python:${PYTHONPATH:-}" .venv/bin/python ci/layerb_32769_parser_1mib_single_role_candidate_probe_v0_2.py \
+            --role reference \
+            --canonical-authority docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json \
+            --build-authority docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json \
+            --fine docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt \
+            --jo-script ci/exp073jo_article3_jm_canonical_8193_one_live_resource_pilot_v0_1.py \
+            --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py \
+            --baseline configs/dsir4/c2/ide0_reference_v0_1.ini \
+            --precision configs/dsir4/c2/dsir_ide_p8_v0_1.pre \
+            --out artifacts/reference_result.json
+          rc=$?
+          set -e; cleanup; trap - EXIT INT TERM
+          grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree):' /proc/meminfo > artifacts/clean_ram_envelope_after.txt
+          python3 - "$rc" <<'PY'
+          import json,sys
+          from pathlib import Path
+          rc=int(sys.argv[1]); d=json.load(open('artifacts/reference_result.json'))
+          before=dict(line.strip().split('=',1) for line in Path('artifacts/clean_ram_envelope_before.txt').read_text().splitlines())
+          after={}
+          for line in Path('artifacts/clean_ram_envelope_after.txt').read_text().splitlines():
+              k,v=line.split(':',1); after[k]=int(v.strip().split()[0])
+          assert int(before['swaptotal_kb'])==0 and after['SwapTotal']==0
+          assert int(before['memtotal_kb'])>=62914560
+          assert d.get('role')=='reference'
+          assert d.get('scientific_transfer_values_read') is False
+          assert d.get('scientific_response_read') is False
+          assert d.get('convergence_metric_computed') is False
+          assert d.get('high_memory_resource_lifecycle_preflight_pass_created') is False
+          assert d.get('successor_execution_authorized') is False
+          if d.get('classification')=='LAYERB_32769_PARSER_1MIB_SINGLE_ROLE_CANDIDATE_V02_PASS_PLUS_0_PLUS_0':
+              assert rc==0 and d.get('compute_completed') is True
+          else:
+              raise SystemExit(63)
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-32769-clean-ram-reference-control-v0-1
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 90
