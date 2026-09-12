@@ -1,0 +1,20 @@
+{
+  "schema": "LAYERB_BETA_FD_REPAIR_LAUNCH_V0_6",
+  "status": "AUTHORIZED_AFTER_TERMINAL_V0_5_DECISION",
+  "parent_run_id": 34717972131,
+  "parent_classification": "H_DEPENDENT_CONDITIONING_STRONGLY_SUPPORTED",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_FINITE_DIFFERENCE_REPAIR_VALIDATION_V0_6.json",
+  "contract_commit": "228f8b9ede9a4e79db06acc59392fc46ccfdb87c",
+  "executor": "ci/layerb_beta_fd_repair_v0_6.py",
+  "executor_commit": "9a72c63f059e7ce41bd2d6aa2cee49c445f57cd3",
+  "executor_sha256": "0366087de06bea6ca48cf16b09a2a595376693a2ebc590f09041f863b639c5bc",
+  "workflow": ".github/workflows/layerb-beta-fd-repair-v0-6.yml",
+  "workflow_commit": "7004386692392d65fb16e840c1c5e5d1b8a03251",
+  "parallel_domains": ["D", "B"],
+  "effect": "+0/+0",
+  "production_h_mutated": false,
+  "global_65537_authorized": false,
+  "covariance_authorized": false,
+  "Wm_S3_authorized": false,
+  "science_gate_authorized": false
+}
