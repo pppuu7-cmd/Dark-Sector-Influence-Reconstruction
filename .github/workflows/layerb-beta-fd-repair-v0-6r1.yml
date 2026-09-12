@@ -1,0 +1,101 @@
+name: layerb-beta-fd-repair-v0-6r1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_BETA_FD_REPAIR_V0_6R1_LAUNCH.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  PARENT_RUN_ID: '34719180791'
+  RECOVERY_CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_FD_REPAIR_V0_6R1_INFRA_RECOVERY.json'
+  SCIENCE_CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_FINITE_DIFFERENCE_REPAIR_VALIDATION_V0_6.json'
+  EXECUTOR: 'ci/layerb_beta_fd_repair_v0_6.py'
+
+jobs:
+  recovery-decision:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify frozen recovery provenance and source artifact metadata
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          R=json.load(open('docs/dsir4/contracts/LAYERB_BETA_FD_REPAIR_V0_6R1_INFRA_RECOVERY.json'))
+          C=json.load(open('docs/dsir4/contracts/LAYERB_BETA_FINITE_DIFFERENCE_REPAIR_VALIDATION_V0_6.json'))
+          assert R['status']=='PROSPECTIVELY_FROZEN_BEFORE_RECOVERY_EXECUTION'
+          assert R['parent_science_run_id']==34719180791
+          assert R['reuse_only_existing_science_artifacts'] is True
+          assert R['recompute_domain_science'] is False
+          assert R['decision_rule_changed'] is False and R['thresholds_changed'] is False
+          assert R['production_h_changed'] is False
+          assert hashlib.sha256(Path(R['frozen_executor']).read_bytes()).hexdigest()==R['frozen_executor_sha256']==C['executor_sha256']
+          assert R['effect']=='+0/+0'
+          assert not R['covariance_authorized'] and not R['Wm_S3_authorized'] and not R['science_gate_authorized']
+          PY
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$GH_REPO/actions/runs/$PARENT_RUN_ID/artifacts?per_page=100" > /tmp/artifacts.json
+          python3 - <<'PY'
+          import json
+          R=json.load(open('docs/dsir4/contracts/LAYERB_BETA_FD_REPAIR_V0_6R1_INFRA_RECOVERY.json'))
+          A=json.load(open('/tmp/artifacts.json'))['artifacts']
+          by_name={x['name']:x for x in A}
+          mapping={
+            'D':'layerb-beta-fd-repair-D-v0-6',
+            'B':'layerb-beta-fd-repair-B-v0-6',
+            'invariant':'layerb-beta-fd-repair-invariant-v0-6',
+          }
+          for key,name in mapping.items():
+              x=by_name[name]; e=R['artifacts'][key]
+              assert x['id']==e['artifact_id'], (key,x['id'],e['artifact_id'])
+              assert x.get('digest')==e['sha256'], (key,x.get('digest'),e['sha256'])
+              assert not x['expired']
+          print('PASS_V0_6R1_SOURCE_ARTIFACT_METADATA')
+          PY
+
+      - name: Install decision-only numerical dependency
+        run: |
+          set -euo pipefail
+          python3 -m venv .decision-venv
+          .decision-venv/bin/python -m pip install --upgrade pip >/dev/null
+          .decision-venv/bin/python -m pip install 'numpy==1.26.4' >/dev/null
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-fd-repair-*-v0-6
+          path: inputs
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: 34719180791
+
+      - name: Apply unchanged pre-registered V0.6 decision rule only
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          test -f inputs/invariant.json
+          test -f inputs/fd_D.json
+          test -f inputs/fd_B.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('inputs/invariant.json'))
+          assert d['pass'] is True and d['token']=='PASS_LAYERB_BETA_FD_REPAIR_INVARIANTS_V0_6'
+          PY
+          .decision-venv/bin/python "$EXECUTOR" --mode decision --contract "$SCIENCE_CONTRACT" --executor "$EXECUTOR" --inputs inputs/fd_D.json inputs/fd_B.json --out safe/decision.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-fd-repair-decision-v0-6r1
+          path: safe/decision.json
+          retention-days: 90
