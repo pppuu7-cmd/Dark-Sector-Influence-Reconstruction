@@ -44,6 +44,15 @@ jobs:
               if name=='v141_method':
                   wf=d.get('workflow',{}); jobs=wf.get('jobs',{}); agg=d.get('aggregate',{})
                   return wf.get('conclusion')=='success' and isinstance(jobs.get('independent_finalizer'),int) and agg.get('missing_roles')==[]
+              if name=='v142_resource':
+                  wf=d.get('workflow',{}); agg=d.get('aggregate',{})
+                  return (
+                      isinstance(wf.get('independent_finalizer_job_id'),int)
+                      and isinstance(wf.get('validated_run_id'),int)
+                      and agg.get('chunks_seen')==list(range(8))
+                      and agg.get('missing_chunks')==[]
+                      and agg.get('failures')==[]
+                  )
               return d.get('artifact_verified_independently') is True
           assert c['schema']=='LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1'
           for group in ('authority_bindings','source_bindings'):
