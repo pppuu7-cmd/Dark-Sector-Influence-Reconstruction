@@ -50,7 +50,8 @@ jobs:
           nodebytes=b''.join(struct.pack('<Q',int(x,16)) for x in lines)
           assert hashlib.sha256(nodebytes).hexdigest()==c['canonical']['node_payload_sha256']
           src=Path('ci/layerb_32769_chunk_response_blind_resource_probe_v0_1.py').read_bytes()
-          assert hashlib.sha256(src).hexdigest()=='5c07a938682ac52207df73148f5307d66552e17b'
+          git_blob_sha=hashlib.sha1(b'blob '+str(len(src)).encode()+b'\0'+src).hexdigest()
+          assert git_blob_sha=='5c07a938682ac52207df73148f5307d66552e17b'
           tree=ast.parse(src.decode())
           forbidden={'get_transfer','pk','get_pk','raw_cl','lensed_cl'}
           bad=[n.attr for n in ast.walk(tree) if isinstance(n,ast.Attribute) and n.attr in forbidden]
