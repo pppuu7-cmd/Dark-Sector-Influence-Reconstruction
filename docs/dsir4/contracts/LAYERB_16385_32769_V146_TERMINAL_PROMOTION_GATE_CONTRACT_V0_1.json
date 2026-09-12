@@ -1,0 +1,48 @@
+{
+  "schema": "LAYERB_16385_32769_V146_TERMINAL_PROMOTION_GATE_CONTRACT_V0_1",
+  "scope": "Prospective scientific-promotion gate for any terminal 16385-to-32769 result emitted by V146 recovery run 34702943923. No terminal result may become durable scientific authority unless all independent method/provenance controls pass exactly.",
+  "frozen_before_terminal_result": true,
+  "recovery_run_id": 34702943923,
+  "required_existing_authorities": {
+    "v141_chunk_method": {"path": "docs/dsir4/authority/LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V0_3.json", "classification": "LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V03_ALL_ROLES_PASS_PLUS_0_PLUS_0"},
+    "v142_chunk_resource": {"path": "docs/dsir4/authority/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_V0_1.json", "classification": "LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_ALL_PASS_PLUS_0_PLUS_0"},
+    "v143_partition_method": {"path": "docs/dsir4/authority/LAYERB_32769_BLINDED_PARTITION_INVARIANCE_V0_1.json", "classification": "LAYERB_32769_BLINDED_PARTITION_INVARIANCE_ALL_ROLES_PASS_PLUS_0_PLUS_0"},
+    "v146_static": {"path": "docs/dsir4/authority/LAYERB_16385_32769_COARSE_RECOVERY_V02_STATIC_AUDIT_V0_1.json", "classification": "LAYERB_16385_32769_RECOVERY_V02_STATIC_AUDIT_PASS_PLUS_0_PLUS_0"},
+    "fine_rebind": {"path": "docs/dsir4/authority/LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_CONTROL_V0_1.json", "classification": "LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_ALL_ROLES_PASS_PLUS_0_PLUS_0"}
+  },
+  "required_pending_authority": {
+    "history_suppression_exact_equivalence": {
+      "expected_path": "docs/dsir4/authority/LAYERB_8193_HISTORY_SUPPRESSION_EXACT_EQUIVALENCE_V0_1.json",
+      "required_classification": "LAYERB_8193_HISTORY_SUPPRESSION_EXACT_EQUIVALENCE_ALL_ROLES_PASS_PLUS_0_PLUS_0",
+      "required_max_absolute_response_difference": 0.0,
+      "required_max_normalized_response_difference": 0.0,
+      "required_minimum_exact_binary64_fraction": 1.0
+    }
+  },
+  "terminal_result_requirements": {
+    "candidate_terminal_science_valid": true,
+    "independent_terminal_science_valid": true,
+    "candidate_and_independent_classification_must_match": true,
+    "candidate_and_independent_max_relative_component_difference_must_match_exactly": true,
+    "allowed_classifications": ["COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0","COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0"],
+    "relative_tolerance": 0.001,
+    "strict_less_than": true,
+    "h": 0.0001,
+    "native_k_per_decade_for_pk": 20.0,
+    "fine_operands_recomputed": false,
+    "retained_fine_response_payloads_must_be_exactly_unchanged": true,
+    "coarse_history_suppression_scientific_parameters_changed": false,
+    "all_four_coarse_role_operands_required": true,
+    "all_four_coarse_role_jobs_must_be_terminal_success": true
+  },
+  "promotion_rules": {
+    "post_result_threshold_change_forbidden": true,
+    "silent_retry_forbidden": true,
+    "method_control_failure_blocks_scientific_promotion_even_if_classifier_is_terminal": true,
+    "green_workflow_status_alone_is_insufficient": true,
+    "raw_terminal_artifacts_must_be_independently_consumed_before_promotion": true,
+    "durable_scientific_authority_may_be_created_only_after_this_gate_passes": true,
+    "covariance_restriction_authorized": false,
+    "Wm_S3_opened": false
+  }
+}
