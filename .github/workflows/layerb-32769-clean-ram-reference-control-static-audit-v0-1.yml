@@ -1,0 +1,150 @@
+name: layerb-32769-clean-ram-reference-control-static-audit-v0-1
+
+on:
+  push:
+    paths:
+      - 'docs/dsir4/contracts/LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_CONTRACT_V0_1.json'
+      - '.github/workflows/layerb-32769-clean-ram-reference-control-v0-1.yml'
+      - '.github/workflows/layerb-32769-clean-ram-reference-control-static-audit-v0-1.yml'
+      - 'ci/layerb_32769_parser_1mib_single_role_candidate_probe_v0_2.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit clean-RAM contract and negative gates
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          p='docs/dsir4/contracts/LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_CONTRACT_V0_1.json'
+          c=json.load(open(p))
+          assert c['schema']=='LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_CONTRACT_V0_1'
+          assert c['effect']=='+0/+0'
+          assert c['required_role']=='reference'
+          assert c['runner_requirements']['no_default_labels'] is True
+          assert c['runner_requirements']['min_memtotal_kb']==62914560
+          assert c['runner_requirements']['required_swap_total_kb']==0
+          assert c['runner_requirements']['workflow_must_not_enable_or_create_swap'] is True
+          assert c['frozen_science']['point_capacity']==32769
+          assert c['frozen_science']['parser_capacity']==1048576
+          assert c['frozen_science']['h']==1e-4
+          assert c['frozen_science']['rel_tol']==1e-3
+          assert c['scientific_authority'] is False
+          assert c['scientific_execution_authorized'] is False
+          assert c['successor_execution_authorized'] is False
+          def gate(mem,swap): return mem>=62914560 and swap==0
+          assert gate(62914560,0)
+          assert not gate(62914559,0)
+          assert not gate(62914560,1)
+          assert not gate(33554432,0)
+          print('CLEAN_RAM_CONTRACT_STATIC_PASS_PLUS_0_PLUS_0')
+          PY
+
+  workflow-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit dormant workflow routing and no-swap mutation
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('.github/workflows/layerb-32769-clean-ram-reference-control-v0-1.yml').read_text()
+          assert 'workflow_dispatch:' in s
+          assert 'runs-on: [dsir-32769-highmem]' in s
+          assert "MIN_MEMTOTAL_KB: '62914560'" in s
+          assert "--role reference" in s
+          assert "SWAPTOTAL_KB" in s and "SWAP_MUST_BE_DISABLED_BEFORE_RUNNER_START" in s
+          forbidden=['mkswap','swapon ','swapoff ','fallocate -l','/swapfile']
+          for x in forbidden:
+              assert x not in s, x
+          assert 'get_transfer' not in s
+          assert '.get_transfer' not in s
+          assert 'convergence_metric' in s
+          assert "scientific_response_read') is False" in s
+          assert "successor_execution_authorized') is False" in s
+          assert 'layerb_32769_response_blind_resource_lifecycle_pilot_v0_2.py' not in s
+          assert s.count('--role reference')==1
+          print('CLEAN_RAM_WORKFLOW_STATIC_PASS_PLUS_0_PLUS_0')
+          PY
+
+  probe-identity-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen parser-corrected probe identity and semantics
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_32769_parser_1mib_single_role_candidate_probe_v0_2.py)" = 'f8776ae1e9e0c325f1a3f5f01b4388e1c93ef7e2'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_32769_CLASS_CAPACITY_BUILD_ENVELOPE_V0_2.json)" = 'b5cd7304c110962dc3baef8d04ef67d5a8042e5f'
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('ci/layerb_32769_parser_1mib_single_role_candidate_probe_v0_2.py').read_text()
+          assert 'PARSER_CAPACITY = 1048576' in s
+          assert 'NODE_COUNT = 32769' in s
+          assert 'c.compute(["transfer"])' in s
+          assert 'get_transfer' not in s
+          assert '"scientific_transfer_values_read": False' in s
+          assert '"convergence_metric_computed": False' in s
+          assert '"successor_execution_authorized": False' in s
+          print('CLEAN_RAM_PROBE_IDENTITY_PASS_PLUS_0_PLUS_0')
+          PY
+
+  independent-finalizer:
+    needs: [contract-audit, workflow-audit, probe-identity-audit]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Finalize only if all independent lanes succeeded
+        env:
+          CONTRACT_RESULT: ${{ needs.contract-audit.result }}
+          WORKFLOW_RESULT: ${{ needs.workflow-audit.result }}
+          PROBE_RESULT: ${{ needs.probe-identity-audit.result }}
+        run: |
+          set -euo pipefail
+          test "$CONTRACT_RESULT" = success
+          test "$WORKFLOW_RESULT" = success
+          test "$PROBE_RESULT" = success
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          paths={
+            'contract':'docs/dsir4/contracts/LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_CONTRACT_V0_1.json',
+            'workflow':'.github/workflows/layerb-32769-clean-ram-reference-control-v0-1.yml',
+            'probe':'ci/layerb_32769_parser_1mib_single_role_candidate_probe_v0_2.py'
+          }
+          d={
+            'schema':'LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_STATIC_AUDIT_V0_1',
+            'classification':'LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_STATIC_AUDIT_PASS_PLUS_0_PLUS_0',
+            'effect':'+0/+0',
+            'scientific_authority':False,
+            'scientific_execution_authorized':False,
+            'clean_reference_execution_authorized':False,
+            'requires_real_runner':True,
+            'required_min_memtotal_kb':62914560,
+            'required_swap_total_kb':0,
+            'required_role':'reference',
+            'lane_results':{
+              'contract':os.environ['CONTRACT_RESULT'],
+              'workflow':os.environ['WORKFLOW_RESULT'],
+              'probe':os.environ['PROBE_RESULT']
+            },
+            'sha256':{k:hashlib.sha256(Path(v).read_bytes()).hexdigest() for k,v in paths.items()}
+          }
+          Path('artifacts/summary.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          print(d['classification'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-clean-ram-reference-control-static-audit-v0-1
+          path: artifacts/summary.json
+          if-no-files-found: error
+          retention-days: 90
