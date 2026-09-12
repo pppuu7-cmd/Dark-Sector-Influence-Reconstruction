@@ -13,6 +13,9 @@ def independently_verified(key,d):
     if key=='v141_method':
         wf=d.get('workflow',{}); jobs=wf.get('jobs',{}); agg=d.get('aggregate',{})
         return wf.get('conclusion')=='success' and isinstance(jobs.get('independent_finalizer'),int) and agg.get('missing_roles')==[]
+    if key=='v142_resource':
+        wf=d.get('workflow',{}); agg=d.get('aggregate',{})
+        return isinstance(wf.get('independent_finalizer_job_id'),int) and agg.get('chunks_seen')==list(range(8)) and agg.get('missing_chunks')==[] and agg.get('failures')==[]
     return d.get('artifact_verified_independently') is True
 
 def main():
@@ -33,10 +36,11 @@ def main():
     for key,path in bindings:
         spec=c.get('authority_bindings',{}).get(key,{})
         try:
-            blob,sha=git_blob(path); d=json.loads(Path(path).read_text()); observed[key]={'path':path,'git_blob':blob,'sha256':sha,'classification':d.get('classification'),'independently_verified':independently_verified(key,d)}
+            blob,sha=git_blob(path); d=json.loads(Path(path).read_text()); verified=independently_verified(key,d)
+            observed[key]={'path':path,'git_blob':blob,'sha256':sha,'classification':d.get('classification'),'independently_verified':verified}
             if blob!=spec.get('git_blob'): errors.append(f'{key} blob mismatch')
             if spec.get('classification') is not None and d.get('classification')!=spec.get('classification'): errors.append(f'{key} classification mismatch')
-            if not independently_verified(key,d): errors.append(f'{key} not independently verified')
+            if not verified: errors.append(f'{key} not independently verified')
         except Exception as e: errors.append(f'{key} validation error {type(e).__name__}: {e}')
     out={
       'schema':'LAYERB_16385_TO_32769_CHUNK_ONE_RUN_AUTHORIZATION_V0_1','effect':'+0/+0',
