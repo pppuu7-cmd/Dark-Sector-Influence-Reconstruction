@@ -1,0 +1,91 @@
+name: Layer-B beta cancellation conditioning v0.3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_BETA_CANCELLATION_CONDITIONING_LAUNCH_V0_3.json'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  RECOVERY_CONTRACT: docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json
+  DIAG: ci/layerb_beta_cancellation_conditioning_v0_3.py
+
+jobs:
+  diagnostic-stream:
+    strategy:
+      fail-fast: false
+      matrix:
+        stream: [census, raw, identity]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and verify all eight retained operands
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p operands
+          python3 - <<'PY' > /tmp/operands.tsv
+          import json
+          c=json.load(open('docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json'))
+          for g in ('coarse','fine'):
+            for r,x in c['retained_operands'][g].items(): print(g,r,x['artifact_id'],x['zip_sha256'],x['operand_sha256'],sep='\t')
+          PY
+          while IFS=$'\t' read -r g r id zsha osha; do
+            mkdir -p "operands/$g/$r"
+            gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "/tmp/${g}-${r}.zip"
+            test "$(sha256sum "/tmp/${g}-${r}.zip" | awk '{print $1}')" = "$zsha"
+            unzip -q "/tmp/${g}-${r}.zip" -d "operands/$g/$r"
+            test "$(sha256sum "operands/$g/$r/operand.json" | awk '{print $1}')" = "$osha"
+          done < /tmp/operands.tsv
+      - name: Download and verify frozen request plan
+        if: matrix.stream == 'census'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p control
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/10303091059/zip" > control.zip
+          test "$(sha256sum control.zip | awk '{print $1}')" = '50e74dace4a017a664077dbc71e5027c69e65757e61f8485fd707f6148613310'
+          unzip -q control.zip -d control
+          test "$(sha256sum control/plan/plan.json | awk '{print $1}')" = 'c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064'
+      - name: Run frozen conditioning stream
+        shell: bash
+        env:
+          STREAM: ${{ matrix.stream }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          case "$STREAM" in
+            census) python3 "$DIAG" census --operands operands --plan control/plan/plan.json --out out/conditioning_census.json ;;
+            raw) python3 "$DIAG" raw --operands operands --out out/raw_role_stability.json ;;
+            identity) python3 "$DIAG" identity --operands operands --out out/beta_numerator_identity.json ;;
+            *) exit 2 ;;
+          esac
+      - uses: actions/upload-artifact@v4
+        with:
+          name: conditioning-${{ matrix.stream }}
+          path: out/*.json
+
+  decision:
+    if: always()
+    needs: [diagnostic-stream]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: conditioning-*
+          merge-multiple: true
+          path: combined
+      - name: Conservative conditioning decision
+        run: python3 "$DIAG" decision --combined combined --out out/cancellation_conditioning_decision.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: conditioning-decision
+          path: out/cancellation_conditioning_decision.json
