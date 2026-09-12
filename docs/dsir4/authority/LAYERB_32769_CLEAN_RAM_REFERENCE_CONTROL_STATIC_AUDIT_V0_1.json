@@ -1,0 +1,42 @@
+{
+  "schema": "LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_STATIC_AUDIT_AUTHORITY_V0_1",
+  "classification": "LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_STATIC_AUDIT_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scientific_authority": false,
+  "scientific_execution_authorized": false,
+  "clean_reference_execution_authorized": false,
+  "requires_real_runner": true,
+  "required_role": "reference",
+  "required_min_memtotal_kb": 62914560,
+  "required_swap_total_kb": 0,
+  "source": {
+    "head_commit": "d46fe1b43821110dd9dbb02edd3a4dfa8c8324a3",
+    "contract_git_blob": "eec2eed8dc9af0b1bf0320ef310fe362e8172910",
+    "control_workflow_git_blob": "59dcf6886512f5f6a1076c9196801477c0642347",
+    "audit_workflow_git_blob": "c0c924bb9e4ddbd4453fbc1941fee2a34ff2ca35",
+    "single_role_probe_git_blob": "f8776ae1e9e0c325f1a3f5f01b4388e1c93ef7e2"
+  },
+  "validation": {
+    "run_id": 34663080404,
+    "contract_audit_job_id": 103469460283,
+    "workflow_audit_job_id": 103469460241,
+    "probe_identity_audit_job_id": 103469460205,
+    "independent_finalizer_job_id": 103469483188,
+    "all_jobs_conclusion": "success",
+    "artifact_id": 10287942224,
+    "artifact_zip_sha256": "ff80beaa01c62fd5ae471255da38eca534f70e80f96366596804f2d7a1ae3161",
+    "summary_json_sha256": "cdbbde5ea8d6ff6a534d8cd8fbd7ca0e0aa6795e3f75c54bba4868be894ff718",
+    "artifact_summary_classification": "LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_STATIC_AUDIT_PASS_PLUS_0_PLUS_0",
+    "artifact_summary_requires_real_runner": true,
+    "artifact_summary_clean_reference_execution_authorized": false,
+    "artifact_summary_scientific_execution_authorized": false
+  },
+  "interpretation": {
+    "v138_added_swap_result_remains_infrastructure_only": true,
+    "clean_control_eliminates_added_swap_as_a_confound": true,
+    "nominal_64gib_class_is_a_control_envelope_not_a_proven_minimum": true,
+    "next_heavy_action_is_exactly_one_clean_reference_probe": true,
+    "four_role_lifecycle_requires_separate_subsequent_authorization": true,
+    "scientific_16385_to_32769_remains_forbidden": true
+  }
+}
