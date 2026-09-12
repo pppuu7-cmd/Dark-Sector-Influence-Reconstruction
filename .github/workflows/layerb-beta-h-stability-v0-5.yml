@@ -1,0 +1,141 @@
+name: layerb-beta-h-stability-v0-5
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_BETA_H_STABILITY_V0_5_LAUNCH.json'
+
+permissions:
+  contents: read
+
+env:
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_H_STABILITY_AUDIT_V0_5.json'
+  PROBES: 'docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4.json'
+  JJ: 'ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py'
+  BASELINE: 'configs/dsir4/c2/ide0_reference_v0_1.ini'
+  PRECISION: 'configs/dsir4/c2/dsir_ide_p8_v0_1.pre'
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+
+jobs:
+  invariant-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify prospectively frozen V0.5 identities
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import hashlib,json
+          C=json.load(open('docs/dsir4/contracts/LAYERB_BETA_H_STABILITY_AUDIT_V0_5.json'))
+          P=open('docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4.json','rb').read()
+          J=open('ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py').read()
+          assert C['status']=='PROSPECTIVELY_FROZEN_BEFORE_H_SWEEP_EXECUTION'
+          assert hashlib.sha256(P).hexdigest()==C['probe_manifest_sha256']=='6ec35db06d66ac7d03f97f57f9d270d84804ee264508d4601ae33c4175a903d4'
+          assert C['production_h']==1e-4 and C['h_values']==[4e-4,2e-4,1e-4,5e-5,2.5e-5]
+          assert C['relative_tolerance']==1e-3 and C['strict_less_than'] is True and C['native_k_per_decade_for_pk']==20.0
+          assert 'H=1e-4' in J and 'REL_TOL=1e-3' in J and 'NATIVE_KPD=20.0' in J
+          assert all(C['forbidden'].values())
+          p=json.loads(P); assert p['unique_failure_coordinates']==23 and p['unique_all_coordinates']==46
+          out={'schema':'LAYERB_BETA_H_STABILITY_INVARIANT_AUDIT_V0_5','pass':True,'probe_sha256':hashlib.sha256(P).hexdigest(),'h_values':C['h_values'],'production_h':C['production_h'],'relative_tolerance':C['relative_tolerance'],'class_commit':C['class_commit'],'effect':'+0/+0','covariance_read':False,'Wm_S3_opened':False,'science_gate_opened':False,'token':'PASS_LAYERB_BETA_H_STABILITY_INVARIANTS_V0_5'}
+          open('safe/invariant.json','w').write(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-h-stability-invariant-v0-5
+          path: safe/invariant.json
+          retention-days: 90
+
+  h-sweep-domain:
+    strategy:
+      fail-fast: false
+      matrix:
+        domain: [D, B]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact production numerical stack
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          git clone -q https://github.com/kaeonikc/class_iv.git external_class
+          git -C external_class checkout -q "$CLASS_COMMIT"
+      - name: Reproduce production CLASS exposure and non-scientific capacity/history patches
+        run: |
+          set -euo pipefail
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 128',1))
+          q=Path('external_class/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 16384',1))
+          r=Path('external_class/source/perturbations.c'); s=r.read_text(); old='perhaps_print_variables = perturb_print_variables;'; assert s.count(old)==1; r.write_text(s.replace(old,'perhaps_print_variables = NULL;',1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external_class
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external_class
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" make -C external_class -j2 all >/dev/null
+      - name: Run frozen exact-target-k h sweep
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          .venv/bin/python ci/layerb_beta_h_stability_v0_5.py --domain '${{ matrix.domain }}' --probes "$PROBES" --contract "$CONTRACT" --jj-script "$JJ" --baseline "$BASELINE" --precision "$PRECISION" --out safe/h_${{ matrix.domain }}.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-h-stability-${{ matrix.domain }}-v0-5
+          path: safe/h_${{ matrix.domain }}.json
+          retention-days: 90
+
+  decision:
+    needs: [invariant-audit, h-sweep-domain]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-h-stability-*-v0-5
+          path: inputs
+          merge-multiple: true
+      - name: Apply pre-registered V0.5 decision rule
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import json,math,statistics
+          inv=json.load(open('inputs/invariant.json')); assert inv['pass'] is True
+          rows=[]; exact=[]
+          for p in ['inputs/h_D.json','inputs/h_B.json']:
+            d=json.load(open(p)); assert d['token']=='PASS_LAYERB_BETA_H_STABILITY_DOMAIN_V0_5'; rows.extend(d['rows']); exact.append(d['max_exact_target_binding_relative_mismatch'])
+          F=[r for r in rows if r['kind']=='F']; C=[r for r in rows if r['kind']=='C']
+          assert len(F)==23 and len(C)==23
+          assert len({(r['z'],r['k']) for r in F})==23 and len({(r['z'],r['k']) for r in C})==23
+          finite=all(math.isfinite(v) for r in rows for v in r['responses_by_h'].values())
+          fs=[r['h_spread'] for r in F]; cs=[r['h_spread'] for r in C]
+          frac=sum(x>=1e-3 for x in fs)/len(fs); fmax=max(fs); fmed=statistics.median(fs); cmax=max(cs); cmed=statistics.median(cs); bind=max(exact)
+          if bind>1e-12 or not finite or cmax>=1e-3:
+            cls='H_STABILITY_AUDIT_INCONCLUSIVE'
+          elif frac>=0.75:
+            cls='H_DEPENDENT_CONDITIONING_STRONGLY_SUPPORTED'
+          elif fmax<1e-3:
+            cls='H_STABLE_DIRECT_BETA_RESPONSE'
+          else:
+            cls='MIXED_H_DEPENDENCE_REQUIRES_LOCALIZED_NUMERICAL_REPAIR_STUDY'
+          next_stage={'H_DEPENDENT_CONDITIONING_STRONGLY_SUPPORTED':'PROSPECTIVELY_FROZEN_FINITE_DIFFERENCE_REPAIR_VALIDATION','H_STABLE_DIRECT_BETA_RESPONSE':'PROSPECTIVELY_FROZEN_UPSTREAM_RESPONSE_CONDITIONING_AUDIT','MIXED_H_DEPENDENCE_REQUIRES_LOCALIZED_NUMERICAL_REPAIR_STUDY':'PROSPECTIVELY_FROZEN_LOCALIZED_H_RESPONSE_CLUSTER_AUDIT','H_STABILITY_AUDIT_INCONCLUSIVE':'NO_SCIENTIFIC_PROMOTION'}[cls]
+          out={'schema':'LAYERB_BETA_H_STABILITY_DECISION_V0_5','classification':cls,'effect':'+0/+0','unique_failure_coordinates':len(F),'unique_control_coordinates':len(C),'failure_fraction_with_h_spread_ge_1e-3':frac,'failure_max_h_spread':fmax,'failure_median_h_spread':fmed,'control_max_h_spread':cmax,'control_median_h_spread':cmed,'max_exact_target_binding_relative_mismatch':bind,'h_values':inv['h_values'],'production_h':inv['production_h'],'relative_tolerance':inv['relative_tolerance'],'production_h_mutated':False,'global_65537_launched':False,'covariance_read':False,'Wm_S3_opened':False,'science_gate_opened':False,'next_stage':next_stage,'token':'PASS_LAYERB_BETA_H_STABILITY_DECISION_V0_5'}
+          open('safe/decision.json','w').write(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token'],json.dumps(out,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-h-stability-decision-v0-5
+          path: safe/decision.json
+          retention-days: 90
