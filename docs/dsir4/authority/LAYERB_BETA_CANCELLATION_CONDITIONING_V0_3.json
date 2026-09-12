@@ -1,0 +1,84 @@
+{
+  "schema": "LAYERB_BETA_CANCELLATION_CONDITIONING_AUTHORITY_V0_3",
+  "status": "DURABLE_NUMERICAL_DIAGNOSTIC_AUTHORITY",
+  "created_from_workflow_run_id": 34713309542,
+  "workflow_head_sha": "6b7f6dcc766d6e0ee3577b1d83b8cad213333269",
+  "effect": "+0/+0",
+  "classification": "SYMMETRIC_BETA_SUBTRACTIVE_CANCELLATION_AMPLIFICATION_STRONGLY_SUPPORTED",
+  "diagnostic_only": true,
+  "mechanism_supported": true,
+  "relative_tolerance": 0.001,
+  "strict_less_than": true,
+  "authoritative_derived_beta_max_relative_difference": 0.007384797439715474,
+  "max_relative_difference_by_component": {
+    "alpha": 0.0006776803529834111,
+    "beta": 0.007384797439715474
+  },
+  "frozen_tolerance_violations": {
+    "total": 31,
+    "alpha": 0,
+    "beta": 31,
+    "DES": 19,
+    "BOSS_GL64": 12
+  },
+  "beta_condition_number_failing": {
+    "count": 31,
+    "min": 2020333.9646229534,
+    "median": 48454025.53125602,
+    "max": 809377607.1062485,
+    "p99": 628292728.401481
+  },
+  "beta_condition_number_all": {
+    "count": 83666,
+    "min": 13584.455306893065,
+    "median": 32469.17708906524,
+    "max": 809377607.1062485,
+    "p99": 1021871.6751819374
+  },
+  "raw_role_grid_stability": {
+    "largest_raw_role_relative_grid_shift": 2.3679108102938125e-08,
+    "derived_to_largest_raw_role_max_ratio": 311869.7464284629,
+    "global_beta_argmax": {
+      "domain": "DES",
+      "call_index": 318,
+      "target_index": 61,
+      "z": 0.9751,
+      "target_k_Mpc^-1": 0.018930775642054563,
+      "derived_beta_relative_difference": 0.007384797439715474
+    }
+  },
+  "derivative_numerator_identity_verified": true,
+  "derivative_identity_error_max": 0.0,
+  "scientific_operand_recomputed": false,
+  "class_solver_invoked": false,
+  "all_frozen_tolerance_violations_beta_only": true,
+  "artifacts": {
+    "conditioning-census": {
+      "id": 10304665132,
+      "sha256": "7d033160841dc273ff91a96af756cee215d848e5c39b174bb03a9fb8786ad947"
+    },
+    "conditioning-identity": {
+      "id": 10304605269,
+      "sha256": "77a1551a119d8d762e855ef4cef59d009f73e1984485358c34e1fd7d1bb21c81"
+    },
+    "conditioning-raw": {
+      "id": 10303821948,
+      "sha256": "b4b37d8e68f1323f8e844f1266d5bcb64ed304c43b9457cc5022065fc601a651"
+    },
+    "conditioning-decision": {
+      "id": 10303709080,
+      "sha256": "a3e4792b4bca83b02d34e6b89867d387a934580fa9b44f2398c5c4692444bba0"
+    }
+  },
+  "authorization": {
+    "durable_numerical_authority_created": true,
+    "denser_successor_65537_authorized": false,
+    "finite_difference_step_mutation_authorized": false,
+    "criterion_mutation_authorized": false,
+    "covariance_restriction_authorized": false,
+    "Wm_S3_opened": false,
+    "science_gate_opened": false
+  },
+  "interpretation": "The 16385-to-32769 Layer-B residual is strongly localized to numerical conditioning of the symmetric-beta subtraction: raw role values are grid-stable while the derived beta finite difference amplifies tiny raw-role shifts by more than five orders of magnitude. This diagnostic does not by itself determine whether the upstream source is support/interpolation or the finite-difference operator.",
+  "next_permitted_stage": "PROSPECTIVELY_FROZEN_TARGETED_DIRECT_K_BETA_DIAGNOSTIC"
+}
