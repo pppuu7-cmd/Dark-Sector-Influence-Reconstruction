@@ -1,0 +1,16 @@
+{
+  "schema": "LAYERB_BETA_CANCELLATION_CONDITIONING_LAUNCH_V0_3",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_CANCELLATION_CONDITIONING_V0_3.json",
+  "contract_commit": "df1e0a1928768bbacb52bcee225c432253a8eaa7",
+  "diagnostic_script_commit": "037d24dcb009160ef081d5b7a844f4af2d93fa3d",
+  "workflow_commit": "87f27b2445c15e532c867948757549bfe07dd2e5",
+  "purpose": "Launch exactly one prospectively frozen three-stream existing-operand beta cancellation-conditioning diagnostic.",
+  "parallel_streams": ["finite_difference_conditioning_census","raw_role_grid_stability","independent_beta_numerator_identity"],
+  "CLASS_solver_invocation_authorized": false,
+  "scientific_operand_recompute_authorized": false,
+  "finite_difference_step_mutation_authorized": false,
+  "criterion_mutation_authorized": false,
+  "denser_successor_65537_authorized": false,
+  "effect": "+0/+0",
+  "token": "LAUNCH_LAYERB_BETA_CANCELLATION_CONDITIONING_V0_3"
+}
