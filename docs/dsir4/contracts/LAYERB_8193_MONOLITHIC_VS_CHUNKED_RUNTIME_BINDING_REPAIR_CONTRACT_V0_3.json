@@ -1,0 +1,70 @@
+{
+  "schema": "LAYERB_8193_MONOLITHIC_VS_CHUNKED_RUNTIME_BINDING_REPAIR_CONTRACT_V0_3",
+  "scope": "DSIR Article III support/resource-route validation only",
+  "effect": "+0/+0",
+  "scientific_authority": false,
+  "scientific_execution_authorized": false,
+  "successor_32769_chunked_execution_authorized": false,
+  "parent_science_contract": {
+    "path": "docs/dsir4/contracts/LAYERB_8193_MONOLITHIC_VS_CHUNKED_REQUEST_EQUIVALENCE_CONTRACT_V0_1.json",
+    "creation_commit": "da94182fe8818b3bfb369b52da5ac312a1587946",
+    "must_remain_unchanged": true
+  },
+  "parent_runtime_repair": {
+    "path": "docs/dsir4/contracts/LAYERB_8193_MONOLITHIC_VS_CHUNKED_RUNTIME_ISOLATION_REPAIR_CONTRACT_V0_2.json",
+    "must_remain_unchanged": true
+  },
+  "v0_2_terminal": {
+    "run_id": 34666093717,
+    "static_audit_job_id": 103478154593,
+    "role_jobs": {
+      "reference": 103478167685,
+      "alpha_minus": 103478167707,
+      "beta_plus": 103478167723,
+      "beta_minus": 103478167688
+    },
+    "both_class_builds_completed_in_all_roles": true,
+    "response_computation_reached": false,
+    "comparison_reached": false,
+    "scientific_result_created": false,
+    "failure_stage": "runtime-binding guard",
+    "diagnosis": "The V0.2 guard used grep -qx against patched C macro lines. Import-path checks did not emit their explicit bad-binding messages; all four roles then exited silently at the guard before response computation, consistent with overly strict exact-line macro matching rather than a scientific failure.",
+    "classification": "INFRASTRUCTURE_GUARD_VALIDATION_FAILURE_PLUS_0_PLUS_0"
+  },
+  "only_authorized_v0_3_change": {
+    "replace_exact_line_grep_with_python_macro_parser": true,
+    "write_diagnostic_binding_receipt_before_enforcement": true,
+    "single_binding_probe_must_pass_before_role_matrix_starts": true,
+    "monolithic_virtualenv": ".venv_mono",
+    "chunk_virtualenv": ".venv_chunk",
+    "expected_monolithic_point_capacity": 8193,
+    "expected_monolithic_parser_capacity": 262144,
+    "expected_chunk_point_capacity": 2304,
+    "expected_chunk_parser_capacity": 65536
+  },
+  "unchanged_frozen_semantics": {
+    "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+    "h": 0.0001,
+    "native_k_per_decade_for_pk": 20.0,
+    "canonical_node_count": 8193,
+    "roles": [
+      ["reference", 0.0, 0.0],
+      ["alpha_minus", -0.0001, 0.0],
+      ["beta_plus", 0.0, 0.0001],
+      ["beta_minus", 0.0, -0.0001]
+    ],
+    "z_probes": [0.295, 0.7, 1.0, 1.5, 2.0, 2.33],
+    "monolithic_slice": [0, 8193],
+    "chunk_slices": [[0, 2049], [2049, 4097], [4097, 6145], [6145, 8193]],
+    "lookup_relative_tolerance": 1e-12,
+    "max_normalized_response_difference": 1e-12,
+    "response_component": "d_m"
+  },
+  "forbidden": [
+    "No change to the V0.1 preregistered support/science contract.",
+    "No change to response-dump or comparator helpers.",
+    "No tolerance, grid, role, z-probe, CLASS commit, h or native-k-density change.",
+    "No 32769 chunked scientific execution from this contract.",
+    "No covariance, whitening, nuisance, relation/null or Wm_S3 access."
+  ]
+}
