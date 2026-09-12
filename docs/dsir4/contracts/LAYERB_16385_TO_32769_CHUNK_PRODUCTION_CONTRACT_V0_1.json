@@ -9,7 +9,7 @@
     "v142_resource": {"path": "docs/dsir4/authority/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_V0_1.json", "git_blob": "edbb20eb798a188e88a49a6cde14d3c37c31c04c", "classification": "LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_ALL_PASS_PLUS_0_PLUS_0"},
     "v143_method": {"path": "docs/dsir4/authority/LAYERB_32769_BLINDED_PARTITION_INVARIANCE_V0_1.json", "git_blob": "38a0f394e8f609298d9a33ca3c007405f7f95850", "classification": "LAYERB_32769_BLINDED_PARTITION_INVARIANCE_ALL_ROLES_PASS_PLUS_0_PLUS_0"},
     "parent_refinement": {"path": "docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json", "git_blob": "7958e1f44c0224e1828f89b1472aa33226c61886", "classification": "COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0"},
-    "request_plan": {"path": "docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json", "git_blob": "5992faa10b6d25d1503b287c19456fb36756caa4", "classification": "RESPONSE_BLIND_REQUEST_PLAN_AUDITED_PLUS_0_PLUS_0"}
+    "request_plan": {"path": "docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json", "git_blob": "5992faa10b6d25d1503b2800fd8445a0023650c4ad084df36a538cbb85f9e723aa92", "classification": "RESPONSE_BLIND_REQUEST_PLAN_AUDITED_PLUS_0_PLUS_0"}
   },
   "source_bindings": {
     "frozen_parent_classifier": {"path": "ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py", "git_blob": "5ae2068d65dd45e0813c75fb795e55aa1bda1d5e"},
@@ -23,7 +23,7 @@
     "chunk_operand_adapter": {"path": "ci/layerb_16385_32769_chunk_operand_adapter_v0_1.py", "git_blob": "798e83c56d50babbdcab1a57f27662b847b653b4"},
     "chunk_classifier_wrapper": {"path": "ci/layerb_16385_to_32769_canonical_chunk_refinement_v0_1.py", "git_blob": "91c7b2d802d611660f5849ee6ec2db0e4ac3eb0f"},
     "chunk_one_live_guard": {"path": "ci/layerb_32769_chunk_one_live_guard_v0_1.py", "git_blob": "7e67e15352f8b5708eb6e47f277973930fb4e386"},
-    "chunk_one_run_authorizer": {"path": "ci/layerb_16385_to_32769_chunk_one_run_authorizer_v0_1.py", "git_blob": "c5a802d398fe3ab68c861574e22e2820d1077d9f"},
+    "chunk_one_run_authorizer": {"path": "ci/layerb_16385_to_32769_chunk_one_run_authorizer_v0_1.py", "git_blob": "f4086b863f24e312e7acbf9d02b939802d686572"},
     "chunk_terminal_consumer": {"path": "ci/layerb_16385_to_32769_chunk_terminal_consumer_v0_1.py", "git_blob": "00d36e4d0cf34e37c4090effe9e3eef6737bb13b"},
     "chunk_terminal_contract": {"path": "docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_TERMINAL_RESULT_CONTRACT_V0_1.json", "git_blob": "76816b105cb72194107cf7eadffc192900fad6f5"},
     "shared_science_input_preparer": {"path": "scripts/dsir4/prepare_layerb_chunk_science_inputs_v0_1.sh", "git_blob": "458fa7bc29ec3290db357431723f7580bf4044b6"}
