@@ -7,60 +7,51 @@ Canonical 8193->16385 remains independently verified `COMMON_GRID_NEXT_REFINEMEN
 
 Frozen science remains unchanged: `REL_TOL=1e-3`, `h=1e-4`, native kpd20, centered-cubic interpolation, same physical domain/masks/107-row accounting, invalid fraction `<=0.05`, retained `>=15`, unsupported=0 and lookup mismatch `<=1e-12`.
 
-No 16385->32769 scientific execution is authorized or has occurred. `HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS=FALSE`. No real durable resource authority, actual live-guard PASS or current-run-only authorization exists. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
+No 16385->32769 scientific execution is authorized or has occurred. `HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS=FALSE`. No real durable production resource authority, actual live-guard PASS or current-run-only science authorization exists. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
 
-## Parser-corrected infrastructure retained
-Current point capacity is `32769`; parser capacity is `1048576`; pinned CLASS commit is `ac627d54e9ce196a08878d1ba33999819925d19c`; build authority blob is `b5cd7304c110962dc3baef8d04ef67d5a8042e5f`.
+## V141 — 8193 monolithic/chunked method equivalence closed
+Run `34666328865` at head `1bba2b79179a4b51ec6b7a377e2a137df29be883` completed the repaired V0.3 monolithic-vs-four-chunk equivalence control. Static audit, independent runtime-binding probe, all four frozen roles and independent finalizer succeeded. Raw artifacts were independently downloaded and consumed.
 
-V137 prospectively closed the parser-corrected V0.3/V0.2 resource->candidate->promotion->live-guard->authorizer->dormant-science->terminal control plane. Scientific core and strict `<1e-3` classifier are unchanged.
+For `reference`, `alpha_minus`, `beta_plus`, and `beta_minus`: preregistered tolerance remained `1e-12`; max normalized response difference = `0.0`; max absolute response difference = `0.0`; exact binary64 fraction = `1.0`; coordinate ordering exact = true. Runtime binding proves distinct CLASS builds/environments with monolithic point/parser capacities `8193/262144` and chunk capacities `2304/65536`.
 
-## V138 retained — added-swap route negative, infrastructure only
-Run `34659953959` tested five standard GitHub-hosted parser-corrected single-role resource probes: all four frozen roles with +8 GiB added swap and an independent reference with +12 GiB. All five passed identity/build/swap setup and then terminated during response-blind `Class.compute(["transfer"])` with runner shutdown / exit 143 before completed role receipts. No scientific transfer values were read.
+Aggregate artifact `10289113561`, ZIP SHA256 `268f2fa46a1a2d002cc881e27e634a37c3b9e79869958b56272dc1a6a0e0149a`; consumed raw aggregate SHA256 `405ba033dcd0c2fb1b8c283c8b4d992b1d7b34eec9cbf236577fb9fefd3aa745`.
 
-Independent finalizer job `103461606069` classified `LAYERB_32769_HOSTED_EXTRA_SWAP_INFRASTRUCTURE_FAIL_PLUS_0_PLUS_0`; final artifact `10287222231`, ZIP SHA256 `4cb9be648cb448215ee5b9e9d0d649dccd8b212d9b45313b9e39c2b093b1ed9b`.
+Durable authority: `docs/dsir4/authority/LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V0_3.json`, creation commit `91861dfceb891fd466f80467c1bfc207fa0d566b`.
 
-V138 therefore rules out only the specific tested standard-hosted added-swap configurations as successful resource routes. It does **not** establish failure on a sufficiently large physical-RAM machine and does not establish an exact RAM minimum.
+Classification remains method-validation `+0/+0`: it establishes exact 8193 execution-method equivalence only. It does not authorize 32769 chunked science or alter the scientific convergence frontier.
 
-## V139 clean-RAM reference control — prepared and independently audited
-V139 inserts one cleaner control before the full four-role high-memory lifecycle.
+## V141 running — 32769 eight-chunk response-blind resource pilot
+Contract `docs/dsir4/contracts/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_CONTRACT_V0_1.json` freezes eight canonical contiguous chunks, CLASS commit `ac627d54e9ce196a08878d1ba33999819925d19c`, per-job point/parser capacities `4608/131072`, role `reference`, and forbids reading/serializing scientific transfer responses or computing convergence.
 
-Frozen contract `docs/dsir4/contracts/LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_CONTRACT_V0_1.json`, blob `eec2eed8dc9af0b1bf0320ef310fe362e8172910`; dormant workflow `.github/workflows/layerb-32769-clean-ram-reference-control-v0-1.yml`, blob `59dcf6886512f5f6a1076c9196801477c0642347`, routed only to `[dsir-32769-highmem]`.
+The initial launch `34667156663` fail-closed in static audit before computation because the workflow compared a Git blob SHA-1 against ordinary SHA-256. No scientific/resource compute occurred. Smallest repair commit `4153cf0b93fb1554d58ff5f488a14f8a739ae090` changed only the identity calculation to reconstruct Git blob SHA-1; probe, contract, layout and acceptance are unchanged.
 
-Requirements: exactly one `reference` role; frozen dedicated-runner provenance; `MemTotal >= 62914560 kB` as a nominal-64-GiB-class control envelope, not an inferred minimum; `SwapTotal == 0`; no swap mutation; same canonical 32769/parser-corrected build identities; no scientific response read and no successor authorization.
+Repaired run `34667210456` has static-audit job `103481440304` PASS and has queued eight independent hosted `chunk-resource` matrix jobs (`0..7`, `fail-fast:false`) followed by an independent finalizer. Even an all-eight PASS is resource feasibility only and has `successor_authorized=false`.
 
-Static/synthetic audit run `34663080404` passed three independent hosted lanes plus finalizer. Artifact `10287942224`, ZIP SHA256 `ff80beaa01c62fd5ae471255da38eca534f70e80f96366596804f2d7a1ae3161`; `summary.json` SHA256 `cdbbde5ea8d6ff6a534d8cd8fbd7ca0e0aa6795e3f75c54bba4868be894ff718`. Durable authority: `docs/dsir4/authority/LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_STATIC_AUDIT_V0_1.json`.
+## Retained V137–V140 controls
+Parser-corrected production control plane remains frozen: current monolithic point capacity `32769`, parser capacity `1048576`, pinned CLASS commit `ac627d54e9ce196a08878d1ba33999819925d19c`, V0.2 build authority blob `b5cd7304c110962dc3baef8d04ef67d5a8042e5f`. V137 resource->candidate->promotion->live-guard->authorizer->dormant-science->terminal chain remains available but untriggered by any chunk result.
 
-## V140 home runner profile — useful low-memory pool, excluded from 32769
-The user brought `DSIR-HOME-PC` online under WSL2, runner version `2.337.0`. The previously queued superseded generic run `34550495778` was picked up but the latest attempt job `103470879253` failed at native prerequisite checking before any heavy compute because `gfortran` was missing. The stale queued ownership hazard is therefore now terminal and closed; no scientific/resource result was created.
+V138 standard-hosted added-swap route remains a narrow infrastructure negative only; it does not prove failure on sufficient physical RAM.
 
-Environment probe run `34663628847`, job `103471030533`, artifact `10288042655`, ZIP SHA256 `dcc543bd160857ec62985c57f07f0280201c14c01bb79351dd49821fab037b71`, measured WSL `MemTotal=6067840 kB`, `MemAvailable=5382384 kB`, `SwapTotal=16777216 kB`, 8 logical CPUs, Intel i5-1235U. Python/GCC/G++/make/pkg-config/cmake/git are present; `gfortran` and GSL pkg-config are absent; non-interactive sudo is unavailable.
+V139 clean-RAM monolithic reference control remains prospectively frozen on an isolated nominal-64-GiB-class runner with `MemTotal >= 62914560 kB`, `SwapTotal==0`, no scientific readout and no successor authorization. It has not run because no qualifying physical runner is attached.
 
-Host-memory probe run `34663666364`, job `103471138939`, artifact `10288262607`, ZIP SHA256 `ec01e9d561bed83397ffda320c4fef4b42b0ab505239e57a38bf619827bfc88d`, measured Windows total physical memory `8245334016` bytes (~7.68 GiB). Existing `.wslconfig`: `memory=6GB`, `processors=8`, `swap=16GB`.
-
-Durable authority: `docs/dsir4/authority/DSIR_HOME_PC_RESOURCE_PROFILE_V0_1.json`.
-
-Policy: `DSIR-HOME-PC` may be used for scientifically admissible independent tasks that fit the ~6 GiB WSL RAM envelope after required dependencies are available. It MUST NOT run the V139 clean-RAM 32769 reference, V0.3 32769 four-role lifecycle, or 16385->32769 production science. The physical Windows host itself is far below the V139 control envelope, so this is not merely a WSL configuration issue.
+V140 home-runner authority remains binding. `DSIR-HOME-PC` has Windows physical RAM `8245334016` bytes (~7.68 GiB), WSL `MemTotal=6067840 kB`, `SwapTotal=16777216 kB`; it is allowed only for suitable lower-memory independent work and MUST NOT receive V139 clean 32769, monolithic V0.3 32769 lifecycle, or 16385->32769 production science.
 
 ## Exact remaining order
-1. For lower-memory independent DSIR work, the home runner can be used after dependencies are available and only when the task fits its measured resource envelope.
-2. For the 32769 path, attach/configure one separate isolated nominal-64-GiB-class runner with unique name, frozen configurator, `--no-default-labels`, exact label `dsir-32769-highmem`, `MemTotal >= 62914560 kB`, and `SwapTotal == 0` before runner start.
-3. Dispatch **exactly one** dormant clean-RAM `reference` control and independently classify its artifact.
-4. Only after clean-reference PASS decide prospectively whether to dispatch V0.3 four-role response-blind resource lifecycle on that machine.
-5. A real four-role PASS must traverse independent consumer V0.3 -> candidate packaging/materialization V0.2 -> promotion V0.2 -> exact durable resource authority.
-6. Only then may immediate live guard V0.2/current-run authorizer V0.2 permit exactly one dormant scientific 16385->32769 run, followed by strict terminal consumer V0.2.
+1. Consume repaired chunk-resource run `34667210456` after all eight jobs and independent finalizer are terminal; verify every raw response-blind receipt.
+2. If all eight pass, treat that result strictly as tested hosted resource feasibility of the eight low-capacity chunks.
+3. Before any 32769 chunked scientific use, prospectively freeze an independent 32769 numerical-equivalence bridge. The 8193 exact result supports this route but does not authorize extrapolation by itself.
+4. The independent V139 clean-RAM monolithic high-memory control remains available if a qualifying external runner is attached.
+5. No 16385->32769 scientific execution until a valid resource/method authority is explicitly promoted through a fail-closed live guard/current-run authorization and terminal contract.
 
 ## Recovery authority
-Newest immutable note: `docs/recovery/RECOVERY_2026-09-12_ARTICLE3_HOME_RUNNER_PROFILE_V140.md`, creation commit `da23d4c0b5ac39fd5b241ba30c064946e59089d9`.
+Newest immutable note: `docs/recovery/RECOVERY_2026-09-12_ARTICLE3_CHUNK_EQUIVALENCE_V141.md`, creation commit `59e3c61c1cb07cd4e76cb8231659970cbfe2db7b`.
 
 ## Readiness
 `ARTICLE3_REPOSITORY_READINESS: 68%`.
 
 Funnel-freeze/scientific frontier: `67%`.
 
-Operational roadmap: `WORKING_PLAN_COMPLETION: 90%`. Increase from V139 is operational only: the available home runner was physically profiled, its proper low-memory scope was established, and the stale generic queued-run ownership hazard became terminal. Scientific convergence has not advanced.
-
-## Exact next action
-Use `DSIR-HOME-PC` only for lower-memory independent tasks that fit its envelope. Do not send 32769 to it. The 32769 frontier remains one clean-RAM reference on a separate physical high-memory runner with swap disabled. Production science remains forbidden before the real resource chain passes.
+Operational roadmap: `WORKING_PLAN_COMPLETION: 91%`. Increase from V140 is operational/numerical-method only: exact 8193 monolithic-vs-chunked equivalence is durably closed and the preregistered 32769 response-blind chunk resource probe is active. Scientific convergence has not advanced.
 
 ## Automation / ownership
-`DSIR Continuous Research` is enabled hourly. Repository state and live Actions ownership are authoritative. No duplicate heavy science lane is authorized.
+`DSIR Continuous Research` is currently **disabled**: re-enabling was rejected because five other task automations are active. Do not infer hourly DSIR task coverage. GitHub-native workflows and repository state are authoritative. No duplicate heavy science lane is authorized.
