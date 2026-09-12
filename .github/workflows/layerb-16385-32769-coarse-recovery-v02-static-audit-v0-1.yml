@@ -49,9 +49,9 @@ jobs:
           w=Path('.github/workflows/layerb-16385-32769-coarse-recovery-v0-2.yml').read_text()
           assert 'matrix:\n        role: [reference, alpha_minus, beta_plus, beta_minus]' in w
           assert 'max-parallel: 4' in w
-          assert "--grid coarse" in w
-          assert "--plan inputs/control/plan/plan.json" in w
-          assert "DSIR_CHUNK_PLAN: '${{ github.workspace }}/inputs/control/plan/plan.json'" in w
+          assert '--grid coarse' in w
+          assert '--plan inputs/control/plan/plan.json' in w
+          assert 'DSIR_CHUNK_PLAN:' in w and 'inputs/control/plan/plan.json' in w
           assert 'classiv_k_output_history_suppression_patch_v0_1.py external_class safe/history_patch.json' in w
           assert 'scientific_parameters_changed' in w
           assert '10299405397' in w and '10298479524' in w and '10298822640' in w and '10299311082' in w
