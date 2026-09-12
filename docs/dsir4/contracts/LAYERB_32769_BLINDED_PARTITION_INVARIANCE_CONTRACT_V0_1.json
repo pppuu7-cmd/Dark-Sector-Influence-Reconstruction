@@ -1,0 +1,76 @@
+{
+  "schema": "LAYERB_32769_BLINDED_PARTITION_INVARIANCE_CONTRACT_V0_1",
+  "scope": "DSIR Article III execution-method validation at canonical 32769 only",
+  "effect": "+0/+0",
+  "scientific_authority": false,
+  "scientific_execution_authorized": false,
+  "production_16385_to_32769_authorized": false,
+  "covariance_authorized": false,
+  "Wm_S3_authorized": false,
+  "prerequisites": {
+    "resource_authority": "docs/dsir4/authority/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_V0_1.json",
+    "required_resource_classification": "LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_ALL_PASS_PLUS_0_PLUS_0",
+    "8193_method_authority": "docs/dsir4/authority/LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V0_3.json",
+    "required_8193_classification": "LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V03_ALL_ROLES_PASS_PLUS_0_PLUS_0"
+  },
+  "canonical": {
+    "path": "docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt",
+    "node_count": 32769,
+    "node_payload_sha256": "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599",
+    "text_sha256": "7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2"
+  },
+  "frozen_runtime": {
+    "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+    "point_capacity": 4608,
+    "parser_capacity": 131072,
+    "h": 0.0001,
+    "native_k_per_decade_for_pk": 20.0,
+    "baseline": "configs/dsir4/c2/ide0_reference_v0_1.ini",
+    "precision": "configs/dsir4/c2/dsir_ide_p8_v0_1.pre",
+    "z_probes": [0.295,0.7,1.0,1.5,2.0,2.33],
+    "roles": {
+      "reference": [0.0,0.0],
+      "alpha_minus": [-0.0001,0.0],
+      "beta_plus": [0.0,0.0001],
+      "beta_minus": [0.0,-0.0001]
+    }
+  },
+  "partition_A": {
+    "name": "eight_4096ish",
+    "slices": [[0,4097],[4097,8193],[8193,12289],[12289,16385],[16385,20481],[20481,24577],[24577,28673],[28673,32769]]
+  },
+  "partition_B": {
+    "name": "nine_equal_3641",
+    "slices": [[0,3641],[3641,7282],[7282,10923],[10923,14564],[14564,18205],[18205,21846],[21846,25487],[25487,29128],[29128,32769]]
+  },
+  "response_blinding": {
+    "transient_scientific_response_read_is_permitted_only_inside_role_job_for_method_comparison": true,
+    "response_vectors_must_not_be_uploaded": true,
+    "response_vectors_must_not_be_committed": true,
+    "response_vectors_must_not_be_printed": true,
+    "response_vectors_must_be_deleted_before_artifact_upload": true,
+    "permitted_persistent_outputs": ["comparison metrics", "binary response hashes", "runtime binding", "resource telemetry", "provenance"],
+    "forbidden_persistent_outputs": ["transfer dictionaries", "d_m vectors", "pk vectors", "16385-vs-32769 convergence values", "physical interpretation of 32769 response"]
+  },
+  "acceptance": {
+    "both_partitions_cover_exactly_all_32769_nodes_once": true,
+    "coordinate_order_exact": true,
+    "max_requested_node_coordinate_rel_mismatch": 1e-12,
+    "max_normalized_response_difference": 1e-12,
+    "all_four_roles_required": true,
+    "all_six_z_probes_required": true,
+    "post_result_tolerance_change_forbidden": true
+  },
+  "classification": {
+    "pass": "LAYERB_32769_BLINDED_PARTITION_INVARIANCE_ALL_ROLES_PASS_PLUS_0_PLUS_0",
+    "role_pass": "LAYERB_32769_BLINDED_PARTITION_INVARIANCE_ROLE_PASS_PLUS_0_PLUS_0",
+    "numerical_method_fail": "LAYERB_32769_BLINDED_PARTITION_INVARIANCE_NUMERICAL_METHOD_FAIL_PLUS_0_PLUS_0",
+    "infrastructure_fail": "LAYERB_32769_BLINDED_PARTITION_INVARIANCE_INFRASTRUCTURE_FAIL_PLUS_0_PLUS_0"
+  },
+  "interpretation": {
+    "pass_means": "For all four frozen roles and six frozen z probes, two prospectively fixed, materially different partitions of the same canonical 32769 request agree within the unchanged 1e-12 method tolerance while response vectors remain blinded outside the role jobs.",
+    "pass_does_not_mean": "No 16385-to-32769 convergence has been evaluated; no physical 32769 result is promoted; no covariance, nuisance, relation/null or Wm_S3 gate is opened; production science remains unauthorized.",
+    "mismatch_means": "A partition-dependent numerical-method failure, not a physical-model falsification."
+  },
+  "successor_authorized_even_on_pass": false
+}
