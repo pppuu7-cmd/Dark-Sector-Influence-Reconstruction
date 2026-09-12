@@ -1,0 +1,35 @@
+{
+  "schema": "LAYERB_16385_32769_COARSE_RECOVERY_V02_STATIC_AUDIT_AUTHORITY_V0_1",
+  "classification": "LAYERB_16385_32769_RECOVERY_V02_STATIC_AUDIT_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "run_id": 34703048335,
+  "head_sha": "4671539e43339afddfaedf91e487063d3e793b4b",
+  "jobs": {
+    "source_science_audit": 103578077138,
+    "topology_audit": 103578077136,
+    "failure_binding_audit": 103578077009,
+    "independent_finalizer": 103578093809
+  },
+  "all_jobs_terminal_success": true,
+  "aggregate_artifact": {
+    "artifact_id": 10301255917,
+    "zip_sha256": "1cca5ae736c90e9ebf6f1630dfc4c892c18cbb73f9245622f27ce084a3cce899",
+    "raw_static_json_sha256": "bd2d0a2009179eed8f6e80a81847ba1de8d4d15cb994be342ea9da6f1f0a8b03",
+    "missing_or_duplicate_receipts": []
+  },
+  "verified": {
+    "frozen_source_science": true,
+    "coarse_only_recompute_topology": true,
+    "fine_recompute_absent": true,
+    "history_suppression_patch_bound": true,
+    "fine_operand_artifact_ids_bound": true,
+    "v01_failed_before_Class_compute": true,
+    "plan_path_delta_bound": true,
+    "independent_terminal_verifier_present": true
+  },
+  "scientific_response_read": false,
+  "scientific_execution_authorized_by_this_authority": false,
+  "scientific_authority_created": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false
+}
