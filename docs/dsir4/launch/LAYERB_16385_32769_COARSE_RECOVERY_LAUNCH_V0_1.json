@@ -1,0 +1,19 @@
+{
+  "schema": "LAYERB_16385_32769_COARSE_RECOVERY_LAUNCH_V0_1",
+  "authorized_launch_count": 1,
+  "recovery_contract_git_blob": "480e5a76c66a7c0fcaa58564910150abea624899",
+  "recovery_workflow_git_blob": "aef4e3655d9622918f8d6080756ea735171e2986",
+  "initial_production_run_id": 34695347893,
+  "initial_terminal_scientific_classification_created": false,
+  "retained_fine_operands_recompute_authorized": false,
+  "coarse_roles_authorized_for_recompute": ["reference", "alpha_minus", "beta_plus", "beta_minus"],
+  "history_suppression_patch_required": true,
+  "relative_tolerance": 0.001,
+  "strict_less_than": true,
+  "h": 0.0001,
+  "native_k_per_decade_for_pk": 20.0,
+  "post_result_threshold_change_forbidden": true,
+  "silent_retry_after_this_recovery_forbidden": true,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false
+}
