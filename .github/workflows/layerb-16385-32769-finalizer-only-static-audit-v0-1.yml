@@ -1,0 +1,118 @@
+name: layerb-16385-32769-finalizer-only-static-audit-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-16385-32769-finalizer-only-static-audit-v0-1.yml'
+      - '.github/workflows/layerb-16385-32769-finalizer-only-recovery-v0-1.yml'
+      - 'docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json'
+
+permissions:
+  contents: read
+
+jobs:
+  source-contract-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen sources, authorities and science
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out_source
+          python3 - <<'PY' | tee out_source/source.txt
+          import json,subprocess
+          c=json.load(open('docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json'))
+          def blob(p): return subprocess.check_output(['git','hash-object',p],text=True).strip()
+          assert c['frozen_before_terminal_16385_to_32769_result'] is True
+          assert blob(c['v146_failure_authority']['path'])==c['v146_failure_authority']['git_blob']
+          f=json.load(open(c['v146_failure_authority']['path'])); assert f['causal_failure']['frozen_classifier_reached'] is False and f['causal_failure']['scientific_failure_established'] is False
+          for k,x in c['required_method_controls'].items():
+              assert blob(x['path'])==x['git_blob'],k
+              assert json.load(open(x['path']))['classification']==x['classification'],k
+          h=json.load(open(c['required_method_controls']['history_suppression_exact_equivalence']['path'])); assert h['max_absolute_response_difference']==0.0 and h['max_normalized_response_difference']==0.0 and h['minimum_exact_binary64_fraction']==1.0 and h['failures']==[]
+          for k,x in c['frozen_sources'].items(): assert blob(x['path'])==x['git_blob'],k
+          s=c['scientific_semantics']; assert s['relative_tolerance']==0.001 and s['strict_less_than'] is True and s['h']==0.0001 and s['native_k_per_decade_for_pk']==20.0 and s['lookup_relative_tolerance']==1e-12 and s['covariance_restriction_authorized'] is False and s['Wm_S3_opened'] is False
+          print('LAYERB_FINALIZER_ONLY_SOURCE_CONTRACT_AUDIT_PASS_PLUS_0_PLUS_0')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: finalizer-only-static-source, path: out_source/, retention-days: 90}
+
+  topology-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify no operand recomputation and exact env repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out_topology
+          python3 - <<'PY' | tee out_topology/topology.txt
+          from pathlib import Path
+          w=Path('.github/workflows/layerb-16385-32769-finalizer-only-recovery-v0-1.yml').read_text()
+          assert "WM_S3_OVERRIDE: 'docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_2.json'" in w
+          assert 'bash scripts/dsir4/prepare_layerb_chunk_science_inputs_v0_1.sh' in w
+          assert 'ci/layerb_16385_to_32769_canonical_chunk_recovery_v0_1.py' in w
+          assert 'ci/layerb_16385_to_32769_chunk_terminal_consumer_v0_1.py' in w
+          assert 'independent-terminal-verifier:' in w and 'prospective-promotion-gate:' in w
+          assert '10301667425' not in w and '10299405397' not in w
+          assert 'ci/layerb_16385_32769_chunk_role_operand_v0_1.py --role' not in w
+          assert 'classiv_k_output_history_suppression_patch_v0_1.py external_class' not in w
+          assert '--grid coarse' not in w and '--grid fine' not in w
+          assert 'recovery_provenance_rebind_only' in w and 'recovery_response_payload_sha256' in w
+          assert 'all_payloads_unchanged' in w
+          print('LAYERB_FINALIZER_ONLY_TOPOLOGY_AUDIT_PASS_PLUS_0_PLUS_0')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: finalizer-only-static-topology, path: out_topology/, retention-days: 90}
+
+  artifact-binding-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify all eight retained operand identities and no recompute authorization
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out_artifacts
+          python3 - <<'PY' | tee out_artifacts/artifacts.txt
+          import json
+          c=json.load(open('docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json'))
+          assert set(c['retained_operands'])=={'coarse','fine'}
+          assert set(c['retained_operands']['coarse'])=={'reference','alpha_minus','beta_plus','beta_minus'}
+          assert set(c['retained_operands']['fine'])=={'reference','alpha_minus','beta_plus','beta_minus'}
+          ids=[x['artifact_id'] for g in c['retained_operands'].values() for x in g.values()]
+          assert len(ids)==8 and len(set(ids))==8
+          assert all(len(x['zip_sha256'])==64 and len(x['operand_sha256'])==64 for g in c['retained_operands'].values() for x in g.values())
+          ex=c['execution']; assert ex['coarse_recompute_authorized'] is False and ex['fine_recompute_authorized'] is False and ex['CLASS_solver_invocation_authorized_in_finalizer'] is False
+          p=c['provenance_rebind']; assert p['required_for_all_eight_operands'] is True and p['responses_f8_b64_must_be_byte_for_byte_unchanged'] is True and p['valid_masks_packbits_b64_must_be_byte_for_byte_unchanged'] is True and p['payload_sha256_must_match_before_and_after'] is True
+          print('LAYERB_FINALIZER_ONLY_ARTIFACT_BINDING_AUDIT_PASS_PLUS_0_PLUS_0')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: finalizer-only-static-artifacts, path: out_artifacts/, retention-days: 90}
+
+  finalizer:
+    if: always()
+    needs: [source-contract-audit, topology-audit, artifact-binding-audit]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with: {pattern: 'finalizer-only-static-*', path: downloaded}
+      - name: Independently aggregate all static receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p final
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          text='\n'.join(p.read_text() for p in Path('downloaded').rglob('*.txt'))
+          req=['LAYERB_FINALIZER_ONLY_SOURCE_CONTRACT_AUDIT_PASS_PLUS_0_PLUS_0','LAYERB_FINALIZER_ONLY_TOPOLOGY_AUDIT_PASS_PLUS_0_PLUS_0','LAYERB_FINALIZER_ONLY_ARTIFACT_BINDING_AUDIT_PASS_PLUS_0_PLUS_0']
+          missing=[x for x in req if text.count(x)!=1]
+          out={'schema':'LAYERB_16385_32769_FINALIZER_ONLY_STATIC_AUDIT_V0_1','classification':'LAYERB_16385_32769_FINALIZER_ONLY_STATIC_AUDIT_PASS_PLUS_0_PLUS_0' if not missing else 'LAYERB_16385_32769_FINALIZER_ONLY_STATIC_AUDIT_FAIL_PLUS_0_PLUS_0','effect':'+0/+0','missing_or_duplicate_receipts':missing,'scientific_response_read':False,'scientific_execution_authorized':False,'coarse_recompute_authorized':False,'fine_recompute_authorized':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('final/static.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['classification']); raise SystemExit(0 if not missing else 51)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: finalizer-only-static-final, path: final/static.json, retention-days: 90}
