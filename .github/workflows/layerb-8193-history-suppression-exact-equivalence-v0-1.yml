@@ -1,0 +1,151 @@
+name: layerb-8193-history-suppression-exact-equivalence-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-8193-history-suppression-exact-equivalence-v0-1.yml'
+      - 'docs/dsir4/contracts/LAYERB_8193_HISTORY_SUPPRESSION_EXACT_EQUIVALENCE_CONTRACT_V0_1.json'
+      - 'ci/layerb_8193_history_suppression_equivalence_compare_v0_1.py'
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  CLASS_COMMIT: ac627d54e9ce196a08878d1ba33999819925d19c
+  CANONICAL: docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt
+  BASELINE: configs/dsir4/c2/ide0_reference_v0_1.ini
+  PRECISION: configs/dsir4/c2/dsir_ide_p8_v0_1.pre
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify prospective exact gate and frozen source identities
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,subprocess
+          c=json.load(open('docs/dsir4/contracts/LAYERB_8193_HISTORY_SUPPRESSION_EXACT_EQUIVALENCE_CONTRACT_V0_1.json'))
+          def blob(p): return subprocess.check_output(['git','hash-object',p],text=True).strip()
+          assert c['schema']=='LAYERB_8193_HISTORY_SUPPRESSION_EXACT_EQUIVALENCE_CONTRACT_V0_1'
+          assert blob(c['patch']['path'])==c['patch']['git_blob']
+          assert blob(c['response_dump']['path'])==c['response_dump']['git_blob']
+          assert blob(c['comparator']['path'])==c['comparator']['git_blob']
+          a=c['prospective_acceptance']; assert a['max_absolute_response_difference']==0.0 and a['max_normalized_response_difference']==0.0 and a['exact_binary64_fraction']==1.0 and a['post_result_tolerance_change_forbidden'] is True
+          assert c['runtime']['roles']==['reference','alpha_minus','beta_plus','beta_minus'] and len(c['runtime']['z_probes'])==6
+          print('LAYERB_8193_HISTORY_SUPPRESSION_STATIC_PASS_PLUS_0_PLUS_0')
+          PY
+
+  role-equivalence:
+    needs: [static-audit]
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        role: [reference, alpha_minus, beta_plus, beta_minus]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install isolated stacks
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          for v in .venv_base .venv_patch; do
+            python3 -m venv "$v"
+            "$v/bin/python" -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+            "$v/bin/python" -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          done
+      - name: Build baseline and history-suppressed CLASS from same commit
+        run: |
+          set -euo pipefail
+          mkdir -p safe scratch
+          build_one() {
+            tree="$1"; venv="$2"; patch="$3"
+            git clone -q https://github.com/kaeonikc/class_iv.git "$tree"
+            git -C "$tree" checkout -q "$CLASS_COMMIT"
+            "$venv/bin/python" - "$tree" <<'PY'
+          import sys
+          from pathlib import Path
+          tree=sys.argv[1]
+          p=Path(tree)/'include/perturbations.h'; s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 8193',1))
+          q=Path(tree)/'include/parser.h'; s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 262144',1))
+          PY
+            PATH="$GITHUB_WORKSPACE/$venv/bin:$PATH" "$venv/bin/python" scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py "$tree"
+            PATH="$GITHUB_WORKSPACE/$venv/bin:$PATH" "$venv/bin/python" scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py "$tree"
+            if [ "$patch" = yes ]; then
+              "$venv/bin/python" scripts/dsir4/classiv_k_output_history_suppression_patch_v0_1.py "$tree" "safe/history_patch_${{ matrix.role }}.json"
+            fi
+            "$venv/bin/python" - "$tree" <<'PY'
+          import sys
+          from pathlib import Path
+          p=Path(sys.argv[1])/'python/setup.py'; s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+            PATH="$GITHUB_WORKSPACE/$venv/bin:$PATH" make -C "$tree" -j2 all >/dev/null
+          }
+          build_one external_base .venv_base no
+          build_one external_patch .venv_patch yes
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/history_patch_${{ matrix.role }}.json')); assert d['post_sha256']=='4e9a419d46471ffab74df3d14239e000bf92f2e198edad4d2c7b82f1335f7a4b' and d['scientific_parameters_changed'] is False and d['k_output_values_still_inserted_into_solver_grid'] is True
+          PY
+      - name: Compute transient baseline and patched responses
+        run: |
+          set -euo pipefail
+          .venv_base/bin/python ci/layerb_8193_chunk_equivalence_response_dump_v0_1.py --role '${{ matrix.role }}' --canonical "$CANONICAL" --baseline "$BASELINE" --precision "$PRECISION" --slice-start 0 --slice-end 8193 --expected-point-capacity 8193 --expected-parser-capacity 262144 --out scratch/baseline.json
+          .venv_patch/bin/python ci/layerb_8193_chunk_equivalence_response_dump_v0_1.py --role '${{ matrix.role }}' --canonical "$CANONICAL" --baseline "$BASELINE" --precision "$PRECISION" --slice-start 0 --slice-end 8193 --expected-point-capacity 8193 --expected-parser-capacity 262144 --out scratch/patched.json
+          .venv_base/bin/python ci/layerb_8193_history_suppression_equivalence_compare_v0_1.py --baseline scratch/baseline.json --patched scratch/patched.json --out safe/comparison.json
+          rm -f scratch/baseline.json scratch/patched.json
+          test ! -e scratch/baseline.json && test ! -e scratch/patched.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-8193-history-suppression-${{ matrix.role }}-v0-1
+          path: safe/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Enforce prospective exact gate after evidence upload
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/comparison.json'))
+          assert d['classification']=='LAYERB_8193_HISTORY_SUPPRESSION_EXACT_EQUIVALENCE_PASS_PLUS_0_PLUS_0'
+          assert d['max_absolute_response_difference']==0.0 and d['max_normalized_response_difference']==0.0 and d['exact_binary64_fraction']==1.0
+          PY
+
+  independent-finalizer:
+    if: always()
+    needs: [role-equivalence]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-8193-history-suppression-*-v0-1
+          path: downloaded
+      - name: Independently aggregate four role metrics
+        run: |
+          set -euo pipefail
+          mkdir -p final
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          rows=[json.load(open(p)) for p in Path('downloaded').rglob('comparison.json')]
+          roles=sorted(x['role'] for x in rows); expected=['alpha_minus','beta_minus','beta_plus','reference']
+          failures=[x['role'] for x in rows if x['classification']!='LAYERB_8193_HISTORY_SUPPRESSION_EXACT_EQUIVALENCE_PASS_PLUS_0_PLUS_0' or x['max_absolute_response_difference']!=0.0 or x['max_normalized_response_difference']!=0.0 or x['exact_binary64_fraction']!=1.0]
+          ok=roles==expected and not failures
+          d={'schema':'LAYERB_8193_HISTORY_SUPPRESSION_EXACT_EQUIVALENCE_AGGREGATE_V0_1','effect':'+0/+0','classification':'LAYERB_8193_HISTORY_SUPPRESSION_EXACT_EQUIVALENCE_ALL_ROLES_PASS_PLUS_0_PLUS_0' if ok else 'LAYERB_8193_HISTORY_SUPPRESSION_EXACT_EQUIVALENCE_FAIL_PLUS_0_PLUS_0','roles_seen':roles,'failures':failures,'max_absolute_response_difference':max([x['max_absolute_response_difference'] for x in rows],default=None),'max_normalized_response_difference':max([x['max_normalized_response_difference'] for x in rows],default=None),'minimum_exact_binary64_fraction':min([x['exact_binary64_fraction'] for x in rows],default=None),'scientific_authority':False,'convergence_metric_computed':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('final/aggregate.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n'); print(d['classification']); raise SystemExit(0 if ok else 47)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-8193-history-suppression-aggregate-v0-1
+          path: final/aggregate.json
+          if-no-files-found: error
+          retention-days: 90
