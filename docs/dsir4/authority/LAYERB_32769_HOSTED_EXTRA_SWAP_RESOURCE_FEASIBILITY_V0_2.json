@@ -18,9 +18,9 @@
   "runner_image": "ubuntu-24.04 20260907.300.1",
   "lanes": [
     {"job_id": 103460194789, "lane": "reference-swap8", "role": "reference", "extra_swap_gib": 8, "build_pass": true, "compute_completed": false, "terminal_pattern": "runner_shutdown_exit_143"},
-    {"job_id": 103460194951, "lane": "alpha-minus-swap8", "role": "alpha_minus", "extra_swap_gib": 8, "build_pass": true, "compute_completed": false, "terminal_pattern": "probe_failure_runner_unavailable_for_post_steps"},
+    {"job_id": 103460194951, "lane": "alpha-minus-swap8", "role": "alpha_minus", "extra_swap_gib": 8, "build_pass": true, "compute_completed": false, "terminal_pattern": "runner_shutdown_exit_143"},
     {"job_id": 103460194926, "lane": "beta-plus-swap8", "role": "beta_plus", "extra_swap_gib": 8, "build_pass": true, "compute_completed": false, "terminal_pattern": "runner_shutdown_exit_143"},
-    {"job_id": 103460194973, "lane": "beta-minus-swap8", "role": "beta_minus", "extra_swap_gib": 8, "build_pass": true, "compute_completed": false, "terminal_pattern": "probe_failure_runner_unavailable_for_post_steps"},
+    {"job_id": 103460194973, "lane": "beta-minus-swap8", "role": "beta_minus", "extra_swap_gib": 8, "build_pass": true, "compute_completed": false, "terminal_pattern": "runner_shutdown_exit_143"},
     {"job_id": 103460194914, "lane": "reference-swap12", "role": "reference", "extra_swap_gib": 12, "build_pass": true, "compute_completed": false, "terminal_pattern": "runner_shutdown_exit_143"}
   ],
   "reference_swap12_probe_started_utc": "2026-09-11T23:58:34Z",
