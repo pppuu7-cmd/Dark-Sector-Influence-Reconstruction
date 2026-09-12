@@ -1,0 +1,19 @@
+{
+  "schema": "LAYERB_BETA_FD_REPAIR_V0_6R1_LAUNCH",
+  "status": "AUTHORIZED_INFRASTRUCTURE_RECOVERY_ONLY",
+  "parent_science_run_id": 34719180791,
+  "parent_science_head_sha": "614b1dd660dbc2dbe53fb5597dbfb2cc5df3a106",
+  "recovery_contract": "docs/dsir4/contracts/LAYERB_BETA_FD_REPAIR_V0_6R1_INFRA_RECOVERY.json",
+  "recovery_contract_commit": "c345b7e3a57a35570a772e5559fa967e4ab76185",
+  "workflow": ".github/workflows/layerb-beta-fd-repair-v0-6r1.yml",
+  "workflow_commit": "85276b5205b82602975d37b8255095ed8f8cbd97",
+  "reuse_only_existing_science_artifacts": true,
+  "recompute_domain_science": false,
+  "effect": "+0/+0",
+  "decision_rule_changed": false,
+  "thresholds_changed": false,
+  "production_h_changed": false,
+  "covariance_authorized": false,
+  "Wm_S3_authorized": false,
+  "science_gate_authorized": false
+}
