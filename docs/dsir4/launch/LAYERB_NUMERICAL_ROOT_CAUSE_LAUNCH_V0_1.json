@@ -1,0 +1,12 @@
+{
+  "schema": "LAYERB_NUMERICAL_ROOT_CAUSE_LAUNCH_V0_1",
+  "contract": "docs/dsir4/contracts/LAYERB_NUMERICAL_ROOT_CAUSE_V0_1.json",
+  "contract_commit": "9d91b45b8c8d8184f2e5a511190c1df5f0464f45",
+  "workflow_commit": "f2f1169ab7dafdcbb0d75c4cdb21130c6cf0599b",
+  "purpose": "Launch exactly one prospectively frozen multi-stream diagnostic-only numerical root-cause stage after the independently promoted 16385-to-32769 NOT_CONVERGED authority.",
+  "streams_requested": 3,
+  "scientific_operand_recompute_authorized": false,
+  "denser_successor_65537_authorized": false,
+  "effect": "+0/+0",
+  "token": "LAUNCH_LAYERB_NUMERICAL_ROOT_CAUSE_V0_1"
+}
