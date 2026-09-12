@@ -7,64 +7,78 @@ Canonical 8193->16385 remains independently verified `COMMON_GRID_NEXT_REFINEMEN
 
 Frozen science remains unchanged: `REL_TOL=1e-3`, `h=1e-4`, native kpd20, centered-cubic interpolation, same physical domain/masks/107-row accounting, invalid fraction `<=0.05`, retained `>=15`, unsupported=0 and lookup mismatch `<=1e-12`.
 
-No 16385->32769 scientific execution is authorized or has occurred. `HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS=FALSE`. No real durable resource authority, actual live-guard PASS or current-run-only one-run authorization exists. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
+No 16385->32769 scientific execution is authorized or has occurred. `HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS=FALSE`. No real durable resource authority, actual live-guard PASS or current-run-only authorization exists. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
 
-## Parser-corrected 32769 infrastructure retained from V137
-Canonical 32769 requires parser capacity above the obsolete `524288`; current frozen parser capacity is `1048576`, point capacity `32769`, build authority blob `b5cd7304c110962dc3baef8d04ef67d5a8042e5f`, CLASS commit `ac627d54e9ce196a08878d1ba33999819925d19c`.
+## Parser-corrected infrastructure retained
+Current point capacity is `32769`; parser capacity is `1048576`; pinned CLASS commit is `ac627d54e9ce196a08878d1ba33999819925d19c`; build authority blob is `b5cd7304c110962dc3baef8d04ef67d5a8042e5f`.
 
-The full parser-corrected V0.3/V0.2 resource->candidate->promotion->live-guard->authorizer->dormant-science->terminal control plane was closed prospectively in V137. Scientific core and strict `<1e-3` classifier remain unchanged.
+V137 prospectively closed the parser-corrected V0.3/V0.2 resource->candidate->promotion->live-guard->authorizer->dormant-science->terminal control plane. Scientific core and strict `<1e-3` classifier are unchanged.
 
-Current isolated source workflow remains `.github/workflows/layerb-32769-isolated-highmem-resource-lifecycle-pilot-v0-3.yml`, Git blob `e55c0ab05c6b7eb0d622eadba25d7e20cdc4ce16`, routed only to `[dsir-32769-highmem]`.
+## V138 retained — added-swap route negative, infrastructure only
+Run `34659953959` tested five standard GitHub-hosted parser-corrected single-role resource probes: all four frozen roles with +8 GiB added swap and an independent reference with +12 GiB. All five passed identity/build/swap setup and then terminated during response-blind `Class.compute(["transfer"])` with runner shutdown / exit 143 before completed role receipts. No scientific transfer values were read.
 
-## V138 hosted extra-swap experiment — negative resource result
-V138 tested whether standard GitHub-hosted `ubuntu-24.04` could remove the physical high-memory blocker by adding swap while preserving exact parser-corrected source identities and never reading scientific transfer values.
+Independent finalizer job `103461606069` classified `LAYERB_32769_HOSTED_EXTRA_SWAP_INFRASTRUCTURE_FAIL_PLUS_0_PLUS_0`; final artifact `10287222231`, ZIP SHA256 `4cb9be648cb448215ee5b9e9d0d649dccd8b212d9b45313b9e39c2b093b1ed9b`.
 
-Parser-corrected probe: `ci/layerb_32769_parser_1mib_single_role_candidate_probe_v0_2.py`, blob `f8776ae1e9e0c325f1a3f5f01b4388e1c93ef7e2`.
+V138 therefore rules out only the specific tested standard-hosted added-swap configurations as successful resource routes. It does **not** establish failure on a sufficiently large physical-RAM machine and does not establish an exact RAM minimum.
 
-A first attempt established that extra swap can be activated but exposed only a toolchain-dependent executable-byte assertion. Before rerun, infrastructure-only repair contract `docs/dsir4/contracts/LAYERB_32769_HOSTED_EXTRA_SWAP_RESOURCE_FEASIBILITY_REPAIR_CONTRACT_V0_2.json`, blob `8da137f5ee260fc0aede75c22ed292e47d32157b`, prospectively froze exact source/patch identities while recording rather than equating ELF bytes. Scientific production identities were not changed.
+## V139 clean-RAM reference control — prepared and independently audited
+Because added swap can create paging/thrashing and confound infrastructure interpretation, V139 inserts one cleaner control before the full four-role high-memory lifecycle.
 
-Repaired parallel workflow `.github/workflows/layerb-32769-hosted-extra-swap-resource-feasibility-v0-2.yml`, Git blob `0c7d2b014464d4bd2c9f993b4d093e5109b59cc0`, run `34659953959`, executed five independent lanes:
-- `103460194789` reference +8 GiB swap;
-- `103460194951` alpha_minus +8 GiB;
-- `103460194926` beta_plus +8 GiB;
-- `103460194973` beta_minus +8 GiB;
-- `103460194914` independent reference +12 GiB.
+Frozen contract:
+- `docs/dsir4/contracts/LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_CONTRACT_V0_1.json`;
+- Git blob `eec2eed8dc9af0b1bf0320ef310fe362e8172910`.
 
-All five passed identity checks, swap activation and exact parser-corrected source build, then all five terminated during the response-blind `Class.compute(["transfer"])` probe with hosted-runner shutdown / exit 143 before a completed role receipt existed. The +12 GiB reference ran from approximately `23:58:34Z` to shutdown at `00:05:25Z` and still did not complete.
+Dormant manual workflow:
+- `.github/workflows/layerb-32769-clean-ram-reference-control-v0-1.yml`;
+- Git blob `59dcf6886512f5f6a1076c9196801477c0642347`;
+- routed only to `[dsir-32769-highmem]`.
 
-Independent finalizer job `103461606069` classified the experiment `LAYERB_32769_HOSTED_EXTRA_SWAP_INFRASTRUCTURE_FAIL_PLUS_0_PLUS_0`. Final artifact `10287222231`, ZIP SHA256 `4cb9be648cb448215ee5b9e9d0d649dccd8b212d9b45313b9e39c2b093b1ed9b`; all-four +8 result=false; reference +12 result=false.
+Clean control requirements:
+- exactly one role: `reference`;
+- isolated runner registered with frozen configurator and `--no-default-labels`;
+- `MemTotal >= 62914560 kB` (guard for a nominal 64-GiB-class machine, **not** an inferred minimum-RAM claim);
+- `SwapTotal == 0` before compute;
+- workflow itself must not create, enable, disable or resize swap;
+- same frozen canonical 32769 nodes, CLASS commit, point capacity `32769`, parser capacity `1048576`, compatibility/public-exposure patches and single-role probe blob `f8776ae1e9e0c325f1a3f5f01b4388e1c93ef7e2`;
+- no `get_transfer`, no scientific response read, no convergence metric, no scientific authority and no successor authorization.
 
-Durable authority: `docs/dsir4/authority/LAYERB_32769_HOSTED_EXTRA_SWAP_RESOURCE_FEASIBILITY_V0_2.json`, latest content blob `9a46702839bd08de3c7a27a60dcdbf544977bf76`, latest commit `4b170a6b0bd7575d4a02a771934329560defbefa`.
+Static/synthetic audit run `34663080404` ran three independent hosted lanes plus an independent barrier finalizer:
+- contract/negative gates job `103469460283`: SUCCESS;
+- workflow/no-swap-mutation job `103469460241`: SUCCESS;
+- frozen probe identity job `103469460205`: SUCCESS;
+- finalizer job `103469483188`: SUCCESS.
 
-This is resource/infrastructure FAIL `+0/+0`, not scientific FAIL. No exact minimum RAM is inferred and no linear memory extrapolation is authorized. The tested +8/+12 GiB hosted-swap alternatives are now closed; blind further swap escalation is not justified.
+Raw artifact was consumed after CI completion:
+- artifact `10287942224`;
+- ZIP SHA256 `ff80beaa01c62fd5ae471255da38eca534f70e80f96366596804f2d7a1ae3161`;
+- `summary.json` SHA256 `cdbbde5ea8d6ff6a534d8cd8fbd7ca0e0aa6795e3f75c54bba4868be894ff718`;
+- classification `LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_STATIC_AUDIT_PASS_PLUS_0_PLUS_0`;
+- artifact explicitly records `requires_real_runner=true`, `clean_reference_execution_authorized=false`, `scientific_execution_authorized=false`.
 
-## Fail-closed dependent chain verified
-Before the source result was known, contract `LAYERB_32769_HOSTED_SWAP_SEQUENTIAL_LIFECYCLE_GATE_V0_1`, blob `53c26f82d821ecb39f3be97c3942134ec8452150`, froze a dependent hosted lifecycle only for exact all-four +8 PASS.
+Durable authority: `docs/dsir4/authority/LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_STATIC_AUDIT_V0_1.json`, creation commit `b30cde8957583258e8cfa0cd9daf908352ee838e`, Git blob `3ddf7095540129febcb0c5612f00970e32b214c2`.
 
-Event run `34660445579` failed source-gate job `103461646780` on the unmet all-four-feasible assertion. Dependent sequential lifecycle job `103461686830` and independent verifier `103461686949` were both `skipped`. No dependent resource lifecycle and no science were launched.
+## Exact remaining order
+1. Attach/configure one real isolated runner with unique name, frozen configurator, `--no-default-labels`, exact label `dsir-32769-highmem`, `MemTotal >= 62914560 kB`, and `SwapTotal == 0` before runner start.
+2. Dispatch **exactly one** dormant `layerb-32769-clean-ram-reference-control-v0-1` run.
+3. Consume and independently classify its artifact. PASS only establishes that parser-corrected canonical 32769 `reference` can complete under clean high-physical-RAM conditions.
+4. Only after that PASS decide prospectively whether to dispatch the existing V0.3 four-role response-blind resource lifecycle on the same machine. The clean-reference result does not auto-authorize it.
+5. A real four-role PASS must then traverse independent consumer V0.3 -> candidate packaging/materialization V0.2 -> promotion V0.2 -> exact durable resource authority.
+6. Only then may immediate live guard V0.2/current-run authorizer V0.2 permit exactly one dormant scientific 16385->32769 run, followed by strict terminal consumer V0.2.
 
-## Remaining true blockers
-1. Configure/attach a real isolated higher-memory runner using the frozen configurator, with unique name, `--no-default-labels`, exact label `dsir-32769-highmem`, physical `MemTotal > 16373452 kB`. `32 GiB` is preferred operational guidance only, not a proven minimum.
-2. Dispatch exactly one current V0.3 response-blind measured 32769 lifecycle pilot and obtain a real resource PASS.
-3. Real artifact must pass independent consumer V0.3 -> candidate packaging V0.2 -> materializer V0.2.
-4. Real candidate must pass promotion review V0.2 and reviewed bytes must be deliberately copied byte-for-byte to `docs/dsir4/authority/LAYERB_32769_HIGH_MEMORY_RESOURCE_LIFECYCLE_V0_1.json`.
-5. Inside the first production run, immediate one-live guard V0.2 and current-run-only one-run authorization V0.2 must PASS.
-6. Only then exactly one canonical 16385->32769 scientific run may execute, followed by terminal consumer V0.2 strict classification.
-
-Old superseded run `34550495778` / job `103112190909` remains queued on generic `[self-hosted, Linux, X64]`; it must not receive the dedicated runner.
+Old superseded run `34550495778` / job `103112190909` remains queued on generic `[self-hosted, Linux, X64]` and must not receive the dedicated runner.
 
 ## Recovery authority
-Newest immutable note: `docs/recovery/RECOVERY_2026-09-12_ARTICLE3_HOSTED_EXTRA_SWAP_NEGATIVE_V138.md`, creation commit `8543e0113db2fed88f91c4ffeac49f647c6ed0ab`.
+Newest immutable note: `docs/recovery/RECOVERY_2026-09-12_ARTICLE3_CLEAN_RAM_REFERENCE_CONTROL_V139.md`, creation commit `48d684ce3ac0285fa9b1fcc1ca5444771664cd34`.
 
 ## Readiness
 `ARTICLE3_REPOSITORY_READINESS: 68%`.
 
 Funnel-freeze/scientific frontier: `67%`.
 
-Operational roadmap: `WORKING_PLAN_COMPLETION: 88%`. Increase from V137 is operational only: a plausible hosted resource alternative was actually tested and closed, with its dependent gate proven fail-closed. Scientific convergence has not advanced.
+Operational roadmap: `WORKING_PLAN_COMPLETION: 89%`. Increase from V138 is operational only: the swap-confound concern has been converted into a prospectively frozen, independently audited clean-RAM reference control. Scientific convergence has not advanced.
 
 ## Exact next action
-Do not spend additional standard-hosted runners on arbitrary swap escalation. Attach a qualifying isolated higher-memory runner and dispatch exactly one V0.3 response-blind lifecycle pilot. Production science V0.2 remains forbidden before real measured durable resource authority and live authorization exist.
+Do not run more standard-hosted swap experiments and do not run the four-role lifecycle first. Attach a qualifying high-physical-RAM runner with swap disabled and execute exactly one clean-RAM `reference` control. Production science remains forbidden.
 
 ## Automation / ownership
-`DSIR Continuous Research` is intended to remain enabled hourly. Repository state and live Actions ownership govern all future launches. No duplicate heavy science lane is authorized.
+`DSIR Continuous Research` is enabled hourly. Repository state and live Actions ownership are authoritative. No duplicate heavy science lane is authorized.
