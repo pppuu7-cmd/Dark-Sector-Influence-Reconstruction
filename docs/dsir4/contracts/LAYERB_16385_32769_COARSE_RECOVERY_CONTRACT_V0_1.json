@@ -1,0 +1,38 @@
+{
+  "schema": "LAYERB_16385_32769_COARSE_RECOVERY_CONTRACT_V0_1",
+  "scope": "Exactly one recovery execution after initial production run 34695347893 ended without a terminal classifier because all four monolithic coarse-16385 hosted jobs received runner shutdown signals; preserve the four successful fine-32769 operands byte-for-byte and recompute only four coarse roles.",
+  "effect": "+0/+0 until independently verified terminal classifier",
+  "initial_failure_authority": {"path": "docs/dsir4/authority/LAYERB_16385_32769_INITIAL_PRODUCTION_INFRA_FAILURE_V0_1.json", "git_blob": "506febe5db4335453595b7ce9d82afcad872e5de", "classification": "LAYERB_16385_32769_INITIAL_PRODUCTION_COARSE_INFRA_FAILURE_PLUS_0_PLUS_0"},
+  "history_suppressed_resource_authority": {"path": "docs/dsir4/authority/CLASSIV_HISTORY_SUPPRESSED_16385_DUAL_RESOURCE_PILOT_V0_1.json", "git_blob": "a1e38e6c77452836315e8ab5b2403b55279f4be8", "classification": "CLASSIV_HISTORY_SUPPRESSED_16385_DUAL_RESOURCE_PILOT_PASS_PLUS_0_PLUS_0", "resource_feasibility_pass": true},
+  "history_suppression_patch": {"path": "scripts/dsir4/classiv_k_output_history_suppression_patch_v0_1.py", "git_blob": "e20687e933d665973c3be40598180587701fa8e0", "source_commit": "ac627d54e9ce196a08878d1ba33999819925d19c", "post_sha256": "4e9a419d46471ffab74df3d14239e000bf92f2e198edad4d2c7b82f1335f7a4b", "scientific_parameters_changed": false, "k_output_values_still_inserted_into_solver_grid": true},
+  "recovery_classifier_wrapper": {"path": "ci/layerb_16385_to_32769_canonical_chunk_recovery_v0_1.py", "git_blob": "d196dd0e8e44a6b0c93689a7074655bd98b0e616"},
+  "frozen_original_sources": {
+    "role_operand_worker": {"path": "ci/layerb_16385_32769_chunk_role_operand_v0_1.py", "git_blob": "472a1b7364fc8ca4f7c86e79f336fde702329f8c"},
+    "operand_adapter": {"path": "ci/layerb_16385_32769_chunk_operand_adapter_v0_1.py", "git_blob": "798e83c56d50babbdcab1a57f27662b847b653b4"},
+    "original_classifier_wrapper": {"path": "ci/layerb_16385_to_32769_canonical_chunk_refinement_v0_1.py", "git_blob": "91c7b2d802d611660f5849ee6ec2db0e4ac3eb0f"},
+    "terminal_consumer": {"path": "ci/layerb_16385_to_32769_chunk_terminal_consumer_v0_1.py", "git_blob": "00d36e4d0cf34e37c4090effe9e3eef6737bb13b"},
+    "terminal_contract": {"path": "docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_TERMINAL_RESULT_CONTRACT_V0_1.json", "git_blob": "76816b105cb72194107cf7eadffc192900fad6f5"},
+    "production_contract": {"path": "docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1.json", "git_blob": "1ab0f5b164727bb0c2c7f42ce3a82a1ebb77678d"}
+  },
+  "original_run": {
+    "run_id": 34695347893,
+    "head_sha": "646d93a7cb0e38dc8b3d358f737e47655567055b",
+    "authorization_artifact_id": 10298499340,
+    "authorization_zip_sha256": "4843252067b6b3b1f9b6e805049f441c900a3a4d09062afc44b305a337f63111",
+    "original_authorization_json_sha256": "5a0eb2851e38eabcb693e978803794b77df0bea74bc9de78bee912f472547680",
+    "plan_artifact_id": 10298655751,
+    "plan_zip_sha256": "9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7",
+    "plan_json_sha256": "c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064"
+  },
+  "retained_fine_operands": {
+    "reference": {"artifact_id": 10299405397, "zip_sha256": "dfed6f05ae09b04d5b2691c649a1a7dd18e2dfb709374a5ed0495d65958e5591", "operand_json_sha256": "a710600cf4ab61180e0f5c4319deb0f56fee4cf9e3e952a3f9ddeadfdf9a355a"},
+    "alpha_minus": {"artifact_id": 10298479524, "zip_sha256": "602240ec256fbf38b3fde1b3a150ed78dc1216e552db804582745673b6215ce0", "operand_json_sha256": "ce4ee784619d9a9d57b3be266722892eb2d592b9abebf38ccdb09dd79f11519e"},
+    "beta_plus": {"artifact_id": 10298822640, "zip_sha256": "c7a85a453f06e1927a1a91a4a6c5aee1bd35ce0e8735e68a9fc740ee91cb8ab7", "operand_json_sha256": "8e28d6ace0be71db00252f3fbf1a2ff5be62f64b07c08a4dc52b3ecc40162bfc"},
+    "beta_minus": {"artifact_id": 10299311082, "zip_sha256": "16dc6dd98741b84b8f0b71a26d62f4556d33b978b278e91a3d8e248af918c910", "operand_json_sha256": "63505dea0ff87b5cc4881c630504aa9dcfca221a4adbfc7e0088bd045d410f12"}
+  },
+  "retained_fine_invariants": {"grid": "fine", "original_run_id": 34695347893, "original_authorization_json_sha256": "5a0eb2851e38eabcb693e978803794b77df0bea74bc9de78bee912f472547680", "call_count": 569, "target_scalar_count": 121682, "calls_digest": "9f5f85e92570b68576bae91f52163cb0c005a1e003bfc09b8ccc80b332f79b36", "canonical_node_count": 32769, "canonical_node_sha256": "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599", "response_bytes_must_not_change_during_provenance_rebind": true, "fine_recompute_forbidden": true},
+  "coarse_recompute": {"roles": ["reference", "alpha_minus", "beta_plus", "beta_minus"], "parallel_jobs": 4, "canonical_node_count": 16385, "canonical_node_sha256": "3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975", "point_capacity": 16385, "parser_capacity": 524288, "history_suppression_required": true, "solver_constructions_per_role": 1, "max_live_instances": 1},
+  "scientific_semantics": {"h": 0.0001, "relative_tolerance": 0.001, "strict_less_than": true, "native_k_per_decade_for_pk": 20.0, "lookup_relative_tolerance": 1e-12, "interpolation": "centered-cubic", "parent_retained_count": 107, "invalid_row_fraction_max": 0.05, "retained_after_layer_b_min": 15, "unsupported_target_evaluations_required": 0, "covariance_restriction_authorized": false, "Wm_S3_opened": false},
+  "provenance_rebind": {"allowed_only_for_retained_fine_operands": true, "may_change_only": ["current_run_id", "authorization_json_sha256"], "must_add_original_operand_sha256": true, "must_verify_response_payload_digest_unchanged": true, "scientific_response_values_may_not_be_modified": true},
+  "authorization": {"exactly_one_recovery_workflow_run": true, "silent_retry_after_recovery_forbidden": true, "post_result_threshold_change_forbidden": true, "terminal_classifier_must_be_independently_reverified": true}
+}
