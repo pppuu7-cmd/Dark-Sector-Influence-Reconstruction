@@ -1,0 +1,31 @@
+{
+  "schema": "LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_CONTROL_AUTHORITY_V0_1",
+  "classification": "LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_ALL_ROLES_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "run_id": 34703405190,
+  "head_sha": "777c9c81b3d08ef9a9650746365f2e30b5977582",
+  "contract": "docs/dsir4/contracts/LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_CONTROL_V0_1.json",
+  "v146_control_artifact_id": 10300881526,
+  "v146_authorization_json_sha256": "602879e17afc39a50775562ff2a6e1b3970ec909ece3af84f6e4c7318ad2aa85",
+  "jobs": {
+    "reference": 103579023794,
+    "alpha_minus": 103579023765,
+    "beta_plus": 103579023771,
+    "beta_minus": 103579023669,
+    "independent_finalizer": 103579104076
+  },
+  "aggregate_artifact": {
+    "artifact_id": 10301301462,
+    "zip_sha256": "6d7a359288213d2bf7953c947bd46737a333f6c5afcba0567a73f0f60a483ba0",
+    "aggregate_json_sha256": "ae54cea9373546af8e09e68ae09408b30fcd8f45a4ce808cbff6ad11c2724d3c"
+  },
+  "roles_seen": ["alpha_minus","beta_minus","beta_plus","reference"],
+  "failures": [],
+  "all_response_payloads_exactly_unchanged": true,
+  "class_solver_invoked": false,
+  "convergence_metric_computed": false,
+  "scientific_authority": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "interpretation": "The four retained fine-32769 production operands can be rebound to the V146 recovery authorization with response and valid-mask payloads remaining byte-for-byte unchanged; only provenance fields change."
+}
