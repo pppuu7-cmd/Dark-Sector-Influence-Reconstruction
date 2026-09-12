@@ -1,0 +1,53 @@
+name: layerb-32769-eight-chunk-layout-static-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-eight-chunk-layout-static-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify canonical coverage and parser margins
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import hashlib,json,struct
+          from pathlib import Path
+          c=json.load(open('docs/dsir4/contracts/LAYERB_32769_EIGHT_CHUNK_RESOURCE_ROUTE_CANDIDATE_V0_1.json'))
+          raw=Path(c['canonical']['path']).read_bytes(); lines=raw.decode().splitlines()
+          assert len(lines)==32769
+          assert hashlib.sha256(raw).hexdigest()==c['canonical']['text_sha256']
+          nodebytes=b''.join(struct.pack('<Q',int(x,16)) for x in lines)
+          assert hashlib.sha256(nodebytes).hexdigest()==c['canonical']['node_payload_sha256']
+          nodes=[struct.unpack('<d',struct.pack('<Q',int(x,16)))[0] for x in lines]
+          slices=c['candidate_chunk_build']['slices']; point_cap=c['candidate_chunk_build']['point_capacity']; parser_cap=c['candidate_chunk_build']['parser_capacity']
+          cursor=0; rec=[]
+          for i,(lo,hi) in enumerate(slices):
+              assert lo==cursor and hi>lo and hi<=32769
+              cursor=hi
+              n=hi-lo; assert n<=point_cap
+              payload=len(','.join(format(float(x),'.17g') for x in nodes[lo:hi]).encode())+1
+              margin=parser_cap-payload
+              assert payload<=parser_cap and margin>=c['static_acceptance']['minimum_parser_margin_bytes']
+              rec.append({'chunk':i,'start':lo,'end':hi,'node_count':n,'payload_bytes_including_nul':payload,'parser_margin_bytes':margin})
+          assert cursor==32769 and sum(x['node_count'] for x in rec)==32769
+          out={'schema':'LAYERB_32769_EIGHT_CHUNK_LAYOUT_STATIC_RESULT_V0_1','classification':'LAYERB_32769_EIGHT_CHUNK_LAYOUT_STATIC_PASS_PLUS_0_PLUS_0','effect':'+0/+0','chunks':rec,'min_parser_margin_bytes':min(x['parser_margin_bytes'] for x in rec),'max_payload_bytes_including_nul':max(x['payload_bytes_including_nul'] for x in rec),'point_capacity':point_cap,'parser_capacity':parser_cap,'scientific_authority':False,'scientific_execution_authorized':False,'chunked_32769_execution_authorized':False}
+          Path('artifacts/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['classification'],out['max_payload_bytes_including_nul'],out['min_parser_margin_bytes'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-32769-eight-chunk-layout-static-v0-1
+          path: artifacts/result.json
+          if-no-files-found: error
+          retention-days: 90
