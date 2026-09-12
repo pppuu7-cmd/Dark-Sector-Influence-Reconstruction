@@ -1,0 +1,80 @@
+{
+  "schema": "LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_AUTHORITY_V0_1",
+  "classification": "LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_ALL_PASS_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scope": "DSIR Article III resource feasibility of the preregistered canonical 32769 eight-chunk route only",
+  "scientific_authority": false,
+  "scientific_execution_authorized": false,
+  "chunked_32769_execution_authorized": false,
+  "successor_authorized": false,
+  "scientific_transfer_values_read": false,
+  "scientific_response_serialized": false,
+  "convergence_metric_computed": false,
+  "covariance_read": false,
+  "Wm_S3_opened": false,
+  "workflow": {
+    "path": ".github/workflows/layerb-32769-eight-chunk-response-blind-resource-pilot-v0-1.yml",
+    "initial_fail_closed_run_id": 34667156663,
+    "initial_failure_scope": "static provenance audit only; Git blob SHA-1 was incorrectly compared as ordinary SHA-256; no chunk compute started",
+    "repair_commit": "4153cf0b93fb1554d58ff5f488a14f8a739ae090",
+    "validated_run_id": 34667210456,
+    "validated_head_sha": "4153cf0b93fb1554d58ff5f488a14f8a739ae090",
+    "static_audit_job_id": 103481440304,
+    "independent_finalizer_job_id": 103481978115,
+    "chunk_jobs": {
+      "0": 103481455395,
+      "1": 103481455195,
+      "2": 103481455237,
+      "3": 103481455230,
+      "4": 103481455243,
+      "5": 103481455209,
+      "6": 103481455250,
+      "7": 103481455221
+    }
+  },
+  "frozen_runtime": {
+    "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+    "point_capacity": 4608,
+    "parser_capacity": 131072,
+    "classy_sha256_all_chunks": "2a28a5a5d36602d9ae148931b6861092a77ad7e231d9fc94968b83981d710dfa",
+    "h": 0.0001,
+    "native_k_per_decade_for_pk": 20.0,
+    "role": "reference"
+  },
+  "canonical": {
+    "node_count": 32769,
+    "node_payload_sha256": "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599",
+    "text_sha256": "7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2"
+  },
+  "chunks": {
+    "0": {"slice": [0,4097], "node_count": 4097, "payload_bytes": 93751, "parser_margin_bytes": 37321, "ru_maxrss_kb": 3783528, "result_sha256": "96c5cd8c56261b2544131c3d8e1b5406fef7134a1acf78e530aa90cf5f98bdb8", "binding_sha256": "871e6b9ce8f0b0aa01312312879c3910e9fb7099f792730dec217acdb7003a13", "artifact_id": 10289513354, "artifact_zip_sha256": "d22364f346e5dc5abdef7d2a4e32196355aa400e9d437559ac0c467f7bd4a4a9"},
+    "1": {"slice": [4097,8193], "node_count": 4096, "payload_bytes": 93758, "parser_margin_bytes": 37314, "ru_maxrss_kb": 4035516, "result_sha256": "63aa42f19eb125b57a1708553c8514f5a688d2341a6af3af2c0a53a6cf8a8ee7", "binding_sha256": "214983152b3229d94e84b2e525a7d9a74b3232724559d4fa1529b6106ed90ba9", "artifact_id": 10289737764, "artifact_zip_sha256": "aa1b55e542990a9685388509fa4beb1da805ffbb2171cdce2d5c6e824e41a49f"},
+    "2": {"slice": [8193,12289], "node_count": 4096, "payload_bytes": 93085, "parser_margin_bytes": 37987, "ru_maxrss_kb": 4360084, "result_sha256": "fae6ab18b444aff0281a88d2d2ee4fd5089e5010cd149e22b7819e1a37c7bb47", "binding_sha256": "4a298dc241a501c6d9a8258e42f9a94559f9966a6f7007e11dcd77b7b3ee4533", "artifact_id": 10289448471, "artifact_zip_sha256": "83eb0f0a7ea429471a4603a25309a9208c018b7f69b70ac9e2531a966ffd3bf4"},
+    "3": {"slice": [12289,16385], "node_count": 4096, "payload_bytes": 89653, "parser_margin_bytes": 41419, "ru_maxrss_kb": 5053968, "result_sha256": "d032a0817691d5b7790c446c509f751d2f65ea64015b38a7b47e53cd094fc951", "binding_sha256": "7b20a94a2d8975b5745e62d8b667f1fd621dcd6fe5c63705d5ea1b4971ffc297", "artifact_id": 10289303539, "artifact_zip_sha256": "242d2cf71aa500b31ec7d581909813560ca2fc2422dac5639c2b2a9027c09d57"},
+    "4": {"slice": [16385,20481], "node_count": 4096, "payload_bytes": 89636, "parser_margin_bytes": 41436, "ru_maxrss_kb": 6398492, "result_sha256": "a2583d00bb0973f360b726fb4a0d222b4b298d60418c644b3eec60145844df8f", "binding_sha256": "5404d6d289eca67cbca19e931303d3b5de887a5842c42b968d9b59fe78d81a96", "artifact_id": 10289138960, "artifact_zip_sha256": "930c2c4ce720e09c251aa06954691778bfaa52d0c488608c559b88aed430e95a"},
+    "5": {"slice": [20481,24577], "node_count": 4096, "payload_bytes": 88302, "parser_margin_bytes": 42770, "ru_maxrss_kb": 8701104, "result_sha256": "3b9df28454269497ebb965876cdc90eaa6a2d67ff4254fa326e2c8d01687a00c", "binding_sha256": "82f65236048350b21f3257c6d1296a822d0644432dd531d39f5dcdb41e980269", "artifact_id": 10289328624, "artifact_zip_sha256": "e8b27f80ab05d20a5244f6053b771c2a2e37b27ada22c3b4630158410324b7c1"},
+    "6": {"slice": [24577,28673], "node_count": 4096, "payload_bytes": 85532, "parser_margin_bytes": 45540, "ru_maxrss_kb": 11853492, "result_sha256": "a3b1a4c7a2543bb7eefd4bcbc3543035d619811d7d665337c755139b0764d33a", "binding_sha256": "654d7f94e13af8c31d3159e9fa74170778d5067ce650a8a6711d9462d0f4820f", "artifact_id": 10289028058, "artifact_zip_sha256": "fa2371d1a5c6d3d9b3efb62b3a7abe17a86078e589e5109ebd762d2c800e832c"},
+    "7": {"slice": [28673,32769], "node_count": 4096, "payload_bytes": 85556, "parser_margin_bytes": 45516, "ru_maxrss_kb": 11865712, "result_sha256": "c9ca8fc436a4884c4863af2552012d0f16e48949e2f0df3a79b83a6ed7d52c29", "binding_sha256": "8cb8bc0224e190e38918d42122906ce167898312deae6493c4d549cc369222b6", "artifact_id": 10289463574, "artifact_zip_sha256": "de049a46d80ae9670de55a682d2bfb0d010ec4b85b4599512385d81030d6bde1"}
+  },
+  "resource_observation": {
+    "peak_ru_maxrss_kb": 11865712,
+    "peak_ru_maxrss_gib_approx": 11.316,
+    "tested_hosted_memtotal_kb_approx": 16373452,
+    "tested_hosted_swaptotal_kb": 3145724,
+    "swapfree_before_equal_after_for_all_eight": true,
+    "usr_bin_time_swaps_chunk_7": 0,
+    "interpretation": "All eight canonical chunks completed on the tested standard hosted runner class without consuming swap; memory demand rises materially toward the high-k chunks, with chunks 6-7 defining the observed peak."
+  },
+  "aggregate": {
+    "artifact_id": 10289194060,
+    "artifact_zip_sha256": "e79dc93bfca38b2edbcddff47a944f2671fa8b2f77789e5ef7599525fd579880",
+    "raw_aggregate_sha256": "8e557b50946917348890adb038ca528c75c11acb27264f897a3bdee26840a881",
+    "chunks_seen": [0,1,2,3,4,5,6,7],
+    "missing_chunks": [],
+    "failures": []
+  },
+  "interpretation": {
+    "established": "The preregistered low-capacity eight-chunk canonical 32769 reference-role Class.compute transfer route is resource-feasible on the tested standard GitHub-hosted runner class without swap consumption and without reading scientific transfer values.",
+    "not_established": "No 32769 response values were inspected or serialized. This does not establish partition invariance, all-role numerical equivalence, 16385-to-32769 convergence, scientific authorization, covariance authorization, or Wm_S3 access."
+  }
+}
