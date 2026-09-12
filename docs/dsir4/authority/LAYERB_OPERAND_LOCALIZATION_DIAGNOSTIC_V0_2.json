@@ -1,0 +1,84 @@
+{
+  "schema": "LAYERB_OPERAND_LOCALIZATION_DIAGNOSTIC_AUTHORITY_V0_2",
+  "scope": "Exact diagnostic localization of the independently promoted 16385-to-32769 Layer-B NOT_CONVERGED discrepancy using only the already retained eight scientific operands and frozen request plan.",
+  "parent_authority": "docs/dsir4/authority/LAYERB_CANONICAL_16385_TO_32769_NOT_CONVERGED_V0_1.json",
+  "parent_root_cause_authority": "docs/dsir4/authority/LAYERB_NUMERICAL_ROOT_CAUSE_DIAGNOSTIC_V0_1.json",
+  "contract": "docs/dsir4/contracts/LAYERB_OPERAND_LOCALIZATION_V0_2.json",
+  "initial_infra_failure_authority": "docs/dsir4/authority/LAYERB_OPERAND_LOCALIZATION_V0_2_INFRA_FAILURE_R0.json",
+  "repair_run_id": 34712885262,
+  "repair_run_head_sha": "04662f4078253aaf608ba3a9b5c732f42de9e121",
+  "classification": "EXACT_OPERAND_LEVEL_DISCREPANCY_LOCALIZED_WITHOUT_SOLVER_RECOMPUTE",
+  "independent_streams_agree": true,
+  "atomic_artifact": {"id":10303757746,"zip_sha256":"30d726e7a25905f9e739a85d236c57b7655f18cf5d3d348d04886343418c981c"},
+  "role_attribution_artifact": {"id":10303846464,"zip_sha256":"3eb1baf89e03ab2511af0169aef0063350c738a4cea7e0070419f9b94cc778d9"},
+  "plan_identity_artifact": {"id":10303399622,"zip_sha256":"f9280b5a21274fe9ddd0f098a4eacfe7cfac9605255070f545def4f377228f56"},
+  "decision_artifact": {"id":10303776798,"zip_sha256":"5497bf063ab554afd94e119a6798e16a6407168a725769c9abe3cec08726868b"},
+  "authoritative_max_relative_component_difference": 0.007384797439715474,
+  "reproduction_error": 0.0,
+  "global_argmax": {
+    "domain": "DES",
+    "component": "abs_dDelta_m_dbeta_symmetric",
+    "call_index": 318,
+    "target_index": 61,
+    "z": 0.9751,
+    "target_k_Mpc^-1": 0.018930775642054563,
+    "coarse_response": 0.02500770506230765,
+    "fine_response": 0.02519375584597583,
+    "relative_difference": 0.007384797439715474
+  },
+  "max_by_component": {
+    "abs_dDelta_m_dalpha_left": {
+      "relative_difference": 0.0006776803529834111,
+      "below_frozen_tolerance": true,
+      "domain": "DES",
+      "z": 0.835,
+      "target_k_Mpc^-1": 0.002177836850107555
+    },
+    "abs_dDelta_m_dbeta_symmetric": {
+      "relative_difference": 0.007384797439715474,
+      "below_frozen_tolerance": false,
+      "domain": "DES",
+      "z": 0.9751,
+      "target_k_Mpc^-1": 0.018930775642054563
+    }
+  },
+  "max_by_domain": {
+    "DES": 0.007384797439715474,
+    "BOSS_GL64": 0.005446699577594388
+  },
+  "counts_above_relative_difference": {"0.001":31,"0.002":16,"0.005":7},
+  "finite_positive_compared_atoms": 167332,
+  "noncomparable_or_status_count": 0,
+  "common_plan": {
+    "coarse_calls": 441,
+    "fine_calls": 569,
+    "common_prefix_calls": 441,
+    "common_prefix_bitwise_identical": true,
+    "coarse_target_scalars": 83666,
+    "fine_target_scalars": 121682
+  },
+  "raw_roles_at_global_argmax": {
+    "coarse": {
+      "reference": -2024.067653958879,
+      "alpha_minus": -2023.2119301001712,
+      "beta_plus": -2024.0676507557089,
+      "beta_minus": -2024.0676457541679
+    },
+    "fine": {
+      "reference": -2024.0676540121538,
+      "alpha_minus": -2023.2119300835755,
+      "beta_plus": -2024.067650780144,
+      "beta_minus": -2024.0676457413929
+    }
+  },
+  "relative_tolerance": 0.001,
+  "strict_less_than": true,
+  "scientific_operand_recomputed": false,
+  "CLASS_solver_invoked": false,
+  "criterion_mutated": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "denser_successor_65537_authorized": false,
+  "effect": "+0/+0",
+  "next_permitted_stage": "prospectively frozen existing-operand cancellation-conditioning diagnostic, followed only if warranted by a separately frozen targeted direct-k numerical diagnostic; no automatic denser support rung"
+}
