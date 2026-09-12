@@ -1,0 +1,17 @@
+{
+  "schema": "LAYERB_8193_HISTORY_SUPPRESSION_EXACT_EQUIVALENCE_CONTRACT_V0_1",
+  "scope": "Independent DSIR Article III method-control testing whether the exact CLASS k-output history-suppression patch used for 16385 recovery changes any requested transfer response at the already validated canonical 8193 lattice.",
+  "effect": "+0/+0",
+  "canonical": {"path": "docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt", "node_count": 8193, "node_payload_sha256": "6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515", "text_sha256": "90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6"},
+  "runtime": {"class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c", "point_capacity": 8193, "parser_capacity": 262144, "h": 0.0001, "native_k_per_decade_for_pk": 20.0, "lookup_relative_tolerance": 1e-12, "z_probes": [0.295,0.7,1.0,1.5,2.0,2.33], "roles": ["reference","alpha_minus","beta_plus","beta_minus"]},
+  "patch": {"path": "scripts/dsir4/classiv_k_output_history_suppression_patch_v0_1.py", "git_blob": "e20687e933d665973c3be40598180587701fa8e0", "post_perturbations_sha256": "4e9a419d46471ffab74df3d14239e000bf92f2e198edad4d2c7b82f1335f7a4b", "scientific_parameters_changed": false, "k_output_values_still_inserted_into_solver_grid": true},
+  "response_dump": {"path": "ci/layerb_8193_chunk_equivalence_response_dump_v0_1.py", "git_blob": "b24a4972aca3566d90741efa59f58cc744845a1e"},
+  "comparator": {"path": "ci/layerb_8193_history_suppression_equivalence_compare_v0_1.py", "git_blob": "d2b9a3d9615b5d395cfbee43f9047ec07dc9beb0"},
+  "prospective_acceptance": {"max_absolute_response_difference": 0.0, "max_normalized_response_difference": 0.0, "exact_binary64_fraction": 1.0, "all_four_roles_required": true, "all_six_z_probes_required": true, "post_result_tolerance_change_forbidden": true},
+  "blinding_and_persistence": {"baseline_and_patched_response_vectors_may_exist_only_transiently_inside_role_job": true, "response_vectors_must_be_deleted_before_artifact_upload": true, "persistent_artifacts_may_contain_only_comparison_metrics_hashes_and_provenance": true},
+  "interpretation": {"pass": "The exact history-suppression callback patch is bitwise response-inert for the tested canonical 8193 lattice, all frozen roles and z probes.", "fail": "The patch is not authorized as a response-inert recovery optimization; any 16385 recovery result using it must not be promoted to scientific authority until resolved."},
+  "scientific_execution_authorized": false,
+  "convergence_metric_computed": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false
+}
