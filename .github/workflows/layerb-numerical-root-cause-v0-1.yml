@@ -1,0 +1,255 @@
+name: Layer-B numerical root-cause v0.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_NUMERICAL_ROOT_CAUSE_LAUNCH_V0_1.json'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  CONTRACT_PATH: docs/dsir4/contracts/LAYERB_NUMERICAL_ROOT_CAUSE_V0_1.json
+  PREV_AUTH: docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json
+  CURR_AUTH: docs/dsir4/authority/LAYERB_CANONICAL_16385_TO_32769_NOT_CONVERGED_V0_1.json
+
+jobs:
+  convergence-order:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Effective-order diagnostic
+        run: |
+          mkdir -p out
+          python - <<'PY'
+          import json, math
+          prev=json.load(open('docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json'))
+          cur=json.load(open('docs/dsir4/authority/LAYERB_CANONICAL_16385_TO_32769_NOT_CONVERGED_V0_1.json'))
+          a=float(prev['max_relative_component_difference'])
+          b=float(cur['max_relative_component_difference'])
+          tol=float(cur['relative_tolerance'])
+          q=b/a
+          p=-math.log(q,2.0)
+          nodes=int(cur['fine_requested_node_count'])
+          metric=b
+          projections=[]
+          first=None
+          for i in range(1,7):
+              nodes=2*nodes-1
+              metric*=q
+              projections.append({'rung':i,'requested_node_count':nodes,'projected_metric_if_constant_ratio':metric,'below_frozen_tolerance':metric<tol})
+              if first is None and metric<tol:
+                  first=nodes
+          out={
+            'schema':'LAYERB_EFFECTIVE_CONVERGENCE_ORDER_DIAGNOSTIC_V0_1',
+            'previous_metric':a,'current_metric':b,'ratio':q,'effective_order_base2':p,
+            'frozen_relative_tolerance':tol,'strict_less_than':True,
+            'metric_reduction_fraction':1-q,
+            'geometric_projections_diagnostic_only':projections,
+            'first_projected_node_count_below_tolerance_if_ratio_constant':first,
+            'projection_is_authority':False,'authorizes_65537':False
+          }
+          json.dump(out,open('out/convergence_order.json','w'),indent=2,sort_keys=True)
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rootcause-convergence-order
+          path: out/convergence_order.json
+
+  provenance-triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Frozen-invariant triage
+        run: |
+          mkdir -p out
+          python - <<'PY'
+          import json
+          p=json.load(open('docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json'))
+          c=json.load(open('docs/dsir4/authority/LAYERB_CANONICAL_16385_TO_32769_NOT_CONVERGED_V0_1.json'))
+          checks={
+            'same_retained_rows': p.get('retained_after_layer_b')==c.get('retained_after_layer_b')==107,
+            'zero_invalid_rows_both': p.get('layer_b_invalid_row_count')==0 and c.get('layer_b_invalid_row_count')==0,
+            'zero_unsupported_targets_both': p.get('unsupported_target_evaluations')==0 and c.get('unsupported_target_evaluations')==0,
+            'requested_node_coordinate_mismatch_machine_scale': c.get('max_requested_node_coordinate_rel_mismatch',1.0)<1e-12,
+            'no_finite_nonzero_status_change': not c.get('finite_nonzero_status_changed',True),
+            'no_row_label_change': not c.get('row_label_changed',True),
+            'no_boss_dense_z_disagreement': not c.get('boss_dense_z_disagreement',True),
+            'same_h': p.get('h')==c.get('h'),
+            'same_native_k_per_decade': p.get('native_k_per_decade_for_pk_frozen')==c.get('native_k_per_decade_for_pk_frozen'),
+            'fine_operands_reused_in_recovery': c.get('fine_operands_recomputed') is False,
+            'candidate_independent_terminal_identical': c.get('candidate_and_independent_terminal_payloads_exactly_identical') is True,
+            'no_covariance_restriction': c.get('covariance_restriction_authorized') is False,
+            'Wm_S3_closed': c.get('Wm_S3_opened') is False
+          }
+          out={
+            'schema':'LAYERB_PROVENANCE_GEOMETRY_VALIDITY_TRIAGE_V0_1',
+            'checks':checks,
+            'all_frozen_invariant_checks_pass':all(checks.values()),
+            'evidence_disfavours':['row-loss explanation','unsupported-target explanation','requested-node-coordinate mismatch','BOSS/dense-z mismatch','terminal replay inconsistency'] if all(checks.values()) else [],
+            'still_unresolved':['support/quadrature resolution','component- and ell-localized response sensitivity','other numerical integration/transfer-response sensitivity'],
+            'authorizes_65537':False,'effect':'+0/+0'
+          }
+          json.dump(out,open('out/provenance_triage.json','w'),indent=2,sort_keys=True)
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rootcause-provenance-triage
+          path: out/provenance_triage.json
+
+  terminal-artifact-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and verify immutable terminal artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p out terminal
+          python - <<'PY'
+          import json
+          c=json.load(open('docs/dsir4/contracts/LAYERB_NUMERICAL_ROOT_CAUSE_V0_1.json'))
+          open('out/artifact_id.txt','w').write(str(c['terminal_source_artifact_id']))
+          open('out/expected_sha.txt','w').write(c['terminal_source_artifact_zip_sha256'])
+          PY
+          AID=$(cat out/artifact_id.txt)
+          curl -L --fail --retry 3 \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${AID}/zip" \
+            -o out/terminal.zip
+          ACTUAL=$(sha256sum out/terminal.zip | awk '{print $1}')
+          EXPECTED=$(cat out/expected_sha.txt)
+          echo "artifact_sha256=${ACTUAL}"
+          test "${ACTUAL}" = "${EXPECTED}"
+          unzip -q out/terminal.zip -d terminal
+      - name: Component/ell localization scan
+        run: |
+          python - <<'PY'
+          import json, pathlib, math, re
+          root=pathlib.Path('terminal')
+          numeric_names=('relative_difference','relative_diff','relative_error','rel_difference','rel_diff','mismatch','max_relative_component_difference','fractional_difference')
+          component_names=('component','spectrum','channel','observable','label')
+          ell_names=('ell','l','multipole')
+          candidates=[]; manifest=[]
+          def num(v): return isinstance(v,(int,float)) and not isinstance(v,bool) and math.isfinite(float(v))
+          def walk(obj,path,file):
+              if isinstance(obj,dict):
+                  keys={str(k).lower():k for k in obj}
+                  metric=None; metric_key=None
+                  for n in numeric_names:
+                      if n in keys and num(obj[keys[n]]): metric=float(obj[keys[n]]); metric_key=str(keys[n]); break
+                  comp=None
+                  for n in component_names:
+                      if n in keys and isinstance(obj[keys[n]],str): comp=obj[keys[n]]; break
+                  ell=None
+                  for n in ell_names:
+                      if n in keys and num(obj[keys[n]]): ell=float(obj[keys[n]]); break
+                  if metric is not None and (comp is not None or ell is not None):
+                      candidates.append({'file':file,'path':path,'metric_key':metric_key,'metric':abs(metric),'component':comp,'ell':ell})
+                  for k,v in obj.items(): walk(v,path+'/'+str(k),file)
+              elif isinstance(obj,list):
+                  for i,v in enumerate(obj): walk(v,path+'/'+str(i),file)
+          for f in sorted(root.rglob('*')):
+              if not f.is_file(): continue
+              info={'path':str(f),'size':f.stat().st_size}
+              if f.suffix.lower()=='.json':
+                  try:
+                      obj=json.load(open(f))
+                      info['json_parse']=True
+                      walk(obj,'$',str(f))
+                  except Exception as e: info['json_parse']=False; info['error']=str(e)[:200]
+              manifest.append(info)
+          candidates.sort(key=lambda x:x['metric'],reverse=True)
+          top=candidates[:50]
+          current=0.007384797439715474
+          localized=[x for x in top if x['component'] is not None and x['ell'] is not None and x['metric']>=0.90*current]
+          robust=None
+          if localized:
+              x=localized[0]
+              robust={'component':x['component'],'ell':x['ell'],'metric':x['metric'],'file':x['file'],'path':x['path']}
+          text_hits=[]
+          for f in root.rglob('*'):
+              if f.is_file() and f.stat().st_size<20_000_000:
+                  try: t=f.read_text(errors='ignore')
+                  except: continue
+                  for token in ('Cgg','Cgr','Crr'):
+                      if token in t: text_hits.append({'file':str(f),'token':token,'occurrences':t.count(token)})
+          out={
+            'schema':'LAYERB_RAW_TERMINAL_COMPONENT_ELL_SCAN_V0_1',
+            'files_scanned':len(manifest),'candidate_records':len(candidates),
+            'top_candidates':top,'robust_near_max_component_ell_candidate':robust,
+            'text_token_hits':text_hits,
+            'localization_classification':'COMPONENT_ELL_CANDIDATE_FOUND' if robust else 'INSUFFICIENT_TERMINAL_DETAIL_FOR_ROBUST_COMPONENT_ELL_LOCALIZATION',
+            'authorizes_65537':False
+          }
+          json.dump(out,open('out/terminal_component_scan.json','w'),indent=2,sort_keys=True)
+          json.dump(manifest,open('out/terminal_manifest.json','w'),indent=2,sort_keys=True)
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rootcause-terminal-scan
+          path: |
+            out/terminal_component_scan.json
+            out/terminal_manifest.json
+
+  decision:
+    if: always()
+    needs: [convergence-order, provenance-triage, terminal-artifact-scan]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: rootcause-*
+          merge-multiple: true
+          path: combined
+      - name: Conservative root-cause decision
+        run: |
+          mkdir -p out
+          python - <<'PY'
+          import json, pathlib
+          def load(name):
+              p=pathlib.Path('combined')/name
+              return json.load(open(p)) if p.exists() else None
+          conv=load('convergence_order.json')
+          prov=load('provenance_triage.json')
+          scan=load('terminal_component_scan.json')
+          streams={'convergence_order':conv is not None,'provenance_triage':prov is not None,'terminal_component_scan':scan is not None}
+          robust=scan.get('robust_near_max_component_ell_candidate') if scan else None
+          if all(streams.values()) and robust:
+              classification='CONTINUED_SLOW_SUPPORT_CONVERGENCE_WITH_COMPONENT_ELL_LOCALIZATION_DIAGNOSTIC_ONLY'
+          elif all(streams.values()):
+              classification='CONTINUED_SLOW_SUPPORT_CONVERGENCE_COMPONENT_LOCALIZATION_INCOMPLETE'
+          else:
+              classification='ROOT_CAUSE_STAGE_INCOMPLETE_INFRASTRUCTURE_OR_ARTIFACT_GAP'
+          out={
+            'schema':'LAYERB_NUMERICAL_ROOT_CAUSE_DECISION_V0_1',
+            'classification':classification,
+            'streams_present':streams,
+            'effective_convergence_order_base2': conv.get('effective_order_base2') if conv else None,
+            'ratio_latest_to_previous': conv.get('ratio') if conv else None,
+            'first_projected_node_count_below_tolerance_if_constant_ratio': conv.get('first_projected_node_count_below_tolerance_if_ratio_constant') if conv else None,
+            'all_frozen_invariant_checks_pass': prov.get('all_frozen_invariant_checks_pass') if prov else None,
+            'localized_candidate':robust,
+            'frozen_relative_tolerance':0.001,'strict_less_than':True,
+            'scientific_operand_recompute_performed':False,
+            'criterion_mutated':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False,
+            'denser_successor_65537_authorized':False,
+            'requires_separate_prospective_authorization_for_any_new_heavy_rung':True,
+            'effect':'+0/+0'
+          }
+          json.dump(out,open('out/root_cause_decision.json','w'),indent=2,sort_keys=True)
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rootcause-decision
+          path: out/root_cause_decision.json
