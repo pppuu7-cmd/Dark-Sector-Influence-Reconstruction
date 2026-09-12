@@ -1,0 +1,16 @@
+{
+  "schema": "LAYERB_TARGETED_DIRECT_K_BETA_V0_4_LAUNCH",
+  "authorized_launch_count": 1,
+  "effect": "+0/+0",
+  "probe_manifest_commit": "f9ccd569b89147a112cd6ece774737807dfa3600",
+  "contract_commit": "45ed6aefcd5bf33484b322408f18f2ccb82cec92",
+  "executor_commit": "81dabd9f1c913e75d571624f6267565b8e71af22",
+  "workflow_commit": "2e6fcf49d9c159a8aced8d31424933a5dc257ac1",
+  "h": 0.0001,
+  "relative_tolerance": 0.001,
+  "global_65537_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "science_gate_opened": false,
+  "token": "LAUNCH_LAYERB_TARGETED_DIRECT_K_BETA_V0_4_ONCE"
+}
