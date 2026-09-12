@@ -1,70 +1,82 @@
 # DSIR authoritative recovery — latest
 
-Updated: 2026-09-12. Scope: **DSIR only**. Never mix RTK, RQIR, KMQGB or KMDSB.
+Updated: 2026-09-13. Scope: **DSIR only**. Never mix RTK, RQIR, KMQGB or KMDSB.
 
-Newest immutable current-front note: `docs/recovery/RECOVERY_2026-09-12_ARTICLE3_COARSE_RECOVERY_V146.md`, creation commit `88cac599075fed2eb5b0bc82dfcb8608e3264f6b`. V145/V144 and earlier notes remain immutable history.
+Repository state, immutable DSIR4 contracts/authorities, validated GitHub Actions artifacts and this file are the recovery source of truth. Older recovery notes remain immutable history and must not be used to reopen already superseded Layer-B work.
 
-## Scientific frontier
+## Current scientific frontier
 
-Canonical 8193->16385 remains independently verified `COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`, max relative component difference `0.012484060640679777` versus unchanged strict `<1e-3`.
+The active Layer-B question is no longer the old V146 16385->32769 recovery. Subsequent prospectively frozen diagnostics localized the remaining beta-response instability to exact-target response conditioning rather than common-grid interpolation alone.
 
-No independently verified terminal 16385->32769 classification exists yet. Frozen science remains `h=1e-4`, native kpd20, centered-cubic interpolation, lookup `<=1e-12`, parent 107-row accounting, invalid fraction `<=0.05`, retained `>=15`, unsupported=0. Covariance restriction remains unauthorized and Wm_S3 unopened.
+Frozen scientific boundaries remain unchanged unless a later explicit authority says otherwise: production `h=1e-4`, native `k_per_decade_for_pk=20`, strict relative tolerance `<1e-3`, exact-target lookup mismatch `<=1e-12`. Covariance restriction remains unauthorized. `Wm_S3` remains unopened. No global 65537 calculation is authorized by the current diagnostic chain.
 
-## Retained method/resource prerequisites
+## V0.5 — h-dependence diagnostic terminal
 
-V141: exact 8193 monolithic/chunk equivalence PASS for all four roles, max difference `0.0`, exact binary64 fraction `1.0`.
+Authoritative run: `34717972131`.
 
-V142: canonical 32769 eight-chunk response-blind resource PASS, peak RSS `11865712 kB`, no observed swap use.
+Classification: `H_DEPENDENT_CONDITIONING_STRONGLY_SUPPORTED`, effect `+0/+0`.
 
-V143: canonical 32769 two-partition invariance PASS for all four roles/six z probes, max normalized/absolute difference `0.0`, exact binary64 fraction `1.0`.
+On the 23 previously failing exact-target coordinates, 20/23 (`0.8695652173913043`) have raw five-h spread `>=1e-3`; failure median spread `0.003260200828240146`, failure max `0.0336066731` (terminal artifact authority contains full precision). Control max spread `0.00022411578499927006` remains below the frozen threshold. Exact-target binding mismatch is of order `1e-16`. Production `h` was not changed.
 
-## Initial production and V145 failure history
+This authorized only a prospectively frozen finite-difference repair diagnostic, not covariance, `Wm_S3`, a science gate, or a denser global grid.
 
-One-shot production run `34695347893` produced all four fine-32769 operands successfully but all four monolithic coarse-16385 hosted jobs received runner shutdown signals during acquisition. Final classifier/verifier were skipped. This is infrastructure/resource evidence only, not a scientific FAIL. Durable authority: `docs/dsir4/authority/LAYERB_16385_32769_INITIAL_PRODUCTION_INFRA_FAILURE_V0_1.json`.
+## V0.6 — fourth-order finite-difference repair terminal
 
-The four successful fine operands are frozen by exact artifact/operand SHA256 and must not be recomputed.
+Terminal authority: `docs/dsir4/authority/LAYERB_BETA_FD_REPAIR_V0_6.json`, creation commit `4b62f4bf4057d34eff2b7cc1ceef98d63f8eafa7`.
 
-V145 recovery run `34702716166` applied the previously independently validated non-scientific CLASS history-suppression patch but failed before `Class.compute` because `plan.json` was addressed as `inputs/control/plan.json` while the downloaded artifact preserved `inputs/control/plan/plan.json`. Final classifier/verifier were skipped; no science result was created. Durable authority: `docs/dsir4/authority/LAYERB_16385_32769_COARSE_RECOVERY_V01_CONTROL_PATH_FAILURE_V0_1.json`.
+Science run: `34719180791`, head `614b1dd660dbc2dbe53fb5597dbfb2cc5df3a106`. Domain jobs D/B completed successfully and covered all 46 unique coordinates. The original decision job failed before scientific classification because its environment lacked numpy; this was infrastructure only.
 
-## V146 active recovery
+Decision-only recovery reused the already-frozen D/B/invariant artifacts and the unchanged frozen executor/thresholds. Final recovery run `34719364652`, job `103622254478`, terminal PASS as infrastructure and produced the scientific decision.
 
-Prospective V0.2 repair contract: `docs/dsir4/contracts/LAYERB_16385_32769_COARSE_RECOVERY_CONTRACT_V0_2.json`, blob `732fa2668bfc7af66131cc1cab5e6db793637e5e`.
+Classification: `FOURTH_ORDER_FD_REPAIR_NOT_SUPPORTED`, effect `+0/+0`.
 
-Recovery workflow: `.github/workflows/layerb-16385-32769-coarse-recovery-v0-2.yml`, launch-time blob `52ebb19ef4c6cff894336258e76489101f0ee9b1`.
+Frozen Richardson repair `D4(h)=(4*D2(h/2)-D2(h))/3` recovered only 4 of the 20 preregistered h-unstable failure coordinates, recovery fraction `0.2`, below the frozen partial-support threshold `0.25`. Failure median raw h-spread `0.003260200828240146`; median repaired local spread `0.003198104008657432`; max repaired local spread `0.033194530500212684`. Control max raw spread `0.00022411578499927006`; control max repaired local spread `0.00032007918985608384`. Exact-target mismatch max `1.2517848722592053e-16`; invariants PASS.
 
-One-shot launch commit `5e9adb306a3f9541afed236553926229ecc09ca9` triggered run `34702943923`.
+Interpretation: ordinary fourth-order centered finite-difference truncation error is not supported as the dominant cause of the h-dependent failure set. The only authorized successor is an upstream response-solver conditioning audit.
 
-Preflight `103577799082` PASS. Four coarse roles are running in parallel:
-- beta_plus `103577831090`
-- reference `103577831101`
-- alpha_minus `103577831124`
-- beta_minus `103577831283`
+## V0.7 — upstream response-solver conditioning audit active
 
-Each uses canonical 16385, pinned CLASS commit `ac627d54e9ce196a08878d1ba33999819925d19c`, capacity 16385/parser 524288 and exact history-suppression post-SHA256 `4e9a419d46471ffab74df3d14239e000bf92f2e198edad4d2c7b82f1335f7a4b`. The patch keeps `k_output_values` in the solver grid and has `scientific_parameters_changed=false`.
+Prospectively frozen contract: `docs/dsir4/contracts/LAYERB_BETA_SOLVER_CONDITIONING_AUDIT_V0_7.json`, creation commit `0d8fa43eb93d4879bdc91aa59a3e8a3fb06314e5`.
 
-V146 changes only the control-plan path plus retry-run guard semantics. Fine recomputation is forbidden and retained fine response/valid-mask payloads must hash identically before/after provenance-only rebind.
+Executor: `ci/layerb_beta_solver_conditioning_v0_7.py`, creation commit `234d64345674ddd2f4d9793d7315460e26efefa9`, Git blob `efdc1899a00f3c490f9dec1de030b671f36d4705`.
 
-Independent V146 static audit run `34703048335` is terminal PASS. Aggregate artifact `10301255917`, ZIP SHA256 `1cca5ae736c90e9ebf6f1630dfc4c892c18cbb73f9245622f27ce084a3cce899`, independently consumed raw `static.json` SHA256 `bd2d0a2009179eed8f6e80a81847ba1de8d4d15cb994be342ea9da6f1f0a8b03`, missing receipts `[]`. Durable authority: `docs/dsir4/authority/LAYERB_16385_32769_COARSE_RECOVERY_V02_STATIC_AUDIT_V0_1.json`.
+Workflow: `.github/workflows/layerb-beta-solver-conditioning-v0-7.yml`, creation commit `abb7faf9aadba1ed4e143a75dc9309627d6d06e5`.
+
+Launch commit: `419e109429f77cb233a01b99e80c82d1c504e700`.
+
+Active run: `34719555760`.
+
+The audit has ten independent hosted science lanes: five prospectively frozen precision profiles crossed with domains D/B, `fail-fast:false`, max parallelism 10:
+- `TOL10`: `tol_perturb_integration=3e-11`;
+- `TOL100`: `tol_perturb_integration=3e-12`;
+- `SAMP2`: `perturb_sampling_stepsize=0.000175`;
+- `SAMP4`: `perturb_sampling_stepsize=0.0000875`;
+- `JOINT100_S4`: both aggressive settings.
+
+Production precision is `tol_perturb_integration=3e-10`, `perturb_sampling_stepsize=0.00035`. All profiles retain the same pinned CLASS source, exact target-k insertion, production `h=1e-4`, five-h ladder `[4e-4,2e-4,1e-4,5e-5,2.5e-5]`, and strict `1e-3` response-stability threshold.
+
+At the latest recovery write, invariant-audit is terminal PASS and all ten D/B profile jobs have been picked up by hosted runners; scientific result inspection is deferred until each relevant lane is terminal. Do not inspect partial numerical output to retune the frozen decision rule.
+
+Frozen V0.7 decision rule in brief: strong support requires all invariants/controls PASS, JOINT recovery >=75%, median reduction >=4x, monotonic improvement on at least one frozen single-knob axis and no pathological joint interaction. Partial support requires JOINT recovery >=25% or median reduction >=2x. Otherwise solver-conditioning support is not established. Exact definitions in the contract are authoritative.
 
 ## Exact next order
 
-1. Continue only run `34702943923`; do not launch another recovery/science run.
-2. Require all four coarse operands PASS and independently inspect artifacts/resource telemetry.
-3. Provenance-rebind retained fine operands without changing scientific payload hashes.
-4. Run exactly one frozen classifier with strict `<1e-3`.
-5. Require fresh-runner independent terminal verifier PASS.
-6. Independently download/inspect terminal artifacts before creating scientific authority or changing scientific/publication readiness.
-7. No silent retry after V0.2. A further infrastructure failure requires another prospective contract.
-8. Covariance/Wm_S3 remain closed regardless of convergence outcome until separate gates.
+1. Continue only run `34719555760`; do not launch duplicate V0.7 profile calculations.
+2. Consume only terminal profile artifacts/logs and distinguish numerical/scientific failure from infrastructure failure.
+3. Apply the already frozen decision job after all ten profile lanes and invariant-audit complete.
+4. If the decision job fails technically before classification, repair only the infrastructure and reuse valid immutable profile artifacts; do not change thresholds/profiles/science.
+5. Promote a durable V0.7 authority only after independently checking terminal provenance and the frozen classifier output.
+6. Launch only the successor named by the frozen V0.7 classification: stabilized-solver local common-grid validation (strong), localized knob isolation (partial), response-parameterization/model-regularity audit (not supported), or no scientific promotion if inconclusive.
+7. Keep covariance, whitening/nuisance/relation-null, `Wm_S3`, global 65537 and any science gate closed unless a later separately frozen authority explicitly opens them.
 
-## Readiness before terminal result
+## Publication/readiness locks
 
-`ARTICLE3_REPOSITORY_READINESS: 68%`
+The last repository readiness values remain unchanged by V0.5/V0.6 diagnostic narrowing alone: `ARTICLE3_REPOSITORY_READINESS: 68%`; funnel-freeze/scientific frontier `67%`. Do not increase them merely for compute volume or a negative diagnostic; only a frozen readiness rubric closure may change them.
 
-Funnel-freeze/scientific frontier: `67%`
+Article-II real cross-family G5 ACT×unWISE closure remains a separate publication-readiness requirement and is not implied by the Layer-B Article-III diagnostics.
 
-Operational roadmap: `WORKING_PLAN_COMPLETION: 95%`.
+## Automation / ownership
 
-## Automation
+`DSIR Continuous Research` is currently disabled. `DSIR Auto-Research Guard` is also disabled. The account currently has five other enabled research automations occupying the active automation slots (QGR, MSQGR, KMQGB, RQIR-CG, ISQGR). Do not disable one of those automatically merely to create a DSIR slot unless the user explicitly reprioritizes them.
 
-`DSIR Continuous Research` remains disabled because all five automation slots are occupied by other active tasks. GitHub Actions run `34702943923` is the active authoritative DSIR computation.
+GitHub run `34719555760` is the active DSIR Layer-B computation. Its profile lanes are GitHub-hosted diagnostics, not a new self-hosted DSIR-HOME-PC heavy run.
