@@ -1,0 +1,208 @@
+name: layerb-32769-eight-chunk-response-blind-resource-pilot-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-eight-chunk-response-blind-resource-pilot-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  CONTRACT: docs/dsir4/contracts/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_CONTRACT_V0_1.json
+  CANONICAL: docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt
+  BASELINE: configs/dsir4/c2/ide0_reference_v0_1.ini
+  PRECISION: configs/dsir4/c2/dsir_ide_p8_v0_1.pre
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify preregistered response-blind contract and probe source
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import ast, hashlib, json, struct
+          from pathlib import Path
+          c=json.load(open('docs/dsir4/contracts/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_CONTRACT_V0_1.json'))
+          assert c['effect']=='+0/+0'
+          assert c['scientific_authority'] is False
+          assert c['scientific_execution_authorized'] is False
+          assert c['chunked_32769_execution_authorized'] is False
+          assert c['scientific_transfer_values_must_not_be_read'] is True
+          assert c['frozen_runtime']['class_commit']=='ac627d54e9ce196a08878d1ba33999819925d19c'
+          assert c['frozen_runtime']['point_capacity']==4608
+          assert c['frozen_runtime']['parser_capacity']==131072
+          assert c['frozen_runtime']['role']==['reference',0.0,0.0]
+          assert c['frozen_runtime']['slices']==[[0,4097],[4097,8193],[8193,12289],[12289,16385],[16385,20481],[20481,24577],[24577,28673],[28673,32769]]
+          raw=Path(c['canonical']['path']).read_bytes(); lines=raw.decode().splitlines()
+          assert len(lines)==32769
+          assert hashlib.sha256(raw).hexdigest()==c['canonical']['text_sha256']
+          nodebytes=b''.join(struct.pack('<Q',int(x,16)) for x in lines)
+          assert hashlib.sha256(nodebytes).hexdigest()==c['canonical']['node_payload_sha256']
+          src=Path('ci/layerb_32769_chunk_response_blind_resource_probe_v0_1.py').read_bytes()
+          assert hashlib.sha256(src).hexdigest()=='5c07a938682ac52207df73148f5307d66552e17b'
+          tree=ast.parse(src.decode())
+          forbidden={'get_transfer','pk','get_pk','raw_cl','lensed_cl'}
+          bad=[n.attr for n in ast.walk(tree) if isinstance(n,ast.Attribute) and n.attr in forbidden]
+          assert not bad, bad
+          print('LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_STATIC_PASS_PLUS_0_PLUS_0')
+          PY
+
+  chunk-resource:
+    needs: [static-audit]
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        chunk: [0,1,2,3,4,5,6,7]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned build prerequisites
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv_chunk32769
+          .venv_chunk32769/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv_chunk32769/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+      - name: Build frozen low-capacity CLASS
+        run: |
+          set -euo pipefail
+          git clone -q https://github.com/kaeonikc/class_iv.git external_chunk32769
+          git -C external_chunk32769 checkout -q "$CLASS_COMMIT"
+          .venv_chunk32769/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_chunk32769/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 4608',1))
+          q=Path('external_chunk32769/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 131072',1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv_chunk32769/bin:$PATH" .venv_chunk32769/bin/python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external_chunk32769
+          PATH="$GITHUB_WORKSPACE/.venv_chunk32769/bin:$PATH" .venv_chunk32769/bin/python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external_chunk32769
+          .venv_chunk32769/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_chunk32769/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv_chunk32769/bin:$PATH" make -C external_chunk32769 -j2 all >/dev/null
+      - name: Verify runtime binding
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          CLASSY=$(.venv_chunk32769/bin/python -c 'import classy; print(classy.__file__)')
+          .venv_chunk32769/bin/python - "$CLASSY" <<'PY'
+          import hashlib,json,re,sys
+          from pathlib import Path
+          root=Path.cwd().resolve(); f=Path(sys.argv[1]).resolve()
+          def macro(path,name):
+              m=re.search(r'^\s*#define\s+'+re.escape(name)+r'\s+(\d+)\b',Path(path).read_text(),re.M)
+              return int(m.group(1)) if m else None
+          d={'schema':'LAYERB_32769_EIGHT_CHUNK_RUNTIME_BINDING_V0_1','effect':'+0/+0','chunk':${{ matrix.chunk }},'classy_file':str(f),'import_under_expected_venv':str(f).startswith(str(root/'.venv_chunk32769')+'/'),'point_capacity':macro('external_chunk32769/include/perturbations.h','_MAX_NUMBER_OF_K_FILES_'),'parser_capacity':macro('external_chunk32769/include/parser.h','_ARGUMENT_LENGTH_MAX_'),'classy_sha256':hashlib.sha256(f.read_bytes()).hexdigest(),'scientific_authority':False,'scientific_execution_authorized':False,'chunked_32769_execution_authorized':False}
+          d['pass']=d['import_under_expected_venv'] and d['point_capacity']==4608 and d['parser_capacity']==131072
+          Path('artifacts/runtime_binding.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(d,sort_keys=True)); raise SystemExit(0 if d['pass'] else 73)
+          PY
+      - name: Run response-blind Class.compute transfer resource probe
+        id: probe
+        continue-on-error: true
+        run: |
+          set +e
+          /usr/bin/time -v -o artifacts/time.txt .venv_chunk32769/bin/python ci/layerb_32769_chunk_response_blind_resource_probe_v0_1.py --chunk '${{ matrix.chunk }}' --canonical "$CANONICAL" --baseline "$BASELINE" --precision "$PRECISION" --out artifacts/result.json
+          rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          exit 0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-32769-response-blind-resource-chunk-${{ matrix.chunk }}-v0-1
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Enforce frozen resource probe result after evidence upload
+        if: always()
+        run: |
+          test '${{ steps.probe.outputs.rc }}' = '0'
+          python3 - <<'PY'
+          import json
+          d=json.load(open('artifacts/result.json'))
+          assert d['classification']=='LAYERB_32769_CHUNK_RESPONSE_BLIND_RESOURCE_PASS_PLUS_0_PLUS_0'
+          assert d['solver_transfer_compute_completed'] is True
+          assert d['scientific_transfer_values_read'] is False
+          assert d['scientific_response_serialized'] is False
+          assert d['convergence_metric_computed'] is False
+          assert d['scientific_authority'] is False
+          assert d['scientific_execution_authorized'] is False
+          assert d['chunked_32769_execution_authorized'] is False
+          assert d['max_live_class_instances']==1
+          PY
+
+  independent-finalizer:
+    if: always()
+    needs: [static-audit, chunk-resource]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-32769-response-blind-resource-chunk-*-v0-1
+          path: downloaded
+      - name: Independently aggregate exact response-blind resource receipts
+        run: |
+          set -euo pipefail
+          mkdir -p final
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          expected=set(range(8)); seen=set(); rows=[]; failures=[]
+          for p in sorted(Path('downloaded').rglob('result.json')):
+              d=json.load(open(p)); ch=d.get('chunk');
+              if ch in seen: failures.append(f'duplicate chunk {ch}')
+              seen.add(ch); rows.append(d)
+              checks=[
+                d.get('classification')=='LAYERB_32769_CHUNK_RESPONSE_BLIND_RESOURCE_PASS_PLUS_0_PLUS_0',
+                d.get('solver_transfer_compute_completed') is True,
+                d.get('scientific_transfer_values_read') is False,
+                d.get('scientific_response_serialized') is False,
+                d.get('convergence_metric_computed') is False,
+                d.get('scientific_authority') is False,
+                d.get('scientific_execution_authorized') is False,
+                d.get('chunked_32769_execution_authorized') is False,
+                d.get('max_live_class_instances')==1,
+                d.get('parser_margin_bytes',-1)>=0,
+              ]
+              if not all(checks): failures.append(f'chunk {ch} failed frozen receipt checks')
+          missing=sorted(expected-seen); extra=sorted(seen-expected)
+          if missing: failures.append(f'missing chunks {missing}')
+          if extra: failures.append(f'extra chunks {extra}')
+          agg={
+            'schema':'LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_AGGREGATE_V0_1',
+            'effect':'+0/+0',
+            'classification':'LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_ALL_PASS_PLUS_0_PLUS_0' if not failures else 'LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_NOT_ALL_PASS_PLUS_0_PLUS_0',
+            'chunks_seen':sorted(seen),'missing_chunks':missing,'failures':failures,
+            'all_eight_compute_completed':not failures,
+            'peak_ru_maxrss_kb':max((int(x.get('ru_maxrss_kb_after_compute',0)) for x in rows),default=0),
+            'scientific_transfer_values_read':False,'convergence_metric_computed':False,
+            'scientific_authority':False,'scientific_execution_authorized':False,'chunked_32769_execution_authorized':False,
+            'successor_authorized':False
+          }
+          Path('final/aggregate.json').write_text(json.dumps(agg,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(agg,sort_keys=True))
+          raise SystemExit(0 if not failures else 79)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-32769-eight-chunk-response-blind-resource-aggregate-v0-1
+          path: final/
+          if-no-files-found: error
+          retention-days: 90
