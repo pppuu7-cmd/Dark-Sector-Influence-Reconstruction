@@ -1,0 +1,13 @@
+{
+  "schema": "LAYERB_OPERAND_LOCALIZATION_LAUNCH_V0_2",
+  "contract": "docs/dsir4/contracts/LAYERB_OPERAND_LOCALIZATION_V0_2.json",
+  "contract_commit": "4cfb460618c2825e88a98b601d35198820dabe1e",
+  "workflow_commit": "25193ef423e686dda679bc2ea68c66740a63e246",
+  "purpose": "Launch exactly one frozen multi-stream exact operand-level localization of the authoritative 16385-to-32769 discrepancy, reusing retained operands only and invoking no CLASS solver.",
+  "parallel_streams": ["exact_atomic_localization","independent_role_attribution","plan_identity"],
+  "CLASS_solver_invocation_authorized": false,
+  "scientific_operand_recompute_authorized": false,
+  "denser_successor_65537_authorized": false,
+  "effect": "+0/+0",
+  "token": "LAUNCH_LAYERB_OPERAND_LOCALIZATION_V0_2"
+}
