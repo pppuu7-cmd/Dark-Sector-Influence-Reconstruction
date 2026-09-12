@@ -1,0 +1,56 @@
+{
+  "schema": "LAYERB_16385_TO_32769_CHUNK_PRODUCTION_STATIC_AUDIT_AUTHORITY_V0_1",
+  "scope": "DSIR Article III pre-production static authorization evidence only; no scientific response was read or classified",
+  "effect": "+0/+0",
+  "classification": "LAYERB_16385_TO_32769_CHUNK_PRODUCTION_STATIC_AUDIT_PASS_PLUS_0_PLUS_0",
+  "artifact_verified_independently": true,
+  "workflow": {
+    "path": ".github/workflows/layerb-16385-32769-chunk-production-static-audit-v0-1.yml",
+    "validated_run_id": 34695256186,
+    "validated_head_sha": "55283ec18d9ca4b12c09097eada4ea43a37ff749",
+    "source_identities_job_id": 103557525777,
+    "compile_synthetic_job_id": 103557525909,
+    "workflow_topology_job_id": 103557525929,
+    "scientific_delta_job_id": 103557525943,
+    "independent_finalizer_job_id": 103557551483,
+    "all_jobs_terminal_success": true
+  },
+  "aggregate_artifact": {
+    "artifact_id": 10298507794,
+    "artifact_zip_sha256": "24b3a5d38198b5e403535e4db8306c2272d6fe1908a0cec8242e5981650631f5",
+    "raw_static_audit_json_sha256": "b9547d407023b5e51a4d91a7764c594a5a61df0fe0bdf7ef16eb229d99353b39",
+    "missing_or_duplicate_receipts": []
+  },
+  "required_receipts": [
+    "LAYERB_16385_TO_32769_CHUNK_SOURCE_IDENTITIES_PASS_PLUS_0_PLUS_0",
+    "LAYERB_16385_TO_32769_CHUNK_ACQUISITION_ONLY_DELTA_PASS_PLUS_0_PLUS_0",
+    "LAYERB_16385_TO_32769_CHUNK_WORKFLOW_TOPOLOGY_PASS_PLUS_0_PLUS_0",
+    "LAYERB_16385_TO_32769_CHUNK_COMPILE_SYNTHETIC_PASS_PLUS_0_PLUS_0"
+  ],
+  "production_contract": {
+    "path": "docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1.json",
+    "git_blob": "1ab0f5b164727bb0c2c7f42ce3a82a1ebb77678d"
+  },
+  "production_workflow": {
+    "path": ".github/workflows/layerb-16385-to-32769-canonical-chunk-scientific-v0-1.yml",
+    "git_blob": "c9bb680edbb04b758b2d9bb1323282e3617428a7"
+  },
+  "frozen_science": {
+    "relative_tolerance": 0.001,
+    "strict_less_than": true,
+    "h": 0.0001,
+    "native_k_per_decade_for_pk": 20.0,
+    "lookup_relative_tolerance": 1e-12,
+    "interpolation": "centered-cubic",
+    "parent_retained_count": 107,
+    "invalid_row_fraction_max": 0.05,
+    "retained_after_layer_b_min": 15,
+    "unsupported_target_evaluations_required": 0
+  },
+  "scientific_response_read": false,
+  "scientific_execution_authorized": false,
+  "launch_authorized_by_this_authority_alone": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "interpretation": "The prospective chunk-production control plane passed independent source-identity, acquisition-only science-delta, workflow-topology and compile/synthetic audits. This authority alone does not launch or classify science; a separate one-shot launch sentinel is required."
+}
