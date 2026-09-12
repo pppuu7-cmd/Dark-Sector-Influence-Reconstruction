@@ -1,0 +1,38 @@
+{
+  "schema": "LAYERB_16385_32769_COARSE_RECOVERY_V01_CONTROL_PATH_FAILURE_AUTHORITY_V0_1",
+  "classification": "LAYERB_16385_32769_COARSE_RECOVERY_V01_CONTROL_PATH_FAIL_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "run_id": 34702716166,
+  "head_sha": "f5be2c5cf2fe8dd432c9c60f66f80ee217b689b2",
+  "preflight_job_id": 103577195853,
+  "preflight_conclusion": "success",
+  "coarse_jobs": {
+    "reference": {"job_id": 103577222445, "conclusion": "failure"},
+    "alpha_minus": {"job_id": 103577222531, "conclusion": "failure"},
+    "beta_plus": {"job_id": 103577222456, "conclusion": "failure"},
+    "beta_minus": {"job_id": 103577222478, "conclusion": "failure"}
+  },
+  "causal_failure": {
+    "stage": "Verify runtime binding and acquire coarse operand",
+    "reference_log_exception": "FileNotFoundError: [Errno 2] No such file or directory: 'inputs/control/plan.json'",
+    "artifact_layout_actual": "inputs/control/plan/plan.json",
+    "worker_argument_v01": "inputs/control/plan.json",
+    "history_suppression_applied_before_failure": true,
+    "history_suppression_post_sha256": "4e9a419d46471ffab74df3d14239e000bf92f2e198edad4d2c7b82f1335f7a4b",
+    "scientific_parameters_changed_by_history_patch": false,
+    "class_compute_reached": false,
+    "scientific_response_read": false,
+    "convergence_metric_computed": false,
+    "terminal_classifier_ran": false
+  },
+  "final_classifier_job_id": 103577399038,
+  "final_classifier_skipped": true,
+  "independent_terminal_verifier_job_id": 103577399079,
+  "independent_terminal_verifier_skipped": true,
+  "terminal_scientific_classification_created": false,
+  "scientific_failure_established": false,
+  "silent_rerun_forbidden_by_v01_contract": true,
+  "permitted_next_action": "prospectively freeze a V0.2 recovery repair whose scientific inputs, response operands, CLASS history-suppression patch, classifier and thresholds are unchanged and whose executable delta is limited to the control-artifact plan path plus retry-run guard semantics",
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false
+}
