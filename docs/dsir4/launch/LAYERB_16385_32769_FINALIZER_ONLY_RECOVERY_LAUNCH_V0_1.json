@@ -1,0 +1,13 @@
+{
+  "schema": "LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_LAUNCH_V0_1",
+  "scope": "Launch exactly one prospectively frozen finalizer-only recovery using the eight retained V146/production scientific operands; no coarse or fine recomputation.",
+  "contract": "docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json",
+  "contract_blob": "e3c20076a61551d082eb8ea4dc2f372cfc5fb50d",
+  "source_v146_run_id": 34702943923,
+  "coarse_recompute_authorized": false,
+  "fine_recompute_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "effect_before_independent_terminal_verification": "+0/+0",
+  "token": "LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_LAUNCH_V0_1"
+}
