@@ -1,0 +1,92 @@
+{
+  "schema": "LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1",
+  "scope": "Exactly one canonical DSIR Article III 16385-to-32769 scientific refinement with parallel role/grid acquisition and frozen legacy replay/classifier",
+  "production_workflow_path": ".github/workflows/layerb-16385-to-32769-canonical-chunk-scientific-v0-1.yml",
+  "launch_sentinel_path": "docs/dsir4/launch/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_LAUNCH_V0_1.json",
+  "effect": "+0/+0 until terminal scientific classifier",
+  "authority_bindings": {
+    "v141_method": {"path": "docs/dsir4/authority/LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V0_3.json", "git_blob": "c6480c1711f227529595f69c9e00b01ac6215800", "classification": "LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V03_ALL_ROLES_PASS_PLUS_0_PLUS_0"},
+    "v142_resource": {"path": "docs/dsir4/authority/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_V0_1.json", "git_blob": "edbb20eb798a188e88a49a6cde14d3c37c31c04c", "classification": "LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_ALL_PASS_PLUS_0_PLUS_0"},
+    "v143_method": {"path": "docs/dsir4/authority/LAYERB_32769_BLINDED_PARTITION_INVARIANCE_V0_1.json", "git_blob": "38a0f394e8f609298d9a33ca3c007405f7f95850", "classification": "LAYERB_32769_BLINDED_PARTITION_INVARIANCE_ALL_ROLES_PASS_PLUS_0_PLUS_0"},
+    "parent_refinement": {"path": "docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json", "git_blob": "7958e1f44c0224e1828f89b1472aa33226c61886", "classification": "COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0"},
+    "request_plan": {"path": "docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json", "git_blob": "5992faa10b6d25d1503b287c19456fb36756caa4", "classification": "RESPONSE_BLIND_REQUEST_PLAN_AUDITED_PLUS_0_PLUS_0"}
+  },
+  "source_bindings": {
+    "frozen_parent_classifier": {"path": "ci/layerb_16385_to_32769_canonical_one_live_refinement_v0_1.py", "git_blob": "5ae2068d65dd45e0813c75fb795e55aa1bda1d5e"},
+    "frozen_response_engine": {"path": "ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py", "git_blob": "5f8475b961db20bef5f4b8a2eb7c99d9f7c722e2"},
+    "frozen_ir": {"path": "ci/exp073ir_article3_real_layerb_common_response_v0_1.py", "git_blob": "6ef2516dfcae8a8ae92f5b7dbe792274138c0f6f"},
+    "frozen_jj": {"path": "ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py", "git_blob": "ee8fd0650a2a1322fab83a86bb06a219e84ca434"},
+    "frozen_request_plan_audit": {"path": "ci/recovered_exp073jl_response_blind_request_plan_audit_v0_1.py", "git_blob": "7180b74641acfa602c34db07ad6cc916c17ebd4f"},
+    "chunk_call_codec": {"path": "ci/layerb_chunk_call_codec_v0_1.py", "git_blob": "a69ca9a78cacdd0def53745a0daa7d2ca9b36dcc"},
+    "chunk_plan_materializer": {"path": "ci/layerb_16385_32769_chunk_plan_materializer_v0_1.py", "git_blob": "58fd22803eca0ab1c9fd7ce94a27c1e9cb981c82"},
+    "chunk_role_operand_worker": {"path": "ci/layerb_16385_32769_chunk_role_operand_v0_1.py", "git_blob": "472a1b7364fc8ca4f7c86e79f336fde702329f8c"},
+    "chunk_operand_adapter": {"path": "ci/layerb_16385_32769_chunk_operand_adapter_v0_1.py", "git_blob": "798e83c56d50babbdcab1a57f27662b847b653b4"},
+    "chunk_classifier_wrapper": {"path": "ci/layerb_16385_to_32769_canonical_chunk_refinement_v0_1.py", "git_blob": "91c7b2d802d611660f5849ee6ec2db0e4ac3eb0f"},
+    "chunk_one_live_guard": {"path": "ci/layerb_32769_chunk_one_live_guard_v0_1.py", "git_blob": "7e67e15352f8b5708eb6e47f277973930fb4e386"},
+    "chunk_one_run_authorizer": {"path": "ci/layerb_16385_to_32769_chunk_one_run_authorizer_v0_1.py", "git_blob": "c5a802d398fe3ab68c861574e22e2820d1077d9f"},
+    "chunk_terminal_consumer": {"path": "ci/layerb_16385_to_32769_chunk_terminal_consumer_v0_1.py", "git_blob": "00d36e4d0cf34e37c4090effe9e3eef6737bb13b"},
+    "chunk_terminal_contract": {"path": "docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_TERMINAL_RESULT_CONTRACT_V0_1.json", "git_blob": "76816b105cb72194107cf7eadffc192900fad6f5"}
+  },
+  "canonical": {
+    "coarse_path": "docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt",
+    "coarse_node_count": 16385,
+    "coarse_text_sha256": "7e8f13abe29617bc0d331f07143e6680f50512e2f3811e017bbc74ea847dff69",
+    "coarse_node_sha256": "3e10cea6e46a6d0c07eac825a4e508829727914c8690d42b187ef894eaa2c975",
+    "fine_path": "docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt",
+    "fine_node_count": 32769,
+    "fine_text_sha256": "7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2",
+    "fine_node_sha256": "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599"
+  },
+  "request_plan": {
+    "coarse_legacy_sha256": "505716116cc385d5700e455017d8e541c5bba7774fa6647298392495c83ecfe0",
+    "fine_legacy_sha256": "0f7ce2e5fa459e15954268dfd46045eaa0ab6356dfdab5a2e282514e7a34ae4e",
+    "coarse_calls_per_role": 441,
+    "fine_calls_per_role": 569,
+    "coarse_target_scalars_per_role": 83666,
+    "fine_target_scalars_per_role": 121682
+  },
+  "acquisition": {
+    "role_order": ["reference", "alpha_minus", "beta_plus", "beta_minus"],
+    "parallel_role_grid_operand_jobs": 8,
+    "coarse_mode": "monolithic_16385_per_role",
+    "coarse_point_capacity": 16385,
+    "coarse_parser_capacity": 524288,
+    "coarse_solver_constructions_total": 4,
+    "fine_mode": "eight_chunk_32769_per_role",
+    "fine_point_capacity": 4608,
+    "fine_parser_capacity": 131072,
+    "fine_slices": [[0,4097],[4097,8193],[8193,12289],[12289,16385],[16385,20481],[20481,24577],[24577,28673],[28673,32769]],
+    "fine_solver_constructions_total": 32,
+    "total_solver_constructions": 36,
+    "max_live_instances_per_acquisition_job": 1,
+    "raw_role_operands_may_be_persisted_only_after_current_run_authorization": true,
+    "final_classifier_must_use_frozen_parent_execute": true,
+    "cross_process_raw_operand_combination": true
+  },
+  "scientific_semantics": {
+    "h": 0.0001,
+    "relative_tolerance": 0.001,
+    "strict_less_than": true,
+    "native_k_per_decade_for_pk": 20.0,
+    "lookup_relative_tolerance": 1e-12,
+    "interpolation": "centered-cubic",
+    "parent_retained_count": 107,
+    "invalid_row_fraction_max": 0.05,
+    "retained_after_layer_b_min": 15,
+    "unsupported_target_evaluations_required": 0,
+    "finite_nonzero_status_changed_required": false,
+    "row_label_changed_required": false,
+    "boss_dense_z_disagreement_required": false,
+    "covariance_restriction_authorized": false,
+    "Wm_S3_opened": false
+  },
+  "authorization": {
+    "exactly_one_workflow_run": true,
+    "all_role_operands_must_bind_same_authorization_sha256": true,
+    "all_role_operands_must_bind_current_github_run_id": true,
+    "scientific_response_persistence_allowed_only_as_role_operand_artifacts": true,
+    "post_result_threshold_change_forbidden": true,
+    "silent_science_retry_forbidden": true
+  },
+  "terminal_contract_path": "docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_TERMINAL_RESULT_CONTRACT_V0_1.json"
+}
