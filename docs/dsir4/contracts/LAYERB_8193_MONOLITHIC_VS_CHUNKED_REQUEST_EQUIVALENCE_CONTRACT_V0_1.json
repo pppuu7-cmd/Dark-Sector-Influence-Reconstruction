@@ -1,0 +1,61 @@
+{
+  "schema": "LAYERB_8193_MONOLITHIC_VS_CHUNKED_REQUEST_EQUIVALENCE_CONTRACT_V0_1",
+  "scope": "DSIR Article III resource-route equivalence support only",
+  "purpose": "Prospectively test whether the frozen canonical 8193 requested-k response can be reproduced by contiguous low-capacity CLASS chunks, before any 32769 chunked route is considered.",
+  "effect": "+0/+0",
+  "scientific_authority": false,
+  "scientific_execution_authorized": false,
+  "successor_32769_chunked_execution_authorized": false,
+  "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+  "canonical": {
+    "path": "docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt",
+    "node_count": 8193,
+    "node_payload_sha256": "6d35a9d79aa8826554e8e39315ab12a8be1675d32d25a86ec04c978c7723a515",
+    "text_sha256": "90b9aee9e01784a4af89ab0aa1bd5cbf1e95061f2d412d7a0e1b8ee5332ba7d6"
+  },
+  "frozen_model": {
+    "h": 0.0001,
+    "native_k_per_decade_for_pk": 20.0,
+    "roles": [
+      ["reference", 0.0, 0.0],
+      ["alpha_minus", -0.0001, 0.0],
+      ["beta_plus", 0.0, 0.0001],
+      ["beta_minus", 0.0, -0.0001]
+    ],
+    "baseline": "configs/dsir4/c2/ide0_reference_v0_1.ini",
+    "precision": "configs/dsir4/c2/dsir_ide_p8_v0_1.pre",
+    "response_component": "d_m",
+    "z_probes": [0.295, 0.7, 1.0, 1.5, 2.0, 2.33]
+  },
+  "monolithic_build": {
+    "point_capacity": 8193,
+    "parser_capacity": 262144,
+    "request_slices": [[0, 8193]]
+  },
+  "chunked_build": {
+    "point_capacity": 2304,
+    "parser_capacity": 65536,
+    "request_slices": [[0, 2049], [2049, 4097], [4097, 6145], [6145, 8193]],
+    "all_nodes_must_be_requested_exactly_once_and_in_canonical_order": true
+  },
+  "acceptance": {
+    "lookup_relative_tolerance": 1e-12,
+    "max_normalized_response_difference": 1e-12,
+    "normalization": "abs(a-b)/max(abs(a),abs(b),1e-300)",
+    "all_values_finite": true,
+    "all_four_roles_must_pass": true,
+    "all_z_probes_must_pass": true,
+    "coordinate_order_must_match_canonical_exactly": true
+  },
+  "interpretation": {
+    "pass_means": "The tested 8193 response is numerically equivalent under the frozen 1e-12 support tolerance when requested monolithically versus four contiguous low-capacity chunks.",
+    "pass_does_not_mean": "32769 chunking is authorized, 32769 convergence is established, or the scientific frontier changes.",
+    "failure_means": "Chunked requesting is not yet qualified as a resource-equivalent route under this frozen test; failure is support/resource-method evidence, not a DSIR physical-model failure."
+  },
+  "forbidden": [
+    "No post-result tolerance change.",
+    "No change to canonical nodes, CLASS commit, H, native k-per-decade, baseline, precision or role tuples.",
+    "No covariance, whitening, nuisance, relation/null or Wm_S3 access.",
+    "No 32769 chunked execution from this contract alone."
+  ]
+}
