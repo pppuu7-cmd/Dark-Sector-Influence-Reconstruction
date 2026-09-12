@@ -1,0 +1,291 @@
+name: layerb-8193-monolithic-vs-chunked-equivalence-v0-3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-8193-monolithic-vs-chunked-equivalence-v0-3.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  CONTRACT_PATH: docs/dsir4/contracts/LAYERB_8193_MONOLITHIC_VS_CHUNKED_REQUEST_EQUIVALENCE_CONTRACT_V0_1.json
+  REPAIR_PATH: docs/dsir4/contracts/LAYERB_8193_MONOLITHIC_VS_CHUNKED_RUNTIME_BINDING_REPAIR_CONTRACT_V0_3.json
+  CANONICAL_PATH: docs/dsir4/canonical/EXP073JM_CANONICAL_FINE_8193_NODES_U64HEX_V0_1.txt
+  BASELINE: configs/dsir4/c2/ide0_reference_v0_1.ini
+  PRECISION: configs/dsir4/c2/dsir_ide_p8_v0_1.pre
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen identities and capacity arithmetic
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,struct
+          from pathlib import Path
+          c=json.load(open('docs/dsir4/contracts/LAYERB_8193_MONOLITHIC_VS_CHUNKED_REQUEST_EQUIVALENCE_CONTRACT_V0_1.json'))
+          r=json.load(open('docs/dsir4/contracts/LAYERB_8193_MONOLITHIC_VS_CHUNKED_RUNTIME_BINDING_REPAIR_CONTRACT_V0_3.json'))
+          assert r['v0_2_terminal']['response_computation_reached'] is False
+          assert r['v0_2_terminal']['comparison_reached'] is False
+          assert c['acceptance']['lookup_relative_tolerance']==1e-12
+          assert c['acceptance']['max_normalized_response_difference']==1e-12
+          assert c['frozen_model']['roles']==r['unchanged_frozen_semantics']['roles']
+          assert c['frozen_model']['z_probes']==r['unchanged_frozen_semantics']['z_probes']
+          assert c['chunked_build']['request_slices']==r['unchanged_frozen_semantics']['chunk_slices']
+          raw=Path(c['canonical']['path']).read_bytes(); lines=raw.decode().splitlines()
+          assert len(lines)==8193 and hashlib.sha256(raw).hexdigest()==c['canonical']['text_sha256']
+          nodebytes=b''.join(struct.pack('<Q',int(x,16)) for x in lines)
+          assert hashlib.sha256(nodebytes).hexdigest()==c['canonical']['node_payload_sha256']
+          # exact decimal payload capacity check using frozen response helper formatting
+          import numpy as np
+          nodes=np.asarray([struct.unpack('<d',struct.pack('<Q',int(x,16)))[0] for x in lines])
+          for lo,hi in c['chunked_build']['request_slices']:
+              payload=len(','.join(format(float(x),'.17g') for x in nodes[lo:hi]).encode())+1
+              assert payload<=65536, (lo,hi,payload)
+          mono_payload=len(','.join(format(float(x),'.17g') for x in nodes).encode())+1
+          assert mono_payload<=262144, mono_payload
+          print('STATIC_CAPACITY_AND_IDENTITY_PASS_PLUS_0_PLUS_0',mono_payload)
+          PY
+
+  binding-probe:
+    needs: [static-audit]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build prerequisites
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          for v in .venv_mono .venv_chunk; do
+            python3 -m venv "$v"
+            "$v/bin/python" -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+            "$v/bin/python" -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          done
+      - name: Build isolated mono and chunk CLASS modules
+        run: |
+          set -euo pipefail
+          build_one() {
+            tree="$1"; venv="$2"; points="$3"; parser="$4"
+            git clone -q https://github.com/kaeonikc/class_iv.git "$tree"
+            git -C "$tree" checkout -q "$CLASS_COMMIT"
+            "$venv/bin/python" - "$tree" "$points" "$parser" <<'PY'
+          import sys
+          from pathlib import Path
+          tree,points,parser=sys.argv[1:]
+          p=Path(tree)/'include/perturbations.h'; s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,f'#define _MAX_NUMBER_OF_K_FILES_ {points}',1))
+          q=Path(tree)/'include/parser.h'; s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,f'#define _ARGUMENT_LENGTH_MAX_ {parser}',1))
+          PY
+            PATH="$GITHUB_WORKSPACE/$venv/bin:$PATH" "$venv/bin/python" scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py "$tree"
+            PATH="$GITHUB_WORKSPACE/$venv/bin:$PATH" "$venv/bin/python" scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py "$tree"
+            "$venv/bin/python" - "$tree" <<'PY'
+          import sys
+          from pathlib import Path
+          p=Path(sys.argv[1])/'python/setup.py'; s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+            PATH="$GITHUB_WORKSPACE/$venv/bin:$PATH" make -C "$tree" -j2 all >/dev/null
+          }
+          build_one external_mono .venv_mono 8193 262144
+          build_one external_chunk .venv_chunk 2304 65536
+      - name: Write diagnostic receipt then enforce robust runtime binding
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          .venv_mono/bin/python - <<'PY' > artifacts/mono_import.txt
+          import classy; print(classy.__file__)
+          PY
+          .venv_chunk/bin/python - <<'PY' > artifacts/chunk_import.txt
+          import classy; print(classy.__file__)
+          PY
+          python3 - <<'PY'
+          import hashlib,json,re
+          from pathlib import Path
+          root=Path.cwd().resolve()
+          def macro(path,name):
+              text=Path(path).read_text()
+              m=re.search(r'^\s*#define\s+'+re.escape(name)+r'\s+(\d+)\b',text,re.M)
+              if not m: return None
+              return int(m.group(1))
+          mf=Path('artifacts/mono_import.txt').read_text().strip(); cf=Path('artifacts/chunk_import.txt').read_text().strip()
+          vals={
+            'schema':'LAYERB_8193_CHUNK_EQUIVALENCE_RUNTIME_BINDING_PROBE_V0_3','effect':'+0/+0',
+            'monolithic_classy_file':mf,'chunk_classy_file':cf,
+            'monolithic_import_under_expected_venv':str(Path(mf).resolve()).startswith(str(root/'.venv_mono')+'/'),
+            'chunk_import_under_expected_venv':str(Path(cf).resolve()).startswith(str(root/'.venv_chunk')+'/'),
+            'environments_distinct':Path(mf).resolve()!=Path(cf).resolve(),
+            'monolithic_point_capacity':macro('external_mono/include/perturbations.h','_MAX_NUMBER_OF_K_FILES_'),
+            'monolithic_parser_capacity':macro('external_mono/include/parser.h','_ARGUMENT_LENGTH_MAX_'),
+            'chunk_point_capacity':macro('external_chunk/include/perturbations.h','_MAX_NUMBER_OF_K_FILES_'),
+            'chunk_parser_capacity':macro('external_chunk/include/parser.h','_ARGUMENT_LENGTH_MAX_'),
+            'monolithic_classy_sha256':hashlib.sha256(Path(mf).read_bytes()).hexdigest() if Path(mf).is_file() else None,
+            'chunk_classy_sha256':hashlib.sha256(Path(cf).read_bytes()).hexdigest() if Path(cf).is_file() else None,
+            'scientific_authority':False,'successor_32769_chunked_execution_authorized':False
+          }
+          vals['pass']=all([vals['monolithic_import_under_expected_venv'],vals['chunk_import_under_expected_venv'],vals['environments_distinct'],vals['monolithic_point_capacity']==8193,vals['monolithic_parser_capacity']==262144,vals['chunk_point_capacity']==2304,vals['chunk_parser_capacity']==65536])
+          Path('artifacts/binding_probe.json').write_text(json.dumps(vals,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(vals,sort_keys=True))
+          raise SystemExit(0 if vals['pass'] else 73)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-8193-chunk-equivalence-binding-probe-v0-3
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 90
+
+  role-equivalence:
+    needs: [binding-probe]
+    strategy:
+      fail-fast: false
+      matrix:
+        role: [reference, alpha_minus, beta_plus, beta_minus]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install isolated stacks
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          for v in .venv_mono .venv_chunk; do
+            python3 -m venv "$v"
+            "$v/bin/python" -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+            "$v/bin/python" -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          done
+      - name: Build isolated CLASS modules
+        run: |
+          set -euo pipefail
+          build_one() {
+            tree="$1"; venv="$2"; points="$3"; parser="$4"
+            git clone -q https://github.com/kaeonikc/class_iv.git "$tree"
+            git -C "$tree" checkout -q "$CLASS_COMMIT"
+            "$venv/bin/python" - "$tree" "$points" "$parser" <<'PY'
+          import sys
+          from pathlib import Path
+          tree,points,parser=sys.argv[1:]
+          p=Path(tree)/'include/perturbations.h'; s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,f'#define _MAX_NUMBER_OF_K_FILES_ {points}',1))
+          q=Path(tree)/'include/parser.h'; s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,f'#define _ARGUMENT_LENGTH_MAX_ {parser}',1))
+          PY
+            PATH="$GITHUB_WORKSPACE/$venv/bin:$PATH" "$venv/bin/python" scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py "$tree"
+            PATH="$GITHUB_WORKSPACE/$venv/bin:$PATH" "$venv/bin/python" scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py "$tree"
+            "$venv/bin/python" - "$tree" <<'PY'
+          import sys
+          from pathlib import Path
+          p=Path(sys.argv[1])/'python/setup.py'; s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+            PATH="$GITHUB_WORKSPACE/$venv/bin:$PATH" make -C "$tree" -j2 all >/dev/null
+          }
+          build_one external_mono .venv_mono 8193 262144
+          build_one external_chunk .venv_chunk 2304 65536
+      - name: Enforce robust binding and write receipt
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          MONO_FILE=$(.venv_mono/bin/python -c 'import classy; print(classy.__file__)')
+          CHUNK_FILE=$(.venv_chunk/bin/python -c 'import classy; print(classy.__file__)')
+          python3 - "$MONO_FILE" "$CHUNK_FILE" <<'PY'
+          import hashlib,json,re,sys
+          from pathlib import Path
+          root=Path.cwd().resolve(); mf=Path(sys.argv[1]).resolve(); cf=Path(sys.argv[2]).resolve()
+          def macro(path,name):
+              m=re.search(r'^\s*#define\s+'+re.escape(name)+r'\s+(\d+)\b',Path(path).read_text(),re.M)
+              return int(m.group(1)) if m else None
+          d={'schema':'LAYERB_8193_CHUNK_EQUIVALENCE_RUNTIME_BINDING_V0_3','effect':'+0/+0','monolithic_classy_file':str(mf),'chunk_classy_file':str(cf),'monolithic_import_under_expected_venv':str(mf).startswith(str(root/'.venv_mono')+'/'),'chunk_import_under_expected_venv':str(cf).startswith(str(root/'.venv_chunk')+'/'),'environments_distinct':mf!=cf,'monolithic_point_capacity':macro('external_mono/include/perturbations.h','_MAX_NUMBER_OF_K_FILES_'),'monolithic_parser_capacity':macro('external_mono/include/parser.h','_ARGUMENT_LENGTH_MAX_'),'chunk_point_capacity':macro('external_chunk/include/perturbations.h','_MAX_NUMBER_OF_K_FILES_'),'chunk_parser_capacity':macro('external_chunk/include/parser.h','_ARGUMENT_LENGTH_MAX_'),'monolithic_classy_sha256':hashlib.sha256(mf.read_bytes()).hexdigest(),'chunk_classy_sha256':hashlib.sha256(cf.read_bytes()).hexdigest(),'scientific_authority':False,'successor_32769_chunked_execution_authorized':False}
+          d['pass']=all([d['monolithic_import_under_expected_venv'],d['chunk_import_under_expected_venv'],d['environments_distinct'],d['monolithic_point_capacity']==8193,d['monolithic_parser_capacity']==262144,d['chunk_point_capacity']==2304,d['chunk_parser_capacity']==65536])
+          Path('artifacts/runtime_binding.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(d,sort_keys=True)); raise SystemExit(0 if d['pass'] else 73)
+          PY
+      - name: Compute frozen monolithic plus four chunks
+        id: compute
+        continue-on-error: true
+        run: |
+          set +e
+          .venv_mono/bin/python ci/layerb_8193_chunk_equivalence_response_dump_v0_1.py --role '${{ matrix.role }}' --canonical "$CANONICAL_PATH" --baseline "$BASELINE" --precision "$PRECISION" --slice-start 0 --slice-end 8193 --expected-point-capacity 8193 --expected-parser-capacity 262144 --out artifacts/mono.json
+          rc=$?
+          if [ "$rc" -eq 0 ]; then
+            for spec in '0 2049 0' '2049 4097 1' '4097 6145 2' '6145 8193 3'; do
+              set -- $spec
+              .venv_chunk/bin/python ci/layerb_8193_chunk_equivalence_response_dump_v0_1.py --role '${{ matrix.role }}' --canonical "$CANONICAL_PATH" --baseline "$BASELINE" --precision "$PRECISION" --slice-start "$1" --slice-end "$2" --expected-point-capacity 2304 --expected-parser-capacity 65536 --out "artifacts/chunk_$3.json" || { rc=$?; break; }
+            done
+          fi
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Compare against unchanged frozen 1e-12 gate
+        id: compare
+        if: steps.compute.outputs.rc == '0'
+        continue-on-error: true
+        run: |
+          set +e
+          .venv_mono/bin/python ci/layerb_8193_chunk_equivalence_compare_v0_1.py --contract "$CONTRACT_PATH" --monolithic artifacts/mono.json --chunks artifacts/chunk_0.json artifacts/chunk_1.json artifacts/chunk_2.json artifacts/chunk_3.json --out artifacts/result.json
+          rc=$?; echo "rc=$rc" >> "$GITHUB_OUTPUT"; exit 0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-8193-chunk-equivalence-v03-${{ matrix.role }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Enforce after upload
+        if: always()
+        run: |
+          test '${{ steps.compute.outputs.rc }}' = '0'
+          test '${{ steps.compare.outputs.rc }}' = '0'
+
+  independent-finalizer:
+    needs: [static-audit, binding-probe, role-equivalence]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-8193-chunk-equivalence-v03-*
+          path: gathered
+      - name: Independently aggregate role receipts/results
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          roles=['reference','alpha_minus','beta_plus','beta_minus']; vals={}; binds={}; missing=[]
+          for r in roles:
+              root=Path('gathered')/f'layerb-8193-chunk-equivalence-v03-{r}'
+              rp=root/'result.json'; bp=root/'runtime_binding.json'
+              if not rp.exists() or not bp.exists(): missing.append(r); continue
+              d=json.load(open(rp)); b=json.load(open(bp)); vals[r]=d; binds[r]=b
+              assert b['pass'] is True and b['environments_distinct'] is True
+              assert b['monolithic_point_capacity']==8193 and b['chunk_point_capacity']==2304
+              assert b['monolithic_parser_capacity']==262144 and b['chunk_parser_capacity']==65536
+          if missing:
+              cls='LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V03_INFRASTRUCTURE_FAIL_PLUS_0_PLUS_0'
+          elif all(vals[r]['classification']=='LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_PASS_PLUS_0_PLUS_0' for r in roles):
+              cls='LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V03_ALL_ROLES_PASS_PLUS_0_PLUS_0'
+          else:
+              cls='LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V03_ONE_OR_MORE_ROLES_FAIL_PLUS_0_PLUS_0'
+          out={'schema':'LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_AGGREGATE_V0_3','classification':cls,'effect':'+0/+0','missing_roles':missing,'roles':{r:{'classification':vals[r]['classification'],'max_normalized_response_difference':vals[r]['max_normalized_response_difference'],'exact_binary64_fraction':vals[r]['exact_binary64_fraction'],'worst':vals[r]['worst']} for r in vals},'scientific_authority':False,'scientific_execution_authorized':False,'successor_32769_chunked_execution_authorized':False,'convergence_metric_computed':False,'Wm_S3_opened':False}
+          Path('artifacts/aggregate.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(cls)
+          if missing: raise SystemExit(41)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layerb-8193-monolithic-vs-chunked-equivalence-aggregate-v0-3
+          path: artifacts/aggregate.json
+          if-no-files-found: error
+          retention-days: 90
