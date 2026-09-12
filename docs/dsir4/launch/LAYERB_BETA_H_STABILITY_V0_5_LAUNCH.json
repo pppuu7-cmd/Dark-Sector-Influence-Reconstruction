@@ -1,0 +1,11 @@
+{
+  "schema": "LAYERB_BETA_H_STABILITY_LAUNCH_V0_5",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_H_STABILITY_AUDIT_V0_5.json",
+  "purpose": "Launch exactly one prospectively frozen diagnostic-only exact-target-k h-stability audit after V0.4 rejected support-interpolation dominance.",
+  "effect": "+0/+0",
+  "production_h_mutated": false,
+  "global_65537_authorized": false,
+  "covariance_authorized": false,
+  "Wm_S3_authorized": false,
+  "science_gate_authorized": false
+}
