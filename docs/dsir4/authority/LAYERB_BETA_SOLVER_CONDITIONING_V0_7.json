@@ -1,0 +1,75 @@
+{
+  "schema": "LAYERB_BETA_SOLVER_CONDITIONING_AUTHORITY_V0_7",
+  "status": "TERMINAL_AUTHORITY",
+  "run_id": 34719555760,
+  "head_sha": "419e109429f77cb233a01b99e80c82d1c504e700",
+  "decision_job_id": 103623179260,
+  "decision_artifact_id": 10306115925,
+  "decision_artifact_zip_sha256": "521fa3a3a42e68154afe5d310098e46519919678ba8a154dd16a7a16de74824f",
+  "classification": "UPSTREAM_RESPONSE_SOLVER_CONDITIONING_PARTIALLY_SUPPORTED",
+  "attribution": "PERTURBATION_INTEGRATION_TOLERANCE_SENSITIVE",
+  "effect": "+0/+0",
+  "production_h": 0.0001,
+  "relative_tolerance": 0.001,
+  "parent_unstable_failure_coordinates": 20,
+  "parent_unstable_median_h_spread": 0.004804415208560067,
+  "tol_axis_monotonic": true,
+  "sampling_axis_monotonic": false,
+  "joint_not_pathological": true,
+  "all_controls_stable": true,
+  "all_coordinate_keysets_exact": true,
+  "max_exact_target_binding_relative_mismatch": 1.2517848722592053e-16,
+  "invariant_ok": true,
+  "profiles": {
+    "TOL10": {
+      "median_parent_unstable_h_spread": 0.000810683437303502,
+      "median_reduction_factor_vs_parent": 5.926376422023039,
+      "recovered_count": 11,
+      "recovery_fraction": 0.55,
+      "control_max_h_spread": 3.731116997559176e-05,
+      "D_artifact_id": 10305647671,
+      "D_artifact_sha256": "3a29cdd1a7941ddccf0ca437f64504c36d4468b8cab29381922e114ea73af5bb",
+      "B_artifact_id": 10304948588,
+      "B_artifact_sha256": "8cfcf18bb1ab8f2a06361e5d2a3b5faf0a01dce591751f3915f04dc2429f8a03"
+    },
+    "TOL100": {
+      "median_parent_unstable_h_spread": 0.0006864929897004239,
+      "median_reduction_factor_vs_parent": 6.998491289265238,
+      "recovered_count": 14,
+      "recovery_fraction": 0.7,
+      "control_max_h_spread": 4.442767872396179e-05,
+      "D_artifact_id": 10305759000,
+      "D_artifact_sha256": "bfd518ce0627b149a2b8626fb2850d48eb545525a4be9c3026f5073c120f0ddc",
+      "B_artifact_id": 10305587551,
+      "B_artifact_sha256": "5df60ec06306d577c9ab1c663385ee520784cdf2bfefd68f9cba15101c1c6ef4"
+    },
+    "SAMP2": {
+      "median_parent_unstable_h_spread": 0.004804344365510022,
+      "median_reduction_factor_vs_parent": 1.0000147456228479,
+      "recovered_count": 0,
+      "recovery_fraction": 0.0,
+      "control_max_h_spread": 0.00022411844229128808
+    },
+    "SAMP4": {
+      "median_parent_unstable_h_spread": 0.004804569566023653,
+      "median_reduction_factor_vs_parent": 0.9999678727799722,
+      "recovered_count": 0,
+      "recovery_fraction": 0.0,
+      "control_max_h_spread": 0.0002241161173034406
+    },
+    "JOINT100_S4": {
+      "median_parent_unstable_h_spread": 0.0006866054910050431,
+      "median_reduction_factor_vs_parent": 6.997344576326405,
+      "recovered_count": 14,
+      "recovery_fraction": 0.7,
+      "control_max_h_spread": 4.4428769669069156e-05
+    }
+  },
+  "interpretation": "Upstream response-solver conditioning is materially present but does not meet the pre-registered strong-support recovery fraction. Tightening tol_perturb_integration produces a monotonic approximately 6-7x median stabilization and 55-70% recovery, while tightening perturb_sampling_stepsize alone produces no recovery and no material median improvement. The joint aggressive profile matches the TOL100 result, so the supported sensitivity is specifically perturbation integration tolerance rather than sampling density.",
+  "production_h_mutated": false,
+  "global_65537_launched": false,
+  "covariance_read": false,
+  "Wm_S3_opened": false,
+  "science_gate_opened": false,
+  "authorized_next_stage": "PROSPECTIVELY_FROZEN_LOCALIZED_SOLVER_KNOB_ISOLATION_AUDIT"
+}
