@@ -1,0 +1,46 @@
+name: dsir-home-windows-memory-probe-v0-1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/dsir-home-windows-memory-probe-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-memory-probe:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 5
+    steps:
+      - name: Probe host Windows RAM through WSL interop
+        shell: bash
+        run: |
+          set -u
+          mkdir -p artifacts
+          {
+            echo 'schema=DSIR_HOME_WINDOWS_MEMORY_PROBE_V0_1'
+            echo "wsl_memtotal_kb=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo)"
+            echo "wsl_swaptotal_kb=$(awk '/^SwapTotal:/ {print $2}' /proc/meminfo)"
+            PSEXE='/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe'
+            if [ -x "$PSEXE" ]; then
+              echo 'powershell_interop=AVAILABLE'
+              "$PSEXE" -NoProfile -NonInteractive -Command "[Console]::OutputEncoding=[System.Text.Encoding]::UTF8; (Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory" 2>/dev/null | tr -d '\r' | sed 's/^/windows_total_physical_bytes=/' || true
+              "$PSEXE" -NoProfile -NonInteractive -Command "[Console]::OutputEncoding=[System.Text.Encoding]::UTF8; (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory" 2>/dev/null | tr -d '\r' | sed 's/^/windows_free_physical_kb=/' || true
+            else
+              echo 'powershell_interop=UNAVAILABLE'
+            fi
+            if [ -f /mnt/c/Users/axioma338/.wslconfig ]; then
+              echo 'wslconfig_present=true'
+              sed -E 's/(password|token|secret).*/REDACTED/Ig' /mnt/c/Users/axioma338/.wslconfig
+            else
+              echo 'wslconfig_present=false'
+            fi
+          } | tee artifacts/windows_memory.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dsir-home-windows-memory-probe-v0-1
+          path: artifacts/windows_memory.txt
+          if-no-files-found: error
+          retention-days: 30
