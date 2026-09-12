@@ -1,10 +1,10 @@
-name: layerb-beta-fd-repair-v0-6r1
+name: layerb-beta-fd-repair-v0-6r2
 
 on:
   push:
     branches: [main]
     paths:
-      - 'docs/dsir4/launch/LAYERB_BETA_FD_REPAIR_V0_6R1_LAUNCH.json'
+      - 'docs/dsir4/launch/LAYERB_BETA_FD_REPAIR_V0_6R2_LAUNCH.json'
   workflow_dispatch:
 
 permissions:
@@ -13,7 +13,8 @@ permissions:
 
 env:
   PARENT_RUN_ID: '34719180791'
-  RECOVERY_CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_FD_REPAIR_V0_6R1_INFRA_RECOVERY.json'
+  RECOVERY_R1: 'docs/dsir4/contracts/LAYERB_BETA_FD_REPAIR_V0_6R1_INFRA_RECOVERY.json'
+  RECOVERY_R2: 'docs/dsir4/contracts/LAYERB_BETA_FD_REPAIR_V0_6R2_INFRA_RECOVERY.json'
   SCIENCE_CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_FINITE_DIFFERENCE_REPAIR_VALIDATION_V0_6.json'
   EXECUTOR: 'ci/layerb_beta_fd_repair_v0_6.py'
 
@@ -32,17 +33,24 @@ jobs:
           python3 - <<'PY'
           import hashlib, json
           from pathlib import Path
-          R=json.load(open('docs/dsir4/contracts/LAYERB_BETA_FD_REPAIR_V0_6R1_INFRA_RECOVERY.json'))
+          R1=json.load(open('docs/dsir4/contracts/LAYERB_BETA_FD_REPAIR_V0_6R1_INFRA_RECOVERY.json'))
+          R2=json.load(open('docs/dsir4/contracts/LAYERB_BETA_FD_REPAIR_V0_6R2_INFRA_RECOVERY.json'))
           C=json.load(open('docs/dsir4/contracts/LAYERB_BETA_FINITE_DIFFERENCE_REPAIR_VALIDATION_V0_6.json'))
-          assert R['status']=='PROSPECTIVELY_FROZEN_BEFORE_RECOVERY_EXECUTION'
-          assert R['parent_science_run_id']==34719180791
-          assert R['reuse_only_existing_science_artifacts'] is True
-          assert R['recompute_domain_science'] is False
-          assert R['decision_rule_changed'] is False and R['thresholds_changed'] is False
-          assert R['production_h_changed'] is False
-          assert hashlib.sha256(Path(R['frozen_executor']).read_bytes()).hexdigest()==R['frozen_executor_sha256']==C['executor_sha256']
-          assert R['effect']=='+0/+0'
-          assert not R['covariance_authorized'] and not R['Wm_S3_authorized'] and not R['science_gate_authorized']
+          assert R1['parent_science_run_id']==R2['parent_science_run_id']==34719180791
+          assert R2['status']=='PROSPECTIVELY_FROZEN_BEFORE_RECOVERY_EXECUTION'
+          assert R2['parent_recovery_run_id']==34719312994
+          assert R2['parent_recovery_failed_before_artifact_download'] is True
+          assert R2['science_data_consumed_by_parent_recovery'] is False
+          assert R2['source_artifacts_unchanged'] is True
+          assert R2['reuse_only_existing_science_artifacts'] is True
+          assert R2['recompute_domain_science'] is False
+          assert R2['decision_rule_changed'] is False and R2['thresholds_changed'] is False
+          assert R2['production_h_changed'] is False
+          assert hashlib.sha256(Path(R2['frozen_executor']).read_bytes()).hexdigest()==R2['frozen_executor_sha256']==C['executor_sha256']==R1['frozen_executor_sha256']
+          assert R2['effect']=='+0/+0'
+          assert not R2['covariance_authorized'] and not R2['Wm_S3_authorized'] and not R2['science_gate_authorized']
+          assert R2['source_artifact_ids']==[R1['artifacts']['D']['artifact_id'],R1['artifacts']['B']['artifact_id'],R1['artifacts']['invariant']['artifact_id']]
+          assert R2['source_artifact_sha256_hex']==[R1['artifacts']['D']['sha256'],R1['artifacts']['B']['sha256'],R1['artifacts']['invariant']['sha256']]
           PY
           curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
             "https://api.github.com/repos/$GH_REPO/actions/runs/$PARENT_RUN_ID/artifacts?per_page=100" > /tmp/artifacts.json
@@ -59,9 +67,12 @@ jobs:
           for key,name in mapping.items():
               x=by_name[name]; e=R['artifacts'][key]
               assert x['id']==e['artifact_id'], (key,x['id'],e['artifact_id'])
-              assert x.get('digest')==e['sha256'], (key,x.get('digest'),e['sha256'])
+              digest=(x.get('digest') or '')
+              if digest.startswith('sha256:'):
+                  digest=digest[7:]
+              assert digest==e['sha256'], (key,digest,e['sha256'])
               assert not x['expired']
-          print('PASS_V0_6R1_SOURCE_ARTIFACT_METADATA')
+          print('PASS_V0_6R2_SOURCE_ARTIFACT_METADATA')
           PY
 
       - name: Install decision-only numerical dependency
@@ -96,6 +107,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: layerb-beta-fd-repair-decision-v0-6r1
+          name: layerb-beta-fd-repair-decision-v0-6r2
           path: safe/decision.json
           retention-days: 90
