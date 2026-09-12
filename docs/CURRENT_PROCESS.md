@@ -7,51 +7,59 @@ Canonical 8193->16385 remains independently verified `COMMON_GRID_NEXT_REFINEMEN
 
 Frozen science remains unchanged: `REL_TOL=1e-3`, `h=1e-4`, native kpd20, centered-cubic interpolation, same physical domain/masks/107-row accounting, invalid fraction `<=0.05`, retained `>=15`, unsupported=0 and lookup mismatch `<=1e-12`.
 
-No 16385->32769 scientific execution is authorized or has occurred. `HIGH_MEMORY_RESOURCE_LIFECYCLE_PREFLIGHT_PASS=FALSE`. No real durable production resource authority, actual live-guard PASS or current-run-only science authorization exists. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
+No 16385->32769 convergence calculation is authorized or has occurred. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
 
-## V141 — 8193 monolithic/chunked method equivalence closed
-Run `34666328865` at head `1bba2b79179a4b51ec6b7a377e2a137df29be883` completed the repaired V0.3 monolithic-vs-four-chunk equivalence control. Static audit, independent runtime-binding probe, all four frozen roles and independent finalizer succeeded. Raw artifacts were independently downloaded and consumed.
+## V141 retained — 8193 execution-method equivalence
+Run `34666328865` closed exact monolithic-vs-four-chunk equivalence for all four frozen roles under distinct verified CLASS builds. Frozen tolerance remained `1e-12`; max normalized and absolute differences are `0.0`; exact binary64 fraction is `1.0`. Durable authority: `docs/dsir4/authority/LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V0_3.json`.
 
-For `reference`, `alpha_minus`, `beta_plus`, and `beta_minus`: preregistered tolerance remained `1e-12`; max normalized response difference = `0.0`; max absolute response difference = `0.0`; exact binary64 fraction = `1.0`; coordinate ordering exact = true. Runtime binding proves distinct CLASS builds/environments with monolithic point/parser capacities `8193/262144` and chunk capacities `2304/65536`.
+## V142 — 32769 response-blind chunk resource route PASS
+Repaired run `34667210456` at commit `4153cf0b93fb1554d58ff5f488a14f8a739ae090` completed static audit, eight independent hosted chunks and independent finalizer successfully. Aggregate classification is `LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_ALL_PASS_PLUS_0_PLUS_0`.
 
-Aggregate artifact `10289113561`, ZIP SHA256 `268f2fa46a1a2d002cc881e27e634a37c3b9e79869958b56272dc1a6a0e0149a`; consumed raw aggregate SHA256 `405ba033dcd0c2fb1b8c283c8b4d992b1d7b34eec9cbf236577fb9fefd3aa745`.
+Chunk jobs: 0=`103481455395`, 1=`103481455195`, 2=`103481455237`, 3=`103481455230`, 4=`103481455243`, 5=`103481455209`, 6=`103481455250`, 7=`103481455221`; independent finalizer `103481978115`.
 
-Durable authority: `docs/dsir4/authority/LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V0_3.json`, creation commit `91861dfceb891fd466f80467c1bfc207fa0d566b`.
+Aggregate artifact `10289194060`, ZIP SHA256 `e79dc93bfca38b2edbcddff47a944f2671fa8b2f77789e5ef7599525fd579880`; independently consumed raw aggregate SHA256 `8e557b50946917348890adb038ca528c75c11acb27264f897a3bdee26840a881`.
 
-Classification remains method-validation `+0/+0`: it establishes exact 8193 execution-method equivalence only. It does not authorize 32769 chunked science or alter the scientific convergence frontier.
+All raw chunk receipts were independently inspected. Frozen low-capacity build `4608/131072` completed every canonical slice; compiled `classy` SHA256 is identical across all eight jobs: `2a28a5a5d36602d9ae148931b6861092a77ad7e231d9fc94968b83981d710dfa`. Scientific response values were not read or serialized; convergence was not computed; all science/covariance/Wm_S3 authorizations remain false.
 
-## V141 running — 32769 eight-chunk response-blind resource pilot
-Contract `docs/dsir4/contracts/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_CONTRACT_V0_1.json` freezes eight canonical contiguous chunks, CLASS commit `ac627d54e9ce196a08878d1ba33999819925d19c`, per-job point/parser capacities `4608/131072`, role `reference`, and forbids reading/serializing scientific transfer responses or computing convergence.
+Peak measured RSS is `11865712 kB` (~11.3 GiB), on standard hosted runners with approximately `16373452 kB` MemTotal. Runner-image swap existed (`3145724 kB`) but SwapFree was unchanged before/after every chunk and `/usr/bin/time` for the peak chunk reports `Swaps: 0`. Memory demand rises toward high-k chunks; chunks 6-7 define the peak.
 
-The initial launch `34667156663` fail-closed in static audit before computation because the workflow compared a Git blob SHA-1 against ordinary SHA-256. No scientific/resource compute occurred. Smallest repair commit `4153cf0b93fb1554d58ff5f488a14f8a739ae090` changed only the identity calculation to reconstruct Git blob SHA-1; probe, contract, layout and acceptance are unchanged.
+Durable authority: `docs/dsir4/authority/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_V0_1.json`, creation commit `72c225231a0b71a1caba5da4e64aed22230dc6d6`.
 
-Repaired run `34667210456` has static-audit job `103481440304` PASS and has queued eight independent hosted `chunk-resource` matrix jobs (`0..7`, `fail-fast:false`) followed by an independent finalizer. Even an all-eight PASS is resource feasibility only and has `successor_authorized=false`.
+Interpretation: tested canonical 32769 chunk execution is resource-feasible on the standard hosted class. This is resource evidence `+0/+0`; it is not yet 32769 numerical-method authorization and does not evaluate 16385->32769 convergence.
 
-## Retained V137–V140 controls
-Parser-corrected production control plane remains frozen: current monolithic point capacity `32769`, parser capacity `1048576`, pinned CLASS commit `ac627d54e9ce196a08878d1ba33999819925d19c`, V0.2 build authority blob `b5cd7304c110962dc3baef8d04ef67d5a8042e5f`. V137 resource->candidate->promotion->live-guard->authorizer->dormant-science->terminal chain remains available but untriggered by any chunk result.
+## V142 active — blinded 32769 partition-invariance bridge
+Prospectively frozen contract: `docs/dsir4/contracts/LAYERB_32769_BLINDED_PARTITION_INVARIANCE_CONTRACT_V0_1.json`, creation commit `456cb482fe38c4b2b917e990328c1787da8b77d6`.
 
-V138 standard-hosted added-swap route remains a narrow infrastructure negative only; it does not prove failure on sufficient physical RAM.
+Partition A is the validated eight-chunk split. Partition B is nine equal contiguous chunks of 3641 nodes. All four frozen roles and six frozen z probes must agree under unchanged `max_normalized_response_difference <= 1e-12` and lookup/coordinate tolerance `1e-12`.
 
-V139 clean-RAM monolithic reference control remains prospectively frozen on an isolated nominal-64-GiB-class runner with `MemTotal >= 62914560 kB`, `SwapTotal==0`, no scientific readout and no successor authorization. It has not run because no qualifying physical runner is attached.
+Response vectors are transient/blinded: they may be read only inside the role job to compare the two partitions, must not be uploaded/committed/printed, and are deleted before artifact upload. Persistent outputs contain comparison metrics/hashes and provenance only. No 16385 comparison or convergence metric is permitted.
 
-V140 home-runner authority remains binding. `DSIR-HOME-PC` has Windows physical RAM `8245334016` bytes (~7.68 GiB), WSL `MemTotal=6067840 kB`, `SwapTotal=16777216 kB`; it is allowed only for suitable lower-memory independent work and MUST NOT receive V139 clean 32769, monolithic V0.3 32769 lifecycle, or 16385->32769 production science.
+Workflow `.github/workflows/layerb-32769-blinded-partition-invariance-v0-1.yml`, launch commit `73e6c5bffd8fb365f163422c41979daf71a129c0`, run `34667606794`. Static audit job `103482605453` PASS. Four independent role jobs are in progress in parallel: reference `103482625030`, beta_plus `103482625067`, beta_minus `103482625085`, alpha_minus `103482625087`.
+
+Even full PASS remains method-validation `+0/+0` and `successor_authorized=false`. A mismatch is a numerical-method failure, not physical-model falsification.
+
+## Retained independent controls
+V139 clean-RAM monolithic reference remains an independent control requiring a separate nominal-64-GiB-class runner with `SwapTotal==0`; it has not run.
+
+V140 `DSIR-HOME-PC` remains low-memory only: Windows physical RAM ~7.68 GiB, WSL ~5.79 GiB RAM plus 16 GiB swap. It must not receive high-memory monolithic 32769 controls or production 16385->32769 science.
+
+The V137 parser-corrected monolithic control plane remains retained but untriggered; chunk-route evidence does not silently promote or modify it.
 
 ## Exact remaining order
-1. Consume repaired chunk-resource run `34667210456` after all eight jobs and independent finalizer are terminal; verify every raw response-blind receipt.
-2. If all eight pass, treat that result strictly as tested hosted resource feasibility of the eight low-capacity chunks.
-3. Before any 32769 chunked scientific use, prospectively freeze an independent 32769 numerical-equivalence bridge. The 8193 exact result supports this route but does not authorize extrapolation by itself.
-4. The independent V139 clean-RAM monolithic high-memory control remains available if a qualifying external runner is attached.
-5. No 16385->32769 scientific execution until a valid resource/method authority is explicitly promoted through a fail-closed live guard/current-run authorization and terminal contract.
+1. Consume all four role artifacts and independent finalizer of run `34667606794`; verify the frozen `<=1e-12` partition-invariance gate and blinding guarantees.
+2. If all roles PASS, record durable 32769 chunk method authority, still `+0/+0` scientifically.
+3. Only then freeze a separate fail-closed promotion/current-run authorization that can permit exactly one canonical chunk-based 16385->32769 convergence evaluation under unchanged strict `<1e-3` science.
+4. A production convergence result must remain separate from covariance/Wm_S3; those remain closed until their own frozen downstream gates.
 
 ## Recovery authority
-Newest immutable note: `docs/recovery/RECOVERY_2026-09-12_ARTICLE3_CHUNK_EQUIVALENCE_V141.md`, creation commit `59e3c61c1cb07cd4e76cb8231659970cbfe2db7b`.
+Newest immutable note: `docs/recovery/RECOVERY_2026-09-12_ARTICLE3_CHUNK_RESOURCE_PASS_V142.md`, creation commit `72b32db7ef670cc068e1f20f7e3b38ad170d340b`.
 
 ## Readiness
 `ARTICLE3_REPOSITORY_READINESS: 68%`.
 
 Funnel-freeze/scientific frontier: `67%`.
 
-Operational roadmap: `WORKING_PLAN_COMPLETION: 91%`. Increase from V140 is operational/numerical-method only: exact 8193 monolithic-vs-chunked equivalence is durably closed and the preregistered 32769 response-blind chunk resource probe is active. Scientific convergence has not advanced.
+Operational roadmap: `WORKING_PLAN_COMPLETION: 92%`. Increase from V141 is operational/methodological only: canonical 32769 chunk resource feasibility is durably PASS and the blinded all-role partition-invariance bridge is actively running. Scientific convergence has not advanced.
 
 ## Automation / ownership
-`DSIR Continuous Research` is currently **disabled**: re-enabling was rejected because five other task automations are active. Do not infer hourly DSIR task coverage. GitHub-native workflows and repository state are authoritative. No duplicate heavy science lane is authorized.
+`DSIR Continuous Research` is currently **disabled** because re-enabling was rejected by the five-active-task account limit. GitHub-native workflows/repository state are authoritative. No duplicate heavy science lane is authorized.
