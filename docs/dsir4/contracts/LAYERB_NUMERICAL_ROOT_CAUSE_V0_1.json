@@ -1,0 +1,30 @@
+{
+  "schema": "LAYERB_NUMERICAL_ROOT_CAUSE_CONTRACT_V0_1",
+  "scope": "Prospectively frozen diagnostic-only root-cause stage after two independently promoted Layer-B support-refinement NOT_CONVERGED authorities.",
+  "authorities": [
+    "docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json",
+    "docs/dsir4/authority/LAYERB_CANONICAL_16385_TO_32769_NOT_CONVERGED_V0_1.json"
+  ],
+  "terminal_source_run_id": 34709986418,
+  "terminal_source_artifact_id": 10302543375,
+  "terminal_source_artifact_zip_sha256": "a298b284a9ef5c87953d84a08d75671b04128ace23325bed549545d886799f91",
+  "relative_tolerance": 0.001,
+  "strict_less_than": true,
+  "effect": "+0/+0",
+  "minimum_independent_streams": 3,
+  "streams": [
+    "effective_convergence_order_and_projection_diagnostic",
+    "provenance_geometry_and_validity_triage",
+    "raw_terminal_component_ell_localization"
+  ],
+  "scientific_operand_recompute_authorized": false,
+  "criterion_mutation_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "denser_successor_65537_authorized": false,
+  "silent_retry_authorized": false,
+  "diagnostic_projection_is_authority": false,
+  "workflow_may_self_authorize_denser_rung": false,
+  "success_condition": "Produce independently auditable diagnostics that distinguish continued slow numerical convergence from identifiable component/ell-localized pathology without changing the frozen scientific criterion.",
+  "launch_token": "docs/dsir4/launch/LAYERB_NUMERICAL_ROOT_CAUSE_LAUNCH_V0_1.json"
+}
