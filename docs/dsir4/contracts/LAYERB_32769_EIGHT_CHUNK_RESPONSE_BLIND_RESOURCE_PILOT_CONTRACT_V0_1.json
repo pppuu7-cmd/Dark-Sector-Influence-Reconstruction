@@ -1,0 +1,49 @@
+{
+  "schema": "LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_CONTRACT_V0_1",
+  "scope": "DSIR Article III resource feasibility only",
+  "effect": "+0/+0",
+  "scientific_authority": false,
+  "scientific_execution_authorized": false,
+  "chunked_32769_execution_authorized": false,
+  "scientific_transfer_values_must_not_be_read": true,
+  "layout_contract": "docs/dsir4/contracts/LAYERB_32769_EIGHT_CHUNK_RESOURCE_ROUTE_CANDIDATE_V0_1.json",
+  "layout_static_run_id": 34666363723,
+  "layout_static_artifact_id": 10288672620,
+  "layout_static_artifact_zip_sha256": "e3646157ede4e1f4f9c38e68e2c32fd433ae91dcbb01d428031fc0b7ac1da7e9",
+  "layout_static_result_sha256": "525ff1ea7b3e09f78d8a3fb518f60b42717b76f544e0ddae9e424a2c47fde570",
+  "canonical": {
+    "path": "docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt",
+    "node_count": 32769,
+    "node_payload_sha256": "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599",
+    "text_sha256": "7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2"
+  },
+  "frozen_runtime": {
+    "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+    "point_capacity": 4608,
+    "parser_capacity": 131072,
+    "h": 0.0001,
+    "native_k_per_decade_for_pk": 20.0,
+    "role": ["reference", 0.0, 0.0],
+    "slices": [[0,4097],[4097,8193],[8193,12289],[12289,16385],[16385,20481],[20481,24577],[24577,28673],[28673,32769]],
+    "baseline": "configs/dsir4/c2/ide0_reference_v0_1.ini",
+    "precision": "configs/dsir4/c2/dsir_ide_p8_v0_1.pre"
+  },
+  "acceptance": {
+    "all_eight_chunks_must_complete_Class_compute_transfer": true,
+    "each_payload_must_fit_parser": true,
+    "no_transfer_dictionary_or_scientific_response_values_may_be_read": true,
+    "max_live_class_instances_per_job": 1,
+    "peak_rss_is_measured_not_thresholded": true
+  },
+  "interpretation": {
+    "pass_means": "All eight canonical chunks are computationally feasible on the tested hosted runner class with the proposed low-capacity build while no scientific transfer values are read.",
+    "pass_does_not_mean": "Chunked numerical equivalence, 32769 convergence, scientific authorization, or any change to the frozen Article III frontier."
+  },
+  "forbidden": [
+    "No get_transfer, pk, response-vector serialization or convergence metric.",
+    "No 32769 monolithic build.",
+    "No tolerance changes.",
+    "No covariance, whitening, nuisance, relation/null or Wm_S3 access.",
+    "No successor execution authorization."
+  ]
+}
