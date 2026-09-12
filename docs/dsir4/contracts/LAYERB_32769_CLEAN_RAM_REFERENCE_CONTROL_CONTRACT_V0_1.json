@@ -1,0 +1,54 @@
+{
+  "schema": "LAYERB_32769_CLEAN_RAM_REFERENCE_CONTROL_CONTRACT_V0_1",
+  "scope": "DSIR Article III Layer-B parser-corrected 32769 resource control only",
+  "purpose": "Test exactly one reference role on a genuinely high-physical-RAM isolated runner with swap disabled, eliminating the V138 added-swap confound before any four-role lifecycle or scientific execution.",
+  "effect": "+0/+0",
+  "scientific_authority": false,
+  "scientific_execution_authorized": false,
+  "successor_execution_authorized": false,
+  "required_role": "reference",
+  "required_custom_label": "dsir-32769-highmem",
+  "runner_requirements": {
+    "no_default_labels": true,
+    "min_memtotal_kb": 62914560,
+    "min_memtotal_interpretation": "guard for a nominal 64 GiB physical-RAM machine; not an inferred minimum RAM requirement",
+    "required_swap_total_kb": 0,
+    "workflow_must_not_enable_or_create_swap": true
+  },
+  "frozen_science": {
+    "h": 0.0001,
+    "rel_tol": 0.001,
+    "native_k_per_decade": 20.0,
+    "point_capacity": 32769,
+    "parser_capacity": 1048576,
+    "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+    "canonical_node_count": 32769,
+    "canonical_node_sha256": "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599",
+    "canonical_text_sha256": "7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2"
+  },
+  "pinned_identities": {
+    "single_role_probe_git_blob": "f8776ae1e9e0c325f1a3f5f01b4388e1c93ef7e2",
+    "build_authority_v02_git_blob": "b5cd7304c110962dc3baef8d04ef67d5a8042e5f",
+    "canonical_authority_git_blob": "dddf7b0f8596506b9e792186d8ebaf14ff789f4c",
+    "canonical_file_git_blob": "7b67706156d7d2016ecba0628210fb08f6f05616",
+    "runner_isolation_contract_git_blob": "d9d910d89889f6d3a27461a73c3dd72c2a9d2096",
+    "runner_configurator_sha256": "2cd02d1a7ac58ea3945a435272f03ea1abe2d7e3410191b5a17a9c62e0a297ce"
+  },
+  "acceptance": {
+    "compute_completed": true,
+    "classification": "LAYERB_32769_PARSER_1MIB_SINGLE_ROLE_CANDIDATE_V02_PASS_PLUS_0_PLUS_0",
+    "role": "reference",
+    "scientific_transfer_values_read": false,
+    "scientific_response_read": false,
+    "convergence_metric_computed": false,
+    "swap_total_kb_before": 0,
+    "swap_total_kb_after": 0
+  },
+  "forbidden_interpretations": [
+    "This control does not establish convergence.",
+    "This control does not establish an exact minimum RAM requirement.",
+    "This control does not authorize the four-role lifecycle by itself.",
+    "This control does not authorize scientific 16385->32769 execution.",
+    "A failure is infrastructure/resource evidence, not scientific failure."
+  ]
+}
