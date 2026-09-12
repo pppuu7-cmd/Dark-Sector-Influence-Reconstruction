@@ -1,0 +1,19 @@
+{
+  "schema": "LAYERB_16385_32769_COARSE_RECOVERY_LAUNCH_V0_2",
+  "authorized_launch_count": 1,
+  "repair_contract_git_blob": "732fa2668bfc7af66131cc1cab5e6db793637e5e",
+  "repair_workflow_git_blob": "52ebb19ef4c6cff894336258e76489101f0ee9b1",
+  "v01_failed_run_id": 34702716166,
+  "v01_terminal_scientific_classification_created": false,
+  "allowed_delta": "control artifact plan path plus retry-run guard semantics only",
+  "fine_recompute_authorized": false,
+  "coarse_roles_authorized_for_recompute": ["reference","alpha_minus","beta_plus","beta_minus"],
+  "relative_tolerance": 0.001,
+  "strict_less_than": true,
+  "h": 0.0001,
+  "native_k_per_decade_for_pk": 20.0,
+  "post_result_threshold_change_forbidden": true,
+  "silent_retry_after_v02_forbidden": true,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false
+}
