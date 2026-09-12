@@ -1,0 +1,37 @@
+{
+  "schema": "LAYERB_16385_TO_32769_CHUNK_PRODUCTION_LAUNCH_V0_1",
+  "scope": "Exactly one canonical DSIR Article III 16385-to-32769 chunk-based scientific refinement under frozen predeclared semantics",
+  "authorized_launch_count": 1,
+  "scientific_response_read_before_launch": false,
+  "production_contract_path": "docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1.json",
+  "production_contract_git_blob": "1ab0f5b164727bb0c2c7f42ce3a82a1ebb77678d",
+  "production_workflow_path": ".github/workflows/layerb-16385-to-32769-canonical-chunk-scientific-v0-1.yml",
+  "production_workflow_git_blob": "c9bb680edbb04b758b2d9bb1323282e3617428a7",
+  "static_audit_authority_path": "docs/dsir4/authority/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_STATIC_AUDIT_V0_1.json",
+  "static_audit_authority_git_blob": "5e1f7a2d22046c181682c211edf8d4cf4cbce62a",
+  "static_audit_run_id": 34695256186,
+  "static_audit_finalizer_job_id": 103557551483,
+  "static_audit_artifact_id": 10298507794,
+  "static_audit_artifact_zip_sha256": "24b3a5d38198b5e403535e4db8306c2272d6fe1908a0cec8242e5981650631f5",
+  "static_audit_raw_json_sha256": "b9547d407023b5e51a4d91a7764c594a5a61df0fe0bdf7ef16eb229d99353b39",
+  "static_audit_classification": "LAYERB_16385_TO_32769_CHUNK_PRODUCTION_STATIC_AUDIT_PASS_PLUS_0_PLUS_0",
+  "prerequisite_authorities": {
+    "v141_method": "LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V03_ALL_ROLES_PASS_PLUS_0_PLUS_0",
+    "v142_resource": "LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_ALL_PASS_PLUS_0_PLUS_0",
+    "v143_method": "LAYERB_32769_BLINDED_PARTITION_INVARIANCE_ALL_ROLES_PASS_PLUS_0_PLUS_0",
+    "parent_refinement": "COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0"
+  },
+  "frozen_science": {
+    "relative_tolerance": 0.001,
+    "strict_less_than": true,
+    "h": 0.0001,
+    "native_k_per_decade_for_pk": 20.0,
+    "lookup_relative_tolerance": 1e-12,
+    "interpolation": "centered-cubic",
+    "covariance_restriction_authorized": false,
+    "Wm_S3_opened": false
+  },
+  "silent_science_retry_forbidden": true,
+  "post_result_threshold_change_forbidden": true,
+  "effect_before_terminal_classifier": "+0/+0"
+}
