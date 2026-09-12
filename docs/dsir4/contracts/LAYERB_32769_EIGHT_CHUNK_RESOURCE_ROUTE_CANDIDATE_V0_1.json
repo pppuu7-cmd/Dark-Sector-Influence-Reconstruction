@@ -1,0 +1,52 @@
+{
+  "schema": "LAYERB_32769_EIGHT_CHUNK_RESOURCE_ROUTE_CANDIDATE_V0_1",
+  "scope": "DSIR Article III prospective resource-route preparation only",
+  "effect": "+0/+0",
+  "scientific_authority": false,
+  "scientific_execution_authorized": false,
+  "chunked_32769_execution_authorized": false,
+  "activation_prerequisite": "A separately validated 8193 monolithic-vs-chunked equivalence authority must PASS under the already frozen <=1e-12 support gate before any 32769 chunked response execution may be considered.",
+  "canonical": {
+    "path": "docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt",
+    "node_count": 32769,
+    "node_payload_sha256": "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599",
+    "text_sha256": "7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2"
+  },
+  "frozen_science_identity": {
+    "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+    "h": 0.0001,
+    "native_k_per_decade_for_pk": 20.0,
+    "response_component": "d_m",
+    "z_probes": [0.295, 0.7, 1.0, 1.5, 2.0, 2.33],
+    "roles": [
+      ["reference", 0.0, 0.0],
+      ["alpha_minus", -0.0001, 0.0],
+      ["beta_plus", 0.0, 0.0001],
+      ["beta_minus", 0.0, -0.0001]
+    ]
+  },
+  "candidate_chunk_build": {
+    "point_capacity": 4608,
+    "parser_capacity": 131072,
+    "slices": [[0,4097],[4097,8193],[8193,12289],[12289,16385],[16385,20481],[20481,24577],[24577,28673],[28673,32769]],
+    "all_nodes_must_be_requested_exactly_once_and_in_canonical_order": true
+  },
+  "static_acceptance": {
+    "canonical_hashes_exact": true,
+    "coverage_exactly_32769_nodes": true,
+    "no_gap_no_overlap": true,
+    "max_slice_node_count_lte_point_capacity": true,
+    "each_decimal_k_output_payload_including_nul_lte_parser_capacity": true,
+    "minimum_parser_margin_bytes": 16384
+  },
+  "interpretation": {
+    "static_pass_means": "The dormant eight-chunk layout is mechanically representable under the proposed low-capacity CLASS build envelope and exactly covers the canonical 32769 lattice.",
+    "static_pass_does_not_mean": "Chunked responses are equivalent, 32769 execution is authorized, convergence is established, or the Article III scientific frontier changes."
+  },
+  "forbidden": [
+    "No 32769 response computation from this contract alone.",
+    "No post-result changes to the existing 8193 equivalence tolerance.",
+    "No covariance, whitening, nuisance, relation/null or Wm_S3 access.",
+    "No change to the frozen 16385->32769 scientific stopping rule."
+  ]
+}
