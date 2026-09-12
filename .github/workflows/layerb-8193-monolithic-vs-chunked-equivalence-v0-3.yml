@@ -47,9 +47,7 @@ jobs:
           assert len(lines)==8193 and hashlib.sha256(raw).hexdigest()==c['canonical']['text_sha256']
           nodebytes=b''.join(struct.pack('<Q',int(x,16)) for x in lines)
           assert hashlib.sha256(nodebytes).hexdigest()==c['canonical']['node_payload_sha256']
-          # exact decimal payload capacity check using frozen response helper formatting
-          import numpy as np
-          nodes=np.asarray([struct.unpack('<d',struct.pack('<Q',int(x,16)))[0] for x in lines])
+          nodes=[struct.unpack('<d',struct.pack('<Q',int(x,16)))[0] for x in lines]
           for lo,hi in c['chunked_build']['request_slices']:
               payload=len(','.join(format(float(x),'.17g') for x in nodes[lo:hi]).encode())+1
               assert payload<=65536, (lo,hi,payload)
