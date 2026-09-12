@@ -1,0 +1,74 @@
+{
+  "schema": "DSIR_HOME_PC_RESOURCE_PROFILE_V0_1",
+  "classification": "DSIR_HOME_PC_PROFILED_LOW_MEMORY_RUNNER_PLUS_0_PLUS_0",
+  "effect": "+0/+0",
+  "scientific_authority": false,
+  "scientific_execution_authorized": false,
+  "runner": {
+    "name": "DSIR-HOME-PC",
+    "machine": "win-ws338",
+    "runner_version": "2.337.0",
+    "os": "Linux",
+    "arch": "X64",
+    "kernel": "Linux 6.18.33.2-microsoft-standard-WSL2",
+    "cpu": "12th Gen Intel(R) Core(TM) i5-1235U",
+    "visible_logical_cpus": 8
+  },
+  "windows_host": {
+    "total_physical_memory_bytes": 8245334016,
+    "approx_physical_gib": 7.68,
+    "probe_run_id": 34663666364,
+    "probe_job_id": 103471138939,
+    "artifact_id": 10288262607,
+    "artifact_zip_sha256": "ec01e9d561bed83397ffda320c4fef4b42b0ab505239e57a38bf619827bfc88d"
+  },
+  "wsl": {
+    "memtotal_kb": 6067840,
+    "memavailable_kb_at_probe": 5382384,
+    "swaptotal_kb": 16777216,
+    "swapfree_kb_at_probe": 16777216,
+    "wslconfig": {
+      "memory": "6GB",
+      "processors": 8,
+      "swap": "16GB",
+      "vmIdleTimeout": 86400000,
+      "localhostForwarding": true
+    }
+  },
+  "build_environment": {
+    "python3": true,
+    "gcc": true,
+    "gxx": true,
+    "make": true,
+    "pkg_config": true,
+    "cmake": true,
+    "git": true,
+    "gfortran": false,
+    "gsl_pkg_config": false,
+    "sudo_noninteractive": false
+  },
+  "provenance": {
+    "environment_probe_run_id": 34663628847,
+    "environment_probe_job_id": 103471030533,
+    "environment_probe_artifact_id": 10288042655,
+    "environment_probe_artifact_zip_sha256": "dcc543bd160857ec62985c57f07f0280201c14c01bb79351dd49821fab037b71",
+    "windows_memory_probe_run_id": 34663666364,
+    "windows_memory_probe_job_id": 103471138939
+  },
+  "superseded_generic_job": {
+    "workflow_run_id": 34550495778,
+    "latest_attempt_job_id": 103470879253,
+    "status": "completed",
+    "conclusion": "failure",
+    "first_causal_failure": "gfortran missing during native prerequisite check",
+    "heavy_compute_started": false,
+    "scientific_or_resource_result_created": false
+  },
+  "policy": {
+    "eligible_for_low_memory_independent_diagnostics_after_dependencies_are_available": true,
+    "eligible_for_clean_ram_32769_reference": false,
+    "eligible_for_32769_four_role_lifecycle": false,
+    "eligible_for_32769_scientific_execution": false,
+    "reason": "Windows host has only about 7.68 GiB physical RAM and WSL exposes about 5.79 GiB RAM with 16 GiB swap; V139 clean control requires a high-physical-RAM no-swap environment."
+  }
+}
