@@ -2,46 +2,49 @@
 
 Updated: 2026-09-12. Scope: **DSIR only**. Never mix RTK, RQIR, KMQGB or KMDSB.
 
-Newest immutable current-front recovery note: `docs/recovery/RECOVERY_2026-09-12_ARTICLE3_CHUNK_METHOD_PASS_V143.md`, creation commit `d3d3887bb1ffa30f3afd51b432eece3d99073073`. V142 and all earlier recovery notes remain immutable history; V143 supersedes them for current-front recovery.
+Newest immutable current-front recovery note: `docs/recovery/RECOVERY_2026-09-12_ARTICLE3_CHUNK_PRODUCTION_LAUNCHED_V144.md`, creation commit `9b7d2e3c07e70362bbc2fbcad89c3f753fcf9332`. V143 and all earlier recovery notes remain immutable history; V144 supersedes them for current-front recovery.
 
-## Scientific frontier — unchanged
-Canonical 8193->16385 remains independently verified `COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`, max relative component difference `0.012484060640679777` versus frozen strict `<1e-3`. No 16385->32769 convergence calculation has occurred. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
+## Scientific frontier
+Canonical 8193->16385 remains independently verified `COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0`, max relative component difference `0.012484060640679777` versus frozen strict `<1e-3`.
 
-## V141 retained
-Canonical 8193 monolithic-vs-chunk execution is independently exact for all four frozen roles: max normalized/absolute differences `0.0`, exact binary64 fraction `1.0`, unchanged `1e-12` method gate. Authority: `docs/dsir4/authority/LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V0_3.json`.
+Exactly one canonical 16385->32769 production workflow is now active: run `34695347893`, launch commit `646d93a7cb0e38dc8b3d358f737e47655567055b`. No terminal 16385->32769 convergence classification has yet been independently consumed. Covariance restriction remains unauthorized. Wm_S3 remains unopened.
 
-## V142 retained
-Canonical 32769 low-capacity eight-chunk response-blind resource route is PASS on standard hosted runners, peak RSS `11865712 kB`, no observed swap use, no scientific transfer readout. Authority: `docs/dsir4/authority/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_V0_1.json`.
+## V141–V143 retained prerequisites
+V141 exact 8193 monolithic/chunk method equivalence PASS: all four roles max normalized/absolute difference `0.0`, exact binary64 fraction `1.0`.
 
-## V143 new method result
-Run `34667606794` completed the prospectively frozen blinded 32769 partition-invariance bridge. Static audit, all four roles, and independent finalizer are terminal success.
+V142 canonical 32769 eight-chunk response-blind resource PASS: peak RSS `11865712 kB`, no observed swap consumption, no scientific transfer readout.
 
-Partition A (8 chunks) and Partition B (9 chunks) cover the same canonical 32769 lattice. Across `reference`, `alpha_minus`, `beta_plus`, `beta_minus` and all six frozen z probes: max normalized response difference `0.0`, max absolute response difference `0.0`, exact binary64 fraction `1.0`, exact coordinate order, and max requested-node mismatch `1.656870599154541e-16`.
+V143 exact canonical 32769 partition invariance PASS: two prospectively distinct partitions agree bitwise for all four frozen roles and six z probes; max normalized/absolute difference `0.0`, exact binary64 fraction `1.0`.
 
-Aggregate artifact `10290710129`, ZIP SHA256 `518927ed71c9acac5fe75d071697f2aafe589c7e213758fdbb59956726cd22d5`, consumed aggregate JSON SHA256 `d7dbd640feb5ae173d2fa7bf4cad79a3776369b6c32bb68762aff21558076a2a`.
+## V144 production static authority and launch
+Static audit run `34695256186` at head `55283ec18d9ca4b12c09097eada4ea43a37ff749` is terminal success. Source identities `103557525777`, compile/synthetic `103557525909`, workflow topology `103557525929`, scientific delta `103557525943`, independent finalizer `103557551483` all PASS.
 
-Scientific response vectors were transient and deleted before upload; no convergence metric was computed. Durable authority: `docs/dsir4/authority/LAYERB_32769_BLINDED_PARTITION_INVARIANCE_V0_1.json`, creation commit `419d3c49294dabde48d9e3994acc6ebef18f621e`.
+Final artifact `10298507794`, ZIP SHA256 `24b3a5d38198b5e403535e4db8306c2272d6fe1908a0cec8242e5981650631f5`; independently consumed raw static result SHA256 `b9547d407023b5e51a4d91a7764c594a5a61df0fe0bdf7ef16eb229d99353b39`. Missing receipts `[]`; no science response was read.
 
-This closes the tested canonical 32769 chunk partition-method gate only. It remains `+0/+0` evidence and grants no automatic production authorization.
+Durable authority: `docs/dsir4/authority/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_STATIC_AUDIT_V0_1.json`, creation commit `f194ae32e03fe321ea787633a74b61782605fe0a`.
 
-## Successor architecture
-The frozen parent science engine already separates lattice response acquisition from IR replay/classification. Preserve the exact old request plan, canonical lattices, four roles, `h=1e-4`, native kpd20, centered-cubic interpolation, parent 107-row identity, unsupported=0, lookup `<=1e-12`, invalid fraction `<=0.05`, retained `>=15`, and strict `max_relative_component_difference < 1e-3`.
+One-shot launch sentinel was created once at commit `646d93a7cb0e38dc8b3d358f737e47655567055b`, triggering run `34695347893`.
 
-Only fine 32769 acquisition may change: assemble the full canonical requested-node transfer response from the validated low-capacity chunks, then feed the same target interpolation/replay/classifier. Freeze a current-run-only production authorization binding V141+V142+V143 before any production scientific response is persisted.
+Current-run authorize job `103557768980` is PASS. Raw authorization artifact `10298499340` confirms exact V141/V142/V143/parent/request-plan bindings, `authorized_canonical_run_count=1`, one-live guard current=1/other-live=0/other-all-status=0, errors `[]`, strict `<1e-3`, `h=1e-4`, kpd20, covariance=false, Wm_S3=false.
+
+At the V144 snapshot, materialize-plan job `103557768867` is in progress. Once it passes, the workflow automatically fans out to 8 independent role/grid acquisition jobs with `max-parallel: 8`: four roles x coarse/fine. No duplicate production run is authorized.
+
+## Frozen science
+`REL_TOL=1e-3` strict `<`, `h=1e-4`, native kpd20, centered-cubic interpolation, canonical 16385/32769 lattices, parent 107-row accounting, invalid fraction `<=0.05`, retained `>=15`, unsupported=0, lookup mismatch `<=1e-12`. Only fine 32769 acquisition changes to the validated low-capacity chunk route. Silent science retry and post-result threshold changes are forbidden.
 
 ## Exact next order
-1. Freeze chunk-production authorization and exact science-delta contract.
-2. Static-audit the new workflow/engine against the retained V0.2 science semantics.
-3. Dispatch exactly one canonical chunk-based 16385->32769 workflow run with parallel role acquisition and one final classifier.
-4. Independently consume terminal science artifact; no silent science retry.
-5. Keep covariance and Wm_S3 closed until separate downstream gates.
+1. Continue active run `34695347893`; do not launch another science run.
+2. After materialize-plan PASS, allow its 8 frozen role/grid acquisition jobs to run in parallel.
+3. Let the same workflow produce exactly one frozen final classifier and one independent terminal verifier.
+4. Consume raw terminal artifact before changing scientific/publication readiness.
+5. Keep covariance/Wm_S3 closed regardless until separate downstream gate.
 
 ## Readiness
 Frozen repository/publication rubric: **ARTICLE3_REPOSITORY_READINESS: 68%**.
 
 Funnel-freeze/scientific frontier: **67%**.
 
-Operational roadmap: **WORKING_PLAN_COMPLETION: 93%**. Increase from V142 is method/operations only; scientific convergence remains open.
+Operational roadmap: **WORKING_PLAN_COMPLETION: 94%**. Increase from V143 is operational only; terminal 16385->32769 science is not yet known.
 
 ## Automation state
-`DSIR Continuous Research` is disabled because the account is already at the five-active-task limit. GitHub-native workflows are the active DSIR computation mechanism.
+`DSIR Continuous Research` remains disabled because all five task slots are occupied. GitHub-native run `34695347893` is the active authoritative DSIR production computation.
