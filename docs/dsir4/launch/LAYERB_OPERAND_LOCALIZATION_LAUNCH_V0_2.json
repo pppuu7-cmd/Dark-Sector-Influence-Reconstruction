@@ -2,12 +2,15 @@
   "schema": "LAYERB_OPERAND_LOCALIZATION_LAUNCH_V0_2",
   "contract": "docs/dsir4/contracts/LAYERB_OPERAND_LOCALIZATION_V0_2.json",
   "contract_commit": "4cfb460618c2825e88a98b601d35198820dabe1e",
-  "workflow_commit": "25193ef423e686dda679bc2ea68c66740a63e246",
-  "purpose": "Launch exactly one frozen multi-stream exact operand-level localization of the authoritative 16385-to-32769 discrepancy, reusing retained operands only and invoking no CLASS solver.",
+  "infra_failure_authority": "docs/dsir4/authority/LAYERB_OPERAND_LOCALIZATION_V0_2_INFRA_FAILURE_R0.json",
+  "repair_workflow_commit": "0a314706d5c9f3516aa1f14e13b38e1dfbec2ec9",
+  "diagnostic_script_commit": "ad27cad30140a7ea416315244c177fc8302444f9",
+  "purpose": "Execute the one authorized infrastructure-repair replay of the frozen V0.2 multi-stream exact operand localization after the initial runner failed before computation because NumPy was unavailable. Scientific inputs, metric, tolerance, and permissions are unchanged.",
   "parallel_streams": ["exact_atomic_localization","independent_role_attribution","plan_identity"],
+  "repair_attempt": 1,
   "CLASS_solver_invocation_authorized": false,
   "scientific_operand_recompute_authorized": false,
   "denser_successor_65537_authorized": false,
   "effect": "+0/+0",
-  "token": "LAUNCH_LAYERB_OPERAND_LOCALIZATION_V0_2"
+  "token": "LAUNCH_LAYERB_OPERAND_LOCALIZATION_V0_2_INFRA_REPAIR_R1"
 }
