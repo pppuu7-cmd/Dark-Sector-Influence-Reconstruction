@@ -1,0 +1,46 @@
+{
+  "schema": "LAYERB_TARGETED_DIRECT_K_BETA_DIAGNOSTIC_CONTRACT_V0_4",
+  "status": "PROSPECTIVELY_FROZEN_BEFORE_DIRECT_K_EXECUTION",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_CANCELLATION_CONDITIONING_V0_3.json",
+  "parent_classification": "SYMMETRIC_BETA_SUBTRACTIVE_CANCELLATION_AMPLIFICATION_STRONGLY_SUPPORTED",
+  "probe_manifest": "docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4.json",
+  "probe_manifest_sha256": "6ec35db06d66ac7d03f97f57f9d270d84804ee264508d4601ae33c4175a903d4",
+  "production_workflow_source": ".github/workflows/layerb-16385-to-32769-canonical-chunk-scientific-v0-1.yml",
+  "production_role_engine_source": "ci/layerb_16385_32769_chunk_role_operand_v0_1.py",
+  "frozen_response_engine_source": "ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py",
+  "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+  "baseline": "configs/dsir4/c2/ide0_reference_v0_1.ini",
+  "precision": "configs/dsir4/c2/dsir_ide_p8_v0_1.pre",
+  "h": 0.0001,
+  "native_k_per_decade_for_pk": 20.0,
+  "relative_tolerance": 0.001,
+  "strict_less_than": true,
+  "probe_counts": {
+    "failing_rows": 31,
+    "matched_control_rows": 31,
+    "unique_failing_zk_coordinates": 23,
+    "unique_all_zk_coordinates": 46
+  },
+  "frozen_change": "Replace only the DSIR common-support cubic interpolation at each selected target k by an exact target-k insertion through CLASS k_output_values, then recover d_m at that exact requested k. Keep the same pinned CLASS source, baseline, precision, h, native k density and beta-plus/beta-minus response definition.",
+  "parallel_partitions": ["DES", "BOSS_GL64", "INVARIANT_AUDIT"],
+  "direct_beta_definition": "abs((d_m(beta=+h)-d_m(beta=-h))/(2*h))",
+  "relative_difference_definition": "abs(a-b)/max(abs(a),abs(b),binary64_tiny)",
+  "pre_registered_decision": {
+    "support_interpolation_dominant": "For unique failing coordinates, fine-to-direct is smaller than coarse-to-direct for at least 75 percent, median(fine-to-direct/coarse-to-direct) <= 0.75, and matched controls have max fine-to-direct < 0.001.",
+    "fine_support_already_within_direct_tolerance": "Additionally report whether max fine-to-direct over unique failing coordinates is < 0.001; this is a stronger but not required condition.",
+    "finite_difference_or_upstream_direct_conditioning_remains": "If the support_interpolation_dominant rule fails while exact target-k binding and invariants pass, do not mutate h in this run; authorize only a separately frozen h-stability audit.",
+    "inconclusive": "Any target-k binding failure, nonfinite direct value, source identity mismatch, control failure >= 0.001, or disagreement between duplicate labeled probes makes the run diagnostic-inconclusive rather than scientific evidence."
+  },
+  "forbidden": {
+    "change_h": true,
+    "change_relative_tolerance": true,
+    "launch_global_65537": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "open_science_gate": true
+  },
+  "authorized_next_stage_only_if_successful": "Use V0.4 classification to choose either support/interpolation repair validation or a separately prospectively frozen h-stability audit."
+}
