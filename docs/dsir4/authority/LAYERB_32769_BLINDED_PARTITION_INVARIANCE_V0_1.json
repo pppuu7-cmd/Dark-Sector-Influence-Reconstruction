@@ -1,0 +1,104 @@
+{
+  "schema": "LAYERB_32769_BLINDED_PARTITION_INVARIANCE_AUTHORITY_V0_1",
+  "scope": "DSIR Article III canonical 32769 execution-method validation only",
+  "effect": "+0/+0",
+  "classification": "LAYERB_32769_BLINDED_PARTITION_INVARIANCE_ALL_ROLES_PASS_PLUS_0_PLUS_0",
+  "artifact_verified_independently": true,
+  "contract": {
+    "path": "docs/dsir4/contracts/LAYERB_32769_BLINDED_PARTITION_INVARIANCE_CONTRACT_V0_1.json",
+    "git_blob": "8f6d84afef41e594c4e4845f4e44abd4a31fd530",
+    "creation_commit": "456cb482fe38c4b2b917e990328c1787da8b77d6",
+    "frozen_max_normalized_response_difference": 1e-12,
+    "frozen_max_requested_node_coordinate_rel_mismatch": 1e-12,
+    "post_result_tolerance_change": false
+  },
+  "workflow": {
+    "path": ".github/workflows/layerb-32769-blinded-partition-invariance-v0-1.yml",
+    "launch_commit": "73e6c5bffd8fb365f163422c41979daf71a129c0",
+    "run_id": 34667606794,
+    "static_audit_job_id": 103482605453,
+    "role_jobs": {
+      "reference": 103482625030,
+      "alpha_minus": 103482625087,
+      "beta_plus": 103482625067,
+      "beta_minus": 103482625085
+    },
+    "independent_finalizer_job_id": 103486143091,
+    "all_jobs_terminal_success": true
+  },
+  "canonical": {
+    "path": "docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt",
+    "node_count": 32769,
+    "node_payload_sha256": "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599",
+    "text_sha256": "7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2"
+  },
+  "frozen_runtime": {
+    "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+    "point_capacity": 4608,
+    "parser_capacity": 131072,
+    "compiled_classy_sha256_all_role_jobs": "902cf07e0b709769aa2be714457c093a8846d6355d437ebd7743bb307c5ab47b",
+    "h": 0.0001,
+    "native_k_per_decade_for_pk": 20.0,
+    "z_probes": [0.295, 0.7, 1.0, 1.5, 2.0, 2.33],
+    "roles": ["reference", "alpha_minus", "beta_plus", "beta_minus"]
+  },
+  "partitions": {
+    "A": [[0,4097],[4097,8193],[8193,12289],[12289,16385],[16385,20481],[20481,24577],[24577,28673],[28673,32769]],
+    "B": [[0,3641],[3641,7282],[7282,10923],[10923,14564],[14564,18205],[18205,21846],[21846,25487],[25487,29128],[29128,32769]],
+    "both_cover_canonical_lattice_exactly_once": true,
+    "coordinate_order_exact_all_roles": true
+  },
+  "aggregate_artifact": {
+    "artifact_id": 10290710129,
+    "zip_sha256": "518927ed71c9acac5fe75d071697f2aafe589c7e213758fdbb59956726cd22d5",
+    "aggregate_json_sha256": "d7dbd640feb5ae173d2fa7bf4cad79a3776369b6c32bb68762aff21558076a2a",
+    "failures": [],
+    "roles_seen": ["alpha_minus", "beta_minus", "beta_plus", "reference"],
+    "max_normalized_response_difference_across_roles": 0.0,
+    "minimum_exact_binary64_fraction_across_roles_z": 1.0
+  },
+  "role_artifacts": {
+    "reference": {
+      "artifact_id": 10289956389,
+      "zip_sha256": "899f8ff79119e489941a407a6f7eafec1c0f47879a2cec7b710c4a0da535573d",
+      "comparison_json_sha256": "b594a8a8098f2ec959dee05ac02a3a7114acbb43266267e89fbe3a91663f8a35"
+    },
+    "alpha_minus": {
+      "artifact_id": 10290615775,
+      "zip_sha256": "516af4e4abf6689f77983091f508e583d94ecbf47ec7a2eebc69b81dc15d3f43",
+      "comparison_json_sha256": "0534c88a6580dbab9ea5612f7eaf82c6939f1d45340bc6f9c204c6200239d8e9"
+    },
+    "beta_plus": {
+      "artifact_id": 10289009891,
+      "zip_sha256": "f62d2449d2391a74d611b3c9667f48146baea79446b78d3104e1d4b054b338ae",
+      "comparison_json_sha256": "c453a66fd6a592133d0f754da1c639437e669ecd8abb8ea4df2b253e459f6bce"
+    },
+    "beta_minus": {
+      "artifact_id": 10290145832,
+      "zip_sha256": "03cc1c0d31a6f20f9ad3dfe8b742ae5a970ed7001801409ec6a1e30e9835035e",
+      "comparison_json_sha256": "68d3509f88a0e2108a1f30e40fee4b43d5b53052302e63291d3e83c79826f85b"
+    }
+  },
+  "acceptance_evidence": {
+    "all_four_roles_pass": true,
+    "all_six_z_probes_pass_each_role": true,
+    "max_normalized_response_difference": 0.0,
+    "max_absolute_response_difference": 0.0,
+    "minimum_exact_binary64_fraction": 1.0,
+    "max_requested_node_coordinate_rel_mismatch": 1.656870599154541e-16,
+    "all_response_values_finite": true,
+    "response_vectors_persisted": false,
+    "response_vectors_uploaded": false
+  },
+  "scientific_response_read_transiently_for_method_test": true,
+  "scientific_response_vectors_persisted": false,
+  "scientific_response_vectors_uploaded": false,
+  "convergence_metric_computed": false,
+  "scientific_authority": false,
+  "scientific_execution_authorized": false,
+  "production_16385_to_32769_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "successor_authorized": false,
+  "interpretation": "Two prospectively frozen, materially different partitions of the same canonical 32769 lattice produce bitwise-identical responses for every frozen role and z probe. This closes the tested chunk-partition numerical-method gate only. It does not evaluate 16385-to-32769 convergence or authorize production science by itself."
+}
