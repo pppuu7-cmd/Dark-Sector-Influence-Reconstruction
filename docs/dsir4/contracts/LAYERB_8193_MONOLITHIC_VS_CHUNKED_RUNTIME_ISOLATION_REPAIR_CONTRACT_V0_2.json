@@ -1,0 +1,70 @@
+{
+  "schema": "LAYERB_8193_MONOLITHIC_VS_CHUNKED_RUNTIME_ISOLATION_REPAIR_CONTRACT_V0_2",
+  "scope": "DSIR Article III support/resource-route validation only",
+  "effect": "+0/+0",
+  "scientific_authority": false,
+  "scientific_execution_authorized": false,
+  "successor_32769_chunked_execution_authorized": false,
+  "original_preregistered_contract": {
+    "path": "docs/dsir4/contracts/LAYERB_8193_MONOLITHIC_VS_CHUNKED_REQUEST_EQUIVALENCE_CONTRACT_V0_1.json",
+    "creation_commit": "da94182fe8818b3bfb369b52da5ac312a1587946",
+    "must_remain_unchanged": true
+  },
+  "frozen_helpers": {
+    "response_dump_path": "ci/layerb_8193_chunk_equivalence_response_dump_v0_1.py",
+    "response_dump_creation_commit": "b029c78c83c42f8d40964ff43a227e33fd928eb5",
+    "comparator_path": "ci/layerb_8193_chunk_equivalence_compare_v0_1.py",
+    "comparator_creation_commit": "b0fafc1ab8e0766e6383116519810ba67dc5f56a",
+    "must_remain_unchanged": true
+  },
+  "failed_v0_1_execution": {
+    "workflow_creation_commit": "291410f8f719f65d993b4d6ac5784fb8b502b5ff",
+    "run_id": 34665499936,
+    "static_audit_job_id": 103476431546,
+    "role_jobs": {
+      "reference": 103476447227,
+      "alpha_minus": 103476447252,
+      "beta_plus": 103476447253,
+      "beta_minus": 103476447291
+    },
+    "comparison_reached": false,
+    "scientific_result_created": false,
+    "diagnosis": "Both CLASS builds installed compiled classy into the same .venv. The later 2304-capacity chunk build overwrote the prior 8193-capacity monolithic module, so the nominal monolithic request loaded the chunk-capacity module and failed before any equivalence comparison.",
+    "classification": "INFRASTRUCTURE_RUNTIME_BINDING_FAILURE_PLUS_0_PLUS_0"
+  },
+  "only_authorized_repair": {
+    "monolithic_virtualenv": ".venv_mono",
+    "chunk_virtualenv": ".venv_chunk",
+    "monolithic_python_must_import_classy_from_own_virtualenv": true,
+    "chunk_python_must_import_classy_from_own_virtualenv": true,
+    "runtime_binding_artifact_required": true,
+    "monolithic_source_point_capacity": 8193,
+    "monolithic_source_parser_capacity": 262144,
+    "chunk_source_point_capacity": 2304,
+    "chunk_source_parser_capacity": 65536
+  },
+  "unchanged_frozen_semantics": {
+    "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+    "h": 0.0001,
+    "native_k_per_decade_for_pk": 20.0,
+    "roles": [
+      ["reference", 0.0, 0.0],
+      ["alpha_minus", -0.0001, 0.0],
+      ["beta_plus", 0.0, 0.0001],
+      ["beta_minus", 0.0, -0.0001]
+    ],
+    "z_probes": [0.295, 0.7, 1.0, 1.5, 2.0, 2.33],
+    "canonical_node_count": 8193,
+    "monolithic_slice": [0, 8193],
+    "chunk_slices": [[0, 2049], [2049, 4097], [4097, 6145], [6145, 8193]],
+    "lookup_relative_tolerance": 1e-12,
+    "max_normalized_response_difference": 1e-12
+  },
+  "forbidden": [
+    "No change to the V0.1 preregistered scientific/support contract.",
+    "No change to response-dump or comparator semantics.",
+    "No tolerance relaxation after observing V0.1 or V0.2 results.",
+    "No 32769 chunked execution from this repair contract.",
+    "No convergence, covariance, whitening, nuisance, relation/null or Wm_S3 claim from this support test."
+  ]
+}
