@@ -1,0 +1,149 @@
+name: layerb-targeted-direct-k-beta-v0-4
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_TARGETED_DIRECT_K_BETA_V0_4_LAUNCH.json'
+
+permissions:
+  contents: read
+
+env:
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_DIAGNOSTIC_V0_4.json'
+  PROBES: 'docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4.json'
+  JJ: 'ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py'
+  BASELINE: 'configs/dsir4/c2/ide0_reference_v0_1.ini'
+  PRECISION: 'configs/dsir4/c2/dsir_ide_p8_v0_1.pre'
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+
+jobs:
+  invariant-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify prospectively frozen identities and semantics
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import hashlib,json,re
+          C=json.load(open('docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_DIAGNOSTIC_V0_4.json'))
+          P=open('docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4.json','rb').read()
+          J=open('ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py').read()
+          assert hashlib.sha256(P).hexdigest()==C['probe_manifest_sha256']=='6ec35db06d66ac7d03f97f57f9d270d84804ee264508d4601ae33c4175a903d4'
+          p=json.loads(P); assert p['failure_count']==31 and p['control_count']==31 and p['unique_failure_coordinates']==23 and p['unique_all_coordinates']==46
+          assert C['h']==1e-4 and C['native_k_per_decade_for_pk']==20.0 and C['relative_tolerance']==1e-3 and C['strict_less_than'] is True
+          assert 'H=1e-4' in J and 'REL_TOL=1e-3' in J and 'NATIVE_KPD=20.0' in J
+          assert all(C['forbidden'].values())
+          out={'schema':'LAYERB_TARGETED_DIRECT_K_BETA_INVARIANT_AUDIT_V0_4','pass':True,'probe_sha256':hashlib.sha256(P).hexdigest(),'h':C['h'],'native_k_per_decade_for_pk':C['native_k_per_decade_for_pk'],'relative_tolerance':C['relative_tolerance'],'class_commit':C['class_commit'],'covariance_read':False,'Wm_S3_opened':False,'token':'PASS_LAYERB_TARGETED_DIRECT_K_BETA_INVARIANTS_V0_4'}
+          open('safe/invariant.json','w').write(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-targeted-direct-k-beta-invariant-v0-4
+          path: safe/invariant.json
+          retention-days: 90
+
+  direct-domain:
+    strategy:
+      fail-fast: false
+      matrix:
+        domain: [D, B]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact production numerical stack
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          git clone -q https://github.com/kaeonikc/class_iv.git external_class
+          git -C external_class checkout -q "$CLASS_COMMIT"
+      - name: Reproduce production CLASS exposure and non-scientific capacity/history patches
+        run: |
+          set -euo pipefail
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 128',1))
+          q=Path('external_class/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 16384',1))
+          r=Path('external_class/source/perturbations.c'); s=r.read_text(); old='perhaps_print_variables = perturb_print_variables;'; assert s.count(old)==1; r.write_text(s.replace(old,'perhaps_print_variables = NULL;',1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external_class
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external_class
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" make -C external_class -j2 all >/dev/null
+      - name: Run frozen exact-target-k beta probe partition
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          .venv/bin/python ci/layerb_targeted_direct_k_beta_v0_4.py --domain '${{ matrix.domain }}' --probes "$PROBES" --contract "$CONTRACT" --jj-script "$JJ" --baseline "$BASELINE" --precision "$PRECISION" --out safe/direct_${{ matrix.domain }}.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-targeted-direct-k-beta-${{ matrix.domain }}-v0-4
+          path: safe/direct_${{ matrix.domain }}.json
+          retention-days: 90
+
+  decision:
+    needs: [invariant-audit, direct-domain]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-targeted-direct-k-beta-*-v0-4
+          path: inputs
+          merge-multiple: true
+      - name: Apply pre-registered V0.4 decision rule
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import json,math,statistics
+          inv=json.load(open('inputs/invariant.json')); ds=[]
+          for p in ['inputs/direct_D.json','inputs/direct_B.json']:
+            d=json.load(open(p)); assert d['token']=='PASS_LAYERB_TARGETED_DIRECT_K_BETA_DOMAIN_V0_4'; ds.extend(d['rows'])
+          assert inv['pass'] is True
+          def unique(kind):
+            out={}
+            for r in ds:
+              if r['kind']!=kind: continue
+              key=(r['z'],r['k'])
+              if key in out:
+                a=out[key]
+                assert a['direct_beta_response']==r['direct_beta_response'] and a['c']==r['c'] and a['f']==r['f']
+              else: out[key]=r
+            return list(out.values())
+          F=unique('F'); C=unique('C'); assert len(F)==23
+          wins=sum(r['fine_to_direct_relative_difference']<r['coarse_to_direct_relative_difference'] for r in F)
+          win_fraction=wins/len(F)
+          ratios=[r['fine_to_direct_relative_difference']/r['coarse_to_direct_relative_difference'] if r['coarse_to_direct_relative_difference']>0 else math.inf for r in F]
+          median_ratio=statistics.median(ratios)
+          control_max=max(r['fine_to_direct_relative_difference'] for r in C)
+          failure_fine_max=max(r['fine_to_direct_relative_difference'] for r in F)
+          exact_binding_max=max(json.load(open(p))['max_exact_target_binding_relative_mismatch'] for p in ['inputs/direct_D.json','inputs/direct_B.json'])
+          if exact_binding_max>1e-12 or not all(math.isfinite(r['direct_beta_response']) for r in ds) or control_max>=1e-3:
+            cls='TARGETED_DIRECT_K_DIAGNOSTIC_INCONCLUSIVE'
+          elif win_fraction>=0.75 and median_ratio<=0.75:
+            cls='SUPPORT_INTERPOLATION_DOMINANT_STRONGLY_SUPPORTED'
+          else:
+            cls='DIRECT_K_DOES_NOT_SUPPORT_INTERPOLATION_DOMINANCE_H_STABILITY_NEXT'
+          out={'schema':'LAYERB_TARGETED_DIRECT_K_BETA_DECISION_V0_4','classification':cls,'effect':'+0/+0','unique_failure_coordinates':len(F),'unique_control_coordinates':len(C),'fine_closer_than_coarse_count':wins,'fine_closer_than_coarse_fraction':win_fraction,'median_fine_to_direct_over_coarse_to_direct_ratio':median_ratio,'control_max_fine_to_direct_relative_difference':control_max,'failure_max_fine_to_direct_relative_difference':failure_fine_max,'fine_support_already_within_direct_tolerance':failure_fine_max<1e-3,'max_exact_target_binding_relative_mismatch':exact_binding_max,'h':1e-4,'relative_tolerance':1e-3,'h_mutated':False,'global_65537_launched':False,'covariance_read':False,'Wm_S3_opened':False,'science_gate_opened':False,'next_stage':'SUPPORT_INTERPOLATION_REPAIR_VALIDATION' if cls=='SUPPORT_INTERPOLATION_DOMINANT_STRONGLY_SUPPORTED' else ('PROSPECTIVELY_FROZEN_H_STABILITY_AUDIT' if cls.startswith('DIRECT_K_DOES') else 'NO_SCIENTIFIC_PROMOTION'),'token':'PASS_LAYERB_TARGETED_DIRECT_K_BETA_DECISION_V0_4'}
+          open('safe/decision.json','w').write(json.dumps(out,indent=2,sort_keys=True)+'\n'); print(out['token'],json.dumps(out,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-targeted-direct-k-beta-decision-v0-4
+          path: safe/decision.json
+          retention-days: 90
