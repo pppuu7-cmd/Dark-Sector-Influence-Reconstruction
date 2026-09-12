@@ -23,7 +23,7 @@
     "chunk_operand_adapter": {"path": "ci/layerb_16385_32769_chunk_operand_adapter_v0_1.py", "git_blob": "798e83c56d50babbdcab1a57f27662b847b653b4"},
     "chunk_classifier_wrapper": {"path": "ci/layerb_16385_to_32769_canonical_chunk_refinement_v0_1.py", "git_blob": "91c7b2d802d611660f5849ee6ec2db0e4ac3eb0f"},
     "chunk_one_live_guard": {"path": "ci/layerb_32769_chunk_one_live_guard_v0_1.py", "git_blob": "7e67e15352f8b5708eb6e47f277973930fb4e386"},
-    "chunk_one_run_authorizer": {"path": "ci/layerb_16385_to_32769_chunk_one_run_authorizer_v0_1.py", "git_blob": "f4086b863f24e312e7acbf9d02b939802d686572"},
+    "chunk_one_run_authorizer": {"path": "ci/layerb_16385_to_32769_chunk_one_run_authorizer_v0_1.py", "git_blob": "d1804ce45692501cdea3b35f81b2488e3a84edbe"},
     "chunk_terminal_consumer": {"path": "ci/layerb_16385_to_32769_chunk_terminal_consumer_v0_1.py", "git_blob": "00d36e4d0cf34e37c4090effe9e3eef6737bb13b"},
     "chunk_terminal_contract": {"path": "docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_TERMINAL_RESULT_CONTRACT_V0_1.json", "git_blob": "76816b105cb72194107cf7eadffc192900fad6f5"},
     "shared_science_input_preparer": {"path": "scripts/dsir4/prepare_layerb_chunk_science_inputs_v0_1.sh", "git_blob": "458fa7bc29ec3290db357431723f7580bf4044b6"}
