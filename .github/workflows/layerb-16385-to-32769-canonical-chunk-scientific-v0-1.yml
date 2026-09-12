@@ -1,0 +1,301 @@
+name: layerb-16385-to-32769-canonical-chunk-scientific-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_LAUNCH_V0_1.json'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: layerb-16385-to-32769-canonical-chunk-scientific-v0-1
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  WORKFLOW_PATH: '.github/workflows/layerb-16385-to-32769-canonical-chunk-scientific-v0-1.yml'
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1.json'
+  TERMINAL_CONTRACT: 'docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_TERMINAL_RESULT_CONTRACT_V0_1.json'
+  LAUNCH: 'docs/dsir4/launch/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_LAUNCH_V0_1.json'
+  V141: 'docs/dsir4/authority/LAYERB_8193_MONOLITHIC_VS_CHUNKED_EQUIVALENCE_V0_3.json'
+  V142: 'docs/dsir4/authority/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_V0_1.json'
+  V143: 'docs/dsir4/authority/LAYERB_32769_BLINDED_PARTITION_INVARIANCE_V0_1.json'
+  PARENT_REFINEMENT: 'docs/dsir4/authority/LAYERB_CANONICAL_8193_TO_16385_NOT_CONVERGED_V0_1.json'
+  REQUEST_PLAN_AUTH: 'docs/dsir4/authority/RECOVERED_EXP073JL_RESPONSE_BLIND_REQUEST_PLAN_V0_2.json'
+  CANON32769_AUTH: 'docs/dsir4/authority/LAYERB_RESPONSE_BLIND_CANONICAL_FINE_32769_V0_1.json'
+  MANIFEST: 'docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json'
+  WM_S3_OVERRIDE: 'docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_2.json'
+  COARSE_CANONICAL: 'docs/dsir4/canonical/LAYERB_CANONICAL_FINE_16385_NODES_U64HEX_V0_1.txt'
+  FINE_CANONICAL: 'docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt'
+  BASELINE: 'configs/dsir4/c2/ide0_reference_v0_1.ini'
+  PRECISION: 'configs/dsir4/c2/dsir_ide_p8_v0_1.pre'
+
+jobs:
+  authorize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - name: Verify launch sentinel, frozen source identities and no pre-science threshold drift
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          c=json.load(open('docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1.json'))
+          l=json.load(open('docs/dsir4/launch/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_LAUNCH_V0_1.json'))
+          def blob(path): return subprocess.check_output(['git','hash-object',path],text=True).strip()
+          assert l['schema']=='LAYERB_16385_TO_32769_CHUNK_PRODUCTION_LAUNCH_V0_1'
+          assert l['authorized_launch_count']==1 and l['scientific_response_read_before_launch'] is False
+          assert l['production_contract_git_blob']==blob(c['launch_sentinel_path'].replace('docs/dsir4/launch/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_LAUNCH_V0_1.json','docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1.json'))
+          assert l['production_workflow_git_blob']==blob(c['production_workflow_path'])
+          assert l['static_audit_classification']=='LAYERB_16385_TO_32769_CHUNK_PRODUCTION_STATIC_AUDIT_PASS_PLUS_0_PLUS_0'
+          assert c['scientific_semantics']['relative_tolerance']==1e-3 and c['scientific_semantics']['strict_less_than'] is True
+          assert c['scientific_semantics']['h']==1e-4 and c['scientific_semantics']['native_k_per_decade_for_pk']==20.0
+          assert c['scientific_semantics']['covariance_restriction_authorized'] is False and c['scientific_semantics']['Wm_S3_opened'] is False
+          for spec in c['source_bindings'].values(): assert blob(spec['path'])==spec['git_blob'], spec['path']
+          for spec in c['authority_bindings'].values(): assert blob(spec['path'])==spec['git_blob'], spec['path']
+          print('CHUNK_PRODUCTION_LAUNCH_AND_IDENTITIES_PASS_PLUS_0_PLUS_0')
+          PY
+      - name: Generate immediate one-live guard
+        run: |
+          set -euo pipefail
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/workflows/layerb-16385-to-32769-canonical-chunk-scientific-v0-1.yml/runs?per_page=100" > safe/production_runs.json
+          python3 ci/layerb_32769_chunk_one_live_guard_v0_1.py --runs-json safe/production_runs.json --current-run-id "$GITHUB_RUN_ID" --workflow-path "$WORKFLOW_PATH" --out safe/guard.json
+      - name: Generate current-run-only science authorization
+        run: |
+          set -euo pipefail
+          python3 ci/layerb_16385_to_32769_chunk_one_run_authorizer_v0_1.py --contract "$CONTRACT" --guard safe/guard.json --v141-authority "$V141" --v142-authority "$V142" --v143-authority "$V143" --parent-refinement-authority "$PARENT_REFINEMENT" --request-plan-authority "$REQUEST_PLAN_AUTH" --current-run-id "$GITHUB_RUN_ID" --out safe/authorization.json
+          test "$(jq -r .classification safe/authorization.json)" = LAYERB_16385_TO_32769_CHUNK_ONE_RUN_AUTHORIZED_PLUS_0_PLUS_0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-32769-chunk-production-authorization-v0-1
+          path: safe/
+          if-no-files-found: error
+          retention-days: 90
+
+  materialize-plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install frozen plan/runtime prerequisites
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv_plan
+          .venv_plan/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv_plan/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy >/dev/null
+      - name: Prepare exact pinned public and authority inputs
+        env: {PYTHON_BIN: '${{ github.workspace }}/.venv_plan/bin/python'}
+        run: bash scripts/dsir4/prepare_layerb_chunk_science_inputs_v0_1.sh
+      - name: Materialize exact response-blind call plan
+        run: |
+          set -euo pipefail
+          mkdir -p safe scratch_plan
+          .venv_plan/bin/python ci/layerb_16385_32769_chunk_plan_materializer_v0_1.py \
+            --frozen-engine ci/exp073jl_article3_canonical_one_live_recovered_third_refinement_convergence_v0_2.py \
+            --ir-script ci/exp073ir_article3_real_layerb_common_response_v0_1.py --request-plan-script ci/recovered_exp073jl_response_blind_request_plan_audit_v0_1.py --request-plan-authority "$REQUEST_PLAN_AUTH" \
+            --parent-root inputs/parent --parent-authority docs/dsir4/authority/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_PASS_V0_1.json --manifest "$MANIFEST" --angular-root inputs/angular --expim-root inputs/expim --boss-root external/exp073w_boss --source external/des_nz/source.fits --lens external/des_nz/lens.fits --camb-root external/camb --expz2-script ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py --exp073iq-script ci/exp073iq_article3_real_layera_support_v0_1.py --baseline "$BASELINE" --precision "$PRECISION" --scratch scratch_plan --out safe/plan.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/plan.json'))
+          assert d['token']=='LAYERB_16385_32769_CHUNK_PRODUCTION_PLAN_MATERIALIZED_PLUS_0_PLUS_0'
+          assert d['scientific_response_read'] is False and d['class_solver_invoked'] is False
+          assert d['coarse_call_count']==441 and d['fine_call_count']==569
+          assert d['coarse_scalar_count']==83666 and d['fine_scalar_count']==121682
+          assert d['legacy_coarse_plan_sha256']=='505716116cc385d5700e455017d8e541c5bba7774fa6647298392495c83ecfe0'
+          assert d['legacy_fine_plan_sha256']=='0f7ce2e5fa459e15954268dfd46045eaa0ab6356dfdab5a2e282514e7a34ae4e'
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-32769-chunk-production-plan-v0-1
+          path: safe/plan.json
+          if-no-files-found: error
+          retention-days: 90
+
+  acquire-role-grid:
+    needs: [authorize, materialize-plan]
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        role: [reference, alpha_minus, beta_plus, beta_minus]
+        grid: [coarse, fine]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-32769-chunk-production-authorization-v0-1
+          path: inputs/auth
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-32769-chunk-production-plan-v0-1
+          path: inputs/plan
+      - name: Install isolated CLASS stack
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv_acq
+          .venv_acq/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv_acq/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+      - name: Build exact role-grid CLASS envelope
+        run: |
+          set -euo pipefail
+          if [ '${{ matrix.grid }}' = coarse ]; then CAP=16385; PARSER=524288; else CAP=4608; PARSER=131072; fi
+          git clone -q https://github.com/kaeonikc/class_iv.git external_class
+          git -C external_class checkout -q "$CLASS_COMMIT"
+          .venv_acq/bin/python - "$CAP" "$PARSER" <<'PY'
+          import sys
+          from pathlib import Path
+          cap,parser=sys.argv[1:]
+          p=Path('external_class/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,f'#define _MAX_NUMBER_OF_K_FILES_ {cap}',1))
+          q=Path('external_class/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,f'#define _ARGUMENT_LENGTH_MAX_ {parser}',1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv_acq/bin:$PATH" .venv_acq/bin/python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external_class
+          PATH="$GITHUB_WORKSPACE/.venv_acq/bin:$PATH" .venv_acq/bin/python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external_class
+          .venv_acq/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv_acq/bin:$PATH" make -C external_class -j2 all >/dev/null
+      - name: Verify runtime binding
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          CLASSY=$(.venv_acq/bin/python -c 'import classy; print(classy.__file__)')
+          python3 - "$CLASSY" <<'PY' > safe/runtime_binding.json
+          import hashlib,json,re,sys
+          from pathlib import Path
+          f=Path(sys.argv[1]).resolve(); root=Path.cwd().resolve()
+          def macro(p,n):
+              m=re.search(r'^\s*#define\s+'+re.escape(n)+r'\s+(\d+)\b',Path(p).read_text(),re.M); return int(m.group(1)) if m else None
+          grid='${{ matrix.grid }}'; cap=16385 if grid=='coarse' else 4608; parser=524288 if grid=='coarse' else 131072
+          d={'schema':'LAYERB_CHUNK_PRODUCTION_RUNTIME_BINDING_V0_1','grid':grid,'role':'${{ matrix.role }}','classy_file':str(f),'import_under_expected_venv':str(f).startswith(str(root/'.venv_acq')+'/'),'point_capacity':macro('external_class/include/perturbations.h','_MAX_NUMBER_OF_K_FILES_'),'parser_capacity':macro('external_class/include/parser.h','_ARGUMENT_LENGTH_MAX_'),'classy_sha256':hashlib.sha256(f.read_bytes()).hexdigest()}
+          d['pass']=d['import_under_expected_venv'] and d['point_capacity']==cap and d['parser_capacity']==parser
+          print(json.dumps(d,sort_keys=True)); raise SystemExit(0 if d['pass'] else 73)
+          PY
+      - name: Acquire exactly one authorized scientific role operand
+        run: |
+          set -euo pipefail
+          if [ '${{ matrix.grid }}' = coarse ]; then CANON="$COARSE_CANONICAL"; else CANON="$FINE_CANONICAL"; fi
+          /usr/bin/time -v -o safe/time.txt .venv_acq/bin/python ci/layerb_16385_32769_chunk_role_operand_v0_1.py --role '${{ matrix.role }}' --grid '${{ matrix.grid }}' --authorization inputs/auth/authorization.json --current-run-id "$GITHUB_RUN_ID" --plan inputs/plan/plan.json --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py --canonical "$CANON" --baseline "$BASELINE" --precision "$PRECISION" --out safe/operand.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-chunk-production-${{ matrix.grid }}-${{ matrix.role }}-v0-1
+          path: safe/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Enforce operand receipt after evidence upload
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/operand.json'))
+          assert d['token']=='LAYERB_16385_32769_CHUNK_ROLE_OPERAND_PASS_PLUS_0_PLUS_0'
+          assert d['role']=='${{ matrix.role }}' and d['grid']=='${{ matrix.grid }}'
+          assert d['current_run_id']==int('${{ github.run_id }}')
+          assert d['convergence_metric_computed'] is False and d['scientific_classification_computed'] is False
+          assert d['covariance_read'] is False and d['Wm_S3_opened'] is False
+          PY
+
+  final-classifier:
+    needs: [authorize, materialize-plan, acquire-role-grid]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-32769-chunk-production-authorization-v0-1
+          path: inputs/auth
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-32769-chunk-production-plan-v0-1
+          path: inputs/plan
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-chunk-production-*-*-v0-1
+          path: inputs/operands
+      - name: Install frozen replay prerequisites
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv_final
+          .venv_final/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv_final/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy astropy >/dev/null
+      - name: Prepare exact pinned replay inputs
+        env: {PYTHON_BIN: '${{ github.workspace }}/.venv_final/bin/python'}
+        run: bash scripts/dsir4/prepare_layerb_chunk_science_inputs_v0_1.sh
+      - name: Run unchanged frozen parent replay/classifier through chunk operand adapter
+        env:
+          DSIR_CHUNK_OPERANDS_ROOT: '${{ github.workspace }}/inputs/operands'
+          DSIR_CHUNK_PLAN: '${{ github.workspace }}/inputs/plan/plan.json'
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts scratch_final
+          .venv_final/bin/python ci/layerb_16385_to_32769_canonical_chunk_refinement_v0_1.py \
+            --current-run-id "$GITHUB_RUN_ID" --parent-refinement-authority "$PARENT_REFINEMENT" --class-build-authority "$V143" --canonical-32769-authority "$CANON32769_AUTH" --resource-authority "$V142" --one-live-guard inputs/auth/guard.json --one-run-authorization inputs/auth/authorization.json \
+            --recovered-jl-script ci/layerb_16385_32769_chunk_operand_adapter_v0_1.py --ir-script ci/exp073ir_article3_real_layerb_common_response_v0_1.py --jj-script ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py --request-plan-script ci/recovered_exp073jl_response_blind_request_plan_audit_v0_1.py --request-plan-authority "$REQUEST_PLAN_AUTH" \
+            --parent-root inputs/parent --parent-authority docs/dsir4/authority/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_PASS_V0_1.json --manifest "$MANIFEST" --angular-root inputs/angular --expim-root inputs/expim --boss-root external/exp073w_boss --source external/des_nz/source.fits --lens external/des_nz/lens.fits --camb-root external/camb --expz2-script ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py --exp073iq-script ci/exp073iq_article3_real_layera_support_v0_1.py --baseline "$BASELINE" --precision "$PRECISION" --coarse "$COARSE_CANONICAL" --fine "$FINE_CANONICAL" --capacity-patch-record "$CONTRACT" --scratch scratch_final --out artifacts/science_result.json
+          .venv_final/bin/python ci/layerb_16385_to_32769_chunk_terminal_consumer_v0_1.py --result artifacts/science_result.json --contract "$TERMINAL_CONTRACT" --authorization inputs/auth/authorization.json --v141-authority "$V141" --v142-authority "$V142" --v143-authority "$V143" --out artifacts/terminal_candidate.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-32769-chunk-production-terminal-v0-1
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Enforce valid terminal science after upload
+        run: |
+          python3 - <<'PY'
+          import json
+          t=json.load(open('artifacts/terminal_candidate.json')); r=json.load(open('artifacts/science_result.json'))
+          assert t['terminal_science_valid'] is True and t['errors']==[]
+          assert r['classification'] in ('COMMON_GRID_NEXT_REFINEMENT_CONVERGED_PLUS_0_PLUS_0','COMMON_GRID_NEXT_REFINEMENT_NOT_CONVERGED_PLUS_0_PLUS_0')
+          assert r['covariance_restriction_authorized'] is False and r['Wm_S3_opened'] is False
+          PY
+
+  independent-terminal-verifier:
+    needs: [final-classifier]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-32769-chunk-production-terminal-v0-1
+          path: inputs/terminal
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-16385-32769-chunk-production-authorization-v0-1
+          path: inputs/auth
+      - name: Independently reclassify terminal artifact on fresh runner
+        run: |
+          set -euo pipefail
+          mkdir -p independent
+          python3 ci/layerb_16385_to_32769_chunk_terminal_consumer_v0_1.py --result inputs/terminal/science_result.json --contract "$TERMINAL_CONTRACT" --authorization inputs/auth/authorization.json --v141-authority "$V141" --v142-authority "$V142" --v143-authority "$V143" --out independent/terminal_independent.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('independent/terminal_independent.json'))
+          assert d['terminal_science_valid'] is True and d['errors']==[] and d['scientific_authority_created'] is True
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-16385-32769-chunk-production-independent-terminal-v0-1
+          path: independent/terminal_independent.json
+          if-no-files-found: error
+          retention-days: 90
