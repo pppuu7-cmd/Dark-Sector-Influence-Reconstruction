@@ -1,0 +1,36 @@
+{
+  "schema": "LAYERB_BETA_CANCELLATION_CONDITIONING_CONTRACT_V0_3",
+  "scope": "Prospectively frozen diagnostic-only test of whether the authoritative Layer-B 16385-to-32769 failure is concentrated in the symmetric-beta finite-difference response and amplified by subtractive cancellation of already-retained raw operands.",
+  "parent_localization_authority": "docs/dsir4/authority/LAYERB_OPERAND_LOCALIZATION_DIAGNOSTIC_V0_2.json",
+  "operand_source_contract": "docs/dsir4/contracts/LAYERB_16385_32769_FINALIZER_ONLY_RECOVERY_CONTRACT_V0_1.json",
+  "frozen_plan_artifact_id": 10303091059,
+  "frozen_plan_zip_sha256": "50e74dace4a017a664077dbc71e5027c69e65757e61f8485fd707f6148613310",
+  "frozen_plan_json_sha256": "c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064",
+  "h": 0.0001,
+  "relative_tolerance": 0.001,
+  "strict_less_than": true,
+  "streams": [
+    "finite_difference_conditioning_census",
+    "raw_role_grid_stability",
+    "independent_beta_numerator_identity"
+  ],
+  "classification_rule": {
+    "required_for_cancellation_amplification_class": [
+      "all frozen-tolerance violations occur in abs_dDelta_m_dbeta_symmetric",
+      "abs_dDelta_m_dalpha_left has zero frozen-tolerance violations",
+      "raw-role coarse/fine relative discrepancies are orders of magnitude below the derived beta-response discrepancy",
+      "beta derivative relative discrepancy equals the corresponding absolute beta numerator relative discrepancy to numerical precision",
+      "failing beta atoms have large subtraction condition numbers compared with the full beta population"
+    ],
+    "interpretation": "A PASS of this diagnostic identifies a numerical conditioning mechanism; it does not authorize changing h, changing the convergence criterion, dropping beta, changing covariance, or accepting the scientific gate."
+  },
+  "CLASS_solver_invocation_authorized": false,
+  "scientific_operand_recompute_authorized": false,
+  "finite_difference_step_mutation_authorized": false,
+  "criterion_mutation_authorized": false,
+  "covariance_restriction_authorized": false,
+  "Wm_S3_opened": false,
+  "denser_successor_65537_authorized": false,
+  "effect": "+0/+0",
+  "launch_token": "docs/dsir4/launch/LAYERB_BETA_CANCELLATION_CONDITIONING_LAUNCH_V0_3.json"
+}
