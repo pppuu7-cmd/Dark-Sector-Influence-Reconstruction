@@ -1,0 +1,99 @@
+name: layerb-32769-fine-operand-provenance-rebind-control-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-32769-fine-operand-provenance-rebind-control-v0-1.yml'
+      - 'docs/dsir4/contracts/LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_CONTROL_V0_1.json'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  CONTRACT: docs/dsir4/contracts/LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_CONTROL_V0_1.json
+
+jobs:
+  role-rebind:
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        role: [reference, alpha_minus, beta_plus, beta_minus]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch exact control and fine operand then verify response-preserving rebind
+        run: |
+          set -euo pipefail
+          mkdir -p work/control work/original safe
+          python3 - <<'PY' > safe/spec.txt
+          import json
+          c=json.load(open('docs/dsir4/contracts/LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_CONTROL_V0_1.json'))
+          r='${{ matrix.role }}'; s=c['fine_operands'][r]; v=c['v146_control']
+          print(v['artifact_id'],v['zip_sha256'],v['authorization_json_sha256'])
+          print(s['artifact_id'],s['zip_sha256'],s['operand_json_sha256'])
+          PY
+          read ctrl_id ctrl_zip auth_sha < <(sed -n '1p' safe/spec.txt)
+          read op_id op_zip op_sha < <(sed -n '2p' safe/spec.txt)
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${ctrl_id}/zip" > work/control.zip
+          test "$(sha256sum work/control.zip | awk '{print $1}')" = "$ctrl_zip"
+          unzip -q work/control.zip -d work/control
+          test "$(sha256sum work/control/authorization.json | awk '{print $1}')" = "$auth_sha"
+          gh api -H 'Accept: application/vnd.github+json' "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${op_id}/zip" > work/original.zip
+          test "$(sha256sum work/original.zip | awk '{print $1}')" = "$op_zip"
+          unzip -q work/original.zip -d work/original
+          test "$(sha256sum work/original/operand.json | awk '{print $1}')" = "$op_sha"
+          python3 - <<'PY'
+          import copy,hashlib,json
+          from pathlib import Path
+          role='${{ matrix.role }}'
+          c=json.load(open('docs/dsir4/contracts/LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_CONTROL_V0_1.json'))
+          d=json.load(open('work/original/operand.json')); authb=Path('work/control/authorization.json').read_bytes(); authsha=hashlib.sha256(authb).hexdigest(); inv=c['frozen_invariants']
+          assert d['role']==role and d['grid']==inv['grid'] and d['current_run_id']==inv['original_run_id'] and d['authorization_json_sha256']==inv['original_authorization_json_sha256']
+          assert d['call_count']==inv['call_count'] and d['target_scalar_count']==inv['target_scalar_count'] and d['calls_digest']==inv['calls_digest'] and d['canonical_node_count']==inv['canonical_node_count'] and d['canonical_node_sha256']==inv['canonical_node_sha256']
+          payload=lambda x: json.dumps({'responses':x['responses_f8_b64'],'valids':x['valid_masks_packbits_b64']},separators=(',',':'),sort_keys=True).encode()
+          before=hashlib.sha256(payload(d)).hexdigest(); q=copy.deepcopy(d)
+          q['current_run_id']=c['v146_control']['current_run_id']; q['authorization_json_sha256']=authsha; q['recovery_provenance_rebind_only']=True; q['recovery_original_run_id']=inv['original_run_id']; q['recovery_original_operand_sha256']=c['fine_operands'][role]['operand_json_sha256']; q['recovery_response_payload_sha256']=before
+          after=hashlib.sha256(payload(q)).hexdigest()
+          assert before==after and q['responses_f8_b64']==d['responses_f8_b64'] and q['valid_masks_packbits_b64']==d['valid_masks_packbits_b64']
+          changed=sorted(k for k in set(d)|set(q) if d.get(k)!=q.get(k))
+          allowed=sorted(c['prospective_acceptance']['only_allowed_changed_fields'])
+          assert set(changed).issubset(set(allowed)),(changed,allowed)
+          out={'schema':'LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_ROLE_V0_1','effect':'+0/+0','classification':'LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_PASS_PLUS_0_PLUS_0','role':role,'original_operand_sha256':hashlib.sha256(Path('work/original/operand.json').read_bytes()).hexdigest(),'v146_authorization_sha256':authsha,'response_payload_sha256_before':before,'response_payload_sha256_after':after,'response_payload_exactly_unchanged':before==after,'changed_fields':changed,'class_solver_invoked':False,'convergence_metric_computed':False,'scientific_authority':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('safe/result.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['classification'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fine-rebind-${{ matrix.role }}-v0-1
+          path: safe/result.json
+          if-no-files-found: error
+          retention-days: 90
+
+  finalizer:
+    if: always()
+    needs: [role-rebind]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with: {pattern: 'fine-rebind-*-v0-1', path: downloaded}
+      - name: Independently aggregate all roles
+        run: |
+          set -euo pipefail
+          mkdir -p final
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          rows=[json.load(open(p)) for p in Path('downloaded').rglob('result.json')]
+          roles=sorted(x['role'] for x in rows); expected=['alpha_minus','beta_minus','beta_plus','reference']
+          failures=[x['role'] for x in rows if x['classification']!='LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_PASS_PLUS_0_PLUS_0' or not x['response_payload_exactly_unchanged']]
+          ok=roles==expected and not failures
+          d={'schema':'LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_AGGREGATE_V0_1','effect':'+0/+0','classification':'LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_ALL_ROLES_PASS_PLUS_0_PLUS_0' if ok else 'LAYERB_32769_FINE_OPERAND_PROVENANCE_REBIND_FAIL_PLUS_0_PLUS_0','roles_seen':roles,'failures':failures,'all_response_payloads_exactly_unchanged':ok,'class_solver_invoked':False,'convergence_metric_computed':False,'scientific_authority':False,'covariance_restriction_authorized':False,'Wm_S3_opened':False}
+          Path('final/aggregate.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n'); print(d['classification']); raise SystemExit(0 if ok else 47)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: fine-rebind-aggregate-v0-1, path: final/aggregate.json, retention-days: 90}
