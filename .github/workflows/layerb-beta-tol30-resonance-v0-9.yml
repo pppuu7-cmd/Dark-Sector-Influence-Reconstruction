@@ -1,0 +1,168 @@
+name: layerb-beta-tol30-resonance-v0-9
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_BETA_TOL30_RESONANCE_V0_9_LAUNCH.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_TOL30_RESONANCE_AUDIT_V0_9.json'
+  PARENT_AUTHORITY: 'docs/dsir4/authority/LAYERB_BETA_TOLERANCE_ISOLATION_V0_8.json'
+  PROBES: 'docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4.json'
+  EXECUTOR: 'ci/layerb_beta_tol30_resonance_v0_9.py'
+  V07_EXECUTOR: 'ci/layerb_beta_solver_conditioning_v0_7.py'
+  JJ: 'ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py'
+  BASELINE: 'configs/dsir4/c2/ide0_reference_v0_1.ini'
+  PRECISION: 'configs/dsir4/c2/dsir_ide_p8_v0_1.pre'
+  RAW_PARENT_RUN_ID: '34719180791'
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+
+jobs:
+  invariant-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen V0.9 contract, parent and identities
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def blobsha(path):
+              b=Path(path).read_bytes()
+              return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          C=json.load(open('docs/dsir4/contracts/LAYERB_BETA_TOL30_RESONANCE_AUDIT_V0_9.json'))
+          A=json.load(open('docs/dsir4/authority/LAYERB_BETA_TOLERANCE_ISOLATION_V0_8.json'))
+          assert C['status']=='PROSPECTIVELY_FROZEN_BEFORE_V0_9_EXECUTION'
+          assert A['classification']==C['parent_classification']=='TOLERANCE_KNOB_ISOLATION_INCONCLUSIVE'
+          assert A['authorized_next_stage']==C['authorized_parent_next_stage']=='PROSPECTIVELY_FROZEN_TOL30_CONTROL_REPRODUCIBILITY_AND_LOCALIZATION_AUDIT'
+          assert A['profiles']['TOL30']['control_max_h_spread']==0.0012003119264226171
+          assert A['profiles']['TOL300']['recovery_fraction']==0.8
+          assert C['production_h']==1e-4 and C['relative_tolerance']==1e-3
+          assert C['production_perturb_sampling_stepsize']==0.00035
+          assert C['h_values']==[4e-4,2e-4,1e-4,5e-5,2.5e-5]
+          assert set(C['profiles'])=={'N20','N15','N12','T30R1','T30R2','N08','N06','TOL300R'}
+          assert C['profiles']['T30R1']['overrides']=={'tol_perturb_integration':'1e-11'}
+          assert C['profiles']['T30R2']['overrides']=={'tol_perturb_integration':'1e-11'}
+          assert C['profiles']['TOL300R']['overrides']=={'tol_perturb_integration':'1e-12'}
+          assert C['profiles']['TOL300R']['scope']=='all'
+          assert all(C['profiles'][p]['scope']=='controls' for p in ['N20','N15','N12','T30R1','T30R2','N08','N06'])
+          assert C['adequate_recovery_fraction']==0.75 and C['adequate_median_h_spread']==1e-3
+          assert C['tol300_recovered_count_difference_max']==1 and C['tol300_median_ratio_max']==1.25
+          assert all(C['forbidden'].values())
+          assert hashlib.sha256(Path(C['probe_manifest']).read_bytes()).hexdigest()==C['probe_manifest_sha256']=='6ec35db06d66ac7d03f97f57f9d270d84804ee264508d4601ae33c4175a903d4'
+          assert blobsha(C['baseline'])==C['baseline_git_blob_sha1']
+          assert blobsha(C['production_precision'])==C['production_precision_git_blob_sha1']
+          assert blobsha(C['v07_domain_executor'])==C['v07_domain_executor_git_blob_sha1']
+          assert blobsha(C['executor'])==C['executor_git_blob_sha1']
+          assert blobsha(C['frozen_response_engine_source'])==C['frozen_response_engine_git_blob_sha1']
+          P=json.load(open(C['probe_manifest']))
+          assert P['unique_failure_coordinates']==23 and P['unique_all_coordinates']==46
+          out={'schema':'LAYERB_BETA_TOL30_RESONANCE_INVARIANT_AUDIT_V0_9','pass':True,'profile_count':len(C['profiles']),'parallel_science_jobs':16,'effect':'+0/+0','covariance_read':False,'Wm_S3_opened':False,'science_gate_opened':False,'token':'PASS_LAYERB_BETA_TOL30_RESONANCE_INVARIANTS_V0_9'}
+          Path('safe/invariant.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+          python3 -m py_compile "$EXECUTOR" "$V07_EXECUTOR"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-tol30-resonance-invariant-v0-9
+          path: safe/invariant.json
+          retention-days: 90
+
+  resonance-domain:
+    strategy:
+      fail-fast: false
+      max-parallel: 16
+      matrix:
+        profile: [N20, N15, N12, T30R1, T30R2, N08, N06, TOL300R]
+        domain: [D, B]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact production numerical stack
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          git clone -q https://github.com/kaeonikc/class_iv.git external_class
+          git -C external_class checkout -q "$CLASS_COMMIT"
+      - name: Reproduce pinned CLASS exposure and non-scientific capacity/history patches
+        run: |
+          set -euo pipefail
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 128',1))
+          q=Path('external_class/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 16384',1))
+          r=Path('external_class/source/perturbations.c'); s=r.read_text(); old='perhaps_print_variables = perturb_print_variables;'; assert s.count(old)==1; r.write_text(s.replace(old,'perhaps_print_variables = NULL;',1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external_class
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external_class
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" make -C external_class -j2 all >/dev/null
+      - name: Run frozen TOL30 resonance / TOL300 replication profile
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          .venv/bin/python "$EXECUTOR" --mode domain --profile '${{ matrix.profile }}' --domain '${{ matrix.domain }}' --probes "$PROBES" --contract "$CONTRACT" --v07-executor "$V07_EXECUTOR" --jj-script "$JJ" --baseline "$BASELINE" --precision "$PRECISION" --out safe/solver_${{ matrix.profile }}_${{ matrix.domain }}.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-tol30-resonance-${{ matrix.profile }}-${{ matrix.domain }}-v0-9
+          path: safe/solver_${{ matrix.profile }}_${{ matrix.domain }}.json
+          retention-days: 90
+
+  decision:
+    needs: [invariant-audit, resonance-domain]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install decision dependency
+        run: |
+          set -euo pipefail
+          python3 -m venv .decision-venv
+          .decision-venv/bin/python -m pip install --upgrade pip >/dev/null
+          .decision-venv/bin/python -m pip install 'numpy==1.26.4' >/dev/null
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-tol30-resonance-*-v0-9
+          path: inputs
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-fd-repair-*-v0-6
+          path: raw
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: 34719180791
+      - name: Verify frozen barrier and apply V0.9 classifier
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import json
+          inv=json.load(open('inputs/invariant.json'))
+          assert inv['pass'] is True and inv['token']=='PASS_LAYERB_BETA_TOL30_RESONANCE_INVARIANTS_V0_9'
+          PY
+          .decision-venv/bin/python "$EXECUTOR" --mode decision --contract "$CONTRACT" --parent-inputs raw/fd_D.json raw/fd_B.json --new-inputs inputs/solver_*.json --out safe/decision.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-tol30-resonance-decision-v0-9
+          path: safe/decision.json
+          retention-days: 90
