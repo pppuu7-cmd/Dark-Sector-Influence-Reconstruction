@@ -149,8 +149,9 @@ def decision_mode(a,C):
             q["pure_vs_direct_response_rel"]=rel(q["pure_interp_response"],float(dr))
             q["mixed_interp_vs_direct_response_rel"]=rel(q["mixed_interp_response"],float(dr))
             q["mixed_exact_vs_direct_response_rel"]=rel(q["mixed_exact_response"],float(dr)); cells.append(q)
+    all_replay_bad=[r for r in cells if r["pure_vs_prior_common_response_rel"]>=C["replay_relative_tolerance"]]
     cellmap={(r["grid"],r["h_key"],r["z"],r["k"]):r for r in cells}
-    violations=[]; interp_supported=[]; node_set_supported=[]; replay_bad=[]
+    violations=[]; interp_supported=[]; node_set_supported=[]
     for v in C["parent_violation_cells"]:
         ck=(v["grid"],format(float(v["h"]),".17g"),v["z"],v["k"]); r=cellmap[ck]
         replicated=r["pure_vs_direct_response_rel"]>=C["response_relative_tolerance"]
@@ -165,14 +166,17 @@ def decision_mode(a,C):
             "mixed_exact_vs_direct_response_rel":r["mixed_exact_vs_direct_response_rel"],
             "pure_vs_mixed_interp_response_rel":r["pure_vs_mixed_interp_response_rel"]
         })
-        interp_supported.append(interp); node_set_supported.append(nodeset); replay_bad.append(not replay)
+        interp_supported.append(interp); node_set_supported.append(nodeset)
     finite=all(math.isfinite(float(v)) for r in cells for v in [r["pure_interp_response"],r["mixed_interp_response"],r["mixed_exact_response"],r["pure_vs_prior_common_response_rel"],r["mixed_interp_vs_exact_response_rel"],r["mixed_exact_vs_direct_response_rel"]])
-    invariant_ok=(finite and max_lookup<=C["exact_target_binding_tolerance"] and not any(replay_bad))
+    invariant_ok=(finite and max_lookup<=C["exact_target_binding_tolerance"] and not all_replay_bad)
+    all_reproduced=all(x["replicated"] for x in violations)
+    all_interp=all(interp_supported); all_nodeset=all(node_set_supported)
+    fully_accounted=all(i or n for i,n in zip(interp_supported,node_set_supported))
     if not invariant_ok: cls="PRODUCTION_H_COMMON_GRID_INTERPOLATION_AUDIT_INCONCLUSIVE"
-    elif all(x["replicated"] for x in violations) and all(interp_supported) and not any(node_set_supported): cls="COMMON_GRID_CUBIC_INTERPOLATION_MECHANISM_SUPPORTED"
-    elif all(x["replicated"] for x in violations) and any(node_set_supported) and not any(interp_supported): cls="K_OUTPUT_NODE_SET_SOLVER_DEPENDENCE_SUPPORTED"
-    elif all(x["replicated"] for x in violations) and any(interp_supported) and any(node_set_supported): cls="MIXED_INTERPOLATION_AND_NODE_SET_DEPENDENCE_SUPPORTED"
-    elif not all(x["replicated"] for x in violations): cls="PARENT_COMMON_GRID_VIOLATIONS_NOT_REPRODUCED"
+    elif all_reproduced and all_interp and not any(node_set_supported): cls="COMMON_GRID_CUBIC_INTERPOLATION_MECHANISM_SUPPORTED"
+    elif all_reproduced and all_nodeset and not any(interp_supported): cls="K_OUTPUT_NODE_SET_SOLVER_DEPENDENCE_SUPPORTED"
+    elif all_reproduced and fully_accounted and any(interp_supported) and any(node_set_supported): cls="MIXED_INTERPOLATION_AND_NODE_SET_DEPENDENCE_SUPPORTED"
+    elif not all_reproduced: cls="PARENT_COMMON_GRID_VIOLATIONS_NOT_REPRODUCED"
     else: cls="PRODUCTION_H_COMMON_GRID_INTERPOLATION_PATTERN_UNRESOLVED"
     nxt={
         "COMMON_GRID_CUBIC_INTERPOLATION_MECHANISM_SUPPORTED":"PROSPECTIVELY_FROZEN_COMMON_GRID_INTERPOLATION_REMEDY_BENCHMARK",
@@ -185,17 +189,17 @@ def decision_mode(a,C):
     out={
         "schema":"LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_DECISION_V0_12",
         "classification":cls,"effect":"+0/+0","violations":violations,"invariant_ok":invariant_ok,
-        "max_requested_node_coordinate_rel_mismatch":max_lookup,
-        "all_parent_violations_reproduced":all(x["replicated"] for x in violations),
-        "all_parent_replays_ok":not any(replay_bad),"interpolation_supported_count":sum(interp_supported),
-        "node_set_dependence_supported_count":sum(node_set_supported),"production_h":C["production_h"],
-        "tol_perturb_integration":C["tol300"],"production_h_mutated":False,"sampling_stepsize_changed":False,
-        "global_65537_launched":False,"covariance_read":False,"whitening_read":False,"nuisance_read":False,
-        "relation_null_read":False,"Wm_S3_opened":False,"science_gate_opened":False,"next_stage":nxt,
+        "max_requested_node_coordinate_rel_mismatch":max_lookup,"all_cells_replay_ok":not all_replay_bad,
+        "replay_failure_count":len(all_replay_bad),"all_parent_violations_reproduced":all_reproduced,
+        "interpolation_supported_count":sum(interp_supported),"node_set_dependence_supported_count":sum(node_set_supported),
+        "production_h":C["production_h"],"tol_perturb_integration":C["tol300"],"production_h_mutated":False,
+        "sampling_stepsize_changed":False,"global_65537_launched":False,"covariance_read":False,
+        "whitening_read":False,"nuisance_read":False,"relation_null_read":False,"Wm_S3_opened":False,
+        "science_gate_opened":False,"next_stage":nxt,
         "token":"PASS_LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_DECISION_V0_12"
     }
     Path(a.out).parent.mkdir(parents=True,exist_ok=True); Path(a.out).write_text(json.dumps(out,indent=2,sort_keys=True)+"\n")
-    print(out["token"],json.dumps({"classification":cls,"next_stage":nxt,"interpolation_supported_count":sum(interp_supported),"node_set_dependence_supported_count":sum(node_set_supported)},sort_keys=True))
+    print(out["token"],json.dumps({"classification":cls,"next_stage":nxt,"interpolation_supported_count":sum(interp_supported),"node_set_dependence_supported_count":sum(node_set_supported),"replay_failure_count":len(all_replay_bad)},sort_keys=True))
 
 def main():
     p=argparse.ArgumentParser(); p.add_argument("--mode",choices=["domain","decision"],required=True)
