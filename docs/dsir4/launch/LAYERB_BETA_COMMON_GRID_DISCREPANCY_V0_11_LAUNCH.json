@@ -1,0 +1,16 @@
+{
+  "schema": "LAYERB_BETA_COMMON_GRID_DISCREPANCY_LAUNCH_V0_11",
+  "status": "LAUNCH_AUTHORIZED_BY_TERMINAL_V0_10",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_V0_10.json",
+  "parent_classification": "STABILIZED_TOL300_LOCAL_COMMON_GRID_NOT_VALIDATED",
+  "authorized_stage": "PROSPECTIVELY_FROZEN_COMMON_GRID_DISCREPANCY_LOCALIZATION_AUDIT",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_COMMON_GRID_DISCREPANCY_V0_11.json",
+  "workflow": ".github/workflows/layerb-beta-common-grid-discrepancy-v0-11.yml",
+  "new_parallel_lanes": ["GRID640_D", "GRID640_B", "GRID768_D", "GRID768_B", "GRID896_D", "GRID896_B"],
+  "reused_without_recomputation": ["GRID512_D", "GRID512_B", "GRID1024_D", "GRID1024_B", "TOL300R_D", "TOL300R_B"],
+  "effect": "+0/+0",
+  "covariance_read": false,
+  "Wm_S3_opened": false,
+  "global_65537_launched": false,
+  "science_gate_opened": false
+}
