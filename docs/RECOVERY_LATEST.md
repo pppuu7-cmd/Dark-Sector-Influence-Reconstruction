@@ -6,64 +6,60 @@ Repository state, immutable DSIR4 contracts/authorities, terminal GitHub Actions
 
 ## Frozen scientific boundaries
 
-Production `h=1e-4`; native `k_per_decade_for_pk=20`; strict response-stability tolerance `<1e-3`; exact target-k binding mismatch `<=1e-12`. Covariance restriction unauthorized; whitening/nuisance/relation-null unopened; `Wm_S3` unopened; global 65537 unauthorized; no science gate opened by the current diagnostic chain.
+Production `h=1e-4`; native `k_per_decade_for_pk=20`; strict response-stability tolerance `<1e-3`; exact target-k binding mismatch `<=1e-12`; production `perturb_sampling_stepsize=0.00035`. Covariance restriction unauthorized; whitening/nuisance/relation-null unopened; `Wm_S3` unopened; global 65537 unauthorized; no science gate opened by this diagnostic chain.
 
-## Closed chain through V0.6
+## Closed chain through V0.7
 
-V0.5 run `34717972131`: `H_DEPENDENT_CONDITIONING_STRONGLY_SUPPORTED`, effect `+0/+0`. Exactly 20/23 failing exact-target coordinates have five-h spread `>=1e-3`; controls remain stable.
+V0.5 run `34717972131`: `H_DEPENDENT_CONDITIONING_STRONGLY_SUPPORTED`, 20/23 failing exact-target coordinates h-unstable.
 
-V0.6 authority: `docs/dsir4/authority/LAYERB_BETA_FD_REPAIR_V0_6.json`, commit `4b62f4bf4057d34eff2b7cc1ceef98d63f8eafa7`. Classification `FOURTH_ORDER_FD_REPAIR_NOT_SUPPORTED`: Richardson repair recovered only 4/20 frozen h-unstable failures (`0.2`), median raw spread `0.003260200828240146` versus repaired local median `0.003198104008657432`. Exact-target mismatch max `1.2517848722592053e-16`; invariants PASS. Ordinary finite-difference truncation is not the dominant source.
+V0.6 authority `docs/dsir4/authority/LAYERB_BETA_FD_REPAIR_V0_6.json`, commit `4b62f4bf4057d34eff2b7cc1ceef98d63f8eafa7`: `FOURTH_ORDER_FD_REPAIR_NOT_SUPPORTED`; Richardson recovered 4/20. Ordinary finite-difference truncation is not the dominant source.
 
-## V0.7 — terminal partial solver-conditioning support
+V0.7 authority `docs/dsir4/authority/LAYERB_BETA_SOLVER_CONDITIONING_V0_7.json`, commit `b84dbcfd08046792866270d9b1dea7b2dfc6c955`, run `34719555760`: `UPSTREAM_RESPONSE_SOLVER_CONDITIONING_PARTIALLY_SUPPORTED`, attribution `PERTURBATION_INTEGRATION_TOLERANCE_SENSITIVE`. `TOL10=3e-11` recovered 11/20 with median `0.000810683437303502`; `TOL100=3e-12` recovered 14/20 with median `0.0006864929897004239`; sampling-only profiles recovered 0/20. Frozen strong threshold 75% was not met by the best 70% V0.7 recovery.
 
-Authority: `docs/dsir4/authority/LAYERB_BETA_SOLVER_CONDITIONING_V0_7.json`, creation commit `b84dbcfd08046792866270d9b1dea7b2dfc6c955`.
+## V0.8 — terminal tolerance sweep, inconclusive because of one control instability
 
-Run `34719555760`, head `419e109429f77cb233a01b99e80c82d1c504e700`; all ten profile/domain jobs and decision job `103623179260` terminal success. Decision artifact `10306115925`, ZIP SHA256 `521fa3a3a42e68154afe5d310098e46519919678ba8a154dd16a7a16de74824f`.
+Authority: `docs/dsir4/authority/LAYERB_BETA_TOLERANCE_ISOLATION_V0_8.json`, creation commit `1ae1d93199b61f66a7b23f945d586b580e5bc3bd`.
 
-Classification: `UPSTREAM_RESPONSE_SOLVER_CONDITIONING_PARTIALLY_SUPPORTED`. Attribution: `PERTURBATION_INTEGRATION_TOLERANCE_SENSITIVE`. Effect `+0/+0`.
+Run `34719854763`, head `00b365d08059f8eff81c8b1c963a13902f839aa0`; decision job `103624105106`; decision artifact `10305343325`, ZIP SHA256 `0cfd690a123aa2891646eb89a29d873d3877ab0532fa45f7e174a657434f4c10`.
 
-Frozen parent-unstable subset: 20 coordinates, production median h-spread `0.004804415208560067`.
+Classification: `TOLERANCE_KNOB_ISOLATION_INCONCLUSIVE`, effect `+0/+0`. The tolerance trend is scientifically informative but cannot be promoted because the frozen all-controls invariant failed.
 
-Tolerance-only results: `TOL10` (`3e-11`) recovers 11/20 (`0.55`), median `0.000810683437303502`, reduction `5.926x`; `TOL100` (`3e-12`) recovers 14/20 (`0.70`), median `0.0006864929897004239`, reduction `6.998x`.
+Key ladder: production `3e-10` recovered 0/20, median `0.004804415208560067`; `1e-10` recovered 10/20, median `0.0010349341119287158`; `3e-11` recovered 11/20, median `0.000810683437303502`; `1e-11` recovered 14/20, median `0.0006824582255432214` but control max `0.0012003119264226171 > 0.001`; `3e-12` recovered 14/20; `1e-12` recovered 16/20 (`0.8`), median `0.000510732305940965`, controls stable; `3e-13` recovered 16/20, median `0.0005100571566997025`, controls stable.
 
-Sampling-only results: `SAMP2` and `SAMP4` recover 0/20 and leave median essentially unchanged (`~0.004804`). Joint `TOL100+SAMP4` also recovers 14/20 with median `0.0006866054910050431`, showing no material added value from denser sampling. Tolerance axis monotonic; sampling axis not monotonic/material. All controls stable; exact target mismatch max `1.2517848722592053e-16`; joint interaction non-pathological.
+The observed `TOL300=1e-12` profile is therefore promising but explicitly **not authorized**. The only authorized successor is a prospectively frozen reproducibility/localization audit of the anomalous TOL30 control plus independent TOL300 replication.
 
-Strong support was not awarded because preregistered recovery required `>=0.75` and observed best recovery was `0.70`. The threshold must not be changed post hoc.
+## V0.9 — TOL30 resonance localization + TOL300 replication active
 
-Authorized successor: `PROSPECTIVELY_FROZEN_LOCALIZED_SOLVER_KNOB_ISOLATION_AUDIT` only.
+Parent authority: V0.8 commit `1ae1d93199b61f66a7b23f945d586b580e5bc3bd`.
 
-## V0.8 — localized integration-tolerance isolation active
+Executor `ci/layerb_beta_tol30_resonance_v0_9.py`, creation commit `058c3cf0dde08325e4b768d1cc39e1f973e1769f`, blob `dcbdd3641b62b9399a1fc78dfbf3abd36d9b16e2`.
 
-Contract: `docs/dsir4/contracts/LAYERB_BETA_TOLERANCE_KNOB_ISOLATION_V0_8.json`, creation commit `b329c72307771cc1768f156e4da25efaaf7dced2`.
+Prospectively frozen contract `docs/dsir4/contracts/LAYERB_BETA_TOL30_RESONANCE_AUDIT_V0_9.json`, creation commit `08fc52377b17285a3dda701b5c2829f8c8e49a9c`.
 
-Executor: `ci/layerb_beta_tol_isolation_v0_8.py`, creation commit `70ef8bbaebd0585ed9adafa3eb738c07e56d4661`, blob `2638690f17510033cca88494514dbc6cb208bb36`.
+Workflow `.github/workflows/layerb-beta-tol30-resonance-v0-9.yml`, creation commit `fc6379a1a969d6446b0dadae137dbf6074a87b90`.
 
-Workflow: `.github/workflows/layerb-beta-tolerance-isolation-v0-8.yml`, creation commit `10e33f74160d96e773557eb0a41e0089227d9f5e`.
+Launch commit `4004e876d0311654da2153ded992834ff83adf49`; active run `34740781222`.
 
-Launch commit `00b365d08059f8eff81c8b1c963a13902f839aa0`; active run `34719854763`.
+V0.9 has 16 independent hosted science lanes, all started concurrently: control-only neighborhood profiles `2e-11`, `1.5e-11`, `1.2e-11`, exact `1e-11` replica R1, independent exact `1e-11` replica R2, `8e-12`, `6e-12`, each crossed with D/B, plus a full-coordinate independent `TOL300R=1e-12` D/B replication. The exact TOL30 replicas are separate jobs to test reproducibility rather than reusing the V0.8 result.
 
-Tolerance ladder is frozen before V0.8 results: `PROD=3e-10`, `TOL3=1e-10`, retained V0.7 `TOL10=3e-11`, `TOL30=1e-11`, retained V0.7 `TOL100=3e-12`, `TOL300=1e-12`, `TOL1000=3e-13`. Sampling remains at production `0.00035` for all V0.8 calculations.
+Frozen decision logic: local reproducible resonance requires both exact TOL30 replicas to violate `1e-3` on the identical nonempty control-coordinate set while every frozen neighboring tolerance is stable; TOL300R must independently satisfy recovery >=75%, median `<1e-3`, controls `<1e-3`, recovered count within 1 of parent TOL300 and median within 1.25x. Only that outcome may authorize a separately frozen stabilized-TOL300 **local** common-grid validation. Broad neighboring instability, nonreproducible TOL30, failed TOL300 replication or invariant failure each route to a diagnostic-only successor.
 
-Efficiency rule: V0.7 `TOL10` and `TOL100` D/B artifacts are reused by exact artifact ID/SHA256 and are forbidden to recompute. V0.8 computes only four new tolerance values across D/B = eight new hosted science lanes.
-
-A profile is prospectively defined as adequate only if controls remain `<1e-3`, at least 75% of the immutable 20-coordinate unstable subset recover `<1e-3`, and subset median h-spread is `<1e-3`. Candidate is the least-strict adequate tolerance whose entire tighter tested suffix remains adequate under frozen adjacent sanity bounds. No post-result retuning is allowed.
-
-At the latest write, invariant-audit is terminal PASS. Five of eight new jobs have been picked up by hosted runners and three are queued; partial numerical outputs must not be inspected before the full decision barrier.
+At the latest recovery write, all 16/16 science lanes are `in_progress`; invariant-audit has passed its scientific identity checks. Do not inspect partial profile numbers before the full barrier.
 
 ## Exact next order
 
-1. Continue only V0.8 run `34719854763`; no duplicate tolerance sweep.
-2. Wait for all eight new profile/domain jobs to become terminal; do not use partial numerical output to alter thresholds or ladder.
-3. Decision must reuse exact V0.7 TOL10/TOL100 artifacts and exact V0.6 raw D/B artifacts, verify provenance, then apply the frozen V0.8 classifier.
-4. Promote V0.8 authority only after terminal decision provenance is verified.
-5. Launch only the classifier-authorized successor. A stable candidate can authorize only a stabilized-tolerance LOCAL common-grid validation; no outcome directly opens covariance, Wm_S3, global 65537 or a science gate.
+1. Continue only V0.9 run `34740781222`; do not duplicate any of its 16 lanes.
+2. Consume only terminal artifacts; do not retune neighborhood points or thresholds from partial output.
+3. After all lanes close, apply only the frozen V0.9 decision job and independently verify artifact provenance.
+4. Promote a durable V0.9 authority, then launch only the successor explicitly authorized by the V0.9 classifier.
+5. Keep covariance, Wm_S3, global 65537 and science gate closed unless a later separately frozen authority opens them.
 
 ## Publication/readiness locks
 
-Last frozen values remain `ARTICLE3_REPOSITORY_READINESS: 68%` and funnel-freeze/scientific frontier `67%`; diagnostic progress alone does not change them. Article-II real cross-family G5 ACT×unWISE closure remains a separate unresolved publication-readiness requirement; no ready repository executor/contract for that real-data gate was found in the current search, so no fabricated G5 run was launched.
+Last frozen values remain `ARTICLE3_REPOSITORY_READINESS: 68%` and funnel-freeze/scientific frontier `67%`; numerical diagnostic progress alone does not change them. Article-II real cross-family G5 ACT×unWISE closure remains a separate unresolved publication gate.
 
 ## Automation / ownership
 
-`DSIR Continuous Research` and `DSIR Auto-Research Guard` are disabled. Five other enabled research automations currently occupy the available task slots: QGR, MSQGR, KMQGB, RQIR-CG and ISQGR. Do not silently disable another project to free a DSIR slot without explicit user reprioritization.
+At the latest automation check, QGR, MSQGR, KMQGB and RQIR-CG are enabled hourly; ISQGR is disabled, leaving one active-task slot available. `DSIR Continuous Research` may therefore be re-enabled without disabling another project. `DSIR Auto-Research Guard` remains disabled to avoid a duplicate DSIR control plane.
 
-V0.8 is GitHub-hosted diagnostic compute, not a new self-hosted `DSIR-HOME-PC` heavy-science run.
+V0.9 is GitHub-hosted diagnostic compute, not a new self-hosted `DSIR-HOME-PC` heavy-science run.
