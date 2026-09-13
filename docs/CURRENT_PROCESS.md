@@ -2,48 +2,46 @@
 
 Updated: 2026-09-13. Scope: **DSIR only**; RTK/RQIR/KMQGB/KMDSB excluded.
 
-## Active frontier — V0.10 stabilized TOL300 local common-grid validation
+## Active frontier — V0.11 common-grid discrepancy localization
 
-Authoritative active run: `34741342346`, launch commit `8f295e06d94d30297f12c5e59da797f5d559083d`.
+Authoritative active run: `34748453026`, launch commit `1a2825cdb91319f9da13a2b446f3cc0447d1690c`.
 
-Parent authority: `docs/dsir4/authority/LAYERB_BETA_TOL30_RESONANCE_V0_9.json`, creation commit `87a5ce2d16f2186ac3159a1aa6e089e116cad9eb`. Parent classification is `REPRODUCIBLE_LOCAL_TOL30_CONTROL_RESONANCE_WITH_REPLICATED_TOL300`.
+Parent authority: `docs/dsir4/authority/LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_V0_10.json`, creation commit `f7f87ed3d624c8bf7125d9d5dfeee8cbe35ec015`. Parent classification: `STABILIZED_TOL300_LOCAL_COMMON_GRID_NOT_VALIDATED`; authorized successor: `PROSPECTIVELY_FROZEN_COMMON_GRID_DISCREPANCY_LOCALIZATION_AUDIT`.
 
-V0.9 terminal evidence: run `34740781222`, decision job `103680387202`, decision artifact `10311599722`, SHA256 `c15759d860b8b95c4ca3889555c612d7f3f7533e0c674481e1dc002a6e5a4132`. Both exact `1e-11` replicas reproduce the same single unstable DES control; all frozen neighboring tolerances are stable. Independent full TOL300R=`1e-12` reproduces 16/20 recovery, median `0.000510732305940965`, control max `5.0840057663462765e-05`.
+Prospectively frozen V0.11 contract: `docs/dsir4/contracts/LAYERB_BETA_COMMON_GRID_DISCREPANCY_V0_11.json`, creation commit `962bd4f907ea70cf46af3ee703336d423913dc91`.
 
-Prospectively frozen V0.10 contract: `docs/dsir4/contracts/LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_V0_10.json`, creation commit `b3c194c9bd5abc0cfa7fa7696056ab20357f6afb`.
+Executor: `ci/layerb_beta_common_grid_discrepancy_v0_11.py`, creation commit `10cad1811bfe66f298bed60cd910d9a1335b0492`, blob `57301e4f30253dd729c93c77dc90452cc797a623`.
 
-Executor: `ci/layerb_beta_tol300_common_grid_v0_10.py`, creation commit `5adee9adc18fee045688b75ee0aeced665e635dd`, blob `9737349b1f171c5772f1d8d6b6bf94cef58e3d07`.
+Workflow: `.github/workflows/layerb-beta-common-grid-discrepancy-v0-11.yml`, creation commit `ebe73f501de97ef4ebd3141a00c8329e33c8ecbf`.
 
-Workflow: `.github/workflows/layerb-beta-tol300-common-grid-v0-10.yml`, creation commit `130ae270f2ae0dd783e1764a1b77b321039b7abc`.
+V0.11 computes only six new hosted lanes in parallel: `GRID640_D/B`, `GRID768_D/B`, `GRID896_D/B`. Existing `GRID512_D/B` and `GRID1024_D/B` from V0.10 plus direct `TOL300R_D/B` from V0.9 are reused by immutable artifact identity and are forbidden to be recomputed. The resolution path is therefore `512 -> 640 -> 768 -> 896 -> 1024` with no post-result grid selection.
 
-V0.10 has four hosted science lanes in parallel: `GRID512_D`, `GRID512_B`, `GRID1024_D`, `GRID1024_B`. They use frozen guarded common grids and cubic log-k interpolation on the same 46 probe coordinates, with stabilized `tol_perturb_integration=1e-12`. Direct-k TOL300 is reused from exact V0.9 immutable artifacts, not recomputed.
+Frozen boundaries remain: production `h=1e-4`, five-h ladder `[4e-4,2e-4,1e-4,5e-5,2.5e-5]`, native kpd20, response threshold `<1e-3`, exact node binding `<=1e-12`, production sampling `0.00035`, stabilized `tol_perturb_integration=1e-12`. Covariance/whitening/nuisance/relation-null, `Wm_S3`, global 65537 and science gate remain closed.
 
-Frozen validation requires: both grids >=75% recovery of the immutable 20-coordinate parent-unstable subset, median h-spread `<1e-3`, controls `<1e-3`; no unsupported interpolation target; requested common-grid node binding `<=1e-12`; GRID512-vs-GRID1024 signed beta-response relative difference `<1e-3` across all five h values and 46 coordinates; GRID1024-vs-direct TOL300 production-h response `<1e-3` everywhere; fine recovered-count difference <=1 and median ratio <=1.25 versus direct TOL300.
+Pre-registered V0.11 classes distinguish: isolated `GRID1024` small-h resonance, broader sub-production-h grid sensitivity, production-h common-grid discrepancy, unresolved transition pattern, or invariant failure. A full 107-row Layer-B traversal is explicitly forbidden in V0.11.
 
-Frozen boundaries: production `h=1e-4`, five-h ladder `[4e-4,2e-4,1e-4,5e-5,2.5e-5]`, native kpd20, response threshold `1e-3`, production sampling `0.00035`. No covariance/whitening/nuisance/relation-null, `Wm_S3`, global 65537 or science gate is authorized.
+At this ledger update invariant-audit is terminal PASS and all six new localization lanes are running concurrently. Do not inspect partial numerical outputs and do not alter the frozen grid sequence or thresholds.
 
-At the latest ledger update invariant-audit is terminal PASS and all four common-grid lanes are in progress. Do not inspect partial science output and do not alter V0.10 thresholds.
+## Closed parent — V0.10 local common-grid validation
 
-## Closed parent — V0.9 localized TOL30 resonance
+Run `34741342346`, head `8f295e06d94d30297f12c5e59da797f5d559083d`, decision job `103683155104`, decision artifact `10313180649`, ZIP SHA256 `040292a748472123626e0de1d4cbbf577c21550e10ed63a6701b24466f9d240e`.
 
-The TOL30=`1e-11` instability is reproducible but narrow: both replicas identify `[C,D,3fdab851eb851eb8,3f8a474c7a7b57bd]` with h-spread `0.0012003119264226171`; neighbor maxima are all below threshold (`2e-11`: `2.2507e-05`, `1.5e-11`: `1.31998e-04`, `1.2e-11`: `7.57812e-04`, `8e-12`: `1.14535e-05`, `6e-12`: `8.85232e-05`). This resolves the V0.8 all-controls blocker sufficiently to authorize local common-grid validation of TOL300 only.
+Classification: `STABILIZED_TOL300_LOCAL_COMMON_GRID_NOT_VALIDATED`, effect `+0/+0`.
 
-## Closed parents — V0.8/V0.7
+`GRID512` remained adequate: 16/20 recovered, median h-spread `0.0005157877273103107`, control max `1.1041926145113362e-05`. `GRID1024` was not adequate: 14/20 recovered, median `0.0005134714477118745`, control max `0.0001745861154644251`. The largest GRID512-vs-GRID1024 signed response discrepancy over all h was `0.0108331289703319`, at the smallest h=`2.5e-5`; yet GRID1024-vs-independent-direct TOL300 at production h agreed to `0.00010217977189246786`. All keysets were exact, unsupported targets zero, max node mismatch `1.6551974349255386e-16`, invariant PASS.
 
-V0.8 run `34719854763`: `TOLERANCE_KNOB_ISOLATION_INCONCLUSIVE`; observed TOL300/TOL1000 16/20 recovery but TOL30 control violation blocked promotion.
+Interpretation is deliberately limited: the stabilized direct-k result has not yet transferred cleanly to common-grid h-stability, but the production-h response itself remains tightly consistent. This is why localization, not full promotion or threshold relaxation, is the only authorized successor.
 
-V0.7 run `34719555760`: `UPSTREAM_RESPONSE_SOLVER_CONDITIONING_PARTIALLY_SUPPORTED`, attribution `PERTURBATION_INTEGRATION_TOLERANCE_SENSITIVE`; sampling-only axis had no material recovery.
+## Closed parents — V0.9/V0.8/V0.7
+
+V0.9 authority `docs/dsir4/authority/LAYERB_BETA_TOL30_RESONANCE_V0_9.json`: reproducible isolated TOL30=`1e-11` control resonance plus independently replicated TOL300=`1e-12` with 16/20 recovery.
+
+V0.8: `TOLERANCE_KNOB_ISOLATION_INCONCLUSIVE`; TOL300/TOL1000 reached 16/20 but TOL30 control violation blocked promotion. V0.7: `UPSTREAM_RESPONSE_SOLVER_CONDITIONING_PARTIALLY_SUPPORTED`, attribution `PERTURBATION_INTEGRATION_TOLERANCE_SENSITIVE`.
 
 ## Anti-duplication / exact next gate
 
-Do not launch another V0.10. When run `34741342346` becomes terminal, consume the single decision artifact and verify hashes/provenance. If classification is `STABILIZED_TOL300_LOCAL_COMMON_GRID_VALIDATED`, write a durable V0.10 authority and only then prospectively freeze/launch `STABILIZED_TOL300_FULL_LAYERB_COMMON_GRID_REEVALUATION`. If not validated, run only a common-grid discrepancy-localization audit. No outcome directly opens covariance or Wm_S3.
+Do not launch duplicate V0.11 lanes and do not run full Layer-B traversal while V0.11 is active. Consume the single decision only after all six lanes and invariant are terminal. Follow only the `next_stage` encoded by the prospectively frozen V0.11 classifier.
 
 ## Recovery/readiness
 
-`docs/RECOVERY_LATEST.md` advanced to V0.9 terminal + V0.10 active in commit `003b961566c5fd1a1020a1452785104c1ecc17ba`.
-
-Last frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%` and funnel-freeze/scientific frontier `67%`. Article-II real G5 ACT×unWISE remains a separate unresolved publication gate.
-
-## Automation
-
-Do not assume DSIR scheduled automation is enabled: the last enable attempt hit the platform active-task limit. Repository/Actions state remains authoritative. Avoid a second DSIR control plane while this chat is actively advancing V0.10.
+Last frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%` and funnel-freeze/scientific frontier `67%`; diagnostic compute does not raise these. Article-II real G5 ACT×unWISE remains a separate unresolved publication gate.
