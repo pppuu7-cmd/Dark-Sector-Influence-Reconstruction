@@ -1,0 +1,12 @@
+{
+  "schema": "LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_LAUNCH_V0_12",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_V0_12.json",
+  "contract_commit": "d15999917dca48553840468ea4edbce6bd6f1b02",
+  "workflow": ".github/workflows/layerb-beta-production-h-common-grid-interpolation-v0-12.yml",
+  "workflow_commit": "46574e6da1bc282f3480ac922a19ca4c67a623fe",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_COMMON_GRID_DISCREPANCY_V0_11.json",
+  "parent_authority_commit": "2621e0ab74685e502e7cec53997c58f99e354085",
+  "parallel_lanes": ["GRID512","GRID640","GRID768","GRID896","GRID1024"],
+  "purpose": "Separate cubic common-grid interpolation error from k-output node-set solver dependence at the three preregistered V0.11 response-violation cells using pure and mixed output grids in the same pinned numerical environment.",
+  "effect": "+0/+0"
+}
