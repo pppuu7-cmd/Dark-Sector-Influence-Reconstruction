@@ -2,50 +2,46 @@
 
 Updated: 2026-09-13. Scope: **DSIR only**; RTK/RQIR/KMQGB/KMDSB excluded.
 
-## Active frontier — V0.8 integration-tolerance knob isolation
+## Active frontier — V0.9 TOL30 control resonance / TOL300 replication
 
-Authoritative active run: `34719854763`, launch commit `00b365d08059f8eff81c8b1c963a13902f839aa0`.
+Authoritative active run: `34740781222`, launch commit `4004e876d0311654da2153ded992834ff83adf49`.
 
-Prospectively frozen contract: `docs/dsir4/contracts/LAYERB_BETA_TOLERANCE_KNOB_ISOLATION_V0_8.json`, creation commit `b329c72307771cc1768f156e4da25efaaf7dced2`.
+Parent authority: `docs/dsir4/authority/LAYERB_BETA_TOLERANCE_ISOLATION_V0_8.json`, commit `1ae1d93199b61f66a7b23f945d586b580e5bc3bd`. V0.8 classified `TOLERANCE_KNOB_ISOLATION_INCONCLUSIVE`: TOL300/TOL1000 reached 16/20 recovery with median ~`5.1e-4`, but intermediate `TOL30=1e-11` produced control max h-spread `0.0012003119264226171`, above the frozen `1e-3` control threshold, so no stabilized profile was authorized.
 
-V0.8 follows the terminal V0.7 result that upstream response-solver conditioning is partially supported and specifically sensitive to `tol_perturb_integration`, not to `perturb_sampling_stepsize`.
+Prospectively frozen V0.9 contract: `docs/dsir4/contracts/LAYERB_BETA_TOL30_RESONANCE_AUDIT_V0_9.json`, commit `08fc52377b17285a3dda701b5c2829f8c8e49a9c`.
 
-Frozen tolerance ladder: production `3e-10`, new `TOL3=1e-10`, retained `TOL10=3e-11`, new `TOL30=1e-11`, retained `TOL100=3e-12`, new `TOL300=1e-12`, new `TOL1000=3e-13`. Sampling remains production `0.00035`; production `h=1e-4`, five-h ladder and strict `<1e-3` response threshold remain unchanged.
+Executor: `ci/layerb_beta_tol30_resonance_v0_9.py`, commit `058c3cf0dde08325e4b768d1cc39e1f973e1769f`, blob `dcbdd3641b62b9399a1fc78dfbf3abd36d9b16e2`.
 
-Only TOL3/TOL30/TOL300/TOL1000 are newly computed, crossed with domains D/B for eight hosted jobs. Existing V0.7 TOL10/TOL100 D/B artifacts are reused by exact IDs/SHA256 and are forbidden to recompute.
+Workflow: `.github/workflows/layerb-beta-tol30-resonance-v0-9.yml`, commit `fc6379a1a969d6446b0dadae137dbf6074a87b90`.
 
-Frozen adequacy rule: controls `<1e-3`, recovery of at least 75% of the immutable 20-coordinate h-unstable parent subset, and subset median h-spread `<1e-3`. Candidate is the least-strict adequate profile whose entire tighter tested suffix stays adequate under frozen adjacent sanity checks. No post-result retuning.
+V0.9 runs 16 independent hosted science lanes with `fail-fast:false`, max parallelism 16. Seven control-only tolerance profiles map the TOL30 neighborhood across D/B: `N20=2e-11`, `N15=1.5e-11`, `N12=1.2e-11`, independent exact replicas `T30R1=T30R2=1e-11`, `N08=8e-12`, `N06=6e-12`. A separate full-coordinate `TOL300R=1e-12` D/B pair independently replicates the promising V0.8 TOL300 result.
 
-At the latest ledger update, V0.8 invariant-audit is terminal PASS; five new jobs are running and three queued. Do not inspect partial science outputs. Continue only run `34719854763` until the full decision barrier.
+Frozen local-resonance rule: both exact TOL30 replicas must identify the same nonempty unstable-control set; every frozen neighboring tolerance must remain below `1e-3`; and independent TOL300R must recover >=75% of the immutable 20-coordinate parent-unstable subset, have median `<1e-3`, controls `<1e-3`, recovery count within 1 of parent TOL300 and median within 1.25x. Only that result can authorize a separately frozen stabilized-TOL300 **local** common-grid validation.
 
-## Closed parent — V0.7 partial upstream solver-conditioning support
+Frozen boundaries remain production `h=1e-4`, five-h ladder `[4e-4,2e-4,1e-4,5e-5,2.5e-5]`, native kpd20, exact target-k, response tolerance `<1e-3`, lookup mismatch `<=1e-12`, production sampling `0.00035`. No covariance, whitening/nuisance/relation-null, Wm_S3, global 65537 or science gate is authorized.
 
-Authority: `docs/dsir4/authority/LAYERB_BETA_SOLVER_CONDITIONING_V0_7.json`, commit `b84dbcfd08046792866270d9b1dea7b2dfc6c955`.
+At the latest ledger update all 16/16 V0.9 science lanes are in progress. Invariant-audit scientific checks passed. Do not inspect partial numerical results; wait for full barrier and frozen decision.
 
-Run `34719555760`, decision job `103623179260`, decision artifact `10306115925`, ZIP SHA256 `521fa3a3a42e68154afe5d310098e46519919678ba8a154dd16a7a16de74824f`.
+## Closed parent — V0.8 tolerance isolation inconclusive
 
-Classification `UPSTREAM_RESPONSE_SOLVER_CONDITIONING_PARTIALLY_SUPPORTED`; attribution `PERTURBATION_INTEGRATION_TOLERANCE_SENSITIVE`; effect `+0/+0`.
+Run `34719854763`, decision job `103624105106`, decision artifact `10305343325`, ZIP SHA256 `0cfd690a123aa2891646eb89a29d873d3877ab0532fa45f7e174a657434f4c10`.
 
-Production parent-unstable median h-spread `0.004804415208560067`. `TOL10=3e-11`: 11/20 recovered, median `0.000810683437303502`, `5.926x` reduction. `TOL100=3e-12`: 14/20 recovered, median `0.0006864929897004239`, `6.998x` reduction. `SAMP2/SAMP4`: 0/20 recovered, essentially no median improvement. Joint `TOL100+SAMP4`: 14/20, median `0.0006866054910050431`, so sampling adds no material benefit. All controls stable, keysets exact, exact-target mismatch max `1.2517848722592053e-16`.
+Key result: tolerance tightening clearly improves the frozen failure subset, reaching 16/20 at `1e-12` and `3e-13`, but the isolated control failure at `1e-11` invalidated promotion under the preregistered all-controls rule. TOL300 remains observed-but-not-authorized until V0.9 resolves reproducibility/locality.
 
-Strong support was not awarded because frozen strong recovery threshold was 75% and best observed recovery was 70%; this threshold must not be altered post hoc.
+## Closed parent — V0.7 partial solver-conditioning support
 
-## Closed parent — V0.6 FD repair not supported
+Authority commit `b84dbcfd08046792866270d9b1dea7b2dfc6c955`, run `34719555760`: `UPSTREAM_RESPONSE_SOLVER_CONDITIONING_PARTIALLY_SUPPORTED`, specifically `PERTURBATION_INTEGRATION_TOLERANCE_SENSITIVE`. Sampling-only tightening gave no recovery; integration tolerance gave ~6-7x median stabilization and up to 14/20 recovery.
 
-Authority `docs/dsir4/authority/LAYERB_BETA_FD_REPAIR_V0_6.json`, commit `4b62f4bf4057d34eff2b7cc1ceef98d63f8eafa7`. Classification `FOURTH_ORDER_FD_REPAIR_NOT_SUPPORTED`: 4/20 recovered, `0.2`; ordinary centered finite-difference truncation is not the dominant source.
+## Anti-duplication / recovery
 
-## Frozen safety / anti-duplication
+Do not launch another V0.9. If a lane fails technically, diagnose first causal failure, preserve valid artifacts and repair only infrastructure without changing frozen science. If all lanes close, consume/classify the terminal decision immediately and write a durable V0.9 authority before any successor launch.
 
-No covariance, whitening/nuisance/relation-null, `Wm_S3`, global 65537 or science gate is authorized. Current V0.8 jobs are GitHub-hosted diagnostics, not a self-hosted `DSIR-HOME-PC` heavy run.
+`docs/RECOVERY_LATEST.md` was advanced to V0.9 active in commit `2a81770678fb9178ba7e10617fde0b983c205f0b`.
 
-If V0.8 has an infrastructure failure, repair only the smallest technical defect and reuse immutable successful artifacts. Do not alter tolerance ladder, adequacy threshold, h ladder, target coordinates, sampling step or decision logic.
+## Readiness
 
-## Recovery/readiness
-
-`docs/RECOVERY_LATEST.md` advanced to V0.7 terminal + V0.8 active in commit `99b4049357483963780561f20524ffc60b1279c2`.
-
-Last frozen readiness values remain `ARTICLE3_REPOSITORY_READINESS: 68%` and funnel-freeze/scientific frontier `67%`. Article-II real G5 ACT×unWISE remains a separate unresolved publication gate.
+Last frozen values remain `ARTICLE3_REPOSITORY_READINESS: 68%` and funnel-freeze/scientific frontier `67%`. Article-II real G5 ACT×unWISE remains separate and unresolved.
 
 ## Automation
 
-`DSIR Continuous Research` and `DSIR Auto-Research Guard` remain disabled. Five active automation slots are currently occupied by QGR, MSQGR, KMQGB, RQIR-CG and ISQGR. Do not disable those projects silently.
+Current active task slots at the latest check: QGR, MSQGR, KMQGB, RQIR-CG. ISQGR is disabled, so one slot is free. Re-enable exactly one DSIR control plane (`DSIR Continuous Research`) and leave `DSIR Auto-Research Guard` disabled to avoid duplication. The DSIR automation must read this ledger/recovery/newest commits and active Actions before every iteration and must continue from the newest repository authority rather than from stale prompt text.
