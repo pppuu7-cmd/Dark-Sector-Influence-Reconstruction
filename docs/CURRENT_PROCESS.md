@@ -2,48 +2,40 @@
 
 Updated: 2026-09-13. Scope: **DSIR only**; RTK/RQIR/KMQGB/KMDSB excluded.
 
-## Active frontier — V0.12 production-h common-grid interpolation audit
+## Active frontier — V0.13 replay sequencing / reproducibility audit
 
-Authoritative active run: `34749034836`, launch commit `0daf43908e276482eb3b02e45d9d93af02bc43f2`.
+Authoritative active run: `34773514342`, launch commit `7c0a10a24f38966f830b7fc2438d8c134e6b5853`.
 
-Parent authority: `docs/dsir4/authority/LAYERB_BETA_COMMON_GRID_DISCREPANCY_V0_11.json`, creation commit `2621e0ab74685e502e7cec53997c58f99e354085`. Parent classification: `PRODUCTION_H_COMMON_GRID_DISCREPANCY_SUPPORTED`; authorized successor: `PROSPECTIVELY_FROZEN_PRODUCTION_H_COMMON_GRID_INTERPOLATION_AUDIT`.
+Parent authority: `docs/dsir4/authority/LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_V0_12.json`, creation commit `b6f0f7e8f3042c55ba47f860cc03210d393a808b`. Parent classification: `PRODUCTION_H_COMMON_GRID_INTERPOLATION_AUDIT_INCONCLUSIVE`; authorized next stage is strictly `NO_SCIENTIFIC_PROMOTION_DIAGNOSE_V0_12_INVARIANT_FAILURE`.
 
-Prospectively frozen V0.12 contract: `docs/dsir4/contracts/LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_V0_12.json`, final pre-execution identity commit `d15999917dca48553840468ea4edbce6bd6f1b02`.
+Prospectively frozen V0.13 contract: `docs/dsir4/contracts/LAYERB_BETA_REPLAY_SEQUENCING_V0_13.json`, creation commit `9105ff24f4561ec61cf286425bc143d6a98aabdf`.
 
-Executor: `ci/layerb_beta_production_h_common_grid_interpolation_v0_12.py`, final pre-execution commit `ad22203c29a448b3c0282649b72e491fc123b286`, blob `aedd509780786f1efc200710e572c0af848cd878`.
+Executor: `ci/layerb_beta_replay_sequencing_v0_13.py`, creation commit `d1825ec35c69c3dc62a3fdd77194a52c6829f87e`, blob `83ae5ff8ebd9cf2123099b354be8b6e724186705`.
 
-Workflow: `.github/workflows/layerb-beta-production-h-common-grid-interpolation-v0-12.yml`, creation commit `46574e6da1bc282f3480ac922a19ca4c67a623fe`.
+Workflow: `.github/workflows/layerb-beta-replay-sequencing-v0-13.yml`, creation commit `7e2d8803bc41ddd3645eb518775961b9f81f5c8a`.
 
-V0.12 has five independent hosted grid lanes: `GRID512`, `GRID640`, `GRID768`, `GRID896`, `GRID1024`. Each lane evaluates the same three preregistered D-domain target coordinates at `h=2e-4` and production `h=1e-4`. For each h it performs both a pure common-grid run and a mixed run in which the same three exact target-k values are added to the output grid. This yields 30 frozen grid/h/target cells and eight CLASS constructions per grid lane.
+V0.13 contains 12 independent hosted science/technical lanes: `GRID768` and `GRID1024` × `PURE_PAIR` and `INTERLEAVED` × replicas `R1/R2/R3`. The diagnostic is deliberately limited to the three V0.12 replay-failure cells plus two frozen anchor cells. It distinguishes execution-order/interleaving state dependence, cross-run parent non-reproducibility, same-profile hosted numerical nondeterminism, non-reproduced V0.12 replay failures, or a mixed/unresolved replay pattern.
 
-The audit is causal rather than another grid search. It compares, inside the same pinned numerical environment: (1) pure common-grid cubic interpolation; (2) mixed-grid cubic interpolation using only the original common-grid stencil; and (3) the exact target value returned by the same mixed CLASS invocation. It then cross-checks against immutable V0.10/V0.11 common-grid artifacts and the independent V0.9 direct TOL300 artifacts.
+At latest write 10/12 profile lanes are `in_progress`, two are queued for hosted-runner capacity, and the invariant job is queued. Do not inspect partial profile numeric results and do not alter the frozen `1e-5` replay threshold.
 
-All 30 pure-grid cells must replay their immutable parent common-grid responses within `1e-5`, 100x tighter than the scientific `1e-3` response threshold. The three frozen parent violation cells are:
+Frozen boundaries remain: production `h=1e-4`; scientific response threshold `<1e-3`; technical replay threshold `<1e-5`; production sampling `0.00035`; stabilized `tol_perturb_integration=1e-12`; exact requested-node binding `<=1e-12`. No full 107-row Layer-B traversal, covariance/whitening/nuisance/relation-null, `Wm_S3`, global 65537 or science gate is authorized.
 
-- `GRID640`, `h=2e-4`, `[F,D,3fe43d70a3d70a3e,3f900ea7bc915d36]`, parent direct relative difference `0.003709335890188209`.
-- `GRID768`, `h=1e-4`, `[F,D,3fdab851eb851eb8,3f890e66b051e28b]`, parent direct relative difference `0.004037659729341879`.
-- `GRID896`, `h=1e-4`, `[F,D,3fe3d70a3d70a3d7,3f8fc70971921840]`, parent direct relative difference `0.0011351878950117023`.
+## Closed parent — V0.12 production-h interpolation audit
 
-The frozen classifier can support cubic-interpolation dominance only if all three violations reproduce, the mixed interpolation remains discrepant from the exact value in the same invocation by `>=1e-3`, the mixed exact value agrees with independent direct TOL300 within `1e-3`, and target insertion does not itself move the interpolated response by `>=1e-3`. A solver node-set class requires all three violations to satisfy the node-set condition. A mixed class requires every violation to be accounted for and at least one cell of each mechanism. Otherwise the result is unresolved/not-reproduced/inconclusive; thresholds may not be relaxed afterward.
+Run `34749034836`, head `0daf43908e276482eb3b02e45d9d93af02bc43f2`; decision job `103703327770`; decision artifact `10314853600`, ZIP SHA256 `cee9d8d9c951fab434b7b32db4a97aa62d0e684e9df625da8dceb43272f30f16`.
 
-Frozen boundaries remain: production `h=1e-4`; native kpd20; production sampling `0.00035`; stabilized `tol_perturb_integration=1e-12`; exact-node binding `<=1e-12`. No covariance/whitening/nuisance/relation-null, `Wm_S3`, global 65537, full 107-row Layer-B traversal or science gate is authorized.
+Classification: `PRODUCTION_H_COMMON_GRID_INTERPOLATION_AUDIT_INCONCLUSIVE`, effect `+0/+0`.
 
-At the latest ledger update GitHub has created run `34749034836`; it is queued for hosted-runner capacity. No V0.12 science output has been inspected.
+All three frozen V0.11 violation cells reproduced. At each one, pure-grid and mixed-grid cubic interpolation were identical, the mixed exact-target response matched independent direct-k TOL300, and cubic interpolation retained the parent discrepancy. Diagnostic interpolation support therefore occurred in all 3/3 offending cells; node-set-dependence support occurred in 0/3.
 
-## Closed parent — V0.11 common-grid discrepancy localization
+Formal promotion was blocked because 3 of 30 preregistered replay cells exceeded the stricter `1e-5` replay threshold, although all remained below the scientific `1e-3` threshold. The localized replay failures are: `GRID1024,h=2e-4,z=0.4175,k≈0.0122345` at `1.550639279e-4`; `GRID768,h=1e-4,z=0.62,k≈0.01551635` at `2.493437109e-5`; and `GRID1024,h=1e-4,z=0.62,k≈0.01551635` at `1.047897806e-5`.
 
-Run `34748453026`, head `1a2825cdb91319f9da13a2b446f3cc0447d1690c`, decision job `103701429242`, decision artifact `10314413873`, ZIP SHA256 `21500360580263f9e9b81c362b8adbc4290880446f4014745c983c1022a38fee`.
-
-Classification: `PRODUCTION_H_COMMON_GRID_DISCREPANCY_SUPPORTED`, effect `+0/+0`; invariant PASS, exact keysets, zero unsupported targets, max requested-node mismatch `1.6564666256119906e-16`.
-
-Resolution summary versus independent direct TOL300: `GRID512` production-h max `0.0003587116277798966`; `GRID640` production-h max `0.0004402359888879361` but one `h=2e-4` violation `0.003709335890188209`; `GRID768` production-h max `0.004037659729341879`; `GRID896` production-h max `0.0011351878950117023`; `GRID1024` production-h max `0.00010217977189246786` but smallest-h max `0.010699084577323596`. GRID512/640/768/896 are adequate by the frozen recovery rule; GRID1024 alone is inadequate at 14/20.
-
-Interpretation is intentionally limited: the discrepancy is sparse and resolution/coordinate-specific, not a uniform common-grid failure. Because real violations occur at or above production h, full common-grid promotion remains blocked until V0.12 identifies the numerical mechanism.
+Interpretation is intentionally limited: V0.12 provides strong diagnostic evidence for cubic interpolation at the three actual offending cells, but the frozen replay invariant prevents scientific promotion until V0.13 diagnoses those three technical replay failures.
 
 ## Anti-duplication / exact next gate
 
-Do not launch duplicate V0.12 lanes. Consume the decision only after all five lanes and invariant are terminal. Promote a durable V0.12 authority before any successor launch, and follow only the encoded `next_stage`.
+Do not launch duplicate V0.13 lanes. Wait for all 12 profile lanes plus invariant and the single decision barrier. Promote a durable V0.13 authority only after the terminal classifier is available, then follow only its encoded `next_stage`.
 
 ## Recovery/readiness
 
-Frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%` and funnel-freeze/scientific frontier `67%`; this numerical diagnostic chain does not by itself raise either value. Article-II real G5 ACT×unWISE remains a separate unresolved publication gate.
+Frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%` and funnel-freeze/scientific frontier `67%`; numerical diagnostic progress alone does not raise either value. Article-II real G5 ACT×unWISE remains a separate unresolved publication gate.
