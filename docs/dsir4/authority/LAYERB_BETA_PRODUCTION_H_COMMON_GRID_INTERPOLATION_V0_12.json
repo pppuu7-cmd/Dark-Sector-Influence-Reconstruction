@@ -1,0 +1,112 @@
+{
+  "schema": "LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_AUTHORITY_V0_12",
+  "status": "TERMINAL_AUTHORITY",
+  "run_id": 34749034836,
+  "head_sha": "0daf43908e276482eb3b02e45d9d93af02bc43f2",
+  "decision_job_id": 103703327770,
+  "decision_artifact_id": 10314853600,
+  "decision_artifact_zip_sha256": "cee9d8d9c951fab434b7b32db4a97aa62d0e684e9df625da8dceb43272f30f16",
+  "classification": "PRODUCTION_H_COMMON_GRID_INTERPOLATION_AUDIT_INCONCLUSIVE",
+  "effect": "+0/+0",
+  "production_h": 0.0001,
+  "tol_perturb_integration": 1e-12,
+  "response_relative_tolerance": 0.001,
+  "replay_relative_tolerance": 0.00001,
+  "invariant_ok": false,
+  "all_parent_violations_reproduced": true,
+  "interpolation_supported_count": 3,
+  "node_set_dependence_supported_count": 0,
+  "replay_failure_count": 3,
+  "max_requested_node_coordinate_rel_mismatch": 1.6564666256119906e-16,
+  "parent_violation_diagnostics": [
+    {
+      "grid": "GRID640",
+      "h": 0.0002,
+      "z": "3fe43d70a3d70a3e",
+      "k": "3f900ea7bc915d36",
+      "replicated": true,
+      "replay_ok": true,
+      "interpolation_mechanism_supported": true,
+      "node_set_dependence_supported": false,
+      "pure_vs_direct_response_rel": 0.003709335890188209,
+      "pure_vs_mixed_interp_response_rel": 0.0,
+      "mixed_interp_vs_exact_response_rel": 0.003709335890188209,
+      "mixed_exact_vs_direct_response_rel": 0.0
+    },
+    {
+      "grid": "GRID768",
+      "h": 0.0001,
+      "z": "3fdab851eb851eb8",
+      "k": "3f890e66b051e28b",
+      "replicated": true,
+      "replay_ok": true,
+      "interpolation_mechanism_supported": true,
+      "node_set_dependence_supported": false,
+      "pure_vs_direct_response_rel": 0.004037659729341879,
+      "pure_vs_mixed_interp_response_rel": 0.0,
+      "mixed_interp_vs_exact_response_rel": 0.004037659729341879,
+      "mixed_exact_vs_direct_response_rel": 0.0
+    },
+    {
+      "grid": "GRID896",
+      "h": 0.0001,
+      "z": "3fe3d70a3d70a3d7",
+      "k": "3f8fc70971921840",
+      "replicated": true,
+      "replay_ok": true,
+      "interpolation_mechanism_supported": true,
+      "node_set_dependence_supported": false,
+      "pure_vs_direct_response_rel": 0.001136253405249066,
+      "pure_vs_mixed_interp_response_rel": 0.0,
+      "mixed_interp_vs_exact_response_rel": 0.001136253405249066,
+      "mixed_exact_vs_direct_response_rel": 0.0
+    }
+  ],
+  "post_terminal_replay_failure_localization": {
+    "status": "DIAGNOSTIC_ONLY_NOT_SCIENTIFIC_PROMOTION",
+    "failures": [
+      {
+        "grid": "GRID1024",
+        "h": 0.0002,
+        "z_value": 0.4175,
+        "k_value": 0.01223449922166366,
+        "parent_role": "GRID768_PRODUCTION_H_VIOLATION",
+        "replay_relative_difference": 0.00015506392790000525,
+        "v012_pure_response": -0.3064101474592462,
+        "prior_response": -0.30645766798897967
+      },
+      {
+        "grid": "GRID768",
+        "h": 0.0001,
+        "z_value": 0.62,
+        "k_value": 0.015516351488496949,
+        "parent_role": "GRID896_PRODUCTION_H_VIOLATION",
+        "replay_relative_difference": 0.000024934371090895516,
+        "v012_pure_response": 0.135503260025871,
+        "prior_response": 0.13550663879868807
+      },
+      {
+        "grid": "GRID1024",
+        "h": 0.0001,
+        "z_value": 0.62,
+        "k_value": 0.015516351488496949,
+        "parent_role": "GRID896_PRODUCTION_H_VIOLATION",
+        "replay_relative_difference": 0.000010478978062540487,
+        "v012_pure_response": 0.1355044923911919,
+        "prior_response": 0.13550307244258875
+      }
+    ],
+    "note": "All three replay failures are below the frozen scientific response threshold 1e-3 but above the stricter technical replay threshold 1e-5. This does not authorize ignoring the replay invariant."
+  },
+  "interpretation": "All three frozen V0.11 offending cells reproduce and, within each same-invocation mixed-grid test, exact-target responses agree with independent direct-k TOL300 while cubic-interpolated responses retain the parent discrepancy and exact-target insertion does not move the interpolated response. This is strong diagnostic evidence for cubic interpolation at the offending cells, but V0.12 remains formally inconclusive because three preregistered non-offending replay cells fail the stricter 1e-5 replay invariant. No scientific promotion is authorized until the replay failure is independently diagnosed.",
+  "production_h_mutated": false,
+  "sampling_stepsize_changed": false,
+  "global_65537_launched": false,
+  "covariance_read": false,
+  "whitening_read": false,
+  "nuisance_read": false,
+  "relation_null_read": false,
+  "Wm_S3_opened": false,
+  "science_gate_opened": false,
+  "authorized_next_stage": "NO_SCIENTIFIC_PROMOTION_DIAGNOSE_V0_12_INVARIANT_FAILURE"
+}
