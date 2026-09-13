@@ -1,0 +1,11 @@
+{
+  "schema": "LAYERB_BETA_REPLAY_SEQUENCING_LAUNCH_V0_13",
+  "status": "LAUNCH_FROZEN_V0_13",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_V0_12.json",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_REPLAY_SEQUENCING_V0_13.json",
+  "workflow": ".github/workflows/layerb-beta-replay-sequencing-v0-13.yml",
+  "executor": "ci/layerb_beta_replay_sequencing_v0_13.py",
+  "parallel_lanes": 12,
+  "effect": "+0/+0",
+  "note": "Technical replay-invariant diagnosis only. No scientific promotion, covariance, Wm_S3, global 65537 or full Layer-B traversal is authorized by launch."
+}
