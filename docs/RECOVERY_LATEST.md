@@ -6,66 +6,63 @@ Repository state, immutable DSIR4 contracts/authorities, terminal GitHub Actions
 
 ## Frozen scientific boundaries
 
-Production `h=1e-4`; five-h ladder `[4e-4,2e-4,1e-4,5e-5,2.5e-5]`; native `k_per_decade_for_pk=20`; response threshold `<1e-3`; exact/requested-node mismatch `<=1e-12`; production `perturb_sampling_stepsize=0.00035`; stabilized `tol_perturb_integration=1e-12`. Covariance/whitening/nuisance/relation-null remain unopened; `Wm_S3` unopened; global 65537 unauthorized; no science gate opened by this chain.
+Production `h=1e-4`; five-h ladder `[4e-4,2e-4,1e-4,5e-5,2.5e-5]`; native `k_per_decade_for_pk=20`; scientific response threshold `<1e-3`; exact/requested-node mismatch `<=1e-12`; production `perturb_sampling_stepsize=0.00035`; stabilized `tol_perturb_integration=1e-12`. V0.13 additionally freezes a technical replay threshold `<1e-5`. Covariance/whitening/nuisance/relation-null remain unopened; `Wm_S3` unopened; global 65537 unauthorized; no science gate opened by this chain.
 
-## Closed chain through V0.10
+## Closed chain through V0.11
 
 V0.5: `H_DEPENDENT_CONDITIONING_STRONGLY_SUPPORTED`.
 
-V0.6: `FOURTH_ORDER_FD_REPAIR_NOT_SUPPORTED`; Richardson recovered only 4/20.
+V0.6: `FOURTH_ORDER_FD_REPAIR_NOT_SUPPORTED`.
 
-V0.7: `UPSTREAM_RESPONSE_SOLVER_CONDITIONING_PARTIALLY_SUPPORTED`, attribution `PERTURBATION_INTEGRATION_TOLERANCE_SENSITIVE`; sampling-only tightening had no material recovery.
+V0.7: `UPSTREAM_RESPONSE_SOLVER_CONDITIONING_PARTIALLY_SUPPORTED`, attribution `PERTURBATION_INTEGRATION_TOLERANCE_SENSITIVE`.
 
-V0.8: `TOLERANCE_KNOB_ISOLATION_INCONCLUSIVE`; TOL300/TOL1000 reached 16/20 but TOL30=`1e-11` produced one unstable control.
+V0.8: `TOLERANCE_KNOB_ISOLATION_INCONCLUSIVE`.
 
-V0.9 authority `docs/dsir4/authority/LAYERB_BETA_TOL30_RESONANCE_V0_9.json`, run `34740781222`: `REPRODUCIBLE_LOCAL_TOL30_CONTROL_RESONANCE_WITH_REPLICATED_TOL300`. Independent TOL300R=`1e-12` reproduces 16/20 recovery, median `0.000510732305940965`, control max `5.0840057663462765e-05`.
+V0.9: `REPRODUCIBLE_LOCAL_TOL30_CONTROL_RESONANCE_WITH_REPLICATED_TOL300`; independent TOL300R=`1e-12` gives 16/20 recovery.
 
-V0.10 authority `docs/dsir4/authority/LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_V0_10.json`, run `34741342346`: `STABILIZED_TOL300_LOCAL_COMMON_GRID_NOT_VALIDATED`. GRID512 recovers 16/20; GRID1024 14/20. Maximum GRID512-vs-GRID1024 response discrepancy is `0.0108331289703319` at `h=2.5e-5`, while GRID1024-vs-direct at production h is only `0.00010217977189246786`. This authorized only discrepancy localization.
+V0.10: `STABILIZED_TOL300_LOCAL_COMMON_GRID_NOT_VALIDATED`; GRID512 recovers 16/20 and GRID1024 14/20.
 
-## V0.11 — terminal common-grid discrepancy localization
+V0.11 authority `docs/dsir4/authority/LAYERB_BETA_COMMON_GRID_DISCREPANCY_V0_11.json`, run `34748453026`: `PRODUCTION_H_COMMON_GRID_DISCREPANCY_SUPPORTED`. The tested resolution path `512→640→768→896→1024` shows sparse coordinate/resolution-specific discrepancies rather than a uniform common-grid failure. Frozen parent violations were `GRID640,h=2e-4:0.003709335890188209`, `GRID768,h=1e-4:0.004037659729341879`, and `GRID896,h=1e-4:0.0011351878950117023` versus independent direct TOL300.
 
-Authority: `docs/dsir4/authority/LAYERB_BETA_COMMON_GRID_DISCREPANCY_V0_11.json`, creation commit `2621e0ab74685e502e7cec53997c58f99e354085`.
+## V0.12 — terminal interpolation audit with replay invariant blocker
 
-Run `34748453026`, head `1a2825cdb91319f9da13a2b446f3cc0447d1690c`; decision job `103701429242`; decision artifact `10314413873`, ZIP SHA256 `21500360580263f9e9b81c362b8adbc4290880446f4014745c983c1022a38fee`.
+Authority: `docs/dsir4/authority/LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_V0_12.json`, creation commit `b6f0f7e8f3042c55ba47f860cc03210d393a808b`.
 
-Classification: `PRODUCTION_H_COMMON_GRID_DISCREPANCY_SUPPORTED`, effect `+0/+0`. All keysets exact, unsupported targets zero, max requested-node mismatch `1.6564666256119906e-16`, invariant PASS.
+Run `34749034836`, head `0daf43908e276482eb3b02e45d9d93af02bc43f2`; decision job `103703327770`; decision artifact `10314853600`, ZIP SHA256 `cee9d8d9c951fab434b7b32db4a97aa62d0e684e9df625da8dceb43272f30f16`.
 
-Resolution path versus independent direct TOL300:
+Classification: `PRODUCTION_H_COMMON_GRID_INTERPOLATION_AUDIT_INCONCLUSIVE`, effect `+0/+0`.
 
-- `GRID512`: adequate, 16/20 recovered, production-h max response difference `0.0003587116277798966`.
-- `GRID640`: adequate, 15/20; production-h max `0.0004402359888879361`, but one `h=2e-4` violation `0.003709335890188209` at `[F,D,3fe43d70a3d70a3e,3f900ea7bc915d36]`.
-- `GRID768`: adequate, 15/20; production-h violation `0.004037659729341879` at `[F,D,3fdab851eb851eb8,3f890e66b051e28b]`.
-- `GRID896`: adequate, 15/20; production-h violation `0.0011351878950117023` at `[F,D,3fe3d70a3d70a3d7,3f8fc70971921840]`.
-- `GRID1024`: inadequate, 14/20; production-h max only `0.00010217977189246786`, but smallest-h max `0.010699084577323596`.
+All three frozen parent violation cells reproduce. At all 3/3 offending cells: pure common-grid interpolation and mixed-grid interpolation are identical; mixed exact-target response agrees with independent direct-k TOL300; and the interpolated response retains the parent discrepancy. Thus the V0.12 diagnostic records `interpolation_supported_count=3` and `node_set_dependence_supported_count=0`.
 
-The discrepancy is sparse and resolution/coordinate-specific, not a uniform common-grid failure. Because violations occur at or above production h, V0.11 authorizes only `PROSPECTIVELY_FROZEN_PRODUCTION_H_COMMON_GRID_INTERPOLATION_AUDIT` and explicitly does not authorize full Layer-B promotion.
+Formal promotion is blocked by three non-offending replay failures against the stricter frozen `<1e-5` technical replay invariant. They are:
 
-## V0.12 — active production-h common-grid interpolation audit
+- `GRID1024`, `h=2e-4`, target `z=0.4175,k≈0.0122344992`: replay relative difference `0.00015506392790000525`.
+- `GRID768`, `h=1e-4`, target `z=0.62,k≈0.01551635149`: replay relative difference `0.000024934371090895516`.
+- `GRID1024`, `h=1e-4`, same `z=0.62` target: replay relative difference `0.000010478978062540487`.
 
-Executor: `ci/layerb_beta_production_h_common_grid_interpolation_v0_12.py`, final pre-execution commit `ad22203c29a448b3c0282649b72e491fc123b286`, blob `aedd509780786f1efc200710e572c0af848cd878`.
+All three are below the scientific `1e-3` threshold, but the frozen replay invariant may not be relaxed post hoc. V0.12 therefore authorizes no scientific promotion and only diagnosis of the replay invariant failure.
 
-Prospectively frozen contract: `docs/dsir4/contracts/LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_V0_12.json`, final pre-execution identity commit `d15999917dca48553840468ea4edbce6bd6f1b02`.
+## V0.13 — active replay sequencing / reproducibility audit
 
-Workflow: `.github/workflows/layerb-beta-production-h-common-grid-interpolation-v0-12.yml`, creation commit `46574e6da1bc282f3480ac922a19ca4c67a623fe`.
+Executor: `ci/layerb_beta_replay_sequencing_v0_13.py`, creation commit `d1825ec35c69c3dc62a3fdd77194a52c6829f87e`, blob `83ae5ff8ebd9cf2123099b354be8b6e724186705`.
 
-Launch commit `0daf43908e276482eb3b02e45d9d93af02bc43f2`; active run `34749034836`.
+Prospectively frozen contract: `docs/dsir4/contracts/LAYERB_BETA_REPLAY_SEQUENCING_V0_13.json`, creation commit `9105ff24f4561ec61cf286425bc143d6a98aabdf`.
 
-V0.12 computes five independent hosted lanes: `GRID512`, `GRID640`, `GRID768`, `GRID896`, `GRID1024`. Each lane tests the same three frozen D-domain coordinates at `h=2e-4` and `h=1e-4`. Every lane performs a pure common-grid invocation and a mixed invocation that adds all three exact target-k values while retaining the original common-grid nodes. The mixed invocation therefore permits an apples-to-apples comparison between cubic interpolation over the original stencil and the exact target returned by the same solver invocation.
+Workflow: `.github/workflows/layerb-beta-replay-sequencing-v0-13.yml`, creation commit `7e2d8803bc41ddd3645eb518775961b9f81f5c8a`.
 
-There are 30 preregistered grid/h/target cells. Every pure-grid cell must replay the immutable V0.10/V0.11 parent response within `1e-5`. The three parent violation cells are fixed before execution and may not be changed. The classifier distinguishes: cubic interpolation mechanism supported; k-output node-set solver dependence supported; mixed mechanism; parent violations not reproduced; unresolved target-stencil geometry; or invariant failure.
+Launch commit `7c0a10a24f38966f830b7fc2438d8c134e6b5853`; active run `34773514342`.
 
-No full 107-row Layer-B traversal, covariance, Wm_S3, global 65537 or science gate is authorized by V0.12.
+V0.13 freezes 12 independent hosted lanes: `GRID768/GRID1024 × PURE_PAIR/INTERLEAVED × R1/R2/R3`. It tests the exact three V0.12 replay-failure cells plus two parent-like anchors. The classifier distinguishes execution-order/interleaving state dependence, cross-run parent non-reproducibility, same-profile hosted numerical nondeterminism, non-reproduced V0.12 replay failures, mixed replay behavior or invariant failure. No V0.13 outcome directly opens science gates; any positive diagnosis only authorizes a separately frozen confirmation/reproducibility successor.
 
-At the latest write GitHub has created run `34749034836`; it is queued for hosted-runner capacity. Do not inspect partial science results or launch duplicate lanes.
+At the latest write 10/12 profile lanes are already in progress, two are queued for hosted-runner capacity, and invariant is queued. No partial profile values may be used to change the frozen classifier.
 
 ## Exact next order
 
-1. Continue only V0.12 run `34749034836`.
-2. Let invariant and all five grid lanes finish; do not use partial numeric output to alter the frozen classifier.
-3. Consume the single decision artifact and verify immutable parent artifact provenance.
-4. Write a durable V0.12 authority.
-5. Launch only the successor encoded by the terminal V0.12 decision.
-6. Keep covariance/whitening/nuisance/relation-null, `Wm_S3`, global 65537, full 107-row traversal and science gate closed unless a later prospectively frozen authority explicitly opens them.
+1. Continue only V0.13 run `34773514342`; no duplicate V0.13 run.
+2. Wait for all 12 profile lanes, invariant and frozen decision barrier.
+3. Verify decision artifact provenance and write a durable V0.13 authority.
+4. Follow only the decision's encoded `next_stage`.
+5. Keep full 107-row Layer-B traversal, covariance/whitening/nuisance/relation-null, `Wm_S3`, global 65537 and science gate closed unless a later prospectively frozen authority explicitly opens them.
 
 ## Publication/readiness locks
 
@@ -73,6 +70,6 @@ Frozen values remain `ARTICLE3_REPOSITORY_READINESS: 68%` and funnel-freeze/scie
 
 ## Automation / ownership
 
-Repository/Actions state wins over any stale automation prompt. DSIR scheduled automation must not be assumed enabled unless a later explicit task-state check confirms it. Avoid a duplicate DSIR control plane while this chat is actively advancing V0.12.
+Repository/Actions state wins over any stale automation prompt. DSIR scheduled automation must not be assumed enabled unless a later explicit task-state check confirms it. Avoid a duplicate DSIR control plane while this chat is actively advancing V0.13.
 
-V0.12 is GitHub-hosted diagnostic compute, not a self-hosted `DSIR-HOME-PC` heavy-science run.
+V0.13 is GitHub-hosted diagnostic compute, not a self-hosted `DSIR-HOME-PC` heavy-science run.
