@@ -1,0 +1,92 @@
+{
+  "schema": "LAYERB_BETA_TOL30_RESONANCE_AND_TOL300_REPLICATION_CONTRACT_V0_9",
+  "status": "PROSPECTIVELY_FROZEN_BEFORE_V0_9_EXECUTION",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_TOLERANCE_ISOLATION_V0_8.json",
+  "parent_authority_commit": "1ae1d93199b61f66a7b23f945d586b580e5bc3bd",
+  "parent_classification": "TOLERANCE_KNOB_ISOLATION_INCONCLUSIVE",
+  "authorized_parent_next_stage": "PROSPECTIVELY_FROZEN_TOL30_CONTROL_REPRODUCIBILITY_AND_LOCALIZATION_AUDIT",
+  "raw_parent_run_id": 34719180791,
+  "expected_parent_h_unstable_failure_coordinates": 20,
+  "probe_manifest": "docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4.json",
+  "probe_manifest_sha256": "6ec35db06d66ac7d03f97f57f9d270d84804ee264508d4601ae33c4175a903d4",
+  "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+  "baseline": "configs/dsir4/c2/ide0_reference_v0_1.ini",
+  "baseline_git_blob_sha1": "cd2beb01ce6575f97f2e3203226ed6d4f048dcaa",
+  "production_precision": "configs/dsir4/c2/dsir_ide_p8_v0_1.pre",
+  "production_precision_git_blob_sha1": "fea602547cfb74e187cf9aedd5a9b0c316c626be",
+  "v07_domain_executor": "ci/layerb_beta_solver_conditioning_v0_7.py",
+  "v07_domain_executor_git_blob_sha1": "efdc1899a00f3c490f9dec1de030b671f36d4705",
+  "executor": "ci/layerb_beta_tol30_resonance_v0_9.py",
+  "executor_commit": "058c3cf0dde08325e4b768d1cc39e1f973e1769f",
+  "executor_git_blob_sha1": "dcbdd3641b62b9399a1fc78dfbf3abd36d9b16e2",
+  "frozen_response_engine_source": "ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py",
+  "frozen_response_engine_git_blob_sha1": "ee8fd0650a2a1322fab83a86bb06a219e84ca434",
+  "native_k_per_decade_for_pk": 20.0,
+  "production_h": 0.0001,
+  "h_values": [0.0004, 0.0002, 0.0001, 0.00005, 0.000025],
+  "relative_tolerance": 0.001,
+  "exact_target_binding_tolerance": 1e-12,
+  "production_perturb_sampling_stepsize": 0.00035,
+  "profiles": {
+    "N20": {"scope": "controls", "axis": "tol30_neighborhood", "overrides": {"tol_perturb_integration": "2e-11"}},
+    "N15": {"scope": "controls", "axis": "tol30_neighborhood", "overrides": {"tol_perturb_integration": "1.5e-11"}},
+    "N12": {"scope": "controls", "axis": "tol30_neighborhood", "overrides": {"tol_perturb_integration": "1.2e-11"}},
+    "T30R1": {"scope": "controls", "axis": "exact_tol30_replica", "overrides": {"tol_perturb_integration": "1e-11"}},
+    "T30R2": {"scope": "controls", "axis": "exact_tol30_replica", "overrides": {"tol_perturb_integration": "1e-11"}},
+    "N08": {"scope": "controls", "axis": "tol30_neighborhood", "overrides": {"tol_perturb_integration": "8e-12"}},
+    "N06": {"scope": "controls", "axis": "tol30_neighborhood", "overrides": {"tol_perturb_integration": "6e-12"}},
+    "TOL300R": {"scope": "all", "axis": "independent_tol300_replication", "overrides": {"tol_perturb_integration": "1e-12"}}
+  },
+  "neighbor_profiles": ["N20", "N15", "N12", "N08", "N06"],
+  "outer_loose_neighbor": "N20",
+  "outer_tight_neighbor": "N06",
+  "stable_external_anchors": {
+    "TOL10_3e-11_control_max": 3.731116997559176e-05,
+    "TOL100_3e-12_control_max": 4.442767872396179e-05
+  },
+  "parent_tol300_metrics": {
+    "tol_perturb_integration": 1e-12,
+    "recovered_count": 16,
+    "recovery_fraction": 0.8,
+    "median_parent_unstable_h_spread": 0.000510732305940965,
+    "control_max_h_spread": 5.0840057663462765e-05,
+    "controls_stable": true
+  },
+  "adequate_recovery_fraction": 0.75,
+  "adequate_median_h_spread": 0.001,
+  "tol300_recovered_count_difference_max": 1,
+  "tol300_median_ratio_max": 1.25,
+  "probe_counts": {
+    "unique_failing_zk_coordinates": 23,
+    "unique_control_zk_coordinates": 23,
+    "unique_all_zk_coordinates": 46
+  },
+  "parallel_partitions": [
+    "N20_D", "N20_B", "N15_D", "N15_B", "N12_D", "N12_B",
+    "T30R1_D", "T30R1_B", "T30R2_D", "T30R2_B",
+    "N08_D", "N08_B", "N06_D", "N06_B", "TOL300R_D", "TOL300R_B"
+  ],
+  "pre_registered_decision": {
+    "local_reproducible_resonance_with_replicated_tol300": "Both exact TOL30 replicas contain a nonempty unstable-control set >=1e-3 and the sets are identical; every N20/N15/N12/N08/N06 control-only neighbor is stable; outer N20/N06 are stable; the independent full TOL300R replicate is adequate under the frozen >=75% recovery, median <1e-3 and controls <1e-3 rule; its recovery count differs from parent TOL300 by <=1 and its median differs by <=1.25x; all invariants/exact-target checks pass. This authorizes only a prospectively frozen stabilized-TOL300 LOCAL common-grid validation.",
+    "broad_instability": "Both exact TOL30 replicas reproduce the identical nonempty unstable-control set and TOL300 replication passes, but at least one frozen neighboring tolerance also violates the control threshold. No stabilized profile promotion; map the tolerance boundary and failing coordinate(s) more finely.",
+    "tol30_not_reproducible": "The two exact TOL30 replicas do not both violate the threshold or do not identify the same unstable-control coordinate set. No scientific promotion; audit cross-run numerical reproducibility.",
+    "tol300_not_replicated": "Exact TOL30 replicas reproduce but the independent TOL300 full replicate fails adequacy or frozen agreement with parent TOL300. No promotion; diagnose TOL300 replication.",
+    "inconclusive": "Any nonfinite, coordinate-count, exact-target or invariant failure."
+  },
+  "forbidden": {
+    "retune_neighborhood_after_results": true,
+    "retune_control_threshold_after_results": true,
+    "retune_tol300_replication_rule_after_results": true,
+    "mutate_production_h": true,
+    "change_relative_tolerance": true,
+    "change_sampling_stepsize": true,
+    "launch_global_65537": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "open_science_gate": true
+  },
+  "effect": "+0/+0"
+}
