@@ -1,0 +1,185 @@
+name: layerb-beta-tol300-common-grid-v0-10
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_V0_10_LAUNCH.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_V0_10.json'
+  PARENT_AUTHORITY: 'docs/dsir4/authority/LAYERB_BETA_TOL30_RESONANCE_V0_9.json'
+  PROBES: 'docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4.json'
+  EXECUTOR: 'ci/layerb_beta_tol300_common_grid_v0_10.py'
+  JJ: 'ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py'
+  BASELINE: 'configs/dsir4/c2/ide0_reference_v0_1.ini'
+  PRECISION: 'configs/dsir4/c2/dsir_ide_p8_v0_1.pre'
+  RAW_PARENT_RUN_ID: '34719180791'
+  V09_RUN_ID: '34740781222'
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+
+jobs:
+  invariant-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen V0.10 identities and boundaries
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def blobsha(path):
+              b=Path(path).read_bytes(); return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          C=json.load(open('docs/dsir4/contracts/LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_V0_10.json'))
+          A=json.load(open('docs/dsir4/authority/LAYERB_BETA_TOL30_RESONANCE_V0_9.json'))
+          assert C['status']=='PROSPECTIVELY_FROZEN_BEFORE_V0_10_EXECUTION'
+          assert A['classification']==C['parent_classification']=='REPRODUCIBLE_LOCAL_TOL30_CONTROL_RESONANCE_WITH_REPLICATED_TOL300'
+          assert A['authorized_next_stage']==C['authorized_parent_next_stage']=='PROSPECTIVELY_FROZEN_STABILIZED_TOL300_LOCAL_COMMON_GRID_VALIDATION'
+          assert A['tol300_replicated'] is True and A['tol300_replicate_metrics']['recovered_count']==16
+          assert C['production_h']==1e-4 and C['relative_tolerance']==1e-3 and C['tol300']==1e-12
+          assert C['production_perturb_sampling_stepsize']==0.00035
+          assert C['h_values']==[4e-4,2e-4,1e-4,5e-5,2.5e-5]
+          assert C['grids']=={'GRID512':{'base_n':512,'lower_guard_count':0,'upper_guard_count':1,'requested_node_count':513},'GRID1024':{'base_n':1024,'lower_guard_count':0,'upper_guard_count':1,'requested_node_count':1025}}
+          assert C['common_grid_response_relative_tolerance']==1e-3
+          assert C['fine_vs_direct_response_relative_tolerance']==1e-3
+          assert all(C['forbidden'].values())
+          assert hashlib.sha256(Path(C['probe_manifest']).read_bytes()).hexdigest()==C['probe_manifest_sha256']
+          assert blobsha(C['baseline'])==C['baseline_git_blob_sha1']
+          assert blobsha(C['production_precision'])==C['production_precision_git_blob_sha1']
+          assert blobsha(C['frozen_response_engine_source'])==C['frozen_response_engine_git_blob_sha1']
+          assert blobsha(C['executor'])==C['executor_git_blob_sha1']
+          text=Path(C['production_precision']).read_text()
+          assert 'tol_perturb_integration = 3e-10' in text
+          assert 'perturb_sampling_stepsize = 0.00035' in text
+          P=json.load(open(C['probe_manifest']))
+          assert P['unique_failure_coordinates']==23 and P['unique_all_coordinates']==46
+          out={'schema':'LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_INVARIANT_AUDIT_V0_10','pass':True,'effect':'+0/+0','covariance_read':False,'Wm_S3_opened':False,'science_gate_opened':False,'token':'PASS_LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_INVARIANTS_V0_10'}
+          Path('safe/invariant.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+          python3 -m py_compile "$EXECUTOR"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-tol300-common-grid-invariant-v0-10
+          path: safe/invariant.json
+          retention-days: 90
+
+  common-grid-domain:
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        grid: [GRID512, GRID1024]
+        domain: [D, B]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact production numerical stack
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          git clone -q https://github.com/kaeonikc/class_iv.git external_class
+          git -C external_class checkout -q "$CLASS_COMMIT"
+      - name: Reproduce pinned CLASS exposure and exact common-grid capacity patches
+        run: |
+          set -euo pipefail
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 1152',1))
+          q=Path('external_class/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 32768',1))
+          r=Path('external_class/source/perturbations.c'); s=r.read_text(); old='perhaps_print_variables = perturb_print_variables;'; assert s.count(old)==1; r.write_text(s.replace(old,'perhaps_print_variables = NULL;',1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external_class
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external_class
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" make -C external_class -j2 all >/dev/null
+      - name: Run frozen stabilized-TOL300 local common-grid lane
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          .venv/bin/python "$EXECUTOR" --mode domain --grid '${{ matrix.grid }}' --domain '${{ matrix.domain }}' --contract "$CONTRACT" --probes "$PROBES" --jj-script "$JJ" --baseline "$BASELINE" --precision "$PRECISION" --out safe/grid_${{ matrix.grid }}_${{ matrix.domain }}.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-tol300-common-grid-${{ matrix.grid }}-${{ matrix.domain }}-v0-10
+          path: safe/grid_${{ matrix.grid }}_${{ matrix.domain }}.json
+          retention-days: 90
+
+  decision:
+    needs: [invariant-audit, common-grid-domain]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install decision dependency
+        run: |
+          set -euo pipefail
+          python3 -m venv .decision-venv
+          .decision-venv/bin/python -m pip install --upgrade pip >/dev/null
+          .decision-venv/bin/python -m pip install 'numpy==1.26.4' >/dev/null
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-tol300-common-grid-*-v0-10
+          path: inputs
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-tol30-resonance-TOL300R-*-v0-9
+          path: direct
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: 34740781222
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-fd-repair-*-v0-6
+          path: raw
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: 34719180791
+      - name: Verify immutable direct-k provenance and apply frozen V0.10 decision
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$GH_REPO/actions/runs/$V09_RUN_ID/artifacts?per_page=100" > /tmp/v09_artifacts.json
+          python3 - <<'PY'
+          import json
+          C=json.load(open('docs/dsir4/contracts/LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_V0_10.json'))
+          A=json.load(open('/tmp/v09_artifacts.json'))['artifacts']; by={x['name']:x for x in A}
+          for dom in ['D','B']:
+              name=f'layerb-beta-tol30-resonance-TOL300R-{dom}-v0-9'
+              x=by[name]; digest=x.get('digest') or ''
+              if digest.startswith('sha256:'): digest=digest[7:]
+              e=C['direct_tol300r_artifacts']
+              assert x['id']==e[f'{dom}_artifact_id']
+              assert digest==e[f'{dom}_artifact_sha256'] and not x['expired']
+          inv=json.load(open('inputs/invariant.json'))
+          assert inv['pass'] is True and inv['token']=='PASS_LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_INVARIANTS_V0_10'
+          PY
+          .decision-venv/bin/python "$EXECUTOR" --mode decision --contract "$CONTRACT" --parent-inputs raw/fd_D.json raw/fd_B.json --direct-inputs direct/solver_TOL300R_D.json direct/solver_TOL300R_B.json --grid-inputs inputs/grid_GRID512_D.json inputs/grid_GRID512_B.json inputs/grid_GRID1024_D.json inputs/grid_GRID1024_B.json --out safe/decision.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-tol300-common-grid-decision-v0-10
+          path: safe/decision.json
+          retention-days: 90
