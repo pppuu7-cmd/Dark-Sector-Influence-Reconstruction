@@ -1,0 +1,89 @@
+{
+  "schema": "LAYERB_BETA_REPLAY_SEQUENCING_CONTRACT_V0_13",
+  "status": "PROSPECTIVELY_FROZEN_BEFORE_V0_13_EXECUTION",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_V0_12.json",
+  "parent_authority_commit": "b6f0f7e8f3042c55ba47f860cc03210d393a808b",
+  "parent_classification": "PRODUCTION_H_COMMON_GRID_INTERPOLATION_AUDIT_INCONCLUSIVE",
+  "authorized_parent_next_stage": "NO_SCIENTIFIC_PROMOTION_DIAGNOSE_V0_12_INVARIANT_FAILURE",
+  "v012_run_id": 34749034836,
+  "v011_run_id": 34748453026,
+  "v010_run_id": 34741342346,
+  "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+  "baseline": "configs/dsir4/c2/ide0_reference_v0_1.ini",
+  "baseline_git_blob_sha1": "cd2beb01ce6575f97f2e3203226ed6d4f048dcaa",
+  "production_precision": "configs/dsir4/c2/dsir_ide_p8_v0_1.pre",
+  "production_precision_git_blob_sha1": "fea602547cfb74e187cf9aedd5a9b0c316c626be",
+  "jj_source": "ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py",
+  "jj_git_blob_sha1": "ee8fd0650a2a1322fab83a86bb06a219e84ca434",
+  "v12_executor": "ci/layerb_beta_production_h_common_grid_interpolation_v0_12.py",
+  "v12_executor_git_blob_sha1": "aedd509780786f1efc200710e572c0af848cd878",
+  "executor": "ci/layerb_beta_replay_sequencing_v0_13.py",
+  "executor_commit": "d1825ec35c69c3dc62a3fdd77194a52c6829f87e",
+  "executor_git_blob_sha1": "83ae5ff8ebd9cf2123099b354be8b6e724186705",
+  "production_h": 0.0001,
+  "h_values": [0.0002, 0.0001],
+  "relative_tolerance": 0.001,
+  "replay_relative_tolerance": 0.00001,
+  "exact_target_binding_tolerance": 1e-12,
+  "production_perturb_sampling_stepsize": 0.00035,
+  "tol300": 1e-12,
+  "tol300_override": "1e-12",
+  "grids": {
+    "GRID768": {"base_n": 768, "lower_guard_count": 0, "upper_guard_count": 1, "requested_node_count": 769},
+    "GRID1024": {"base_n": 1024, "lower_guard_count": 0, "upper_guard_count": 1, "requested_node_count": 1025}
+  },
+  "profiles": ["PURE_PAIR", "INTERLEAVED"],
+  "replicates": ["R1", "R2", "R3"],
+  "targets": [
+    {"kind":"F","d":"D","z":"3fe43d70a3d70a3e","k":"3f900ea7bc915d36"},
+    {"kind":"F","d":"D","z":"3fdab851eb851eb8","k":"3f890e66b051e28b"},
+    {"kind":"F","d":"D","z":"3fe3d70a3d70a3d7","k":"3f8fc70971921840"}
+  ],
+  "diagnostic_cells": [
+    {"role":"REPLAY_FAILURE","grid":"GRID1024","h":0.0002,"kind":"F","d":"D","z":"3fdab851eb851eb8","k":"3f890e66b051e28b","v012_replay_relative_difference":0.00015506392790000525},
+    {"role":"REPLAY_FAILURE","grid":"GRID768","h":0.0001,"kind":"F","d":"D","z":"3fe3d70a3d70a3d7","k":"3f8fc70971921840","v012_replay_relative_difference":0.000024934371090895516},
+    {"role":"REPLAY_FAILURE","grid":"GRID1024","h":0.0001,"kind":"F","d":"D","z":"3fe3d70a3d70a3d7","k":"3f8fc70971921840","v012_replay_relative_difference":0.000010478978062540487},
+    {"role":"ANCHOR","grid":"GRID768","h":0.0001,"kind":"F","d":"D","z":"3fdab851eb851eb8","k":"3f890e66b051e28b"},
+    {"role":"ANCHOR","grid":"GRID1024","h":0.0001,"kind":"F","d":"D","z":"3fdab851eb851eb8","k":"3f890e66b051e28b"}
+  ],
+  "parent_grid_artifacts": {
+    "GRID768_D": {"run_id":34748453026,"artifact_id":10314768049,"sha256":"0cd231290146c91bd1f67a64f9329e580f7a2a24216cd7e40627561ff362f019"},
+    "GRID1024_D": {"run_id":34741342346,"artifact_id":10313056334,"sha256":"43e2095d9f63cc5ef2b1dd67a6c29e3e7c54af6f9f7e199149dd813d036e0542"}
+  },
+  "v012_grid_artifacts": {
+    "GRID768": {"artifact_id":10315640069,"sha256":"6e61f56a2e125ade9d2fd5e92433c73a4834f8c0085b7fd5759bb8f031c03346"},
+    "GRID1024": {"artifact_id":10315237413,"sha256":"863b6c2cc9f57931e8bfe619b491c420f2e4d98fe7d57fb4a1f610d5c5c0d929"}
+  },
+  "parallel_partitions": [
+    "GRID768_PURE_PAIR_R1","GRID768_PURE_PAIR_R2","GRID768_PURE_PAIR_R3",
+    "GRID768_INTERLEAVED_R1","GRID768_INTERLEAVED_R2","GRID768_INTERLEAVED_R3",
+    "GRID1024_PURE_PAIR_R1","GRID1024_PURE_PAIR_R2","GRID1024_PURE_PAIR_R3",
+    "GRID1024_INTERLEAVED_R1","GRID1024_INTERLEAVED_R2","GRID1024_INTERLEAVED_R3"
+  ],
+  "pre_registered_decision": {
+    "interleaving_effect": "All anchor cells pass the 1e-5 parent replay invariant and same-profile replicas are stable. PURE_PAIR replicas are parent-like on every frozen replay-failure cell while INTERLEAVED replicas are V0.12-like and at least one is not parent-like. This supports execution-order/interleaving state dependence and authorizes only a separated interpolation confirmation audit.",
+    "v012_state_independent_of_interleaving": "All anchor cells pass and replicas are stable, but both PURE_PAIR and INTERLEAVED profiles reproduce the V0.12 replay state rather than the parent on the frozen replay-failure set. This supports a cross-run parent reproducibility problem and authorizes only a broader pure-grid cross-run reproducibility audit.",
+    "hosted_nondeterminism": "Any same-profile independent replica spread reaches or exceeds 1e-5 on a frozen diagnostic cell while anchors otherwise remain valid. This supports hosted-run numerical nondeterminism and authorizes only a same-run repeated-solver determinism audit.",
+    "v012_replay_not_reproduced": "All anchor cells pass and both profiles reproducibly return to the immutable parent values on every frozen replay-failure cell. Treat V0.12 replay failures as non-reproduced and authorize only a separated interpolation confirmation audit; do not promote the V0.12 science result directly.",
+    "mixed": "Anchors pass and replicas are stable but the frozen replay-failure cells split across the preregistered patterns. Run only a cellwise replay-transition audit.",
+    "inconclusive": "Any anchor, exact-binding, identity or finite-value invariant fails. No scientific promotion."
+  },
+  "forbidden": {
+    "retune_replay_threshold_after_results": true,
+    "change_diagnostic_cells_after_results": true,
+    "change_profiles_after_results": true,
+    "change_replica_count_after_results": true,
+    "mutate_production_h": true,
+    "change_sampling_stepsize": true,
+    "change_tol300": true,
+    "launch_full_layerb_107_row_traversal": true,
+    "launch_global_65537": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "open_science_gate": true
+  },
+  "effect": "+0/+0"
+}
