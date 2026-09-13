@@ -1,0 +1,89 @@
+{
+  "schema": "LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_CONTRACT_V0_12",
+  "status": "PROSPECTIVELY_FROZEN_BEFORE_V0_12_EXECUTION",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_COMMON_GRID_DISCREPANCY_V0_11.json",
+  "parent_authority_commit": "2621e0ab74685e502e7cec53997c58f99e354085",
+  "parent_classification": "PRODUCTION_H_COMMON_GRID_DISCREPANCY_SUPPORTED",
+  "authorized_parent_next_stage": "PROSPECTIVELY_FROZEN_PRODUCTION_H_COMMON_GRID_INTERPOLATION_AUDIT",
+  "v011_run_id": 34748453026,
+  "v010_run_id": 34741342346,
+  "v09_run_id": 34740781222,
+  "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+  "baseline": "configs/dsir4/c2/ide0_reference_v0_1.ini",
+  "baseline_git_blob_sha1": "cd2beb01ce6575f97f2e3203226ed6d4f048dcaa",
+  "production_precision": "configs/dsir4/c2/dsir_ide_p8_v0_1.pre",
+  "production_precision_git_blob_sha1": "fea602547cfb74e187cf9aedd5a9b0c316c626be",
+  "frozen_response_engine_source": "ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py",
+  "frozen_response_engine_git_blob_sha1": "ee8fd0650a2a1322fab83a86bb06a219e84ca434",
+  "executor": "ci/layerb_beta_production_h_common_grid_interpolation_v0_12.py",
+  "executor_commit": "68aecf9f1b8583be4e5b728bf320ce97b9443d2b",
+  "executor_git_blob_sha1": "f6e6703514a08988dc2cbc4f74de9ff5f74a042a",
+  "native_k_per_decade_for_pk": 20.0,
+  "production_h": 0.0001,
+  "audit_h_values": [0.0002, 0.0001],
+  "relative_tolerance": 0.001,
+  "response_relative_tolerance": 0.001,
+  "replay_relative_tolerance": 0.00001,
+  "exact_target_binding_tolerance": 1e-12,
+  "production_perturb_sampling_stepsize": 0.00035,
+  "tol300": 1e-12,
+  "tol300_override": "1e-12",
+  "grids": {
+    "GRID512": {"base_n": 512, "lower_guard_count": 0, "upper_guard_count": 1, "requested_node_count": 513},
+    "GRID640": {"base_n": 640, "lower_guard_count": 0, "upper_guard_count": 1, "requested_node_count": 641},
+    "GRID768": {"base_n": 768, "lower_guard_count": 0, "upper_guard_count": 1, "requested_node_count": 769},
+    "GRID896": {"base_n": 896, "lower_guard_count": 0, "upper_guard_count": 1, "requested_node_count": 897},
+    "GRID1024": {"base_n": 1024, "lower_guard_count": 0, "upper_guard_count": 1, "requested_node_count": 1025}
+  },
+  "audit_targets": [
+    {"kind":"F","d":"D","z":"3fe43d70a3d70a3e","k":"3f900ea7bc915d36","z_value":0.6325000000000001,"k_value":0.015680905231730345,"parent_role":"GRID640_H2_VIOLATION"},
+    {"kind":"F","d":"D","z":"3fdab851eb851eb8","k":"3f890e66b051e28b","z_value":0.4175,"k_value":0.01223449922166366,"parent_role":"GRID768_PRODUCTION_H_VIOLATION"},
+    {"kind":"F","d":"D","z":"3fe3d70a3d70a3d7","k":"3f8fc70971921840","z_value":0.62,"k_value":0.015516351488496949,"parent_role":"GRID896_PRODUCTION_H_VIOLATION"}
+  ],
+  "parent_violation_cells": [
+    {"grid":"GRID640","h":0.0002,"z":"3fe43d70a3d70a3e","k":"3f900ea7bc915d36","parent_direct_relative_difference":0.003709335890188209},
+    {"grid":"GRID768","h":0.0001,"z":"3fdab851eb851eb8","k":"3f890e66b051e28b","parent_direct_relative_difference":0.004037659729341879},
+    {"grid":"GRID896","h":0.0001,"z":"3fe3d70a3d70a3d7","k":"3f8fc70971921840","parent_direct_relative_difference":0.0011351878950117023}
+  ],
+  "prior_grid_artifacts": {
+    "GRID512_D": {"run_id":34741342346,"artifact_id":10313050991,"sha256":"3ff20688ef2cbca889458773461397f250fab71483ce30cabb5d039667835eac"},
+    "GRID640_D": {"run_id":34748453026,"artifact_id":10314508510,"sha256":"d9c1d5b93fc364e1e56748888cd76cd5b98bd0ec1bfbb28ea1aa5fe54738d596"},
+    "GRID768_D": {"run_id":34748453026,"artifact_id":10314768049,"sha256":"0cd231290146c91bd1f67a64f9329e580f7a2a24216cd7e40627561ff362f019"},
+    "GRID896_D": {"run_id":34748453026,"artifact_id":10315186414,"sha256":"b425ad7e44dd3be7ef9264839ad243a7ab5ef5da76ed6451b0074a7a4a2ad461"},
+    "GRID1024_D": {"run_id":34741342346,"artifact_id":10313056334,"sha256":"43e2095d9f63cc5ef2b1dd67a6c29e3e7c54af6f9f7e199149dd813d036e0542"}
+  },
+  "direct_tol300r_artifacts": {
+    "D_artifact_id": 10311549685,
+    "D_artifact_sha256": "c54c688ab3326b4e7166b37118e85cd65b85e5d728e1cb3ee166920266b7124f",
+    "B_artifact_id": 10312433284,
+    "B_artifact_sha256": "658f5e449f875326ebd5a039a317d9297fec306c5c18be36551f2c8ec621e535"
+  },
+  "capacity_patch": {"k_output_old":30,"k_output_new":1152,"parser_old":1024,"parser_new":32768},
+  "parallel_partitions": ["GRID512","GRID640","GRID768","GRID896","GRID1024"],
+  "pre_registered_decision": {
+    "interpolation_supported": "All immutable invariants and pure-grid replay checks pass; all three parent violation cells reproduce; in every violation cell the mixed-grid cubic interpolation still differs from the exact target returned by the same CLASS invocation by >=1e-3, while the mixed exact-target response agrees with independent direct-k TOL300 within 1e-3 and adding exact targets does not move the interpolated response by >=1e-3. This supports cubic common-grid interpolation as the dominant mechanism and authorizes only an interpolation-remedy benchmark.",
+    "node_set_dependence_supported": "All parent violation cells reproduce, but exact target insertion changes the exact target response relative to independent direct-k or changes the interpolated response by >=1e-3, without satisfying the interpolation-only condition. This supports k-output node-set solver dependence and authorizes only a node-set sensitivity audit.",
+    "mixed_supported": "All parent violation cells reproduce and different violation cells satisfy interpolation-only versus node-set-dependence criteria. Run only a mixed numerical-mechanism audit.",
+    "not_reproduced": "One or more frozen parent violation cells no longer differs from direct TOL300 by >=1e-3 in the pure-grid replay. Run only a cross-run reproducibility audit.",
+    "unresolved": "Invariants and replays pass, but no preregistered structured mechanism fully accounts for the frozen violation set. Run only a target-stencil geometry audit.",
+    "inconclusive": "Any immutable identity, nonfinite, exact-node-binding or pure-grid replay invariant fails. No scientific promotion."
+  },
+  "forbidden": {
+    "retune_parent_violation_cells_after_results": true,
+    "retune_audit_targets_after_results": true,
+    "retune_replay_threshold_after_results": true,
+    "retune_response_threshold_after_results": true,
+    "mutate_production_h": true,
+    "change_sampling_stepsize": true,
+    "change_tol300": true,
+    "launch_full_layerb_107_row_traversal": true,
+    "launch_global_65537": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "open_science_gate": true
+  },
+  "effect": "+0/+0"
+}
