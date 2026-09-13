@@ -1,0 +1,23 @@
+{
+  "schema": "LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_V0_10_LAUNCH",
+  "status": "AUTHORIZED_AFTER_TERMINAL_V0_9_AUTHORITY",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_TOL30_RESONANCE_V0_9.json",
+  "parent_authority_commit": "87a5ce2d16f2186ac3159a1aa6e089e116cad9eb",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_V0_10.json",
+  "contract_commit": "b3c194c9bd5abc0cfa7fa7696056ab20357f6afb",
+  "executor": "ci/layerb_beta_tol300_common_grid_v0_10.py",
+  "executor_commit": "5adee9adc18fee045688b75ee0aeced665e635dd",
+  "workflow": ".github/workflows/layerb-beta-tol300-common-grid-v0-10.yml",
+  "workflow_commit": "130ae270f2ae0dd783e1764a1b77b321039b7abc",
+  "tol_perturb_integration": 1e-12,
+  "grids": ["GRID512", "GRID1024"],
+  "domains": ["D", "B"],
+  "parallel_science_jobs": 4,
+  "effect": "+0/+0",
+  "production_h_mutated": false,
+  "sampling_stepsize_changed": false,
+  "global_65537_authorized": false,
+  "covariance_authorized": false,
+  "Wm_S3_authorized": false,
+  "science_gate_authorized": false
+}
