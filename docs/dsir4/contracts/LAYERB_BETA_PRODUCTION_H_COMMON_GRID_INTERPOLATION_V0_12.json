@@ -16,8 +16,8 @@
   "frozen_response_engine_source": "ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py",
   "frozen_response_engine_git_blob_sha1": "ee8fd0650a2a1322fab83a86bb06a219e84ca434",
   "executor": "ci/layerb_beta_production_h_common_grid_interpolation_v0_12.py",
-  "executor_commit": "68aecf9f1b8583be4e5b728bf320ce97b9443d2b",
-  "executor_git_blob_sha1": "f6e6703514a08988dc2cbc4f74de9ff5f74a042a",
+  "executor_commit": "ad22203c29a448b3c0282649b72e491fc123b286",
+  "executor_git_blob_sha1": "aedd509780786f1efc200710e572c0af848cd878",
   "native_k_per_decade_for_pk": 20.0,
   "production_h": 0.0001,
   "audit_h_values": [0.0002, 0.0001],
@@ -61,12 +61,12 @@
   "capacity_patch": {"k_output_old":30,"k_output_new":1152,"parser_old":1024,"parser_new":32768},
   "parallel_partitions": ["GRID512","GRID640","GRID768","GRID896","GRID1024"],
   "pre_registered_decision": {
-    "interpolation_supported": "All immutable invariants and pure-grid replay checks pass; all three parent violation cells reproduce; in every violation cell the mixed-grid cubic interpolation still differs from the exact target returned by the same CLASS invocation by >=1e-3, while the mixed exact-target response agrees with independent direct-k TOL300 within 1e-3 and adding exact targets does not move the interpolated response by >=1e-3. This supports cubic common-grid interpolation as the dominant mechanism and authorizes only an interpolation-remedy benchmark.",
-    "node_set_dependence_supported": "All parent violation cells reproduce, but exact target insertion changes the exact target response relative to independent direct-k or changes the interpolated response by >=1e-3, without satisfying the interpolation-only condition. This supports k-output node-set solver dependence and authorizes only a node-set sensitivity audit.",
-    "mixed_supported": "All parent violation cells reproduce and different violation cells satisfy interpolation-only versus node-set-dependence criteria. Run only a mixed numerical-mechanism audit.",
+    "interpolation_supported": "All immutable invariants and all 30 pure-grid replay checks pass; all three parent violation cells reproduce; in every violation cell the mixed-grid cubic interpolation still differs from the exact target returned by the same CLASS invocation by >=1e-3, while the mixed exact-target response agrees with independent direct-k TOL300 within 1e-3 and adding exact targets does not move the interpolated response by >=1e-3. This supports cubic common-grid interpolation as the dominant mechanism and authorizes only an interpolation-remedy benchmark.",
+    "node_set_dependence_supported": "All immutable invariants and all 30 pure-grid replay checks pass; all three parent violation cells reproduce and all three satisfy the node-set-dependence condition, with none satisfying interpolation-only. This supports k-output node-set solver dependence and authorizes only a node-set sensitivity audit.",
+    "mixed_supported": "All immutable invariants and all 30 pure-grid replay checks pass; all three parent violation cells reproduce; every violation cell is accounted for by interpolation-only or node-set dependence, and at least one cell supports each mechanism. Run only a mixed numerical-mechanism audit.",
     "not_reproduced": "One or more frozen parent violation cells no longer differs from direct TOL300 by >=1e-3 in the pure-grid replay. Run only a cross-run reproducibility audit.",
-    "unresolved": "Invariants and replays pass, but no preregistered structured mechanism fully accounts for the frozen violation set. Run only a target-stencil geometry audit.",
-    "inconclusive": "Any immutable identity, nonfinite, exact-node-binding or pure-grid replay invariant fails. No scientific promotion."
+    "unresolved": "Invariants and all 30 replays pass, but the complete frozen violation set is not fully explained by any preregistered mechanism pattern. Run only a target-stencil geometry audit.",
+    "inconclusive": "Any immutable identity, nonfinite, exact-node-binding or any of the 30 pure-grid replay invariants fails. No scientific promotion."
   },
   "forbidden": {
     "retune_parent_violation_cells_after_results": true,
