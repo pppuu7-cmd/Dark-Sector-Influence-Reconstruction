@@ -1,0 +1,189 @@
+name: layerb-beta-production-h-common-grid-interpolation-v0-12
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_V0_12_LAUNCH.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_V0_12.json'
+  PARENT_AUTHORITY: 'docs/dsir4/authority/LAYERB_BETA_COMMON_GRID_DISCREPANCY_V0_11.json'
+  EXECUTOR: 'ci/layerb_beta_production_h_common_grid_interpolation_v0_12.py'
+  JJ: 'ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py'
+  BASELINE: 'configs/dsir4/c2/ide0_reference_v0_1.ini'
+  PRECISION: 'configs/dsir4/c2/dsir_ide_p8_v0_1.pre'
+  V011_RUN_ID: '34748453026'
+  V010_RUN_ID: '34741342346'
+  V09_RUN_ID: '34740781222'
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+
+jobs:
+  invariant-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen V0.12 identities and boundaries
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def blobsha(path):
+              b=Path(path).read_bytes(); return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          C=json.load(open('docs/dsir4/contracts/LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_V0_12.json'))
+          A=json.load(open('docs/dsir4/authority/LAYERB_BETA_COMMON_GRID_DISCREPANCY_V0_11.json'))
+          assert C['status']=='PROSPECTIVELY_FROZEN_BEFORE_V0_12_EXECUTION'
+          assert A['classification']==C['parent_classification']=='PRODUCTION_H_COMMON_GRID_DISCREPANCY_SUPPORTED'
+          assert A['authorized_next_stage']==C['authorized_parent_next_stage']=='PROSPECTIVELY_FROZEN_PRODUCTION_H_COMMON_GRID_INTERPOLATION_AUDIT'
+          assert C['production_h']==1e-4 and C['audit_h_values']==[2e-4,1e-4]
+          assert C['relative_tolerance']==1e-3 and C['response_relative_tolerance']==1e-3 and C['replay_relative_tolerance']==1e-5
+          assert C['tol300']==1e-12 and C['production_perturb_sampling_stepsize']==0.00035
+          assert list(C['grids'])==['GRID512','GRID640','GRID768','GRID896','GRID1024']
+          assert len(C['audit_targets'])==3 and len(C['parent_violation_cells'])==3
+          assert {(x['grid'],x['h']) for x in C['parent_violation_cells']}=={('GRID640',2e-4),('GRID768',1e-4),('GRID896',1e-4)}
+          assert all(C['forbidden'].values())
+          assert blobsha(C['baseline'])==C['baseline_git_blob_sha1']
+          assert blobsha(C['production_precision'])==C['production_precision_git_blob_sha1']
+          assert blobsha(C['frozen_response_engine_source'])==C['frozen_response_engine_git_blob_sha1']
+          assert blobsha(C['executor'])==C['executor_git_blob_sha1']
+          assert max(x['requested_node_count']+3 for x in C['grids'].values()) <= C['capacity_patch']['k_output_new']
+          out={'schema':'LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_INVARIANT_AUDIT_V0_12','pass':True,'effect':'+0/+0','covariance_read':False,'Wm_S3_opened':False,'science_gate_opened':False,'token':'PASS_LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_INVARIANTS_V0_12'}
+          Path('safe/invariant.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+          python3 -m py_compile "$EXECUTOR"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-production-h-common-grid-interpolation-invariant-v0-12
+          path: safe/invariant.json
+          retention-days: 90
+
+  interpolation-grid:
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        grid: [GRID512, GRID640, GRID768, GRID896, GRID1024]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact production numerical stack
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          git clone -q https://github.com/kaeonikc/class_iv.git external_class
+          git -C external_class checkout -q "$CLASS_COMMIT"
+      - name: Reproduce pinned CLASS exposure and common-grid capacity patches
+        run: |
+          set -euo pipefail
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 1152',1))
+          q=Path('external_class/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 32768',1))
+          r=Path('external_class/source/perturbations.c'); s=r.read_text(); old='perhaps_print_variables = perturb_print_variables;'; assert s.count(old)==1; r.write_text(s.replace(old,'perhaps_print_variables = NULL;',1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external_class
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external_class
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" make -C external_class -j2 all >/dev/null
+      - name: Run frozen pure-versus-mixed interpolation lane
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          .venv/bin/python "$EXECUTOR" --mode domain --grid '${{ matrix.grid }}' --contract "$CONTRACT" --jj-script "$JJ" --baseline "$BASELINE" --precision "$PRECISION" --out safe/audit_${{ matrix.grid }}.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-production-h-common-grid-interpolation-${{ matrix.grid }}-v0-12
+          path: safe/audit_${{ matrix.grid }}.json
+          retention-days: 90
+
+  decision:
+    needs: [invariant-audit, interpolation-grid]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install decision dependency
+        run: |
+          set -euo pipefail
+          python3 -m venv .decision-venv
+          .decision-venv/bin/python -m pip install --upgrade pip >/dev/null
+          .decision-venv/bin/python -m pip install 'numpy==1.26.4' >/dev/null
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-production-h-common-grid-interpolation-*-v0-12
+          path: new
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-tol300-common-grid-GRID*-D-v0-10
+          path: prior10
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: 34741342346
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-common-grid-discrepancy-GRID*-D-v0-11
+          path: prior11
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: 34748453026
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-tol30-resonance-TOL300R-*-v0-9
+          path: direct
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: 34740781222
+      - name: Verify immutable parent artifacts and apply frozen V0.12 decision
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/$GH_REPO/actions/runs/$V010_RUN_ID/artifacts?per_page=100" > /tmp/v010.json
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/$GH_REPO/actions/runs/$V011_RUN_ID/artifacts?per_page=100" > /tmp/v011.json
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/$GH_REPO/actions/runs/$V09_RUN_ID/artifacts?per_page=100" > /tmp/v09.json
+          python3 - <<'PY'
+          import json
+          C=json.load(open('docs/dsir4/contracts/LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_V0_12.json'))
+          def clean(x):
+              d=x.get('digest') or ''; return d[7:] if d.startswith('sha256:') else d
+          byrun={34741342346:{x['name']:x for x in json.load(open('/tmp/v010.json'))['artifacts']},34748453026:{x['name']:x for x in json.load(open('/tmp/v011.json'))['artifacts']}}
+          for key,e in C['prior_grid_artifacts'].items():
+              g,dom=key.rsplit('_',1); run=e['run_id']; version='v0-10' if run==34741342346 else 'v0-11'; prefix='layerb-beta-tol300-common-grid' if run==34741342346 else 'layerb-beta-common-grid-discrepancy'
+              name=f'{prefix}-{g}-{dom}-{version}'; x=byrun[run][name]
+              assert x['id']==e['artifact_id'] and clean(x)==e['sha256'] and not x['expired']
+          A={x['name']:x for x in json.load(open('/tmp/v09.json'))['artifacts']}
+          for dom in ['D','B']:
+              name=f'layerb-beta-tol30-resonance-TOL300R-{dom}-v0-9'; x=A[name]; e=C['direct_tol300r_artifacts']
+              assert x['id']==e[f'{dom}_artifact_id'] and clean(x)==e[f'{dom}_artifact_sha256'] and not x['expired']
+          inv=json.load(open('new/invariant.json')); assert inv['pass'] is True and inv['token']=='PASS_LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_INVARIANTS_V0_12'
+          PY
+          .decision-venv/bin/python "$EXECUTOR" --mode decision --contract "$CONTRACT" --direct-inputs direct/solver_TOL300R_D.json direct/solver_TOL300R_B.json --prior-grid-inputs prior10/grid_GRID512_D.json prior11/grid_GRID640_D.json prior11/grid_GRID768_D.json prior11/grid_GRID896_D.json prior10/grid_GRID1024_D.json --inputs new/audit_GRID512.json new/audit_GRID640.json new/audit_GRID768.json new/audit_GRID896.json new/audit_GRID1024.json --out safe/decision.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-production-h-common-grid-interpolation-decision-v0-12
+          path: safe/decision.json
+          retention-days: 90
