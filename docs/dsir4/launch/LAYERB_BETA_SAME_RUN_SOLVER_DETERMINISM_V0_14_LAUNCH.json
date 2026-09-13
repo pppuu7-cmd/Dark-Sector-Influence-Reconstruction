@@ -1,0 +1,15 @@
+{
+  "schema": "LAYERB_BETA_SAME_RUN_SOLVER_DETERMINISM_LAUNCH_V0_14",
+  "status": "LAUNCH_FROZEN_V0_14",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_REPLAY_SEQUENCING_V0_13.json",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_SAME_RUN_SOLVER_DETERMINISM_V0_14.json",
+  "contract_commit": "ca0dd7e25307d73e6ce0b689542b88aa9468e93b",
+  "workflow": ".github/workflows/layerb-beta-same-run-solver-determinism-v0-14.yml",
+  "workflow_commit": "127d19739bad80df822bfd58d45fed8bbfc12a64",
+  "executor": "ci/layerb_beta_same_run_solver_determinism_v0_14.py",
+  "executor_commit": "351f18f25c2b18330ad0449d1d3cbc9c9460c781",
+  "parallel_lanes": 4,
+  "repeat_count_per_lane": 3,
+  "effect": "+0/+0",
+  "note": "Reproducibility localization only. No Layer-B scientific promotion, covariance, whitening, nuisance, relation-null, Wm_S3, global 65537 or full 107-row traversal is authorized by launch."
+}
