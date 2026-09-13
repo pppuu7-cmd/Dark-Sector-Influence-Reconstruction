@@ -1,0 +1,69 @@
+{
+  "schema": "LAYERB_BETA_TOL30_RESONANCE_AUTHORITY_V0_9",
+  "status": "TERMINAL_AUTHORITY",
+  "run_id": 34740781222,
+  "head_sha": "4004e876d0311654da2153ded992834ff83adf49",
+  "decision_job_id": 103680387202,
+  "decision_artifact_id": 10311599722,
+  "decision_artifact_zip_sha256": "c15759d860b8b95c4ca3889555c612d7f3f7533e0c674481e1dc002a6e5a4132",
+  "classification": "REPRODUCIBLE_LOCAL_TOL30_CONTROL_RESONANCE_WITH_REPLICATED_TOL300",
+  "effect": "+0/+0",
+  "production_h": 0.0001,
+  "relative_tolerance": 0.001,
+  "exact_tol30": 1e-11,
+  "tol300": 1e-12,
+  "exact_tol30_replicas": {
+    "T30R1": {
+      "control_max_h_spread": 0.0012003119264226171,
+      "controls_stable": false,
+      "unstable_control_count": 1,
+      "unstable_control_key": ["C", "D", "3fdab851eb851eb8", "3f8a474c7a7b57bd"]
+    },
+    "T30R2": {
+      "control_max_h_spread": 0.0012003119264226171,
+      "controls_stable": false,
+      "unstable_control_count": 1,
+      "unstable_control_key": ["C", "D", "3fdab851eb851eb8", "3f8a474c7a7b57bd"]
+    }
+  },
+  "neighbor_controls": {
+    "N20_2e-11": 2.250728286084143e-05,
+    "N15_1.5e-11": 0.0001319984497407242,
+    "N12_1.2e-11": 0.0007578124275447409,
+    "N08_8e-12": 1.1453456129948862e-05,
+    "N06_6e-12": 8.852316280511897e-05
+  },
+  "all_neighbors_stable": true,
+  "exact_replicas_reproduce": true,
+  "exact_replicas_both_violate": true,
+  "exact_replicas_same_unstable_set": true,
+  "tol300_parent_metrics": {
+    "recovered_count": 16,
+    "recovery_fraction": 0.8,
+    "median_parent_unstable_h_spread": 0.000510732305940965,
+    "control_max_h_spread": 5.0840057663462765e-05,
+    "controls_stable": true
+  },
+  "tol300_replicate_metrics": {
+    "recovered_count": 16,
+    "recovery_fraction": 0.8,
+    "median_parent_unstable_h_spread": 0.000510732305940965,
+    "control_max_h_spread": 5.0840057663462765e-05,
+    "controls_stable": true,
+    "unique_all_coordinates": 46
+  },
+  "tol300_replicated": true,
+  "tol300_recovered_count_agree": true,
+  "tol300_median_agree": true,
+  "tol300_median_ratio": 1.0,
+  "max_exact_target_binding_relative_mismatch": 1.2517848722592053e-16,
+  "invariant_ok": true,
+  "interpretation": "The V0.8 TOL30 control failure is a reproducible, sharply localized tolerance resonance at tol_perturb_integration=1e-11 rather than broad instability: both exact replicas identify the same single DES control coordinate while all preregistered neighboring tolerances remain below the frozen 1e-3 control threshold. Independently repeated TOL300=1e-12 exactly reproduces the V0.8 16/20 recovery, 0.8 recovery fraction, median 5.10732305940965e-4 and stable controls. This authorizes only a stabilized-TOL300 local common-grid validation and does not open covariance, Wm_S3, global 65537, or any science gate.",
+  "production_h_mutated": false,
+  "sampling_stepsize_changed": false,
+  "global_65537_launched": false,
+  "covariance_read": false,
+  "Wm_S3_opened": false,
+  "science_gate_opened": false,
+  "authorized_next_stage": "PROSPECTIVELY_FROZEN_STABILIZED_TOL300_LOCAL_COMMON_GRID_VALIDATION"
+}
