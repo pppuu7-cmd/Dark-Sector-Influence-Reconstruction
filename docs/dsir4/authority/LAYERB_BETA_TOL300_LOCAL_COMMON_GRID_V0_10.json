@@ -1,0 +1,57 @@
+{
+  "schema": "LAYERB_BETA_TOL300_LOCAL_COMMON_GRID_AUTHORITY_V0_10",
+  "status": "TERMINAL_AUTHORITY",
+  "run_id": 34741342346,
+  "head_sha": "8f295e06d94d30297f12c5e59da797f5d559083d",
+  "decision_job_id": 103683155104,
+  "decision_artifact_id": 10313180649,
+  "decision_artifact_zip_sha256": "040292a748472123626e0de1d4cbbf577c21550e10ed63a6701b24466f9d240e",
+  "classification": "STABILIZED_TOL300_LOCAL_COMMON_GRID_NOT_VALIDATED",
+  "effect": "+0/+0",
+  "production_h": 0.0001,
+  "relative_tolerance": 0.001,
+  "tol_perturb_integration": 1e-12,
+  "direct_tol300_metrics": {
+    "recovered_count": 16,
+    "recovery_fraction": 0.8,
+    "median_parent_unstable_h_spread": 0.000510732305940965,
+    "control_max_h_spread": 5.0840057663462765e-05,
+    "controls_stable": true
+  },
+  "grid_metrics": {
+    "GRID512": {
+      "recovered_count": 16,
+      "recovery_fraction": 0.8,
+      "median_parent_unstable_h_spread": 0.0005157877273103107,
+      "control_max_h_spread": 1.1041926145113362e-05,
+      "controls_stable": true,
+      "adequate": true
+    },
+    "GRID1024": {
+      "recovered_count": 14,
+      "recovery_fraction": 0.7,
+      "median_parent_unstable_h_spread": 0.0005134714477118745,
+      "control_max_h_spread": 0.0001745861154644251,
+      "controls_stable": true,
+      "adequate": false
+    }
+  },
+  "common_grid_max_relative_response_difference_all_h": 0.0108331289703319,
+  "common_grid_worst_coordinate": ["F", "D", "3ff047ae147ae148", "3f93adf194593fb0"],
+  "common_grid_worst_h": "2.5000000000000001e-05",
+  "fine_vs_direct_production_h_max_relative_response_difference": 0.00010217977189246786,
+  "fine_vs_direct_median_ratio": 1.0053631652806119,
+  "fine_vs_direct_recovered_count_agree": false,
+  "max_requested_node_coordinate_rel_mismatch": 1.6551974349255386e-16,
+  "unsupported_target_evaluations": 0,
+  "all_coordinate_keysets_exact": true,
+  "invariant_ok": true,
+  "interpretation": "Stabilized TOL300 remains locally promising but is not common-grid validated. GRID512 preserves 16/20 recovery while GRID1024 preserves only 14/20. The worst GRID512-vs-GRID1024 signed beta-response discrepancy is 1.0833e-2 at the smallest h=2.5e-5, whereas GRID1024 agrees with independently replicated direct-k TOL300 at production h to 1.0218e-4. This pattern requires a prospectively frozen grid-resolution discrepancy localization audit; it does not authorize full Layer-B promotion or any science gate.",
+  "production_h_mutated": false,
+  "sampling_stepsize_changed": false,
+  "global_65537_launched": false,
+  "covariance_read": false,
+  "Wm_S3_opened": false,
+  "science_gate_opened": false,
+  "authorized_next_stage": "PROSPECTIVELY_FROZEN_COMMON_GRID_DISCREPANCY_LOCALIZATION_AUDIT"
+}
