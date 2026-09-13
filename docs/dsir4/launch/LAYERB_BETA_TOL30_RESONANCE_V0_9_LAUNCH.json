@@ -1,0 +1,23 @@
+{
+  "schema": "LAYERB_BETA_TOL30_RESONANCE_V0_9_LAUNCH",
+  "status": "AUTHORIZED_AFTER_TERMINAL_V0_8_AUTHORITY",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_TOLERANCE_ISOLATION_V0_8.json",
+  "parent_authority_commit": "1ae1d93199b61f66a7b23f945d586b580e5bc3bd",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_TOL30_RESONANCE_AUDIT_V0_9.json",
+  "contract_commit": "08fc52377b17285a3dda701b5c2829f8c8e49a9c",
+  "executor": "ci/layerb_beta_tol30_resonance_v0_9.py",
+  "executor_commit": "058c3cf0dde08325e4b768d1cc39e1f973e1769f",
+  "executor_git_blob_sha1": "dcbdd3641b62b9399a1fc78dfbf3abd36d9b16e2",
+  "workflow": ".github/workflows/layerb-beta-tol30-resonance-v0-9.yml",
+  "workflow_commit": "fc6379a1a969d6446b0dadae137dbf6074a87b90",
+  "profiles": ["N20","N15","N12","T30R1","T30R2","N08","N06","TOL300R"],
+  "domains": ["D","B"],
+  "parallel_science_jobs": 16,
+  "effect": "+0/+0",
+  "production_h_mutated": false,
+  "sampling_stepsize_changed": false,
+  "global_65537_authorized": false,
+  "covariance_authorized": false,
+  "Wm_S3_authorized": false,
+  "science_gate_authorized": false
+}
