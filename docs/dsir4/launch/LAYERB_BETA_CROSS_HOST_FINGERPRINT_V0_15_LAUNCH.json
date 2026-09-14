@@ -1,0 +1,16 @@
+{
+  "schema": "LAYERB_BETA_CROSS_HOST_FINGERPRINT_LAUNCH_V0_15",
+  "status": "LAUNCH_FROZEN_V0_15",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_SAME_RUN_SOLVER_DETERMINISM_V0_14.json",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_CROSS_HOST_FINGERPRINT_V0_15.json",
+  "contract_commit": "8bdfee04fbdbeece06824d215088797866ed579a",
+  "workflow": ".github/workflows/layerb-beta-cross-host-fingerprint-v0-15.yml",
+  "workflow_commit": "c3003bf0c8862fee75167bd3afdc415db80e9a99",
+  "executor": "ci/layerb_beta_cross_host_fingerprint_v0_15.py",
+  "executor_commit": "ad811e5da24bb20f654b0bc4d0646640e561150f",
+  "parallel_lanes": 16,
+  "replicates_per_grid": 8,
+  "profile": "PURE_PAIR",
+  "effect": "+0/+0",
+  "note": "Cross-host reproducibility localization only. Ephemeral runner/job IDs are provenance only and cannot define scientific fingerprint groups. No Layer-B scientific promotion, covariance, whitening, nuisance, relation-null, Wm_S3, global 65537 or full 107-row traversal is authorized by launch."
+}
