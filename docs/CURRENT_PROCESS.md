@@ -2,35 +2,33 @@
 
 Updated: 2026-09-14. Scope: **DSIR only**; RTK/RQIR/KMQGB/KMDSB excluded.
 
-## Latest terminal scientific/numerical authority — V0.18R
+## Latest terminal intervention authority — V0.19
 
-V0.17 authority `docs/dsir4/authority/LAYERB_BETA_NUMERICAL_RUNTIME_STATE_FINGERPRINT_V0_17.json` established observational `CPU_CAPABILITY_RUNTIME_STATE_STRATIFICATION_SUPPORTED` and authorized a controlled dispatch intervention.
+V0.17 established observational `CPU_CAPABILITY_RUNTIME_STATE_STRATIFICATION_SUPPORTED` and authorized a controlled dispatch intervention. V0.18R was terminal `CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_INVALID`; its diagnosis V0.18D identified an incomplete NumPy mask plus an overbroad raw-feature validator.
 
-V0.18R terminal authority: `docs/dsir4/authority/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_18R.json`, creation commit `e192492b5c56fdae91632447cc02d9bfdac942a5`.
-Run `34861893888` is terminal `success`: invariant + 32 dispatch lanes + decision all completed. Decision job `104045296799`; decision artifact `10355468958`, digest `sha256:953a2f0472452828b155dee1ff9b47833ba0c92859ae39c69220de6f82065868`.
-Classification: `CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_INVALID`, effect `+0/+0`. Eligible exact-target paired hosts `n=7` exceeded the frozen minimum `n=3`; exact binding and anchor invariants passed. The result is not interpretable as support or no-effect because an intervention positive control failed.
+V0.19 attempted a repaired causal intervention with response-free preflight. Terminal authority: `docs/dsir4/authority/LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_19.json`, creation commit `3d4542b3c3514092fdc99566bed01c877eb77003`.
+Run `34868672661` is terminal `success`: invariant + 32 lanes + decision all completed. Decision job `104060026580`; decision artifact `10358292041`, digest `sha256:a4725493e504c4f3c4f2a3bae5a1927abd58fde8ba22e90546d32d3bce0a8d87`.
+Classification: `CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_INVALID`, effect `+0/+0`. Eligible exact-target lanes were `R20,R24,R27` (n=3, frozen minimum 3), and all three failed only the response-free intervention preflight. `substantive_response_computed=false` for all invalid-preflight lanes. Therefore V0.19 neither supports nor rejects the dispatch mechanism.
 
-## Terminal validation diagnosis — V0.18D
+## Terminal validation diagnosis — V0.19D
 
-Authority: `docs/dsir4/authority/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_VALIDATION_DIAGNOSIS_V0_18D.json`, commit `728987ddfbc9caddc1202234662b964c6f034b5b`.
-Diagnosis: `NUMPY_AVX512_MASK_INCOMPLETE_AND_VALIDATOR_OVERBROAD`.
+Authority: `docs/dsir4/authority/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_VALIDATION_DIAGNOSIS_V0_19D.json`, commit `f29190ead75225d8e8862e44ba06b51555c580b2`.
+Diagnosis: `NUMPY_RAW_CAPABILITY_BITS_NOT_RUNTIME_DISPATCH_VALIDATION_TARGET`.
 
-All seven V0.18R eligible hosts had the same native active NumPy AVX-512 set:
-`AVX512BITALG, AVX512BW, AVX512CD, AVX512DQ, AVX512F, AVX512IFMA, AVX512VBMI, AVX512VBMI2, AVX512VL, AVX512VNNI, AVX512VPOPCNTDQ, AVX512_CLX, AVX512_CNL, AVX512_ICL, AVX512_SKX`.
-The V0.18R NumPy mask disabled only a subset and left nine native-active AVX-512 features enabled, while its validator required zero active AVX-512 features. Native and glibc-only controls validated; NumPy-only and combined controls therefore failed by construction. Binary identities were constant; no V0.18R failure-cell response values were inspected for this diagnosis. V0.18D authorizes exactly `PROSPECTIVELY_FROZEN_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_AUDIT`.
+All three eligible preflights reproduced the same pattern: native and glibc-only controls valid; NumPy-only and combined invalid under the V0.19 raw-feature criterion; binary identity constant; no substantive response computed. NumPy 1.26.4 `show_runtime()` treats `__cpu_dispatch__` as the dispatchable non-baseline feature list and reads `__cpu_features__[feature]` only for those dispatch entries. Therefore residual raw AVX-512 capability bits outside `__cpu_dispatch__` are not themselves proof of active runtime dispatch. V0.19D authorizes exactly `PROSPECTIVELY_FROZEN_NUMPY_RUNTIME_DISPATCH_SEMANTICS_AUDIT`.
 
-## Active authoritative frontier — V0.19 repaired controlled dispatch intervention
+## Active authoritative frontier — V0.20 response-free NumPy dispatch semantics audit
 
-Preregistration: `prereg/LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_19.md`, commit `a7fc1d1740f64d197fcc269cdd7bf95a5fda080b`.
-Final executor: `ci/layerb_beta_repaired_controlled_cpu_capability_dispatch_intervention_v0_19.py`, commit `b385cc3b2719e8672672c595a40181814ba0a0ee`, blob `6df0890f5646df1c309aa8369232b77c0120dce0`.
-Contract: `docs/dsir4/contracts/LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_19.json`, commit `996f0b0657dda4bc84a62d020cba89c599e8b509`.
-Workflow: `.github/workflows/layerb-beta-repaired-controlled-cpu-capability-dispatch-intervention-v0-19.yml`, commit `94e39c2ab35b1172e9d145b413e015297a9be2d4`.
-Launch/head: `8f04577d97e62ed4273ef5e5ea2bb41382582e5b`.
-Authoritative active run: `34868672661`; exactly one run exists. Invariant identity/repair-scope checks and py_compile passed; the 32-host matrix is active with `max-parallel:32`.
+Preregistration: `prereg/LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_V0_20.md`, commit `032ef809a934c4ac0ae8dfb4cb9d2d7b4d35386b`.
+Executor: `ci/layerb_beta_numpy_runtime_dispatch_semantics_v0_20.py`, commit `865c241675d18af8e76d4fd632cc803cd6c99869`, blob `1d31907a488224cc510afc7908c888da4bfe08ff`.
+Contract: `docs/dsir4/contracts/LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_V0_20.json`, commit `de9eae11c49a82b8d01ec405540258927a6a4a43`.
+Workflow: `.github/workflows/layerb-beta-numpy-runtime-dispatch-semantics-v0-20.yml`, commit `216677ba6d5733339a634afcf9546cac00343b22`.
+Launch/head: `596fbdc15f99a4709756c3df3770fce721b93635`.
+Authoritative active run: `34869578874`; exactly one run exists. Invariant audit is terminal `success`; 32 independent lightweight NumPy-only lanes are active with `max-parallel:32`.
 
-V0.19 preserves the V0.18 hypothesis, exact cells, V0.17 branch references, all thresholds, target CPU and minimum eligible `n=3`. The only intervention repair is a complete prospectively frozen 15-feature NumPy AVX-512 mask plus exact validation. Every eligible host first performs a **response-free four-condition preflight**; a failed preflight produces `INVALID` without computing substantive response. Only successful preflight lanes execute paired `NATIVE`, `NUMPY_NO_AVX512`, `GLIBC_NO_AVX512`, `COMBINED_NO_AVX512` solver conditions.
+V0.20 computes **no CLASS/DSIR response**. Each lane records NumPy 1.26.4 `__cpu_baseline__`, `__cpu_dispatch__`, `__cpu_features__`; exact-target EPYC 9V74 lanes derive `NPY_DISABLE_CPU_FEATURES` only from native AVX-512 members of `__cpu_dispatch__`, then verify in a fresh masked interpreter that those dispatch targets are inactive while non-AVX512 dispatch is preserved. Raw non-dispatch AVX-512 capability bits are allowed to remain true. Minimum eligible lanes is frozen at 3.
 
-Do not inspect partial substantive V0.19 response values. Consume only the single terminal decision after all 32 lanes.
+Exact next order: do not duplicate V0.20; wait for all 32 lanes + single decision barrier; materialize V0.20 authority from the frozen classifier; follow only its `next_stage`. If mask validation passes, only then may a separately preregistered validated causal intervention reopen the numerical response test.
 
 ## Frozen boundaries
 
