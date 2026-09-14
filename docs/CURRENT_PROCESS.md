@@ -2,32 +2,36 @@
 
 Updated: 2026-09-14. Scope: **DSIR only**; RTK/RQIR/KMQGB/KMDSB excluded.
 
-## Parent terminal authority — V0.17
+## Latest terminal scientific/numerical authority — V0.18R
 
-Terminal authority: `docs/dsir4/authority/LAYERB_BETA_NUMERICAL_RUNTIME_STATE_FINGERPRINT_V0_17.json`, creation commit `ae9d1532d7ad7479a8eee52d04e974ebf9ab7d17`.
+V0.17 authority `docs/dsir4/authority/LAYERB_BETA_NUMERICAL_RUNTIME_STATE_FINGERPRINT_V0_17.json` established observational `CPU_CAPABILITY_RUNTIME_STATE_STRATIFICATION_SUPPORTED` and authorized a controlled dispatch intervention.
 
-Run `34817501445`: invariant + 32 runtime-state lanes + decision terminal `success`; decision job `103894789121`; decision artifact `10337134088`, digest `sha256:24bf51b3993353dceefe4908955d0e14eb48de06675174e1b7b9ede3ab3f7ae4`.
+V0.18R terminal authority: `docs/dsir4/authority/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_18R.json`, creation commit `e192492b5c56fdae91632447cc02d9bfdac942a5`.
+Run `34861893888` is terminal `success`: invariant + 32 dispatch lanes + decision all completed. Decision job `104045296799`; decision artifact `10355468958`, digest `sha256:953a2f0472452828b155dee1ff9b47833ba0c92859ae39c69220de6f82065868`.
+Classification: `CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_INVALID`, effect `+0/+0`. Eligible exact-target paired hosts `n=7` exceeded the frozen minimum `n=3`; exact binding and anchor invariants passed. The result is not interpretable as support or no-effect because an intervention positive control failed.
 
-Classification: `CPU_CAPABILITY_RUNTIME_STATE_STRATIFICATION_SUPPORTED`, effect `+0/+0`. In the exact AMD EPYC 9V74 subgroup, `cpu_capability_key` is the first preregistered stable observational stratifier; FPU-control and exact binary identity do not explain the branch, while NumPy dispatch remains correlated. V0.17 authorizes exactly `PROSPECTIVELY_FROZEN_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_AUDIT`.
+## Terminal validation diagnosis — V0.18D
 
-## Active authoritative frontier — V0.18R controlled dispatch intervention
+Authority: `docs/dsir4/authority/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_VALIDATION_DIAGNOSIS_V0_18D.json`, commit `728987ddfbc9caddc1202234662b964c6f034b5b`.
+Diagnosis: `NUMPY_AVX512_MASK_INCOMPLETE_AND_VALIDATOR_OVERBROAD`.
 
-Scientific preregistration: `prereg/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_18.md`, commit `34c955fcdfca7429b033e8c194de090f4ced8701`.
+All seven V0.18R eligible hosts had the same native active NumPy AVX-512 set:
+`AVX512BITALG, AVX512BW, AVX512CD, AVX512DQ, AVX512F, AVX512IFMA, AVX512VBMI, AVX512VBMI2, AVX512VL, AVX512VNNI, AVX512VPOPCNTDQ, AVX512_CLX, AVX512_CNL, AVX512_ICL, AVX512_SKX`.
+The V0.18R NumPy mask disabled only a subset and left nine native-active AVX-512 features enabled, while its validator required zero active AVX-512 features. Native and glibc-only controls validated; NumPy-only and combined controls therefore failed by construction. Binary identities were constant; no V0.18R failure-cell response values were inspected for this diagnosis. V0.18D authorizes exactly `PROSPECTIVELY_FROZEN_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_AUDIT`.
 
-The original unexecuted V0.18 contract (`288adc096449e72264273937e68ebe1a687b9faa`) was superseded before any workflow/run because its lane implementation computed a native response before eligibility. No V0.18 substantive result exists. V0.18R is a control-only pre-execution sequencing repair; the preregistered science and classifier are unchanged.
+## Active authoritative frontier — V0.19 repaired controlled dispatch intervention
 
-Active contract: `docs/dsir4/contracts/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_18R.json`, commit `59ff8aca5360c849fb9e7bba7b314a6009b64444`.
-Executor: `ci/layerb_beta_controlled_cpu_capability_dispatch_intervention_v0_18r.py`, commit `7dbcc2dcf30d8351c4d8504226231ff205a5fe94`, blob `820154ac8d121f0eb44904db55640d08ab7fb03a`; substantive child/decision base executor blob `279925c25f2db17ba59d7cbe76f4d2043026da06`.
-Workflow: `.github/workflows/layerb-beta-controlled-cpu-capability-dispatch-intervention-v0-18r.yml`, commit `3a0e07263ce1f528c6045c1ff9c3719ef45ea3f4`.
-Launch/head: `698b62dab1ecda77724dd6d7def36342cb4372dd`.
-Authoritative active run: `34861893888`; exactly one V0.18R run exists. Invariant audit is terminal `success`.
+Preregistration: `prereg/LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_19.md`, commit `a7fc1d1740f64d197fcc269cdd7bf95a5fda080b`.
+Final executor: `ci/layerb_beta_repaired_controlled_cpu_capability_dispatch_intervention_v0_19.py`, commit `b385cc3b2719e8672672c595a40181814ba0a0ee`, blob `6df0890f5646df1c309aa8369232b77c0120dce0`.
+Contract: `docs/dsir4/contracts/LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_19.json`, commit `996f0b0657dda4bc84a62d020cba89c599e8b509`.
+Workflow: `.github/workflows/layerb-beta-repaired-controlled-cpu-capability-dispatch-intervention-v0-19.yml`, commit `94e39c2ab35b1172e9d145b413e015297a9be2d4`.
+Launch/head: `8f04577d97e62ed4273ef5e5ea2bb41382582e5b`.
+Authoritative active run: `34868672661`; exactly one run exists. Invariant identity/repair-scope checks and py_compile passed; the 32-host matrix is active with `max-parallel:32`.
 
-V0.18R has 32 independent host lanes with `max-parallel: 32`. Each lane fingerprints first. Only exact AMD EPYC 9V74 hosts with native AVX512F, native glibc x86-64-v4 and native NumPy AVX512 dispatch are eligible. Ineligible hosts emit provenance-only SKIP and no response values. Eligible lanes execute four paired child conditions on the same host and exact binaries: `NATIVE`, `NUMPY_NO_AVX512`, `GLIBC_NO_AVX512`, `COMBINED_NO_AVX512`. Minimum eligible paired lanes is frozen at 3.
+V0.19 preserves the V0.18 hypothesis, exact cells, V0.17 branch references, all thresholds, target CPU and minimum eligible `n=3`. The only intervention repair is a complete prospectively frozen 15-feature NumPy AVX-512 mask plus exact validation. Every eligible host first performs a **response-free four-condition preflight**; a failed preflight produces `INVALID` without computing substantive response. Only successful preflight lanes execute paired `NATIVE`, `NUMPY_NO_AVX512`, `GLIBC_NO_AVX512`, `COMBINED_NO_AVX512` solver conditions.
 
-Do not inspect partial substantive response values. Wait for all 32 lanes + single decision barrier, then consume only the frozen decision.
+Do not inspect partial substantive V0.19 response values. Consume only the single terminal decision after all 32 lanes.
 
 ## Frozen boundaries
 
-Production `h=1e-4`; scientific response threshold `<1e-3`; replay/intervention threshold `<1e-5`; exact binding `<=1e-12`; production sampling `0.00035`; `tol_perturb_integration=1e-12`. Full 107-row Layer-B, covariance, whitening, nuisance, relation-null, `Wm_S3`, global 65537 and downstream science remain closed.
-
-Frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%`; scientific frontier `67%`.
+Production `h=1e-4`; scientific response threshold `<1e-3`; replay/intervention threshold `<1e-5`; exact binding `<=1e-12`; production sampling `0.00035`; `tol_perturb_integration=1e-12`. Full 107-row Layer-B, covariance, whitening, nuisance, relation-null, `Wm_S3`, global 65537 and downstream science remain closed. Frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%`; scientific frontier `67%`.
