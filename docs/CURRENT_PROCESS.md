@@ -2,49 +2,31 @@
 
 Updated: 2026-09-14. Scope: **DSIR only**; RTK/RQIR/KMQGB/KMDSB excluded.
 
-## Current authoritative frontier — V0.15 terminal
+## Active authoritative frontier — V0.16 host-factor isolation
 
-Terminal authority: `docs/dsir4/authority/LAYERB_BETA_CROSS_HOST_FINGERPRINT_V0_15.json`, creation commit `e974d09d9fc4a687da582384da290c8fcb3989e6`.
+Parent terminal authority: `docs/dsir4/authority/LAYERB_BETA_CROSS_HOST_FINGERPRINT_V0_15.json`, creation commit `e974d09d9fc4a687da582384da290c8fcb3989e6`.
 
-Run `34792546153`, head `64968099805f6701424881562b1b5263a56d0e0b`; invariant + all 16 `GRID768/GRID1024 × R1..R8` lanes + decision are terminal `success`. Decision job `103820921014`; decision artifact `10328836120`, SHA256 `147aedae7d660c7554078151ee5ed6ba5985b7317ad5b1f3e18e4cb0f75ca1a4`.
+Parent classification: `HOST_ENVIRONMENT_FINGERPRINT_STRATIFICATION_SUPPORTED`, effect `+0/+0`; authorized successor exactly `PROSPECTIVELY_FROZEN_HOST_FACTOR_ISOLATION_AUDIT`.
 
-Classification: `HOST_ENVIRONMENT_FINGERPRINT_STRATIFICATION_SUPPORTED`, effect `+0/+0`.
+Prospective V0.16 contract: `docs/dsir4/contracts/LAYERB_BETA_HOST_FACTOR_ISOLATION_V0_16.json`, commit `32061462eda85f3e9a7dc6e648e0327c2269901f`.
+Executor: `ci/layerb_beta_host_factor_isolation_v0_16.py`, commit `1ca9b1b711e09b3d34abd03d7932091b5e44682d`, blob `ceeaea50dccb9c7cfcf136f6c0e686cb078af4c2`.
+Workflow: `.github/workflows/layerb-beta-host-factor-isolation-v0-16.yml`, commit `ebc858e961e309b6934b0b17bf8120c39810a401`.
+Launch/head: `cb30b8bad9dbebd22138e3a8a73c974e4625c0e3`.
 
-The exact V0.13 cross-job response branches reproduce. On all three frozen replay-failure cells, jobs sharing the same prospectively recorded combined hardware/software fingerprint are exactly stable within group (`max within-group spread = 0.0`), while distinct repeated fingerprint groups have group-mean separation at or above the unchanged `<1e-5` technical threshold. Frozen anchors remain valid; fingerprint integrity, finite-value and exact-binding invariants pass; no ephemeral runner/job identifier entered scientific grouping.
+Authoritative active run: `34793440750`. Exactly one V0.16 run exists. It contains one invariant job plus 24 independent `GRID1024 PURE_PAIR` host lanes (`R01..R24`) and a single decision barrier. Hosted-runner capacity may queue lanes; do not launch duplicates.
 
-This is numerical reproducibility localization only. It does not validate Layer-B science and is not evidence for a dark-sector signal.
+## Frozen V0.16 object
 
-## Parent V0.15 factor evidence available for the authorized successor
+Two exact GRID1024 V0.15 replay-failure cells plus the exact GRID1024 anchor are recomputed on 24 new independent GitHub-hosted jobs under unchanged numerical identities. Primary prospective factor is runtime `AVX512F_PRESENT` versus `AVX512F_ABSENT` from `/proc/cpuinfo`; secondary factor is exact CPU model key. NumPy config/runtime SIMD hashes are recorded correlated signatures only. Stable OS/kernel/compiler/Python/NumPy/SciPy signature is a control.
 
-Representative repeated fingerprint groups show:
+Minimum class size is frozen at four jobs in each AVX512F class. Anchor spread must remain `<1e-5`; exact binding `<=1e-12`; all values finite. CPU vendor alone and ephemeral runner/job IDs are forbidden classifiers.
 
-- `AMD EPYC 9V74 80-Core Processor` and `INTEL(R) XEON(R) PLATINUM 8573C` occupy the same response branch on the overlapping GRID768 witness and share the same V0.15 software fingerprint; despite different CPU vendor/model, both have the same NumPy-config hash in the frozen fingerprint.
-- `AMD EPYC 7763 64-Core Processor` occupies the alternate response branch; relative to the AMD EPYC 9V74 group, every frozen software field is identical except the NumPy-config hash, while CPU model/flags differ.
-- Therefore CPU vendor alone is already an implausible separator. The highest-information prospectively testable candidate family is runtime SIMD/AVX-512 capability versus finer CPU-model/runtime confounding.
-
-These parent observations select candidates for the next prospective gate; they are not themselves a causal host-factor claim.
-
-## Authorized successor
-
-V0.15 authorizes exactly:
-
-`PROSPECTIVELY_FROZEN_HOST_FACTOR_ISOLATION_AUDIT`.
-
-The next gate must be frozen before new substantive compute. It should retain the unchanged numerical object/thresholds and use new independent hosted jobs to test a small predeclared factor hierarchy, with a decisive `UNDERPOWERED/CONFOUNDED` outcome if the hosted allocation does not populate the required factor strata.
-
-Recommended frozen factor hierarchy for V0.16:
-
-1. runtime `AVX512F` present vs absent, read directly from `/proc/cpuinfo` flags;
-2. exact CPU model key (vendor/family/model/stepping/model name) as a finer nested factor;
-3. NumPy runtime/config SIMD signature as a recorded correlated factor, not automatically a causal factor;
-4. stable OS/kernel/compiler/toolchain fields as controls.
-
-A confirmatory AVX-512-class result requires independent replication in both factor classes, within-class stability below `1e-5`, between-class failure-cell separation at/above `1e-5`, and valid anchors. If AVX-512 and another candidate remain perfectly confounded, classify as confounded rather than causal.
+Frozen decision distinguishes: invariant failure; V0.15 stratification not reproduced; software-control confounding; insufficient AVX512F class coverage; same-CPU-model variation; stable AVX512F class stratification; or mixed/finer CPU-model requirement. Even an AVX512F result is observational stratification only and can authorize only a separate controlled dispatch intervention audit.
 
 ## Frozen boundaries / anti-duplication
 
-Production `h=1e-4`; scientific response threshold `<1e-3`; replay/determinism threshold `<1e-5`; production sampling `0.00035`; `tol_perturb_integration=1e-12`; exact binding `<=1e-12`; CLASS commit and baseline/precision/extraction identities remain frozen. No full 107-row Layer-B traversal, covariance/whitening/nuisance/relation-null, `Wm_S3`, global 65537 or downstream science gate is authorized.
+Production `h=1e-4`; scientific response threshold `<1e-3`; replay/determinism threshold `<1e-5`; production sampling `0.00035`; `tol_perturb_integration=1e-12`; exact binding `<=1e-12`; CLASS/baseline/precision/JJ/extraction identities frozen. No full 107-row Layer-B traversal, covariance/whitening/nuisance/relation-null, `Wm_S3`, global 65537 or downstream science gate is authorized.
 
-Frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%` and scientific frontier `67%`; reproducibility diagnosis alone changes neither.
+Frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%` and scientific frontier `67%`. No active DSIR ChatGPT automation or repository cron research loop was found in the explicit check.
 
-No active DSIR ChatGPT automation and no repository cron/schedule research loop were found in the latest task-state check. Do not launch competing production gates.
+Do not inspect partial substantive lane values. Consume only the terminal frozen decision after invariant plus all 24 lanes complete, then materialize V0.16 authority and follow only its encoded `next_stage`.
