@@ -1,0 +1,215 @@
+name: layerb-beta-forced-baseline-production-h-common-grid-interpolation-reassessment-v0-24
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_V0_24_LAUNCH.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_V0_24.json'
+  PARENT_AUTHORITY: 'docs/dsir4/authority/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_REPLAY_REVALIDATION_V0_23.json'
+  PREREG: 'prereg/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_V0_24.md'
+  EXECUTOR: 'ci/layerb_beta_forced_baseline_production_h_common_grid_interpolation_reassessment_v0_24.py'
+  V023_EXECUTOR: 'ci/layerb_beta_forced_baseline_production_h_replay_revalidation_v0_23.py'
+  V022_EXECUTOR: 'ci/layerb_beta_forced_baseline_cross_host_reproducibility_v0_22.py'
+  V021_EXECUTOR: 'ci/layerb_beta_validated_controlled_cpu_capability_dispatch_intervention_v0_21.py'
+  V018_EXECUTOR: 'ci/layerb_beta_controlled_cpu_capability_dispatch_intervention_v0_18.py'
+  V012_EXECUTOR: 'ci/layerb_beta_production_h_common_grid_interpolation_v0_12.py'
+  V07_EXECUTOR: 'ci/layerb_beta_solver_conditioning_v0_7.py'
+  V09_EXECUTOR: 'ci/layerb_beta_tol30_resonance_v0_9.py'
+  V012_CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_PRODUCTION_H_COMMON_GRID_INTERPOLATION_V0_12.json'
+  JJ: 'ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py'
+  PROBES: 'docs/dsir4/contracts/LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4.json'
+  BASELINE: 'configs/dsir4/c2/ide0_reference_v0_1.ini'
+  PRECISION: 'configs/dsir4/c2/dsir_ide_p8_v0_1.pre'
+  V023_RUN_ID: '34878651714'
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+
+jobs:
+  invariant-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen V0.24 identities, direct semantics, mechanism object and boundaries
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def blobsha(path):
+              b=Path(path).read_bytes(); return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          C=json.load(open('docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_V0_24.json'))
+          A=json.load(open(C['parent_authority']))
+          V12=json.load(open(C['v012_contract']))
+          P=json.load(open(C['probe_manifest']))
+          assert C['status']=='PROSPECTIVELY_FROZEN_BEFORE_V0_24_EXECUTION'
+          assert A['classification']==C['parent_classification']=='FORCED_NUMPY_BASELINE_PRODUCTION_H_REPLAY_REVALIDATED'
+          assert A['authorized_next_stage']==C['authorized_parent_next_stage']=='PROSPECTIVELY_FROZEN_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_AUDIT'
+          assert A['run_id']==C['parent_run_id'] and A['decision_job_id']==C['parent_decision_job_id']
+          assert A['decision_artifact_id']==C['parent_decision_artifact_id']
+          assert A['decision_artifact_zip_sha256']==C['parent_decision_artifact_zip_sha256']
+          for p,k in [
+              (C['parent_authority'],'parent_authority_git_blob_sha1'),
+              (C['preregistration'],'preregistration_git_blob_sha1'),
+              (C['executor'],'executor_git_blob_sha1'),
+              (C['v023_executor'],'v023_executor_git_blob_sha1'),
+              (C['v012_executor'],'v012_executor_git_blob_sha1'),
+              (C['v012_contract'],'v012_contract_git_blob_sha1'),
+              (C['historical_direct_v07_executor'],'historical_direct_v07_executor_git_blob_sha1'),
+              (C['historical_direct_v09_executor'],'historical_direct_v09_executor_git_blob_sha1'),
+              (C['probe_manifest'],'probe_manifest_git_blob_sha1'),
+              (C['baseline'],'baseline_git_blob_sha1'),
+              (C['production_precision'],'production_precision_git_blob_sha1'),
+              (C['jj_source'],'jj_git_blob_sha1')]:
+              assert blobsha(p)==C[k], (p,blobsha(p),C[k])
+          assert P['schema']=='LAYERB_TARGETED_DIRECT_K_BETA_PROBES_V0_4'
+          assert P['unique_all_coordinates']==C['probe_manifest_unique_all_coordinates']==46
+          assert C['direct_domain']=='D'
+          # Reproduce the historical V0.7 direct-node construction identity without solving.
+          uniq={}
+          for x in P['items']:
+              if x['d']!='D': continue
+              key=(x['kind'],x['z'],x['k'])
+              if key in uniq:
+                  assert uniq[key]['c']==x['c'] and uniq[key]['f']==x['f']
+              else: uniq[key]=x
+          direct_ks=sorted(set(x['k'] for x in uniq.values()))
+          assert len(uniq)>0 and len(direct_ks)>0
+          parent_k={x['k'] for x in C['parent_cells']}
+          assert parent_k.issubset(set(direct_ks))
+          assert C['production_h']==V12['production_h']==1e-4
+          assert C['scientific_response_relative_tolerance']==V12['response_relative_tolerance']==1e-3
+          assert C['replay_relative_tolerance']==V12['replay_relative_tolerance']==1e-5
+          assert C['exact_target_binding_tolerance']==V12['exact_target_binding_tolerance']==1e-12
+          assert C['production_perturb_sampling_stepsize']==V12['production_perturb_sampling_stepsize']==0.00035
+          assert C['tol300']==V12['tol300']==1e-12 and C['tol300_override']=='1e-12'
+          assert C['native_k_per_decade_for_pk']==V12['native_k_per_decade_for_pk']==20.0
+          assert C['grids']=={k:V12['grids'][k] for k in ['GRID768','GRID896']}
+          v12_targets={(x['kind'],x['d'],x['z'],x['k']) for x in V12['audit_targets']}
+          assert len(C['all_v012_targets'])==3
+          assert {(x['kind'],x['d'],x['z'],x['k']) for x in C['all_v012_targets']}==v12_targets
+          pv={(x['grid'],x['h'],x['z'],x['k']) for x in V12['parent_violation_cells']}
+          assert len(C['parent_cells'])==2
+          for x in C['parent_cells']:
+              assert (x['grid'],1e-4,x['z'],x['k']) in pv
+          assert C['expected_solver_construction_count']==10
+          assert C['primitive_response_series_count']==8 and len(C['primitive_response_series'])==4
+          assert C['numpy_disable_cpu_features']=='AVX512CD,AVX512F,AVX512_CLX,AVX512_CNL,AVX512_ICL,AVX512_KNL,AVX512_KNM,AVX512_SKX'
+          assert C['forced_active_avx512_dispatch']==[]
+          assert C['forced_active_non_avx512_dispatch']==['AVX','AVX2','F16C','FMA3','POPCNT','SSE41','SSE42','SSSE3']
+          assert len(C['replicates'])==32 and len(set(C['replicates']))==32
+          assert C['minimum_eligible_lane_n']==6 and C['minimum_per_native_class_n']==3
+          assert C['explicit_invariant_to_lane_dag_dependency_required'] is True
+          assert C['historical_direct_numeric_values_are_non_gating'] is True
+          assert all(C['forbidden'].values())
+          out={'schema':'LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_INTERPOLATION_INVARIANT_V0_24',
+               'pass':True,'effect':'+0/+0','parallel_lane_count':32,'parent_cell_count':2,
+               'primitive_response_series_count':8,'expected_solver_construction_count':10,
+               'direct_deduplicated_probe_row_count':len(uniq),'direct_unique_node_count':len(direct_ks),
+               'minimum_eligible_lane_n':6,'minimum_per_native_class_n':3,'science_gate_opened':False,
+               'token':'PASS_LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_INTERPOLATION_INVARIANTS_V0_24'}
+          Path('safe/invariant.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'],len(uniq),len(direct_ks))
+          PY
+          python3 -m py_compile "$EXECUTOR" "$V023_EXECUTOR" "$V022_EXECUTOR" "$V021_EXECUTOR" "$V018_EXECUTOR" "$V012_EXECUTOR" "$V07_EXECUTOR" "$V09_EXECUTOR"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-forced-prod-h-interp-invariant-v0-24
+          path: safe/invariant.json
+          retention-days: 90
+
+  interpolation-lane:
+    needs: invariant-audit
+    strategy:
+      fail-fast: false
+      max-parallel: 32
+      matrix:
+        replicate: [R01, R02, R03, R04, R05, R06, R07, R08, R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R25, R26, R27, R28, R29, R30, R31, R32]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact production numerical stack
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'Cython<3' six scipy >/dev/null
+          git clone -q https://github.com/kaeonikc/class_iv.git external_class
+          git -C external_class checkout -q "$CLASS_COMMIT"
+      - name: Reproduce pinned CLASS exposure and common-grid capacity patches
+        run: |
+          set -euo pipefail
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 1152',1))
+          q=Path('external_class/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 32768',1))
+          r=Path('external_class/source/perturbations.c'); s=r.read_text(); old='perhaps_print_variables = perturb_print_variables;'; assert s.count(old)==1; r.write_text(s.replace(old,'perhaps_print_variables = NULL;',1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external_class
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external_class
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" make -C external_class -j2 all >/dev/null
+      - name: Run frozen V0.24 response-free preflight and interpolation reassessment lane
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          .venv/bin/python "$EXECUTOR" --mode lane --replicate '${{ matrix.replicate }}' --contract "$CONTRACT" --v12-executor "$V012_EXECUTOR" --jj-script "$JJ" --probe-manifest "$PROBES" --baseline "$BASELINE" --precision "$PRECISION" --out safe/lane_${{ matrix.replicate }}.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-forced-prod-h-interp-${{ matrix.replicate }}-v0-24
+          path: safe/lane_${{ matrix.replicate }}.json
+          retention-days: 90
+
+  decision:
+    needs: [invariant-audit, interpolation-lane]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-forced-prod-h-interp-*-v0-24
+          path: new
+          merge-multiple: true
+      - name: Verify V0.23 provenance and apply frozen V0.24 classifier
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/$GH_REPO/actions/runs/$V023_RUN_ID/artifacts?per_page=100" > /tmp/v023.json
+          python3 - <<'PY'
+          import json
+          C=json.load(open('docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_V0_24.json'))
+          by={x['name']:x for x in json.load(open('/tmp/v023.json'))['artifacts']}
+          x=by['layerb-beta-forced-prod-h-replay-decision-v0-23']; d=x.get('digest') or ''; d=d[7:] if d.startswith('sha256:') else d
+          assert x['id']==C['parent_decision_artifact_id'] and d==C['parent_decision_artifact_zip_sha256'] and not x['expired']
+          inv=json.load(open('new/invariant.json'))
+          assert inv['pass'] is True and inv['parallel_lane_count']==32 and inv['parent_cell_count']==2
+          assert inv['primitive_response_series_count']==8 and inv['expected_solver_construction_count']==10
+          assert inv['minimum_eligible_lane_n']==6 and inv['minimum_per_native_class_n']==3
+          assert inv['direct_deduplicated_probe_row_count']>0 and inv['direct_unique_node_count']>0
+          assert inv['token']=='PASS_LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_INTERPOLATION_INVARIANTS_V0_24'
+          PY
+          python3 "$EXECUTOR" --mode decision --contract "$CONTRACT" --inputs new/lane_*.json --out safe/decision.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-forced-prod-h-interp-decision-v0-24
+          path: safe/decision.json
+          retention-days: 90
