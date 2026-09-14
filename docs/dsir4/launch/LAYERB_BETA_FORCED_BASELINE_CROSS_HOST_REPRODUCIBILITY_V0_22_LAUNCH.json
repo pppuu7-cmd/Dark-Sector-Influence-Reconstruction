@@ -1,0 +1,17 @@
+{
+  "schema": "LAYERB_BETA_FORCED_BASELINE_CROSS_HOST_REPRODUCIBILITY_LAUNCH_V0_22",
+  "status": "LAUNCH_FROZEN_V0_22",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_VALIDATED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_21.json",
+  "parent_classification": "NUMPY_AVX512_DISPATCH_INTERVENTION_SUPPORTED",
+  "authorized_parent_next_stage": "PROSPECTIVELY_FROZEN_FORCED_BASELINE_CROSS_HOST_REPRODUCIBILITY_AUDIT",
+  "preregistration": "prereg/LAYERB_BETA_FORCED_BASELINE_CROSS_HOST_REPRODUCIBILITY_V0_22.md",
+  "preregistration_commit": "20403f5dbd2a3772752852c0c84ce306d7971c43",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_CROSS_HOST_REPRODUCIBILITY_V0_22.json",
+  "contract_commit": "bc10698aa746747955d27ce2099867de236ef598",
+  "workflow": ".github/workflows/layerb-beta-forced-baseline-cross-host-reproducibility-v0-22.yml",
+  "workflow_commit": "8c36fdeece4cfc6b6f6c8477282a40c9a2ccff25",
+  "parallel_lane_count": 32,
+  "minimum_eligible_lane_n": 6,
+  "minimum_per_native_class_n": 3,
+  "effect": "+0/+0"
+}
