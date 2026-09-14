@@ -8,34 +8,35 @@ Repository state, immutable DSIR4 contracts/authorities, terminal GitHub Actions
 
 Production `h=1e-4`; five-h ladder `[4e-4,2e-4,1e-4,5e-5,2.5e-5]`; native `k_per_decade_for_pk=20`; scientific response threshold `<1e-3`; exact/requested-node mismatch `<=1e-12`; production sampling `0.00035`; stabilized `tol_perturb_integration=1e-12`; technical replay/intervention threshold `<1e-5`. Covariance/whitening/nuisance/relation-null unopened; `Wm_S3` unopened; global 65537 unauthorized; no science gate opened by this numerical diagnostic chain.
 
-## Closed chain through V0.18R/V0.18D
+## Closed chain through V0.19/V0.19D
 
 V0.12 `PRODUCTION_H_COMMON_GRID_INTERPOLATION_AUDIT_INCONCLUSIVE` -> V0.13 `HOSTED_RUN_REPLAY_NONDETERMINISM_SUPPORTED` -> V0.14 `SAME_RUN_REPEATED_SOLVER_DETERMINISM_SUPPORTED` -> V0.15 `HOST_ENVIRONMENT_FINGERPRINT_STRATIFICATION_SUPPORTED` -> V0.16 `HOST_FACTOR_ISOLATION_INCOMPLETE_SAME_CPU_MODEL_VARIATION` -> V0.17 `CPU_CAPABILITY_RUNTIME_STATE_STRATIFICATION_SUPPORTED`.
 
-V0.18R terminal authority: `docs/dsir4/authority/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_18R.json`, commit `e192492b5c56fdae91632447cc02d9bfdac942a5`. Run `34861893888`; decision job `104045296799`; decision artifact `10355468958`, digest `sha256:953a2f0472452828b155dee1ff9b47833ba0c92859ae39c69220de6f82065868`. Classification `CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_INVALID`, effect `+0/+0`; 7 eligible exact-target hosts, minimum 3; numerical invariant and exact binding passed. This is neither causal support nor no-effect.
+V0.18R terminal authority `docs/dsir4/authority/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_18R.json`, commit `e192492b5c56fdae91632447cc02d9bfdac942a5`: `CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_INVALID`, effect `+0/+0`. V0.18D commit `728987ddfbc9caddc1202234662b964c6f034b5b` diagnosed the first NumPy validation defect without reading failure-cell responses.
 
-V0.18D terminal diagnostic authority: `docs/dsir4/authority/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_VALIDATION_DIAGNOSIS_V0_18D.json`, commit `728987ddfbc9caddc1202234662b964c6f034b5b`. Diagnosis `NUMPY_AVX512_MASK_INCOMPLETE_AND_VALIDATOR_OVERBROAD`. The old NumPy mask disabled only a subset of the exact native-active 15-feature AVX-512 dispatch set while the validator required zero active AVX-512 features. Native and glibc-only controls validated on all 7 eligible hosts; NumPy-only and combined were invalid by construction. Binary identity was constant. No substantive V0.18R failure-cell responses were read for the diagnosis. Authorized successor exactly: `PROSPECTIVELY_FROZEN_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_AUDIT`.
+V0.19 terminal authority: `docs/dsir4/authority/LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_19.json`, commit `3d4542b3c3514092fdc99566bed01c877eb77003`. Run `34868672661`, decision job `104060026580`, decision artifact `10358292041`, digest `sha256:a4725493e504c4f3c4f2a3bae5a1927abd58fde8ba22e90546d32d3bce0a8d87`. Classification `CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_INVALID`, effect `+0/+0`. Exact-target eligible lanes `R20,R24,R27` met the frozen minimum n=3 but all failed response-free preflight; no substantive response was computed for any invalid-preflight lane.
 
-## V0.19 — active repaired prospectively frozen intervention
+V0.19D terminal diagnostic authority: `docs/dsir4/authority/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_VALIDATION_DIAGNOSIS_V0_19D.json`, commit `f29190ead75225d8e8862e44ba06b51555c580b2`. Diagnosis `NUMPY_RAW_CAPABILITY_BITS_NOT_RUNTIME_DISPATCH_VALIDATION_TARGET`. NumPy 1.26.4 runtime reporting iterates `__cpu_dispatch__` and tests `__cpu_features__[feature]`; residual raw capability bits outside the dispatch list are diagnostic, not proof of active dispatch. V0.19D authorizes exactly `PROSPECTIVELY_FROZEN_NUMPY_RUNTIME_DISPATCH_SEMANTICS_AUDIT`.
 
-Preregistration: `prereg/LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_19.md`, commit `a7fc1d1740f64d197fcc269cdd7bf95a5fda080b`.
-Executor: `ci/layerb_beta_repaired_controlled_cpu_capability_dispatch_intervention_v0_19.py`, final commit `b385cc3b2719e8672672c595a40181814ba0a0ee`, blob `6df0890f5646df1c309aa8369232b77c0120dce0`.
-Contract: `docs/dsir4/contracts/LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_19.json`, commit `996f0b0657dda4bc84a62d020cba89c599e8b509`.
-Workflow: `.github/workflows/layerb-beta-repaired-controlled-cpu-capability-dispatch-intervention-v0-19.yml`, commit `94e39c2ab35b1172e9d145b413e015297a9be2d4`.
-Launch/head: `8f04577d97e62ed4273ef5e5ea2bb41382582e5b`.
-Authoritative active run: `34868672661`; exactly one run exists. Invariant source-identity/repair-scope checks and py_compile passed. Thirty-two independent host lanes are running with `max-parallel:32`.
+## V0.20 — active response-free NumPy runtime dispatch semantics audit
 
-Eligibility is prospectively stricter: exact AMD EPYC 9V74, native AVX512F, glibc x86-64-v4 active, and the exact frozen native NumPy active AVX-512 set: `AVX512BITALG,AVX512BW,AVX512CD,AVX512DQ,AVX512F,AVX512IFMA,AVX512VBMI,AVX512VBMI2,AVX512VL,AVX512VNNI,AVX512VPOPCNTDQ,AVX512_CLX,AVX512_CNL,AVX512_ICL,AVX512_SKX`.
+Preregistration: `prereg/LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_V0_20.md`, commit `032ef809a934c4ac0ae8dfb4cb9d2d7b4d35386b`.
+Executor: `ci/layerb_beta_numpy_runtime_dispatch_semantics_v0_20.py`, commit `865c241675d18af8e76d4fd632cc803cd6c99869`, blob `1d31907a488224cc510afc7908c888da4bfe08ff`.
+Contract: `docs/dsir4/contracts/LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_V0_20.json`, commit `de9eae11c49a82b8d01ec405540258927a6a4a43`.
+Workflow: `.github/workflows/layerb-beta-numpy-runtime-dispatch-semantics-v0-20.yml`, commit `216677ba6d5733339a634afcf9546cac00343b22`.
+Launch/head: `596fbdc15f99a4709756c3df3770fce721b93635`.
+Authoritative active run: `34869578874`; exactly one run exists. Invariant audit is terminal `success`. Thirty-two independent NumPy-only host lanes run with `max-parallel:32`.
 
-Every eligible lane performs four response-free condition fingerprints first. NumPy-only and combined must have zero active NumPy AVX-512 features; glibc-only must disable x86-64-v4 while preserving the exact 15-feature NumPy set. If preflight fails, no substantive response is computed and the terminal classifier returns `INVALID`. Only preflight-valid lanes perform the four paired solver conditions. Scientific hypothesis, diagnostic cells, V0.17 branch references, thresholds, target model, minimum eligible `n=3` and decision semantics are unchanged from V0.18.
+V0.20 never builds/imports CLASS and never computes a DSIR response. Exact-target EPYC 9V74 lanes record NumPy 1.26.4 `__cpu_baseline__`, `__cpu_dispatch__`, `__cpu_features__`, define active dispatch only as dispatch-list members whose feature state is true, derive the AVX-512 mask only from native `__cpu_dispatch__`, and validate the fresh masked interpreter against that dispatch model. Raw non-dispatch AVX-512 capability bits may remain true. Minimum eligible n=3; profile consistency is frozen across baseline/dispatch/AVX512-dispatch/active-AVX512-dispatch.
 
 ## Exact next order
 
-1. Continue only V0.19 run `34868672661`; do not launch a duplicate.
-2. Do not inspect partial substantive V0.19 response values or use lane timing/identity as a classifier.
-3. Wait for invariant + all 32 lanes + single decision barrier.
-4. Verify terminal decision artifact ID/digest and materialize a V0.19 authority from the frozen decision.
-5. Follow only its encoded `next_stage`.
-6. Keep full Layer-B, covariance/whitening/nuisance/relation-null, `Wm_S3`, global 65537 and science gates closed unless a later terminal authority explicitly opens them.
+1. Continue only V0.20 run `34869578874`; do not launch a duplicate.
+2. Wait for invariant + all 32 lanes + single terminal decision barrier. Technical lane fingerprints are response-free, but only the frozen terminal classifier determines promotion.
+3. Verify terminal decision artifact ID/digest and materialize a V0.20 authority.
+4. If `NUMPY_AVX512_RUNTIME_DISPATCH_MASK_VALIDATED`, follow only `PROSPECTIVELY_FROZEN_VALIDATED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_AUDIT` using the exact common profile/mask recorded by V0.20 authority.
+5. Otherwise follow only the encoded underpowered/heterogeneous/mask-diagnosis/inconclusive branch.
+6. Do not read V0.18R/V0.19 failure-cell responses or salvage them post hoc.
+7. Keep full Layer-B, covariance/whitening/nuisance/relation-null, `Wm_S3`, global 65537 and science gates closed unless a later terminal authority explicitly opens them.
 
 Frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%`; scientific frontier `67%`.
