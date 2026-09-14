@@ -4,29 +4,28 @@ Updated: 2026-09-14. Scope: **DSIR only**; RTK/RQIR/KMQGB/KMDSB excluded.
 
 ## Closed numerical-runtime chain through V0.21
 
-V0.17 `CPU_CAPABILITY_RUNTIME_STATE_STRATIFICATION_SUPPORTED` established observational host/runtime stratification.
+V0.18R and V0.19 terminal invalid outcomes were caused by a validation-model error, not by GitHub Actions or CLASS failure: the validator incorrectly required every raw NumPy `__cpu_features__` AVX-512 capability bit to become false. V0.19D (`f29190ead75225d8e8862e44ba06b51555c580b2`) diagnosed `NUMPY_RAW_CAPABILITY_BITS_NOT_RUNTIME_DISPATCH_VALIDATION_TARGET`. Runtime dispatch must be validated on `__cpu_dispatch__` members intersected with true `__cpu_features__`; residual non-dispatch hardware bits are irrelevant to mask success.
 
-V0.18R and V0.19 both ended `CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_INVALID`, not because GitHub Actions or CLASS failed, but because the intervention validator targeted the wrong NumPy observable: it required every raw AVX-512 bit in `__cpu_features__` to become false. V0.19D (`f29190ead75225d8e8862e44ba06b51555c580b2`) diagnosed `NUMPY_RAW_CAPABILITY_BITS_NOT_RUNTIME_DISPATCH_VALIDATION_TARGET`. NumPy runtime dispatch is defined by membership in `__cpu_dispatch__` combined with the corresponding `__cpu_features__` state; residual non-dispatch raw capability bits are not evidence that dispatch remains active.
+V0.20 authority `docs/dsir4/authority/LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_V0_20.json`, commit `e1357e18bf95109e5b05b5e188d8f1e137f761e1`, response-free validated the exact NumPy 1.26.4 mask.
 
-V0.20 authority `docs/dsir4/authority/LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_V0_20.json`, commit `e1357e18bf95109e5b05b5e188d8f1e137f761e1`, validated the exact NumPy 1.26.4 runtime-dispatch mask response-free. Run `34869578874`, decision artifact `10358203034`, digest `sha256:397e2da8f05b92d300bf244f81ee411045508988ad04762ed3868615a66c4002`. Classification `NUMPY_AVX512_RUNTIME_DISPATCH_MASK_VALIDATED`.
+V0.21 terminal authority `docs/dsir4/authority/LAYERB_BETA_VALIDATED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_21.json`, creation commit `7b6fc404e70ab75f1a7b7053123e7cf5dc46967e`. Run `34870133635` terminal success; decision job `104071826031`; artifact `10359787747`; digest `sha256:5b85934b23cc01cd6a4c6f3c3662d9d196a491d52addf129127e5d63e8ca6e13`. Classification `NUMPY_AVX512_DISPATCH_INTERVENTION_SUPPORTED`, effect `+0/+0`. Five exact-target preflight-valid lanes (`R03,R15,R19,R22,R28`) showed NumPy-only branch switch; glibc-only did not; combined did. Exact binding maximum `1.6551974349255386e-16`; anchor spread `1.0758876522574515e-6`.
 
-V0.21 terminal authority: `docs/dsir4/authority/LAYERB_BETA_VALIDATED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_21.json`, creation commit `7b6fc404e70ab75f1a7b7053123e7cf5dc46967e`.
-Run `34870133635` is terminal success: invariant + 32 hosted lanes + decision all succeeded. Decision job `104071826031`; decision artifact `10359787747`, digest `sha256:5b85934b23cc01cd6a4c6f3c3662d9d196a491d52addf129127e5d63e8ca6e13`.
-Classification: `NUMPY_AVX512_DISPATCH_INTERVENTION_SUPPORTED`, effect `+0/+0`.
-Eligible/preflight-valid exact-target lanes: `R03,R15,R19,R22,R28` (`n=5`, frozen minimum 3). `numpy_switch_supported=true`, `glibc_switch_supported=false`, `combined_switch_supported=true`; intervention invalid=false; invariant=true. Maximum requested-node mismatch `1.6551974349255386e-16`; maximum anchor condition spread `1.0758876522574515e-6`.
+Causal numerical result: the hosted response branch is localized to NumPy AVX-512 runtime dispatch under the frozen numerical object. This is not Layer-B or dark-sector evidence.
 
-Causal numerical interpretation: under the exact frozen AMD EPYC 9V74 object and identical binaries, disabling the validated NumPy AVX-512 runtime dispatch set switches both frozen V0.17 replay-failure responses from the native branch to the alternate branch in every eligible lane while the anchor remains stable. The glibc-only hwcaps mask does not switch the branch. Thus the host-dependent response branch is causally localized to NumPy AVX-512 runtime dispatch, not to glibc x86-64-v4 dispatch. This is numerical-runtime mechanism evidence only, not Layer-B or dark-sector evidence.
+## Active authoritative frontier — V0.22 forced-baseline cross-host reproducibility
 
-Authorized next stage exactly: `PROSPECTIVELY_FROZEN_FORCED_BASELINE_CROSS_HOST_REPRODUCIBILITY_AUDIT`.
+Preregistration: `prereg/LAYERB_BETA_FORCED_BASELINE_CROSS_HOST_REPRODUCIBILITY_V0_22.md`, commit `20403f5dbd2a3772752852c0c84ce306d7971c43`.
+Executor: `ci/layerb_beta_forced_baseline_cross_host_reproducibility_v0_22.py`, commit `82684fa591911761720e744e5462e51902569fa2`, blob `7921f856f468d9b73889130df39148ccca3d048d`.
+Contract: `docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_CROSS_HOST_REPRODUCIBILITY_V0_22.json`, commit `bc10698aa746747955d27ce2099867de236ef598`.
+Workflow: `.github/workflows/layerb-beta-forced-baseline-cross-host-reproducibility-v0-22.yml`, commit `8c36fdeece4cfc6b6f6c8477282a40c9a2ccff25`.
+Launch/head: `d2e4e2cfbc122683d2390369dc087b55e89fb2fc`.
+Authoritative run: `34875798025`; exactly one run exists. Invariant audit is terminal `success`; 32 independent hosted lanes run with `max-parallel:32`.
 
-## Exact next order
+V0.22 fixes the prior validator defect by construction: response-free preflight never treats raw non-dispatch AVX-512 capability bits as mask-success criteria. It validates the exact NumPy build baseline/dispatch sets and requires forced active AVX-512 dispatch to be empty while preserving the frozen active non-AVX512 dispatch set. No unmasked substantive response is computed. Only a validated forced-baseline child computes the two frozen replay-failure cells plus anchor.
 
-1. Do not repeat V0.18R/V0.19 or V0.21.
-2. Prospectively freeze a forced NumPy non-AVX512 baseline cross-host reproducibility audit before execution.
-3. Use response-free native fingerprints to prove representation of distinct native capability/dispatch classes, then compute only the forced-baseline numerical object.
-4. Require the exact V0.20 validated NumPy mask and validate the forced active dispatch profile before any substantive response.
-5. Test whether both frozen replay-failure cells and the anchor collapse to cross-host spread `<1e-5` and whether failure-cell responses agree with the frozen V0.17 alternate branch within `<1e-5`.
-6. Keep all downstream science gates closed.
+Principal power requirement is frozen at total eligible `n>=6`, with at least `n>=3` from native `NATIVE_AVX512_ACTIVE` and at least `n>=3` from native `NATIVE_AVX512_INACTIVE`. Supported result requires cross-host spread `<1e-5` on both failure cells and anchor, native-class mean separation `<1e-5`, and every failure response within `<1e-5` of the frozen V0.17 alternate branch.
+
+Do not inspect partial substantive V0.22 response values. Consume only the terminal frozen decision.
 
 ## Frozen boundaries
 
