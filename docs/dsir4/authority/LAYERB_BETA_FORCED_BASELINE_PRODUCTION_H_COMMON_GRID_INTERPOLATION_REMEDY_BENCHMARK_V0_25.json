@@ -1,0 +1,69 @@
+{
+  "schema": "LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REMEDY_BENCHMARK_AUTHORITY_V0_25",
+  "status": "TERMINAL_AUTHORITY",
+  "scope": "DSIR_ONLY",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_V0_24.json",
+  "preregistration": {
+    "path": "prereg/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REMEDY_BENCHMARK_V0_25.md",
+    "commit": "4a1247c56cfbe293a5203ca0b44968ae13aacade"
+  },
+  "contract": {
+    "path": "docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REMEDY_BENCHMARK_V0_25.json",
+    "commit": "876b56589d61b263a569583e7cb69e887d68d326"
+  },
+  "executor": {
+    "path": "ci/layerb_beta_forced_baseline_production_h_common_grid_interpolation_remedy_benchmark_v0_25.py",
+    "commit": "03cbd910774aa365859abaff18496b01b22bc24d"
+  },
+  "workflow": {
+    "path": ".github/workflows/layerb-beta-forced-baseline-production-h-common-grid-interpolation-remedy-benchmark-v0-25.yml",
+    "commit": "f63156fa1adaeb61e496cc5259cf77a584496612"
+  },
+  "launch_head": "05c87c85093142cfca4d0a432269d5f2440a6e88",
+  "run": {
+    "id": 34896282790,
+    "conclusion": "success",
+    "required_lane_count": 32,
+    "eligible_lane_count": 32,
+    "decision_job_id": 104165699139,
+    "decision_artifact_id": 10370496892,
+    "decision_artifact_digest": "sha256:7fcb329027fad04425802f4a90b7874baa2a25e949fbc1057db1a3ed70546562",
+    "decision_json_sha256": "f3d0f47c02c20f39da0fcd71e28665308d53ab8386c876776d3f64da6a7d4bb8"
+  },
+  "raw_decision": {
+    "path": "results/dsir4/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REMEDY_BENCHMARK_V0_25_DECISION.json",
+    "commit": "2bd14dec8b0d845787cce6ddfba290144001bae9"
+  },
+  "classification": "FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED",
+  "scientific_effect": "+0/+0",
+  "validated_findings": {
+    "parent_problem_reproduced": true,
+    "primitive_response_reproducibility_ok": true,
+    "exact_target_union_remedy_supported": true,
+    "exact_target_union_node_set_safety_ok": true,
+    "one_step_grid_refinement_remedy_supported": false,
+    "exact_target_union_relative_to_direct_max_all_six_cells": 0.0,
+    "one_step_grid_refinement_failing_cell": {
+      "original_grid": "GRID768",
+      "target_id": "T3",
+      "relative_to_direct": 0.001136253405249066,
+      "required_threshold": 0.001
+    },
+    "native_class_counts": {
+      "NATIVE_AVX512_ACTIVE": 7,
+      "NATIVE_AVX512_INACTIVE": 25
+    }
+  },
+  "authorized_next_stage": "PROSPECTIVELY_FROZEN_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_AUDIT",
+  "interpretation_ceiling": "Numerical interpolation-remedy selection only. This terminal authority supports exact-target-union as the prospectively frozen numerical remedy candidate under the validated forced NumPy non-AVX512 baseline. It is not statistical/model evidence and not physical dark-sector evidence. No downstream science gate is opened by V0.25 itself.",
+  "locked": {
+    "full_layerb_107_row_traversal": true,
+    "covariance": true,
+    "whitening": true,
+    "nuisance_marginalization": true,
+    "relation_null": true,
+    "Wm_S3": true,
+    "global_65537": true,
+    "downstream_physical_science": true
+  }
+}
