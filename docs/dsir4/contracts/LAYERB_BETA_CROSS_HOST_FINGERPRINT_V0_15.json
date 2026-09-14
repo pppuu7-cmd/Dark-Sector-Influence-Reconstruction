@@ -1,0 +1,106 @@
+{
+  "schema": "LAYERB_BETA_CROSS_HOST_FINGERPRINT_CONTRACT_V0_15",
+  "status": "PROSPECTIVELY_FROZEN_BEFORE_V0_15_EXECUTION",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_SAME_RUN_SOLVER_DETERMINISM_V0_14.json",
+  "parent_authority_commit": "1a752a42223043b6efed79dd1294406532d2b48e",
+  "parent_authority_git_blob_sha1": "85ac795239815e50d0593d1fd73f206618c75db3",
+  "parent_classification": "SAME_RUN_REPEATED_SOLVER_DETERMINISM_SUPPORTED",
+  "authorized_parent_next_stage": "PROSPECTIVELY_FROZEN_CROSS_HOST_ENVIRONMENT_FINGERPRINT_REPRODUCIBILITY_AUDIT",
+  "parent_run_id": 34787822995,
+  "parent_decision_artifact_id": 10327458719,
+  "parent_decision_artifact_zip_sha256": "12e9ea528dfbb12d2041ae927be6f551e84abff8478c74e19508e7b5e3345576",
+  "target_hypothesis": "The V0.13 cross-job response variation is associated with a stable recorded GitHub-hosted hardware/software environment fingerprint; alternatively, if variation persists among jobs with the same recorded fingerprint, the recorded host fingerprint is insufficient and a deeper numerical runtime-state audit is required.",
+  "object": "Across-independent-job pairwise relative spread of the signed centered beta response (plus-minus)/(2h) on the exact V0.13/V0.14 diagnostic cells, grouped by a prospectively fixed normalized host hardware/software fingerprint. Only PURE_PAIR solver construction is used because V0.14 established exact within-run repeat determinism in both profiles and V0.15 tests cross-host variation rather than interleaving.",
+  "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+  "baseline": "configs/dsir4/c2/ide0_reference_v0_1.ini",
+  "baseline_git_blob_sha1": "cd2beb01ce6575f97f2e3203226ed6d4f048dcaa",
+  "production_precision": "configs/dsir4/c2/dsir_ide_p8_v0_1.pre",
+  "production_precision_git_blob_sha1": "fea602547cfb74e187cf9aedd5a9b0c316c626be",
+  "jj_source": "ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py",
+  "jj_git_blob_sha1": "ee8fd0650a2a1322fab83a86bb06a219e84ca434",
+  "v12_executor": "ci/layerb_beta_production_h_common_grid_interpolation_v0_12.py",
+  "v12_executor_git_blob_sha1": "aedd509780786f1efc200710e572c0af848cd878",
+  "executor": "ci/layerb_beta_cross_host_fingerprint_v0_15.py",
+  "executor_commit": "ad811e5da24bb20f654b0bc4d0646640e561150f",
+  "executor_git_blob_sha1": "1a51344f0c571704b2b1d01bf4ecb04fe4508083",
+  "production_h": 0.0001,
+  "scientific_response_relative_tolerance": 0.001,
+  "replay_relative_tolerance": 0.00001,
+  "exact_target_binding_tolerance": 1e-12,
+  "production_perturb_sampling_stepsize": 0.00035,
+  "tol300": 1e-12,
+  "tol300_override": "1e-12",
+  "profile": "PURE_PAIR",
+  "replicates": ["R1","R2","R3","R4","R5","R6","R7","R8"],
+  "grids": {
+    "GRID768": {"base_n": 768, "lower_guard_count": 0, "upper_guard_count": 1, "requested_node_count": 769},
+    "GRID1024": {"base_n": 1024, "lower_guard_count": 0, "upper_guard_count": 1, "requested_node_count": 1025}
+  },
+  "targets": [
+    {"kind":"F","d":"D","z":"3fe43d70a3d70a3e","k":"3f900ea7bc915d36"},
+    {"kind":"F","d":"D","z":"3fdab851eb851eb8","k":"3f890e66b051e28b"},
+    {"kind":"F","d":"D","z":"3fe3d70a3d70a3d7","k":"3f8fc70971921840"}
+  ],
+  "diagnostic_cells": [
+    {"role":"REPLAY_FAILURE","grid":"GRID1024","h":0.0002,"kind":"F","d":"D","z":"3fdab851eb851eb8","k":"3f890e66b051e28b"},
+    {"role":"REPLAY_FAILURE","grid":"GRID768","h":0.0001,"kind":"F","d":"D","z":"3fe3d70a3d70a3d7","k":"3f8fc70971921840"},
+    {"role":"REPLAY_FAILURE","grid":"GRID1024","h":0.0001,"kind":"F","d":"D","z":"3fe3d70a3d70a3d7","k":"3f8fc70971921840"},
+    {"role":"ANCHOR","grid":"GRID768","h":0.0001,"kind":"F","d":"D","z":"3fdab851eb851eb8","k":"3f890e66b051e28b"},
+    {"role":"ANCHOR","grid":"GRID1024","h":0.0001,"kind":"F","d":"D","z":"3fdab851eb851eb8","k":"3f890e66b051e28b"}
+  ],
+  "parallel_partitions": [
+    "GRID768_R1","GRID768_R2","GRID768_R3","GRID768_R4","GRID768_R5","GRID768_R6","GRID768_R7","GRID768_R8",
+    "GRID1024_R1","GRID1024_R2","GRID1024_R3","GRID1024_R4","GRID1024_R5","GRID1024_R6","GRID1024_R7","GRID1024_R8"
+  ],
+  "scientific_fingerprint": {
+    "hardware_fields": ["runner_arch","platform_machine","cpu_vendor_id","cpu_family","cpu_model","cpu_stepping","cpu_microcode","cpu_model_name","cpu_flags_sha256"],
+    "software_fields": ["runner_os","image_os","image_version","platform_system","platform_release","platform_version","os_release","libc","gcc","gfortran","ldd","python","numpy","scipy","numpy_config_sha256"],
+    "fingerprint_hash": "SHA256(canonical sorted compact JSON of {hardware,software})",
+    "excluded_ephemeral_fields": ["runner_name","github_run_id","github_job","github_run_attempt","dynamic_cpu_frequency","timestamps"],
+    "ephemeral_provenance_may_be_recorded_but_not_used_for_classification": true
+  },
+  "positive_controls": {
+    "all_16_frozen_grid_replica_lanes_present": true,
+    "exactly_8_independent_jobs_per_grid": true,
+    "anchors_cross_job_spread_below_1e_5": true,
+    "all_responses_finite": true,
+    "requested_node_coordinate_rel_mismatch_at_most_1e_12": true,
+    "fingerprint_hash_integrity": true,
+    "no_ephemeral_field_in_scientific_fingerprint": true
+  },
+  "negative_controls": {
+    "cross_grid_values_are_not_compared_as_replicates": true,
+    "closeness_to_parent_or_v012_state_is_not_a_classifier": true,
+    "runner_name_or_job_id_cannot_define_scientific_groups": true,
+    "green_ci_alone_is_not_scientific_pass": true,
+    "v014_same_run_determinism_is_not_physical_layerb_validation": true
+  },
+  "pre_registered_decision": {
+    "INCONCLUSIVE": "If an anchor cross-job spread reaches 1e-5, requested-node binding exceeds 1e-12, any required lane is missing, a response is non-finite, a frozen identity/hash fails, or fingerprint integrity/ephemeral-field exclusion fails, classify CROSS_HOST_FINGERPRINT_AUDIT_INCONCLUSIVE and authorize no scientific promotion.",
+    "NOT_REPRODUCED": "If all invariants and anchors pass and every REPLAY_FAILURE cell has cross-job max pairwise spread <1e-5 across the eight jobs for its grid, classify V013_CROSS_JOB_NONDETERMINISM_NOT_REPRODUCED_IN_V015. Authorize only a separately frozen separated-interpolation confirmation audit; do not promote V0.12 directly.",
+    "SAME_FINGERPRINT_VARIATION": "If all invariants and anchors pass, at least one REPLAY_FAILURE cell has cross-job spread >=1e-5, and any combined-fingerprint group containing at least two jobs has within-group spread >=1e-5 on a REPLAY_FAILURE cell, classify RECORDED_HOST_FINGERPRINT_INSUFFICIENT_CROSS_JOB_VARIATION_PERSISTS. Authorize only a separately frozen numerical runtime-state fingerprint audit.",
+    "FINGERPRINT_STRATIFIED": "If all invariants and anchors pass, cross-job variation >=1e-5 is reproduced, no repeated combined-fingerprint group has within-group failure-cell spread >=1e-5, and at least two distinct repeated combined-fingerprint groups on the same grid have group-mean separation >=1e-5 for a REPLAY_FAILURE cell, classify HOST_ENVIRONMENT_FINGERPRINT_STRATIFICATION_SUPPORTED. Authorize only a separately frozen host-factor isolation audit.",
+    "UNDERPOWERED_OR_MIXED": "If all invariants and anchors pass and cross-job variation >=1e-5 is reproduced but the frozen repeated-fingerprint evidence satisfies neither SAME_FINGERPRINT_VARIATION nor FINGERPRINT_STRATIFIED, classify HOST_ENVIRONMENT_FINGERPRINT_AUDIT_UNDERPOWERED_OR_MIXED. Authorize only a separately frozen expanded host-fingerprint replication audit."
+  },
+  "interpretation_ceiling": "V0.15 may localize or fail to localize the already-established cross-job numerical reproducibility defect with respect to the prospectively fixed recorded host fingerprint. It cannot validate full Layer-B, covariance, whitening, nuisance treatment, relation-null, Wm_S3, global traversal, a dark-sector signal, or any physical inference.",
+  "forbidden": {
+    "retune_replay_threshold_after_results": true,
+    "change_fingerprint_fields_after_results": true,
+    "change_replica_count_after_results": true,
+    "change_diagnostic_cells_after_results": true,
+    "change_profile_after_results": true,
+    "use_ephemeral_runner_or_job_ids_for_scientific_grouping": true,
+    "mutate_production_h": true,
+    "change_sampling_stepsize": true,
+    "change_tol300": true,
+    "launch_full_layerb_107_row_traversal": true,
+    "launch_global_65537": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "open_science_gate": true
+  },
+  "effect": "+0/+0"
+}
