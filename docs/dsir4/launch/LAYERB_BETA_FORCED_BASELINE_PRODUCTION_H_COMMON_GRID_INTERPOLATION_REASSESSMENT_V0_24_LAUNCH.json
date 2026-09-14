@@ -1,0 +1,18 @@
+{
+  "schema": "LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_LAUNCH_V0_24",
+  "status": "AUTHORITATIVE_LAUNCH",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_REPLAY_REVALIDATION_V0_23.json",
+  "parent_authority_commit": "2aa8ff62a47c1aa367f102032bdb7b2267a9fa94",
+  "preregistration": "prereg/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_V0_24.md",
+  "preregistration_commit": "67e92ef1fb11e8cf607d693f0b38d64a31003258",
+  "executor": "ci/layerb_beta_forced_baseline_production_h_common_grid_interpolation_reassessment_v0_24.py",
+  "executor_commit": "8bddca0baaa72446a6ae230114193ce74a4c318d",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_V0_24.json",
+  "contract_commit": "f71f6a957cd2f61659f87e4ec108c7ed0e18d4ce",
+  "workflow": ".github/workflows/layerb-beta-forced-baseline-production-h-common-grid-interpolation-reassessment-v0-24.yml",
+  "workflow_commit": "3b6af7e97a21ea14992e3b5d13c91ff3394a9d87",
+  "workflow_git_blob_sha1": "5e408a4d052ddf396248abb21fd54e557032120f",
+  "expected_authoritative_run_count": 1,
+  "effect": "+0/+0",
+  "science_gate_opened": false
+}
