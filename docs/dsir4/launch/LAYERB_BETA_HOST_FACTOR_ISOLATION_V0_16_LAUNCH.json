@@ -1,0 +1,17 @@
+{
+  "schema": "LAYERB_BETA_HOST_FACTOR_ISOLATION_LAUNCH_V0_16",
+  "status": "LAUNCH_FROZEN_V0_16",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_CROSS_HOST_FINGERPRINT_V0_15.json",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_HOST_FACTOR_ISOLATION_V0_16.json",
+  "contract_commit": "32061462eda85f3e9a7dc6e648e0327c2269901f",
+  "workflow": ".github/workflows/layerb-beta-host-factor-isolation-v0-16.yml",
+  "workflow_commit": "ebc858e961e309b6934b0b17bf8120c39810a401",
+  "executor": "ci/layerb_beta_host_factor_isolation_v0_16.py",
+  "executor_commit": "1ca9b1b711e09b3d34abd03d7932091b5e44682d",
+  "parallel_lanes": 24,
+  "grid": "GRID1024",
+  "factor_primary": "AVX512F_PRESENT_VS_ABSENT",
+  "minimum_factor_class_n": 4,
+  "effect": "+0/+0",
+  "note": "Host-factor isolation only. AVX512F result is observational stratification, never causal proof. No Layer-B science promotion, covariance, whitening, nuisance, relation-null, Wm_S3, global 65537 or full traversal is authorized by launch."
+}
