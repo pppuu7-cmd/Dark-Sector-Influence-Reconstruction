@@ -1,0 +1,22 @@
+{
+  "schema": "LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_REPLAY_REVALIDATION_LAUNCH_V0_23",
+  "status": "AUTHORITATIVE_SINGLE_LAUNCH",
+  "created_utc_date": "2026-09-14",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_FORCED_BASELINE_CROSS_HOST_REPRODUCIBILITY_V0_22.json",
+  "parent_authority_commit": "2b3cb46863fb85e6456a5a11e30183acf3b6de10",
+  "parent_classification": "FORCED_NUMPY_BASELINE_CROSS_HOST_REPRODUCIBILITY_SUPPORTED",
+  "authorized_parent_next_stage": "PROSPECTIVELY_FROZEN_FORCED_BASELINE_PRODUCTION_H_REPLAY_REVALIDATION_AUDIT",
+  "preregistration": "prereg/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_REPLAY_REVALIDATION_V0_23.md",
+  "preregistration_commit": "24b09db3069acbe875459f7ad6f2d2aea9f25830",
+  "executor": "ci/layerb_beta_forced_baseline_production_h_replay_revalidation_v0_23.py",
+  "executor_commit": "c96e80a0e075bd21b41351aa158ef997f0cc05cd",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_REPLAY_REVALIDATION_V0_23.json",
+  "contract_commit": "d5d5665671fbfedaaf77022b0f7164ada90d49ee",
+  "workflow": ".github/workflows/layerb-beta-forced-baseline-production-h-replay-revalidation-v0-23.yml",
+  "workflow_commit": "a7ce06dc9cef76c934d5b5c2c289a0729aa64e04",
+  "parallel_lane_count": 32,
+  "production_h_cell_count": 15,
+  "effect": "+0/+0",
+  "science_gate_opened": false,
+  "instruction": "Create exactly one authoritative V0.23 GitHub Actions run from this launch commit; consume only the terminal frozen decision artifact and follow only its encoded next_stage."
+}
