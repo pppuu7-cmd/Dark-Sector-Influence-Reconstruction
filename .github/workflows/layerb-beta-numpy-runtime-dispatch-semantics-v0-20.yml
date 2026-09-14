@@ -1,0 +1,111 @@
+name: layerb-beta-numpy-runtime-dispatch-semantics-v0-20
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_V0_20_LAUNCH.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_V0_20.json'
+  PARENT: 'docs/dsir4/authority/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_VALIDATION_DIAGNOSIS_V0_19D.json'
+  PREREG: 'prereg/LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_V0_20.md'
+  EXECUTOR: 'ci/layerb_beta_numpy_runtime_dispatch_semantics_v0_20.py'
+
+jobs:
+  invariant-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen response-free V0.20 contract
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def blobsha(path):
+              b=Path(path).read_bytes(); return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          C=json.load(open('docs/dsir4/contracts/LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_V0_20.json'))
+          P=json.load(open(C['parent_authority']))
+          assert C['status']=='PROSPECTIVELY_FROZEN_BEFORE_V0_20_EXECUTION'
+          assert P['diagnosis']==C['parent_diagnosis']=='NUMPY_RAW_CAPABILITY_BITS_NOT_RUNTIME_DISPATCH_VALIDATION_TARGET'
+          assert P['authorized_next_stage']==C['authorized_parent_next_stage']=='PROSPECTIVELY_FROZEN_NUMPY_RUNTIME_DISPATCH_SEMANTICS_AUDIT'
+          assert C['numpy_version']=='1.26.4'
+          assert len(C['replicates'])==32 and len(set(C['replicates']))==32 and C['required_lane_count']==32
+          assert C['minimum_eligible_lane_n']==3
+          assert C['response_computation_forbidden'] is True and C['class_import_forbidden'] is True
+          assert C['target_cpu_model']=={'vendor_id':'AuthenticAMD','family':'25','model':'17','stepping':'1','model_name':'AMD EPYC 9V74 80-Core Processor'}
+          assert all(C['forbidden'].values())
+          assert blobsha(C['parent_authority'])==C['parent_authority_git_blob_sha1']
+          assert blobsha(C['preregistration'])==C['preregistration_git_blob_sha1']
+          assert blobsha(C['executor'])==C['executor_git_blob_sha1']
+          out={'schema':'LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_INVARIANT_V0_20','pass':True,'effect':'+0/+0','parallel_lane_count':32,'minimum_eligible_lane_n':3,'response_computed':False,'class_imported':False,'science_gate_opened':False,'token':'PASS_LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_INVARIANTS_V0_20'}
+          Path('safe/invariant.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['token'])
+          PY
+          python3 -m py_compile "$EXECUTOR"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-numpy-dispatch-invariant-v0-20
+          path: safe/invariant.json
+          retention-days: 90
+
+  dispatch-lane:
+    strategy:
+      fail-fast: false
+      max-parallel: 32
+      matrix:
+        replicate: [R01, R02, R03, R04, R05, R06, R07, R08, R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R25, R26, R27, R28, R29, R30, R31, R32]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact NumPy runtime
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' >/dev/null
+      - name: Run frozen response-free dispatch semantics lane
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          .venv/bin/python "$EXECUTOR" --mode lane --replicate '${{ matrix.replicate }}' --contract "$CONTRACT" --out safe/lane_${{ matrix.replicate }}.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-numpy-dispatch-${{ matrix.replicate }}-v0-20
+          path: safe/lane_${{ matrix.replicate }}.json
+          retention-days: 90
+
+  decision:
+    needs: [invariant-audit, dispatch-lane]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-numpy-dispatch-*-v0-20
+          path: new
+          merge-multiple: true
+      - name: Apply frozen response-free V0.20 classifier
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import json
+          inv=json.load(open('new/invariant.json'))
+          assert inv['pass'] is True and inv['parallel_lane_count']==32 and inv['minimum_eligible_lane_n']==3
+          assert inv['response_computed'] is False and inv['class_imported'] is False
+          assert inv['token']=='PASS_LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_INVARIANTS_V0_20'
+          PY
+          python3 "$EXECUTOR" --mode decision --contract "$CONTRACT" --inputs new/lane_*.json --out safe/decision.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-numpy-dispatch-decision-v0-20
+          path: safe/decision.json
+          retention-days: 90
