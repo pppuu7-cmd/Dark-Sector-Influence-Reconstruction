@@ -1,0 +1,18 @@
+{
+  "schema": "LAYERB_BETA_NUMERICAL_RUNTIME_STATE_FINGERPRINT_LAUNCH_V0_17",
+  "status": "LAUNCH_FROZEN_V0_17",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_HOST_FACTOR_ISOLATION_V0_16.json",
+  "parent_authority_commit": "3e9058d54ea19278eaa40c083ecae9e933be64dc",
+  "preregistration": "prereg/LAYERB_BETA_NUMERICAL_RUNTIME_STATE_FINGERPRINT_V0_17.md",
+  "preregistration_commit": "7a52ef36718f319e85f4fd62729fdf72b08d6876",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_NUMERICAL_RUNTIME_STATE_FINGERPRINT_V0_17.json",
+  "contract_commit": "cb0eeb9d899433c4fe8705a2c822a0973e79ebdb",
+  "executor": "ci/layerb_beta_numerical_runtime_state_fingerprint_v0_17.py",
+  "executor_commit": "f934d4c2edc2295709a1adda8556059c7c1d4357",
+  "workflow": ".github/workflows/layerb-beta-numerical-runtime-state-fingerprint-v0-17.yml",
+  "workflow_commit": "90812dd35753758086dcc0cee8d74909471bb519",
+  "parallel_lanes": 32,
+  "target_cpu_model": "AMD EPYC 9V74 80-Core Processor",
+  "effect": "+0/+0",
+  "note": "Numerical reproducibility localization only. One immutable V0.17 gate with 32 independent hosted lanes and one decision barrier. No Layer-B scientific promotion, covariance, whitening, nuisance, relation-null, Wm_S3, global 65537 or full 107-row traversal is authorized."
+}
