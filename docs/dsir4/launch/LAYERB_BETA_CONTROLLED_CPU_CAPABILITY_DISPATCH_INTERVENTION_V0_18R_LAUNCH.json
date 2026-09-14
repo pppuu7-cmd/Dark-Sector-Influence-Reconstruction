@@ -1,0 +1,16 @@
+{
+  "schema": "LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_LAUNCH_V0_18R",
+  "status": "LAUNCH_FROZEN_V0_18R",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_NUMERICAL_RUNTIME_STATE_FINGERPRINT_V0_17.json",
+  "parent_classification": "CPU_CAPABILITY_RUNTIME_STATE_STRATIFICATION_SUPPORTED",
+  "authorized_parent_next_stage": "PROSPECTIVELY_FROZEN_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_AUDIT",
+  "preregistration": "prereg/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_18.md",
+  "preregistration_commit": "34c955fcdfca7429b033e8c194de090f4ced8701",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_18R.json",
+  "contract_commit": "59ff8aca5360c849fb9e7bba7b314a6009b64444",
+  "workflow": ".github/workflows/layerb-beta-controlled-cpu-capability-dispatch-intervention-v0-18r.yml",
+  "workflow_commit": "3a0e07263ce1f528c6045c1ff9c3719ef45ea3f4",
+  "parallel_lane_count": 32,
+  "minimum_eligible_lane_n": 3,
+  "effect": "+0/+0"
+}
