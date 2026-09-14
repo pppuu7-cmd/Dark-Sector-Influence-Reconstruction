@@ -2,52 +2,49 @@
 
 Updated: 2026-09-14. Scope: **DSIR only**; RTK/RQIR/KMQGB/KMDSB excluded.
 
-## Active authoritative frontier — V0.15 cross-host environment fingerprint reproducibility audit
+## Current authoritative frontier — V0.15 terminal
 
-Parent terminal authority: `docs/dsir4/authority/LAYERB_BETA_SAME_RUN_SOLVER_DETERMINISM_V0_14.json`, creation commit `1a752a42223043b6efed79dd1294406532d2b48e`.
+Terminal authority: `docs/dsir4/authority/LAYERB_BETA_CROSS_HOST_FINGERPRINT_V0_15.json`, creation commit `e974d09d9fc4a687da582384da290c8fcb3989e6`.
 
-Parent classification: `SAME_RUN_REPEATED_SOLVER_DETERMINISM_SUPPORTED`, effect `+0/+0`; authorized successor exactly `PROSPECTIVELY_FROZEN_CROSS_HOST_ENVIRONMENT_FINGERPRINT_REPRODUCIBILITY_AUDIT`.
+Run `34792546153`, head `64968099805f6701424881562b1b5263a56d0e0b`; invariant + all 16 `GRID768/GRID1024 × R1..R8` lanes + decision are terminal `success`. Decision job `103820921014`; decision artifact `10328836120`, SHA256 `147aedae7d660c7554078151ee5ed6ba5985b7317ad5b1f3e18e4cb0f75ca1a4`.
 
-Prospective V0.15 contract: `docs/dsir4/contracts/LAYERB_BETA_CROSS_HOST_FINGERPRINT_V0_15.json`, commit `8bdfee04fbdbeece06824d215088797866ed579a`.
+Classification: `HOST_ENVIRONMENT_FINGERPRINT_STRATIFICATION_SUPPORTED`, effect `+0/+0`.
 
-Executor: `ci/layerb_beta_cross_host_fingerprint_v0_15.py`, commit `ad811e5da24bb20f654b0bc4d0646640e561150f`, blob `1a51344f0c571704b2b1d01bf4ecb04fe4508083`.
+The exact V0.13 cross-job response branches reproduce. On all three frozen replay-failure cells, jobs sharing the same prospectively recorded combined hardware/software fingerprint are exactly stable within group (`max within-group spread = 0.0`), while distinct repeated fingerprint groups have group-mean separation at or above the unchanged `<1e-5` technical threshold. Frozen anchors remain valid; fingerprint integrity, finite-value and exact-binding invariants pass; no ephemeral runner/job identifier entered scientific grouping.
 
-Workflow: `.github/workflows/layerb-beta-cross-host-fingerprint-v0-15.yml`, commit `c3003bf0c8862fee75167bd3afdc415db80e9a99`.
+This is numerical reproducibility localization only. It does not validate Layer-B science and is not evidence for a dark-sector signal.
 
-Launch: `docs/dsir4/launch/LAYERB_BETA_CROSS_HOST_FINGERPRINT_V0_15_LAUNCH.json`, head/commit `64968099805f6701424881562b1b5263a56d0e0b`.
+## Parent V0.15 factor evidence available for the authorized successor
 
-Authoritative active run: `34792546153`. Exactly one run was created for the launch head. Frozen invariant-audit is terminal `success`. The production matrix contains exactly 16 independent hosted jobs: `GRID768/GRID1024 × R1..R8`, `PURE_PAIR` only, with workflow `max-parallel: 16`; hosted-runner capacity may queue some lanes. Decision is allowed only after invariant plus all sixteen lanes are terminal.
+Representative repeated fingerprint groups show:
 
-Do not inspect or use partial substantive lane values before the single frozen decision barrier.
+- `AMD EPYC 9V74 80-Core Processor` and `INTEL(R) XEON(R) PLATINUM 8573C` occupy the same response branch on the overlapping GRID768 witness and share the same V0.15 software fingerprint; despite different CPU vendor/model, both have the same NumPy-config hash in the frozen fingerprint.
+- `AMD EPYC 7763 64-Core Processor` occupies the alternate response branch; relative to the AMD EPYC 9V74 group, every frozen software field is identical except the NumPy-config hash, while CPU model/flags differ.
+- Therefore CPU vendor alone is already an implausible separator. The highest-information prospectively testable candidate family is runtime SIMD/AVX-512 capability versus finer CPU-model/runtime confounding.
 
-## Frozen V0.15 object and fingerprint
+These parent observations select candidates for the next prospective gate; they are not themselves a causal host-factor claim.
 
-Target hypothesis: the V0.13 cross-job numerical variation is associated with the prospectively fixed stable hardware/software environment fingerprint, or else persists within identical recorded fingerprints and therefore requires deeper runtime-state localization.
+## Authorized successor
 
-Object: across-independent-job pairwise relative spread of signed centered beta responses on the exact V0.13/V0.14 diagnostic cells, grouped only by the frozen normalized combined fingerprint.
+V0.15 authorizes exactly:
 
-Frozen numerical identities: production `h=1e-4`; scientific response threshold `<1e-3`; technical replay threshold `<1e-5`; exact binding `<=1e-12`; production sampling `0.00035`; TOL300 `1e-12`; CLASS commit `ac627d54e9ce196a08878d1ba33999819925d19c`; unchanged baseline/precision/JJ/V12 extraction identities.
+`PROSPECTIVELY_FROZEN_HOST_FACTOR_ISOLATION_AUDIT`.
 
-Frozen scientific fingerprint hardware fields: runner architecture; platform machine; CPU vendor/family/model/stepping/microcode/model-name; hash of sorted CPU flags. Frozen software fields: runner/image OS and image version; platform/kernel fields; normalized `/etc/os-release`; libc; gcc/gfortran/ldd; Python/NumPy/SciPy; NumPy build-config hash.
+The next gate must be frozen before new substantive compute. It should retain the unchanged numerical object/thresholds and use new independent hosted jobs to test a small predeclared factor hierarchy, with a decisive `UNDERPOWERED/CONFOUNDED` outcome if the hosted allocation does not populate the required factor strata.
 
-Ephemeral runner name, GitHub run/job IDs, run attempt, timestamps and dynamic CPU frequency are provenance only and cannot define scientific fingerprint groups or classifications.
+Recommended frozen factor hierarchy for V0.16:
 
-## Frozen classifier
+1. runtime `AVX512F` present vs absent, read directly from `/proc/cpuinfo` flags;
+2. exact CPU model key (vendor/family/model/stepping/model name) as a finer nested factor;
+3. NumPy runtime/config SIMD signature as a recorded correlated factor, not automatically a causal factor;
+4. stable OS/kernel/compiler/toolchain fields as controls.
 
-- invariant/anchor/identity/fingerprint failure -> `CROSS_HOST_FINGERPRINT_AUDIT_INCONCLUSIVE`, no scientific promotion;
-- all failure cells cross-job stable below `1e-5` -> `V013_CROSS_JOB_NONDETERMINISM_NOT_REPRODUCED_IN_V015`;
-- cross-job variation reproduced and any repeated identical combined-fingerprint group varies at/above `1e-5` -> `RECORDED_HOST_FINGERPRINT_INSUFFICIENT_CROSS_JOB_VARIATION_PERSISTS`;
-- cross-job variation reproduced, repeated fingerprint groups internally stable, and at least two distinct repeated fingerprint groups on the same grid differ in failure-cell mean at/above `1e-5` -> `HOST_ENVIRONMENT_FINGERPRINT_STRATIFICATION_SUPPORTED`;
-- otherwise reproduced but insufficient/mixed grouping -> `HOST_ENVIRONMENT_FINGERPRINT_AUDIT_UNDERPOWERED_OR_MIXED`.
-
-Interpretation ceiling: numerical reproducibility localization only. No V0.15 outcome itself validates full Layer-B, covariance, whitening, nuisance treatment, relation-null, `Wm_S3`, global traversal, dark-sector inference or a physical signal.
-
-## Parent V0.14 fact
-
-Run `34787822995` was terminal `success`; decision artifact `10327458719`, SHA256 `12e9ea528dfbb12d2041ae927be6f551e84abff8478c74e19508e7b5e3345576`. All five frozen diagnostic cells were exactly stable across three sequential same-process repeats in all four grid/profile lanes, so V0.13 variation was localized away from same-run repeated-solver behavior and toward cross-job/runner/environment variation.
+A confirmatory AVX-512-class result requires independent replication in both factor classes, within-class stability below `1e-5`, between-class failure-cell separation at/above `1e-5`, and valid anchors. If AVX-512 and another candidate remain perfectly confounded, classify as confounded rather than causal.
 
 ## Frozen boundaries / anti-duplication
 
-No full 107-row Layer-B traversal, covariance/whitening/nuisance/relation-null, `Wm_S3`, global 65537 or science gate is authorized. Frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%` and scientific frontier `67%`; reproducibility diagnosis alone changes neither.
+Production `h=1e-4`; scientific response threshold `<1e-3`; replay/determinism threshold `<1e-5`; production sampling `0.00035`; `tol_perturb_integration=1e-12`; exact binding `<=1e-12`; CLASS commit and baseline/precision/extraction identities remain frozen. No full 107-row Layer-B traversal, covariance/whitening/nuisance/relation-null, `Wm_S3`, global 65537 or downstream science gate is authorized.
 
-Do not launch another V0.15 while run `34792546153` is non-terminal. Consume only its terminal decision after all 16 lanes plus invariant are terminal; then verify artifacts/hashes, write a durable V0.15 authority, and follow only the encoded `next_stage`.
+Frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%` and scientific frontier `67%`; reproducibility diagnosis alone changes neither.
+
+No active DSIR ChatGPT automation and no repository cron/schedule research loop were found in the latest task-state check. Do not launch competing production gates.
