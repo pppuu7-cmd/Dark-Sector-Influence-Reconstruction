@@ -1,0 +1,54 @@
+{
+  "schema": "LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_VALIDATION_DIAGNOSIS_V0_19D",
+  "status": "TERMINAL_DIAGNOSTIC_AUTHORITY_NO_SCIENTIFIC_PROMOTION",
+  "created_utc_date": "2026-09-14",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_19.json",
+  "parent_authority_commit": "3d4542b3c3514092fdc99566bed01c877eb77003",
+  "parent_classification": "CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_INVALID",
+  "authorized_parent_next_stage": "NO_SCIENTIFIC_PROMOTION_DIAGNOSE_V0_19_INTERVENTION_VALIDATION",
+  "run_id": 34868672661,
+  "decision_job_id": 104060026580,
+  "decision_artifact_id": 10358292041,
+  "decision_artifact_zip_sha256": "a4725493e504c4f3c4f2a3bae5a1927abd58fde8ba22e90546d32d3bce0a8d87",
+  "eligible_replicates": ["R20","R24","R27"],
+  "diagnosis": "NUMPY_RAW_CAPABILITY_BITS_NOT_RUNTIME_DISPATCH_VALIDATION_TARGET",
+  "diagnostic_findings": {
+    "all_three_eligible_preflights_same_failure_pattern": true,
+    "substantive_response_computed": false,
+    "native_preflight_valid": true,
+    "glibc_only_preflight_valid": true,
+    "numpy_only_preflight_valid": false,
+    "combined_preflight_valid": false,
+    "binary_preflight_constant": true,
+    "native_raw_avx512_features": ["AVX512BITALG","AVX512BW","AVX512CD","AVX512DQ","AVX512F","AVX512IFMA","AVX512VBMI","AVX512VBMI2","AVX512VL","AVX512VNNI","AVX512VPOPCNTDQ","AVX512_CLX","AVX512_CNL","AVX512_ICL","AVX512_SKX"],
+    "raw_features_disabled_by_full_v019_env_mask": ["AVX512CD","AVX512F","AVX512_CLX","AVX512_CNL","AVX512_ICL","AVX512_SKX"],
+    "raw_features_remaining_true_under_full_v019_env_mask": ["AVX512BITALG","AVX512BW","AVX512DQ","AVX512IFMA","AVX512VBMI","AVX512VBMI2","AVX512VL","AVX512VNNI","AVX512VPOPCNTDQ"]
+  },
+  "numpy_1_26_4_source_authority": {
+    "repository": "numpy/numpy",
+    "tag": "v1.26.4",
+    "path": "numpy/lib/utils.py",
+    "show_runtime_semantics": "SIMD runtime found/not_found is constructed by iterating __cpu_dispatch__ and reading __cpu_features__[feature]; __cpu_features__, __cpu_baseline__, and __cpu_dispatch__ are distinct runtime objects."
+  },
+  "technical_interpretation": "V0.19 required every raw AVX-512 entry exposed through __cpu_features__ to become false. NumPy 1.26.4 runtime dispatch reporting instead treats __cpu_dispatch__ as the set of dispatchable non-baseline features and consults __cpu_features__ only for members of that set. Therefore residual raw capability bits are not, by themselves, evidence that AVX-512 runtime dispatch remains enabled. The V0.19 success criterion targeted the wrong observable. This diagnosis does not salvage V0.18R/V0.19 and does not inspect any failure-cell response.",
+  "repair_constraints": {
+    "separate_dispatch_semantics_validation_from_scientific_causal_run": true,
+    "next_audit_response_free": true,
+    "record_numpy___cpu_baseline__": true,
+    "record_numpy___cpu_dispatch__": true,
+    "record_numpy___cpu_features__": true,
+    "define_active_dispatch_as_dispatch_intersection_with_true_features": true,
+    "derive_avx512_dispatch_targets_only_from___cpu_dispatch__": true,
+    "do_not_require_non_dispatch_raw_capability_bits_to_turn_false": true,
+    "preserve_v017_branch_references_and_all_scientific_thresholds_for_any_later_causal_rerun": true,
+    "do_not_read_v018r_or_v019_failure_cell_responses": true
+  },
+  "authorized_next_stage": "PROSPECTIVELY_FROZEN_NUMPY_RUNTIME_DISPATCH_SEMANTICS_AUDIT",
+  "effect": "+0/+0",
+  "forbidden": {
+    "post_hoc_salvage_v018r_or_v019_scientific_effect": true,
+    "interpret_residual_raw_capability_bits_as_active_dispatch_without_dispatch_membership": true,
+    "read_failure_cell_responses": true,
+    "open_science_gate": true
+  }
+}
