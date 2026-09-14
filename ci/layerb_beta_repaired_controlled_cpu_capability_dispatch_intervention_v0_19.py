@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, importlib.util, json, os, subprocess, sys
+import argparse, importlib.util, json, math, os, subprocess, sys
 from pathlib import Path
 
 BASE_PATH = 'ci/layerb_beta_controlled_cpu_capability_dispatch_intervention_v0_18.py'
@@ -58,7 +58,7 @@ def fingerprint_mode(a,B):
     out={
         'schema':'LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_FINGERPRINT_V0_19',
         'fingerprint':fp,
-        'native_active_numpy_avx512_features':sorted(active_numpy_avx512(fp)),
+        'active_numpy_avx512_features':sorted(active_numpy_avx512(fp)),
         'frozen_native_active_numpy_avx512_features':list(FROZEN_NUMPY_AVX512),
         'no_substantive_response_computed':True,
         'token':'PASS_LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_FINGERPRINT_V0_19'
@@ -76,10 +76,9 @@ def child_env(condition):
     return env
 
 
-def run_fingerprint(a,outpath):
-    env=os.environ.copy(); env.pop('NPY_DISABLE_CPU_FEATURES',None); env.pop('GLIBC_TUNABLES',None)
+def run_fingerprint(a,condition,outpath):
     cmd=[sys.executable,str(Path(__file__).resolve()),'--mode','fingerprint','--contract',a.contract,'--out',str(outpath)]
-    subprocess.run(cmd,check=True,env=env)
+    subprocess.run(cmd,check=True,env=child_env(condition))
     return json.load(open(outpath))
 
 
@@ -104,15 +103,25 @@ def lane_mode(a,C,B):
     if a.replicate not in C['replicates']:
         raise RuntimeError('unfrozen replicate')
     tmp=Path(a.out).parent/f'.v019_{a.replicate}'; tmp.mkdir(parents=True,exist_ok=True)
-    probe=run_fingerprint(a,tmp/'native_fingerprint.json'); fp=probe['fingerprint']
+    native_probe=run_fingerprint(a,'NATIVE',tmp/'preflight_NATIVE.json'); fp=native_probe['fingerprint']
     target=fp['cpu']['cpu_model']==C['target_cpu_model']
     exact_native_set=active_numpy_avx512(fp)==FROZEN_SET
     eligible=bool(target and fp['cpu']['selected_cpu_features'].get('avx512f') and
                   fp['loader']['v4_active'] is True and exact_native_set)
-    conditions={}
+    preflight={}; preflight_valid=None; binary_preflight_constant=None; conditions={}
     if eligible:
-        for condition in CONDITIONS:
-            conditions[condition]=run_child(a,condition,tmp/f'{condition}.json')
+        preflight={'NATIVE':native_probe}
+        for condition in CONDITIONS[1:]:
+            preflight[condition]=run_fingerprint(a,condition,tmp/f'preflight_{condition}.json')
+        condition_validity={c:condition_valid(c,preflight[c]['fingerprint']) for c in CONDITIONS}
+        binary_keys=[preflight[c]['fingerprint']['binary']['key'] for c in CONDITIONS]
+        binary_preflight_constant=len(set(binary_keys))==1
+        preflight_valid=all(condition_validity.values()) and binary_preflight_constant
+        for c in CONDITIONS:
+            preflight[c]['condition_valid']=condition_validity[c]
+        if preflight_valid:
+            for condition in CONDITIONS:
+                conditions[condition]=run_child(a,condition,tmp/f'{condition}.json')
     out={
         'schema':'LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_LANE_V0_19',
         'replicate':a.replicate,
@@ -120,6 +129,10 @@ def lane_mode(a,C,B):
         'native_fingerprint':fp,
         'native_exact_frozen_numpy_avx512_set':exact_native_set,
         'eligibility_probe_no_substantive_response':True,
+        'preflight':preflight,
+        'preflight_valid':preflight_valid,
+        'binary_preflight_constant':binary_preflight_constant,
+        'substantive_response_computed':bool(eligible and preflight_valid),
         'conditions':conditions,
         'effect':'+0/+0',
         'production_h_mutated':False,'sampling_stepsize_changed':False,'global_65537_launched':False,
@@ -129,10 +142,47 @@ def lane_mode(a,C,B):
     }
     Path(a.out).parent.mkdir(parents=True,exist_ok=True)
     Path(a.out).write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
-    print(out['token'],a.replicate,'ELIGIBLE' if eligible else 'SKIP')
+    state='ELIGIBLE' if eligible else 'SKIP'
+    if eligible and not preflight_valid: state='INVALID_PREFLIGHT'
+    print(out['token'],a.replicate,state)
+
+
+def invalid_preflight_decision(a,C,docs,eligible):
+    bad=[d for d in eligible if d.get('preflight_valid') is not True]
+    out={
+        'schema':'LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_DECISION_V0_19',
+        'classification':'CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_INVALID',
+        'effect':'+0/+0',
+        'eligible_lane_count':len(eligible),
+        'minimum_eligible_lane_n':int(C['minimum_eligible_lane_n']),
+        'eligible_replicates':[d['replicate'] for d in eligible],
+        'invalid_preflight_replicates':[d['replicate'] for d in bad],
+        'invalid_intervention':True,
+        'invariant_ok':True,
+        'substantive_response_computed_for_invalid_preflight_replicates':False,
+        'numpy_switch_supported':False,'glibc_switch_supported':False,
+        'combined_switch_supported':False,'combined_no_effect':False,
+        'next_stage':'NO_SCIENTIFIC_PROMOTION_DIAGNOSE_V0_19_INTERVENTION_VALIDATION',
+        'repair_parent':'NUMPY_AVX512_MASK_INCOMPLETE_AND_VALIDATOR_OVERBROAD',
+        'frozen_native_active_numpy_avx512_features':list(FROZEN_NUMPY_AVX512),
+        'production_h_mutated':False,'sampling_stepsize_changed':False,'global_65537_launched':False,
+        'covariance_read':False,'whitening_read':False,'nuisance_read':False,'relation_null_read':False,
+        'Wm_S3_opened':False,'science_gate_opened':False,
+        'token':'PASS_LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_DECISION_V0_19'
+    }
+    Path(a.out).parent.mkdir(parents=True,exist_ok=True)
+    Path(a.out).write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+    print(out['token'],out['classification'],len(eligible),out['next_stage'])
 
 
 def decision_mode(a,C,B):
+    docs=[json.load(open(p)) for p in a.inputs]
+    expected=set(C['replicates']); got={d['replicate'] for d in docs}
+    if got!=expected or len(docs)!=len(expected):
+        raise RuntimeError('lane identity mismatch')
+    eligible=[d for d in docs if d['eligible']]
+    if any(d.get('preflight_valid') is not True for d in eligible):
+        invalid_preflight_decision(a,C,docs,eligible); return
     B.decision(a,C)
     doc=json.load(open(a.out))
     doc['schema']='LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_DECISION_V0_19'
@@ -141,6 +191,7 @@ def decision_mode(a,C,B):
     elif doc['classification']=='CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_INCONCLUSIVE':
         doc['next_stage']='NO_SCIENTIFIC_PROMOTION_DIAGNOSE_V0_19_INVARIANT_FAILURE'
     doc['repair_parent']='NUMPY_AVX512_MASK_INCOMPLETE_AND_VALIDATOR_OVERBROAD'
+    doc['all_eligible_preflights_valid']=True
     doc['frozen_native_active_numpy_avx512_features']=list(FROZEN_NUMPY_AVX512)
     doc['token']='PASS_LAYERB_BETA_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_DECISION_V0_19'
     Path(a.out).write_text(json.dumps(doc,indent=2,sort_keys=True)+'\n')
