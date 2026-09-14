@@ -1,0 +1,19 @@
+{
+  "schema": "LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_LAUNCH_V0_20",
+  "status": "LAUNCH_FROZEN_V0_20",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_VALIDATION_DIAGNOSIS_V0_19D.json",
+  "parent_diagnosis": "NUMPY_RAW_CAPABILITY_BITS_NOT_RUNTIME_DISPATCH_VALIDATION_TARGET",
+  "authorized_parent_next_stage": "PROSPECTIVELY_FROZEN_NUMPY_RUNTIME_DISPATCH_SEMANTICS_AUDIT",
+  "preregistration": "prereg/LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_V0_20.md",
+  "preregistration_commit": "032ef809a934c4ac0ae8dfb4cb9d2d7b4d35386b",
+  "executor": "ci/layerb_beta_numpy_runtime_dispatch_semantics_v0_20.py",
+  "executor_commit": "865c241675d18af8e76d4fd632cc803cd6c99869",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_V0_20.json",
+  "contract_commit": "de9eae11c49a82b8d01ec405540258927a6a4a43",
+  "workflow": ".github/workflows/layerb-beta-numpy-runtime-dispatch-semantics-v0-20.yml",
+  "workflow_commit": "216677ba6d5733339a634afcf9546cac00343b22",
+  "parallel_lane_count": 32,
+  "minimum_eligible_lane_n": 3,
+  "response_free": true,
+  "effect": "+0/+0"
+}
