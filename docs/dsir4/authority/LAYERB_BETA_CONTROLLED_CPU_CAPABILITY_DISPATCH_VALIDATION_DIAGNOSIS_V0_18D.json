@@ -1,0 +1,60 @@
+{
+  "schema": "LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_VALIDATION_DIAGNOSIS_V0_18D",
+  "status": "TERMINAL_DIAGNOSTIC_AUTHORITY_NO_SCIENTIFIC_PROMOTION",
+  "created_utc_date": "2026-09-14",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_18R.json",
+  "parent_authority_commit": "e192492b5c56fdae91632447cc02d9bfdac942a5",
+  "parent_classification": "CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_INVALID",
+  "authorized_parent_next_stage": "NO_SCIENTIFIC_PROMOTION_DIAGNOSE_V0_18_INTERVENTION_VALIDATION",
+  "run_id": 34861893888,
+  "decision_job_id": 104045296799,
+  "decision_artifact_id": 10355468958,
+  "decision_artifact_zip_sha256": "953a2f0472452828b155dee1ff9b47833ba0c92859ae39c69220de6f82065868",
+  "eligible_replicates": ["R07","R08","R15","R27","R30","R31","R32"],
+  "eligible_lane_count": 7,
+  "diagnosis": "NUMPY_AVX512_MASK_INCOMPLETE_AND_VALIDATOR_OVERBROAD",
+  "diagnostic_findings": {
+    "all_seven_eligible_hosts_same_native_numpy_avx512_set": true,
+    "native_active_numpy_avx512_features": [
+      "AVX512BITALG","AVX512BW","AVX512CD","AVX512DQ","AVX512F","AVX512IFMA","AVX512VBMI","AVX512VBMI2","AVX512VL","AVX512VNNI","AVX512VPOPCNTDQ","AVX512_CLX","AVX512_CNL","AVX512_ICL","AVX512_SKX"
+    ],
+    "v018r_numpy_mask": [
+      "AVX512F","AVX512CD","AVX512_KNL","AVX512_KNM","AVX512_SKX","AVX512_CLX","AVX512_CNL","AVX512_ICL"
+    ],
+    "features_actually_disabled_by_v018r_numpy_mask_on_all_eligible_hosts": [
+      "AVX512CD","AVX512F","AVX512_CLX","AVX512_CNL","AVX512_ICL","AVX512_SKX"
+    ],
+    "native_active_features_left_enabled_by_v018r_numpy_mask_on_all_eligible_hosts": [
+      "AVX512BITALG","AVX512BW","AVX512DQ","AVX512IFMA","AVX512VBMI","AVX512VBMI2","AVX512VL","AVX512VNNI","AVX512VPOPCNTDQ"
+    ],
+    "native_condition_valid_all_eligible_hosts": true,
+    "glibc_no_avx512_condition_valid_all_eligible_hosts": true,
+    "numpy_no_avx512_condition_invalid_all_eligible_hosts": true,
+    "combined_no_avx512_condition_invalid_all_eligible_hosts": true,
+    "within_lane_binary_identity_constant_all_conditions": true,
+    "anchor_invariant_passed": true,
+    "exact_binding_passed": true,
+    "substantive_failure_cell_responses_inspected_for_diagnosis": false
+  },
+  "technical_interpretation": "NumPy 1.26 NPY_DISABLE_CPU_FEATURES restricts the explicitly named runtime-dispatch features. The V0.18R NumPy mask named only a subset of the exact target host's native-active AVX-512 feature set, while the V0.18R validator required no AVX-512 feature to remain enabled. Thus the NumPy and combined intervention controls were invalid by construction. This invalidates causal interpretation of V0.18R but does not provide evidence for or against the numerical dispatch hypothesis.",
+  "repair_constraints": {
+    "freeze_complete_observed_native_active_numpy_avx512_feature_set_before_rerun": true,
+    "validate_each_frozen_native_active_numpy_avx512_feature_is_false_under_numpy_mask": true,
+    "preserve_glibc_mask_and_validation_that_already_passed": true,
+    "preserve_target_cpu_model": true,
+    "preserve_minimum_eligible_lane_n": true,
+    "preserve_diagnostic_cells": true,
+    "preserve_branch_references": true,
+    "preserve_all_numeric_thresholds": true,
+    "do_not_read_v018r_failure_cell_responses_before_repaired_preregistration": true
+  },
+  "authorized_next_stage": "PROSPECTIVELY_FROZEN_REPAIRED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_AUDIT",
+  "effect": "+0/+0",
+  "forbidden": {
+    "salvage_glibc_scientific_result_post_hoc_from_invalid_v018r": true,
+    "interpret_v018r_as_no_effect": true,
+    "interpret_v018r_as_causal_support": true,
+    "retune_scientific_thresholds": true,
+    "open_science_gate": true
+  }
+}
