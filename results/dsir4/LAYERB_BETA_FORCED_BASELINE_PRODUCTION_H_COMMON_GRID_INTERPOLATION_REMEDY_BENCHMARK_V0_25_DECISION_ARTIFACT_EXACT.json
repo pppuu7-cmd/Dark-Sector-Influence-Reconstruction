@@ -147,30 +147,198 @@
   "parent_problem_reproduced": true,
   "powered": true,
   "primitive_response_metrics": [
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID768", "reproducible": true, "series": "control_response", "target_id": "T1"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID768", "reproducible": true, "series": "exact_target_union_response", "target_id": "T1"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID768", "reproducible": true, "series": "one_step_refinement_response", "target_id": "T1"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID768", "reproducible": true, "series": "direct_response", "target_id": "T1"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID768", "reproducible": true, "series": "control_response", "target_id": "T2"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID768", "reproducible": true, "series": "exact_target_union_response", "target_id": "T2"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID768", "reproducible": true, "series": "one_step_refinement_response", "target_id": "T2"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID768", "reproducible": true, "series": "direct_response", "target_id": "T2"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID768", "reproducible": true, "series": "control_response", "target_id": "T3"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID768", "reproducible": true, "series": "exact_target_union_response", "target_id": "T3"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID768", "reproducible": true, "series": "one_step_refinement_response", "target_id": "T3"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID768", "reproducible": true, "series": "direct_response", "target_id": "T3"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID896", "reproducible": true, "series": "control_response", "target_id": "T1"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID896", "reproducible": true, "series": "exact_target_union_response", "target_id": "T1"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID896", "reproducible": true, "series": "one_step_refinement_response", "target_id": "T1"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID896", "reproducible": true, "series": "direct_response", "target_id": "T1"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID896", "reproducible": true, "series": "control_response", "target_id": "T2"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID896", "reproducible": true, "series": "exact_target_union_response", "target_id": "T2"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID896", "reproducible": true, "series": "one_step_refinement_response", "target_id": "T2"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID896", "reproducible": true, "series": "direct_response", "target_id": "T2"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID896", "reproducible": true, "series": "control_response", "target_id": "T3"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID896", "reproducible": true, "series": "exact_target_union_response", "target_id": "T3"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID896", "reproducible": true, "series": "one_step_refinement_response", "target_id": "T3"},
-    {"cross_host_max_pairwise_rel_spread": 0.0, "native_class_mean_rel_separation": 0.0, "original_grid": "GRID896", "reproducible": true, "series": "direct_response", "target_id": "T3"}
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID768",
+      "reproducible": true,
+      "series": "control_response",
+      "target_id": "T1"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID768",
+      "reproducible": true,
+      "series": "exact_target_union_response",
+      "target_id": "T1"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID768",
+      "reproducible": true,
+      "series": "one_step_refinement_response",
+      "target_id": "T1"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID768",
+      "reproducible": true,
+      "series": "direct_response",
+      "target_id": "T1"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID768",
+      "reproducible": true,
+      "series": "control_response",
+      "target_id": "T2"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID768",
+      "reproducible": true,
+      "series": "exact_target_union_response",
+      "target_id": "T2"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID768",
+      "reproducible": true,
+      "series": "one_step_refinement_response",
+      "target_id": "T2"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID768",
+      "reproducible": true,
+      "series": "direct_response",
+      "target_id": "T2"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID768",
+      "reproducible": true,
+      "series": "control_response",
+      "target_id": "T3"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID768",
+      "reproducible": true,
+      "series": "exact_target_union_response",
+      "target_id": "T3"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID768",
+      "reproducible": true,
+      "series": "one_step_refinement_response",
+      "target_id": "T3"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID768",
+      "reproducible": true,
+      "series": "direct_response",
+      "target_id": "T3"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID896",
+      "reproducible": true,
+      "series": "control_response",
+      "target_id": "T1"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID896",
+      "reproducible": true,
+      "series": "exact_target_union_response",
+      "target_id": "T1"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID896",
+      "reproducible": true,
+      "series": "one_step_refinement_response",
+      "target_id": "T1"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID896",
+      "reproducible": true,
+      "series": "direct_response",
+      "target_id": "T1"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID896",
+      "reproducible": true,
+      "series": "control_response",
+      "target_id": "T2"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID896",
+      "reproducible": true,
+      "series": "exact_target_union_response",
+      "target_id": "T2"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID896",
+      "reproducible": true,
+      "series": "one_step_refinement_response",
+      "target_id": "T2"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID896",
+      "reproducible": true,
+      "series": "direct_response",
+      "target_id": "T2"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID896",
+      "reproducible": true,
+      "series": "control_response",
+      "target_id": "T3"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID896",
+      "reproducible": true,
+      "series": "exact_target_union_response",
+      "target_id": "T3"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID896",
+      "reproducible": true,
+      "series": "one_step_refinement_response",
+      "target_id": "T3"
+    },
+    {
+      "cross_host_max_pairwise_rel_spread": 0.0,
+      "native_class_mean_rel_separation": 0.0,
+      "original_grid": "GRID896",
+      "reproducible": true,
+      "series": "direct_response",
+      "target_id": "T3"
+    }
   ],
   "primitive_response_reproducibility_ok": true,
   "production_h_mutated": false,
