@@ -1,0 +1,20 @@
+{
+  "schema": "LAYERB_BETA_VALIDATED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_LAUNCH_V0_21",
+  "status": "LAUNCH_FROZEN_V0_21",
+  "parent_authority": "docs/dsir4/authority/LAYERB_BETA_NUMPY_RUNTIME_DISPATCH_SEMANTICS_V0_20.json",
+  "parent_classification": "NUMPY_AVX512_RUNTIME_DISPATCH_MASK_VALIDATED",
+  "authorized_parent_next_stage": "PROSPECTIVELY_FROZEN_VALIDATED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_AUDIT",
+  "preregistration": "prereg/LAYERB_BETA_VALIDATED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_21.md",
+  "preregistration_commit": "2620148106a66e462e239fb25ab15f8ab800ef52",
+  "executor": "ci/layerb_beta_validated_controlled_cpu_capability_dispatch_intervention_v0_21.py",
+  "executor_commit": "110fc5b7b33b9ae2cc1baa9e8d8c0e91e7252e0f",
+  "contract": "docs/dsir4/contracts/LAYERB_BETA_VALIDATED_CONTROLLED_CPU_CAPABILITY_DISPATCH_INTERVENTION_V0_21.json",
+  "contract_commit": "a305c2e8e5106e031e0f7b5d6f3ee9d742b9cf39",
+  "workflow": ".github/workflows/layerb-beta-validated-controlled-cpu-capability-dispatch-intervention-v0-21.yml",
+  "workflow_commit": "7f0c8e876105fe9cf7de87b37553b268f1489194",
+  "parallel_lane_count": 32,
+  "minimum_eligible_lane_n": 3,
+  "response_free_preflight_required": true,
+  "validated_numpy_mask": "AVX512CD,AVX512F,AVX512_CLX,AVX512_CNL,AVX512_ICL,AVX512_KNL,AVX512_KNM,AVX512_SKX",
+  "effect": "+0/+0"
+}
