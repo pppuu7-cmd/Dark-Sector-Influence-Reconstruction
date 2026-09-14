@@ -149,30 +149,34 @@ def decision_mode(a,C):
         if r.get('solver_construction_count')!=C['expected_solver_construction_count']: invalid=True
         keys=[cell_key(c) for c in r.get('cells',[])]
         if len(keys)!=len(expkeys) or set(keys)!=expkeys: invalid=True
+        if 'fingerprint' not in r or 'binary' not in r['fingerprint'] or 'software_control_key' not in r: invalid=True; continue
         binary_keys.append(r['fingerprint']['binary']['key']); software_keys.append(r['software_control_key'])
         max_lookup=max(max_lookup,float(r['max_requested_node_coordinate_rel_mismatch']))
-        invariant_ok &= all(math.isfinite(float(c['response'])) for c in r['cells'])
-        invariant_ok &= not any(bool(r[k]) for k in ['production_h_mutated','sampling_stepsize_changed','global_65537_launched','covariance_read','whitening_read','nuisance_read','relation_null_read','Wm_S3_opened','science_gate_opened'])
+        invariant_ok &= all(math.isfinite(float(c['response'])) for c in r.get('cells',[]))
+        invariant_ok &= not any(bool(r.get(k,True)) for k in ['production_h_mutated','sampling_stepsize_changed','global_65537_launched','covariance_read','whitening_read','nuisance_read','relation_null_read','Wm_S3_opened','science_gate_opened'])
     if eligible and (len(set(binary_keys))!=1 or len(set(software_keys))!=1): invalid=True
     invariant_ok &= max_lookup<=float(C['exact_target_binding_tolerance'])
     counts={x:sum(d['native_class']==x for d in eligible) for x in ['NATIVE_AVX512_ACTIVE','NATIVE_AVX512_INACTIVE']}
     powered=(len(eligible)>=int(C['minimum_eligible_lane_n']) and counts['NATIVE_AVX512_ACTIVE']>=int(C['minimum_per_native_class_n']) and counts['NATIVE_AVX512_INACTIVE']>=int(C['minimum_per_native_class_n']))
-    tol=float(C['replay_relative_tolerance']); metrics=[]; all_replay_ok=True
-    value_maps={d['replicate']:{cell_key(c):float(c['response']) for c in d['result']['cells']} for d in eligible}
-    for grid in C['grids']:
-        for t in C['targets']:
-            ck=(grid,t['kind'],t['d'],t['z'],t['k']); vals=[value_maps[d['replicate']][ck] for d in eligible]
-            spread=max([rel(x,y) for x,y in itertools.combinations(vals,2)] or [0.0])
-            means={}
-            for cls in counts:
-                vv=[value_maps[d['replicate']][ck] for d in eligible if d['native_class']==cls]
-                if vv: means[cls]=sum(vv)/len(vv)
-            sep=rel(means['NATIVE_AVX512_ACTIVE'],means['NATIVE_AVX512_INACTIVE']) if len(means)==2 else float('inf')
-            ok=(spread<tol and sep<tol); all_replay_ok &= ok
-            metrics.append({'grid':grid,'kind':t['kind'],'d':t['d'],'z':t['z'],'k':t['k'],
-                            'cross_host_max_pairwise_rel_spread':spread,'native_class_mean_rel_separation':sep,'replay_ok':ok})
-    failure_keys={(x['grid'],x['kind'],x['d'],x['z'],x['k']) for x in C['original_production_h_failure_cells']}
-    original_failures_repaired=all(m['replay_ok'] for m in metrics if (m['grid'],m['kind'],m['d'],m['z'],m['k']) in failure_keys)
+    tol=float(C['replay_relative_tolerance']); metrics=[]; all_replay_ok=False; original_failures_repaired=False
+    if not invalid and invariant_ok and eligible:
+        all_replay_ok=True
+        value_maps={d['replicate']:{cell_key(c):float(c['response']) for c in d['result']['cells']} for d in eligible}
+        for grid in C['grids']:
+            for t in C['targets']:
+                ck=(grid,t['kind'],t['d'],t['z'],t['k']); vals=[value_maps[d['replicate']][ck] for d in eligible]
+                spread=max([rel(x,y) for x,y in itertools.combinations(vals,2)] or [0.0])
+                means={}
+                for cls in counts:
+                    vv=[value_maps[d['replicate']][ck] for d in eligible if d['native_class']==cls]
+                    if vv: means[cls]=sum(vv)/len(vv)
+                sep=rel(means['NATIVE_AVX512_ACTIVE'],means['NATIVE_AVX512_INACTIVE']) if len(means)==2 else float('inf')
+                ok=(spread<tol and sep<tol); all_replay_ok &= ok
+                metrics.append({'grid':grid,'kind':t['kind'],'d':t['d'],'z':t['z'],'k':t['k'],
+                                'cross_host_max_pairwise_rel_spread':spread,'native_class_mean_rel_separation':sep,'replay_ok':ok})
+        failure_keys={(x['grid'],x['kind'],x['d'],x['z'],x['k']) for x in C['original_production_h_failure_cells']}
+        failure_metrics=[m for m in metrics if (m['grid'],m['kind'],m['d'],m['z'],m['k']) in failure_keys]
+        original_failures_repaired=(len(failure_metrics)==len(failure_keys) and all(m['replay_ok'] for m in failure_metrics))
     if invalid:
         cls='FORCED_BASELINE_PRODUCTION_H_REPLAY_REVALIDATION_INVALID'; nxt='NO_SCIENTIFIC_PROMOTION_DIAGNOSE_V0_23_FORCED_BASELINE_VALIDATION'
     elif not invariant_ok:
