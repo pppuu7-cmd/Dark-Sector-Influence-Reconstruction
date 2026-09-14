@@ -2,6 +2,29 @@
 
 Updated: 2026-09-15. Scope: **DSIR only**; RTK/RQIR/KMQGB/KMDSB excluded.
 
+## DSIR Core v1 freeze scope
+
+Prospective completion contract: `docs/DSIR_CORE_V1_COMPLETION_CONTRACT.md`, introduced on branch `dsir-core-v1-freeze-scope`.
+
+The active objective is now to freeze **DSIR Core v1 as a reusable model-independent adjudication core for the Polygon**, not to force completion of the entire future scientific program before release.
+
+Freeze blockers are restricted to the following model-independent capabilities:
+
+1. full 107-row Layer-B numerical closure under a prospectively frozen denominator and exact-target-union construction;
+2. independent numerical/provenance audit and terminal authority;
+3. production-grade reference/control closure;
+4. completion of the G5 statistical layer, including data-whitened cross-family rank stress tests;
+5. frozen covariance, whitening, nuisance, quotient, mask/common-domain, and uncertainty semantics;
+6. machine-readable Core-to-Polygon adapter contract;
+7. frozen terminal decision semantics, including fail-closed `NEW_MODEL_REQUIRED` eligibility rules;
+8. executable test registry, fail-closed Core orchestrator, release validator, and deterministic release bundle;
+9. versioning, freeze manifest, and change-control policy;
+10. regression across existing Polygon model families without changing Core rules.
+
+G7, G8, and G9 scientific outcomes are explicitly **not DSIR Core v1 freeze blockers**. Their evaluation procedures must be frozen, but the scientific gates may remain OPEN after Core freeze. Model-specific solver extensions, new model families, and mechanism-specific discoveries belong to the Polygon unless they reveal a genuinely missing model-independent Core capability.
+
+The legacy single readiness percentage is no longer sufficient as a freeze criterion. Future status should separate at least `CORE_METHODOLOGY_READINESS`, `CORE_EXECUTABLE_REPRODUCIBILITY_READINESS`, and `POLYGON_SCIENTIFIC_COVERAGE`. The first two must reach 100% before declaring `DSIR Core v1 FROZEN`; Polygon scientific coverage may continue afterward.
+
 ## Reproducibility/mechanism chain terminal through V0.25
 
 V0.21 established NumPy AVX-512 runtime dispatch as the causal hosted branch; V0.22 established the forced NumPy non-AVX512 baseline; V0.23 revalidated the frozen production-h replay cells; V0.24 attributed the remaining two immutable parent violations to common-grid cubic interpolation under the validated baseline.
@@ -48,6 +71,8 @@ This successor is **not currently executable**. Before any 107-row computation, 
 
 The successor must not silently change the V0.25 construction. V0.25 benchmarked each common grid unioned with all three frozen target k values. A successor must prospectively specify whether its full object uses a global exact-target union or another exact row-denominator construction; target-local/ad hoc post-result unions are not inherited authorization. Static `1025 + 107 = 1132 < 1152` is only a capacity bound.
 
+Within the DSIR Core v1 completion contract, this 107-row numerical closure is **F1 and the first active freeze blocker**. Work outside the authorized critical path in `docs/DSIR_CORE_V1_COMPLETION_CONTRACT.md` should be deferred unless it demonstrates a missing model-independent Core capability.
+
 ## Frozen boundaries
 
-Production `h=1e-4`; native `k_per_decade_for_pk=20`; scientific response threshold `<1e-3`; technical reproducibility `<1e-5`; exact binding `<=1e-12`; sampling `0.00035`; `tol_perturb_integration=1e-12`. Covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537 and physical dark-sector inference remain closed. Frozen readiness `68%`; scientific frontier `67%`.
+Production `h=1e-4`; native `k_per_decade_for_pk=20`; scientific response threshold `<1e-3`; technical reproducibility `<1e-5`; exact binding `<=1e-12`; sampling `0.00035`; `tol_perturb_integration=1e-12`. Covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537 and physical dark-sector inference remain closed pending their respective prospective Core or scientific gates.
