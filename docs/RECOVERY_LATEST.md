@@ -26,7 +26,11 @@ Executor `ci/layerb_beta_forced_baseline_production_h_replay_revalidation_v0_23.
 Contract `docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_REPLAY_REVALIDATION_V0_23.json`, commit `d5d5665671fbfedaaf77022b0f7164ada90d49ee`.
 Workflow `.github/workflows/layerb-beta-forced-baseline-production-h-replay-revalidation-v0-23.yml`, commit `a7ce06dc9cef76c934d5b5c2c289a0729aa64e04`.
 Launch/head `ad5472244fdcffa05ecfd3826ac9c83db06f32ef`.
-Authoritative run `34878651714`; exactly one run exists. At latest check GitHub has the invariant and replay matrix jobs queued; no failure and no competing V0.23 run exists.
+Authoritative run `34878651714`; exactly one run exists.
+
+Invariant job `104092079570` is terminal `success`; invariant artifact `10361618142`, digest `sha256:d8bc4761cd1c2b4a3031e6c7fdbd1f4acbf12323cce14d5d96067b25f92f1228`. The first completed substantive lane observed was `R11`, terminal `success`, artifact `10362073981`; its contents were deliberately not inspected before the decision barrier. Multiple additional lanes are in progress and the remaining matrix is queued; no failure/cancellation has been observed.
+
+Outcome-blind workflow audit found that `replay-lane` lacks an explicit YAML `needs: invariant-audit` dependency. This is a workflow-hardening omission, not a defect in the frozen classifier. In the actual authoritative run the invariant completed successfully before the first replay lane started substantive execution, so the current run is not invalidated. Do not rerun V0.23 for this omission. Add an explicit invariant-to-lane DAG barrier in the next workflow generated after V0.23 terminal classification.
 
 Frozen V0.23 object: complete V0.12 production-h pure-grid replay subset = five frozen grids × three frozen targets = 15 cells at `h=1e-4`. The exact V0.20 NumPy mask must be validated response-free before substantive computation. Raw non-dispatch AVX-512 bits are forbidden as validation targets. No unmasked substantive response is allowed. Every eligible lane computes only the forced-baseline 15-cell object, with exactly 10 CLASS solver constructions.
 
@@ -35,11 +39,12 @@ Frozen power: eligible n>=6, including n>=3 native AVX512-active and n>=3 native
 ## Exact next order
 
 1. Continue only run `34878651714`; do not create a duplicate.
-2. Wait for invariant + all 32 lanes + the single decision barrier.
-3. Do not inspect partial substantive V0.23 response values.
+2. Wait for all 32 lanes + the single decision barrier; invariant is already terminal success.
+3. Do not inspect partial substantive V0.23 response values or completed lane artifact contents.
 4. Verify the terminal decision artifact ID/digest and materialize V0.23 authority.
 5. Follow only the encoded `next_stage`.
 6. If supported, the only authorized successor is `PROSPECTIVELY_FROZEN_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_AUDIT`.
-7. Full Layer-B and all physical-science gates remain closed.
+7. In the next generated workflow, add explicit `needs: invariant-audit` for substantive lanes as a hardening control.
+8. Full Layer-B and all physical-science gates remain closed.
 
 Frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%`; scientific frontier `67%`.
