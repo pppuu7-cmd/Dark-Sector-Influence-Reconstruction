@@ -1,0 +1,145 @@
+name: layerb-beta-forced-baseline-production-h-common-grid-interpolation-reassessment-v0-24-decision-recovery
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layerb-beta-forced-baseline-production-h-common-grid-interpolation-reassessment-v0-24-decision-recovery.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  SOURCE_RUN_ID: '34884436750'
+  SOURCE_SHA: '3a655cf12614955716898c7943e5d638d6a1cf1f'
+  V023_RUN_ID: '34878651714'
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_V0_24.json'
+  EXECUTOR: 'ci/layerb_beta_forced_baseline_production_h_common_grid_interpolation_reassessment_v0_24.py'
+
+jobs:
+  decision-recovery:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact frozen scientific source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+
+      - name: Install decision-only dependency
+        run: |
+          set -euo pipefail
+          python3 -m pip install --user 'numpy==1.26.4' >/dev/null
+          python3 - <<'PY'
+          import numpy
+          assert numpy.__version__ == '1.26.4'
+          print('decision numpy', numpy.__version__)
+          PY
+
+      - name: Fetch source-run artifact manifest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$GH_REPO/actions/runs/$SOURCE_RUN_ID/artifacts?per_page=100" > safe/source_artifacts_api.json
+          python3 - <<'PY'
+          import json, os
+          src=json.load(open('safe/source_artifacts_api.json'))
+          arts=src['artifacts']
+          expected=['layerb-beta-forced-prod-h-interp-invariant-v0-24'] + [f'layerb-beta-forced-prod-h-interp-R{i:02d}-v0-24' for i in range(1,33)]
+          by={x['name']:x for x in arts}
+          missing=[n for n in expected if n not in by]
+          assert not missing, missing
+          selected=[]
+          for n in expected:
+              x=by[n]
+              assert not x['expired'], n
+              d=x.get('digest') or ''
+              selected.append({'name':n,'id':x['id'],'digest':d,'expired':x['expired']})
+          out={'schema':'LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_INTERPOLATION_DECISION_RECOVERY_SOURCE_V0_24',
+               'source_run_id':int(os.environ['SOURCE_RUN_ID']),
+               'source_head_sha':os.environ['SOURCE_SHA'],
+               'artifact_count':len(selected),'artifacts':selected}
+          json.dump(out,open('safe/source_artifacts.json','w'),indent=2,sort_keys=True)
+          print('source artifacts',len(selected))
+          PY
+
+      - name: Download immutable source-run V0.24 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+          pattern: layerb-beta-forced-prod-h-interp-*-v0-24
+          path: new
+          merge-multiple: true
+
+      - name: Verify source invariant and parent provenance
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          python3 - <<'PY'
+          import json
+          inv=json.load(open('new/invariant.json'))
+          assert inv['pass'] is True and inv['parallel_lane_count']==32 and inv['parent_cell_count']==2
+          assert inv['primitive_response_series_count']==8 and inv['expected_solver_construction_count']==10
+          assert inv['minimum_eligible_lane_n']==6 and inv['minimum_per_native_class_n']==3
+          assert inv['direct_deduplicated_probe_row_count']>0 and inv['direct_unique_node_count']>0
+          assert inv['token']=='PASS_LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_INTERPOLATION_INVARIANTS_V0_24'
+          PY
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$GH_REPO/actions/runs/$V023_RUN_ID/artifacts?per_page=100" > /tmp/v023.json
+          python3 - <<'PY'
+          import json
+          C=json.load(open('docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_V0_24.json'))
+          by={x['name']:x for x in json.load(open('/tmp/v023.json'))['artifacts']}
+          x=by['layerb-beta-forced-prod-h-replay-decision-v0-23']; d=x.get('digest') or ''; d=d[7:] if d.startswith('sha256:') else d
+          assert x['id']==C['parent_decision_artifact_id'] and d==C['parent_decision_artifact_zip_sha256'] and not x['expired']
+          PY
+
+      - name: Apply exact frozen V0.24 classifier
+        run: |
+          set -euo pipefail
+          test "$(find new -maxdepth 1 -name 'lane_R*.json' | wc -l)" -eq 32
+          python3 "$EXECUTOR" --mode decision --contract "$CONTRACT" --inputs new/lane_R*.json --out safe/decision.json
+
+      - name: Bind recovery provenance
+        env:
+          RECOVERY_RUN_ID: ${{ github.run_id }}
+          RECOVERY_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os
+          src=json.load(open('safe/source_artifacts.json'))
+          dec=json.load(open('safe/decision.json'))
+          b=open('safe/decision.json','rb').read()
+          out={'schema':'LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_INTERPOLATION_DECISION_RECOVERY_PROVENANCE_V0_24',
+               'source_run_id':src['source_run_id'],'source_head_sha':src['source_head_sha'],
+               'source_artifacts':src['artifacts'],'source_artifact_count':src['artifact_count'],
+               'recovery_run_id':int(os.environ['RECOVERY_RUN_ID']),'recovery_workflow_commit':os.environ['RECOVERY_SHA'],
+               'frozen_classifier_checkout_sha':os.popen('git rev-parse HEAD').read().strip(),
+               'decision_sha256':hashlib.sha256(b).hexdigest(),
+               'classification':dec['classification'],'next_stage':dec['next_stage'],
+               'effect':dec['effect'],'scientific_inputs_regenerated':False,'class_solve_launched':False}
+          assert out['frozen_classifier_checkout_sha']==src['source_head_sha']
+          json.dump(out,open('safe/recovery_provenance.json','w'),indent=2,sort_keys=True)
+          print(dec['classification'],dec['next_stage'])
+          PY
+
+      - name: Upload recovered frozen decision
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-forced-prod-h-interp-decision-recovery-v0-24
+          path: |
+            safe/decision.json
+            safe/recovery_provenance.json
+            safe/source_artifacts.json
+          retention-days: 90
