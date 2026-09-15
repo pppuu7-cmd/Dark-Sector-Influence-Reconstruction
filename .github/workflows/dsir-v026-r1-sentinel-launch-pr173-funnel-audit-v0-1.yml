@@ -1,0 +1,94 @@
+name: dsir-v026-r1-sentinel-launch-pr173-funnel-audit-v0-1
+
+on:
+  push:
+    branches:
+      - audit/v026-r1-sentinel-launch-pr173
+    paths:
+      - '.github/workflows/dsir-v026-r1-sentinel-launch-pr173-funnel-audit-v0-1.yml'
+      - 'ci/dsir_v026_r1_sentinel_launch_pr173_funnel_audit_v0_1.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
+env:
+  PR_NUMBER: '173'
+  MAIN_SHA: '6ccd564184456052a993593c43951604ccd3aaef'
+  CANDIDATE_HEAD: '1403581d4d608d98597eaff2c77c80a98d6c3c6e'
+  STATIC_HEAD: '5d42cd84ce54c9781d7bbefd41b01d3cf775fbd7'
+  STATIC_RUN_ID: '34959657394'
+  STATIC_ARTIFACT_ID: '10393170033'
+
+jobs:
+  funnel-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout independent main-based audit branch
+        uses: actions/checkout@v4
+
+      - name: Fetch exact main and PR173 head as read-only git objects
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main --depth=32
+          git fetch --no-tags origin pull/${PR_NUMBER}/head:refs/remotes/origin/pr173 --depth=32
+          test "$(git rev-parse refs/remotes/origin/main)" = "$MAIN_SHA"
+          test "$(git rev-parse refs/remotes/origin/pr173)" = "$CANDIDATE_HEAD"
+
+      - name: Capture exact PR and hosted static-audit metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          gh api "/repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" > safe/pr.json
+          gh api "/repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" > safe/pr_files.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${STATIC_RUN_ID}" > safe/static_run.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${STATIC_HEAD}&event=push&per_page=100" > safe/static_runs.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${STATIC_ARTIFACT_ID}" > safe/static_artifact.json
+
+      - name: Download exact immutable static launch-package artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${STATIC_ARTIFACT_ID}/zip" > safe/static.zip
+          printf '%s  %s\n' 'e95c4675db77a2ecd864d21e39dfdccffe289ed61a84ece95182f22c46e16184' safe/static.zip | sha256sum -c -
+
+      - name: Execute external funnel audit without executing candidate W or science code
+        run: |
+          set -euo pipefail
+          python3 -m py_compile ci/dsir_v026_r1_sentinel_launch_pr173_funnel_audit_v0_1.py
+          mkdir -p safe
+          python3 ci/dsir_v026_r1_sentinel_launch_pr173_funnel_audit_v0_1.py \
+            --pr-json safe/pr.json --pr-files-json safe/pr_files.json \
+            --static-run-json safe/static_run.json --static-runs-json safe/static_runs.json \
+            --static-art-json safe/static_artifact.json --static-zip safe/static.zip \
+            --out safe/funnel_audit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/funnel_audit.json'))
+          assert d['token']=='QUALIFIED_DSIR_V0_26_R1_SENTINEL_LAUNCH_PR173_FUNNEL_AUDIT_PLUS_0_PLUS_0'
+          assert d['verdict']=='QUALIFIED'
+          assert d['classification']=='SENTINEL_ACYCLIC_LAUNCH_PACKAGE_QUALIFIED_FOR_INACTIVE_PROMOTION_AND_Q_CONSTRUCTION'
+          assert d['candidate_future_workflow_executed_by_funnel_audit'] is False
+          assert d['class_solver_invoked_by_funnel_audit'] is False
+          assert d['scientific_response_read_by_funnel_audit'] is False
+          assert d['sentinel_science_execution_authorized_by_this_receipt'] is False
+          assert d['full_107_row_execution_authorized_by_this_receipt'] is False
+          print(d['token'])
+          PY
+          sha256sum safe/funnel_audit.json > safe/funnel_audit.sha256
+
+      - name: Persist external launch-package funnel receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-sentinel-launch-pr173-funnel-audit-v0-1
+          path: |
+            safe/funnel_audit.json
+            safe/funnel_audit.sha256
+          if-no-files-found: error
+          retention-days: 90
