@@ -1,0 +1,102 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_RUNTIME_CHAIN_SCHEMA_BLOCKER_AUTHORITY_V0_2",
+  "status": "FAIL_CLOSED_BLOCKER_AUTHORITY",
+  "date": "2026-09-15",
+  "scope": "FULL_FROZEN_SENTINEL_PRE_SOLVE_RUNTIME_CONSUMER_CHAIN_BEFORE_FINAL_L",
+  "effect": "+0/+0",
+  "verdict": "BLOCKED",
+  "classification": "SENTINEL_RUNTIME_CHAIN_SCHEMA_INCOMPATIBILITY_REQUIRES_GOVERNANCE_ONLY_A_L_Q_CORRECTION",
+  "reviewed_main_sha": "88b69e808bafdeb89166949d31e7353018437966",
+  "supersedes_correction_scope_guidance_only": {
+    "prior_blocker_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FINAL_Q_RUNTIME_SCHEMA_BLOCKER_V0_1.json",
+    "prior_blocker_git_blob_sha1": "44cc53fb014e043d31f72519c3ac96493ddabb57",
+    "prior_blocking_verdict_remains_valid": true,
+    "prior_Q_only_repair_guidance_is_complete": false,
+    "historical_verdict_rewritten": false
+  },
+  "runtime_blockers": {
+    "W_to_Q": {
+      "consumer_git_blob_sha1": "19907175f0f3417ddee2aba6916d961c6be02e26",
+      "current_Q_git_blob_sha1": "ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd",
+      "missing_top_level_keys": [
+        "active_workflow_git_blob_sha1",
+        "launch_authority_git_blob_sha1",
+        "launch_descriptor_git_blob_sha1",
+        "executor_git_blob_sha1",
+        "decision_git_blob_sha1",
+        "implementation_contract_git_blob_sha1"
+      ],
+      "equivalent_nested_values_present": true,
+      "failure_mode": "W_AUTHORIZE_KEYERROR_BEFORE_LANES"
+    },
+    "executor_to_A": {
+      "consumer_git_blob_sha1": "9affe7c7d4e02bbc728ba15e3cde893ec9876b38",
+      "current_A_git_blob_sha1": "4ba40e59e6a9d48636d95d07efab575e56ae0966",
+      "required_field": "promotion_authority_git_blob_sha1",
+      "required_value": "cdbcea2622564d40aa9d1edc045a5808f8cdd1c4",
+      "current_equivalent_field": "r1_promotion_authority_git_blob_sha1",
+      "equivalent_value_present": true,
+      "failure_mode": "EXECUTOR_REQUIRE_LAUNCH_AUTHORITY_REJECTS_BEFORE_CLASS_CONSTRUCTION"
+    }
+  },
+  "downstream_response_blind_preflight": {
+    "PR169_load_contract_runtime_field_present": true,
+    "PR169_authority_git_blob_sha1": "cdbcea2622564d40aa9d1edc045a5808f8cdd1c4",
+    "decision_git_blob_sha1": "97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9",
+    "additional_launch_schema_blocker_identified_after_A": false,
+    "class_solver_invoked": false,
+    "scientific_response_read": false,
+    "covariance_read": false
+  },
+  "minimal_complete_repair": {
+    "repair_type": "GOVERNANCE_ONLY_A_THEN_L_THEN_Q_EXACT_BINDING_CASCADE",
+    "A_change": "ADD_PROMOTION_AUTHORITY_GIT_BLOB_SHA1_ALIAS_ONLY",
+    "L_change": "UPDATE_LAUNCH_AUTHORITY_GIT_BLOB_SHA1_TO_CORRECTED_A_ONLY",
+    "Q_change": "ADD_SIX_W_REQUIRED_TOP_LEVEL_BINDINGS_AND_UPDATE_EXACT_A_L_BINDINGS",
+    "modify_W": false,
+    "modify_executor": false,
+    "modify_decision": false,
+    "modify_R1_scientific_contract": false,
+    "modify_numerical_thresholds": false,
+    "modify_target_geometry": false
+  },
+  "qualification_requirements": {
+    "corrected_A_L_Q_package_must_be_prospectively_frozen": true,
+    "response_blind_static_full_runtime_chain_audit_required": true,
+    "independent_funnel_qualification_required": true,
+    "qualification_authority_must_reach_main_before_replacing_final_A_or_Q": true,
+    "final_L_must_remain_absent_during_A_Q_replacement": true,
+    "post_replacement_fail_closed_audit_required_before_final_L": true
+  },
+  "audit_report": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_RUNTIME_CHAIN_SCHEMA_BLOCKER_AUDIT_V0_2.md",
+    "git_blob_sha1": "a8f4cb4c4445609f71dae0e682648f335213b02b"
+  },
+  "hosted_v0_1_blocker_confirmation": {
+    "run_id": 35023640741,
+    "job_id": 104565256669,
+    "status_at_v0_2_creation": "queued",
+    "v0_2_blocking_scope_does_not_depend_on_runner_completion": true,
+    "terminal_receipt_should_be_persisted_when_available": true
+  },
+  "forbidden": {
+    "interpret_as_scientific_failure": true,
+    "create_final_L_from_current_package": true,
+    "launch_sentinel_science_from_current_package": true,
+    "promote_Q_only_correction_as_complete": true,
+    "launch_full_107_row_replay": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "launch_global_65537": true,
+    "open_statistical_or_physical_science_gate": true
+  },
+  "authorized_next_stage": "CONSTRUCT_PROSPECTIVE_GOVERNANCE_ONLY_CORRECTED_A_L_Q_PACKAGE_FOR_RESPONSE_BLIND_STATIC_AND_INDEPENDENT_FUNNEL_REQUALIFICATION",
+  "final_L_creation_authorized": false,
+  "sentinel_science_execution_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "readiness_percent_change": 0,
+  "scientific_frontier_percent_change": 0
+}
