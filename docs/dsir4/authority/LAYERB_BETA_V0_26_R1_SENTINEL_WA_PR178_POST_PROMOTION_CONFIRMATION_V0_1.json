@@ -1,0 +1,132 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_WA_PR178_POST_PROMOTION_CONFIRMATION_V0_1",
+  "status": "TERMINAL_AUDIT_AUTHORITY",
+  "date": "2026-09-15",
+  "scope": "EXACT_PR178_WA_MAIN_STAGING_FAIL_CLOSED_POST_PROMOTION_ONLY",
+  "effect": "+0/+0",
+  "verdict": "CONFIRMED_SCOPED",
+  "classification": "SENTINEL_WA_MAIN_STAGING_CONFIRMED_FAIL_CLOSED_FINAL_Q_PROMOTION_ADMISSIBLE",
+  "reviewed_promotion": {
+    "merge_sha": "d605a941b412bb9625bf2fc6fedb0c7d9f8e8293",
+    "first_parent_authority_bearing_main_sha": "9a14b804c0743023c1225a53d55865612b3d0a97",
+    "audited_candidate_parent_sha": "15e7dbfb9c05744c026d5b03e5466267d802a2c7",
+    "exact_changed_file_count_relative_to_first_parent": 4,
+    "deletion_count": 0,
+    "exact_promotion_head_push_run_count": 0
+  },
+  "exact_promoted_bindings": {
+    "active_workflow_path": ".github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml",
+    "active_workflow_git_blob_sha1": "19907175f0f3417ddee2aba6916d961c6be02e26",
+    "launch_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json",
+    "launch_authority_git_blob_sha1": "4ba40e59e6a9d48636d95d07efab575e56ae0966",
+    "pretrigger_static_auditor_path": "ci/layerb_beta_v026_r1_sentinel_wa_pretrigger_static_audit_v0_1.py",
+    "pretrigger_static_auditor_git_blob_sha1": "2dbc76f15ee3510111db2bbe7da3cefb496d027b",
+    "pretrigger_static_workflow_path": ".github/workflows/layerb-beta-v026-r1-sentinel-wa-pretrigger-static-audit-v0-1.yml",
+    "pretrigger_static_workflow_git_blob_sha1": "f039472f7a94cda2ccf088f2e0e36b90ef08dc5d",
+    "executor_git_blob_sha1": "9affe7c7d4e02bbc728ba15e3cde893ec9876b38",
+    "decision_git_blob_sha1": "97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9",
+    "r1_contract_git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9"
+  },
+  "upstream_authority_chain": {
+    "q_candidate_path": "docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_CANDIDATE_V0_1.json",
+    "q_candidate_git_blob_sha1": "ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd",
+    "q_funnel_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_Q_FUNNEL_QUALIFICATION_V0_1.json",
+    "q_funnel_authority_git_blob_sha1": "43696ebc566c23871c0bcd94feca40bb9c03d82c",
+    "wa_pretrigger_funnel_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_WA_PRETRIGGER_FUNNEL_QUALIFICATION_V0_1.json",
+    "wa_pretrigger_funnel_authority_git_blob_sha1": "7c365449795d523d4ada39804c55c90e8c527a85"
+  },
+  "pretrigger_static_evidence": {
+    "run_id": 35017254145,
+    "run_number": 1,
+    "run_attempt": 1,
+    "artifact_id": 10415689546,
+    "artifact_zip_sha256": "ac4d6b601e8f8b90cb0ae21bfbdc8f360949453784da51688a76318668076c72",
+    "receipt_filename": "wa_pretrigger_static_audit.json",
+    "receipt_byte_length": 1252,
+    "receipt_sha256": "9f70c83f57f74805f073cbd0ef7b6bdf2fef0ac8028b01d503c6b54e7f46b681",
+    "class_solver_invoked": false,
+    "scientific_response_read": false
+  },
+  "pretrigger_independent_funnel_evidence": {
+    "run_id": 35017440323,
+    "run_number": 1,
+    "run_attempt": 1,
+    "artifact_id": 10415119864,
+    "artifact_zip_sha256": "e023a71379dee09ecf203b7a687c0da9b092b5ad2e39afc68dda39836752d8c0",
+    "receipt_filename": "wa_pretrigger_funnel_audit.json",
+    "receipt_byte_length": 1343,
+    "receipt_sha256": "dfc6219a1d766f38957d20185f3e5473f7c33260abcfbf607f48053f7224e025",
+    "receipt_verdict": "QUALIFIED",
+    "class_solver_invoked": false,
+    "scientific_response_read": false
+  },
+  "post_promotion_hosted_evidence": {
+    "run_id": 35017910362,
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "audit_head_sha": "4d0076f155e36326263c1b420f9944e57c4690b9",
+    "job_id": 104545919688,
+    "run_conclusion": "success",
+    "artifact_id": 10417107515,
+    "artifact_name": "dsir-v026-r1-sentinel-wa-post-promotion-audit-v0-1",
+    "artifact_zip_sha256": "ce839f31ad5dfb164611df4cd49ee9b774c64cef7289e861944bb7e1c04e1c52",
+    "receipt_filename": "wa_post_promotion_audit.json",
+    "receipt_byte_length": 1179,
+    "receipt_sha256": "034c546a75dfccc94dfb31596bea4d1967a33bccff219bffe1641e58f4a32ed2",
+    "receipt_classification": "SENTINEL_WA_MAIN_STAGING_CONFIRMED_FAIL_CLOSED_FINAL_Q_PROMOTION_ADMISSIBLE",
+    "sentinel_workflow_executed": false,
+    "class_solver_invoked": false,
+    "scientific_response_read": false,
+    "covariance_read": false
+  },
+  "fail_closed_state": {
+    "active_workflow_trigger_branch_main_only": true,
+    "active_workflow_trigger_path_final_L_only": true,
+    "active_workflow_workflow_dispatch_absent": true,
+    "launch_authority_binds_exact_W": true,
+    "launch_authority_requires_final_Q": true,
+    "launch_authority_does_not_bind_L": true,
+    "final_launch_descriptor_present": false,
+    "final_Q_authority_present": false,
+    "q_candidate_storage_remains_inert": true,
+    "sentinel_science_executed": false
+  },
+  "audit_report": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_WA_PR178_POST_PROMOTION_FUNNEL_AUDIT_V0_1.md",
+    "git_blob_sha1": "883393d170c32cc3b27022999a77c45bcb8defad"
+  },
+  "interpretation": {
+    "accepted": "Exact PR178 W/A staging preserved the previously audited bytes and remains fail-closed before final Q and final L.",
+    "not_accepted": "This is not a sentinel scientific-response PASS and establishes no interpolation, resolution, solver-tolerance, cross-host scientific reproducibility, covariance, nuisance, statistical/model or physical dark-sector inference.",
+    "readiness_percent_change": 0,
+    "scientific_frontier_percent_change": 0
+  },
+  "next_gate_authorization": {
+    "exact_Q_candidate_promotion_to_final_Q_path_authorized": true,
+    "exact_Q_candidate_git_blob_sha1": "ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd",
+    "final_Q_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_V0_1.json",
+    "Q_must_be_exact_copy_without_mutation": true,
+    "Q_promotion_must_not_create_final_L": true,
+    "final_Q_post_promotion_response_blind_audit_required": true,
+    "final_L_creation_authorized_now": false,
+    "sentinel_science_execution_authorized_now": false,
+    "full_107_row_execution_authorized": false
+  },
+  "forbidden": {
+    "interpret_as_sentinel_scientific_pass": true,
+    "create_final_L_in_same_change_as_final_Q_promotion": true,
+    "launch_sentinel_science_before_final_Q_post_promotion_gate": true,
+    "launch_full_107_row_replay": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "launch_global_65537": true,
+    "open_statistical_or_physical_science_gate": true
+  },
+  "authorized_next_stage": "PROMOTE_EXACT_QUALIFIED_Q_CANDIDATE_BLOB_TO_FINAL_Q_AUTHORITY_PATH_WITHOUT_L_THEN_PERFORM_SEPARATE_RESPONSE_BLIND_FINAL_Q_POST_PROMOTION_AUDIT",
+  "sentinel_science_execution_authorized": false,
+  "full_107_row_execution_authorized": false
+}
