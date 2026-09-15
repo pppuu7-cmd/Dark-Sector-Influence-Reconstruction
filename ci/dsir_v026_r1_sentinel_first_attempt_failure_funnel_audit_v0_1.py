@@ -26,7 +26,18 @@ W_BLOB = '19907175f0f3417ddee2aba6916d961c6be02e26'
 L = 'docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json'
 L_BLOB = 'fa7014435f0a5688def2124898ddd01d0c0183aa'
 PRODUCER_RECEIPT = 'first_attempt_forensic_audit.json'
+PRODUCER_RECEIPT_HASH = 'first_attempt_forensic_audit.sha256'
+PRODUCER_INPUT_HASH = 'input_evidence.sha256'
 PRODUCER_ARTIFACT_NAME = 'dsir-v026-r1-sentinel-first-attempt-forensic-audit-v0-1'
+PRODUCER_FILES = {
+    PRODUCER_RECEIPT,
+    PRODUCER_RECEIPT_HASH,
+    PRODUCER_INPUT_HASH,
+    'run.json',
+    'jobs.json',
+    'artifacts.json',
+    'authorize.log',
+}
 PLATFORM_SOURCE = 'https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push'
 
 
@@ -54,6 +65,19 @@ def load(path: Path):
     return json.loads(path.read_text())
 
 
+def parse_sha256_manifest(path: Path) -> dict[str, str]:
+    out: dict[str, str] = {}
+    for line in path.read_text().splitlines():
+        if not line.strip():
+            continue
+        digest, name = line.split(None, 1)
+        name = name.strip()
+        if name.startswith('*'):
+            name = name[1:]
+        out[Path(name).name] = digest
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument('--producer-dir', required=True)
@@ -64,13 +88,27 @@ def main() -> int:
     a = ap.parse_args()
 
     pd = Path(a.producer_dir)
+    present_files = {p.name for p in pd.iterdir() if p.is_file()}
+    assert present_files == PRODUCER_FILES, (present_files, PRODUCER_FILES)
+
     receipt_path = pd / PRODUCER_RECEIPT
+    receipt_hash_path = pd / PRODUCER_RECEIPT_HASH
+    input_hash_path = pd / PRODUCER_INPUT_HASH
     science_run_path = pd / 'run.json'
     science_jobs_path = pd / 'jobs.json'
     science_artifacts_path = pd / 'artifacts.json'
     authorize_log_path = pd / 'authorize.log'
-    for p in [receipt_path, science_run_path, science_jobs_path, science_artifacts_path, authorize_log_path]:
-        assert p.is_file(), p
+
+    receipt_manifest = parse_sha256_manifest(receipt_hash_path)
+    assert receipt_manifest == {PRODUCER_RECEIPT: sha256(receipt_path)}, receipt_manifest
+    input_manifest = parse_sha256_manifest(input_hash_path)
+    expected_input_manifest = {
+        'run.json': sha256(science_run_path),
+        'jobs.json': sha256(science_jobs_path),
+        'artifacts.json': sha256(science_artifacts_path),
+        'authorize.log': sha256(authorize_log_path),
+    }
+    assert input_manifest == expected_input_manifest, (input_manifest, expected_input_manifest)
 
     # Independent repository reconstruction; do not import or execute producer auditor.
     assert blob(REVIEW_SUPPORT) == REVIEW_SUPPORT_BLOB
@@ -191,6 +229,9 @@ def main() -> int:
         'producer_artifact_name': PRODUCER_ARTIFACT_NAME,
         'producer_artifact_zip_sha256': producer_zip_sha256,
         'producer_receipt_sha256': sha256(receipt_path),
+        'producer_receipt_manifest_verified': True,
+        'producer_input_manifest_verified': True,
+        'producer_artifact_file_set_verified': True,
         'review_support_git_blob_sha1': REVIEW_SUPPORT_BLOB,
         'interim_fail_closed_authority_git_blob_sha1': INTERIM_BLOB,
         'repository_trigger_reconstructed_exact_L_only': True,
