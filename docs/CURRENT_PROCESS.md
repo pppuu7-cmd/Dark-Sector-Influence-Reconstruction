@@ -1,82 +1,116 @@
 # DSIR current-process ledger
 
-Updated: 2026-09-16. Scope: **DSIR only**. GitHub repository/Actions state, frozen DSIR4 preregistrations/contracts, terminal authorities and independent audit qualifications are authoritative. Chat is not authority.
+Updated: 2026-09-16. Scope: **DSIR only**. Repository/Actions state, frozen DSIR4 contracts and terminal authorities are authoritative. Chat is not authority.
 
-## Numerical/reproducibility baseline
+## Scientific baseline remains unchanged
 
-The numerical/reproducibility chain remains terminal through V0.25. V0.25 classification is `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, effect `+0/+0`; historical `INVALID_PROVENANCE` remains scoped to the original producer binding and was reconciled by the separate provenance-correction authority without rewriting history.
+V0.25 remains terminal numerical classification `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, effect `+0/+0`. V0.26 R1 remains the prospectively frozen successor specification: preregistration blob `545e5be589e0f8029d23db2edb4e2faad116c3a0`, contract blob `b510d8e97baf1c0b7b216c0605d83cdd029254e9`, 107 rows (DES 53/BOSS 54), alpha tolerance `3e-10`, beta exact-target tolerance `1e-12`, scientific strict `<1e-3`, technical strict `<1e-5`, exact-node binding `<=1e-12`. Full-replay accounting remains 738 CLASS constructions.
 
-Consolidated V0.26 R1 remains the current prospective specification: preregistration blob `545e5be589e0f8029d23db2edb4e2faad116c3a0`, machine contract blob `b510d8e97baf1c0b7b216c0605d83cdd029254e9`, 107 rows (DES 53 / BOSS 54), alpha canonical-32769 tolerance `3e-10`, beta exact-target-union tolerance `1e-12`, scientific strict `<1e-3`, technical strict `<1e-5`, requested-node binding `<=1e-12`. Full-replay accounting remains 738 CLASS constructions. None of this scientific content changed in the launch-governance work below.
+No full-107 authority exists. Covariance, whitening, nuisance, relation-null, `Wm_S3`, global 65537, statistical/model inference and physical inference remain closed.
 
 ## Frozen sentinel implementation
 
-PR171 implementation remains independently `QUALIFIED` and promoted. Frozen active workflow content W blob `19907175f0f3417ddee2aba6916d961c6be02e26`; executor `9affe7c7d4e02bbc728ba15e3cde893ec9876b38`; decision finalizer `97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9`; implementation contract `e14804463d9eab288162b4c98e8dd5c1fd6a10eb`.
+Frozen implementation identities remain:
 
-PR173 originally froze the acyclic package DAG `W -> A(W) -> L(A,W) -> static audit -> Q(W,A,L)` with original candidate A blob `4ba40e59e6a9d48636d95d07efab575e56ae0966`, L blob `9c217e41764d979bea12644fae372354241bc976`, and Q blob `ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd`.
+- active W `.github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml`, blob `19907175f0f3417ddee2aba6916d961c6be02e26`;
+- executor `ci/layerb_beta_v026_r1_sentinel_v0_1.py`, blob `9affe7c7d4e02bbc728ba15e3cde893ec9876b38`;
+- decision `ci/layerb_beta_v026_r1_sentinel_decision_v0_1.py`, blob `97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9`;
+- implementation contract blob `e14804463d9eab288162b4c98e8dd5c1fd6a10eb`.
 
-## W/A staging and old final-Q state
+The historical old-A/Q runtime-schema blockers remain historical facts. They were corrected through the independently audited governance-only A-L-Q correction chain.
 
-PR178 exactly staged active-path W and old authority-path A without L. Merge: `d605a941b412bb9625bf2fc6fedb0c7d9f8e8293`. Hosted and independent pretrigger/post-promotion audits established that staging was fail-closed and caused zero sentinel runs.
+## Corrected runtime package was promoted and independently checked
 
-PR179 then promoted exact old Q blob `ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd` to final Q path, merge `bcd1cfaaee2961fe4997d5789971547e3ea42955`, **without L**. PR179 head had zero push Actions runs.
+Corrected governance identities:
 
-Current final runtime paths before correction replacement are therefore:
+- A `1c9945dd00b137f3e202efa14bf4112fffebf8af`;
+- L `fa7014435f0a5688def2124898ddd01d0c0183aa`;
+- Q `f7b97f47d9e771e3d3ea78875da5a45962160cd0`.
 
-- W present, blob `19907175f0f3417ddee2aba6916d961c6be02e26`;
-- final A present, old blob `4ba40e59e6a9d48636d95d07efab575e56ae0966`;
-- final Q present, old blob `ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd`;
-- final L **absent**.
+PR #184 merge `41ef654d7552b670c20d3202249d7687bae5f870` replaced final A/Q only; L remained absent. Hosted post-replacement run `35032839418` and independent funnel run `35032991806` both passed response-blind checks, reproduced the minimal A/Q deltas, confirmed W->Q and executor->A compatibility, recorded zero sentinel-science runs at the replacement head, and read no scientific response/covariance.
 
-No sentinel scientific run has occurred.
+A separate exact-one-run L-gate authority was then promoted by PR #185 merge `2ca2d4c35f9dcfe2be00e573598e6189f987508d`. Authority path:
 
-## Historical runtime-chain blocker remains authoritative for old A/Q
+`docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_EXACT_L_GATE_AUTHORITY_V0_1.json`
 
-PR179 post-promotion review discovered that frozen W consumes six Q bindings at the **top level**, while old Q stores the same correct values only inside nested sections. A complete consumer-chain review then found that executor `require_launch_authority()` consumes A field `promotion_authority_git_blob_sha1`, while old A contains the same correct PR169 blob only as `r1_promotion_authority_git_blob_sha1`.
+blob `1c1819ee6aa7a48597770d9bc9116185d061a49c`.
 
-The broader historical blocker authority remains `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_RUNTIME_CHAIN_SCHEMA_BLOCKER_V0_2.json`, blob `09190c92c1311b66e953d19ef3811d63a0bf871a`, verdict `BLOCKED`, classification `SENTINEL_RUNTIME_CHAIN_SCHEMA_INCOMPATIBILITY_REQUIRES_GOVERNANCE_ONLY_A_L_Q_CORRECTION`. It is not rewritten by the correction result.
+It authorized exactly one new-file final-L creation / one first-attempt sentinel run, explicitly forbade rerun, and kept full-107 false.
 
-## Prospectively frozen corrected A-L-Q package
+## Exact L trigger and consumed first attempt
 
-Research branch `research/v026-r1-sentinel-runtime-chain-correction-v02`, exact audited head `d3b32cd341ce16b5494024dfa9785a2480173dc1`, freezes a governance-only correction with no W/executor/decision/R1 change:
+PR #186 merge `9a333294f3acb80201c5f6ed5b74918c1c767232` added exactly one runtime path relative to first parent `2ca2d4c35f9dcfe2be00e573598e6189f987508d`:
 
-- corrected A candidate `1c9945dd00b137f3e202efa14bf4112fffebf8af`: old A plus exactly one alias `promotion_authority_git_blob_sha1`;
-- corrected L candidate `fa7014435f0a5688def2124898ddd01d0c0183aa`: old L with only its exact A binding updated;
-- corrected Q candidate `f7b97f47d9e771e3d3ea78875da5a45962160cd0`: six W-required top-level bindings plus exact corrected A/L bindings.
+`docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json`
 
-Exact source diff relative to correction base `78f96f2c60db385f88a391b7fd046dd312176019`: six governance/audit files only; no scientific/executable runtime file changed. Correction contract blob: `01af3648bd3dc640acf35c7b0b7c116334b61cfe`.
+with exact L blob `fa7014435f0a5688def2124898ddd01d0c0183aa`. No A/Q/W/executor/decision/R1 file changed in the trigger operation.
 
-Hosted response-blind full-chain static audit run `35025081430`, job `104570053404`, run #1 / attempt #1, terminal success. Artifact `10419525675`; ZIP SHA256 `82929104a6129f5f8f8bd465ef574b4ce55c172411415c19458de9bb8fe5fa0f`; inner receipt SHA256 `b326cfc032a2e758d9565b4672d34f5f18ec61d8475ee5d23601e037bf3dab39`.
+This created exactly one sentinel workflow run at the trigger head:
 
-## Independent correction funnel result is now terminal and confirmed scoped
+- run `35033268924`;
+- run #1 / attempt #1;
+- event `push`;
+- exact head `9a333294f3acb80201c5f6ed5b74918c1c767232`;
+- terminal conclusion `failure`.
 
-The formerly pending independent response-blind funnel audit is now terminal:
+The first attempt is **consumed**. Do not rerun it.
 
-- run `35025283328`, run #1 / attempt #1, event `push`, terminal `success`;
-- exact audit head `5c34da32133f086d53c5af939e3e6e80147786d3`;
-- sole job `104570712438`, terminal `success`;
-- artifact `10419217250`;
-- Actions ZIP digest and independent redownload SHA256 both `51fa034ee9b3ff4bafe2f030db1b619adabd5f8e69b3b88cbd626ed126e53592`;
-- inner `runtime_chain_correction_funnel_audit.json`: 1607 bytes, SHA256 `7edd0cdaa06a43c7c42518993891c63c071c3feda2c187ff9b60f767b1a1b9d6`;
-- `science_runs.json`: 36 bytes, SHA256 `a2790a384d7d281e7395679000c35d27768d89dbd7052f725b8f4688beb59915`, exact count zero.
+## First-attempt failure occurred before science
 
-Producer receipt verdict is `QUALIFIED`, classification `SENTINEL_GOVERNANCE_ONLY_A_L_Q_RUNTIME_CHAIN_CORRECTION_QUALIFIED_FOR_AUTHORITY_FIRST_PROMOTION`, effect `+0/+0`.
+Hosted jobs:
 
-Independent auditor review `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_RUNTIME_CHAIN_CORRECTION_FUNNEL_AUDIT_REVIEW_V0_1.md` gives verdict `CONFIRMED_SCOPED`. Terminal confirmation authority is `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_RUNTIME_CHAIN_CORRECTION_FUNNEL_CONFIRMATION_V0_1.json`.
+- authorize job `104596462857`: `failure`;
+- materialize-plan: `skipped`;
+- lane matrix: `skipped`;
+- decision job `104596495504`: `failure` because current-run authorization did not succeed;
+- decision finalizer: `skipped`;
+- run artifacts: zero.
 
-The confirmed scope is narrow: exact corrected A/L/Q are qualified for **authority-first no-L promotion sequencing only**. No CLASS solver ran; no scientific response or covariance was read; no sentinel-science run exists at the correction head. The review does not establish sentinel numerical validity.
+Therefore no source-plan materialization, no lane execution, no CLASS scientific solve and no sentinel decision artifact occurred. There is **no sentinel scientific classification** from attempt #1.
+
+Authorize traceback is exact embedded Python line 48:
+
+`assert added.count(launch)==1`
+
+All A/Q/L/package assertions preceding that line were reached before the traceback and are independently reproducible as passing. The repository tree is also correct: the staging commit and merge both show exact L as added, and the net first-parent-to-merge diff contains exactly one added L.
+
+## Exact platform-contract root cause
+
+Frozen W reconstructs added files from `github.event.commits[*].added`. GitHub Actions documentation states that the push payload exposed to Actions does **not include** the commit-level `added`, `removed`, and `modified` attributes. Source checked 2026-09-16:
+
+`https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push`
+
+The frozen code uses `c.get('added', [])`; under the documented Actions payload this deterministically falls back to `[]`, giving effective `added.count(launch)=0`. Thus the exact frozen event guard is unsatisfiable even though the repository diff correctly contains one added L.
+
+This is a pre-science workflow/event-validation defect, not an interpolation, solver, tolerance, reproducibility or physical-science result.
+
+## Fail-closed interim authority on main
+
+PR #187 merge `f85d679fd4e8a16b83e7b44fd74911149e868746` persisted:
+
+- `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_PRELIMINARY_FAILURE_AUDIT_V0_1.md`, blob `387e13ac2f1c88d0405c7b3f7a41886cd1e276af`;
+- `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAIL_CLOSED_INTERIM_V0_1.json`, blob `8f898f3579ac55db4bfd3b7cc6a12cad04a4a613`.
+
+The interim authority explicitly forbids rerun of `35033268924`, a same-nonce second attempt, final-L modification/removal/recreation, full 107-row replay and downstream science. It does not claim a sentinel scientific result.
+
+## Current evidence gate
+
+Hosted forensic audit branch: `audit/v026-r1-sentinel-first-attempt-forensic`.
+
+Exact current forensic head `c5502bc124f502cb4ef1c19300fcdf87f260089b`; forensic run `35033678449` is pending GitHub-hosted runner execution. It is designed to persist run/jobs/artifacts snapshots plus authorize log, map traceback line 48 back to the exact frozen W source, reproduce all preceding package predicates and record the documented Actions push-payload root cause.
+
+After an immutable forensic receipt, a separate independent first-attempt failure funnel audit is required before a terminal result authority is written.
 
 ## Current funnel position
 
-`V0.25 TERMINAL -> V0.26 R1 PREREGISTERED/QUALIFIED -> PR171 IMPLEMENTATION PROMOTED -> PR173 ORIGINAL PACKAGE -> PR178 OLD W/A STAGED -> PR179 OLD FINAL Q PRESENT -> HISTORICAL RUNTIME CHAIN BLOCKED -> V0.2 GOVERNANCE-ONLY A-L-Q CORRECTION STATIC PASS -> INDEPENDENT CORRECTION FUNNEL QUALIFIED -> AUDITOR CONFIRMED_SCOPED -> CORRECTED A/Q NOT YET PROMOTED -> FINAL L ABSENT -> SENTINEL SCIENCE NOT EXECUTED -> FULL 107 ROW CLOSED`.
+`V0.25 TERMINAL -> V0.26 R1 QUALIFIED -> PR171 IMPLEMENTATION -> CORRECTED A/Q PROMOTED -> POST-REPLACEMENT AUDITS PASS -> EXACT L-GATE AUTHORITY -> EXACT L TRIGGER -> SENTINEL RUN #1/ATTEMPT #1 CONSUMED -> AUTHORIZE EVENT-GUARD FAILURE BEFORE SCIENCE -> RERUN FORBIDDEN -> FORENSIC/FUNNEL TERMINALIZATION PENDING -> FULL 107 ROW CLOSED`.
 
 ## Exact next admissible action
 
-The correction-funnel confirmation authority is now on main. The next admissible gate is **exact replacement of old final A and old final Q with corrected A `1c9945dd00b137f3e202efa14bf4112fffebf8af` and corrected Q `f7b97f47d9e771e3d3ea78875da5a45962160cd0`, without creating final L**.
+Complete forensic run `35033678449`, independently audit its immutable evidence, and persist a terminal first-attempt result authority.
 
-After that replacement, a separate response-blind fail-closed post-replacement audit is mandatory. Only a later terminal authority may authorize creation of exact corrected L `fa7014435f0a5688def2124898ddd01d0c0183aa` as the unique new-file one-run sentinel trigger.
+Do **not** rerun run `35033268924`. Do not modify/remove/recreate final L. Do not silently patch W and call it the same attempt. Any future scientific sentinel requires a separately prospectively frozen successor launch-governance package/workflow with a new trigger identity and independent static/funnel qualification.
 
-Do not create L early. Do not launch or rerun sentinel science from this authority. Full 107-row replay remains closed even after any future sentinel PASS until independent sentinel-result funnel audit plus a distinct explicit full-replay launch authority.
+A future successor guard should validate the aggregate `before...after` repository diff (or equivalent first-parent tree diff), rather than absent commit-level file lists in the Actions push payload.
 
-## Interpretation boundary
-
-No substantive sentinel response exists. Do not infer interpolation/grid/resolution/tolerance success, cross-host scientific reproducibility, covariance/nuisance validity, statistical/model validity or physical dark-sector inference from governance/static audits. Covariance, whitening, nuisance, relation-null, `Wm_S3`, global 65537 and downstream science remain closed. Effect `+0/+0`; readiness `68%`; scientific frontier `67%`.
+Effect remains `+0/+0`; readiness `68%`; scientific frontier `67%`.
