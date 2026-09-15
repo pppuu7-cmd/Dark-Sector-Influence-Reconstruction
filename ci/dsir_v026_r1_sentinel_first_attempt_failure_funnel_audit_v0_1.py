@@ -5,14 +5,19 @@ import argparse
 import hashlib
 import json
 import subprocess
-from pathlib import Path
+import zipfile
+from pathlib import Path, PurePosixPath
 
 SCIENCE_RUN_ID = 35033268924
+SCIENCE_WORKFLOW_ID = 359060727
 SCIENCE_HEAD = '9a333294f3acb80201c5f6ed5b74918c1c767232'
 SCIENCE_FIRST_PARENT = '2ca2d4c35f9dcfe2be00e573598e6189f987508d'
 SCIENCE_STAGING_PARENT = '657e5d6b2fe3ad7f7c11bcd2af873cffe800cc96'
 FORENSIC_RUN_ID = 35033678449
 FORENSIC_HEAD = 'c5502bc124f502cb4ef1c19300fcdf87f260089b'
+FORENSIC_ARTIFACT_ID = 10422924571
+FORENSIC_ZIP_SHA256 = '226209ae5cb416bd2575e5d1b7800632b6848c04363ce0d9a1add27cbbdd559b'
+FORENSIC_RECEIPT_SHA256 = '207cfde59971b91f3e6ac5ef3c95703f608735c17df67daa03a14efb4a7f976e'
 FORENSIC_AUDITOR = 'ci/dsir_v026_r1_sentinel_first_attempt_forensic_audit_v0_1.py'
 FORENSIC_WORKFLOW = '.github/workflows/dsir-v026-r1-sentinel-first-attempt-forensic-audit-v0-1.yml'
 FORENSIC_AUDITOR_BLOB = '63b6a0db41ff5e0e3c36be605596fb1c5aee0f1d'
@@ -37,6 +42,15 @@ PRODUCER_FILES = {
     'jobs.json',
     'artifacts.json',
     'authorize.log',
+}
+PRODUCER_RECEIPT_MANIFEST_NAMES = {
+    'safe/first_attempt_forensic_audit.json',
+}
+PRODUCER_INPUT_MANIFEST_NAMES = {
+    'safe/run.json',
+    'safe/jobs.json',
+    'safe/artifacts.json',
+    'safe/authorize.log',
 }
 PLATFORM_SOURCE = 'https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push'
 
@@ -65,17 +79,48 @@ def load(path: Path):
     return json.loads(path.read_text())
 
 
-def parse_sha256_manifest(path: Path) -> dict[str, str]:
+def parse_sha256_manifest_exact(path: Path, expected_names: set[str]) -> dict[str, str]:
     out: dict[str, str] = {}
-    for line in path.read_text().splitlines():
-        if not line.strip():
-            continue
-        digest, name = line.split(None, 1)
-        name = name.strip()
-        if name.startswith('*'):
-            name = name[1:]
-        out[Path(name).name] = digest
+    lines = [line for line in path.read_text().splitlines() if line.strip()]
+    assert len(lines) == len(expected_names), (len(lines), expected_names)
+    for line in lines:
+        fields = line.split(None, 1)
+        assert len(fields) == 2, line
+        digest, name = fields
+        assert len(digest) == 64 and digest == digest.lower(), digest
+        assert all(c in '0123456789abcdef' for c in digest), digest
+        assert not name.startswith('*'), name
+        assert name in expected_names, (name, expected_names)
+        assert name not in out, name
+        out[name] = digest
+    assert set(out) == expected_names, (set(out), expected_names)
     return out
+
+
+def verify_exact_zip_members(zip_path: Path) -> None:
+    with zipfile.ZipFile(zip_path) as zf:
+        infos = zf.infolist()
+        assert len(infos) == len(PRODUCER_FILES), len(infos)
+        names: list[str] = []
+        for info in infos:
+            assert not info.is_dir(), info.filename
+            name = info.filename
+            assert '\\' not in name, name
+            p = PurePosixPath(name)
+            assert not p.is_absolute(), name
+            assert all(part not in ('', '.', '..') for part in p.parts), name
+            assert p.as_posix() == name, name
+            names.append(name)
+        assert len(names) == len(set(names)), names
+        assert set(names) == PRODUCER_FILES, (set(names), PRODUCER_FILES)
+
+
+def verify_exact_extracted_tree(root: Path) -> None:
+    assert root.is_dir(), root
+    files = {p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file()}
+    dirs = {p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_dir()}
+    assert files == PRODUCER_FILES, (files, PRODUCER_FILES)
+    assert dirs == set(), dirs
 
 
 def main() -> int:
@@ -84,12 +129,14 @@ def main() -> int:
     ap.add_argument('--producer-run-json', required=True)
     ap.add_argument('--producer-artifacts-json', required=True)
     ap.add_argument('--producer-zip', required=True)
+    ap.add_argument('--science-live-runs-json', required=True)
     ap.add_argument('--out', required=True)
     a = ap.parse_args()
 
     pd = Path(a.producer_dir)
-    present_files = {p.name for p in pd.iterdir() if p.is_file()}
-    assert present_files == PRODUCER_FILES, (present_files, PRODUCER_FILES)
+    producer_zip = Path(a.producer_zip)
+    verify_exact_zip_members(producer_zip)
+    verify_exact_extracted_tree(pd)
 
     receipt_path = pd / PRODUCER_RECEIPT
     receipt_hash_path = pd / PRODUCER_RECEIPT_HASH
@@ -99,14 +146,16 @@ def main() -> int:
     science_artifacts_path = pd / 'artifacts.json'
     authorize_log_path = pd / 'authorize.log'
 
-    receipt_manifest = parse_sha256_manifest(receipt_hash_path)
-    assert receipt_manifest == {PRODUCER_RECEIPT: sha256(receipt_path)}, receipt_manifest
-    input_manifest = parse_sha256_manifest(input_hash_path)
+    receipt_manifest = parse_sha256_manifest_exact(receipt_hash_path, PRODUCER_RECEIPT_MANIFEST_NAMES)
+    assert receipt_manifest == {
+        'safe/first_attempt_forensic_audit.json': sha256(receipt_path)
+    }, receipt_manifest
+    input_manifest = parse_sha256_manifest_exact(input_hash_path, PRODUCER_INPUT_MANIFEST_NAMES)
     expected_input_manifest = {
-        'run.json': sha256(science_run_path),
-        'jobs.json': sha256(science_jobs_path),
-        'artifacts.json': sha256(science_artifacts_path),
-        'authorize.log': sha256(authorize_log_path),
+        'safe/run.json': sha256(science_run_path),
+        'safe/jobs.json': sha256(science_jobs_path),
+        'safe/artifacts.json': sha256(science_artifacts_path),
+        'safe/authorize.log': sha256(authorize_log_path),
     }
     assert input_manifest == expected_input_manifest, (input_manifest, expected_input_manifest)
 
@@ -137,7 +186,7 @@ def main() -> int:
     assert interim['sentinel_science_execution_authorized_now'] is False
     assert interim['full_107_row_execution_authorized'] is False
 
-    # Exact producer run must be the current third-generation forensic run, never stale run #1/#2.
+    # Exact producer run must be the third-generation forensic run, never stale run #1/#2.
     prun = load(Path(a.producer_run_json))
     assert int(prun['id']) == FORENSIC_RUN_ID
     assert prun['head_sha'] == FORENSIC_HEAD
@@ -150,16 +199,38 @@ def main() -> int:
 
     part = load(Path(a.producer_artifacts_json))
     artifacts = part.get('artifacts', [])
+    assert int(part.get('total_count', len(artifacts))) == 1, part.get('total_count')
     assert len(artifacts) == 1, artifacts
     art = artifacts[0]
+    assert int(art['id']) == FORENSIC_ARTIFACT_ID
     assert art['name'] == PRODUCER_ARTIFACT_NAME
     assert int(art['workflow_run']['id']) == FORENSIC_RUN_ID
     assert art['workflow_run']['head_sha'] == FORENSIC_HEAD
-    producer_artifact_id = int(art['id'])
-    producer_zip_sha256 = sha256(Path(a.producer_zip))
+    assert art.get('expired') is False
+    producer_zip_sha256 = sha256(producer_zip)
+    assert producer_zip_sha256 == FORENSIC_ZIP_SHA256, producer_zip_sha256
     api_digest = art.get('digest')
-    if api_digest:
-        assert api_digest == 'sha256:' + producer_zip_sha256, (api_digest, producer_zip_sha256)
+    assert api_digest == 'sha256:' + FORENSIC_ZIP_SHA256, api_digest
+    assert sha256(receipt_path) == FORENSIC_RECEIPT_SHA256, sha256(receipt_path)
+
+    # Live exact-head enumeration is deliberately later than the immutable producer snapshot.
+    live = load(Path(a.science_live_runs_json))
+    live_runs = live.get('workflow_runs', [])
+    exact_runs = [
+        x for x in live_runs
+        if int(x.get('workflow_id', -1)) == SCIENCE_WORKFLOW_ID
+        and x.get('head_sha') == SCIENCE_HEAD
+        and x.get('event') == 'push'
+    ]
+    assert len(exact_runs) == 1, [(x.get('id'), x.get('workflow_id'), x.get('head_sha'), x.get('run_attempt')) for x in exact_runs]
+    only = exact_runs[0]
+    assert int(only['id']) == SCIENCE_RUN_ID
+    assert int(only['run_number']) == 1
+    assert int(only['run_attempt']) == 1
+    assert only['head_branch'] == 'main'
+    assert only['status'] == 'completed'
+    assert only['conclusion'] == 'failure'
+    assert only['path'] == W
 
     # Producer receipt is evidence, but every material claim is independently cross-checked below.
     r = load(receipt_path)
@@ -219,19 +290,25 @@ def main() -> int:
         'verdict': 'CONFIRMED_SCOPED',
         'classification': 'SENTINEL_FIRST_ATTEMPT_PRE_SCIENCE_ACTIONS_EVENT_GUARD_FAILURE_INDEPENDENTLY_CONFIRMED',
         'science_run_id': SCIENCE_RUN_ID,
+        'science_workflow_id': SCIENCE_WORKFLOW_ID,
         'science_run_attempt': 1,
         'science_head_sha': SCIENCE_HEAD,
+        'live_exact_head_workflow_run_count': 1,
+        'live_exact_head_only_run_id': SCIENCE_RUN_ID,
+        'live_rerun_or_duplicate_exact_head_detected': False,
         'producer_forensic_run_id': FORENSIC_RUN_ID,
         'producer_forensic_head_sha': FORENSIC_HEAD,
         'producer_forensic_auditor_git_blob_sha1': FORENSIC_AUDITOR_BLOB,
         'producer_forensic_workflow_git_blob_sha1': FORENSIC_WORKFLOW_BLOB,
-        'producer_artifact_id': producer_artifact_id,
+        'producer_artifact_id': FORENSIC_ARTIFACT_ID,
         'producer_artifact_name': PRODUCER_ARTIFACT_NAME,
-        'producer_artifact_zip_sha256': producer_zip_sha256,
-        'producer_receipt_sha256': sha256(receipt_path),
+        'producer_artifact_zip_sha256': FORENSIC_ZIP_SHA256,
+        'producer_receipt_sha256': FORENSIC_RECEIPT_SHA256,
         'producer_receipt_manifest_verified': True,
         'producer_input_manifest_verified': True,
-        'producer_artifact_file_set_verified': True,
+        'producer_artifact_recursive_file_set_verified': True,
+        'producer_artifact_zip_member_set_verified': True,
+        'producer_manifest_exact_relative_names_verified': True,
         'review_support_git_blob_sha1': REVIEW_SUPPORT_BLOB,
         'interim_fail_closed_authority_git_blob_sha1': INTERIM_BLOB,
         'repository_trigger_reconstructed_exact_L_only': True,
