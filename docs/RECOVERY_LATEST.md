@@ -42,13 +42,28 @@ The historical producer result was not rewritten. Exact artifact content is now 
 
 Terminal provenance correction authority: `docs/dsir4/authority/LAYERB_BETA_V0_25_PROVENANCE_CORRECTION_V0_1.json`, commit `3d51ce928c0e6b76c69f5b42171abc3640c8b1e1`. It supersedes only the incorrect producer provenance fields, preserves the historical V0.25 classification, and restores a clean artifact anchor to the actual terminal bytes.
 
+## Open PR #168 — prospective Core-v1 scope proposal
+
+PR #168, `Freeze DSIR Core v1 completion scope`, is open on branch `dsir-core-v1-freeze-scope`, reviewed head `4983e0b1a8537e64b6a90eacd8857fe98ac0ebe0`. It adds a prospective Core-v1 completion-scope document and changes the branch copy of `docs/CURRENT_PROCESS.md`; it does not change V0.25 code, inputs, thresholds, artifacts, classification, or the current terminal authority.
+
+Independent audit: `docs/dsir4/audits/DSIR_CORE_V1_COMPLETION_SCOPE_PR168_FUNNEL_AUDIT_V0_1.md`, commit `c6e5ec83dbdfffceb8417880b233493850be513a`.
+
+Qualification authority: `docs/dsir4/authority/DSIR_CORE_V1_COMPLETION_SCOPE_PR168_QUALIFICATION_AUDIT_V0_1.json`, commit `37b4f7119f376a5b474f60e3b6607c611fad2b49`. Verdict: **`QUALIFIED`**.
+
+The proposal is admissible only as prospective governance/release-scope planning. Its F1 description is compatible with the existing authorized successor, but the phrase `Authorized critical path` must not be read as current authorization for F2-F7. Covariance, whitening, nuisance, statistical/model gates, relation-null, `Wm_S3`, global 65537 and downstream science remain closed until separately reached through terminal authority.
+
+The PR's green Actions run `34910842417` is not validation of the scope contract. It is the pre-existing G-T-tau additive-projection workflow; its artifact `10374282750` has digest `sha256:3648048f8ebae4c33cf2b99e702b338027d7a5725d9c3bfbfed3691edf160633` and is incidental regression evidence only.
+
+PR #168 does not update this recovery file and does not add the F1 preregistration/immutable contract. If its scope is later accepted on main, recovery must be reconciled and the current 68% repository-readiness / 67% scientific-frontier accounting must remain authoritative until any replacement readiness dimensions have frozen denominators, calculation rules, migration rules and initial values. `DSIR Core v1 FROZEN` must never be equated with scientific closure or physical dark-sector inference.
+
 ## Exact next order
 
-1. Treat the independent audit verdict `INVALID_PROVENANCE` as historical qualification of the original producer binding; do not erase or relabel it.
+1. Treat the independent V0.25 audit verdict `INVALID_PROVENANCE` as historical qualification of the original producer binding; do not erase or relabel it.
 2. Treat `LAYERB_BETA_V0_25_PROVENANCE_CORRECTION_V0_1.json` as the current terminal provenance correction. Numerical V0.25 classification remains unchanged.
-3. The authorized successor is again exactly `PROSPECTIVELY_FROZEN_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_AUDIT`, but it is **not open for execution** until a new prospective preregistration and frozen contract are committed.
-4. That successor must freeze the full 107-row denominator/input identities and exact-target-union construction prospectively; V0.25's `1025 + 107 = 1132 < 1152` is capacity feasibility only, not execution authorization.
-5. No covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537, or downstream physical-science gate is authorized.
-6. Keep effect at `+0/+0`; numerical remedy support is not statistical/model evidence and not dark-sector evidence.
+3. Treat the PR #168 scope audit verdict `QUALIFIED` as a qualification of that unmerged prospective governance proposal only. It does not modify scientific gate authorization.
+4. The authorized successor remains exactly `PROSPECTIVELY_FROZEN_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_AUDIT`, but it is **not open for execution** until a new prospective preregistration and frozen contract are committed.
+5. That successor must freeze the full 107-row denominator/input identities and exact-target-union construction prospectively; V0.25's `1025 + 107 = 1132 < 1152` is capacity feasibility only, not execution authorization.
+6. No covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537, or downstream physical-science gate is authorized.
+7. Keep effect at `+0/+0`; numerical remedy support and governance scope changes are not statistical/model evidence and not dark-sector evidence.
 
 Frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%`; scientific frontier `67%`.
