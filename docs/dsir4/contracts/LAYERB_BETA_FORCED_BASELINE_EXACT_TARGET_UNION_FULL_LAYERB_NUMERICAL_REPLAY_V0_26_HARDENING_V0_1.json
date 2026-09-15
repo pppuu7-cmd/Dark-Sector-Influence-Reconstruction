@@ -1,0 +1,77 @@
+{
+  "schema": "LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_HARDENING_V0_1",
+  "status": "PROSPECTIVE_CANDIDATE_HARDENING_NOT_EXECUTABLE",
+  "scope": "Immutable hardening amendment for the V0.26 candidate contract; no scientific execution authorization",
+  "effect": "+0/+0",
+  "parent_candidate_contract": {
+    "path": "docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26.json",
+    "git_blob_sha1": "7112a20f4d7b3b6c8ffa76d3be780e9b7c685a8d",
+    "creation_commit": "2cf8c2fa3ee24c29c77026e8dd022b67a00cfa14"
+  },
+  "static_auditor_binding": {
+    "path": "ci/layerb_beta_v026_response_blind_static_audit_v0_1.py",
+    "git_blob_sha1": "8a8195de8539f6408445933e898d62f004f26edc",
+    "creation_commit": "da18cff9982d7ef91f13caa7a46a388295cd5207",
+    "source_plan_inner_sha256": "c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064",
+    "expected_token": "PASS_LAYERB_BETA_V0_26_RESPONSE_BLIND_STATIC_AUDIT",
+    "class_solver_invoked_expected": false,
+    "scientific_response_read_expected": false,
+    "covariance_read_expected": false,
+    "mixed_canonical_sha256_expected": "59abce49f6338c30b93d11fa462e1ff8642615d6100d23feca4b36505a5cef85",
+    "direct_canonical_sha256_expected": "1c98927960e81d7fb55ebc687ef36059d964b233001551dba2aa9a01652c8864",
+    "local_precommit_validation": {
+      "authoritative": false,
+      "result": "PASS",
+      "output_sha256": "d55cb61f2cd5338dba0b36df656409fdc248afe3cfa1972fe060b3a09b09c515",
+      "interpretation": "Development check only; cannot replace a hosted immutable audit artifact."
+    }
+  },
+  "alpha_route_hardening": {
+    "production_contract": {
+      "path": "docs/dsir4/contracts/LAYERB_16385_TO_32769_CHUNK_PRODUCTION_CONTRACT_V0_1.json",
+      "git_blob_sha1": "1ab0f5b164727bb0c2c7f42ce3a82a1ebb77678d"
+    },
+    "resource_authority": {
+      "path": "docs/dsir4/authority/LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_PILOT_V0_1.json",
+      "git_blob_sha1": "edbb20eb798a188e88a49a6cde14d3c37c31c04c",
+      "classification": "LAYERB_32769_EIGHT_CHUNK_RESPONSE_BLIND_RESOURCE_ALL_PASS_PLUS_0_PLUS_0"
+    },
+    "partition_invariance_authority": {
+      "path": "docs/dsir4/authority/LAYERB_32769_BLINDED_PARTITION_INVARIANCE_V0_1.json",
+      "git_blob_sha1": "38a0f394e8f609298d9a33ca3c007405f7f95850",
+      "classification": "LAYERB_32769_BLINDED_PARTITION_INVARIANCE_ALL_ROLES_PASS_PLUS_0_PLUS_0",
+      "max_normalized_response_difference": 0.0,
+      "minimum_exact_binary64_fraction": 1.0,
+      "max_requested_node_coordinate_rel_mismatch": 1.656870599154541e-16
+    },
+    "canonical_32769": {
+      "path": "docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt",
+      "node_count": 32769,
+      "node_payload_sha256": "82c48c17dba812bd08a3437f7e48376208a8c506f4a63087191608793fba4599",
+      "text_sha256": "7422d00aab2b32a060878224e81834277a67d42016595a0e9088db05b14166e2"
+    },
+    "partition_A_exact_slices": [[0,4097],[4097,8193],[8193,12289],[12289,16385],[16385,20481],[20481,24577],[24577,28673],[28673,32769]],
+    "point_capacity": 4608,
+    "parser_capacity": 131072,
+    "max_live_class_instances_per_job": 1,
+    "alpha_roles_exact": ["reference", "alpha_minus"],
+    "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+    "h": 0.0001,
+    "native_k_per_decade_for_pk": 20.0,
+    "request_plan_fine_call_count": 569,
+    "request_plan_fine_legacy_sha256": "0f7ce2e5fa459e15954268dfd46045eaa0ab6356dfdab5a2e282514e7a34ae4e",
+    "interpolation": "centered-cubic",
+    "fresh_v026_alpha_operands_required": true,
+    "historical_alpha_response_values_reuse_forbidden": true,
+    "historical_method_and_node_identity_reuse_required": true
+  },
+  "immutability_rules": {
+    "parent_candidate_contract_mutation_required": false,
+    "this_amendment_must_be_considered_jointly_with_parent_contract": true,
+    "silent_alpha_partition_change_forbidden": true,
+    "silent_canonical_node_change_forbidden": true,
+    "silent_static_auditor_change_forbidden": true,
+    "science_launch_authorized": false
+  },
+  "next_permitted_action": "HOSTED_RESPONSE_BLIND_STATIC_AUDIT_AND_INDEPENDENT_CONTRACT_RECONCILIATION_ONLY"
+}
