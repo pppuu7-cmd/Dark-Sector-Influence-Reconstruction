@@ -13,6 +13,8 @@ SCIENCE_FIRST_PARENT = '2ca2d4c35f9dcfe2be00e573598e6189f987508d'
 SCIENCE_STAGING_PARENT = '657e5d6b2fe3ad7f7c11bcd2af873cffe800cc96'
 FORENSIC_RUN_ID = 35033678449
 FORENSIC_HEAD = 'c5502bc124f502cb4ef1c19300fcdf87f260089b'
+FORENSIC_AUDITOR = 'ci/dsir_v026_r1_sentinel_first_attempt_forensic_audit_v0_1.py'
+FORENSIC_WORKFLOW = '.github/workflows/dsir-v026-r1-sentinel-first-attempt-forensic-audit-v0-1.yml'
 FORENSIC_AUDITOR_BLOB = '63b6a0db41ff5e0e3c36be605596fb1c5aee0f1d'
 FORENSIC_WORKFLOW_BLOB = '4d09b78d3a586d3c4f7e42573a7bdac4454d3a48'
 REVIEW_SUPPORT = 'docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_PLATFORM_CONTRACT_REVIEW_SUPPORT_V0_1.json'
@@ -34,6 +36,10 @@ def sh(*args: str) -> str:
 
 def blob(path: str) -> str:
     return sh('git', 'hash-object', path)
+
+
+def rev_blob(rev: str, path: str) -> str:
+    return sh('git', 'rev-parse', f'{rev}:{path}')
 
 
 def sha256(path: Path) -> str:
@@ -71,6 +77,8 @@ def main() -> int:
     assert blob(INTERIM) == INTERIM_BLOB
     assert blob(W) == W_BLOB
     assert blob(L) == L_BLOB
+    assert rev_blob(FORENSIC_HEAD, FORENSIC_AUDITOR) == FORENSIC_AUDITOR_BLOB
+    assert rev_blob(FORENSIC_HEAD, FORENSIC_WORKFLOW) == FORENSIC_WORKFLOW_BLOB
     assert sh('git', 'rev-parse', f'{SCIENCE_HEAD}^1') == SCIENCE_FIRST_PARENT
     assert sh('git', 'rev-parse', f'{SCIENCE_HEAD}^2') == SCIENCE_STAGING_PARENT
     expected = [f'A\t{L}']
@@ -161,7 +169,7 @@ def main() -> int:
     wtxt = Path(W).read_text()
     marker = "python3 - <<'PY'\n"
     start = wtxt.index(marker) + len(marker)
-    block = wtxt[start:block_end] if False else wtxt[start:]
+    block = wtxt[start:]
     block = block[:block.index('\n          PY')]
     py_lines = [line[10:] if line.startswith('          ') else line for line in block.splitlines()]
     assert py_lines[47].strip() == 'assert added.count(launch)==1'
