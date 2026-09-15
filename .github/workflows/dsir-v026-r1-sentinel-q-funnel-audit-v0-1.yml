@@ -1,0 +1,104 @@
+name: dsir-v026-r1-sentinel-q-funnel-audit-v0-1
+
+on:
+  push:
+    branches:
+      - audit/v026-r1-sentinel-package-q-v02
+    paths:
+      - '.github/workflows/dsir-v026-r1-sentinel-q-funnel-audit-v0-1.yml'
+      - 'ci/dsir_v026_r1_sentinel_q_funnel_audit_v0_1.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  BASE_SHA: 'f9de6daceb887bf86b47b02f71cae70b70f173a0'
+  Q_HEAD: '0b22c49010e86d09f7c881381613c99fb40c70aa'
+  Q_RUN_ID: '35016371281'
+  Q_ARTIFACT_ID: '10416085334'
+  PR173_STATIC_ARTIFACT_ID: '10393170033'
+  PR173_FUNNEL_ARTIFACT_ID: '10392992058'
+  AUDITOR: 'ci/dsir_v026_r1_sentinel_q_funnel_audit_v0_1.py'
+
+jobs:
+  q-funnel-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout independent audit branch only
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fetch exact reviewed base and exact Q candidate head as read-only objects
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUDITOR")" = '7f210b2dd3c6f98b94f2786ab8afe6d906670aa7'
+          git fetch --no-tags origin "$BASE_SHA" --depth=32
+          git fetch --no-tags origin "$Q_HEAD" --depth=32
+          git cat-file -e "$BASE_SHA^{commit}"
+          git cat-file -e "$Q_HEAD^{commit}"
+
+      - name: Capture exact Q Actions and artifact metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${Q_RUN_ID}" > safe/q_run.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${Q_HEAD}&event=push&per_page=100" > safe/q_head_runs.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${Q_ARTIFACT_ID}" > safe/q_artifact.json
+
+      - name: Download immutable Q and PR173 audit artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${Q_ARTIFACT_ID}/zip" > safe/q.zip
+          printf '%s  %s\n' 'f6902133327a78fcb387c114f6ef31f5f8cd37024827bab9655b6708410be14b' safe/q.zip | sha256sum -c -
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${PR173_STATIC_ARTIFACT_ID}/zip" > safe/pr173_static.zip
+          printf '%s  %s\n' 'e95c4675db77a2ecd864d21e39dfdccffe289ed61a84ece95182f22c46e16184' safe/pr173_static.zip | sha256sum -c -
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${PR173_FUNNEL_ARTIFACT_ID}/zip" > safe/pr173_funnel.zip
+          printf '%s  %s\n' '73ea7849b60dd65b20e2f93144c7afbb0f7dc7bd09ae8e0e9cfe0e3d63801c59' safe/pr173_funnel.zip | sha256sum -c -
+
+      - name: Execute independent Q funnel audit
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$AUDITOR"
+          python3 "$AUDITOR" \
+            --q-run-json safe/q_run.json \
+            --q-head-runs-json safe/q_head_runs.json \
+            --q-artifact-json safe/q_artifact.json \
+            --q-zip safe/q.zip \
+            --static-zip safe/pr173_static.zip \
+            --funnel-zip safe/pr173_funnel.zip \
+            --out safe/q_funnel_audit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/q_funnel_audit.json'))
+          assert d['token']=='QUALIFIED_DSIR_V0_26_R1_SENTINEL_Q_FUNNEL_AUDIT_PLUS_0_PLUS_0'
+          assert d['verdict']=='QUALIFIED'
+          assert d['classification']=='SENTINEL_PACKAGE_Q_QUALIFIED_FOR_INACTIVE_PROMOTION_TO_MAIN'
+          assert d['candidate_storage_inert'] is True
+          assert d['active_or_final_paths_present'] is False
+          assert d['future_Q_runtime_contract_satisfied'] is True
+          assert d['sentinel_science_execution_authorized_by_this_audit'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          assert d['candidate_future_workflow_executed_by_this_audit'] is False
+          assert d['class_solver_invoked'] is False
+          assert d['scientific_response_read'] is False
+          print(d['token'])
+          PY
+          sha256sum safe/q_funnel_audit.json > safe/q_funnel_audit.sha256
+
+      - name: Persist independent Q funnel receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-sentinel-q-funnel-audit-v0-1
+          path: |
+            safe/q_funnel_audit.json
+            safe/q_funnel_audit.sha256
+          if-no-files-found: error
+          retention-days: 90
