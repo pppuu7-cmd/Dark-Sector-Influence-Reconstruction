@@ -1,0 +1,107 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_RUNTIME_CHAIN_CORRECTION_FUNNEL_CONFIRMATION_V0_1",
+  "status": "TERMINAL_AUDIT_AUTHORITY",
+  "date": "2026-09-16",
+  "verdict": "CONFIRMED_SCOPED",
+  "classification": "SENTINEL_GOVERNANCE_ONLY_A_L_Q_RUNTIME_CHAIN_CORRECTION_CONFIRMED_FOR_AUTHORITY_FIRST_NO_L_PROMOTION",
+  "effect": "+0/+0",
+  "reviewed_result": {
+    "producer_verdict": "QUALIFIED",
+    "producer_classification": "SENTINEL_GOVERNANCE_ONLY_A_L_Q_RUNTIME_CHAIN_CORRECTION_QUALIFIED_FOR_AUTHORITY_FIRST_PROMOTION",
+    "workflow_run_id": 35025283328,
+    "workflow_run_number": 1,
+    "workflow_run_attempt": 1,
+    "workflow_event": "push",
+    "workflow_head_sha": "5c34da32133f086d53c5af939e3e6e80147786d3",
+    "reviewed_correction_head_sha": "d3b32cd341ce16b5494024dfa9785a2480173dc1",
+    "reviewed_base_sha": "78f96f2c60db385f88a391b7fd046dd312176019",
+    "job_id": 104570712438,
+    "job_conclusion": "success"
+  },
+  "artifact_provenance": {
+    "artifact_id": 10419217250,
+    "artifact_name": "dsir-v026-r1-sentinel-runtime-chain-correction-funnel-audit-v0-2",
+    "actions_zip_sha256": "51fa034ee9b3ff4bafe2f030db1b619adabd5f8e69b3b88cbd626ed126e53592",
+    "independent_redownload_zip_sha256": "51fa034ee9b3ff4bafe2f030db1b619adabd5f8e69b3b88cbd626ed126e53592",
+    "receipt_filename": "runtime_chain_correction_funnel_audit.json",
+    "receipt_byte_length": 1607,
+    "receipt_sha256": "7edd0cdaa06a43c7c42518993891c63c071c3feda2c187ff9b60f767b1a1b9d6",
+    "receipt_sha_file_byte_length": 114,
+    "receipt_sha_file_sha256": "8278dd9988e2820c40d6a025594e3389e5aae8db19ce1bfb7a70701fd827e524",
+    "science_runs_filename": "science_runs.json",
+    "science_runs_byte_length": 36,
+    "science_runs_sha256": "a2790a384d7d281e7395679000c35d27768d89dbd7052f725b8f4688beb59915",
+    "science_workflow_run_count_at_candidate_head": 0
+  },
+  "static_control": {
+    "run_id": 35025081430,
+    "job_id": 104570053404,
+    "run_number": 1,
+    "run_attempt": 1,
+    "conclusion": "success",
+    "artifact_id": 10419525675,
+    "artifact_zip_sha256": "82929104a6129f5f8f8bd465ef574b4ce55c172411415c19458de9bb8fe5fa0f",
+    "receipt_sha256": "b326cfc032a2e758d9565b4672d34f5f18ec61d8475ee5d23601e037bf3dab39"
+  },
+  "exact_bindings": {
+    "corrected_A_git_blob_sha1": "1c9945dd00b137f3e202efa14bf4112fffebf8af",
+    "corrected_L_git_blob_sha1": "fa7014435f0a5688def2124898ddd01d0c0183aa",
+    "corrected_Q_git_blob_sha1": "f7b97f47d9e771e3d3ea78875da5a45962160cd0",
+    "active_workflow_git_blob_sha1": "19907175f0f3417ddee2aba6916d961c6be02e26",
+    "executor_git_blob_sha1": "9affe7c7d4e02bbc728ba15e3cde893ec9876b38",
+    "decision_git_blob_sha1": "97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9",
+    "implementation_contract_git_blob_sha1": "e14804463d9eab288162b4c98e8dd5c1fd6a10eb",
+    "correction_contract_git_blob_sha1": "01af3648bd3dc640acf35c7b0b7c116334b61cfe",
+    "independent_auditor_git_blob_sha1": "1ee95009fef7b259deaa93b4594a67f37d20dbf3"
+  },
+  "confirmed_controls": {
+    "A_delta_exact_one_executor_alias": true,
+    "L_delta_exact_corrected_A_binding_only": true,
+    "Q_delta_exact_runtime_bindings_only": true,
+    "frozen_W_consumer_contract_compatible": true,
+    "frozen_executor_consumer_contract_compatible": true,
+    "decision_full_replay_firewall_intact": true,
+    "final_L_present_on_reviewed_head": false,
+    "class_solver_invoked": false,
+    "scientific_response_read": false,
+    "covariance_read": false,
+    "sentinel_science_executed": false,
+    "full_107_row_execution_authorized": false
+  },
+  "historical_blocker_preserved": {
+    "authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_RUNTIME_CHAIN_SCHEMA_BLOCKER_V0_2.json",
+    "authority_git_blob_sha1": "09190c92c1311b66e953d19ef3811d63a0bf871a",
+    "verdict": "BLOCKED",
+    "not_rewritten": true
+  },
+  "audit_report": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_RUNTIME_CHAIN_CORRECTION_FUNNEL_AUDIT_REVIEW_V0_1.md",
+    "commit": "6e9813405f75fb929f2525cee3474ec0396346a2"
+  },
+  "interpretation_ceiling": "Governance/provenance/runtime-consumer compatibility only. This does not establish sentinel numerical-response validity, full 107-row validity, covariance/nuisance validity, statistical/model validity, or physical dark-sector inference.",
+  "authorized_next_stage": "EXACT_CORRECTED_A_AND_Q_REPLACEMENT_WITHOUT_FINAL_L_THEN_SEPARATE_POST_REPLACEMENT_FAIL_CLOSED_AUDIT",
+  "promotion_order": {
+    "qualification_authority_must_be_on_main_before_runtime_replacement": true,
+    "replace_exact_corrected_A_without_L": true,
+    "replace_exact_corrected_Q_without_L": true,
+    "post_replacement_fail_closed_audit_required": true,
+    "final_L_creation_authorized_now": false,
+    "sentinel_science_execution_authorized_now": false,
+    "full_107_row_execution_authorized_now": false
+  },
+  "locked": [
+    "FINAL_L_CREATION_UNTIL_POST_REPLACEMENT_TERMINAL_AUTHORITY",
+    "SENTINEL_SCIENCE_EXECUTION_UNTIL_EXPLICIT_L_GATE",
+    "FULL_107_ROW_REPLAY",
+    "COVARIANCE",
+    "WHITENING",
+    "NUISANCE",
+    "RELATION_NULL",
+    "Wm_S3",
+    "GLOBAL_65537",
+    "STATISTICAL_MODEL_INFERENCE",
+    "PHYSICAL_DARK_SECTOR_INFERENCE"
+  ],
+  "readiness_percent": 68,
+  "scientific_frontier_percent": 67
+}
