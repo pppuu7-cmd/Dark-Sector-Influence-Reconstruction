@@ -1,0 +1,188 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_PR171_FUNNEL_QUALIFICATION_AUTHORITY_V0_1",
+  "status": "TERMINAL_AUDIT_AUTHORITY",
+  "date": "2026-09-15",
+  "scope": "DSIR_V0_26_R1_PRE_FULL_SENTINEL_IMPLEMENTATION_PROMOTION_AND_LAUNCH_PACKAGE_CONSTRUCTION_BOUNDARY_ONLY",
+  "effect": "+0/+0",
+  "verdict": "QUALIFIED",
+  "classification": "SENTINEL_IMPLEMENTATION_QUALIFIED_FOR_PROMOTION_WITH_LAUNCH_BINDING_HARDENING_REQUIRED",
+  "reviewed_main": {
+    "sha": "438ab2e6732512cf50c163719ade01575257b209",
+    "r1_contract_path": "docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json",
+    "r1_contract_git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9",
+    "r1_promotion_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_PR169_FUNNEL_QUALIFICATION_V0_1.json",
+    "r1_promotion_authority_git_blob_sha1": "cdbcea2622564d40aa9d1edc045a5808f8cdd1c4",
+    "readiness_percent": 68,
+    "scientific_frontier_percent": 67
+  },
+  "reviewed_candidate": {
+    "pull_request_number": 171,
+    "title": "Construct DSIR V0.26 R1 pre-full sentinel candidate",
+    "base_branch": "main",
+    "base_sha_at_review": "438ab2e6732512cf50c163719ade01575257b209",
+    "head_branch": "research/v026-r1-sentinel-static",
+    "exact_head_sha": "973eea003e6e246b7e1853b5469cb0a7d90c8177",
+    "commit_count_after_base": 9,
+    "changed_file_count": 7,
+    "all_changed_files_added": true,
+    "deletion_count": 0,
+    "active_science_workflow_present": false,
+    "launch_authority_present": false,
+    "launch_sentinel_present": false,
+    "sentinel_science_executed": false
+  },
+  "audited_candidate_blobs": {
+    "static_audit_workflow": {
+      "path": ".github/workflows/layerb-beta-v026-r1-sentinel-static-audit-v0-1.yml",
+      "git_blob_sha1": "a7eb32f900431b73daf9d5c2c7b98d0137755475"
+    },
+    "decision_finalizer": {
+      "path": "ci/layerb_beta_v026_r1_sentinel_decision_v0_1.py",
+      "git_blob_sha1": "97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9"
+    },
+    "static_auditor": {
+      "path": "ci/layerb_beta_v026_r1_sentinel_static_audit_v0_2.py",
+      "git_blob_sha1": "ebb1db6b365560e9e4c8ab7e575d163bdab58cc4"
+    },
+    "sentinel_executor": {
+      "path": "ci/layerb_beta_v026_r1_sentinel_v0_1.py",
+      "git_blob_sha1": "9affe7c7d4e02bbc728ba15e3cde893ec9876b38"
+    },
+    "static_audit_evidence": {
+      "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_IMPLEMENTATION_STATIC_AUDIT_CANDIDATE_V0_1.md",
+      "git_blob_sha1": "d2a89f0f143a1af4c844248f4385d6b1a55d16e5"
+    },
+    "implementation_contract": {
+      "path": "docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_SENTINEL_IMPLEMENTATION_CONTRACT_V0_1.json",
+      "git_blob_sha1": "e14804463d9eab288162b4c98e8dd5c1fd6a10eb"
+    },
+    "inert_workflow_blueprint": {
+      "path": "docs/dsir4/workflow_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_SCIENCE_WORKFLOW_CANDIDATE_V0_1.yml",
+      "git_blob_sha1": "1ed36c850d80537646556a858204cac14eca852e"
+    }
+  },
+  "confirmed_sentinel_semantics": {
+    "lane_count": 32,
+    "mixed_batches": ["M076", "M298", "M300"],
+    "direct_comparators": {"M076": "D50", "M298": "D00", "M300": "D58"},
+    "requested_node_counts": {"PURE": 897, "M076": 1152, "M298": 1141, "M300": 996, "D50": 1146, "D00": 1152, "D58": 99},
+    "class_constructions_per_eligible_lane": 14,
+    "maximum_class_constructions_if_all_32_eligible": 448,
+    "minimum_eligible_lanes": 6,
+    "minimum_native_avx512_active": 3,
+    "minimum_native_avx512_inactive": 3,
+    "cross_host_primitive_spread_strict_lt": 0.00001,
+    "native_class_mean_separation_strict_lt": 0.00001,
+    "mixed_common_vs_pure_common_strict_lt": 0.001,
+    "exact_vs_direct_strict_lt": 0.001,
+    "requested_node_binding_le": 1e-12
+  },
+  "static_audit_evidence": {
+    "run_id": 34958187529,
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "execution_head_sha": "510a7145bd5ea49e45db3ab53e56093567da746f",
+    "run_conclusion": "success",
+    "artifact_id": 10392400462,
+    "artifact_name": "layerb-beta-v026-r1-sentinel-static-audit-v0-1",
+    "artifact_zip_sha256": "2384436ee78a9a1ee4d55e5297e3b36f2dff9ffe53a243e20af0b2f7dfe729f0",
+    "receipt_filename": "sentinel_static_audit.json",
+    "receipt_byte_length": 1344,
+    "receipt_sha256": "33972dc25eabb7a19097164234b5e336d4bc4bd3cfef37ff8a442443810b75a8",
+    "receipt_classification": "SENTINEL_IMPLEMENTATION_RESPONSE_BLIND_STATIC_AUDIT_PASS",
+    "receipt_token": "PASS_LAYERB_BETA_V0_26_R1_SENTINEL_IMPLEMENTATION_STATIC_AUDIT_PLUS_0_PLUS_0",
+    "preflight_sha256": "63429e12875545d0a3d0be01882c6bf9b71dd5e26a840fe739b969fa3f5be3bb",
+    "unauthorized_lane_log_sha256": "8ebb37d6a3d51d46e259f2eb66d5622162a5494cc94f085c52534d501208991d",
+    "lane_without_launch_authority_failed_closed": true,
+    "class_solver_invoked": false,
+    "scientific_response_read": false,
+    "sentinel_science_execution_authorized": false,
+    "full_107_row_execution_authorized": false
+  },
+  "source_plan_recheck": {
+    "artifact_id": 10298655751,
+    "artifact_zip_sha256": "9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7",
+    "inner_filename": "plan.json",
+    "inner_byte_length": 3953984,
+    "inner_sha256": "c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064"
+  },
+  "independent_funnel_audit": {
+    "audit_branch": "audit/v026-r1-sentinel-pr171",
+    "auditor_path": "ci/dsir_v026_r1_sentinel_pr171_funnel_audit_v0_1.py",
+    "auditor_git_blob_sha1": "1d2cef2532e9d2bd6061720aae2bd78b6b6e1b13",
+    "workflow_path": ".github/workflows/dsir-v026-r1-sentinel-pr171-funnel-audit-v0-1.yml",
+    "workflow_git_blob_sha1": "361dfeac334f2afc7d8494765f74d9390c019d7c",
+    "run_id": 34958540961,
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "execution_head_sha": "ef20283ec4d66c60773fdb2cbf56e8a2673c7560",
+    "run_conclusion": "success",
+    "job_id": 104346337918,
+    "job_name": "funnel-audit",
+    "job_conclusion": "success",
+    "artifact_id": 10392755109,
+    "artifact_name": "dsir-v026-r1-sentinel-pr171-funnel-audit-v0-1",
+    "artifact_zip_sha256": "8fade9139142e2ab3f6a99ef2696853d3f5dce026c6fa130a43d96bff6870edb",
+    "receipt_filename": "funnel_audit.json",
+    "receipt_byte_length": 1848,
+    "receipt_sha256": "ac2c2cc9d2aa536207a8ee5121cb37d92665f521cb6e0ef41865540810ded333",
+    "receipt_hash_filename_sha256": "a995cc6500077398b421b15b8cc8069651d1588c579eec60088039f99fd3ea62",
+    "receipt_token": "QUALIFIED_DSIR_V0_26_R1_SENTINEL_PR171_FUNNEL_AUDIT_PLUS_0_PLUS_0",
+    "candidate_science_code_executed_by_funnel_audit": false
+  },
+  "audit_report": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_PR171_FUNNEL_AUDIT_V0_1.md",
+    "git_blob_sha1": "02199fbaf7cbead653cd13d2da5f74fa02eb49f8"
+  },
+  "launch_binding_hardening_required_before_activation": {
+    "active_workflow_exact_git_blob_must_be_bound_in_launch_authority": true,
+    "launch_sentinel_exact_git_blob_must_be_bound_in_launch_authority": true,
+    "r1_contract_exact_git_blob_must_be_bound": true,
+    "r1_promotion_authority_exact_git_blob_must_be_bound": true,
+    "sentinel_implementation_contract_exact_git_blob_must_be_bound": true,
+    "sentinel_executor_exact_git_blob_must_be_bound": true,
+    "sentinel_decision_exact_git_blob_must_be_bound": true,
+    "one_run_semantics_required": true,
+    "full_107_row_execution_authorized_must_remain_false": true,
+    "complete_active_workflow_authority_launch_object_set_requires_separate_response_blind_static_launch_audit": true,
+    "separate_terminal_launch_authority_required_after_that_static_audit": true
+  },
+  "promotion_authorization": {
+    "exact_pr171_head_sha": "973eea003e6e246b7e1853b5469cb0a7d90c8177",
+    "promotion_to_main_authorized_after_this_authority_is_on_main": true,
+    "all_seven_audited_blobs_must_be_preserved": true,
+    "candidate_blob_mutation_during_promotion_forbidden": true
+  },
+  "post_promotion_authorization": {
+    "construct_hardened_active_workflow_candidate_for_static_launch_audit": true,
+    "construct_launch_authority_candidate_for_static_launch_audit": true,
+    "construct_launch_sentinel_candidate_for_static_launch_audit": true,
+    "promote_trigger_capable_launch_sentinel_to_main_before_static_launch_audit": false,
+    "sentinel_science_execution_authorized": false,
+    "full_107_row_execution_authorized": false
+  },
+  "interpretation": {
+    "accepted": "The exact PR171 implementation candidate is internally/provenance consistent and fail-closed and may be promoted to main after this authority is on main, subject to mandatory future launch binding hardening.",
+    "not_accepted": "This audit is not sentinel numerical-response evidence and does not authorize a CLASS sentinel run, full Layer-B replay, or downstream science.",
+    "readiness_percent_change": 0,
+    "scientific_frontier_percent_change": 0
+  },
+  "forbidden": {
+    "interpret_as_dark_sector_evidence": true,
+    "launch_sentinel_science_from_this_authority": true,
+    "launch_full_107_row_replay_from_this_authority": true,
+    "create_trigger_capable_main_launch_before_static_launch_audit": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "launch_global_65537": true,
+    "open_statistical_or_physical_science_gate": true
+  },
+  "authorized_next_stage": "PROMOTE_EXACT_PR171_SENTINEL_IMPLEMENTATION_TO_MAIN_THEN_CONSTRUCT_HARDENED_ACTIVE_WORKFLOW_AUTHORITY_LAUNCH_CANDIDATES_FOR_SEPARATE_RESPONSE_BLIND_STATIC_LAUNCH_AUDIT",
+  "sentinel_science_execution_authorized": false,
+  "full_107_row_execution_authorized": false
+}
