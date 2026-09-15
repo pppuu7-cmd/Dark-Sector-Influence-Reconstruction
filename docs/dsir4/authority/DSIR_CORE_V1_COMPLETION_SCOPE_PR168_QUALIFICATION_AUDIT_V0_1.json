@@ -1,0 +1,70 @@
+{
+  "schema": "DSIR_CORE_V1_COMPLETION_SCOPE_PR168_QUALIFICATION_AUDIT_V0_1",
+  "status": "TERMINAL_AUDIT_AUTHORITY",
+  "scope": "DSIR_ONLY",
+  "created_utc_date": "2026-09-15",
+  "reviewed_object": {
+    "type": "OPEN_PULL_REQUEST_PROSPECTIVE_SCOPE_PROPOSAL",
+    "pull_request": 168,
+    "title": "Freeze DSIR Core v1 completion scope",
+    "base_main_at_review_start": "1a8ee40c0df613f5350e2a8798fd46c9e128332c",
+    "head_sha": "4983e0b1a8537e64b6a90eacd8857fe98ac0ebe0",
+    "changed_files": [
+      "docs/DSIR_CORE_V1_COMPLETION_CONTRACT.md",
+      "docs/CURRENT_PROCESS.md"
+    ]
+  },
+  "parent_terminal_authority": "docs/dsir4/authority/LAYERB_BETA_V0_25_PROVENANCE_CORRECTION_V0_1.json",
+  "parent_authorized_next_stage": "PROSPECTIVELY_FROZEN_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_AUDIT",
+  "reviewed_pr_actions": {
+    "run_id": 34910842417,
+    "event": "pull_request",
+    "head_sha": "4983e0b1a8537e64b6a90eacd8857fe98ac0ebe0",
+    "status": "completed",
+    "conclusion": "success",
+    "job_count": 1,
+    "job_name": "core-projection",
+    "scope_validation_workflow": false,
+    "artifact_id": 10374282750,
+    "artifact_sha256": "3648048f8ebae4c33cf2b99e702b338027d7a5725d9c3bfbfed3691edf160633",
+    "artifact_interpretation": "INCIDENTAL_EXISTING_REGRESSION_ONLY_NOT_SCOPE_OR_SCIENCE_AUTHORITY"
+  },
+  "verdict": "QUALIFIED",
+  "qualification_scope": "PROSPECTIVE_GOVERNANCE_AND_RELEASE_SCOPE_ONLY",
+  "findings": {
+    "f1_compatible_with_current_next_gate": true,
+    "f1_execution_authorized_by_pr": false,
+    "new_f1_preregistration_present": false,
+    "new_f1_immutable_contract_present": false,
+    "f2_f7_currently_authorized": false,
+    "threshold_tuning_found": false,
+    "v0_25_result_mutated": false,
+    "recovery_updated_in_pr": false,
+    "readiness_replacement_frozen": false,
+    "green_pr_ci_validates_scope_contract": false
+  },
+  "required_qualifications": [
+    "Treat the Core-v1 document as a prospective roadmap/release-scope proposal, not as a funnel authority.",
+    "Rename or explicitly qualify the heading 'Authorized critical path' so it cannot be read as current authorization for F2-F7.",
+    "State that only the current F1 definition is the next admissible gate and that every later scientific/statistical stage requires separate upstream terminal authorization.",
+    "Keep the full 107-row replay non-executable until a new prospective preregistration and immutable contract are committed.",
+    "Reconcile docs/RECOVERY_LATEST.md if and when the Core-v1 scope is accepted on main.",
+    "Do not replace the current 68% repository-readiness and 67% scientific-frontier accounting until new readiness dimensions have frozen denominators, calculation rules, migration rules, and initial values.",
+    "Never equate DSIR Core v1 FROZEN with scientific closure, publication readiness, or physical dark-sector inference."
+  ],
+  "current_authoritative_next_stage_unchanged": "PROSPECTIVELY_FROZEN_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_AUDIT",
+  "current_successor_execution_status": "NOT_OPEN_UNTIL_SEPARATE_PROSPECTIVE_PREREGISTRATION_AND_FROZEN_CONTRACT",
+  "forbidden": {
+    "treat_pr168_as_terminal_science_authority": true,
+    "execute_full_107_rows_from_pr168_alone": true,
+    "open_covariance_from_pr168": true,
+    "open_whitening_from_pr168": true,
+    "open_nuisance_from_pr168": true,
+    "open_relation_null_from_pr168": true,
+    "open_Wm_S3_from_pr168": true,
+    "launch_global_65537_from_pr168": true,
+    "reinterpret_pr_ci_success_as_scientific_pass": true,
+    "raise_scientific_frontier_from_scope_relabeling": true
+  },
+  "audit_report": "docs/dsir4/audits/DSIR_CORE_V1_COMPLETION_SCOPE_PR168_FUNNEL_AUDIT_V0_1.md"
+}
