@@ -1,0 +1,101 @@
+name: layerb-beta-v026-r1-sentinel-q-static-audit-v0-1
+
+on:
+  push:
+    branches:
+      - research/v026-r1-sentinel-package-q-v02
+    paths:
+      - '.github/workflows/layerb-beta-v026-r1-sentinel-q-static-audit-v0-1.yml'
+      - 'ci/layerb_beta_v026_r1_sentinel_q_static_audit_v0_1.py'
+      - 'docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_CANDIDATE_V0_1.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  Q_CANDIDATE: 'docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_CANDIDATE_V0_1.json'
+  AUDITOR: 'ci/layerb_beta_v026_r1_sentinel_q_static_audit_v0_1.py'
+  STATIC_ARTIFACT_ID: '10393170033'
+  STATIC_ZIP_SHA256: 'e95c4675db77a2ecd864d21e39dfdccffe289ed61a84ece95182f22c46e16184'
+  FUNNEL_ARTIFACT_ID: '10392992058'
+  FUNNEL_ZIP_SHA256: '73ea7849b60dd65b20e2f93144c7afbb0f7dc7bd09ae8e0e9cfe0e3d63801c59'
+
+jobs:
+  q-static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact inactive Q candidate head
+        uses: actions/checkout@v4
+
+      - name: Verify exact Q and auditor blobs and inactive/final-path negatives
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$Q_CANDIDATE")" = 'ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd'
+          test "$(git hash-object "$AUDITOR")" = '5d1070460041c3a3a4ebd18df3164145eaeb5aec'
+          test "$(git hash-object docs/dsir4/workflow_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_ACTIVE_WORKFLOW_CANDIDATE_V0_2.yml)" = '19907175f0f3417ddee2aba6916d961c6be02e26'
+          test "$(git hash-object docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_CANDIDATE_V0_1.json)" = '4ba40e59e6a9d48636d95d07efab575e56ae0966'
+          test "$(git hash-object docs/dsir4/launch_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_CANDIDATE_V0_1.json)" = '9c217e41764d979bea12644fae372354241bc976'
+          test ! -e .github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml
+          test ! -e docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json
+          test ! -e docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json
+          test ! -e docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_V0_1.json
+
+      - name: Download exact immutable PR173 audit artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe/static safe/funnel
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${STATIC_ARTIFACT_ID}/zip" > safe/static.zip
+          printf '%s  %s\n' "$STATIC_ZIP_SHA256" safe/static.zip | sha256sum -c -
+          unzip -q safe/static.zip -d safe/static
+          test -f safe/static/launch_package_static_audit.json
+          test "$(wc -c < safe/static/launch_package_static_audit.json)" = '1348'
+          printf '%s  %s\n' '133df1d2753c9228198a15be792fdcbbf99da243efeccdb785d610aad7dc5ee5' safe/static/launch_package_static_audit.json | sha256sum -c -
+
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${FUNNEL_ARTIFACT_ID}/zip" > safe/funnel.zip
+          printf '%s  %s\n' "$FUNNEL_ZIP_SHA256" safe/funnel.zip | sha256sum -c -
+          unzip -q safe/funnel.zip -d safe/funnel
+          test -f safe/funnel/funnel_audit.json
+          test "$(wc -c < safe/funnel/funnel_audit.json)" = '1728'
+          printf '%s  %s\n' 'f525feaf938e99a9282ea97619842ded9883ac54219e60c9bbdd3f34f934a1aa' safe/funnel/funnel_audit.json | sha256sum -c -
+
+      - name: Execute independent response-blind Q static audit
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$AUDITOR"
+          python3 "$AUDITOR" \
+            --static-receipt safe/static/launch_package_static_audit.json \
+            --funnel-receipt safe/funnel/funnel_audit.json \
+            --out safe/q_static_audit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/q_static_audit.json'))
+          assert d['token']=='PASS_LAYERB_BETA_V0_26_R1_SENTINEL_Q_STATIC_AUDIT_PLUS_0_PLUS_0'
+          assert d['classification']=='SENTINEL_PACKAGE_Q_RESPONSE_BLIND_STATIC_AUDIT_PASS'
+          assert d['Q_candidate_git_blob_sha1']=='ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd'
+          assert d['candidate_storage_inert'] is True
+          assert d['sentinel_science_execution_authorized_by_candidate_storage'] is False
+          assert d['future_Q_content_authorizes_one_sentinel_run'] is True
+          assert d['full_replay_launch_authorized'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          assert d['class_solver_invoked'] is False
+          assert d['scientific_response_read'] is False
+          assert d['covariance_read'] is False
+          assert not any(d['active_path_state'].values())
+          print(d['token'])
+          PY
+          sha256sum safe/q_static_audit.json > safe/q_static_audit.sha256
+
+      - name: Persist immutable Q static-audit receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-sentinel-q-static-audit-v0-1
+          path: |
+            safe/q_static_audit.json
+            safe/q_static_audit.sha256
+          if-no-files-found: error
+          retention-days: 90
