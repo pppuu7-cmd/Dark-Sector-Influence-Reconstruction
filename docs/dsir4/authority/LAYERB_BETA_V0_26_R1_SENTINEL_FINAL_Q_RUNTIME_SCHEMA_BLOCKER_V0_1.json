@@ -1,0 +1,109 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FINAL_Q_RUNTIME_SCHEMA_BLOCKER_AUTHORITY_V0_1",
+  "status": "INTERIM_FAIL_CLOSED_BLOCKER_AUTHORITY_PENDING_HOSTED_CONFIRMATION",
+  "date": "2026-09-15",
+  "scope": "EXACT_PR179_FINAL_Q_RUNTIME_CONSUMER_COMPATIBILITY_BEFORE_FINAL_L_ONLY",
+  "effect": "+0/+0",
+  "verdict": "BLOCKED",
+  "classification": "SENTINEL_FINAL_Q_RUNTIME_SCHEMA_INCOMPATIBILITY_BLOCKED_BEFORE_L",
+  "reviewed_promotion": {
+    "merge_sha": "bcd1cfaaee2961fe4997d5789971547e3ea42955",
+    "first_parent_sha": "370e8bb6fd77bcc3cbf3d5826a6e3a908beacda4",
+    "q_staging_parent_sha": "24082fa57d420de2f6e837c578fbbf0d21e25fb7",
+    "changed_file_count_relative_to_first_parent": 1,
+    "deletion_count": 0,
+    "promotion_head_push_run_count": 0,
+    "final_L_present": false
+  },
+  "exact_bindings": {
+    "active_workflow_path": ".github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml",
+    "active_workflow_git_blob_sha1": "19907175f0f3417ddee2aba6916d961c6be02e26",
+    "launch_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json",
+    "launch_authority_git_blob_sha1": "4ba40e59e6a9d48636d95d07efab575e56ae0966",
+    "final_Q_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_V0_1.json",
+    "final_Q_git_blob_sha1": "ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd",
+    "Q_candidate_path": "docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_CANDIDATE_V0_1.json",
+    "Q_candidate_git_blob_sha1": "ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd",
+    "launch_descriptor_candidate_git_blob_sha1": "9c217e41764d979bea12644fae372354241bc976",
+    "executor_git_blob_sha1": "9affe7c7d4e02bbc728ba15e3cde893ec9876b38",
+    "decision_git_blob_sha1": "97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9",
+    "implementation_contract_git_blob_sha1": "e14804463d9eab288162b4c98e8dd5c1fd6a10eb"
+  },
+  "runtime_contract_mismatch": {
+    "consumer": "ACTIVE_W_AUTHORIZE_JOB",
+    "required_Q_top_level_keys": [
+      "active_workflow_git_blob_sha1",
+      "launch_authority_git_blob_sha1",
+      "launch_descriptor_git_blob_sha1",
+      "executor_git_blob_sha1",
+      "decision_git_blob_sha1",
+      "implementation_contract_git_blob_sha1"
+    ],
+    "missing_Q_top_level_keys": [
+      "active_workflow_git_blob_sha1",
+      "launch_authority_git_blob_sha1",
+      "launch_descriptor_git_blob_sha1",
+      "executor_git_blob_sha1",
+      "decision_git_blob_sha1",
+      "implementation_contract_git_blob_sha1"
+    ],
+    "equivalent_nested_bindings_present": true,
+    "nested_binding_values_are_exact": true,
+    "failure_mode_if_final_L_created_now": "AUTHORIZE_JOB_KEYERROR_BEFORE_SENTINEL_SOLVE",
+    "fail_closed": true
+  },
+  "historical_scope_preservation": {
+    "Q_funnel_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_Q_FUNNEL_QUALIFICATION_V0_1.json",
+    "Q_funnel_authority_git_blob_sha1": "43696ebc566c23871c0bcd94feca40bb9c03d82c",
+    "historical_Q_promotion_qualification_rewritten": false,
+    "historical_Q_qualification_scope": "INACTIVE_Q_PROMOTION_BOUNDARY_ONLY",
+    "new_blocker_scope": "RUNTIME_CONSUMER_SCHEMA_COMPATIBILITY_BEFORE_L"
+  },
+  "audit_report": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_FINAL_Q_RUNTIME_SCHEMA_BLOCKER_AUDIT_V0_1.md",
+    "git_blob_sha1": "7c56da1fa68877cbb46be7bae479bea7b721c5ea"
+  },
+  "hosted_confirmation": {
+    "audit_branch": "audit/v026-r1-sentinel-final-q-post-promotion",
+    "auditor_path": "ci/dsir_v026_r1_sentinel_final_q_post_promotion_audit_v0_1.py",
+    "auditor_git_blob_sha1": "fce9d82ae62f1a4849e9e3b0d5c44045360f4c58",
+    "workflow_path": ".github/workflows/dsir-v026-r1-sentinel-final-q-post-promotion-audit-v0-1.yml",
+    "workflow_git_blob_sha1": "d4777d46d0924f7f2d1d8705d300330463b3c3c2",
+    "run_id": 35023640741,
+    "job_id": 104565256669,
+    "status_at_authority_creation": "queued",
+    "expected_terminal_token": "BLOCKED_LAYERB_BETA_V0_26_R1_SENTINEL_FINAL_Q_RUNTIME_SCHEMA_PLUS_0_PLUS_0",
+    "terminal_artifact_required_for_confirmation": true
+  },
+  "correction_boundary": {
+    "smallest_admissible_repair": "Q_ONLY_TOP_LEVEL_BINDING_ADDITION",
+    "modify_W_required": false,
+    "modify_A_required": false,
+    "modify_L_required": false,
+    "modify_executor_required": false,
+    "modify_decision_required": false,
+    "modify_R1_scientific_contract_required": false,
+    "corrected_Q_requires_new_response_blind_static_runtime_audit": true,
+    "corrected_Q_requires_independent_funnel_qualification": true,
+    "corrected_Q_final_path_replacement_before_L_required": true
+  },
+  "forbidden": {
+    "create_final_L_from_current_Q": true,
+    "launch_sentinel_science_from_current_Q": true,
+    "interpret_current_Q_as_runtime_compatible": true,
+    "launch_full_107_row_replay": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "launch_global_65537": true,
+    "open_statistical_or_physical_science_gate": true
+  },
+  "authorized_next_stage": "PERSIST_FAIL_CLOSED_BLOCKER_THEN_CONSTRUCT_PROSPECTIVE_Q_RUNTIME_SCHEMA_CORRECTION_FOR_SEPARATE_REQUALIFICATION",
+  "final_L_creation_authorized": false,
+  "sentinel_science_execution_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "readiness_percent_change": 0,
+  "scientific_frontier_percent_change": 0
+}
