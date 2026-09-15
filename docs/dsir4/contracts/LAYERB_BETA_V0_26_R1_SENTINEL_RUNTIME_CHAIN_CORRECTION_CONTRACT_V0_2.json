@@ -1,0 +1,118 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_RUNTIME_CHAIN_CORRECTION_CONTRACT_V0_2",
+  "status": "PROSPECTIVELY_FROZEN_GOVERNANCE_ONLY_CORRECTION_CANDIDATE_NOT_EXECUTABLE",
+  "date": "2026-09-15",
+  "effect": "+0/+0",
+  "base_main_sha": "78f96f2c60db385f88a391b7fd046dd312176019",
+  "governing_blocker": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_RUNTIME_CHAIN_SCHEMA_BLOCKER_V0_2.json",
+    "git_blob_sha1": "09190c92c1311b66e953d19ef3811d63a0bf871a",
+    "verdict": "BLOCKED",
+    "classification": "SENTINEL_RUNTIME_CHAIN_SCHEMA_INCOMPATIBILITY_REQUIRES_GOVERNANCE_ONLY_A_L_Q_CORRECTION"
+  },
+  "frozen_unchanged_runtime": {
+    "W_git_blob_sha1": "19907175f0f3417ddee2aba6916d961c6be02e26",
+    "executor_git_blob_sha1": "9affe7c7d4e02bbc728ba15e3cde893ec9876b38",
+    "decision_git_blob_sha1": "97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9",
+    "implementation_contract_git_blob_sha1": "e14804463d9eab288162b4c98e8dd5c1fd6a10eb",
+    "r1_contract_git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9",
+    "r1_promotion_authority_git_blob_sha1": "cdbcea2622564d40aa9d1edc045a5808f8cdd1c4"
+  },
+  "old_package": {
+    "A_git_blob_sha1": "4ba40e59e6a9d48636d95d07efab575e56ae0966",
+    "L_git_blob_sha1": "9c217e41764d979bea12644fae372354241bc976",
+    "Q_git_blob_sha1": "ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd"
+  },
+  "corrected_package": {
+    "A_candidate_path": "docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_CANDIDATE_V0_1.json",
+    "A_git_blob_sha1": "1c9945dd00b137f3e202efa14bf4112fffebf8af",
+    "L_candidate_path": "docs/dsir4/launch_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_CANDIDATE_V0_1.json",
+    "L_git_blob_sha1": "fa7014435f0a5688def2124898ddd01d0c0183aa",
+    "Q_candidate_path": "docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_CANDIDATE_V0_1.json",
+    "Q_git_blob_sha1": "f7b97f47d9e771e3d3ea78875da5a45962160cd0"
+  },
+  "exact_semantic_deltas": {
+    "A": {
+      "allowed_added_keys": ["promotion_authority_git_blob_sha1"],
+      "allowed_deleted_keys": [],
+      "promotion_authority_git_blob_sha1": "cdbcea2622564d40aa9d1edc045a5808f8cdd1c4",
+      "all_other_semantics_equal_old_A": true
+    },
+    "L": {
+      "allowed_changed_keys": ["launch_authority_git_blob_sha1"],
+      "old_launch_authority_git_blob_sha1": "4ba40e59e6a9d48636d95d07efab575e56ae0966",
+      "new_launch_authority_git_blob_sha1": "1c9945dd00b137f3e202efa14bf4112fffebf8af",
+      "all_other_semantics_equal_old_L": true
+    },
+    "Q": {
+      "allowed_added_top_level_keys": [
+        "active_workflow_git_blob_sha1",
+        "launch_authority_git_blob_sha1",
+        "launch_descriptor_git_blob_sha1",
+        "executor_git_blob_sha1",
+        "decision_git_blob_sha1",
+        "implementation_contract_git_blob_sha1"
+      ],
+      "allowed_changed_existing_paths": [
+        "acyclic_package.launch_authority_git_blob_sha1",
+        "acyclic_package.launch_descriptor_git_blob_sha1"
+      ],
+      "all_other_semantics_equal_old_Q": true
+    }
+  },
+  "corrected_runtime_bindings": {
+    "W": "19907175f0f3417ddee2aba6916d961c6be02e26",
+    "A": "1c9945dd00b137f3e202efa14bf4112fffebf8af",
+    "L": "fa7014435f0a5688def2124898ddd01d0c0183aa",
+    "Q": "f7b97f47d9e771e3d3ea78875da5a45962160cd0",
+    "executor": "9affe7c7d4e02bbc728ba15e3cde893ec9876b38",
+    "decision": "97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9",
+    "implementation_contract": "e14804463d9eab288162b4c98e8dd5c1fd6a10eb",
+    "r1_contract": "b510d8e97baf1c0b7b216c0605d83cdd029254e9",
+    "r1_promotion_authority": "cdbcea2622564d40aa9d1edc045a5808f8cdd1c4"
+  },
+  "runtime_compatibility_requirements": {
+    "W_authorize_exact_A_checks_pass": true,
+    "W_authorize_exact_L_checks_pass": true,
+    "W_authorize_exact_Q_checks_pass": true,
+    "executor_require_launch_authority_checks_pass": true,
+    "executor_load_contract_PR169_precondition_pass": true,
+    "decision_frozen_blob_checks_pass": true,
+    "final_L_absent_during_candidate_audit": true
+  },
+  "promotion_plan_after_independent_qualification": {
+    "qualification_authority_before_runtime_replacement": true,
+    "replace_final_A_with_exact_corrected_A": true,
+    "replace_final_Q_with_exact_corrected_Q": true,
+    "do_not_create_final_L_in_A_Q_replacement": true,
+    "post_A_Q_replacement_response_blind_audit_required": true,
+    "only_after_post_replacement_confirmation_create_exact_corrected_L_as_new_file_trigger": true
+  },
+  "forbidden": {
+    "modify_W": true,
+    "modify_executor": true,
+    "modify_decision": true,
+    "modify_R1_scientific_contract": true,
+    "modify_numerical_thresholds": true,
+    "modify_target_geometry": true,
+    "create_final_L_during_candidate_audit": true,
+    "launch_sentinel_science_during_correction": true,
+    "launch_full_107_row_replay": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "launch_global_65537": true,
+    "open_statistical_or_physical_science_gate": true
+  },
+  "qualification_requirements": {
+    "response_blind_static_full_runtime_chain_audit": true,
+    "independent_funnel_audit": true,
+    "hosted_immutable_receipts": true,
+    "class_solver_invoked": false,
+    "scientific_response_read": false
+  },
+  "sentinel_science_execution_authorized": false,
+  "full_107_row_execution_authorized": false
+}
