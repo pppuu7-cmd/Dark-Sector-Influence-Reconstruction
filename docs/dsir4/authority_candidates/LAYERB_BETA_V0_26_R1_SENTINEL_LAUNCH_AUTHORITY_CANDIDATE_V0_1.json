@@ -4,7 +4,7 @@
   "date": "2026-09-15",
   "scope": "EXACTLY_ONE_V0_26_R1_PRE_FULL_SENTINEL_SCIENCE_RUN_ONLY",
   "effect": "+0/+0",
-  "construction_state": "INERT_CANDIDATE_CONTENT_NOT_MAIN_AUTHORITY_UNTIL_EXACT_PROMOTION",
+  "artifact_role": "FROZEN_CONTENT_FOR_EXACT_AUTHORITY_PATH_PROMOTION_AFTER_PACKAGE_QUALIFICATION",
   "r1_contract_path": "docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json",
   "r1_contract_git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9",
   "r1_promotion_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_PR169_FUNNEL_QUALIFICATION_V0_1.json",
