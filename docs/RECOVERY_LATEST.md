@@ -56,14 +56,34 @@ The PR's green Actions run `34910842417` is not validation of the scope contract
 
 PR #168 does not update this recovery file and does not add the F1 preregistration/immutable contract. If its scope is later accepted on main, recovery must be reconciled and the current 68% repository-readiness / 67% scientific-frontier accounting must remain authoritative until any replacement readiness dimensions have frozen denominators, calculation rules, migration rules and initial values. `DSIR Core v1 FROZEN` must never be equated with scientific closure or physical dark-sector inference.
 
+## V0.26 prospective candidate branch — hosted response-blind static audit qualification
+
+A new research branch `research/v026-full-layerb-prereg` proposes the authorized full Layer-B numerical replay. Reviewed branch head: `ed67dade1fb08873ec3807a9513a55a725527fe6`. The branch is **not main authority and not executable**.
+
+Candidate chronology is prospective: preregistration commit `8fc1a9d8dc908309f956e2295e934639730d3796`; base contract `2cf8c2fa3ee24c29c77026e8dd022b67a00cfa14`; static auditor `da18cff9982d7ef91f13caa7a46a388295cd5207`; hardening amendment `54c7a6c32d04cf498df6cd9a79e1bc04b8ad2c90`; route-specific tolerance correction `e6b5e622e27ff8fde0820cbf0f731fd0c3751cd3`; hosted static-audit launch head `20eb0f8db1bc4d426fd957dbed6a1211a0459f10`.
+
+Hosted response-blind static Actions run `34952288638` is terminal `success`, run number 1 / attempt 1, and is the unique push run for that exact head. Job `104325850674` succeeded. Artifact `10389832162` has ZIP digest `sha256:8fce87986b0e96356fdc6935df0f16470b224d10caa371db3fe644929d4616b3`; inner `v026_static_audit.json` is 2924 bytes, SHA256 `718a1ba3be7ce14527e8995bff174c9f53e540a0e5f74008cff0bc1e687acbcd`. The run invoked no CLASS solver and read no scientific response or covariance.
+
+The static audit independently reproduces the exact source-plan bytes and principal response-blind batch identities: source artifact `10298655751` ZIP SHA256 `9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7`, `plan.json` 3,953,984 bytes SHA256 `c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064`; mixed plan 301 batches with canonical SHA256 `59abce49f6338c30b93d11fa462e1ff8642615d6100d23feca4b36505a5cef85`; direct plan 59 batches with canonical SHA256 `1c98927960e81d7fb55ebc687ef36059d964b233001551dba2aa9a01652c8864`; GRID896 has 897 guarded common nodes and zero exact-target overlap. Source run `34695347893` itself failed, but its response-blind `materialize-plan` job `103557768867` succeeded and is the scoped provenance source for artifact `10298655751`; the failed parent run is not relabelled as a successful science run.
+
+Independent funnel audit: `docs/dsir4/audits/LAYERB_BETA_V0_26_RESPONSE_BLIND_STATIC_AUDIT_FUNNEL_REVIEW_V0_1.md`, commit `182676e8b53c9cf4fab673f5164fb43849ca0fc4`. Qualification authority: `docs/dsir4/authority/LAYERB_BETA_V0_26_RESPONSE_BLIND_STATIC_AUDIT_QUALIFICATION_V0_1.json`, commit `d50419d3b8e4a9fc8ee10d9e28b98043d9cf7f2b`. Verdict: **`QUALIFIED`**.
+
+Concrete qualification: the candidate preregistration/base contract freeze M013 maximum mixed `.17g` payload at `25062` bytes, but the hosted workflow correctly pins the candidate's NumPy `1.26.4` and its immutable receipt reports `25063`. Both are safely below the parser bound `32768`, so this is not a capacity failure; it is a frozen-static-identity mismatch. The static auditor does not assert equality to the frozen `25062`, so its PASS token cannot mean that every frozen static scalar reproduced exactly. An independent NumPy `2.3.5` response-blind control reproduces both `25062` and the hardening amendment's recorded non-authoritative local output SHA256 `d55cb61f2cd5338dba0b36df656409fdc248afe3cfa1972fe060b3a09b09c515`, while the hosted NumPy-1.26.4 receipt is `718a1ba3...`; this is an explicit environment-sensitive generated-grid/serialization witness.
+
+The branch's final trigger note at commit `ed67dade1fb08873ec3807a9513a55a725527fe6` says zero run was created. That observation is stale: Actions shows run `34952288638` created at 09:23:21Z and completed at 09:23:39Z, while the note commit timestamp is 09:23:37Z. Actions overrides the race-prone branch note for workflow/provenance state.
+
+No science execution is opened. Before promotion, create one consolidated V0.26 R1 preregistration plus one immutable machine-readable contract that directly incorporates the alpha-route hardening and route-specific tolerance correction, removes/corrects the superseded `25062` scalar, freezes the intended NumPy-1.26.4 GRID896 node identity (preferably exact binary64/u64hex hash), defines the payload-byte counting convention, and makes the static auditor assert the R1 expected identity. The R1 pair then requires an independent contract audit **before** any sentinel executor/workflow or 107-row execution is authorized.
+
 ## Exact next order
 
 1. Treat the independent V0.25 audit verdict `INVALID_PROVENANCE` as historical qualification of the original producer binding; do not erase or relabel it.
-2. Treat `LAYERB_BETA_V0_25_PROVENANCE_CORRECTION_V0_1.json` as the current terminal provenance correction. Numerical V0.25 classification remains unchanged.
+2. Treat `LAYERB_BETA_V0_25_PROVENANCE_CORRECTION_V0_1.json` as the current terminal V0.25 provenance correction. Numerical V0.25 classification remains unchanged.
 3. Treat the PR #168 scope audit verdict `QUALIFIED` as a qualification of that unmerged prospective governance proposal only. It does not modify scientific gate authorization.
-4. The authorized successor remains exactly `PROSPECTIVELY_FROZEN_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_AUDIT`, but it is **not open for execution** until a new prospective preregistration and frozen contract are committed.
-5. That successor must freeze the full 107-row denominator/input identities and exact-target-union construction prospectively; V0.25's `1025 + 107 = 1132 < 1152` is capacity feasibility only, not execution authorization.
-6. No covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537, or downstream physical-science gate is authorized.
-7. Keep effect at `+0/+0`; numerical remedy support and governance scope changes are not statistical/model evidence and not dark-sector evidence.
+4. Treat `LAYERB_BETA_V0_26_RESPONSE_BLIND_STATIC_AUDIT_QUALIFICATION_V0_1.json` as the current independent qualification of the research-branch V0.26 static candidate evidence. Do not promote the hosted PASS token into a numerical-response or science PASS.
+5. The authorized successor remains exactly `PROSPECTIVELY_FROZEN_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_AUDIT`, but it is **not open for execution**. The next admissible gate is a consolidated prospective V0.26 R1 preregistration + immutable contract followed by independent R1 contract audit.
+6. Do not author/launch the sentinel science workflow or full 107-row workflow until that R1 contract audit authorizes it. The current split candidate and its amendments are not execution authority.
+7. The R1 must retain the full 107-row denominator/input identities and exact-target-union construction prospectively, incorporate route-specific alpha/beta tolerances, and bind exact generated GRID896 identity under the intended pinned runtime. V0.25's `1025 + 107 = 1132 < 1152` remains capacity feasibility only, not execution authorization.
+8. No covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537, or downstream physical-science gate is authorized.
+9. Keep effect at `+0/+0`; response-blind static consistency and governance progress are not statistical/model evidence and not dark-sector evidence.
 
 Frozen readiness remains `ARTICLE3_REPOSITORY_READINESS: 68%`; scientific frontier `67%`.
