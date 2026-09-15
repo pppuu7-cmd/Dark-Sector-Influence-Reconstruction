@@ -1,0 +1,73 @@
+name: layerb-beta-v026-r1-static-identity-probe-v0-1
+
+on:
+  push:
+    branches:
+      - research/v026-r1-freeze
+    paths:
+      - '.github/workflows/layerb-beta-v026-r1-static-identity-probe-v0-1.yml'
+      - 'ci/layerb_beta_v026_r1_static_identity_probe_v0_1.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  static-identity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact candidate head
+        uses: actions/checkout@v4
+
+      - name: Pin response-blind numerical runtime
+        run: python -m pip install --disable-pip-version-check --no-cache-dir numpy==1.26.4
+
+      - name: Fetch exact frozen request-plan artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PLAN_ARTIFACT_ID: '10298655751'
+        run: |
+          set -euo pipefail
+          mkdir -p _v026_r1
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${PLAN_ARTIFACT_ID}/zip" > _v026_r1/plan.zip
+          printf '%s  %s\n' '9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7' '_v026_r1/plan.zip' | sha256sum -c -
+          unzip -q _v026_r1/plan.zip -d _v026_r1/unpacked
+          test -f _v026_r1/unpacked/plan.json
+          test "$(wc -c < _v026_r1/unpacked/plan.json)" = '3953984'
+          printf '%s  %s\n' 'c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064' '_v026_r1/unpacked/plan.json' | sha256sum -c -
+
+      - name: Capture exact R1 static identity
+        run: |
+          set -euo pipefail
+          python ci/layerb_beta_v026_r1_static_identity_probe_v0_1.py \
+            --plan _v026_r1/unpacked/plan.json \
+            --out _v026_r1/v026_r1_static_identity.json
+          python - <<'PY'
+          import json
+          p='_v026_r1/v026_r1_static_identity.json'
+          d=json.load(open(p))
+          assert d['token']=='PASS_LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_STATIC_IDENTITY'
+          assert d['numpy_version']=='1.26.4'
+          assert d['class_solver_invoked'] is False
+          assert d['scientific_response_read'] is False
+          assert d['mixed']['batch_count']==301
+          assert d['direct']['batch_count']==59
+          assert d['mixed']['target_plan_canonical_sha256']=='59abce49f6338c30b93d11fa462e1ff8642615d6100d23feca4b36505a5cef85'
+          assert d['direct']['target_plan_canonical_sha256']=='1c98927960e81d7fb55ebc687ef36059d964b233001551dba2aa9a01652c8864'
+          print(d['grid896'])
+          print(d['mixed']['max_payload_batch_id'],d['mixed']['max_payload_bytes'])
+          print(d['direct']['max_payload_batch_id'],d['direct']['max_payload_bytes'])
+          PY
+          sha256sum _v026_r1/v026_r1_static_identity.json > _v026_r1/v026_r1_static_identity.sha256
+
+      - name: Persist immutable response-blind R1 identity receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-static-identity-v0-1
+          path: |
+            _v026_r1/v026_r1_static_identity.json
+            _v026_r1/v026_r1_static_identity.sha256
+          if-no-files-found: error
+          retention-days: 90
