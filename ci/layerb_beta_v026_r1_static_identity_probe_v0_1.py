@@ -151,7 +151,7 @@ def main():
 
     des_sets = [uniq_targets(c) for c in coarse[:377]]
     boss_sets = [uniq_targets(c) for c in coarse[377:441]]
-    if len({x for s in boss_sets for x in [tuple(s)]}) != 1:
+    if len({tuple(s) for s in boss_sets}) != 1:
         raise RuntimeError('BOSS target-set identity mismatch')
     boss_set = boss_sets[0]
 
@@ -207,6 +207,7 @@ def main():
             'node_payload_format': 'contiguous little-endian IEEE-754 binary64 in ascending node order',
             'node_payload_byte_length': len(common_le),
             'node_payload_sha256': sha256_bytes(common_le),
+            'node_u64hex': common_words,
             'node_u64hex_lines_sha256': sha256_bytes(common_hex_lines),
             'dot17g_ascii_without_nul_byte_length': len(common_ascii),
             'dot17g_ascii_without_nul_sha256': sha256_bytes(common_ascii),
