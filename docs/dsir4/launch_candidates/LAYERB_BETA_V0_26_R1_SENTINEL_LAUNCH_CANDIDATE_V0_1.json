@@ -14,7 +14,7 @@
   "active_workflow_git_blob_sha1": "19907175f0f3417ddee2aba6916d961c6be02e26",
   "active_workflow_candidate_source_path": "docs/dsir4/workflow_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_ACTIVE_WORKFLOW_CANDIDATE_V0_2.yml",
   "launch_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json",
-  "launch_authority_git_blob_sha1": "4ba40e59e6a9d48636d95d07efab575e56ae0966",
+  "launch_authority_git_blob_sha1": "1c9945dd00b137f3e202efa14bf4112fffebf8af",
   "launch_authority_candidate_source_path": "docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_CANDIDATE_V0_1.json",
   "r1_contract_git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9",
   "sentinel_implementation_contract_git_blob_sha1": "e14804463d9eab288162b4c98e8dd5c1fd6a10eb",
