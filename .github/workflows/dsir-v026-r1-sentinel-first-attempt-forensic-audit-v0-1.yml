@@ -32,7 +32,7 @@ jobs:
       - name: Verify exact forensic auditor and frozen run head
         run: |
           set -euo pipefail
-          test "$(git hash-object "$AUDITOR")" = 'c55d9594ec7a3d318f9e6b8939142358d52df481'
+          test "$(git hash-object "$AUDITOR")" = '63b6a0db41ff5e0e3c36be605596fb1c5aee0f1d'
           git cat-file -e "$RUN_HEAD^{commit}"
           test "$(git rev-parse "$RUN_HEAD:.github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml")" = '19907175f0f3417ddee2aba6916d961c6be02e26'
           test "$(git rev-parse "$RUN_HEAD:docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json")" = 'fa7014435f0a5688def2124898ddd01d0c0183aa'
@@ -73,14 +73,20 @@ jobs:
           assert d['artifact_count']==0
           assert d['repository_merge_diff_exactly_one_added_L'] is True
           assert d['repository_staging_diff_exactly_one_added_L'] is True
+          assert d['pushed_graph_commit_count']==2
           assert d['all_package_assertions_before_event_guard_reproduced_pass'] is True
           assert d['traceback_stdin_line']==48
           assert d['traceback_line_source']=='assert added.count(launch)==1'
+          assert d['github_actions_push_payload_commit_file_lists_available'] is False
+          assert d['guard_missing_field_fallback_is_empty_list'] is True
+          assert d['effective_added_count_under_frozen_guard']==0
           assert d['event_payload_added_count_equals_one_predicate'] is False
+          assert d['failure_scope']=='GITHUB_ACTIONS_PUSH_PAYLOAD_OMITS_COMMIT_FILE_LISTS_USED_BY_FROZEN_GUARD'
           assert d['A_Q_L_runtime_binding_failure'] is False
           assert d['class_solver_invoked'] is False
           assert d['scientific_response_computed'] is False
           assert d['rerun_authorized'] is False
+          assert d['same_nonce_second_attempt_authorized'] is False
           assert d['full_107_row_execution_authorized'] is False
           assert d['token']=='TERMINAL_BLOCKED_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_EVENT_GUARD_PLUS_0_PLUS_0'
           print(d['token'])
