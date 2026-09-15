@@ -1,0 +1,215 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_PR169_FUNNEL_QUALIFICATION_AUTHORITY_V0_1",
+  "status": "TERMINAL_AUDIT_AUTHORITY",
+  "date": "2026-09-15",
+  "scope": "DSIR_V0_26_R1_PROSPECTIVE_NUMERICAL_SPECIFICATION_AND_PR169_PROMOTION_BOUNDARY_ONLY",
+  "effect": "+0/+0",
+  "verdict": "QUALIFIED",
+  "classification": "V0_26_R1_PROSPECTIVE_NUMERICAL_SPECIFICATION_QUALIFIED_FOR_PROMOTION",
+  "reviewed_main_state": {
+    "main_sha": "b489eb58f598915db52476b740eb76de67e42d5f",
+    "terminal_scientific_numerical_parent": "docs/dsir4/authority/LAYERB_BETA_V0_25_PROVENANCE_CORRECTION_V0_1.json",
+    "terminal_parent_classification": "FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED",
+    "authorized_parent_successor": "PROSPECTIVELY_FROZEN_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_AUDIT",
+    "immediately_prior_v026_audit_authority": "docs/dsir4/authority/LAYERB_BETA_V0_26_RESPONSE_BLIND_STATIC_AUDIT_QUALIFICATION_V0_1.json",
+    "immediately_prior_v026_audit_authority_git_blob_sha1": "dc6075ea3582989909ea8a85abe78eb34381ff2e",
+    "readiness_percent": 68,
+    "scientific_frontier_percent": 67
+  },
+  "reviewed_candidate": {
+    "pull_request_number": 169,
+    "title": "Freeze consolidated DSIR V0.26 R1 numerical replay candidate",
+    "base_branch": "main",
+    "base_sha_at_review": "b489eb58f598915db52476b740eb76de67e42d5f",
+    "head_branch": "research/v026-r1-freeze",
+    "exact_head_sha": "23f226445547d39f35800cac50a8daa583be04b0",
+    "commit_count_after_base": 8,
+    "changed_file_count": 7,
+    "all_changed_files_added": true,
+    "historical_science_result_modified": false,
+    "historical_terminal_authority_modified": false,
+    "science_launch_added": false,
+    "candidate_is_science_authority": false
+  },
+  "r1_bindings": {
+    "preregistration": {
+      "path": "prereg/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.md",
+      "creation_commit": "c74828209901d9486f8a778d30084f567807654d",
+      "git_blob_sha1": "545e5be589e0f8029d23db2edb4e2faad116c3a0"
+    },
+    "contract": {
+      "path": "docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json",
+      "creation_commit": "ad1f7cd07b7d0da27a8c551c7bc44704e50a1f0d",
+      "git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9"
+    },
+    "static_identity_probe_git_blob_sha1": "5fffa2fd926eaf3d775213959039577b20b312bd",
+    "static_identity_workflow_git_blob_sha1": "0a2f42f70c3d4e8cbe2776f26dc9c5fb3a68bc23",
+    "independent_contract_auditor_git_blob_sha1": "9109f2e2bcc6146fa62e423e145ad09a67b70b0c",
+    "independent_contract_audit_workflow_git_blob_sha1": "626c56d86d778453468a6b422b9b780548e041a4",
+    "candidate_audit_evidence_git_blob_sha1": "1d4315de6f357d35d554ff028b1ff453fc97fdc7"
+  },
+  "response_blind_source_plan": {
+    "origin_run_id": 34695347893,
+    "origin_run_conclusion": "failure",
+    "materialize_plan_job_id": 103557768867,
+    "materialize_plan_job_conclusion": "success",
+    "artifact_id": 10298655751,
+    "artifact_zip_sha256": "9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7",
+    "inner_filename": "plan.json",
+    "inner_byte_length": 3953984,
+    "inner_sha256": "c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064",
+    "inheritance_scoped_to_successful_materialization_job_only": true,
+    "failed_parent_run_relabelled_as_success": false
+  },
+  "confirmed_r1_numerical_identity": {
+    "retained_row_count": 107,
+    "des_row_count": 53,
+    "boss_row_count": 54,
+    "retained_id_sha256": "44b57c6c910bc3612310ce415d773c8c180497528bfc5fc2927ce61da6ad40d7",
+    "full_order_sha256": "bfaf582518cdbfd34b1e8392da83dac6b0885948bc31f2c29d4e48247c23af75",
+    "production_call_count": 441,
+    "fine_call_count": 569,
+    "des_unique_target_count": 64658,
+    "grid896_common_node_count": 897,
+    "grid896_binary64_sha256": "8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d",
+    "mixed_batch_count": 301,
+    "mixed_target_plan_sha256": "59abce49f6338c30b93d11fa462e1ff8642615d6100d23feca4b36505a5cef85",
+    "mixed_payload_manifest_sha256": "6b0f08b196f6afa2086a4275ec364d527c50786921ef0ca1d77a30edbed91ce6",
+    "mixed_max_payload_batch": "M013",
+    "mixed_max_payload_bytes": 25063,
+    "direct_batch_count": 59,
+    "direct_target_plan_sha256": "1c98927960e81d7fb55ebc687ef36059d964b233001551dba2aa9a01652c8864",
+    "direct_payload_manifest_sha256": "99a6e4c48d353b05bea5000fc27417731d1c347071254232ed807554ee569da6",
+    "direct_max_payload_batch": "D20",
+    "direct_max_payload_bytes": 24262,
+    "full_replay_class_construction_count": 738
+  },
+  "confirmed_runtime_identity": {
+    "runner": "ubuntu-24.04",
+    "python": "3.12.3",
+    "numpy": "1.26.4",
+    "scipy": "1.17.1",
+    "v025_r01_witness_artifact_id": 10368809560,
+    "v025_r01_witness_zip_sha256": "0c2f8a255ff4407936692f4cebb8648437abb6897c1e88f66a55927782ac6921",
+    "historical_witness_rechecked_independently": true
+  },
+  "route_specific_semantics": {
+    "production_h": 0.0001,
+    "native_k_per_decade_for_pk": 20.0,
+    "perturb_sampling_stepsize": 0.00035,
+    "alpha_route": "CANONICAL_32769_EIGHT_CHUNK",
+    "alpha_tol_perturb_integration": "3e-10",
+    "beta_route": "GRID896_EXACT_TARGET_UNION_PLUS_TARGET_ONLY_DIRECT",
+    "beta_tol_perturb_integration": "1e-12",
+    "scientific_relative_threshold": 0.001,
+    "scientific_threshold_is_strict_less_than": true,
+    "technical_relative_threshold": 0.00001,
+    "technical_threshold_is_strict_less_than": true,
+    "exact_binding_threshold": 1e-12
+  },
+  "hosted_r1_evidence": {
+    "static_identity": {
+      "run_id": 34954905127,
+      "job_id": 104334496210,
+      "artifact_id": 10390997654,
+      "artifact_zip_sha256": "5cd19512bef3d9795957fb8105361e4006123ae59794bc94e2e5ded5722436ff",
+      "receipt_sha256": "3a9d8375119068063ddcb4ac37d8f3da92444261b0fad356a228ccaedf6292d7",
+      "class_solver_invoked": false,
+      "scientific_response_read": false
+    },
+    "independent_contract_audit": {
+      "run_id": 34955509439,
+      "job_id": 104336497954,
+      "artifact_id": 10390734361,
+      "artifact_zip_sha256": "6309cc724061d66d881157e0c7b49807a6a111d55b76b0ca091fdf6efb43e664",
+      "receipt_sha256": "304d14217933d5852b9e9783a127cb6486344adddf228ae70e2a455d298e483f",
+      "token": "PASS_LAYERB_BETA_V0_26_R1_CONTRACT_AUDIT_PLUS_0_PLUS_0",
+      "class_solver_invoked": false,
+      "scientific_response_read": false,
+      "sentinel_execution_authorized": false,
+      "full_107_row_execution_authorized": false
+    }
+  },
+  "independent_funnel_audit": {
+    "audit_branch": "audit/v026-r1-pr169",
+    "auditor_path": "ci/dsir_v026_r1_pr169_funnel_audit_v0_1.py",
+    "auditor_git_blob_sha1_at_terminal_run": "44820de9f51469e36984da1cd3ef434cc948a785",
+    "workflow_path": ".github/workflows/dsir-v026-r1-pr169-funnel-audit-v0-1.yml",
+    "workflow_git_blob_sha1": "aed0ed2a81e7a2a2ef8684fdc7e05e6c53b58e83",
+    "preterminal_tooling_failures": [
+      {
+        "run_id": 34956541006,
+        "head_sha": "6f5183cd708f20bdd2ad6fd20c42a58aa4ff905e",
+        "failure": "AUDITOR_SCHEMA_BINDING_KEYERROR_MODELS_PER_LANE",
+        "candidate_failure": false,
+        "qualification_receipt_emitted": false
+      },
+      {
+        "run_id": 34956955267,
+        "head_sha": "f841d589e151200cdde391a6c0f6cafd391f9b8f",
+        "failure": "AUDITOR_SCHEMA_BINDING_KEYERROR_CONTRACT_AUDIT_SOLVER_FIELD",
+        "candidate_failure": false,
+        "qualification_receipt_emitted": false
+      }
+    ],
+    "terminal_run_id": 34957094367,
+    "terminal_run_number": 3,
+    "terminal_run_attempt": 1,
+    "terminal_run_event": "push",
+    "terminal_run_head_sha": "28c5d60ae09a4c7ebb48c42044e63f00038e55d6",
+    "terminal_run_conclusion": "success",
+    "terminal_job_id": 104341644425,
+    "terminal_job_conclusion": "success",
+    "artifact_id": 10391816317,
+    "artifact_name": "dsir-v026-r1-pr169-funnel-audit-v0-1",
+    "artifact_zip_sha256": "4a6563ebee5a71e6704e821ead428932bca888ff41d4f12cae7af4f4d877ffa0",
+    "receipt_filename": "funnel_audit.json",
+    "receipt_byte_length": 1892,
+    "receipt_sha256": "63acdb5070bd5824713e9141a543eb03e01a022cc5ba395d9dfb06c7cf23bec0",
+    "receipt_token": "QUALIFIED_DSIR_V0_26_R1_PR169_FUNNEL_AUDIT_PLUS_0_PLUS_0",
+    "receipt_verdict": "QUALIFIED",
+    "class_solver_invoked": false,
+    "scientific_response_read": false
+  },
+  "audit_report": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_PR169_FUNNEL_AUDIT_V0_1.md",
+    "git_blob_sha1": "873101f7e2273480d507a34ab62949ed543e12fb"
+  },
+  "interpretation": {
+    "accepted": "The exact seven audited PR169 blobs form an internally/provenance-consistent consolidated prospective V0.26 R1 numerical specification and may be promoted to main after this authority itself is on main.",
+    "not_accepted": "This is not a V0.26 scientific-response PASS and does not authorize any CLASS sentinel solve, full 107-row replay, covariance/statistical/model work, or physical dark-sector inference.",
+    "readiness_percent_change": 0,
+    "scientific_frontier_percent_change": 0
+  },
+  "promotion_authorization": {
+    "exact_pr169_head_sha": "23f226445547d39f35800cac50a8daa583be04b0",
+    "promotion_to_main_authorized_after_this_authority_is_on_main": true,
+    "merge_commit_allowed_if_all_seven_audited_blobs_are_preserved": true,
+    "candidate_blob_mutation_during_promotion_forbidden": true
+  },
+  "post_promotion_authorization": {
+    "sentinel_executor_construction_authorized_after_exact_r1_is_on_main": true,
+    "sentinel_workflow_construction_authorized_after_exact_r1_is_on_main": true,
+    "sentinel_response_blind_static_audit_required": true,
+    "separate_explicit_sentinel_launch_authority_required": true,
+    "sentinel_science_execution_authorized": false,
+    "full_107_row_execution_authorized": false,
+    "full_replay_requires_valid_sentinel_science_result": true,
+    "full_replay_requires_separate_explicit_launch_authority": true
+  },
+  "forbidden": {
+    "interpret_as_dark_sector_evidence": true,
+    "launch_sentinel_science_from_this_authority": true,
+    "launch_full_107_row_replay_from_this_authority": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "launch_global_65537": true,
+    "open_statistical_or_physical_science_gate": true
+  },
+  "authorized_next_stage": "PROMOTE_EXACT_V0_26_R1_PR169_SPECIFICATION_TO_MAIN_THEN_CONSTRUCT_PRE_FULL_SENTINEL_EXECUTOR_WORKFLOW_FOR_STATIC_AUDIT_ONLY",
+  "sentinel_science_execution_authorized": false,
+  "full_107_row_execution_authorized": false
+}
