@@ -1,0 +1,119 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PR173_PROMOTION_CONFIRMATION_V0_1",
+  "status": "TERMINAL_AUDIT_AUTHORITY",
+  "date": "2026-09-15",
+  "scope": "DSIR_V0_26_R1_EXACT_INACTIVE_PR173_PROMOTION_ONLY",
+  "effect": "+0/+0",
+  "verdict": "CONFIRMED_SCOPED",
+  "classification": "EXACT_INACTIVE_PR173_PROMOTION_CONFIRMED_Q_ONLY_NEXT",
+  "reviewed_promotion": {
+    "merge_commit_sha": "7224e044b0c972456127dd969dcf212918e6f47f",
+    "authority_parent_sha": "cb5fe39993c66d7ab9f952ee9527ce310073f292",
+    "audited_pr173_head_parent_sha": "1403581d4d608d98597eaff2c77c80a98d6c3c6e",
+    "added_file_count": 7,
+    "additions": 827,
+    "deletions": 0
+  },
+  "governing_launch_package_authority": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PR173_FUNNEL_QUALIFICATION_V0_1.json",
+    "git_blob_sha1": "ed3cec954d2077e6b5a6daab5da53e8fe72cc2e0",
+    "verdict": "QUALIFIED",
+    "authorized_exact_pr173_head_sha": "1403581d4d608d98597eaff2c77c80a98d6c3c6e"
+  },
+  "promoted_exact_blobs": {
+    "static_package_audit_workflow": "09e3a4b14bacd33e451b5f35aa4dc78004ac7945",
+    "static_package_auditor": "8efdccffcf0e740a799fd462c3988cdc20a29b1a",
+    "static_package_evidence": "4bbed7fc77e57aab82a72bf886c697cf6f07c1a6",
+    "launch_authority_candidate_A": "4ba40e59e6a9d48636d95d07efab575e56ae0966",
+    "launch_package_contract": "26806597e651fb22956de59f102c0ad24d11c576",
+    "launch_descriptor_candidate_L": "9c217e41764d979bea12644fae372354241bc976",
+    "active_workflow_candidate_W": "19907175f0f3417ddee2aba6916d961c6be02e26"
+  },
+  "activation_negative_controls": {
+    "active_workflow_path_absent": true,
+    "final_launch_authority_path_absent": true,
+    "final_launch_descriptor_path_absent": true,
+    "package_qualification_Q_path_absent": true,
+    "workflow_runs_for_exact_promotion_head": 0,
+    "sentinel_science_executed": false
+  },
+  "hosted_static_package_evidence": {
+    "run_id": 34959657394,
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "head_sha": "5d42cd84ce54c9781d7bbefd41b01d3cf775fbd7",
+    "job_id": 104349972403,
+    "run_conclusion": "success",
+    "job_conclusion": "success",
+    "artifact_id": 10393170033,
+    "artifact_zip_sha256": "e95c4675db77a2ecd864d21e39dfdccffe289ed61a84ece95182f22c46e16184",
+    "receipt_sha256": "133df1d2753c9228198a15be792fdcbbf99da243efeccdb785d610aad7dc5ee5",
+    "independent_download_rechecked": true,
+    "future_W_git_blob_sha1": "19907175f0f3417ddee2aba6916d961c6be02e26",
+    "future_A_git_blob_sha1": "4ba40e59e6a9d48636d95d07efab575e56ae0966",
+    "future_L_git_blob_sha1": "9c217e41764d979bea12644fae372354241bc976",
+    "class_solver_invoked": false,
+    "scientific_response_read": false
+  },
+  "external_funnel_evidence": {
+    "run_id": 34960031527,
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "head_sha": "9d39949b0531aa91f229dea18372d79d6c6b6e00",
+    "job_id": 104351158807,
+    "run_conclusion": "success",
+    "job_conclusion": "success",
+    "artifact_id": 10392992058,
+    "artifact_zip_sha256": "73ea7849b60dd65b20e2f93144c7afbb0f7dc7bd09ae8e0e9cfe0e3d63801c59",
+    "receipt_sha256": "f525feaf938e99a9282ea97619842ded9883ac54219e60c9bbdd3f34f934a1aa",
+    "independent_download_rechecked": true,
+    "receipt_verdict": "QUALIFIED",
+    "candidate_future_workflow_executed": false,
+    "class_solver_invoked": false,
+    "scientific_response_read": false
+  },
+  "audit_report": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PR173_PROMOTION_AUDIT_V0_1.md",
+    "git_blob_sha1": "dad638a0749c41f53d4fd1f29057bbee09ac1292"
+  },
+  "interpretation": {
+    "accepted": "The exact independently qualified PR173 inactive W/A/L launch-package material and static evidence were promoted to main without mutation or activation.",
+    "not_accepted": "This does not make candidate A or L active authority, does not authorize sentinel CLASS execution, and does not authorize the full 107-row replay or any downstream statistical/physical gate.",
+    "readiness_percent_change": 0,
+    "scientific_frontier_percent_change": 0
+  },
+  "recovery_reconciliation_required": true,
+  "post_promotion_next_stage": {
+    "construct_Q_binding_exact_W_A_L": true,
+    "Q_must_bind_static_package_receipt": true,
+    "Q_must_bind_external_funnel_receipt": true,
+    "Q_must_keep_full_107_row_execution_false": true,
+    "Q_requires_separate_response_blind_static_audit_before_promotion": true,
+    "stage_active_W_A_now": false,
+    "create_final_L_now": false,
+    "sentinel_science_execution_authorized_now": false,
+    "full_107_row_execution_authorized_now": false
+  },
+  "forbidden": {
+    "interpret_as_numerical_sentinel_pass": true,
+    "interpret_as_dark_sector_evidence": true,
+    "activate_candidate_A_by_path_semantics": true,
+    "activate_candidate_L_by_path_semantics": true,
+    "stage_active_W_or_A_before_Q_qualification": true,
+    "create_final_L_trigger_before_Q_and_pretrigger_controls": true,
+    "launch_sentinel_science_now": true,
+    "launch_full_107_row_replay": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "launch_global_65537": true,
+    "open_statistical_or_physical_science_gate": true
+  },
+  "authorized_next_stage": "CONSTRUCT_Q_BINDING_EXACT_W_A_L_AND_FROZEN_AUDIT_RECEIPTS_FOR_SEPARATE_RESPONSE_BLIND_Q_AUDIT",
+  "sentinel_science_execution_authorized": false,
+  "full_107_row_execution_authorized": false
+}
