@@ -1,0 +1,122 @@
+name: GDM finite-start convergence sweep
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/gdm-start-sweep.yml'
+      - 'ci/analyze_gdm_start_sweep.py'
+      - 'ci/gdm_calibration_trigger.txt'
+
+jobs:
+  gdm-start-sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout DSIR
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Clone and build pinned GDM_CLASS
+        run: |
+          git clone https://github.com/s-ilic/gdm_class_public.git external_gdm
+          cd external_gdm
+          git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          git rev-parse HEAD | tee ../gdm_upstream_sha.txt
+          make -j2 class
+
+      - name: Run matched start-time sweep
+        shell: bash
+        run: |
+          set -euo pipefail
+          starts=(1e-6 3e-7 1e-7 3e-8)
+          for start in "${starts[@]}"; do
+            out="dsir_sweep/start_${start}"
+            mkdir -p "external_gdm/${out}"
+
+            cat > external_gdm/dsir_baseline_${start}.ini <<EOF
+          h = 0.67
+          omega_b = 0.0224
+          omega_cdm = 0.1200
+          omega_gdm = 0.0
+          Omega_Lambda = 0.684
+          A_s = 2.10e-9
+          n_s = 0.965
+          tau_reio = 0.054
+          gauge = newtonian
+          output = tCl,pCl,lCl,mPk
+          lensing = yes
+          l_max_scalars = 800
+          P_k_max_h/Mpc = 2.0
+          z_pk = 0,1
+          start_small_k_at_tau_c_over_tau_h = ${start}
+          write background = yes
+          root = ${out}/baseline_
+          EOF
+
+            cat > external_gdm/dsir_gdm0_${start}.ini <<EOF
+          h = 0.67
+          omega_b = 0.0224
+          omega_cdm = 0.0
+          omega_gdm = 0.1200
+          Omega_Lambda = 0.684
+          A_s = 2.10e-9
+          n_s = 0.965
+          tau_reio = 0.054
+          gauge = newtonian
+          type_gdm = time_only_bins
+          smooth_bins_gdm = yes
+          time_transition_width_gdm = 8.
+          time_values_gdm = 0.00001, 0.0001, 0.001, 0.01, 0.1
+          w_values_gdm = 0., 0., 0., 0., 0., 0.
+          cs2_values_gdm = 0., 0., 0., 0., 0., 0.
+          cv2_values_gdm = 0., 0., 0., 0., 0., 0.
+          dynamic_shear_gdm = yes
+          output = tCl,pCl,lCl,mPk
+          lensing = yes
+          l_max_scalars = 800
+          P_k_max_h/Mpc = 2.0
+          z_pk = 0,1
+          start_small_k_at_tau_c_over_tau_h = ${start}
+          write background = yes
+          root = ${out}/gdm0_
+          EOF
+
+            (cd external_gdm && ./class dsir_baseline_${start}.ini 2>&1 | tee ${out}/baseline.log)
+            (cd external_gdm && ./class dsir_gdm0_${start}.ini 2>&1 | tee ${out}/gdm0.log)
+          done
+
+      - name: Analyze convergence with scale-aware metrics
+        run: |
+          python3 ci/analyze_gdm_start_sweep.py \
+            --root external_gdm/dsir_sweep \
+            --json external_gdm/dsir_sweep/convergence.json
+
+      - name: Record environment
+        run: |
+          {
+            echo "DSIR GDM finite-start sweep"
+            echo "DSIR commit: $GITHUB_SHA"
+            echo -n "GDM upstream: "
+            cat gdm_upstream_sha.txt
+            uname -a
+            python3 --version
+            gcc --version | head -1
+          } > external_gdm/dsir_sweep/environment.txt
+
+      - name: Upload sweep artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gdm-start-sweep-${{ github.sha }}
+          path: |
+            external_gdm/dsir_sweep/
+            external_gdm/dsir_baseline_*.ini
+            external_gdm/dsir_gdm0_*.ini
+            gdm_upstream_sha.txt
+          if-no-files-found: error

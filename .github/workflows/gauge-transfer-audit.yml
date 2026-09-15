@@ -1,0 +1,130 @@
+name: Hard comoving-matter gauge regression
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/gauge-transfer-audit.yml'
+      - 'ci/gauge_invariant_matter_audit.py'
+      - 'ci/gdm_calibration_trigger.txt'
+
+jobs:
+  transfer-gauge-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout DSIR
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip
+          python3 -m pip install --user numpy
+
+      - name: Clone and build pinned GDM_CLASS
+        run: |
+          git clone https://github.com/s-ilic/gdm_class_public.git external_gdm
+          cd external_gdm
+          git checkout 4c87916aab5ca124a68f1dd16f31846fc13d1829
+          git rev-parse HEAD | tee ../gdm_upstream_sha.txt
+          make -j2 class
+
+      - name: Write frozen p8 precision
+        run: |
+          cat > external_gdm/dsir_precision.pre <<'EOF'
+          k_step_sub = 0.0010
+          k_step_super = 0.000003
+          k_step_super_reduction = 0.1
+          start_small_k_at_tau_c_over_tau_h = 1e-6
+          start_large_k_at_tau_h_over_tau_k = 0.05
+          tight_coupling_trigger_tau_c_over_tau_h = 0.005
+          tight_coupling_trigger_tau_c_over_tau_k = 0.008
+          start_sources_at_tau_c_over_tau_h = 0.006
+          tol_perturb_integration = 3e-10
+          perturb_sampling_stepsize = 0.00035
+          radiation_streaming_approximation = 2
+          radiation_streaming_trigger_tau_over_tau_k = 240.
+          radiation_streaming_trigger_tau_c_over_tau = 100.
+          ur_fluid_approximation = 2
+          ur_fluid_trigger_tau_over_tau_k = 50.
+          EOF
+
+      - name: Write identical transfer configurations
+        run: |
+          mkdir -p external_gdm/dsir_transfer_outputs
+          cat > external_gdm/newt_transfer.ini <<'EOF'
+          h = 0.67
+          omega_b = 0.0224
+          omega_cdm = 0.1200
+          omega_gdm = 0.0
+          Omega_Lambda = 0.684
+          A_s = 2.10e-9
+          n_s = 0.965
+          tau_reio = 0.054
+          gauge = newtonian
+          output = mTk,vTk,mPk
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0,1
+          headers = yes
+          write background = yes
+          root = dsir_transfer_outputs/newt_
+          EOF
+          cat > external_gdm/sync_transfer.ini <<'EOF'
+          h = 0.67
+          omega_b = 0.0224
+          omega_cdm = 0.1200
+          omega_gdm = 0.0
+          Omega_Lambda = 0.684
+          A_s = 2.10e-9
+          n_s = 0.965
+          tau_reio = 0.054
+          gauge = synchronous
+          output = mTk,vTk,mPk
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0,1
+          headers = yes
+          write background = yes
+          root = dsir_transfer_outputs/sync_
+          EOF
+
+      - name: Run frozen p8 transfer calculations
+        working-directory: external_gdm
+        run: |
+          ./class newt_transfer.ini dsir_precision.pre 2>&1 | tee dsir_transfer_outputs/newt.log
+          ./class sync_transfer.ini dsir_precision.pre 2>&1 | tee dsir_transfer_outputs/sync.log
+
+      - name: Hard gate comoving matter density
+        run: |
+          python3 ci/gauge_invariant_matter_audit.py \
+            --directory external_gdm/dsir_transfer_outputs \
+            --h 0.67 \
+            --json external_gdm/dsir_transfer_outputs/comoving_gauge_audit.json \
+            --max-rel 5e-6
+
+      - name: Record provenance and frozen tolerance
+        run: |
+          {
+            echo "DSIR HARD comoving-matter gauge regression"
+            echo "definition frozen before this run: Delta_m = delta_m + 3 a H theta_m/k^2 for pressureless matter"
+            echo "hard tolerance frozen before this run: Newtonian/synchronous max |Delta_Delta/Delta| <= 5e-6 on 1e-3<=k<=1e-1 h/Mpc"
+            echo "calibration p8 maximum before freezing tolerance: 2.551425316e-6"
+            echo "p8 precision is identical to GDM-S1 hard regression"
+            echo "DSIR commit: $GITHUB_SHA"
+            echo -n "GDM upstream: "
+            cat gdm_upstream_sha.txt
+          } > external_gdm/dsir_transfer_outputs/environment.txt
+
+      - name: Upload hard gauge artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: comoving-gauge-hard-${{ github.sha }}
+          path: |
+            external_gdm/dsir_transfer_outputs/
+            external_gdm/newt_transfer.ini
+            external_gdm/sync_transfer.ini
+            external_gdm/dsir_precision.pre
+            gdm_upstream_sha.txt
+            ci/gauge_invariant_matter_audit.py
+          if-no-files-found: error
