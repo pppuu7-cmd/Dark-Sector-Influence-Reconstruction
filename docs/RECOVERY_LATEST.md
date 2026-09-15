@@ -1,106 +1,44 @@
 # DSIR authoritative recovery — latest
 
-Updated: 2026-09-15. Scope: **DSIR only**. Never mix RTK, RQIR, KMQGB or KMDSB. GitHub repository state, immutable DSIR4 preregistrations/contracts, terminal authorities, terminal GitHub Actions artifacts, independent audit qualifications/corrections, `docs/CURRENT_PROCESS.md`, and this file are the durable source of truth. Chat is not authority.
+Updated: 2026-09-15. Scope: **DSIR only**. GitHub repository/Actions state, frozen DSIR4 preregistrations/contracts, terminal authorities and independent audit qualifications are the durable source of truth. Chat is not authority. Never mix RTK, RQIR, KMQGB or KMDSB.
 
 ## Frozen scientific boundaries
+Production `h=1e-4`; native `k_per_decade_for_pk=20`; sampling `0.00035`; scientific numerical threshold strict `<1e-3`; technical reproducibility strict `<1e-5`; requested-node binding `<=1e-12`. V0.26 R1 freezes alpha canonical-32769 route `tol_perturb_integration=3e-10` and beta exact-target-union route `1e-12`. Covariance, whitening, nuisance, relation-null, `Wm_S3`, global 65537, statistical/model inference and physical dark-sector inference remain unopened. Diagnostic/static/provenance progress does not raise the scientific frontier.
 
-Production `h=1e-4`; native `k_per_decade_for_pk=20`; production sampling `0.00035`; scientific numerical threshold strict `<1e-3`; technical reproducibility strict `<1e-5`; requested/exact-node binding `<=1e-12`. V0.26 R1 freezes alpha canonical-32769 route `tol_perturb_integration=3e-10` and beta exact-target-union route `1e-12`. Covariance, whitening, nuisance, relation-null, `Wm_S3`, global 65537, statistical/model inference and physical dark-sector inference remain unopened. Diagnostic/static/provenance progress alone does not raise scientific frontier/readiness.
+## Terminal chain through V0.25
+V0.21 localized hosted discrepancy to NumPy AVX-512 dispatch; V0.22 established deterministic forced non-AVX512 baseline; V0.23 revalidated production-h replay cells; V0.24 attributed the remaining immutable violations to common-grid cubic interpolation. V0.25 run `34896282790` is terminal success, run #1 / attempt #1, classification `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, effect `+0/+0`. Historical independent verdict `INVALID_PROVENANCE` remains scoped to the original producer artifact-to-repository binding; `docs/dsir4/authority/LAYERB_BETA_V0_25_PROVENANCE_CORRECTION_V0_1.json` repaired provenance without rewriting history. V0.25 authorized only a prospectively frozen full Layer-B numerical replay gate, never direct 107-row execution.
 
-## Terminal numerical/reproducibility chain through V0.25
+## Consolidated V0.26 R1
+R1 preregistration `prereg/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.md` blob `545e5be589e0f8029d23db2edb4e2faad116c3a0`; machine contract `docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json` blob `b510d8e97baf1c0b7b216c0605d83cdd029254e9`; promotion authority `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_PR169_FUNNEL_QUALIFICATION_V0_1.json`, verdict `QUALIFIED`; exact promotion merge `438ab2e6732512cf50c163719ade01575257b209`.
 
-V0.21 localized hosted discrepancy to NumPy AVX-512 dispatch; V0.22 established deterministic forced non-AVX512 baseline; V0.23 revalidated frozen production-h replay cells; V0.24 attributed remaining immutable violations to common-grid cubic interpolation.
+R1 freezes 107 retained rows (DES 53 / BOSS 54), retained-ID SHA256 `44b57c6c910bc3612310ce415d773c8c180497528bfc5fc2927ce61da6ad40d7`, row-order SHA256 `bfaf582518cdbfd34b1e8392da83dac6b0885948bc31f2c29d4e48247c23af75`, source-plan artifact `10298655751` ZIP SHA256 `9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7`, hosted NumPy-1.26.4 GRID896 payload SHA256 `8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d`, M013 max `25063`, and full-replay accounting 738 CLASS constructions. The preregistered pre-full sentinel is 32 lanes using M076/M298/M300 with D50/D00/D58 comparators, 14 CLASS constructions per eligible lane, minimum 6 eligible with >=3 native AVX512-active and >=3 inactive.
 
-V0.25 authoritative run `34896282790` is terminal success, run #1 / attempt #1. All 32 lanes eligible; native classes 7 active / 25 inactive. Decision job `104165699139`; artifact `10370496892`; ZIP SHA256 `7fcb329027fad04425802f4a90b7874baa2a25e949fbc1057db1a3ed70546562`. Frozen classification remains `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, effect `+0/+0`. Exact-target-union matched direct exactly on all six frozen benchmark cells; one-step refinement remained rejected because GRID768/T3 = `0.001136253405249066 >= 0.001`.
+## Sentinel implementation and acyclic launch package
+PR171 implementation was promoted by merge `6ccd564184456052a993593c43951604ccd3aaef` after independent `QUALIFIED` review. Frozen executor blob `9affe7c7d4e02bbc728ba15e3cde893ec9876b38`; decision blob `97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9`; inert workflow blueprint blob `1ed36c850d80537646556a858204cac14eca852e`; implementation contract blob `e14804463d9eab288162b4c98e8dd5c1fd6a10eb`.
 
-Historical independent V0.25 funnel verdict remains **`INVALID_PROVENANCE`** for the original producer artifact-to-repository binding only. Actual terminal `decision.json` SHA256 is `5bcc9d93c22d32ace5d97f78ff9ce89b399cc4c7e4377b174c5fe882869dd71f`; terminal provenance correction `docs/dsir4/authority/LAYERB_BETA_V0_25_PROVENANCE_CORRECTION_V0_1.json` repairs provenance without rewriting the historical result.
+PR173 froze the acyclic provenance DAG `W -> A(W) -> L(A,W) -> static audit -> Q(W,A,L)` and was exactly promoted by merge `7224e044b0c972456127dd969dcf212918e6f47f` after package authority reached main. Candidate blobs: W `19907175f0f3417ddee2aba6916d961c6be02e26`, A `4ba40e59e6a9d48636d95d07efab575e56ae0966`, L `9c217e41764d979bea12644fae372354241bc976`. Static package artifact `10393170033`, ZIP `e95c4675db77a2ecd864d21e39dfdccffe289ed61a84ece95182f22c46e16184`; external funnel artifact `10392992058`, ZIP `73ea7849b60dd65b20e2f93144c7afbb0f7dc7bd09ae8e0e9cfe0e3d63801c59`.
 
-V0.25 authorizes only `PROSPECTIVELY_FROZEN_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_AUDIT`, not direct 107-row execution.
+## Q candidate qualification and inactive promotion
+The exact inactive package-Q candidate blob is `ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd`. Response-blind Q static run `35016371281`, run #1 / attempt #1, artifact `10416085334`, ZIP SHA256 `f6902133327a78fcb387c114f6ef31f5f8cd37024827bab9655b6708410be14b`, receipt SHA256 `0f654ce0e5609189eb675da623a8c4adfa6042479bcfebe7e8f5e9ce7a869a2e`. Independent Q funnel run `35016565037`, run #1 / attempt #1, artifact `10415269967`, ZIP SHA256 `d943607cf423708912b46962d9ba26c9e37ddc8eb1d63b6bd7ac1cb7c7b66520`, receipt SHA256 `96b824df3b9a9fc40f298b95e5f858aa6c72e4d740beb1fa66961c429208a1f3`, verdict `QUALIFIED`. Terminal authority `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_Q_FUNNEL_QUALIFICATION_V0_1.json` blob `43696ebc566c23871c0bcd94feca40bb9c03d82c`. PR175 authority merge `a86209ed04a93d70f55efdd5f8035c0f09868c2a` preceded PR176 exact inactive-Q promotion merge `b7d65db1dacb355ddf2419a22cec38cc4b091c39`.
 
-## Historical split V0.26 candidate
+## W/A pretrigger qualification and exact PR178 staging
+After inactive Q was on main, exact W/A staging candidate head `15e7dbfb9c05744c026d5b03e5466267d802a2c7` passed response-blind pretrigger static run `35017254145`, run #1 / attempt #1, artifact `10415689546`, ZIP SHA256 `ac4d6b601e8f8b90cb0ae21bfbdc8f360949453784da51688a76318668076c72`, inner receipt SHA256 `9f70c83f57f74805f073cbd0ef7b6bdf2fef0ac8028b01d503c6b54e7f46b681`. Independent pretrigger funnel run `35017440323`, run #1 / attempt #1, artifact `10415119864`, ZIP SHA256 `e023a71379dee09ecf203b7a687c0da9b092b5ad2e39afc68dda39836752d8c0`, inner receipt SHA256 `dfc6219a1d766f38957d20185f3e5473f7c33260abcfbf607f48053f7224e025`, verdict `QUALIFIED`. Terminal pretrigger authority `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_WA_PRETRIGGER_FUNNEL_QUALIFICATION_V0_1.json` blob `7c365449795d523d4ada39804c55c90e8c527a85` entered main in PR177 merge `9a14b804c0743023c1225a53d55865612b3d0a97` before PR178 staging.
 
-The superseded split candidate remains historical evidence. Hosted response-blind run `34952288638` exposed M013 mixed `.17g` maximum `25062` in the split freeze versus `25063` under pinned hosted NumPy `1.26.4`. Independent verdict was `QUALIFIED`, requiring the consolidated R1 successor; the historical record is not rewritten.
+Current main before this recovery reconciliation was PR178 merge `d605a941b412bb9625bf2fc6fedb0c7d9f8e8293`, parents exactly authority-bearing main `9a14b804c0743023c1225a53d55865612b3d0a97` and audited candidate head `15e7dbfb9c05744c026d5b03e5466267d802a2c7`. Relative to first parent it adds exactly four files: active-path W, final-path A, the pretrigger static auditor, and its workflow. Current W blob is exactly `19907175f0f3417ddee2aba6916d961c6be02e26`; current A blob exactly `4ba40e59e6a9d48636d95d07efab575e56ae0966`.
 
-## Consolidated V0.26 R1 on main
+Final L `docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json` is absent. Final Q `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_V0_1.json` is absent. Exact PR178 promotion head has zero push Actions runs, so no sentinel workflow executed at promotion.
 
-R1 preregistration: `prereg/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.md`, git blob `545e5be589e0f8029d23db2edb4e2faad116c3a0`.
-
-R1 machine contract: `docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json`, git blob `b510d8e97baf1c0b7b216c0605d83cdd029254e9`.
-
-Independent R1 promotion authority: `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_PR169_FUNNEL_QUALIFICATION_V0_1.json`, git blob `cdbcea2622564d40aa9d1edc045a5808f8cdd1c4`, verdict `QUALIFIED`; exact R1 promotion merge `438ab2e6732512cf50c163719ade01575257b209`.
-
-R1 freezes complete retained denominator exactly 107 rows (DES 53 / BOSS 54), retained-ID SHA256 `44b57c6c910bc3612310ce415d773c8c180497528bfc5fc2927ce61da6ad40d7`, row-order SHA256 `bfaf582518cdbfd34b1e8392da83dac6b0885948bc31f2c29d4e48247c23af75`, source-plan artifact `10298655751` with ZIP SHA256 `9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7`, hosted NumPy-1.26.4 GRID896 payload SHA256 `8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d`, corrected M013 max `25063`, alpha route tolerance `3e-10`, beta exact-target route `1e-12`, scientific `<1e-3`, technical `<1e-5`, requested-node binding `<=1e-12`, and full-replay accounting 738 CLASS constructions.
-
-R1 preregisters a pre-full sentinel: 32 lanes; M076/M298/M300 with D50/D00/D58 comparators; 14 CLASS constructions per eligible lane; minimum 6 eligible with >=3 native AVX512-active and >=3 inactive; strict technical/class-separation `<1e-5`; mixed-common/pure-common and exact/direct strict `<1e-3`; requested-node binding `<=1e-12`; no science retry solely to alter class mix.
-
-## PR171 sentinel implementation is promoted but remains inert without later launch governance
-
-PR171 exact reviewed head `973eea003e6e246b7e1853b5469cb0a7d90c8177` was independently qualified by `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_PR171_QUALIFICATION_AUDIT_V0_2.json`, verdict `QUALIFIED`, then promoted by merge `6ccd564184456052a993593c43951604ccd3aaef`.
-
-Frozen implementation identities: executor `9affe7c7d4e02bbc728ba15e3cde893ec9876b38`; decision `97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9`; inert workflow blueprint `1ed36c850d80537646556a858204cac14eca852e`; implementation contract `e14804463d9eab288162b4c98e8dd5c1fd6a10eb`.
-
-PR171 static run `34958187529`, run #1 / attempt #1, job `104345200819`, artifact `10392400462`, ZIP SHA256 `2384436ee78a9a1ee4d55e5297e3b36f2dff9ffe53a243e20af0b2f7dfe729f0`, established fail-closed no-authority behavior and contained no CLASS scientific response.
-
-## PR173 acyclic launch package: terminal static/funnel qualification and exact inactive promotion
-
-PR173 exact audited head `1403581d4d608d98597eaff2c77c80a98d6c3c6e` freezes the realizable provenance DAG `W -> A(W) -> L(A,W) -> static audit -> Q(W,A,L)`.
-
-Exact candidate blobs now present on main under inactive candidate paths:
-
-- W `19907175f0f3417ddee2aba6916d961c6be02e26`;
-- A `4ba40e59e6a9d48636d95d07efab575e56ae0966`;
-- L `9c217e41764d979bea12644fae372354241bc976`;
-- package contract `26806597e651fb22956de59f102c0ad24d11c576`;
-- static auditor `8efdccffcf0e740a799fd462c3988cdc20a29b1a`;
-- static workflow `09e3a4b14bacd33e451b5f35aa4dc78004ac7945`;
-- static evidence record `4bbed7fc77e57aab82a72bf886c697cf6f07c1a6`.
-
-The package contract remains `PROSPECTIVELY_FROZEN_INACTIVE_LAUNCH_PACKAGE_CANDIDATE_NOT_EXECUTABLE`. A binds W but not L; L binds exact A and W. Candidate A/L internal `sentinel_science_execution_authorized=true` fields are frozen future content, not current execution authority while the objects remain under candidate paths.
-
-Hosted response-blind package static audit: run `34959657394`, run #1 / attempt #1 / push, head `5d42cd84ce54c9781d7bbefd41b01d3cf775fbd7`, job `104349972403`, success. Artifact `10393170033`; GitHub and independent redownload ZIP SHA256 `e95c4675db77a2ecd864d21e39dfdccffe289ed61a84ece95182f22c46e16184`; inner receipt 1,348 bytes SHA256 `133df1d2753c9228198a15be792fdcbbf99da243efeccdb785d610aad7dc5ee5`; exact-copy W/A/L blobs independently reproduced. Receipt records no CLASS solve, no scientific-response read, no active W/A/L/Q, and no full-107 authorization.
-
-External funnel audit: run `34960031527`, run #1 / attempt #1 / push, head `9d39949b0531aa91f229dea18372d79d6c6b6e00`, job `104351158807`, success. Artifact `10392992058`; GitHub and independent redownload ZIP SHA256 `73ea7849b60dd65b20e2f93144c7afbb0f7dc7bd09ae8e0e9cfe0e3d63801c59`; receipt 1,728 bytes SHA256 `f525feaf938e99a9282ea97619842ded9883ac54219e60c9bbdd3f34f934a1aa`; verdict `QUALIFIED`; no candidate workflow execution or scientific-response read.
-
-Terminal package audit authority: `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PR173_FUNNEL_QUALIFICATION_V0_1.json`, current git blob `ed3cec954d2077e6b5a6daab5da53e8fe72cc2e0`, verdict `QUALIFIED`, classification `SENTINEL_ACYCLIC_LAUNCH_PACKAGE_QUALIFIED_FOR_INACTIVE_PROMOTION_AND_Q_CONSTRUCTION`.
-
-Chronology is valid: PR174 authority merge `cb5fe39993c66d7ab9f952ee9527ce310073f292` entered main before exact PR173 promotion merge `7224e044b0c972456127dd969dcf212918e6f47f`. The promotion merge parents are exactly authority-bearing main and audited PR173 head; it added exactly the seven audited inactive files with no blob mutation or deletion.
-
-Post-promotion independent audit: `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PR173_PROMOTION_AUDIT_V0_1.md`, git blob `dad638a0749c41f53d4fd1f29057bbee09ac1292`.
-
-Post-promotion terminal confirmation: `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PR173_PROMOTION_CONFIRMATION_V0_1.json`, git blob `499fec9c1738f410bb1d4c714da96f60ac1de7ab`, verdict **`CONFIRMED_SCOPED`**, classification `EXACT_INACTIVE_PR173_PROMOTION_CONFIRMED_Q_ONLY_NEXT`.
-
-Current auditor handoff: `docs/dsir4/handoffs/DSIR_FUNNEL_AUDITOR_HANDOFF_V0_26_R1_SENTINEL_LAUNCH_PR173_PROMOTION_V0_1.md`.
-
-## Exact current activation state
-
-The following active/final paths are absent on current main:
-
-- `.github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml`;
-- `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json`;
-- `docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json`;
-- `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_V0_1.json`.
-
-Actions query for exact promotion head `7224e044b0c972456127dd969dcf212918e6f47f` returns zero workflow runs. Therefore no sentinel science was triggered by promotion. No substantive sentinel value exists.
+Hosted response-blind post-promotion audit run `35017910362`, run #1 / attempt #1 / push, head `4d0076f155e36326263c1b420f9944e57c4690b9`, job `104545919688`, completed success. Artifact `10417107515`, ZIP SHA256 `ce839f31ad5dfb164611df4cd49ee9b774c64cef7289e861944bb7e1c04e1c52`, inner `wa_post_promotion_audit.json` SHA256 `034c546a75dfccc94dfb31596bea4d1967a33bccff219bffe1641e58f4a32ed2`; it records no CLASS solve, no scientific-response read, no sentinel execution, L absent and final Q absent. This hosted receipt is static/provenance evidence only and does not itself constitute a scientific PASS.
 
 ## Current funnel position
+`V0.25 TERMINAL NUMERICAL AUTHORITY -> V0.26 R1 PREREGISTERED/QUALIFIED -> PR171 SENTINEL IMPLEMENTATION PROMOTED/QUALIFIED -> PR173 INACTIVE W/A/L PACKAGE QUALIFIED+PROMOTED -> Q CANDIDATE QUALIFIED+INACTIVELY PROMOTED -> PR178 EXACT W/A STAGED ON MAIN WITH L ABSENT AND FINAL Q ABSENT -> POST-PROMOTION FAIL-CLOSED AUDIT TERMINAL SUCCESS -> INDEPENDENT FUNNEL CONFIRMATION/PERSISTENCE PENDING -> SENTINEL SCIENCE NOT EXECUTED -> FULL 107 ROW CLOSED`.
 
-`V0.25 TERMINAL NUMERICAL AUTHORITY -> V0.26 R1 PREREGISTERED/QUALIFIED ON MAIN -> PR171 INERT SENTINEL IMPLEMENTATION PROMOTED/QUALIFIED -> PR173 INACTIVE ACYCLIC W/A/L PACKAGE STATIC+FUNNEL AUDITED AND EXACTLY PROMOTED -> Q NOT YET CONSTRUCTED/AUDITED -> ACTIVE W/A NOT STAGED -> FINAL L NOT CREATED -> SENTINEL SCIENCE NOT EXECUTED -> FULL 107 ROW CLOSED`.
+No substantive sentinel response exists. Do not infer interpolation success, tolerance success, cross-host scientific reproducibility, execution-order independence, covariance/nuisance validity, statistical/model validity or physical identifiability.
 
-Do not infer interpolation success, solver-tolerance success, cross-host scientific reproducibility, execution-order independence, statistical validity, nuisance removal or physical identifiability from static/provenance evidence.
+## Exact next admissible action
+Independently review and persist the PR178 post-promotion fail-closed confirmation. Only after terminal confirmation may the exact already-qualified Q candidate blob `ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd` be copied to the final Q authority path **without L**, followed by a separate final-Q post-promotion re-audit. Final L remains forbidden until that later gate is terminal. Sentinel science and full 107-row execution remain unauthorized now. Even a future sentinel PASS cannot by itself open 107 rows; it requires independent sentinel-result funnel audit and a distinct explicit full-replay launch authority.
 
-## Exact next order
+Keep effect `+0/+0`, repository readiness `68%`, scientific frontier `67%`.
 
-1. Preserve V0.25 classification, historical `INVALID_PROVENANCE` verdict and its separate provenance correction.
-2. Treat consolidated V0.26 R1 as the current prospective numerical specification; never fall back to the historical split candidate.
-3. Treat PR171 implementation as promoted/qualified but non-executable without later launch governance.
-4. Treat PR173 W/A/L package as exact inactive promoted candidate material under the terminal `QUALIFIED` package authority and `CONFIRMED_SCOPED` post-promotion authority.
-5. Construct only an **inactive Q candidate** binding exact W `19907175f0f3417ddee2aba6916d961c6be02e26`, A `4ba40e59e6a9d48636d95d07efab575e56ae0966`, L `9c217e41764d979bea12644fae372354241bc976`, static package artifact/receipt (`10393170033`, `e95c...`, `133df1...`) and external funnel artifact/receipt (`10392992058`, `73ea...`, `f525fe...`).
-6. Q must keep `full_107_row_execution_authorized=false` and must undergo a separate response-blind static Q audit before any Q promotion.
-7. Do **not** stage active W/A yet. Do **not** create final L. Do **not** launch sentinel science now.
-8. A later qualified Q still requires separately controlled staging/pretrigger checks before final L creation and the one sentinel run.
-9. Even a later sentinel PASS does not automatically open full 107 rows; independent sentinel-result funnel audit and distinct explicit full-replay launch authority are required.
-10. Full 107-row replay, covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537, statistical/model inference and downstream physical science remain unauthorized.
-11. Keep effect `+0/+0`, repository readiness `68%`, scientific frontier `67%`.
-
-## Handoff and roadmap note
-
-Latest Researcher handoff on main remains `docs/dsir4/handoffs/DSIR_FUNNEL_HANDOFF_V0_25_TERMINAL.md`; later current state is encoded by the terminal authorities and auditor handoffs above. `docs/ACTIVE_FRONTIER_2026-09-06.md` is historical and must not override this later DSIR4 authority chain. PR #168 remains a prospective Core-v1 governance proposal only; its prior `QUALIFIED` governance verdict does not authorize F2-F7 or alter this numerical chain.
+## Handoff/roadmap note
+Latest Researcher handoff remains `docs/dsir4/handoffs/DSIR_FUNNEL_HANDOFF_V0_25_TERMINAL.md`; later state is carried by terminal authorities and auditor handoffs. `docs/ACTIVE_FRONTIER_2026-09-06.md` is historical and cannot override the later DSIR4 chain. PR #168 remains a prospective Core-v1 governance proposal only and does not authorize F2-F7 or alter this numerical gate chain.
