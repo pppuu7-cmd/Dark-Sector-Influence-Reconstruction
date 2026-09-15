@@ -1,0 +1,105 @@
+name: layerb-beta-v026-r1-sentinel-q-runtime-schema-correction-static-audit-v0-1
+
+on:
+  push:
+    branches:
+      - research/v026-r1-sentinel-q-runtime-schema-correction
+    paths:
+      - '.github/workflows/layerb-beta-v026-r1-sentinel-q-runtime-schema-correction-static-audit-v0-1.yml'
+      - 'ci/layerb_beta_v026_r1_sentinel_q_runtime_schema_correction_static_audit_v0_1.py'
+      - 'docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_SENTINEL_Q_RUNTIME_SCHEMA_CORRECTION_CONTRACT_V0_1.json'
+      - 'docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_CANDIDATE_V0_1.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  q-runtime-schema-correction-static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact correction candidate head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify exact correction objects and fail-closed paths
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_beta_v026_r1_sentinel_q_runtime_schema_correction_static_audit_v0_1.py)" = 'bcb76913212570f120ae1787368c7e90b1e5cbbc'
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_SENTINEL_Q_RUNTIME_SCHEMA_CORRECTION_CONTRACT_V0_1.json)" = '6f72c0c39dfb67e5ad5b8a952093589388e9a80b'
+          test "$(git hash-object docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_CANDIDATE_V0_1.json)" = '928178e0e68660e7f892f8d3c064981d137fd736'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_V0_1.json)" = 'ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FINAL_Q_RUNTIME_SCHEMA_BLOCKER_V0_1.json)" = '44cc53fb014e043d31f72519c3ac96493ddabb57'
+          test "$(git hash-object .github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml)" = '19907175f0f3417ddee2aba6916d961c6be02e26'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json)" = '4ba40e59e6a9d48636d95d07efab575e56ae0966'
+          test "$(git hash-object docs/dsir4/launch_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_CANDIDATE_V0_1.json)" = '9c217e41764d979bea12644fae372354241bc976'
+          test ! -e docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json
+
+      - name: Verify exact six-key correction diff
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, subprocess
+          base='88b69e808bafdeb89166949d31e7353018437966'
+          path='docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_CANDIDATE_V0_1.json'
+          old=json.loads(subprocess.check_output(['git','show',f'{base}:{path}'],text=True))
+          new=json.load(open(path))
+          keys=[
+            'active_workflow_git_blob_sha1',
+            'launch_authority_git_blob_sha1',
+            'launch_descriptor_git_blob_sha1',
+            'executor_git_blob_sha1',
+            'decision_git_blob_sha1',
+            'implementation_contract_git_blob_sha1',
+          ]
+          stripped=dict(new)
+          for k in keys:
+            assert k not in old, k
+            assert k in stripped, k
+            stripped.pop(k)
+          assert stripped==old
+          print('EXACT_SIX_TOP_LEVEL_BINDING_DELTA_PASS')
+          PY
+
+      - name: Execute response-blind runtime compatibility audit
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 -m py_compile ci/layerb_beta_v026_r1_sentinel_q_runtime_schema_correction_static_audit_v0_1.py
+          python3 ci/layerb_beta_v026_r1_sentinel_q_runtime_schema_correction_static_audit_v0_1.py \
+            --out safe/q_runtime_schema_correction_static_audit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/q_runtime_schema_correction_static_audit.json'))
+          assert d['verdict']=='PASS_STATIC_CANDIDATE'
+          assert d['classification']=='SENTINEL_Q_RUNTIME_SCHEMA_CORRECTION_STATIC_COMPATIBLE_CANDIDATE'
+          assert d['old_final_Q_git_blob_sha1']=='ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd'
+          assert d['corrected_Q_candidate_git_blob_sha1']=='928178e0e68660e7f892f8d3c064981d137fd736'
+          assert d['semantic_delta_exactly_six_top_level_bindings'] is True
+          assert d['top_level_bindings_match_nested_bindings'] is True
+          assert d['would_pass_W_Q_binding_assertions_with_frozen_L_candidate'] is True
+          assert d['final_Q_replaced_by_this_receipt'] is False
+          assert d['final_L_present'] is False
+          assert d['class_solver_invoked'] is False
+          assert d['scientific_response_read'] is False
+          assert d['covariance_read'] is False
+          assert d['sentinel_science_execution_authorized_by_this_receipt'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          assert d['requires_independent_funnel_qualification'] is True
+          assert d['token']=='PASS_LAYERB_BETA_V0_26_R1_SENTINEL_Q_RUNTIME_SCHEMA_CORRECTION_STATIC_PLUS_0_PLUS_0'
+          print(d['token'])
+          PY
+          sha256sum safe/q_runtime_schema_correction_static_audit.json > safe/q_runtime_schema_correction_static_audit.sha256
+
+      - name: Persist immutable correction audit receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-sentinel-q-runtime-schema-correction-static-audit-v0-1
+          path: |
+            safe/q_runtime_schema_correction_static_audit.json
+            safe/q_runtime_schema_correction_static_audit.sha256
+          if-no-files-found: error
+          retention-days: 90
