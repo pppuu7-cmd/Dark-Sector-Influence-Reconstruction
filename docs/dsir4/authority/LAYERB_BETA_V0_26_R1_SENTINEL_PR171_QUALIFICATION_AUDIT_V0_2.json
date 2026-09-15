@@ -1,0 +1,150 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_PR171_QUALIFICATION_AUDIT_V0_2",
+  "status": "TERMINAL_AUDIT_AUTHORITY",
+  "date": "2026-09-15",
+  "scope": "DSIR_V0_26_R1_PRE_FULL_SENTINEL_IMPLEMENTATION_AND_RESPONSE_BLIND_STATIC_PROVENANCE_ONLY",
+  "effect": "+0/+0",
+  "verdict": "QUALIFIED",
+  "classification": "SENTINEL_IMPLEMENTATION_QUALIFIED_FOR_EXACT_PROMOTION_WITH_ACYCLIC_LAUNCH_BINDING_REQUIRED",
+  "reviewed_main_sha": "438ab2e6732512cf50c163719ade01575257b209",
+  "reviewed_pr": {
+    "number": 171,
+    "head_sha": "973eea003e6e246b7e1853b5469cb0a7d90c8177",
+    "base_sha": "438ab2e6732512cf50c163719ade01575257b209",
+    "draft": true,
+    "changed_file_count": 7,
+    "science_result_modified": false,
+    "terminal_authority_modified": false,
+    "active_science_workflow_added": false,
+    "launch_authority_added": false,
+    "launch_descriptor_added": false
+  },
+  "governing_authority": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_PR169_FUNNEL_QUALIFICATION_V0_1.json",
+    "git_blob_sha1": "cdbcea2622564d40aa9d1edc045a5808f8cdd1c4",
+    "verdict": "QUALIFIED",
+    "sentinel_construction_authorized": true,
+    "sentinel_science_execution_authorized": false,
+    "full_107_row_execution_authorized": false
+  },
+  "r1_bindings": {
+    "preregistration_path": "prereg/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.md",
+    "preregistration_git_blob_sha1": "545e5be589e0f8029d23db2edb4e2faad116c3a0",
+    "contract_path": "docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json",
+    "contract_git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9"
+  },
+  "implementation_bindings": {
+    "executor_git_blob_sha1": "9affe7c7d4e02bbc728ba15e3cde893ec9876b38",
+    "decision_git_blob_sha1": "97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9",
+    "workflow_blueprint_git_blob_sha1": "1ed36c850d80537646556a858204cac14eca852e",
+    "implementation_contract_git_blob_sha1": "e14804463d9eab288162b4c98e8dd5c1fd6a10eb",
+    "static_auditor_v0_2_git_blob_sha1": "ebb1db6b365560e9e4c8ab7e575d163bdab58cc4"
+  },
+  "static_evidence": {
+    "run_id": 34958187529,
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "head_sha": "510a7145bd5ea49e45db3ab53e56093567da746f",
+    "job_id": 104345200819,
+    "artifact_id": 10392400462,
+    "artifact_zip_sha256": "2384436ee78a9a1ee4d55e5297e3b36f2dff9ffe53a243e20af0b2f7dfe729f0",
+    "static_receipt_filename": "sentinel_static_audit.json",
+    "static_receipt_byte_length": 1344,
+    "static_receipt_sha256": "33972dc25eabb7a19097164234b5e336d4bc4bd3cfef37ff8a442443810b75a8",
+    "preflight_sha256": "63429e12875545d0a3d0be01882c6bf9b71dd5e26a840fe739b969fa3f5be3bb",
+    "unauthorized_lane_negative_control_sha256": "8ebb37d6a3d51d46e259f2eb66d5622162a5494cc94f085c52534d501208991d",
+    "class_solver_invoked": false,
+    "scientific_response_read": false,
+    "covariance_read": false,
+    "lane_without_launch_authority_failed_closed": true
+  },
+  "external_funnel_evidence": {
+    "run_id": 34958540961,
+    "run_number": 1,
+    "run_attempt": 1,
+    "head_sha": "ef20283ec4d66c60773fdb2cbf56e8a2673c7560",
+    "job_id": 104346337918,
+    "artifact_id": 10392755109,
+    "artifact_zip_sha256": "8fade9139142e2ab3f6a99ef2696853d3f5dce026c6fa130a43d96bff6870edb",
+    "receipt_filename": "funnel_audit.json",
+    "receipt_byte_length": 1848,
+    "receipt_sha256": "ac2c2cc9d2aa536207a8ee5121cb37d92665f521cb6e0ef41865540810ded333",
+    "receipt_verdict": "QUALIFIED"
+  },
+  "source_plan": {
+    "artifact_id": 10298655751,
+    "artifact_zip_sha256": "9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7",
+    "inner_filename": "plan.json",
+    "inner_byte_length": 3953984,
+    "inner_sha256": "c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064",
+    "inheritance_scoped_to_successful_materialization_job_only": true
+  },
+  "confirmed_static_semantics": {
+    "lane_count": 32,
+    "class_constructions_per_lane": 14,
+    "sentinel_mixed_batches": ["M076", "M298", "M300"],
+    "sentinel_direct_batches": ["D50", "D00", "D58"],
+    "minimum_eligible_lanes": 6,
+    "minimum_native_avx512_active": 3,
+    "minimum_native_avx512_inactive": 3,
+    "technical_threshold_strict_lt": 0.00001,
+    "scientific_numerical_threshold_strict_lt": 0.001,
+    "requested_node_binding_le": 1e-12,
+    "forced_non_avx512_substantive_child": true,
+    "beta_tol_perturb_integration": "1e-12",
+    "grid896_exact_hash_checked_before_class": true,
+    "full_replay_always_unauthorized_by_sentinel_decision": true
+  },
+  "qualification": {
+    "external_receipt_launch_hardening_direction_is_overconstrained_if_interpreted_bidirectionally": true,
+    "reason": "The current inert blueprint makes the launch descriptor bind the launch-authority git blob, while the external funnel receipt also asks the launch authority to bind the final launch-descriptor git blob. Mutual final git-blob hash binding is circular and not a realizable ordinary provenance construction.",
+    "required_launch_provenance_topology": "ACYCLIC_EXACT_HASH_DAG",
+    "preferred_order": [
+      "FREEZE_ACTIVE_WORKFLOW",
+      "CREATE_LAUNCH_AUTHORITY_BINDING_R1_PROMOTION_EXECUTOR_DECISION_ACTIVE_WORKFLOW",
+      "CREATE_LAUNCH_DESCRIPTOR_BINDING_LAUNCH_AUTHORITY_AND_ACTIVE_WORKFLOW",
+      "INDEPENDENT_STATIC_LAUNCH_PACKAGE_AUDIT",
+      "ONLY_THEN_ONE_SENTINEL_SCIENCE_RUN_IF_AUDIT_TERMINAL_QUALIFIED_OR_CONFIRMED"
+    ],
+    "launch_authority_must_not_also_bind_final_launch_descriptor_blob_when_descriptor_binds_authority_blob": true,
+    "equivalent_reverse_acyclic_dag_allowed": true
+  },
+  "interpretation": {
+    "accepted": "The exact PR171 implementation blobs are consistent with the prospectively frozen R1 sentinel design and response-blind hosted static evidence, and may be promoted as an inert pre-full sentinel implementation candidate.",
+    "not_accepted": "No sentinel scientific response has been executed or validated. This authority does not authorize a sentinel CLASS solve, full 107-row replay, covariance/statistical/model work, or physical dark-sector inference.",
+    "readiness_percent_change": 0,
+    "scientific_frontier_percent_change": 0
+  },
+  "promotion_authorization": {
+    "exact_pr171_head_sha": "973eea003e6e246b7e1853b5469cb0a7d90c8177",
+    "promotion_of_exact_implementation_blobs_authorized": true,
+    "mutation_of_scientific_object_thresholds_or_sentinel_geometry_forbidden": true
+  },
+  "post_promotion_authorization": {
+    "construct_inactive_active_workflow_launch_authority_launch_descriptor_package": true,
+    "separate_response_blind_static_launch_package_audit_required": true,
+    "sentinel_science_execution_authorized": false,
+    "full_107_row_execution_authorized": false
+  },
+  "forbidden": {
+    "interpret_static_pass_as_science_pass": true,
+    "launch_sentinel_science_from_this_authority": true,
+    "launch_full_107_row_replay_from_this_authority": true,
+    "mutual_final_blob_hash_cycle_between_launch_authority_and_launch_descriptor": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "launch_global_65537": true,
+    "open_statistical_or_physical_science_gate": true
+  },
+  "audit_report": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_PR171_FUNNEL_AUDIT_V0_2.md",
+    "git_blob_sha1": "91c097e081a596b32d352ca76e1ef5e7088c88b7"
+  },
+  "authorized_next_stage": "PROMOTE_EXACT_PR171_SENTINEL_IMPLEMENTATION_THEN_CONSTRUCT_ACYCLIC_INACTIVE_LAUNCH_PACKAGE_FOR_SEPARATE_STATIC_AUDIT",
+  "sentinel_science_execution_authorized": false,
+  "full_107_row_execution_authorized": false
+}
