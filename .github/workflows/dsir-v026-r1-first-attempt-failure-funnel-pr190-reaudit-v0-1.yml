@@ -1,0 +1,73 @@
+name: dsir-v026-r1-first-attempt-failure-funnel-pr190-reaudit-v0-1
+
+on:
+  push:
+    branches:
+      - audit/v026-r1-first-attempt-failure-funnel-pr190-reaudit
+    paths:
+      - ci/dsir_v026_r1_sentinel_first_attempt_failure_funnel_pr190_reaudit_v0_1.py
+      - .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-pr190-reaudit-v0-1.yml
+
+permissions:
+  contents: read
+
+env:
+  TARGET_BRANCH: audit/v026-r1-first-attempt-failure-funnel-candidate
+  TARGET_HEAD: 5731b605afdc35bd85d3a2014a9e135719a07697
+  AUDITOR: ci/dsir_v026_r1_sentinel_first_attempt_failure_funnel_pr190_reaudit_v0_1.py
+
+jobs:
+  pr190-hardened-static-reaudit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout independent re-audit branch with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch and bind exact PR190 target head
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$TARGET_BRANCH:refs/remotes/origin/pr190-target"
+          test "$(git rev-parse refs/remotes/origin/pr190-target)" = "$TARGET_HEAD"
+          git cat-file -e "$TARGET_HEAD^{commit}"
+          test "$(git hash-object "$AUDITOR")" = '4bf1b3867a953b61e62225735883628869218ded'
+
+      - name: Execute independent response-blind static re-audit
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 -m py_compile "$AUDITOR"
+          python3 "$AUDITOR" --out safe/pr190_failure_funnel_reaudit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/pr190_failure_funnel_reaudit.json'))
+          assert d['verdict']=='QUALIFIED'
+          assert d['classification']=='PR190_HARDENED_FAILURE_FUNNEL_CANDIDATE_STATICALLY_QUALIFIED_FOR_SEPARATE_HOSTED_WORKFLOW_AUTHORING_ONLY'
+          assert d['target_head_sha']=='5731b605afdc35bd85d3a2014a9e135719a07697'
+          assert d['target_auditor_git_blob_sha1']=='f7eff337e511baa25d51e5b0c333a97534e1bbc3'
+          assert d['target_contract_git_blob_sha1']=='3369e5cdd2086ca22dca6bfa575054286fd1dcd7'
+          assert d['duplicate_or_rerun_exact_head_fail_closed'] is True
+          assert d['recursive_zip_extra_counterexample_rejected'] is True
+          assert d['recursive_extracted_tree_extra_counterexample_rejected'] is True
+          assert d['manifest_basename_collision_counterexample_rejected'] is True
+          assert d['hosted_failure_funnel_execution_authorized'] is False
+          assert d['rerun_authorized'] is False
+          assert d['same_nonce_second_attempt_authorized'] is False
+          assert d['successor_sentinel_science_authorized'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          assert d['token']=='QUALIFIED_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_PR190_REAUDIT_PLUS_0_PLUS_0'
+          print(d['token'])
+          PY
+          sha256sum safe/pr190_failure_funnel_reaudit.json > safe/pr190_failure_funnel_reaudit.sha256
+
+      - name: Persist immutable PR190 static re-audit evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-first-attempt-failure-funnel-pr190-reaudit-v0-1
+          path: |
+            safe/pr190_failure_funnel_reaudit.json
+            safe/pr190_failure_funnel_reaudit.sha256
+          if-no-files-found: error
+          retention-days: 90
