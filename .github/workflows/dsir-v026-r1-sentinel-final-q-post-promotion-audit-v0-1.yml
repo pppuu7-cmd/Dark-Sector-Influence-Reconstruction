@@ -1,0 +1,91 @@
+name: dsir-v026-r1-sentinel-final-q-post-promotion-audit-v0-1
+
+on:
+  push:
+    branches:
+      - audit/v026-r1-sentinel-final-q-post-promotion
+    paths:
+      - '.github/workflows/dsir-v026-r1-sentinel-final-q-post-promotion-audit-v0-1.yml'
+      - 'ci/dsir_v026_r1_sentinel_final_q_post_promotion_audit_v0_1.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  PROMO: 'bcd1cfaaee2961fe4997d5789971547e3ea42955'
+  AUDITOR: 'ci/dsir_v026_r1_sentinel_final_q_post_promotion_audit_v0_1.py'
+
+jobs:
+  final-q-post-promotion-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout audit branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify exact auditor and promotion object
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUDITOR")" = 'fce9d82ae62f1a4849e9e3b0d5c44045360f4c58'
+          git cat-file -e "$PROMO^{commit}"
+          test "$(git rev-parse "$PROMO:docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_V0_1.json")" = 'ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd'
+          if git cat-file -e "$PROMO:docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json" 2>/dev/null; then
+            echo 'ERROR: final L unexpectedly present at final-Q promotion head' >&2
+            exit 1
+          fi
+
+      - name: Capture exact promotion-head push Actions runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${PROMO}&event=push&per_page=100" > safe/promo_runs.json
+
+      - name: Execute response-blind final-Q runtime-schema audit
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$AUDITOR"
+          python3 "$AUDITOR" --runs-json safe/promo_runs.json --out safe/final_q_post_promotion_audit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/final_q_post_promotion_audit.json'))
+          required=[
+            'active_workflow_git_blob_sha1',
+            'launch_authority_git_blob_sha1',
+            'launch_descriptor_git_blob_sha1',
+            'executor_git_blob_sha1',
+            'decision_git_blob_sha1',
+            'implementation_contract_git_blob_sha1',
+          ]
+          assert d['verdict']=='BLOCKED'
+          assert d['classification']=='SENTINEL_FINAL_Q_POST_PROMOTION_RUNTIME_SCHEMA_BLOCKED'
+          assert d['runtime_missing_Q_top_level_keys']==required
+          assert d['equivalent_nested_bindings_present_and_exact'] is True
+          assert d['final_L_present'] is False
+          assert d['promotion_head_push_run_count']==0
+          assert d['sentinel_workflow_executed'] is False
+          assert d['class_solver_invoked'] is False
+          assert d['scientific_response_read'] is False
+          assert d['covariance_read'] is False
+          assert d['final_L_creation_authorized'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          assert d['token']=='BLOCKED_LAYERB_BETA_V0_26_R1_SENTINEL_FINAL_Q_RUNTIME_SCHEMA_PLUS_0_PLUS_0'
+          print(d['token'])
+          PY
+          sha256sum safe/final_q_post_promotion_audit.json > safe/final_q_post_promotion_audit.sha256
+
+      - name: Persist immutable blocker receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-sentinel-final-q-post-promotion-audit-v0-1
+          path: |
+            safe/final_q_post_promotion_audit.json
+            safe/final_q_post_promotion_audit.sha256
+            safe/promo_runs.json
+          if-no-files-found: error
+          retention-days: 90
