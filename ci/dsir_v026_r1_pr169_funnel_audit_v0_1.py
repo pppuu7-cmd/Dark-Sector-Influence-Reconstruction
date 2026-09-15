@@ -231,7 +231,7 @@ def main():
     s = c['sentinel']
     assert s['status'] == 'PREREGISTERED_NOT_AUTHORIZED_FOR_CONSTRUCTION_OR_EXECUTION'
     assert s['independent_r1_audit_authority_required_before_executor_or_workflow'] is True
-    assert s['lane_count'] == 32 and s['models_per_lane'] == 14
+    assert s['lane_count'] == 32 and s['class_constructions_per_lane'] == 14
     assert s['full_replay_must_not_launch_if_sentinel_not_pass'] is True
 
     forbidden = find_dict_with_key(c, 'silent_science_retry')
@@ -248,7 +248,6 @@ def main():
     assert '25063' in prereg and '8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d' in prereg
     assert '738' in prereg
 
-    # Hosted static identity provenance.
     static_run = readj(args.static_run_json)
     assert static_run['id'] == 34954905127 and static_run['head_sha'] == '5dc6150191638f48442671395ce4da9e676579b4'
     assert static_run['event'] == 'push' and static_run['run_attempt'] == 1 and static_run['conclusion'] == 'success'
@@ -267,7 +266,6 @@ def main():
     assert sj['mixed']['max_payload_bytes'] == 25063
     assert sj['direct']['payload_manifest_canonical_sha256'] == pp['direct_payload_manifest_canonical_sha256']
 
-    # Independent contract audit provenance.
     crun = readj(args.contract_run_json)
     assert crun['id'] == 34955509439 and crun['head_sha'] == '6d1e8f9a8f4940390b5618bbbdf8be4c91945beb'
     assert crun['event'] == 'push' and crun['run_attempt'] == 1 and crun['conclusion'] == 'success'
@@ -283,7 +281,6 @@ def main():
         assert cj[k] is False, k
     assert cj['solver_accounting_total_class_constructions'] == 738
 
-    # Source-plan provenance is inherited only from its successful response-blind job.
     source_run = readj(args.source_run_json)
     assert source_run['id'] == 34695347893 and source_run['conclusion'] == 'failure'
     source_jobs = readj(args.source_jobs_json)['jobs']
@@ -295,7 +292,6 @@ def main():
     planb = zip_member_bytes(source_zip, 'plan.json')
     assert len(planb) == 3953984 and hashlib.sha256(planb).hexdigest() == p['inner_sha256']
 
-    # V0.25 actual R01 software witness: independent support for the R1 runtime pin.
     assert_artifact_meta(readj(args.v025_r01_artifact_json), 10368809560, '0c2f8a255ff4407936692f4cebb8648437abb6897c1e88f66a55927782ac6921')
     rzip = Path(args.v025_r01_zip)
     assert sha256_file(rzip) == '0c2f8a255ff4407936692f4cebb8648437abb6897c1e88f66a55927782ac6921'
