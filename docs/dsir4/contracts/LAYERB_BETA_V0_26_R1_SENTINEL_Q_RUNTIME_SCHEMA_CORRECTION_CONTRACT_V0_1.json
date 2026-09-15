@@ -1,0 +1,77 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_Q_RUNTIME_SCHEMA_CORRECTION_CONTRACT_V0_1",
+  "status": "PROSPECTIVELY_FROZEN_CORRECTION_CANDIDATE_NOT_EXECUTABLE",
+  "date": "2026-09-15",
+  "effect": "+0/+0",
+  "base_main_sha": "88b69e808bafdeb89166949d31e7353018437966",
+  "governing_blocker": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FINAL_Q_RUNTIME_SCHEMA_BLOCKER_V0_1.json",
+    "git_blob_sha1": "44cc53fb014e043d31f72519c3ac96493ddabb57",
+    "verdict": "BLOCKED",
+    "classification": "SENTINEL_FINAL_Q_RUNTIME_SCHEMA_INCOMPATIBILITY_BLOCKED_BEFORE_L"
+  },
+  "old_final_Q": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_V0_1.json",
+    "git_blob_sha1": "ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd"
+  },
+  "corrected_Q_candidate": {
+    "path": "docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_CANDIDATE_V0_1.json",
+    "git_blob_sha1": "928178e0e68660e7f892f8d3c064981d137fd736",
+    "source_old_Q_git_blob_sha1": "ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd",
+    "semantic_delta_must_be_exactly_six_top_level_keys": true,
+    "other_semantic_fields_must_equal_old_Q": true
+  },
+  "required_top_level_bindings": {
+    "active_workflow_git_blob_sha1": "19907175f0f3417ddee2aba6916d961c6be02e26",
+    "launch_authority_git_blob_sha1": "4ba40e59e6a9d48636d95d07efab575e56ae0966",
+    "launch_descriptor_git_blob_sha1": "9c217e41764d979bea12644fae372354241bc976",
+    "executor_git_blob_sha1": "9affe7c7d4e02bbc728ba15e3cde893ec9876b38",
+    "decision_git_blob_sha1": "97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9",
+    "implementation_contract_git_blob_sha1": "e14804463d9eab288162b4c98e8dd5c1fd6a10eb"
+  },
+  "nested_binding_consistency_required": {
+    "active_workflow_git_blob_sha1": "acyclic_package.active_workflow_git_blob_sha1",
+    "launch_authority_git_blob_sha1": "acyclic_package.launch_authority_git_blob_sha1",
+    "launch_descriptor_git_blob_sha1": "acyclic_package.launch_descriptor_git_blob_sha1",
+    "executor_git_blob_sha1": "implementation_bindings.executor_git_blob_sha1",
+    "decision_git_blob_sha1": "implementation_bindings.decision_git_blob_sha1",
+    "implementation_contract_git_blob_sha1": "implementation_bindings.implementation_contract_git_blob_sha1"
+  },
+  "frozen_runtime_consumer": {
+    "active_workflow_path": ".github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml",
+    "active_workflow_git_blob_sha1": "19907175f0f3417ddee2aba6916d961c6be02e26",
+    "Q_schema_required_by_W": "LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_V0_1",
+    "Q_status_required_by_W": "TERMINAL_AUDIT_AUTHORITY",
+    "Q_verdict_allowed_by_W": ["QUALIFIED", "CONFIRMED"]
+  },
+  "qualification_requirements": {
+    "response_blind_static_runtime_compatibility_audit": true,
+    "verify_corrected_Q_blob_exact": true,
+    "verify_old_final_Q_remains_unchanged_during_candidate_audit": true,
+    "verify_final_L_absent": true,
+    "verify_W_Q_runtime_assertions_would_pass_with_frozen_L_candidate": true,
+    "independent_funnel_audit_after_static_pass": true,
+    "authority_before_final_Q_replacement": true,
+    "post_replacement_fail_closed_audit_before_L": true
+  },
+  "forbidden": {
+    "modify_active_W": true,
+    "modify_launch_A": true,
+    "modify_launch_L_candidate": true,
+    "create_final_L_during_correction": true,
+    "launch_sentinel_science_during_correction": true,
+    "modify_executor": true,
+    "modify_decision": true,
+    "modify_R1_scientific_contract": true,
+    "launch_full_107_row_replay": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "launch_global_65537": true,
+    "open_statistical_or_physical_science_gate": true
+  },
+  "sentinel_science_execution_authorized": false,
+  "full_107_row_execution_authorized": false
+}
