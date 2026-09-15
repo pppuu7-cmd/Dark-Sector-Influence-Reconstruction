@@ -1,0 +1,143 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_IMPLEMENTATION_CONTRACT_V0_1",
+  "status": "PROSPECTIVELY_FROZEN_IMPLEMENTATION_CANDIDATE_NOT_EXECUTABLE",
+  "date": "2026-09-15",
+  "scope": "PRE_FULL_SENTINEL_IMPLEMENTATION_AND_RESPONSE_BLIND_STATIC_AUDIT_ONLY",
+  "effect": "+0/+0",
+  "base_main_sha": "438ab2e6732512cf50c163719ade01575257b209",
+  "r1_contract": {
+    "path": "docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json",
+    "git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9"
+  },
+  "construction_authority": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_PR169_FUNNEL_QUALIFICATION_V0_1.json",
+    "git_blob_sha1": "cdbcea2622564d40aa9d1edc045a5808f8cdd1c4",
+    "verdict": "QUALIFIED",
+    "classification": "V0_26_R1_PROSPECTIVE_NUMERICAL_SPECIFICATION_QUALIFIED_FOR_PROMOTION",
+    "sentinel_executor_construction_authorized": true,
+    "sentinel_workflow_construction_authorized": true,
+    "sentinel_response_blind_static_audit_required": true,
+    "separate_explicit_sentinel_launch_authority_required": true,
+    "sentinel_science_execution_authorized": false,
+    "full_107_row_execution_authorized": false
+  },
+  "implementation": {
+    "executor_path": "ci/layerb_beta_v026_r1_sentinel_v0_1.py",
+    "executor_git_blob_sha1": "9affe7c7d4e02bbc728ba15e3cde893ec9876b38",
+    "decision_path": "ci/layerb_beta_v026_r1_sentinel_decision_v0_1.py",
+    "decision_git_blob_sha1": "97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9",
+    "workflow_blueprint_path": "docs/dsir4/workflow_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_SCIENCE_WORKFLOW_CANDIDATE_V0_1.yml",
+    "workflow_blueprint_git_blob_sha1": "1ed36c850d80537646556a858204cac14eca852e",
+    "active_science_workflow_path": ".github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml",
+    "active_science_workflow_must_be_absent_before_launch_authority": true,
+    "launch_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json",
+    "launch_authority_must_be_absent_during_static_audit": true,
+    "launch_sentinel_path": "docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json",
+    "launch_sentinel_must_be_absent_during_static_audit": true
+  },
+  "source_plan": {
+    "artifact_id": 10298655751,
+    "artifact_zip_sha256": "9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7",
+    "inner_filename": "plan.json",
+    "inner_byte_length": 3953984,
+    "inner_sha256": "c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064",
+    "coarse_calls_digest": "9e829d5127457085f18d79901d4aa621a050ce8406ff30c4d7e157dd069b80b4",
+    "fine_calls_digest": "9f5f85e92570b68576bae91f52163cb0c005a1e003bfc09b8ccc80b332f79b36"
+  },
+  "runtime": {
+    "runner": "ubuntu-24.04",
+    "python": "3.12.3",
+    "numpy": "1.26.4",
+    "scipy": "1.17.1",
+    "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+    "omp_num_threads": 1,
+    "openblas_num_threads": 1,
+    "mkl_num_threads": 1,
+    "numexpr_num_threads": 1,
+    "numpy_disable_cpu_features": "AVX512CD,AVX512F,AVX512_CLX,AVX512_CNL,AVX512_ICL,AVX512_KNL,AVX512_KNM,AVX512_SKX"
+  },
+  "sentinel_geometry": {
+    "lane_count": 32,
+    "replicates": ["R01","R02","R03","R04","R05","R06","R07","R08","R09","R10","R11","R12","R13","R14","R15","R16","R17","R18","R19","R20","R21","R22","R23","R24","R25","R26","R27","R28","R29","R30","R31","R32"],
+    "mixed_batches": ["M076","M298","M300"],
+    "direct_comparators": {"M076":"D50","M298":"D00","M300":"D58"},
+    "requested_node_counts": {"PURE":897,"M076":1152,"M298":1141,"M300":996,"D50":1146,"D00":1152,"D58":99},
+    "class_constructions_per_lane": 14,
+    "total_possible_class_constructions_if_all_32_eligible": 448,
+    "full_107_row_traversal_forbidden": true,
+    "boss_gl128_not_part_of_sentinel": true
+  },
+  "power": {
+    "minimum_eligible_lanes": 6,
+    "minimum_native_avx512_active": 3,
+    "minimum_native_avx512_inactive": 3,
+    "both_native_classes_required": true,
+    "science_retry_to_change_native_class_mix_forbidden": true
+  },
+  "gates": {
+    "primitive_series": ["pure_common_response","mixed_common_response","exact_target_response","direct_response"],
+    "cross_host_max_pairwise_relative_spread_strict_lt": 0.00001,
+    "native_class_mean_relative_separation_strict_lt": 0.00001,
+    "mixed_common_vs_pure_common_relative_difference_strict_lt": 0.001,
+    "exact_vs_direct_relative_difference_strict_lt": 0.001,
+    "requested_node_binding_relative_difference_le": 1e-12,
+    "all_primitive_values_finite_required": true
+  },
+  "decision_priority": [
+    "SENTINEL_INVALID",
+    "SENTINEL_INCONCLUSIVE",
+    "SENTINEL_UNDERPOWERED",
+    "SENTINEL_REPRODUCIBILITY_BLOCKED",
+    "SENTINEL_NODE_SET_SIDE_EFFECT_BLOCKED",
+    "SENTINEL_DIRECT_REFERENCE_BLOCKED",
+    "SENTINEL_PASS"
+  ],
+  "decision_semantics": {
+    "SENTINEL_PASS_is_numerical_gate_only": true,
+    "SENTINEL_PASS_does_not_authorize_full_replay": true,
+    "separate_sentinel_result_funnel_audit_required": true,
+    "separate_full_replay_launch_authority_required": true,
+    "primitive_reproducibility_metrics_must_be_complete": true
+  },
+  "fail_closed_authorization": {
+    "executor_lane_requires_launch_authority_argument": true,
+    "executor_child_requires_launch_authority_argument": true,
+    "required_future_launch_authority_schema": "LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1",
+    "required_future_launch_authority_status": "TERMINAL_LAUNCH_AUTHORITY",
+    "required_future_sentinel_science_execution_authorized": true,
+    "required_future_full_107_row_execution_authorized": false,
+    "current_promotion_authority_is_not_launch_authority": true,
+    "static_preflight_invokes_class": false,
+    "fingerprint_invokes_class": false
+  },
+  "static_audit_requirements": {
+    "re_download_and_hash_source_plan": true,
+    "execute_static_preflight_only": true,
+    "prove_lane_without_launch_authority_fails_before_class": true,
+    "verify_executor_decision_blueprint_git_blobs": true,
+    "verify_active_science_workflow_absent": true,
+    "verify_launch_authority_absent": true,
+    "verify_launch_sentinel_absent": true,
+    "verify_32_lane_blueprint": true,
+    "verify_max_parallel_32": true,
+    "verify_decision_depends_on_lane": true,
+    "verify_decision_forbids_full_replay_launch": true,
+    "class_solver_invoked": false,
+    "scientific_response_read": false
+  },
+  "forbidden": {
+    "activate_science_workflow_before_static_audit_authority": true,
+    "create_launch_authority_before_static_audit_authority": true,
+    "create_launch_sentinel_before_static_audit_authority": true,
+    "run_lane_or_child_without_launch_authority": true,
+    "launch_sentinel_science_from_this_contract": true,
+    "launch_full_107_row_replay": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "launch_global_65537": true,
+    "open_statistical_or_physical_science_gate": true
+  }
+}
