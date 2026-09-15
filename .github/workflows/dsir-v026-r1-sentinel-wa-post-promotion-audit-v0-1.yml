@@ -1,0 +1,74 @@
+name: dsir-v026-r1-sentinel-wa-post-promotion-audit-v0-1
+
+on:
+  push:
+    branches:
+      - audit/v026-r1-sentinel-wa-promotion
+    paths:
+      - '.github/workflows/dsir-v026-r1-sentinel-wa-post-promotion-audit-v0-1.yml'
+      - 'ci/dsir_v026_r1_sentinel_wa_post_promotion_audit_v0_1.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  PROMOTION_HEAD: 'd605a941b412bb9625bf2fc6fedb0c7d9f8e8293'
+  AUDITOR: 'ci/dsir_v026_r1_sentinel_wa_post_promotion_audit_v0_1.py'
+
+jobs:
+  post-promotion-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout audit branch
+        uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+
+      - name: Fetch exact W/A promotion merge as read-only object
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUDITOR")" = '888ddf3e5cd1d92c9180b2499bd766e09e3f5af3'
+          git fetch --no-tags origin "$PROMOTION_HEAD" --depth=32
+          git cat-file -e "$PROMOTION_HEAD^{commit}"
+
+      - name: Capture exact promotion-head Actions runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${PROMOTION_HEAD}&event=push&per_page=100" > safe/runs.json
+
+      - name: Execute response-blind W/A post-promotion audit
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$AUDITOR"
+          python3 "$AUDITOR" --runs-json safe/runs.json --out safe/wa_post_promotion_audit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/wa_post_promotion_audit.json'))
+          assert d['token']=='CONFIRMED_DSIR_V0_26_R1_SENTINEL_WA_POST_PROMOTION_FAIL_CLOSED_PLUS_0_PLUS_0'
+          assert d['verdict']=='CONFIRMED_SCOPED'
+          assert d['classification']=='SENTINEL_WA_MAIN_STAGING_CONFIRMED_FAIL_CLOSED_FINAL_Q_PROMOTION_ADMISSIBLE'
+          assert d['L_present'] is False and d['final_Q_present'] is False
+          assert d['exact_promotion_head_push_run_count']==0
+          assert d['sentinel_workflow_executed'] is False
+          assert d['class_solver_invoked'] is False
+          assert d['scientific_response_read'] is False
+          assert d['sentinel_science_execution_authorized_by_this_audit'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          print(d['token'])
+          PY
+          sha256sum safe/wa_post_promotion_audit.json > safe/wa_post_promotion_audit.sha256
+
+      - name: Persist post-promotion receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-sentinel-wa-post-promotion-audit-v0-1
+          path: |
+            safe/wa_post_promotion_audit.json
+            safe/wa_post_promotion_audit.sha256
+          if-no-files-found: error
+          retention-days: 90
