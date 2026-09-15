@@ -1,0 +1,97 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_PLATFORM_CONTRACT_REVIEW_SUPPORT_V0_1",
+  "status": "REVIEW_SUPPORT_NOT_TERMINAL_AUTHORITY",
+  "date": "2026-09-16",
+  "effect": "+0/+0",
+  "scope": "EXACT_SENTINEL_RUN_35033268924_FIRST_ATTEMPT_PRE_SCIENCE_FAILURE_ONLY",
+  "classification": "ACTIONS_PUSH_PAYLOAD_FILE_LIST_OMISSION_CORROBORATES_FROZEN_EVENT_GUARD_FAILURE",
+  "reviewed_main_sha": "8c3e9a533a2a2083ae6b9ea5c8296231a56e8e33",
+  "science_run": {
+    "run_id": 35033268924,
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "head_sha": "9a333294f3acb80201c5f6ed5b74918c1c767232",
+    "status": "completed",
+    "conclusion": "failure",
+    "authorize_job_id": 104596462857,
+    "authorize_job_conclusion": "failure",
+    "decision_job_id": 104596495504,
+    "decision_job_conclusion": "failure",
+    "materialize_plan_conclusion": "skipped",
+    "lane_conclusion": "skipped",
+    "artifact_count": 0
+  },
+  "exact_runtime_identity": {
+    "workflow_git_blob_sha1": "19907175f0f3417ddee2aba6916d961c6be02e26",
+    "launch_authority_git_blob_sha1": "1c9945dd00b137f3e202efa14bf4112fffebf8af",
+    "launch_package_qualification_git_blob_sha1": "f7b97f47d9e771e3d3ea78875da5a45962160cd0",
+    "launch_descriptor_git_blob_sha1": "fa7014435f0a5688def2124898ddd01d0c0183aa",
+    "executor_git_blob_sha1": "9affe7c7d4e02bbc728ba15e3cde893ec9876b38",
+    "decision_git_blob_sha1": "97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9",
+    "exact_L_gate_authority_git_blob_sha1": "1c1819ee6aa7a48597770d9bc9116185d061a49c"
+  },
+  "repository_trigger_evidence": {
+    "first_parent_sha": "2ca2d4c35f9dcfe2be00e573598e6189f987508d",
+    "staging_parent_sha": "657e5d6b2fe3ad7f7c11bcd2af873cffe800cc96",
+    "trigger_merge_sha": "9a333294f3acb80201c5f6ed5b74918c1c767232",
+    "net_first_parent_to_merge_diff": "EXACTLY_ONE_ADDED_FINAL_L_PATH",
+    "staging_diff": "EXACTLY_ONE_ADDED_FINAL_L_PATH",
+    "final_L_path": "docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json",
+    "final_L_git_blob_sha1": "fa7014435f0a5688def2124898ddd01d0c0183aa"
+  },
+  "authorize_failure_evidence": {
+    "traceback_stdin_line": 48,
+    "traceback_line_source": "assert added.count(launch)==1",
+    "process_exit_code": 1,
+    "all_prior_sequential_package_assertions_reached_without_failure": true,
+    "unique_run_guard_step_reached": false,
+    "authorization_receipt_created": false
+  },
+  "platform_contract": {
+    "source": "https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push",
+    "checked_date": "2026-09-16",
+    "github_actions_push_payload_commit_file_lists_available": false,
+    "documented_missing_attributes": [
+      "added",
+      "removed",
+      "modified"
+    ],
+    "frozen_guard_source_expression": "for c in ev.get('commits',[]): added += c.get('added',[]); modified += c.get('modified',[]); removed += c.get('removed',[])",
+    "missing_added_fallback": [],
+    "effective_added_count_for_launch_under_documented_payload": 0,
+    "required_added_count": 1,
+    "predicate_satisfiable_under_documented_actions_payload": false
+  },
+  "failure_scope": {
+    "A_Q_L_runtime_binding_failure": false,
+    "numerical_contract_failure": false,
+    "class_solver_invoked": false,
+    "scientific_response_computed": false,
+    "scientific_response_read": false,
+    "sentinel_scientific_classification_available": false,
+    "covariance_read": false,
+    "full_107_row_execution_authorized": false,
+    "root_cause": "GITHUB_ACTIONS_PUSH_PAYLOAD_OMITS_COMMIT_FILE_LISTS_USED_BY_FROZEN_GUARD"
+  },
+  "hosted_forensic_gate": {
+    "branch": "audit/v026-r1-sentinel-first-attempt-forensic",
+    "head_sha": "c5502bc124f502cb4ef1c19300fcdf87f260089b",
+    "auditor_git_blob_sha1": "63b6a0db41ff5e0e3c36be605596fb1c5aee0f1d",
+    "workflow_git_blob_sha1": "4d09b78d3a586d3c4f7e42573a7bdac4454d3a48",
+    "run_id": 35033678449,
+    "status_at_review_support_creation": "queued",
+    "immutable_artifact_required_for_terminal_result_authority": true
+  },
+  "governance_boundary": {
+    "interim_fail_closed_authority_git_blob_sha1": "8f898f3579ac55db4bfd3b7cc6a12cad04a4a613",
+    "rerun_authorized": false,
+    "same_nonce_second_attempt_authorized": false,
+    "modify_remove_or_recreate_final_L_authorized": false,
+    "successor_science_authorized": false,
+    "full_replay_launch_authorized": false,
+    "terminal_result_authority_created_by_this_review_support": false
+  },
+  "next_gate": "HOSTED_FORENSIC_ARTIFACT_THEN_INDEPENDENT_FAILURE_FUNNEL_THEN_TERMINAL_FIRST_ATTEMPT_RESULT_AUTHORITY",
+  "interpretation": "This file is immutable review support only. It corroborates the pre-science platform-contract blocker and may be consumed by later independent audits, but it does not replace the pending hosted forensic artifact and does not authorize any rerun or successor science."
+}
