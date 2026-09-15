@@ -1,0 +1,184 @@
+name: Interacting-vacuum zero-coupling hard regression
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/ide-zero-limit.yml'
+      - 'ci/ide_calibration_trigger.txt'
+      - 'ci/compare_class_outputs.py'
+      - 'ci/compare_ide_background.py'
+      - 'patches/apply_class_iv_ac627d54_compile_fix.py'
+
+jobs:
+  ide-zero-limit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout DSIR
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 python3-pip libgsl-dev
+          python3 -m pip install --user numpy
+
+      - name: Clone pinned class_iv and apply assertion-checked compile repair
+        run: |
+          git clone https://github.com/kaeonikc/class_iv.git external_iv
+          cd external_iv
+          git checkout ac627d54e9ce196a08878d1ba33999819925d19c
+          git rev-parse HEAD | tee ../iv_upstream_sha.txt
+          python3 ../patches/apply_class_iv_ac627d54_compile_fix.py source/background.c
+          git diff --check
+          git diff -- source/background.c | tee ../iv_applied_compile_fix.diff
+          cd ..
+          sha256sum patches/apply_class_iv_ac627d54_compile_fix.py | tee iv_compile_repair_sha256.txt
+          cd external_iv
+          make -j2 \
+            OPTFLAG="-O2 -fcommon" \
+            LDFLAG="-g -fPIC -Wl,--no-as-needed -lgsl -lgslcblas" \
+            class
+
+      - name: Write matched LambdaCDM baseline
+        run: |
+          mkdir -p external_iv/dsir_outputs
+          cat > external_iv/dsir_baseline.ini <<'EOF'
+          h = 0.67556
+          T_cmb = 2.7255
+          omega_b = 0.022032
+          N_ur = 3.046
+          omega_cdm = 0.12038
+          Omega_dcdmdr = 0.0
+          N_ncdm = 0
+          Omega_k = 0.
+          Omega_fld = 0
+          Omega_scf = 0
+          Omega_idm_dr = 0.
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.215e-9
+          n_s = 0.9619
+          alpha_s = 0.
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0,0.295,0.51,0.706,0.934,1,1.317,1.491,2.33
+          headers = yes
+          write background = yes
+          write thermodynamics = no
+          write primordial = no
+          root = dsir_outputs/baseline_
+          EOF
+
+      - name: Write source-authored zero-coupling IDM_IV realization
+        run: |
+          cat > external_iv/dsir_ide0.ini <<'EOF'
+          h = 0.67556
+          T_cmb = 2.7255
+          omega_b = 0.022032
+          N_ur = 3.046
+          omega_cdm = 0.12038
+          alpha_idm_iv = 0.
+          beta_idm_iv = 0.
+          f_idm_iv = 1.
+          f_iv = 1.
+          # Upstream test_idm_iv_lcdm.ini intentionally leaves
+          # fluid_equation_of_state = IDM_IV commented out: use the
+          # explicit separate idm_iv/iv component path.
+          Omega_dcdmdr = 0.0
+          N_ncdm = 0
+          Omega_k = 0.
+          Omega_fld = 0
+          Omega_scf = 0
+          Omega_idm_dr = 0.
+          YHe = 0.2404
+          recombination = RECFAST
+          reio_parametrization = reio_none
+          output = mPk
+          modes = s
+          ic = ad
+          gauge = synchronous
+          P_k_ini type = analytic_Pk
+          k_pivot = 0.05
+          A_s = 2.215e-9
+          n_s = 0.9619
+          alpha_s = 0.
+          P_k_max_h/Mpc = 0.25
+          z_pk = 0,0.295,0.51,0.706,0.934,1,1.317,1.491,2.33
+          headers = yes
+          write background = yes
+          write thermodynamics = no
+          write primordial = no
+          root = dsir_outputs/ide0_
+          EOF
+
+      - name: Run matched frozen-grid calculations
+        working-directory: external_iv
+        run: |
+          ./class dsir_baseline.ini 2>&1 | tee dsir_outputs/baseline.log
+          ./class dsir_ide0.ini 2>&1 | tee dsir_outputs/ide0.log
+          ls -lah dsir_outputs
+
+      - name: Hard gate linear-core P(k)
+        run: |
+          python3 ci/compare_class_outputs.py \
+            --directory external_iv/dsir_outputs \
+            --root-a baseline_ \
+            --root-b ide0_ \
+            --json external_iv/dsir_outputs/comparison.json \
+            --max-core-rel 2e-8
+
+      - name: Hard gate semantic background
+        run: |
+          python3 ci/compare_ide_background.py \
+            --baseline external_iv/dsir_outputs/baseline_background.dat \
+            --ide external_iv/dsir_outputs/ide0_background.dat \
+            --json external_iv/dsir_outputs/background_semantic.json \
+            --max-rel 2e-12
+
+      - name: Record environment and frozen tolerances
+        run: |
+          cp external_iv/test_idm_iv_lcdm.ini external_iv/dsir_outputs/upstream_test_idm_iv_lcdm.ini
+          {
+            echo "DSIR interacting-vacuum zero-coupling HARD regression"
+            echo "linear-core tolerance frozen before this run: max |Delta P/P| <= 2e-8 for 1e-3<=k<=1e-1 h/Mpc"
+            echo "semantic-background tolerance frozen before this run: <= 2e-12 peak-normalized"
+            echo "calibration basis: two prior clean-room runs; worst core P residual ~9.94e-9; worst semantic background residual ~8.1e-13"
+            echo "z grid: 0,0.295,0.51,0.706,0.934,1,1.317,1.491,2.33"
+            echo "frozen k core: 0.001,0.003,0.01,0.03,0.1 h/Mpc"
+            echo "DSIR commit: $GITHUB_SHA"
+            echo -n "class_iv upstream: "
+            cat iv_upstream_sha.txt
+            echo -n "compile repair script sha256: "
+            cut -d' ' -f1 iv_compile_repair_sha256.txt
+            echo "repair scope: removes exactly one premature closing brace before case IDM_IV; assertions require exact pinned context; no equations changed"
+            echo "legacy compiler adaptation: OPTFLAG='-O2 -fcommon'"
+            echo "legacy linker adaptation: -Wl,--no-as-needed with GSL libraries; no source equations changed"
+            uname -a
+            python3 --version
+            gcc --version | head -1
+          } > external_iv/dsir_outputs/environment.txt
+
+      - name: Upload regression artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ide-zero-limit-hard-${{ github.sha }}
+          path: |
+            external_iv/dsir_outputs/
+            external_iv/dsir_baseline.ini
+            external_iv/dsir_ide0.ini
+            iv_upstream_sha.txt
+            iv_compile_repair_sha256.txt
+            iv_applied_compile_fix.diff
+            patches/apply_class_iv_ac627d54_compile_fix.py
+            ci/compare_class_outputs.py
+            ci/compare_ide_background.py
+          if-no-files-found: error
