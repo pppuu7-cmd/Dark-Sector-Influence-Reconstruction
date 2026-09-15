@@ -1,0 +1,98 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_CONTRACT_V0_1",
+  "status": "PROSPECTIVELY_FROZEN_CANDIDATE_NOT_EXECUTABLE_UNTIL_EXACT_FORENSIC_ARTIFACT_EXISTS",
+  "date": "2026-09-16",
+  "effect": "+0/+0",
+  "scope": "INDEPENDENT_TERMINALIZATION_AUDIT_FOR_CONSUMED_V0_26_R1_SENTINEL_FIRST_ATTEMPT_ONLY",
+  "science_attempt": {
+    "run_id": 35033268924,
+    "run_number": 1,
+    "run_attempt": 1,
+    "head_sha": "9a333294f3acb80201c5f6ed5b74918c1c767232",
+    "conclusion": "failure",
+    "scientific_response_available": false
+  },
+  "required_exact_producer": {
+    "run_id": 35033678449,
+    "run_number": 3,
+    "run_attempt": 1,
+    "head_sha": "c5502bc124f502cb4ef1c19300fcdf87f260089b",
+    "branch": "audit/v026-r1-sentinel-first-attempt-forensic",
+    "auditor_path": "ci/dsir_v026_r1_sentinel_first_attempt_forensic_audit_v0_1.py",
+    "auditor_git_blob_sha1": "63b6a0db41ff5e0e3c36be605596fb1c5aee0f1d",
+    "workflow_path": ".github/workflows/dsir-v026-r1-sentinel-first-attempt-forensic-audit-v0-1.yml",
+    "workflow_git_blob_sha1": "4d09b78d3a586d3c4f7e42573a7bdac4454d3a48",
+    "required_terminal_status": "completed",
+    "required_conclusion": "success",
+    "required_artifact_name": "dsir-v026-r1-sentinel-first-attempt-forensic-audit-v0-1",
+    "required_artifact_count": 1,
+    "artifact_id_frozen_now": null,
+    "artifact_zip_sha256_frozen_now": null,
+    "receipt_sha256_frozen_now": null,
+    "reason_unfrozen": "EXACT_PRODUCER_RUN_IS_CURRENTLY_QUEUED_AND_HAS_NOT_EMITTED_AN_ARTIFACT",
+    "execution_allowed_while_any_required_artifact_identity_is_null": false
+  },
+  "explicitly_rejected_producers": [
+    {
+      "run_id": 35033503488,
+      "run_number": 1,
+      "head_sha": "00f9c5ceea9cb5071a5a894816dd8f3fc052025f",
+      "reason": "STALE_PRE_ROOT_CAUSE_HARDENING"
+    },
+    {
+      "run_id": 35033644017,
+      "run_number": 2,
+      "head_sha": "b5949c3649cf7e52c27df34887ee02d82f554fb6",
+      "reason": "STALE_PRE_FINAL_FORENSIC_WORKFLOW_BINDING"
+    }
+  ],
+  "independent_auditor": {
+    "path": "ci/dsir_v026_r1_sentinel_first_attempt_failure_funnel_audit_v0_1.py",
+    "git_blob_sha1": "41a61a00915b1273822d5fb9513263ff5e7c8ecd",
+    "must_not_import_or_execute_producer_auditor": true,
+    "must_verify_producer_code_blobs_at_exact_head": true,
+    "must_reconstruct_science_trigger_tree_diff": true,
+    "must_reconstruct_frozen_workflow_traceback_line": true,
+    "must_verify_science_run_job_dispositions": true,
+    "must_verify_science_run_artifact_count_zero": true,
+    "must_hash_exact_producer_zip": true,
+    "must_match_actions_artifact_digest_when_available": true,
+    "must_hash_inner_producer_receipt": true,
+    "must_keep_successor_science_false": true,
+    "must_keep_full_107_false": true
+  },
+  "governing_main_evidence": {
+    "interim_fail_closed_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAIL_CLOSED_INTERIM_V0_1.json",
+    "interim_fail_closed_authority_git_blob_sha1": "8f898f3579ac55db4bfd3b7cc6a12cad04a4a613",
+    "platform_contract_review_support_path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_PLATFORM_CONTRACT_REVIEW_SUPPORT_V0_1.json",
+    "platform_contract_review_support_git_blob_sha1": "34acaa0f87af18cb85d765b9a2cb80003af65a71"
+  },
+  "expected_only_if_all_checks_pass": {
+    "verdict": "CONFIRMED_SCOPED",
+    "classification": "SENTINEL_FIRST_ATTEMPT_PRE_SCIENCE_ACTIONS_EVENT_GUARD_FAILURE_INDEPENDENTLY_CONFIRMED",
+    "terminal_first_attempt_authority_admissible": true,
+    "rerun_authorized": false,
+    "same_nonce_second_attempt_authorized": false,
+    "successor_science_authorized_by_receipt": false,
+    "full_107_row_execution_authorized": false
+  },
+  "fail_closed": {
+    "missing_producer_artifact": "BLOCK",
+    "producer_run_not_success": "BLOCK",
+    "producer_head_mismatch": "BLOCK",
+    "producer_run_number_or_attempt_mismatch": "BLOCK",
+    "producer_artifact_count_not_one": "BLOCK",
+    "producer_artifact_digest_mismatch": "BLOCK",
+    "producer_receipt_mismatch": "BLOCK",
+    "repository_diff_mismatch": "BLOCK",
+    "traceback_line_mismatch": "BLOCK",
+    "any_scientific_response_or_lane_execution_detected": "BLOCK",
+    "stale_run_substitution": "BLOCK"
+  },
+  "workflow_authoring_authorized_now": false,
+  "terminal_result_authority_authorized_now": false,
+  "successor_sentinel_authorized_now": false,
+  "full_replay_launch_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "next_gate": "WAIT_FOR_EXACT_RUN_35033678449_TERMINAL_SUCCESS_AND_IMMUTABLE_ARTIFACT_THEN_FREEZE_ARTIFACT_ID_ZIP_SHA256_RECEIPT_SHA256_AND_AUTHOR_SEPARATE_HOSTED_FUNNEL_WORKFLOW"
+}
