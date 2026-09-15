@@ -1,0 +1,82 @@
+name: layerb-beta-v026-r1-sentinel-wa-pretrigger-static-audit-v0-1
+
+on:
+  push:
+    branches:
+      - research/v026-r1-sentinel-wa-pretrigger
+    paths:
+      - '.github/workflows/layerb-beta-v026-r1-sentinel-wa-pretrigger-static-audit-v0-1.yml'
+      - 'ci/layerb_beta_v026_r1_sentinel_wa_pretrigger_static_audit_v0_1.py'
+      - '.github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml'
+      - 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  AUDITOR: 'ci/layerb_beta_v026_r1_sentinel_wa_pretrigger_static_audit_v0_1.py'
+  W: '.github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml'
+  A: 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json'
+  L: 'docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json'
+  Q: 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_V0_1.json'
+
+jobs:
+  wa-pretrigger-static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact W/A staging head
+        uses: actions/checkout@v4
+
+      - name: Verify exact staged W/A and fail-closed missing L/Q
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$W")" = '19907175f0f3417ddee2aba6916d961c6be02e26'
+          test "$(git hash-object "$A")" = '4ba40e59e6a9d48636d95d07efab575e56ae0966'
+          test "$(git hash-object "$AUDITOR")" = '2dbc76f15ee3510111db2bbe7da3cefb496d027b'
+          test "$(git hash-object docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_CANDIDATE_V0_1.json)" = 'ab3249a6fd71a8fe8dcbd8c1be0a8b18e3e789cd'
+          test "$(git hash-object docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_Q_FUNNEL_QUALIFICATION_V0_1.json)" = '43696ebc566c23871c0bcd94feca40bb9c03d82c'
+          test ! -e "$L"
+          test ! -e "$Q"
+
+      - name: Capture exact-head Actions runs for negative control
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${GITHUB_SHA}&event=push&per_page=100" > safe/head_runs.json
+
+      - name: Execute response-blind W/A pretrigger audit
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$AUDITOR"
+          python3 "$AUDITOR" --runs-json safe/head_runs.json --out safe/wa_pretrigger_static_audit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/wa_pretrigger_static_audit.json'))
+          assert d['token']=='PASS_LAYERB_BETA_V0_26_R1_SENTINEL_WA_PRETRIGGER_STATIC_AUDIT_PLUS_0_PLUS_0'
+          assert d['classification']=='SENTINEL_WA_STAGING_FAIL_CLOSED_PRETRIGGER_STATIC_AUDIT_PASS'
+          assert d['W_git_blob_sha1']=='19907175f0f3417ddee2aba6916d961c6be02e26'
+          assert d['A_git_blob_sha1']=='4ba40e59e6a9d48636d95d07efab575e56ae0966'
+          assert d['L_present'] is False and d['final_Q_present'] is False
+          assert d['sentinel_workflow_run_count_at_exact_head']==0
+          assert d['class_solver_invoked'] is False
+          assert d['scientific_response_read'] is False
+          assert d['sentinel_science_execution_authorized_by_this_receipt'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          print(d['token'])
+          PY
+          sha256sum safe/wa_pretrigger_static_audit.json > safe/wa_pretrigger_static_audit.sha256
+
+      - name: Persist immutable W/A pretrigger receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-sentinel-wa-pretrigger-static-audit-v0-1
+          path: |
+            safe/wa_pretrigger_static_audit.json
+            safe/wa_pretrigger_static_audit.sha256
+          if-no-files-found: error
+          retention-days: 90
