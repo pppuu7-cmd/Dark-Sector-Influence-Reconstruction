@@ -1,0 +1,113 @@
+name: dsir-v026-r1-pr169-funnel-audit-v0-1
+
+on:
+  push:
+    branches:
+      - audit/v026-r1-pr169
+    paths:
+      - '.github/workflows/dsir-v026-r1-pr169-funnel-audit-v0-1.yml'
+      - 'ci/dsir_v026_r1_pr169_funnel_audit_v0_1.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
+env:
+  PR_NUMBER: '169'
+  MAIN_SHA: 'b489eb58f598915db52476b740eb76de67e42d5f'
+  CANDIDATE_HEAD: '23f226445547d39f35800cac50a8daa583be04b0'
+  STATIC_HEAD: '5dc6150191638f48442671395ce4da9e676579b4'
+  STATIC_RUN_ID: '34954905127'
+  STATIC_ARTIFACT_ID: '10390997654'
+  CONTRACT_AUDIT_HEAD: '6d1e8f9a8f4940390b5618bbbdf8be4c91945beb'
+  CONTRACT_AUDIT_RUN_ID: '34955509439'
+  CONTRACT_AUDIT_ARTIFACT_ID: '10390734361'
+  SOURCE_RUN_ID: '34695347893'
+  SOURCE_ARTIFACT_ID: '10298655751'
+  V025_R01_ARTIFACT_ID: '10368809560'
+
+jobs:
+  funnel-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout independent audit branch only
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fetch exact main and exact PR head as read-only git objects
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main --depth=32
+          git fetch --no-tags origin pull/${PR_NUMBER}/head:refs/remotes/origin/pr169 --depth=32
+          test "$(git rev-parse refs/remotes/origin/main)" = "$MAIN_SHA"
+          test "$(git rev-parse refs/remotes/origin/pr169)" = "$CANDIDATE_HEAD"
+
+      - name: Capture GitHub PR, Actions and artifact metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          gh api "/repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" > safe/pr.json
+          gh api "/repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" > safe/pr_files.json
+
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${STATIC_RUN_ID}" > safe/static_run.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${STATIC_HEAD}&event=push&per_page=100" > safe/static_head_runs.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${STATIC_ARTIFACT_ID}" > safe/static_artifact.json
+
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${CONTRACT_AUDIT_RUN_ID}" > safe/contract_run.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${CONTRACT_AUDIT_HEAD}&event=push&per_page=100" > safe/contract_head_runs.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${CONTRACT_AUDIT_ARTIFACT_ID}" > safe/contract_artifact.json
+
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN_ID}" > safe/source_run.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN_ID}/jobs?per_page=100" > safe/source_jobs.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT_ID}" > safe/source_artifact.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${V025_R01_ARTIFACT_ID}" > safe/v025_r01_artifact.json
+
+      - name: Download exact immutable artifacts without executing candidate code
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${STATIC_ARTIFACT_ID}/zip" > safe/static.zip
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${CONTRACT_AUDIT_ARTIFACT_ID}/zip" > safe/contract.zip
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT_ID}/zip" > safe/source.zip
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${V025_R01_ARTIFACT_ID}/zip" > safe/v025_r01.zip
+
+      - name: Execute independent funnel audit
+        run: |
+          set -euo pipefail
+          python3 ci/dsir_v026_r1_pr169_funnel_audit_v0_1.py \
+            --pr-json safe/pr.json \
+            --pr-files-json safe/pr_files.json \
+            --static-run-json safe/static_run.json \
+            --static-head-runs-json safe/static_head_runs.json \
+            --static-artifact-json safe/static_artifact.json \
+            --static-zip safe/static.zip \
+            --contract-run-json safe/contract_run.json \
+            --contract-head-runs-json safe/contract_head_runs.json \
+            --contract-artifact-json safe/contract_artifact.json \
+            --contract-zip safe/contract.zip \
+            --source-run-json safe/source_run.json \
+            --source-jobs-json safe/source_jobs.json \
+            --source-artifact-json safe/source_artifact.json \
+            --source-zip safe/source.zip \
+            --v025-r01-artifact-json safe/v025_r01_artifact.json \
+            --v025-r01-zip safe/v025_r01.zip \
+            --out safe/funnel_audit.json
+          test "$(python3 -c "import json; print(json.load(open('safe/funnel_audit.json'))['token'])")" = 'QUALIFIED_DSIR_V0_26_R1_PR169_FUNNEL_AUDIT_PLUS_0_PLUS_0'
+          sha256sum safe/funnel_audit.json > safe/funnel_audit.sha256
+
+      - name: Persist independent funnel receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-pr169-funnel-audit-v0-1
+          path: |
+            safe/funnel_audit.json
+            safe/funnel_audit.sha256
+          if-no-files-found: error
+          retention-days: 90
