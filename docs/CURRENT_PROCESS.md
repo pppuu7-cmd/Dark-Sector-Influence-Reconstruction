@@ -50,14 +50,38 @@ Exact terminal artifact content has been materialized separately at `results/dsi
 
 Correction authority: `docs/dsir4/authority/LAYERB_BETA_V0_25_PROVENANCE_CORRECTION_V0_1.json`, commit `3d51ce928c0e6b76c69f5b42171abc3640c8b1e1`. Correction scope is provenance only. It binds artifact ID `10370496892`, ZIP digest `7fcb329027fad04425802f4a90b7874baa2a25e949fbc1057db1a3ed70546562`, actual inner SHA256 `5bcc9d93c22d32ace5d97f78ff9ce89b399cc4c7e4377b174c5fe882869dd71f`, and preserves `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED` unchanged.
 
+## V0.26 prospective branch — response-blind static candidate review
+
+Branch `research/v026-full-layerb-prereg`, reviewed head `ed67dade1fb08873ec3807a9513a55a725527fe6`, is a prospective candidate only. It is not main authority and is not executable.
+
+Prospective chronology precedes the hosted static result: preregistration `8fc1a9d8dc908309f956e2295e934639730d3796`; base contract `2cf8c2fa3ee24c29c77026e8dd022b67a00cfa14`; response-blind auditor `da18cff9982d7ef91f13caa7a46a388295cd5207`; hardening amendment `54c7a6c32d04cf498df6cd9a79e1bc04b8ad2c90`; route-specific alpha/beta tolerance correction `e6b5e622e27ff8fde0820cbf0f731fd0c3751cd3`; hosted workflow execution head `20eb0f8db1bc4d426fd957dbed6a1211a0459f10`.
+
+The candidate correctly keeps science execution closed. Alpha is prospectively restored to its inherited canonical-32769 production tolerance `3e-10`; beta exact-target pure/mixed/direct routes use `1e-12`; both preserve sampling `0.00035`. The older global `1e-12` sentence remains superseded and must disappear from a consolidated main-ready specification rather than be interpreted ad hoc.
+
+Hosted static run `34952288638` is terminal success, run number 1 / attempt 1, unique push run for exact head `20eb0f8...`. Job `104325850674` succeeded. Artifact `10389832162` ZIP digest is `sha256:8fce87986b0e96356fdc6935df0f16470b224d10caa371db3fe644929d4616b3`; `v026_static_audit.json` is 2924 bytes SHA256 `718a1ba3be7ce14527e8995bff174c9f53e540a0e5f74008cff0bc1e687acbcd`. No CLASS solver, scientific response, or covariance was read.
+
+The exact response-blind source plan is independently bound to artifact `10298655751`, ZIP SHA256 `9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7`, `plan.json` 3,953,984 bytes SHA256 `c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064`. Its origin run `34695347893` failed overall, but `materialize-plan` job `103557768867` succeeded and produced this response-blind artifact before later science-job failure/cancellation; only that successful materialization job is inherited as source-plan provenance.
+
+Core response-blind geometry reproduces: 377 DES calls / 64,658 unique non-overlapping DES targets, 64 BOSS GL64 + 128 fine-only GL128 calls sharing one 99-k set, GRID896 with 897 guarded common nodes and zero exact-target overlap, 301 mixed batches canonical SHA256 `59abce49f6338c30b93d11fa462e1ff8642615d6100d23feca4b36505a5cef85`, and 59 direct batches canonical SHA256 `1c98927960e81d7fb55ebc687ef36059d964b233001551dba2aa9a01652c8864`.
+
+Independent audit report: `docs/dsir4/audits/LAYERB_BETA_V0_26_RESPONSE_BLIND_STATIC_AUDIT_FUNNEL_REVIEW_V0_1.md`, commit `182676e8b53c9cf4fab673f5164fb43849ca0fc4`. Terminal audit authority: `docs/dsir4/authority/LAYERB_BETA_V0_26_RESPONSE_BLIND_STATIC_AUDIT_QUALIFICATION_V0_1.json`, commit `d50419d3b8e4a9fc8ee10d9e28b98043d9cf7f2b`. Verdict: **`QUALIFIED`**.
+
+The qualification is concrete. The candidate freezes mixed M013 `.17g` maximum at `25062` bytes; the hosted run under the candidate's pinned NumPy `1.26.4` reports `25063`. Both remain below parser capacity `32768`, so capacity safety survives, but the static PASS implementation does not assert this frozen scalar and therefore cannot certify full scalar identity. A NumPy `2.3.5` response-blind control reproduces the recorded non-authoritative local-precommit output SHA256 `d55cb61f2cd5338dba0b36df656409fdc248afe3cfa1972fe060b3a09b09c515` together with `25062`, exposing generated GRID896/serialization sensitivity to the numerical Python runtime. The exact intended NumPy-1.26.4 GRID896 node payload should therefore be hash-bound in the reconciled specification.
+
+The branch note at `ed67dade...` claiming zero workflow runs is stale. Actions shows run `34952288638`; the note was committed during the short interval after run creation but before completion. Actions overrides that note for workflow/provenance state.
+
 ## Authorized next stage
 
 Exactly: `PROSPECTIVELY_FROZEN_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_AUDIT`.
 
-This successor is **not currently executable**. Before any 107-row computation, a new prospective preregistration and immutable contract must be committed defining the full row denominator, exact input identities, validated forced NumPy baseline, exact-target-union node construction, solver accounting, technical/scientific thresholds, PASS/FAIL/BLOCKED/INVALID rules, artifact provenance requirements and numerical-only interpretation ceiling.
+This successor is **not currently executable**. The present branch candidate is not a main-ready immutable freeze because its effective specification is split across a base preregistration, base contract, hardening amendment and runtime correction, and one frozen static scalar conflicts with the hosted pinned-runtime receipt.
 
-The successor must not silently change the V0.25 construction. V0.25 benchmarked each common grid unioned with all three frozen target k values. A successor must prospectively specify whether its full object uses a global exact-target union or another exact row-denominator construction; target-local/ad hoc post-result unions are not inherited authorization. Static `1025 + 107 = 1132 < 1152` is only a capacity bound.
+Next admissible gate: create one consolidated prospective **V0.26 R1 preregistration** plus one immutable **V0.26 R1 machine-readable contract**. R1 must directly incorporate the alpha hardening and route-specific tolerances; preserve the exact 107-row denominator/input identities; freeze the exact-target-union construction and solver accounting; remove/correct the superseded `25062` field; define payload-byte counting convention; bind exact generated GRID896 identity under NumPy `1.26.4` (preferably canonical binary64/u64hex hash); retain scientific `<1e-3`, technical `<1e-5` and exact-binding `<=1e-12` semantics; and preserve complete provenance/interpretation firewalls.
+
+After R1 is committed, an independent R1 contract audit is required. **Do not author or launch the 32-lane sentinel science workflow and do not launch any full 107-row replay before that independent audit explicitly authorizes the next step.** Static response-blind PASS is not scientific execution authority.
+
+The successor must not silently change the V0.25 construction. Any full object must prospectively specify its deterministic exact-target batching/union semantics; target-local/ad hoc post-result unions remain forbidden. Historical `1025 + 107 = 1132 < 1152` is only a capacity bound.
 
 ## Frozen boundaries
 
-Production `h=1e-4`; native `k_per_decade_for_pk=20`; scientific response threshold `<1e-3`; technical reproducibility `<1e-5`; exact binding `<=1e-12`; sampling `0.00035`; `tol_perturb_integration=1e-12`. Covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537 and physical dark-sector inference remain closed. Frozen readiness `68%`; scientific frontier `67%`.
+Production `h=1e-4`; native `k_per_decade_for_pk=20`; scientific response threshold `<1e-3`; technical reproducibility `<1e-5`; exact binding `<=1e-12`; sampling `0.00035`. Current V0.25 beta stabilization used `tol_perturb_integration=1e-12`; the prospective V0.26 candidate's alpha route is separately constrained by its canonical production precision and is not yet main execution authority. Covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537 and physical dark-sector inference remain closed. Frozen readiness `68%`; scientific frontier `67%`.
