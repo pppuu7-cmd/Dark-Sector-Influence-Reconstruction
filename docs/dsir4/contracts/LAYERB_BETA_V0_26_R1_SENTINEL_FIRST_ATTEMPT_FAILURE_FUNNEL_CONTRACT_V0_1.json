@@ -1,16 +1,38 @@
 {
-  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_CONTRACT_V0_1",
-  "status": "PROSPECTIVELY_FROZEN_CANDIDATE_NOT_EXECUTABLE_UNTIL_EXACT_FORENSIC_ARTIFACT_EXISTS",
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_CONTRACT_V0_2",
+  "status": "PROSPECTIVELY_HARDENED_CANDIDATE_PENDING_FRESH_INDEPENDENT_REAUDIT",
   "date": "2026-09-16",
   "effect": "+0/+0",
   "scope": "INDEPENDENT_TERMINALIZATION_AUDIT_FOR_CONSUMED_V0_26_R1_SENTINEL_FIRST_ATTEMPT_ONLY",
+  "governing_qualification_authority": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_PR190_QUALIFICATION_V0_1.json",
+    "git_blob_sha1": "74b10d5d326ec6984edec986fe1bbc368a73b4f6",
+    "verdict": "QUALIFIED",
+    "authorized_next_stage": "PROSPECTIVELY_HARDEN_PR190_FIRST_ATTEMPT_FAILURE_FUNNEL_CANDIDATE_AND_REAUDIT"
+  },
   "science_attempt": {
     "run_id": 35033268924,
+    "workflow_id": 359060727,
     "run_number": 1,
     "run_attempt": 1,
     "head_sha": "9a333294f3acb80201c5f6ed5b74918c1c767232",
+    "event": "push",
     "conclusion": "failure",
     "scientific_response_available": false
+  },
+  "required_live_exact_head_enumeration": {
+    "input_argument": "--science-live-runs-json",
+    "api_query_semantics": "GET_REPOSITORY_ACTIONS_RUNS_FILTER_HEAD_SHA_AND_EVENT_PUSH_THEN_FILTER_WORKFLOW_ID",
+    "head_sha": "9a333294f3acb80201c5f6ed5b74918c1c767232",
+    "event": "push",
+    "workflow_id": 359060727,
+    "required_matching_run_count": 1,
+    "required_only_run_id": 35033268924,
+    "required_run_number": 1,
+    "required_run_attempt": 1,
+    "required_status": "completed",
+    "required_conclusion": "failure",
+    "duplicate_or_rerun_exact_head": "BLOCK"
   },
   "required_exact_producer": {
     "run_id": 35033678449,
@@ -26,20 +48,36 @@
     "required_conclusion": "success",
     "required_artifact_name": "dsir-v026-r1-sentinel-first-attempt-forensic-audit-v0-1",
     "required_artifact_count": 1,
-    "required_inner_files_exactly": [
+    "artifact_id": 10422924571,
+    "artifact_zip_sha256": "226209ae5cb416bd2575e5d1b7800632b6848c04363ce0d9a1add27cbbdd559b",
+    "receipt_sha256": "207cfde59971b91f3e6ac5ef3c95703f608735c17df67daa03a14efb4a7f976e",
+    "required_zip_member_paths_exactly": [
+      "artifacts.json",
+      "authorize.log",
       "first_attempt_forensic_audit.json",
       "first_attempt_forensic_audit.sha256",
       "input_evidence.sha256",
-      "run.json",
       "jobs.json",
-      "artifacts.json",
-      "authorize.log"
+      "run.json"
     ],
-    "artifact_id_frozen_now": null,
-    "artifact_zip_sha256_frozen_now": null,
-    "receipt_sha256_frozen_now": null,
-    "reason_unfrozen": "EXACT_PRODUCER_RUN_IS_CURRENTLY_QUEUED_AND_HAS_NOT_EMITTED_AN_ARTIFACT",
-    "execution_allowed_while_any_required_artifact_identity_is_null": false
+    "required_extracted_relative_paths_exactly": [
+      "artifacts.json",
+      "authorize.log",
+      "first_attempt_forensic_audit.json",
+      "first_attempt_forensic_audit.sha256",
+      "input_evidence.sha256",
+      "jobs.json",
+      "run.json"
+    ],
+    "required_receipt_manifest_names_exactly": [
+      "safe/first_attempt_forensic_audit.json"
+    ],
+    "required_input_manifest_names_exactly": [
+      "safe/artifacts.json",
+      "safe/authorize.log",
+      "safe/jobs.json",
+      "safe/run.json"
+    ]
   },
   "explicitly_rejected_producers": [
     {
@@ -57,18 +95,22 @@
   ],
   "independent_auditor": {
     "path": "ci/dsir_v026_r1_sentinel_first_attempt_failure_funnel_audit_v0_1.py",
-    "git_blob_sha1": "5823daaa682a99460203ce3d4db5e59cd08c731d",
+    "git_blob_sha1": "f7eff337e511baa25d51e5b0c333a97534e1bbc3",
     "must_not_import_or_execute_producer_auditor": true,
     "must_verify_producer_code_blobs_at_exact_head": true,
     "must_reconstruct_science_trigger_tree_diff": true,
     "must_reconstruct_frozen_workflow_traceback_line": true,
     "must_verify_science_run_job_dispositions": true,
     "must_verify_science_run_artifact_count_zero": true,
+    "must_live_enumerate_exact_head_science_runs": true,
+    "must_reject_duplicate_or_rerun_exact_head": true,
     "must_hash_exact_producer_zip": true,
-    "must_match_actions_artifact_digest_when_available": true,
-    "must_verify_exact_inner_file_set": true,
-    "must_verify_inner_receipt_sha256_manifest": true,
-    "must_verify_inner_input_evidence_sha256_manifest": true,
+    "must_match_frozen_actions_artifact_digest": true,
+    "must_verify_exact_zip_member_set_recursively": true,
+    "must_verify_exact_extracted_relative_file_set_recursively": true,
+    "must_reject_nested_or_extra_paths": true,
+    "must_verify_manifest_exact_relative_names_and_cardinality": true,
+    "must_reject_basename_normalization_or_collisions": true,
     "must_hash_inner_producer_receipt": true,
     "must_keep_successor_science_false": true,
     "must_keep_full_107_false": true
@@ -79,6 +121,33 @@
     "platform_contract_review_support_path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_PLATFORM_CONTRACT_REVIEW_SUPPORT_V0_1.json",
     "platform_contract_review_support_git_blob_sha1": "34acaa0f87af18cb85d765b9a2cb80003af65a71"
   },
+  "future_hosted_failure_funnel_workflow_requirements": {
+    "present_now": false,
+    "authoring_authorized_now": false,
+    "full_git_graph_required": true,
+    "alternative_exact_sha_fetch_for_every_historical_object_allowed": true,
+    "must_capture_live_science_runs_after_forensic_artifact": true,
+    "must_supply_exact_frozen_producer_artifact": true,
+    "fresh_independent_reaudit_before_authoring": true
+  },
+  "fail_closed": {
+    "missing_or_expired_producer_artifact": "BLOCK",
+    "producer_run_not_success": "BLOCK",
+    "producer_head_mismatch": "BLOCK",
+    "producer_run_number_or_attempt_mismatch": "BLOCK",
+    "producer_artifact_id_mismatch": "BLOCK",
+    "producer_artifact_digest_mismatch": "BLOCK",
+    "producer_zip_member_set_mismatch": "BLOCK",
+    "producer_extracted_tree_mismatch": "BLOCK",
+    "producer_manifest_exact_name_or_cardinality_mismatch": "BLOCK",
+    "producer_receipt_sha256_mismatch": "BLOCK",
+    "live_exact_head_science_run_count_not_one": "BLOCK",
+    "live_exact_head_run_id_or_attempt_mismatch": "BLOCK",
+    "repository_diff_mismatch": "BLOCK",
+    "traceback_line_mismatch": "BLOCK",
+    "any_scientific_response_or_lane_execution_detected": "BLOCK",
+    "stale_run_substitution": "BLOCK"
+  },
   "expected_only_if_all_checks_pass": {
     "verdict": "CONFIRMED_SCOPED",
     "classification": "SENTINEL_FIRST_ATTEMPT_PRE_SCIENCE_ACTIONS_EVENT_GUARD_FAILURE_INDEPENDENTLY_CONFIRMED",
@@ -88,26 +157,13 @@
     "successor_science_authorized_by_receipt": false,
     "full_107_row_execution_authorized": false
   },
-  "fail_closed": {
-    "missing_producer_artifact": "BLOCK",
-    "producer_run_not_success": "BLOCK",
-    "producer_head_mismatch": "BLOCK",
-    "producer_run_number_or_attempt_mismatch": "BLOCK",
-    "producer_artifact_count_not_one": "BLOCK",
-    "producer_artifact_digest_mismatch": "BLOCK",
-    "producer_inner_file_set_mismatch": "BLOCK",
-    "producer_inner_receipt_manifest_mismatch": "BLOCK",
-    "producer_inner_input_manifest_mismatch": "BLOCK",
-    "producer_receipt_mismatch": "BLOCK",
-    "repository_diff_mismatch": "BLOCK",
-    "traceback_line_mismatch": "BLOCK",
-    "any_scientific_response_or_lane_execution_detected": "BLOCK",
-    "stale_run_substitution": "BLOCK"
-  },
-  "workflow_authoring_authorized_now": false,
+  "fresh_independent_response_blind_reaudit_required_now": true,
+  "hosted_failure_funnel_execution_authorized_now": false,
   "terminal_result_authority_authorized_now": false,
+  "rerun_authorized": false,
+  "same_nonce_second_attempt_authorized": false,
   "successor_sentinel_authorized_now": false,
   "full_replay_launch_authorized": false,
   "full_107_row_execution_authorized": false,
-  "next_gate": "WAIT_FOR_EXACT_RUN_35033678449_TERMINAL_SUCCESS_AND_IMMUTABLE_ARTIFACT_THEN_FREEZE_ARTIFACT_ID_ZIP_SHA256_RECEIPT_SHA256_AND_AUTHOR_SEPARATE_HOSTED_FUNNEL_WORKFLOW"
+  "next_gate": "FRESH_INDEPENDENT_RESPONSE_BLIND_STATIC_REAUDIT_OF_THIS_REVISED_EXACT_PR190_HEAD_BEFORE_ANY_HOSTED_FAILURE_FUNNEL_WORKFLOW_IS_AUTHORED"
 }
