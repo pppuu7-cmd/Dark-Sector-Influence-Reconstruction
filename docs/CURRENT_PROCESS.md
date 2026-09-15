@@ -2,6 +2,16 @@
 
 Updated: 2026-09-15. Scope: **DSIR only**; RTK/RQIR/KMQGB/KMDSB excluded.
 
+## Open PR #168 — prospective Core-v1 scope only
+
+PR #168, `Freeze DSIR Core v1 completion scope`, reviewed at head `4983e0b1a8537e64b6a90eacd8857fe98ac0ebe0`, is not main authority and does not change the current scientific gate chain. Independent review is persisted at `docs/dsir4/audits/DSIR_CORE_V1_COMPLETION_SCOPE_PR168_FUNNEL_AUDIT_V0_1.md`; qualification authority is `docs/dsir4/authority/DSIR_CORE_V1_COMPLETION_SCOPE_PR168_QUALIFICATION_AUDIT_V0_1.json`. Verdict: **`QUALIFIED`**.
+
+The proposed Core-v1 completion document is admissible only as prospective governance/release-scope planning. Its F1 description is compatible with the current next admissible gate, but its `Authorized critical path` wording is not current authorization for later F2-F7 work. Covariance, whitening, nuisance, statistical/model comparison, relation-null, `Wm_S3`, global 65537 and downstream science remain closed until separately authorized through the terminal gate chain.
+
+PR run `34910842417` is green but is the pre-existing G-T-tau additive-projection workflow, not validation of the new scope contract. Artifact `10374282750`, digest `sha256:3648048f8ebae4c33cf2b99e702b338027d7a5725d9c3bfbfed3691edf160633`, is incidental regression evidence only.
+
+PR #168 adds no full-107 preregistration or immutable contract. It therefore cannot execute F1. If the scope proposal is later accepted on main, recovery must be reconciled and any new readiness dimensions must receive frozen denominators, calculation/migration rules and initial values before replacing the current readiness/frontier accounting. `DSIR Core v1 FROZEN` is not scientific closure or physical dark-sector inference.
+
 ## Reproducibility/mechanism chain terminal through V0.25
 
 V0.21 established NumPy AVX-512 runtime dispatch as the causal hosted branch; V0.22 established the forced NumPy non-AVX512 baseline; V0.23 revalidated the frozen production-h replay cells; V0.24 attributed the remaining two immutable parent violations to common-grid cubic interpolation under the validated baseline.
