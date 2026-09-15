@@ -1,0 +1,93 @@
+name: layerb-beta-v026-r1-sentinel-static-audit-v0-1
+
+on:
+  push:
+    branches:
+      - research/v026-r1-sentinel-static
+    paths:
+      - '.github/workflows/layerb-beta-v026-r1-sentinel-static-audit-v0-1.yml'
+      - 'ci/layerb_beta_v026_r1_sentinel_v0_1.py'
+      - 'ci/layerb_beta_v026_r1_sentinel_decision_v0_1.py'
+      - 'ci/layerb_beta_v026_r1_sentinel_static_audit_v0_2.py'
+      - 'docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_SENTINEL_IMPLEMENTATION_CONTRACT_V0_1.json'
+      - 'docs/dsir4/workflow_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_SCIENCE_WORKFLOW_CANDIDATE_V0_1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact sentinel construction head
+        uses: actions/checkout@v4
+
+      - name: Pin response-blind audit runtime
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+
+      - name: Install only static numerical dependency
+        run: python -m pip install --disable-pip-version-check --no-cache-dir numpy==1.26.4
+
+      - name: Verify exact implementation blobs before audit
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_beta_v026_r1_sentinel_v0_1.py)" = '9affe7c7d4e02bbc728ba15e3cde893ec9876b38'
+          test "$(git hash-object ci/layerb_beta_v026_r1_sentinel_decision_v0_1.py)" = '97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9'
+          test "$(git hash-object ci/layerb_beta_v026_r1_sentinel_static_audit_v0_2.py)" = 'ebb1db6b365560e9e4c8ab7e575d163bdab58cc4'
+          test "$(git hash-object docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_SENTINEL_IMPLEMENTATION_CONTRACT_V0_1.json)" = 'e14804463d9eab288162b4c98e8dd5c1fd6a10eb'
+          test "$(git hash-object docs/dsir4/workflow_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_SCIENCE_WORKFLOW_CANDIDATE_V0_1.yml)" = '1ed36c850d80537646556a858204cac14eca852e'
+          test ! -e .github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml
+          test ! -e docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json
+          test ! -e docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json
+
+      - name: Fetch exact frozen response-blind source plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/10298655751/zip" > safe/plan.zip
+          printf '%s  %s\n' '9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7' safe/plan.zip | sha256sum -c -
+          unzip -q safe/plan.zip -d safe/unpacked
+          test -f safe/unpacked/plan.json
+          test "$(wc -c < safe/unpacked/plan.json)" = '3953984'
+          printf '%s  %s\n' 'c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064' safe/unpacked/plan.json | sha256sum -c -
+
+      - name: Execute response-blind sentinel implementation audit
+        run: |
+          set -euo pipefail
+          python ci/layerb_beta_v026_r1_sentinel_static_audit_v0_2.py \
+            --plan safe/unpacked/plan.json \
+            --out safe/sentinel_static_audit.json
+          python - <<'PY'
+          import json
+          d=json.load(open('safe/sentinel_static_audit.json'))
+          assert d['token']=='PASS_LAYERB_BETA_V0_26_R1_SENTINEL_IMPLEMENTATION_STATIC_AUDIT_PLUS_0_PLUS_0'
+          assert d['classification']=='SENTINEL_IMPLEMENTATION_RESPONSE_BLIND_STATIC_AUDIT_PASS'
+          assert d['class_solver_invoked'] is False
+          assert d['scientific_response_read'] is False
+          assert d['lane_without_launch_authority_failed_closed'] is True
+          assert d['active_science_workflow_present'] is False
+          assert d['launch_authority_present'] is False
+          assert d['sentinel_science_execution_authorized'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          print(d['token'])
+          PY
+          sha256sum safe/sentinel_static_audit.json > safe/sentinel_static_audit.sha256
+
+      - name: Persist immutable response-blind static audit receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-sentinel-static-audit-v0-1
+          path: |
+            safe/sentinel_static_audit.json
+            safe/sentinel_static_audit.sha256
+            safe/executor_static_preflight.json
+            safe/lane_without_authority.txt
+          if-no-files-found: error
+          retention-days: 90
