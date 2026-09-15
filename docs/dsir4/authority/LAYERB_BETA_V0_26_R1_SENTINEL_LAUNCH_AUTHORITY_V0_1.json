@@ -9,6 +9,7 @@
   "r1_contract_git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9",
   "r1_promotion_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_PR169_FUNNEL_QUALIFICATION_V0_1.json",
   "r1_promotion_authority_git_blob_sha1": "cdbcea2622564d40aa9d1edc045a5808f8cdd1c4",
+  "promotion_authority_git_blob_sha1": "cdbcea2622564d40aa9d1edc045a5808f8cdd1c4",
   "sentinel_implementation_contract_path": "docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_SENTINEL_IMPLEMENTATION_CONTRACT_V0_1.json",
   "sentinel_implementation_contract_git_blob_sha1": "e14804463d9eab288162b4c98e8dd5c1fd6a10eb",
   "sentinel_implementation_qualification_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_PR171_QUALIFICATION_AUDIT_V0_2.json",
