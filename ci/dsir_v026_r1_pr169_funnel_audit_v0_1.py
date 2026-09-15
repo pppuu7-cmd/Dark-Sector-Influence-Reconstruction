@@ -279,7 +279,7 @@ def main():
     assert cj['token'] == 'PASS_LAYERB_BETA_V0_26_R1_CONTRACT_AUDIT_PLUS_0_PLUS_0'
     for k in ['class_solver_invoked','scientific_response_read','covariance_read','sentinel_execution_authorized','full_107_row_execution_authorized']:
         assert cj[k] is False, k
-    assert cj['solver_accounting_total_class_constructions'] == 738
+    assert cj['solver_constructions_full_replay'] == 738
 
     source_run = readj(args.source_run_json)
     assert source_run['id'] == 34695347893 and source_run['conclusion'] == 'failure'
