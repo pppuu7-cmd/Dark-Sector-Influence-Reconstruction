@@ -1,0 +1,99 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_CONTRACT_V0_1",
+  "status": "PROSPECTIVELY_FROZEN_INACTIVE_LAUNCH_PACKAGE_CANDIDATE_NOT_EXECUTABLE",
+  "date": "2026-09-15",
+  "effect": "+0/+0",
+  "base_main_sha": "6ccd564184456052a993593c43951604ccd3aaef",
+  "governing_implementation_qualification": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_PR171_QUALIFICATION_AUDIT_V0_2.json",
+    "git_blob_sha1": "5d042377fa48d896865db0ada11508015c74e350",
+    "verdict": "QUALIFIED",
+    "classification": "SENTINEL_IMPLEMENTATION_QUALIFIED_FOR_EXACT_PROMOTION_WITH_ACYCLIC_LAUNCH_BINDING_REQUIRED"
+  },
+  "upstream_bindings": {
+    "r1_contract_git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9",
+    "r1_promotion_authority_git_blob_sha1": "cdbcea2622564d40aa9d1edc045a5808f8cdd1c4",
+    "sentinel_implementation_contract_git_blob_sha1": "e14804463d9eab288162b4c98e8dd5c1fd6a10eb",
+    "sentinel_executor_git_blob_sha1": "9affe7c7d4e02bbc728ba15e3cde893ec9876b38",
+    "sentinel_decision_git_blob_sha1": "97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9"
+  },
+  "acyclic_package": {
+    "topology": "W_TO_A_TO_L_THEN_STATIC_AUDIT_THEN_Q",
+    "W": {
+      "candidate_path": "docs/dsir4/workflow_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_ACTIVE_WORKFLOW_CANDIDATE_V0_2.yml",
+      "future_active_path": ".github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml",
+      "git_blob_sha1": "19907175f0f3417ddee2aba6916d961c6be02e26"
+    },
+    "A": {
+      "candidate_path": "docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_CANDIDATE_V0_1.json",
+      "future_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json",
+      "git_blob_sha1": "4ba40e59e6a9d48636d95d07efab575e56ae0966",
+      "binds_W": true,
+      "binds_L": false
+    },
+    "L": {
+      "candidate_path": "docs/dsir4/launch_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_CANDIDATE_V0_1.json",
+      "future_trigger_path": "docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json",
+      "git_blob_sha1": "9c217e41764d979bea12644fae372354241bc976",
+      "binds_W": true,
+      "binds_A": true
+    },
+    "Q": {
+      "future_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_V0_1.json",
+      "must_be_created_only_after_static_and_external_package_audits": true,
+      "must_bind_W_A_L": true,
+      "must_authorize_exactly_one_sentinel_run": true,
+      "must_keep_full_107_false": true
+    }
+  },
+  "one_run_guards_frozen_in_W_and_A": {
+    "workflow_event_push_only": true,
+    "trigger_path_only_launch_descriptor": true,
+    "trigger_descriptor_must_be_newly_added_exactly_once": true,
+    "trigger_descriptor_modify_or_remove_forbidden": true,
+    "github_run_attempt_must_equal_one": true,
+    "unique_workflow_push_run_for_exact_head_required": true,
+    "concurrency_cancel_in_progress_false": true,
+    "authorized_launch_count": 1,
+    "rerun_forbidden": true
+  },
+  "activation_plan_after_future_package_qualification": {
+    "phase_1_promote_exact_W_to_active_path_and_exact_A_to_authority_path_without_L": true,
+    "phase_1_must_not_trigger_science": true,
+    "phase_2_promote_exact_Q_package_qualification": true,
+    "phase_2_must_not_trigger_science": true,
+    "phase_3_create_exact_L_at_new_trigger_path": true,
+    "phase_3_is_the_only_authorized_one_run_trigger": true,
+    "never_modify_L_after_trigger": true
+  },
+  "static_audit_requirements": {
+    "verify_exact_W_A_L_candidate_blobs": true,
+    "verify_acyclic_hash_edges": true,
+    "verify_A_does_not_bind_L": true,
+    "verify_L_binds_A_and_W": true,
+    "verify_W_runtime_requires_future_Q_binding_W_A_L": true,
+    "verify_W_requires_new_file_trigger_and_first_attempt_unique_run": true,
+    "verify_exact_upstream_blobs": true,
+    "verify_future_active_W_path_absent": true,
+    "verify_future_A_path_absent": true,
+    "verify_future_L_trigger_path_absent": true,
+    "verify_future_Q_path_absent": true,
+    "class_solver_invoked": false,
+    "scientific_response_read": false
+  },
+  "forbidden": {
+    "mutual_A_L_final_blob_hash_cycle": true,
+    "activate_W_before_package_audit_authority": true,
+    "promote_A_before_package_audit_authority": true,
+    "promote_L_trigger_before_package_audit_authority": true,
+    "launch_sentinel_science_from_this_contract": true,
+    "launch_full_107_row_replay": true,
+    "read_covariance": true,
+    "read_whitening": true,
+    "read_nuisance": true,
+    "read_relation_null": true,
+    "open_Wm_S3": true,
+    "launch_global_65537": true,
+    "open_statistical_or_physical_science_gate": true
+  }
+}
