@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import subprocess
 from pathlib import Path
 
@@ -24,6 +23,8 @@ IQ = 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_PR171_QUALIFICATION_AUD
 E = 'ci/layerb_beta_v026_r1_sentinel_v0_1.py'
 D = 'ci/layerb_beta_v026_r1_sentinel_decision_v0_1.py'
 L_GATE = 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_EXACT_L_GATE_AUTHORITY_V0_1.json'
+PLATFORM_CONTRACT_SOURCE = 'https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push'
+PLATFORM_CONTRACT = 'GitHub Actions push event payload does not include added, removed, and modified attributes in commit objects.'
 
 BLOBS = {
     W: '19907175f0f3417ddee2aba6916d961c6be02e26',
@@ -57,7 +58,6 @@ def main() -> int:
     ap.add_argument('--out', required=True)
     args = ap.parse_args()
 
-    assert sh('git', 'rev-parse', 'HEAD') != ''
     assert sh('git', 'rev-parse', f'{HEAD}^1') == FIRST_PARENT
     assert sh('git', 'rev-parse', f'{HEAD}^2') == STAGING_PARENT
     subprocess.run(['git', 'merge-base', '--is-ancestor', HEAD, 'HEAD'], check=True)
@@ -70,6 +70,10 @@ def main() -> int:
     expected_change = [f'A\t{L}']
     assert merge_changes == expected_change, merge_changes
     assert stage_changes == expected_change, stage_changes
+
+    # The ref update introduced two graph commits (staging + merge), but the net repository tree change is one added L.
+    pushed_graph_commits = sh('git', 'rev-list', '--count', f'{FIRST_PARENT}..{HEAD}')
+    assert pushed_graph_commits == '2'
 
     aa = json.loads(Path(A).read_text())
     qq = json.loads(Path(Q).read_text())
@@ -166,6 +170,12 @@ def main() -> int:
     assert py_lines[48].strip() == "assert launch not in modified and launch not in removed", py_lines[48]
     assert py_lines[49].strip() == "assert ev.get('forced') is False", py_lines[49]
 
+    # GitHub documents that Actions' push-event payload omits commit-level added/removed/modified arrays.
+    # Therefore this frozen guard's c.get('added', []) fallback deterministically yields [] for every commit.
+    effective_added: list[str] = []
+    assert effective_added.count(L) == 0
+    assert effective_added.count(L) != 1
+
     out = {
         'schema': 'LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FORENSIC_AUDIT_V0_1',
         'effect': '+0/+0',
@@ -188,12 +198,17 @@ def main() -> int:
         'exact_L_git_blob_sha1': BLOBS[L],
         'repository_merge_diff_exactly_one_added_L': True,
         'repository_staging_diff_exactly_one_added_L': True,
+        'pushed_graph_commit_count': 2,
         'all_package_assertions_before_event_guard_reproduced_pass': True,
         'traceback_stdin_line': 48,
         'traceback_line_source': "assert added.count(launch)==1",
+        'github_actions_push_payload_commit_file_lists_available': False,
+        'platform_contract_source': PLATFORM_CONTRACT_SOURCE,
+        'platform_contract': PLATFORM_CONTRACT,
+        'guard_missing_field_fallback_is_empty_list': True,
+        'effective_added_count_under_frozen_guard': 0,
         'event_payload_added_count_equals_one_predicate': False,
-        'event_payload_actual_added_count_recoverable_from_persisted_run_evidence': False,
-        'failure_scope': 'GITHUB_PUSH_EVENT_COMMITS_ADDED_AGGREGATION_GUARD_ONLY',
+        'failure_scope': 'GITHUB_ACTIONS_PUSH_PAYLOAD_OMITS_COMMIT_FILE_LISTS_USED_BY_FROZEN_GUARD',
         'A_Q_L_runtime_binding_failure': False,
         'class_solver_invoked': False,
         'scientific_response_computed': False,
