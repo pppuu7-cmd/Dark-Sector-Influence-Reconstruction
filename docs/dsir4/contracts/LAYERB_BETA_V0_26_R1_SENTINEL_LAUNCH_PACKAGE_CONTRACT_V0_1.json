@@ -27,14 +27,14 @@
     "A": {
       "candidate_path": "docs/dsir4/authority_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_CANDIDATE_V0_1.json",
       "future_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json",
-      "git_blob_sha1": "5c7cc6898c387867b30c66220f3b1a7e85a20755",
+      "git_blob_sha1": "4ba40e59e6a9d48636d95d07efab575e56ae0966",
       "binds_W": true,
       "binds_L": false
     },
     "L": {
       "candidate_path": "docs/dsir4/launch_candidates/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_CANDIDATE_V0_1.json",
       "future_trigger_path": "docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json",
-      "git_blob_sha1": "f7b9e2d0a253592148c7a8012819feb5ea1626bc",
+      "git_blob_sha1": "9c217e41764d979bea12644fae372354241bc976",
       "binds_W": true,
       "binds_A": true
     },
