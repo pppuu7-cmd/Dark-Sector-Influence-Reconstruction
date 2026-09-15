@@ -1,0 +1,180 @@
+# INERT CANDIDATE BLUEPRINT — NOT AN ACTIVE .github/workflows FILE.
+# Promotion into .github/workflows is forbidden until a separate static audit
+# and explicit sentinel launch authority exist.
+name: layerb-beta-v026-r1-sentinel-science-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: layerb-beta-v026-r1-sentinel-science-v0-1
+  cancel-in-progress: false
+
+env:
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json'
+  PROMOTION_AUTHORITY: 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_PR169_FUNNEL_QUALIFICATION_V0_1.json'
+  LAUNCH_AUTHORITY: 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json'
+  LAUNCH: 'docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json'
+  EXECUTOR: 'ci/layerb_beta_v026_r1_sentinel_v0_1.py'
+  DECISION: 'ci/layerb_beta_v026_r1_sentinel_decision_v0_1.py'
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+
+jobs:
+  authorize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify explicit one-run sentinel launch authority
+        run: |
+          set -euo pipefail
+          test -f "$LAUNCH_AUTHORITY"
+          test -f "$LAUNCH"
+          python3 - <<'PY'
+          import json, subprocess
+          A=json.load(open('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json'))
+          L=json.load(open('docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json'))
+          def blob(p): return subprocess.check_output(['git','hash-object',p],text=True).strip()
+          assert A['schema']=='LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1'
+          assert A['status']=='TERMINAL_LAUNCH_AUTHORITY'
+          assert A['sentinel_science_execution_authorized'] is True
+          assert A['full_107_row_execution_authorized'] is False
+          assert A['r1_contract_git_blob_sha1']==blob('docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json')
+          assert A['promotion_authority_git_blob_sha1']==blob('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_PR169_FUNNEL_QUALIFICATION_V0_1.json')
+          assert A['executor_git_blob_sha1']==blob('ci/layerb_beta_v026_r1_sentinel_v0_1.py')
+          assert A['decision_git_blob_sha1']==blob('ci/layerb_beta_v026_r1_sentinel_decision_v0_1.py')
+          assert L['authorized_launch_count']==1
+          assert L['launch_authority_git_blob_sha1']==blob('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json')
+          assert L['sentinel_science_execution_authorized'] is True
+          assert L['full_107_row_execution_authorized'] is False
+          print('V026_R1_SENTINEL_EXPLICIT_LAUNCH_AUTHORITY_PASS')
+          PY
+
+  materialize-plan:
+    needs: authorize
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch exact frozen response-blind source plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/10298655751/zip" > safe/plan.zip
+          printf '%s  %s\n' '9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7' safe/plan.zip | sha256sum -c -
+          unzip -q safe/plan.zip -d safe/unpacked
+          test "$(wc -c < safe/unpacked/plan.json)" = '3953984'
+          printf '%s  %s\n' 'c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064' safe/unpacked/plan.json | sha256sum -c -
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-sentinel-source-plan
+          path: safe/unpacked/plan.json
+          if-no-files-found: error
+          retention-days: 90
+
+  lane:
+    needs: [authorize, materialize-plan]
+    strategy:
+      fail-fast: false
+      max-parallel: 32
+      matrix:
+        replicate: [R01,R02,R03,R04,R05,R06,R07,R08,R09,R10,R11,R12,R13,R14,R15,R16,R17,R18,R19,R20,R21,R22,R23,R24,R25,R26,R27,R28,R29,R30,R31,R32]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-sentinel-source-plan
+          path: inputs/plan
+      - name: Install exact numerical/build stack
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'scipy==1.17.1' 'Cython<3' six >/dev/null
+      - name: Build exact sentinel CLASS envelope
+        run: |
+          set -euo pipefail
+          git clone -q https://github.com/kaeonikc/class_iv.git external_class
+          git -C external_class checkout -q "$CLASS_COMMIT"
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 1152',1))
+          q=Path('external_class/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 32768',1))
+          r=Path('external_class/source/perturbations.c'); s=r.read_text(); old='perhaps_print_variables = perturb_print_variables;'; assert s.count(old)==1; r.write_text(s.replace(old,'perhaps_print_variables = NULL;',1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external_class
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external_class
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" make -C external_class -j2 all >/dev/null
+      - name: Execute one frozen sentinel lane
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python "$EXECUTOR" \
+            --mode lane --replicate '${{ matrix.replicate }}' \
+            --contract "$CONTRACT" --plan inputs/plan/plan.json \
+            --launch-authority "$LAUNCH_AUTHORITY" \
+            --out "safe/lane_${{ matrix.replicate }}.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-sentinel-${{ matrix.replicate }}
+          path: safe/lane_${{ matrix.replicate }}.json
+          if-no-files-found: error
+          retention-days: 90
+
+  decision:
+    needs: lane
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-v026-r1-sentinel-R*
+          path: inputs/lanes
+          merge-multiple: true
+      - name: Finalize sentinel only; never launch full replay
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          test "$(find inputs/lanes -name 'lane_R*.json' | wc -l)" = '32'
+          python3 "$DECISION" \
+            --contract "$CONTRACT" --promotion-authority "$PROMOTION_AUTHORITY" \
+            --inputs inputs/lanes/lane_R*.json --out safe/sentinel_decision.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/sentinel_decision.json'))
+          assert d['full_replay_launch_authorized'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          print(d['classification'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-sentinel-decision-v0-1
+          path: safe/sentinel_decision.json
+          if-no-files-found: error
+          retention-days: 90
