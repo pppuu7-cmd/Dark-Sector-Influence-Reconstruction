@@ -2,86 +2,68 @@
 
 Updated: 2026-09-15. Scope: **DSIR only**; RTK/RQIR/KMQGB/KMDSB excluded.
 
-## Open PR #168 — prospective Core-v1 scope only
+## Current authoritative numerical funnel
 
-PR #168, `Freeze DSIR Core v1 completion scope`, reviewed at head `4983e0b1a8537e64b6a90eacd8857fe98ac0ebe0`, is not main authority and does not change the current scientific gate chain. Independent review is persisted at `docs/dsir4/audits/DSIR_CORE_V1_COMPLETION_SCOPE_PR168_FUNNEL_AUDIT_V0_1.md`; qualification authority is `docs/dsir4/authority/DSIR_CORE_V1_COMPLETION_SCOPE_PR168_QUALIFICATION_AUDIT_V0_1.json`. Verdict: **`QUALIFIED`**.
+The reproducibility/mechanism chain is terminal through V0.25. V0.25 terminal numerical classification remains `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, effect `+0/+0`. The historical independent audit verdict `INVALID_PROVENANCE` remains attached to the original producer artifact-to-repository binding; terminal provenance correction `docs/dsir4/authority/LAYERB_BETA_V0_25_PROVENANCE_CORRECTION_V0_1.json` repaired that provenance without rewriting the historical producer result.
 
-The proposed Core-v1 completion document is admissible only as prospective governance/release-scope planning. Its F1 description is compatible with the current next admissible gate, but its `Authorized critical path` wording is not current authorization for later F2-F7 work. Covariance, whitening, nuisance, statistical/model comparison, relation-null, `Wm_S3`, global 65537 and downstream science remain closed until separately authorized through the terminal gate chain.
+The V0.25 numerical result authorizes the prospective successor `PROSPECTIVELY_FROZEN_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_AUDIT`. It does not itself authorize a 107-row execution.
 
-PR run `34910842417` is green but is the pre-existing G-T-tau additive-projection workflow, not validation of the new scope contract. Artifact `10374282750`, digest `sha256:3648048f8ebae4c33cf2b99e702b338027d7a5725d9c3bfbfed3691edf160633`, is incidental regression evidence only.
+## V0.26 R1 specification is now on main
 
-PR #168 adds no full-107 preregistration or immutable contract. It therefore cannot execute F1. If the scope proposal is later accepted on main, recovery must be reconciled and any new readiness dimensions must receive frozen denominators, calculation/migration rules and initial values before replacing the current readiness/frontier accounting. `DSIR Core v1 FROZEN` is not scientific closure or physical dark-sector inference.
+The earlier split V0.26 candidate and its `25062` hosted-runtime mismatch remain historical qualification evidence. They were superseded prospectively, not rewritten.
 
-## Reproducibility/mechanism chain terminal through V0.25
+Consolidated R1 preregistration is now on main at `prereg/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.md`, git blob `545e5be589e0f8029d23db2edb4e2faad116c3a0`. Machine contract is `docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json`, git blob `b510d8e97baf1c0b7b216c0605d83cdd029254e9`.
 
-V0.21 established NumPy AVX-512 runtime dispatch as the causal hosted branch; V0.22 established the forced NumPy non-AVX512 baseline; V0.23 revalidated the frozen production-h replay cells; V0.24 attributed the remaining two immutable parent violations to common-grid cubic interpolation under the validated baseline.
+Independent qualification authority `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_PR169_FUNNEL_QUALIFICATION_V0_1.json`, git blob `cdbcea2622564d40aa9d1edc045a5808f8cdd1c4`, verdict `QUALIFIED`, authorized exact PR #169 promotion. PR #170 carrying that audit authority merged first; exact PR #169 then merged to main at commit `438ab2e6732512cf50c163719ade01575257b209`.
 
-## V0.25 terminal numerical result
+R1 freezes the complete 107-row denominator, exact retained/order hashes, response-blind source-plan identity, hosted NumPy-1.26.4 GRID896 binary64 identity, parser-byte convention and corrected M013 maximum `25063`, route-specific tolerances (alpha canonical-32769 route `3e-10`; beta exact-target-union route `1e-12`), scientific threshold strict `<1e-3`, technical threshold strict `<1e-5`, requested-node binding `<=1e-12`, exact mixed/direct batch plans, and total full-replay CLASS construction accounting of 738.
 
-Parent authority: `docs/dsir4/authority/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REASSESSMENT_V0_24.json`.
+R1 remains numerical/reproducibility scope only. Covariance, whitening, nuisance, relation-null, `Wm_S3`, global 65537, statistical/model inference and physical dark-sector inference remain closed.
 
-Preregistration: `prereg/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REMEDY_BENCHMARK_V0_25.md`, commit `4a1247c56cfbe293a5203ca0b44968ae13aacade`.
-Contract: `docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REMEDY_BENCHMARK_V0_25.json`, commit `876b56589d61b263a569583e7cb69e887d68d326`.
-Executor: `ci/layerb_beta_forced_baseline_production_h_common_grid_interpolation_remedy_benchmark_v0_25.py`, commit `03cbd910774aa365859abaff18496b01b22bc24d`.
-Workflow: `.github/workflows/layerb-beta-forced-baseline-production-h-common-grid-interpolation-remedy-benchmark-v0-25.yml`, commit `f63156fa1adaeb61e496cc5259cf77a584496612`.
-Launch/head: `05c87c85093142cfca4d0a432269d5f2440a6e88`.
+## PR #171 — pre-full sentinel implementation
 
-Run `34896282790` terminal `success`, run number 1 / attempt 1; invariant + 32 substantive lanes + decision all terminal. All 32 lanes eligible. Native NumPy runtime classes: 7 AVX512-active / 25 AVX512-inactive. Decision job `104165699139`; decision artifact `10370496892`; artifact ZIP digest `sha256:7fcb329027fad04425802f4a90b7874baa2a25e949fbc1057db1a3ed70546562`.
+PR #171 `Construct DSIR V0.26 R1 pre-full sentinel candidate`, exact reviewed head `973eea003e6e246b7e1853b5469cb0a7d90c8177`, branches from exact R1 main `438ab2e6732512cf50c163719ade01575257b209`.
 
-Frozen numerical classification: `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`; scientific effect `+0/+0`.
+It adds only an inert sentinel implementation package: executor blob `9affe7c7d4e02bbc728ba15e3cde893ec9876b38`; decision blob `97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9`; inert workflow blueprint blob `1ed36c850d80537646556a858204cac14eca852e`; implementation-contract blob `e14804463d9eab288162b4c98e8dd5c1fd6a10eb`; response-blind static-auditor V0.2 blob `ebb1db6b365560e9e4c8ab7e575d163bdab58cc4`. It does not add the active science workflow, launch authority, or launch descriptor.
 
-The frozen six-cell panel reproduced both parent violations. All 24 primitive scientific response series satisfy the technical reproducibility gate with cross-host maximum pairwise relative spread `0.0` and native-class mean separation `0.0`. `EXACT_TARGET_UNION` matches the fresh direct reference exactly on every panel cell (`max relative difference = 0.0`) and passes mixed-node-set safety. `ONE_STEP_GRID_REFINEMENT` fails the all-six rule because GRID768/T3 has `0.001136253405249066 >= 0.001`.
+The sentinel scientific object was frozen in R1 before implementation: 32 lanes; M076/M298/M300 with D50/D00/D58 direct comparators; 14 CLASS constructions per lane; minimum 6 eligible with >=3 native AVX512-active and >=3 native AVX512-inactive; strict primitive reproducibility/class-separation `<1e-5`; mixed-common vs pure-common and exact vs direct strict `<1e-3`; requested-node binding `<=1e-12`. No response-informed tuning occurred because no sentinel scientific response has run.
 
-## Independent audit qualification
+The executor is fail-closed. Lane/child require a separate `TERMINAL_LAUNCH_AUTHORITY`; the lane takes the native fingerprint unmasked and launches forced preflight/substantive child subprocesses with the exact frozen non-AVX512 NumPy mask. The child verifies the mask and forced dispatch profile before CLASS scientific work, checks exact GRID896 identity, and uses beta `tol_perturb_integration=1e-12`.
 
-Audit report: `docs/dsir4/audits/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REMEDY_BENCHMARK_V0_25_FUNNEL_AUDIT.md`, commit `44c322496cedd63152cdae9dc4a8c7015f7f0e4d`.
+## PR #171 hosted response-blind static evidence
 
-Qualification authority: `docs/dsir4/authority/LAYERB_BETA_V0_25_PROVENANCE_QUALIFICATION_AUDIT_V0_1.json`, commit `9dcc2be6f5cc2946d8ba6586db196c710034e846`.
+Static run `34958187529` is terminal success, run #1 / attempt #1, job `104345200819`. Artifact `10392400462` ZIP SHA256 `2384436ee78a9a1ee4d55e5297e3b36f2dff9ffe53a243e20af0b2f7dfe729f0`; independently downloaded bytes match. `sentinel_static_audit.json` is 1344 bytes SHA256 `33972dc25eabb7a19097164234b5e336d4bc4bd3cfef37ff8a442443810b75a8`; static preflight SHA256 `63429e12875545d0a3d0be01882c6bf9b71dd5e26a840fe739b969fa3f5be3bb`; unauthorized-lane negative-control text SHA256 `8ebb37d6a3d51d46e259f2eb66d5622162a5494cc94f085c52534d501208991d`.
 
-Auditor verdict: **`INVALID_PROVENANCE`** for the original producer authority's artifact-to-repository provenance binding. The numerical classification itself is not refuted.
+The negative control proves a lane without launch authority fails before CLASS and produces no lane output. The static receipt records no CLASS solve, no scientific-response read, no covariance read, no active science workflow, no launch authority, no launch descriptor, and no full-107 authorization.
 
-Independent artifact inspection established the actual terminal `decision.json` SHA256 as `5bcc9d93c22d32ace5d97f78ff9ce89b399cc4c7e4377b174c5fe882869dd71f`; the producer documents had recorded `f3d0f47c02c20f39da0fcd71e28665308d53ab8386c876776d3f64da6a7d4bb8`. The original persisted decision also omitted the 24-entry `primitive_response_metrics` emitted by the frozen executor.
+Separate external funnel run `34958540961` is terminal success, run #1 / attempt #1, job `104346337918`, artifact `10392755109`, ZIP SHA256 `8fade9139142e2ab3f6a99ef2696853d3f5dce026c6fa130a43d96bff6870edb`; `funnel_audit.json` is 1848 bytes SHA256 `ac2c2cc9d2aa536207a8ee5121cb37d92665f521cb6e0ef41865540810ded333`, verdict `QUALIFIED`.
 
-## Terminal provenance correction
+## Independent PR #171 qualification
 
-Historical V0.25 result/authority remains immutable and is not rewritten.
+Current audit report: `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_PR171_FUNNEL_AUDIT_V0_2.md`, commit `3200e887af26b686af882604ec8e3665785b2cd0`.
 
-Exact terminal artifact content has been materialized separately at `results/dsir4/LAYERB_BETA_FORCED_BASELINE_PRODUCTION_H_COMMON_GRID_INTERPOLATION_REMEDY_BENCHMARK_V0_25_DECISION_ARTIFACT_EXACT.json`, exact-materialization commit `f26a0bd1dbf03f356509178061df40f104e93a46`.
+Current terminal audit authority: `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_PR171_QUALIFICATION_AUDIT_V0_2.json`, commit `19a88e7e60f8c1bbb6711c5e7a2ea4fd486ab231`. Verdict: **`QUALIFIED`**.
 
-Correction authority: `docs/dsir4/authority/LAYERB_BETA_V0_25_PROVENANCE_CORRECTION_V0_1.json`, commit `3d51ce928c0e6b76c69f5b42171abc3640c8b1e1`. Correction scope is provenance only. It binds artifact ID `10370496892`, ZIP digest `7fcb329027fad04425802f4a90b7874baa2a25e949fbc1057db1a3ed70546562`, actual inner SHA256 `5bcc9d93c22d32ace5d97f78ff9ce89b399cc4c7e4377b174c5fe882869dd71f`, and preserves `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED` unchanged.
+The exact PR171 implementation may be promoted as an inert pre-full sentinel implementation candidate. This is not sentinel scientific execution authority.
 
-## V0.26 prospective branch — response-blind static candidate review
+A concrete qualification was added to the external funnel receipt's proposed launch hardening. The current inert blueprint makes the future launch descriptor bind the launch-authority git blob, while the external receipt also asks the launch authority to bind the final launch-descriptor git blob. Mutual final git-blob hash binding is circular and generally unrealizable. Future launch provenance must use an **acyclic exact-hash DAG**.
 
-Branch `research/v026-full-layerb-prereg`, reviewed head `ed67dade1fb08873ec3807a9513a55a725527fe6`, is a prospective candidate only. It is not main authority and is not executable.
+Preferred order: freeze active workflow -> create launch authority binding exact R1/promotion/executor/decision/active-workflow blobs and authorizing one sentinel run while full107 remains false -> create launch descriptor binding launch-authority and active-workflow blobs -> independently static-audit the complete inactive launch package -> only then may a terminal launch-package authority permit one sentinel science run.
 
-Prospective chronology precedes the hosted static result: preregistration `8fc1a9d8dc908309f956e2295e934639730d3796`; base contract `2cf8c2fa3ee24c29c77026e8dd022b67a00cfa14`; response-blind auditor `da18cff9982d7ef91f13caa7a46a388295cd5207`; hardening amendment `54c7a6c32d04cf498df6cd9a79e1bc04b8ad2c90`; route-specific alpha/beta tolerance correction `e6b5e622e27ff8fde0820cbf0f731fd0c3751cd3`; hosted workflow execution head `20eb0f8db1bc4d426fd957dbed6a1211a0459f10`.
+## Gate position and exact next action
 
-The candidate correctly keeps science execution closed. Alpha is prospectively restored to its inherited canonical-32769 production tolerance `3e-10`; beta exact-target pure/mixed/direct routes use `1e-12`; both preserve sampling `0.00035`. The older global `1e-12` sentence remains superseded and must disappear from a consolidated main-ready specification rather than be interpreted ad hoc.
+Current gate chain is:
 
-Hosted static run `34952288638` is terminal success, run number 1 / attempt 1, unique push run for exact head `20eb0f8...`. Job `104325850674` succeeded. Artifact `10389832162` ZIP digest is `sha256:8fce87986b0e96356fdc6935df0f16470b224d10caa371db3fe644929d4616b3`; `v026_static_audit.json` is 2924 bytes SHA256 `718a1ba3be7ce14527e8995bff174c9f53e540a0e5f74008cff0bc1e687acbcd`. No CLASS solver, scientific response, or covariance was read.
+`V0.25 TERMINAL NUMERICAL AUTHORITY -> V0.26 R1 PREREGISTERED/QUALIFIED SPECIFICATION ON MAIN -> PR171 SENTINEL IMPLEMENTATION QUALIFIED FOR EXACT PROMOTION -> LAUNCH PACKAGE NOT YET FROZEN/AUDITED -> SENTINEL SCIENCE NOT EXECUTED -> FULL 107 ROW CLOSED`.
 
-The exact response-blind source plan is independently bound to artifact `10298655751`, ZIP SHA256 `9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7`, `plan.json` 3,953,984 bytes SHA256 `c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064`. Its origin run `34695347893` failed overall, but `materialize-plan` job `103557768867` succeeded and produced this response-blind artifact before later science-job failure/cancellation; only that successful materialization job is inherited as source-plan provenance.
+Next admissible action: exact promotion of the qualified PR171 implementation blobs. After promotion, construct an **inactive** active-workflow/launch-authority/launch-descriptor package with acyclic exact hash bindings and submit it to a separate response-blind static launch-package audit.
 
-Core response-blind geometry reproduces: 377 DES calls / 64,658 unique non-overlapping DES targets, 64 BOSS GL64 + 128 fine-only GL128 calls sharing one 99-k set, GRID896 with 897 guarded common nodes and zero exact-target overlap, 301 mixed batches canonical SHA256 `59abce49f6338c30b93d11fa462e1ff8642615d6100d23feca4b36505a5cef85`, and 59 direct batches canonical SHA256 `1c98927960e81d7fb55ebc687ef36059d964b233001551dba2aa9a01652c8864`.
-
-Independent audit report: `docs/dsir4/audits/LAYERB_BETA_V0_26_RESPONSE_BLIND_STATIC_AUDIT_FUNNEL_REVIEW_V0_1.md`, commit `182676e8b53c9cf4fab673f5164fb43849ca0fc4`. Terminal audit authority: `docs/dsir4/authority/LAYERB_BETA_V0_26_RESPONSE_BLIND_STATIC_AUDIT_QUALIFICATION_V0_1.json`, commit `d50419d3b8e4a9fc8ee10d9e28b98043d9cf7f2b`. Verdict: **`QUALIFIED`**.
-
-The qualification is concrete. The candidate freezes mixed M013 `.17g` maximum at `25062` bytes; the hosted run under the candidate's pinned NumPy `1.26.4` reports `25063`. Both remain below parser capacity `32768`, so capacity safety survives, but the static PASS implementation does not assert this frozen scalar and therefore cannot certify full scalar identity. A NumPy `2.3.5` response-blind control reproduces the recorded non-authoritative local-precommit output SHA256 `d55cb61f2cd5338dba0b36df656409fdc248afe3cfa1972fe060b3a09b09c515` together with `25062`, exposing generated GRID896/serialization sensitivity to the numerical Python runtime. The exact intended NumPy-1.26.4 GRID896 node payload should therefore be hash-bound in the reconciled specification.
-
-The branch note at `ed67dade...` claiming zero workflow runs is stale. Actions shows run `34952288638`; the note was committed during the short interval after run creation but before completion. Actions overrides that note for workflow/provenance state.
-
-## Authorized next stage
-
-Exactly: `PROSPECTIVELY_FROZEN_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_AUDIT`.
-
-This successor is **not currently executable**. The present branch candidate is not a main-ready immutable freeze because its effective specification is split across a base preregistration, base contract, hardening amendment and runtime correction, and one frozen static scalar conflicts with the hosted pinned-runtime receipt.
-
-Next admissible gate: create one consolidated prospective **V0.26 R1 preregistration** plus one immutable **V0.26 R1 machine-readable contract**. R1 must directly incorporate the alpha hardening and route-specific tolerances; preserve the exact 107-row denominator/input identities; freeze the exact-target-union construction and solver accounting; remove/correct the superseded `25062` field; define payload-byte counting convention; bind exact generated GRID896 identity under NumPy `1.26.4` (preferably canonical binary64/u64hex hash); retain scientific `<1e-3`, technical `<1e-5` and exact-binding `<=1e-12` semantics; and preserve complete provenance/interpretation firewalls.
-
-After R1 is committed, an independent R1 contract audit is required. **Do not author or launch the 32-lane sentinel science workflow and do not launch any full 107-row replay before that independent audit explicitly authorizes the next step.** Static response-blind PASS is not scientific execution authority.
-
-The successor must not silently change the V0.25 construction. Any full object must prospectively specify its deterministic exact-target batching/union semantics; target-local/ad hoc post-result unions remain forbidden. Historical `1025 + 107 = 1132 < 1152` is only a capacity bound.
+Do not launch the sentinel science workflow from the PR171 authority. Do not launch the full 107-row replay. A later sentinel PASS would still require an independent sentinel-result funnel audit plus a distinct explicit full-replay launch authority.
 
 ## Frozen boundaries
 
-Production `h=1e-4`; native `k_per_decade_for_pk=20`; scientific response threshold `<1e-3`; technical reproducibility `<1e-5`; exact binding `<=1e-12`; sampling `0.00035`. Current V0.25 beta stabilization used `tol_perturb_integration=1e-12`; the prospective V0.26 candidate's alpha route is separately constrained by its canonical production precision and is not yet main execution authority. Covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537 and physical dark-sector inference remain closed. Frozen readiness `68%`; scientific frontier `67%`.
+Production `h=1e-4`; native `k_per_decade_for_pk=20`; sampling `0.00035`; scientific numerical threshold strict `<1e-3`; technical reproducibility strict `<1e-5`; requested-node binding `<=1e-12`; alpha canonical route tolerance `3e-10`; beta exact-target route tolerance `1e-12`. Full 107-row denominator remains exactly frozen. No covariance/whitening/nuisance/relation-null/`Wm_S3`/global-65537/downstream physical science. Effect `+0/+0`. Repository readiness remains `68%`; scientific frontier remains `67%`.
+
+## Open PR #168 governance note
+
+PR #168 remains only a prospective Core-v1 scope proposal. Its prior independent verdict `QUALIFIED` remains scoped to governance wording. It does not authorize F2-F7 or any downstream science and does not alter the active numerical gate chain above.
