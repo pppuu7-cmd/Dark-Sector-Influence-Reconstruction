@@ -1,0 +1,103 @@
+name: dsir-v026-r1-sentinel-first-attempt-forensic-audit-v0-1
+
+on:
+  push:
+    branches:
+      - audit/v026-r1-sentinel-first-attempt-forensic
+    paths:
+      - '.github/workflows/dsir-v026-r1-sentinel-first-attempt-forensic-audit-v0-1.yml'
+      - 'ci/dsir_v026_r1_sentinel_first_attempt_forensic_audit_v0_1.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  RUN_ID: '35033268924'
+  AUTHORIZE_JOB_ID: '104596462857'
+  RUN_HEAD: '9a333294f3acb80201c5f6ed5b74918c1c767232'
+  AUDITOR: 'ci/dsir_v026_r1_sentinel_first_attempt_forensic_audit_v0_1.py'
+
+jobs:
+  first-attempt-forensic-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout forensic branch with full graph
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify exact forensic auditor and frozen run head
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUDITOR")" = 'c55d9594ec7a3d318f9e6b8939142358d52df481'
+          git cat-file -e "$RUN_HEAD^{commit}"
+          test "$(git rev-parse "$RUN_HEAD:.github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml")" = '19907175f0f3417ddee2aba6916d961c6be02e26'
+          test "$(git rev-parse "$RUN_HEAD:docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json")" = 'fa7014435f0a5688def2124898ddd01d0c0183aa'
+
+      - name: Capture immutable first-attempt metadata and authorize log
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}" > safe/run.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs?per_page=100" > safe/jobs.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/artifacts?per_page=100" > safe/artifacts.json
+          gh run view "$RUN_ID" --job "$AUTHORIZE_JOB_ID" --log > safe/authorize.log
+          sha256sum safe/run.json safe/jobs.json safe/artifacts.json safe/authorize.log > safe/input_evidence.sha256
+
+      - name: Execute first-attempt forensic audit
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$AUDITOR"
+          python3 "$AUDITOR" \
+            --run-json safe/run.json \
+            --jobs-json safe/jobs.json \
+            --artifacts-json safe/artifacts.json \
+            --authorize-log safe/authorize.log \
+            --out safe/first_attempt_forensic_audit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/first_attempt_forensic_audit.json'))
+          assert d['verdict']=='TERMINAL_BLOCKED'
+          assert d['classification']=='SENTINEL_FIRST_ATTEMPT_AUTHORIZATION_EVENT_GUARD_BLOCKED_BEFORE_SCIENCE'
+          assert d['run_id']==35033268924
+          assert d['run_attempt']==1
+          assert d['authorize_job_conclusion']=='failure'
+          assert d['materialize_plan_conclusion']=='skipped'
+          assert d['lane_conclusion']=='skipped'
+          assert d['decision_finalizer_executed'] is False
+          assert d['artifact_count']==0
+          assert d['repository_merge_diff_exactly_one_added_L'] is True
+          assert d['repository_staging_diff_exactly_one_added_L'] is True
+          assert d['all_package_assertions_before_event_guard_reproduced_pass'] is True
+          assert d['traceback_stdin_line']==48
+          assert d['traceback_line_source']=='assert added.count(launch)==1'
+          assert d['event_payload_added_count_equals_one_predicate'] is False
+          assert d['A_Q_L_runtime_binding_failure'] is False
+          assert d['class_solver_invoked'] is False
+          assert d['scientific_response_computed'] is False
+          assert d['rerun_authorized'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          assert d['token']=='TERMINAL_BLOCKED_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_EVENT_GUARD_PLUS_0_PLUS_0'
+          print(d['token'])
+          PY
+          sha256sum safe/first_attempt_forensic_audit.json > safe/first_attempt_forensic_audit.sha256
+
+      - name: Persist immutable first-attempt forensic evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-sentinel-first-attempt-forensic-audit-v0-1
+          path: |
+            safe/first_attempt_forensic_audit.json
+            safe/first_attempt_forensic_audit.sha256
+            safe/input_evidence.sha256
+            safe/run.json
+            safe/jobs.json
+            safe/artifacts.json
+            safe/authorize.log
+          if-no-files-found: error
+          retention-days: 90
