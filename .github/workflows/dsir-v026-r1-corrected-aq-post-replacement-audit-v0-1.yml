@@ -1,0 +1,92 @@
+name: dsir-v026-r1-corrected-aq-post-replacement-audit-v0-1
+
+on:
+  push:
+    branches:
+      - audit/v026-r1-corrected-aq-post-replacement
+    paths:
+      - '.github/workflows/dsir-v026-r1-corrected-aq-post-replacement-audit-v0-1.yml'
+      - 'ci/dsir_v026_r1_corrected_aq_post_replacement_audit_v0_1.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  PROMO: '41ef654d7552b670c20d3202249d7687bae5f870'
+  AUDITOR: 'ci/dsir_v026_r1_corrected_aq_post_replacement_audit_v0_1.py'
+  SCIENCE_WORKFLOW: 'layerb-beta-v026-r1-sentinel-science-v0-1.yml'
+
+jobs:
+  corrected-aq-post-replacement-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout audit branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify exact auditor and promoted objects
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUDITOR")" = 'badce957a7bac161b203048c25f71c559b890b21'
+          git cat-file -e "$PROMO^{commit}"
+          test "$(git rev-parse "$PROMO:docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_AUTHORITY_V0_1.json")" = '1c9945dd00b137f3e202efa14bf4112fffebf8af'
+          test "$(git rev-parse "$PROMO:docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_PACKAGE_QUALIFICATION_V0_1.json")" = 'f7b97f47d9e771e3d3ea78875da5a45962160cd0'
+          if git cat-file -e "$PROMO:docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json" 2>/dev/null; then
+            echo 'ERROR: final L unexpectedly present at corrected A/Q replacement head' >&2
+            exit 1
+          fi
+
+      - name: Capture exact sentinel-science runs at replacement head
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/workflows/${SCIENCE_WORKFLOW}/runs?head_sha=${PROMO}&event=push&per_page=100" > safe/science_runs.json
+
+      - name: Execute response-blind post-replacement audit
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$AUDITOR"
+          python3 "$AUDITOR" --runs-json safe/science_runs.json --out safe/corrected_aq_post_replacement_audit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/corrected_aq_post_replacement_audit.json'))
+          assert d['verdict']=='CONFIRMED_SCOPED'
+          assert d['classification']=='SENTINEL_CORRECTED_AQ_MAIN_REPLACEMENT_CONFIRMED_FAIL_CLOSED_L_GATE_REVIEW_ADMISSIBLE'
+          assert d['final_A_git_blob_sha1']=='1c9945dd00b137f3e202efa14bf4112fffebf8af'
+          assert d['final_Q_git_blob_sha1']=='f7b97f47d9e771e3d3ea78875da5a45962160cd0'
+          assert d['bound_future_L_git_blob_sha1']=='fa7014435f0a5688def2124898ddd01d0c0183aa'
+          assert d['final_L_present'] is False
+          assert d['promotion_head_push_run_count']==0
+          assert d['frozen_W_Q_consumer_contract_compatible'] is True
+          assert d['frozen_executor_A_consumer_contract_compatible'] is True
+          assert d['decision_full_replay_firewall_intact'] is True
+          assert d['sentinel_workflow_executed'] is False
+          assert d['class_solver_invoked'] is False
+          assert d['scientific_response_read'] is False
+          assert d['covariance_read'] is False
+          assert d['final_L_creation_authorized_by_this_receipt'] is False
+          assert d['sentinel_science_execution_authorized_by_this_receipt'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          assert d['token']=='CONFIRMED_LAYERB_BETA_V0_26_R1_CORRECTED_AQ_POST_REPLACEMENT_FAIL_CLOSED_PLUS_0_PLUS_0'
+          print(d['token'])
+          PY
+          sha256sum safe/corrected_aq_post_replacement_audit.json > safe/corrected_aq_post_replacement_audit.sha256
+          sha256sum safe/science_runs.json > safe/science_runs.sha256
+
+      - name: Persist immutable post-replacement receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-corrected-aq-post-replacement-audit-v0-1
+          path: |
+            safe/corrected_aq_post_replacement_audit.json
+            safe/corrected_aq_post_replacement_audit.sha256
+            safe/science_runs.json
+            safe/science_runs.sha256
+          if-no-files-found: error
+          retention-days: 90
