@@ -1,0 +1,100 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAIL_CLOSED_INTERIM_V0_1",
+  "status": "INTERIM_FAIL_CLOSED_FIRST_ATTEMPT_TERMINALIZATION_PENDING_FORENSIC_FUNNEL",
+  "date": "2026-09-16",
+  "scope": "EXACT_V0_26_R1_SENTINEL_RUN_35033268924_FIRST_ATTEMPT_ONLY",
+  "effect": "+0/+0",
+  "verdict": "BLOCKED",
+  "classification": "SENTINEL_FIRST_ATTEMPT_CONSUMED_AUTHORIZATION_EVENT_GUARD_FAILURE_NO_SCIENCE",
+  "exact_trigger": {
+    "merge_sha": "9a333294f3acb80201c5f6ed5b74918c1c767232",
+    "first_parent_sha": "2ca2d4c35f9dcfe2be00e573598e6189f987508d",
+    "staging_parent_sha": "657e5d6b2fe3ad7f7c11bcd2af873cffe800cc96",
+    "final_L_path": "docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json",
+    "final_L_git_blob_sha1": "fa7014435f0a5688def2124898ddd01d0c0183aa",
+    "merge_diff_exactly_one_added_L": true
+  },
+  "one_run_authority": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_EXACT_L_GATE_AUTHORITY_V0_1.json",
+    "git_blob_sha1": "1c1819ee6aa7a48597770d9bc9116185d061a49c",
+    "authorized_sentinel_science_run_count": 1,
+    "rerun_forbidden": true,
+    "full_107_row_execution_authorized": false
+  },
+  "first_attempt": {
+    "run_id": 35033268924,
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "head_sha": "9a333294f3acb80201c5f6ed5b74918c1c767232",
+    "workflow_name": "layerb-beta-v026-r1-sentinel-science-v0-1",
+    "workflow_git_blob_sha1": "19907175f0f3417ddee2aba6916d961c6be02e26",
+    "run_status": "completed",
+    "run_conclusion": "failure",
+    "authorize_job_id": 104596462857,
+    "authorize_job_conclusion": "failure",
+    "materialize_plan_conclusion": "skipped",
+    "lane_conclusion": "skipped",
+    "decision_job_id": 104596495504,
+    "decision_job_conclusion": "failure",
+    "decision_finalizer_executed": false,
+    "artifact_count": 0
+  },
+  "preliminary_failure_localization": {
+    "traceback_source": "AUTHORIZE_EMBEDDED_PYTHON",
+    "traceback_stdin_line": 48,
+    "traceback_line_source": "assert added.count(launch)==1",
+    "all_prior_package_assertions_reached_before_failure": true,
+    "A_git_blob_sha1": "1c9945dd00b137f3e202efa14bf4112fffebf8af",
+    "Q_git_blob_sha1": "f7b97f47d9e771e3d3ea78875da5a45962160cd0",
+    "L_git_blob_sha1": "fa7014435f0a5688def2124898ddd01d0c0183aa",
+    "A_Q_L_runtime_binding_failure": false,
+    "platform_contract_source": "https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push",
+    "platform_contract_checked_date": "2026-09-16",
+    "github_actions_push_payload_commit_file_lists_available": false,
+    "guard_missing_field_fallback_is_empty_list": true,
+    "effective_added_count_under_frozen_guard": 0,
+    "failure_scope": "GITHUB_ACTIONS_PUSH_PAYLOAD_OMITS_COMMIT_FILE_LISTS_USED_BY_FROZEN_GUARD"
+  },
+  "scientific_boundary": {
+    "class_solver_invoked": false,
+    "scientific_response_computed": false,
+    "scientific_response_read": false,
+    "sentinel_scientific_classification_available": false,
+    "covariance_read": false,
+    "whitening_read": false,
+    "nuisance_read": false,
+    "relation_null_read": false,
+    "Wm_S3_opened": false,
+    "global_65537_launched": false,
+    "full_replay_launch_authorized": false,
+    "full_107_row_execution_authorized": false
+  },
+  "forensic_gate": {
+    "branch": "audit/v026-r1-sentinel-first-attempt-forensic",
+    "run_id": 35033678449,
+    "status_at_authority_creation": "queued",
+    "immutable_forensic_receipt_required_before_terminal_result_authority": true,
+    "independent_failure_funnel_required_after_forensic_receipt": true
+  },
+  "forbidden": {
+    "rerun_run_35033268924": true,
+    "same_nonce_second_attempt": true,
+    "modify_final_L": true,
+    "remove_final_L": true,
+    "recreate_final_L": true,
+    "interpret_as_sentinel_scientific_pass_or_refutation": true,
+    "launch_full_107_row_replay": true,
+    "open_downstream_science": true
+  },
+  "audit_report": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_PRELIMINARY_FAILURE_AUDIT_V0_1.md",
+    "git_blob_sha1": "387e13ac2f1c88d0405c7b3f7a41886cd1e276af"
+  },
+  "authorized_next_stage": "COMPLETE_HOSTED_FIRST_ATTEMPT_FORENSIC_AUDIT_THEN_INDEPENDENT_FAILURE_FUNNEL_AND_TERMINAL_RESULT_AUTHORITY; ANY_FUTURE_SENTINEL_REQUIRES_SEPARATE_PROSPECTIVE_SUCCESSOR_GOVERNANCE",
+  "rerun_authorized": false,
+  "sentinel_science_execution_authorized_now": false,
+  "full_107_row_execution_authorized": false,
+  "readiness_percent": 68,
+  "scientific_frontier_percent": 67
+}
