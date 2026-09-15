@@ -1,0 +1,87 @@
+name: dsir-v026-r1-sentinel-wa-pretrigger-funnel-audit-v0-1
+
+on:
+  push:
+    branches:
+      - audit/v026-r1-sentinel-wa-pretrigger
+    paths:
+      - '.github/workflows/dsir-v026-r1-sentinel-wa-pretrigger-funnel-audit-v0-1.yml'
+      - 'ci/dsir_v026_r1_sentinel_wa_pretrigger_funnel_audit_v0_1.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  BASE_SHA: 'b7d65db1dacb355ddf2419a22cec38cc4b091c39'
+  CANDIDATE_HEAD: '15e7dbfb9c05744c026d5b03e5466267d802a2c7'
+  STATIC_RUN_ID: '35017254145'
+  STATIC_ARTIFACT_ID: '10415689546'
+  AUDITOR: 'ci/dsir_v026_r1_sentinel_wa_pretrigger_funnel_audit_v0_1.py'
+
+jobs:
+  wa-pretrigger-funnel-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout independent audit branch only
+        uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+
+      - name: Fetch exact base and W/A candidate as read-only git objects
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUDITOR")" = '6d32121ba347b5ffa130e61ed9533de946ae9a40'
+          git fetch --no-tags origin "$BASE_SHA" --depth=32
+          git fetch --no-tags origin "$CANDIDATE_HEAD" --depth=32
+          git cat-file -e "$BASE_SHA^{commit}"
+          git cat-file -e "$CANDIDATE_HEAD^{commit}"
+
+      - name: Capture exact static run and artifact metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${STATIC_RUN_ID}" > safe/run.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${CANDIDATE_HEAD}&event=push&per_page=100" > safe/head_runs.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${STATIC_ARTIFACT_ID}" > safe/artifact.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${STATIC_ARTIFACT_ID}/zip" > safe/static.zip
+          printf '%s  %s\n' 'ac4d6b601e8f8b90cb0ae21bfbdc8f360949453784da51688a76318668076c72' safe/static.zip | sha256sum -c -
+
+      - name: Execute independent W/A pretrigger funnel audit
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$AUDITOR"
+          python3 "$AUDITOR" \
+            --run-json safe/run.json \
+            --head-runs-json safe/head_runs.json \
+            --artifact-json safe/artifact.json \
+            --zip safe/static.zip \
+            --out safe/wa_pretrigger_funnel_audit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/wa_pretrigger_funnel_audit.json'))
+          assert d['token']=='QUALIFIED_DSIR_V0_26_R1_SENTINEL_WA_PRETRIGGER_FUNNEL_AUDIT_PLUS_0_PLUS_0'
+          assert d['verdict']=='QUALIFIED'
+          assert d['classification']=='SENTINEL_WA_STAGING_QUALIFIED_FOR_MAIN_PROMOTION_WITHOUT_L_OR_FINAL_Q'
+          assert d['L_present'] is False and d['final_Q_present'] is False
+          assert d['sentinel_workflow_executed'] is False
+          assert d['class_solver_invoked'] is False
+          assert d['scientific_response_read'] is False
+          assert d['sentinel_science_execution_authorized_by_this_audit'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          print(d['token'])
+          PY
+          sha256sum safe/wa_pretrigger_funnel_audit.json > safe/wa_pretrigger_funnel_audit.sha256
+
+      - name: Persist independent W/A pretrigger funnel receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-sentinel-wa-pretrigger-funnel-audit-v0-1
+          path: |
+            safe/wa_pretrigger_funnel_audit.json
+            safe/wa_pretrigger_funnel_audit.sha256
+          if-no-files-found: error
+          retention-days: 90
