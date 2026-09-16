@@ -1,0 +1,29 @@
+{
+  "authority_blob_runtime_bound": true,
+  "authority_inactive_before_hosted_audit": true,
+  "authorized_ref_runtime_enforced": true,
+  "classification": "HOSTED_RUNTIME_BINDING_AUDIT_REQUIRED_PROCEDURALLY_BUT_NOT_RUNTIME_BOUND",
+  "declared_hosted_audit_required_before_promotion": true,
+  "effect": "+0/+0",
+  "execution_authority_git_blob_sha1": "47788695c3ab7050099ed44cacbb6f507cbbf03d",
+  "failure_funnel_dispatch_authorized_now": false,
+  "full_107_row_execution_authorized": false,
+  "hosted_runtime_binding_audit_authority_runtime_bound": false,
+  "next_gate": "FREEZE_V0_3_WORKFLOW_THAT_REQUIRES_A_FUTURE_SEPARATELY_AUTHORED_TERMINAL_RUNTIME_BINDING_AUDIT_AUTHORITY;_DO_NOT_PROMOTE_OR_DISPATCH_V0_2",
+  "promotion_safe_if_hosted_audit_never_completed": false,
+  "required_correction": [
+    "ADD_FUTURE_RUNTIME_BINDING_AUDIT_AUTHORITY_PATH_AND_EXACT_BLOB_INPUT_TO_WORKFLOW",
+    "FAIL_CLOSED_UNLESS_TERMINAL_AUDIT_AUTHORITY_BINDS_EXACT_WORKFLOW_AUTHORITY_REVIEW_NONCE_REF_AND_EVENT",
+    "AUTHOR_TERMINAL_AUDIT_AUTHORITY_ONLY_AFTER_INDEPENDENT_AUDIT_COMPLETES"
+  ],
+  "review_blob_runtime_bound": true,
+  "review_confirmation_git_blob_sha1": "f8824d107a7fbfb260e5c5946a9d05f71131c94b",
+  "review_inactive_before_hosted_audit": true,
+  "same_nonce_second_attempt_authorized": false,
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_2_SECOND_ORDER_RUNTIME_AUTHORITY_AUDIT_V0_1",
+  "science_rerun_authorized": false,
+  "successor_science_authorized": false,
+  "token": "BLOCKED_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_2_SECOND_ORDER_RUNTIME_AUTHORITY_PLUS_0_PLUS_0",
+  "verdict": "BLOCKED",
+  "workflow_git_blob_sha1": "670a771e1d2e2854c33d71cc1c37ea6beea85566"
+}
