@@ -1,0 +1,75 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_2_CONSUMER_SCHEMA_QUALIFICATION_V0_1",
+  "status": "TERMINAL_AUDIT_QUALIFICATION",
+  "date": "2026-09-16",
+  "effect": "+0/+0",
+  "verdict": "QUALIFIED",
+  "classification": "HOSTED_FAILURE_FUNNEL_V0_2_NOT_EXECUTION_READY_DUE_TO_FROZEN_PRODUCER_CONSUMER_SCHEMA_MISMATCH",
+  "interpretation_ceiling": "GOVERNANCE_PROVENANCE_AND_STATIC_IMPLEMENTATION_ONLY",
+  "reviewed_main_sha": "8493f247b3095a139626cf11cfaa80e85daad293",
+  "governing_main_authority": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_WORKFLOW_STATIC_AUDIT_AUTHORITY_V0_1.json",
+    "main_commit": "8493f247b3095a139626cf11cfaa80e85daad293",
+    "verdict": "QUALIFIED",
+    "failure_funnel_execution_authorized_now": false
+  },
+  "reviewed_candidate": {
+    "head_sha": "4c8a59b68791c0320840652dff65f1a106e89634",
+    "hosted_workflow_path": ".github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-2.yml",
+    "hosted_workflow_git_blob_sha1": "670a771e1d2e2854c33d71cc1c37ea6beea85566",
+    "execution_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_V0_2.json",
+    "execution_authority_git_blob_sha1": "47788695c3ab7050099ed44cacbb6f507cbbf03d",
+    "review_confirmation_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_REVIEW_CONFIRMATION_V0_2.json",
+    "review_confirmation_git_blob_sha1": "f8824d107a7fbfb260e5c5946a9d05f71131c94b",
+    "runtime_binding_auditor_path": "ci/dsir_v026_r1_sentinel_first_attempt_failure_funnel_runtime_binding_audit_v0_2.py",
+    "runtime_binding_auditor_git_blob_sha1": "66f4c9352c8efa0732d625689c4ba582535dfb73"
+  },
+  "frozen_producer": {
+    "head_sha": "5731b605afdc35bd85d3a2014a9e135719a07697",
+    "path": "ci/dsir_v026_r1_sentinel_first_attempt_failure_funnel_audit_v0_1.py",
+    "git_blob_sha1": "f7eff337e511baa25d51e5b0c333a97534e1bbc3",
+    "emitted_successor_science_key": "successor_science_authorized_by_this_receipt"
+  },
+  "consumer_schema_counterexample": {
+    "hosted_workflow_consumed_key": "successor_science_authorized",
+    "producer_emits_consumed_key": false,
+    "producer_emits_alternative_exact_key": true,
+    "deterministic_failure_mode": "PYTHON_KEYERROR_AT_POST_AUDITOR_RECEIPT_VALIDATION",
+    "candidate_can_reach_intended_successful_evidence_persistence_without_correction": false
+  },
+  "nonterminal_workflow_boundary": {
+    "runtime_binding_audit_run_id": 35044374801,
+    "workflow_id": 359223774,
+    "head_sha": "4c8a59b68791c0320840652dff65f1a106e89634",
+    "run_number": 1,
+    "run_attempt": 1,
+    "status_at_review": "queued",
+    "conclusion_at_review": null,
+    "partial_substantive_values_used": false,
+    "competing_outcome_verdict_created": false
+  },
+  "coverage_qualification": {
+    "runtime_ref_binding_reviewed": true,
+    "authority_blob_binding_reviewed": true,
+    "review_blob_binding_reviewed": true,
+    "workflow_blob_binding_reviewed": true,
+    "nonce_binding_reviewed": true,
+    "first_attempt_guard_reviewed": true,
+    "producer_consumer_receipt_schema_compatibility_checked_by_candidate_static_auditor": false
+  },
+  "historical_science_run_rerun_authorized": false,
+  "same_nonce_second_attempt_authorized": false,
+  "failure_funnel_dispatch_authorized": false,
+  "terminal_first_attempt_result_authority_authorized_by_this_review": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "required_corrections": [
+    "PROSPECTIVELY_CORRECT_THE_HOSTED_RECEIPT_CONSUMER_TO_THE_EXACT_FROZEN_PRODUCER_SCHEMA_OR_FREEZE_AN_EXPLICIT_EQUIVALENT_SCHEMA_TRANSFORMATION",
+    "HARDEN_THE_INDEPENDENT_STATIC_AUDITOR_TO_VERIFY_EVERY_HOSTED_RECEIPT_CONSUMER_FIELD_AGAINST_THE_EXACT_FROZEN_PR190_PRODUCER_OUTPUT_SCHEMA",
+    "RUN_A_FRESH_RESPONSE_BLIND_STATIC_AUDIT_OF_THE_CORRECTED_EXACT_CANDIDATE_BEFORE_ANY_PROMOTION_OR_DISPATCH"
+  ],
+  "authorized_next_stage": "PROSPECTIVELY_CORRECT_AND_REAUDIT_HOSTED_FAILURE_FUNNEL_RECEIPT_CONSUMER_INTERFACE",
+  "next_admissible_gate": "CREATE_A_NEW_EXACT_CORRECTED_CANDIDATE_HEAD_WITH_SCHEMA_COMPATIBILITY_CONTROL;_RUN_A_FRESH_INDEPENDENT_RESPONSE_BLIND_STATIC_AUDIT;_DO_NOT_DISPATCH_THE_V0_2_CANDIDATE",
+  "token": "QUALIFIED_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_2_CONSUMER_SCHEMA_PLUS_0_PLUS_0"
+}
