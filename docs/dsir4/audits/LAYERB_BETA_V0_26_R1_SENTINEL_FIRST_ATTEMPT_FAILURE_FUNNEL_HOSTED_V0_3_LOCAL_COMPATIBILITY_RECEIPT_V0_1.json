@@ -1,0 +1,33 @@
+{
+  "authorized_ref": "refs/heads/main",
+  "candidate_dispatch_authorized_now": false,
+  "classification": "V0_3_WORKFLOW_AUTHORITY_REVIEW_AND_FROZEN_PRODUCER_SCHEMA_COMPATIBILITY_CONFIRMED_LOCALLY",
+  "consumer_keys": [
+    "classification",
+    "full_107_row_execution_authorized",
+    "rerun_authorized",
+    "same_nonce_second_attempt_authorized",
+    "successor_science_authorized_by_this_receipt",
+    "terminal_first_attempt_authority_admissible",
+    "verdict"
+  ],
+  "consumer_schema_exact_match_verified": true,
+  "effect": "+0/+0",
+  "execution_authority_git_blob_sha1": "30821cd7f7461c6adc9575e937351b9d1fcdbeaa",
+  "execution_nonce": "DSIR-V026R1-FFHOSTED-V0-3-6176A508-AC189F0A-20260916-A1",
+  "failure_funnel_executed_during_audit": false,
+  "frozen_pr190_auditor_git_blob_sha1": "f7eff337e511baa25d51e5b0c333a97534e1bbc3",
+  "full_107_row_execution_authorized": false,
+  "future_terminal_runtime_binding_audit_authority_authored_now": false,
+  "future_terminal_runtime_binding_audit_authority_required_by_workflow": true,
+  "next_gate": "PUBLISH_EXACT_V0_3_CANDIDATE_SET_AND_RUN_FRESH_INDEPENDENT_HOSTED_STATIC_COMPATIBILITY_AUDIT;_DO_NOT_AUTHOR_TERMINAL_RUNTIME_BINDING_AUDIT_AUTHORITY_BEFORE_HOSTED_PASS",
+  "promotion_authorized_by_this_receipt": false,
+  "review_confirmation_git_blob_sha1": "336ebce9da0e11edc798c0229fa3ef756debcc4f",
+  "same_nonce_second_attempt_authorized": false,
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_V0_3_COMPATIBILITY_AUDIT_V0_1",
+  "science_run_35033268924_rerun_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "token": "QUALIFIED_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_V0_3_COMPATIBILITY_LOCAL_PLUS_0_PLUS_0",
+  "verdict": "QUALIFIED",
+  "workflow_git_blob_sha1": "ac189f0af5027c8ce81936a0074a08bedc538826"
+}
