@@ -11,7 +11,7 @@
     "authorized_next_stage": "PROSPECTIVELY_CORRECT_AND_REAUDIT_HOSTED_FAILURE_FUNNEL_RECEIPT_CONSUMER_INTERFACE"
   },
   "workflow_path": ".github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-3.yml",
-  "workflow_git_blob_sha1": "ac189f0af5027c8ce81936a0074a08bedc538826",
+  "workflow_git_blob_sha1": "1b73d49539470dad89dff4aa7e660529e5f5a72a",
   "authorized_event": "workflow_dispatch",
   "authorized_ref": "refs/heads/main",
   "execution_nonce": "DSIR-V026R1-FFHOSTED-V0-3-6176A508-AC189F0A-20260916-A1",
