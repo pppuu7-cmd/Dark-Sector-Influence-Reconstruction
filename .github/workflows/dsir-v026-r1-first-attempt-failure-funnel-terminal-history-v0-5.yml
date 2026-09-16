@@ -1,0 +1,181 @@
+name: dsir-v026-r1-first-attempt-failure-funnel-terminal-history-v0-5
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_run_id:
+        required: true
+        type: string
+      target_head_sha:
+        required: true
+        type: string
+      execution_nonce:
+        required: true
+        type: string
+      execution_authority_blob_sha1:
+        required: true
+        type: string
+      execution_authority_review_blob_sha1:
+        required: true
+        type: string
+      terminal_static_audit_authority_blob_sha1:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  TARGET_WORKFLOW_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-5.yml
+  TERMINAL_WORKFLOW_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-terminal-history-v0-5.yml
+  EXECUTION_AUTHORITY_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_V0_5.json
+  EXECUTION_AUTHORITY_REVIEW_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_REVIEW_CONFIRMATION_V0_5.json
+  TERMINAL_STATIC_AUDIT_AUTHORITY_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_STATIC_AUDIT_AUTHORITY_V0_5.json
+  TARGET_RUN_ID: ${{ inputs.target_run_id }}
+  TARGET_HEAD_SHA: ${{ inputs.target_head_sha }}
+  EXECUTION_NONCE: ${{ inputs.execution_nonce }}
+  INPUT_EXECUTION_AUTHORITY_BLOB_SHA1: ${{ inputs.execution_authority_blob_sha1 }}
+  INPUT_EXECUTION_AUTHORITY_REVIEW_BLOB_SHA1: ${{ inputs.execution_authority_review_blob_sha1 }}
+  INPUT_TERMINAL_STATIC_AUDIT_AUTHORITY_BLOB_SHA1: ${{ inputs.terminal_static_audit_authority_blob_sha1 }}
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  terminal-history-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bind exact authority chain and unique terminal-auditor dispatch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$GITHUB_RUN_NUMBER" = "1"
+          test "$GITHUB_RUN_ATTEMPT" = "1"
+          test "$(git hash-object "$EXECUTION_AUTHORITY_PATH")" = "$INPUT_EXECUTION_AUTHORITY_BLOB_SHA1"
+          test "$(git hash-object "$EXECUTION_AUTHORITY_REVIEW_PATH")" = "$INPUT_EXECUTION_AUTHORITY_REVIEW_BLOB_SHA1"
+          test "$(git hash-object "$TERMINAL_STATIC_AUDIT_AUTHORITY_PATH")" = "$INPUT_TERMINAL_STATIC_AUDIT_AUTHORITY_BLOB_SHA1"
+          python3 - <<'PY'
+          import json, os, subprocess
+          h=lambda p: subprocess.check_output(['git','hash-object',p],text=True).strip()
+          a=json.load(open(os.environ['EXECUTION_AUTHORITY_PATH'])); r=json.load(open(os.environ['EXECUTION_AUTHORITY_REVIEW_PATH'])); s=json.load(open(os.environ['TERMINAL_STATIC_AUDIT_AUTHORITY_PATH']))
+          assert a['execution_nonce']==os.environ['EXECUTION_NONCE']
+          assert a['terminal_history_workflow_git_blob_sha1']==h(os.environ['TERMINAL_WORKFLOW_PATH'])
+          assert r['reviewed_terminal_history_workflow_git_blob_sha1']==h(os.environ['TERMINAL_WORKFLOW_PATH'])
+          assert s['reviewed_terminal_history_workflow_git_blob_sha1']==h(os.environ['TERMINAL_WORKFLOW_PATH'])
+          assert a['science_run_35033268924_rerun_authorized'] is False
+          assert a['same_nonce_second_attempt_authorized'] is False
+          assert a['successor_sentinel_science_authorized'] is False
+          assert a['full_107_row_execution_authorized'] is False
+          PY
+
+      - name: Freshly prove exact one terminal target and exact one terminal-auditor run
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import json, os, urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; token=os.environ['GH_TOKEN']; headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          def get(url):
+              with urllib.request.urlopen(urllib.request.Request(url,headers=headers)) as r:return json.load(r)
+          target=get(f"https://api.github.com/repos/{repo}/actions/runs/{os.environ['TARGET_RUN_ID']}")
+          assert target['path']==os.environ['TARGET_WORKFLOW_PATH']
+          assert target['event']=='workflow_dispatch'
+          assert target['status']=='completed' and target['conclusion']=='success'
+          assert int(target['run_number'])==1 and int(target['run_attempt'])==1
+          assert target['head_branch']=='main' and target['head_sha']==os.environ['TARGET_HEAD_SHA']
+          def all_dispatch(path):
+              runs=[]; url=f'https://api.github.com/repos/{repo}/actions/runs?event=workflow_dispatch&per_page=100'
+              while url:
+                  req=urllib.request.Request(url,headers=headers)
+                  with urllib.request.urlopen(req) as r:
+                      p=json.load(r); runs.extend(p.get('workflow_runs',[])); link=r.headers.get('Link','')
+                  url=next((x.split(';',1)[0].strip()[1:-1] for x in link.split(',') if 'rel="next"' in x),None)
+              return [x for x in runs if x.get('path')==path]
+          tr=all_dispatch(os.environ['TARGET_WORKFLOW_PATH'])
+          assert len(tr)==1 and int(tr[0]['id'])==int(os.environ['TARGET_RUN_ID']) and int(tr[0]['run_number'])==1 and int(tr[0]['run_attempt'])==1
+          ar=all_dispatch(os.environ['TERMINAL_WORKFLOW_PATH'])
+          assert len(ar)==1 and int(ar[0]['id'])==int(os.environ['GITHUB_RUN_ID']) and int(ar[0]['run_number'])==1 and int(ar[0]['run_attempt'])==1
+          artifacts=get(f"https://api.github.com/repos/{repo}/actions/runs/{os.environ['TARGET_RUN_ID']}/artifacts?per_page=100")
+          xs=[a for a in artifacts.get('artifacts',[]) if a.get('name')=='dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-5' and not a.get('expired')]
+          assert len(xs)==1
+          json.dump(target,open('safe/target_run.json','w'),indent=2,sort_keys=True)
+          json.dump({'total_count':1,'workflow_runs':tr},open('safe/target_live_history.json','w'),indent=2,sort_keys=True)
+          json.dump({'total_count':1,'workflow_runs':ar},open('safe/terminal_auditor_live_history.json','w'),indent=2,sort_keys=True)
+          json.dump(xs[0],open('safe/target_artifact_metadata.json','w'),indent=2,sort_keys=True)
+          open('safe/target_artifact_id.txt','w').write(str(xs[0]['id'])+'\n')
+          PY
+
+      - name: Download and hash exact target artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          aid=$(cat safe/target_artifact_id.txt)
+          curl --fail --location --silent --show-error -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$aid/zip" --output safe/target_artifact.zip
+          sha256sum safe/target_artifact.zip > safe/target_artifact.zip.sha256
+          mkdir -p safe/target_artifact && unzip -q safe/target_artifact.zip -d safe/target_artifact
+          test -f safe/target_artifact/failure_funnel_receipt.json
+          test -f safe/target_artifact/pre_run_dispatch_history.json
+          test -f safe/target_artifact/end_of_run_dispatch_history.json
+          cmp safe/target_artifact/pre_run_dispatch_history.json safe/target_artifact/end_of_run_dispatch_history.json
+          python3 - <<'PY'
+          import json, hashlib
+          d=json.load(open('safe/target_artifact/failure_funnel_receipt.json'))
+          assert d['verdict']=='CONFIRMED_SCOPED'
+          assert d['classification']=='SENTINEL_FIRST_ATTEMPT_PRE_SCIENCE_ACTIONS_EVENT_GUARD_FAILURE_INDEPENDENTLY_CONFIRMED'
+          assert d['rerun_authorized'] is False
+          assert d['same_nonce_second_attempt_authorized'] is False
+          assert d['successor_science_authorized_by_this_receipt'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          receipt_sha=hashlib.sha256(open('safe/target_artifact/failure_funnel_receipt.json','rb').read()).hexdigest()
+          open('safe/target_receipt.sha256','w').write(receipt_sha+'  failure_funnel_receipt.json\n')
+          PY
+
+      - name: Emit terminal runtime receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, hashlib
+          target=json.load(open('safe/target_run.json')); artifact=json.load(open('safe/target_artifact_metadata.json'))
+          z=hashlib.sha256(open('safe/target_artifact.zip','rb').read()).hexdigest(); r=open('safe/target_receipt.sha256').read().split()[0]
+          out={
+            'schema':'LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_5_TERMINAL_RUNTIME_RECEIPT_V0_1',
+            'status':'TERMINAL_RUNTIME_RECEIPT','verdict':'QUALIFIED',
+            'classification':'V0_5_EXPLICIT_POSTRUN_DISPATCH_TERMINAL_HISTORY_CLOSED',
+            'execution_nonce':os.environ['EXECUTION_NONCE'],
+            'target_run_id':int(os.environ['TARGET_RUN_ID']),'target_run_number':1,'target_run_attempt':1,
+            'target_head_sha':os.environ['TARGET_HEAD_SHA'],'target_status':'completed','target_conclusion':'success',
+            'target_dispatch_history_count':1,'terminal_auditor_dispatch_history_count':1,
+            'target_artifact_id':artifact['id'],'target_artifact_zip_sha256':z,'target_failure_funnel_receipt_sha256':r,
+            'failure_funnel_verdict':'CONFIRMED_SCOPED','postrun_started_after_target_terminal':True,
+            'rerun_authorized':False,'same_nonce_second_attempt_authorized':False,
+            'successor_sentinel_science_authorized_by_this_receipt':False,
+            'full_107_row_execution_authorized':False,'downstream_science_authorized':False,
+            'token':'QUALIFIED_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_5_TERMINAL_RUNTIME_PLUS_0_PLUS_0'
+          }
+          json.dump(out,open('safe/v05_terminal_runtime_receipt.json','w'),indent=2,sort_keys=True); open('safe/v05_terminal_runtime_receipt.json','a').write('\n')
+          PY
+          sha256sum safe/v05_terminal_runtime_receipt.json > safe/v05_terminal_runtime_receipt.sha256
+
+      - name: Persist terminal runtime evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-first-attempt-failure-funnel-v05-terminal-runtime
+          path: |
+            safe/v05_terminal_runtime_receipt.json
+            safe/v05_terminal_runtime_receipt.sha256
+            safe/target_run.json
+            safe/target_live_history.json
+            safe/terminal_auditor_live_history.json
+            safe/target_artifact_metadata.json
+            safe/target_artifact.zip.sha256
+            safe/target_receipt.sha256
+          if-no-files-found: error
+          retention-days: 90
