@@ -1,0 +1,184 @@
+name: dsir-v026-r1-first-attempt-failure-funnel-v04-one-shot-launcher
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_4_TERMINAL_ONE_SHOT_LAUNCH_AUTHORITY_V0_1.json
+
+permissions:
+  contents: read
+  actions: write
+
+env:
+  TARGET_WORKFLOW_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-4.yml
+  TARGET_WORKFLOW_BLOB: 6bf2027a121348823914e9076338055a4820162e
+  POST_RUN_WORKFLOW_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-post-run-history-v0-4.yml
+  POST_RUN_WORKFLOW_BLOB: 6c2617e756877fb3cbb8b27dcf16b2bfc164cab5
+  EXECUTION_AUTHORITY_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_V0_4.json
+  EXECUTION_AUTHORITY_BLOB: d68aa9ffa3fb5a7768e6802146aed74a3b57cf1b
+  EXECUTION_AUTHORITY_REVIEW_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_REVIEW_CONFIRMATION_V0_4.json
+  EXECUTION_AUTHORITY_REVIEW_BLOB: 01e5e9e0145e8c2ad1f0da639f3de073d9b26da2
+  RUNTIME_STATIC_AUTHORITY_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_STATIC_AUDIT_AUTHORITY_V0_4.json
+  RUNTIME_STATIC_AUTHORITY_BLOB: 6bbacdc70dbfbee1dc4753e4a05266f9dbe45399
+  TERMINAL_EXECUTION_GATE_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_4_TERMINAL_EXECUTION_AUTHORITY_GATE_V0_1.json
+  TERMINAL_EXECUTION_GATE_BLOB: 35578c8eab01b11474c00b5306abe0c0fae7ac70
+  LAUNCH_AUTHORITY_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_4_TERMINAL_ONE_SHOT_LAUNCH_AUTHORITY_V0_1.json
+  LAUNCHER_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-v04-one-shot-launcher.yml
+  EXECUTION_NONCE: DSIR-V026R1-FFHOSTED-V0-4-10E7F9BD-7072FA7F-20260916-A1
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  one-shot-launch:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact promoted main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fail closed unless exact terminal launch authority is active
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$GITHUB_RUN_NUMBER" = "1"
+          test "$GITHUB_RUN_ATTEMPT" = "1"
+          test "$(git hash-object "$TARGET_WORKFLOW_PATH")" = "$TARGET_WORKFLOW_BLOB"
+          test "$(git hash-object "$POST_RUN_WORKFLOW_PATH")" = "$POST_RUN_WORKFLOW_BLOB"
+          test "$(git hash-object "$EXECUTION_AUTHORITY_PATH")" = "$EXECUTION_AUTHORITY_BLOB"
+          test "$(git hash-object "$EXECUTION_AUTHORITY_REVIEW_PATH")" = "$EXECUTION_AUTHORITY_REVIEW_BLOB"
+          test "$(git hash-object "$RUNTIME_STATIC_AUTHORITY_PATH")" = "$RUNTIME_STATIC_AUTHORITY_BLOB"
+          test "$(git hash-object "$TERMINAL_EXECUTION_GATE_PATH")" = "$TERMINAL_EXECUTION_GATE_BLOB"
+          test -f "$LAUNCH_AUTHORITY_PATH"
+          python3 - <<'PY'
+          import json, os, subprocess
+          def load(p):
+              with open(p) as f: return json.load(f)
+          launch=load(os.environ['LAUNCH_AUTHORITY_PATH'])
+          gate=load(os.environ['TERMINAL_EXECUTION_GATE_PATH'])
+          launcher_blob=subprocess.check_output(['git','hash-object',os.environ['LAUNCHER_PATH']],text=True).strip()
+          assert gate['status']=='TERMINAL_EXECUTION_AUTHORITY_GATE'
+          assert gate['verdict']=='QUALIFIED'
+          assert gate['classification']=='V0_4_EXACT_ONE_FIRST_LIVE_FAILURE_FUNNEL_DISPATCH_AUTHORITY_QUALIFIED'
+          assert gate['hosted_workflow_git_blob_sha1']==os.environ['TARGET_WORKFLOW_BLOB']
+          assert gate['post_run_history_workflow_git_blob_sha1']==os.environ['POST_RUN_WORKFLOW_BLOB']
+          assert gate['execution_authority_git_blob_sha1']==os.environ['EXECUTION_AUTHORITY_BLOB']
+          assert gate['execution_authority_review_git_blob_sha1']==os.environ['EXECUTION_AUTHORITY_REVIEW_BLOB']
+          assert gate['runtime_static_authority_git_blob_sha1']==os.environ['RUNTIME_STATIC_AUTHORITY_BLOB']
+          assert gate['execution_nonce']==os.environ['EXECUTION_NONCE']
+          assert gate['authorized_event']=='workflow_dispatch'
+          assert gate['authorized_ref']=='refs/heads/main'
+          assert gate['authorized_run_number']==1
+          assert gate['authorized_run_attempt']==1
+          assert gate['live_history_at_terminal_gate']['prior_target_dispatch_count']==0
+          assert gate['live_history_at_terminal_gate']['parallel_or_in_progress_target_sibling_count']==0
+          assert gate['exact_promotion_to_main_authorized'] is True
+          assert gate['atomic_pre_dispatch_recheck_required'] is True
+          assert gate['single_target_dispatch_authorized_after_exact_promotion_and_atomic_preflight'] is True
+          assert gate['failure_funnel_dispatch_authorized_now'] is False
+          assert gate['rerun_authorized'] is False
+          assert gate['second_dispatch_authorized'] is False
+          assert gate['same_nonce_second_attempt_authorized'] is False
+          assert gate['successor_sentinel_science_authorized'] is False
+          assert gate['full_107_row_execution_authorized'] is False
+          assert launch['schema']=='LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_4_TERMINAL_ONE_SHOT_LAUNCH_AUTHORITY_V0_1'
+          assert launch['status']=='TERMINAL_ONE_SHOT_LAUNCH_AUTHORITY'
+          assert launch['verdict']=='QUALIFIED'
+          assert launch['reviewed_launcher_workflow_path']==os.environ['LAUNCHER_PATH']
+          assert launch['reviewed_launcher_workflow_git_blob_sha1']==launcher_blob
+          assert launch['terminal_execution_gate_git_blob_sha1']==os.environ['TERMINAL_EXECUTION_GATE_BLOB']
+          assert launch['target_workflow_git_blob_sha1']==os.environ['TARGET_WORKFLOW_BLOB']
+          assert launch['post_run_workflow_git_blob_sha1']==os.environ['POST_RUN_WORKFLOW_BLOB']
+          assert launch['execution_authority_git_blob_sha1']==os.environ['EXECUTION_AUTHORITY_BLOB']
+          assert launch['execution_authority_review_git_blob_sha1']==os.environ['EXECUTION_AUTHORITY_REVIEW_BLOB']
+          assert launch['runtime_static_authority_git_blob_sha1']==os.environ['RUNTIME_STATIC_AUTHORITY_BLOB']
+          assert launch['execution_nonce']==os.environ['EXECUTION_NONCE']
+          assert launch['authorized_ref']=='refs/heads/main'
+          assert launch['authorized_event']=='workflow_dispatch'
+          assert launch['launcher_run_number']==1
+          assert launch['launcher_run_attempt']==1
+          assert launch['target_run_number']==1
+          assert launch['target_run_attempt']==1
+          assert launch['required_prior_target_dispatch_count']==0
+          assert launch['required_parallel_target_dispatch_count']==0
+          assert launch['exactly_one_dispatch_authorized'] is True
+          assert launch['rerun_authorized'] is False
+          assert launch['second_dispatch_authorized'] is False
+          assert launch['successor_sentinel_science_authorized'] is False
+          assert launch['full_107_row_execution_authorized'] is False
+          PY
+
+      - name: Atomic preflight and issue exactly one target workflow_dispatch
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import json, os, urllib.request, urllib.error
+          repo=os.environ['GITHUB_REPOSITORY']
+          token=os.environ['GH_TOKEN']
+          target=os.environ['TARGET_WORKFLOW_PATH']
+          headers={
+              'Authorization':f'Bearer {token}',
+              'Accept':'application/vnd.github+json',
+              'X-GitHub-Api-Version':'2022-11-28',
+              'User-Agent':'dsir-v026-r1-v04-one-shot-launcher',
+          }
+          runs=[]
+          url=f'https://api.github.com/repos/{repo}/actions/runs?event=workflow_dispatch&per_page=100'
+          while url:
+              req=urllib.request.Request(url,headers=headers)
+              with urllib.request.urlopen(req) as r:
+                  page=json.load(r); runs.extend(page.get('workflow_runs',[])); link=r.headers.get('Link','')
+              url=next((p.split(';',1)[0].strip()[1:-1] for p in link.split(',') if 'rel="next"' in p),None)
+          exact=[x for x in runs if x.get('path')==target and x.get('event')=='workflow_dispatch']
+          active=[x for x in exact if x.get('status') in ('queued','in_progress','waiting','requested','pending')]
+          preflight={
+              'schema':'DSIR_V026_R1_V04_ONE_SHOT_ATOMIC_PREFLIGHT_V0_1',
+              'target_workflow_path':target,
+              'visible_target_dispatch_count':len(exact),
+              'active_target_dispatch_count':len(active),
+              'target_dispatches':[{k:x.get(k) for k in ('id','run_number','run_attempt','status','conclusion','head_branch','head_sha','event','path')} for x in exact],
+          }
+          open('safe/atomic_preflight.json','w').write(json.dumps(preflight,indent=2,sort_keys=True)+'\n')
+          assert len(exact)==0, preflight
+          assert len(active)==0, preflight
+          payload={
+              'ref':'main',
+              'inputs':{
+                  'execution_nonce':os.environ['EXECUTION_NONCE'],
+                  'execution_authority_blob_sha1':os.environ['EXECUTION_AUTHORITY_BLOB'],
+                  'execution_authority_review_blob_sha1':os.environ['EXECUTION_AUTHORITY_REVIEW_BLOB'],
+                  'terminal_static_audit_authority_blob_sha1':os.environ['RUNTIME_STATIC_AUTHORITY_BLOB'],
+              },
+          }
+          dispatch_url=f'https://api.github.com/repos/{repo}/actions/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-4.yml/dispatches'
+          data=json.dumps(payload,separators=(',',':')).encode()
+          req=urllib.request.Request(dispatch_url,data=data,headers={**headers,'Content-Type':'application/json'},method='POST')
+          try:
+              with urllib.request.urlopen(req) as r:
+                  body=r.read().decode() if r else ''
+                  status=int(r.status)
+          except urllib.error.HTTPError as e:
+              body=e.read().decode(errors='replace')
+              status=int(e.code)
+              open('safe/dispatch_response.json','w').write(json.dumps({'http_status':status,'body':body},indent=2,sort_keys=True)+'\n')
+              raise
+          record={'http_status':status,'body':body,'request':payload,'dispatch_call_count':1}
+          open('safe/dispatch_response.json','w').write(json.dumps(record,indent=2,sort_keys=True)+'\n')
+          assert status in (200,204), record
+          PY
+
+      - name: Persist one-shot launcher evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-first-attempt-failure-funnel-v04-one-shot-launcher
+          path: |
+            safe/atomic_preflight.json
+            safe/dispatch_response.json
+          if-no-files-found: warn
+          retention-days: 90
