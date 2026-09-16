@@ -1,0 +1,110 @@
+name: dsir-v026-r1-first-attempt-failure-funnel-hosted-workflow-audit-v0-1
+
+on:
+  push:
+    branches:
+      - audit/v026-r1-first-attempt-failure-funnel-hosted-workflow-audit
+    paths:
+      - ci/dsir_v026_r1_sentinel_first_attempt_failure_funnel_hosted_workflow_audit_v0_1.py
+      - .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-workflow-audit-v0-1.yml
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  TARGET_BRANCH: audit/v026-r1-first-attempt-failure-funnel-hosted-workflow-candidate
+  TARGET_HEAD: 1a1f33df835218b7c6232e2a9078d6681081b16f
+  TARGET_WORKFLOW_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-1.yml
+  AUDITOR: ci/dsir_v026_r1_sentinel_first_attempt_failure_funnel_hosted_workflow_audit_v0_1.py
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  hosted-workflow-static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout independent audit branch with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch and bind exact hosted workflow candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$TARGET_BRANCH:refs/remotes/origin/hosted-workflow-target"
+          test "$(git rev-parse refs/remotes/origin/hosted-workflow-target)" = "$TARGET_HEAD"
+          git cat-file -e "$TARGET_HEAD^{commit}"
+          test "$(git hash-object "$AUDITOR")" = '04a20456f161f9042565046f2d798cc90258d0b0'
+
+      - name: Capture live dispatch history for candidate workflow path
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import json, os, urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']
+          token=os.environ['GH_TOKEN']
+          path=os.environ['TARGET_WORKFLOW_PATH']
+          runs=[]
+          url=f'https://api.github.com/repos/{repo}/actions/runs?event=workflow_dispatch&per_page=100'
+          while url:
+              req=urllib.request.Request(url, headers={
+                  'Authorization': f'Bearer {token}',
+                  'Accept': 'application/vnd.github+json',
+                  'X-GitHub-Api-Version': '2022-11-28',
+              })
+              with urllib.request.urlopen(req) as r:
+                  page=json.load(r)
+                  runs.extend(page.get('workflow_runs', []))
+                  link=r.headers.get('Link','')
+              next_url=None
+              for part in link.split(','):
+                  if 'rel="next"' in part:
+                      next_url=part.split(';',1)[0].strip()[1:-1]
+              url=next_url
+          exact=[x for x in runs if x.get('path')==path]
+          json.dump({'total_count':len(exact),'workflow_runs':exact}, open('safe/candidate_live_runs.json','w'), indent=2, sort_keys=True)
+          PY
+
+      - name: Execute independent response-blind static workflow audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$AUDITOR"
+          python3 "$AUDITOR" \
+            --candidate-live-runs-json safe/candidate_live_runs.json \
+            --out safe/hosted_workflow_static_audit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/hosted_workflow_static_audit.json'))
+          assert d['verdict']=='QUALIFIED'
+          assert d['classification']=='HOSTED_FAILURE_FUNNEL_WORKFLOW_CANDIDATE_STATICALLY_QUALIFIED_FOR_SEPARATE_EXECUTION_AUTHORITY_REVIEW_ONLY'
+          assert d['target_head_sha']=='1a1f33df835218b7c6232e2a9078d6681081b16f'
+          assert d['workflow_git_blob_sha1']=='71d054036e251dce50d0bcfc8429b6d875ceb9c4'
+          assert d['contract_git_blob_sha1']=='2152e952e37fd1f22f5f38b976379540103de2ef'
+          assert d['workflow_dispatch_only'] is True
+          assert d['future_execution_authority_absent_on_candidate'] is True
+          assert d['execution_guard_precedes_all_evidence_access'] is True
+          assert d['unique_first_dispatch_guard_present'] is True
+          assert d['current_candidate_dispatch_run_count']==0
+          assert d['failure_funnel_executed_during_static_audit'] is False
+          assert d['failure_funnel_execution_authorized'] is False
+          assert d['rerun_authorized'] is False
+          assert d['successor_sentinel_science_authorized'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          PY
+          sha256sum safe/hosted_workflow_static_audit.json > safe/hosted_workflow_static_audit.sha256
+
+      - name: Persist immutable hosted workflow static-audit evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-first-attempt-failure-funnel-hosted-workflow-audit-v0-1
+          path: |
+            safe/hosted_workflow_static_audit.json
+            safe/hosted_workflow_static_audit.sha256
+            safe/candidate_live_runs.json
+          if-no-files-found: error
+          retention-days: 90
