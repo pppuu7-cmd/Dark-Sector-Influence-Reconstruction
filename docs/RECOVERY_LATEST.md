@@ -4,170 +4,85 @@ Updated: 2026-09-16. Scope: **DSIR only**. Repository/Actions state, frozen DSIR
 
 ## Frozen scientific boundary
 
-V0.25 remains terminal `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, effect `+0/+0`. V0.26 R1 remains the prospectively frozen numerical/reproducibility successor:
+V0.25 remains terminal `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, effect `+0/+0`. V0.26 R1 remains the prospectively frozen numerical/reproducibility successor under preregistration blob `545e5be589e0f8029d23db2edb4e2faad116c3a0` and contract blob `b510d8e97baf1c0b7b216c0605d83cdd029254e9`.
 
-- preregistration `prereg/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.md`, blob `545e5be589e0f8029d23db2edb4e2faad116c3a0`;
-- contract `docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json`, blob `b510d8e97baf1c0b7b216c0605d83cdd029254e9`;
-- denominator 107 retained rows = DES 53 + BOSS 54;
-- alpha canonical-32769 `tol_perturb_integration=3e-10`;
-- beta exact-target route `tol_perturb_integration=1e-12`;
-- scientific relative criterion strict `<1e-3`;
-- technical reproducibility criterion strict `<1e-5`;
-- requested-node binding `<=1e-12`;
-- full-replay accounting 738 CLASS constructions.
+Frozen criteria remain: 107 rows = DES 53 + BOSS 54; alpha `3e-10`; beta exact-target `1e-12`; scientific strict `<1e-3`; technical strict `<1e-5`; requested-node binding `<=1e-12`; full replay 738 CLASS constructions.
 
 Full 107-row replay, covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537, statistical/model inference and physical dark-sector inference remain closed.
 
-## Frozen implementation and corrected launch package
+## Frozen implementation and launch package
 
-Frozen sentinel identities remain:
+Sentinel W `19907175f0f3417ddee2aba6916d961c6be02e26`; executor `9affe7c7d4e02bbc728ba15e3cde893ec9876b38`; decision `97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9`; implementation contract `e14804463d9eab288162b4c98e8dd5c1fd6a10eb`; corrected A/L/Q = `1c9945dd00b137f3e202efa14bf4112fffebf8af` / `fa7014435f0a5688def2124898ddd01d0c0183aa` / `f7b97f47d9e771e3d3ea78875da5a45962160cd0`.
 
-- W `.github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml`, blob `19907175f0f3417ddee2aba6916d961c6be02e26`;
-- executor `ci/layerb_beta_v026_r1_sentinel_v0_1.py`, blob `9affe7c7d4e02bbc728ba15e3cde893ec9876b38`;
-- decision `ci/layerb_beta_v026_r1_sentinel_decision_v0_1.py`, blob `97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9`;
-- implementation contract blob `e14804463d9eab288162b4c98e8dd5c1fd6a10eb`.
+PR #186 merge `9a333294f3acb80201c5f6ed5b74918c1c767232` consumed the one authorized first attempt and triggered science workflow run `35033268924`, workflow `359060727`, run #1 / attempt #1. The run failed before science: authorize `104596462857` failed, materialize-plan/lane skipped, decision `104596495504` failed from absent current-run authorization, science artifacts = 0. No CLASS solve, scientific response, covariance read or sentinel scientific classification exists.
 
-Historical A/Q runtime-schema blockers were corrected without changing science:
+Failure is frozen W event guard line 48: `assert added.count(launch)==1`. Repository diff is correct L-only; the Actions push payload omits commit-level file-list fields used by W, so `c.get('added', [])` yields zero. This is a pre-science workflow/event-contract failure only.
 
-- corrected A `1c9945dd00b137f3e202efa14bf4112fffebf8af`;
-- corrected L `fa7014435f0a5688def2124898ddd01d0c0183aa`;
-- corrected Q `f7b97f47d9e771e3d3ea78875da5a45962160cd0`.
+Historical interim authority blob `8f898f3579ac55db4bfd3b7cc6a12cad04a4a613` remains binding: **never rerun `35033268924`; never use rerun-failed-jobs/rerun-job; never create same-nonce attempt; never modify/remove/recreate final L; full-107 and downstream science remain forbidden.**
 
-PR #184 merge `41ef654d7552b670c20d3202249d7687bae5f870` promoted exact A/Q without L. Post-replacement hosted audit `35032839418` and independent funnel `35032991806` passed with zero sentinel-science runs at the replacement head.
+## Immutable forensic evidence
 
-PR #185 merge `2ca2d4c35f9dcfe2be00e573598e6189f987508d` promoted the separate exact-one-run L-gate authority:
-
-`docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_EXACT_L_GATE_AUTHORITY_V0_1.json`, blob `1c1819ee6aa7a48597770d9bc9116185d061a49c`.
-
-That authority allowed exactly one new-file final-L trigger / one first attempt, explicitly forbade rerun, and kept full-107 false.
-
-## Exact L trigger and consumed first attempt
-
-PR #186 merge `9a333294f3acb80201c5f6ed5b74918c1c767232` created exact final L as the only runtime file change:
-
-`docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SENTINEL_LAUNCH_V0_1.json`, blob `fa7014435f0a5688def2124898ddd01d0c0183aa`.
-
-It produced sentinel workflow run:
-
-- run `35033268924`;
-- workflow id `359060727`, `layerb-beta-v026-r1-sentinel-science-v0-1`;
-- event `push`;
-- run #1 / attempt #1;
-- head `9a333294f3acb80201c5f6ed5b74918c1c767232`;
-- terminal conclusion `failure`.
-
-A fresh exact-head Actions enumeration on 2026-09-16 returned exactly one workflow run for that head: run `35033268924`, attempt 1. No rerun or duplicate exact-head selection contamination is currently present.
-
-This attempt is consumed. **Never rerun it.**
-
-## Failure localization: pre-science event guard
-
-Hosted job outcomes:
-
-- authorize job `104596462857`: failure;
-- materialize-plan: skipped;
-- lane: skipped;
-- decision job `104596495504`: failure because current-run authorization was absent;
-- science-run artifact count: 0.
-
-No source-plan materialization, lane execution, CLASS scientific solve, scientific response, covariance read, or sentinel decision artifact exists from run `35033268924`.
-
-Authorize log fails at embedded Python `<stdin>` line 48, exactly:
-
-`assert added.count(launch)==1`
-
-All preceding package/blob predicates were reached without failure. The repository tree is correct: staging commit `657e5d6b2fe3ad7f7c11bcd2af873cffe800cc96` and merge `9a333294f3acb80201c5f6ed5b74918c1c767232` both show exact L as the single added path relative to the authorized first parent.
-
-Frozen W reconstructs event file changes from `github.event.commits[*].added`, `modified`, and `removed`, with missing fields falling back to `[]`. The Actions push payload platform contract used by the repository omits those commit-level file-list attributes, so effective `added.count(launch)=0` even for the correct L-only repository change.
-
-This is a pre-science workflow/event-contract implementation failure. It is not an interpolation, resolution, solver-tolerance, reproducibility, covariance, nuisance, statistical, or physical-science result.
-
-## Historical fail-closed interim authority
-
-PR #187 merge `f85d679fd4e8a16b83e7b44fd74911149e868746` persisted:
-
-- preliminary failure audit blob `387e13ac2f1c88d0405c7b3f7a41886cd1e276af`;
-- interim authority `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAIL_CLOSED_INTERIM_V0_1.json`, blob `8f898f3579ac55db4bfd3b7cc6a12cad04a4a613`.
-
-The historical interim verdict remains `BLOCKED`. It forbids rerun of `35033268924`, same-nonce second attempt, final-L modification/removal/recreation, full replay and downstream science. It does not claim a sentinel scientific PASS or refutation.
-
-PR #189 later added immutable platform-contract review support blob `34acaa0f87af18cb85d765b9a2cb80003af65a71`; that file is review support only, not terminal first-attempt authority.
-
-## Terminal forensic evidence now exists
-
-The exact forensic producer is fixed at:
+Exact forensic producer is terminal success:
 
 - branch `audit/v026-r1-sentinel-first-attempt-forensic`;
 - head `c5502bc124f502cb4ef1c19300fcdf87f260089b`;
-- auditor blob `63b6a0db41ff5e0e3c36be605596fb1c5aee0f1d`;
-- workflow blob `4d09b78d3a586d3c4f7e42573a7bdac4454d3a48`;
-- run `35033678449`, run #3 / attempt #1, event `push`;
-- terminal status/conclusion `completed/success`;
-- job `104597783801`: success.
+- auditor `63b6a0db41ff5e0e3c36be605596fb1c5aee0f1d`;
+- workflow `4d09b78d3a586d3c4f7e42573a7bdac4454d3a48`;
+- run `35033678449`, run #3 / attempt #1;
+- job `104597783801` success;
+- artifact `10422924571`;
+- ZIP SHA256 `226209ae5cb416bd2575e5d1b7800632b6848c04363ce0d9a1add27cbbdd559b`;
+- producer receipt SHA256 `207cfde59971b91f3e6ac5ef3c95703f608735c17df67daa03a14efb4a7f976e`.
 
-It emitted exactly one immutable artifact:
+Producer verdict is `TERMINAL_BLOCKED` / `SENTINEL_FIRST_ATTEMPT_AUTHORIZATION_EVENT_GUARD_BLOCKED_BEFORE_SCIENCE`. It is immutable evidence but not by itself the independent terminal first-attempt authority.
 
-- artifact id `10422924571`;
-- name `dsir-v026-r1-sentinel-first-attempt-forensic-audit-v0-1`;
-- Actions ZIP digest `sha256:226209ae5cb416bd2575e5d1b7800632b6848c04363ce0d9a1add27cbbdd559b`.
+## PR #190 current hardened target — do not mutate while re-audit is pending
 
-Independent download/hashing matched that ZIP digest exactly. The ZIP contains exactly seven files and no nested entries. Producer receipt `first_attempt_forensic_audit.json` is 2374 bytes with SHA256 `207cfde59971b91f3e6ac5ef3c95703f608735c17df67daa03a14efb4a7f976e`. Both inner SHA256 manifests were independently verified.
+The old reviewed PR190 head `d38e9825...` is historical. Qualification authority blob `74b10d5d326ec6984edec986fe1bbc368a73b4f6` authorized prospective hardening plus fresh static re-audit only.
 
-The forensic receipt records `TERMINAL_BLOCKED` / `SENTINEL_FIRST_ATTEMPT_AUTHORIZATION_EVENT_GUARD_BLOCKED_BEFORE_SCIENCE`, no CLASS invocation, no scientific response, no covariance read, rerun false, same-nonce second attempt false, and full-107 false.
+Current PR #190 is open/draft at exact frozen head **`5731b605afdc35bd85d3a2014a9e135719a07697`** and changes exactly two non-runtime files:
 
-The forensic artifact is valid immutable evidence. It does **not** by itself replace the required independent failure-funnel audit/terminalization gate.
+- hardened independent failure-funnel auditor blob **`f7eff337e511baa25d51e5b0c333a97534e1bbc3`**;
+- hardened machine contract blob **`3369e5cdd2086ca22dca6bfa575054286fd1dcd7`**.
 
-## Independent audit of PR #190 failure-funnel candidate
+The hardened candidate fixes all corrections required by the prior audit:
 
-PR #190 is open/draft. Reviewed exact head: `d38e9825ba7fa87558c7f729c3abdf67002e038f`.
+1. forensic artifact id / ZIP SHA256 / receipt SHA256 are exact and non-null;
+2. failure-funnel execution would require a fresh live exact-head enumeration and accept only workflow `359060727`, head `9a333294f3acb80201c5f6ed5b74918c1c767232`, run `35033268924`, run #1 / attempt #1; duplicate/rerun blocks;
+3. artifact member/extracted-tree checks are recursive and require exactly seven relative paths, rejecting nested extras;
+4. SHA256 manifests require exact `safe/...` relative names/cardinality with no basename collision normalization;
+5. any future hosted failure-funnel workflow must make exact historical SHAs available via full graph/explicit fetch.
 
-Reviewed candidate identities:
+The PR remains intentionally non-executable pending the independent re-audit below. Do not add a hosted failure-funnel workflow to PR190 now.
 
-- independent auditor blob `5823daaa682a99460203ce3d4db5e59cd08c731d`;
-- machine contract blob `7a57bfd512bcdb4042be0d7940e57c3059a9cc36`.
+## Current gate: independent static re-audit of hardened PR #190
 
-Independent audit:
+Independent branch: `audit/v026-r1-first-attempt-failure-funnel-pr190-reaudit`.
 
-`docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_PR190_AUDIT_V0_1.md`, commit `e23cb73df393d221c7e3a9742f1b915108644980`.
+Frozen identities:
 
-Terminal audit qualification authority:
+- re-auditor blob `4bf1b3867a953b61e62225735883628869218ded`;
+- static re-audit workflow blob `5db1a2580c22ca2c65d9b0f0d87aa42940f402bd`;
+- exact audit head `ece06ed801c65aa336a06ee8b421e9812b8e1e58`.
 
-`docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_PR190_QUALIFICATION_V0_1.json`, commit `d7b329796f73d7b09bfb0d71d9ae422d51b3a583`.
+That branch differs from its main base only by the auditor and static workflow. It executes no failure funnel and no science. Its adversarial checks cover exact target bindings, duplicate/rerun selection, nested ZIP extras, nested extracted-tree extras and manifest basename collisions.
 
-Verdict: **QUALIFIED**.
+Hosted run **`35036894735`**, job **`104607902297`**, run #1 / attempt #1 is the only authoritative hosted re-audit attempt for this frozen target. Latest observed status: **queued**, conclusion null. Multiple repository Actions runs are also queued; queued status is not a PASS or failure verdict.
 
-The root-cause evidence and actual forensic artifact provenance survived review, and the live repository currently has exactly one exact-head science run. However, reviewed PR190 head is not executable/terminalizable as-is because:
+Do not mutate target PR190 head `5731b605...`, re-audit head `ece06ed8...`, or create another duplicate re-audit while this run is pending solely because of scheduler delay.
 
-1. contract fields for producer artifact id / ZIP SHA256 / receipt SHA256 are still null and say the producer is queued;
-2. the candidate auditor does not live-enumerate exact science workflow/head runs, so a forbidden rerun created after the producer artifact could escape detection;
-3. its claimed exact artifact-file-set check inspects only top-level files and would not reject nested extras;
-4. manifest parsing should bind exact relative names/cardinality rather than basename-normalizing entries;
-5. any future hosted funnel workflow must checkout full history or explicitly fetch all exact historical SHAs needed by the independent reconstruction.
+## Exact continuation procedure
 
-These are fail-closed audit-implementation qualifications. They do not change the pre-science root cause and do not create a sentinel scientific result.
+1. Read current `main` and check run `35036894735` first.
+2. If run remains queued/in-progress, preserve the frozen target and do response-blind supporting work only. Do not execute failure funnel, do not write terminal authority, do not alter science/runtime objects.
+3. If run completes `success`, require exactly one re-audit artifact; download and independently hash its ZIP; verify the inner receipt and SHA manifest; require verdict `QUALIFIED`, classification `PR190_HARDENED_FAILURE_FUNNEL_CANDIDATE_STATICALLY_QUALIFIED_FOR_SEPARATE_HOSTED_WORKFLOW_AUTHORING_ONLY`, exact target head/blobs and all adversarial fail-closed checks true.
+4. Only after step 3 passes, persist a **separate static re-audit qualification authority on main**. Its authorization ceiling is limited to authoring/auditing a separately frozen hosted failure-funnel workflow. It must not authorize the failure-funnel execution itself, terminal first-attempt result authority, rerun, same-nonce attempt, successor science or full-107.
+5. If re-audit fails, inspect the exact failure and keep PR190/failure-funnel execution blocked. Any candidate correction requires a new frozen target head and a fresh independent audit; never reuse evidence from `35036894735` for a mutated target.
+6. After a future separate hosted failure-funnel workflow is itself frozen/audited/authorized, its execution must live-enumerate exact science run history and independently verify immutable forensic artifact provenance. Only a terminal independent failure-funnel PASS may make terminal first-attempt result authority admissible.
+7. Any future scientific sentinel is a separate prospective successor with a new trigger identity. Do not patch W and call it attempt #1 continuation.
 
-## Exact next admissible gate
+## Current funnel
 
-Revise PR #190 prospectively as a new exact candidate head, changing only the failure-funnel audit/contract object:
-
-- freeze artifact id `10422924571`;
-- freeze ZIP SHA256 `226209ae5cb416bd2575e5d1b7800632b6848c04363ce0d9a1add27cbbdd559b`;
-- freeze producer receipt SHA256 `207cfde59971b91f3e6ac5ef3c95703f608735c17df67daa03a14efb4a7f976e`;
-- live-enumerate the exact science workflow/head and require exactly run `35033268924`, run #1 / attempt #1, with no duplicate/rerun;
-- recursively require exactly the seven frozen forensic artifact relative paths and no extras;
-- bind exact manifest names/cardinality without basename collisions;
-- design the future hosted funnel workflow with full graph/exact-SHA availability.
-
-Then conduct a **fresh independent response-blind static re-audit of the revised PR190 code+contract**. Do not execute a hosted failure-funnel workflow and do not write terminal first-attempt result authority before that re-audit passes.
-
-## Recovery invariant
-
-Do not rerun `35033268924`. Do not use rerun-failed-jobs or rerun-job actions. Do not modify/remove/recreate final L. Do not silently patch W and call it a continuation of attempt #1. Do not execute the reviewed PR190 failure funnel as-is.
-
-Any future scientific sentinel requires a separately prospectively frozen successor launch-governance package/workflow with a **new trigger identity**, independently audited before activation. A successor event guard should validate aggregate `before...after` repository diff or equivalent first-parent tree diff rather than absent commit-level file lists.
-
-Current funnel:
-
-`V0.25 TERMINAL -> V0.26 R1 QUALIFIED -> CORRECTED A/Q PROMOTED -> EXACT L-GATE AUTHORITY -> EXACT L TRIGGER -> RUN #1/ATTEMPT #1 CONSUMED -> PRE-SCIENCE EVENT-GUARD FAILURE -> HISTORICAL INTERIM BLOCKED -> FORENSIC RUN #3 TERMINAL SUCCESS + IMMUTABLE ARTIFACT -> PR190 FAILURE-FUNNEL CANDIDATE QUALIFIED / NOT EXECUTION-READY -> PR190 HARDENING + REAUDIT REQUIRED -> FULL 107 ROW CLOSED`.
+`V0.25 TERMINAL -> V0.26 R1 QUALIFIED -> CORRECTED A/Q PROMOTED -> EXACT L-GATE AUTHORITY -> EXACT L TRIGGER -> RUN #1/ATTEMPT #1 CONSUMED -> PRE-SCIENCE EVENT-GUARD FAILURE -> HISTORICAL INTERIM BLOCKED -> FORENSIC RUN #3 TERMINAL SUCCESS -> PR190 ORIGINAL CANDIDATE QUALIFIED WITH CORRECTIONS -> PR190 HARDENED HEAD 5731b605 -> INDEPENDENT STATIC RE-AUDIT RUN 35036894735 QUEUED -> FULL 107 ROW CLOSED`.
 
 Effect remains `+0/+0`; readiness `68%`; scientific frontier `67%`.
