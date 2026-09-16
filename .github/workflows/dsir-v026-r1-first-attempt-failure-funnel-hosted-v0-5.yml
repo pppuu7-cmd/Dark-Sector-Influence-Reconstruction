@@ -1,0 +1,233 @@
+name: dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-5
+
+on:
+  workflow_dispatch:
+    inputs:
+      execution_nonce:
+        required: true
+        type: string
+      execution_authority_blob_sha1:
+        required: true
+        type: string
+      execution_authority_review_blob_sha1:
+        required: true
+        type: string
+      terminal_static_audit_authority_blob_sha1:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  WORKFLOW_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-5.yml
+  TERMINAL_HISTORY_WORKFLOW_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-terminal-history-v0-5.yml
+  ORCHESTRATOR_WORKFLOW_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-orchestrator-v0-5.yml
+  REAUDIT_CONFIRMATION_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_PR190_REAUDIT_CONFIRMATION_V0_1.json
+  REAUDIT_CONFIRMATION_BLOB: d2fe264e2866b9f490a7523a32f341fb7cc08d0b
+  EXECUTION_AUTHORITY_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_V0_5.json
+  EXECUTION_AUTHORITY_REVIEW_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_REVIEW_CONFIRMATION_V0_5.json
+  TERMINAL_STATIC_AUDIT_AUTHORITY_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_STATIC_AUDIT_AUTHORITY_V0_5.json
+  TARGET_BRANCH: audit/v026-r1-first-attempt-failure-funnel-candidate
+  TARGET_HEAD: 5731b605afdc35bd85d3a2014a9e135719a07697
+  TARGET_AUDITOR: ci/dsir_v026_r1_sentinel_first_attempt_failure_funnel_audit_v0_1.py
+  TARGET_AUDITOR_BLOB: f7eff337e511baa25d51e5b0c333a97534e1bbc3
+  TARGET_CONTRACT: docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_CONTRACT_V0_1.json
+  TARGET_CONTRACT_BLOB: 3369e5cdd2086ca22dca6bfa575054286fd1dcd7
+  FORENSIC_RUN_ID: '35033678449'
+  FORENSIC_ARTIFACT_ID: '10422924571'
+  FORENSIC_ARTIFACT_ZIP_SHA256: 226209ae5cb416bd2575e5d1b7800632b6848c04363ce0d9a1add27cbbdd559b
+  SCIENCE_HEAD: 9a333294f3acb80201c5f6ed5b74918c1c767232
+  GH_TOKEN: ${{ github.token }}
+  INPUT_EXECUTION_NONCE: ${{ inputs.execution_nonce }}
+  INPUT_EXECUTION_AUTHORITY_BLOB_SHA1: ${{ inputs.execution_authority_blob_sha1 }}
+  INPUT_EXECUTION_AUTHORITY_REVIEW_BLOB_SHA1: ${{ inputs.execution_authority_review_blob_sha1 }}
+  INPUT_TERMINAL_STATIC_AUDIT_AUTHORITY_BLOB_SHA1: ${{ inputs.terminal_static_audit_authority_blob_sha1 }}
+
+jobs:
+  failure-funnel:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout dispatch ref with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fail closed unless exact v0.5 authority chain is active
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$GITHUB_RUN_NUMBER" = "1"
+          test "$GITHUB_RUN_ATTEMPT" = "1"
+          test "$(git hash-object "$REAUDIT_CONFIRMATION_PATH")" = "$REAUDIT_CONFIRMATION_BLOB"
+          test -f "$TERMINAL_HISTORY_WORKFLOW_PATH"
+          test -f "$ORCHESTRATOR_WORKFLOW_PATH"
+          test -f "$EXECUTION_AUTHORITY_PATH"
+          test -f "$EXECUTION_AUTHORITY_REVIEW_PATH"
+          test -f "$TERMINAL_STATIC_AUDIT_AUTHORITY_PATH"
+          test "$(git hash-object "$EXECUTION_AUTHORITY_PATH")" = "$INPUT_EXECUTION_AUTHORITY_BLOB_SHA1"
+          test "$(git hash-object "$EXECUTION_AUTHORITY_REVIEW_PATH")" = "$INPUT_EXECUTION_AUTHORITY_REVIEW_BLOB_SHA1"
+          test "$(git hash-object "$TERMINAL_STATIC_AUDIT_AUTHORITY_PATH")" = "$INPUT_TERMINAL_STATIC_AUDIT_AUTHORITY_BLOB_SHA1"
+          python3 - <<'PY'
+          import json, os, subprocess
+          h=lambda p: subprocess.check_output(['git','hash-object',p],text=True).strip()
+          ap=os.environ['EXECUTION_AUTHORITY_PATH']; rp=os.environ['EXECUTION_AUTHORITY_REVIEW_PATH']; sp=os.environ['TERMINAL_STATIC_AUDIT_AUTHORITY_PATH']
+          a=json.load(open(ap)); r=json.load(open(rp)); s=json.load(open(sp))
+          wb=h(os.environ['WORKFLOW_PATH']); tb=h(os.environ['TERMINAL_HISTORY_WORKFLOW_PATH']); ob=h(os.environ['ORCHESTRATOR_WORKFLOW_PATH']); ab=h(ap); rb=h(rp); sb=h(sp)
+          assert a['schema']=='LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_V0_5'
+          assert a['status']=='AUTHORIZED_SCOPED'
+          assert a['authorized_event']=='workflow_dispatch'
+          assert a['authorized_ref']==os.environ['GITHUB_REF']
+          assert a['authorized_run_number']==1 and a['authorized_run_attempt']==1
+          assert a['authorized_dispatch_count']==1
+          assert a['workflow_git_blob_sha1']==wb
+          assert a['terminal_history_workflow_git_blob_sha1']==tb
+          assert a['orchestrator_workflow_git_blob_sha1']==ob
+          assert a['execution_nonce']==os.environ['INPUT_EXECUTION_NONCE']
+          assert a['failure_funnel_execution_authorized_after_activation'] is True
+          assert a['science_run_35033268924_rerun_authorized'] is False
+          assert a['same_nonce_second_attempt_authorized'] is False
+          assert a['successor_sentinel_science_authorized'] is False
+          assert a['full_107_row_execution_authorized'] is False
+          assert ab==os.environ['INPUT_EXECUTION_AUTHORITY_BLOB_SHA1']
+          assert rb==os.environ['INPUT_EXECUTION_AUTHORITY_REVIEW_BLOB_SHA1']
+          assert sb==os.environ['INPUT_TERMINAL_STATIC_AUDIT_AUTHORITY_BLOB_SHA1']
+          assert r['schema']=='LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_REVIEW_CONFIRMATION_V0_5'
+          assert r['status']=='QUALIFIED' and r['verdict']=='QUALIFIED'
+          assert r['reviewed_execution_authority_git_blob_sha1']==ab
+          assert r['reviewed_workflow_git_blob_sha1']==wb
+          assert r['reviewed_terminal_history_workflow_git_blob_sha1']==tb
+          assert r['reviewed_orchestrator_workflow_git_blob_sha1']==ob
+          assert r['authorized_run_number']==1 and r['authorized_run_attempt']==1
+          assert r['execution_nonce']==os.environ['INPUT_EXECUTION_NONCE']
+          assert r['rerun_authorized'] is False and r['same_nonce_second_attempt_authorized'] is False
+          assert r['successor_sentinel_science_authorized'] is False and r['full_107_row_execution_authorized'] is False
+          assert s['schema']=='LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_STATIC_AUDIT_AUTHORITY_V0_5'
+          assert s['status']=='TERMINAL_STATIC_AUDIT_AUTHORITY' and s['verdict']=='QUALIFIED'
+          assert s['reviewed_workflow_git_blob_sha1']==wb
+          assert s['reviewed_terminal_history_workflow_git_blob_sha1']==tb
+          assert s['reviewed_orchestrator_workflow_git_blob_sha1']==ob
+          assert s['explicit_postrun_workflow_dispatch_verified'] is True
+          assert s['orchestrator_waits_for_target_terminal_before_postrun_dispatch'] is True
+          assert s['failure_funnel_dispatch_authorized_after_exact_promotion'] is True
+          assert s['science_run_35033268924_rerun_authorized'] is False
+          assert s['same_nonce_second_attempt_authorized'] is False
+          assert s['successor_sentinel_science_authorized'] is False
+          assert s['full_107_row_execution_authorized'] is False
+          PY
+
+      - name: Require unique first target dispatch before evidence access
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import json, os, urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; token=os.environ['GH_TOKEN']; path=os.environ['WORKFLOW_PATH']
+          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          runs=[]; url=f'https://api.github.com/repos/{repo}/actions/runs?event=workflow_dispatch&per_page=100'
+          while url:
+              req=urllib.request.Request(url,headers=headers)
+              with urllib.request.urlopen(req) as rr:
+                  p=json.load(rr); runs.extend(p.get('workflow_runs',[])); link=rr.headers.get('Link','')
+              url=next((x.split(';',1)[0].strip()[1:-1] for x in link.split(',') if 'rel="next"' in x),None)
+          exact=[x for x in runs if x.get('path')==path]
+          assert len(exact)==1
+          only=exact[0]
+          assert int(only['id'])==int(os.environ['GITHUB_RUN_ID'])
+          assert int(only['run_number'])==1 and int(only['run_attempt'])==1
+          assert int(os.environ['GITHUB_RUN_NUMBER'])==1 and int(os.environ['GITHUB_RUN_ATTEMPT'])==1
+          assert only['event']=='workflow_dispatch' and only['head_branch']=='main'
+          json.dump({'total_count':1,'workflow_runs':exact},open('safe/pre_run_dispatch_history.json','w'),indent=2,sort_keys=True)
+          PY
+
+      - name: Bind frozen PR190 auditor and contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$TARGET_BRANCH:refs/remotes/origin/failure-funnel-target"
+          test "$(git rev-parse refs/remotes/origin/failure-funnel-target)" = "$TARGET_HEAD"
+          test "$(git rev-parse "$TARGET_HEAD:$TARGET_AUDITOR")" = "$TARGET_AUDITOR_BLOB"
+          test "$(git rev-parse "$TARGET_HEAD:$TARGET_CONTRACT")" = "$TARGET_CONTRACT_BLOB"
+          git show "$TARGET_HEAD:$TARGET_AUDITOR" > safe/failure_funnel_auditor.py
+          python3 -m py_compile safe/failure_funnel_auditor.py
+
+      - name: Capture frozen producer and science histories
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, urllib.parse, urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; token=os.environ['GH_TOKEN']; h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          def get(url):
+              with urllib.request.urlopen(urllib.request.Request(url,headers=h)) as r:return json.load(r)
+          json.dump(get(f"https://api.github.com/repos/{repo}/actions/runs/{os.environ['FORENSIC_RUN_ID']}"),open('safe/producer_run.json','w'),indent=2,sort_keys=True)
+          json.dump(get(f"https://api.github.com/repos/{repo}/actions/runs/{os.environ['FORENSIC_RUN_ID']}/artifacts?per_page=100"),open('safe/producer_artifacts.json','w'),indent=2,sort_keys=True)
+          q=urllib.parse.urlencode({'head_sha':os.environ['SCIENCE_HEAD'],'event':'push','per_page':100}); runs=[]; url=f'https://api.github.com/repos/{repo}/actions/runs?{q}'
+          while url:
+              req=urllib.request.Request(url,headers=h)
+              with urllib.request.urlopen(req) as r:
+                  p=json.load(r); runs.extend(p.get('workflow_runs',[])); link=r.headers.get('Link','')
+              url=next((x.split(';',1)[0].strip()[1:-1] for x in link.split(',') if 'rel="next"' in x),None)
+          json.dump({'total_count':len(runs),'workflow_runs':runs},open('safe/science_live_runs.json','w'),indent=2,sort_keys=True)
+          PY
+
+      - name: Download frozen forensic artifact and execute auditor
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$FORENSIC_ARTIFACT_ID/zip" --output safe/forensic.zip
+          test "$(sha256sum safe/forensic.zip | awk '{print $1}')" = "$FORENSIC_ARTIFACT_ZIP_SHA256"
+          mkdir -p safe/producer && unzip -q safe/forensic.zip -d safe/producer
+          python3 safe/failure_funnel_auditor.py --producer-dir safe/producer --producer-run-json safe/producer_run.json --producer-artifacts-json safe/producer_artifacts.json --producer-zip safe/forensic.zip --science-live-runs-json safe/science_live_runs.json --out safe/failure_funnel_receipt.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/failure_funnel_receipt.json'))
+          assert d['verdict']=='CONFIRMED_SCOPED'
+          assert d['classification']=='SENTINEL_FIRST_ATTEMPT_PRE_SCIENCE_ACTIONS_EVENT_GUARD_FAILURE_INDEPENDENTLY_CONFIRMED'
+          assert d['terminal_first_attempt_authority_admissible'] is True
+          assert d['rerun_authorized'] is False
+          assert d['same_nonce_second_attempt_authorized'] is False
+          assert d['successor_science_authorized_by_this_receipt'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          PY
+          sha256sum safe/failure_funnel_receipt.json > safe/failure_funnel_receipt.sha256
+
+      - name: Fresh end-of-run target history closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; token=os.environ['GH_TOKEN']; path=os.environ['WORKFLOW_PATH']; h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          runs=[]; url=f'https://api.github.com/repos/{repo}/actions/runs?event=workflow_dispatch&per_page=100'
+          while url:
+              req=urllib.request.Request(url,headers=h)
+              with urllib.request.urlopen(req) as r:
+                  p=json.load(r); runs.extend(p.get('workflow_runs',[])); link=r.headers.get('Link','')
+              url=next((x.split(';',1)[0].strip()[1:-1] for x in link.split(',') if 'rel="next"' in x),None)
+          exact=[x for x in runs if x.get('path')==path]
+          assert len(exact)==1
+          only=exact[0]
+          assert int(only['id'])==int(os.environ['GITHUB_RUN_ID']) and int(only['run_number'])==1 and int(only['run_attempt'])==1
+          assert only['head_branch']=='main' and only['event']=='workflow_dispatch'
+          json.dump({'total_count':1,'workflow_runs':exact},open('safe/end_of_run_dispatch_history.json','w'),indent=2,sort_keys=True)
+          PY
+
+      - name: Persist v0.5 target evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-5
+          path: |
+            safe/failure_funnel_receipt.json
+            safe/failure_funnel_receipt.sha256
+            safe/pre_run_dispatch_history.json
+            safe/end_of_run_dispatch_history.json
+            safe/science_live_runs.json
+            safe/producer_run.json
+            safe/producer_artifacts.json
+          if-no-files-found: error
+          retention-days: 90

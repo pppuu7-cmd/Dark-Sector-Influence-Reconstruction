@@ -1,0 +1,198 @@
+name: dsir-v026-r1-first-attempt-failure-funnel-orchestrator-v0-5
+
+on:
+  workflow_dispatch:
+    inputs:
+      execution_nonce:
+        required: true
+        type: string
+      execution_authority_blob_sha1:
+        required: true
+        type: string
+      execution_authority_review_blob_sha1:
+        required: true
+        type: string
+      terminal_static_audit_authority_blob_sha1:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: write
+
+env:
+  TARGET_WORKFLOW_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-5.yml
+  TERMINAL_WORKFLOW_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-terminal-history-v0-5.yml
+  ORCHESTRATOR_WORKFLOW_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-orchestrator-v0-5.yml
+  EXECUTION_AUTHORITY_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_V0_5.json
+  EXECUTION_AUTHORITY_REVIEW_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_REVIEW_CONFIRMATION_V0_5.json
+  TERMINAL_STATIC_AUDIT_AUTHORITY_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_STATIC_AUDIT_AUTHORITY_V0_5.json
+  EXECUTION_NONCE: ${{ inputs.execution_nonce }}
+  AUTHORITY_BLOB: ${{ inputs.execution_authority_blob_sha1 }}
+  REVIEW_BLOB: ${{ inputs.execution_authority_review_blob_sha1 }}
+  STATIC_BLOB: ${{ inputs.terminal_static_audit_authority_blob_sha1 }}
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout main and bind exact one-shot authority
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fail closed unless this is unique orchestrator run #1 attempt #1
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$GITHUB_RUN_NUMBER" = "1"
+          test "$GITHUB_RUN_ATTEMPT" = "1"
+          test "$(git hash-object "$EXECUTION_AUTHORITY_PATH")" = "$AUTHORITY_BLOB"
+          test "$(git hash-object "$EXECUTION_AUTHORITY_REVIEW_PATH")" = "$REVIEW_BLOB"
+          test "$(git hash-object "$TERMINAL_STATIC_AUDIT_AUTHORITY_PATH")" = "$STATIC_BLOB"
+          python3 - <<'PY'
+          import json,os,subprocess
+          h=lambda p:subprocess.check_output(['git','hash-object',p],text=True).strip()
+          a=json.load(open(os.environ['EXECUTION_AUTHORITY_PATH'])); r=json.load(open(os.environ['EXECUTION_AUTHORITY_REVIEW_PATH'])); s=json.load(open(os.environ['TERMINAL_STATIC_AUDIT_AUTHORITY_PATH']))
+          assert a['execution_nonce']==os.environ['EXECUTION_NONCE']
+          assert a['orchestrator_workflow_git_blob_sha1']==h(os.environ['ORCHESTRATOR_WORKFLOW_PATH'])
+          assert a['workflow_git_blob_sha1']==h(os.environ['TARGET_WORKFLOW_PATH'])
+          assert a['terminal_history_workflow_git_blob_sha1']==h(os.environ['TERMINAL_WORKFLOW_PATH'])
+          assert a['authorized_orchestrator_dispatch_count']==1
+          assert a['authorized_target_dispatch_count']==1
+          assert a['authorized_terminal_history_dispatch_count']==1
+          assert a['authorized_run_number']==1 and a['authorized_run_attempt']==1
+          assert a['science_run_35033268924_rerun_authorized'] is False
+          assert a['same_nonce_second_attempt_authorized'] is False
+          assert a['successor_sentinel_science_authorized'] is False
+          assert a['full_107_row_execution_authorized'] is False
+          assert r['reviewed_execution_authority_git_blob_sha1']==os.environ['AUTHORITY_BLOB']
+          assert s['reviewed_orchestrator_workflow_git_blob_sha1']==h(os.environ['ORCHESTRATOR_WORKFLOW_PATH'])
+          assert s['explicit_postrun_workflow_dispatch_verified'] is True
+          assert s['orchestrator_waits_for_target_terminal_before_postrun_dispatch'] is True
+          PY
+
+      - name: Atomic zero-history preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import json,os,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; token=os.environ['GH_TOKEN']; h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          def runs(path):
+              xs=[]; url=f'https://api.github.com/repos/{repo}/actions/runs?event=workflow_dispatch&per_page=100'
+              while url:
+                  req=urllib.request.Request(url,headers=h)
+                  with urllib.request.urlopen(req) as r:
+                      p=json.load(r); xs.extend(p.get('workflow_runs',[])); link=r.headers.get('Link','')
+                  url=next((z.split(';',1)[0].strip()[1:-1] for z in link.split(',') if 'rel="next"' in z),None)
+              return [x for x in xs if x.get('path')==path]
+          o=runs(os.environ['ORCHESTRATOR_WORKFLOW_PATH']); t=runs(os.environ['TARGET_WORKFLOW_PATH']); a=runs(os.environ['TERMINAL_WORKFLOW_PATH'])
+          assert len(o)==1 and int(o[0]['id'])==int(os.environ['GITHUB_RUN_ID']) and int(o[0]['run_number'])==1 and int(o[0]['run_attempt'])==1
+          assert len(t)==0 and len(a)==0
+          json.dump({'orchestrator':o,'target':t,'terminal':a},open('safe/preflight_history.json','w'),indent=2,sort_keys=True)
+          PY
+
+      - name: Dispatch exactly one v0.5 target
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; token=os.environ['GH_TOKEN']; workflow_id=os.path.basename(os.environ['TARGET_WORKFLOW_PATH'])
+          url=f'https://api.github.com/repos/{repo}/actions/workflows/{workflow_id}/dispatches'
+          body=json.dumps({'ref':'main','inputs':{'execution_nonce':os.environ['EXECUTION_NONCE'],'execution_authority_blob_sha1':os.environ['AUTHORITY_BLOB'],'execution_authority_review_blob_sha1':os.environ['REVIEW_BLOB'],'terminal_static_audit_authority_blob_sha1':os.environ['STATIC_BLOB']}}).encode()
+          req=urllib.request.Request(url,data=body,method='POST',headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'})
+          with urllib.request.urlopen(req) as r: assert r.status==204
+          PY
+
+      - name: Wait for unique target to become terminal success
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os,time,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; token=os.environ['GH_TOKEN']; path=os.environ['TARGET_WORKFLOW_PATH']; h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          def get(url):
+              with urllib.request.urlopen(urllib.request.Request(url,headers=h)) as r:return json.load(r)
+          target=None
+          for _ in range(150):
+              p=get(f'https://api.github.com/repos/{repo}/actions/runs?event=workflow_dispatch&per_page=100')
+              xs=[x for x in p.get('workflow_runs',[]) if x.get('path')==path]
+              if len(xs)==1:
+                  x=xs[0]
+                  assert int(x['run_number'])==1 and int(x['run_attempt'])==1 and x['head_branch']=='main'
+                  target=x
+                  if x['status']=='completed': break
+              elif len(xs)>1: raise AssertionError('duplicate target dispatch')
+              time.sleep(4)
+          assert target and target['status']=='completed' and target['conclusion']=='success'
+          json.dump(target,open('safe/target_terminal_run.json','w'),indent=2,sort_keys=True)
+          open('safe/target_run_id.txt','w').write(str(target['id'])+'\n')
+          open('safe/target_head_sha.txt','w').write(target['head_sha']+'\n')
+          PY
+
+      - name: Dispatch terminal-history auditor only after target terminal success
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; token=os.environ['GH_TOKEN']; workflow_id=os.path.basename(os.environ['TERMINAL_WORKFLOW_PATH'])
+          rid=open('safe/target_run_id.txt').read().strip(); head=open('safe/target_head_sha.txt').read().strip()
+          url=f'https://api.github.com/repos/{repo}/actions/workflows/{workflow_id}/dispatches'
+          body=json.dumps({'ref':'main','inputs':{'target_run_id':rid,'target_head_sha':head,'execution_nonce':os.environ['EXECUTION_NONCE'],'execution_authority_blob_sha1':os.environ['AUTHORITY_BLOB'],'execution_authority_review_blob_sha1':os.environ['REVIEW_BLOB'],'terminal_static_audit_authority_blob_sha1':os.environ['STATIC_BLOB']}}).encode()
+          req=urllib.request.Request(url,data=body,method='POST',headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'})
+          with urllib.request.urlopen(req) as r: assert r.status==204
+          PY
+
+      - name: Wait for unique terminal-history auditor success
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os,time,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; token=os.environ['GH_TOKEN']; path=os.environ['TERMINAL_WORKFLOW_PATH']; h={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          def get(url):
+              with urllib.request.urlopen(urllib.request.Request(url,headers=h)) as r:return json.load(r)
+          audit=None
+          for _ in range(150):
+              p=get(f'https://api.github.com/repos/{repo}/actions/runs?event=workflow_dispatch&per_page=100')
+              xs=[x for x in p.get('workflow_runs',[]) if x.get('path')==path]
+              if len(xs)==1:
+                  x=xs[0]; assert int(x['run_number'])==1 and int(x['run_attempt'])==1 and x['head_branch']=='main'; audit=x
+                  if x['status']=='completed': break
+              elif len(xs)>1: raise AssertionError('duplicate terminal auditor dispatch')
+              time.sleep(4)
+          assert audit and audit['status']=='completed' and audit['conclusion']=='success'
+          json.dump(audit,open('safe/terminal_history_run.json','w'),indent=2,sort_keys=True)
+          PY
+
+      - name: Emit orchestration receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os
+          t=json.load(open('safe/target_terminal_run.json')); a=json.load(open('safe/terminal_history_run.json'))
+          out={'schema':'LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_5_ORCHESTRATION_RECEIPT_V0_1','status':'TERMINAL_ORCHESTRATION_RECEIPT','verdict':'QUALIFIED','classification':'V0_5_TARGET_THEN_EXPLICIT_POSTRUN_TERMINAL_AUDIT_COMPLETED','execution_nonce':os.environ['EXECUTION_NONCE'],'orchestrator_run_id':int(os.environ['GITHUB_RUN_ID']),'orchestrator_run_number':1,'orchestrator_run_attempt':1,'target_run_id':t['id'],'target_run_number':1,'target_run_attempt':1,'target_conclusion':'success','terminal_history_run_id':a['id'],'terminal_history_run_number':1,'terminal_history_run_attempt':1,'terminal_history_conclusion':'success','postrun_dispatch_after_target_terminal':True,'rerun_authorized':False,'second_dispatch_authorized':False,'successor_sentinel_science_authorized_by_this_receipt':False,'full_107_row_execution_authorized':False,'token':'QUALIFIED_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_5_ORCHESTRATION_PLUS_0_PLUS_0'}
+          json.dump(out,open('safe/v05_orchestration_receipt.json','w'),indent=2,sort_keys=True);open('safe/v05_orchestration_receipt.json','a').write('\n')
+          PY
+          sha256sum safe/v05_orchestration_receipt.json > safe/v05_orchestration_receipt.sha256
+
+      - name: Persist orchestration evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-first-attempt-failure-funnel-v05-orchestration
+          path: |
+            safe/preflight_history.json
+            safe/target_terminal_run.json
+            safe/terminal_history_run.json
+            safe/v05_orchestration_receipt.json
+            safe/v05_orchestration_receipt.sha256
+          if-no-files-found: error
+          retention-days: 90
