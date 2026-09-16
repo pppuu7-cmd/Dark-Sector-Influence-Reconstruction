@@ -1,0 +1,83 @@
+{
+  "schema": "dsir.article2.figure_numeric_manifest.v0.1",
+  "date": "2026-08-28",
+  "metric": "theory/provider Euclidean metric for Exp071 angle chain",
+  "frozen_separator_deg": 45.0,
+  "figure1": {
+    "K2_static": {
+      "matter_only": {"cs2_deg": 19.223081503733017, "cv2_deg": 19.037102938963482, "source": "data/derived/exp071f_known_sector_matter_weyl_slip_direction_summary_v0_1.json"},
+      "weyl_slip": {"cs2_deg": 18.925666634781507, "cv2_deg": 58.912673573574864, "source": "data/derived/exp071e_known_sector_joint_metric_direction_summary_v0_1.json"},
+      "matter_weyl_slip": {"cs2_deg": 19.07487721786906, "cv2_deg": 50.16673498586107, "source": "data/derived/exp071f_known_sector_matter_weyl_slip_direction_summary_v0_1.json"}
+    },
+    "K2_positive_ray": {
+      "temporal": {"cs2_deg": 138.10058532621147, "cv2_deg": 137.0972592611391, "source": "data/derived/exp071h_k2_finite_bin_growth_dual_provenance_summary_v0_1.json"},
+      "raw_ttot": {"cs2_deg": 165.9454940017539, "cv2_deg": 164.7113289163152, "source": "data/derived/exp071i_k2_gdm_total_velocity_direction_summary_v0_1.json"},
+      "projected_ttot_shape": {"cs2_deg": 166.43869440595827, "cv2_deg": 164.92709673022526, "source": "data/derived/exp071j_total_velocity_shape_projection_summary_v0_1.json"}
+    },
+    "K2_line": {
+      "predicted_from_positive_shape": {"cs2_deg": 13.56130559404173, "cv2_deg": 15.07290326977474, "source": "algebra from Exp071J oriented angles"},
+      "fresh_negative": {"cs2_deg": 13.550260274305414, "cv2_deg": 15.070884431347679, "source": "data/derived/exp071l_two_sided_k2_velocity_shape_nuisance_summary_v0_1.json"},
+      "plus_minus_mutual_deg": 179.9078020829102,
+      "nonlinear_antisymmetry_error": 0.002992249341414612
+    },
+    "support_robustness": {
+      "global_min_primary_angle_deg": 157.8212319078262,
+      "primary_angle_count": 24,
+      "source": "data/derived/exp071k_velocity_shape_support_localization_summary_v0_1.json"
+    }
+  },
+  "figure2": {
+    "Exp071M": {
+      "reference_n_s": 0.965,
+      "plus_n_s": 0.970,
+      "minus_n_s": 0.960,
+      "K1_plus_max_abs_log_ttot_response": 0.0,
+      "K1_minus_max_abs_log_ttot_response": 0.0,
+      "status": "INVALID_FOR_SCIENCE_EXP071M",
+      "source_path_main": "data/derived/exp071m_two_sided_k1_transfer_null_summary_v0_1.json",
+      "source_blob_sha": "3000738a2ea6360efc4a29dbdaf890a7df92fcfa"
+    },
+    "Exp071N": {
+      "response_formula": "Delta ln P_R(k) + 2 Delta ln |t_tot|",
+      "K1_line_cs2_deg": 36.06223725044938,
+      "K1_line_cv2_deg": 37.84581229951204,
+      "K1_plus_vs_GDM_cs2_deg": 36.06223725044938,
+      "K1_plus_vs_GDM_cv2_deg": 37.84581229951204,
+      "K1_minus_vs_GDM_cs2_deg": 143.93776274955064,
+      "K1_minus_vs_GDM_cv2_deg": 142.15418770048797,
+      "K1_plus_minus_mutual_deg": 179.99999914622634,
+      "antisymmetry_error": 0.0,
+      "retained_shape_norm_fraction": {"K1": 0.625535121104866, "GDM_cs2": 0.8271831838994257, "GDM_cv2": 0.8372386500341654},
+      "fresh_reference_max_abs_relative_P_difference": 0.0,
+      "fresh_reference_max_abs_relative_ttot_difference": 0.0,
+      "integrity_threshold": 1e-10,
+      "source_path_main": "data/derived/exp071n_two_sided_k1_velocity_power_shape_summary_v0_1.json",
+      "source_blob_sha": "2e2254abc92bb3455ec51b053e23455711c7b06c"
+    }
+  },
+  "figure3": {
+    "provider_cells_retained": 495,
+    "provider_cells_total": 495,
+    "act_unwise_retained_observational_dimension": 0,
+    "act_unwise_leakage_threshold_fraction": 0.05,
+    "joint_frontier_z_min": 0.0087345858,
+    "joint_frontier_k_max_Mpc_inv": 4.8182610974,
+    "boss_nonempty_rows": 54,
+    "boss_total_rows": 240,
+    "kids_finite_theta_status": "FAIL_FROZEN_ABSOLUTE_RESPONSE_ADMISSIBILITY",
+    "source": "docs/ARTICLE2_CLAIM_MATRIX_CURRENT.md and docs/ARTICLE2_FINAL_FIGURE_TABLE_SPEC_V0_1.md on main"
+  },
+  "figure4": {
+    "hierarchy": ["representation A", "resolvability / ker(A)", "channel block", "ray / line / nuisance subspace", "metric M", "physical support", "finite observation operator", "covariance whitening", "nuisance quotient", "G7 relation/null"],
+    "article2_stops_before": "covariance whitening"
+  },
+  "boundaries": [
+    "not tracer RSD",
+    "not f_sigma8",
+    "not survey distinguishability",
+    "not covariance whitening",
+    "not nuisance-marginalized observational separation",
+    "not dark-sector detection",
+    "G7/G8/G9 remain open"
+  ]
+}
