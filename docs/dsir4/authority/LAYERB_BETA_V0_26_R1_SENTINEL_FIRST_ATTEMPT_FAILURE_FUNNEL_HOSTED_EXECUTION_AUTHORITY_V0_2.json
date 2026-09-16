@@ -1,0 +1,56 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_V0_2",
+  "status": "AUTHORIZED_SCOPED",
+  "date": "2026-09-16",
+  "effect": "+0/+0",
+  "role": "PROSPECTIVE_EXACT_ONE_RUN_HOSTED_FAILURE_FUNNEL_EXECUTION_AUTHORITY_CANDIDATE_PENDING_INDEPENDENT_HOSTED_AUDIT_AND_EXACT_PROMOTION",
+  "governing_runtime_binding_blocker": {
+    "run_id": 35041244978,
+    "job_id": 104621354119,
+    "artifact_id": 10424693735,
+    "classification": "HOSTED_FAILURE_FUNNEL_EXECUTION_AUTHORITY_RUNTIME_BINDING_INCOMPLETE",
+    "auditor_git_blob_sha1": "7255fee3e6387d26a628f98dc33f8e6ff0660575",
+    "required_corrections": [
+      "ENFORCE_AUTHORIZED_REF_EQUALS_GITHUB_REF_BEFORE_ANY_EVIDENCE_ACCESS",
+      "REQUIRE_AND_VALIDATE_SEPARATE_EXECUTION_AUTHORITY_REVIEW_CONFIRMATION_BINDING_EXACT_AUTHORITY_BLOB_WORKFLOW_BLOB_NONCE_AND_AUTHORIZED_REF",
+      "REPEAT_INDEPENDENT_STATIC_WORKFLOW_AND_AUTHORITY_COMPATIBILITY_AUDIT_AFTER_CORRECTION"
+    ]
+  },
+  "workflow_path": ".github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-2.yml",
+  "workflow_git_blob_sha1": "670a771e1d2e2854c33d71cc1c37ea6beea85566",
+  "authorized_event": "workflow_dispatch",
+  "authorized_ref": "refs/heads/main",
+  "execution_nonce": "DSIR-V026R1-FFHOSTED-V0-2-8493F247-670A771E-20260916-A1",
+  "authorized_dispatch_count": 1,
+  "authorized_run_attempt": 1,
+  "failure_funnel_execution_authorized_after_activation": true,
+  "activation_conditions": {
+    "independent_hosted_runtime_binding_audit_required_before_promotion": true,
+    "workflow_authority_and_exact_review_confirmation_must_be_promoted_to_default_branch_before_dispatch": true,
+    "candidate_workflow_dispatch_history_must_remain_zero_before_promotion": true,
+    "dispatch_ref_must_equal_authorized_ref": true,
+    "dispatch_must_supply_exact_execution_nonce": true,
+    "dispatch_must_supply_exact_execution_authority_blob_sha1": true,
+    "dispatch_must_supply_exact_execution_authority_review_blob_sha1": true,
+    "no_dispatch_before_all_activation_conditions_pass": true
+  },
+  "bound_evidence": {
+    "pr190_head_sha": "5731b605afdc35bd85d3a2014a9e135719a07697",
+    "failure_funnel_auditor_git_blob_sha1": "f7eff337e511baa25d51e5b0c333a97534e1bbc3",
+    "failure_funnel_contract_git_blob_sha1": "3369e5cdd2086ca22dca6bfa575054286fd1dcd7",
+    "forensic_run_id": 35033678449,
+    "forensic_artifact_id": 10422924571,
+    "forensic_zip_sha256": "226209ae5cb416bd2575e5d1b7800632b6848c04363ce0d9a1add27cbbdd559b",
+    "science_run_id": 35033268924,
+    "science_workflow_id": 359060727,
+    "science_head_sha": "9a333294f3acb80201c5f6ed5b74918c1c767232"
+  },
+  "science_run_35033268924_rerun_authorized": false,
+  "same_nonce_second_attempt_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authority_active_before_independent_hosted_audit_and_exact_promotion": false,
+  "next_gate": "INDEPENDENT_HOSTED_AUDIT_OF_EXACT_V0_2_WORKFLOW_AUTHORITY_AND_REVIEW_BINDING;_DO_NOT_DISPATCH_OR_PROMOTE_IF_ANY_RUNTIME_BINDING_FAILS",
+  "token": "CANDIDATE_AUTHORIZED_SCOPED_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_V0_2_PLUS_0_PLUS_0"
+}
