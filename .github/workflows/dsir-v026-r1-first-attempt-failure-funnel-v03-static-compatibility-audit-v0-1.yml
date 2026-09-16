@@ -12,7 +12,7 @@ permissions:
 env:
   TARGET_WORKFLOW_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-3.yml
   AUDITOR: ci/dsir_v026_r1_sentinel_first_attempt_failure_funnel_v03_static_compatibility_audit_v0_1.py
-  AUDITOR_BLOB: 165acf8ad0a59269fd61ee075f63c69e2db24efc
+  AUDITOR_BLOB: 47c27ab3179e9e803e945e9c7779353d18d0c4d0
   GH_TOKEN: ${{ github.token }}
 
 jobs:
