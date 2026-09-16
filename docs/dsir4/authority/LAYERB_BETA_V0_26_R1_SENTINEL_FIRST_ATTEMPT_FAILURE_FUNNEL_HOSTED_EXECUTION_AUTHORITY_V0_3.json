@@ -1,0 +1,57 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_V0_3",
+  "status": "AUTHORIZED_SCOPED",
+  "date": "2026-09-16",
+  "effect": "+0/+0",
+  "role": "PROSPECTIVE_EXACT_ONE_RUN_HOSTED_FAILURE_FUNNEL_EXECUTION_AUTHORITY_CANDIDATE_PENDING_INDEPENDENT_STATIC_COMPATIBILITY_AUDIT_TERMINAL_AUDIT_AUTHORITY_AND_EXACT_PROMOTION",
+  "governing_consumer_schema_qualification": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_2_CONSUMER_SCHEMA_QUALIFICATION_V0_1.json",
+    "git_blob_sha1": "612e7ceef4ca69988cb5518004dee614b37c3400",
+    "verdict": "QUALIFIED",
+    "authorized_next_stage": "PROSPECTIVELY_CORRECT_AND_REAUDIT_HOSTED_FAILURE_FUNNEL_RECEIPT_CONSUMER_INTERFACE"
+  },
+  "workflow_path": ".github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-3.yml",
+  "workflow_git_blob_sha1": "ac189f0af5027c8ce81936a0074a08bedc538826",
+  "authorized_event": "workflow_dispatch",
+  "authorized_ref": "refs/heads/main",
+  "execution_nonce": "DSIR-V026R1-FFHOSTED-V0-3-6176A508-AC189F0A-20260916-A1",
+  "authorized_dispatch_count": 1,
+  "authorized_run_attempt": 1,
+  "failure_funnel_execution_authorized_after_activation": true,
+  "activation_conditions": {
+    "independent_static_compatibility_audit_required_before_promotion": true,
+    "future_terminal_runtime_binding_audit_authority_required_before_dispatch": true,
+    "workflow_authority_review_and_terminal_audit_authority_must_be_on_default_branch_before_dispatch": true,
+    "candidate_workflow_dispatch_history_must_remain_zero_before_promotion": true,
+    "dispatch_ref_must_equal_authorized_ref": true,
+    "dispatch_must_supply_exact_execution_nonce": true,
+    "dispatch_must_supply_exact_execution_authority_blob_sha1": true,
+    "dispatch_must_supply_exact_execution_authority_review_blob_sha1": true,
+    "dispatch_must_supply_exact_runtime_binding_audit_authority_blob_sha1": true,
+    "no_dispatch_before_all_activation_conditions_pass": true
+  },
+  "bound_evidence": {
+    "pr190_head_sha": "5731b605afdc35bd85d3a2014a9e135719a07697",
+    "failure_funnel_auditor_git_blob_sha1": "f7eff337e511baa25d51e5b0c333a97534e1bbc3",
+    "failure_funnel_contract_git_blob_sha1": "3369e5cdd2086ca22dca6bfa575054286fd1dcd7",
+    "forensic_run_id": 35033678449,
+    "forensic_artifact_id": 10422924571,
+    "forensic_zip_sha256": "226209ae5cb416bd2575e5d1b7800632b6848c04363ce0d9a1add27cbbdd559b",
+    "science_run_id": 35033268924,
+    "science_workflow_id": 359060727,
+    "science_head_sha": "9a333294f3acb80201c5f6ed5b74918c1c767232"
+  },
+  "consumer_schema_control": {
+    "frozen_producer_key": "successor_science_authorized_by_this_receipt",
+    "hosted_consumer_uses_exact_frozen_key": true,
+    "all_hosted_receipt_consumer_keys_required_to_exist_in_frozen_producer": true
+  },
+  "science_run_35033268924_rerun_authorized": false,
+  "same_nonce_second_attempt_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authority_active_before_terminal_runtime_binding_audit_authority_and_exact_promotion": false,
+  "next_gate": "INDEPENDENTLY_AUDIT_EXACT_V0_3_WORKFLOW_AUTHORITY_AND_REVIEW_WITH_PRODUCER_SCHEMA_CLOSURE;_DO_NOT_PROMOTE_OR_DISPATCH_UNTIL_A_SEPARATE_TERMINAL_RUNTIME_BINDING_AUDIT_AUTHORITY_IS_AUTHORED",
+  "token": "CANDIDATE_AUTHORIZED_SCOPED_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_V0_3_PLUS_0_PLUS_0"
+}
