@@ -1,0 +1,109 @@
+{
+  "audit": "DSIR-I original 72/28 scientific-plan readiness",
+  "version": "v0.1",
+  "date": "2026-08-28",
+  "historical_baseline": {
+    "paper1_readiness_fraction": 0.72,
+    "remaining_fraction": 0.28,
+    "note": "Historical chat-derived estimate predating staged publication architecture; exact per-block historical weights were not repository-archived."
+  },
+  "rubric": {
+    "CLOSED": 1.0,
+    "HIGH_PARTIAL": 0.75,
+    "PARTIAL": 0.5,
+    "OPEN": 0.0,
+    "weighting": "equal across the six historically named blocks",
+    "high_partial_sensitivity": [0.67, 0.83]
+  },
+  "blocks": [
+    {
+      "id": "H1",
+      "name": "unified_response_map",
+      "status": "CLOSED",
+      "score": 1.0,
+      "evidence": [
+        "docs/publications/ARTICLE_01_EVIDENCE_MAP_V0_1.md",
+        "papers/dsir1/MECHANISM_TO_FINGERPRINT_ATLAS.md",
+        "papers/dsir1/PAPER1_SCIENTIFIC_CLOSURE_LEDGER.md"
+      ]
+    },
+    {
+      "id": "H2",
+      "name": "amplitude_zero_transition_atlas",
+      "status": "CLOSED",
+      "score": 1.0,
+      "evidence": [
+        "docs/CROSS_MODEL_TRANSLATOR_LIGHTWEIGHT_AUDIT_2026-08-27.md",
+        "papers/dsir1/MOVING_SCALE_NONSEPARABILITY_BRIDGE.md",
+        "papers/dsir1/PROVENANCE_MATRIX.md"
+      ]
+    },
+    {
+      "id": "H3",
+      "name": "cross_model_translator",
+      "status": "HIGH_PARTIAL",
+      "score": 0.75,
+      "evidence": [
+        "docs/CROSS_MODEL_TRANSLATOR_LIGHTWEIGHT_AUDIT_2026-08-27.md"
+      ],
+      "open_dependency": "preregistered frozen translator robustness / held-out validation; observational precision additionally requires support+covariance+nuisance"
+    },
+    {
+      "id": "H4",
+      "name": "withheld_family_validation",
+      "status": "HIGH_PARTIAL",
+      "score": 0.75,
+      "evidence": [
+        "docs/publications/ARTICLE_01_EVIDENCE_MAP_V0_1.md",
+        "papers/dsir1/PROVENANCE_MATRIX.md",
+        "papers/dsir1/MECHANISM_TO_FINGERPRINT_ATLAS.md"
+      ],
+      "open_dependency": "completed observational G7 relation/null followed by genuinely fresh G8 family remains open"
+    },
+    {
+      "id": "H5",
+      "name": "central_scientific_narrative",
+      "status": "CLOSED",
+      "score": 1.0,
+      "evidence": [
+        "papers/dsir1/CLAIMS_LEDGER.md",
+        "papers/dsir1/PAPER1_SCIENTIFIC_CLOSURE_LEDGER.md",
+        "papers/dsir1/LITERATURE_POSITIONING.md"
+      ]
+    },
+    {
+      "id": "H6",
+      "name": "compact_figures_tables",
+      "status": "CLOSED",
+      "score": 1.0,
+      "evidence": [
+        "papers/dsir1/FIGURE_MANIFEST.md",
+        "papers/dsir1/TABLES_DRAFT.md",
+        "papers/dsir1/supplement/numerical_tables.md"
+      ],
+      "note": "scientific-data closure only; final layout/polish is publication engineering"
+    }
+  ],
+  "scores": {
+    "historical_six_block_equal_weight": 0.9166666667,
+    "reported_rounded": 0.92,
+    "sensitivity_low": 0.89,
+    "sensitivity_high": 0.94,
+    "declared_current_paper1_scientific_scope": 1.0
+  },
+  "open_science": [
+    "cross-model translator prospectivity/held-out robustness beyond retrospective proof-of-concept",
+    "realized physical-support -> covariance -> nuisance quotient -> frozen G7 -> genuinely fresh G8 chain"
+  ],
+  "gate_state": {
+    "G7": "OPEN",
+    "G8": "OPEN",
+    "G9": "OPEN"
+  },
+  "non_claims": [
+    "This audit is not a statistical confidence interval.",
+    "This audit does not mean the whole DSIR program is 92% complete.",
+    "This audit does not promote G7/G8/G9.",
+    "Publication/editorial readiness percentages are separate from scientific readiness."
+  ]
+}
