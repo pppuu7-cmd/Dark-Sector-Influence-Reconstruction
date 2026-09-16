@@ -1,0 +1,79 @@
+name: dsir-v026-r1-first-attempt-failure-funnel-v03-static-compatibility-audit
+
+on:
+  push:
+    branches:
+      - audit/v026-r1-failure-funnel-v03-schema-runtime-closure
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  TARGET_WORKFLOW_PATH: .github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-3.yml
+  AUDITOR: ci/dsir_v026_r1_sentinel_first_attempt_failure_funnel_v03_static_compatibility_audit_v0_1.py
+  AUDITOR_BLOB: 165acf8ad0a59269fd61ee075f63c69e2db24efc
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  static-compatibility-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact candidate with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify exact auditor identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$AUDITOR")" = "$AUDITOR_BLOB"
+      - name: Capture zero dispatch history for v0.3 candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import json, os, urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; token=os.environ['GH_TOKEN']; path=os.environ['TARGET_WORKFLOW_PATH']
+          runs=[]; url=f'https://api.github.com/repos/{repo}/actions/runs?event=workflow_dispatch&per_page=100'
+          while url:
+              req=urllib.request.Request(url,headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'})
+              with urllib.request.urlopen(req) as r:
+                  page=json.load(r); runs.extend(page.get('workflow_runs',[])); link=r.headers.get('Link','')
+              nxt=None
+              for part in link.split(','):
+                  if 'rel="next"' in part: nxt=part.split(';',1)[0].strip()[1:-1]
+              url=nxt
+          exact=[x for x in runs if x.get('path')==path]
+          json.dump({'total_count':len(exact),'workflow_runs':exact},open('safe/v03_candidate_live_runs.json','w'),indent=2,sort_keys=True)
+          PY
+      - name: Execute exact v0.3 static compatibility audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$AUDITOR"
+          python3 "$AUDITOR" --candidate-live-runs-json safe/v03_candidate_live_runs.json --out safe/v03_compatibility_audit.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/v03_compatibility_audit.json'))
+          assert d['verdict']=='QUALIFIED'
+          assert d['candidate_dispatch_run_count']==0
+          assert d['consumer_schema_exact_match_verified'] is True
+          assert d['future_terminal_runtime_binding_audit_authority_required_by_workflow'] is True
+          assert d['promotion_authorized_by_this_receipt'] is False
+          assert d['failure_funnel_dispatch_authorized_by_this_receipt'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          PY
+          sha256sum safe/v03_compatibility_audit.json > safe/v03_compatibility_audit.sha256
+      - name: Persist immutable v0.3 compatibility evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsir-v026-r1-first-attempt-failure-funnel-v03-static-compatibility-audit
+          path: |
+            safe/v03_compatibility_audit.json
+            safe/v03_compatibility_audit.sha256
+            safe/v03_candidate_live_runs.json
+          if-no-files-found: error
+          retention-days: 90
