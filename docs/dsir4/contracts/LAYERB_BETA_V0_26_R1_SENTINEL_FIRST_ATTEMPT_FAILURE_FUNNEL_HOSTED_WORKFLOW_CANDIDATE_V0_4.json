@@ -1,0 +1,33 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_WORKFLOW_CANDIDATE_V0_4",
+  "status": "PROSPECTIVE_NONEXECUTED_CANDIDATE",
+  "date": "2026-09-16",
+  "effect": "+0/+0",
+  "base_main_sha": "de6e4177905b7e7346da84a16c75a5a8ace5279b",
+  "governing_v0_3_dispatch_history_qualification_blob_sha1": "f55eaec50895debdbb9d2363b64a79e55db1f218",
+  "hosted_workflow_path": ".github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-4.yml",
+  "hosted_workflow_git_blob_sha1": "6bf2027a121348823914e9076338055a4820162e",
+  "post_run_history_workflow_path": ".github/workflows/dsir-v026-r1-first-attempt-failure-funnel-post-run-history-v0-4.yml",
+  "post_run_history_workflow_git_blob_sha1": "6c2617e756877fb3cbb8b27dcf16b2bfc164cab5",
+  "static_auditor_path": "ci/dsir_v026_r1_sentinel_first_attempt_failure_funnel_v04_dispatch_history_static_audit_v0_1.py",
+  "static_auditor_git_blob_sha1": "73ebfa8d680809f3d577c7eab4b6f6f689c9edab",
+  "required_controls": {
+    "github_run_number_equals_1_before_evidence_access": true,
+    "api_run_number_equals_1_before_evidence_access": true,
+    "run_attempt_equals_1_before_evidence_access": true,
+    "unique_visible_current_dispatch_before_evidence_access": true,
+    "end_of_run_fresh_live_dispatch_history_recheck": true,
+    "post_run_workflow_run_completed_terminal_history_audit": true,
+    "post_run_requires_single_run_number_1_attempt_1_success": true,
+    "post_run_late_duplicate_fail_closed": true
+  },
+  "failure_funnel_dispatch_authorized_now": false,
+  "promotion_authorized_now": false,
+  "science_run_35033268924_rerun_authorized": false,
+  "same_nonce_second_attempt_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "next_gate": "FRESH_INDEPENDENT_HOSTED_STATIC_AUDIT_OF_EXACT_V0_4_SOURCE_SET;_NO_DISPATCH_OR_PROMOTION_FROM_THIS_CONTRACT",
+  "token": "CANDIDATE_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_V0_4_PLUS_0_PLUS_0"
+}
