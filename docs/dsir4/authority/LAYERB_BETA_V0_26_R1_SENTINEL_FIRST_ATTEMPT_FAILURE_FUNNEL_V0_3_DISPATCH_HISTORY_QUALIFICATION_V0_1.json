@@ -1,0 +1,71 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_3_DISPATCH_HISTORY_QUALIFICATION_V0_1",
+  "status": "TERMINAL_AUDIT_QUALIFICATION",
+  "date": "2026-09-16",
+  "effect": "+0/+0",
+  "verdict": "QUALIFIED",
+  "classification": "V0_3_EXACT_ONE_DISPATCH_PROVENANCE_NOT_TAMPER_EVIDENT_OR_POST_RUN_CLOSED",
+  "interpretation_ceiling": "GOVERNANCE_PROVENANCE_AND_STATIC_IMPLEMENTATION_ONLY",
+  "reviewed_main_sha": "7e9812305d3b1a05d8ec1e65dc3c98870ca9867a",
+  "reviewed_candidate": {
+    "head_sha": "d71c8d7a9e0d98369fdd2e46c843314e0307cd1c",
+    "hosted_workflow_path": ".github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-3.yml",
+    "hosted_workflow_git_blob_sha1": "1b73d49539470dad89dff4aa7e660529e5f5a72a",
+    "static_compatibility_auditor_git_blob_sha1": "47c27ab3179e9e803e945e9c7779353d18d0c4d0",
+    "static_compatibility_workflow_git_blob_sha1": "2ba18f30f78041e3b9378c2cb987e92bae15f907",
+    "machine_contract_git_blob_sha1": "d6f440ac1063486cd8dbdda77d7e366c66180f6b"
+  },
+  "nonterminal_boundary": {
+    "static_run_id": 35046173814,
+    "workflow_id": 359235031,
+    "run_number": 7,
+    "run_attempt": 1,
+    "head_sha": "d71c8d7a9e0d98369fdd2e46c843314e0307cd1c",
+    "status_at_review": "queued",
+    "job_id": 104636353665,
+    "job_status_at_review": "queued",
+    "runner_id_at_review": 0,
+    "artifact_count_at_review": 0,
+    "exact_head_run_count": 1,
+    "partial_substantive_values_used": false,
+    "competing_outcome_verdict_created": false
+  },
+  "surviving_v0_3_controls": {
+    "v0_2_consumer_schema_key_mismatch_closed": true,
+    "future_terminal_runtime_binding_audit_authority_hook_acyclic": true,
+    "authorized_ref_runtime_enforced": true,
+    "run_attempt_1_required": true,
+    "visible_current_run_uniqueness_required": true
+  },
+  "counterexamples": {
+    "visible_history_deletion_gap": {
+      "description": "AN_EARLIER_DISPATCH_CAN_BE_ABSENT_FROM_CURRENT_VISIBLE_ACTIONS_HISTORY_WHILE_A_LATER_RUN_WITH_RUN_NUMBER_GREATER_THAN_1_PASSES_LEN_EXACT_EQUALS_1_CURRENT_ID_ATTEMPT_1_MAIN_CHECKS",
+      "monotonic_run_number_1_required_by_candidate": false,
+      "candidate_proves_historical_first_dispatch_identity": false
+    },
+    "early_snapshot_toctou_gap": {
+      "description": "DISPATCH_HISTORY_IS_CAPTURED_BEFORE_MAIN_FAILURE_FUNNEL_WORK_AND_ARTIFACT_PERSISTENCE;_A_LATE_SECOND_DISPATCH_IS_NOT_IN_THE_ALREADY_CAPTURED_SNAPSHOT",
+      "post_execution_live_history_check_required_by_candidate": false,
+      "self_contained_exact_one_dispatch_proof": false
+    }
+  },
+  "required_successor_controls": [
+    "PROSPECTIVELY_FREEZE_A_NEW_SUCCESSOR_CANDIDATE;_DO_NOT_REWRITE_V0_3",
+    "REQUIRE_API_RUN_NUMBER_EQUALS_1_AND_GITHUB_RUN_NUMBER_EQUALS_1_IN_ADDITION_TO_RUN_ATTEMPT_1",
+    "RETAIN_EXACT_WORKFLOW_PATH_CURRENT_RUN_ID_MAIN_REF_NONCE_AND_BLOB_BINDINGS",
+    "REQUIRE_A_FRESH_POST_RUN_TERMINAL_LIVE_DISPATCH_HISTORY_AUDIT_REJECTING_ANY_HISTORY_OTHER_THAN_THE_SINGLE_AUTHORIZED_RUN_NUMBER_1_ATTEMPT_1",
+    "HARDEN_THE_SUCCESSOR_STATIC_AUDITOR_TO_VERIFY_THE_FIRST_DISPATCH_RUN_NUMBER_AND_POST_RUN_HISTORY_INVARIANTS",
+    "PRESERVE_ALL_EXISTING_SCIENCE_PROHIBITIONS_AND_HISTORICAL_BLOCKED_FAIL_STATES"
+  ],
+  "frozen_v0_3_promotion_authorized": false,
+  "frozen_v0_3_dispatch_authorized": false,
+  "static_run_35046173814_rerun_authorized": false,
+  "science_run_35033268924_rerun_authorized": false,
+  "same_nonce_second_attempt_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authorized_next_stage": "PROSPECTIVELY_FREEZE_SUCCESSOR_FAILURE_FUNNEL_CANDIDATE_WITH_TAMPER_EVIDENT_FIRST_DISPATCH_AND_POST_RUN_HISTORY_CLOSURE",
+  "next_admissible_gate": "CREATE_A_NEW_EXACT_SUCCESSOR_SOURCE_SET_AND_RUN_A_FRESH_INDEPENDENT_RESPONSE_BLIND_STATIC_AUDIT;_DO_NOT_PROMOTE_OR_DISPATCH_FROZEN_V0_3",
+  "token": "QUALIFIED_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_3_DISPATCH_HISTORY_PLUS_0_PLUS_0"
+}
