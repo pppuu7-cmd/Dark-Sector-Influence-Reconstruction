@@ -1,0 +1,77 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_WORKFLOW_CANDIDATE_V0_1",
+  "status": "FROZEN_NONEXECUTED_CANDIDATE_PENDING_INDEPENDENT_STATIC_AUDIT",
+  "date": "2026-09-16",
+  "effect": "+0/+0",
+  "scope": "HOSTED_FAILURE_FUNNEL_WORKFLOW_IMPLEMENTATION_ONLY",
+  "governing_reaudit_confirmation": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_PR190_REAUDIT_CONFIRMATION_V0_1.json",
+    "git_blob_sha1": "d2fe264e2866b9f490a7523a32f341fb7cc08d0b",
+    "verdict": "CONFIRMED_SCOPED",
+    "authorized_next_stage": "PROSPECTIVELY_AUTHOR_SEPARATE_FROZEN_HOSTED_FAILURE_FUNNEL_WORKFLOW_CANDIDATE_AND_AUDIT_BEFORE_EXECUTION"
+  },
+  "candidate_branch": "audit/v026-r1-first-attempt-failure-funnel-hosted-workflow-candidate",
+  "base_main_sha": "bb11150bebd8476b42c7e3c352cb4385c64251f7",
+  "workflow": {
+    "path": ".github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-1.yml",
+    "git_blob_sha1": "71d054036e251dce50d0bcfc8429b6d875ceb9c4",
+    "trigger": "workflow_dispatch_only",
+    "push_trigger_present": false,
+    "schedule_trigger_present": false,
+    "failure_funnel_execution_authorized_now": false,
+    "requires_future_execution_authority_file": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_EXECUTION_AUTHORITY_V0_1.json",
+    "requires_execution_nonce": true,
+    "requires_execution_authority_blob_input": true,
+    "requires_first_run_attempt": true,
+    "requires_unique_first_dispatch_of_workflow_path": true,
+    "full_history_checkout": true,
+    "live_science_history_pagination_required": true
+  },
+  "hardened_pr190_target": {
+    "head_sha": "5731b605afdc35bd85d3a2014a9e135719a07697",
+    "auditor_path": "ci/dsir_v026_r1_sentinel_first_attempt_failure_funnel_audit_v0_1.py",
+    "auditor_git_blob_sha1": "f7eff337e511baa25d51e5b0c333a97534e1bbc3",
+    "contract_path": "docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_CONTRACT_V0_1.json",
+    "contract_git_blob_sha1": "3369e5cdd2086ca22dca6bfa575054286fd1dcd7"
+  },
+  "forensic_producer": {
+    "run_id": 35033678449,
+    "artifact_id": 10422924571,
+    "artifact_zip_sha256": "226209ae5cb416bd2575e5d1b7800632b6848c04363ce0d9a1add27cbbdd559b",
+    "receipt_sha256": "207cfde59971b91f3e6ac5ef3c95703f608735c17df67daa03a14efb4a7f976e"
+  },
+  "science_attempt": {
+    "workflow_id": 359060727,
+    "run_id": 35033268924,
+    "head_sha": "9a333294f3acb80201c5f6ed5b74918c1c767232",
+    "run_number": 1,
+    "run_attempt": 1,
+    "rerun_authorized": false,
+    "same_nonce_second_attempt_authorized": false,
+    "scientific_response_available": false
+  },
+  "required_static_audit_checks": [
+    "EXACT_WORKFLOW_AND_CONTRACT_BLOBS",
+    "WORKFLOW_DISPATCH_ONLY_NO_PUSH_SCHEDULE_OR_PULL_REQUEST_TRIGGER",
+    "EXECUTION_AUTHORITY_AND_NONCE_GUARD_PRECEDES_ANY_EVIDENCE_ACCESS",
+    "CURRENT_WORKFLOW_RUN_HISTORY_PAGINATED_AND_UNIQUE_FIRST_DISPATCH_REQUIRED",
+    "EXACT_PR190_HEAD_AUDITOR_AND_CONTRACT_BINDING",
+    "EXACT_FORENSIC_ARTIFACT_ID_AND_ZIP_DIGEST_BINDING",
+    "FRESH_SCIENCE_HEAD_RUN_HISTORY_PAGINATED",
+    "FROZEN_FAILURE_FUNNEL_AUDITOR_EXECUTED_ONLY_AFTER_ALL_GUARDS",
+    "NO_SCIENCE_WORKFLOW_OR_CLASS_EXECUTION",
+    "NO_REPOSITORY_WRITE_OR_RUNTIME_MUTATION",
+    "NO_FAILURE_FUNNEL_EXECUTION_DURING_STATIC_AUDIT"
+  ],
+  "future_execution_authority_required": true,
+  "future_execution_authority_present_now": false,
+  "hosted_failure_funnel_execution_authorized_now": false,
+  "terminal_first_attempt_result_authority_authorized_now": false,
+  "rerun_authorized": false,
+  "same_nonce_second_attempt_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "next_gate": "SEPARATE_RESPONSE_BLIND_STATIC_AUDIT_OF_THIS_EXACT_WORKFLOW_CANDIDATE;_DO_NOT_DISPATCH_FAILURE_FUNNEL",
+  "token": "FROZEN_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_HOSTED_WORKFLOW_CANDIDATE_PLUS_0_PLUS_0"
+}
