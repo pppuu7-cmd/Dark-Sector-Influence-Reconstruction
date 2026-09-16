@@ -8,51 +8,58 @@ V0.25 remains terminal numerical classification `FORCED_BASELINE_EXACT_TARGET_UN
 
 Frozen science boundary is unchanged: 107 retained rows = DES 53 + BOSS 54; alpha route tolerance `3e-10`; beta exact-target tolerance `1e-12`; scientific strict `<1e-3`; technical strict `<1e-5`; requested-node binding `<=1e-12`; full replay accounting 738 CLASS constructions. There is no full-107 execution authority. Covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537, statistical/model inference and physical dark-sector inference remain closed.
 
-## Consumed sentinel first attempt and immutable forensic chain
+Science run `35033268924`, workflow `359060727`, run #1 / attempt #1, is permanently consumed. It failed before science at the frozen W event guard and must never be rerun or recreated as a same-nonce second attempt. Historical authorities/results remain immutable.
 
-Science run `35033268924`, workflow `359060727`, run #1 / attempt #1, head `9a333294f3acb80201c5f6ed5b74918c1c767232`, is permanently consumed. It failed before science at frozen W event guard `assert added.count(launch)==1`; zero science artifacts exist. Never rerun it, never create a same-nonce second attempt, and never modify/remove/recreate final L.
+## Final v0.4 source and static qualification
 
-Forensic producer run `35033678449` is terminal success. Artifact `10422924571` ZIP SHA256 is `226209ae5cb416bd2575e5d1b7800632b6848c04363ce0d9a1add27cbbdd559b`; producer receipt SHA256 is `207cfde59971b91f3e6ac5ef3c95703f608735c17df67daa03a14efb4a7f976e`. Hardened PR190 exact head `5731b605afdc35bd85d3a2014a9e135719a07697`, auditor blob `f7eff337e511baa25d51e5b0c333a97534e1bbc3`, contract blob `3369e5cdd2086ca22dca6bfa575054286fd1dcd7`, and independent re-audit run `35036894735` remain terminal governance evidence only.
+Frozen source origin head: `10e7f9bd8aaa5623e9f34adf17c2f53f50db5873`.
 
-Historical v0.2 and v0.3 defects remain immutable and are not reopened. V0.3 terminal qualification established that visible-history uniqueness without monotonic `run_number==1` and without terminal post-run live-history closure was insufficient.
-
-## Final prospective v0.4 source set
-
-Exact final candidate is head `10e7f9bd8aaa5623e9f34adf17c2f53f50db5873` on `audit/v026-r1-failure-funnel-v04-dispatch-history-closure`.
-
-Exact identities:
+Exact runtime identities:
 - hosted failure-funnel workflow blob `6bf2027a121348823914e9076338055a4820162e`;
 - post-run terminal-history workflow blob `6c2617e756877fb3cbb8b27dcf16b2bfc164cab5`;
-- static auditor blob `73ebfa8d680809f3d577c7eab4b6f6f689c9edab`;
-- hosted static-audit workflow blob `884b9d13b1c76db6028fb81e892165f4377c1255`;
-- machine-contract blob `23e2404d835b4615308fbbb345f8a00e45c449a1`.
+- v0.4 candidate contract blob `23e2404d835b4615308fbbb345f8a00e45c449a1`.
 
-V0.4 requires runtime `GITHUB_RUN_NUMBER==1`, API `run_number==1`, run attempt 1, exact current-run identity on `main`, zero/unique dispatch history as appropriate, an end-of-run fresh live-history recheck, and a separate `workflow_run: completed` terminal-history audit that requires the single exact run #1 / attempt #1 to be terminal success. A late duplicate fails closed.
+Terminal static qualification is persisted on `main` as `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_4_FINAL_STATIC_QUALIFICATION_V0_1.json`, blob `eba53204d3a46b11c54c37adefe729722b00783f`. Authoritative static run `35139440106` is terminal success. Artifact `10464695970` ZIP SHA256 is `bff94d6a0c0eb956efd19357a8099075ea035fcc78fe8a638b6e2c7b75333b60`; receipt SHA256 is `7072fa7f39f8c903f0b75fddc14f108981c9ec6beafc052f5593ba949b4e88ae`. Static qualification itself authorizes no execution or science.
 
-## Terminal v0.4 static qualification
+## Terminal v0.4 execution-authority gate
 
-Authoritative hosted static run `35139440106`, workflow `359934434`, run #2 / attempt #1, exact head `10e7f9bd...`, job `104939962304`, is terminal `success`.
+Prospectively frozen authority chain:
+- execution authority blob `d68aa9ffa3fb5a7768e6802146aed74a3b57cf1b`;
+- independent review blob `01e5e9e0145e8c2ad1f0da639f3de073d9b26da2`;
+- runtime static authority blob `6bbacdc70dbfbee1dc4753e4a05266f9dbe45399`;
+- nonce `DSIR-V026R1-FFHOSTED-V0-4-10E7F9BD-7072FA7F-20260916-A1`;
+- authorized ref `refs/heads/main`;
+- authorized target event `workflow_dispatch`;
+- target run number 1 / attempt 1 only;
+- required prior target dispatch count 0;
+- required parallel/in-progress target sibling count 0;
+- rerun, second dispatch and same-nonce second attempt forbidden.
 
-Artifact `10464695970`, `dsir-v026-r1-first-attempt-failure-funnel-v04-dispatch-history-static-audit`, was independently downloaded and verified. ZIP SHA256 is `bff94d6a0c0eb956efd19357a8099075ea035fcc78fe8a638b6e2c7b75333b60`; receipt SHA256 is `7072fa7f39f8c903f0b75fddc14f108981c9ec6beafc052f5593ba949b4e88ae`. Artifact contains exactly `v04_static_receipt.json`, `v04_static_receipt.sha256`, and `v04_live_runs.json`.
+The first execution-gate audit run `35144971693` failed only because the Critic harness searched for a stale local marker name (`trig` rather than the frozen source's `e`). It produced no authority artifact and changed no v0.4 source or authority object. It is immutable historical FAIL and is not rerun.
 
-Receipt token: `QUALIFIED_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_4_DISPATCH_HISTORY_STATIC_PLUS_0_PLUS_0`. Candidate dispatch count at review is zero. All required first-dispatch/end-of-run/post-run guards are true. All execution/science authorization side effects are false.
+Corrected Critic v0.2 uses auditor blob `ea2a41f7ea9692d3c9f95ea82ff7785c486eb092`, hosted audit workflow blob `9b062b091e118927ab602a464bd8adef3805d719`, and contract blob `d859aa3becf60dca328d41d4aa268c54904c23ef`.
 
-Independent Critic found no new deterministic v0.4 source defect; no v0.5 repair is justified. The stale intermediate authority candidate bound to head `8c772714...` / run `35139417993` is not authoritative for the final source set and remains historical without rewrite.
+Authoritative corrected execution-gate run `35145130524`, workflow `359972281`, run #2 / attempt #1, exact head `8b1957e0e0aa1c85281b7975c2cda91941f31541`, job `104959104646`, is terminal `success`.
 
-Durable final static qualification: `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_4_FINAL_STATIC_QUALIFICATION_V0_1.json`.
+Artifact `10467180869` was independently downloaded and verified. ZIP SHA256 is `3935d4a48cd9e596dca040ddc22f23ed2b71e299bd51a33f4e90a629197eb5b3`; receipt SHA256 is `5bb92f3548d64a8b2757c75c149dff9ebc2738ee535277a959415c7edb16de66`. Fresh target history at the terminal gate contains zero target `workflow_dispatch` runs and zero competing/in-progress target siblings.
 
-Independent Critic: `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_4_FINAL_STATIC_CRITIC_V0_1.md`.
+Receipt classification is `V0_4_EXACT_ONE_FIRST_LIVE_FAILURE_FUNNEL_DISPATCH_AUTHORITY_QUALIFIED`; token is `QUALIFIED_LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_4_EXECUTION_GATE_V0_2_PLUS_0_PLUS_0`.
+
+Durable terminal gate authority: `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_4_TERMINAL_EXECUTION_AUTHORITY_GATE_V0_1.json`.
+
+This terminal gate authorizes exact promotion of the frozen source/authority set and, only after that promotion plus a fresh atomic zero-history preflight, exactly one target v0.4 dispatch. It does **not** authorize any successor sentinel science, full 107-row execution or downstream science.
 
 ## Current funnel position
 
-`V0.25 TERMINAL -> V0.26 R1 FROZEN -> SENTINEL RUN #1/ATTEMPT #1 CONSUMED -> PRE-SCIENCE EVENT-GUARD FAILURE -> FORENSIC EVIDENCE TERMINAL -> PR190 CONFIRMED_SCOPED -> V0.2/V0.3 DEFECTS TERMINAL -> V0.4 FINAL SOURCE SET FROZEN -> V0.4 STATIC QUALIFICATION QUALIFIED -> EXECUTION-AUTHORITY GATE NEXT -> FAILURE-FUNNEL DISPATCH CLOSED UNTIL THAT GATE -> SCIENCE CLOSED`.
+`V0.25 TERMINAL -> V0.26 R1 FROZEN -> CONSUMED SENTINEL PRE-SCIENCE FAILURE -> FORENSIC AUTHORITY TERMINAL -> V0.2/V0.3 DEFECTS TERMINAL -> V0.4 STATIC QUALIFIED -> V0.4 EXECUTION AUTHORITY QUALIFIED -> EXACT PROMOTION + ATOMIC PRE-DISPATCH GATE NEXT -> ONE FAILURE-FUNNEL DISPATCH MAX -> TERMINAL POST-RUN HISTORY REQUIRED -> SCIENCE STILL CLOSED`.
 
-Interpretation ceiling remains governance/provenance/static implementation only. Effect remains `+0/+0`.
+Interpretation ceiling remains governance/provenance/execution-authority only. Effect remains `+0/+0`.
 
 ## Exact next admissible action
 
-1. Freeze a separate v0.4 execution-authority gate that binds the exact final source set and this terminal static qualification.
-2. Require exact `workflow_dispatch`, `refs/heads/main`, a fresh nonce, `run_number==1`, `run_attempt==1`, zero prior target dispatches, no competing/in-progress sibling, no rerun/second attempt, exact authority/review/static-runtime identities, end-of-run recheck and terminal post-run history closure.
-3. Independently audit that execution-authority source set. A PASS may authorize only one exact first v0.4 failure-funnel dispatch; it does not authorize successor science or full 107 rows.
-4. Only after terminal execution-authority PASS and exact promotion may a single dispatch occur. No retry/rerun/manual outcome repair is allowed.
-5. Never rerun science run `35033268924`; never create a same-nonce second attempt; never modify/remove/recreate final L; keep successor sentinel science, full 107 rows and downstream science closed until a separate terminal runtime/promotion authority explicitly opens the minimal next object.
+1. Promote the exact v0.4 runtime source and authority chain to `main` without changing their Git blobs.
+2. Immediately before target dispatch, atomically recheck: exact main blobs, nonce/ref/authority identity, target dispatch history count 0, no competing/in-progress target dispatch, target workflow run-number history compatible with first run.
+3. If and only if that preflight remains clean, create exactly one `workflow_dispatch` of the target v0.4 workflow with the exact authority blob inputs and nonce.
+4. No rerun, retry, second dispatch or manual outcome repair is permitted after target dispatch begins.
+5. Require the target main run to be run #1 / attempt #1, pass its end-of-run live history recheck, then require the separate post-run `workflow_run: completed` audit to confirm exactly one terminal successful target run.
+6. Only after independent consumption of both runtime artifacts may a separate runtime authority be authored and the minimal next scientific object be considered. Full 107 rows and all downstream science remain closed.
