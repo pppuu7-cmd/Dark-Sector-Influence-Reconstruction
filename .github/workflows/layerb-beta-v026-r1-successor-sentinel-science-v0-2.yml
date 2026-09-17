@@ -1,0 +1,220 @@
+name: layerb-beta-v026-r1-successor-sentinel-science-v0-2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_LAUNCH_V0_2.json'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: layerb-beta-v026-r1-successor-sentinel-science-v0-2
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  CLASS_COMMIT: 'ac627d54e9ce196a08878d1ba33999819925d19c'
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json'
+  PROMOTION_AUTHORITY: 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_PR169_FUNNEL_QUALIFICATION_V0_1.json'
+  SUCCESSOR_AUTHORITY: 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_SCIENCE_AUTHORIZATION_V0_2.json'
+  REMEDY_CRITIC: 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_GRID896_REMEDY_INDEPENDENT_CRITIC_V0_1.json'
+  DIAGNOSTIC_CONSUMPTION: 'docs/dsir4/runtime/LAYERB_BETA_V0_26_R1_GRID896_DISPATCH_DIAGNOSTIC_CONSUMPTION_V0_1.json'
+  LAUNCH: 'docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_LAUNCH_V0_2.json'
+  EXECUTOR: 'ci/layerb_beta_v026_r1_sentinel_v0_2.py'
+  DECISION: 'ci/layerb_beta_v026_r1_sentinel_decision_v0_1.py'
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+
+jobs:
+  authorize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Verify prospective V0.2 authority and unique identity
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          CURRENT_RUN_ID: ${{ github.run_id }}
+          CURRENT_RUN_NUMBER: ${{ github.run_number }}
+          CURRENT_RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = push
+          test "$CURRENT_RUN_NUMBER" = 1
+          test "$CURRENT_RUN_ATTEMPT" = 1
+          test -f "$SUCCESSOR_AUTHORITY" -a -f "$REMEDY_CRITIC" -a -f "$DIAGNOSTIC_CONSUMPTION" -a -f "$LAUNCH"
+          python3 - <<'PY'
+          import json, os, subprocess
+          def blob(p): return subprocess.check_output(['git','hash-object',p],text=True).strip()
+          a=json.load(open(os.environ['SUCCESSOR_AUTHORITY']))
+          c=json.load(open(os.environ['REMEDY_CRITIC']))
+          d=json.load(open(os.environ['DIAGNOSTIC_CONSUMPTION']))
+          l=json.load(open(os.environ['LAUNCH']))
+          assert a['status']=='TERMINAL_LAUNCH_AUTHORITY' and a['classification']=='AUTHORIZED_SCOPED'
+          assert a['experiment_id']=='LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_SCIENCE_V0_2'
+          assert a['execution_nonce']=='DSIR-V026R1-SUCCESSOR-20260917-A2-GRID896NATIVE'
+          assert a['authorized_launch_count']==1 and a['required_run_attempt']==1
+          assert a['sentinel_science_execution_authorized'] is True
+          assert a['full_107_row_execution_authorized'] is False
+          assert a['historical_v0_1_run_35174721773_rerun_authorized'] is False
+          assert c['critic_verdict']=='PASS_SCOPED'
+          assert c['verdicts']['historical_v0_1_must_not_be_rerun'] is True
+          assert d['diagnostic_result_classification']=='GRID896_NUMPY_DISPATCH_PATH_DEPENDENCE_CONFIRMED'
+          assert d['new_science_experiment_authorized_by_this_record'] is False
+          assert a['executor_git_blob_sha1']==blob(os.environ['EXECUTOR'])
+          assert a['r1_contract_git_blob_sha1']==blob(os.environ['CONTRACT'])
+          assert l['experiment_id']==a['experiment_id'] and l['execution_nonce']==a['execution_nonce']
+          before=os.environ['BEFORE_SHA']
+          if subprocess.run(['git','cat-file','-e',f'{before}:{os.environ["LAUNCH"]}']).returncode==0:
+              raise SystemExit('launch marker existed before triggering main transition')
+          print('V026_R1_SUCCESSOR_V02_AUTHORITY_CHAIN_PASS')
+          PY
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/workflows/layerb-beta-v026-r1-successor-sentinel-science-v0-2.yml/runs?event=push&per_page=100" > history.json
+          python3 - <<'PY'
+          import json, os
+          rows=json.load(open('history.json')).get('workflow_runs',[])
+          assert len(rows)==1, len(rows)
+          r=rows[0]
+          assert str(r['id'])==os.environ['CURRENT_RUN_ID']
+          assert int(r['run_number'])==1 and int(r.get('run_attempt',1))==1
+          print('V026_R1_SUCCESSOR_V02_UNIQUE_RUN_PASS')
+          PY
+      - name: Persist authorization receipt
+        run: |
+          mkdir -p safe
+          python3 - <<'PY'
+          import json, os, subprocess
+          def blob(p): return subprocess.check_output(['git','hash-object',p],text=True).strip()
+          out={'schema':'LAYERB_BETA_V0_26_R1_SUCCESSOR_CURRENT_RUN_AUTHORIZATION_V0_2','experiment_id':'LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_SCIENCE_V0_2','execution_nonce':'DSIR-V026R1-SUCCESSOR-20260917-A2-GRID896NATIVE','run_id':int(os.environ['GITHUB_RUN_ID']),'run_number':int(os.environ['GITHUB_RUN_NUMBER']),'run_attempt':int(os.environ['GITHUB_RUN_ATTEMPT']),'head_sha':os.environ['GITHUB_SHA'],'executor_git_blob_sha1':blob(os.environ['EXECUTOR']),'sentinel_science_execution_authorized':True,'full_107_row_execution_authorized':False,'token':'AUTHORIZED_LAYERB_BETA_V0_26_R1_SUCCESSOR_V02_CURRENT_RUN_PLUS_0_PLUS_0'}
+          open('safe/authorization.json','w').write(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-successor-authorization-v0-2
+          path: safe/authorization.json
+          retention-days: 90
+
+  materialize-plan:
+    needs: authorize
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch exact frozen response-blind source plan
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/10298655751/zip" > safe/plan.zip
+          printf '%s  %s\n' '9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7' safe/plan.zip | sha256sum -c -
+          unzip -q safe/plan.zip -d safe/unpacked
+          test "$(wc -c < safe/unpacked/plan.json)" = '3953984'
+          printf '%s  %s\n' 'c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064' safe/unpacked/plan.json | sha256sum -c -
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-successor-v02-source-plan
+          path: safe/unpacked/plan.json
+          retention-days: 90
+
+  lane:
+    needs: [authorize, materialize-plan]
+    strategy:
+      fail-fast: false
+      max-parallel: 32
+      matrix:
+        replicate: [R01,R02,R03,R04,R05,R06,R07,R08,R09,R10,R11,R12,R13,R14,R15,R16,R17,R18,R19,R20,R21,R22,R23,R24,R25,R26,R27,R28,R29,R30,R31,R32]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+      - uses: actions/download-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-successor-v02-source-plan
+          path: inputs/plan
+      - name: Install exact numerical and build stack
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'scipy==1.17.1' 'Cython<3' six >/dev/null
+      - name: Build exact frozen CLASS envelope
+        run: |
+          set -euo pipefail
+          git clone -q https://github.com/kaeonikc/class_iv.git external_class
+          git -C external_class checkout -q "$CLASS_COMMIT"
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 1152',1))
+          q=Path('external_class/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 32768',1))
+          r=Path('external_class/source/perturbations.c'); s=r.read_text(); old='perhaps_print_variables = perturb_print_variables;'; assert s.count(old)==1; r.write_text(s.replace(old,'perhaps_print_variables = NULL;',1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py external_class
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py external_class
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" make -C external_class -j2 all >/dev/null
+      - name: Execute frozen V0.2 successor sentinel lane
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python "$EXECUTOR" --mode lane --replicate '${{ matrix.replicate }}' --contract "$CONTRACT" --plan inputs/plan/plan.json --launch-authority "$SUCCESSOR_AUTHORITY" --out "safe/lane_${{ matrix.replicate }}.json"
+      - name: Persist lane operand if produced
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-successor-v02-${{ matrix.replicate }}
+          path: safe/lane_${{ matrix.replicate }}.json
+          if-no-files-found: ignore
+          retention-days: 90
+
+  decision:
+    needs: [authorize, lane]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require authorization before finalization
+        env:
+          AUTH_RESULT: ${{ needs.authorize.result }}
+        run: test "$AUTH_RESULT" = success
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: layerb-beta-v026-r1-successor-v02-R*
+          path: inputs/lanes
+          merge-multiple: true
+      - name: Finalize sentinel only
+        run: |
+          set -euo pipefail
+          mkdir -p safe inputs/lanes
+          shopt -s nullglob
+          files=(inputs/lanes/lane_R*.json)
+          if [ "${#files[@]}" -eq 0 ]; then printf '%s\n' '{"replicate":null,"eligible":false,"candidate":false}' > inputs/lanes/lane_missing.json; files=(inputs/lanes/lane_missing.json); fi
+          python3 "$DECISION" --contract "$CONTRACT" --promotion-authority "$PROMOTION_AUTHORITY" --inputs "${files[@]}" --out safe/sentinel_decision.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/sentinel_decision.json'))
+          assert d['full_replay_launch_authorized'] is False
+          assert d['full_107_row_execution_authorized'] is False
+          print(d['classification'])
+          PY
+          sha256sum safe/sentinel_decision.json > safe/sentinel_decision.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-successor-decision-v0-2
+          path: |
+            safe/sentinel_decision.json
+            safe/sentinel_decision.sha256
+          retention-days: 90
