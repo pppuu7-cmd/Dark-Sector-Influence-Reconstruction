@@ -1,0 +1,53 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_GRID896_DISPATCH_DIAGNOSTIC_INDEPENDENT_CRITIC_V0_1",
+  "status": "TERMINAL_INDEPENDENT_CRITIC",
+  "critic_verdict": "PASS_SCOPED",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "independence_rule": "RECONSTRUCT_FROM_RAW_ACTIONS_HISTORY_AND_ARTIFACT_FIELDS_NOT_PRODUCER_FINAL_VERDICT",
+  "parent_main_head": "bdf0369df5788d5301fb4cea34f61751f039fe8f",
+  "raw_evidence": {
+    "diagnostic_run_id": 35177449482,
+    "run_number": 1,
+    "run_attempt": 1,
+    "artifact_id": 10479491325,
+    "artifact_zip_sha256": "ae4fa512f4d0559c5266d10fdf803d1d2c863049b1796824fde95200bc90136d",
+    "result_inner_sha256": "a6f309198ffd75e807264fddfd96b4115fdf81385e0bafd01e1b328994c8a2a5",
+    "frozen_grid_sha256": "8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d",
+    "native_grid_sha256": "8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d",
+    "forced_grid_sha256": "1ad5c76772b193086b1f10bc8e150cc7095504c4e4c80fd50da6821a30750097",
+    "differing_node_count": 247,
+    "same_geometry": true,
+    "native_ratio_u64hex": "3ff01ddd7148e822",
+    "forced_ratio_u64hex": "3ff01ddd7148e822",
+    "class_solver_invoked": false,
+    "scientific_response_read": false,
+    "covariance_read": false
+  },
+  "reconstruction": {
+    "native_binary_identity_equals_frozen": true,
+    "forced_binary_identity_equals_frozen": false,
+    "binary_identity_changes_with_numpy_cpu_dispatch": true,
+    "geometry_changes_with_dispatch": false,
+    "ratio_changes_with_dispatch": false,
+    "supported_failure_primitive": "GRID896_BINARY_MATERIALIZATION_DEPENDS_ON_NUMPY_CPU_DISPATCH",
+    "scientific_response_failure_supported": false
+  },
+  "verdicts": {
+    "provenance_validity": "PASS_SCOPED",
+    "numerical_validity": "NOT_EVALUATED",
+    "exact_target_validity": "NOT_EVALUATED",
+    "scientific_criterion": "NOT_EVALUATED",
+    "model_statistical_interpretation": "NOT_EVALUATED"
+  },
+  "authority_analysis": {
+    "parent_successor_run_35174721773_rerun_authorized": false,
+    "same_nonce_second_attempt_authorized": false,
+    "diagnostic_authorizes_new_science": false,
+    "full_107_row_execution_authorized": false,
+    "new_design_primitive_may_be_frozen_prospectively": true,
+    "minimal_supported_design_primitive": "MATERIALIZE_FROZEN_GRID896_BYTES_UNDER_NATIVE_DISPATCH_THEN_CONSUME_THOSE_EXACT_BYTES_INSIDE_THE_UNCHANGED_FORCED_SCIENCE_RUNTIME"
+  },
+  "critic_conclusion": "The raw evidence independently supports dispatch-path dependence of GRID896 binary materialization. It does not support a scientific PASS or FAIL and does not itself authorize a new science run. A new experiment identity may prospectively freeze a repair that changes only grid materialization while preserving the forced science runtime and all frozen scientific criteria.",
+  "token": "PASS_SCOPED_GRID896_DISPATCH_DIAGNOSTIC_INDEPENDENT_CRITIC_PLUS_0_PLUS_0"
+}

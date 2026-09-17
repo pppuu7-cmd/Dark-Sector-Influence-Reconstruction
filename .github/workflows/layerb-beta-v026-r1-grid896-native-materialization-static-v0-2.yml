@@ -1,0 +1,49 @@
+name: layerb-beta-v026-r1-grid896-native-materialization-static-v0-2
+
+on:
+  push:
+    branches: [research/grid896-native-materialization-v2]
+    paths:
+      - 'ci/layerb_beta_v026_r1_sentinel_v0_2.py'
+      - 'docs/dsir4/runtime/LAYERB_BETA_V0_26_R1_GRID896_DISPATCH_DIAGNOSTIC_CONSUMPTION_V0_1.json'
+      - 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_GRID896_DISPATCH_DIAGNOSTIC_INDEPENDENT_CRITIC_V0_1.json'
+      - '.github/workflows/layerb-beta-v026-r1-grid896-native-materialization-static-v0-2.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  static-qualification:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+      - name: Compile executors
+        run: |
+          python3 -m py_compile ci/layerb_beta_v026_r1_sentinel_v0_1.py
+          python3 -m py_compile ci/layerb_beta_v026_r1_sentinel_v0_2.py
+      - name: Verify response-blind repair boundary
+        run: |
+          python3 - <<'PY'
+          import ast, json
+          from pathlib import Path
+          p=Path('ci/layerb_beta_v026_r1_sentinel_v0_2.py')
+          s=p.read_text()
+          ast.parse(s)
+          assert 'LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_SCIENCE_V0_2' in s
+          assert 'DSIR_V026_R1_FROZEN_GRID896_BIN' in s
+          assert '8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d' in s
+          assert '35174721773' in s
+          assert 'full_107_row_execution_authorized' in s
+          c=json.load(open('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_GRID896_DISPATCH_DIAGNOSTIC_INDEPENDENT_CRITIC_V0_1.json'))
+          assert c['critic_verdict']=='PASS_SCOPED'
+          assert c['verdicts']['numerical_validity']=='NOT_EVALUATED'
+          assert c['verdicts']['scientific_criterion']=='NOT_EVALUATED'
+          r=json.load(open('docs/dsir4/runtime/LAYERB_BETA_V0_26_R1_GRID896_DISPATCH_DIAGNOSTIC_CONSUMPTION_V0_1.json'))
+          assert r['classification']=='GRID896_NUMPY_DISPATCH_PATH_DEPENDENCE_CONFIRMED'
+          assert r['new_science_experiment_authorized'] is False
+          assert not Path('docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_LAUNCH_V0_2.json').exists()
+          print('GRID896_V02_RESPONSE_BLIND_STATIC_QUALIFICATION_PASS')
+          PY
