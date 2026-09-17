@@ -1,0 +1,298 @@
+name: DSIR V0.26 R1 V0.6 workflow registry read-only capture v0.1
+
+# Provenance-only transport for the already-authorized read-only registry capture gate.
+# This workflow MUST NOT launch or invoke the V0.6 GRID896 diagnostic, CLASS, or any
+# scientific response computation. It queries the Actions workflow registry by the
+# exact canonical V0.6 workflow filename and persists the returned positive registry
+# object plus fail-closed local bindings.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/dsir4/launch/LAYERB_BETA_V0_26_R1_V0_6_WORKFLOW_REGISTRY_CAPTURE_V0_1.launch.json
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-v026-r1-v06-workflow-registry-capture-v0-1
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    name: Read-only canonical V0.6 workflow registry capture
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      TARGET_FILENAME: layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml
+      TARGET_PATH: .github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml
+      TARGET_BLOB: 832f0491421619579c2a1d77ba9ca339cb4898ac
+      STATIC_CONFIRMATION_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_STATIC_AUDIT_CONFIRMATION_V0_6.json
+      STATIC_CONFIRMATION_BLOB: 6cc317eb359a820bc1ecb3c657fc33b46a7d152b
+      GOVERNING_QUALIFICATION_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_6_POST_PROMOTION_IDENTITY_QUALIFICATION_V0_1.json
+      GOVERNING_QUALIFICATION_BLOB: 9cc8f6ad8ed01821841afc84181933efc75fa44e
+      CAPTURE_AUTHORITY_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_V0_6_WORKFLOW_REGISTRY_CAPTURE_AUTHORITY_V0_1.json
+      CAPTURE_CRITIC_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_V0_6_WORKFLOW_REGISTRY_CAPTURE_STATIC_CRITIC_V0_1.json
+      CAPTURE_MARKER_PATH: docs/dsir4/launch/LAYERB_BETA_V0_26_R1_V0_6_WORKFLOW_REGISTRY_CAPTURE_V0_1.launch.json
+      CAPTURE_WORKFLOW_PATH: .github/workflows/layerb-beta-v026-r1-v06-workflow-registry-capture-v0-1.yml
+      EXECUTION_AUTHORITY_PATH: docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_STATIC_AUDIT_AUTHORITY_V0_6.json
+      V06_LAUNCH_MARKER_PATH: docs/dsir4/launch/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_6.launch.json
+
+    steps:
+      - name: Checkout exact triggering main head with first-parent history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Capture exact read-only workflow registry record and fail closed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          import subprocess
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+
+          ROOT = Path.cwd()
+
+          def git_blob_sha1(data: bytes) -> str:
+              return hashlib.sha1(f"blob {len(data)}\0".encode("ascii") + data).hexdigest()
+
+          def read_bytes(path: str) -> bytes:
+              return (ROOT / path).read_bytes()
+
+          def git(args):
+              return subprocess.check_output(["git", *args], cwd=ROOT, text=True).strip()
+
+          def show_bytes(rev: str, path: str) -> bytes:
+              return subprocess.check_output(["git", "show", f"{rev}:{path}"], cwd=ROOT)
+
+          def api_bytes(url: str) -> bytes:
+              req = urllib.request.Request(
+                  url,
+                  headers={
+                      "Accept": "application/vnd.github+json",
+                      "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                  },
+              )
+              with urllib.request.urlopen(req, timeout=60) as response:
+                  return response.read()
+
+          def api_json(url: str):
+              raw = api_bytes(url)
+              return raw, json.loads(raw.decode("utf-8"))
+
+          if int(os.environ["GITHUB_RUN_NUMBER"]) != 1:
+              raise SystemExit("capture one-shot guard: run_number != 1")
+          if int(os.environ["GITHUB_RUN_ATTEMPT"]) != 1:
+              raise SystemExit("capture one-shot guard: run_attempt != 1")
+          if os.environ.get("GITHUB_EVENT_NAME") != "push" or os.environ.get("GITHUB_REF") != "refs/heads/main":
+              raise SystemExit("capture event/ref binding failed")
+
+          head = git(["rev-parse", "HEAD"])
+          if head != os.environ["GITHUB_SHA"]:
+              raise SystemExit("checked out HEAD != GITHUB_SHA")
+          parents = git(["rev-list", "--parents", "-n", "1", "HEAD"]).split()
+          if len(parents) != 2:
+              raise SystemExit("capture launch commit must have exactly one parent")
+          parent = parents[1]
+
+          target_path = os.environ["TARGET_PATH"]
+          capture_workflow_path = os.environ["CAPTURE_WORKFLOW_PATH"]
+          authority_path = os.environ["CAPTURE_AUTHORITY_PATH"]
+          critic_path = os.environ["CAPTURE_CRITIC_PATH"]
+          marker_path = os.environ["CAPTURE_MARKER_PATH"]
+
+          # Frozen prerequisites and exact active workflow bytes.
+          checks = {
+              target_path: os.environ["TARGET_BLOB"],
+              os.environ["STATIC_CONFIRMATION_PATH"]: os.environ["STATIC_CONFIRMATION_BLOB"],
+              os.environ["GOVERNING_QUALIFICATION_PATH"]: os.environ["GOVERNING_QUALIFICATION_BLOB"],
+          }
+          for path, expected_blob in checks.items():
+              actual = git_blob_sha1(read_bytes(path))
+              if actual != expected_blob:
+                  raise SystemExit(f"frozen blob mismatch {path}: {actual} != {expected_blob}")
+
+          authority_bytes = read_bytes(authority_path)
+          critic_bytes = read_bytes(critic_path)
+          marker_bytes = read_bytes(marker_path)
+          workflow_bytes = read_bytes(capture_workflow_path)
+          authority_blob = git_blob_sha1(authority_bytes)
+          critic_blob = git_blob_sha1(critic_bytes)
+          marker_blob = git_blob_sha1(marker_bytes)
+          capture_workflow_blob = git_blob_sha1(workflow_bytes)
+          authority = json.loads(authority_bytes.decode("utf-8"))
+          critic = json.loads(critic_bytes.decode("utf-8"))
+          marker = json.loads(marker_bytes.decode("utf-8"))
+
+          required_authority = {
+              "status": "TERMINAL_READ_ONLY_REGISTRY_CAPTURE_AUTHORITY",
+              "verdict": "AUTHORIZED_SCOPED_READ_ONLY_CAPTURE",
+              "capture_execution_authorized": True,
+              "authorized_launch_count": 1,
+              "authorized_run_number": 1,
+              "authorized_run_attempt": 1,
+              "target_workflow_filename": os.environ["TARGET_FILENAME"],
+              "target_workflow_path": target_path,
+              "target_active_workflow_git_blob_sha1": os.environ["TARGET_BLOB"],
+              "capture_workflow_git_blob_sha1": capture_workflow_blob,
+              "v0_6_diagnostic_execution_authorized": False,
+              "successor_sentinel_science_authorized": False,
+              "full_107_row_execution_authorized": False,
+              "downstream_science_authorized": False,
+          }
+          for key, expected in required_authority.items():
+              if authority.get(key) != expected:
+                  raise SystemExit(f"capture authority mismatch: {key}")
+
+          required_critic = {
+              "status": "TERMINAL_INDEPENDENT_STATIC_CRITIC",
+              "verdict": "PASS_SCOPED",
+              "capture_workflow_git_blob_sha1": capture_workflow_blob,
+              "capture_authority_git_blob_sha1": authority_blob,
+              "read_only_registry_capture_only": True,
+              "v0_6_diagnostic_execution_authorized": False,
+              "scientific_result_evaluated": False,
+          }
+          for key, expected in required_critic.items():
+              if critic.get(key) != expected:
+                  raise SystemExit(f"capture critic mismatch: {key}")
+
+          required_marker = {
+              "status": "AUTHORIZED_ONE_SHOT_READ_ONLY_REGISTRY_CAPTURE_MARKER",
+              "capture_authority_git_blob_sha1": authority_blob,
+              "capture_static_critic_git_blob_sha1": critic_blob,
+              "capture_workflow_git_blob_sha1": capture_workflow_blob,
+              "authorized_run_number": 1,
+              "authorized_run_attempt": 1,
+              "v0_6_diagnostic_execution_authorized": False,
+          }
+          for key, expected in required_marker.items():
+              if marker.get(key) != expected:
+                  raise SystemExit(f"capture marker mismatch: {key}")
+
+          # Authority, critic, target workflow and capture workflow must preexist unchanged.
+          for path, current_blob in [
+              (authority_path, authority_blob),
+              (critic_path, critic_blob),
+              (target_path, os.environ["TARGET_BLOB"]),
+              (capture_workflow_path, capture_workflow_blob),
+          ]:
+              if git_blob_sha1(show_bytes("HEAD^", path)) != current_blob:
+                  raise SystemExit(f"{path} did not preexist unchanged in HEAD^")
+
+          exists_parent = subprocess.run(
+              ["git", "cat-file", "-e", f"HEAD^:{marker_path}"],
+              cwd=ROOT,
+              stdout=subprocess.DEVNULL,
+              stderr=subprocess.DEVNULL,
+          ).returncode == 0
+          if exists_parent:
+              raise SystemExit("capture marker already existed in HEAD^")
+          diff = [line for line in git(["diff", "--name-status", "HEAD^", "HEAD", "--"]).splitlines() if line.strip()]
+          if diff != [f"A\t{marker_path}"]:
+              raise SystemExit(f"capture launch commit diff is not marker-only: {diff}")
+
+          # Current V0.6 execution authority and V0.6 diagnostic marker must remain absent.
+          for forbidden in [os.environ["EXECUTION_AUTHORITY_PATH"], os.environ["V06_LAUNCH_MARKER_PATH"]]:
+              if (ROOT / forbidden).exists():
+                  raise SystemExit(f"forbidden V0.6 execution object present: {forbidden}")
+
+          api = os.environ["GITHUB_API_URL"].rstrip("/")
+          repo = os.environ["GITHUB_REPOSITORY"]
+          filename = os.environ["TARGET_FILENAME"]
+          encoded_filename = urllib.parse.quote(filename, safe="")
+          registry_url = f"{api}/repos/{repo}/actions/workflows/{encoded_filename}"
+          raw_registry, registry = api_json(registry_url)
+
+          workflow_id = int(registry.get("id", 0) or 0)
+          if workflow_id <= 0:
+              raise SystemExit("registry record lacks positive workflow id")
+          if registry.get("path") != target_path:
+              raise SystemExit(f"registry path mismatch: {registry.get('path')!r}")
+          if registry.get("state") != "active":
+              raise SystemExit(f"registry state is not active: {registry.get('state')!r}")
+
+          runs_url = f"{api}/repos/{repo}/actions/workflows/{workflow_id}/runs?per_page=100"
+          raw_runs, runs = api_json(runs_url)
+          target_run_count = int(runs.get("total_count", -1))
+          if target_run_count != 0:
+              raise SystemExit(f"V0.6 target workflow history is not zero: {target_run_count}")
+
+          outdir = ROOT / "results/dsir4/v06_registry_capture_v0_1"
+          outdir.mkdir(parents=True, exist_ok=True)
+          (outdir / "raw_workflow_registry.json").write_bytes(raw_registry)
+          (outdir / "raw_target_workflow_runs.json").write_bytes(raw_runs)
+
+          receipt = {
+              "schema": "LAYERB_BETA_V0_26_R1_V0_6_WORKFLOW_REGISTRY_CAPTURE_RECEIPT_V0_1",
+              "classification": "PASS_READ_ONLY_V0_6_WORKFLOW_REGISTRY_CAPTURE",
+              "effect": "+0/+0",
+              "run_id": int(os.environ["GITHUB_RUN_ID"]),
+              "run_number": int(os.environ["GITHUB_RUN_NUMBER"]),
+              "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "main_head_sha": head,
+              "first_parent_sha": parent,
+              "target_workflow_id": workflow_id,
+              "target_workflow_filename": filename,
+              "target_workflow_path": registry["path"],
+              "target_workflow_state": registry["state"],
+              "target_active_workflow_git_blob_sha1": os.environ["TARGET_BLOB"],
+              "static_confirmation_git_blob_sha1": os.environ["STATIC_CONFIRMATION_BLOB"],
+              "governing_qualification_git_blob_sha1": os.environ["GOVERNING_QUALIFICATION_BLOB"],
+              "capture_workflow_git_blob_sha1": capture_workflow_blob,
+              "capture_authority_git_blob_sha1": authority_blob,
+              "capture_static_critic_git_blob_sha1": critic_blob,
+              "capture_marker_git_blob_sha1": marker_blob,
+              "raw_registry_sha256": hashlib.sha256(raw_registry).hexdigest(),
+              "raw_target_runs_sha256": hashlib.sha256(raw_runs).hexdigest(),
+              "target_workflow_run_count_before_any_v0_6_execution": target_run_count,
+              "v0_6_execution_authority_absent": True,
+              "v0_6_launch_marker_absent": True,
+              "class_solver_invoked": False,
+              "scientific_response_read": False,
+              "covariance_read": False,
+              "successor_sentinel_science_authorized": False,
+              "full_107_row_execution_authorized": False,
+              "downstream_science_authorized": False,
+          }
+          receipt_bytes = (json.dumps(receipt, sort_keys=True, indent=2) + "\n").encode("utf-8")
+          (outdir / "capture_receipt.json").write_bytes(receipt_bytes)
+          (outdir / "capture_receipt.sha256").write_text(hashlib.sha256(receipt_bytes).hexdigest() + "\n", encoding="ascii")
+          print(json.dumps(receipt, sort_keys=True))
+          PY
+
+      - name: Upload immutable read-only registry evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: layerb-beta-v026-r1-v06-workflow-registry-capture-v0-1
+          path: results/dsir4/v06_registry_capture_v0_1/
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Reflect capture receipt in workflow conclusion
+        if: ${{ always() }}
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('results/dsir4/v06_registry_capture_v0_1/capture_receipt.json')
+          if not p.is_file():
+              raise SystemExit('missing capture receipt')
+          d = json.loads(p.read_text(encoding='utf-8'))
+          print(d['classification'])
+          raise SystemExit(0 if d['classification'] == 'PASS_READ_ONLY_V0_6_WORKFLOW_REGISTRY_CAPTURE' else 1)
+          PY
