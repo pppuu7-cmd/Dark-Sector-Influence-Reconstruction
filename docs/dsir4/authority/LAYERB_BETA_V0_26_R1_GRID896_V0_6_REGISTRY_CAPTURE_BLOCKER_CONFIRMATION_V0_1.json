@@ -1,0 +1,68 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_GRID896_V0_6_REGISTRY_CAPTURE_BLOCKER_CONFIRMATION_V0_1",
+  "status": "TERMINAL_AUDIT_CONFIRMATION",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "verdict": "CONFIRMED_SCOPED",
+  "classification": "READ_ONLY_GITHUB_WORKFLOW_REGISTRY_INTERFACE_BLOCKER_CONFIRMED_WITH_NO_GATE_ADVANCEMENT",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_AND_STATIC_IMPLEMENTATION_ONLY",
+  "reviewed_main_sha": "463a923d3ac8805da3640fedd7fab403ebb2f3ff",
+  "reviewed_researcher_audit": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_GRID896_V0_6_WORKFLOW_REGISTRY_CAPTURE_BLOCKER_AUDIT_V0_1.md",
+    "git_blob_sha1": "8781ab97917044038e953176a8e7e876f2a4854b",
+    "classification": "BLOCKED_READ_ONLY_GITHUB_WORKFLOW_REGISTRY_INTERFACE_UNAVAILABLE"
+  },
+  "independent_audit": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_GRID896_V0_6_REGISTRY_CAPTURE_BLOCKER_CONFIRMATION_AUDIT_V0_1.md",
+    "commit": "62a645fbcf61e2480dc4676fd53f79ec3a072104"
+  },
+  "governing_post_promotion_qualification": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_6_POST_PROMOTION_IDENTITY_QUALIFICATION_V0_1.json",
+    "git_blob_sha1": "9cc8f6ad8ed01821841afc84181933efc75fa44e",
+    "verdict": "REQUIRES_CONFIRMATION_GATE",
+    "authorized_next_stage": "CAPTURE_AND_INDEPENDENTLY_CONFIRM_READ_ONLY_GITHUB_ACTIONS_WORKFLOW_REGISTRY_ID_PATH_ACTIVE_STATE_FOR_EXACT_V0_6_CANONICAL_WORKFLOW_ONLY"
+  },
+  "frozen_v0_6_identity": {
+    "executor_git_blob_sha1": "eae9eee7ae6a1424bcac67279663a2c8ddd3ebf9",
+    "active_workflow_path": ".github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml",
+    "active_workflow_git_blob_sha1": "832f0491421619579c2a1d77ba9ca339cb4898ac",
+    "implementation_manifest_git_blob_sha1": "e71d2c92a56555ffaea59a08c80d8f073c4b48da",
+    "terminal_static_confirmation_git_blob_sha1": "6cc317eb359a820bc1ecb3c657fc33b46a7d152b"
+  },
+  "independently_confirmed": {
+    "connected_interface_lacks_positive_workflow_registry_item_or_collection_read": true,
+    "direct_registry_read_attempt_rejected_by_connected_interface": true,
+    "positive_workflow_id_observed": false,
+    "exact_registry_path_observed": false,
+    "registry_state_active_observed": false,
+    "workflow_id_inferred_or_guessed": false,
+    "active_repository_workflow_blob_still_exact": true,
+    "exact_promotion_head_run_count": 0,
+    "current_review_head_run_count": 0,
+    "queued_run_count": 0,
+    "in_progress_run_count": 0,
+    "execution_authority_absent": true,
+    "launch_marker_absent": true,
+    "v0_6_diagnostic_executed": false,
+    "partial_substantive_values_used": false
+  },
+  "scope_limits": {
+    "registry_entry_absent_inferred": false,
+    "registry_entry_inactive_inferred": false,
+    "diagnostic_pass_or_fail_established": false,
+    "numerical_reproducibility_established": false,
+    "scientific_result_established": false,
+    "statistical_model_validity_established": false,
+    "physical_dark_sector_inference_established": false
+  },
+  "prior_requires_confirmation_gate_remains_binding": true,
+  "execution_authority_creation_authorized": false,
+  "launch_marker_creation_authorized": false,
+  "diagnostic_execution_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authorized_next_stage": "CAPTURE_AND_INDEPENDENTLY_CONFIRM_READ_ONLY_GITHUB_ACTIONS_WORKFLOW_REGISTRY_ID_PATH_ACTIVE_STATE_FOR_EXACT_V0_6_CANONICAL_WORKFLOW_ONLY",
+  "next_admissible_gate": "OBTAIN_READ_ONLY_POSITIVE_WORKFLOW_REGISTRY_RECORD_WITH_WORKFLOW_ID_EXACT_CANONICAL_PATH_AND_ACTIVE_STATE;_PERSIST_EVIDENCE_AND_PROVENANCE;_REVERIFY_ACTIVE_BLOB_STATIC_CONFIRMATION_ZERO_V0_6_RUN_HISTORY_AND_ABSENCE_OF_AUTHORITY_MARKER;_ONLY_THEN_CONSIDER_SEPARATE_EXECUTION_AUTHORITY_AUTHORING",
+  "token": "CONFIRMED_SCOPED_LAYERB_BETA_V0_26_R1_GRID896_V0_6_REGISTRY_INTERFACE_BLOCKER_PLUS_0_PLUS_0"
+}
