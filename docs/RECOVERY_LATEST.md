@@ -16,9 +16,7 @@ Terminal implementation qualification `docs/dsir4/authority/LAYERB_BETA_V0_26_R1
 
 ## Cross-host GRID896 producer-identity V0.1 — frozen design
 
-Design-only freeze commit reviewed by the Funnel Auditor: `5abbf0fc19ac52779372b326149b70cc8f851a4d`. No executor/workflow was part of the design and exact design-head Actions run count was zero.
-
-Frozen identities:
+Design-only freeze commit reviewed by the Funnel Auditor: `5abbf0fc19ac52779372b326149b70cc8f851a4d`. Exact frozen design identities:
 
 - canonical source `docs/dsir4/canonical/LAYERB_BETA_V0_26_R1_GRID896_U64HEX_V0_1.txt`, GitHub blob `24fa61685ab45e42e3ab0d453f5cb223c247ced6`;
 - prereg `docs/dsir4/prereg/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_1.md`, blob `903c80709439cb790bd41316029b218a77d5695b`;
@@ -28,48 +26,61 @@ Canonical source is pre-existing response-blind R1 identity data, not an object 
 
 Canonical object: exactly 897 lowercase 16-hex u64 words + final LF, source SHA256 `e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4`. Canonical production is arithmetic-free: unsigned u64 parse + exactly eight bytes little-endian in frozen order = 7176 bytes, SHA256 `8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d`. Consumer round-trip must preserve exact bytes. Frozen negative control `corrupted[0] ^= 0x01` has SHA256 `e94e2e05fc0cc1fcbc9bd710a24b8ef231fab350cd6247ea3039b913adfba800` and must be rejected.
 
-Prospective classifiers remain: PASS `PASS_SHARED_GRID896_CONTENT_ADDRESSING_CROSS_HOST`; FAIL `FAIL_SHARED_GRID896_CONTENT_ADDRESSING_CROSS_HOST`; BLOCKED `BLOCKED_MISSING_OR_UNBOUND_CANONICAL_OBJECT` or `BLOCKED_HOSTED_INFRASTRUCTURE_INCOMPLETE`; INVALID `INVALID_DIAGNOSTIC_PROVENANCE`. If later authorized, population is exactly 32 hosted `ubuntu-24.04` lanes `R01..R32`, no replacement/post-hoc selection, one run/attempt only. PASS is infrastructure/provenance only.
+Prospective classifiers remain: PASS `PASS_SHARED_GRID896_CONTENT_ADDRESSING_CROSS_HOST`; FAIL `FAIL_SHARED_GRID896_CONTENT_ADDRESSING_CROSS_HOST`; BLOCKED `BLOCKED_MISSING_OR_UNBOUND_CANONICAL_OBJECT` or `BLOCKED_HOSTED_INFRASTRUCTURE_INCOMPLETE`; INVALID `INVALID_DIAGNOSTIC_PROVENANCE`. If later separately authorized, population is exactly 32 hosted `ubuntu-24.04` lanes `R01..R32`, no replacement/post-hoc selection, one run/attempt only. PASS is infrastructure/provenance only.
 
 ## Independent pre-execution review — terminal
 
-Funnel Auditor audit:
-`docs/dsir4/audits/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_PREEXECUTION_AUDIT_V0_1.md`, blob `391848495af22c6c282f91ed70ba64ffdcdf39e8`, audit commit `73f6b3c3c5b2fc02a7e0bd5280c42876b4c9a110`.
+Funnel Auditor audit `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_PREEXECUTION_AUDIT_V0_1.md`, blob `391848495af22c6c282f91ed70ba64ffdcdf39e8`, audit commit `73f6b3c3c5b2fc02a7e0bd5280c42876b4c9a110`.
 
-Terminal confirmation authority:
-`docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_PREEXECUTION_CONFIRMATION_V0_1.json`, blob `5f1a7dcaeb39dd093586eefb4f869cc0791ae715`, authority commit `a37ae8e925ed36cfe13ceccbeba81894cf4319d5`.
+Terminal confirmation authority `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_PREEXECUTION_CONFIRMATION_V0_1.json`, blob `5f1a7dcaeb39dd093586eefb4f869cc0791ae715`, authority commit `a37ae8e925ed36cfe13ceccbeba81894cf4319d5`, verdict `CONFIRMED_SCOPED`, classification `CROSS_HOST_GRID896_CONTENT_ADDRESSED_DIAGNOSTIC_DESIGN_PREEXECUTION_CONFIRMED_SCOPED`.
 
-Auditor handoff:
-`docs/dsir4/handoffs/DSIR_FUNNEL_AUDITOR_HANDOFF_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_PREEXECUTION_V0_1.md`, handoff commit `b58491217154916a25a038ac50753187f99ca18d`.
+Auditor handoff `docs/dsir4/handoffs/DSIR_FUNNEL_AUDITOR_HANDOFF_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_PREEXECUTION_V0_1.md`, handoff commit `b58491217154916a25a038ac50753187f99ca18d`.
 
-Verdict: **`CONFIRMED_SCOPED`**. Classification: `CROSS_HOST_GRID896_CONTENT_ADDRESSED_DIAGNOSTIC_DESIGN_PREEXECUTION_CONFIRMED_SCOPED`.
+The pre-execution authority authorized construction only and required a separate independent static audit before any launch.
 
-Independent controls reproduced the canonical 897-word format/text hash, exact 7176-byte little-endian payload hash, byte-identical consumer round-trip and frozen one-bit negative-control digest. No deterministic source-level counterexample was found in the frozen design. The known v0.2 host-native floating/NumPy producer dependence is eliminated at the design level by content-addressed integer parsing plus fixed endianness.
+## Inert implementation candidate — constructed, not audited
 
-Qualification: no cross-host diagnostic runtime result exists yet. A future 32-lane PASS can establish only sampled hosted-runner invariance under the audited content-addressed implementation; it is not global native-generator invariance and is not Layer-B science.
+The authorized construction step is complete. Exact response-blind executor candidate:
+
+- path `scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_1.py`;
+- Git blob `f5e482bfef050796687f4beeb4d3940543681392`.
+
+Exact inert workflow candidate:
+
+- path `docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-1.yml`;
+- Git blob `78aa9d15be46bd2a5222e4618a88e56ed4e4e84c`;
+- deliberately outside `.github/workflows`, so it is not executable by GitHub Actions in the candidate location.
+
+Machine-readable non-authority implementation manifest:
+`docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_CANDIDATE_V0_1.json`.
+
+Construction properties frozen for static audit: no NumPy/CLASS/scientific-response access; canonical GRID896 reconstructed only from frozen u64hex words by fixed little-endian byte packing; consumer round-trip is byte-only 8-byte framing with no float conversion; exact payload and fixed one-bit negative-control guards are explicit; canonical-object absence/mismatch maps to the frozen `BLOCKED_MISSING_OR_UNBOUND_CANONICAL_OBJECT`; all other required provenance identity mismatches fail closed as invalid; hosted population is exactly `R01..R32`; no `workflow_dispatch`; run #1 / attempt #1 guards are explicit; lane and decision receipts bind code/workflow/provenance; missing lane population maps to `BLOCKED_HOSTED_INFRASTRUCTURE_INCOMPLETE`; all downstream/science authorizations remain false.
+
+The implementation also requires any later promoted active workflow to be byte-identical to the audited inert workflow candidate, requires a future terminal implementation authority, and requires a separately bound one-shot launch marker. As of this recovery update the active workflow path `.github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-1.yml` is absent and the launch marker `docs/dsir4/launch/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_1.launch.json` is absent.
+
+This is **not** an independent static audit and is **not** execution authority.
 
 ## Current authorization state
 
-The terminal pre-execution authority intentionally narrows the next step:
+- executor construction: complete;
+- inert workflow-candidate construction: complete;
+- independent static pre-launch audit: **required and now the only authorized next stage**;
+- workflow promotion to `.github/workflows`: **not authorized**;
+- launch-marker creation: **not authorized**;
+- diagnostic execution/launch: **not authorized**;
+- successor sentinel science: **not authorized**;
+- full107/downstream science: **not authorized**.
 
-- `executor_construction_authorized=true`;
-- `workflow_construction_authorized=true`;
-- `independent_static_prelaunch_audit_required=true`;
-- `diagnostic_execution_authorized=false`;
-- `diagnostic_launch_authorized=false`;
-- `successor_sentinel_science_authorized=false`;
-- `full_107_row_execution_authorized=false`;
-- `downstream_science_authorized=false`.
-
-Therefore do **not** launch the diagnostic while implementing it. Author exact response-blind executor/workflow candidate only. It must bind the exact prereg, contract, canonical source and terminal preexecution authority; verify source count/hash; reconstruct only by unsigned-u64 hex parse + fixed little-endian packing; verify exact payload hash and byte round-trip; reject the fixed corruption; freeze exactly 32 lanes with no replacement/selection; enforce run #1 / attempt #1 and no `workflow_dispatch`/same-identity retry; record complete lane provenance; and contain no CLASS/science access.
+Do not modify the exact executor/workflow candidate while auditing it. If the audit finds a deterministic implementation defect, preserve the failed candidate and require a prospective corrected implementation candidate; do not silently tune the audited bytes.
 
 ## Funnel position / interpretation ceiling
 
-`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 EXECUTED / SENTINEL_INVALID -> V0.2 INVALID_IMPLEMENTATION -> CROSS-HOST GRID896 PRODUCER-IDENTITY DIAGNOSTIC V0.1 PREREGISTERED DESIGN -> PREEXECUTION DESIGN CONFIRMED_SCOPED -> EXECUTOR/WORKFLOW CONSTRUCTION OPEN FOR STATIC AUDIT ONLY -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
+`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 EXECUTED / SENTINEL_INVALID -> V0.2 INVALID_IMPLEMENTATION -> CROSS-HOST GRID896 PRODUCER-IDENTITY DIAGNOSTIC V0.1 PREREGISTERED DESIGN -> PREEXECUTION DESIGN CONFIRMED_SCOPED -> INERT EXECUTOR/WORKFLOW IMPLEMENTATION CANDIDATE FROZEN -> INDEPENDENT STATIC PRELAUNCH AUDIT REQUIRED -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
 
 Interpretation ceiling remains infrastructure/provenance/static implementation. Scientific effect remains `+0/+0`; numerical response reproducibility, exact-target/scientific criteria, covariance, statistical/model validity and physical dark-sector inference remain `NOT_EVALUATED`. No readiness/frontier percentage increase is authorized.
 
 ## Exact authorized next stage
 
-`AUTHOR_EXACT_RESPONSE_BLIND_GRID896_DIAGNOSTIC_EXECUTOR_AND_WORKFLOW_CANDIDATE_BOUND_TO_FROZEN_DESIGN_THEN_RUN_SEPARATE_INDEPENDENT_STATIC_PRELAUNCH_AUDIT`.
+`INDEPENDENT_STATIC_AUDIT_OF_EXACT_GRID896_DIAGNOSTIC_IMPLEMENTATION_CANDIDATE_ONLY`.
 
-The next independent audit must verify exact executor/workflow blobs, topology, one-shot protections, source/hash/endianness guards, fixed negative control, artifact/receipt schema, 32-lane/no-replacement semantics and no-science boundary. Only a later terminal implementation/static-audit authority may authorize one diagnostic execution. Successor sentinel science and all full107/downstream gates remain closed.
+The audit must independently verify exact executor blob `f5e482bfef050796687f4beeb4d3940543681392` and inert workflow blob `78aa9d15be46bd2a5222e4618a88e56ed4e4e84c`; frozen prereg/contract/canonical/preexecution bindings; source count/hash; fixed little-endian reconstruction; exact 7176-byte payload hash; byte-only round-trip; fixed negative control; PASS/FAIL/BLOCKED/INVALID classifier logic; exactly 32 lanes with no replacement; run #1 / attempt #1/no-dispatch semantics; artifact/receipt provenance; active-workflow exact-byte promotion guard; one-shot launch-marker guard; and no-science boundary. Do not execute or promote the diagnostic during this audit. Only a later terminal implementation/static-audit authority may authorize a separately controlled promotion/launch stage.
