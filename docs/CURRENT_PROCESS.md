@@ -1,64 +1,92 @@
 # DSIR current-process ledger
 
-Updated: 2026-09-16. Scope: **DSIR only**. Repository/Actions state, terminal artifacts and frozen authorities are authoritative; chat is not authority.
+Updated: 2026-09-17. Scope: **DSIR only**. Repository/Actions state, terminal artifacts and frozen authorities are authoritative; chat is not authority.
 
 ## Scientific boundary
 
 V0.25 remains terminal numerical classification `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, effect `+0/+0`. V0.26 R1 remains frozen under preregistration blob `545e5be589e0f8029d23db2edb4e2faad116c3a0` and contract blob `b510d8e97baf1c0b7b216c0605d83cdd029254e9`.
 
-Frozen science boundary remains unchanged: 107 retained rows = DES 53 + BOSS 54; alpha route `3e-10`; beta exact-target `1e-12`; scientific strict `<1e-3`; technical strict `<1e-5`; requested-node binding `<=1e-12`; full replay 738 CLASS constructions. Full-107 and downstream inference remain closed.
+Frozen science boundary is unchanged: 107 retained rows = DES 53 + BOSS 54; alpha route `3e-10`; beta exact-target `1e-12`; scientific strict `<1e-3`; technical strict `<1e-5`; requested-node binding `<=1e-12`; full replay 738 CLASS constructions. Full 107 rows, covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537, statistical/model inference and physical dark-sector inference remain closed.
 
-Science run `35033268924`, workflow `359060727`, run #1 / attempt #1, is permanently consumed. Never rerun it, never create a same-nonce second attempt, and never modify/remove/recreate final L.
+Original sentinel run `35033268924` remains permanently consumed pre-science and non-rerunnable.
 
-## V0.4 static and execution authority
+## V0.5 failure-funnel governance closure
 
-Final v0.4 source origin head: `10e7f9bd8aaa5623e9f34adf17c2f53f50db5873`.
+The prior v0.4 branch was terminally blocked because its required `workflow_run` post-run auditor did not materialize. A prospectively frozen v0.5 explicit post-run chain corrected only that governance trigger defect.
 
-Exact source identities:
-- hosted failure-funnel workflow blob `6bf2027a121348823914e9076338055a4820162e`;
-- post-run `workflow_run` history workflow blob `6c2617e756877fb3cbb8b27dcf16b2bfc164cab5`;
-- final static qualification blob `eba53204d3a46b11c54c37adefe729722b00783f`;
-- execution authority blob `d68aa9ffa3fb5a7768e6802146aed74a3b57cf1b`;
-- review blob `01e5e9e0145e8c2ad1f0da639f3de073d9b26da2`;
-- runtime static authority blob `6bbacdc70dbfbee1dc4753e4a05266f9dbe45399`;
-- terminal execution-gate authority blob `35578c8eab01b11474c00b5306abe0c0fae7ac70`.
+V0.5 target run `35148542110` and terminal-history auditor run `35148573508` each completed success as run #1 / attempt #1. Durable terminal consumption records exact one-and-one dispatch histories, valid chronology and no rerun/same-nonce duplicate. Independent post-runtime Critic verdict is `PASS_SCOPED`, classification `V0_5_FAILURE_FUNNEL_BRANCH_CLOSED_SUCCESSOR_REQUIRES_NEW_PROSPECTIVE_AUTHORITY`. Historical scientific result remained `NOT_EVALUATED`; v0.5 did not authorize successor science or full 107 rows.
 
-Terminal execution gate run `35145130524` was QUALIFIED with zero prior target dispatches and zero competing target siblings. It authorized exact promotion and at most one target dispatch after a fresh atomic preflight; it authorized no science.
+## First successor sentinel v0.1 — consumed
 
-## One-shot launch and consumed v0.4 runtime
+A new prospective successor identity was later authorized. Target run `35174721773`, workflow `layerb-beta-v026-r1-successor-sentinel-science-v0-1`, head `62406eb1b7de748850d2a4fbb94cb0634dddaca8`, run #1 / attempt #1, is terminal failure and permanently consumed. It must not be rerun and no same-nonce second attempt is admissible.
 
-One-shot launcher static audit run `35145717750` was terminal success. Artifact `10467406401` ZIP SHA256 is `d314cd72a1e5786e6a848a83f583374f9aa6d6ba8255f14af8329770b5180e2c`; launcher-static receipt SHA256 is `8a3e19094cd5713962b9574f076546d4eb9dd9f5e3e7ccbf249aff0d1f085a32`.
+No historical FAIL/BLOCKED state is rewritten by later repair work.
 
-PR #196 merge `fcdcf5b90c2fe701b480bac8b5dc771bb3ccf871` activated the terminal one-shot launcher. Launcher run `35145835567`, workflow `359976724`, run #1 / attempt #1, completed success. Its atomic preflight observed zero target dispatches and zero active target siblings. Exactly one REST dispatch call returned HTTP 204. Launcher artifact `10467436639` ZIP SHA256 is `29957b38879e587862d775bd1faffeb61d6d560382df60ade301831cd101715a`.
+## GRID896 response-blind diagnostic — terminal
 
-The single target v0.4 failure-funnel run is `35145849799`, workflow `359974223`, `run_number=1`, `run_attempt=1`, event `workflow_dispatch`, branch `main`, head `fcdcf5b90c2fe701b480bac8b5dc771bb3ccf871`. The run completed `success`; every runtime provenance guard passed, the frozen independent failure-funnel auditor passed, and the end-of-run fresh live-history recheck passed.
+Response-blind diagnostic run `35177449482`, workflow `360168104`, head `bdf0369df5788d5301fb4cea34f61751f039fe8f`, run #1 / attempt #1, completed success.
 
-Target artifact `10467257116` ZIP SHA256 is `fdb47099b592afb13959a94a0e82678db284d786b63e57501d73277ea522f58a`. Failure-funnel receipt SHA256 is `8495668b993620c99ffe77f08297077749813d218c2e68988130023b0d7037ab`. Pre-run and end-of-run history snapshots are identical, SHA256 `1fad673eaf80610f4a042b24ee62107d71cf83f30cdf346dbf70e2f8932e3eb5`, and contain exactly the one target run.
+Artifact `10479491325` ZIP SHA256: `ae4fa512f4d0559c5266d10fdf803d1d2c863049b1796824fde95200bc90136d`.
 
-The failure-funnel receipt verdict remains `CONFIRMED_SCOPED`, classification `SENTINEL_FIRST_ATTEMPT_PRE_SCIENCE_ACTIONS_EVENT_GUARD_FAILURE_INDEPENDENTLY_CONFIRMED`; it explicitly authorizes no successor science and no full-107 execution.
+Inner diagnostic result SHA256: `a6f309198ffd75e807264fddfd96b4115fdf81385e0bafd01e1b328994c8a2a5`.
 
-## Terminal runtime blocker
+Terminal consumption classification: `GRID896_NUMPY_DISPATCH_PATH_DEPENDENCE_CONFIRMED`.
 
-The separately frozen post-run workflow required `workflow_run: completed`. After target completion, a fresh Actions query over the relevant time range returned zero `workflow_run` runs. Therefore the required terminal post-run receipt does not exist.
+The frozen/native GRID896 payload SHA256 is `8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d`; the forced-profile diagnostic payload SHA256 is `1ad5c76772b193086b1f10bc8e150cc7095504c4e4c80fd50da6821a30750097`; 247 nodes differed at binary level, while tested geometry and ratio were unchanged. The diagnostic invoked no CLASS solver and read no scientific response or covariance.
 
-This is consistent with GitHub's documented `GITHUB_TOKEN` recursion rule: events caused by `GITHUB_TOKEN` do not create new workflow runs except `workflow_dispatch` and `repository_dispatch`. The launcher correctly created the target via the `workflow_dispatch` exception, but the downstream `workflow_run` chain did not materialize.
+Independent diagnostic Critic verdict `PASS_SCOPED` supports only the minimal prospective design primitive: materialize exact frozen GRID896 bytes under native NumPy dispatch, then consume those exact bytes inside the otherwise unchanged forced science runtime. Numerical/scientific criterion remained `NOT_EVALUATED`; diagnostic itself authorized no science.
 
-Durable authority: `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SENTINEL_FIRST_ATTEMPT_FAILURE_FUNNEL_V0_4_RUNTIME_POSTRUN_BLOCKER_V0_1.json`.
+## Successor sentinel v0.2 — frozen repair and authority
 
-Classification: `V0_4_TARGET_RUNTIME_SUCCEEDED_BUT_REQUIRED_POST_RUN_WORKFLOW_RUN_TERMINAL_HISTORY_AUDIT_WAS_NOT_CREATED`.
+PR #201 merge `d7ed277617cd91b74d4f734edafc1e8fff0ec57b` froze the repaired v0.2 package without a launch marker.
 
-V0.4 is now consumed and terminally BLOCKED before terminal runtime authority. Do not rerun/retry the target, do not create a second v0.4 dispatch, and do not substitute a post-hoc manual audit for the frozen requirement.
+Exact identities:
+- launch authority blob `f5932ce87acc392220ca2fa71abbade8c5899723`;
+- independent design Critic blob `f89dc41d46cbe5727bc16f216e21432cdc4a4a57`, verdict `PASS_SCOPED`;
+- executor `ci/layerb_beta_v026_r1_sentinel_v0_2.py`, blob `1f727056491a6f4997298bb63dba26589fd3ddec`;
+- target workflow blob `00bb68196c995079cad50da70be555d737d28ecb`;
+- terminal-history workflow blob `9dc4962288471fbcd0803d22cabe1182bfac8ed3`;
+- decision blob `97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9`.
+
+V0.2 uses new experiment identity `LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_SCIENCE_V0_2` and nonce `DSIR-V026R1-SUCCESSOR-20260917-B1-4C92E7A1`. Historical successor run `35174721773` and original run `35033268924` remain non-rerunnable; same-nonce second attempt is forbidden.
+
+The authority preserves the exact R1 dataset, plan, CLASS commit/options, 32-lane sentinel, alpha/beta tolerances and scientific/technical/requested-node thresholds. The only supported implementation change is GRID896 materialization: exact frozen native bytes are produced under clean/native NumPy dispatch and passed into the forced child, which consumes and revalidates those exact bytes before CLASS.
+
+Response-blind repair static run `35181631286`, workflow `360200575`, head `e25324612756c38c2435f6db1a22d74e701ed4ec`, run #1 / attempt #1, completed success. Its only job `105074835330` completed success. This is static/design evidence only, not science.
+
+## Exact one-shot v0.2 launch — current active gate
+
+PR #202 merge `1fd68a9814ac987300710c4e67d080c7455efa34` added only `docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_LAUNCH_V0_2.json`, blob `69d827768bc852e8d5f62d2d27e137826dd82e25`, to prelaunch main `d7ed277617cd91b74d4f734edafc1e8fff0ec57b`.
+
+This triggered exact target run `35181812498`, workflow `360201395`, head `1fd68a9814ac987300710c4e67d080c7455efa34`, event `push`, run #1 / attempt #1. At the latest Funnel Auditor review the target is **in_progress/nonterminal**. Exact-head enumeration returns one target run.
+
+Completed pre-science controls are terminal success: the `authorize` job checked the exact authority/contract/executor/target-workflow/terminal-workflow/diagnostic bindings, exact experiment id/nonce, launch-marker new-addition chronology, run #1 / attempt #1 and fresh one-run target history; response-blind plan materialization also completed success.
+
+No partial lane scientific values, lane outcome pattern, decision values or partial substantive artifacts are admissible while the target remains nonterminal.
+
+Independent Funnel Auditor durable review:
+- audit: `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_V0_2_LAUNCH_PRETERMINAL_FUNNEL_AUDIT_V0_1.md`;
+- confirmation: `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_V0_2_LAUNCH_PRETERMINAL_CONFIRMATION_V0_1.json`;
+- handoff: `docs/dsir4/handoffs/DSIR_FUNNEL_AUDITOR_HANDOFF_V0_26_R1_SUCCESSOR_SENTINEL_V0_2_LAUNCH_PRETERMINAL_V0_1.md`;
+- verdict: `CONFIRMED_SCOPED` for exact authorization/one-shot launch only, not for the nonterminal science result.
+
+## Mandatory terminal-history gate
+
+Frozen terminal-history workflow `layerb-beta-v026-r1-successor-sentinel-terminal-history-v0-2` must run only after target completion. It requires target run #1 / attempt #1, auditor run #1 / attempt #1, fresh exact target history with exactly one run, and a unique decision artifact. It records decision artifact ZIP and inner JSON digests and reconstructs separate provenance/numerical/exact-target/scientific verdict fields.
+
+A target completion alone does not open the next stage. The terminal-history workflow itself must become terminal and its artifacts/hashes/classification must be independently reviewed before any terminal result authority may be written.
 
 ## Current funnel position
 
-`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED PRE-SCIENCE FAILURE -> FORENSIC AUTHORITY TERMINAL -> V0.2/V0.3 DEFECTS TERMINAL -> V0.4 STATIC QUALIFIED -> V0.4 EXECUTION AUTHORITY QUALIFIED -> ONE-SHOT V0.4 RUN #1/ATTEMPT #1 SUCCESS -> END-OF-RUN HISTORY PASS -> REQUIRED WORKFLOW_RUN POST-RUN AUDIT NOT CREATED -> V0.4 TERMINAL RUNTIME BLOCKED -> SCIENCE CLOSED`.
+`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED PRE-SCIENCE -> V0.5 FAILURE-FUNNEL GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED/TERMINAL FAILURE -> GRID896 RESPONSE-BLIND DIAGNOSTIC TERMINAL -> DIAGNOSTIC CRITIC PASS_SCOPED -> SUCCESSOR V0.2 PROSPECTIVELY FROZEN -> DESIGN CRITIC PASS_SCOPED -> EXACT V0.2 LAUNCH CONFIRMED_SCOPED -> TARGET 35181812498 IN_PROGRESS/NONTERMINAL -> TERMINAL-HISTORY GATE PENDING -> FULL 107 ROW CLOSED`.
 
-Effect remains `+0/+0`. No new V0.26 R1 scientific response exists.
+Effect remains `+0/+0`. Launch/governance progress does not increase the scientific frontier.
 
 ## Exact next admissible action
 
-1. Never rerun target `35145849799`; never create another v0.4 dispatch or same-nonce attempt.
-2. Prospectively freeze a **new successor repair identity** solely for the post-run trigger defect. The repair must not alter the historical v0.4 outcome.
-3. Use an explicit GitHub event that is permitted from `GITHUB_TOKEN` (for example a separately frozen `workflow_dispatch` terminal-history auditor) and ensure that auditor evaluates the target only after it is terminal, then freshly proves exactly one run #1 / attempt #1.
-4. Independently static-qualify that successor source set before any new live execution authority is considered.
-5. No post-hoc recovery of v0.4 can authorize science. Successor sentinel science, full 107 rows and downstream science remain false until a completely separate terminal authority opens the minimal next scientific object.
+1. Let existing target run `35181812498` terminate. **Do not rerun it** and do not create a competing/same-nonce attempt.
+2. While target is nonterminal, do not use partial lane/decision values and do not create a competing scientific verdict.
+3. After target termination, require the frozen terminal-history workflow to become terminal; do not substitute a manual/post-hoc shortcut.
+4. Independently verify target and auditor run uniqueness, run numbers/attempts, exact target head/chronology, decision artifact id, Actions ZIP digest, inner decision digest, terminal receipt digest and classifier output against the frozen R1 contract.
+5. Only a separate later terminal authority may decide the next admissible Layer-B stage.
+6. Full 107 rows, covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global 65537 and all downstream statistical/model/physical science remain closed.
