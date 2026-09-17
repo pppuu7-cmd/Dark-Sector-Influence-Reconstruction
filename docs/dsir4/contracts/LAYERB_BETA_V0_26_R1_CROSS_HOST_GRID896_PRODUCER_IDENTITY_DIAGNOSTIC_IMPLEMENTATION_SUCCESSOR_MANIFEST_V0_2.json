@@ -1,0 +1,75 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_MANIFEST_V0_2",
+  "status": "INERT_SUCCESSOR_IMPLEMENTATION_CANDIDATE_FROZEN_AWAITING_INDEPENDENT_STATIC_AUDIT",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_AND_STATIC_IMPLEMENTATION_ONLY",
+  "terminal_parent": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_STATIC_AUDIT_QUALIFICATION_V0_1.json",
+    "git_blob_sha1": "d9f940f3ea7b41b8df76d102f71ead16342a7f23",
+    "verdict": "INVALID_IMPLEMENTATION",
+    "classification": "GRID896_DIAGNOSTIC_IMPLEMENTATION_DOES_NOT_REALIZE_FROZEN_CONSUMER_ROUNDTRIP_AND_ARTIFACT_PROVENANCE_CONTRACT",
+    "authorized_next_stage": "AUTHOR_PROSPECTIVE_CORRECTED_INERT_GRID896_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_ONLY"
+  },
+  "frozen_design": {
+    "preregistration_git_blob_sha1": "903c80709439cb790bd41316029b218a77d5695b",
+    "contract_git_blob_sha1": "6ba6e5a6c946a1091680f8f44821d323c9a463f3",
+    "canonical_source_git_blob_sha1": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+    "preexecution_confirmation_git_blob_sha1": "5f1a7dcaeb39dd093586eefb4f869cc0791ae715"
+  },
+  "historical_failed_candidate_preserved": {
+    "executor_git_blob_sha1": "f5e482bfef050796687f4beeb4d3940543681392",
+    "workflow_candidate_git_blob_sha1": "78aa9d15be46bd2a5222e4618a88e56ed4e4e84c",
+    "implementation_manifest_git_blob_sha1": "c9bd923b0b7531307fe48dc5930c629745a89e37"
+  },
+  "successor_candidate": {
+    "executor_path": "scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_2.py",
+    "executor_git_blob_sha1": "69ead98fdaf605b961c7a85570a0cc5770af3750",
+    "executor_creation_commit": "b85b06818165129268be2a05e7a70f2d91f09383",
+    "workflow_candidate_path": "docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-2.yml",
+    "workflow_candidate_git_blob_sha1": "271646639792041eb88a1b5c31a3cd142d1778df",
+    "workflow_creation_commit": "a617f66c656c43e8a19fd648d23a38c2a2a73b79",
+    "inert_location": true
+  },
+  "prospective_corrections_realized_in_source": {
+    "consumer_roundtrip": "STRUCT_ITER_UNPACK_LT_D_THEN_STRUCT_PACK_LT_D_WITHOUT_ARITHMETIC_AND_REQUIRE_EXACT_BYTES",
+    "artifact_population": "QUERY_CURRENT_RUN_ACTIONS_ARTIFACT_API_AND_REQUIRE_EXACTLY_32_UNIQUE_EXPECTED_LANE_ARTIFACT_NAMES_AND_IDS",
+    "outer_artifact_digest": "DOWNLOAD_EACH_IMMUTABLE_ARTIFACT_ZIP_AND_REQUIRE_GITHUB_SHA256_DIGEST_EQUALS_COMPUTED_ZIP_SHA256",
+    "inner_receipt_digest": "REQUIRE_EXACTLY_ONE_EXPECTED_RXX_JSON_MEMBER_COMPUTE_SHA256_AND_BIND_IT_WITH_ARTIFACT_ID_NAME_DIGEST_AND_ZIP_SHA256_IN_TERMINAL_DECISION",
+    "runtime_binding": "REQUIRE_ARTIFACT_RUN_ID_HEAD_SHA_AND_RECEIPT_RUN_ATTEMPT_JOB_EVENT_REF_SOURCE_CONTRACT_EXECUTOR_WORKFLOW_IDENTITIES",
+    "missing_population": "BLOCKED_HOSTED_INFRASTRUCTURE_INCOMPLETE",
+    "DUPLICATE_EXTRA_OR_DIGEST_MISMATCH": "INVALID_DIAGNOSTIC_PROVENANCE"
+  },
+  "preserved_controls": {
+    "canonical_source_sha256": "e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4",
+    "canonical_line_count": 897,
+    "canonical_payload_byte_length": 7176,
+    "canonical_payload_sha256": "8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d",
+    "negative_control_sha256": "e94e2e05fc0cc1fcbc9bd710a24b8ef231fab350cd6247ea3039b913adfba800",
+    "lane_count": 32,
+    "lane_ids": "R01..R32",
+    "runner": "ubuntu-24.04",
+    "required_run_number": 1,
+    "required_run_attempt": 1,
+    "lane_replacement_forbidden": true,
+    "same_identity_retry_not_authorized": true,
+    "workflow_dispatch_absent": true,
+    "class_solver_invoked": false,
+    "scientific_response_read": false
+  },
+  "future_paths_if_later_separately_authorized": {
+    "active_workflow_path": ".github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-2.yml",
+    "implementation_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_STATIC_AUDIT_AUTHORITY_V0_2.json",
+    "launch_marker_path": "docs/dsir4/launch/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_2.launch.json"
+  },
+  "independent_static_audit_complete": false,
+  "implementation_qualified": false,
+  "workflow_promotion_authorized": false,
+  "launch_marker_creation_authorized": false,
+  "diagnostic_execution_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authorized_next_stage": "INDEPENDENT_STATIC_AUDIT_OF_EXACT_GRID896_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_2_ONLY",
+  "token": "INERT_GRID896_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_2_FROZEN_PLUS_0_PLUS_0"
+}
