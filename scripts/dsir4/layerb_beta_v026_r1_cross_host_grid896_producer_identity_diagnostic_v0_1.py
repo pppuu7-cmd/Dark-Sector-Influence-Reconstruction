@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Response-blind cross-host GRID896 content-addressing diagnostic.
 
-This file is an implementation candidate only.  It must not be used to launch
-or interpret Layer-B science.  The only admissible object is the frozen exact
+This file is an implementation candidate only. It must not be used to launch
+or interpret Layer-B science. The only admissible object is the frozen exact
 GRID896 byte payload and its provenance/transport controls.
 """
 
@@ -14,11 +14,10 @@ import json
 import os
 import platform
 import re
-import struct
 import sys
 import urllib.request
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 SCHEMA = "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_EXECUTOR_V0_1"
 LANE_RECEIPT_SCHEMA = "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_LANE_RECEIPT_V0_1"
@@ -27,6 +26,7 @@ DECISION_SCHEMA = "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIA
 ROOT = Path(__file__).resolve().parents[2]
 EXECUTOR_PATH = Path("scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_1.py")
 WORKFLOW_CANDIDATE_PATH = Path("docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-1.yml")
+ACTIVE_WORKFLOW_PATH = Path(".github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-1.yml")
 PREREG_PATH = Path("docs/dsir4/prereg/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_1.md")
 CONTRACT_PATH = Path("docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_CONTRACT_V0_1.json")
 CANONICAL_PATH = Path("docs/dsir4/canonical/LAYERB_BETA_V0_26_R1_GRID896_U64HEX_V0_1.txt")
@@ -71,9 +71,23 @@ def file_git_blob(rel: Path) -> str:
 
 
 def require_blob(rel: Path, expected: str) -> None:
+    path = ROOT / rel
+    if not path.is_file():
+        raise ValueError(f"required provenance object is absent: {rel}")
     actual = file_git_blob(rel)
     if actual != expected:
         raise ValueError(f"blob mismatch for {rel}: {actual} != {expected}")
+
+
+def require_canonical_object() -> None:
+    path = ROOT / CANONICAL_PATH
+    if not path.is_file():
+        raise FileNotFoundError("canonical GRID896 object is absent")
+    actual = file_git_blob(CANONICAL_PATH)
+    if actual != CANONICAL_BLOB:
+        raise FileNotFoundError(
+            f"canonical GRID896 object blob mismatch: {actual} != {CANONICAL_BLOB}"
+        )
 
 
 def canonical_source_and_payload() -> Tuple[bytes, bytes, List[bytes]]:
@@ -81,7 +95,7 @@ def canonical_source_and_payload() -> Tuple[bytes, bytes, List[bytes]]:
     if sha256_bytes(source) != CANONICAL_SOURCE_SHA256:
         raise FileNotFoundError("canonical source SHA256 mismatch")
     if not source.endswith(b"\n"):
-        raise FileNotFoundError("canonical source must end in exactly a final LF")
+        raise FileNotFoundError("canonical source must end in a final LF")
     lines = source[:-1].split(b"\n")
     if len(lines) != CANONICAL_LINE_COUNT:
         raise FileNotFoundError(f"canonical line count mismatch: {len(lines)}")
@@ -101,10 +115,12 @@ def exact_payload_guard(payload: bytes) -> bool:
 def consumer_roundtrip(payload: bytes) -> bytes:
     if len(payload) != CANONICAL_PAYLOAD_LEN:
         raise ValueError("roundtrip input length mismatch")
-    # Interpret each 8-byte word as little-endian IEEE754 binary64 and immediately
-    # reserialize it; there is no arithmetic and no NumPy/native grid generation.
-    values = [item[0] for item in struct.iter_unpack("<d", payload)]
-    return b"".join(struct.pack("<d", value) for value in values)
+    # Byte-only 8-byte word framing: no float conversion, arithmetic, NumPy, or
+    # host-native grid generation is permitted in this diagnostic control.
+    chunks = [payload[i : i + 8] for i in range(0, len(payload), 8)]
+    if len(chunks) != CANONICAL_LINE_COUNT or any(len(chunk) != 8 for chunk in chunks):
+        raise ValueError("roundtrip word framing mismatch")
+    return b"".join(chunks)
 
 
 def negative_control(payload: bytes) -> Tuple[bytes, bool]:
@@ -136,7 +152,10 @@ def runtime_fingerprint() -> Dict[str, str]:
 
 
 def api_json(url: str, token: str) -> Dict[str, Any]:
-    headers = {"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
     if token:
         headers["Authorization"] = f"Bearer {token}"
     req = urllib.request.Request(url, headers=headers)
@@ -164,6 +183,13 @@ def load_json(rel: Path) -> Dict[str, Any]:
 def verify_launch_authorization(executor_blob: str, workflow_blob: str) -> Dict[str, str]:
     if not (ROOT / IMPLEMENTATION_AUTHORITY_PATH).is_file():
         raise PermissionError("terminal implementation authority is absent")
+    if not (ROOT / ACTIVE_WORKFLOW_PATH).is_file():
+        raise PermissionError("promoted active workflow is absent")
+    active_workflow_blob = file_git_blob(ACTIVE_WORKFLOW_PATH)
+    if active_workflow_blob != workflow_blob:
+        raise PermissionError(
+            f"active workflow blob {active_workflow_blob} != audited candidate blob {workflow_blob}"
+        )
     if not (ROOT / LAUNCH_MARKER_PATH).is_file():
         raise PermissionError("authorized launch marker is absent")
 
@@ -189,6 +215,7 @@ def verify_launch_authorization(executor_blob: str, workflow_blob: str) -> Dict[
         "implementation_authority_git_blob_sha1": authority_blob,
         "executor_git_blob_sha1": executor_blob,
         "workflow_candidate_git_blob_sha1": workflow_blob,
+        "active_workflow_git_blob_sha1": active_workflow_blob,
         "authorized_run_number": 1,
         "authorized_run_attempt": 1,
         "lane_count": 32,
@@ -200,6 +227,7 @@ def verify_launch_authorization(executor_blob: str, workflow_blob: str) -> Dict[
     return {
         "implementation_authority_git_blob_sha1": authority_blob,
         "launch_marker_git_blob_sha1": file_git_blob(LAUNCH_MARKER_PATH),
+        "active_workflow_git_blob_sha1": active_workflow_blob,
     }
 
 
@@ -239,7 +267,6 @@ def lane_command(args: argparse.Namespace) -> int:
     output = Path(args.receipt)
     executor_blob = file_git_blob(EXECUTOR_PATH)
     workflow_blob = file_git_blob(WORKFLOW_CANDIDATE_PATH)
-    job_id = -1
     receipt: Dict[str, Any] = {
         "schema": LANE_RECEIPT_SCHEMA,
         "executor_schema": SCHEMA,
@@ -264,7 +291,7 @@ def lane_command(args: argparse.Namespace) -> int:
 
         require_blob(PREREG_PATH, PREREG_BLOB)
         require_blob(CONTRACT_PATH, CONTRACT_BLOB)
-        require_blob(CANONICAL_PATH, CANONICAL_BLOB)
+        require_canonical_object()
         require_blob(PREEXEC_AUTHORITY_PATH, PREEXEC_AUTHORITY_BLOB)
         launch_bindings = verify_launch_authorization(executor_blob, workflow_blob)
         job_id = discover_job_id(args.job_name)
@@ -283,7 +310,9 @@ def lane_command(args: argparse.Namespace) -> int:
 
         if not exact_payload_guard(payload):
             receipt["lane_outcome"] = FAIL
-            receipt["errors"].append("canonical reconstruction did not match frozen 7176-byte SHA256 object")
+            receipt["errors"].append(
+                "canonical reconstruction did not match frozen 7176-byte SHA256 object"
+            )
         else:
             roundtrip = consumer_roundtrip(payload)
             roundtrip_identical = roundtrip == payload
@@ -308,7 +337,7 @@ def lane_command(args: argparse.Namespace) -> int:
     except PermissionError as exc:
         receipt["lane_outcome"] = INVALID
         receipt["errors"].append(str(exc))
-    except Exception as exc:  # fail closed; aggregate classifies missing/invalid provenance separately
+    except Exception as exc:
         receipt["lane_outcome"] = INVALID
         receipt["errors"].append(f"{type(exc).__name__}: {exc}")
 
@@ -358,7 +387,12 @@ def aggregate_command(args: argparse.Namespace) -> int:
         "physical_dark_sector_inference": "NOT_EVALUATED",
     }
 
-    if parse_errors or len(receipts) != 32 or unique_lane_ids != set(LANE_IDS) or len(unique_lane_ids) != len(lane_ids):
+    if (
+        parse_errors
+        or len(receipts) != 32
+        or unique_lane_ids != set(LANE_IDS)
+        or len(unique_lane_ids) != len(lane_ids)
+    ):
         decision["classification"] = BLOCKED_POPULATION
     else:
         provenance_invalid = False
