@@ -66,7 +66,7 @@ Infrastructure/provenance/static implementation only. Numerical response reprodu
 
 # ARTIFACTS
 
-No new GitHub Actions artifacts were produced. Durable blocker audit: `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_GRID896_V0_6_WORKFLOW_REGISTRY_CAPTURE_BLOCKER_AUDIT_V0_1.md`. Recovery was reconciled to record the interface blocker while preserving the unchanged authorized next stage.
+No new GitHub Actions artifacts were produced. Durable blocker audit: `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_GRID896_V0_6_WORKFLOW_REGISTRY_CAPTURE_BLOCKER_AUDIT_V0_1.md`. `docs/RECOVERY_LATEST.md` and `docs/CURRENT_PROCESS.md` were reconciled to record the interface blocker while preserving the unchanged authorized next stage.
 
 # COMMITS
 
@@ -74,7 +74,11 @@ Blocker audit commit: `31def483654b279e09e5cc0db59a800ee830438c`.
 
 Recovery reconciliation commit: `bab79ce714cc80087e0d563a840f9d1147106fc4`.
 
-This handoff commit is the commit that creates this file and must be read from current `main` after creation.
+Initial handoff commit: `d8d411cba0c4f9d3883bebee9abbc78b3129f44a`.
+
+Process reconciliation commit: `f32cc3c81f3a6476c2067f13bbc93ebd61649ef0`.
+
+Final handoff refresh commit is the commit that updates this file and should be read as current `main` after completion.
 
 # FUNNEL_CHANGE
 
