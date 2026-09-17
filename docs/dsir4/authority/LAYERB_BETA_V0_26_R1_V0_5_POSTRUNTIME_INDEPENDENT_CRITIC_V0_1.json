@@ -1,0 +1,98 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_V0_5_POSTRUNTIME_INDEPENDENT_CRITIC_V0_1",
+  "status": "TERMINAL_INDEPENDENT_CRITIC",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "method": "INDEPENDENT_RECONSTRUCTION_FROM_RAW_ACTIONS_HISTORY_JOB_LOGS_ARTIFACT_METADATA_AND_FROZEN_AUTHORITIES",
+  "producer_final_verdict_used_as_input": false,
+  "main_head_observed": "c84f0545b2746bf768cb1a0fdfb88d06cf1ceb34",
+  "raw_reconstruction": {
+    "historical_science_run": {
+      "run_id": 35033268924,
+      "workflow_path": ".github/workflows/layerb-beta-v026-r1-sentinel-science-v0-1.yml",
+      "head_sha": "9a333294f3acb80201c5f6ed5b74918c1c767232",
+      "event": "push",
+      "run_number": 1,
+      "run_attempt": 1,
+      "conclusion": "failure",
+      "first_failing_job": "authorize",
+      "first_failing_step": "Verify exact acyclic W-A-L-Q launch package and one-run trigger",
+      "exact_failure": "assert added.count(launch)==1",
+      "science_executor_reached": false,
+      "class_lane_reached": false,
+      "scientific_response_read": false,
+      "classification": "PRE_SCIENCE_ACTIONS_EVENT_GUARD_FAILURE"
+    },
+    "v0_5_target": {
+      "run_id": 35148542110,
+      "workflow_path": ".github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-5.yml",
+      "head_sha": "c84f0545b2746bf768cb1a0fdfb88d06cf1ceb34",
+      "event": "workflow_dispatch",
+      "run_number": 1,
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-09-16T20:46:15Z",
+      "terminal_at": "2026-09-16T20:46:33Z",
+      "artifact_id": 10468460475,
+      "artifact_zip_sha256": "447654ed8906b64ea662804053afa75d8c099c26428ea3ff358e6b9b46819569"
+    },
+    "v0_5_terminal_auditor": {
+      "run_id": 35148573508,
+      "workflow_path": ".github/workflows/dsir-v026-r1-first-attempt-failure-funnel-terminal-history-v0-5.yml",
+      "head_sha": "c84f0545b2746bf768cb1a0fdfb88d06cf1ceb34",
+      "event": "workflow_dispatch",
+      "run_number": 1,
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-09-16T20:46:36Z",
+      "artifact_id": 10468455963,
+      "artifact_zip_sha256": "75ebde9d5ddc56ff3db739c3bf0b39d5cf17afec5a74084282952f780e5fac15"
+    },
+    "chronology_valid": true,
+    "exact_target_dispatch_count": 1,
+    "exact_terminal_auditor_dispatch_count": 1,
+    "target_run_number_valid": true,
+    "target_run_attempt_valid": true,
+    "terminal_auditor_run_number_valid": true,
+    "terminal_auditor_run_attempt_valid": true,
+    "rerun_observed": false,
+    "same_nonce_second_attempt_observed": false,
+    "late_duplicate_observed": false,
+    "execution_nonce": "DSIR-V026R1-FFHOSTED-V0-5-728EC746-60286B97-20260916-A1",
+    "authority_blobs": {
+      "execution_authority": "fee0ea62b0fa465643b9bfe5cafae01666680631",
+      "execution_authority_review": "ee644f633d011021f0d4437fc8e096a7b16e5c91",
+      "terminal_static_audit_authority": "961490275981c7312e4b1c4aed95bbe63fb10987"
+    }
+  },
+  "cross_check_only": {
+    "terminal_receipt_sha256": "a6519125cc3f7d11d3120cd7d0cf7a684adc8314b67f015231ba337208121893",
+    "terminal_receipt_classification": "V0_5_EXPLICIT_POSTRUN_DISPATCH_TERMINAL_HISTORY_CLOSED",
+    "matches_independent_reconstruction": true
+  },
+  "verdicts": {
+    "governance_provenance": "PASS_SCOPED",
+    "historical_failure_funnel": "CONFIRMED_SCOPED",
+    "historical_scientific_result": "NOT_EVALUATED",
+    "v0_5_branch_closed": true,
+    "v0_5_authorizes_historical_rerun": false,
+    "v0_5_authorizes_same_nonce_second_attempt": false,
+    "v0_5_authorizes_successor_science": false,
+    "v0_5_authorizes_full_107": false
+  },
+  "successor_eligibility": {
+    "new_prospective_authority_required": true,
+    "new_experiment_identity_required": true,
+    "new_nonce_required": true,
+    "new_workflow_identity_required": true,
+    "historical_science_payload_was_not_observed": true,
+    "minimal_defect_to_avoid": "WEBHOOK_COMMITS_ADDED_PREDICATE",
+    "science_contract_may_be_inherited_unchanged": true,
+    "eligible_for_separate_successor_authorization_gate": true
+  },
+  "critic_verdict": "PASS_SCOPED",
+  "classification": "V0_5_FAILURE_FUNNEL_BRANCH_CLOSED_SUCCESSOR_REQUIRES_NEW_PROSPECTIVE_AUTHORITY",
+  "token": "PASS_LAYERB_BETA_V0_26_R1_V0_5_POSTRUNTIME_INDEPENDENT_CRITIC_PLUS_0_PLUS_0"
+}
