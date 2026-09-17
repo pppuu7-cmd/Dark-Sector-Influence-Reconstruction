@@ -1,0 +1,71 @@
+{
+  "schema": "DSIR_LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_CANDIDATE_V0_1",
+  "status": "INERT_IMPLEMENTATION_CANDIDATE_AWAITING_INDEPENDENT_STATIC_AUDIT",
+  "project": "DSIR",
+  "gate": "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_1",
+  "parent_r1_prereg_git_blob_sha1": "545e5be589e0f8029d23db2edb4e2faad116c3a0",
+  "parent_r1_contract_git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9",
+  "diagnostic_prereg_git_blob_sha1": "903c80709439cb790bd41316029b218a77d5695b",
+  "diagnostic_contract_git_blob_sha1": "6ba6e5a6c946a1091680f8f44821d323c9a463f3",
+  "canonical_grid896_git_blob_sha1": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+  "preexecution_confirmation_git_blob_sha1": "5f1a7dcaeb39dd093586eefb4f869cc0791ae715",
+  "executor": {
+    "path": "scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_1.py",
+    "git_blob_sha1": "f5e482bfef050796687f4beeb4d3940543681392",
+    "response_blind": true,
+    "class_solver_invoked": false,
+    "scientific_response_read": false
+  },
+  "workflow_candidate": {
+    "path": "docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-1.yml",
+    "git_blob_sha1": "78aa9d15be46bd2a5222e4618a88e56ed4e4e84c",
+    "inert_location": true,
+    "active_workflow_path": ".github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-1.yml",
+    "active_workflow_present_at_freeze": false
+  },
+  "canonical_object": {
+    "source_sha256": "e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4",
+    "line_count": 897,
+    "producer": "each frozen lowercase 16-hex unsigned word -> exactly 8 little-endian bytes; concatenate in frozen order",
+    "payload_byte_length": 7176,
+    "payload_sha256": "8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d",
+    "consumer_roundtrip": "byte-only 8-byte framing and re-concatenation; no float conversion or arithmetic",
+    "negative_control": "corrupted[0] ^= 0x01",
+    "negative_control_sha256": "e94e2e05fc0cc1fcbc9bd710a24b8ef231fab350cd6247ea3039b913adfba800"
+  },
+  "frozen_population": {
+    "runner": "ubuntu-24.04",
+    "lane_ids": [
+      "R01", "R02", "R03", "R04", "R05", "R06", "R07", "R08",
+      "R09", "R10", "R11", "R12", "R13", "R14", "R15", "R16",
+      "R17", "R18", "R19", "R20", "R21", "R22", "R23", "R24",
+      "R25", "R26", "R27", "R28", "R29", "R30", "R31", "R32"
+    ],
+    "lane_count": 32,
+    "authorized_run_number": 1,
+    "authorized_run_attempt": 1,
+    "lane_replacement_allowed": false,
+    "same_identity_rerun_allowed": false
+  },
+  "frozen_classifications": [
+    "PASS_SHARED_GRID896_CONTENT_ADDRESSING_CROSS_HOST",
+    "FAIL_SHARED_GRID896_CONTENT_ADDRESSING_CROSS_HOST",
+    "BLOCKED_MISSING_OR_UNBOUND_CANONICAL_OBJECT",
+    "BLOCKED_HOSTED_INFRASTRUCTURE_INCOMPLETE",
+    "INVALID_DIAGNOSTIC_PROVENANCE"
+  ],
+  "future_terminal_implementation_authority_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_STATIC_AUDIT_AUTHORITY_V0_1.json",
+  "future_launch_marker_path": "docs/dsir4/launch/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_1.launch.json",
+  "implementation_candidate_complete": true,
+  "independent_static_audit_complete": false,
+  "diagnostic_execution_authorized": false,
+  "workflow_promotion_authorized": false,
+  "launch_marker_creation_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "scientific_effect": "+0/+0",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_AND_EXACT_GRID896_CONTENT_ADDRESSING_ONLY",
+  "next_stage": "INDEPENDENT_STATIC_AUDIT_OF_EXACT_GRID896_DIAGNOSTIC_IMPLEMENTATION_CANDIDATE_ONLY",
+  "authority": false
+}
