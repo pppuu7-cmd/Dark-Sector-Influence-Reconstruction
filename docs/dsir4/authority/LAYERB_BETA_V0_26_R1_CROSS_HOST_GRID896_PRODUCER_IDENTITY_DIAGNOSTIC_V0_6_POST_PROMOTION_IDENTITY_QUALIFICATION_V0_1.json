@@ -1,0 +1,70 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_6_POST_PROMOTION_IDENTITY_QUALIFICATION_V0_1",
+  "status": "TERMINAL_POST_PROMOTION_IDENTITY_AUDIT_QUALIFICATION",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "verdict": "REQUIRES_CONFIRMATION_GATE",
+  "classification": "V0_6_POST_PROMOTION_REPOSITORY_IDENTITY_CONFIRMED_BUT_GITHUB_WORKFLOW_REGISTRY_ID_PATH_STATE_NOT_DURABLY_BOUND",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_AND_STATIC_IMPLEMENTATION_ONLY",
+  "reviewed_main_sha": "24fd6b33bef60c16d3afcdd67af769568116d0c2",
+  "governing_terminal_static_confirmation": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_STATIC_AUDIT_CONFIRMATION_V0_6.json",
+    "git_blob_sha1": "6cc317eb359a820bc1ecb3c657fc33b46a7d152b",
+    "verdict": "CONFIRMED_SCOPED"
+  },
+  "audit": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_6_POST_PROMOTION_IDENTITY_AUDIT_V0_1.md",
+    "git_blob_sha1": "2a7408a9edb9a55b4ce995a5fcab1f42a57f59a8",
+    "commit": "d4b867329f160c05f35b3bdc0fb5702204daeb1c"
+  },
+  "reviewed_promotion": {
+    "promotion_commit": "3cd2ab71e490bc2ccbea0a8a8c3527d0e25c0a9d",
+    "promotion_record_path": "docs/dsir4/results/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_DIAGNOSTIC_V0_6_EXACT_BYTE_PROMOTION_RECORD_V0_1.json",
+    "promotion_record_git_blob_sha1": "2fa6386b7cfae6413be377162ccbf05d40904a74",
+    "active_workflow_path": ".github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml",
+    "active_workflow_git_blob_sha1": "832f0491421619579c2a1d77ba9ca339cb4898ac",
+    "workflow_candidate_git_blob_sha1": "832f0491421619579c2a1d77ba9ca339cb4898ac",
+    "byte_exact_promotion_confirmed": true
+  },
+  "frozen_implementation": {
+    "executor_git_blob_sha1": "eae9eee7ae6a1424bcac67279663a2c8ddd3ebf9",
+    "implementation_manifest_git_blob_sha1": "e71d2c92a56555ffaea59a08c80d8f073c4b48da"
+  },
+  "completed_checks": {
+    "promotion_was_authorized_by_prior_terminal_authority": true,
+    "promotion_commit_added_only_canonical_active_workflow": true,
+    "active_blob_equals_audited_candidate_blob": true,
+    "executor_identity_unchanged": true,
+    "implementation_manifest_identity_unchanged": true,
+    "execution_authority_absent": true,
+    "launch_marker_absent": true,
+    "exact_promotion_head_run_count": 0,
+    "queued_run_count": 0,
+    "in_progress_run_count": 0,
+    "partial_substantive_values_used": false
+  },
+  "unresolved_required_registry_binding": {
+    "positive_github_assigned_workflow_id_bound": false,
+    "registry_path_bound": false,
+    "registry_state_active_bound": false,
+    "durable_registry_snapshot_present": false,
+    "promotion_record_github_assigned_workflow_id": null,
+    "promotion_record_registry_path": null,
+    "promotion_record_registry_state": null
+  },
+  "counterexamples_remaining_open": [
+    "BYTE_CORRECT_REPOSITORY_FILE_WITH_DISABLED_OR_NONACTIVE_ACTIONS_REGISTRY_ENTRY",
+    "BYTE_CORRECT_REPOSITORY_FILE_WITH_UNEXPECTED_REGISTRY_PATH_OR_IDENTITY",
+    "GUESSED_OR_INFERRED_WORKFLOW_ID_WRONG_WHILE_REPOSITORY_BLOB_CHECKS_REMAIN_GREEN",
+    "ZERO_RUN_HISTORY_DOES_NOT_PROVE_POSITIVE_REGISTRY_ID_PATH_STATE_TUPLE"
+  ],
+  "execution_authority_creation_authorized": false,
+  "launch_marker_creation_authorized": false,
+  "diagnostic_execution_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authorized_next_stage": "CAPTURE_AND_INDEPENDENTLY_CONFIRM_READ_ONLY_GITHUB_ACTIONS_WORKFLOW_REGISTRY_ID_PATH_ACTIVE_STATE_FOR_EXACT_V0_6_CANONICAL_WORKFLOW_ONLY",
+  "next_admissible_gate": "PERSIST_READ_ONLY_WORKFLOW_REGISTRY_EVIDENCE_BINDING_POSITIVE_ID_EXACT_CANONICAL_PATH_AND_ACTIVE_STATE;_REVERIFY_ACTIVE_BLOB_STATIC_CONFIRMATION_ZERO_RUN_HISTORY_AND_ABSENCE_OF_AUTHORITY_MARKER;_ONLY_THEN_CONSIDER_SEPARATE_EXECUTION_AUTHORITY_AUTHORING",
+  "token": "REQUIRES_CONFIRMATION_GATE_LAYERB_BETA_V0_26_R1_GRID896_V0_6_POST_PROMOTION_IDENTITY_PLUS_0_PLUS_0"
+}
