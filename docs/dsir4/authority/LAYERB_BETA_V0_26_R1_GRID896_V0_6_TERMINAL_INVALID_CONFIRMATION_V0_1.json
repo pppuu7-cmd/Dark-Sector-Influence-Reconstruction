@@ -1,0 +1,74 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_GRID896_V0_6_TERMINAL_INVALID_CONFIRMATION_V0_1",
+  "status": "TERMINAL_INDEPENDENT_AUDIT_CONFIRMATION",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "verdict": "CONFIRMED_SCOPED",
+  "classification": "V0_6_TERMINAL_INVALID_DIAGNOSTIC_PROVENANCE_WITH_DUAL_INFRASTRUCTURE_ROOT_CAUSE_CONFIRMED",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_ONLY",
+  "reviewed_terminal_result": {
+    "path": "docs/dsir4/results/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_6_TERMINAL_RESULT_V0_1.json",
+    "git_blob_sha1": "6a75796df2b88c426549a9cd047169bbf9115599",
+    "classification": "INVALID_DIAGNOSTIC_PROVENANCE"
+  },
+  "reviewed_root_cause_audit": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_GRID896_V0_6_TERMINAL_DUAL_ROOT_CAUSE_AUDIT_V0_1.md",
+    "git_blob_sha1": "43045a929e5cfb87aaa32c3158fc8839ede88df5"
+  },
+  "independently_confirmed_terminal_identity": {
+    "run_id": 35251121404,
+    "run_number": 1,
+    "run_attempt": 1,
+    "head_sha": "c6526f940a559140eaa7928d97164524e462cecf",
+    "workflow_id": 360576929,
+    "workflow_path": ".github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml",
+    "lane_job_count": 32,
+    "decision_job_id": 105307265996,
+    "decision_artifact_id": 10510805424,
+    "decision_outer_sha256": "fe664cd5ef1c5adf959d40f7c179550074b380ccd0c3805dc361661bf97bc574",
+    "decision_inner_sha256": "e57bcb39736bf80dac16900cb124ec66429e00bc1e20c31df0b05ea5f2a86325",
+    "decision_classification": "INVALID_DIAGNOSTIC_PROVENANCE",
+    "decision_error_http_415": true,
+    "same_identity_rerun_authorized": false
+  },
+  "independently_confirmed_root_cause_a": {
+    "classification": "CONFIRMED_RAW_VS_NORMALIZED_FINAL_LF_BINDING_DEFECT",
+    "canonical_git_blob_sha1": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+    "semantic_word_count": 897,
+    "raw_file_has_final_lf": false,
+    "raw_file_byte_length": 15248,
+    "raw_file_sha256": "e9b5a3093223f13291993ea4339398cc5274c0047540740dd73978529c2689a0",
+    "normalized_final_lf_byte_length": 15249,
+    "normalized_final_lf_sha256": "e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4",
+    "frozen_executor_compares_normalized_hash_to_raw_bytes": true,
+    "independent_cross_runner_receipts_checked": ["R01", "R03", "R17"],
+    "all_checked_receipts_same_source_sha_blocker": true
+  },
+  "independently_confirmed_root_cause_b": {
+    "classification": "ARTIFACT_DOWNLOAD_MEDIA_TYPE_COMPATIBILITY_DEFECT_LOCALIZED",
+    "observed_http_status": 415,
+    "frozen_download_endpoint_family": "/actions/artifacts/{artifact_id}/zip",
+    "frozen_accept_header": "application/octet-stream",
+    "current_github_documented_recommended_accept": "application/vnd.github+json",
+    "current_github_documented_success_path": "302 redirect",
+    "causality_ceiling": "REPAIRED_TRANSPORT_MUST_BE_PROSPECTIVELY_QUALIFIED_BEFORE_NEW_EXECUTION"
+  },
+  "scope_limits": {
+    "v0_6_diagnostic_pass_established": false,
+    "v0_6_diagnostic_fail_established": false,
+    "numerical_reproducibility_established": false,
+    "scientific_result_established": false,
+    "statistical_model_validity_established": false,
+    "physical_dark_sector_inference_established": false
+  },
+  "v0_6_historical_identity_closed": true,
+  "v0_6_rerun_authorized": false,
+  "v0_7_implementation_design_authorized": true,
+  "v0_7_execution_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authorized_next_stage": "DESIGN_AND_STATICALLY_QUALIFY_NEW_V0_7_IDENTITY_WITH_ONLY_CANONICAL_SOURCE_SERIALIZATION_BINDING_AND_ARTIFACT_DOWNLOAD_TRANSPORT_REPAIRED",
+  "next_admissible_gate": "NO_V0_7_PROMOTION_OR_EXECUTION_UNTIL_EXACT_NEW_EXECUTOR_WORKFLOW_AND_MANIFEST_PASS_RESPONSE_BLIND_STATIC_QUALIFICATION_AND_INDEPENDENT_CRITIC",
+  "token": "CONFIRMED_SCOPED_LAYERB_BETA_V0_26_R1_GRID896_V0_6_TERMINAL_INVALID_PLUS_0_PLUS_0"
+}
