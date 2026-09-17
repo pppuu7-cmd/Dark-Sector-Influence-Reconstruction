@@ -1,0 +1,47 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_DIAGNOSTIC_V0_6_EXACT_BYTE_PROMOTION_RECORD_V0_1",
+  "status": "PROMOTION_COMPLETE_POST_PROMOTION_IDENTITY_AUDIT_PENDING",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_AND_STATIC_IMPLEMENTATION_ONLY",
+  "governing_terminal_static_confirmation": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_STATIC_AUDIT_CONFIRMATION_V0_6.json",
+    "git_blob_sha1": "6cc317eb359a820bc1ecb3c657fc33b46a7d152b",
+    "verdict": "CONFIRMED_SCOPED",
+    "classification": "GRID896_DIAGNOSTIC_SUCCESSOR_V0_6_STATIC_IMPLEMENTATION_CONFIRMED_FOR_EXACT_BYTE_PROMOTION_ONLY"
+  },
+  "candidate": {
+    "path": "docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml",
+    "git_blob_sha1": "832f0491421619579c2a1d77ba9ca339cb4898ac"
+  },
+  "promoted_active_workflow": {
+    "path": ".github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml",
+    "git_blob_sha1": "832f0491421619579c2a1d77ba9ca339cb4898ac",
+    "promotion_commit": "3cd2ab71e490bc2ccbea0a8a8c3527d0e25c0a9d",
+    "byte_exact_copy_confirmed": true
+  },
+  "promotion_safety_checks": {
+    "launch_marker_created": false,
+    "future_execution_authority_created": false,
+    "exact_promotion_head_actions_run_count": 0,
+    "repository_queued_run_count_after_promotion": 0,
+    "repository_in_progress_run_count_after_promotion": 0,
+    "diagnostic_execution_observed": false,
+    "partial_substantive_values_used": false
+  },
+  "workflow_registry_identity": {
+    "github_assigned_workflow_id": null,
+    "registry_path": null,
+    "registry_state": null,
+    "independent_post_promotion_review_complete": false,
+    "note": "Workflow registry identity is intentionally left for the separately required post-promotion identity audit; this promotion record is not a terminal execution authority."
+  },
+  "implementation_execution_authority_creation_authorized": false,
+  "launch_marker_creation_authorized": false,
+  "diagnostic_execution_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authorized_next_stage": "INDEPENDENT_POST_PROMOTION_WORKFLOW_IDENTITY_AUDIT_OF_EXACT_V0_6_ACTIVE_WORKFLOW_ONLY",
+  "token": "PROMOTED_EXACT_GRID896_V0_6_WORKFLOW_BYTES_POST_PROMOTION_IDENTITY_AUDIT_PENDING_PLUS_0_PLUS_0"
+}
