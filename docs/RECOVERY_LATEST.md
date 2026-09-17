@@ -2,78 +2,78 @@
 
 Updated: 2026-09-17. Scope: **DSIR only**. GitHub repository/Actions state, frozen authorities and terminal artifacts are authoritative; chat is not authority.
 
-## Frozen scientific boundary
+## Frozen science boundary
 
-V0.25 remains terminal `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, effect `+0/+0`. V0.26 R1 remains frozen under prereg blob `545e5be589e0f8029d23db2edb4e2faad116c3a0` and contract blob `b510d8e97baf1c0b7b216c0605d83cdd029254e9`. Frozen denominator/criteria remain 107 rows = DES53+BOSS54; alpha `3e-10`; beta exact-target `1e-12`; scientific strict `<1e-3`; technical strict `<1e-5`; requested-node binding `<=1e-12`; full replay 738 CLASS constructions.
+V0.25 remains terminal `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, effect `+0/+0`. V0.26 R1 remains frozen: 107 DES53+BOSS54 rows; alpha `3e-10`; beta exact-target `1e-12`; scientific strict `<1e-3`; technical strict `<1e-5`; requested-node binding `<=1e-12`; full replay 738 CLASS constructions. Full107 and all downstream science remain closed.
 
-Full107, covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global65537, statistical/model validity and physical dark-sector inference remain closed. Never rerun historical/same-identity runs including `35033268924`, `35174721773`, `35181812498`, failed v0.2 lanes, and V0.6 run `35251121404`.
+Never rerun consumed identities: V0.2 `35181812498`; V0.6 `35251121404`; V0.7 static qualification `35253515074`; completed one-shot captures.
 
-## Terminal predecessor chain
+## V0.6 terminal state
 
-V0.13 remains terminal `HOSTED_RUN_REPLAY_NONDETERMINISM_SUPPORTED`. Response-blind GRID896 dispatch diagnostic `35177449482` established `GRID896_NUMPY_DISPATCH_PATH_DEPENDENCE_CONFIRMED`. Successor v0.2 `35181812498` terminated `SENTINEL_INVALID` before science with 10 eligible lanes, all `NATIVE_AVX512_ACTIVE`, and zero inactive. Numerical/scientific/model layers remained `NOT_EVALUATED`.
+Canonical V0.6 workflow registry ID `360576929` was prospectively bound and one-shot run `35251121404` executed run #1 / attempt #1. Frozen terminal decision is `INVALID_DIAGNOSTIC_PROVENANCE`; decision artifact `10510805424`, outer SHA256 `fe664cd5ef1c5adf959d40f7c179550074b380ccd0c3805dc361661bf97bc574`, inner decision SHA256 `e57bcb39736bf80dac16900cb124ec66429e00bc1e20c31df0b05ea5f2a86325`. Aggregate observed `HTTP 415 Unsupported Media Type` retrieving lane artifact ZIPs. This transport defect remains open and must be prospectively qualified in a new identity.
 
-Frozen cross-host GRID896 design: prereg `903c80709439cb790bd41316029b218a77d5695b`; contract `6ba6e5a6c946a1091680f8f44821d323c9a463f3`; canonical Git blob `24fa61685ab45e42e3ab0d453f5cb223c247ced6`; preexecution confirmation `5f1a7dcaeb39dd093586eefb4f869cc0791ae715`; packed payload 7176 bytes SHA256 `8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d`; negative-control SHA256 `e94e2e05fc0cc1fcbc9bd710a24b8ef231fab350cd6247ea3039b913adfba800`.
+V0.6 is immutable and must not be rerun.
 
-Implementations V0.1–V0.5 remain terminal `INVALID_IMPLEMENTATION`.
+## Source-root-cause correction — definitive
 
-## V0.6 execution history — closed
+The old V0.6 audit's claim that canonical V0.1 lacked final LF is superseded. Dedicated provenance capture run `35253892736`, workflow ID `360739640`, artifact `10511577132` (outer SHA256 `55268b6f8302b269583e6546d61a8504c82bc644ed04d8ddb87765fd6122cf24`, inner result SHA256 `2d6d5d5cd5fc0cefc5f9ab53b64379a4a1e722638188d5734f3e6c051ccca9c7`) established:
 
-V0.6 exact executor blob `eae9eee7ae6a1424bcac67279663a2c8ddd3ebf9`; active workflow blob `832f0491421619579c2a1d77ba9ca339cb4898ac`. Read-only registry capture `35247378034` bound workflow ID `360576929`, exact canonical path and state `active`; registry result blob `033c9df4fde1feecd6cd1a75e1feb9abb9dc3013`, confirmation blob `6c92403f487a4fe487a942e426930134c7c0b949`.
+- working tree = `git show` = exact Git blob;
+- `git hash-object` = `24fa61685ab45e42e3ab0d453f5cb223c247ced6`;
+- no checkout line-ending transform;
+- actual V0.1 = 15248 bytes, SHA256 `f84d6fa7cf9e5b8014176fd480062b27aaf97947d4a5211c7fbb5c69f93634ba`;
+- final LF present; 897 lines; at least one line not 16 lowercase hex chars.
 
-V0.6 one-shot execution authority blob `eb27b62d809ac26611ba6b79bc1100b3dd1d9f0b` and independent confirmation blob `9171ce6e562846040ce8f0e9c4776edbd4b37bd0` authorized exactly one infrastructure-only run #1 / attempt #1, 32 lanes. Marker-only commit `c6526f940a559140eaa7928d97164524e462cecf` launched run `35251121404`. That identity is consumed and MUST NOT be rerun.
+Exact comparison with pre-v0.2 origin run `34954905127` / artifact `10390997654` proves a one-byte publication corruption:
 
-Run `35251121404` produced 32 lane artifacts and terminal decision artifact `10510805424`. Decision outer SHA256 `fe664cd5ef1c5adf959d40f7c179550074b380ccd0c3805dc361661bf97bc574`; inner `decision.json` SHA256 `e57bcb39736bf80dac16900cb124ec66429e00bc1e20c31df0b05ea5f2a86325`. Frozen classification is **`INVALID_DIAGNOSTIC_PROVENANCE`** with `HTTPError: HTTP Error 415: Unsupported Media Type`. The decision had 32 artifacts, no missing lanes and zero accepted `artifact_provenance` because retrieval failed before receipt validation. This is not diagnostic FAIL or PASS.
+- deleted ASCII `e` at zero-based byte offset `13182`;
+- line 776, column 8 (1-based);
+- correct origin token `3f9c8a9eeea3c9c8`;
+- malformed committed token `3f9c8a9eea3c9c8`.
 
-Durable terminal result blob: `6a75796df2b88c426549a9cd047169bbf9115599` at `docs/dsir4/results/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_6_TERMINAL_RESULT_V0_1.json`.
+Applying that single deletion to the pre-existing origin serialization reproduces exactly committed V0.1 Git blob `24fa6168...` and SHA256 `f84d6fa7...`. The intact origin serialization is 15249 bytes, SHA256 `e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4`, Git blob `ded43b233a71a631809111514c9dd35d0419af2d`, 897 valid lowercase hex16 words, and payload SHA256 `8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d`.
 
-Dual-root-cause audit blob: `43045a929e5cfb87aaa32c3158fc8839ede88df5` at `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_GRID896_V0_6_TERMINAL_DUAL_ROOT_CAUSE_AUDIT_V0_1.md`.
+Correct classification: `CANONICAL_V0_1_SINGLE_HEX_DELETION_CONFIRMED_AND_PRIOR_FINAL_LF_INTERPRETATION_SUPERSEDED`.
 
-Independent terminal confirmation blob: `bdabd5bd085a8507af999fd535701ce6adb10688` at `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_GRID896_V0_6_TERMINAL_INVALID_CONFIRMATION_V0_1.json`; verdict `CONFIRMED_SCOPED`.
+V0.6 source guard was therefore correct to reject the malformed published V0.1 object. This is not host disagreement.
 
-## Confirmed defect A — canonical source serialization identity
+## V0.7 closure
 
-The pre-existing semantic lines hash `e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4` corresponds to 897 lines normalized with exactly one final LF. The committed canonical Git object contains the same 897 words but no final LF:
+First V0.7 implementation was designed under the now-superseded final-LF hypothesis. One-shot static qualification `35253515074`, run #1 / attempt #1, terminated `INVALID_STATIC_QUALIFICATION` with `FileNotFoundError: canonical raw SHA256 mismatch`. Artifact `10512311250`: outer SHA256 `736b412c171afe1e04b30b5735fcd7a728c032f4f142e08b535a8bb964e91c9a`, inner SHA256 `260bf466611d9b5f7666246bcfb27601a94a6e99b1409a384c057241b548a072`. No CLASS/science/covariance was touched.
 
-- raw file = 15248 bytes, SHA256 `e9b5a3093223f13291993ea4339398cc5274c0047540740dd73978529c2689a0`;
-- normalized semantic lines + LF = 15249 bytes, SHA256 `e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4`.
+V0.7 is historical and closed. Do not rerun or mutate that identity.
 
-V0.6 compares the normalized hash directly with raw file bytes and requires raw final LF. Independent R01/R03/R17 receipts, on different hosted runners, all report `BLOCKED_MISSING_OR_UNBOUND_CANONICAL_OBJECT` / `canonical source SHA256 mismatch` before payload reconstruction. Therefore this is a common one-byte serialization-binding defect, not host-specific evidence.
+## Corrected canonical V0.2 repair specification
 
-## Localized defect B — Actions artifact-download transport
+A frozen V0.2 repair specification retains corrupt V0.1 as immutable evidence and defines corrected bytes as exactly V0.1 plus one inserted `e` at byte offset 13182. Successors must verify before payload use:
 
-V0.6 aggregate enumerated all 32 lane artifacts, then requested `/actions/artifacts/{artifact_id}/zip` using `Accept: application/octet-stream` and observed HTTP 415. Current GitHub Actions artifact-download documentation describes a 302 redirect and recommends `Accept: application/vnd.github+json`. Treat this as a localized request/media-type compatibility defect. V0.7 must prospectively qualify the repaired request path; do not post-hoc alter V0.6 classification.
+- corrected byte length `15249`;
+- corrected SHA256 `e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4`;
+- corrected Git blob SHA1 `ded43b233a71a631809111514c9dd35d0419af2d`;
+- 897 lowercase hex16 lines;
+- payload length 7176;
+- payload SHA256 `8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d`;
+- negative-control SHA256 `e94e2e05fc0cc1fcbc9bd710a24b8ef231fab350cd6247ea3039b913adfba800`.
 
-The two defects are independent. Repairing only one is insufficient.
+Do not overwrite historical V0.1.
 
 ## Prospective population evidence
 
-Historical V0.22 terminal cross-host run `34875798025` had all 32 lanes eligible with `10 NATIVE_AVX512_ACTIVE + 22 NATIVE_AVX512_INACTIVE`, satisfying its frozen population-power gate. V0.2 later retained exactly the 10 ACTIVE lanes while other lanes failed after fingerprinting at native GRID896 materialization. This response-blind history supports the hypothesis that a content-addressed producer can restore the censored INACTIVE population. It does not authorize science.
+Historical V0.22 run `34875798025` had 32/32 eligible = `10 NATIVE_AVX512_ACTIVE + 22 NATIVE_AVX512_INACTIVE`. V0.2 later retained exactly 10 ACTIVE lanes while others died after fingerprinting at native GRID896 materialization. This is response-blind evidence that an exact corrected content-addressed producer could restore the censored INACTIVE class. It is not a science result or authorization.
 
 ## Current authorization state
 
-- V0.6: terminal historical **`INVALID_DIAGNOSTIC_PROVENANCE`**, rerun forbidden;
-- V0.6 diagnostic PASS/FAIL: not established;
-- V0.6 dual infrastructure root cause: independently confirmed scoped;
-- V0.7 design/static qualification: authorized;
-- V0.7 promotion/execution: not authorized;
-- successor sentinel science: not authorized;
-- full107/downstream science: not authorized.
+- V0.6: terminal `INVALID_DIAGNOSTIC_PROVENANCE`, rerun false.
+- V0.7 static qualification: terminal `INVALID_STATIC_QUALIFICATION`, rerun false.
+- canonical V0.1 single-hex deletion: independently confirmed; old final-LF interpretation superseded.
+- corrected canonical V0.2 repair specification: frozen.
+- V0.8 design/static qualification: **authorized**.
+- V0.8 promotion/execution: **closed**.
+- successor sentinel science: **closed**.
+- full107/downstream: **closed**.
 
-## Funnel
+## Exact next stage
 
-`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 SENTINEL_INVALID -> CROSS-HOST DESIGN CONFIRMED_SCOPED -> V0.1-V0.5 INVALID -> V0.6 STATIC CONFIRMED -> REGISTRY BOUND -> ONE-SHOT AUTHORITY CONFIRMED -> V0.6 RUN 35251121404 CONSUMED -> INVALID_DIAGNOSTIC_PROVENANCE -> SOURCE SERIALIZATION DEFECT CONFIRMED + ARTIFACT TRANSPORT DEFECT LOCALIZED -> V0.7 DESIGN/STATIC QUALIFICATION OPEN -> V0.7 EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
+`DESIGN_NEW_V0_8_IDENTITY_FROM_IMMUTABLE_V0_6_BASE_PLUS_EXACT_CANONICAL_V0_2_RECONSTRUCTION_AND_ARTIFACT_DOWNLOAD_TRANSPORT_REPAIR;_RUN_ONE_RESPONSE_BLIND_STATIC_QUALIFICATION_ONLY;_NO_PROMOTION_OR_EXECUTION_BEFORE_INDEPENDENT_PASS_SCOPED`.
 
-Scientific effect remains `+0/+0`; numerical response reproducibility, exact-target/scientific criteria, covariance, statistical/model validity and physical dark-sector inference remain `NOT_EVALUATED`.
-
-## Exact next admissible stage
-
-`DESIGN_AND_STATICALLY_QUALIFY_NEW_V0_7_IDENTITY_WITH_ONLY_CANONICAL_SOURCE_SERIALIZATION_BINDING_AND_ACTIONS_ARTIFACT_DOWNLOAD_TRANSPORT_REPAIRED`.
-
-Required V0.7 invariants:
-1. Preserve canonical Git blob `24fa61685ab45e42e3ab0d453f5cb223c247ced6`.
-2. Bind raw file separately: 15248 bytes, SHA256 `e9b5a3093223f13291993ea4339398cc5274c0047540740dd73978529c2689a0`.
-3. Parse exactly 897 lowercase 16-hex tokens independent of final-LF presence, then reproduce normalized-line SHA256 `e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4`.
-4. Preserve packed 7176-byte payload SHA256 `8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d` and negative-control SHA256 `e94e2e05fc0cc1fcbc9bd710a24b8ef231fab350cd6247ea3039b913adfba800`.
-5. Repair and response-blind qualify artifact ZIP retrieval while preserving GitHub artifact digest verification.
-6. Preserve 32 lanes, run/job/head bindings, consumer roundtrip, classifier semantics and zero-science scope.
-7. No V0.7 promotion or execution authority before exact new executor/workflow/manifest pass static qualification and independent Critic.
+V0.8 should be narrower than V0.7: keep V0.6 parser/guards, reconstruct corrected source bytes from immutable V0.1 + exact one-byte repair and verify the corrected SHA256/Git blob, and patch only artifact ZIP request media type/redirect compatibility. Preserve 32 lanes, payload, negative control, consumer roundtrip and classifier semantics. Scientific effect remains `+0/+0`; science remains `NOT_EVALUATED`.
