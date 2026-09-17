@@ -1,0 +1,17 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_GRID896_CANONICAL_BYTE_IDENTITY_CAPTURE_LAUNCH_V0_1",
+  "status": "AUTHORIZED_ONE_SHOT_PROVENANCE_CAPTURE_MARKER",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "capture_authority_git_blob_sha1": "f116e8bf311366ba285035c277aa80d66c6d1b06",
+  "capture_workflow_git_blob_sha1": "d5253fc06765532450a59675e06981507af3cb32",
+  "canonical_git_blob_sha1": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+  "authorized_run_number": 1,
+  "authorized_run_attempt": 1,
+  "class_solver_invocation_authorized": false,
+  "scientific_response_read_authorized": false,
+  "v0_7_diagnostic_execution_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false
+}
