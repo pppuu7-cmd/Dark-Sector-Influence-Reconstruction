@@ -1,0 +1,139 @@
+name: layerb-beta-v026-r1-successor-sentinel-terminal-history-v0-2
+
+on:
+  workflow_run:
+    workflows: [layerb-beta-v026-r1-successor-sentinel-science-v0-2]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: layerb-beta-v026-r1-successor-sentinel-terminal-history-v0-2
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  TARGET_WORKFLOW: 'layerb-beta-v026-r1-successor-sentinel-science-v0-2.yml'
+  DECISION_ARTIFACT: 'layerb-beta-v026-r1-successor-decision-v0-2'
+  AUTHORITY: 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_SCIENCE_AUTHORIZATION_V0_2.json'
+
+jobs:
+  terminal-history:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 1
+      - name: Verify exact target identity and first-attempt chronology
+        env:
+          TARGET_RUN_ID: ${{ github.event.workflow_run.id }}
+          TARGET_RUN_NUMBER: ${{ github.event.workflow_run.run_number }}
+          TARGET_RUN_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
+          TARGET_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          TARGET_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          AUDITOR_RUN_ID: ${{ github.run_id }}
+          AUDITOR_RUN_NUMBER: ${{ github.run_number }}
+          AUDITOR_RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          test "$TARGET_RUN_NUMBER" = 1
+          test "$TARGET_RUN_ATTEMPT" = 1
+          test "$AUDITOR_RUN_NUMBER" = 1
+          test "$AUDITOR_RUN_ATTEMPT" = 1
+          test -f "$AUTHORITY"
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/workflows/${TARGET_WORKFLOW}/runs?event=push&per_page=100" > target_history.json
+          python3 - <<'PY'
+          import json,os
+          a=json.load(open(os.environ['AUTHORITY']))
+          rows=json.load(open('target_history.json')).get('workflow_runs',[])
+          assert a['experiment_id']=='LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_SCIENCE_V0_2'
+          assert a['execution_nonce']=='DSIR-V026R1-SUCCESSOR-20260917-B1-4C92E7A1'
+          assert a['historical_successor_run_35174721773_rerun_authorized'] is False
+          assert a['same_nonce_second_attempt_authorized'] is False
+          assert a['full_107_row_execution_authorized'] is False
+          assert len(rows)==1, len(rows)
+          r=rows[0]
+          assert str(r['id'])==os.environ['TARGET_RUN_ID']
+          assert int(r['run_number'])==1 and int(r.get('run_attempt',1))==1
+          assert r['head_sha']==os.environ['TARGET_HEAD_SHA']
+          PY
+      - name: Freeze decision artifact and reconstruct separate verdicts
+        env:
+          TARGET_RUN_ID: ${{ github.event.workflow_run.id }}
+          TARGET_RUN_NUMBER: ${{ github.event.workflow_run.run_number }}
+          TARGET_RUN_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
+          TARGET_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          TARGET_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          TARGET_UPDATED_AT: ${{ github.event.workflow_run.updated_at }}
+          AUDITOR_RUN_ID: ${{ github.run_id }}
+          AUDITOR_RUN_NUMBER: ${{ github.run_number }}
+          AUDITOR_RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe/decision
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${TARGET_RUN_ID}/artifacts?per_page=100" > artifacts.json
+          aid="$(python3 - <<'PY'
+          import json,os
+          rows=json.load(open('artifacts.json')).get('artifacts',[])
+          m=[x for x in rows if x['name']==os.environ['DECISION_ARTIFACT']]
+          assert len(m)==1, len(m)
+          print(m[0]['id'])
+          PY
+          )"
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${aid}/zip" > safe/decision.zip
+          unzip -q safe/decision.zip -d safe/decision
+          test -f safe/decision/sentinel_decision.json
+          python3 - "$aid" <<'PY'
+          import hashlib,json,os,sys
+          from pathlib import Path
+          aid=int(sys.argv[1]); d=json.load(open('safe/decision/sentinel_decision.json'))
+          classification=d.get('classification')
+          prov='PASS_SCOPED' if classification not in ('SENTINEL_INVALID','INFRASTRUCTURE_TERMINAL_NO_SCIENCE_DECISION') else ('INVALID' if classification=='SENTINEL_INVALID' else 'NOT_EVALUATED')
+          num=d.get('numerical_validity','NOT_EVALUATED')
+          exact=d.get('exact_target_validity','NOT_EVALUATED')
+          sci=d.get('scientific_criterion','NOT_EVALUATED')
+          out={
+            'schema':'LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_TERMINAL_RUNTIME_RECEIPT_V0_2',
+            'experiment_id':'LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_SCIENCE_V0_2',
+            'execution_nonce':'DSIR-V026R1-SUCCESSOR-20260917-B1-4C92E7A1',
+            'target_run_id':int(os.environ['TARGET_RUN_ID']),
+            'target_run_number':int(os.environ['TARGET_RUN_NUMBER']),
+            'target_run_attempt':int(os.environ['TARGET_RUN_ATTEMPT']),
+            'target_head_sha':os.environ['TARGET_HEAD_SHA'],
+            'target_conclusion':os.environ['TARGET_CONCLUSION'],
+            'target_terminal_timestamp':os.environ['TARGET_UPDATED_AT'],
+            'auditor_run_id':int(os.environ['AUDITOR_RUN_ID']),
+            'auditor_run_number':int(os.environ['AUDITOR_RUN_NUMBER']),
+            'auditor_run_attempt':int(os.environ['AUDITOR_RUN_ATTEMPT']),
+            'decision_artifact_id':aid,
+            'decision_artifact_zip_sha256':hashlib.sha256(Path('safe/decision.zip').read_bytes()).hexdigest(),
+            'decision_inner_sha256':hashlib.sha256(Path('safe/decision/sentinel_decision.json').read_bytes()).hexdigest(),
+            'decision_classification':classification,
+            'provenance_validity':prov,
+            'numerical_validity':num,
+            'exact_target_validity':exact,
+            'scientific_criterion':sci,
+            'model_statistical_interpretation':'NOT_EVALUATED',
+            'historical_successor_rerun_authorized':False,
+            'same_nonce_second_attempt_authorized':False,
+            'full_107_row_execution_authorized':False,
+            'terminal_history_closed':True,
+            'token':'TERMINAL_LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_V0_2_PLUS_0_PLUS_0'
+          }
+          Path('safe/terminal_receipt.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          Path('safe/terminal_receipt.sha256').write_text(hashlib.sha256(Path('safe/terminal_receipt.json').read_bytes()).hexdigest()+'  terminal_receipt.json\n')
+          print(classification,prov,num,exact,sci)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-successor-terminal-runtime-v0-2
+          path: |
+            safe/terminal_receipt.json
+            safe/terminal_receipt.sha256
+            safe/decision/sentinel_decision.json
+          if-no-files-found: error
+          retention-days: 90
