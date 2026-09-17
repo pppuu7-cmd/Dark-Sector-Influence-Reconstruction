@@ -1,0 +1,40 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_GRID896_V0_7_STATIC_REPAIR_QUALIFICATION_TERMINAL_RESULT_V0_1",
+  "status": "TERMINAL_STATIC_QUALIFICATION_RESULT",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "classification": "INVALID_STATIC_QUALIFICATION",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_ONLY",
+  "run": {
+    "run_id": 35253515074,
+    "run_number": 1,
+    "run_attempt": 1,
+    "head_sha": "1f7415aacd622887ff8e061cca3475f095c415ca",
+    "workflow_id": 360737045,
+    "job_id": 105311371421,
+    "github_conclusion": "failure"
+  },
+  "artifact": {
+    "artifact_id": 10512311250,
+    "name": "layerb-beta-v026-r1-grid896-v07-static-repair-qualification-v0-1",
+    "outer_sha256": "736b412c171afe1e04b30b5735fcd7a728c032f4f142e08b535a8bb964e91c9a",
+    "inner_result_sha256": "260bf466611d9b5f7666246bcfb27601a94a6e99b1409a384c057241b548a072"
+  },
+  "frozen_result": {
+    "classification": "INVALID_STATIC_QUALIFICATION",
+    "error": "FileNotFoundError: canonical raw SHA256 mismatch",
+    "frozen_base_executor_git_blob_sha1": "eae9eee7ae6a1424bcac67279663a2c8ddd3ebf9",
+    "class_solver_invoked": false,
+    "scientific_response_read": false,
+    "covariance_read": false
+  },
+  "historical_identity_closed": true,
+  "same_identity_rerun_authorized": false,
+  "v0_7_promotion_authorized": false,
+  "v0_7_diagnostic_execution_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authorized_next_stage": "CONSUME_CANONICAL_BYTE_IDENTITY_CAPTURE_AND_CORRECT_SOURCE_ROOT_CAUSE_BEFORE_NEW_SUCCESSOR_IDENTITY",
+  "token": "INVALID_STATIC_QUALIFICATION_LAYERB_BETA_V0_26_R1_GRID896_V0_7_PLUS_0_PLUS_0"
+}
