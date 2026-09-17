@@ -35,7 +35,7 @@ Historical failed candidate remains immutable:
 - inert workflow blob `78aa9d15be46bd2a5222e4618a88e56ed4e4e84c`;
 - implementation manifest blob `c9bd923b0b7531307fe48dc5930c629745a89e37`.
 
-Terminal qualification blob `d9f940f3ea7b41b8df76d102f71ead16342a7f23`, verdict `INVALID_IMPLEMENTATION`. Recorded defects: raw-byte slice/rejoin substituted for frozen binary64 decode/reserialize, and outer Actions artifact id/name/digest plus inner receipt digest were not terminally bound.
+Terminal qualification blob `d9f940f3ea7b41b8df76d102f71ead16342a7f23`, verdict `INVALID_IMPLEMENTATION`.
 
 ## Corrected inert implementation successor V0.2 — terminal INVALID_IMPLEMENTATION
 
@@ -44,29 +44,28 @@ Frozen V0.2 identities:
 - inert workflow blob `271646639792041eb88a1b5c31a3cd142d1778df`;
 - successor implementation manifest blob `2d8b8aa8d91817e758edf5fabcdb79d3d53deeca`.
 
-Independent static audit: `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_2_STATIC_AUDIT_V0_1.md`, blob `7529240a3fd8053fb7e7e14d22b72e067ad50f75`, commit `15bf568aa04d239016a5506da723f47f02b13f4d`.
+Independent static audit blob `7529240a3fd8053fb7e7e14d22b72e067ad50f75`; terminal qualification blob `effd843587442f1c7bb3e9d7ae1c7ae6a8afd618`, verdict `INVALID_IMPLEMENTATION`, classification `GRID896_DIAGNOSTIC_SUCCESSOR_V0_2_CLASSIFIER_PRECEDENCE_CAN_HIDE_ESTABLISHED_FAIL_OR_INVALID_PROVENANCE_BEHIND_INCOMPLETE_POPULATION_BLOCK`.
 
-Terminal static-audit qualification: `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_STATIC_AUDIT_QUALIFICATION_V0_2.json`, blob `effd843587442f1c7bb3e9d7ae1c7ae6a8afd618`, verdict `INVALID_IMPLEMENTATION`, classification `GRID896_DIAGNOSTIC_SUCCESSOR_V0_2_CLASSIFIER_PRECEDENCE_CAN_HIDE_ESTABLISHED_FAIL_OR_INVALID_PROVENANCE_BEHIND_INCOMPLETE_POPULATION_BLOCK`.
+V0.2 repaired the V0.1 binary64 and cryptographic artifact-binding defects but deterministically short-circuited `total_count < 32` to `BLOCKED_HOSTED_INFRASTRUCTURE_INCOMPLETE` before validating present evidence. That could hide either an already-established frozen FAIL predicate or present invalid provenance. Exact V0.2 blobs remain historical failed objects and must not be modified, promoted, launch-marked or executed.
 
-Auditor handoff: `docs/dsir4/handoffs/DSIR_FUNNEL_AUDITOR_HANDOFF_V0_26_R1_CROSS_HOST_GRID896_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_2_STATIC_AUDIT_V0_1.md`.
+## Corrected inert implementation successor V0.3 — FROZEN, AUDIT PENDING
 
-V0.2 successfully repairs the two V0.1 defects at source level: exact `struct` binary64 decode/immediate little-endian reserialization is implemented, and aggregate artifact provenance binds exact artifact ids/names/API digest/computed ZIP SHA256/inner receipt SHA256 plus run/head/job/code identities. Existing canonical hash, negative-control, 32-lane, run#1-attempt#1, no-workflow-dispatch, launch/authority and no-science controls survive.
+Prospective V0.3 was authored only after the terminal V0.2 static-audit authority. Exact frozen identities:
+- executor `scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_3.py`, blob `af1bc1e76338d6019bfa0fdde025d4ea17bd57ee`, creation commit `7df64e7f5f34eff859e345bac075ea07ace94b72`;
+- inert workflow candidate `docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-3.yml`, blob `63113da2c0091473482e833a5c766b904be3244a`, creation commit `648c8bfd0bc5084ed3415eb2846df72a507bf2b9`;
+- implementation successor manifest `docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_MANIFEST_V0_3.json`, blob `e87f7ad25a4be9a499d1b8546504059cbeaaf087`, creation commit `6a44b9a09dfac42c8382bfb42f40855db5285dde`.
 
-A new deterministic classifier defect prevents execution readiness. `list_run_artifacts()` short-circuits to `PopulationIncomplete` whenever current-run artifact `total_count < 32`, before reading any present receipt or validating any present artifact provenance. This violates the frozen preregistered distinction:
+V0.3 preserves the surviving V0.2 controls and prospectively corrects only classifier/provenance ordering. It enumerates the full current-run artifact list without an early `<32` BLOCKED return, rejects duplicate/extra/malformed/digest-mismatched present evidence as `INVALID_DIAGNOSTIC_PROVENANCE`, validates all present expected artifacts and receipts, preserves an established frozen FAIL before considering missing-lane infrastructure BLOCKED, and uses `BLOCKED_HOSTED_INFRASTRUCTURE_INCOMPLETE` only after all present evidence validates and no present valid FAIL is established. Complete PASS still requires exactly 32 bound lane receipts and all frozen PASS fields.
 
-1. `BLOCKED_HOSTED_INFRASTRUCTURE_INCOMPLETE` is allowed only when fewer than 32 receipts are available for infrastructure reasons **without an implementation-level FAIL predicate being established**. A present otherwise-valid lane can establish the frozen FAIL predicate while another lane artifact is missing; exact V0.2 still returns BLOCKED before observing the FAIL.
-2. A present malformed or digest-mismatched artifact can coexist with a missing lane; exact V0.2 returns BLOCKED before the present evidence can establish `INVALID_DIAGNOSTIC_PROVENANCE`.
-
-Therefore V0.2 exact blobs are historical failed objects and must not be modified, promoted, launch-marked or executed.
-
-The active workflow path `.github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-2.yml` remains absent. Launch marker `docs/dsir4/launch/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_2.launch.json` remains absent. No V0.2 diagnostic run is authorized or executed.
+The V0.3 active workflow path `.github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-3.yml` is absent. The V0.3 launch marker `docs/dsir4/launch/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_3.launch.json` is absent. No V0.3 diagnostic execution is authorized by this materialization.
 
 ## Current authorization state
 
 - frozen cross-host design: terminal `CONFIRMED_SCOPED`;
 - implementation V0.1: terminal `INVALID_IMPLEMENTATION`;
 - implementation successor V0.2: terminal static-audit `INVALID_IMPLEMENTATION`;
-- prospective corrected inert implementation successor V0.3 authoring: **authorized next and only next stage**;
+- corrected inert implementation successor V0.3: **frozen, independent static audit pending**;
+- independent static audit of exact V0.3 blobs: **authorized next and only next stage**;
 - workflow promotion: **not authorized**;
 - launch-marker creation: **not authorized**;
 - diagnostic execution: **not authorized**;
@@ -75,12 +74,12 @@ The active workflow path `.github/workflows/layerb-beta-v026-r1-cross-host-grid8
 
 ## Funnel position / interpretation ceiling
 
-`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 SENTINEL_INVALID -> V0.2 INVALID_IMPLEMENTATION -> CROSS-HOST GRID896 DESIGN PREREGISTERED -> PREEXECUTION DESIGN CONFIRMED_SCOPED -> IMPLEMENTATION V0.1 STATIC-AUDIT INVALID -> CORRECTED INERT IMPLEMENTATION SUCCESSOR V0.2 FROZEN -> SUCCESSOR V0.2 STATIC-AUDIT INVALID_IMPLEMENTATION -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
+`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 SENTINEL_INVALID -> V0.2 INVALID_IMPLEMENTATION -> CROSS-HOST GRID896 DESIGN PREREGISTERED -> PREEXECUTION DESIGN CONFIRMED_SCOPED -> IMPLEMENTATION V0.1 STATIC-AUDIT INVALID -> IMPLEMENTATION SUCCESSOR V0.2 STATIC-AUDIT INVALID -> CORRECTED INERT IMPLEMENTATION SUCCESSOR V0.3 FROZEN -> INDEPENDENT STATIC AUDIT REQUIRED -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
 
 Interpretation ceiling remains infrastructure/provenance/static implementation. Scientific effect remains `+0/+0`; numerical response reproducibility, exact-target/scientific criteria, covariance, statistical/model validity and physical dark-sector inference remain `NOT_EVALUATED`. No readiness/frontier percentage increase is authorized.
 
 ## Exact authorized next stage
 
-`AUTHOR_PROSPECTIVE_CORRECTED_INERT_GRID896_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_3_ONLY`.
+`INDEPENDENT_STATIC_AUDIT_OF_EXACT_GRID896_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_3_ONLY`.
 
-Do not rewrite V0.2. A new successor must enumerate and validate all present artifacts before incomplete-population classification; preserve any established frozen implementation FAIL when another lane is missing; reject present malformed/duplicate/unexpected/digest-mismatched evidence as INVALID even when the population is also incomplete; and use `BLOCKED_HOSTED_INFRASTRUCTURE_INCOMPLETE` only when no FAIL or present INVALID predicate has been established. Preserve all surviving V0.2 controls. After freezing exact V0.3 blobs, run a new independent static audit before any promotion, launch marker, diagnostic execution or science gate.
+Audit only exact blobs `af1bc1e76338d6019bfa0fdde025d4ea17bd57ee`, `63113da2c0091473482e833a5c766b904be3244a`, and manifest `e87f7ad25a4be9a499d1b8546504059cbeaaf087`. Verify the frozen classifier precedence, binary64 producer/consumer path, artifact API/digest/inner-receipt bindings, 32-lane/run#1-attempt#1/one-shot/launch-authority controls and strict no-science boundary. Do not promote, create a launch marker, execute the diagnostic or open any science gate during that audit.
