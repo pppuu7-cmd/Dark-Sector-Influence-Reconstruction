@@ -1,0 +1,77 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_STATIC_AUDIT_QUALIFICATION_V0_1",
+  "status": "TERMINAL_IMPLEMENTATION_STATIC_AUDIT_QUALIFICATION",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "verdict": "INVALID_IMPLEMENTATION",
+  "classification": "GRID896_DIAGNOSTIC_IMPLEMENTATION_DOES_NOT_REALIZE_FROZEN_CONSUMER_ROUNDTRIP_AND_ARTIFACT_PROVENANCE_CONTRACT",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_AND_STATIC_IMPLEMENTATION_ONLY",
+  "reviewed_main_sha": "6a2ed1b7a8ee012f74fd4f163c5199669553d434",
+  "reviewed_executor": {
+    "path": "scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_1.py",
+    "git_blob_sha1": "f5e482bfef050796687f4beeb4d3940543681392"
+  },
+  "reviewed_workflow_candidate": {
+    "path": "docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-1.yml",
+    "git_blob_sha1": "78aa9d15be46bd2a5222e4618a88e56ed4e4e84c",
+    "inert_location": true
+  },
+  "reviewed_implementation_manifest_git_blob_sha1": "c9bd923b0b7531307fe48dc5930c629745a89e37",
+  "frozen_design": {
+    "preregistration_git_blob_sha1": "903c80709439cb790bd41316029b218a77d5695b",
+    "contract_git_blob_sha1": "6ba6e5a6c946a1091680f8f44821d323c9a463f3",
+    "canonical_source_git_blob_sha1": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+    "preexecution_confirmation_git_blob_sha1": "5f1a7dcaeb39dd093586eefb4f869cc0791ae715"
+  },
+  "surviving_controls": {
+    "canonical_u64hex_source_binding": true,
+    "canonical_source_sha256_and_897_line_guard": true,
+    "unsigned_u64_fixed_little_endian_producer": true,
+    "canonical_7176_byte_payload_hash_guard": true,
+    "frozen_negative_control_digest_and_rejection_guard": true,
+    "exact_32_lane_topology": true,
+    "run_number_1_and_attempt_1_guards": true,
+    "workflow_dispatch_absent": true,
+    "active_workflow_exact_candidate_copy_guard_present": true,
+    "future_terminal_implementation_authority_guard_present": true,
+    "one_shot_launch_marker_guard_present": true,
+    "class_solver_or_scientific_response_access_detected": false
+  },
+  "implementation_defects": {
+    "consumer_roundtrip_contract_mismatch": {
+      "frozen_required_operation": "DECODE_CONTIGUOUS_LITTLE_ENDIAN_IEEE754_BINARY64_WITHOUT_ARITHMETIC_THEN_RESERIALIZE_LITTLE_ENDIAN_AND_REQUIRE_BYTE_IDENTITY",
+      "implemented_operation": "SLICE_RAW_BYTES_INTO_8_BYTE_CHUNKS_AND_RECONCATENATE_WITHOUT_BINARY64_DECODE_OR_SERIALIZE",
+      "frozen_operation_realized": false,
+      "pass_predicate_admissible_with_current_executor": false
+    },
+    "artifact_provenance_contract_missing": {
+      "frozen_requirement": "COMPLETE_PER_LANE_RUNTIME_AND_ARTIFACT_PROVENANCE_WITH_ARTIFACT_AND_INNER_HASH_BINDING",
+      "lane_artifact_id_recorded": false,
+      "lane_artifact_digest_or_zip_sha256_recorded": false,
+      "lane_inner_receipt_digest_recorded": false,
+      "aggregate_exact_artifact_metadata_enumerated": false,
+      "aggregate_outer_digest_verified": false,
+      "pass_predicate_admissible_with_current_workflow": false
+    }
+  },
+  "active_workflow_present_at_review": false,
+  "launch_marker_present_at_review": false,
+  "diagnostic_executed_by_review": false,
+  "diagnostic_execution_authorized": false,
+  "workflow_promotion_authorized": false,
+  "launch_marker_creation_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "historical_candidate_must_be_preserved": true,
+  "required_corrections": [
+    "CREATE_PROSPECTIVE_SUCCESSOR_EXECUTOR_IMPLEMENTING_EXACT_LITTLE_ENDIAN_IEEE754_BINARY64_DECODE_AND_IMMEDIATE_RESERIALIZATION_WITH_NO_ARITHMETIC",
+    "CREATE_PROSPECTIVE_ARTIFACT_PROVENANCE_BINDING_FOR_EACH_LANE_WITH_EXACT_ARTIFACT_ID_NAME_DIGEST_AND_INNER_RECEIPT_DIGEST",
+    "REQUIRE_AGGREGATE_OR_TERMINAL_VALIDATOR_TO_REJECT_MISSING_DUPLICATE_EXTRA_OR_DIGEST_MISMATCHED_LANE_EVIDENCE",
+    "PRESERVE_ALL_EXISTING_CANONICAL_HASH_NEGATIVE_CONTROL_32_LANE_ONE_SHOT_AND_NO_SCIENCE_GUARDS",
+    "RUN_FRESH_INDEPENDENT_STATIC_AUDIT_OF_THE_SUCCESSOR_BEFORE_ANY_PROMOTION_OR_LAUNCH"
+  ],
+  "authorized_next_stage": "AUTHOR_PROSPECTIVE_CORRECTED_INERT_GRID896_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_ONLY",
+  "next_admissible_gate": "FREEZE_NEW_EXECUTOR_AND_INERT_WORKFLOW_CANDIDATE_THAT_REALIZE_THE_FROZEN_BINARY64_ROUNDTRIP_AND_ARTIFACT_PROVENANCE_PREDICATES;_THEN_INDEPENDENTLY_STATIC_AUDIT_EXACT_SUCCESSOR_BLOBS;_NO_PROMOTION_OR_EXECUTION",
+  "token": "INVALID_IMPLEMENTATION_LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_DIAGNOSTIC_IMPLEMENTATION_STATIC_AUDIT_PLUS_0_PLUS_0"
+}
