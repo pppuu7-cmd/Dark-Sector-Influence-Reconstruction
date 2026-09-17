@@ -1,0 +1,92 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_STATIC_AUDIT_QUALIFICATION_V0_4",
+  "status": "TERMINAL_IMPLEMENTATION_STATIC_AUDIT_QUALIFICATION",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "verdict": "INVALID_IMPLEMENTATION",
+  "classification": "GRID896_DIAGNOSTIC_SUCCESSOR_V0_4_DUPLICATE_RERUN_INVALID_CLASSIFIER_UNREACHABLE",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_AND_STATIC_IMPLEMENTATION_ONLY",
+  "reviewed_main_sha": "a0bac968861608b6e1b758c1fbe2e25b74dfb7fd",
+  "audit": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_4_STATIC_AUDIT_V0_1.md",
+    "git_blob_sha1": "8476a076cd77d7ee55ccf8dc4203b8b1738aed9e",
+    "commit": "b2ba38767a28dd058c157fd7c5fe4ad1bebe312f"
+  },
+  "reviewed_successor": {
+    "executor_path": "scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_4.py",
+    "executor_git_blob_sha1": "81b352d586f5e13ff2f50d254b11384f3e326b86",
+    "workflow_candidate_path": "docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-4.yml",
+    "workflow_candidate_git_blob_sha1": "6f18bdd2e0924498a0a076abf9ee80b9b5da4580",
+    "implementation_manifest_git_blob_sha1": "4a0813c0935623e1f266038774ad6048897bbf39",
+    "active_workflow_present_at_review": false,
+    "launch_marker_present_at_review": false,
+    "diagnostic_executed_by_review": false
+  },
+  "frozen_design": {
+    "preregistration_git_blob_sha1": "903c80709439cb790bd41316029b218a77d5695b",
+    "contract_git_blob_sha1": "6ba6e5a6c946a1091680f8f44821d323c9a463f3",
+    "canonical_source_git_blob_sha1": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+    "preexecution_confirmation_git_blob_sha1": "5f1a7dcaeb39dd093586eefb4f869cc0791ae715",
+    "terminal_v0_3_static_audit_qualification_git_blob_sha1": "b20311d02c8fc0353e04c138b8ad4f121f4de0a2"
+  },
+  "v0_3_chronology_defect_closed_in_v0_4_source": {
+    "head_equals_triggering_sha_required": true,
+    "single_parent_launch_commit_required": true,
+    "terminal_authority_preexists_unchanged_in_first_parent": true,
+    "active_workflow_preexists_unchanged_in_first_parent": true,
+    "marker_absent_in_first_parent": true,
+    "launch_commit_diff_only_exact_marker_addition": true,
+    "chronology_bindings_revalidated_by_aggregate": true
+  },
+  "surviving_controls": {
+    "exact_binary64_decode_immediate_little_endian_reserialize": true,
+    "canonical_source_sha256_and_897_line_guard": true,
+    "unsigned_u64_fixed_little_endian_producer": true,
+    "canonical_7176_byte_payload_hash_guard": true,
+    "frozen_negative_control_digest_and_rejection_guard": true,
+    "exact_32_lane_topology": true,
+    "lane_job_run_number_1_and_attempt_1_guard": true,
+    "workflow_dispatch_absent": true,
+    "outer_artifact_api_digest_vs_computed_zip_sha256_check": true,
+    "inner_receipt_sha256_binding": true,
+    "artifact_run_and_head_binding": true,
+    "receipt_run_job_event_ref_and_code_identity_binding": true,
+    "present_invalid_provenance_precedes_incomplete_population_blocked": true,
+    "established_present_fail_precedes_incomplete_population_blocked": true,
+    "complete_exact_32_all_pass_only_pass_path": true,
+    "class_solver_or_scientific_response_access_detected": false
+  },
+  "implementation_defect": {
+    "name": "DUPLICATE_RERUN_INVALID_CLASSIFIER_JOB_UNREACHABLE",
+    "frozen_requirement": "DUPLICATED_OR_RERUN_EXECUTION_OR_ATTEMPT_NOT_EQUAL_TO_1_MUST_CLASSIFY_INVALID_DIAGNOSTIC_PROVENANCE",
+    "python_behavior_if_invoked": "AGGREGATE_GUARD_RAISES_PROVENANCEINVALID_AND_WRITES_INVALID_DECISION_WHEN_RUN_NUMBER_OR_ATTEMPT_DIFFERS_FROM_1",
+    "workflow_behavior": "DECISION_JOB_ITSELF_REQUIRES_RUN_NUMBER_1_AND_ATTEMPT_1_AND_IS_SKIPPED_BEFORE_AGGREGATE_ON_DUPLICATE_OR_RERUN",
+    "counterexample": "RERUN_THE_SAME_WORKFLOW_AS_ATTEMPT_2_OR_OBTAIN_A_SAME_WORKFLOW_RUN_NUMBER_GREATER_THAN_1;_MATRIX_AND_DECISION_JOBS_ARE_SKIPPED_SO_NO_DURABLE_INVALID_DIAGNOSTIC_PROVENANCE_DECISION_ARTIFACT_IS_EMITTED",
+    "frozen_invalid_predicate_realized": false,
+    "duplicate_rerun_terminal_decision_reachable": false
+  },
+  "actions_state_at_review": {
+    "queued_run_count": 0,
+    "in_progress_run_count": 0,
+    "v0_4_diagnostic_run_exists": false,
+    "partial_substantive_values_used": false
+  },
+  "diagnostic_execution_authorized": false,
+  "workflow_promotion_authorized": false,
+  "launch_marker_creation_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "historical_successor_v0_4_must_be_preserved": true,
+  "required_corrections": [
+    "CREATE_A_NEW_PROSPECTIVE_INERT_SUCCESSOR_WITHOUT_MODIFYING_V0_4_BLOBS",
+    "KEEP_LANE_EXECUTION_ONE_SHOT_GATED_SO_DUPLICATE_OR_RERUN_DOES_NOT_CREATE_REPLACEMENT_LANE_EVIDENCE",
+    "MAKE_A_PROVENANCE_DECISION_JOB_RUN_ON_MATCHING_PUSH_MAIN_EVEN_WHEN_RUN_NUMBER_OR_ATTEMPT_IS_NOT_1",
+    "REQUIRE_THAT_JOB_TO_EMIT_AND_UPLOAD_INVALID_DIAGNOSTIC_PROVENANCE_FOR_DUPLICATE_RERUN_OR_ATTEMPT_GREATER_THAN_1",
+    "PRESERVE_ALL_V0_4_FIRST_PARENT_CHRONOLOGY_BINARY64_HASH_ARTIFACT_CLASSIFIER_PRECEDENCE_32_LANE_AND_NO_SCIENCE_CONTROLS",
+    "RUN_A_FRESH_INDEPENDENT_STATIC_AUDIT_OF_THE_NEW_EXACT_SUCCESSOR_BLOBS_BEFORE_ANY_PROMOTION_AUTHORITY_MARKER_OR_EXECUTION"
+  ],
+  "authorized_next_stage": "AUTHOR_PROSPECTIVE_INERT_GRID896_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_5_WITH_REACHABLE_DUPLICATE_RERUN_INVALID_DECISION_ONLY",
+  "next_admissible_gate": "FREEZE_NEW_EXECUTOR_WORKFLOW_AND_MANIFEST_WHERE_DUPLICATE_RERUN_INVALID_CLASSIFICATION_IS_REACHABLE_AND_DURABLY_ARTIFACTED;_THEN_INDEPENDENTLY_STATIC_AUDIT_EXACT_NEW_BLOBS;_NO_PROMOTION_OR_EXECUTION",
+  "token": "INVALID_IMPLEMENTATION_LAYERB_BETA_V0_26_R1_GRID896_DIAGNOSTIC_SUCCESSOR_V0_4_STATIC_AUDIT_PLUS_0_PLUS_0"
+}
