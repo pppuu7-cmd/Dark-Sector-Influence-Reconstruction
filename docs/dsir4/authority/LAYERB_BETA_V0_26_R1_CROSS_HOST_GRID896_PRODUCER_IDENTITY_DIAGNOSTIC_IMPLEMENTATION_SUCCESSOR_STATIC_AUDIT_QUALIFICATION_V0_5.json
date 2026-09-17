@@ -1,0 +1,93 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_STATIC_AUDIT_QUALIFICATION_V0_5",
+  "status": "TERMINAL_IMPLEMENTATION_STATIC_AUDIT_QUALIFICATION",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "verdict": "INVALID_IMPLEMENTATION",
+  "classification": "GRID896_DIAGNOSTIC_SUCCESSOR_V0_5_EXECUTING_WORKFLOW_IDENTITY_NOT_BOUND",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_AND_STATIC_IMPLEMENTATION_ONLY",
+  "reviewed_main_sha": "28743d615e1e66da66c6ab49f08bdaf3480478f5",
+  "audit": {
+    "path": "docs/dsir4/audits/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_5_STATIC_AUDIT_V0_1.md",
+    "git_blob_sha1": "18b3cda1a806f11edd0587e15a89b6517bb3cc9d",
+    "commit": "8781435b12d0eba0022da81f0069e76e8efdd65a"
+  },
+  "reviewed_successor": {
+    "executor_path": "scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_5.py",
+    "executor_git_blob_sha1": "224a4b8472c6aa0081627894d31cf967a2f2fc78",
+    "workflow_candidate_path": "docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-5.yml",
+    "workflow_candidate_git_blob_sha1": "f2134d3f80ead145aaae1c1203eac0626cf914f7",
+    "implementation_manifest_git_blob_sha1": "a19883ec25942664c89afe40b89ef5afa8cc8bf1",
+    "active_workflow_present_at_review": false,
+    "launch_marker_present_at_review": false,
+    "diagnostic_executed_by_review": false
+  },
+  "frozen_design": {
+    "preregistration_git_blob_sha1": "903c80709439cb790bd41316029b218a77d5695b",
+    "contract_git_blob_sha1": "6ba6e5a6c946a1091680f8f44821d323c9a463f3",
+    "canonical_source_git_blob_sha1": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+    "preexecution_confirmation_git_blob_sha1": "5f1a7dcaeb39dd093586eefb4f869cc0791ae715",
+    "terminal_v0_4_static_audit_qualification_git_blob_sha1": "f5d15887f88e6d9753e475d9c69572265babb2d6"
+  },
+  "v0_4_duplicate_rerun_reachability_defect_closed_in_v0_5_source": {
+    "lanes_run_only_on_run_number_1_attempt_1": true,
+    "decision_job_uses_always_with_needs_grid896": true,
+    "decision_job_omits_run_number_attempt_job_gate": true,
+    "aggregate_non_1_run_or_attempt_emits_invalid_if_exact_workflow_is_executing": true
+  },
+  "surviving_controls": {
+    "head_equals_triggering_sha_required": true,
+    "single_parent_launch_commit_required": true,
+    "terminal_authority_preexists_unchanged_in_first_parent": true,
+    "canonical_active_workflow_preexists_unchanged_in_first_parent": true,
+    "marker_absent_in_first_parent": true,
+    "launch_commit_diff_only_exact_marker_addition": true,
+    "exact_binary64_decode_immediate_little_endian_reserialize": true,
+    "canonical_source_sha256_and_897_line_guard": true,
+    "unsigned_u64_fixed_little_endian_producer": true,
+    "canonical_7176_byte_payload_hash_guard": true,
+    "frozen_negative_control_digest_and_rejection_guard": true,
+    "exact_32_lane_topology": true,
+    "outer_artifact_api_digest_vs_computed_zip_sha256_check": true,
+    "inner_receipt_sha256_binding": true,
+    "artifact_run_and_head_binding": true,
+    "present_invalid_provenance_precedes_incomplete_population_blocked": true,
+    "established_present_fail_precedes_incomplete_population_blocked": true,
+    "complete_exact_32_all_pass_only_pass_path": true,
+    "class_solver_or_scientific_response_access_detected": false
+  },
+  "implementation_defect": {
+    "name": "EXECUTING_WORKFLOW_IDENTITY_NOT_BOUND",
+    "frozen_requirement": "ONE_LAUNCH_ONLY_WITH_EXACT_AUDITED_WORKFLOW_IDENTITY_AND_NO_DUPLICATE_OR_REPLACEMENT_LANES",
+    "source_behavior": "EXECUTOR_AUTHENTICATES_THE_CANONICAL_ACTIVE_WORKFLOW_FILE_BLOB_AND_CANDIDATE_BLOB_BUT_NEVER_AUTHENTICATES_THE_PATH_OR_WORKFLOW_ID_OF_THE_CURRENT_GITHUB_ACTIONS_RUN",
+    "counterexample": "PREEXIST_A_SECOND_BYTE_IDENTICAL_WORKFLOW_AT_ANOTHER_DOT_GITHUB_WORKFLOWS_PATH_SUBSCRIBED_TO_THE_SAME_MARKER;_THE_MARKER_PUSH_CAN_TRIGGER_BOTH_WORKFLOW_IDENTITIES_AS_RUN_NUMBER_1_ATTEMPT_1;_THE_ALIAS_RUN_SEES_THE_VALID_CANONICAL_ACTIVE_FILE_AND_PASSES_CURRENT_V0_5_AUTHORIZATION_CHECKS_BECAUSE_CURRENT_RUN_PATH_OR_WORKFLOW_ID_IS_NEVER_COMPARED",
+    "current_run_workflow_path_bound": false,
+    "current_run_workflow_id_bound": false,
+    "repository_global_one_shot_provenance_established": false
+  },
+  "actions_state_at_review": {
+    "queued_run_count": 0,
+    "in_progress_run_count": 0,
+    "v0_5_diagnostic_run_exists": false,
+    "partial_substantive_values_used": false
+  },
+  "diagnostic_execution_authorized": false,
+  "workflow_promotion_authorized": false,
+  "launch_marker_creation_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "historical_successor_v0_5_must_be_preserved": true,
+  "required_corrections": [
+    "CREATE_A_NEW_PROSPECTIVE_INERT_SUCCESSOR_WITHOUT_MODIFYING_V0_5_BLOBS",
+    "BIND_THE_CURRENT_ACTIONS_RUN_EXECUTING_WORKFLOW_PATH_TO_THE_EXACT_CANONICAL_ACTIVE_WORKFLOW_PATH_BEFORE_ANY_LANE_OPERATION",
+    "REVALIDATE_EXECUTING_WORKFLOW_IDENTITY_IN_AGGREGATE_DECISION",
+    "PREFERABLY_BIND_THE_PROMOTED_GITHUB_WORKFLOW_ID_IN_THE_LATER_AUTHORITY_OR_LAUNCH_OBJECT_AND_VERIFY_CURRENT_RUN_WORKFLOW_ID_AND_PATH",
+    "ADD_A_STATIC_NEGATIVE_CASE_WHERE_A_BYTE_IDENTICAL_ALIAS_WORKFLOW_AT_ANOTHER_PATH_CANNOT_PRODUCE_ADMISSIBLE_LANES_OR_AN_ADMISSIBLE_PASS_FAIL_DECISION",
+    "PRESERVE_V0_5_DUPLICATE_RERUN_DECISION_REACHABILITY_FIRST_PARENT_CHRONOLOGY_BINARY64_HASH_ARTIFACT_CLASSIFIER_PRECEDENCE_32_LANE_AND_NO_SCIENCE_CONTROLS",
+    "RUN_A_FRESH_INDEPENDENT_STATIC_AUDIT_OF_THE_NEW_EXACT_SUCCESSOR_BLOBS_BEFORE_ANY_PROMOTION_AUTHORITY_MARKER_OR_EXECUTION"
+  ],
+  "authorized_next_stage": "AUTHOR_PROSPECTIVE_INERT_GRID896_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_6_WITH_EXACT_EXECUTING_WORKFLOW_IDENTITY_BINDING_ONLY",
+  "next_admissible_gate": "FREEZE_NEW_EXECUTOR_WORKFLOW_AND_MANIFEST_WHERE_CURRENT_RUN_PATH_OR_WORKFLOW_ID_IS_FAIL_CLOSED_BOUND_TO_THE_CANONICAL_ACTIVE_WORKFLOW_AND_ALIAS_WORKFLOW_EXECUTION_IS_REJECTED;_THEN_INDEPENDENTLY_STATIC_AUDIT_EXACT_NEW_BLOBS;_NO_PROMOTION_OR_EXECUTION",
+  "token": "INVALID_IMPLEMENTATION_LAYERB_BETA_V0_26_R1_GRID896_DIAGNOSTIC_SUCCESSOR_V0_5_STATIC_AUDIT_PLUS_0_PLUS_0"
+}
