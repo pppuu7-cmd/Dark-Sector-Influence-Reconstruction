@@ -48,7 +48,7 @@ The committed V0.1 canonical object is obtained from that exact pre-existing ori
 
 - zero-based byte offset: `13182`;
 - line: `776` (1-based);
-- column: `9` (1-based within the intended 16-hex token; deletion leaves the following character in its place);
+- column: `8` (1-based within the intended 16-hex token);
 - origin/correct token: `3f9c8a9eeea3c9c8`;
 - committed malformed token: `3f9c8a9eea3c9c8`.
 
