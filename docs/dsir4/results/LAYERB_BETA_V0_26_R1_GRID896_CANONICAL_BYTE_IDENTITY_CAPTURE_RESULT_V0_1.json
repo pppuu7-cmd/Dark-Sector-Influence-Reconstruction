@@ -1,0 +1,53 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_GRID896_CANONICAL_BYTE_IDENTITY_CAPTURE_RESULT_V0_1",
+  "status": "TERMINAL_PROVENANCE_CAPTURE_RESULT",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "classification": "PASS_CANONICAL_BYTE_IDENTITY_CAPTURE",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_ONLY",
+  "run": {
+    "run_id": 35253892736,
+    "run_number": 1,
+    "run_attempt": 1,
+    "head_sha": "aaf6b44dd46b32010256bb0690a8b07f8ae104a3",
+    "workflow_id": 360739640,
+    "job_id": 105312646796,
+    "github_conclusion": "success"
+  },
+  "artifact": {
+    "artifact_id": 10511577132,
+    "name": "layerb-beta-v026-r1-grid896-canonical-byte-identity-capture-v0-1",
+    "outer_sha256": "55268b6f8302b269583e6546d61a8504c82bc644ed04d8ddb87765fd6122cf24",
+    "inner_result_sha256": "2d6d5d5cd5fc0cefc5f9ab53b64379a4a1e722638188d5734f3e6c051ccca9c7"
+  },
+  "canonical_path": "docs/dsir4/canonical/LAYERB_BETA_V0_26_R1_GRID896_U64HEX_V0_1.txt",
+  "expected_git_blob_sha1": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+  "working_tree_git_hash_object": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+  "working_tree_equals_git_show": true,
+  "working_tree_equals_git_blob": true,
+  "git_show_equals_git_blob": true,
+  "working_tree": {
+    "byte_length": 15248,
+    "sha256": "f84d6fa7cf9e5b8014176fd480062b27aaf97947d4a5211c7fbb5c69f93634ba",
+    "endswith_lf": true,
+    "endswith_crlf": false,
+    "lf_byte_count": 897,
+    "crlf_pair_count": 0,
+    "splitlines_count": 897,
+    "normalized_lf_byte_length": 15248,
+    "normalized_lf_sha256": "f84d6fa7cf9e5b8014176fd480062b27aaf97947d4a5211c7fbb5c69f93634ba",
+    "all_lines_lowercase_hex16": false
+  },
+  "git_show_and_blob_metrics_equal_working_tree": true,
+  "git_check_attr_all": "",
+  "git_config_core_autocrlf": "",
+  "git_config_core_eol": "",
+  "checkout_transformation_observed": false,
+  "class_solver_invoked": false,
+  "scientific_response_read": false,
+  "covariance_read": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "token": "PASS_LAYERB_BETA_V0_26_R1_GRID896_CANONICAL_BYTE_IDENTITY_CAPTURE_PLUS_0_PLUS_0"
+}
