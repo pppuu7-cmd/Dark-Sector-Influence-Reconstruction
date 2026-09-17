@@ -1,0 +1,82 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_V0_2_TERMINAL_IMPLEMENTATION_QUALIFICATION_V0_1",
+  "status": "TERMINAL_AUDIT_QUALIFICATION",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "verdict": "INVALID_IMPLEMENTATION",
+  "classification": "SUCCESSOR_SENTINEL_V0_2_PER_LANE_NATIVE_GRID896_MATERIALIZATION_NOT_HOST_INVARIANT",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_AND_IMPLEMENTATION_ONLY",
+  "reviewed_main_sha": "f07df98bb0a99b152b4a1becdb6203194ba72d5d",
+  "historical_terminal_result_preserved": {
+    "target_run_id": 35181812498,
+    "target_workflow_id": 360201395,
+    "target_head_sha": "1fd68a9814ac987300710c4e67d080c7455efa34",
+    "target_run_number": 1,
+    "target_run_attempt": 1,
+    "target_conclusion": "failure",
+    "decision_classification": "SENTINEL_INVALID",
+    "terminal_history_run_id": 35183519508,
+    "terminal_history_workflow_id": 360201396,
+    "terminal_history_run_number": 1,
+    "terminal_history_run_attempt": 1,
+    "terminal_history_conclusion": "success",
+    "terminal_history_closed": true
+  },
+  "authorization_and_preregistration": {
+    "launch_authority_git_blob_sha1": "f5932ce87acc392220ca2fa71abbade8c5899723",
+    "r1_preregistration_git_blob_sha1": "545e5be589e0f8029d23db2edb4e2faad116c3a0",
+    "r1_contract_git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9",
+    "executor_git_blob_sha1": "1f727056491a6f4997298bb63dba26589fd3ddec",
+    "decision_git_blob_sha1": "97f675e48e5b63a3d6dc7a10b0c2f2e6833cf2d9",
+    "target_workflow_git_blob_sha1": "00bb68196c995079cad50da70be555d737d28ecb",
+    "terminal_history_workflow_git_blob_sha1": "9dc4962288471fbcd0803d22cabe1182bfac8ed3",
+    "experiment_id": "LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_SCIENCE_V0_2",
+    "execution_nonce": "DSIR-V026R1-SUCCESSOR-20260917-B1-4C92E7A1",
+    "threshold_or_science_object_tuning_detected": false
+  },
+  "artifact_provenance": {
+    "decision_artifact_id": 10480279579,
+    "decision_artifact_zip_sha256": "8718c9ece145907aaa4f4d1b812a7245fd226aa22c6415042a3fa293bda068b6",
+    "decision_inner_sha256": "4a6f064348f8cf042bc56483101af0674930a890949bea6bf171cdb772bc0fbc",
+    "terminal_history_artifact_id": 10480539101,
+    "terminal_history_artifact_zip_sha256": "0d61e9f90f03d875e8a67d99a7882530f44e5d6bd875d900c33391033c5fb329",
+    "terminal_receipt_inner_sha256": "e8c9cee498e66ef53224041eee98860cab89ea031351ecdcf91bfd8b47e0ff49",
+    "terminal_copy_decision_inner_sha256": "4a6f064348f8cf042bc56483101af0674930a890949bea6bf171cdb772bc0fbc",
+    "inner_manifests_verified": true,
+    "exact_head_run_count": 1,
+    "rerun_or_selection_contamination_detected": false
+  },
+  "implementation_counterexample": {
+    "failed_lane_example": "R01",
+    "failed_lane_job_id": 105075573436,
+    "failure_before_class": true,
+    "failure": "GRID896 binary identity mismatch",
+    "failure_site": "INHERITED_V0_1_RECONSTRUCT_DURING_V0_2_PER_LANE_NATIVE_MATERIALIZATION",
+    "completed_materialization_counterexample_lanes": ["R09", "R15"],
+    "scientific_partial_values_used": false,
+    "inference": "AUTHORIZED_UBUNTU_24_04_PLUS_NUMPY_1_26_4_NATIVE_DISPATCH_IS_NOT_A_SUFFICIENT_CROSS_HOST_EXACT_GRID896_PRODUCER_IDENTITY"
+  },
+  "validity_layers": {
+    "infrastructure_validity": "FAIL_SCOPED_IMPLEMENTATION",
+    "numerical_reproducibility_validity": "NOT_EVALUATED",
+    "statistical_model_validity": "NOT_EVALUATED",
+    "physical_dark_sector_inference": "NOT_EVALUATED"
+  },
+  "historical_classifier_semantics": {
+    "provenance_validity": "INVALID",
+    "numerical_validity": "NOT_EVALUATED",
+    "exact_target_validity": "NOT_EVALUATED",
+    "scientific_criterion": "NOT_EVALUATED",
+    "model_statistical_interpretation": "NOT_EVALUATED",
+    "full_107_row_execution_authorized": false
+  },
+  "rerun_authorized": false,
+  "failed_job_rerun_authorized": false,
+  "same_nonce_second_attempt_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authorized_next_stage": "AUTHOR_PROSPECTIVE_RESPONSE_BLIND_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_DESIGN_ONLY",
+  "next_admissible_gate": "FREEZE_A_NEW_RESPONSE_BLIND_DIAGNOSTIC_CONTRACT_THAT_TESTS_OR_ELIMINATES_PER_LANE_HOST_NATIVE_GRID896_PRODUCER_DEPENDENCE;_INDEPENDENTLY_REVIEW_THAT_CONTRACT_BEFORE_ANY_DIAGNOSTIC_EXECUTION;_DO_NOT_AUTHORIZE_SUCCESSOR_SCIENCE_YET",
+  "token": "INVALID_IMPLEMENTATION_LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_V0_2_PLUS_0_PLUS_0"
+}
