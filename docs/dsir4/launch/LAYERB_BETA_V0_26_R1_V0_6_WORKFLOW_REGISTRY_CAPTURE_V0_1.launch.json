@@ -1,0 +1,17 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_V0_6_WORKFLOW_REGISTRY_CAPTURE_LAUNCH_V0_1",
+  "status": "AUTHORIZED_ONE_SHOT_READ_ONLY_REGISTRY_CAPTURE_MARKER",
+  "date": "2026-09-17",
+  "prelaunch_main_sha": "766e5c6662a4ff1a9b1288b6902c16b9882d245d",
+  "capture_authority_git_blob_sha1": "25450e19e4948131db0c18ddb2406205c020b1dc",
+  "capture_static_critic_git_blob_sha1": "d024858233d9ad6530837c9ffd769d57b228bede",
+  "capture_workflow_git_blob_sha1": "fe41439ee05166d71df1211238ca7543afb75add",
+  "target_active_workflow_git_blob_sha1": "832f0491421619579c2a1d77ba9ca339cb4898ac",
+  "authorized_run_number": 1,
+  "authorized_run_attempt": 1,
+  "rerun_authorized": false,
+  "v0_6_diagnostic_execution_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false
+}
