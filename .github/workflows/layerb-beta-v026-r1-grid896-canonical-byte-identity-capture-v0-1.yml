@@ -1,0 +1,106 @@
+name: DSIR V0.26 R1 GRID896 canonical byte identity capture v0.1
+
+# Provenance-only byte capture. No diagnostic lanes, CLASS, scientific response,
+# covariance, or model inference. It records actual checkout/Git-object bytes to
+# resolve the V0.6/V0.7 source-identity contradiction without guessing.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/dsir4/launch/LAYERB_BETA_V0_26_R1_GRID896_CANONICAL_BYTE_IDENTITY_CAPTURE_V0_1.launch.json
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    name: Capture canonical GRID896 raw byte identities
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Capture working-tree, git-show, and blob bytes
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib
+          import json
+          import subprocess
+          from pathlib import Path
+
+          path = 'docs/dsir4/canonical/LAYERB_BETA_V0_26_R1_GRID896_U64HEX_V0_1.txt'
+          blob = '24fa61685ab45e42e3ab0d453f5cb223c247ced6'
+
+          def sh(args, text=False):
+              return subprocess.check_output(args, text=text)
+
+          def metrics(data):
+              lines = data.splitlines()
+              normalized = b'\n'.join(lines) + b'\n'
+              return {
+                  'byte_length': len(data),
+                  'sha256': hashlib.sha256(data).hexdigest(),
+                  'endswith_lf': data.endswith(b'\n'),
+                  'endswith_crlf': data.endswith(b'\r\n'),
+                  'lf_byte_count': data.count(b'\n'),
+                  'crlf_pair_count': data.count(b'\r\n'),
+                  'splitlines_count': len(lines),
+                  'normalized_lf_byte_length': len(normalized),
+                  'normalized_lf_sha256': hashlib.sha256(normalized).hexdigest(),
+                  'all_lines_lowercase_hex16': all(len(x) == 16 and all(c in b'0123456789abcdef' for c in x) for x in lines),
+                  'last_32_hex': data[-32:].hex(),
+              }
+
+          wt = Path(path).read_bytes()
+          git_show = sh(['git', 'show', f'HEAD:{path}'])
+          git_blob = sh(['git', 'cat-file', 'blob', blob])
+          hash_object = sh(['git', 'hash-object', path], text=True).strip()
+          attrs = subprocess.run(['git', 'check-attr', '-a', '--', path], text=True, capture_output=True, check=True).stdout
+          autocrlf = subprocess.run(['git', 'config', '--get', 'core.autocrlf'], text=True, capture_output=True).stdout.strip()
+          eol = subprocess.run(['git', 'config', '--get', 'core.eol'], text=True, capture_output=True).stdout.strip()
+
+          result = {
+              'schema': 'LAYERB_BETA_V0_26_R1_GRID896_CANONICAL_BYTE_IDENTITY_CAPTURE_V0_1',
+              'classification': 'PASS_CANONICAL_BYTE_IDENTITY_CAPTURE',
+              'effect': '+0/+0',
+              'interpretation_ceiling': 'INFRASTRUCTURE_PROVENANCE_ONLY',
+              'canonical_path': path,
+              'expected_git_blob_sha1': blob,
+              'git_hash_object_working_tree': hash_object,
+              'working_tree': metrics(wt),
+              'git_show_head_path': metrics(git_show),
+              'git_cat_file_blob': metrics(git_blob),
+              'working_tree_equals_git_show': wt == git_show,
+              'working_tree_equals_git_blob': wt == git_blob,
+              'git_show_equals_git_blob': git_show == git_blob,
+              'git_check_attr_all': attrs,
+              'git_config_core_autocrlf': autocrlf,
+              'git_config_core_eol': eol,
+              'class_solver_invoked': False,
+              'scientific_response_read': False,
+              'covariance_read': False,
+              'successor_sentinel_science_authorized': False,
+              'full_107_row_execution_authorized': False,
+              'downstream_science_authorized': False,
+          }
+          out = Path('results/dsir4/grid896_canonical_byte_identity_capture_v0_1/result.json')
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_text(json.dumps(result, sort_keys=True, indent=2) + '\n', encoding='utf-8')
+          print(json.dumps(result, sort_keys=True))
+          PY
+
+      - name: Upload immutable byte identity capture
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-grid896-canonical-byte-identity-capture-v0-1
+          path: results/dsir4/grid896_canonical_byte_identity_capture_v0_1/result.json
+          if-no-files-found: error
+          retention-days: 90

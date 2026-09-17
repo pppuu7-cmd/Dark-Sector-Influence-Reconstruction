@@ -1,0 +1,39 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_GRID896_CANONICAL_BYTE_IDENTITY_CAPTURE_AUTHORITY_V0_1",
+  "status": "TERMINAL_PROVENANCE_CAPTURE_AUTHORITY",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "verdict": "AUTHORIZED_SCOPED_ONE_SHOT_CAPTURE",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_ONLY",
+  "triggering_problem": {
+    "v0_6_terminal_classification": "INVALID_DIAGNOSTIC_PROVENANCE",
+    "v0_7_static_qualification_run_id": 35253515074,
+    "v0_7_static_qualification_classification": "INVALID_STATIC_QUALIFICATION",
+    "v0_7_static_qualification_error": "FileNotFoundError: canonical raw SHA256 mismatch",
+    "contradiction_to_resolve": "TEXT_VIEW_DERIVED_RAW_BYTE_ASSUMPTION_CONFLICTS_WITH_DIRECT_GIT_BLOB_VIEW_AND_ACTUAL_CHECKOUT_QUALIFICATION"
+  },
+  "capture_workflow_path": ".github/workflows/layerb-beta-v026-r1-grid896-canonical-byte-identity-capture-v0-1.yml",
+  "capture_workflow_git_blob_sha1": "d5253fc06765532450a59675e06981507af3cb32",
+  "canonical_path": "docs/dsir4/canonical/LAYERB_BETA_V0_26_R1_GRID896_U64HEX_V0_1.txt",
+  "canonical_git_blob_sha1": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+  "authorized_measurements": [
+    "WORKING_TREE_RAW_BYTES_LENGTH_SHA256_LINE_ENDINGS",
+    "GIT_SHOW_HEAD_PATH_BYTES_LENGTH_SHA256_LINE_ENDINGS",
+    "GIT_CAT_FILE_EXACT_BLOB_BYTES_LENGTH_SHA256_LINE_ENDINGS",
+    "WORKING_TREE_GIT_HASH_OBJECT",
+    "GIT_CHECK_ATTR_ALL",
+    "GIT_CONFIG_CORE_AUTOCRLF_AND_EOL",
+    "NORMALIZED_SPLITLINES_PLUS_ONE_FINAL_LF_SHA256"
+  ],
+  "authorized_run_count": 1,
+  "authorized_run_number": 1,
+  "authorized_run_attempt": 1,
+  "class_solver_invocation_authorized": false,
+  "scientific_response_read_authorized": false,
+  "covariance_read_authorized": false,
+  "v0_7_diagnostic_execution_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "token": "AUTHORIZED_SCOPED_LAYERB_BETA_V0_26_R1_GRID896_CANONICAL_BYTE_IDENTITY_CAPTURE_PLUS_0_PLUS_0"
+}
