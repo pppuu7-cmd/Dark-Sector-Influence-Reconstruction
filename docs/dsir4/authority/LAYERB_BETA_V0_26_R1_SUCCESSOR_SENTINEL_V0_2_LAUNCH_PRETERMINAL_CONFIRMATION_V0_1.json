@@ -23,7 +23,7 @@
     "experiment_id": "LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_SCIENCE_V0_2",
     "execution_nonce": "DSIR-V026R1-SUCCESSOR-20260917-B1-4C92E7A1",
     "launch_marker_path": "docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_LAUNCH_V0_2.json",
-    "launch_marker_git_blob_sha1": "84ba5f2fc0c89b58a1790fe2a267270bbf56fa47",
+    "launch_marker_git_blob_sha1": "69d827768bc852e8d5f62d2d27e137826dd82e25",
     "launch_diff_only_adds_marker": true
   },
   "frozen_bindings": {
