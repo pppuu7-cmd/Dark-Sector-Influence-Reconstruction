@@ -1,0 +1,111 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_REPAIR_PAIR_OPERATION_BOUND_QUALIFICATION_TERMINAL_V0_1",
+  "status": "TERMINAL_QUALIFICATION_DECISION",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "classification": "PASS_SCOPED_CORRECTED_REPAIR_PAIR_OPERATIONALLY_QUALIFIED",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_ONLY",
+  "run_id": 35267258974,
+  "run_number": 1,
+  "run_attempt": 1,
+  "head_sha": "59dde719905334f9501f35840d7368d9ec0c1a37",
+  "workflow_id": 360830695,
+  "workflow_path": ".github/workflows/dsir-v026-r1-response-blind-corrected-repair-pair-operation-bound-qualification-v0-1.yml",
+  "job_id": 105357396468,
+  "artifact_id": 10516409112,
+  "artifact_name": "layerb-beta-v026-r1-response-blind-corrected-repair-pair-operation-bound-qualification-v0-1",
+  "artifact_digest": "sha256:34eb27285365d2d39530e694bd5e941ce5f783433b309a36c3cdc42cc312162c",
+  "result_json_sha256": "edf553e5b3077e345d56cf7cd1089eef35a6c48ee88a6ef2f155bed488e153f7",
+  "qualification_script_git_blob_sha1": "3a531b78ae153b23e3862e7cb04577f5522ff0a8",
+  "qualification_workflow_git_blob_sha1": "04ab5baffc6eb96472c045864c77bfbcf0bf676b",
+  "qualification_authority_git_blob_sha1": "b30142cc86a950c17d6ef69faf113a310cdd002c",
+  "static_critic_git_blob_sha1": "98bc1e49746676286dfc9ba166c7af93a07891ac",
+  "causal_parent_terminal_git_blob_sha1": "c851c8c93c1228ae268808dd0ef707fe190a02ae",
+  "causal_parent_runtime_critic_git_blob_sha1": "09b780cc787480bc864b5a086da85799102642c5",
+  "historical_source_evidence": {
+    "git_blob_sha1": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+    "sha256": "f84d6fa7cf9e5b8014176fd480062b27aaf97947d4a5211c7fbb5c69f93634ba",
+    "byte_length": 15248,
+    "line_count": 897,
+    "malformed_token_line_776": "3f9c8a9eea3c9c8"
+  },
+  "repair_operation_evidence": {
+    "operation_parameters_validated_before_reconstruction": true,
+    "zero_based_byte_offset": 13182,
+    "insert_ascii": "e",
+    "single_byte_only": true
+  },
+  "corrected_output_evidence": {
+    "byte_length": 15249,
+    "sha256": "e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4",
+    "git_blob_sha1": "ded43b233a71a631809111514c9dd35d0419af2d",
+    "line_count": 897,
+    "corrected_token_line_776": "3f9c8a9eeea3c9c8",
+    "payload_byte_length": 7176,
+    "payload_sha256": "8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d",
+    "frozen_payload_negative_control_sha256": "e94e2e05fc0cc1fcbc9bd710a24b8ef231fab350cd6247ea3039b913adfba800"
+  },
+  "negative_controls": {
+    "no_insertion_rejected": true,
+    "wrong_insert_byte_operation_rejected": true,
+    "wrong_insert_offset_operation_rejected": true,
+    "mutated_corrected_object_rejected": true,
+    "wrong_expected_corrected_digest_rejected": true,
+    "frozen_payload_negative_control_exact": true
+  },
+  "transport_primitive_binding": {
+    "implementation_git_blob_sha1": "0228fda053f6396708dabaf8e47984145e1b7b7a",
+    "terminal_authority_git_blob_sha1": "f5d2068ef33a6b00592951476030d84a25cb60a1",
+    "terminal_classification": "PASS_HISTORICAL_ACTIONS_ARTIFACT_TRANSPORT_PRIMITIVE_QUALIFIED"
+  },
+  "artifact_transport_evidence": {
+    "artifact_id": 10508904186,
+    "artifact_name": "grid896-v0-6-R01",
+    "metadata_api_host": "api.github.com",
+    "metadata_http_status": 200,
+    "archive_api_redirect_status": 302,
+    "redirect_scheme": "https",
+    "redirect_storage_host": "productionresultssa4.blob.core.windows.net",
+    "final_storage_host": "productionresultssa4.blob.core.windows.net",
+    "repository_authorization_forwarded_to_storage": false,
+    "storage_request_header_names": ["accept", "user-agent"],
+    "storage_http_status": 200,
+    "outer_zip_sha256": "b8897d2b5ff336be7f472bca740f1bc4b82e301b7b6ca0381127627a71050ffd",
+    "sole_member": "R01.json",
+    "member_sha256": "95516bd6920448c7bc36f4d85592f318a719d2ea3044388b31e2f7e1ef6deab3"
+  },
+  "provenance_evidence": {
+    "source_run_id": 35251121404,
+    "source_run_attempt": 1,
+    "source_head_sha": "c6526f940a559140eaa7928d97164524e462cecf",
+    "source_lane_id": "R01",
+    "source_lane_outcome": "BLOCKED_MISSING_OR_UNBOUND_CANONICAL_OBJECT",
+    "source_class_solver_invoked": false,
+    "source_scientific_response_read": false
+  },
+  "response_blindness": {
+    "class_solver_invoked": false,
+    "scientific_response_read": false,
+    "covariance_read": false,
+    "scientific_classifier_invoked": false,
+    "response_dependent_decision": false,
+    "producer_lane_count": 0
+  },
+  "bounded_inference": {
+    "corrected_canonical_reconstruction_operationally_qualified": true,
+    "qualified_artifact_transport_reused_successfully": true,
+    "corrected_repair_pair_operationally_qualified": true,
+    "historical_source_artifact_provenance_bound": true,
+    "cross_host_population_validity_evaluated": false,
+    "numerical_reproducibility_evaluated": false,
+    "science_evaluated": false
+  },
+  "rerun_same_identity_authorized": false,
+  "corrected_producer_cross_host_population_gate_design_authorized": true,
+  "corrected_producer_cross_host_population_gate_execution_authorized": false,
+  "numerical_reproducibility_execution_authorized": false,
+  "minimal_scientific_response_execution_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "next_gate_question": "DOES_THE_CORRECTED_CONTENT_ADDRESSED_PRODUCER_VALIDLY_MATERIALIZE_THE_INTENDED_CROSS_HOST_POPULATION_WITHOUT_SCIENTIFIC_RESPONSE_CONSUMPTION"
+}
