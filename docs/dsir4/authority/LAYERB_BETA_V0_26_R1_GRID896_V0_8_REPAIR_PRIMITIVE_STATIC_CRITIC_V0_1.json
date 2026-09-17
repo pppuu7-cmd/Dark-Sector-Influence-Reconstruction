@@ -1,0 +1,42 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_GRID896_V0_8_REPAIR_PRIMITIVE_STATIC_CRITIC_V0_1",
+  "status": "TERMINAL_INDEPENDENT_STATIC_CRITIC",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "verdict": "PASS_SCOPED",
+  "classification": "V0_8_REPAIR_PRIMITIVE_QUALIFICATION_STATIC_SCOPE_CONFIRMED",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_ONLY",
+  "reviewed_qualification_script_git_blob_sha1": "b9dedf70a47f9c49a4d68b7fedc09667934ac7cc",
+  "reviewed_qualification_workflow_git_blob_sha1": "70e3fd9ba13c286e3cbbbf4c25cfbf5c2f868149",
+  "parent_canonical_confirmation_git_blob_sha1": "576db80ff1741d0b4ca03250417843fa372ebad3",
+  "repair_spec_git_blob_sha1": "c3b3d2f5533d5c6c9c27b9922d58d0a32188be95",
+  "independently_checked": {
+    "historical_v0_1_raw_identity_required_before_patch": true,
+    "exact_single_byte_insert_offset_13182_required": true,
+    "exact_insert_ascii_e_required": true,
+    "corrected_sha256_e4f8_required": true,
+    "corrected_git_blob_ded43b_required": true,
+    "corrected_897_hex16_lines_required": true,
+    "payload_sha256_8499_required": true,
+    "negative_control_sha256_e94e_required": true,
+    "historical_r01_artifact_id_and_digest_bound": true,
+    "artifact_archive_url_exactly_bound": true,
+    "github_json_accept_used_for_zip_request": true,
+    "downloaded_zip_digest_must_equal_github_digest": true,
+    "exact_R01_json_member_required": true,
+    "source_receipt_must_confirm_no_class_or_scientific_response": true,
+    "qualification_workflow_has_no_32_lane_matrix": true,
+    "qualification_workflow_has_no_class_or_science_step": true
+  },
+  "runtime_counterexamples_left_open": [
+    "CORRECTED_RECONSTRUCTION_DOES_NOT_MATCH_ACTUAL_HOSTED_CHECKOUT",
+    "GITHUB_JSON_MEDIA_TYPE_ARTIFACT_DOWNLOAD_STILL_FAILS_OR_DIGEST_DIFFERS"
+  ],
+  "one_response_blind_qualification_run_authorized": true,
+  "v0_8_diagnostic_promotion_authorized": false,
+  "v0_8_diagnostic_execution_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "token": "PASS_SCOPED_LAYERB_BETA_V0_26_R1_GRID896_V0_8_REPAIR_PRIMITIVE_STATIC_CRITIC_PLUS_0_PLUS_0"
+}
