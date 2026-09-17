@@ -1,0 +1,127 @@
+name: DSIR V0.26 R1 response-blind corrected repair pair operational qualification v0.1
+
+# One-shot infrastructure/provenance qualification only.
+# No CLASS, scientific response, covariance, scientific classifier, producer lanes, or downstream science.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/dsir4/launch/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_REPAIR_PAIR_OPERATIONAL_QUALIFICATION_V0_1.launch.json
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-v026-r1-response-blind-corrected-repair-pair-operational-qualification-v0-1
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    name: Qualify corrected repair pair operational usability
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verify prospective authority, Critic, implementation and frozen dependencies
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          marker_path = Path('docs/dsir4/launch/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_REPAIR_PAIR_OPERATIONAL_QUALIFICATION_V0_1.launch.json')
+          authority_path = Path('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_REPAIR_PAIR_OPERATIONAL_QUALIFICATION_AUTHORITY_V0_1.json')
+          critic_path = Path('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_REPAIR_PAIR_OPERATIONAL_QUALIFICATION_STATIC_CRITIC_V0_1.json')
+          pair_script_path = Path('ci/layerb_beta_v026_r1_response_blind_corrected_repair_pair_operational_qualification_v0_1.py')
+          transport_script_path = Path('ci/layerb_beta_v026_r1_response_blind_artifact_transport_qualification_v0_1.py')
+          workflow_path = Path('.github/workflows/dsir-v026-r1-response-blind-corrected-repair-pair-operational-qualification-v0-1.yml')
+          repair_spec_path = Path('docs/dsir4/canonical/LAYERB_BETA_V0_26_R1_GRID896_CANONICAL_V0_2_REPAIR_SPEC_V0_1.json')
+          canonical_v01_path = Path('docs/dsir4/canonical/LAYERB_BETA_V0_26_R1_GRID896_U64HEX_V0_1.txt')
+          transport_terminal_path = Path('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_ARTIFACT_TRANSPORT_QUALIFICATION_TERMINAL_V0_1.json')
+
+          def blob(path: Path) -> str:
+              return subprocess.check_output(['git', 'hash-object', str(path)], text=True).strip()
+
+          marker = json.loads(marker_path.read_text(encoding='utf-8'))
+          authority = json.loads(authority_path.read_text(encoding='utf-8'))
+          critic = json.loads(critic_path.read_text(encoding='utf-8'))
+
+          assert blob(pair_script_path) == '7fb1204a84ed6684d65e2ab12ebbf46e8c37f487'
+          assert blob(transport_script_path) == '0228fda053f6396708dabaf8e47984145e1b7b7a'
+          assert blob(repair_spec_path) == 'c3b3d2f5533d5c6c9c27b9922d58d0a32188be95'
+          assert blob(canonical_v01_path) == '24fa61685ab45e42e3ab0d453f5cb223c247ced6'
+          assert blob(transport_terminal_path) == 'f5d2068ef33a6b00592951476030d84a25cb60a1'
+          assert marker['qualification_script_git_blob_sha1'] == blob(pair_script_path)
+          assert marker['qualification_workflow_git_blob_sha1'] == blob(workflow_path)
+          assert marker['qualification_authority_git_blob_sha1'] == blob(authority_path)
+          assert marker['static_critic_git_blob_sha1'] == blob(critic_path)
+          assert authority['qualification_script_git_blob_sha1'] == blob(pair_script_path)
+          assert authority['qualification_workflow_git_blob_sha1'] == blob(workflow_path)
+          assert critic['reviewed_qualification_script_git_blob_sha1'] == blob(pair_script_path)
+          assert critic['reviewed_qualification_workflow_git_blob_sha1'] == blob(workflow_path)
+          assert critic['verdict'] == 'PASS_SCOPED'
+          assert marker['authorized_run_number'] == 1
+          assert marker['authorized_run_attempt'] == 1
+          assert marker['historical_v0_1_git_blob_sha1'] == '24fa61685ab45e42e3ab0d453f5cb223c247ced6'
+          assert marker['insert_offset_zero_based'] == 13182
+          assert marker['insert_ascii'] == 'e'
+          assert marker['corrected_sha256'] == 'e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4'
+          assert marker['corrected_git_blob_sha1'] == 'ded43b233a71a631809111514c9dd35d0419af2d'
+          assert marker['payload_sha256'] == '8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d'
+          assert marker['artifact_id'] == 10508904186
+          assert marker['expected_outer_zip_sha256'] == 'b8897d2b5ff336be7f472bca740f1bc4b82e301b7b6ca0381127627a71050ffd'
+          assert marker['expected_sole_member'] == 'R01.json'
+          assert marker['expected_member_sha256'] == '95516bd6920448c7bc36f4d85592f318a719d2ea3044388b31e2f7e1ef6deab3'
+          assert marker['class_solver_invocation_authorized'] is False
+          assert marker['scientific_response_read_authorized'] is False
+          assert marker['covariance_read_authorized'] is False
+          assert marker['scientific_classifier_authorized'] is False
+          assert marker['producer_lane_execution_authorized'] is False
+          PY
+
+      - name: Run response-blind corrected repair pair operational qualification
+        id: qualify
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python ci/layerb_beta_v026_r1_response_blind_corrected_repair_pair_operational_qualification_v0_1.py \
+            --output results/dsir4/response_blind_corrected_repair_pair_operational_qualification_v0_1/result.json
+
+      - name: Upload immutable corrected repair pair qualification result
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-response-blind-corrected-repair-pair-operational-qualification-v0-1
+          path: results/dsir4/response_blind_corrected_repair_pair_operational_qualification_v0_1/result.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Reflect frozen repair pair classification
+        if: ${{ always() }}
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('results/dsir4/response_blind_corrected_repair_pair_operational_qualification_v0_1/result.json')
+          if not p.is_file():
+              raise SystemExit('missing corrected repair pair qualification result')
+          d = json.loads(p.read_text(encoding='utf-8'))
+          print(d['classification'])
+          raise SystemExit(0 if d['classification'] == 'PASS_SCOPED_CORRECTED_REPAIR_PAIR_OPERATIONALLY_QUALIFIED' else 1)
+          PY
