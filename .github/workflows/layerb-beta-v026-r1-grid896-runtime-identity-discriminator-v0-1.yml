@@ -1,0 +1,140 @@
+name: layerb-beta-v026-r1-grid896-runtime-identity-discriminator-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/dsir4/launch/LAYERB_BETA_V0_26_R1_GRID896_RUNTIME_IDENTITY_DIAGNOSTIC_LAUNCH_V0_1.json'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: layerb-beta-v026-r1-grid896-runtime-identity-discriminator-v0-1
+  cancel-in-progress: false
+
+env:
+  AUTHORITY: 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_GRID896_RUNTIME_IDENTITY_DIAGNOSTIC_AUTHORITY_V0_1.json'
+  LAUNCH: 'docs/dsir4/launch/LAYERB_BETA_V0_26_R1_GRID896_RUNTIME_IDENTITY_DIAGNOSTIC_LAUNCH_V0_1.json'
+  WORKFLOW: '.github/workflows/layerb-beta-v026-r1-grid896-runtime-identity-discriminator-v0-1.yml'
+  CONTRACT: 'docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json'
+  PROBE: 'ci/layerb_beta_v026_r1_static_identity_probe_v0_1.py'
+  NUMPY_DISABLE: 'AVX512CD,AVX512F,AVX512_CLX,AVX512_CNL,AVX512_ICL,AVX512_KNL,AVX512_KNM,AVX512_SKX'
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+      - name: Validate exact non-science diagnostic authority
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_RUN_NUMBER" = 1
+          test "$GITHUB_RUN_ATTEMPT" = 1
+          python3 - <<'PY'
+          import json, os, subprocess
+          def blob(p): return subprocess.check_output(['git','hash-object',p],text=True).strip()
+          a=json.load(open(os.environ['AUTHORITY']))
+          l=json.load(open(os.environ['LAUNCH']))
+          assert a['status']=='TERMINAL_DIAGNOSTIC_AUTHORITY'
+          assert a['classification']=='AUTHORIZED_SCOPED'
+          assert a['science_execution_authorized'] is False
+          assert a['class_solver_authorized'] is False
+          assert a['full_107_row_execution_authorized'] is False
+          assert a['target_workflow_git_blob_sha1']==blob(os.environ['WORKFLOW'])
+          assert a['contract_git_blob_sha1']==blob(os.environ['CONTRACT'])
+          assert a['probe_git_blob_sha1']==blob(os.environ['PROBE'])
+          assert l['authority_git_blob_sha1']==blob(os.environ['AUTHORITY'])
+          assert l['target_workflow_git_blob_sha1']==blob(os.environ['WORKFLOW'])
+          PY
+          if git cat-file -e "$BEFORE_SHA:$LAUNCH" 2>/dev/null; then exit 1; fi
+          test "$(git diff --name-status "$BEFORE_SHA" "$GITHUB_SHA" -- "$LAUNCH")" = $'A\t'"$LAUNCH"
+      - name: Install exact NumPy only
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/python -m pip install -q --upgrade pip
+          .venv/bin/python -m pip install -q 'numpy==1.26.4'
+      - name: Compute normal and forced GRID896 identities without CLASS
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          cat > safe/grid_diag.py <<'PY'
+          import hashlib, importlib.util, json, os, struct, sys
+          import numpy as np
+          spec=importlib.util.spec_from_file_location('probe', os.environ['PROBE'])
+          m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          nodes, ratio, nlo, nhi=m.guarded_lattice(896)
+          raw=np.ascontiguousarray(nodes,dtype='<f8').tobytes()
+          words=[struct.pack('>d',float(x)).hex() for x in nodes]
+          out={
+            'numpy_version':np.__version__,
+            'disabled_features_env':os.environ.get('NPY_DISABLE_CPU_FEATURES'),
+            'cpu_features':{k:bool(v) for k,v in np.core._multiarray_umath.__cpu_features__.items()},
+            'nlo':nlo,'nhi':nhi,'count':len(nodes),
+            'ratio_u64hex':struct.pack('>d',float(ratio)).hex(),
+            'payload_sha256':hashlib.sha256(raw).hexdigest(),
+            'first_u64hex':words[0], 'last_u64hex':words[-1],
+            'words':words,
+          }
+          json.dump(out,sys.stdout,sort_keys=True)
+          PY
+          env -u NPY_DISABLE_CPU_FEATURES .venv/bin/python safe/grid_diag.py > safe/normal.json
+          NPY_DISABLE_CPU_FEATURES="$NUMPY_DISABLE" .venv/bin/python safe/grid_diag.py > safe/forced.json
+          python3 - <<'PY'
+          import json, hashlib, struct, os
+          n=json.load(open('safe/normal.json')); f=json.load(open('safe/forced.json'))
+          c=json.load(open(os.environ['CONTRACT']))
+          expected=c['grid896']['node_payload_sha256']
+          diffs=[]
+          for i,(a,b) in enumerate(zip(n['words'],f['words'])):
+            if a!=b:
+              diffs.append({'index':i,'normal':a,'forced':b,'normal_u64':int(a,16),'forced_u64':int(b,16),'ulp_distance':abs(int(a,16)-int(b,16))})
+          out={
+            'schema':'LAYERB_BETA_V0_26_R1_GRID896_RUNTIME_IDENTITY_DIAGNOSTIC_V0_1',
+            'science':False,
+            'class_solver_invoked':False,
+            'scientific_response_read':False,
+            'expected_contract_sha256':expected,
+            'normal_sha256':n['payload_sha256'],
+            'forced_sha256':f['payload_sha256'],
+            'normal_matches_contract':n['payload_sha256']==expected,
+            'forced_matches_contract':f['payload_sha256']==expected,
+            'normal_equals_forced':n['payload_sha256']==f['payload_sha256'],
+            'differing_node_count':len(diffs),
+            'first_differences':diffs[:16],
+            'normal_ratio_u64hex':n['ratio_u64hex'],
+            'forced_ratio_u64hex':f['ratio_u64hex'],
+            'geometry_equal':(n['nlo'],n['nhi'],n['count'])==(f['nlo'],f['nhi'],f['count'])==(0,1,897),
+            'normal_cpu_features':n['cpu_features'],
+            'forced_cpu_features':f['cpu_features'],
+          }
+          if out['normal_matches_contract'] and not out['forced_matches_contract'] and not out['normal_equals_forced']:
+            out['classification']='CONFIRMED_NUMPY_CPU_DISPATCH_GRID896_IDENTITY_SPLIT'
+          elif out['forced_matches_contract']:
+            out['classification']='FORCED_ENV_NOT_CAUSAL'
+          else:
+            out['classification']='GRID896_MISMATCH_REQUIRES_FURTHER_LOCALIZATION'
+          open('safe/grid896_runtime_identity_diagnostic.json','w').write(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(out['classification'])
+          PY
+          sha256sum safe/grid896_runtime_identity_diagnostic.json > safe/grid896_runtime_identity_diagnostic.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-grid896-runtime-identity-diagnostic-v0-1
+          path: |
+            safe/grid896_runtime_identity_diagnostic.json
+            safe/grid896_runtime_identity_diagnostic.sha256
+            safe/normal.json
+            safe/forced.json
+          if-no-files-found: error
+          retention-days: 90
