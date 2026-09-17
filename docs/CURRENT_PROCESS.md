@@ -20,16 +20,18 @@ Frozen cross-host GRID896 design remains bound by prereg `903c80709439cb790bd413
 
 Implementation V0.1 remains terminal `INVALID_IMPLEMENTATION`, authority blob `d9f940f3ea7b41b8df76d102f71ead16342a7f23`. Implementation V0.2 remains terminal `INVALID_IMPLEMENTATION`, authority blob `effd843587442f1c7bb3e9d7ae1c7ae6a8afd618`. Implementation V0.3 remains terminal `INVALID_IMPLEMENTATION`, authority blob `b20311d02c8fc0353e04c138b8ad4f121f4de0a2`. Implementation V0.4 remains terminal `INVALID_IMPLEMENTATION`, authority blob `f5d15887f88e6d9753e475d9c69572265babb2d6`, classification `GRID896_DIAGNOSTIC_SUCCESSOR_V0_4_DUPLICATE_RERUN_INVALID_CLASSIFIER_UNREACHABLE`.
 
-## Implementation successor V0.5 — frozen inert candidate
+## Implementation successor V0.5 — terminal static-audit INVALID_IMPLEMENTATION
 
-Exact identities:
-- executor `scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_5.py`, blob `224a4b8472c6aa0081627894d31cf967a2f2fc78`, creation commit `7cfb9ffdc600183795622242f5d67a80e539ea98`;
-- inert workflow `docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-5.yml`, blob `f2134d3f80ead145aaae1c1203eac0626cf914f7`, creation commit `9fd9f9e2f16e52770a08babcb57eec58ebeff237`;
-- frozen manifest `docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_MANIFEST_V0_5.json`, blob `a19883ec25942664c89afe40b89ef5afa8cc8bf1`, creation commit `f57fc3ce537c7a4cf9f605cdc558cf8884c0f0dc`.
+Exact reviewed identities remain historical and immutable:
+- executor `scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_5.py`, blob `224a4b8472c6aa0081627894d31cf967a2f2fc78`;
+- inert workflow `docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-5.yml`, blob `f2134d3f80ead145aaae1c1203eac0626cf914f7`;
+- frozen manifest `docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_MANIFEST_V0_5.json`, blob `a19883ec25942664c89afe40b89ef5afa8cc8bf1`.
 
-V0.5 makes only the authorized prospective workflow-reachability correction. Lane execution remains gated to push/main, run #1, attempt #1. The decision job remains `needs: grid896` but uses `always()` + push/main without run-number/run-attempt gating. Thus a rerun/duplicate skips replacement lanes yet still reaches the aggregate one-shot guard; that guard writes `INVALID_DIAGNOSTIC_PROVENANCE`, the decision artifact is uploaded, and the final step reflects the classifier. The exact active workflow and launch marker remain absent; this candidate is inert and unqualified until a separate static audit.
+Independent static audit `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_5_STATIC_AUDIT_V0_1.md`, blob `18b3cda1a806f11edd0587e15a89b6517bb3cc9d`, commit `8781435b12d0eba0022da81f0069e76e8efdd65a`, found that V0.5 does close the V0.4 rerun/duplicate decision-job reachability defect for the exact executing workflow identity and preserves the surviving V0.4 chronology/binary64/hash/artifact/classifier/no-science controls.
 
-All surviving V0.4 controls are preserved: first-parent launch chronology, exact preexisting authority/active-workflow binding, marker-only launch commit, binary64 decode/immediate reserialize without arithmetic, canonical hash and negative control, exact 32-lane topology, GitHub artifact digest versus independently computed ZIP SHA256, inner receipt SHA256, run/head/job/code identity bindings, present-evidence classifier precedence, and no CLASS/scientific-response access.
+However V0.5 does not bind the workflow identity actually executing the current Actions run. It authenticates the inert candidate blob and a canonical repository `ACTIVE_WORKFLOW_PATH` blob, but does not compare the current run's actual workflow path/ID to that canonical active path. A byte-identical alias workflow at another `.github/workflows/...` path can subscribe to the same marker push and independently be run #1 / attempt #1. The alias run can see the valid canonical active file, authority, candidate blob and marker chronology and therefore execute a second 32-lane population while the frozen V0.5 checks pass. `run_number==1` is per executing workflow identity, not a repository-global one-shot token.
+
+Terminal qualification `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_STATIC_AUDIT_QUALIFICATION_V0_5.json`, blob `581759b3230bf6bd8491ca60d843857a5749e76a`, verdict `INVALID_IMPLEMENTATION`, classification `GRID896_DIAGNOSTIC_SUCCESSOR_V0_5_EXECUTING_WORKFLOW_IDENTITY_NOT_BOUND`, is binding. No V0.5 active workflow or marker existed at review and Actions had zero queued/in-progress runs; no partial result was used.
 
 ## Current authorization state
 
@@ -38,25 +40,24 @@ All surviving V0.4 controls are preserved: first-parent launch chronology, exact
 - implementation V0.2: terminal `INVALID_IMPLEMENTATION`;
 - implementation V0.3: terminal `INVALID_IMPLEMENTATION`;
 - implementation V0.4: terminal `INVALID_IMPLEMENTATION`;
-- implementation V0.5: inert candidate frozen, not audited/qualified;
-- exact V0.1–V0.4 failed blobs remain historical and must not be rewritten;
-- exact V0.5 blobs must remain immutable during audit;
-- authorized next stage: **independent static audit of exact V0.5 executor/workflow/manifest only**;
-- workflow promotion: **not authorized**;
-- terminal implementation execution authority: **not authorized**;
-- launch-marker creation: **not authorized**;
+- implementation V0.5: terminal `INVALID_IMPLEMENTATION`;
+- exact V0.1–V0.5 failed blobs remain historical and must not be rewritten;
+- authorized next stage: **prospective inert V0.6 authoring only**, adding exact current-run executing-workflow path/identity binding while preserving V0.5 controls;
+- V0.5 workflow promotion: **not authorized**;
+- V0.5 terminal implementation execution authority: **not authorized**;
+- V0.5 launch-marker creation: **not authorized**;
 - diagnostic execution: **not authorized**;
 - successor sentinel science: **not authorized**;
 - full107/downstream science: **not authorized**.
 
 ## Funnel position
 
-`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 SENTINEL_INVALID -> V0.2 INVALID_IMPLEMENTATION -> CROSS-HOST GRID896 DESIGN PREREGISTERED -> PREEXECUTION DESIGN CONFIRMED_SCOPED -> IMPLEMENTATION V0.1 STATIC-AUDIT INVALID -> IMPLEMENTATION V0.2 STATIC-AUDIT INVALID -> IMPLEMENTATION V0.3 STATIC-AUDIT INVALID -> IMPLEMENTATION V0.4 STATIC-AUDIT INVALID -> IMPLEMENTATION V0.5 INERT CANDIDATE FROZEN -> INDEPENDENT STATIC AUDIT REQUIRED -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
+`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 SENTINEL_INVALID -> V0.2 INVALID_IMPLEMENTATION -> CROSS-HOST GRID896 DESIGN PREREGISTERED -> PREEXECUTION DESIGN CONFIRMED_SCOPED -> IMPLEMENTATION V0.1 STATIC-AUDIT INVALID -> IMPLEMENTATION V0.2 STATIC-AUDIT INVALID -> IMPLEMENTATION V0.3 STATIC-AUDIT INVALID -> IMPLEMENTATION V0.4 STATIC-AUDIT INVALID -> IMPLEMENTATION V0.5 STATIC-AUDIT INVALID -> PROSPECTIVE V0.6 AUTHORING ONLY -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
 
 Scientific effect remains `+0/+0`; interpretation ceiling remains infrastructure/provenance/static implementation. Numerical response reproducibility, exact-target/scientific criteria, covariance, statistical/model validity and physical dark-sector inference remain `NOT_EVALUATED`. No readiness/frontier increase is authorized.
 
 ## Exact next admissible action
 
-`INDEPENDENT_STATIC_AUDIT_OF_EXACT_GRID896_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_5_ONLY`.
+`AUTHOR_PROSPECTIVE_INERT_GRID896_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_6_WITH_EXACT_EXECUTING_WORKFLOW_IDENTITY_BINDING_ONLY`.
 
-Audit exact blobs `224a4b8472c6aa0081627894d31cf967a2f2fc78`, `f2134d3f80ead145aaae1c1203eac0626cf914f7`, `a19883ec25942664c89afe40b89ef5afa8cc8bf1`. Verify that run #1/attempt #2 and any run number >1 cannot execute lanes but still execute decision and durably upload an `INVALID_DIAGNOSTIC_PROVENANCE` decision. Re-check V0.4 chronology/binary64/hash/artifact/classifier/32-lane/no-science controls. Do not promote, create an implementation authority or marker, execute diagnostic, rerun consumed identities, or open successor/full107/downstream science.
+V0.6 must fail-closed bind the current Actions run's actual workflow path to the exact canonical active workflow before any lane operation and revalidate it in aggregate/decision; preferably also bind the promoted GitHub workflow ID in a later authority/launch object. It must include a negative static case where a byte-identical alias workflow at another path cannot produce admissible lanes or an admissible PASS/FAIL decision. Preserve V0.5 duplicate/rerun durable INVALID reachability, first-parent chronology, binary64/hash/negative-control, artifact provenance, classifier precedence, exact 32-lane topology and no-science boundary. Freeze exact V0.6 blobs and then run a fresh independent static audit. Do not promote or execute V0.5 and do not open successor/full107/downstream science.
