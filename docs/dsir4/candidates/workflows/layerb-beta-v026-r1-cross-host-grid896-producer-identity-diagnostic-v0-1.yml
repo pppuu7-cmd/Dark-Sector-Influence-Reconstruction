@@ -1,0 +1,154 @@
+name: DSIR Layer-B beta v0.26 R1 cross-host GRID896 producer identity diagnostic v0.1
+
+# INERT CANDIDATE. This file is deliberately outside .github/workflows.
+# It is not executable by GitHub Actions in this location. A separate terminal
+# implementation/static-audit authority must qualify this exact blob before an
+# exact-byte copy may be promoted to .github/workflows. Even after promotion,
+# only creation of the separately authorized launch marker can trigger run #1.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/dsir4/launch/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_1.launch.json
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-1
+  cancel-in-progress: false
+
+jobs:
+  grid896:
+    name: GRID896 ${{ matrix.lane }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      max-parallel: 32
+      matrix:
+        lane:
+          - R01
+          - R02
+          - R03
+          - R04
+          - R05
+          - R06
+          - R07
+          - R08
+          - R09
+          - R10
+          - R11
+          - R12
+          - R13
+          - R14
+          - R15
+          - R16
+          - R17
+          - R18
+          - R19
+          - R20
+          - R21
+          - R22
+          - R23
+          - R24
+          - R25
+          - R26
+          - R27
+          - R28
+          - R29
+          - R30
+          - R31
+          - R32
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run response-blind exact-byte lane
+        id: lane
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_1.py lane \
+            --lane-id '${{ matrix.lane }}' \
+            --job-name 'GRID896 ${{ matrix.lane }}' \
+            --receipt 'results/dsir4/grid896_cross_host_v0_1/${{ matrix.lane }}.json'
+
+      - name: Upload immutable lane receipt
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: grid896-${{ matrix.lane }}
+          path: results/dsir4/grid896_cross_host_v0_1/${{ matrix.lane }}.json
+          if-no-files-found: error
+          retention-days: 30
+
+  decision:
+    name: Frozen GRID896 cross-host decision
+    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_number == 1 && github.run_attempt == 1 }}
+    needs:
+      - grid896
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Download all hosted-lane receipts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: grid896-*
+          path: results/dsir4/grid896_cross_host_v0_1/receipts
+          merge-multiple: true
+
+      - name: Apply frozen aggregate classifier
+        id: classify
+        continue-on-error: true
+        run: |
+          python scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_1.py aggregate \
+            --receipts-root results/dsir4/grid896_cross_host_v0_1/receipts \
+            --decision results/dsir4/grid896_cross_host_v0_1/decision.json
+
+      - name: Upload frozen decision artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: grid896-cross-host-decision-v0-1
+          path: results/dsir4/grid896_cross_host_v0_1/decision.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Reflect classifier in workflow conclusion without changing it
+        if: ${{ always() }}
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('results/dsir4/grid896_cross_host_v0_1/decision.json')
+          if not p.is_file():
+              raise SystemExit('missing frozen decision artifact')
+          classification = json.loads(p.read_text(encoding='utf-8'))['classification']
+          print(classification)
+          raise SystemExit(0 if classification == 'PASS_SHARED_GRID896_CONTENT_ADDRESSING_CROSS_HOST' else 1)
+          PY
