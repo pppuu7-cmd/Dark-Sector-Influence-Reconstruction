@@ -16,35 +16,37 @@ Frozen cross-host GRID896 design remains: prereg `903c80709439cb790bd41316029b21
 
 Implementations V0.1–V0.5 remain terminal `INVALID_IMPLEMENTATION` and immutable.
 
-## Implementation successor V0.6 — exact-byte promotion complete; registry confirmation required
+## Implementation successor V0.6 — registry identity now positively bound
 
 Exact frozen identities:
-- executor `scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_6.py`, blob `eae9eee7ae6a1424bcac67279663a2c8ddd3ebf9`;
-- workflow candidate `docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml`, blob `832f0491421619579c2a1d77ba9ca339cb4898ac`;
+- executor blob `eae9eee7ae6a1424bcac67279663a2c8ddd3ebf9`;
+- active workflow path `.github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml`;
+- active workflow blob `832f0491421619579c2a1d77ba9ca339cb4898ac`;
 - implementation manifest blob `e71d2c92a56555ffaea59a08c80d8f073c4b48da`;
-- terminal static confirmation blob `6cc317eb359a820bc1ecb3c657fc33b46a7d152b`, verdict `CONFIRMED_SCOPED` for exact-byte promotion only.
+- terminal static confirmation blob `6cc317eb359a820bc1ecb3c657fc33b46a7d152b`, verdict `CONFIRMED_SCOPED` for exact-byte promotion only;
+- post-promotion qualification blob `9cc8f6ad8ed01821841afc84181933efc75fa44e`.
 
-Authorized promotion commit `3cd2ab71e490bc2ccbea0a8a8c3527d0e25c0a9d` copied the candidate byte-exactly to `.github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml`. Current active workflow blob is exactly `832f0491421619579c2a1d77ba9ca339cb4898ac`. Non-authority promotion record blob is `2fa6386b7cfae6413be377162ccbf05d40904a74`.
+Authorized promotion commit `3cd2ab71e490bc2ccbea0a8a8c3527d0e25c0a9d` copied the audited workflow byte-exactly into `.github/workflows`. The prior registry-read blocker was real for the connected external interface but has now been closed by a separately frozen read-only capture transport rather than by inference or by launching V0.6.
 
-Independent post-promotion audit is durable: `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_6_POST_PROMOTION_IDENTITY_AUDIT_V0_1.md`, blob `2a7408a9edb9a55b4ce995a5fcab1f42a57f59a8`, commit `d4b867329f160c05f35b3bdc0fb5702204daeb1c`.
+Capture transport identities: workflow blob `fe41439ee05166d71df1211238ca7543afb75add`; scoped capture authority blob `25450e19e4948131db0c18ddb2406205c020b1dc`; static Critic blob `d024858233d9ad6530837c9ffd769d57b228bede`; marker blob `30c4e9cd477d47b7ac3425b15cd4b95aeb4a22a4`.
 
-Terminal qualification `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_6_POST_PROMOTION_IDENTITY_QUALIFICATION_V0_1.json`, blob `9cc8f6ad8ed01821841afc84181933efc75fa44e`, has verdict `REQUIRES_CONFIRMATION_GATE` and classification `V0_6_POST_PROMOTION_REPOSITORY_IDENTITY_CONFIRMED_BUT_GITHUB_WORKFLOW_REGISTRY_ID_PATH_STATE_NOT_DURABLY_BOUND`.
+Marker-only main commit `e8c337725599721bf63fc1f5e081cbf7b62bd3db` launched exactly one capture run `35247378034`, run #1 / attempt #1. It completed success on job `105290901385`. Runtime permissions were `Actions: read`, `Contents: read`, `Metadata: read`; no CLASS solve, scientific response or covariance read occurred.
 
-Repository-level promotion provenance survived audit: prior authorization existed; promotion commit added only the active workflow; active blob equals audited candidate; executor and implementation-manifest identities are unchanged; future execution-authority and launch-marker paths remain absent; exact promotion-head run count is zero; no partial substantive values were used.
+Sole artifact `10508901859` has outer SHA256 `fd3d1d4fcf294106507d446e44dfb3d499559d8e1adcdacd3abb4575df8cddb7`. Independent download and re-hash reproduced the same outer digest. Internal independently recomputed hashes: receipt `38bb804f124b906b66f491080b9e8ea4989466f650dd0d2e8a36827848e0fd02`; raw registry `9c053163ee426ef01237f99172c2e502d2c5c2e9856f31f4422b15ed82eb99a3`; raw target-runs `a2790a384d7d281e7395679000c35d27768d89dbd7052f725b8f4688beb59915`.
 
-The mandatory positive GitHub Actions workflow registry identity remains unbound in durable evidence. The promotion record intentionally stores `github_assigned_workflow_id: null`, `registry_path: null`, `registry_state: null`. Zero run history proves non-execution but does not prove a positive workflow ID, exact registry path and `active` state. Do not infer or guess these fields and do not launch the workflow to discover them.
+The raw GitHub Actions registry object positively binds:
+- workflow ID `360576929`;
+- exact canonical path `.github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml`;
+- state `active`;
+- created/updated `2026-09-17T14:04:01.000Z`.
 
-## Read-only registry-capture blocker — independently confirmed
+At capture, `/actions/workflows/360576929/runs` returned `total_count: 0`. After capture, an independent fresh latest-100 Actions search still contained zero canonical V0.6 diagnostic path matches. V0.6 execution authority and V0.6 launch marker remained absent.
 
-Researcher blocker audit `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_GRID896_V0_6_WORKFLOW_REGISTRY_CAPTURE_BLOCKER_AUDIT_V0_1.md`, Git blob `8781ab97917044038e953176a8e7e876f2a4854b`, classified `BLOCKED_READ_ONLY_GITHUB_WORKFLOW_REGISTRY_INTERFACE_UNAVAILABLE` after attempting the exact authorized read-only registry capture without triggering any workflow.
+Durable capture result: `docs/dsir4/results/LAYERB_BETA_V0_26_R1_V0_6_WORKFLOW_REGISTRY_CAPTURE_RESULT_V0_1.json`, blob `033c9df4fde1feecd6cd1a75e1feb9abb9dc3013`, classification `PASS_READ_ONLY_V0_6_WORKFLOW_REGISTRY_CAPTURE`.
 
-Independent Funnel Auditor confirmation reproduced that operational limitation in the current environment: available GitHub reads support repository/branch/content/workflow-run/job/artifact data, but no workflow-registry item/collection read returning a positive workflow ID/path/state tuple is exposed; direct registry read is rejected by the connected interface. Durable audit: `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_GRID896_V0_6_REGISTRY_CAPTURE_BLOCKER_CONFIRMATION_AUDIT_V0_1.md`, commit `62a645fbcf61e2480dc4676fd53f79ec3a072104`. Terminal scoped confirmation: `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_GRID896_V0_6_REGISTRY_CAPTURE_BLOCKER_CONFIRMATION_V0_1.json`, verdict `CONFIRMED_SCOPED`, classification `READ_ONLY_GITHUB_WORKFLOW_REGISTRY_INTERFACE_BLOCKER_CONFIRMED_WITH_NO_GATE_ADVANCEMENT`.
+Independent terminal confirmation: `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_V0_6_WORKFLOW_REGISTRY_CAPTURE_RESULT_CONFIRMATION_V0_1.json`, blob `6c92403f487a4fe487a942e426930134c7c0b949`, verdict `CONFIRMED_SCOPED`, classification `V0_6_WORKFLOW_REGISTRY_POSITIVE_ID_PATH_ACTIVE_STATE_DURABLY_BOUND_AND_INDEPENDENTLY_CONFIRMED`.
 
-This confirms only the interface/provenance blocker and the no-gate-advancement interpretation. It does not establish that the registry entry is absent, disabled or inactive; no workflow ID/path/state was inferred or guessed. The prior terminal V0.6 post-promotion `REQUIRES_CONFIRMATION_GATE` remains binding.
-
-Fresh Actions checks during independent review: queued count `0`, in-progress count `0`, current reviewed Researcher head run count `0`, exact promotion-head run count `0`. Historical terminal-history run `35183519508` remains completed success with job `105080579651` success and sole artifact `10480539101` digest `sha256:0d61e9f90f03d875e8a67d99a7882530f44e5d6bd875d900c33391033c5fb329`. No V0.6 diagnostic run or artifact exists. Future execution-authority path and launch-marker path remain absent.
-
-Auditor handoff: `docs/dsir4/handoffs/DSIR_FUNNEL_AUDITOR_HANDOFF_V0_26_R1_GRID896_V0_6_REGISTRY_CAPTURE_BLOCKER_CONFIRMATION_V0_1.md`.
+This closes only the workflow-registry provenance gate. It does not establish the V0.6 diagnostic result, numerical response reproducibility, scientific/model validity or any physical dark-sector inference.
 
 ## Current authorization state
 
@@ -53,29 +55,29 @@ Auditor handoff: `docs/dsir4/handoffs/DSIR_FUNNEL_AUDITOR_HANDOFF_V0_26_R1_GRID8
 - exact V0.6 source: terminal static `CONFIRMED_SCOPED` for exact-byte promotion only;
 - exact-byte promotion: complete and byte-exact;
 - post-promotion repository identity: confirmed;
-- registry read-interface blocker: terminal `CONFIRMED_SCOPED` for the blocker only;
-- GitHub Actions workflow registry positive ID / exact path / `active` state: **required and unbound**;
-- execution-authority creation: **not authorized**;
-- launch-marker creation: **not authorized**;
-- diagnostic execution: **not authorized**;
+- GitHub Actions workflow registry positive ID `360576929` / exact path / `active` state: **durably bound and independently confirmed**;
+- zero prior V0.6 diagnostic history: **confirmed**;
+- separate V0.6 diagnostic execution-authority authoring: **may now be considered**;
+- V0.6 diagnostic execution authority: **not yet created / not in force**;
+- V0.6 launch-marker creation: **not authorized**;
+- V0.6 diagnostic execution: **not authorized**;
 - successor sentinel science: **not authorized**;
 - full107/downstream science: **not authorized**.
 
 ## Funnel position / interpretation ceiling
 
-`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 SENTINEL_INVALID -> CROSS-HOST GRID896 DESIGN CONFIRMED_SCOPED -> IMPLEMENTATIONS V0.1-V0.5 INVALID -> V0.6 STATIC IMPLEMENTATION CONFIRMED_SCOPED -> EXACT-BYTE PROMOTION COMPLETE -> POST-PROMOTION REPOSITORY IDENTITY CONFIRMED / REGISTRY ID-PATH-STATE UNBOUND -> REGISTRY READ-INTERFACE BLOCKER CONFIRMED_SCOPED -> EXECUTION AUTHORITY CLOSED -> LAUNCH CLOSED -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
+`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 SENTINEL_INVALID -> CROSS-HOST GRID896 DESIGN CONFIRMED_SCOPED -> IMPLEMENTATIONS V0.1-V0.5 INVALID -> V0.6 STATIC IMPLEMENTATION CONFIRMED_SCOPED -> EXACT-BYTE PROMOTION COMPLETE -> POST-PROMOTION REPOSITORY IDENTITY CONFIRMED -> REGISTRY ID 360576929 / EXACT PATH / ACTIVE STATE CONFIRMED -> ZERO PRIOR V0.6 RUN HISTORY CONFIRMED -> EXECUTION AUTHORITY AUTHORING GATE OPEN -> LAUNCH CLOSED -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
 
 Interpretation ceiling remains infrastructure/provenance/static implementation. Scientific effect remains `+0/+0`; numerical response reproducibility, exact-target/scientific criteria, covariance, statistical/model validity and physical dark-sector inference remain `NOT_EVALUATED`. No readiness/frontier percentage increase is authorized.
 
 ## Exact authorized next stage
 
-`CAPTURE_AND_INDEPENDENTLY_CONFIRM_READ_ONLY_GITHUB_ACTIONS_WORKFLOW_REGISTRY_ID_PATH_ACTIVE_STATE_FOR_EXACT_V0_6_CANONICAL_WORKFLOW_ONLY`.
+`AUTHOR_AND_INDEPENDENTLY_AUDIT_A_SEPARATE_V0_6_DIAGNOSTIC_EXECUTION_AUTHORITY_BOUND_TO_WORKFLOW_ID_360576929_EXACT_PATH_ACTIVE_BLOB_AND_ZERO_PRIOR_TARGET_HISTORY_ONLY`.
 
-Next admissible sequence:
-1. Obtain a read-only GitHub Actions workflow-registry record for `.github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml` without triggering the workflow.
-2. Persist raw or canonicalized registry evidence plus digest/provenance.
-3. Independently verify positive GitHub-assigned workflow ID, exact canonical path and state `active`.
-4. Reverify active blob `832f0491421619579c2a1d77ba9ca339cb4898ac`, static confirmation blob `6cc317eb359a820bc1ecb3c657fc33b46a7d152b`, zero V0.6 run history and continued absence of execution authority/launch marker.
-5. Only after a separate terminal confirmation may execution-authority authoring be considered.
+Required sequence:
+1. Author a separate execution-authority object binding workflow ID `360576929`, exact canonical path, active blob `832f0491421619579c2a1d77ba9ca339cb4898ac`, static confirmation `6cc317eb359a820bc1ecb3c657fc33b46a7d152b`, capture result `033c9df4fde1feecd6cd1a75e1feb9abb9dc3013`, independent registry confirmation `6c92403f487a4fe487a942e426930134c7c0b949`, and zero prior target history.
+2. Authority ceiling must be exactly one first V0.6 diagnostic run, run #1 / attempt #1, infrastructure/provenance only; successor science/full107/downstream remain false.
+3. Independently static-audit that exact authority and recheck active workflow identity plus zero target history.
+4. Only a later, separate terminal gate may authorize a marker-only V0.6 diagnostic launch.
 
-Until then, do not create an execution authority or launch marker and do not run the diagnostic. Successor sentinel science, full107 and all downstream science remain closed.
+Do not create the V0.6 diagnostic launch marker before the new execution authority itself has passed independent review. Do not run successor science or full107.
