@@ -6,7 +6,7 @@ Updated: 2026-09-17. Scope: **DSIR only**. GitHub repository/Actions state, froz
 
 V0.25 remains terminal `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, effect `+0/+0`. V0.26 R1 remains frozen: 107 DES53+BOSS54 rows; alpha `3e-10`; beta exact-target `1e-12`; scientific strict `<1e-3`; technical strict `<1e-5`; requested-node binding `<=1e-12`; full replay 738 CLASS constructions. Full107 and all downstream science remain closed.
 
-Never rerun consumed identities: V0.2 `35181812498`; V0.6 `35251121404`; V0.7 static qualification `35253515074`; completed one-shot captures.
+Never rerun consumed identities: V0.2 `35181812498`; V0.6 `35251121404`; V0.7 static qualification `35253515074`; V0.8 repair-primitive qualification `35264388526`; completed one-shot captures.
 
 ## V0.6 terminal state
 
@@ -61,19 +61,46 @@ Do not overwrite historical V0.1.
 
 Historical V0.22 run `34875798025` had 32/32 eligible = `10 NATIVE_AVX512_ACTIVE + 22 NATIVE_AVX512_INACTIVE`. V0.2 later retained exactly 10 ACTIVE lanes while others died after fingerprinting at native GRID896 materialization. This is response-blind evidence that an exact corrected content-addressed producer could restore the censored INACTIVE class. It is not a science result or authorization.
 
+## V0.8 repair-primitive qualification — terminal infrastructure failure
+
+A scoped authority and independent static Critic authorized exactly one response-blind repair-primitive qualification, run #1 / attempt #1, with no CLASS, scientific response, covariance, diagnostic promotion, or diagnostic execution.
+
+Marker-only launch commit `74a2a3de41da0d18be1642f955850525f2e7f786` triggered workflow ID `360747162`, run `35264388526`, job `105347779372`. The exact-identity verification step passed; the response-blind qualification computation ran and produced its result; immutable artifact upload passed; only the final classifier-reflection step failed.
+
+Frozen artifact `10516021621`, name `layerb-beta-v026-r1-grid896-v08-repair-primitive-qualification-v0-1`, outer digest `sha256:7e64635f2d03d91c63e73b2d76d1f721b0105535a5c6af4d4792f59320d1d001`, contains `result.json` SHA256 `6a3c62aeeee4191c163bbbd17f26e3f50c5d385fcedb48f0e3473b77afff7093` with:
+
+- classification `INVALID_V0_8_REPAIR_PRIMITIVE_QUALIFICATION`;
+- error `HTTPError: HTTP Error 401: Server failed to authenticate the request...`;
+- `class_solver_invoked=false`;
+- `scientific_response_read=false`;
+- `covariance_read=false`;
+- effect `+0/+0`;
+- interpretation ceiling `INFRASTRUCTURE_PROVENANCE_ONLY`.
+
+Because the qualification code performs all corrected-canonical local identity checks before the first network artifact request, reaching the HTTP 401 establishes that those local checks reached the network phase without exception. It does **not** complete qualification of the repair pair.
+
+The historical source artifact remains present and independently retrievable: artifact `10508904186` downloaded with outer SHA256 exactly `b8897d2b5ff336be7f472bca740f1bc4b82e301b7b6ca0381127627a71050ffd` and contains sole member `R01.json`. Therefore this V0.8 result is classified narrowly as `INFRASTRUCTURE_FAILURE_V0_8_QUALIFICATION_HTTP_AUTH`, not as canonical-repair falsification, numerical reproducibility failure, or science failure.
+
+Terminal decision authority: `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_GRID896_V0_8_REPAIR_PRIMITIVE_QUALIFICATION_TERMINAL_V0_1.json`.
+
+V0.8 qualification identity is consumed and must not be rerun.
+
 ## Current authorization state
 
 - V0.6: terminal `INVALID_DIAGNOSTIC_PROVENANCE`, rerun false.
 - V0.7 static qualification: terminal `INVALID_STATIC_QUALIFICATION`, rerun false.
 - canonical V0.1 single-hex deletion: independently confirmed; old final-LF interpretation superseded.
 - corrected canonical V0.2 repair specification: frozen.
-- V0.8 design/static qualification: **authorized**.
-- V0.8 promotion/execution: **closed**.
+- V0.8 repair-primitive qualification: terminal `INFRASTRUCTURE_FAILURE_V0_8_QUALIFICATION_HTTP_AUTH`, rerun false.
+- same V0.8 diagnostic promotion/execution: **closed**.
+- one new prospective transport-qualification successor may be authored, but its execution requires a separate prospective scoped authority/audit.
 - successor sentinel science: **closed**.
 - full107/downstream: **closed**.
 
 ## Exact next stage
 
-`DESIGN_NEW_V0_8_IDENTITY_FROM_IMMUTABLE_V0_6_BASE_PLUS_EXACT_CANONICAL_V0_2_RECONSTRUCTION_AND_ARTIFACT_DOWNLOAD_TRANSPORT_REPAIR;_RUN_ONE_RESPONSE_BLIND_STATIC_QUALIFICATION_ONLY;_NO_PROMOTION_OR_EXECUTION_BEFORE_INDEPENDENT_PASS_SCOPED`.
+`AUTHOR_ONE_NEW_RESPONSE_BLIND_TRANSPORT_QUALIFICATION_IDENTITY_WITH_EXPLICIT_HTTP_AUTH_REDIRECT_DEFECT_HYPOTHESIS;_SEPARATE_METADATA_REQUEST_FROM_ARCHIVE_REDIRECT_DOWNLOAD;_DO_NOT_FORWARD_REPOSITORY_AUTHORIZATION_TO_REDIRECTED_STORAGE_HOST;_FREEZE_EXACT_ARTIFACT_ID_DIGEST_MEMBER_AND_NO_SCIENCE_CRITERIA;_INDEPENDENTLY_AUDIT_BEFORE_ONE_SHOT_EXECUTION;_NO_V0_8_DIAGNOSTIC_PROMOTION_OR_EXECUTION_YET`.
 
-V0.8 should be narrower than V0.7: keep V0.6 parser/guards, reconstruct corrected source bytes from immutable V0.1 + exact one-byte repair and verify the corrected SHA256/Git blob, and patch only artifact ZIP request media type/redirect compatibility. Preserve 32 lanes, payload, negative control, consumer roundtrip and classifier semantics. Scientific effect remains `+0/+0`; science remains `NOT_EVALUATED`.
+The successor repair criterion is falsifiable and narrow: it must retrieve historical artifact `10508904186`, verify outer ZIP SHA256 `b8897d2b5ff336be7f472bca740f1bc4b82e301b7b6ca0381127627a71050ffd`, require sole member `R01.json`, and confirm the receipt did not invoke CLASS or read scientific response. Any authentication, redirect, digest, member, or provenance mismatch is terminal FAIL for that successor.
+
+Scientific effect remains `+0/+0`; science remains `NOT_EVALUATED`.
