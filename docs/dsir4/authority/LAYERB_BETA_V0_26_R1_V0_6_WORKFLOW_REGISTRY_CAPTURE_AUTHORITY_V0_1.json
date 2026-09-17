@@ -1,0 +1,22 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_V0_6_WORKFLOW_REGISTRY_CAPTURE_AUTHORITY_V0_1",
+  "status": "TERMINAL_READ_ONLY_REGISTRY_CAPTURE_AUTHORITY",
+  "verdict": "AUTHORIZED_SCOPED_READ_ONLY_CAPTURE",
+  "effect": "+0/+0",
+  "governing_qualification_git_blob_sha1": "9cc8f6ad8ed01821841afc84181933efc75fa44e",
+  "blocker_confirmation_git_blob_sha1": "2da003370cbf53590e7ffcb8c986cb6d2afeed1f",
+  "target_workflow_filename": "layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml",
+  "target_workflow_path": ".github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml",
+  "target_active_workflow_git_blob_sha1": "832f0491421619579c2a1d77ba9ca339cb4898ac",
+  "capture_workflow_git_blob_sha1": "fe41439ee05166d71df1211238ca7543afb75add",
+  "capture_execution_authorized": true,
+  "authorized_launch_count": 1,
+  "authorized_run_number": 1,
+  "authorized_run_attempt": 1,
+  "rerun_authorized": false,
+  "v0_6_diagnostic_execution_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authorized_next_stage_after_terminal_capture_pass": "INDEPENDENT_CONFIRMATION_OF_CAPTURED_V0_6_WORKFLOW_REGISTRY_ID_PATH_ACTIVE_STATE_ONLY"
+}
