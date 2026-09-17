@@ -1,0 +1,73 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_V0_6_WORKFLOW_REGISTRY_CAPTURE_RESULT_CONFIRMATION_V0_1",
+  "status": "TERMINAL_INDEPENDENT_AUDIT_CONFIRMATION",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "verdict": "CONFIRMED_SCOPED",
+  "classification": "V0_6_WORKFLOW_REGISTRY_POSITIVE_ID_PATH_ACTIVE_STATE_DURABLY_BOUND_AND_INDEPENDENTLY_CONFIRMED",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_AND_STATIC_IMPLEMENTATION_ONLY",
+  "reviewed_result": {
+    "path": "docs/dsir4/results/LAYERB_BETA_V0_26_R1_V0_6_WORKFLOW_REGISTRY_CAPTURE_RESULT_V0_1.json",
+    "git_blob_sha1": "033c9df4fde1feecd6cd1a75e1feb9abb9dc3013",
+    "classification": "PASS_READ_ONLY_V0_6_WORKFLOW_REGISTRY_CAPTURE"
+  },
+  "independently_verified_capture": {
+    "run_id": 35247378034,
+    "run_number": 1,
+    "run_attempt": 1,
+    "head_sha": "e8c337725599721bf63fc1f5e081cbf7b62bd3db",
+    "job_id": 105290901385,
+    "run_conclusion_success": true,
+    "all_substantive_job_steps_success": true,
+    "github_token_actions_permission_read": true,
+    "github_token_contents_permission_read": true,
+    "artifact_id": 10508901859,
+    "artifact_outer_sha256_from_github": "fd3d1d4fcf294106507d446e44dfb3d499559d8e1adcdacd3abb4575df8cddb7",
+    "artifact_outer_sha256_recomputed_independently": "fd3d1d4fcf294106507d446e44dfb3d499559d8e1adcdacd3abb4575df8cddb7",
+    "capture_receipt_sha256_recomputed_independently": "38bb804f124b906b66f491080b9e8ea4989466f650dd0d2e8a36827848e0fd02",
+    "raw_registry_sha256_recomputed_independently": "9c053163ee426ef01237f99172c2e502d2c5c2e9856f31f4422b15ed82eb99a3",
+    "raw_target_runs_sha256_recomputed_independently": "a2790a384d7d281e7395679000c35d27768d89dbd7052f725b8f4688beb59915"
+  },
+  "independently_verified_registry_binding": {
+    "positive_workflow_id": 360576929,
+    "exact_canonical_path": ".github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml",
+    "registry_state": "active",
+    "target_workflow_run_count_at_capture": 0,
+    "target_workflow_run_path_matches_in_fresh_latest_100_after_capture": 0
+  },
+  "current_frozen_repository_bindings": {
+    "reviewed_main_sha": "e8c337725599721bf63fc1f5e081cbf7b62bd3db",
+    "target_active_workflow_git_blob_sha1": "832f0491421619579c2a1d77ba9ca339cb4898ac",
+    "terminal_static_confirmation_git_blob_sha1": "6cc317eb359a820bc1ecb3c657fc33b46a7d152b",
+    "governing_post_promotion_qualification_git_blob_sha1": "9cc8f6ad8ed01821841afc84181933efc75fa44e",
+    "capture_workflow_git_blob_sha1": "fe41439ee05166d71df1211238ca7543afb75add",
+    "capture_authority_git_blob_sha1": "25450e19e4948131db0c18ddb2406205c020b1dc",
+    "capture_static_critic_git_blob_sha1": "d024858233d9ad6530837c9ffd769d57b228bede",
+    "capture_marker_git_blob_sha1": "30c4e9cd477d47b7ac3425b15cd4b95aeb4a22a4",
+    "v0_6_execution_authority_absent": true,
+    "v0_6_diagnostic_launch_marker_absent": true
+  },
+  "gate_state": {
+    "read_only_registry_confirmation_gate_satisfied": true,
+    "positive_registry_id_bound": true,
+    "exact_registry_path_bound": true,
+    "registry_active_state_bound": true,
+    "zero_v0_6_target_history_confirmed": true,
+    "separate_v0_6_execution_authority_authoring_may_be_considered": true
+  },
+  "scope_limits": {
+    "v0_6_diagnostic_pass_or_fail_established": false,
+    "numerical_reproducibility_established": false,
+    "scientific_result_established": false,
+    "statistical_model_validity_established": false,
+    "physical_dark_sector_inference_established": false
+  },
+  "v0_6_diagnostic_execution_authorized": false,
+  "v0_6_diagnostic_launch_marker_creation_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authorized_next_stage": "AUTHOR_AND_INDEPENDENTLY_AUDIT_A_SEPARATE_V0_6_DIAGNOSTIC_EXECUTION_AUTHORITY_BOUND_TO_WORKFLOW_ID_360576929_EXACT_PATH_ACTIVE_BLOB_AND_ZERO_PRIOR_TARGET_HISTORY_ONLY",
+  "next_admissible_gate": "SEPARATE_EXECUTION_AUTHORITY_MUST_PREEXIST_AND_PASS_INDEPENDENT_STATIC_REVIEW_BEFORE_ANY_V0_6_DIAGNOSTIC_LAUNCH_MARKER_MAY_BE_CONSIDERED",
+  "token": "CONFIRMED_SCOPED_LAYERB_BETA_V0_26_R1_GRID896_V0_6_WORKFLOW_REGISTRY_BINDING_PLUS_0_PLUS_0"
+}

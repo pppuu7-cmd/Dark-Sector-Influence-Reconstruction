@@ -1,0 +1,72 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_V0_6_WORKFLOW_REGISTRY_CAPTURE_RESULT_V0_1",
+  "status": "TERMINAL_READ_ONLY_WORKFLOW_REGISTRY_CAPTURE_RESULT",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "classification": "PASS_READ_ONLY_V0_6_WORKFLOW_REGISTRY_CAPTURE",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_AND_STATIC_IMPLEMENTATION_ONLY",
+  "capture_run": {
+    "run_id": 35247378034,
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "head_sha": "e8c337725599721bf63fc1f5e081cbf7b62bd3db",
+    "first_parent_sha": "766e5c6662a4ff1a9b1288b6902c16b9882d245d",
+    "capture_workflow_id": 360694046,
+    "job_id": 105290901385,
+    "conclusion": "success"
+  },
+  "artifact": {
+    "artifact_id": 10508901859,
+    "name": "layerb-beta-v026-r1-v06-workflow-registry-capture-v0-1",
+    "size_in_bytes": 1946,
+    "outer_sha256": "fd3d1d4fcf294106507d446e44dfb3d499559d8e1adcdacd3abb4575df8cddb7",
+    "capture_receipt_sha256": "38bb804f124b906b66f491080b9e8ea4989466f650dd0d2e8a36827848e0fd02",
+    "raw_workflow_registry_sha256": "9c053163ee426ef01237f99172c2e502d2c5c2e9856f31f4422b15ed82eb99a3",
+    "raw_target_workflow_runs_sha256": "a2790a384d7d281e7395679000c35d27768d89dbd7052f725b8f4688beb59915"
+  },
+  "captured_target_registry_record": {
+    "workflow_id": 360576929,
+    "name": "DSIR Layer-B beta v0.26 R1 cross-host GRID896 producer identity diagnostic v0.6",
+    "path": ".github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml",
+    "state": "active",
+    "created_at": "2026-09-17T14:04:01.000Z",
+    "updated_at": "2026-09-17T14:04:01.000Z"
+  },
+  "target_history_at_capture": {
+    "total_count": 0,
+    "workflow_runs": []
+  },
+  "frozen_identity": {
+    "target_active_workflow_git_blob_sha1": "832f0491421619579c2a1d77ba9ca339cb4898ac",
+    "terminal_static_confirmation_git_blob_sha1": "6cc317eb359a820bc1ecb3c657fc33b46a7d152b",
+    "governing_post_promotion_qualification_git_blob_sha1": "9cc8f6ad8ed01821841afc84181933efc75fa44e",
+    "capture_workflow_git_blob_sha1": "fe41439ee05166d71df1211238ca7543afb75add",
+    "capture_authority_git_blob_sha1": "25450e19e4948131db0c18ddb2406205c020b1dc",
+    "capture_static_critic_git_blob_sha1": "d024858233d9ad6530837c9ffd769d57b228bede",
+    "capture_marker_git_blob_sha1": "30c4e9cd477d47b7ac3425b15cd4b95aeb4a22a4"
+  },
+  "runtime_scope": {
+    "github_token_actions_permission": "read",
+    "github_token_contents_permission": "read",
+    "class_solver_invoked": false,
+    "scientific_response_read": false,
+    "covariance_read": false,
+    "v0_6_execution_authority_absent_at_capture": true,
+    "v0_6_launch_marker_absent_at_capture": true
+  },
+  "scope_limits": {
+    "v0_6_diagnostic_pass_or_fail_established": false,
+    "numerical_reproducibility_established": false,
+    "scientific_result_established": false,
+    "statistical_model_validity_established": false,
+    "physical_dark_sector_inference_established": false
+  },
+  "v0_6_diagnostic_execution_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authorized_next_stage": "INDEPENDENTLY_CONFIRM_CAPTURE_ARTIFACT_REGISTRY_TUPLE_ZERO_TARGET_HISTORY_AND_CURRENT_FROZEN_REPOSITORY_BINDINGS_ONLY",
+  "next_admissible_gate": "AFTER_INDEPENDENT_CONFIRMATION_REVERIFY_ACTIVE_WORKFLOW_BLOB_STATIC_CONFIRMATION_ZERO_V0_6_RUN_HISTORY_AND_ABSENCE_OF_V0_6_EXECUTION_AUTHORITY_AND_LAUNCH_MARKER;_ONLY_THEN_CONSIDER_SEPARATE_EXECUTION_AUTHORITY_AUTHORING",
+  "token": "PASS_READ_ONLY_LAYERB_BETA_V0_26_R1_GRID896_V0_6_WORKFLOW_REGISTRY_CAPTURE_PLUS_0_PLUS_0"
+}
