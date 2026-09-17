@@ -123,9 +123,11 @@ jobs:
           merge-multiple: true
 
       - name: Apply frozen aggregate classifier
+        if: ${{ always() }}
         id: classify
         continue-on-error: true
         run: |
+          mkdir -p results/dsir4/grid896_cross_host_v0_1/receipts
           python scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_1.py aggregate \
             --receipts-root results/dsir4/grid896_cross_host_v0_1/receipts \
             --decision results/dsir4/grid896_cross_host_v0_1/decision.json
