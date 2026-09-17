@@ -1,0 +1,22 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_LAUNCH_V0_6",
+  "status": "AUTHORIZED_ONE_SHOT_LAUNCH_MARKER",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "implementation_authority_git_blob_sha1": "eb27b62d809ac26611ba6b79bc1100b3dd1d9f0b",
+  "execution_authority_confirmation_git_blob_sha1": "9171ce6e562846040ce8f0e9c4776edbd4b37bd0",
+  "executor_git_blob_sha1": "eae9eee7ae6a1424bcac67279663a2c8ddd3ebf9",
+  "workflow_candidate_git_blob_sha1": "832f0491421619579c2a1d77ba9ca339cb4898ac",
+  "active_workflow_git_blob_sha1": "832f0491421619579c2a1d77ba9ca339cb4898ac",
+  "promoted_workflow_path": ".github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml",
+  "promoted_workflow_id": 360576929,
+  "authorized_run_number": 1,
+  "authorized_run_attempt": 1,
+  "lane_count": 32,
+  "class_solver_invocation_authorized": false,
+  "scientific_response_read_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "same_identity_rerun_authorized": false
+}
