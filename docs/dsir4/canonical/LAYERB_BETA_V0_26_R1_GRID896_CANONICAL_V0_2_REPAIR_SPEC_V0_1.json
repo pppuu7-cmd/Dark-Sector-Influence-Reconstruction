@@ -1,0 +1,55 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_GRID896_CANONICAL_V0_2_REPAIR_SPEC_V0_1",
+  "status": "FROZEN_CORRECTED_CANONICAL_SPECIFICATION",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_ONLY",
+  "origin": {
+    "run_id": 34954905127,
+    "artifact_id": 10390997654,
+    "artifact_outer_sha256": "5cd19512bef3d9795957fb8105361e4006123ae59794bc94e2e5ded5722436ff",
+    "identity_json_member": "v026_r1_static_identity.json",
+    "identity_json_sha256": "3a9d8375119068063ddcb4ac37d8f3da92444261b0fad356a228ccaedf6292d7",
+    "node_u64hex_count": 897,
+    "node_u64hex_lines_sha256": "e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4",
+    "payload_sha256": "8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d"
+  },
+  "historical_corrupt_v0_1": {
+    "path": "docs/dsir4/canonical/LAYERB_BETA_V0_26_R1_GRID896_U64HEX_V0_1.txt",
+    "git_blob_sha1": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+    "byte_length": 15248,
+    "sha256": "f84d6fa7cf9e5b8014176fd480062b27aaf97947d4a5211c7fbb5c69f93634ba",
+    "endswith_lf": true,
+    "line_count": 897,
+    "all_lines_lowercase_hex16": false,
+    "malformed_line_number_1_based": 776,
+    "malformed_token": "3f9c8a9eea3c9c8"
+  },
+  "exact_repair": {
+    "operation": "INSERT_ONE_ASCII_BYTE_INTO_HISTORICAL_V0_1_BYTES",
+    "zero_based_byte_offset": 13182,
+    "insert_ascii": "e",
+    "line_number_1_based": 776,
+    "column_1_based": 8,
+    "corrected_token": "3f9c8a9eeea3c9c8",
+    "single_byte_only": true
+  },
+  "corrected_v0_2_identity": {
+    "serialization": "897_LOWERCASE_HEX16_LINES_WITH_ONE_FINAL_LF",
+    "byte_length": 15249,
+    "sha256": "e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4",
+    "git_blob_sha1": "ded43b233a71a631809111514c9dd35d0419af2d",
+    "line_count": 897,
+    "all_lines_lowercase_hex16": true,
+    "payload_byte_length": 7176,
+    "payload_sha256": "8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d",
+    "negative_control_sha256": "e94e2e05fc0cc1fcbc9bd710a24b8ef231fab350cd6247ea3039b913adfba800"
+  },
+  "provenance_rule": "A_SUCCESSOR_MUST_RECONSTRUCT_THE_CORRECTED_BYTES_FROM_THE_IMMUTABLE_V0_1_OBJECT_PLUS_THIS_EXACT_ONE_BYTE_REPAIR_AND_VERIFY_BOTH_CORRECTED_SHA256_AND_GIT_BLOB_BEFORE_PAYLOAD_USE",
+  "historical_v0_1_must_not_be_modified": true,
+  "v0_8_execution_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "token": "FROZEN_LAYERB_BETA_V0_26_R1_GRID896_CANONICAL_V0_2_REPAIR_SPEC_PLUS_0_PLUS_0"
+}
