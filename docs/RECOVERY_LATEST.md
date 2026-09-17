@@ -36,6 +36,16 @@ The mandatory positive GitHub Actions workflow registry identity remains unbound
 
 Auditor handoff: `docs/dsir4/handoffs/DSIR_FUNNEL_AUDITOR_HANDOFF_V0_26_R1_GRID896_V0_6_POST_PROMOTION_IDENTITY_V0_1.md`, commit `2563f9c99aadd324287d54a47c3d53b6eea59296`.
 
+## Latest read-only registry-capture attempt — blocked by available interface
+
+Researcher blocker audit: `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_GRID896_V0_6_WORKFLOW_REGISTRY_CAPTURE_BLOCKER_AUDIT_V0_1.md`, commit `31def483654b279e09e5cc0db59a800ee830438c`.
+
+A read-only registry capture was attempted without triggering any workflow. The connected GitHub interface available in this environment supports repository/branch/content/workflow-run/job/artifact reads but does not expose the GitHub Actions workflow-registry collection/item read required to obtain a positive workflow ID/path/state tuple; generic reads reject `actions/workflows` registry resources. Classification: `BLOCKED_READ_ONLY_GITHUB_WORKFLOW_REGISTRY_INTERFACE_UNAVAILABLE`.
+
+This is an operational provenance blocker only. It is not evidence that the registry entry is absent, disabled or malformed. No ID/path/state value was inferred or guessed. Active V0.6 blob remains `832f0491421619579c2a1d77ba9ca339cb4898ac`; future execution-authority and launch-marker paths remain absent; queued and in-progress Actions counts remain zero; no V0.6 run exists. Historical V0.13 run `34773514342` was rechecked and remains terminal success with decision artifact `10322573705` digest `sha256:b04db83d530c36e03f2b80ad33fb4be80747817bd08cb2b001d5c8c6375fd202`.
+
+The scientific/authorization state does not advance. The exact authorized next stage remains the same positive read-only registry capture and independent confirmation. No launch may be used as a discovery mechanism.
+
 ## Current authorization state
 
 - frozen cross-host design: terminal `CONFIRMED_SCOPED`;
@@ -52,7 +62,7 @@ Auditor handoff: `docs/dsir4/handoffs/DSIR_FUNNEL_AUDITOR_HANDOFF_V0_26_R1_GRID8
 
 ## Funnel position / interpretation ceiling
 
-`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 SENTINEL_INVALID -> CROSS-HOST GRID896 DESIGN CONFIRMED_SCOPED -> IMPLEMENTATIONS V0.1-V0.5 INVALID -> V0.6 STATIC IMPLEMENTATION CONFIRMED_SCOPED -> EXACT-BYTE PROMOTION COMPLETE -> POST-PROMOTION REPOSITORY IDENTITY CONFIRMED / REGISTRY ID-PATH-STATE UNBOUND -> EXECUTION AUTHORITY CLOSED -> LAUNCH CLOSED -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
+`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 SENTINEL_INVALID -> CROSS-HOST GRID896 DESIGN CONFIRMED_SCOPED -> IMPLEMENTATIONS V0.1-V0.5 INVALID -> V0.6 STATIC IMPLEMENTATION CONFIRMED_SCOPED -> EXACT-BYTE PROMOTION COMPLETE -> POST-PROMOTION REPOSITORY IDENTITY CONFIRMED / REGISTRY ID-PATH-STATE UNBOUND / READ-INTERFACE BLOCKED -> EXECUTION AUTHORITY CLOSED -> LAUNCH CLOSED -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
 
 Interpretation ceiling remains infrastructure/provenance/static implementation. Scientific effect remains `+0/+0`; numerical response reproducibility, exact-target/scientific criteria, covariance, statistical/model validity and physical dark-sector inference remain `NOT_EVALUATED`. No readiness/frontier percentage increase is authorized.
 
