@@ -1,0 +1,77 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_INDEPENDENT_RESULT_CRITIC_V0_1",
+  "status": "TERMINAL_INDEPENDENT_CRITIC",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "experiment_id": "LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_SCIENCE_V0_1",
+  "execution_nonce": "DSIR-V026R1-SUCCESSOR-20260917-A1-8B7F56D2",
+  "target_run": {
+    "run_id": 35174721773,
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "head_sha": "62406eb1b7de748850d2a4fbb94cb0634dddaca8",
+    "conclusion": "failure"
+  },
+  "terminal_auditor": {
+    "run_id": 35174995723,
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "workflow_run",
+    "conclusion": "success",
+    "artifact_id": 10477494072,
+    "artifact_zip_sha256": "8e7ab1f27b5815350ba4cc5f0a54dbb357a3ff6036a556f6eea477bbe744cf4f",
+    "receipt_sha256": "3e47870d1985d05da641e38b835e9e0daf55650c8f7f9d50da9020136b2f8b12"
+  },
+  "decision_artifact": {
+    "artifact_id": 10478371567,
+    "artifact_zip_sha256": "78a76057b52efb972e5b612ce67273cbb4557cefc5a73ac4f6fb15e8ba250843",
+    "sentinel_decision_sha256": "bbee0208d5205a252923b7fa8acd3d7c8d1b9c3ed948e13761c5612ee2070dd1",
+    "producer_classification": "SENTINEL_INVALID",
+    "eligible_lane_count": 0,
+    "candidate_lane_count": 0,
+    "science_gate_opened": false,
+    "covariance_read": false,
+    "relation_null_read": false,
+    "nuisance_read": false,
+    "whitening_read": false,
+    "global_65537_launched": false,
+    "full_107_row_execution_authorized": false
+  },
+  "raw_lane_reconstruction": {
+    "authorization_gate_passed": true,
+    "response_blind_plan_materialization_passed": true,
+    "class_build_passed_before_lane_failure": true,
+    "sentinel_fingerprint_passed_before_failure": true,
+    "common_first_exception": "RuntimeError: GRID896 binary identity mismatch",
+    "exception_location": "ci/layerb_beta_v026_r1_sentinel_v0_1.py reconstruct() before any CLASS scientific response solve",
+    "lane_operand_produced": false,
+    "scientific_response_observed": false,
+    "exact_target_response_observed": false,
+    "scientific_threshold_evaluable": false
+  },
+  "producer_terminal_receipt_review": {
+    "producer_PROVENANCE_VALIDITY": "PASS_SCOPED",
+    "producer_NUMERICAL_VALIDITY": "FAIL_SCOPED",
+    "producer_EXACT_TARGET_VALIDITY": "FAIL_SCOPED",
+    "producer_SCIENTIFIC_CRITERION": "FAIL_SCOPED",
+    "producer_sentinel_classification": "SENTINEL_INVALID",
+    "critic_finding": "CLASSIFIER_DEFECT_INVALID_COLLAPSED_INTO_FAIL",
+    "reason": "SENTINEL_INVALID with zero eligible lanes and no scientific response cannot support scientific or exact-target FAIL; frozen semantics require INVALID != FAIL"
+  },
+  "independent_verdicts": {
+    "PROVENANCE_VALIDITY": "PASS_SCOPED",
+    "EXECUTION_IMPLEMENTATION_VALIDITY": "INVALID",
+    "NUMERICAL_VALIDITY": "NOT_EVALUATED",
+    "EXACT_TARGET_VALIDITY": "NOT_EVALUATED",
+    "SCIENTIFIC_CRITERION": "NOT_EVALUATED",
+    "MODEL_STATISTICAL_INTERPRETATION": "NOT_AUTHORIZED_NOT_EVALUATED"
+  },
+  "terminal_classification": "INVALID_GRID896_BINARY_IDENTITY_PRE_SCIENCE",
+  "full_107_row_execution_authorized": false,
+  "rerun_same_experiment_authorized": false,
+  "same_nonce_second_attempt_authorized": false,
+  "next_admissible_action": "MINIMAL_NON_SCIENCE_GRID896_RUNTIME_IDENTITY_DISCRIMINATOR_ONLY",
+  "critic_verdict": "PASS_SCOPED",
+  "token": "PASS_LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_INDEPENDENT_RESULT_CRITIC_PLUS_0_PLUS_0"
+}
