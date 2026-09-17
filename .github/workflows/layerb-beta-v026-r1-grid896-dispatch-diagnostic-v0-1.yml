@@ -1,0 +1,59 @@
+name: layerb-beta-v026-r1-grid896-dispatch-diagnostic-v0-1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/activations/layerb-beta-v026-r1-grid896-dispatch-diagnostic-v0-1.txt'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: layerb-beta-v026-r1-grid896-dispatch-diagnostic-v0-1
+  cancel-in-progress: false
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+      - name: Verify response-blind diagnostic authority
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          p='docs/dsir4/authority/LAYERB_BETA_V0_26_R1_GRID896_DISPATCH_DIAGNOSTIC_AUTHORIZATION_V0_1.json'
+          a=json.load(open(p))
+          assert a['classification']=='AUTHORIZED_SCOPED_DIAGNOSTIC_ONLY'
+          assert a['science'] is False
+          assert a['class_solver_authorized'] is False
+          assert a['scientific_response_read_authorized'] is False
+          assert a['covariance_read_authorized'] is False
+          assert a['successor_run_35174721773_rerun_authorized'] is False
+          assert a['new_science_experiment_authorized'] is False
+          assert a['full_107_row_execution_authorized'] is False
+          print('GRID896_DIAGNOSTIC_AUTHORITY_PASS')
+          PY
+      - name: Install exact NumPy identity
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' >/dev/null
+      - name: Run native versus forced dispatch diagnostic
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          .venv/bin/python ci/layerb_beta_v026_r1_grid896_dispatch_diagnostic_v0_1.py --out safe/grid896_dispatch_diagnostic.json
+          sha256sum safe/grid896_dispatch_diagnostic.json > safe/grid896_dispatch_diagnostic.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-grid896-dispatch-diagnostic-v0-1
+          path: safe/grid896_dispatch_diagnostic.*
+          if-no-files-found: error
+          retention-days: 90
