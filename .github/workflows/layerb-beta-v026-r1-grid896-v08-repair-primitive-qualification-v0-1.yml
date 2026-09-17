@@ -1,0 +1,73 @@
+name: DSIR V0.26 R1 GRID896 V0.8 repair primitive qualification v0.1
+
+# Response-blind one-job qualification only. No 32-lane diagnostic, CLASS,
+# scientific response, covariance, or downstream science.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/dsir4/launch/LAYERB_BETA_V0_26_R1_GRID896_V0_8_REPAIR_PRIMITIVE_QUALIFICATION_V0_1.launch.json
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    name: Qualify corrected canonical reconstruction and artifact transport
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verify exact qualification and provenance objects
+        run: |
+          set -euo pipefail
+          test "$(git hash-object ci/layerb_beta_v026_r1_grid896_v0_8_repair_primitive_qualification.py)" = "b9dedf70a47f9c49a4d68b7fedc09667934ac7cc"
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_BETA_V0_26_R1_GRID896_U64HEX_V0_1.txt)" = "24fa61685ab45e42e3ab0d453f5cb223c247ced6"
+          test "$(git hash-object docs/dsir4/canonical/LAYERB_BETA_V0_26_R1_GRID896_CANONICAL_V0_2_REPAIR_SPEC_V0_1.json)" = "c3b3d2f5533d5c6c9c27b9922d58d0a32188be95"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_BETA_V0_26_R1_GRID896_CANONICAL_SINGLE_HEX_DELETION_CONFIRMATION_V0_1.json)" = "576db80ff1741d0b4ca03250417843fa372ebad3"
+
+      - name: Run response-blind V0.8 repair primitive qualification
+        id: qualify
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python ci/layerb_beta_v026_r1_grid896_v0_8_repair_primitive_qualification.py \
+            --output results/dsir4/grid896_v0_8_repair_primitive_qualification/result.json
+
+      - name: Upload immutable qualification result
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-grid896-v08-repair-primitive-qualification-v0-1
+          path: results/dsir4/grid896_v0_8_repair_primitive_qualification/result.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Reflect frozen qualification classification
+        if: ${{ always() }}
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('results/dsir4/grid896_v0_8_repair_primitive_qualification/result.json')
+          if not p.is_file():
+              raise SystemExit('missing V0.8 repair primitive qualification result')
+          d = json.loads(p.read_text(encoding='utf-8'))
+          print(d['classification'])
+          raise SystemExit(0 if d['classification'] == 'PASS_V0_8_REPAIR_PRIMITIVES_QUALIFIED' else 1)
+          PY
