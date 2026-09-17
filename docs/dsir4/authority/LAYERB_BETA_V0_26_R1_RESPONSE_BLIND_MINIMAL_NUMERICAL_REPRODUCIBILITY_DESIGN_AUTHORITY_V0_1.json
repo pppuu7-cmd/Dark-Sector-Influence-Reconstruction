@@ -1,0 +1,237 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_MINIMAL_NUMERICAL_REPRODUCIBILITY_DESIGN_AUTHORITY_V0_1",
+  "status": "PROSPECTIVE_DESIGN_ONLY_SCOPED_AUTHORITY",
+  "created_utc_date": "2026-09-17",
+  "effect": "+0/+0",
+  "interpretation_ceiling": "NUMERICAL_REPRODUCIBILITY_ONLY",
+  "execution_authorized": false,
+  "launch_marker_authorized": false,
+  "workflow_execution_authorized": false,
+  "implementation_execution_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "minimal_scientific_response_authorized": false,
+  "downstream_science_authorized": false,
+  "scientific_response_read_authorized": false,
+  "covariance_read_authorized": false,
+  "scientific_classifier_authorized": false,
+  "response_dependent_decision_authorized": false,
+  "upstream_population_terminal": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_PRODUCER_CROSS_HOST_POPULATION_VALIDITY_TERMINAL_V0_1.json",
+    "git_blob_sha1": "6ce9d30e36ea6627b21fcba1e0e886adfef89765",
+    "classification": "PASS_SCOPED_CORRECTED_PRODUCER_CROSS_HOST_POPULATION_VALID"
+  },
+  "upstream_population_runtime_critic": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_PRODUCER_CROSS_HOST_POPULATION_VALIDITY_RUNTIME_CRITIC_V0_1.json",
+    "git_blob_sha1": "4b990b4b55eed93a2b891470d616a8a133998ce1",
+    "verdict": "PASS_TERMINAL_CLOSURE"
+  },
+  "v0_25_exact_target_parent": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_25_PROVENANCE_CORRECTION_V0_1.json",
+    "git_blob_sha1": "20153418850f49d4c23f207787102161f0032d3c",
+    "classification": "FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED",
+    "primitive_response_metric_count": 24,
+    "all_primitive_response_metrics_reproducible": true,
+    "all_primitive_cross_host_spreads": 0.0,
+    "all_primitive_native_class_mean_separations": 0.0,
+    "one_step_grid_refinement_remedy_supported": false
+  },
+  "v0_26_r1_binding": {
+    "preregistration_path": "prereg/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.md",
+    "preregistration_git_blob_sha1": "545e5be589e0f8029d23db2edb4e2faad116c3a0",
+    "contract_path": "docs/dsir4/contracts/LAYERB_BETA_FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_V0_26_R1.json",
+    "contract_git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9",
+    "scope": "DSIR_F1_NUMERICAL_REPRODUCIBILITY_ONLY",
+    "frozen_full_replay_class_constructions": 738
+  },
+  "historical_dispatch_binding": {
+    "consumption_path": "docs/dsir4/runtime/LAYERB_BETA_V0_26_R1_GRID896_DISPATCH_DIAGNOSTIC_CONSUMPTION_V0_1.json",
+    "consumption_git_blob_sha1": "b3a3a2b68a6d275f29e18c8ed035d49599fd9dbb",
+    "independent_critic_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_GRID896_DISPATCH_DIAGNOSTIC_INDEPENDENT_CRITIC_V0_1.json",
+    "independent_critic_git_blob_sha1": "dce5e48ea065c5fba716a71cc9ff37e4126ddde8",
+    "classification": "GRID896_NUMPY_DISPATCH_PATH_DEPENDENCE_CONFIRMED",
+    "frozen_grid896_sha256": "8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d",
+    "forced_grid896_sha256": "1ad5c76772b193086b1f10bc8e150cc7095504c4e4c80fd50da6821a30750097",
+    "differing_node_count": 247
+  },
+  "prospective_gate_question": "DOES_THE_FROZEN_V0_26_R1_BETA_EXACT_TARGET_NUMERICAL_PATH_REPRODUCE_UNDER_THE_CORRECTED_CONTENT_ADDRESSED_GRID896_ACROSS_HETEROGENEOUS_HOSTS_FROZEN_EXECUTION_ORDERS_AND_SERIALIZATION_RELOAD_WITHOUT_COMPUTING_OR_CLASSIFYING_A_SCIENTIFIC_RESPONSE",
+  "scope_rationale": {
+    "why_beta_only": "V0.25 selected the exact-target-union remedy for the beta route; the alpha canonical-32769 route already has frozen response-blind resource and partition-invariance authorities and is not the current causal blocker.",
+    "why_not_full107": "The unresolved uncertainty is solver/numerical reproducibility of the repaired beta exact-target path, so a pre-full sentinel has higher information gain per construction than the 738-construction replay.",
+    "why_32_lanes": "The already-frozen R1 sentinel and upstream population contract preregister 32 candidate lanes with power requirements of at least 6 eligible and at least 3 in each native AVX512 dispatch class. Reducing lane count would create a new post hoc power contract.",
+    "why_no_derived_response": "This gate isolates raw solver numerics and exact-target extraction from scientific response construction and scientific thresholding."
+  },
+  "frozen_runtime": {
+    "runner": "ubuntu-24.04",
+    "python_version": "3.12.3",
+    "numpy_version": "1.26.4",
+    "scipy_version": "1.17.1",
+    "class_commit": "ac627d54e9ce196a08878d1ba33999819925d19c",
+    "baseline_path": "configs/dsir4/c2/ide0_reference_v0_1.ini",
+    "baseline_git_blob_sha1": "cd2beb01ce6575f97f2e3203226ed6d4f048dcaa",
+    "precision_path": "configs/dsir4/c2/dsir_ide_p8_v0_1.pre",
+    "precision_git_blob_sha1": "fea602547cfb74e187cf9aedd5a9b0c316c626be",
+    "omp_num_threads": 1,
+    "openblas_num_threads": 1,
+    "mkl_num_threads": 1,
+    "numexpr_num_threads": 1,
+    "beta_npy_disable_cpu_features": "AVX512CD,AVX512F,AVX512_CLX,AVX512_CNL,AVX512_ICL,AVX512_KNL,AVX512_KNM,AVX512_SKX",
+    "required_forced_active_avx512_dispatch": [],
+    "required_forced_active_non_avx512_dispatch": ["AVX","AVX2","F16C","FMA3","POPCNT","SSE41","SSE42","SSSE3"],
+    "native_fingerprint_must_be_captured_in_separate_process_before_forced_solver_process": true
+  },
+  "frozen_beta_numerics": {
+    "h": 0.0001,
+    "tol_perturb_integration": "1e-12",
+    "tol_perturb_integration_source": "V0_25_EXACT_TARGET_REMEDY_OVERRIDE",
+    "beta_3e_10_inheritance_forbidden": true,
+    "global_1e_12_override_forbidden": true,
+    "technical_cross_host_relative_tolerance_strict_lt": 0.00001,
+    "requested_node_binding_relative_tolerance_le": 1e-12,
+    "scientific_relative_threshold_0_001_is_not_a_classifier_in_this_gate": true
+  },
+  "corrected_grid896": {
+    "node_count": 897,
+    "payload_byte_length": 7176,
+    "payload_sha256": "8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d",
+    "u64hex_lines_sha256": "e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4",
+    "runtime_regeneration_without_exact_hash_check_forbidden": true,
+    "solver_must_consume_exact_corrected_content_addressed_payload": true
+  },
+  "candidate_population_contract": {
+    "replicate_ids": ["R01","R02","R03","R04","R05","R06","R07","R08","R09","R10","R11","R12","R13","R14","R15","R16","R17","R18","R19","R20","R21","R22","R23","R24","R25","R26","R27","R28","R29","R30","R31","R32"],
+    "candidate_receipt_count_required": 32,
+    "minimum_eligible_lane_n": 6,
+    "minimum_native_avx512_active_n": 3,
+    "minimum_native_avx512_inactive_n": 3,
+    "both_native_classes_required": true,
+    "historical_or_previous_live_class_ratio_is_not_a_pass_requirement": true,
+    "no_retry_to_obtain_favorable_native_class_mix": true
+  },
+  "frozen_response_blind_selections": [
+    {
+      "mixed_batch_id": "M076",
+      "mixed_call_indices": [76,78],
+      "mixed_target_count": 255,
+      "mixed_requested_node_count": 1152,
+      "direct_batch_id": "D50",
+      "direct_target_count": 1146
+    },
+    {
+      "mixed_batch_id": "M298",
+      "mixed_call_indices": [375],
+      "mixed_target_count": 244,
+      "mixed_requested_node_count": 1141,
+      "direct_batch_id": "D00",
+      "direct_target_count": 1152
+    },
+    {
+      "mixed_batch_id": "M300",
+      "mixed_call_index_range": [377,440],
+      "mixed_target_count": 99,
+      "mixed_requested_node_count": 996,
+      "direct_batch_id": "D58",
+      "direct_target_count": 99
+    }
+  ],
+  "solver_construction_contract": {
+    "roles": ["beta_plus","beta_minus"],
+    "pure_common_constructions_per_lane": 2,
+    "mixed_constructions_per_lane": 6,
+    "direct_constructions_per_lane": 6,
+    "total_constructions_per_lane": 14,
+    "lane_count": 32,
+    "maximum_total_constructions": 448,
+    "derived_beta_response_construction_forbidden": true,
+    "alpha_route_construction_forbidden_in_this_gate": true,
+    "full_replay_construction_forbidden": true
+  },
+  "execution_order_contract": {
+    "order_arm_A_replicates": ["R01","R02","R03","R04","R05","R06","R07","R08","R09","R10","R11","R12","R13","R14","R15","R16"],
+    "order_arm_B_replicates": ["R17","R18","R19","R20","R21","R22","R23","R24","R25","R26","R27","R28","R29","R30","R31","R32"],
+    "order_A": ["pure_beta_plus","pure_beta_minus","M076_beta_plus","M076_beta_minus","M298_beta_plus","M298_beta_minus","M300_beta_plus","M300_beta_minus","D50_beta_plus","D50_beta_minus","D00_beta_plus","D00_beta_minus","D58_beta_plus","D58_beta_minus"],
+    "order_B": ["D58_beta_minus","D58_beta_plus","D00_beta_minus","D00_beta_plus","D50_beta_minus","D50_beta_plus","M300_beta_minus","M300_beta_plus","M298_beta_minus","M298_beta_plus","M076_beta_minus","M076_beta_plus","pure_beta_minus","pure_beta_plus"],
+    "each_lane_executes_exactly_one_frozen_order_arm": true,
+    "post_outcome_order_change_forbidden": true
+  },
+  "raw_numerical_witness_contract": {
+    "scientific_response_is_not_constructed": true,
+    "for_each_solver_construction_persist_exact_requested_node_coordinates": true,
+    "for_each_solver_construction_persist_raw_requested_node_value_payload_as_contiguous_little_endian_float64": true,
+    "for_each_raw_payload_persist_sha256": true,
+    "for_each_raw_payload_persist_shape_and_finite_flag": true,
+    "unsupported_requested_node_count_must_be_zero": true,
+    "maximum_requested_node_coordinate_relative_mismatch_must_be_le_1e_12": true,
+    "serialization_reload_must_be_bitwise_identical_within_lane": true,
+    "serialization_reload_sha256_must_match_original_payload_sha256": true
+  },
+  "comparison_contract": {
+    "cross_host_same_logical_operand_max_pairwise_relative_spread_strict_lt": 0.00001,
+    "native_class_same_logical_operand_mean_separation_strict_lt": 0.00001,
+    "execution_order_arm_same_logical_operand_mean_separation_strict_lt": 0.00001,
+    "mixed_vs_direct_exact_target_same_role_relative_difference_strict_lt": 0.00001,
+    "mixed_common_vs_pure_common_same_role_relative_difference_strict_lt": 0.00001,
+    "comparison_zero_denominator_policy": "USE_MAX_ABSOLUTE_DIFFERENCE_IF_BOTH_REFERENCE_MAGNITUDES_ARE_ZERO_OTHERWISE_RELATIVE_TO_MAX_ABS_REFERENCE_WITH_MACHINE_TINY_FLOOR",
+    "scientific_0_001_threshold_must_not_be_used_for_pass_fail": true
+  },
+  "negative_controls_required": [
+    "wrong corrected GRID896 payload SHA256 is rejected before CLASS construction",
+    "wrong beta tol_perturb_integration 3e-10 is rejected before CLASS construction",
+    "wrong NumPy version or forced dispatch mask is rejected before CLASS construction",
+    "wrong requested-node binding tolerance is rejected",
+    "mutated serialized raw numerical payload is rejected on reload",
+    "response-construction or scientific-classifier path presence is rejected by static audit"
+  ],
+  "strict_pass_criteria": [
+    "exactly 32 candidate lane receipts are persisted even on lane failure or ineligibility",
+    "at least 6 lanes are eligible",
+    "at least 3 eligible lanes are NATIVE_AVX512_ACTIVE",
+    "at least 3 eligible lanes are NATIVE_AVX512_INACTIVE",
+    "all eligible lanes bind the exact corrected GRID896 payload and frozen R1 runtime before any solver construction",
+    "all eligible lanes execute exactly 14 beta solver constructions in their preregistered order arm",
+    "no eligible lane reports unsupported requested nodes",
+    "every requested-node coordinate binding is <=1e-12",
+    "every raw numerical payload is finite",
+    "every persisted raw payload reload is bitwise identical and SHA256-identical to its pre-serialization bytes",
+    "every same-logical-operand cross-host max pairwise relative spread is <1e-5",
+    "every same-logical-operand native-class mean separation is <1e-5",
+    "every same-logical-operand execution-order-arm mean separation is <1e-5",
+    "every same-role mixed-vs-direct exact-target raw-value relative difference is <1e-5",
+    "every same-role mixed-common-vs-pure-common raw-value relative difference is <1e-5",
+    "scientific response is not constructed or read",
+    "covariance is not read",
+    "scientific classifier is not invoked",
+    "no response-dependent decision is made",
+    "full107 and downstream science are not launched",
+    "immutable per-lane receipts and one aggregate numerical-only decision artifact are persisted"
+  ],
+  "prospective_terminal_outcomes": {
+    "pass": "PASS_SCOPED_MINIMAL_NUMERICAL_REPRODUCIBILITY_QUALIFIED",
+    "underpowered": "BLOCKED_INSUFFICIENT_NATIVE_CLASS_POWER",
+    "runtime_profile_drift": "BLOCKED_FROZEN_RUNTIME_PROFILE_DRIFT",
+    "provenance_failure": "PROVENANCE_FAIL",
+    "numerical_failure": "NUMERICAL_REPRODUCIBILITY_FAIL",
+    "implementation_failure": "INVALID_IMPLEMENTATION"
+  },
+  "failure_detail_fields_required": [
+    "failure_stage",
+    "failed_logical_operand_or_invariant",
+    "observed_value_or_digest",
+    "frozen_expected_value_or_threshold"
+  ],
+  "post_pass_ceiling": {
+    "minimal_scientific_response_automatically_authorized": false,
+    "full107_automatically_authorized": false,
+    "separate_terminal_authority_and_runtime_critic_required": true,
+    "dependency_dag_must_be_recalculated_before_any_science": true
+  },
+  "next_if_static_critic_passes": "AUTHOR_ONE_EXACT_IMPLEMENTATION_AND_WORKFLOW_FOR_THIS_DESIGN;_FREEZE_IMPLEMENTATION_IDENTITIES;_CREATE_SEPARATE_EXECUTION_AUTHORITY_AND_IMPLEMENTATION_STATIC_CRITIC_BEFORE_ANY_RUN",
+  "forbidden": [
+    "rerun any consumed identity",
+    "change solver grid tolerance precision NumPy version node identity or execution ordering after outcome",
+    "compute beta derivative response",
+    "apply scientific 1e-3 classifier",
+    "read covariance",
+    "launch full107",
+    "open downstream statistical or physical inference"
+  ]
+}
