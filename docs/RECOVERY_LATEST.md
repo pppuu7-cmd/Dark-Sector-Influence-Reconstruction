@@ -8,59 +8,60 @@ V0.25 remains terminal `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, ef
 
 Full107, covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global65537, statistical/model validity and physical dark-sector inference remain closed. Never rerun historical science run `35033268924`, successor v0.1 `35174721773`, successor v0.2 target `35181812498`, failed v0.2 lanes, or any same-identity attempt.
 
+Historical control V0.13 run `34773514342` remains terminal success, run #1 / attempt #1; decision job `103769308584` succeeded; decision artifact `10322573705` has digest `sha256:b04db83d530c36e03f2b80ad33fb4be80747817bd08cb2b001d5c8c6375fd202`. Existing frozen classification remains `HOSTED_RUN_REPLAY_NONDETERMINISM_SUPPORTED`; no new V0.13 authority is required.
+
 ## Terminal v0.2 implementation chain
 
-Response-blind GRID896 diagnostic `35177449482` established `GRID896_NUMPY_DISPATCH_PATH_DEPENDENCE_CONFIRMED`. Successor v0.2 target `35181812498`, exact head `1fd68a9814ac987300710c4e67d080c7455efa34`, run #1 / attempt #1, terminal failure; decision classification `SENTINEL_INVALID` before numerical/scientific evaluation. Terminal-history `35183519508`, run #1 / attempt #1, terminal success, closed provenance. Numerical/exact-target/scientific/model layers remain `NOT_EVALUATED`.
+Response-blind GRID896 diagnostic `35177449482` established `GRID896_NUMPY_DISPATCH_PATH_DEPENDENCE_CONFIRMED`. Successor v0.2 target `35181812498`, exact head `1fd68a9814ac987300710c4e67d080c7455efa34`, run #1 / attempt #1, terminated with `SENTINEL_INVALID` before numerical/scientific evaluation. Terminal-history `35183519508` closed provenance. Numerical/exact-target/scientific/model layers remain `NOT_EVALUATED`.
 
 Terminal v0.2 implementation qualification remains blob `fddc6e08d0bdedcb468a18f749e862ae7c813e38`, verdict `INVALID_IMPLEMENTATION`, classification `SUCCESSOR_SENTINEL_V0_2_PER_LANE_NATIVE_GRID896_MATERIALIZATION_NOT_HOST_INVARIANT`.
 
-## Cross-host GRID896 producer-identity design — frozen and terminally confirmed
+## Cross-host GRID896 producer-identity design — frozen
 
-Exact design identities:
-- canonical source `docs/dsir4/canonical/LAYERB_BETA_V0_26_R1_GRID896_U64HEX_V0_1.txt`, blob `24fa61685ab45e42e3ab0d453f5cb223c247ced6`;
-- prereg `docs/dsir4/prereg/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_1.md`, blob `903c80709439cb790bd41316029b218a77d5695b`;
-- contract `docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_CONTRACT_V0_1.json`, blob `6ba6e5a6c946a1091680f8f44821d323c9a463f3`;
-- terminal preexecution confirmation `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_PREEXECUTION_CONFIRMATION_V0_1.json`, blob `5f1a7dcaeb39dd093586eefb4f869cc0791ae715`, verdict `CONFIRMED_SCOPED`.
+Frozen design identities:
+- prereg blob `903c80709439cb790bd41316029b218a77d5695b`;
+- contract blob `6ba6e5a6c946a1091680f8f44821d323c9a463f3`;
+- canonical source blob `24fa61685ab45e42e3ab0d453f5cb223c247ced6`;
+- terminal preexecution confirmation blob `5f1a7dcaeb39dd093586eefb4f869cc0791ae715`, verdict `CONFIRMED_SCOPED`.
 
-Canonical source is exact pre-existing response-blind R1 identity data: 897 lowercase u64hex words, source SHA256 `e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4`; canonical arithmetic-free producer is unsigned u64 parse + exactly eight little-endian bytes per word = 7176 bytes, SHA256 `8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d`. Frozen negative control `corrupted[0] ^= 0x01` has SHA256 `e94e2e05fc0cc1fcbc9bd710a24b8ef231fab350cd6247ea3039b913adfba800` and must be rejected.
+Canonical source is 897 lowercase u64hex words, source SHA256 `e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4`; fixed little-endian u64 binaryization is exactly 7176 bytes, SHA256 `8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d`; one-bit negative control SHA256 is `e94e2e05fc0cc1fcbc9bd710a24b8ef231fab350cd6247ea3039b913adfba800`.
 
-Frozen consumer round-trip is not arbitrary byte identity: every lane must interpret the canonical bytes as contiguous little-endian IEEE-754 binary64 **without arithmetic**, immediately reserialize contiguous little-endian binary64, and require exact byte identity and the same SHA256. Frozen PASS also requires all lane receipts/artifacts and inner hashes to be present and bind run #1 / attempt #1.
+Frozen consumer operation is explicit: decode the exact payload as contiguous little-endian IEEE-754 binary64 without arithmetic, immediately reserialize little-endian binary64, and require exact bytes/hash. PASS also requires complete per-lane runtime plus Actions artifact provenance with artifact id/name/digest and inner receipt digest.
 
-## Inert implementation candidate V0.1 — terminal INVALID_IMPLEMENTATION
+## Historical implementation V0.1 — terminal INVALID_IMPLEMENTATION
 
-Reviewed implementation identities:
-- executor `scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_1.py`, blob `f5e482bfef050796687f4beeb4d3940543681392`;
-- inert workflow `docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-1.yml`, blob `78aa9d15be46bd2a5222e4618a88e56ed4e4e84c`;
-- non-authority implementation manifest blob `c9bd923b0b7531307fe48dc5930c629745a89e37`.
+Historical failed candidate remains immutable:
+- executor blob `f5e482bfef050796687f4beeb4d3940543681392`;
+- inert workflow blob `78aa9d15be46bd2a5222e4618a88e56ed4e4e84c`;
+- implementation manifest blob `c9bd923b0b7531307fe48dc5930c629745a89e37`.
 
-Independent static audit:
-`docs/dsir4/audits/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_STATIC_AUDIT_V0_1.md`, blob `21e9b62b53dccad3e09cb43f0b3a807bd6dbe4c2`, commit `c3fe18679eea52376fbd62e47433b4be1059de6e`.
+Independent static audit blob `21e9b62b53dccad3e09cb43f0b3a807bd6dbe4c2`; terminal qualification blob `d9f940f3ea7b41b8df76d102f71ead16342a7f23`, verdict `INVALID_IMPLEMENTATION`, classification `GRID896_DIAGNOSTIC_IMPLEMENTATION_DOES_NOT_REALIZE_FROZEN_CONSUMER_ROUNDTRIP_AND_ARTIFACT_PROVENANCE_CONTRACT`; Auditor handoff blob `0abac9f574ae6065234d4acf00a148befdcd668d`.
 
-Terminal implementation qualification:
-`docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_STATIC_AUDIT_QUALIFICATION_V0_1.json`, blob `d9f940f3ea7b41b8df76d102f71ead16342a7f23`, commit `8575ff64dd7bab88a1082d6b61d4e87002b096a8`, verdict `INVALID_IMPLEMENTATION`, classification `GRID896_DIAGNOSTIC_IMPLEMENTATION_DOES_NOT_REALIZE_FROZEN_CONSUMER_ROUNDTRIP_AND_ARTIFACT_PROVENANCE_CONTRACT`.
+Defects were deterministic and pre-execution: V0.1 only sliced/rejoined raw 8-byte chunks rather than binary64 decode/reserialize, and its aggregate did not bind outer Actions artifact ids/names/digests plus inner receipt hashes.
 
-Auditor handoff:
-`docs/dsir4/handoffs/DSIR_FUNNEL_AUDITOR_HANDOFF_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_STATIC_AUDIT_V0_1.md`, blob `0abac9f574ae6065234d4acf00a148befdcd668d`, commit `481120da74cf494f9c36a27fb72bdc097ee7dd3f`.
+## Corrected inert implementation successor V0.2 — CURRENT FRONTIER
 
-### Defect 1 — consumer operation identity mismatch
+The exactly authorized successor-authoring step has been completed without promotion or execution.
 
-The reviewed `consumer_roundtrip()` merely slices raw bytes into 8-byte chunks and concatenates the same chunks. It never performs the prospectively frozen little-endian IEEE-754 binary64 decode and immediate little-endian binary64 reserialization. A real consumer endian/serialization defect can therefore exist while this implementation trivially returns byte-identical output. The implementation cannot earn the frozen PASS.
+Frozen successor identities:
+- executor `scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_2.py`, blob `69ead98fdaf605b961c7a85570a0cc5770af3750`, creation commit `b85b06818165129268be2a05e7a70f2d91f09383`;
+- inert workflow candidate `docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-2.yml`, blob `271646639792041eb88a1b5c31a3cd142d1778df`, creation commit `a617f66c656c43e8a19fd648d23a38c2a2a73b79`;
+- non-authority successor implementation manifest `docs/dsir4/contracts/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_MANIFEST_V0_2.json`, blob `2d8b8aa8d91817e758edf5fabcdb79d3d53deeca`, commit `1267e880689f03c7a8949398d823eb9690ff8fb7`.
 
-### Defect 2 — artifact/inner-hash provenance predicate missing
+Prospective source-level corrections now frozen for independent audit:
+1. `consumer_roundtrip()` uses explicit `struct.iter_unpack("<d", payload)` followed by immediate `struct.pack("<d", value)` with no arithmetic; exact payload byte identity and SHA remain required.
+2. Aggregate no longer trusts an extracted receipt directory. It queries current-run Actions artifacts, requires exactly 32 unique expected lane artifact names/ids, downloads each immutable artifact ZIP, requires GitHub `sha256:` digest to equal computed ZIP SHA256, requires exactly one expected `Rxx.json` member, computes its inner SHA256, parses that exact bytestring, and records per-lane artifact id/name/API digest/ZIP SHA256/inner receipt SHA256 in the terminal decision.
+3. Aggregate verifies artifact run/head binding and receipt run/run-attempt/job/event/ref/source/contract/executor/workflow bindings; missing population maps to `BLOCKED_HOSTED_INFRASTRUCTURE_INCOMPLETE`; duplicate/extra/malformed/digest-mismatched evidence maps to `INVALID_DIAGNOSTIC_PROVENANCE`.
+4. Existing source/hash/negative-control/32-lane/run#1-attempt#1/no-replacement/no-science controls are preserved.
 
-Lane receipts/workflow do not record or terminally bind Actions artifact id/name/digest or inner receipt digest. Aggregate logic parses downloaded `R*.json` files but does not enumerate exact artifact metadata, require exact artifact count/names/ids, verify GitHub artifact digests, or bind outer/inner digests into the decision. A PASS decision could therefore occur without the frozen complete artifact/inner-hash provenance predicate.
-
-Both are pre-execution deterministic implementation defects. No scientific or partial numerical output was used.
-
-Surviving controls remain: exact prereg/contract/canonical/preexecution bindings; arithmetic-free canonical producer; source/payload hashes; fixed negative control; exactly 32 lanes `R01..R32`; no `workflow_dispatch`; run #1 / attempt #1 guards; active-workflow exact-copy guard; future authority and one-shot launch-marker guards; no NumPy/CLASS/scientific-response access. These do not rescue the failed frozen PASS identity.
-
-The reviewed executor/workflow blobs are historical failed candidates and must not be silently modified. The active workflow path `.github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-1.yml` remains absent and the launch marker remains absent. No diagnostic run was authorized or executed.
+The active workflow path `.github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-2.yml` is absent. Launch marker `docs/dsir4/launch/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_2.launch.json` is absent. Therefore no diagnostic run can have been authorized by this successor construction step.
 
 ## Current authorization state
 
-- cross-host diagnostic design: terminal `CONFIRMED_SCOPED`;
-- implementation candidate V0.1: terminal `INVALID_IMPLEMENTATION`;
-- corrected inert successor implementation authoring: **authorized and now the only next stage**;
+- frozen cross-host design: terminal `CONFIRMED_SCOPED`;
+- historical implementation V0.1: terminal `INVALID_IMPLEMENTATION`;
+- corrected inert implementation successor V0.2: **frozen, not yet independently audited**;
+- independent static audit of exact V0.2 executor/workflow blobs: **authorized next and only next stage**;
 - workflow promotion: **not authorized**;
 - launch-marker creation: **not authorized**;
 - diagnostic execution: **not authorized**;
@@ -69,12 +70,12 @@ The reviewed executor/workflow blobs are historical failed candidates and must n
 
 ## Funnel position / interpretation ceiling
 
-`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 SENTINEL_INVALID -> V0.2 INVALID_IMPLEMENTATION -> CROSS-HOST GRID896 DESIGN PREREGISTERED -> PREEXECUTION DESIGN CONFIRMED_SCOPED -> INERT IMPLEMENTATION V0.1 FROZEN -> STATIC AUDIT INVALID_IMPLEMENTATION -> CORRECTED INERT SUCCESSOR IMPLEMENTATION REQUIRED -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
+`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 SENTINEL_INVALID -> V0.2 INVALID_IMPLEMENTATION -> CROSS-HOST GRID896 DESIGN PREREGISTERED -> PREEXECUTION DESIGN CONFIRMED_SCOPED -> IMPLEMENTATION V0.1 STATIC-AUDIT INVALID -> CORRECTED INERT IMPLEMENTATION SUCCESSOR V0.2 FROZEN -> INDEPENDENT STATIC AUDIT REQUIRED -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
 
 Interpretation ceiling remains infrastructure/provenance/static implementation. Scientific effect remains `+0/+0`; numerical response reproducibility, exact-target/scientific criteria, covariance, statistical/model validity and physical dark-sector inference remain `NOT_EVALUATED`. No readiness/frontier percentage increase is authorized.
 
 ## Exact authorized next stage
 
-`AUTHOR_PROSPECTIVE_CORRECTED_INERT_GRID896_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_ONLY`.
+`INDEPENDENT_STATIC_AUDIT_OF_EXACT_GRID896_DIAGNOSTIC_IMPLEMENTATION_SUCCESSOR_V0_2_ONLY`.
 
-The successor must preserve the frozen design and historical failed candidate while implementing the exact binary64 decode/immediate reserialize consumer control and a terminally verifiable per-lane artifact provenance scheme with exact artifact id/name/digest plus inner receipt digest and exact count/uniqueness/digest rejection rules. Preserve all existing canonical source/payload/negative-control, 32-lane, one-shot and no-science controls. Keep the successor inert outside `.github/workflows`; after freezing its exact identities, perform a fresh independent static audit. Only a later terminal authority may consider promotion/launch. Do not run the diagnostic or any science gate now.
+Audit only executor blob `69ead98fdaf605b961c7a85570a0cc5770af3750`, inert workflow blob `271646639792041eb88a1b5c31a3cd142d1778df`, manifest blob `2d8b8aa8d91817e758edf5fabcdb79d3d53deeca`, and their frozen parents. Verify exact binary64 consumer semantics; exact Actions artifact count/name/id/digest and ZIP/inner receipt hash binding; run/head/job provenance; PASS/FAIL/BLOCKED/INVALID logic; 32-lane topology; one-shot guards; no `workflow_dispatch`; active-copy/authority/launch guards; and strict no-science boundary. Do not modify the exact successor during that audit, do not promote, do not create a launch marker, and do not execute any diagnostic or science gate.
