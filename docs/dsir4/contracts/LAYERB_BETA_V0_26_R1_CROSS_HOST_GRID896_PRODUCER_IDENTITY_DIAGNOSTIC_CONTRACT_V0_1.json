@@ -1,0 +1,147 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_CONTRACT_V0_1",
+  "status": "PROSPECTIVELY_FROZEN_DESIGN_EXECUTION_CLOSED_PENDING_INDEPENDENT_PREEXECUTION_AUDIT",
+  "date": "2026-09-17",
+  "scope": "DSIR_INFRASTRUCTURE_PROVENANCE_ONLY",
+  "effect": "+0/+0",
+  "terminal_parent": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_V0_2_TERMINAL_IMPLEMENTATION_QUALIFICATION_V0_1.json",
+    "git_blob_sha1": "fddc6e08d0bdedcb468a18f749e862ae7c813e38",
+    "verdict": "INVALID_IMPLEMENTATION",
+    "classification": "SUCCESSOR_SENTINEL_V0_2_PER_LANE_NATIVE_GRID896_MATERIALIZATION_NOT_HOST_INVARIANT",
+    "authorized_next_stage": "AUTHOR_PROSPECTIVE_RESPONSE_BLIND_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_DESIGN_ONLY"
+  },
+  "auditor_parent": {
+    "path": "docs/dsir4/handoffs/DSIR_FUNNEL_AUDITOR_HANDOFF_V0_26_R1_SUCCESSOR_SENTINEL_V0_2_TERMINAL_IMPLEMENTATION_V0_1.md",
+    "git_blob_sha1": "b7994a77cb463c316092ddd7c40e5c63a191a691",
+    "verdict": "INVALID_IMPLEMENTATION"
+  },
+  "preregistration": {
+    "path": "docs/dsir4/prereg/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_1.md",
+    "git_blob_sha1": "903c80709439cb790bd41316029b218a77d5695b"
+  },
+  "canonical_source": {
+    "path": "docs/dsir4/canonical/LAYERB_BETA_V0_26_R1_GRID896_U64HEX_V0_1.txt",
+    "git_blob_sha1": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+    "line_count": 897,
+    "line_format": "LOWERCASE_16_HEX_U64_ONE_PER_LINE_FINAL_NEWLINE",
+    "file_sha256": "e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4",
+    "origin_run_id": 34954905127,
+    "origin_job_id": 104334496210,
+    "origin_artifact_id": 10390997654,
+    "origin_artifact_zip_sha256": "5cd19512bef3d9795957fb8105361e4006123ae59794bc94e2e5ded5722436ff",
+    "origin_inner_json_sha256": "3a9d8375119068063ddcb4ac37d8f3da92444261b0fad356a228ccaedf6292d7",
+    "origin_inner_hash_receipt_sha256": "5c6187a03db04888c4e3bd4f6f98befc1d67ae45a0c362fdbb320fe5dcf70f32"
+  },
+  "canonical_binaryization": {
+    "algorithm": "FOR_EACH_OF_897_LINES_IN_ORDER_PARSE_UNSIGNED_HEX_U64_THEN_PACK_EXACTLY_8_BYTES_LITTLE_ENDIAN_Q_AND_CONCATENATE",
+    "floating_arithmetic_forbidden": true,
+    "numpy_grid_generation_forbidden": true,
+    "node_count": 897,
+    "byte_length": 7176,
+    "payload_sha256": "8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d",
+    "consumer_roundtrip": "INTERPRET_AS_CONTIGUOUS_LITTLE_ENDIAN_IEEE754_BINARY64_WITHOUT_ARITHMETIC_THEN_RESERIALIZE_LITTLE_ENDIAN_AND_REQUIRE_BYTE_IDENTITY"
+  },
+  "science_inheritance": {
+    "r1_prereg_git_blob_sha1": "545e5be589e0f8029d23db2edb4e2faad116c3a0",
+    "r1_contract_git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9",
+    "retained_rows": 107,
+    "des_rows": 53,
+    "boss_rows": 54,
+    "alpha_tol": "3e-10",
+    "beta_tol": "1e-12",
+    "scientific_relative_strict_lt": 0.001,
+    "technical_relative_strict_lt": 0.00001,
+    "requested_node_binding_le": 1e-12,
+    "full_replay_class_constructions": 738,
+    "all_science_thresholds_unchanged": true,
+    "all_science_objects_closed": true
+  },
+  "future_population_if_separately_authorized": {
+    "runner": "ubuntu-24.04",
+    "lane_count": 32,
+    "lane_ids": "R01..R32",
+    "authorized_launch_count": 0,
+    "required_run_attempt_if_later_authorized": 1,
+    "lane_replacement_forbidden": true,
+    "same_identity_retry_not_authorized": true,
+    "posthoc_host_or_cpu_selection_forbidden": true
+  },
+  "positive_control": {
+    "source_sha256": "e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4",
+    "expected_payload_sha256": "8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d",
+    "expected_payload_byte_length": 7176
+  },
+  "negative_control": {
+    "mutation": "COPY_CANONICAL_PAYLOAD_THEN_CORRUPTED_BYTE_0_XOR_0x01",
+    "corrupted_payload_sha256": "e94e2e05fc0cc1fcbc9bd710a24b8ef231fab350cd6247ea3039b913adfba800",
+    "required_guard_outcome": "REJECT"
+  },
+  "future_lane_required_receipt_fields": [
+    "lane_id",
+    "run_id",
+    "run_attempt",
+    "job_id",
+    "main_head_sha",
+    "prereg_git_blob_sha1",
+    "contract_git_blob_sha1",
+    "canonical_source_git_blob_sha1",
+    "canonical_source_sha256",
+    "canonical_source_line_count",
+    "canonical_payload_sha256",
+    "canonical_payload_byte_length",
+    "roundtrip_payload_sha256",
+    "roundtrip_byte_identical",
+    "negative_control_sha256",
+    "negative_control_rejected",
+    "runtime_fingerprint",
+    "executor_git_blob_sha1",
+    "workflow_git_blob_sha1",
+    "class_solver_invoked",
+    "scientific_response_read"
+  ],
+  "pass": {
+    "classification": "PASS_SHARED_GRID896_CONTENT_ADDRESSING_CROSS_HOST",
+    "requirements": "EXACTLY_32_UNIQUE_R01_TO_R32_RECEIPTS_ALL_WITH_BOUND_IDENTITIES_SOURCE_897_LINES_AND_SOURCE_SHA_MATCH_CANONICAL_7176_BYTES_AND_SHA_MATCH_ROUNDTRIP_BYTE_IDENTICAL_NEGATIVE_CONTROL_REJECTED_NO_SCIENCE_ACCESS"
+  },
+  "fail": {
+    "classification": "FAIL_SHARED_GRID896_CONTENT_ADDRESSING_CROSS_HOST",
+    "requirements": "AT_LEAST_ONE_OTHERWISE_VALID_COMPLETED_LANE_WITH_CORRECT_SOURCE_AND_AUDITED_IMPLEMENTATION_PRODUCES_WRONG_CANONICAL_LENGTH_OR_SHA_OR_NONIDENTICAL_ROUNDTRIP_OR_ACCEPTS_FROZEN_CORRUPTION"
+  },
+  "blocked_or_invalid": {
+    "missing_object": "BLOCKED_MISSING_OR_UNBOUND_CANONICAL_OBJECT",
+    "incomplete_hosted_population": "BLOCKED_HOSTED_INFRASTRUCTURE_INCOMPLETE",
+    "provenance": "INVALID_DIAGNOSTIC_PROVENANCE"
+  },
+  "native_generator_control": {
+    "optional_only_if_prospectively_implemented_and_independently_audited_before_execution": true,
+    "gating_for_shared_payload_pass": false,
+    "mismatch_classification": "NATIVE_PRODUCER_NOT_HOST_INVARIANT_CONFIRMED",
+    "all_match_classification": "NATIVE_VARIANCE_NOT_OBSERVED_IN_SAMPLE",
+    "all_match_does_not_prove_global_invariance": true
+  },
+  "execution_authorized": false,
+  "executor_construction_authorized": false,
+  "workflow_construction_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "forbidden": [
+    "CLASS_SOLVE",
+    "SCIENTIFIC_RESPONSE_READ_OR_COMPUTE",
+    "POSTHOC_LANE_SELECTION_OR_REPLACEMENT",
+    "CANONICAL_GRID_FLOATING_ARITHMETIC_REGENERATION",
+    "CRITERIA_OR_THRESHOLD_TUNING_AFTER_OUTCOME",
+    "SAME_IDENTITY_RERUN_SELECTION",
+    "COVARIANCE",
+    "WHITENING",
+    "NUISANCE_MARGINALIZATION",
+    "RELATION_NULL",
+    "WM_S3",
+    "GLOBAL_65537",
+    "PHYSICAL_DARK_SECTOR_INFERENCE"
+  ],
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_AND_EXACT_GRID896_CONTENT_ADDRESSING_ONLY",
+  "authorized_next_stage": "INDEPENDENT_PREEXECUTION_AUDIT_OF_FROZEN_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_DESIGN_ONLY",
+  "token": "PREREGISTERED_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_DESIGN_V0_1_PLUS_0_PLUS_0"
+}
