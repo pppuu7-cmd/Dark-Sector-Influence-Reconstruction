@@ -1,0 +1,98 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_V0_6_TERMINAL_RESULT_V0_1",
+  "status": "TERMINAL_DIAGNOSTIC_RESULT",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "classification": "INVALID_DIAGNOSTIC_PROVENANCE",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_ONLY",
+  "run": {
+    "run_id": 35251121404,
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "head_sha": "c6526f940a559140eaa7928d97164524e462cecf",
+    "first_parent_sha": "f382bb750b482262ab2f4a1e56d2cf071e50578c",
+    "workflow_id": 360576929,
+    "workflow_path": ".github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml",
+    "github_conclusion": "failure",
+    "same_identity_rerun_authorized": false
+  },
+  "population": {
+    "frozen_lane_count": 32,
+    "lane_job_count": 32,
+    "lane_artifact_count_before_decision": 32,
+    "missing_lane_ids_in_frozen_decision": [],
+    "decision_job_id": 105307265996
+  },
+  "decision_artifact": {
+    "artifact_id": 10510805424,
+    "name": "grid896-cross-host-decision-v0-6",
+    "outer_sha256": "fe664cd5ef1c5adf959d40f7c179550074b380ccd0c3805dc361661bf97bc574",
+    "inner_member": "decision.json",
+    "inner_sha256": "e57bcb39736bf80dac16900cb124ec66429e00bc1e20c31df0b05ea5f2a86325",
+    "frozen_classification": "INVALID_DIAGNOSTIC_PROVENANCE",
+    "frozen_errors": [
+      "HTTPError: HTTP Error 415: Unsupported Media Type"
+    ],
+    "artifact_provenance_count": 0
+  },
+  "independent_lane_evidence": {
+    "R01": {
+      "artifact_id": 10508904186,
+      "artifact_digest": "sha256:b8897d2b5ff336be7f472bca740f1bc4b82e301b7b6ca0381127627a71050ffd",
+      "lane_outcome": "BLOCKED_MISSING_OR_UNBOUND_CANONICAL_OBJECT",
+      "error": "RuntimeError: canonical source SHA256 mismatch"
+    },
+    "R03": {
+      "artifact_id": 10509692685,
+      "artifact_digest": "sha256:9ddc2e41d3cd2f351aed65fea8ec5ccaff5668074a2d543e925087d8932b4b26",
+      "lane_outcome": "BLOCKED_MISSING_OR_UNBOUND_CANONICAL_OBJECT",
+      "error": "RuntimeError: canonical source SHA256 mismatch"
+    },
+    "R17": {
+      "artifact_id": 10509529109,
+      "artifact_digest": "sha256:1180a473d2e68a99cf6ba833a4e69bfe297a36e6c8f19e5725c652ee4a1cd86d",
+      "lane_outcome": "BLOCKED_MISSING_OR_UNBOUND_CANONICAL_OBJECT",
+      "error": "RuntimeError: canonical source SHA256 mismatch"
+    },
+    "cross_runner_same_blocker_observed": true
+  },
+  "root_cause_1_canonical_source_serialization_binding": {
+    "canonical_path": "docs/dsir4/canonical/LAYERB_BETA_V0_26_R1_GRID896_U64HEX_V0_1.txt",
+    "canonical_git_blob_sha1": "24fa61685ab45e42e3ab0d453f5cb223c247ced6",
+    "word_count": 897,
+    "raw_file_has_final_lf": false,
+    "raw_file_byte_length": 15248,
+    "raw_file_sha256": "e9b5a3093223f13291993ea4339398cc5274c0047540740dd73978529c2689a0",
+    "normalized_lines_with_final_lf_byte_length": 15249,
+    "normalized_lines_with_final_lf_sha256": "e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4",
+    "executor_expected_source_sha256": "e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4",
+    "executor_applied_expected_hash_to_raw_file_bytes": true,
+    "classification": "CONFIRMED_RAW_VS_NORMALIZED_FINAL_LF_BINDING_DEFECT"
+  },
+  "root_cause_2_aggregate_artifact_transport": {
+    "observed_error": "HTTP 415 Unsupported Media Type",
+    "failing_endpoint_family": "/actions/artifacts/{artifact_id}/zip",
+    "frozen_executor_accept_header": "application/octet-stream",
+    "github_actions_artifact_download_documented_response": "302 redirect",
+    "github_actions_artifact_download_documented_recommended_accept": "application/vnd.github+json",
+    "classification": "ARTIFACT_DOWNLOAD_MEDIA_TYPE_COMPATIBILITY_DEFECT_LOCALIZED",
+    "causal_claim_ceiling": "THE_415_IS_OBSERVED_AND_THE_REQUEST_MEDIA_TYPE_DIFFERS_FROM_CURRENT_DOCUMENTED_RECOMMENDATION;_V0_7_MUST_PROSPECTIVELY_QUALIFY_THE_REPAIRED_TRANSPORT_BEFORE_EXECUTION"
+  },
+  "frozen_science_scope": {
+    "class_solver_invoked": false,
+    "scientific_response_read": false,
+    "covariance_read": false,
+    "numerical_reproducibility_established": false,
+    "scientific_result_established": false,
+    "statistical_model_validity_established": false,
+    "physical_dark_sector_inference_established": false
+  },
+  "historical_identity_closed": true,
+  "v0_6_rerun_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authorized_next_stage": "INDEPENDENTLY_CONFIRM_V0_6_TERMINAL_INVALIDITY_AND_DUAL_ROOT_CAUSE_THEN_DESIGN_NEW_V0_7_IMPLEMENTATION_IDENTITY_ONLY",
+  "token": "INVALID_DIAGNOSTIC_PROVENANCE_LAYERB_BETA_V0_26_R1_GRID896_V0_6_TERMINAL_PLUS_0_PLUS_0"
+}
