@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Audited orchestration layer for the DSIR V0.26 R1 minimal numerical gate.
 
-This layer fixes two pre-execution defects found by static review of the base
-implementation: negative controls must exercise rejection instead of scanning
-for their own sentinel strings, and solver terminal classifications must remain
-visible at lane/decision level instead of collapsing into INVALID_IMPLEMENTATION.
+This layer fixes pre-execution defects found by static review of the base
+implementation: negative controls exercise rejection rather than scanning for
+their own sentinel strings, and solver terminal classifications remain visible
+at lane/decision level instead of collapsing into INVALID_IMPLEMENTATION.
 """
 from __future__ import annotations
 
@@ -98,10 +98,13 @@ def static_controls(out: Path) -> int:
         lambda: require_sha(bytes(mutated), expected, "serialized raw witness SHA256"),
     )
 
+    # Structural checks intentionally inspect executable call patterns rather than
+    # banned words, so the control cannot fail merely because a sentinel string is
+    # present in a comment, label, or negative-control list.
     source = BASE.read_text(encoding="utf-8")
     structural = {
-        "no_beta_derivative_symbol": "abs_dDelta_m_dbeta_symmetric" not in source,
         "no_cubic_response_constructor_call": "jj.cubic_centered(" not in source,
+        "no_centered_derivative_helper": "def centered(" not in source,
         "scientific_threshold_not_used_as_constant": "REL_TOL=1e-3" not in source and "REL_TOL = 1e-3" not in source,
         "decision_uses_technical_tolerance": 'TECH_TOL = 1e-5' in source,
         "binding_uses_frozen_tolerance": 'BIND_TOL = 1e-12' in source,
@@ -150,6 +153,21 @@ def run_base_child(b, mode: str, output: Path, env: dict[str, str], extra: list[
             "error": f"{type(exc).__name__}: {exc}",
         }
     return proc.returncode, doc
+
+
+def class_was_invoked_for_failure(solver: dict) -> bool:
+    stage = solver.get("failure_stage")
+    if stage in {
+        "dependency_binding", "solver_configuration", "forced_runtime",
+        "corrected_grid", "plan_binding", "solver_contract",
+    }:
+        return False
+    if stage in {
+        "raw_extract", "requested_node_binding", "raw_witness",
+        "solver_lifecycle", "serialization_reload",
+    }:
+        return True
+    return bool(solver.get("class_solver_invoked", False))
 
 
 def lane(replicate: str, plan: Path, witness: Path, out: Path) -> int:
@@ -216,7 +234,7 @@ def lane(replicate: str, plan: Path, witness: Path, out: Path) -> int:
                     }
                     receipt["classification"] = solver_class if solver_class in allowed else "INVALID_IMPLEMENTATION"
                     receipt["solver_failure_receipt"] = solver
-                    receipt["class_solver_invoked"] = bool(solver.get("class_solver_invoked", True))
+                    receipt["class_solver_invoked"] = class_was_invoked_for_failure(solver)
                     receipt["errors"].append({
                         "stage": solver.get("failure_stage", "solver_child"),
                         "message": solver.get("error", f"solver child returned {solver_rc}"),
