@@ -1,0 +1,178 @@
+name: layerb-beta-v026-r1-successor-sentinel-terminal-history-v0-1
+
+on:
+  workflow_run:
+    workflows: ['layerb-beta-v026-r1-successor-sentinel-science-v0-1']
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: layerb-beta-v026-r1-successor-sentinel-terminal-history-v0-1
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  TARGET_WORKFLOW_PATH: '.github/workflows/layerb-beta-v026-r1-successor-sentinel-science-v0-1.yml'
+  TERMINAL_WORKFLOW_PATH: '.github/workflows/layerb-beta-v026-r1-successor-sentinel-terminal-history-v0-1.yml'
+  SUCCESSOR_AUTHORITY: 'docs/dsir4/authority/LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_SCIENCE_AUTHORIZATION_V0_1.json'
+  LAUNCH: 'docs/dsir4/launch/LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_LAUNCH_V0_1.json'
+  EXPERIMENT_ID: 'LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_SCIENCE_V0_1'
+  EXECUTION_NONCE: 'DSIR-V026R1-SUCCESSOR-20260917-A1-8B7F56D2'
+
+jobs:
+  terminal-history-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Bind exact successor authority and workflow identities
+        env:
+          TARGET_RUN_ID: ${{ github.event.workflow_run.id }}
+          TARGET_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_RUN_NUMBER" = 1
+          test "$GITHUB_RUN_ATTEMPT" = 1
+          python3 - <<'PY'
+          import json, os, subprocess
+          def blob(p): return subprocess.check_output(['git','hash-object',p],text=True).strip()
+          a=json.load(open(os.environ['SUCCESSOR_AUTHORITY']))
+          l=json.load(open(os.environ['LAUNCH']))
+          assert a['experiment_id']==os.environ['EXPERIMENT_ID']
+          assert a['execution_nonce']==os.environ['EXECUTION_NONCE']
+          assert a['classification']=='AUTHORIZED_SCOPED'
+          assert a['authorized_launch_count']==1
+          assert a['sentinel_science_execution_authorized'] is True
+          assert a['full_107_row_execution_authorized'] is False
+          assert a['target_workflow_git_blob_sha1']==blob(os.environ['TARGET_WORKFLOW_PATH'])
+          assert a['terminal_history_workflow_git_blob_sha1']==blob(os.environ['TERMINAL_WORKFLOW_PATH'])
+          assert l['successor_authority_git_blob_sha1']==blob(os.environ['SUCCESSOR_AUTHORITY'])
+          assert l['target_workflow_git_blob_sha1']==blob(os.environ['TARGET_WORKFLOW_PATH'])
+          assert l['terminal_history_workflow_git_blob_sha1']==blob(os.environ['TERMINAL_WORKFLOW_PATH'])
+          PY
+
+      - name: Independently reconstruct target and auditor live history
+        env:
+          TARGET_RUN_ID: ${{ github.event.workflow_run.id }}
+          TARGET_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${TARGET_RUN_ID}" > safe/target_run.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/workflows/layerb-beta-v026-r1-successor-sentinel-science-v0-1.yml/runs?event=push&per_page=100" > safe/target_history.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/workflows/layerb-beta-v026-r1-successor-sentinel-terminal-history-v0-1.yml/runs?event=workflow_run&per_page=100" > safe/auditor_history.json
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${TARGET_RUN_ID}/artifacts?per_page=100" > safe/target_artifacts.json
+          python3 - <<'PY'
+          import json, os
+          t=json.load(open('safe/target_run.json'))
+          th=json.load(open('safe/target_history.json')).get('workflow_runs',[])
+          ah=json.load(open('safe/auditor_history.json')).get('workflow_runs',[])
+          assert t['path']==os.environ['TARGET_WORKFLOW_PATH']
+          assert t['event']=='push'
+          assert t['status']=='completed'
+          assert int(t['run_number'])==1 and int(t.get('run_attempt',1))==1
+          assert t['head_sha']==os.environ['TARGET_HEAD_SHA']
+          assert len(th)==1 and int(th[0]['id'])==int(os.environ['TARGET_RUN_ID'])
+          assert int(th[0]['run_number'])==1 and int(th[0].get('run_attempt',1))==1
+          assert len(ah)==1 and int(ah[0]['id'])==int(os.environ['GITHUB_RUN_ID'])
+          assert int(ah[0]['run_number'])==1 and int(ah[0].get('run_attempt',1))==1
+          assert t['updated_at'] <= ah[0]['created_at']
+          print('SUCCESSOR_TERMINAL_HISTORY_UNIQUE_AND_ORDERED')
+          PY
+
+      - name: Freeze decision artifact if present and derive separated verdicts
+        env:
+          TARGET_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('safe/target_artifacts.json'))
+          xs=[a for a in d.get('artifacts',[]) if a.get('name')=='layerb-beta-v026-r1-successor-decision-v0-1' and not a.get('expired')]
+          if len(xs)>1: raise SystemExit('duplicate decision artifacts')
+          if xs:
+            open('safe/decision_artifact_id.txt','w').write(str(xs[0]['id'])+'\n')
+            json.dump(xs[0],open('safe/decision_artifact_metadata.json','w'),indent=2,sort_keys=True)
+          PY
+          if test -f safe/decision_artifact_id.txt; then
+            aid="$(cat safe/decision_artifact_id.txt)"
+            gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${aid}/zip" > safe/decision_artifact.zip
+            sha256sum safe/decision_artifact.zip > safe/decision_artifact.zip.sha256
+            mkdir -p safe/decision
+            unzip -q safe/decision_artifact.zip -d safe/decision
+            test -f safe/decision/sentinel_decision.json
+            sha256sum safe/decision/sentinel_decision.json > safe/sentinel_decision.sha256.independent
+          fi
+          python3 - <<'PY'
+          import json, os, hashlib
+          t=json.load(open('safe/target_run.json'))
+          artifact_meta=None; decision=None; zsha=None; dsha=None
+          if os.path.exists('safe/decision_artifact_metadata.json'):
+            artifact_meta=json.load(open('safe/decision_artifact_metadata.json'))
+            decision=json.load(open('safe/decision/sentinel_decision.json'))
+            zsha=hashlib.sha256(open('safe/decision_artifact.zip','rb').read()).hexdigest()
+            dsha=hashlib.sha256(open('safe/decision/sentinel_decision.json','rb').read()).hexdigest()
+          provenance='PASS_SCOPED'
+          if decision is None:
+            numerical='NOT_EVALUATED'; exact='NOT_EVALUATED'; scientific='NOT_EVALUATED'
+            terminal='INFRASTRUCTURE_TERMINAL_NO_SCIENCE_DECISION'
+          else:
+            numerical='PASS_SCOPED' if (decision.get('invalid') is False and decision.get('invariant_ok') is True and decision.get('powered') is True and decision.get('primitive_response_reproducibility_ok') is True) else 'FAIL_SCOPED'
+            exact='PASS_SCOPED' if (decision.get('max_requested_node_coordinate_rel_mismatch',float('inf')) <= 1e-12 and decision.get('direct_reference_ok') is True) else 'FAIL_SCOPED'
+            scientific='PASS_SCOPED' if decision.get('sentinel_pass') is True else 'FAIL_SCOPED'
+            terminal=decision.get('classification')
+          out={
+            'schema':'LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_TERMINAL_RUNTIME_RECEIPT_V0_1',
+            'status':'TERMINAL_RUNTIME_RECEIPT',
+            'experiment_id':os.environ['EXPERIMENT_ID'],
+            'execution_nonce':os.environ['EXECUTION_NONCE'],
+            'target_run_id':int(os.environ['TARGET_RUN_ID']),
+            'target_run_number':1,
+            'target_run_attempt':1,
+            'target_head_sha':t['head_sha'],
+            'target_conclusion':t.get('conclusion'),
+            'target_dispatch_history_count':1,
+            'terminal_auditor_history_count':1,
+            'rerun_observed':False,
+            'same_nonce_second_attempt_observed':False,
+            'late_duplicate_observed':False,
+            'decision_artifact_id':artifact_meta.get('id') if artifact_meta else None,
+            'decision_artifact_api_digest':artifact_meta.get('digest') if artifact_meta else None,
+            'decision_artifact_zip_sha256':zsha,
+            'sentinel_decision_sha256':dsha,
+            'PROVENANCE_VALIDITY':provenance,
+            'NUMERICAL_VALIDITY':numerical,
+            'EXACT_TARGET_VALIDITY':exact,
+            'SCIENTIFIC_CRITERION':scientific,
+            'MODEL_STATISTICAL_INTERPRETATION':'NOT_AUTHORIZED_NOT_EVALUATED',
+            'sentinel_classification':terminal,
+            'full_107_row_execution_authorized':False,
+            'downstream_science_authorized_by_this_receipt':False,
+            'token':'TERMINAL_LAYERB_BETA_V0_26_R1_SUCCESSOR_SENTINEL_PLUS_0_PLUS_0'
+          }
+          open('safe/successor_terminal_runtime_receipt.json','w').write(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          PY
+          sha256sum safe/successor_terminal_runtime_receipt.json > safe/successor_terminal_runtime_receipt.sha256
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-successor-terminal-runtime-v0-1
+          path: |
+            safe/successor_terminal_runtime_receipt.json
+            safe/successor_terminal_runtime_receipt.sha256
+            safe/target_run.json
+            safe/target_history.json
+            safe/auditor_history.json
+            safe/target_artifacts.json
+            safe/decision_artifact_metadata.json
+            safe/decision_artifact.zip.sha256
+            safe/sentinel_decision.sha256.independent
+          if-no-files-found: ignore
+          retention-days: 90

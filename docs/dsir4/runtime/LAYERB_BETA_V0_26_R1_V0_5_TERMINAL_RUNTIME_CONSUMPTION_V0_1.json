@@ -1,0 +1,73 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_V0_5_TERMINAL_RUNTIME_CONSUMPTION_V0_1",
+  "status": "DURABLE_TERMINAL_CONSUMPTION",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "classification": "V0_5_EXPLICIT_POSTRUN_DISPATCH_TERMINAL_HISTORY_CLOSED",
+  "scope": "GOVERNANCE_PROVENANCE_ONLY_NOT_SCIENTIFIC_PASS",
+  "main_head_observed": "c84f0545b2746bf768cb1a0fdfb88d06cf1ceb34",
+  "terminal_auditor": {
+    "run_id": 35148573508,
+    "workflow_path": ".github/workflows/dsir-v026-r1-first-attempt-failure-funnel-terminal-history-v0-5.yml",
+    "workflow_id": 359993836,
+    "head_sha": "c84f0545b2746bf768cb1a0fdfb88d06cf1ceb34",
+    "event": "workflow_dispatch",
+    "run_number": 1,
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-09-16T20:46:36Z",
+    "artifact_id": 10468455963,
+    "artifact_name": "dsir-v026-r1-first-attempt-failure-funnel-v05-terminal-runtime",
+    "artifact_zip_sha256": "75ebde9d5ddc56ff3db739c3bf0b39d5cf17afec5a74084282952f780e5fac15",
+    "terminal_receipt_sha256": "a6519125cc3f7d11d3120cd7d0cf7a684adc8314b67f015231ba337208121893"
+  },
+  "target": {
+    "run_id": 35148542110,
+    "workflow_path": ".github/workflows/dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-5.yml",
+    "workflow_id": 359993834,
+    "head_sha": "c84f0545b2746bf768cb1a0fdfb88d06cf1ceb34",
+    "event": "workflow_dispatch",
+    "run_number": 1,
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-09-16T20:46:15Z",
+    "updated_at": "2026-09-16T20:46:33Z",
+    "artifact_id": 10468460475,
+    "artifact_name": "dsir-v026-r1-first-attempt-failure-funnel-hosted-v0-5",
+    "artifact_zip_sha256": "447654ed8906b64ea662804053afa75d8c099c26428ea3ff358e6b9b46819569",
+    "failure_funnel_receipt_sha256": "8495668b993620c99ffe77f08297077749813d218c2e68988130023b0d7037ab"
+  },
+  "orchestrator_run_id": 35148521984,
+  "historical_science_run_id": 35033268924,
+  "historical_science_semantics": "PRE_SCIENCE_ACTIONS_EVENT_GUARD_FAILURE_NOT_SCIENTIFIC_FAIL",
+  "execution_nonce": "DSIR-V026R1-FFHOSTED-V0-5-728EC746-60286B97-20260916-A1",
+  "chronology": {
+    "target_terminal_at": "2026-09-16T20:46:33Z",
+    "terminal_auditor_created_at": "2026-09-16T20:46:36Z",
+    "target_terminal_before_terminal_auditor": true
+  },
+  "dispatch_history": {
+    "target_count": 1,
+    "terminal_auditor_count": 1,
+    "target_run_number": 1,
+    "target_run_attempt": 1,
+    "terminal_auditor_run_number": 1,
+    "terminal_auditor_run_attempt": 1,
+    "rerun_observed": false,
+    "same_nonce_second_attempt_observed": false,
+    "late_duplicate_observed_at_consumption": false
+  },
+  "authority_ceiling": {
+    "historical_rerun_authorized": false,
+    "same_nonce_second_attempt_authorized": false,
+    "successor_sentinel_science_authorized_by_v0_5": false,
+    "full_107_row_execution_authorized": false,
+    "downstream_science_authorized": false
+  },
+  "failure_funnel_verdict": "CONFIRMED_SCOPED",
+  "provenance_validity": "PASS_SCOPED",
+  "scientific_verdict": "NOT_EVALUATED",
+  "token": "V0_5_TERMINAL_RUNTIME_DURABLY_CONSUMED_PLUS_0_PLUS_0"
+}
