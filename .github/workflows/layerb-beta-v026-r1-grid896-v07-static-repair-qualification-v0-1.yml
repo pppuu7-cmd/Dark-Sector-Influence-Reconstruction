@@ -1,0 +1,79 @@
+name: DSIR V0.26 R1 GRID896 V0.7 static repair qualification v0.1
+
+# Response-blind implementation qualification only. This workflow cannot launch
+# the V0.7 32-lane diagnostic and cannot access CLASS/scientific response data.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/dsir4/launch/LAYERB_BETA_V0_26_R1_GRID896_V0_7_STATIC_REPAIR_QUALIFICATION_V0_1.launch.json
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-v026-r1-grid896-v07-static-repair-qualification-v0-1
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    name: Response-blind V0.7 two-defect repair qualification
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verify frozen V0.7 candidate identities
+        run: |
+          set -euo pipefail
+          test "$(git hash-object scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_7.py)" = "5f7863851204faac82c341c25acc2d707b49f3a7"
+          test "$(git hash-object docs/dsir4/candidates/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-7.yml)" = "68badc857f7f05c420f46d228ae22798b23cfb56"
+          test "$(git hash-object docs/dsir4/manifests/LAYERB_BETA_V0_26_R1_GRID896_V0_7_IMPLEMENTATION_MANIFEST_V0_1.json)" = "544cb383a9b7a54385e1d6f3f69dbac163e67ed8"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_BETA_V0_26_R1_GRID896_V0_7_IMPLEMENTATION_STATIC_CRITIC_V0_1.json)" = "772c73df207533e37e6d0e155f130b3a4c10be33"
+          test "$(git hash-object docs/dsir4/authority/LAYERB_BETA_V0_26_R1_GRID896_V0_6_TERMINAL_INVALID_CONFIRMATION_V0_1.json)" = "bdabd5bd085a8507af999fd535701ce6adb10688"
+          test "$(git hash-object scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_6.py)" = "eae9eee7ae6a1424bcac67279663a2c8ddd3ebf9"
+
+      - name: Run response-blind source and artifact-transport qualification
+        id: qualify
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/dsir4/layerb_beta_v026_r1_cross_host_grid896_producer_identity_diagnostic_v0_7.py static-qualify \
+            --output results/dsir4/grid896_v0_7_static_repair_qualification/result.json
+
+      - name: Upload immutable qualification result
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-grid896-v07-static-repair-qualification-v0-1
+          path: results/dsir4/grid896_v0_7_static_repair_qualification/result.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Reflect frozen qualification classification
+        if: ${{ always() }}
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('results/dsir4/grid896_v0_7_static_repair_qualification/result.json')
+          if not p.is_file():
+              raise SystemExit('missing V0.7 static qualification result')
+          d = json.loads(p.read_text(encoding='utf-8'))
+          print(d['classification'])
+          raise SystemExit(0 if d['classification'] == 'PASS_V0_7_STATIC_TWO_DEFECT_REPAIR_QUALIFICATION' else 1)
+          PY
