@@ -1,0 +1,68 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_EXECUTION_AUTHORITY_CONFIRMATION_V0_6",
+  "status": "TERMINAL_INDEPENDENT_STATIC_CONFIRMATION",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "verdict": "PASS_SCOPED",
+  "classification": "V0_6_DIAGNOSTIC_EXECUTION_AUTHORITY_STATICALLY_CONFIRMED_FOR_ONE_MARKER_ONLY_LAUNCH",
+  "interpretation_ceiling": "INFRASTRUCTURE_PROVENANCE_ONLY",
+  "reviewed_main_sha": "3f21c71bfd57492875eb435da00286d93899eec5",
+  "reviewed_execution_authority": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_CROSS_HOST_GRID896_PRODUCER_IDENTITY_DIAGNOSTIC_IMPLEMENTATION_STATIC_AUDIT_AUTHORITY_V0_6.json",
+    "git_blob_sha1": "eb27b62d809ac26611ba6b79bc1100b3dd1d9f0b",
+    "status": "TERMINAL_IMPLEMENTATION_STATIC_AUDIT_AUTHORITY",
+    "verdict": "QUALIFIED"
+  },
+  "frozen_executor_requirements_independently_checked": {
+    "required_status_exact": true,
+    "required_verdict_exact": true,
+    "diagnostic_execution_authorized_true": true,
+    "executor_git_blob_sha1_exact": true,
+    "workflow_candidate_git_blob_sha1_exact": true,
+    "preexecution_confirmation_git_blob_sha1_exact": true,
+    "promoted_workflow_path_exact": true,
+    "positive_promoted_workflow_id_bound": true,
+    "executing_workflow_identity_binding_required": true,
+    "alias_workflow_execution_forbidden": true,
+    "authority_must_preexist_unchanged_in_launch_parent": true,
+    "active_workflow_must_preexist_unchanged_in_launch_parent": true,
+    "marker_must_be_absent_in_launch_parent": true,
+    "launch_commit_must_add_only_exact_marker": true
+  },
+  "confirmed_runtime_identity": {
+    "promoted_workflow_id": 360576929,
+    "promoted_workflow_path": ".github/workflows/layerb-beta-v026-r1-cross-host-grid896-producer-identity-diagnostic-v0-6.yml",
+    "promoted_workflow_registry_state": "active",
+    "active_workflow_git_blob_sha1": "832f0491421619579c2a1d77ba9ca339cb4898ac",
+    "executor_git_blob_sha1": "eae9eee7ae6a1424bcac67279663a2c8ddd3ebf9",
+    "preexecution_confirmation_git_blob_sha1": "5f1a7dcaeb39dd093586eefb4f869cc0791ae715",
+    "terminal_static_confirmation_git_blob_sha1": "6cc317eb359a820bc1ecb3c657fc33b46a7d152b",
+    "registry_capture_result_git_blob_sha1": "033c9df4fde1feecd6cd1a75e1feb9abb9dc3013",
+    "registry_capture_confirmation_git_blob_sha1": "6c92403f487a4fe487a942e426930134c7c0b949"
+  },
+  "fresh_prelaunch_checks": {
+    "latest_100_target_workflow_path_matches": 0,
+    "execution_authority_was_absent_on_reviewed_main_before_authoring": true,
+    "launch_marker_absent_on_reviewed_main": true,
+    "no_target_result_or_partial_substantive_value_used": true
+  },
+  "authorized_execution_ceiling": {
+    "authorized_launch_count": 1,
+    "authorized_run_number": 1,
+    "authorized_run_attempt": 1,
+    "lane_count": 32,
+    "class_solver_invocation_authorized": false,
+    "scientific_response_read_authorized": false,
+    "successor_sentinel_science_authorized": false,
+    "full_107_row_execution_authorized": false,
+    "downstream_science_authorized": false
+  },
+  "launch_marker_creation_authorized": true,
+  "launch_marker_must_be_separate_marker_only_commit": true,
+  "same_identity_rerun_authorized": false,
+  "v0_6_diagnostic_result_established": false,
+  "scientific_result_established": false,
+  "authorized_next_stage": "CREATE_ONE_SEPARATE_MARKER_ONLY_COMMIT_BOUND_TO_EXECUTION_AUTHORITY_BLOB_EB27B62D809AC26611BA6B79BC1100B3DD1D9F0B_WORKFLOW_ID_360576929_RUN_1_ATTEMPT_1_LANES_32_ONLY",
+  "next_admissible_gate": "AFTER_LAUNCH_CONSUME_RUN_AND_ARTIFACTS_TERMINALLY_WITHOUT_RERUN;_PASS_FAIL_BLOCKED_OR_INVALID_REMAINS_INFRASTRUCTURE_PROVENANCE_ONLY",
+  "token": "PASS_SCOPED_LAYERB_BETA_V0_26_R1_GRID896_V0_6_EXECUTION_AUTHORITY_CONFIRMATION_PLUS_0_PLUS_0"
+}
