@@ -1,0 +1,237 @@
+name: DSIR V0.26 R1 response-blind corrected producer cross-host population validity v0.1
+
+# Response-blind L1/L2 population/materialization gate only.
+# No CLASS, scientific response, covariance, scientific classifier, or downstream science.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/dsir4/launch/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_PRODUCER_CROSS_HOST_POPULATION_VALIDITY_V0_1.launch.json
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-v026-r1-response-blind-corrected-producer-cross-host-population-validity-v0-1
+  cancel-in-progress: false
+
+jobs:
+  invariant-audit:
+    name: Verify frozen producer-population execution identity
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Verify marker, execution authority, implementation Critic and frozen design
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          marker_path = Path('docs/dsir4/launch/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_PRODUCER_CROSS_HOST_POPULATION_VALIDITY_V0_1.launch.json')
+          authority_path = Path('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_PRODUCER_CROSS_HOST_POPULATION_VALIDITY_EXECUTION_AUTHORITY_V0_1.json')
+          critic_path = Path('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_PRODUCER_CROSS_HOST_POPULATION_VALIDITY_IMPLEMENTATION_STATIC_CRITIC_V0_1.json')
+          design_path = Path('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_PRODUCER_CROSS_HOST_POPULATION_VALIDITY_DESIGN_AUTHORITY_V0_1.json')
+          design_critic_path = Path('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_PRODUCER_CROSS_HOST_POPULATION_VALIDITY_DESIGN_STATIC_CRITIC_V0_1.json')
+          script_path = Path('ci/layerb_beta_v026_r1_response_blind_corrected_producer_cross_host_population_validity_v0_1.py')
+          workflow_path = Path('.github/workflows/dsir-v026-r1-response-blind-corrected-producer-cross-host-population-validity-v0-1.yml')
+          pair_terminal_path = Path('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_REPAIR_PAIR_OPERATION_BOUND_QUALIFICATION_TERMINAL_V0_1.json')
+          pair_critic_path = Path('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_CORRECTED_REPAIR_PAIR_OPERATION_BOUND_QUALIFICATION_RUNTIME_CRITIC_V0_1.json')
+
+          def blob(path: Path) -> str:
+              return subprocess.check_output(['git', 'hash-object', str(path)], text=True).strip()
+
+          marker = json.loads(marker_path.read_text(encoding='utf-8'))
+          authority = json.loads(authority_path.read_text(encoding='utf-8'))
+          critic = json.loads(critic_path.read_text(encoding='utf-8'))
+          design = json.loads(design_path.read_text(encoding='utf-8'))
+          design_critic = json.loads(design_critic_path.read_text(encoding='utf-8'))
+
+          assert blob(script_path) == '70664f447fcf2f8362abaccf964b12b8742a0b73'
+          assert blob(design_path) == 'e45a724eee83418d192b12c64e12b08050aa7011'
+          assert blob(design_critic_path) == 'b4a67e6339bbe94bcdf64130c334c46e4e007dc2'
+          assert blob(pair_terminal_path) == '3cfc4624a770502bf3b55a4d3768bb1606132e85'
+          assert blob(pair_critic_path) == 'a7d5aaf4e0f388e64d747552f29acfa3473f483a'
+          assert design['execution_authorized'] is False
+          assert design_critic['verdict'] == 'PASS_SCOPED'
+          assert design_critic['implementation_authoring_authorized'] is True
+          assert marker['implementation_script_git_blob_sha1'] == blob(script_path)
+          assert marker['workflow_git_blob_sha1'] == blob(workflow_path)
+          assert marker['execution_authority_git_blob_sha1'] == blob(authority_path)
+          assert marker['implementation_static_critic_git_blob_sha1'] == blob(critic_path)
+          assert authority['implementation_script_git_blob_sha1'] == blob(script_path)
+          assert authority['workflow_git_blob_sha1'] == blob(workflow_path)
+          assert authority['design_authority_git_blob_sha1'] == blob(design_path)
+          assert authority['design_static_critic_git_blob_sha1'] == blob(design_critic_path)
+          assert critic['reviewed_implementation_script_git_blob_sha1'] == blob(script_path)
+          assert critic['reviewed_workflow_git_blob_sha1'] == blob(workflow_path)
+          assert critic['reviewed_execution_authority_git_blob_sha1'] == blob(authority_path)
+          assert critic['verdict'] == 'PASS_SCOPED'
+          assert authority['authorized_run_count'] == 1
+          assert authority['authorized_run_number'] == 1
+          assert authority['authorized_run_attempt'] == 1
+          assert authority['execution_authorized'] is True
+          assert marker['authorized_run_number'] == 1
+          assert marker['authorized_run_attempt'] == 1
+          assert marker['replicate_ids'] == [f'R{i:02d}' for i in range(1,33)]
+          assert marker['expected_payload_sha256'] == '8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d'
+          assert marker['class_solver_invocation_authorized'] is False
+          assert marker['scientific_response_read_authorized'] is False
+          assert marker['covariance_read_authorized'] is False
+          assert marker['scientific_classifier_authorized'] is False
+          assert marker['response_dependent_decision_authorized'] is False
+          assert marker['full_107_row_execution_authorized'] is False
+          assert marker['downstream_science_authorized'] is False
+
+          out = {
+              'schema': 'LAYERB_BETA_V0_26_R1_CORRECTED_PRODUCER_POPULATION_EXECUTION_INVARIANT_V0_1',
+              'pass': True,
+              'run_number': 1,
+              'run_attempt': 1,
+              'replicate_count': 32,
+              'expected_payload_sha256': marker['expected_payload_sha256'],
+              'class_solver_invoked': False,
+              'scientific_response_read': False,
+              'covariance_read': False,
+              'scientific_classifier_invoked': False,
+              'response_dependent_decision': False,
+              'effect': '+0/+0',
+              'token': 'PASS_CORRECTED_PRODUCER_POPULATION_EXECUTION_INVARIANT_V0_1',
+          }
+          Path('safe/invariant.json').write_text(json.dumps(out, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+          PY
+          python -m py_compile ci/layerb_beta_v026_r1_response_blind_corrected_producer_cross_host_population_validity_v0_1.py
+
+      - name: Upload frozen execution invariant
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-corrected-producer-population-invariant-v0-1
+          path: safe/invariant.json
+          if-no-files-found: error
+          retention-days: 90
+
+  lane:
+    name: Producer population ${{ matrix.replicate }}
+    needs: invariant-audit
+    strategy:
+      fail-fast: false
+      max-parallel: 32
+      matrix:
+        replicate: [R01, R02, R03, R04, R05, R06, R07, R08, R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R25, R26, R27, R28, R29, R30, R31, R32]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install exact response-free NumPy fingerprint dependency
+        id: numpy-install
+        continue-on-error: true
+        run: |
+          python -m pip install --disable-pip-version-check 'numpy==1.26.4'
+
+      - name: Run response-blind lane and persist receipt on classified failures
+        if: ${{ always() }}
+        env:
+          NPY_DISABLE_CPU_FEATURES: ''
+          GLIBC_TUNABLES: ''
+        run: |
+          mkdir -p safe/materialized
+          python ci/layerb_beta_v026_r1_response_blind_corrected_producer_cross_host_population_validity_v0_1.py \
+            --mode lane \
+            --replicate '${{ matrix.replicate }}' \
+            --materialized 'safe/materialized/grid896_${{ matrix.replicate }}.bin' \
+            --out 'safe/receipt_${{ matrix.replicate }}.json'
+
+      - name: Upload immutable response-blind lane receipt
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-corrected-producer-population-${{ matrix.replicate }}-v0-1
+          path: safe/receipt_${{ matrix.replicate }}.json
+          if-no-files-found: error
+          retention-days: 90
+
+  decision:
+    name: Aggregate response-blind producer population decision
+    if: ${{ always() }}
+    needs: [invariant-audit, lane]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Download all lane receipts
+        id: download
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-v026-r1-corrected-producer-population-R*-v0-1
+          path: receipts
+          merge-multiple: true
+
+      - name: Apply frozen response-blind aggregate classifier
+        id: classify
+        continue-on-error: true
+        run: |
+          mkdir -p safe
+          mapfile -t files < <(find receipts -type f -name 'receipt_R*.json' 2>/dev/null | sort || true)
+          python ci/layerb_beta_v026_r1_response_blind_corrected_producer_cross_host_population_validity_v0_1.py \
+            --mode decision \
+            --inputs "${files[@]}" \
+            --out safe/decision.json
+
+      - name: Collect immutable aggregate evidence
+        if: ${{ always() }}
+        run: |
+          mkdir -p safe/receipts
+          find receipts -type f -name 'receipt_R*.json' -exec cp {} safe/receipts/ \; 2>/dev/null || true
+
+      - name: Upload immutable producer population decision
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-corrected-producer-population-decision-v0-1
+          path: |
+            safe/decision.json
+            safe/receipts/receipt_R*.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Reflect frozen aggregate classification
+        if: ${{ always() }}
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('safe/decision.json')
+          if not p.is_file():
+              raise SystemExit('missing producer population decision')
+          d = json.loads(p.read_text(encoding='utf-8'))
+          print(d['classification'])
+          raise SystemExit(0 if d['classification'] == 'PASS_SCOPED_CORRECTED_PRODUCER_CROSS_HOST_POPULATION_VALID' else 1)
+          PY
