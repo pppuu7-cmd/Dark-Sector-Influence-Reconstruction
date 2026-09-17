@@ -1,0 +1,318 @@
+name: DSIR V0.26 R1 response-blind minimal numerical reproducibility v0.1
+
+# Numerical reproducibility only. The workflow is inert until a separately
+# audited execution authority and launch marker exist. No derived scientific
+# response, covariance, scientific classifier, full107, or downstream science.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/dsir4/launch/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_MINIMAL_NUMERICAL_REPRODUCIBILITY_V0_1.launch.json
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-v026-r1-response-blind-minimal-numerical-reproducibility-v0-1
+  cancel-in-progress: false
+
+env:
+  CLASS_COMMIT: ac627d54e9ce196a08878d1ba33999819925d19c
+  BASE_EXECUTOR: ci/layerb_beta_v026_r1_response_blind_minimal_numerical_reproducibility_v0_1.py
+  ORCHESTRATOR: ci/layerb_beta_v026_r1_response_blind_minimal_numerical_reproducibility_orchestrator_v0_1.py
+  BUILD_COMPAT: scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py
+  DM_EXPOSURE_PATCH: scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py
+
+jobs:
+  invariant:
+    name: Verify frozen numerical identity and retrieve frozen response-blind plan
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Set up exact Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+
+      - name: Verify marker, authorities, Critic and implementation blobs
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import platform
+          import subprocess
+          from pathlib import Path
+
+          marker_path = Path('docs/dsir4/launch/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_MINIMAL_NUMERICAL_REPRODUCIBILITY_V0_1.launch.json')
+          authority_path = Path('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_MINIMAL_NUMERICAL_REPRODUCIBILITY_EXECUTION_AUTHORITY_V0_1.json')
+          critic_path = Path('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_MINIMAL_NUMERICAL_REPRODUCIBILITY_IMPLEMENTATION_STATIC_CRITIC_V0_1.json')
+          design_path = Path('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_MINIMAL_NUMERICAL_REPRODUCIBILITY_DESIGN_AUTHORITY_V0_1.json')
+          design_critic_path = Path('docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_MINIMAL_NUMERICAL_REPRODUCIBILITY_DESIGN_STATIC_CRITIC_V0_1.json')
+          base_path = Path('ci/layerb_beta_v026_r1_response_blind_minimal_numerical_reproducibility_v0_1.py')
+          orch_path = Path('ci/layerb_beta_v026_r1_response_blind_minimal_numerical_reproducibility_orchestrator_v0_1.py')
+          build_path = Path('scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py')
+          expose_path = Path('scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py')
+
+          def blob(path):
+              return subprocess.check_output(['git', 'hash-object', str(path)], text=True).strip()
+
+          marker = json.loads(marker_path.read_text())
+          authority = json.loads(authority_path.read_text())
+          critic = json.loads(critic_path.read_text())
+          design = json.loads(design_path.read_text())
+          design_critic = json.loads(design_critic_path.read_text())
+
+          assert platform.python_version() == '3.12.3'
+          assert blob(design_path) == 'b09d4f7de24974d7b8052e4b130c8902a57cf68b'
+          assert blob(design_critic_path) == '5f4682a3f691b7b533237389ceac10162e8aa721'
+          assert blob(base_path) == 'ca4307962c0e92dd4bf5d74e76dd4e6db27c10d1'
+          assert blob(orch_path) == 'f12ae302f7dce44cac93791f39a4f3e0a29d7d28'
+          assert blob(build_path) == 'b7fe663154519b605699c1fd622d0079a5f76772'
+          assert blob(expose_path) == 'e5afe14eccf531d3e5b9de09b19d34df431a08b9'
+          assert marker['execution_authority_git_blob_sha1'] == blob(authority_path)
+          assert marker['implementation_static_critic_git_blob_sha1'] == blob(critic_path)
+          assert marker['base_executor_git_blob_sha1'] == blob(base_path)
+          assert marker['orchestrator_git_blob_sha1'] == blob(orch_path)
+          assert marker['workflow_git_blob_sha1'] == blob(Path('.github/workflows/dsir-v026-r1-response-blind-minimal-numerical-reproducibility-v0-1.yml'))
+          assert authority['base_executor_git_blob_sha1'] == blob(base_path)
+          assert authority['orchestrator_git_blob_sha1'] == blob(orch_path)
+          assert authority['workflow_git_blob_sha1'] == marker['workflow_git_blob_sha1']
+          assert critic['reviewed_base_executor_git_blob_sha1'] == blob(base_path)
+          assert critic['reviewed_orchestrator_git_blob_sha1'] == blob(orch_path)
+          assert critic['reviewed_workflow_git_blob_sha1'] == marker['workflow_git_blob_sha1']
+          assert design['status'] == 'PROSPECTIVE_DESIGN_ONLY_SCOPED_AUTHORITY'
+          assert design_critic['verdict'] == 'PASS_SCOPED'
+          assert authority['status'] == 'PROSPECTIVE_ONE_SHOT_EXECUTION_AUTHORITY'
+          assert authority['authorized_run_count'] == 1
+          assert authority['authorized_run_number'] == 1
+          assert authority['authorized_run_attempt'] == 1
+          assert critic['verdict'] == 'PASS_SCOPED'
+          assert critic['one_shot_execution_authorized'] is True
+          assert marker['authorized_run_number'] == 1
+          assert marker['authorized_run_attempt'] == 1
+          assert marker['scientific_response_read_authorized'] is False
+          assert marker['covariance_read_authorized'] is False
+          assert marker['scientific_classifier_authorized'] is False
+          assert marker['full_107_row_execution_authorized'] is False
+          PY
+          python -m py_compile "$BASE_EXECUTOR" "$ORCHESTRATOR" "$BUILD_COMPAT" "$DM_EXPOSURE_PATCH"
+
+      - name: Run audited static negative controls
+        run: |
+          set -euo pipefail
+          mkdir -p invariant
+          python "$ORCHESTRATOR" --mode static-controls --out invariant/static_controls.json
+
+      - name: Retrieve exact frozen response-blind R1 plan with qualified transport policy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python "$BASE_EXECUTOR" --mode fetch-plan --out invariant/plan.json
+
+      - name: Verify retrieved plan receipt
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('invariant/plan.json')
+          r=json.loads(Path('invariant/plan.receipt.json').read_text())
+          c=json.loads(Path('invariant/static_controls.json').read_text())
+          raw=p.read_bytes()
+          assert len(raw)==3953984
+          assert hashlib.sha256(raw).hexdigest()=='c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064'
+          assert r['artifact_id']==10298655751
+          assert r['outer_zip_sha256']=='9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7'
+          assert r['member']=='plan.json'
+          assert r['repository_authorization_forwarded_to_storage'] is False
+          assert c['classification']=='PASS_STATIC_CONTROLS'
+          assert c['scientific_response_read'] is False
+          assert c['covariance_read'] is False
+          assert c['scientific_classifier_invoked'] is False
+          PY
+
+      - name: Upload frozen invariant bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-minimal-numerical-invariant-v0-1
+          path: invariant/
+          if-no-files-found: error
+          retention-days: 90
+
+  numerical-lane:
+    name: Numerical lane ${{ matrix.replicate }}
+    needs: invariant
+    strategy:
+      fail-fast: false
+      max-parallel: 32
+      matrix:
+        replicate: [R01, R02, R03, R04, R05, R06, R07, R08, R09, R10, R11, R12, R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R25, R26, R27, R28, R29, R30, R31, R32]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Create immutable fallback lane receipt before heavy setup
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p safe
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          rep='${{ matrix.replicate }}'
+          arm='A' if int(rep[1:])<=16 else 'B'
+          d={
+            'schema':'LAYERB_BETA_V0_26_R1_MINIMAL_NUMERICAL_LANE_RECEIPT_V0_2',
+            'replicate':rep,'order_arm':arm,'candidate':False,'eligible':False,
+            'solver_attempted':False,'classification':'INVALID_IMPLEMENTATION','effect':'+0/+0',
+            'class_solver_invoked':False,'scientific_response_read':False,'covariance_read':False,
+            'scientific_classifier_invoked':False,'response_dependent_decision':False,
+            'errors':[{'stage':'workflow_fallback','message':'substantive lane did not replace fallback receipt'}]
+          }
+          Path(f'safe/receipt_{rep}.json').write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Set up exact Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+
+      - name: Download frozen invariant plan
+        uses: actions/download-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-minimal-numerical-invariant-v0-1
+          path: invariant
+
+      - name: Install exact numerical stack and pinned CLASS build dependencies
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'scipy==1.17.1' 'Cython<3' six >/dev/null
+          .venv/bin/python - <<'PY'
+          import platform,numpy,scipy
+          assert platform.python_version()=='3.12.3'
+          assert numpy.__version__=='1.26.4'
+          assert scipy.__version__=='1.17.1'
+          PY
+
+      - name: Build exact pinned CLASS exposure
+        run: |
+          set -euo pipefail
+          git clone -q https://github.com/kaeonikc/class_iv.git external_class
+          git -C external_class checkout -q "$CLASS_COMMIT"
+          test "$(git -C external_class rev-parse HEAD)" = "$CLASS_COMMIT"
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1; p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 1152',1))
+          q=Path('external_class/include/parser.h'); s=q.read_text(); old='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert s.count(old)==1; q.write_text(s.replace(old,'#define _ARGUMENT_LENGTH_MAX_ 32768',1))
+          r=Path('external_class/source/perturbations.c'); s=r.read_text(); old='perhaps_print_variables = perturb_print_variables;'; assert s.count(old)==1; r.write_text(s.replace(old,'perhaps_print_variables = NULL;',1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python "$BUILD_COMPAT" external_class
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python "$DM_EXPOSURE_PATCH" external_class
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" make -C external_class -j2 all >/dev/null
+
+      - name: Run one frozen response-blind numerical lane
+        env:
+          OMP_NUM_THREADS: '1'
+          OPENBLAS_NUM_THREADS: '1'
+          MKL_NUM_THREADS: '1'
+          NUMEXPR_NUM_THREADS: '1'
+        run: |
+          set -euo pipefail
+          rep='${{ matrix.replicate }}'
+          .venv/bin/python "$ORCHESTRATOR" --mode lane --replicate "$rep" --plan invariant/plan.json --witness "safe/witness_${rep}.npz" --out "safe/receipt_${rep}.json"
+
+      - name: Upload immutable lane receipt and raw witness
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-minimal-numerical-${{ matrix.replicate }}-v0-1
+          path: safe/
+          if-no-files-found: error
+          retention-days: 90
+
+  decision:
+    name: Aggregate numerical-only terminal decision
+    if: ${{ always() }}
+    needs: [invariant, numerical-lane]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Set up exact Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+
+      - name: Install exact decision dependency
+        run: |
+          set -euo pipefail
+          python -m venv .decision-venv
+          .decision-venv/bin/python -m pip install --upgrade pip >/dev/null
+          .decision-venv/bin/python -m pip install 'numpy==1.26.4' >/dev/null
+
+      - name: Download all immutable lane receipts and witnesses
+        uses: actions/download-artifact@v4
+        with:
+          pattern: layerb-beta-v026-r1-minimal-numerical-R*-v0-1
+          path: lanes
+          merge-multiple: true
+
+      - name: Apply frozen numerical-only classifier
+        id: decision
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          mkdir -p decision
+          .decision-venv/bin/python "$ORCHESTRATOR" --mode decision --inputs-root lanes --out decision/result.json
+
+      - name: Upload immutable numerical decision
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-minimal-numerical-decision-v0-1
+          path: decision/result.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Reflect frozen terminal classification
+        if: ${{ always() }}
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('decision/result.json')
+          if not p.is_file():
+              raise SystemExit('missing numerical decision result')
+          d=json.loads(p.read_text())
+          print(d['classification'])
+          raise SystemExit(0 if d['classification']=='PASS_SCOPED_MINIMAL_NUMERICAL_REPRODUCIBILITY_QUALIFIED' else 1)
+          PY
