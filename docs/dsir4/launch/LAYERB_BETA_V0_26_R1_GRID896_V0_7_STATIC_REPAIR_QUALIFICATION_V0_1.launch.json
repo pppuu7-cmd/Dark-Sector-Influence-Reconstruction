@@ -1,0 +1,21 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_GRID896_V0_7_STATIC_REPAIR_QUALIFICATION_LAUNCH_V0_1",
+  "status": "AUTHORIZED_ONE_SHOT_STATIC_QUALIFICATION_MARKER",
+  "date": "2026-09-17",
+  "effect": "+0/+0",
+  "qualification_authority_git_blob_sha1": "837b8d8ed97aa248d9958f47ae95529216e6af08",
+  "qualification_workflow_git_blob_sha1": "25c21fff62c0ee4c30cc2b0155d684bc597b5edf",
+  "executor_git_blob_sha1": "5f7863851204faac82c341c25acc2d707b49f3a7",
+  "workflow_candidate_git_blob_sha1": "68badc857f7f05c420f46d228ae22798b23cfb56",
+  "implementation_manifest_git_blob_sha1": "544cb383a9b7a54385e1d6f3f69dbac163e67ed8",
+  "static_critic_git_blob_sha1": "772c73df207533e37e6d0e155f130b3a4c10be33",
+  "authorized_run_number": 1,
+  "authorized_run_attempt": 1,
+  "class_solver_invocation_authorized": false,
+  "scientific_response_read_authorized": false,
+  "v0_7_diagnostic_execution_authorized": false,
+  "v0_7_diagnostic_launch_marker_creation_authorized": false,
+  "successor_sentinel_science_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false
+}
