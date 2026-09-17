@@ -26,13 +26,13 @@ Completed checks: promotion was authorized; promotion diff added only the canoni
 
 Unresolved mandatory binding: no durable evidence yet binds a positive GitHub-assigned workflow ID, exact registry path and registry state `active`. The promotion record intentionally leaves these fields null. Zero run history proves non-execution but cannot prove the positive workflow-registry tuple. Do not infer or guess the workflow ID and do not use a launch to discover it.
 
-## Latest registry-capture attempt
+## Registry-capture blocker — independently confirmed scoped
 
-Researcher attempted the exact authorized read-only registry-capture gate without launching any workflow. Durable blocker audit: `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_GRID896_V0_6_WORKFLOW_REGISTRY_CAPTURE_BLOCKER_AUDIT_V0_1.md`, commit `31def483654b279e09e5cc0db59a800ee830438c`; Researcher handoff: `docs/dsir4/handoffs/DSIR_FUNNEL_HANDOFF_V0_26_R1_GRID896_V0_6_REGISTRY_CAPTURE_BLOCKED_V0_1.md`, commit `d8d411cba0c4f9d3883bebee9abbc78b3129f44a`.
+Researcher attempted the exact authorized read-only registry-capture gate without launching any workflow. Durable Researcher blocker audit: `docs/dsir4/audits/LAYERB_BETA_V0_26_R1_GRID896_V0_6_WORKFLOW_REGISTRY_CAPTURE_BLOCKER_AUDIT_V0_1.md`, blob `8781ab97917044038e953176a8e7e876f2a4854b`.
 
-The connected GitHub read interface in this environment does not expose the Actions workflow-registry collection/item read needed for a positive ID/path/state tuple; generic reads reject `actions/workflows` registry resources. Classification: `BLOCKED_READ_ONLY_GITHUB_WORKFLOW_REGISTRY_INTERFACE_UNAVAILABLE`.
+Independent Funnel Auditor review reproduced the same operational limitation: the connected GitHub interface exposes repository/branch/content/workflow-run/job/artifact reads but no workflow-registry item/collection read returning a positive workflow ID/path/state tuple; direct registry read is rejected rather than returning the object. Terminal scoped confirmation: `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_GRID896_V0_6_REGISTRY_CAPTURE_BLOCKER_CONFIRMATION_V0_1.json`, verdict `CONFIRMED_SCOPED`, classification `READ_ONLY_GITHUB_WORKFLOW_REGISTRY_INTERFACE_BLOCKER_CONFIRMED_WITH_NO_GATE_ADVANCEMENT`.
 
-This is only an operational provenance blocker. It is not evidence that the registry record is absent or inactive. No value was inferred or guessed. Active V0.6 blob remains exact, execution-authority and launch-marker paths remain absent, current queued and in-progress counts remain zero, and no V0.6 diagnostic run exists.
+This confirms only the operational blocker and the no-advance interpretation. It does not replace the prior V0.6 post-promotion `REQUIRES_CONFIRMATION_GATE`, does not establish that the registry entry is absent/inactive, and does not authorize guessing/inference of workflow ID. Fresh Actions checks remain queued `0`, in-progress `0`, current reviewed head run count `0`, and exact promotion-head run count `0`; no V0.6 diagnostic execution or artifact exists. Execution-authority and launch-marker paths remain absent.
 
 ## Current authorization state
 
@@ -41,6 +41,7 @@ This is only an operational provenance blocker. It is not evidence that the regi
 - exact V0.6 implementation: terminal static `CONFIRMED_SCOPED` for promotion only;
 - exact V0.6 active workflow promotion: complete and byte-exact;
 - post-promotion repository identity: confirmed;
+- registry read-interface blocker: terminal `CONFIRMED_SCOPED` as operational blocker only;
 - GitHub Actions workflow registry ID/path/active-state binding: **required and unresolved**;
 - execution-authority creation: **not authorized**;
 - launch marker: **not authorized**;
@@ -50,7 +51,7 @@ This is only an operational provenance blocker. It is not evidence that the regi
 
 ## Funnel position
 
-`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 SENTINEL_INVALID -> CROSS-HOST GRID896 DESIGN CONFIRMED_SCOPED -> V0.1-V0.5 INVALID -> V0.6 STATIC IMPLEMENTATION CONFIRMED_SCOPED -> EXACT-BYTE PROMOTION COMPLETE -> POST-PROMOTION REPOSITORY IDENTITY CONFIRMED / REGISTRY ID-PATH-STATE UNBOUND / READ-INTERFACE BLOCKED -> EXECUTION AUTHORITY CLOSED -> LAUNCH CLOSED -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
+`V0.25 TERMINAL -> V0.26 R1 FROZEN -> ORIGINAL SENTINEL CONSUMED -> V0.5 GOVERNANCE CLOSED -> SUCCESSOR V0.1 CONSUMED -> GRID896 DISPATCH DIAGNOSTIC TERMINAL -> SUCCESSOR V0.2 SENTINEL_INVALID -> CROSS-HOST GRID896 DESIGN CONFIRMED_SCOPED -> V0.1-V0.5 INVALID -> V0.6 STATIC IMPLEMENTATION CONFIRMED_SCOPED -> EXACT-BYTE PROMOTION COMPLETE -> POST-PROMOTION REPOSITORY IDENTITY CONFIRMED / REGISTRY ID-PATH-STATE UNBOUND -> REGISTRY READ-INTERFACE BLOCKER CONFIRMED_SCOPED -> EXECUTION AUTHORITY CLOSED -> LAUNCH CLOSED -> DIAGNOSTIC EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
 
 Scientific effect remains `+0/+0`; interpretation ceiling remains infrastructure/provenance/static implementation. Numerical response reproducibility, exact-target/scientific criteria, covariance, statistical/model validity and physical dark-sector inference remain `NOT_EVALUATED`. No readiness/frontier increase is authorized.
 
@@ -58,4 +59,4 @@ Scientific effect remains `+0/+0`; interpretation ceiling remains infrastructure
 
 `CAPTURE_AND_INDEPENDENTLY_CONFIRM_READ_ONLY_GITHUB_ACTIONS_WORKFLOW_REGISTRY_ID_PATH_ACTIVE_STATE_FOR_EXACT_V0_6_CANONICAL_WORKFLOW_ONLY`.
 
-The immediate unblock is a read-only GitHub Actions workflow-registry read that returns the exact canonical V0.6 workflow record without launching it. Persist raw/canonicalized evidence plus provenance/digest, require positive workflow ID, exact canonical path and state `active`, then reverify active blob `832f0491421619579c2a1d77ba9ca339cb4898ac`, static confirmation blob `6cc317eb359a820bc1ecb3c657fc33b46a7d152b`, zero V0.6 run history and absence of execution authority/marker. Only after a separate independent confirmation may execution-authority authoring be considered.
+The immediate unblock remains a read-only GitHub Actions workflow-registry read that returns the exact canonical V0.6 workflow record without launching it. Persist raw/canonicalized evidence plus provenance/digest, require positive workflow ID, exact canonical path and state `active`, then reverify active blob `832f0491421619579c2a1d77ba9ca339cb4898ac`, static confirmation blob `6cc317eb359a820bc1ecb3c657fc33b46a7d152b`, zero V0.6 run history and absence of execution authority/marker. Only after a separate independent terminal confirmation may execution-authority authoring be considered.
