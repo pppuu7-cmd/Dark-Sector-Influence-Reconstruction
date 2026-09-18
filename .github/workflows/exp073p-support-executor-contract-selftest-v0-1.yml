@@ -1,0 +1,63 @@
+name: Exp073P support-executor contract self-test v0.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci/exp073p_support_executor_contract_selftest_v0_1.py'
+      - '.github/workflows/exp073p-support-executor-contract-selftest-v0-1.yml'
+      - 'experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md'
+
+permissions:
+  contents: read
+
+jobs:
+  support-executor-contract-selftest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile
+        run: python3 -m py_compile ci/exp073p_support_executor_contract_selftest_v0_1.py
+      - name: Execute synthetic frozen support-executor contract tests
+        run: python3 ci/exp073p_support_executor_contract_selftest_v0_1.py
+      - name: Assert non-science scope and preregistration binding
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          code = Path('ci/exp073p_support_executor_contract_selftest_v0_1.py').read_text()
+          prereg = Path('experiments/073p_cosmotheka_desy1_boss_exact_common_physical_support_prereg_v0_1.md').read_text()
+          required_code = [
+              'PASS_EXP073P_SUPPORT_EXECUTOR_CONTRACT_SELFTEST_V0_1',
+              'PASS_DESY1_FULL_ONEPASS_WEAK_LENSING_MASK_EXP073R1',
+              '0.06664762008318016',
+              'F_INVALID_MAX = 0.05',
+              'MIN_RETAINED_FULL_COORDINATES = 15',
+              'NSIDE_CLASSIFYING = 4096',
+              'abs(cell.signed_response)',
+              'signed_observable_response',
+              'complete_coordinate_intersection',
+              'effective_ell',
+              'fiducial_p',
+              'covariance',
+          ]
+          missing = [x for x in required_code if x not in code]
+          assert not missing, missing
+          required_prereg = [
+              'No fiducial `P(k)`',
+              'absolute value only when constructing the positive support envelope',
+              'minimum retained full-coordinate dimension exactly `15`',
+              'Only `PASS_COSMOTHEKA_DESY1_BOSS_COMMON_PHYSICAL_SUPPORT_EXP073P` authorizes covariance restriction/whitening.',
+          ]
+          missing = [x for x in required_prereg if x not in prereg]
+          assert not missing, missing
+          # This CI must remain synthetic and must not download/read real observables.
+          forbidden_execution_tokens = [
+              'requests.get(', 'urllib.request', 'healpy.read_map', 'astropy.io.fits.open',
+              'numpy.load(', 'compute_covariance', 'whiten(',
+          ]
+          present = [x for x in forbidden_execution_tokens if x in code]
+          assert not present, present
+          print('PASS_EXP073P_SUPPORT_EXECUTOR_NONSCIENCE_CI_BINDING_V0_1')
+          PY
