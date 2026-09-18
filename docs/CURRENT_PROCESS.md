@@ -86,15 +86,15 @@ Run `35280281867` is consumed. Same-identity rerun and failed-job retry are forb
 → `corrected producer/cross-host population TERMINAL PASS`
 → `minimal response-blind numerical reproducibility TERMINAL CONFIRMED_SCOPED`
 → `minimal scientific response M298/call375 TERMINAL PASS + runtime Critic CLOSED`
-→ `BOSS M300 cross-survey response replication DESIGN ONLY AUTHORIZED`
-→ `next scientific execution CLOSED`
+→ `BOSS M300 cross-survey response replication PREREG + DESIGN + DESIGN STATIC CRITIC PASS_SCOPED`
+→ `M300 implementation/execution CLOSED`
 → `full107 and downstream CLOSED`.
 
 ## Current authorization state
 
 Authorized now:
-- prospective **design only** of one BOSS M300 cross-survey response-replication falsifier over existing immutable numerical witnesses;
-- independent static Critic of that future design.
+- no M300 implementation or execution;
+- only recovery/state reconciliation after terminal design closure.
 
 Not authorized:
 - minimal scientific response execution;
@@ -106,7 +106,7 @@ Not authorized:
 
 ## Exact next admissible action
 
-`DESIGN_ONE_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION_FALSIFIER_FROM_EXISTING_IMMUTABLE_NUMERICAL_WITNESSES;_NO_RESPONSE_READ_DURING_DESIGN;_NO_NEW_CLASS_SOLVES;_NO_FULL107_NO_COVARIANCE_NO_NUISANCE_NO_PHYSICAL_INFERENCE`.
+`STOP_AFTER_BOSS_M300_DESIGN_CLOSURE;_REREAD_DURABLE_AUTHORITY_BEFORE_ANY_IMPLEMENTATION;_NO_M300_RESPONSE_ARITHMETIC_NO_NEW_CLASS_SOLVES_NO_FULL107_NO_COVARIANCE_NO_NUISANCE_NO_PHYSICAL_INFERENCE`.
 
 Scientific effect remains `+0/+0`.
 
@@ -184,3 +184,71 @@ Prospectively design one **BOSS M300 cross-survey response replication** gate fr
 - do not inspect M300 response values before preregistration/design/static Critic.
 
 This is preferred over immediate full107 because it tests whether the DES M298 PASS survives a different survey/data block at negligible solver cost, providing a cheap potential killer before broad expansion.
+
+
+## BOSS M300 cross-survey replication design — terminal static closure
+
+The current counterexample-first successor has completed **design only**.
+
+Frozen design chain:
+- prereg commit `28917bbe0137c4d71b9dcfbd10c2dfb3f0a12b9c`, blob `983f039f0bcf410d629a78332c2be2b6b85a95ff`;
+- design authority commit `cdf50d3ef2886f9305bdfea78297d3f3da97f0ed`, blob `8ebb5ea32b28d9ac38625bdb1c1f999663d113cb`;
+- independent design static Critic commit `4ce56f4b32190a66816600fd3f5f766312bd3e1a`, blob `acf0cf8ab62f586ac9b771f29b2a2202caaf87bb`, verdict `PASS_SCOPED`.
+
+Frozen object:
+- BOSS `M300`;
+- direct `D58`;
+- all 64 calls `377..440`;
+- exactly `R01..R32`;
+- no call subset;
+- no new CLASS solve.
+
+Target structure:
+- 99 unique exact coordinates shared by all 64 calls;
+- each unique coordinate appears exactly three times in the persisted raw source target list;
+- 297 persisted source entries per call;
+- unique-99 identity SHA256 `a44a8921e3c10b17cdf222b97d18524454e927dadeea30b13e75c3a0d6fc42fc`;
+- raw-297 identity SHA256 `e5bcdcb7fbb802b24469d8e3f1965013dc35b3b9249868476cf22490456f344a`.
+
+The scientific source vectors remain the exact persisted shape-`[297]` arrays; deduplication is forbidden.
+
+Response-blind structural audit checked all 32 lane receipts without opening NPZ scientific values:
+- 256 selected M300 arrays per lane;
+- 8,192 selected manifest entries total;
+- shape `[297]`;
+- dtype `<f8`;
+- byte length `2376`;
+- roles beta_plus/beta_minus;
+- mixed/direct constructions;
+- direct batch D58;
+- exact raw target identity;
+- frozen population 10 active / 22 inactive, 16 A / 16 B.
+
+Future response, if separately authorized:
+`abs((beta_plus-beta_minus)/(2*h))`, `h=1e-4`.
+
+Frozen future classifier operates over complete `[64,297]` tensors:
+- 19,008 atoms per lane/per construction;
+- 608,256 atoms across 32 lanes per construction;
+- 1,216,512 combined atoms;
+- every atom finite and strictly positive;
+- mixed and direct cross-host max pairwise response spread strict `<1e-5`;
+- mixed and direct native-class mean separation strict `<1e-5`;
+- mixed/direct atomwise construction agreement strict `<1e-3`.
+
+No DES/BOSS amplitude-equality threshold exists.
+
+Current authorization after design Critic:
+- `M300_response_read=false`;
+- `scientific_classifier_invoked=false`;
+- `implementation_authorized=false`;
+- `execution_authorized=false`;
+- covariance/nuisance/full107/statistical/physical inference closed.
+
+## Exact next admissible action
+
+**STOP.**
+
+Re-read durable authority before any M300 implementation. A design PASS alone does not authorize code that performs response arithmetic and does not authorize an Actions run.
+
+Do not author/launch M300 response execution unless a later explicit authority changes this state.
