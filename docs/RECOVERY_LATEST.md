@@ -634,3 +634,44 @@ Protocol requires:
 5. only after independent result exists, compare producer classification/metrics and require bitwise response-evidence equality.
 
 No threshold, subset, classifier or Critic algorithm may be changed after the M076 outcome.
+
+
+### M076 independent runtime Critic implementation — prospectively frozen before outcome
+
+While authoritative producer run `35405511563` remained queued and before any M076 source/producer scientific value was consumed, the independent runtime-Critic implementation was frozen and statically reviewed.
+
+Critic protocol:
+- protocol commit `9f1262cabe4a7a024ea29bb74d94b738356bef20`;
+- protocol blob `0946784a0300d495615b54658ad1a650a3f3bdc4`.
+
+Critic implementation chain:
+- implementation-authoring authority commit `185554b962ddca1a65b411a39c16a02a9b220b9e`, blob `791bb2f3b278ee794c6758ec0b817e26507437ab`;
+- initial Critic implementation commit `85c65d4a27e9f421ca51df5ce920eb6b4952d975`;
+- response-blind diagnostic repair commit `7b2df4a22f53546c44fa3a43b620a0d0f934d8be`, final Critic implementation blob `e03f24d1424a84fecbb34981c010de7c6a1cf1a9`;
+- inert two-job Critic workflow commit `bac73e8e384e8ba27415ccfdce583a36345799e2`;
+- provenance-fail workflow repair commit `16bd20681fe591f4393ebe103866e976a73e5831`, final Critic workflow blob `bd297ae5ebe3361888f9ef1d9bb4ea575e5e3e90`;
+- independent Critic implementation static authority commit `e2dd32ba7f787935014908a269117a7e6466c2b1`, verdict `PASS_SCOPED`.
+
+Independence barrier:
+1. recompute job may consume only the 32 frozen numerical source artifacts;
+2. producer implementation is not imported;
+3. independent classification/evidence is persisted and uploaded before compare;
+4. compare job depends on prior recompute artifact;
+5. producer artifact may be read only through a post-terminal metadata-freeze authority;
+6. source-provenance failure closes before producer read;
+7. exact technical counterexamples are frozen for cross-host and native-class failure paths.
+
+Critic execution remains unauthorized until the producer run is terminal and its run/job/artifact metadata are frozen before science read.
+
+Current authoritative producer identity remains:
+- run `35405511563`;
+- workflow `361754162`;
+- job `105794347277`;
+- run #1 / attempt #1;
+- head `7ca7092fddc3e1d263ed763bed2e7b53bd1672ab`;
+- latest observed status: `queued`;
+- artifacts: none;
+- partial science consumed: false.
+
+Exact next admissible action remains:
+`POLL_RUN_35405511563_METADATA_ONLY;_IF_TERMINAL_FREEZE_RUN_JOB_ARTIFACT_METADATA_BEFORE_ANY_SCIENCE_READ;_THEN_AUTHOR_ONE_CRITIC_EXECUTION_AUTHORITY_BINDING_METADATA_FREEZE_PLUS_CRITIC_CODE_WORKFLOW_STATIC_PASS;_LAUNCH_ONE_CRITIC_RUN`.
