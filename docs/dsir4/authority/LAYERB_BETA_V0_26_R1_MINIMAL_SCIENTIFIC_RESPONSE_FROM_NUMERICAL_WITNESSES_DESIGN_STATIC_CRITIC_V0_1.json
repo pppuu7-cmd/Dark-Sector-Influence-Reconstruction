@@ -1,0 +1,77 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_DESIGN_STATIC_CRITIC_V0_1",
+  "status": "TERMINAL_INDEPENDENT_DESIGN_STATIC_CRITIC",
+  "created_utc_date": "2026-09-18",
+  "effect": "+0/+0",
+  "verdict": "PASS_SCOPED",
+  "classification": "MINIMAL_SCIENTIFIC_RESPONSE_DESIGN_SCOPE_CONFIRMED",
+  "interpretation_ceiling": "DESIGN_STATIC_REVIEW_ONLY_NO_SCIENTIFIC_RESPONSE_READ",
+  "reviewed_design_authority": {
+    "path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_DESIGN_AUTHORITY_V0_1.json",
+    "git_blob_sha1": "f55607c6cf0850c064c4ea1d6edf4660ddb16fba"
+  },
+  "reviewed_preregistration": {
+    "path": "prereg/LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_V0_1.md",
+    "git_blob_sha1": "139bb9272e4e9ed194434f50694886fc0e6ebdfe"
+  },
+  "terminal_parent_runtime_critic_git_blob_sha1": "9f19f8cc643bc978d0dbbcdd58f80fdf04395e24",
+  "independently_checked": {
+    "numerical_parent_is_terminal_CONFIRMED_SCOPED": true,
+    "consumed_numerical_run_is_not_reauthorized": true,
+    "design_is_response_blind_and_prospective": true,
+    "source_semantic_parent_blob_exact": true,
+    "response_component_matches_source_semantics": true,
+    "beta_symmetric_formula_matches_source_semantics": true,
+    "h_exact_1e_4": true,
+    "beta_tolerance_exact_1e_12": true,
+    "scientific_relative_threshold_strict_1e_3_inherited": true,
+    "technical_relative_threshold_strict_1e_5_inherited": true,
+    "M298_call375_is_preexisting_frozen_sentinel_selection": true,
+    "M298_call375_is_one_call_selection": true,
+    "M076_has_two_calls_and_M300_has_64_calls": true,
+    "selection_rationale_is_response_blind": true,
+    "exact_replicate_set_R01_R32_frozen": true,
+    "all_32_lane_receipts_contain_all_four_selected_witness_keys": true,
+    "all_four_selected_arrays_shape_244_in_all_lanes": true,
+    "all_four_selected_arrays_dtype_little_endian_float64_in_all_lanes": true,
+    "selected_mixed_and_direct_arrays_share_one_exact_target_identity_hash": true,
+    "selected_target_identity_hash": "1e835a495e6b742b7b992627e819e949420529ba5097164d260ca0accb0d3c0c",
+    "frozen_population_10_active_22_inactive_preserved": true,
+    "frozen_order_arms_16_A_16_B_preserved": true,
+    "no_new_CLASS_construction_required": true,
+    "no_interpolation_permitted": true,
+    "provenance_must_bind_before_response_arithmetic": true,
+    "finite_positive_nonzero_semantics_are_source_authoritative": true,
+    "scientific_1e_3_is_not_misrepresented_as_amplitude_significance": true,
+    "nuisance_like_classification_is_not_claimed_without_nuisance_data": true,
+    "covariance_whitening_nuisance_relation_null_Wm_S3_global65537_full107_remain_forbidden": true,
+    "terminal_taxonomy_is_frozen_before_response": true,
+    "claim_ceiling_excludes_statistical_significance_and_dark_sector_inference": true
+  },
+  "negative_review_findings": {
+    "response_dependent_subset_selection_found": false,
+    "post_outcome_threshold_adaptation_found": false,
+    "scientific_value_read_during_design_found": false,
+    "covariance_or_nuisance_dependency_found": false,
+    "hidden_new_solver_requirement_found": false,
+    "full107_dependency_found": false,
+    "physical_claim_leakage_found": false
+  },
+  "response_read_status": {
+    "scientific_response_constructed": false,
+    "scientific_response_read": false,
+    "scientific_classifier_invoked": false,
+    "covariance_read": false,
+    "nuisance_read": false
+  },
+  "authorization_after_pass": {
+    "implementation_authoring_authorized": true,
+    "implementation_execution_authorized": false,
+    "response_construction_execution_authorized": false,
+    "new_CLASS_solver_execution_authorized": false,
+    "full_107_row_execution_authorized": false,
+    "downstream_science_authorized": false
+  },
+  "next_stage": "AUTHOR_ONE_READ_ONLY_RESPONSE_CONSTRUCTOR_OVER_THE_FOUR_FROZEN_M298_CALL375_WITNESS_ARRAYS;_STATIC_AUDIT_IMPLEMENTATION;_FREEZE_SEPARATE_ONE_SHOT_EXECUTION_AUTHORITY_BEFORE_ANY_RESPONSE_ARITHMETIC;_NO_NEW_CLASS;_NO_FULL107",
+  "token": "PASS_SCOPED_MINIMAL_SCIENTIFIC_RESPONSE_DESIGN_PLUS_0_PLUS_0"
+}
