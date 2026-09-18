@@ -1,0 +1,46 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_TARGET_IDENTITY_PROVENANCE_CORRECTION_V0_1",
+  "status": "TERMINAL_PROVENANCE_CORRECTION",
+  "created_utc_date": "2026-09-18",
+  "effect": "+0/+0",
+  "scope": "TARGET_IDENTITY_LITERAL_ONLY",
+  "scientific_object_changed": false,
+  "reviewed_v0_2_runtime_critic_git_blob_sha1": "85ce3e72100c8ab61605d8be73b376a70811f40e",
+  "original_preregistration_git_blob_sha1": "139bb9272e4e9ed194434f50694886fc0e6ebdfe",
+  "original_design_authority_git_blob_sha1": "f55607c6cf0850c064c4ea1d6edf4660ddb16fba",
+  "source_numerical_run_id": 35280281867,
+  "immutable_source_receipt_count": 32,
+  "selected_keys": [
+    "mixed_target__M298__beta_plus__call375",
+    "mixed_target__M298__beta_minus__call375",
+    "direct_target__M298__beta_plus__call375",
+    "direct_target__M298__beta_minus__call375"
+  ],
+  "corrected_target_identity_sha256": "1e835a495e6b742b7b992627e819e949420529ba5097164d260ca0accb0d3c0c",
+  "corrected_target_identity_length": 64,
+  "all_32_receipts_all_4_keys_match_corrected_identity": true,
+  "superseded_malformed_literal": "1e835a495e6b742b7b992627e819e949420529ba5097164d260ca0accb0d3c0",
+  "superseded_malformed_literal_length": 63,
+  "defect_type": "TRUNCATED_SHA256_LITERAL_MISSING_FINAL_HEX_C",
+  "frozen_science_preserved": {
+    "mixed_batch_id": "M298",
+    "call_index": 375,
+    "exact_target_count": 244,
+    "h": 0.0001,
+    "technical_relative_tolerance_strict_lt": 0.00001,
+    "scientific_construction_agreement_strict_lt": 0.001,
+    "formula": "abs((beta_plus - beta_minus) / (2*h))",
+    "replicate_count": 32
+  },
+  "response_blindness": {
+    "scientific_response_constructed": false,
+    "scientific_response_read": false,
+    "scientific_classifier_invoked": false,
+    "covariance_read": false,
+    "nuisance_read": false,
+    "new_CLASS_solves": 0
+  },
+  "corrected_successor_authoring_authorized": true,
+  "previous_execution_rerun_authorized": false,
+  "token": "TERMINAL_TARGET_IDENTITY_PROVENANCE_CORRECTION_NO_SCIENCE_CHANGE"
+}
