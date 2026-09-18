@@ -1,0 +1,25 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_LAUNCH_V0_3",
+  "status": "ONE_SHOT_PROVENANCE_CORRECTED_LAUNCH_MARKER",
+  "created_utc_date": "2026-09-18",
+  "effect": "+0/+0",
+  "launch_once": true,
+  "parent_invalid_runs": [
+    35367672204,
+    35368119311
+  ],
+  "parent_rerun_authorized": false,
+  "source_run_id": 35280281867,
+  "execution_authority_git_blob_sha1": "d3f00526acefab51e66c18552bb39aa6a19da3ad",
+  "implementation_git_blob_sha1": "7e72482c536968a769b69c302fc9eb64b639bcec",
+  "implementation_static_critic_git_blob_sha1": "fdb34c9df253c8339ac7cb57c6f333d6b8e1dc35",
+  "workflow_git_blob_sha1": "27ebe8b99aae818337ba77e51733b05ce80f9c07",
+  "target_identity_correction_git_blob_sha1": "27af1bea4c380029741ea56083e982abbbe2fbb1",
+  "authorized_run_number": 1,
+  "authorized_run_attempt": 1,
+  "new_CLASS_solves_authorized": false,
+  "full107_authorized": false,
+  "covariance_read_authorized": false,
+  "nuisance_read_authorized": false,
+  "token": "LAUNCH_EXACTLY_ONE_PROVENANCE_CORRECTED_MINIMAL_SCIENCE_V0_3"
+}
