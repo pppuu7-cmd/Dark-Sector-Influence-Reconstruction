@@ -1,0 +1,143 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION_TERMINAL_V0_1",
+  "status": "TERMINAL_SCIENTIFIC_GATE_DECISION",
+  "created_utc_date": "2026-09-19",
+  "effect": "+0/+0",
+  "classification": "PASS_SCOPED_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION",
+  "interpretation_ceiling": "CROSS_SURVEY_RESPONSE_EXISTENCE_REPRODUCIBILITY_AND_CONSTRUCTION_STABILITY_ONLY",
+  "run_identity": {
+    "run_id": 35404848010,
+    "workflow_id": 361750847,
+    "job_id": 105792356879,
+    "run_number": 1,
+    "run_attempt": 1,
+    "head_sha": "5f466f238ad2b9562d98794b2de1e33764ebb418",
+    "workflow_conclusion": "success",
+    "consumed": true,
+    "rerun_authorized": false,
+    "retry_failed_jobs_authorized": false
+  },
+  "run_metadata_freeze_git_blob_sha1": "09ea4ec4ff8dfecb2698916ac990738795624062",
+  "frozen_authorities": {
+    "preregistration_git_blob_sha1": "983f039f0bcf410d629a78332c2be2b6b85a95ff",
+    "design_authority_git_blob_sha1": "8ebb5ea32b28d9ac38625bdb1c1f999663d113cb",
+    "design_static_critic_git_blob_sha1": "acf0cf8ab62f586ac9b771f29b2a2202caaf87bb",
+    "implementation_authoring_authority_git_blob_sha1": "9fd2c5faddbb98bed67a0edf8e89ef582068616a",
+    "implementation_git_blob_sha1": "55b7df57ab86c5dc2e48f860b179c1a64eb5005b",
+    "implementation_static_critic_git_blob_sha1": "53ddecce0a20fcb50041781a0a14b55f26cfcd78",
+    "workflow_git_blob_sha1": "03e99a747ca8d4e7db13fd12a23f59fdd5c02b07",
+    "execution_authority_git_blob_sha1": "ff09e8c55f0f7a04aa05f3e36d9e16c715f67d4a",
+    "numerical_runtime_critic_git_blob_sha1": "9f19f8cc643bc978d0dbbcdd58f80fdf04395e24"
+  },
+  "immutable_scientific_artifact": {
+    "artifact_id": 10572057201,
+    "name": "layerb-beta-v026-r1-boss-m300-cross-survey-response-v0-1",
+    "outer_digest": "sha256:de99c1954d38b83559bafa40a149938c98052af255f3f6b6f67880377cf4385a",
+    "independent_download_sha256": "de99c1954d38b83559bafa40a149938c98052af255f3f6b6f67880377cf4385a",
+    "members": [
+      {
+        "name": "provenance.json",
+        "sha256": "304ae85ab38daf9fe9cca0c9633e324f361dc227d2741bb032c9db24a7b199de"
+      },
+      {
+        "name": "response_evidence.npz",
+        "sha256": "4de8084deea170860ed27c2eab85a6f24bcc54baa68a64deaee0b9734d53b76e"
+      },
+      {
+        "name": "result.json",
+        "sha256": "44c9c1d822fad354fada144d31f816248db73c174dd2e9378cd4345d04d984bb"
+      },
+      {
+        "name": "static_contract.json",
+        "sha256": "ccc8cd2c05c9f95e4fcacc7c746a4023e813b851fb6936907cf03932c34c4107"
+      }
+    ]
+  },
+  "frozen_object": {
+    "survey": "BOSS",
+    "mixed_selection": "M300",
+    "direct_batch": "D58",
+    "calls": "377..440",
+    "call_count": 64,
+    "unique_exact_coordinates": 99,
+    "persisted_source_entries_per_call": 297,
+    "replicate_count": 32,
+    "response_shape_per_construction": [
+      32,
+      64,
+      297
+    ],
+    "atoms_per_construction": 608256,
+    "combined_atoms": 1216512,
+    "h": 0.0001,
+    "response_formula": "abs((beta_plus-beta_minus)/(2*h))",
+    "new_CLASS_solves": 0
+  },
+  "scientific_result": {
+    "finite_positive_status": true,
+    "mixed_response_min": 0.1527526944755664,
+    "mixed_response_max": 5708.442424129316,
+    "direct_response_min": 0.1527526944755664,
+    "direct_response_max": 5708.442424129316,
+    "metrics": {
+      "mixed_cross_host_max_pairwise_rel": 0,
+      "direct_cross_host_max_pairwise_rel": 0,
+      "mixed_native_class_mean_rel_separation": 4.709641672451007e-16,
+      "direct_native_class_mean_rel_separation": 4.709641672451007e-16,
+      "mixed_direct_response_max_rel": 0,
+      "execution_order_arm_mean_rel_separation_descriptive_mixed": 0,
+      "execution_order_arm_mean_rel_separation_descriptive_direct": 0
+    },
+    "smallest_exact_counterexample": null
+  },
+  "provenance_summary": {
+    "source_run_id": 35280281867,
+    "exact_lane_count": 32,
+    "source_outer_digest_match_count": 32,
+    "selected_manifest_entries_verified": 8192,
+    "native_class_counts": {
+      "NATIVE_AVX512_ACTIVE": 10,
+      "NATIVE_AVX512_INACTIVE": 22
+    },
+    "order_arm_counts": {
+      "A": 16,
+      "B": 16
+    },
+    "provenance_complete_before_response_arithmetic": true
+  },
+  "boundary_flags": {
+    "M300_response_read": true,
+    "scientific_classifier_invoked": true,
+    "covariance_read": false,
+    "whitening_read": false,
+    "nuisance_read": false,
+    "relation_null_read": false,
+    "Wm_S3_opened": false,
+    "global_65537_opened": false,
+    "full107_execution": false,
+    "statistical_inference_authorized": false,
+    "physical_inference_authorized": false,
+    "DES_BOSS_amplitude_equality_tested": false
+  },
+  "bounded_inference": {
+    "supported": "The prospectively frozen BOSS M300 response family replicates the DES M298 scoped response-existence, technical-reproducibility and mixed/direct construction-stability properties over the complete frozen 64-call BOSS family and frozen 32-lane population.",
+    "not_supported": [
+      "DES-BOSS amplitude equality",
+      "statistical significance",
+      "covariance-aware validity",
+      "nuisance robustness",
+      "full107 validity",
+      "dark-sector detection",
+      "physical dark-sector inference",
+      "new physics"
+    ]
+  },
+  "runtime_critic_required": true,
+  "full107_authorized": false,
+  "covariance_authorized": false,
+  "nuisance_authorized": false,
+  "statistical_inference_authorized": false,
+  "physical_inference_authorized": false,
+  "next_rule": "INDEPENDENT_RUNTIME_CRITIC_MUST_CLOSE_THIS_PASS_BEFORE_ANY_NEW_SCIENCE_GATE;_THEN_REBUILD_DAG_COUNTEREXAMPLE_FIRST;_NO_AUTOMATIC_FULL107",
+  "token": "TERMINAL_PASS_SCOPED_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION_PLUS_0_PLUS_0"
+}
