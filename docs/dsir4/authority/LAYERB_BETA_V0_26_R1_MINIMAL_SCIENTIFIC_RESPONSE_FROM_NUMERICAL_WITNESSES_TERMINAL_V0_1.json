@@ -1,0 +1,57 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_TERMINAL_V0_1",
+  "status": "TERMINAL_SCIENTIFIC_GATE_EXECUTION_DECISION",
+  "created_utc_date": "2026-09-18",
+  "effect": "+0/+0",
+  "classification": "INVALID_IMPLEMENTATION",
+  "interpretation_ceiling": "IMPLEMENTATION_TRANSPORT_FAILURE_BEFORE_SCIENTIFIC_RESPONSE",
+  "run_id": 35367672204,
+  "workflow_id": 361513304,
+  "run_number": 1,
+  "run_attempt": 1,
+  "head_sha": "25a5380d1d366ab233d8222fa7c3a2d8601e1fda",
+  "workflow_conclusion": "success",
+  "job_id": 105673940890,
+  "source_numerical_run_id": 35280281867,
+  "execution_authority_git_blob_sha1": "bfbb9ce09870a8bf76b535abd893a9732bc4e094",
+  "implementation_git_blob_sha1": "00230b171103fabb860ad81489d3f8052aff25c8",
+  "implementation_static_critic_git_blob_sha1": "bb119e34554877fee4070094fdae1d903cc94065",
+  "workflow_git_blob_sha1": "0813494d14d6b6470de0ee17e75f349c04bf99c1",
+  "evidence_artifact": {
+    "artifact_id": 10557341573,
+    "name": "layerb-beta-v026-r1-minimal-scientific-response-v0-1",
+    "outer_digest": "sha256:38cc742ea382dd3712ef64487583dcef59bc58965f7ddb2dc60140021229e272",
+    "independent_download_sha256": "38cc742ea382dd3712ef64487583dcef59bc58965f7ddb2dc60140021229e272",
+    "members": [
+      "result.json",
+      "static_contract.json"
+    ],
+    "result_json_sha256": "3af48a2e786d3c4877ad3fd2d22c815e88bab234d9aa0ae077ca7812fb6b1d27",
+    "static_contract_json_sha256": "c2ebeeb855993a94c32fa2586df9860adc5a16563c73d286e40e91b87e7504fc"
+  },
+  "observed_failure": {
+    "failure_stage": "unexpected",
+    "error": "HTTPError: HTTP Error 401: Unauthorized",
+    "localized_scope": "source artifact transport/authentication before provenance completion",
+    "static_contract_classification": "PASS_STATIC_CONTRACT",
+    "provenance_complete_before_response_arithmetic": false,
+    "scientific_response_read": false,
+    "scientific_classifier_invoked": false,
+    "covariance_read": false,
+    "nuisance_read": false,
+    "new_CLASS_solves": 0
+  },
+  "scientific_interpretation": {
+    "scientific_response_evaluated": false,
+    "finite_positive_evaluated": false,
+    "response_reproducibility_evaluated": false,
+    "mixed_direct_response_agreement_evaluated": false,
+    "dark_sector_inference_evaluated": false,
+    "reason": "The source artifact transport failed before all provenance bindings passed; no beta plus/minus arithmetic was performed."
+  },
+  "rerun_same_identity_authorized": false,
+  "retry_failed_jobs_authorized": false,
+  "causal_successor_authoring_authorized": true,
+  "causal_successor_constraint": "Preserve M298/call375 science object, thresholds, source run and classifier; repair only artifact transport/authentication with a new prospective identity.",
+  "token": "TERMINAL_INVALID_IMPLEMENTATION_PRE_RESPONSE_AUTH_TRANSPORT_PLUS_0_PLUS_0"
+}
