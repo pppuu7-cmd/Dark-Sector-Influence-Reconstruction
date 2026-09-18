@@ -361,6 +361,30 @@ def source_recompute(outdir):
         mdarr=rel(M,D); md=float(mdarr.max())
         if not all(x<TECH_TOL for x in (mm,dd,mn,dn)):
             classification="SCIENTIFIC_RESPONSE_REPRODUCIBILITY_FAIL"
+            # Deterministic exact technical witness: replicate-pair order,
+            # then atom order, mixed before direct; native-class means only
+            # if no cross-host atom violates the technical threshold.
+            for i,j in itertools.combinations(range(32),2):
+                qm=rel(M[i],M[j]); qd=rel(D[i],D[j])
+                for ei in range(255):
+                    if qm[ei]>=TECH_TOL:
+                        call=76 if ei<127 else 78; idx=ei if ei<127 else ei-127
+                        smallest={"failure_class":classification,"metric":"mixed_cross_host","replicate_a":REPLICATES[i],"replicate_b":REPLICATES[j],"call":call,"source_entry_index":idx,"relative_difference":float(qm[ei])}; break
+                    if qd[ei]>=TECH_TOL:
+                        call=76 if ei<127 else 78; idx=ei if ei<127 else ei-127
+                        smallest={"failure_class":classification,"metric":"direct_cross_host","replicate_a":REPLICATES[i],"replicate_b":REPLICATES[j],"call":call,"source_entry_index":idx,"relative_difference":float(qd[ei])}; break
+                if smallest: break
+            if smallest is None:
+                qmn=rel(M[ai].mean(0),M[ii].mean(0)); qdn=rel(D[ai].mean(0),D[ii].mean(0))
+                for ei in range(255):
+                    if qmn[ei]>=TECH_TOL:
+                        call=76 if ei<127 else 78; idx=ei if ei<127 else ei-127
+                        smallest={"failure_class":classification,"metric":"mixed_native_class_mean","native_class_a":ACTIVE,"native_class_b":INACTIVE,"call":call,"source_entry_index":idx,"relative_difference":float(qmn[ei])}; break
+                    if qdn[ei]>=TECH_TOL:
+                        call=76 if ei<127 else 78; idx=ei if ei<127 else ei-127
+                        smallest={"failure_class":classification,"metric":"direct_native_class_mean","native_class_a":ACTIVE,"native_class_b":INACTIVE,"call":call,"source_entry_index":idx,"relative_difference":float(qdn[ei])}; break
+            if smallest is None:
+                raise CriticError("CRITIC_INVALID_IMPLEMENTATION","counterexample_capture","technical failure without exact witness")
         elif not md<SCI_TOL:
             classification="SCIENTIFIC_RESPONSE_CONSTRUCTION_MISMATCH"
             ri,ei=map(int,np.argwhere(mdarr>=SCI_TOL)[0]); call=76 if ei<127 else 78; idx=ei if ei<127 else ei-127
@@ -389,10 +413,17 @@ def compare(indir,metadata_freeze,outdir):
     validate_static_chain()
     indir=Path(indir); mf=Path(metadata_freeze); outdir=Path(outdir); outdir.mkdir(parents=True,exist_ok=True)
     # Consume independent evidence BEFORE producer metadata/artifact.
-    iraw=(indir/"independent_result.json").read_bytes(); praw=(indir/"independent_provenance.json").read_bytes(); nraw=(indir/"independent_response.npz").read_bytes()
+    iraw=(indir/"independent_result.json").read_bytes()
     independent=json.loads(iraw)
     if independent.get("producer_payload_read") is not False: raise CriticError("CRITIC_INVALID_IMPLEMENTATION","independence","independent phase read producer")
     if independent.get("classification") not in SCIENCE_TAXONOMY: raise CriticError("CRITIC_INVALID_IMPLEMENTATION","independent_taxonomy","bad classification")
+    pre=independent.get("critic_precompare_verdict")
+    if pre is not None:
+        if pre not in CRITIC_TAXONOMY or pre=="PASS_TERMINAL_CLOSURE":
+            raise CriticError("CRITIC_INVALID_IMPLEMENTATION","precompare_verdict","invalid precompare verdict")
+        writej(outdir/"critic_decision.json",{"schema":"DSIR_M076_RUNTIME_CRITIC_DECISION_V0_1","verdict":pre,"reason":independent.get("failure_stage"),"independent_classification":independent.get("classification"),"producer_payload_read":False,"full107_authorized":False,"covariance_authorized":False,"nuisance_authorized":False,"statistical_inference_authorized":False,"physical_inference_authorized":False})
+        return 0
+    praw=(indir/"independent_provenance.json").read_bytes(); nraw=(indir/"independent_response.npz").read_bytes()
     with np.load(io.BytesIO(nraw),allow_pickle=False) as z:
         im=np.ascontiguousarray(z["R_mixed"],dtype="<f8"); idr=np.ascontiguousarray(z["R_direct"],dtype="<f8")
     if im.shape!=(32,255) or idr.shape!=(32,255): raise CriticError("CRITIC_INVALID_IMPLEMENTATION","independent_shape","bad shape")
@@ -451,10 +482,21 @@ def main():
         return compare(a.independent_dir,a.metadata_freeze,a.outdir)
     except CriticError as e:
         target=Path(a.outdir or "."); target.mkdir(parents=True,exist_ok=True)
-        writej(target/"critic_error.json",{"schema":"DSIR_M076_RUNTIME_CRITIC_ERROR_V0_1","verdict":e.kind if e.kind in CRITIC_TAXONOMY else "CRITIC_INVALID_IMPLEMENTATION","stage":e.stage,"error":str(e)})
+        verdict=e.kind if e.kind in CRITIC_TAXONOMY else "CRITIC_INVALID_IMPLEMENTATION"
+        writej(target/"critic_error.json",{"schema":"DSIR_M076_RUNTIME_CRITIC_ERROR_V0_1","verdict":verdict,"stage":e.stage,"error":str(e)})
+        if a.mode=="recompute":
+            science="PROVENANCE_FAIL" if verdict=="CRITIC_PROVENANCE_FAIL" else "INVALID_IMPLEMENTATION"
+            writej(target/"independent_result.json",{"schema":"DSIR_M076_INDEPENDENT_CRITIC_RECOMPUTE_V0_1","classification":science,"critic_precompare_verdict":verdict,"failure_stage":e.stage,"error":str(e),"producer_payload_read":False})
+        elif a.mode=="compare":
+            writej(target/"critic_decision.json",{"schema":"DSIR_M076_RUNTIME_CRITIC_DECISION_V0_1","verdict":verdict,"reason":e.stage,"error":str(e),"producer_payload_read":False,"full107_authorized":False,"covariance_authorized":False,"nuisance_authorized":False,"statistical_inference_authorized":False,"physical_inference_authorized":False})
         return 0
     except Exception as e:
         target=Path(a.outdir or "."); target.mkdir(parents=True,exist_ok=True)
-        writej(target/"critic_error.json",{"schema":"DSIR_M076_RUNTIME_CRITIC_ERROR_V0_1","verdict":"CRITIC_INVALID_IMPLEMENTATION","stage":"unexpected","error":f"{type(e).__name__}: {e}"})
+        msg=f"{type(e).__name__}: {e}"
+        writej(target/"critic_error.json",{"schema":"DSIR_M076_RUNTIME_CRITIC_ERROR_V0_1","verdict":"CRITIC_INVALID_IMPLEMENTATION","stage":"unexpected","error":msg})
+        if a.mode=="recompute":
+            writej(target/"independent_result.json",{"schema":"DSIR_M076_INDEPENDENT_CRITIC_RECOMPUTE_V0_1","classification":"INVALID_IMPLEMENTATION","critic_precompare_verdict":"CRITIC_INVALID_IMPLEMENTATION","failure_stage":"unexpected","error":msg,"producer_payload_read":False})
+        elif a.mode=="compare":
+            writej(target/"critic_decision.json",{"schema":"DSIR_M076_RUNTIME_CRITIC_DECISION_V0_1","verdict":"CRITIC_INVALID_IMPLEMENTATION","reason":"unexpected","error":msg,"producer_payload_read":False,"full107_authorized":False,"covariance_authorized":False,"nuisance_authorized":False,"statistical_inference_authorized":False,"physical_inference_authorized":False})
         return 0
 if __name__=="__main__": raise SystemExit(main())
