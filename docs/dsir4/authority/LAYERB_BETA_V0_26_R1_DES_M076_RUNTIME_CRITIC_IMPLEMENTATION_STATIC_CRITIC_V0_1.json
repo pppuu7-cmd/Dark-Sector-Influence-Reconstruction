@@ -1,0 +1,90 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_DES_M076_RUNTIME_CRITIC_IMPLEMENTATION_STATIC_CRITIC_V0_1",
+  "status": "TERMINAL_INDEPENDENT_RUNTIME_CRITIC_IMPLEMENTATION_STATIC_CRITIC",
+  "created_utc_date": "2026-09-19",
+  "effect": "+0/+0",
+  "verdict": "PASS_SCOPED",
+  "classification": "M076_RUNTIME_CRITIC_IMPLEMENTATION_SCOPE_CONFIRMED",
+  "interpretation_ceiling": "STATIC_CRITIC_IMPLEMENTATION_REVIEW_ONLY_NO_M076_SOURCE_OR_PRODUCER_SCIENCE_READ",
+  "reviewed_runtime_critic_protocol_git_blob_sha1": "0946784a0300d495615b54658ad1a650a3f3bdc4",
+  "reviewed_critic_authoring_authority_git_blob_sha1": "791bb2f3b278ee794c6758ec0b817e26507437ab",
+  "reviewed_critic_implementation": {
+    "path": "ci/layerb_beta_v026_r1_des_m076_remaining_sentinel_response_runtime_critic_v0_1.py",
+    "git_blob_sha1": "e03f24d1424a84fecbb34981c010de7c6a1cf1a9"
+  },
+  "reviewed_critic_workflow": {
+    "path": ".github/workflows/dsir-v026-r1-des-m076-independent-runtime-critic-v0-1.yml",
+    "git_blob_sha1": "bd297ae5ebe3361888f9ef1d9bb4ea575e5e3e90"
+  },
+  "pre_execution_repair_history": [
+    {
+      "original_commit": "85c65d4a27e9f421ca51df5ce920eb6b4952d975",
+      "repair_commit": "7b2df4a22f53546c44fa3a43b620a0d0f934d8be",
+      "defect": "Technical reproducibility FAIL lacked mandatory exact witness; source-provenance failure could fail to materialize independent_result.json.",
+      "science_read": false,
+      "thresholds_changed": false,
+      "object_changed": false
+    },
+    {
+      "original_workflow_commit": "bac73e8e384e8ba27415ccfdce583a36345799e2",
+      "repair_commit": "16bd20681fe591f4393ebe103866e976a73e5831",
+      "defect": "Compare step unconditionally required independent_response.npz even for pre-response provenance failure.",
+      "science_read": false,
+      "workflow_scientific_contract_changed": false
+    }
+  ],
+  "independently_checked": {
+    "producer_implementation_import_absent": true,
+    "source_only_recompute_phase_has_no_producer_artifact_dependency": true,
+    "exact_calls_76_78": true,
+    "exact_shapes_127_128": true,
+    "exact_selected_source_bindings_256": true,
+    "exact_h_1e_4": true,
+    "exact_technical_threshold_strict_lt_1e_5": true,
+    "exact_mixed_direct_threshold_strict_lt_1e_3": true,
+    "source_artifact_id_name_outer_digest_validation_present": true,
+    "receipt_npz_manifest_per_array_binding_validation_present": true,
+    "exact_D50_direct_binding_present": true,
+    "deterministic_zero_nonfinite_counterexample_present": true,
+    "deterministic_cross_host_counterexample_present": true,
+    "deterministic_native_class_counterexample_present": true,
+    "deterministic_mixed_direct_counterexample_present": true,
+    "independent_result_persisted_before_compare_phase": true,
+    "precompare_failure_closes_without_producer_read": true,
+    "producer_metadata_freeze_required_before_compare": true,
+    "producer_artifact_outer_digest_reverified": true,
+    "producer_classification_exact_compare": true,
+    "producer_metrics_exact_compare": true,
+    "producer_response_arrays_bitwise_compare": true,
+    "no_CLASS_import": true,
+    "no_subprocess_solver_path": true,
+    "no_new_CLASS_solves": true,
+    "workflow_marker_only": true,
+    "workflow_dispatch_absent": true,
+    "two_job_independence_barrier": true,
+    "compare_needs_recompute": true,
+    "independent_artifact_uploaded_before_compare": true,
+    "contents_read_actions_read_only": true,
+    "run_number_1_attempt_1_guard": true,
+    "critic_launch_marker_absent": true
+  },
+  "response_blind_static_phase": {
+    "M076_source_scientific_values_read": false,
+    "M076_producer_scientific_values_read": false,
+    "producer_classification_read": false,
+    "runtime_critic_executed": false
+  },
+  "authorization_after_pass": {
+    "runtime_critic_execution_authority_authoring_authorized_only_after_terminal_M076_metadata_freeze": true,
+    "runtime_critic_execution_authorized": false,
+    "runtime_critic_launch_authorized": false,
+    "duplicate_M076_producer_run_authorized": false,
+    "full107_authorized": false,
+    "covariance_authorized": false,
+    "nuisance_authorized": false,
+    "statistical_inference_authorized": false,
+    "physical_inference_authorized": false
+  },
+  "next_stage": "WAIT_FOR_M076_RUN_35405511563_TERMINAL;_FREEZE_RUN_JOB_ARTIFACT_METADATA_BEFORE_SCIENCE_READ;_THEN_AUTHOR_ONE_CRITIC_EXECUTION_AUTHORITY_BINDING_THIS_IMPLEMENTATION_WORKFLOW_AND_METADATA_FREEZE",
+  "token": "PASS_SCOPED_M076_RUNTIME_CRITIC_IMPLEMENTATION_PLUS_0_PLUS_0"
+}
