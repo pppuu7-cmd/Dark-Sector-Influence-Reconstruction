@@ -329,3 +329,32 @@ Until terminal:
 
 Next:
 `WAIT_ONLY_BY_METADATA_POLLING_FOR_RUN_35405511563_TERMINAL;_THEN_METADATA_FREEZE_BEFORE_SCIENCE_READ`.
+
+
+## M076 queue-state and pre-outcome Critic readiness
+
+The sole authorized M076 producer run remains `35405511563`, run #1/attempt #1, launch head `7ca7092fddc3e1d263ed763bed2e7b53bd1672ab`.
+
+Latest observed state:
+- job `105794347277`;
+- status `queued`;
+- no steps started;
+- no artifact exists;
+- partial scientific payload consumed = false.
+
+Do not duplicate/cancel/rerun solely because of queue delay.
+
+Independent runtime-Critic preparation is already complete before outcome:
+- protocol blob `0946784a0300d495615b54658ad1a650a3f3bdc4`;
+- Critic authoring authority blob `791bb2f3b278ee794c6758ec0b817e26507437ab`;
+- final Critic implementation blob `e03f24d1424a84fecbb34981c010de7c6a1cf1a9`;
+- final inert two-job Critic workflow blob `bd297ae5ebe3361888f9ef1d9bb4ea575e5e3e90`;
+- Critic implementation static review = `PASS_SCOPED` via commit `e2dd32ba7f787935014908a269117a7e6466c2b1`.
+
+Critic execution is CLOSED until producer terminal metadata freeze exists.
+
+Exact next:
+`METADATA_ONLY_POLL_RUN_35405511563 -> TERMINAL_METADATA_FREEZE -> ONE_CRITIC_EXECUTION_AUTHORITY -> ONE_CRITIC_MARKER -> INDEPENDENT_RECOMPUTE_JOB -> PRODUCER_COMPARE_JOB -> TERMINALIZE -> REBUILD_DAG`.
+
+Still locked:
+`FULL107`, covariance, whitening, nuisance, relation-null, `Wm_S3`, global65537, statistical inference and physical dark-sector inference.
