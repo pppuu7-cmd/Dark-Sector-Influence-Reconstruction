@@ -1,0 +1,19 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_LAUNCH_V0_1",
+  "status": "ONE_SHOT_LAUNCH_MARKER",
+  "created_utc_date": "2026-09-18",
+  "effect": "+0/+0",
+  "launch_once": true,
+  "source_run_id": 35280281867,
+  "execution_authority_git_blob_sha1": "bfbb9ce09870a8bf76b535abd893a9732bc4e094",
+  "implementation_git_blob_sha1": "00230b171103fabb860ad81489d3f8052aff25c8",
+  "implementation_static_critic_git_blob_sha1": "bb119e34554877fee4070094fdae1d903cc94065",
+  "workflow_git_blob_sha1": "0813494d14d6b6470de0ee17e75f349c04bf99c1",
+  "authorized_run_number": 1,
+  "authorized_run_attempt": 1,
+  "new_CLASS_solves_authorized": false,
+  "full107_authorized": false,
+  "covariance_read_authorized": false,
+  "nuisance_read_authorized": false,
+  "token": "LAUNCH_EXACTLY_ONE_MINIMAL_SCIENTIFIC_RESPONSE_FROM_FROZEN_WITNESSES"
+}
