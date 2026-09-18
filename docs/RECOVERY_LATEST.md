@@ -560,3 +560,60 @@ Claim ceiling remains scoped. This does not establish statistical significance, 
 → full107 / covariance / nuisance / statistical inference / physical inference = CLOSED.
 
 The next highest-information cheap gate is the remaining frozen sentinel family M076 because its raw witnesses already exist and require zero new CLASS solves. It tests another DES packing/comparator geometry before any 738-construction full replay.
+
+
+## DES M076 remaining-sentinel response — one-shot launched, terminal result pending
+
+After terminal closure of M298 and M300, the remaining frozen numerical sentinel family M076 was prospectively promoted through its own response-blind chain.
+
+Frozen M076 design:
+- prereg commit `1e9c32aefb783151d7ac59dd0064c86a4b440925`, blob `8817448b4794446a81dad3014e900c6ddf43b884`;
+- design authority commit `5d0957d11b92c2763bf2896678b5c7169ba7df0c`, blob `86046021a9463d6287d1d6854149097a9c769d47`;
+- design static Critic commit `02e8c52730da4e3973afdb755d318c926cec3b0f`, blob `d1598a8c8cdc00da5942af79612d319f472f3859`, verdict `PASS_SCOPED`.
+
+Frozen object:
+- DES `M076`;
+- calls exactly `76,78`;
+- direct comparator `D50`;
+- call76: z `3fdf851eb851eb85`, 127 persisted atoms, target SHA256 `661250b46dfc123a84fb8bfe908893780d419ebf5ba8ee51b83e24e826e26198`;
+- call78: z `3fdfafb7e90ff972`, 128 persisted atoms, target SHA256 `1969c1c6e83087e5408b19fb948d52ce9f91caf163969a66d7bd6647323aa57c`;
+- ordered union count 255, union SHA256 `bc86d3e98ff1e7d79bb8b3057e2a810b9dbaffd82f8c552cf781ffa52fd07df3`;
+- exact population `R01..R32`;
+- no new CLASS solves.
+
+Implementation chain:
+- implementation-authoring authority commit `2ee0d6d6c6a7370c1296efbb3e3c199c3f0325aa`, blob `60980d26c609cf3a6591514f1216ef47407d30b2`;
+- initial implementation commit `9b34b335c84264d735cc4392493afabfc906dd89`;
+- pre-execution static diagnostic repair commit `244779564b5f5622e098694283a58fe7263c47d5`, final implementation blob `363fc2103a60c533365a7797b72cf0f43351069c`;
+- repair only added deterministic smallest exact counterexample capture for technical reproducibility failure; no response value was read and no frozen science choice changed;
+- inert workflow commit `cf95955d3fd87190d97063f1dad231aba9fb1aa8`, blob `2f770d8f5ab99e759556f0cb0487b9e8c5304dda`;
+- implementation static Critic commit `d75df8063b34c99307de86e7b762256588e531f7`, blob `85bbff8295b5beaec8995bd566d1fb5a17ba8754`, verdict `PASS_SCOPED`;
+- one-shot execution authority commit `c8c8ba0b0f8d89a579da9898b6ed2659c514ffe6`, blob `65cc2cb75612c2fef2770af1bce606d0db5551e5`;
+- launch commit `7ca7092fddc3e1d263ed763bed2e7b53bd1672ab`.
+
+One-shot run:
+- run `35405511563`;
+- workflow `361754162`;
+- job `105794347277`;
+- run #1 / attempt #1;
+- launch head `7ca7092fddc3e1d263ed763bed2e7b53bd1672ab`;
+- latest durable observation at this recovery update: `queued`;
+- no partial scientific artifact consumed;
+- no duplicate run, rerun or retry authorized.
+
+Frozen future response:
+`abs((beta_plus-beta_minus)/(2*1e-4))`.
+
+Per construction:
+- 255 atoms/lane;
+- 8,160 atoms over 32 lanes;
+- 16,320 combined mixed+direct atoms.
+
+Thresholds:
+- technical reproducibility strict `<1e-5`;
+- mixed/direct construction agreement strict `<1e-3`.
+
+Full107/covariance/nuisance/statistical/physical inference remain closed.
+
+Exact next action:
+`MONITOR_RUN_35405511563_METADATA_ONLY_UNTIL_TERMINAL;_FREEZE_TERMINAL_RUN_AND_ARTIFACT_METADATA_BEFORE_READING_SCIENTIFIC_PAYLOAD;_THEN_INDEPENDENT_RUNTIME_RECOMPUTATION_FROM_ORIGINAL_32_NUMERICAL_ARTIFACTS`.
