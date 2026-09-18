@@ -1,0 +1,52 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_RUNTIME_CRITIC_V0_2",
+  "status": "TERMINAL_INDEPENDENT_RUNTIME_CRITIC",
+  "created_utc_date": "2026-09-18",
+  "effect": "+0/+0",
+  "verdict": "CONFIRMED_SCOPED",
+  "classification": "PROVENANCE_FAIL_RUNTIME_CONFIRMED",
+  "interpretation_ceiling": "PRE_RESPONSE_PROVENANCE_FAILURE_ONLY",
+  "reviewed_terminal_authority_git_blob_sha1": "85ce3e72100c8ab61605d8be73b376a70811f40e",
+  "reviewed_run": {
+    "run_id": 35368119311,
+    "workflow_id": 361516884,
+    "run_number": 1,
+    "run_attempt": 1,
+    "head_sha": "d20d3b76c5538de266a8e522055ffcf952a29a9d",
+    "job_id": 105675378266
+  },
+  "independently_checked": {
+    "exact_evidence_artifact_id_10557297419": true,
+    "github_outer_digest_matches_independent_download_sha256": true,
+    "outer_sha256": "3dd7ad8629108e09e8863efd0dc25daefd81181ac79011e99f876fb5c6e9f6f3",
+    "result_json_sha256_exact": true,
+    "static_contract_pass": true,
+    "classification_provenance_fail": true,
+    "provenance_complete_before_response_arithmetic_false": true,
+    "scientific_response_read_false": true,
+    "scientific_classifier_invoked_false": true,
+    "no_new_CLASS_solves": true,
+    "all_32_immutable_source_receipts_inspected_without_response_arithmetic": true,
+    "all_32_selected_mixed_plus_target_hash_equal": true,
+    "all_32_selected_mixed_minus_target_hash_equal": true,
+    "all_32_selected_direct_plus_target_hash_equal": true,
+    "all_32_selected_direct_minus_target_hash_equal": true,
+    "actual_common_target_identity_sha256": "1e835a495e6b742b7b992627e819e949420529ba5097164d260ca0accb0d3c0c",
+    "actual_common_target_identity_length_64": true,
+    "v0_2_constant_missing_trailing_c": true,
+    "source_artifact_corruption_found": false
+  },
+  "bounded_interpretation": {
+    "supported": "The v0.2 gate reached immutable numerical artifacts successfully but rejected the selected array before response arithmetic because its frozen implementation target-hash literal was malformed by one missing trailing hexadecimal character.",
+    "not_supported": [
+      "scientific response zero/nonzero",
+      "scientific response reproducibility",
+      "mixed/direct response construction agreement",
+      "dark-sector evidence"
+    ]
+  },
+  "rerun_same_identity_authorized": false,
+  "causal_successor_authoring_authorized": true,
+  "causal_successor_scope": "single provenance-literal correction only; science object and criteria unchanged",
+  "token": "CONFIRMED_SCOPED_PROVENANCE_FAIL_TARGET_HASH_TRANSCRIPTION_PLUS_0_PLUS_0"
+}
