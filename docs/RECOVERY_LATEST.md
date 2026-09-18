@@ -1,6 +1,6 @@
 # DSIR recovery — latest authoritative continuation state
 
-Updated: 2026-09-17. Scope: **DSIR only**. GitHub repository/Actions state, frozen authorities, immutable artifacts and independent Critic closures are authoritative; chat is not authority.
+Updated: 2026-09-18. Scope: **DSIR only**. GitHub repository/Actions state, frozen authorities, immutable artifacts and independent Critic closures are authoritative; chat is not authority.
 
 ## Frozen science boundary
 
@@ -218,7 +218,7 @@ Run `35280281867` is consumed. Never rerun or retry jobs for this identity.
 - corrected repair pair: terminal PASS, rerun false.
 - corrected producer / cross-host population validity: terminal PASS, runtime Critic closed, rerun false.
 - minimal response-blind numerical reproducibility: **terminal CONFIRMED_SCOPED**, run `35280281867` consumed.
-- minimal scientific response: **design authoring only is now authorized**; execution is not authorized.
+- minimal scientific response: **prospective preregistration + design authority + independent design static Critic PASS_SCOPED are frozen**; implementation authoring is authorized, response construction/execution is not authorized.
 - full107, covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global65537, statistical/model and physical inference: closed.
 
 ## Recalculated dependency DAG
@@ -233,12 +233,46 @@ Run `35280281867` is consumed. Never rerun or retry jobs for this identity.
 
 → `minimal response-blind numerical reproducibility` = TERMINAL CONFIRMED_SCOPED
 
-→ `minimal scientific response` = **DESIGN ONLY AUTHORIZED; EXECUTION CLOSED**
+→ `minimal scientific response` = **PREREG + DESIGN + DESIGN STATIC CRITIC PASS_SCOPED; IMPLEMENTATION AUTHORING AUTHORIZED; EXECUTION CLOSED**
 
 → `same-realization exact-target` / bounded expansion / full107 / covariance / whitening / nuisance / relation-null / global-systematics / statistical-model validity / physical inference = CLOSED.
 
 ## Exact next stage
 
-`AUTHOR_ONE_PROSPECTIVE_MINIMAL_SCIENTIFIC_RESPONSE_GATE_DESIGN_ONLY;_BIND_TERMINAL_NUMERICAL_RUNTIME_CRITIC_BLOB_9f19f8cc643bc978d0dbbcdd58f80fdf04395e24;_FREEZE_OBSERVABLE_RESPONSE_CONSTRUCTION_SCIENTIFIC_THRESHOLD_SELECTIONS_AND_INTERPRETATION_CEILING;_INDEPENDENT_STATIC_CRITIC_BEFORE_ANY_EXECUTION;_NO_FULL107_NO_COVARIANCE_NO_WHITENING_NO_NUISANCE_NO_RELATION_NULL_NO_WM_S3_NO_GLOBAL65537`.
+`AUTHOR_ONE_READ_ONLY_MINIMAL_SCIENTIFIC_RESPONSE_CONSTRUCTOR_OVER_FROZEN_M298_CALL375_WITNESSES;_STATIC_AUDIT_IMPLEMENTATION;_FREEZE_SEPARATE_ONE_SHOT_EXECUTION_AUTHORITY_BEFORE_ANY_RESPONSE_ARITHMETIC;_NO_NEW_CLASS_SOLVES;_NO_FULL107_NO_COVARIANCE_NO_WHITENING_NO_NUISANCE_NO_RELATION_NULL_NO_WM_S3_NO_GLOBAL65537`.
 
 Do not reuse the numerical PASS as a scientific PASS. A new scientific hypothesis/object/threshold/classifier requires its own prospective identity and terminal chain. Scientific effect remains `+0/+0`.
+
+
+## Minimal scientific response gate — prospective design frozen, execution CLOSED
+
+A new response-blind scientific gate was preregistered only after numerical runtime Critic closure. No scientific response values were constructed or read while selecting or reviewing the design.
+
+Frozen identities:
+
+- preregistration `prereg/LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_V0_1.md`, git blob `139bb9272e4e9ed194434f50694886fc0e6ebdfe`, creation commit `6612993128d18fcd03b84c219880c22a64f46939`;
+- design authority `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_DESIGN_AUTHORITY_V0_1.json`, git blob `f55607c6cf0850c064c4ea1d6edf4660ddb16fba`, creation commit `826551a72828453f22dc0b52a85fb78382ba9e19`;
+- independent design static Critic `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_DESIGN_STATIC_CRITIC_V0_1.json`, git blob `171791c608a65320d8eb76ef76faa93d4900fe8e`, verdict `PASS_SCOPED`, creation commit `51fb3014a663643a5bba1c04b84d4762cd3196e8`.
+
+Frozen minimal object is exactly `M298 / call375` over immutable numerical run `35280281867`, all `R01..R32`, using only four existing raw arrays per lane:
+
+- `mixed_target__M298__beta_plus__call375`;
+- `mixed_target__M298__beta_minus__call375`;
+- `direct_target__M298__beta_plus__call375`;
+- `direct_target__M298__beta_minus__call375`.
+
+Static review confirmed all four arrays exist in all 32 lane receipts, shape `[244]`, dtype `<f8`, with one shared exact-target identity SHA256 `1e835a495e6b742b7b992627e819e949420529ba5097164d260ca0accb0d3c0c`. This check did not combine beta-plus/minus values and therefore did not construct a scientific response.
+
+Frozen future response is `abs((beta_plus-beta_minus)/(2*h))` with `h=1e-4`, built separately for mixed and direct. Technical response reproducibility remains strict `<1e-5`; mixed/direct scientific construction agreement is strict `<1e-3`. Every preregistered response atom must be finite and strictly positive for the scoped PASS. The `1e-3` threshold is an agreement threshold, not a physical-amplitude/significance threshold.
+
+Nuisance-like behavior is `NOT_EVALUATED` because nuisance data remain closed. Covariance, whitening, nuisance, relation-null, `Wm_S3`, global65537, full107 and physical inference remain forbidden.
+
+Current science flags remain:
+
+- `scientific_response_read=false`;
+- `scientific_classifier_invoked=false`;
+- `covariance_read=false`;
+- `nuisance_read=false`;
+- `scientific_effect=+0/+0`.
+
+Implementation authoring is now authorized; implementation execution is not. A separate frozen implementation/static audit/execution authority is required before any response arithmetic.
