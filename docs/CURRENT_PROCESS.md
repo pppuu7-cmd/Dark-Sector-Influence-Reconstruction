@@ -298,3 +298,34 @@ Prospectively design the remaining `M076` DES response family from existing immu
 - do not inspect M076 response values before prereg/design/static Critic.
 
 This is cheaper and more falsifiable than jumping to the 738-construction full replay.
+
+
+## Current live frontier — DES M076 one-shot
+
+M298 and M300 scientific response gates are terminally closed with independent runtime Critic PASS.
+
+The final pre-existing numerical sentinel family M076 has completed prospective design and static implementation qualification.
+
+Current frozen chain:
+- M076 prereg blob `8817448b4794446a81dad3014e900c6ddf43b884`;
+- design blob `86046021a9463d6287d1d6854149097a9c769d47`;
+- design Critic blob `d1598a8c8cdc00da5942af79612d319f472f3859`, PASS_SCOPED;
+- implementation-authoring authority blob `60980d26c609cf3a6591514f1216ef47407d30b2`;
+- final read-only implementation blob `363fc2103a60c533365a7797b72cf0f43351069c`;
+- inert workflow blob `2f770d8f5ab99e759556f0cb0487b9e8c5304dda`;
+- implementation Critic blob `85bbff8295b5beaec8995bd566d1fb5a17ba8754`, PASS_SCOPED;
+- one-shot execution authority blob `65cc2cb75612c2fef2770af1bce606d0db5551e5`;
+- launch head `7ca7092fddc3e1d263ed763bed2e7b53bd1672ab`.
+
+Run `35405511563` / workflow `361754162` / job `105794347277` is the sole authorized M076 execution identity, run #1 attempt #1.
+
+Latest durable observation: queued. No partial scientific payload has been consumed.
+
+Until terminal:
+- do not create a second M076 run;
+- do not rerun/retry;
+- do not consume partial artifacts;
+- full107/covariance/nuisance/statistical/physical inference remain closed.
+
+Next:
+`WAIT_ONLY_BY_METADATA_POLLING_FOR_RUN_35405511563_TERMINAL;_THEN_METADATA_FREEZE_BEFORE_SCIENCE_READ`.
