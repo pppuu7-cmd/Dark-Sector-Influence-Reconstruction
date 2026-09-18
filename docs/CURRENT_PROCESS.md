@@ -1,77 +1,110 @@
 # DSIR current-process ledger
 
-Updated: 2026-09-17. Scope: **DSIR only**. Repository/Actions state, terminal artifacts and frozen authorities are authoritative; chat is not authority.
+Updated: 2026-09-18. Scope: **DSIR only**. Repository/Actions state, frozen authorities, immutable artifacts and independent Critic closures are authoritative; chat is not authority.
 
 ## Frozen scientific boundary
 
-V0.25 remains terminal `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, effect `+0/+0`. V0.26 R1 remains frozen: 107 rows = DES53+BOSS54; alpha `3e-10`; beta exact-target `1e-12`; scientific strict `<1e-3`; technical strict `<1e-5`; requested-node binding `<=1e-12`; full replay 738 CLASS constructions. Full107, covariance, whitening, nuisance, relation-null, `Wm_S3`, global65537, statistical/model validity and physical dark-sector inference remain closed.
+V0.25 remains terminal `FORCED_BASELINE_EXACT_TARGET_UNION_REMEDY_SUPPORTED`, effect `+0/+0`. V0.26 R1 remains frozen: 107 rows = DES53+BOSS54; alpha `3e-10`; beta exact-target `1e-12`; scientific strict `<1e-3`; technical strict `<1e-5`; requested-node binding `<=1e-12`; full replay 738 CLASS constructions.
 
-Never rerun consumed identities, including `35033268924`, `35174721773`, `35181812498`, V0.6 `35251121404`, V0.7 static qualification `35253515074`, or completed one-shot provenance captures.
+The newly closed gate is **numerical/reproducibility only**. Scientific response remains `NOT_EVALUATED`. Full107, covariance, whitening, nuisance, relation-null, `Wm_S3`, global65537, statistical/model validity and physical dark-sector inference remain closed.
 
-## Predecessor evidence
+## Consumed prerequisite chain
 
-Response-blind GRID896 dispatch diagnostic `35177449482` established `GRID896_NUMPY_DISPATCH_PATH_DEPENDENCE_CONFIRMED`. Successor sentinel v0.2 `35181812498` terminated `SENTINEL_INVALID` before science: 10 eligible lanes, all `NATIVE_AVX512_ACTIVE`, zero inactive. Historical V0.22 cross-host run `34875798025` had 32/32 eligible with `10 ACTIVE + 22 INACTIVE`, so restoration of the censored INACTIVE population remains a response-blind prospective hypothesis, not a scientific result.
+Do not rerun consumed identities. Current chain includes:
+- successor sentinel V0.2 run `35181812498`, historical `SENTINEL_INVALID` before science;
+- V0.6 run `35251121404`, terminal `INVALID_DIAGNOSTIC_PROVENANCE`;
+- V0.7 static qualification `35253515074`, terminal `INVALID_STATIC_QUALIFICATION`;
+- artifact transport run `35265458237`, terminal PASS;
+- corrected-repair-pair runs `35266829413` historical INVALID and `35267258974` terminal PASS;
+- corrected producer/cross-host population run `35268950893`, terminal PASS with runtime Critic closure;
+- minimal numerical reproducibility run `35280281867`, terminal `CONFIRMED_SCOPED`.
 
-## V0.6 — terminal historical INVALID
+Historical failures remain historical and are not rewritten.
 
-V0.6 registry ID `360576929` / exact path / state `active` was prospectively bound. One-shot run `35251121404`, run #1 / attempt #1, produced all 32 lane artifacts and decision artifact `10510805424`. Frozen terminal classification is **`INVALID_DIAGNOSTIC_PROVENANCE`**, not PASS or FAIL. Decision artifact outer SHA256 `fe664cd5ef1c5adf959d40f7c179550074b380ccd0c3805dc361661bf97bc574`; inner decision SHA256 `e57bcb39736bf80dac16900cb124ec66429e00bc1e20c31df0b05ea5f2a86325`. Aggregate observed `HTTP 415 Unsupported Media Type` while retrieving lane ZIPs. V0.6 is closed; no rerun.
+## Corrected canonical / transport / producer status
 
-The previously merged V0.6 dual-root-cause audit blob `43045a929e5cfb87aaa32c3158fc8839ede88df5` remains historical. Its aggregate HTTP-415 observation remains valid. Its source-side claim that canonical V0.1 lacked a final LF is **superseded** by stronger byte-level evidence below.
+Canonical V0.1 defect is definitively one deleted ASCII `e` at byte offset 13182. Corrected source identity is Git blob `ded43b233a71a631809111514c9dd35d0419af2d`, source SHA256 `e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4`; exact GRID896 payload SHA256 remains `8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d`.
 
-## Canonical V0.1 definitive byte identity — single hex deletion
+Artifact transport is terminal PASS under the qualified redirect policy. Corrected repair-pair operational usability is terminal PASS. Corrected producer/cross-host population validity is terminal PASS with 32/32 eligible and exact corrected payload identity; its runtime Critic blob is `4b990b4b55eed93a2b891470d616a8a133998ce1`.
 
-One-shot byte capture run `35253892736`, run #1 / attempt #1, completed success. Artifact `10511577132`: outer SHA256 `55268b6f8302b269583e6546d61a8504c82bc644ed04d8ddb87765fd6122cf24`; inner result SHA256 `2d6d5d5cd5fc0cefc5f9ab53b64379a4a1e722638188d5734f3e6c051ccca9c7`.
+## Minimal response-blind numerical reproducibility — terminal
 
-Hosted Ubuntu measurements prove working-tree bytes = `git show` bytes = exact Git blob `24fa61685ab45e42e3ab0d453f5cb223c247ced6`; `git hash-object` agrees. No checkout transformation was observed. Actual committed V0.1 metrics:
-- 15248 bytes;
-- SHA256 `f84d6fa7cf9e5b8014176fd480062b27aaf97947d4a5211c7fbb5c69f93634ba`;
-- final LF present;
-- 897 LF / 897 split lines;
-- at least one line is not 16 lowercase hex characters.
+Prospective identities:
+- design authority `b09d4f7de24974d7b8052e4b130c8902a57cf68b`;
+- design static Critic `5f4682a3f691b7b533237389ceac10162e8aa721`, PASS_SCOPED;
+- base executor `ca4307962c0e92dd4bf5d74e76dd4e6db27c10d1`;
+- audited orchestrator `f12ae302f7dce44cac93791f39a4f3e0a29d7d28`;
+- workflow `2c47d859741e9b4f13c8e044046f3169e163a1b6`;
+- one-shot execution authority `83eeb4ed967206329edd90d4efe5c349f4311281`;
+- implementation static Critic `1f75d64be53e21731ddd7700f7ebf02fccb7e7ef`, PASS_SCOPED;
+- launch head `6ba39aeade5b0603c02ea3d0fc7f8167c11c240a`.
 
-Exact comparison with the pre-v0.2 origin artifact from run `34954905127`, artifact `10390997654`, proves a **single ASCII `e` deletion**:
-- zero-based byte offset `13182`;
-- line 776, column 8 (1-based);
-- correct origin token `3f9c8a9eeea3c9c8`;
-- committed malformed V0.1 token `3f9c8a9eea3c9c8`.
+Execution:
+- workflow ID `360911210`;
+- run `35280281867`;
+- run #1 / attempt #1;
+- one exact-head run only;
+- 34/34 jobs terminal success;
+- exactly R01..R32 lane jobs plus invariant and aggregate decision;
+- 34 unexpired artifacts.
 
-Deleting only that byte from the pre-existing origin serialization reproduces exactly V0.1 SHA256 `f84d6fa7...` and Git blob `24fa6168...`. The intact pre-existing origin serialization is 15249 bytes, 897 valid hex16 lines, SHA256 `e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4`, Git blob `ded43b233a71a631809111514c9dd35d0419af2d`, and packs to the unchanged 7176-byte payload SHA256 `8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d`.
+Terminal decision artifact:
+- artifact ID `10523772312`;
+- outer GitHub digest and independent ZIP SHA256 `24c5901c1cd31e44a8d882672d542a5361e98a9be0cf7a6133b08fff9fcb76ff`;
+- sole member `result.json`;
+- inner SHA256 `aaf10366106bbcefdd7b0569b182d56aa8f70e7462822893a8692350a8a6c93e`;
+- producer classification `PASS_SCOPED_MINIMAL_NUMERICAL_REPRODUCIBILITY_QUALIFIED`.
 
-Therefore V0.6's source guard correctly rejected a malformed published canonical object. The source-side failure is a canonical publication defect, not missing LF, checkout normalization, or host disagreement.
+Independent Funnel Auditor closure:
+- audit blob `c0f0b3a9896ec354bea321b233a8df3a623b6f3d`;
+- runtime Critic authority blob `9f19f8cc643bc978d0dbbcdd58f80fdf04395e24`;
+- verdict `CONFIRMED_SCOPED`;
+- handoff blob `6cac68b1a4592f9043ee0da77591d8db8fd9f607`.
 
-## V0.7 — terminal invalid static qualification
+Independent recomputation from all 32 downloaded lane artifacts reproduced:
+- 32/32 eligible;
+- 10 native AVX512 active + 22 inactive;
+- 16 order-A + 16 order-B;
+- cross-host max pairwise rel `0.0`;
+- native-class mean rel separation `7.215823672842194e-16`;
+- execution-order mean separation `0.0`;
+- mixed/direct exact-target rel `0.0`;
+- mixed-common/pure-common rel `0.0`;
+- max requested-node coordinate rel mismatch `1.6568353692813133e-16`.
 
-First V0.7 thin-successor package attempted to repair a now-superseded final-LF hypothesis. Static qualification run `35253515074`, run #1 / attempt #1, is terminal `INVALID_STATIC_QUALIFICATION` with `FileNotFoundError: canonical raw SHA256 mismatch`; artifact `10512311250`, outer SHA256 `736b412c171afe1e04b30b5735fcd7a728c032f4f142e08b535a8bb964e91c9a`, inner SHA256 `260bf466611d9b5f7666246bcfb27601a94a6e99b1409a384c057241b548a072`. V0.7 is closed; no rerun or mutation.
+The frozen technical threshold is strictly `<1e-5`; requested-node binding is `<=1e-12`. The scientific `1e-3` threshold was not used. No derived beta response, scientific response read, covariance read, scientific classifier, full107 or downstream science occurred.
 
-## Corrected canonical V0.2 specification
+Run `35280281867` is consumed. Same-identity rerun and failed-job retry are forbidden.
 
-The immutable V0.1 object is retained as historical evidence. A corrected V0.2 **repair specification** reconstructs the origin object from V0.1 by inserting exactly one `e` at byte offset 13182 and then requires:
-- 15249 bytes;
-- SHA256 `e4f8d7174696d98edc34df25e8be699d641dd4c4f276de4681d933af97fd50b4`;
-- Git blob `ded43b233a71a631809111514c9dd35d0419af2d`;
-- 897 lowercase hex16 lines;
-- payload SHA256 `8499eb0f240b85581e0dcb804b841ba911c4b3a58e8fe15702aea134e40bd65d`;
-- frozen one-bit negative-control SHA256 `e94e2e05fc0cc1fcbc9bd710a24b8ef231fab350cd6247ea3039b913adfba800`.
+## Current gate chain
 
-The V0.6 aggregate HTTP-415 transport defect remains separately open for successor qualification.
+`V0.25 TERMINAL`
+→ `V0.26 R1 FROZEN`
+→ `corrected canonical FROZEN`
+→ `artifact transport TERMINAL PASS`
+→ `corrected repair pair TERMINAL PASS`
+→ `corrected producer/cross-host population TERMINAL PASS`
+→ `minimal response-blind numerical reproducibility TERMINAL CONFIRMED_SCOPED`
+→ `minimal scientific response DESIGN ONLY AUTHORIZED`
+→ `scientific execution CLOSED`
+→ `full107 and downstream CLOSED`.
 
 ## Current authorization state
 
-- V0.6: terminal `INVALID_DIAGNOSTIC_PROVENANCE`, rerun forbidden.
-- V0.7 static qualification: terminal `INVALID_STATIC_QUALIFICATION`, rerun forbidden.
-- canonical V0.1 single-hex deletion: independently confirmed; prior final-LF interpretation superseded.
-- corrected canonical V0.2 reconstruction specification: frozen.
-- V0.8 design and response-blind static qualification: **authorized**.
-- V0.8 promotion/execution: **not authorized**.
-- successor sentinel science: **not authorized**.
-- full107/downstream science: **not authorized**.
+Authorized now:
+- prospective authoring of **one minimal scientific response gate design only**;
+- independent static Critic of that future design.
 
-## Funnel
-
-`... -> V0.6 RUN 35251121404 -> INVALID_DIAGNOSTIC_PROVENANCE -> BYTE CAPTURE -> CANONICAL V0.1 SINGLE-HEX DELETION CONFIRMED -> PRIOR FINAL-LF CLAIM SUPERSEDED -> V0.7 STATIC QUALIFICATION INVALID/CLOSED -> CORRECTED V0.2 REPAIR SPEC FROZEN -> V0.8 DESIGN/STATIC-QUALIFICATION OPEN -> V0.8 EXECUTION CLOSED -> SUCCESSOR SCIENCE CLOSED -> FULL107 CLOSED`.
-
-Scientific effect remains `+0/+0`; all numerical/scientific/model claims remain `NOT_EVALUATED`.
+Not authorized:
+- minimal scientific response execution;
+- any automatic use of the numerical PASS as a scientific PASS;
+- full 107-row Layer-B traversal;
+- covariance, whitening, nuisance marginalization, relation-null;
+- `Wm_S3`, global65537;
+- statistical/model or physical dark-sector inference.
 
 ## Exact next admissible action
 
-`DESIGN_NEW_V0_8_IDENTITY_FROM_IMMUTABLE_V0_6_BASE_PLUS_EXACT_CANONICAL_V0_2_RECONSTRUCTION_AND_ARTIFACT_DOWNLOAD_TRANSPORT_REPAIR;_RUN_ONE_RESPONSE_BLIND_STATIC_QUALIFICATION;_NO_PROMOTION_OR_DIAGNOSTIC_EXECUTION_BEFORE_INDEPENDENT_PASS_SCOPED`.
+`AUTHOR_ONE_PROSPECTIVE_MINIMAL_SCIENTIFIC_RESPONSE_GATE_DESIGN_ONLY;_BIND_TERMINAL_NUMERICAL_RUNTIME_CRITIC_BLOB_9f19f8cc643bc978d0dbbcdd58f80fdf04395e24;_FREEZE_OBSERVABLE_RESPONSE_CONSTRUCTION_SCIENTIFIC_THRESHOLD_SELECTIONS_AND_INTERPRETATION_CEILING;_INDEPENDENT_STATIC_CRITIC_BEFORE_ANY_EXECUTION;_NO_FULL107_NO_COVARIANCE_NO_WHITENING_NO_NUISANCE_NO_RELATION_NULL_NO_WM_S3_NO_GLOBAL65537`.
+
+Scientific effect remains `+0/+0`.
