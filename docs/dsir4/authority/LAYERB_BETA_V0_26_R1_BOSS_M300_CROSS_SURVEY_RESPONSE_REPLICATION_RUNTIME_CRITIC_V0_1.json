@@ -1,0 +1,121 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION_RUNTIME_CRITIC_V0_1",
+  "status": "TERMINAL_INDEPENDENT_RUNTIME_CRITIC",
+  "created_utc_date": "2026-09-19",
+  "effect": "+0/+0",
+  "verdict": "PASS_TERMINAL_CLOSURE",
+  "classification": "BOSS_M300_CROSS_SURVEY_RESPONSE_RUNTIME_CONFIRMED",
+  "interpretation_ceiling": "CROSS_SURVEY_RESPONSE_EXISTENCE_REPRODUCIBILITY_AND_CONSTRUCTION_STABILITY_ONLY",
+  "reviewed_terminal_authority_git_blob_sha1": "e7e94650dd75b2a148717e241a907761fdbdbcda",
+  "reviewed_run": {
+    "run_id": 35404848010,
+    "workflow_id": 361750847,
+    "job_id": 105792356879,
+    "run_number": 1,
+    "run_attempt": 1,
+    "head_sha": "5f466f238ad2b9562d98794b2de1e33764ebb418"
+  },
+  "reviewed_scientific_artifact": {
+    "artifact_id": 10572057201,
+    "outer_digest": "sha256:de99c1954d38b83559bafa40a149938c98052af255f3f6b6f67880377cf4385a",
+    "independent_download_sha256": "de99c1954d38b83559bafa40a149938c98052af255f3f6b6f67880377cf4385a",
+    "provenance_json_sha256": "304ae85ab38daf9fe9cca0c9633e324f361dc227d2741bb032c9db24a7b199de",
+    "response_evidence_npz_sha256": "4de8084deea170860ed27c2eab85a6f24bcc54baa68a64deaee0b9734d53b76e",
+    "result_json_sha256": "44c9c1d822fad354fada144d31f816248db73c174dd2e9378cd4345d04d984bb",
+    "static_contract_json_sha256": "ccc8cd2c05c9f95e4fcacc7c746a4023e813b851fb6936907cf03932c34c4107"
+  },
+  "independent_recompute": {
+    "recompute_sha256": "d9908a31eb33c4fe978f809156467f732dbcf8a37cf3ebd48d5d22166f3f2c5f",
+    "source_outer_digest_match_count": 32,
+    "selected_manifest_entries_verified": 8192,
+    "response_shape": [
+      32,
+      64,
+      297
+    ],
+    "atoms_per_construction": 608256,
+    "combined_atoms": 1216512,
+    "finite_positive": true,
+    "mixed_response_min": 0.1527526944755664,
+    "mixed_response_max": 5708.442424129316,
+    "direct_response_min": 0.1527526944755664,
+    "direct_response_max": 5708.442424129316,
+    "metrics": {
+      "mixed_cross_host_max_pairwise_rel": 0,
+      "direct_cross_host_max_pairwise_rel": 0,
+      "mixed_native_class_mean_rel_separation": 4.709641672451007e-16,
+      "direct_native_class_mean_rel_separation": 4.709641672451007e-16,
+      "mixed_direct_response_max_rel": 0,
+      "execution_order_arm_mean_rel_separation_descriptive_mixed": 0,
+      "execution_order_arm_mean_rel_separation_descriptive_direct": 0
+    },
+    "native_class_counts": {
+      "NATIVE_AVX512_ACTIVE": 10,
+      "NATIVE_AVX512_INACTIVE": 22
+    },
+    "order_arm_counts": {
+      "A": 16,
+      "B": 16
+    },
+    "independently_classified": "PASS_SCOPED_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION",
+    "producer_classification_match": true,
+    "producer_metrics_exact_match": true,
+    "persisted_response_evidence_bitwise_match_mixed": true,
+    "persisted_response_evidence_bitwise_match_direct": true
+  },
+  "independently_checked": {
+    "exact_BOSS_M300_scope": true,
+    "exact_calls_377_440": true,
+    "exact_64_calls": true,
+    "exact_99_unique_coordinate_identity_bound": true,
+    "exact_297_persisted_entries_per_call": true,
+    "exact_R01_R32_population": true,
+    "all_32_source_outer_digests_match": true,
+    "all_8192_selected_manifest_bindings_match": true,
+    "exact_D58_direct_comparator": true,
+    "no_deduplication": true,
+    "no_call_subsetting": true,
+    "no_target_subsetting": true,
+    "no_new_CLASS_solves": true,
+    "all_1216512_atoms_finite_and_strict_positive": true,
+    "mixed_cross_host_strict_lt_1e_5": true,
+    "direct_cross_host_strict_lt_1e_5": true,
+    "mixed_native_class_strict_lt_1e_5": true,
+    "direct_native_class_strict_lt_1e_5": true,
+    "mixed_direct_response_agreement_strict_lt_1e_3": true,
+    "covariance_read_false": true,
+    "nuisance_read_false": true,
+    "full107_false": true,
+    "statistical_inference_not_authorized": true,
+    "physical_inference_not_authorized": true,
+    "DES_BOSS_amplitude_equality_not_tested": true
+  },
+  "counterexample_search": {
+    "zero_or_nonfinite_atom_found": false,
+    "host_dependence_above_threshold_found": false,
+    "native_dispatch_dependence_above_threshold_found": false,
+    "mixed_direct_construction_mismatch_found": false,
+    "source_provenance_counterexample_found": false,
+    "forbidden_information_read_found": false
+  },
+  "bounded_interpretation": {
+    "supported": "The complete frozen BOSS M300 response family independently reproduces the scoped response-existence, host/native technical reproducibility, and mixed/direct construction-stability properties previously established on DES M298.",
+    "not_supported": [
+      "statistical significance",
+      "covariance-aware science",
+      "nuisance robustness",
+      "full107 validity",
+      "dark-sector detection",
+      "physical dark-sector inference",
+      "new physics"
+    ]
+  },
+  "consumed_identity_rerun_authorized": false,
+  "full107_authorized": false,
+  "covariance_authorized": false,
+  "nuisance_authorized": false,
+  "statistical_inference_authorized": false,
+  "physical_inference_authorized": false,
+  "next_stage_authorized": "DESIGN_ONLY_ONE_NEXT_COUNTEREXAMPLE_FIRST_GATE_AFTER_DAG_REBUILD",
+  "token": "TERMINAL_RUNTIME_CONFIRMED_BOSS_M300_CROSS_SURVEY_RESPONSE_PASS_PLUS_0_PLUS_0"
+}
