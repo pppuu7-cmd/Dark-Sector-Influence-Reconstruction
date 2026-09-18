@@ -1,0 +1,99 @@
+name: DSIR V0.26 R1 DES M076 remaining-sentinel response replication v0.1
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/dsir4/launch/LAYERB_BETA_V0_26_R1_DES_M076_REMAINING_SENTINEL_RESPONSE_REPLICATION_V0_1.launch.json
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-v026-r1-des-m076-remaining-sentinel-response-replication-v0-1
+  cancel-in-progress: false
+
+jobs:
+  des-m076-response:
+    name: One-shot frozen DES M076 remaining-sentinel response replication
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Set up exact Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.3"
+
+      - name: Install exact read-only numerical dependency
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip >/dev/null
+          python -m pip install "numpy==1.26.4" >/dev/null
+          python - <<'PY'
+          import platform
+          import numpy as np
+          assert platform.python_version() == "3.12.3"
+          assert np.__version__ == "1.26.4"
+          PY
+
+      - name: Response-blind static contract self-check
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          python ci/layerb_beta_v026_r1_des_m076_remaining_sentinel_response_replication_v0_1.py             --mode static-contract             --out evidence/static_contract.json
+
+      - name: Execute exactly one frozen DES M076 response gate
+        run: |
+          set -euo pipefail
+          python ci/layerb_beta_v026_r1_des_m076_remaining_sentinel_response_replication_v0_1.py             --mode execute             --outdir evidence
+
+      - name: Upload immutable DES M076 scientific response evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-des-m076-remaining-sentinel-response-v0-1
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
+
+      - name: Reflect frozen terminal classification without redefining science
+        if: always()
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("evidence/result.json")
+          if not p.is_file():
+              raise SystemExit("missing DES M076 scientific response result")
+          d=json.loads(p.read_text())
+          allowed={
+              "PASS_SCOPED_DES_M076_REMAINING_SENTINEL_RESPONSE_REPLICATION",
+              "SCIENTIFIC_RESPONSE_ZERO_OR_NONFINITE",
+              "SCIENTIFIC_RESPONSE_REPRODUCIBILITY_FAIL",
+              "SCIENTIFIC_RESPONSE_CONSTRUCTION_MISMATCH",
+              "PROVENANCE_FAIL",
+              "INVALID_IMPLEMENTATION",
+          }
+          c=d.get("classification")
+          if c not in allowed:
+              raise SystemExit(f"unfrozen classification: {c!r}")
+          print(c)
+          PY
