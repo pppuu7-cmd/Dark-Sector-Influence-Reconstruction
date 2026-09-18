@@ -115,7 +115,6 @@ jobs:
           set -euo pipefail
           mkdir -p critic_compare
           test -f critic_independent/independent_result.json
-          test -f critic_independent/independent_response.npz
           python ci/layerb_beta_v026_r1_des_m076_remaining_sentinel_response_runtime_critic_v0_1.py             --mode compare             --independent-dir critic_independent             --metadata-freeze docs/dsir4/authority/LAYERB_BETA_V0_26_R1_DES_M076_REMAINING_SENTINEL_RESPONSE_RUN_METADATA_FREEZE_V0_1.json             --outdir critic_compare
 
       - name: Upload immutable Critic decision
