@@ -1,0 +1,61 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_TERMINAL_V0_2",
+  "status": "TERMINAL_SCIENTIFIC_GATE_EXECUTION_DECISION",
+  "created_utc_date": "2026-09-18",
+  "effect": "+0/+0",
+  "classification": "PROVENANCE_FAIL",
+  "interpretation_ceiling": "PRE_RESPONSE_PROVENANCE_BINDING_FAILURE_ONLY",
+  "run_id": 35368119311,
+  "workflow_id": 361516884,
+  "run_number": 1,
+  "run_attempt": 1,
+  "head_sha": "d20d3b76c5538de266a8e522055ffcf952a29a9d",
+  "workflow_conclusion": "success",
+  "job_id": 105675378266,
+  "source_numerical_run_id": 35280281867,
+  "parent_invalid_run_id": 35367672204,
+  "evidence_artifact": {
+    "artifact_id": 10557297419,
+    "name": "layerb-beta-v026-r1-minimal-scientific-response-v0-2",
+    "outer_digest": "sha256:3dd7ad8629108e09e8863efd0dc25daefd81181ac79011e99f876fb5c6e9f6f3",
+    "independent_download_sha256": "3dd7ad8629108e09e8863efd0dc25daefd81181ac79011e99f876fb5c6e9f6f3",
+    "members": [
+      "result.json",
+      "static_contract.json"
+    ],
+    "result_json_sha256": "bd9d0dddec480d0eb0861fc69bbb6139254196bccb7af71ca815839f3b665d1a",
+    "static_contract_json_sha256": "c2ebeeb855993a94c32fa2586df9860adc5a16563c73d286e40e91b87e7504fc"
+  },
+  "observed_failure": {
+    "failure_stage": "selected_array_binding",
+    "error": "mixed_target__M298__beta_plus__call375 target identity mismatch",
+    "provenance_complete_before_response_arithmetic": false,
+    "scientific_response_read": false,
+    "scientific_classifier_invoked": false,
+    "covariance_read": false,
+    "nuisance_read": false,
+    "new_CLASS_solves": 0
+  },
+  "independent_localization": {
+    "immutable_source_receipt_count_checked": 32,
+    "all_32_receipts_share_same_M298_call375_target_identity": true,
+    "actual_target_identity_sha256": "1e835a495e6b742b7b992627e819e949420529ba5097164d260ca0accb0d3c0c",
+    "actual_target_identity_length": 64,
+    "implementation_v0_2_frozen_target_identity": "1e835a495e6b742b7b992627e819e949420529ba5097164d260ca0accb0d3c0",
+    "implementation_v0_2_frozen_target_identity_length": 63,
+    "defect": "one missing trailing hexadecimal character c in the implementation/static-review transcription",
+    "source_artifact_corruption_found": false
+  },
+  "scientific_interpretation": {
+    "scientific_response_evaluated": false,
+    "finite_positive_evaluated": false,
+    "response_reproducibility_evaluated": false,
+    "mixed_direct_response_agreement_evaluated": false,
+    "dark_sector_inference_evaluated": false
+  },
+  "rerun_same_identity_authorized": false,
+  "retry_failed_jobs_authorized": false,
+  "causal_successor_authoring_authorized": true,
+  "causal_successor_constraint": "Correct only the malformed target-identity constant under a new prospective provenance correction; preserve M298/call375, source run, formula, thresholds and taxonomy.",
+  "token": "TERMINAL_PROVENANCE_FAIL_PRE_RESPONSE_TARGET_IDENTITY_TRANSCRIPTION_PLUS_0_PLUS_0"
+}
