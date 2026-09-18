@@ -218,7 +218,7 @@ Run `35280281867` is consumed. Never rerun or retry jobs for this identity.
 - corrected repair pair: terminal PASS, rerun false.
 - corrected producer / cross-host population validity: terminal PASS, runtime Critic closed, rerun false.
 - minimal response-blind numerical reproducibility: **terminal CONFIRMED_SCOPED**, run `35280281867` consumed.
-- minimal scientific response: **prospective preregistration + design authority + independent design static Critic PASS_SCOPED are frozen**; implementation authoring is authorized, response construction/execution is not authorized.
+- minimal scientific response M298/call375: **TERMINAL PASS + independent runtime Critic PASS_TERMINAL_CLOSURE**; run `35368618232` consumed.
 - full107, covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global65537, statistical/model and physical inference: closed.
 
 ## Recalculated dependency DAG
@@ -233,13 +233,13 @@ Run `35280281867` is consumed. Never rerun or retry jobs for this identity.
 
 → `minimal response-blind numerical reproducibility` = TERMINAL CONFIRMED_SCOPED
 
-→ `minimal scientific response` = **PREREG + DESIGN + DESIGN STATIC CRITIC PASS_SCOPED; IMPLEMENTATION AUTHORING AUTHORIZED; EXECUTION CLOSED**
+→ `minimal scientific response M298/call375` = **TERMINAL PASS; RUNTIME CRITIC CLOSED**\n\n→ `next bounded counterexample-first science gate` = **DESIGN ONLY AUTHORIZED; EXECUTION CLOSED**
 
 → `same-realization exact-target` / bounded expansion / full107 / covariance / whitening / nuisance / relation-null / global-systematics / statistical-model validity / physical inference = CLOSED.
 
 ## Exact next stage
 
-`AUTHOR_ONE_READ_ONLY_MINIMAL_SCIENTIFIC_RESPONSE_CONSTRUCTOR_OVER_FROZEN_M298_CALL375_WITNESSES;_STATIC_AUDIT_IMPLEMENTATION;_FREEZE_SEPARATE_ONE_SHOT_EXECUTION_AUTHORITY_BEFORE_ANY_RESPONSE_ARITHMETIC;_NO_NEW_CLASS_SOLVES;_NO_FULL107_NO_COVARIANCE_NO_WHITENING_NO_NUISANCE_NO_RELATION_NULL_NO_WM_S3_NO_GLOBAL65537`.
+`DESIGN_ONE_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION_FALSIFIER_FROM_EXISTING_IMMUTABLE_NUMERICAL_WITNESSES;_NO_RESPONSE_READ_DURING_DESIGN;_NO_NEW_CLASS_SOLVES;_NO_FULL107_NO_COVARIANCE_NO_NUISANCE_NO_PHYSICAL_INFERENCE`.
 
 Do not reuse the numerical PASS as a scientific PASS. A new scientific hypothesis/object/threshold/classifier requires its own prospective identity and terminal chain. Scientific effect remains `+0/+0`.
 
@@ -276,3 +276,98 @@ Current science flags remain:
 - `scientific_effect=+0/+0`.
 
 Implementation authoring is now authorized; implementation execution is not. A separate frozen implementation/static audit/execution authority is required before any response arithmetic.
+
+
+## First terminal scientific response — M298/call375 PASS
+
+The first legally authorized scientific-response experiment is now terminal.
+
+Frozen scientific object:
+- mixed batch `M298`;
+- call `375`;
+- 244 exact targets;
+- exactly `R01..R32`;
+- response `abs((beta_plus-beta_minus)/(2*h))`, `h=1e-4`;
+- no new CLASS solves.
+
+Two pre-response causal identities were consumed before the terminal PASS and must never be rerun:
+
+1. run `35367672204` / v0.1 — terminal `INVALID_IMPLEMENTATION`; GitHub expression was serialized with a literal leading backslash, producing HTTP 401 before provenance completion. Scientific response was not read.
+2. run `35368119311` / v0.2 — terminal `PROVENANCE_FAIL`; source transport succeeded, but a 63-character target-hash literal was missing the final hexadecimal `c`. All immutable source receipts agreed on the corrected 64-hex identity. Scientific response was not read.
+
+The target-identity provenance correction is frozen:
+- correction blob `27af1bea4c380029741ea56083e982abbbe2fbb1`;
+- independent correction Critic blob `7d6f4f9d3b0709ca89993e9a8a46651919f1ffe2`, PASS_SCOPED;
+- corrected SHA256 `1e835a495e6b742b7b992627e819e949420529ba5097164d260ca0accb0d3c0c`.
+
+Terminal scientific execution:
+- workflow v0.3 ID `361520624`;
+- run `35368618232`, run #1 / attempt #1;
+- launch head `68597fe91c2e1ba5e9de042201be497fb4d26046`;
+- job `105676991286`;
+- workflow conclusion `success`;
+- run consumed; rerun/retry false.
+
+Immutable scientific artifact:
+- artifact `10557123574`, `layerb-beta-v026-r1-minimal-scientific-response-v0-3`;
+- outer GitHub digest and independent download SHA256 `c3411f883abebc2cc03a4d646a36c1ad1705450070f8c72984884604450267d5`;
+- `provenance.json` SHA256 `aca164aa724bde4efbb20fdcc52bcecc0e1df248e4be5cafb8c72bece36f3c66`;
+- `response_evidence.npz` SHA256 `5de9d8dedbdd2faaa5e7d4ed7e2425696540dcc927a513183e115f71f195deab`;
+- `result.json` SHA256 `1d7c0c88cae0b2684dc100788980ba6cb63dce54bd7a418d0d018db3c16ecd1d`.
+
+Terminal classification:
+`PASS_SCOPED_MINIMAL_SCIENTIFIC_RESPONSE_REPRODUCIBLE_NONZERO`.
+
+Independent runtime recomputation did not trust the producer result. It re-read all 32 immutable numerical lane ZIPs and verified:
+- 32/32 frozen outer SHA256 identities;
+- exact R01..R32 receipt set;
+- 128 selected manifest bindings = 32 lanes × 4 arrays;
+- corrected target identity in all selected arrays;
+- 7,808 mixed response atoms and 7,808 direct response atoms;
+- every atom finite and strictly positive;
+- mixed response range `2.988634574316862 .. 3105.5120056680607`;
+- direct response range identical;
+- mixed cross-host max pairwise relative spread `0.0`;
+- direct cross-host max pairwise relative spread `0.0`;
+- mixed native-class mean separation `1.4178931066714796e-16`;
+- direct native-class mean separation `1.4178931066714796e-16`;
+- mixed/direct response max relative difference `0.0`;
+- independently reconstructed response arrays bitwise equal the persisted scientific evidence.
+
+Terminal authority:
+`docs/dsir4/authority/LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_TERMINAL_V0_3.json`
+Git blob `7ea2cefde247845d4c6d70660b798dcaa79a4a72`.
+
+Independent runtime Critic:
+`docs/dsir4/authority/LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_RUNTIME_CRITIC_V0_3.json`
+Git blob `91fb97a73a820cf5172d7e0383752a1ee6a26143`;
+verdict `PASS_TERMINAL_CLOSURE`;
+classification `MINIMAL_SCIENTIFIC_RESPONSE_RUNTIME_CONFIRMED`.
+
+### Interpretation ceiling
+
+Supported only: one prospectively frozen minimal DES beta response object exists, is finite-positive, technically reproducible across the frozen hosted population, and agrees between mixed/direct exact-target constructions.
+
+Not established:
+- statistical significance;
+- nuisance robustness;
+- covariance-aware validity;
+- all 107 rows;
+- dark-sector detection;
+- global cosmological consistency;
+- physical inference.
+
+Scientific bookkeeping effect remains `+0/+0`; this is not a physical amplitude statement.
+
+### Rebuilt science DAG
+
+`minimal numerical reproducibility` = TERMINAL PASS
+→ `M298/call375 minimal scientific response` = TERMINAL PASS + runtime Critic closed
+→ `BOSS M300 cross-survey response replication falsifier` = **DESIGN ONLY AUTHORIZED**
+→ covariance / nuisance / full107 / statistical-model validity / physical inference = CLOSED.
+
+### Next highest-information gate
+
+Design only: use the already frozen **BOSS M300** numerical witness family as the second independent response object. M300 spans calls `377..440` and the shared 99 exact BOSS targets. It requires **zero new CLASS solves**, tests a different survey/data block than the passed DES M298 object, and can falsify cross-survey robustness before any covariance/nuisance/full107 expansion.
+
+Do not inspect or construct M300 responses during design. A new preregistration, design authority and independent static Critic are required before any M300 response arithmetic.
