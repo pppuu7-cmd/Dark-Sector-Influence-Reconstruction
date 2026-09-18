@@ -163,15 +163,63 @@ Bounded inference only: under this preregistered powered response-blind hosted s
 
 Run `35268950893` is consumed and must not be rerun.
 
+## Minimal response-blind numerical reproducibility — terminal CONFIRMED_SCOPED
+
+Prospective chain:
+- design authority blob `b09d4f7de24974d7b8052e4b130c8902a57cf68b`;
+- design static Critic blob `5f4682a3f691b7b533237389ceac10162e8aa721`, PASS_SCOPED;
+- base executor blob `ca4307962c0e92dd4bf5d74e76dd4e6db27c10d1`;
+- audited orchestrator blob `f12ae302f7dce44cac93791f39a4f3e0a29d7d28`;
+- workflow blob `2c47d859741e9b4f13c8e044046f3169e163a1b6`;
+- one-shot execution authority blob `83eeb4ed967206329edd90d4efe5c349f4311281`;
+- implementation static Critic blob `1f75d64be53e21731ddd7700f7ebf02fccb7e7ef`, PASS_SCOPED;
+- marker-only launch head `6ba39aeade5b0603c02ea3d0fc7f8167c11c240a`.
+
+One-shot execution:
+- workflow `360911210`;
+- run `35280281867`;
+- run #1 / attempt #1;
+- exact-head run count 1;
+- 34/34 jobs terminal success: invariant + R01..R32 + aggregate decision;
+- 34 unexpired artifacts: invariant + 32 lane artifacts + decision;
+- decision artifact `10523772312`, outer GitHub / independently downloaded ZIP SHA256 `24c5901c1cd31e44a8d882672d542a5361e98a9be0cf7a6133b08fff9fcb76ff`;
+- decision sole member `result.json`, inner SHA256 `aaf10366106bbcefdd7b0569b182d56aa8f70e7462822893a8692350a8a6c93e`.
+
+Producer classification:
+`PASS_SCOPED_MINIMAL_NUMERICAL_REPRODUCIBILITY_QUALIFIED`.
+
+Independent Funnel Auditor:
+- runtime audit blob `c0f0b3a9896ec354bea321b233a8df3a623b6f3d`;
+- runtime Critic authority blob `9f19f8cc643bc978d0dbbcdd58f80fdf04395e24`;
+- verdict `CONFIRMED_SCOPED`;
+- handoff blob `6cac68b1a4592f9043ee0da77591d8db8fd9f607`.
+
+Independent download/recompute from all 32 lane artifacts reproduced the terminal result exactly:
+- 32/32 candidate receipts present, 32/32 eligible and LANE_PASS;
+- 10 `NATIVE_AVX512_ACTIVE` + 22 `NATIVE_AVX512_INACTIVE`;
+- order arms 16 A + 16 B;
+- 536 raw witness arrays common to all lanes;
+- cross-host max pairwise relative spread `0.0`;
+- native-class mean relative separation `7.215823672842194e-16`;
+- execution-order-arm mean relative separation `0.0`;
+- mixed-vs-direct exact-target relative difference `0.0`;
+- mixed-common-vs-pure-common relative difference `0.0`;
+- max requested-node coordinate relative mismatch `1.6568353692813133e-16`;
+- all lane witness hashes bind to their receipts and all downloaded lane ZIP hashes match GitHub artifact digests.
+
+Interpretation ceiling is strictly numerical/reproducibility only. The scientific `1e-3` threshold was not used; scientific response, covariance, scientific classifier, full107 and downstream science were not executed. Scientific effect remains `+0/+0`.
+
+Run `35280281867` is consumed. Never rerun or retry jobs for this identity.
+
 ## Current authorization state
 
 - corrected canonical identity: frozen.
 - artifact transport: terminal PASS, rerun false.
 - corrected repair pair: terminal PASS, rerun false.
 - corrected producer / cross-host population validity: terminal PASS, runtime Critic closed, rerun false.
-- **numerical reproducibility prerequisite: current highest DAG blocker; design authoring authorized; execution not authorized.**
-- minimal scientific response: closed pending numerical reproducibility terminal PASS.
-- full107/downstream science: closed.
+- minimal response-blind numerical reproducibility: **terminal CONFIRMED_SCOPED**, run `35280281867` consumed.
+- minimal scientific response: **design authoring only is now authorized**; execution is not authorized.
+- full107, covariance, whitening, nuisance marginalization, relation-null, `Wm_S3`, global65537, statistical/model and physical inference: closed.
 
 ## Recalculated dependency DAG
 
@@ -183,16 +231,14 @@ Run `35268950893` is consumed and must not be rerun.
 
 → `corrected producer / cross-host population validity` = TERMINAL PASS
 
-→ `numerical reproducibility prerequisite` = **CURRENT HIGHEST BLOCKER; DESIGN ONLY AUTHORIZED**
+→ `minimal response-blind numerical reproducibility` = TERMINAL CONFIRMED_SCOPED
 
-→ `minimal scientific response` = CLOSED
+→ `minimal scientific response` = **DESIGN ONLY AUTHORIZED; EXECUTION CLOSED**
 
 → `same-realization exact-target` / bounded expansion / full107 / covariance / whitening / nuisance / relation-null / global-systematics / statistical-model validity / physical inference = CLOSED.
 
 ## Exact next stage
 
-`DESIGN_ONE_MINIMAL_RESPONSE_BLIND_NUMERICAL_REPRODUCIBILITY_PREREQUISITE;_GROUND_IT_IN_FROZEN_V0_26_R1_AND_PRIOR_V0_25_EXACT_TARGET_EVIDENCE;_SEPARATE_SOLVER_NUMERICS_FROM_SCIENTIFIC_RESPONSE;_FREEZE_DETERMINISM_EXACT_TARGET_SERIALIZATION_RELOAD_HOST_AGREEMENT_TOLERANCE_EXECUTION_ORDER_AND_DISPATCH_CRITERIA;_INDEPENDENT_STATIC_CRITIC_BEFORE_ANY_IMPLEMENTATION_EXECUTION;_NO_SCIENCE_NO_FULL107`.
+`AUTHOR_ONE_PROSPECTIVE_MINIMAL_SCIENTIFIC_RESPONSE_GATE_DESIGN_ONLY;_BIND_TERMINAL_NUMERICAL_RUNTIME_CRITIC_BLOB_9f19f8cc643bc978d0dbbcdd58f80fdf04395e24;_FREEZE_OBSERVABLE_RESPONSE_CONSTRUCTION_SCIENTIFIC_THRESHOLD_SELECTIONS_AND_INTERPRETATION_CEILING;_INDEPENDENT_STATIC_CRITIC_BEFORE_ANY_EXECUTION;_NO_FULL107_NO_COVARIANCE_NO_WHITENING_NO_NUISANCE_NO_RELATION_NULL_NO_WM_S3_NO_GLOBAL65537`.
 
-The numerical gate must be falsifiable and must allow terminal numerical failure. Do not post-hoc change solver, grid, tolerance, precision, NumPy version, node identity or execution ordering after outcome. A variant requires a new prospective identity.
-
-Scientific effect remains `+0/+0`; science remains `NOT_EVALUATED`.
+Do not reuse the numerical PASS as a scientific PASS. A new scientific hypothesis/object/threshold/classifier requires its own prospective identity and terminal chain. Scientific effect remains `+0/+0`.
