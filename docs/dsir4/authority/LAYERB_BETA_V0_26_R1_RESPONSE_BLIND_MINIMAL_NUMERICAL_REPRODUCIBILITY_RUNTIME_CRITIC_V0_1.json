@@ -1,0 +1,311 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_MINIMAL_NUMERICAL_REPRODUCIBILITY_RUNTIME_CRITIC_V0_1",
+  "status": "TERMINAL_INDEPENDENT_RUNTIME_CRITIC",
+  "created_utc_date": "2026-09-18",
+  "effect": "+0/+0",
+  "verdict": "CONFIRMED_SCOPED",
+  "classification": "MINIMAL_NUMERICAL_REPRODUCIBILITY_RUNTIME_CONFIRMED_SCOPED",
+  "interpretation_ceiling": "NUMERICAL_REPRODUCIBILITY_ONLY",
+  "reviewed_run": {
+    "run_id": 35280281867,
+    "workflow_id": 360911210,
+    "head_sha": "6ba39aeade5b0603c02ea3d0fc7f8167c11c240a",
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "exact_head_run_count": 1
+  },
+  "prospective_chain": {
+    "design_authority_git_blob_sha1": "b09d4f7de24974d7b8052e4b130c8902a57cf68b",
+    "design_static_critic_git_blob_sha1": "5f4682a3f691b7b533237389ceac10162e8aa721",
+    "base_executor_git_blob_sha1": "ca4307962c0e92dd4bf5d74e76dd4e6db27c10d1",
+    "orchestrator_git_blob_sha1": "f12ae302f7dce44cac93791f39a4f3e0a29d7d28",
+    "workflow_git_blob_sha1": "2c47d859741e9b4f13c8e044046f3169e163a1b6",
+    "execution_authority_git_blob_sha1": "83eeb4ed967206329edd90d4efe5c349f4311281",
+    "implementation_static_critic_git_blob_sha1": "1f75d64be53e21731ddd7700f7ebf02fccb7e7ef",
+    "launch_head_sha": "6ba39aeade5b0603c02ea3d0fc7f8167c11c240a",
+    "launch_marker_only_commit": true
+  },
+  "frozen_science_parent": {
+    "r1_prereg_git_blob_sha1": "545e5be589e0f8029d23db2edb4e2faad116c3a0",
+    "r1_contract_git_blob_sha1": "b510d8e97baf1c0b7b216c0605d83cdd029254e9",
+    "note": "R1 contract hash retained from frozen authority; scientific response remains closed"
+  },
+  "artifacts": {
+    "invariant": {
+      "artifact_id": 10522366691,
+      "name": "layerb-beta-v026-r1-minimal-numerical-invariant-v0-1",
+      "github_sha256": "74a1694ebe774641ca5585cd8612aa9c3cd1d68a2bb807ea4ec67269a2fa0df9"
+    },
+    "lanes": [
+      {
+        "artifact_id": 10523240392,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R01-v0-1",
+        "github_sha256": "ee95f22766aad94ecbea4b246b0b52918af3b271174a7021541948e41989ad19",
+        "expired": false
+      },
+      {
+        "artifact_id": 10524117130,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R02-v0-1",
+        "github_sha256": "5de470b8339f8f82dbf8d04bef727ba12ee15b01b12ef45b86dcc7680b14946a",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523105313,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R03-v0-1",
+        "github_sha256": "05910abbb7ace4e45354be79502a4b4d7a721a4c4855132e62622edbba72a032",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523143744,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R04-v0-1",
+        "github_sha256": "af04d485963f95db476eac902a974680bf58052cec391060b300e8eb3360d44e",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523060327,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R05-v0-1",
+        "github_sha256": "017f2f91ae7a06e1cde8c7522a9cb768ff107df775b57988fb68de7a5717fcd6",
+        "expired": false
+      },
+      {
+        "artifact_id": 10522119938,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R06-v0-1",
+        "github_sha256": "2bcd0b1ed6c4b3da2ae0001ffc39a3591aed1dc1a376da024f5a6ed72ef80eb8",
+        "expired": false
+      },
+      {
+        "artifact_id": 10521889308,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R07-v0-1",
+        "github_sha256": "7de18e6a3e38da9e6afa6a3ae31f8b4fa5785a4a2774c00f3706b176b9f29841",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523686811,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R08-v0-1",
+        "github_sha256": "0b4e3e42a2adfa174c0b766c28a14d9fb0e348abcd05cd13b1133cb95bffb244",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523533058,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R09-v0-1",
+        "github_sha256": "9e4848945074b47b1e6f2bd1da2b51839a160247ac0b66ea6dc19e6fbe9e0f46",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523571519,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R10-v0-1",
+        "github_sha256": "c238391b558d89ff82f69c3d2d705142c8bf4c66c7f7b31be5c9cafa9c17abc6",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523455046,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R11-v0-1",
+        "github_sha256": "d24db04361f00c9ae2f34c36afe5482e982a33c6dcfea78415d8f93d40f0981f",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523452556,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R12-v0-1",
+        "github_sha256": "d05aaef8e5b643caf340a3d7b7cdc12be71d8b743f84a5fce2e97b8922231a00",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523680602,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R13-v0-1",
+        "github_sha256": "05fbcdbd9557403e0df611e578e0d5982dec26bca49cd41dd240afad688549d4",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523692853,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R14-v0-1",
+        "github_sha256": "7b410a3fd4bb8fcd56d0ea22c26dc60387a8444d5387e37ff7b0562fd4180efe",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523455059,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R15-v0-1",
+        "github_sha256": "03d7e73a5dde118e22effb15b718119a11cbceda9a55dee34a3ee927f9cd5d7b",
+        "expired": false
+      },
+      {
+        "artifact_id": 10521988921,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R16-v0-1",
+        "github_sha256": "ae640737ac5f0f1f252c08f1a0d5f98bc12d55ad1026b52e224100b4a9cd8b49",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523415017,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R17-v0-1",
+        "github_sha256": "c6eaa3c2eb3d31b709fcc8fbd583e643c36164c45dc5fdf353095e3c63834473",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523295503,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R18-v0-1",
+        "github_sha256": "ce9482417ac01b23c50069d67072c54cfa6bac7cbdb91677760ea92087b6c3bc",
+        "expired": false
+      },
+      {
+        "artifact_id": 10522783710,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R19-v0-1",
+        "github_sha256": "5f367d29309fd137bf47431b891547a798680d4efb19d5143eb23a5f8f1e2286",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523767086,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R20-v0-1",
+        "github_sha256": "e2d66412d8d1e014ed991752743256a2fc04c17f1711683c23fc174cfaa53811",
+        "expired": false
+      },
+      {
+        "artifact_id": 10522839934,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R21-v0-1",
+        "github_sha256": "21723f39486d483018a137475846c5e70f93d06b32334adacab54218aa56b79e",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523352424,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R22-v0-1",
+        "github_sha256": "0951c25939d49b149956be4d5f2f728e237887d7b72fc711b2d486bcb3481403",
+        "expired": false
+      },
+      {
+        "artifact_id": 10524042336,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R23-v0-1",
+        "github_sha256": "4a3ff182f934bef832763856b7beab67c9f942c282f69d57dd6a7e9015798d7e",
+        "expired": false
+      },
+      {
+        "artifact_id": 10522633290,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R24-v0-1",
+        "github_sha256": "27b5b5ea9ad6fa9835551aa7bee52dc824197e5a6641e44a64c927504ff6b930",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523550658,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R25-v0-1",
+        "github_sha256": "b4f97670abf70aefa18553443a9896b2bffaa65659c7cdf6d64bfebb0d61b324",
+        "expired": false
+      },
+      {
+        "artifact_id": 10522813881,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R26-v0-1",
+        "github_sha256": "e41cb15f93d6fb44b032d0f2205a53527786fa87594ad8f5a5019920dadbac7a",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523740117,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R27-v0-1",
+        "github_sha256": "308f23f03e7ebfbc622f6307d4c174a08b720a3f4f84dabf1681e3ba706f13a6",
+        "expired": false
+      },
+      {
+        "artifact_id": 10522698898,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R28-v0-1",
+        "github_sha256": "d8d35ce3f263ce2bbd265f477e3d544492f7f03f5552992b28eac8a4c62ec80d",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523132184,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R29-v0-1",
+        "github_sha256": "89035658a7d751b74d21660f5d333c8db9679506118c64ac4106ae09fb42b872",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523112892,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R30-v0-1",
+        "github_sha256": "474dacd17ad1f4dd7a0e35a76377b271ba3118252a7c7b7fba4d8c2fede17fb8",
+        "expired": false
+      },
+      {
+        "artifact_id": 10522938361,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R31-v0-1",
+        "github_sha256": "69d4deed0c6201e08022ec1a85e29c87480c03040bb07c993df21c803edad6c8",
+        "expired": false
+      },
+      {
+        "artifact_id": 10523743733,
+        "name": "layerb-beta-v026-r1-minimal-numerical-R32-v0-1",
+        "github_sha256": "964acae9ceea1c5b53c9d1d5346e63c81dd3a1d6bb9046633b85cfac062fa887",
+        "expired": false
+      }
+    ],
+    "decision": {
+      "artifact_id": 10523772312,
+      "name": "layerb-beta-v026-r1-minimal-numerical-decision-v0-1",
+      "github_sha256": "24c5901c1cd31e44a8d882672d542a5361e98a9be0cf7a6133b08fff9fcb76ff",
+      "independently_downloaded_zip_sha256": "24c5901c1cd31e44a8d882672d542a5361e98a9be0cf7a6133b08fff9fcb76ff",
+      "sole_member": "result.json",
+      "inner_result_sha256": "aaf10366106bbcefdd7b0569b182d56aa8f70e7462822893a8692350a8a6c93e"
+    }
+  },
+  "terminal_result": {
+    "producer_classification": "PASS_SCOPED_MINIMAL_NUMERICAL_REPRODUCIBILITY_QUALIFIED",
+    "candidate_receipt_count": 32,
+    "eligible_lane_count": 32,
+    "native_class_counts": {
+      "NATIVE_AVX512_ACTIVE": 10,
+      "NATIVE_AVX512_INACTIVE": 22
+    },
+    "order_arm_counts": {
+      "A": 16,
+      "B": 16
+    },
+    "powered": true,
+    "provenance_ok": true,
+    "numerical_ok": true,
+    "metrics": {
+      "cross_host_max_pairwise_rel": 0,
+      "native_class_mean_rel_separation": 7.215823672842194e-16,
+      "execution_order_arm_mean_rel_separation": 0,
+      "mixed_vs_direct_exact_target_rel": 0,
+      "mixed_common_vs_pure_common_rel": 0,
+      "max_requested_node_coordinate_rel_mismatch": 1.6568353692813133e-16
+    },
+    "technical_relative_tolerance_strict_lt": 0.00001,
+    "requested_node_binding_tolerance_le": 1e-12
+  },
+  "independent_recompute": {
+    "all_32_lane_artifacts_downloaded": true,
+    "all_downloaded_lane_zip_sha256_match_github_digest": true,
+    "each_lane_zip_exact_members": "receipt_Rxx.json + witness_Rxx.npz",
+    "all_32_receipts_lane_pass": true,
+    "all_32_receipt_witness_sha256_bindings_match": true,
+    "common_witness_key_count": 536,
+    "recomputed_metrics_exactly_match_terminal_result": true,
+    "arm_A_witness_npz_sha256": "1fc65ef247109ef606eb6431811dad54827575cb51ae779fc78a8bbe76640ae3",
+    "arm_B_witness_npz_sha256": "9e910416a40efb9330b89c1dd4baaad07d750064a9c497fd1656c95262e33cf3",
+    "arm_container_hash_difference_is_not_raw_value_difference": true
+  },
+  "boundaries": {
+    "class_solver_invoked": true,
+    "raw_solver_transfer_read": true,
+    "derived_beta_response_constructed": false,
+    "scientific_response_read": false,
+    "covariance_read": false,
+    "scientific_classifier_invoked": false,
+    "response_dependent_decision": false,
+    "minimal_scientific_response_execution": false,
+    "full_107_row_execution": false
+  },
+  "counterexample_search": {
+    "interpolation_or_grid_counterexample_found": false,
+    "solver_tolerance_counterexample_found": false,
+    "execution_order_counterexample_found": false,
+    "native_dispatch_counterexample_found": false,
+    "serialization_counterexample_found": false,
+    "rerun_or_selection_counterexample_found": false,
+    "technical_threshold_misrepresented_as_scientific": false
+  },
+  "run_consumed": true,
+  "rerun_same_identity_authorized": false,
+  "retry_failed_jobs_authorized": false,
+  "minimal_scientific_response_execution_authorized": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "authorized_next_stage": "AUTHOR_ONE_PROSPECTIVE_MINIMAL_SCIENTIFIC_RESPONSE_GATE_DESIGN_ONLY;_INDEPENDENT_STATIC_CRITIC_BEFORE_ANY_EXECUTION;_NO_FULL107",
+  "token": "CONFIRMED_SCOPED_MINIMAL_NUMERICAL_REPRODUCIBILITY_RUNTIME_PLUS_0_PLUS_0"
+}
