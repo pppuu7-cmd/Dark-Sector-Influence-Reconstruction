@@ -1,0 +1,87 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_DES_M076_REMAINING_SENTINEL_RESPONSE_RUNTIME_CRITIC_PROTOCOL_V0_1",
+  "status": "PROSPECTIVE_INDEPENDENT_RUNTIME_CRITIC_PROTOCOL",
+  "created_utc_date": "2026-09-19",
+  "effect": "+0/+0",
+  "scientific_payload_read": false,
+  "producer_classification_read": false,
+  "reviewed_frozen_chain": {
+    "preregistration_git_blob_sha1": "8817448b4794446a81dad3014e900c6ddf43b884",
+    "design_authority_git_blob_sha1": "86046021a9463d6287d1d6854149097a9c769d47",
+    "design_static_critic_git_blob_sha1": "d1598a8c8cdc00da5942af79612d319f472f3859",
+    "implementation_authoring_authority_git_blob_sha1": "60980d26c609cf3a6591514f1216ef47407d30b2",
+    "implementation_git_blob_sha1": "363fc2103a60c533365a7797b72cf0f43351069c",
+    "implementation_static_critic_git_blob_sha1": "85bbff8295b5beaec8995bd566d1fb5a17ba8754",
+    "workflow_git_blob_sha1": "2f770d8f5ab99e759556f0cb0487b9e8c5304dda",
+    "execution_authority_git_blob_sha1": "65cc2cb75612c2fef2770af1bce606d0db5551e5",
+    "launch_head_sha": "7ca7092fddc3e1d263ed763bed2e7b53bd1672ab",
+    "authorized_run_id": 35405511563,
+    "authorized_run_number": 1,
+    "authorized_run_attempt": 1,
+    "source_numerical_run_id": 35280281867,
+    "source_numerical_runtime_critic_git_blob_sha1": "9f19f8cc643bc978d0dbbcdd58f80fdf04395e24"
+  },
+  "independent_recompute_order": [
+    "wait until authorized M076 run is terminal and immutable output artifact is complete",
+    "freeze run/job/artifact metadata before reading scientific payload",
+    "from numerical runtime Critic authority obtain exact 32 source artifact IDs names and SHA256 digests",
+    "download all 32 source ZIPs independently and verify exact outer SHA256",
+    "verify every source receipt, witness NPZ SHA256 and manifest canonical SHA256",
+    "verify exactly 256 selected M076 manifest bindings with calls 76/78, D50, z identities, target hashes, shapes, dtype, byte lengths and per-array SHA256",
+    "only after all provenance passes construct independent mixed and direct responses from source beta plus/minus arrays",
+    "independently classify under frozen taxonomy and thresholds without using producer result or producer response evidence",
+    "persist independent classification, metrics, response-array hashes and smallest exact counterexample if any",
+    "only then read producer result/evidence and compare classification, metrics and response arrays bitwise"
+  ],
+  "frozen_science": {
+    "calls": [
+      76,
+      78
+    ],
+    "direct_batch": "D50",
+    "call076_entries": 127,
+    "call078_entries": 128,
+    "atoms_per_construction": 8160,
+    "combined_atoms": 16320,
+    "h": 0.0001,
+    "technical_tolerance_strict_lt": 0.00001,
+    "mixed_direct_tolerance_strict_lt": 0.001,
+    "require_all_atoms_finite_positive": true
+  },
+  "required_independent_outputs": [
+    "source_outer_digest_match_count",
+    "selected_manifest_entries_verified",
+    "native_class_counts",
+    "order_arm_counts",
+    "finite_positive_status",
+    "mixed_response_min_max",
+    "direct_response_min_max",
+    "mixed_cross_host_max_pairwise_rel",
+    "direct_cross_host_max_pairwise_rel",
+    "mixed_native_class_mean_rel_separation",
+    "direct_native_class_mean_rel_separation",
+    "mixed_direct_response_max_rel",
+    "descriptive_order_arm_metrics",
+    "independent_classification",
+    "smallest_exact_counterexample",
+    "independent_response_arrays_sha256"
+  ],
+  "closure_rule": {
+    "pass_terminal_closure_requires_exact_classification_agreement": true,
+    "producer_metrics_must_exactly_match_independent_metrics": true,
+    "persisted_response_arrays_must_be_bitwise_equal_to_independent_recompute": true,
+    "provenance_disagreement_requires_nonpass_critic": true,
+    "no_post_outcome_threshold_change": true
+  },
+  "forbidden": [
+    "consume partial producer artifact",
+    "use producer classification to choose Critic algorithm",
+    "use producer response arrays as source of independent recomputation",
+    "rerun source numerical run",
+    "rerun M076 scientific run",
+    "open full107",
+    "read covariance or nuisance",
+    "make physical inference"
+  ],
+  "token": "FROZEN_INDEPENDENT_M076_RUNTIME_CRITIC_PROTOCOL_BEFORE_OUTCOME"
+}
