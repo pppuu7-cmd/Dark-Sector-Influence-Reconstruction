@@ -1,0 +1,129 @@
+name: DSIR V0.26 R1 DES M076 independent runtime Critic v0.1
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/dsir4/launch/LAYERB_BETA_V0_26_R1_DES_M076_RUNTIME_CRITIC_V0_1.launch.json
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-v026-r1-des-m076-independent-runtime-critic-v0-1
+  cancel-in-progress: false
+
+jobs:
+  recompute:
+    name: Independent source-only M076 recomputation
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - name: Checkout exact Critic launch head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Set up exact Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.3"
+
+      - name: Install exact numerical dependency
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip >/dev/null
+          python -m pip install "numpy==1.26.4" >/dev/null
+          python - <<'PY'
+          import platform
+          import numpy as np
+          assert platform.python_version() == "3.12.3"
+          assert np.__version__ == "1.26.4"
+          PY
+
+      - name: Response-blind Critic static contract
+        run: |
+          set -euo pipefail
+          mkdir -p critic_independent
+          python ci/layerb_beta_v026_r1_des_m076_remaining_sentinel_response_runtime_critic_v0_1.py             --mode static-contract             --out critic_independent/static_contract.json
+
+      - name: Independently reconstruct M076 from frozen source artifacts only
+        run: |
+          set -euo pipefail
+          python ci/layerb_beta_v026_r1_des_m076_remaining_sentinel_response_runtime_critic_v0_1.py             --mode recompute             --outdir critic_independent
+
+      - name: Upload independent Critic evidence before producer comparison
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-des-m076-independent-critic-recompute-v0-1
+          path: critic_independent/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
+
+  compare:
+    name: Compare frozen producer against prior independent M076 evidence
+    needs: recompute
+    if: ${{ always() && needs.recompute.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - name: Checkout exact Critic launch head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Set up exact Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.3"
+
+      - name: Install exact numerical dependency
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip >/dev/null
+          python -m pip install "numpy==1.26.4" >/dev/null
+
+      - name: Download already-persisted independent Critic evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-des-m076-independent-critic-recompute-v0-1
+          path: critic_independent
+
+      - name: Compare producer only after independent evidence exists
+        run: |
+          set -euo pipefail
+          mkdir -p critic_compare
+          test -f critic_independent/independent_result.json
+          test -f critic_independent/independent_response.npz
+          python ci/layerb_beta_v026_r1_des_m076_remaining_sentinel_response_runtime_critic_v0_1.py             --mode compare             --independent-dir critic_independent             --metadata-freeze docs/dsir4/authority/LAYERB_BETA_V0_26_R1_DES_M076_REMAINING_SENTINEL_RESPONSE_RUN_METADATA_FREEZE_V0_1.json             --outdir critic_compare
+
+      - name: Upload immutable Critic decision
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: layerb-beta-v026-r1-des-m076-independent-runtime-critic-v0-1
+          path: critic_compare/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
