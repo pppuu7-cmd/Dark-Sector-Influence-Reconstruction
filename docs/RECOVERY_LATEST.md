@@ -239,7 +239,7 @@ Run `35280281867` is consumed. Never rerun or retry jobs for this identity.
 
 ## Exact next stage
 
-`DESIGN_ONE_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION_FALSIFIER_FROM_EXISTING_IMMUTABLE_NUMERICAL_WITNESSES;_NO_RESPONSE_READ_DURING_DESIGN;_NO_NEW_CLASS_SOLVES;_NO_FULL107_NO_COVARIANCE_NO_NUISANCE_NO_PHYSICAL_INFERENCE`.
+`STOP_AFTER_BOSS_M300_DESIGN_CLOSURE;_REREAD_DURABLE_AUTHORITY_BEFORE_ANY_IMPLEMENTATION;_NO_M300_RESPONSE_ARITHMETIC_NO_NEW_CLASS_SOLVES_NO_FULL107_NO_COVARIANCE_NO_NUISANCE_NO_PHYSICAL_INFERENCE`.
 
 Do not reuse the numerical PASS as a scientific PASS. A new scientific hypothesis/object/threshold/classifier requires its own prospective identity and terminal chain. Scientific effect remains `+0/+0`.
 
@@ -363,7 +363,7 @@ Scientific bookkeeping effect remains `+0/+0`; this is not a physical amplitude 
 
 `minimal numerical reproducibility` = TERMINAL PASS
 → `M298/call375 minimal scientific response` = TERMINAL PASS + runtime Critic closed
-→ `BOSS M300 cross-survey response replication falsifier` = **DESIGN ONLY AUTHORIZED**
+→ `BOSS M300 cross-survey response replication falsifier` = **PREREG + DESIGN + INDEPENDENT DESIGN STATIC CRITIC PASS_SCOPED; IMPLEMENTATION/EXECUTION CLOSED**
 → covariance / nuisance / full107 / statistical-model validity / physical inference = CLOSED.
 
 ### Next highest-information gate
@@ -371,3 +371,129 @@ Scientific bookkeeping effect remains `+0/+0`; this is not a physical amplitude 
 Design only: use the already frozen **BOSS M300** numerical witness family as the second independent response object. M300 spans calls `377..440` and the shared 99 exact BOSS targets. It requires **zero new CLASS solves**, tests a different survey/data block than the passed DES M298 object, and can falsify cross-survey robustness before any covariance/nuisance/full107 expansion.
 
 Do not inspect or construct M300 responses during design. A new preregistration, design authority and independent static Critic are required before any M300 response arithmetic.
+
+
+## BOSS M300 cross-survey replication — prospective design terminally frozen
+
+The next counterexample-first science gate has now completed its response-blind **design-only** stage.
+
+Frozen identities:
+
+- preregistration `prereg/LAYERB_BETA_V0_26_R1_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION_V0_1.md`;
+- prereg commit `28917bbe0137c4d71b9dcfbd10c2dfb3f0a12b9c`;
+- prereg git blob `983f039f0bcf410d629a78332c2be2b6b85a95ff`;
+- design authority `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION_DESIGN_AUTHORITY_V0_1.json`;
+- design commit `cdf50d3ef2886f9305bdfea78297d3f3da97f0ed`;
+- design git blob `8ebb5ea32b28d9ac38625bdb1c1f999663d113cb`;
+- independent design static Critic `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION_DESIGN_STATIC_CRITIC_V0_1.json`;
+- Critic commit `4ce56f4b32190a66816600fd3f5f766312bd3e1a`;
+- Critic git blob `acf0cf8ab62f586ac9b771f29b2a2202caaf87bb`;
+- Critic verdict `PASS_SCOPED`.
+
+### Frozen BOSS object
+
+Use the complete pre-existing M300 family:
+
+- survey/data block: BOSS;
+- mixed selection: `M300`;
+- direct comparator: `D58`;
+- exact calls: every call `377..440`;
+- call count: `64`;
+- exact population: `R01..R32`;
+- native classes: 10 active + 22 inactive;
+- order arms: 16 A + 16 B;
+- new CLASS solves: `0`.
+
+No call subset is permitted.
+
+### Important target-structure distinction
+
+Response-blind structural inspection of the immutable plan established:
+
+- each BOSS call contains 297 persisted raw target entries;
+- these are exactly 99 unique exact coordinates, each repeated three times;
+- all 64 BOSS calls share the same raw target list;
+- canonical unique-99 identity SHA256:
+  `a44a8921e3c10b17cdf222b97d18524454e927dadeea30b13e75c3a0d6fc42fc`;
+- canonical raw-297 identity SHA256:
+  `e5bcdcb7fbb802b24469d8e3f1965013dc35b3b9249868476cf22490456f344a`.
+
+The 99-coordinate identity defines the shared batch geometry. The persisted scientific source arrays are shape `[297]`; design freezes all 297 entries and forbids deduplication or subsetting before response construction.
+
+### Structural receipt audit without response read
+
+All 32 immutable lane receipts from numerical run `35280281867` were inspected at manifest level only. NPZ scientific values were not opened.
+
+Confirmed:
+
+- 32/32 receipts remain `LANE_PASS`;
+- exactly 256 M300 source arrays per lane;
+- exactly 8,192 selected M300 manifest entries over all lanes;
+- calls exactly `377..440`;
+- roles exactly `beta_plus` and `beta_minus`;
+- constructions exactly `mixed_target` and `direct_target`;
+- direct arrays bind `D58`;
+- shape exactly `[297]`;
+- dtype exactly `<f8`;
+- byte length exactly `2376`;
+- every selected manifest entry binds raw-target SHA256 `e5bcdcb7fbb802b24469d8e3f1965013dc35b3b9249868476cf22490456f344a`.
+
+Structural source authority remains numerical executor blob `ca4307962c0e92dd4bf5d74e76dd4e6db27c10d1` and contract-audit blob `9109f2e2bcc6146fa62e423e145ad09a67b70b0c`.
+
+### Frozen future response gate
+
+If a later authority opens implementation/execution, use the same source-authoritative DES-gate construction:
+
+`R = abs((beta_plus-beta_minus)/(2*h))`, `h=1e-4`.
+
+Construct separately for mixed and direct.
+
+Frozen future response tensor per lane/per construction:
+
+`[64,297]`
+
+= 19,008 atoms per lane.
+
+Across 32 lanes:
+
+- 608,256 mixed atoms;
+- 608,256 direct atoms;
+- 1,216,512 total required response atoms.
+
+Every atom must be finite and strictly positive for the scoped replication PASS.
+
+Technical response reproducibility remains strict `<1e-5` for both cross-host maximum pairwise spread and native-class mean separation over the complete response tensor.
+
+Mixed/direct construction agreement remains strict `<1e-3`, maximized over all lanes, calls and source entries.
+
+There is deliberately **no DES-vs-BOSS amplitude equality criterion**. M300 tests whether response existence/reproducibility/construction stability survives a survey-block change, not whether amplitudes numerically match M298.
+
+Frozen future taxonomy:
+
+- `PASS_SCOPED_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION`;
+- `SCIENTIFIC_RESPONSE_ZERO_OR_NONFINITE`;
+- `SCIENTIFIC_RESPONSE_REPRODUCIBILITY_FAIL`;
+- `SCIENTIFIC_RESPONSE_CONSTRUCTION_MISMATCH`;
+- `PROVENANCE_FAIL`;
+- `INVALID_IMPLEMENTATION`.
+
+### Current authorization after design Critic
+
+The design stage is terminally complete, but Critic PASS does **not** automatically authorize the next stage.
+
+Current flags:
+
+- `M300_response_read=false`;
+- `scientific_classifier_invoked=false`;
+- `response_dependent_selection=false`;
+- `covariance_read=false`;
+- `nuisance_read=false`;
+- `new_CLASS_solves=0`;
+- `implementation_authorized=false`;
+- `execution_authorized=false`;
+- `full107_authorized=false`;
+- `statistical_inference_authorized=false`;
+- `physical_inference_authorized=false`;
+- `scientific_effect=+0/+0`.
+
+Current exact action is therefore **STOP after design closure and re-read durable authority before any implementation or M300 response arithmetic**.
