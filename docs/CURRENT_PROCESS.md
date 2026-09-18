@@ -85,15 +85,16 @@ Run `35280281867` is consumed. Same-identity rerun and failed-job retry are forb
 → `corrected repair pair TERMINAL PASS`
 → `corrected producer/cross-host population TERMINAL PASS`
 → `minimal response-blind numerical reproducibility TERMINAL CONFIRMED_SCOPED`
-→ `minimal scientific response DESIGN ONLY AUTHORIZED`
-→ `scientific execution CLOSED`
+→ `minimal scientific response PREREG + DESIGN + DESIGN STATIC CRITIC PASS_SCOPED`
+→ `read-only implementation authoring AUTHORIZED`
+→ `scientific response construction/execution CLOSED`
 → `full107 and downstream CLOSED`.
 
 ## Current authorization state
 
 Authorized now:
-- prospective authoring of **one minimal scientific response gate design only**;
-- independent static Critic of that future design.
+- authoring of one **read-only minimal scientific response constructor** over the frozen M298/call375 witness arrays;
+- independent static Critic of that implementation.
 
 Not authorized:
 - minimal scientific response execution;
@@ -105,6 +106,21 @@ Not authorized:
 
 ## Exact next admissible action
 
-`AUTHOR_ONE_PROSPECTIVE_MINIMAL_SCIENTIFIC_RESPONSE_GATE_DESIGN_ONLY;_BIND_TERMINAL_NUMERICAL_RUNTIME_CRITIC_BLOB_9f19f8cc643bc978d0dbbcdd58f80fdf04395e24;_FREEZE_OBSERVABLE_RESPONSE_CONSTRUCTION_SCIENTIFIC_THRESHOLD_SELECTIONS_AND_INTERPRETATION_CEILING;_INDEPENDENT_STATIC_CRITIC_BEFORE_ANY_EXECUTION;_NO_FULL107_NO_COVARIANCE_NO_WHITENING_NO_NUISANCE_NO_RELATION_NULL_NO_WM_S3_NO_GLOBAL65537`.
+`AUTHOR_ONE_READ_ONLY_MINIMAL_SCIENTIFIC_RESPONSE_CONSTRUCTOR_OVER_FROZEN_M298_CALL375_WITNESSES;_STATIC_AUDIT_IMPLEMENTATION;_FREEZE_SEPARATE_ONE_SHOT_EXECUTION_AUTHORITY_BEFORE_ANY_RESPONSE_ARITHMETIC;_NO_NEW_CLASS_SOLVES;_NO_FULL107_NO_COVARIANCE_NO_WHITENING_NO_NUISANCE_NO_RELATION_NULL_NO_WM_S3_NO_GLOBAL65537`.
 
 Scientific effect remains `+0/+0`.
+
+
+## Newly frozen minimal scientific response design
+
+The design-only stage has now been completed without reading a scientific response.
+
+- prereg blob `139bb9272e4e9ed194434f50694886fc0e6ebdfe`;
+- design authority blob `f55607c6cf0850c064c4ea1d6edf4660ddb16fba`;
+- independent design static Critic blob `171791c608a65320d8eb76ef76faa93d4900fe8e`, verdict `PASS_SCOPED`.
+
+Frozen object: exact `M298 / call375`, all 32 immutable numerical lanes, four existing beta plus/minus mixed/direct target arrays, 244 exact targets, no new CLASS solve. Future response formula is source-authoritative `abs((beta_plus-beta_minus)/(2*h))`, `h=1e-4`.
+
+Static-only witness inspection confirmed the selected arrays' presence, shape `[244]`, dtype `<f8`, and exact shared target identity, but did not perform plus/minus response arithmetic.
+
+The next legal step is implementation authoring/static audit only. Response construction remains closed until a separate execution authority is frozen.
