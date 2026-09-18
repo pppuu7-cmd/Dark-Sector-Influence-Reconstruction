@@ -1,0 +1,19 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_DES_M076_REMAINING_SENTINEL_RESPONSE_REPLICATION_LAUNCH_V0_1",
+  "status": "ONE_SHOT_LAUNCH_MARKER",
+  "created_utc_date": "2026-09-19",
+  "effect": "+0/+0",
+  "launch_once": true,
+  "source_run_id": 35280281867,
+  "execution_authority_git_blob_sha1": "65cc2cb75612c2fef2770af1bce606d0db5551e5",
+  "implementation_git_blob_sha1": "363fc2103a60c533365a7797b72cf0f43351069c",
+  "implementation_static_critic_git_blob_sha1": "85bbff8295b5beaec8995bd566d1fb5a17ba8754",
+  "workflow_git_blob_sha1": "2f770d8f5ab99e759556f0cb0487b9e8c5304dda",
+  "authorized_run_number": 1,
+  "authorized_run_attempt": 1,
+  "new_CLASS_solves_authorized": false,
+  "full107_authorized": false,
+  "covariance_read_authorized": false,
+  "nuisance_read_authorized": false,
+  "token": "LAUNCH_EXACTLY_ONE_DES_M076_REMAINING_SENTINEL_RESPONSE_REPLICATION"
+}
