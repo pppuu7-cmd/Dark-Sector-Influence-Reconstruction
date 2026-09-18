@@ -785,17 +785,33 @@ def execute(outdir: Path) -> int:
 
 def static_contract_report(out: Path) -> int:
     """Response-blind static/self-identity report; no source artifact or response read."""
+    import ast
+
     validate_frozen_chain()
     source = Path(__file__).read_text(encoding="utf-8")
+    tree = ast.parse(source)
+    imported = set()
+    function_names = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imported.update(alias.name for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            imported.add(node.module)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            function_names.add(node.name)
+
     checks = {
-        "exact_M298_call375_keys_present": all(k in source for k in SELECTED_KEYS.values()),
-        "no_classy_import": "from classy import" not in source and "import classy" not in source,
-        "no_covariance_token_as_runtime_path": "np.load('covariance" not in source and 'np.load("covariance' not in source,
-        "formula_literal_present": "np.abs((mixed_plus - mixed_minus) / (2.0 * H))" in source and "np.abs((direct_plus - direct_minus) / (2.0 * H))" in source,
+        "no_classy_module_import": "classy" not in imported,
+        "no_subprocess_module_import": "subprocess" not in imported,
         "technical_tolerance_exact": TECH_TOL == 1e-5,
         "scientific_tolerance_exact": SCI_TOL == 1e-3,
+        "h_exact": H == 1e-4,
         "target_count_exact": TARGET_COUNT == 244,
         "lane_count_exact": len(REPLICATES) == 32,
+        "exact_selected_alias_set": set(SELECTED_KEYS) == {"mixed_plus", "mixed_minus", "direct_plus", "direct_minus"},
+        "stage_function_present": "stage_all_source_arrays" in function_names,
+        "construct_function_present": "construct_and_classify" in function_names,
+        "execute_function_present": "execute" in function_names,
     }
     if not all(checks.values()):
         fail("INVALID_IMPLEMENTATION", "static_contract", f"static check failure {checks}")
@@ -810,7 +826,6 @@ def static_contract_report(out: Path) -> int:
         "new_CLASS_solves": 0,
     })
     return 0
-
 
 def main() -> int:
     p = argparse.ArgumentParser()
