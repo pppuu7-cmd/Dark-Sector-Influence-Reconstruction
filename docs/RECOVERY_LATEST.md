@@ -239,7 +239,7 @@ Run `35280281867` is consumed. Never rerun or retry jobs for this identity.
 
 ## Exact next stage
 
-`STOP_AFTER_BOSS_M300_DESIGN_CLOSURE;_REREAD_DURABLE_AUTHORITY_BEFORE_ANY_IMPLEMENTATION;_NO_M300_RESPONSE_ARITHMETIC_NO_NEW_CLASS_SOLVES_NO_FULL107_NO_COVARIANCE_NO_NUISANCE_NO_PHYSICAL_INFERENCE`.
+`DESIGN_ONE_REMAINING_M076_DES_RESPONSE_REPLICATION_FALSIFIER_FROM_EXISTING_IMMUTABLE_NUMERICAL_WITNESSES;_NO_M076_RESPONSE_READ_DURING_DESIGN;_NO_NEW_CLASS_SOLVES;_NO_FULL107_NO_COVARIANCE_NO_NUISANCE_NO_PHYSICAL_INFERENCE`.
 
 Do not reuse the numerical PASS as a scientific PASS. A new scientific hypothesis/object/threshold/classifier requires its own prospective identity and terminal chain. Scientific effect remains `+0/+0`.
 
@@ -363,7 +363,7 @@ Scientific bookkeeping effect remains `+0/+0`; this is not a physical amplitude 
 
 `minimal numerical reproducibility` = TERMINAL PASS
 → `M298/call375 minimal scientific response` = TERMINAL PASS + runtime Critic closed
-→ `BOSS M300 cross-survey response replication falsifier` = **PREREG + DESIGN + INDEPENDENT DESIGN STATIC CRITIC PASS_SCOPED; IMPLEMENTATION/EXECUTION CLOSED**
+→ `BOSS M300 cross-survey response replication` = **TERMINAL SCIENTIFIC PASS + INDEPENDENT RUNTIME CRITIC PASS_TERMINAL_CLOSURE**
 → covariance / nuisance / full107 / statistical-model validity / physical inference = CLOSED.
 
 ### Next highest-information gate
@@ -497,3 +497,66 @@ Current flags:
 - `scientific_effect=+0/+0`.
 
 Current exact action is therefore **STOP after design closure and re-read durable authority before any implementation or M300 response arithmetic**.
+
+
+## BOSS M300 cross-survey response replication — TERMINAL PASS
+
+The complete frozen BOSS M300 family has now been executed exactly once and independently closed.
+
+Execution chain:
+- implementation-authoring authority commit `469e9a9601c7d7f275db0be31a670f0f1b082eb5`, blob `9fd2c5faddbb98bed67a0edf8e89ef582068616a`;
+- read-only implementation commit `3dafc691090c917e23f8f677aab343efae5786ce`, blob `55b7df57ab86c5dc2e48f860b179c1a64eb5005b`;
+- inert workflow commit `5cc937a167e05626666aedc071166edc5e9e3f0f`, blob `03e99a747ca8d4e7db13fd12a23f59fdd5c02b07`;
+- implementation static Critic commit `b4fd47d8e6f6a4ecd9cb9543d14ebb4a4d68b1e1`, blob `53ddecce0a20fcb50041781a0a14b55f26cfcd78`, verdict `PASS_SCOPED`;
+- one-shot execution authority commit `74d6cd5e86b1c0886d496b9566435cb7880b413e`, blob `ff09e8c55f0f7a04aa05f3e36d9e16c715f67d4a`;
+- launch commit `5f466f238ad2b9562d98794b2de1e33764ebb418`.
+
+Consumed scientific run:
+- run `35404848010`;
+- workflow `361750847`;
+- job `105792356879`;
+- run #1 / attempt #1;
+- conclusion `success`;
+- rerun/retry not authorized.
+
+Immutable scientific artifact:
+- artifact `10572057201`;
+- name `layerb-beta-v026-r1-boss-m300-cross-survey-response-v0-1`;
+- outer SHA256 `de99c1954d38b83559bafa40a149938c98052af255f3f6b6f67880377cf4385a`;
+- `provenance.json` SHA256 `304ae85ab38daf9fe9cca0c9633e324f361dc227d2741bb032c9db24a7b199de`;
+- `response_evidence.npz` SHA256 `4de8084deea170860ed27c2eab85a6f24bcc54baa68a64deaee0b9734d53b76e`;
+- `result.json` SHA256 `44c9c1d822fad354fada144d31f816248db73c174dd2e9378cd4345d04d984bb`.
+
+Terminal classification:
+`PASS_SCOPED_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION`.
+
+Independent runtime recomputation consumed all 32 original numerical lane artifacts and independently verified:
+- 32/32 source outer SHA256 identities;
+- 8,192 selected M300 manifest entries;
+- exact complete `[32,64,297]` mixed and direct response tensors;
+- 608,256 atoms per construction / 1,216,512 total atoms;
+- every atom finite and strictly positive;
+- mixed/direct response range `0.1527526944755664 .. 5708.442424129316`;
+- mixed and direct cross-host max relative spread `0.0`;
+- mixed and direct native-class mean separation `4.709641672451007e-16`;
+- mixed/direct response max relative difference `0.0`;
+- persisted mixed and direct response evidence bitwise identical to the independent reconstruction.
+
+Terminal authority:
+- blob `e7e94650dd75b2a148717e241a907761fdbdbcda`.
+
+Independent runtime Critic:
+- blob `5c54869af9c5bf157d2ec857ca1623b763a0d7d3`;
+- verdict `PASS_TERMINAL_CLOSURE`.
+
+Claim ceiling remains scoped. This does not establish statistical significance, covariance/nuisance robustness, full107 validity, dark-sector detection or new physics.
+
+### Rebuilt DAG after M300
+
+`numerical reproducibility` = TERMINAL PASS
+→ `DES M298/call375 response` = TERMINAL PASS + runtime Critic closed
+→ `BOSS M300 complete response family` = TERMINAL PASS + runtime Critic closed
+→ `DES M076 calls 76/78 remaining sentinel response family` = **DESIGN ONLY NEXT**
+→ full107 / covariance / nuisance / statistical inference / physical inference = CLOSED.
+
+The next highest-information cheap gate is the remaining frozen sentinel family M076 because its raw witnesses already exist and require zero new CLASS solves. It tests another DES packing/comparator geometry before any 738-construction full replay.
