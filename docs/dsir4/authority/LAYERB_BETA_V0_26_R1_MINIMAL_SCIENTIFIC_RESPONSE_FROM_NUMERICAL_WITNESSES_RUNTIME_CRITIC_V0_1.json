@@ -1,0 +1,51 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_RUNTIME_CRITIC_V0_1",
+  "status": "TERMINAL_INDEPENDENT_RUNTIME_CRITIC",
+  "created_utc_date": "2026-09-18",
+  "effect": "+0/+0",
+  "verdict": "CONFIRMED_SCOPED",
+  "classification": "INVALID_IMPLEMENTATION_RUNTIME_CONFIRMED",
+  "interpretation_ceiling": "PRE_RESPONSE_IMPLEMENTATION_FAILURE_ONLY",
+  "reviewed_terminal_authority_git_blob_sha1": "571f92b48fdc4f5769e985a11c6dcc1c7e260cf0",
+  "reviewed_run": {
+    "run_id": 35367672204,
+    "workflow_id": 361513304,
+    "run_number": 1,
+    "run_attempt": 1,
+    "head_sha": "25a5380d1d366ab233d8222fa7c3a2d8601e1fda",
+    "job_id": 105673940890
+  },
+  "independently_checked": {
+    "one_shot_identity_preserved": true,
+    "exact_evidence_artifact_id_10557341573": true,
+    "github_outer_digest_matches_independent_download_sha256": true,
+    "outer_sha256": "38cc742ea382dd3712ef64487583dcef59bc58965f7ddb2dc60140021229e272",
+    "exact_member_set_result_and_static_contract": true,
+    "result_json_sha256_exact": true,
+    "static_contract_pass": true,
+    "terminal_classification_invalid_implementation": true,
+    "observed_HTTP_401_unauthorized": true,
+    "provenance_complete_before_response_arithmetic_false": true,
+    "scientific_response_read_false": true,
+    "scientific_classifier_invoked_false": true,
+    "covariance_read_false": true,
+    "nuisance_read_false": true,
+    "no_new_CLASS_solves": true,
+    "no_scientific_response_evidence_member_present": true
+  },
+  "bounded_interpretation": {
+    "supported": "Run 35367672204 consumed its one-shot identity and failed in source-artifact authentication/transport before scientific response construction.",
+    "not_supported": [
+      "zero scientific response",
+      "nonfinite scientific response",
+      "scientific response reproducibility failure",
+      "mixed/direct scientific construction mismatch",
+      "dark-sector evidence"
+    ]
+  },
+  "false_science_failure_guard": true,
+  "rerun_same_identity_authorized": false,
+  "causal_successor_authoring_authorized": true,
+  "causal_successor_scope": "transport/authentication only; preserve all frozen scientific choices",
+  "token": "CONFIRMED_SCOPED_INVALID_IMPLEMENTATION_PRE_RESPONSE_PLUS_0_PLUS_0"
+}
