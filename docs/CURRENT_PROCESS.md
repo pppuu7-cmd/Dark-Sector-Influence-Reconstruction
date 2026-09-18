@@ -86,15 +86,15 @@ Run `35280281867` is consumed. Same-identity rerun and failed-job retry are forb
 → `corrected producer/cross-host population TERMINAL PASS`
 → `minimal response-blind numerical reproducibility TERMINAL CONFIRMED_SCOPED`
 → `minimal scientific response M298/call375 TERMINAL PASS + runtime Critic CLOSED`
-→ `BOSS M300 cross-survey response replication PREREG + DESIGN + DESIGN STATIC CRITIC PASS_SCOPED`
-→ `M300 implementation/execution CLOSED`
+→ `BOSS M300 cross-survey response replication TERMINAL PASS + runtime Critic CLOSED`
+→ `DES M076 remaining sentinel response replication DESIGN ONLY NEXT`
 → `full107 and downstream CLOSED`.
 
 ## Current authorization state
 
 Authorized now:
-- no M300 implementation or execution;
-- only recovery/state reconciliation after terminal design closure.
+- prospective design only of the remaining frozen DES M076 response-replication falsifier;
+- no M076 response read or execution before its own prereg/design/static Critic chain.
 
 Not authorized:
 - minimal scientific response execution;
@@ -106,7 +106,7 @@ Not authorized:
 
 ## Exact next admissible action
 
-`STOP_AFTER_BOSS_M300_DESIGN_CLOSURE;_REREAD_DURABLE_AUTHORITY_BEFORE_ANY_IMPLEMENTATION;_NO_M300_RESPONSE_ARITHMETIC_NO_NEW_CLASS_SOLVES_NO_FULL107_NO_COVARIANCE_NO_NUISANCE_NO_PHYSICAL_INFERENCE`.
+`DESIGN_ONE_REMAINING_M076_DES_RESPONSE_REPLICATION_FALSIFIER_FROM_EXISTING_IMMUTABLE_NUMERICAL_WITNESSES;_NO_M076_RESPONSE_READ_DURING_DESIGN;_NO_NEW_CLASS_SOLVES;_NO_FULL107_NO_COVARIANCE_NO_NUISANCE_NO_PHYSICAL_INFERENCE`.
 
 Scientific effect remains `+0/+0`.
 
@@ -252,3 +252,49 @@ Current authorization after design Critic:
 Re-read durable authority before any M300 implementation. A design PASS alone does not authorize code that performs response arithmetic and does not authorize an Actions run.
 
 Do not author/launch M300 response execution unless a later explicit authority changes this state.
+
+
+## BOSS M300 scientific response — terminal runtime closure
+
+M300 is now closed, not merely designed.
+
+- run `35404848010`, run #1/attempt #1, head `5f466f238ad2b9562d98794b2de1e33764ebb418`;
+- classification `PASS_SCOPED_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION`;
+- terminal authority blob `e7e94650dd75b2a148717e241a907761fdbdbcda`;
+- runtime Critic blob `5c54869af9c5bf157d2ec857ca1623b763a0d7d3`, verdict `PASS_TERMINAL_CLOSURE`;
+- zero new CLASS solves;
+- 1,216,512 response atoms independently recomputed;
+- all finite-positive;
+- cross-host spreads `0.0`;
+- native-class separations `4.709641672451007e-16`;
+- mixed/direct response difference `0.0`.
+
+No full107/covariance/nuisance/statistical/physical authority follows automatically.
+
+## Current science frontier
+
+L1 infrastructure/provenance: terminally strong.
+
+L2 numerical reproducibility: terminal PASS.
+
+L3a DES M298 minimal response: terminal PASS.
+
+L3a BOSS M300 cross-survey family: terminal PASS.
+
+L3a remaining frozen sentinel family M076: **design only next**.
+
+L3b statistical/model validity: closed.
+
+L4 physical inference: closed.
+
+## Exact next admissible action
+
+Prospectively design the remaining `M076` DES response family from existing immutable numerical witnesses:
+- calls `76,78`;
+- direct comparator `D50`;
+- mixed target union 255;
+- no new CLASS solve;
+- no covariance/nuisance/full107;
+- do not inspect M076 response values before prereg/design/static Critic.
+
+This is cheaper and more falsifiable than jumping to the 738-construction full replay.
