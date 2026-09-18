@@ -353,7 +353,29 @@ def construct(staged):
         mn,_=maxrel(M[ai].mean(0),M[ii].mean(0)); dn,_=maxrel(D[ai].mean(0),D[ii].mean(0)); om,_=maxrel(M[:16].mean(0),M[16:].mean(0)); od,_=maxrel(D[:16].mean(0),D[16:].mean(0))
         mdarr=rel(M,D); md=float(mdarr.max())
         metrics.update({"mixed_cross_host_max_pairwise_rel":mm[0],"direct_cross_host_max_pairwise_rel":dd[0],"mixed_native_class_mean_rel_separation":mn,"direct_native_class_mean_rel_separation":dn,"mixed_direct_response_max_rel":md,"execution_order_arm_mean_rel_separation_descriptive_mixed":om,"execution_order_arm_mean_rel_separation_descriptive_direct":od})
-        if not all(x<TECH_TOL for x in (mm[0],dd[0],mn,dn)): cls="SCIENTIFIC_RESPONSE_REPRODUCIBILITY_FAIL"
+        if not all(x<TECH_TOL for x in (mm[0],dd[0],mn,dn)):
+            cls="SCIENTIFIC_RESPONSE_REPRODUCIBILITY_FAIL"
+            # Freeze a deterministic smallest exact technical witness. Cross-host
+            # failures are searched first in replicate-pair order, then atom
+            # order, mixed before direct. If only native-class means fail,
+            # freeze the first atom in call/source-entry order.
+            for i,j in itertools.combinations(range(32),2):
+                qm=rel(M[i],M[j]); qd=rel(D[i],D[j])
+                for ei in range(255):
+                    if qm[ei]>=TECH_TOL:
+                        call,idx=locate(ei); ce={"failure_class":cls,"metric":"mixed_cross_host","replicate_a":REPLICATES[i],"replicate_b":REPLICATES[j],"call":call,"source_entry_index":idx,"relative_difference":float(qm[ei])}; break
+                    if qd[ei]>=TECH_TOL:
+                        call,idx=locate(ei); ce={"failure_class":cls,"metric":"direct_cross_host","replicate_a":REPLICATES[i],"replicate_b":REPLICATES[j],"call":call,"source_entry_index":idx,"relative_difference":float(qd[ei])}; break
+                if ce: break
+            if ce is None:
+                qmn=rel(M[ai].mean(0),M[ii].mean(0)); qdn=rel(D[ai].mean(0),D[ii].mean(0))
+                for ei in range(255):
+                    if qmn[ei]>=TECH_TOL:
+                        call,idx=locate(ei); ce={"failure_class":cls,"metric":"mixed_native_class_mean","native_class_a":ACTIVE,"native_class_b":INACTIVE,"call":call,"source_entry_index":idx,"relative_difference":float(qmn[ei])}; break
+                    if qdn[ei]>=TECH_TOL:
+                        call,idx=locate(ei); ce={"failure_class":cls,"metric":"direct_native_class_mean","native_class_a":ACTIVE,"native_class_b":INACTIVE,"call":call,"source_entry_index":idx,"relative_difference":float(qdn[ei])}; break
+            if ce is None:
+                fail("INVALID_IMPLEMENTATION","counterexample_capture","technical failure without exact witness")
         elif not md<SCI_TOL:
             cls="SCIENTIFIC_RESPONSE_CONSTRUCTION_MISMATCH"; ri,ei=map(int,np.argwhere(mdarr>=SCI_TOL)[0]); call,idx=locate(ei); ce={"failure_class":cls,"replicate":REPLICATES[ri],"call":call,"source_entry_index":idx,"mixed_value":float(M[ri,ei]),"direct_value":float(D[ri,ei]),"relative_difference":float(mdarr[ri,ei])}
         else: cls=PASS
