@@ -617,3 +617,20 @@ Full107/covariance/nuisance/statistical/physical inference remain closed.
 
 Exact next action:
 `MONITOR_RUN_35405511563_METADATA_ONLY_UNTIL_TERMINAL;_FREEZE_TERMINAL_RUN_AND_ARTIFACT_METADATA_BEFORE_READING_SCIENTIFIC_PAYLOAD;_THEN_INDEPENDENT_RUNTIME_RECOMPUTATION_FROM_ORIGINAL_32_NUMERICAL_ARTIFACTS`.
+
+
+### Prospective M076 runtime-Critic protocol frozen before outcome
+
+Independent runtime-Critic method was preregistered while run `35405511563` was still queued and before any M076 scientific payload existed/was read:
+
+- commit `9f1262cabe4a7a024ea29bb74d94b738356bef20`;
+- file `docs/dsir4/authority/LAYERB_BETA_V0_26_R1_DES_M076_REMAINING_SENTINEL_RESPONSE_RUNTIME_CRITIC_PROTOCOL_V0_1.json`.
+
+Protocol requires:
+1. terminal run metadata/artifact freeze before producer science read;
+2. independent redownload and SHA verification of all 32 original numerical lane artifacts;
+3. independent verification of all 256 M076 source bindings;
+4. independent response construction/classification from source beta plus/minus arrays without using producer result/evidence;
+5. only after independent result exists, compare producer classification/metrics and require bitwise response-evidence equality.
+
+No threshold, subset, classifier or Critic algorithm may be changed after the M076 outcome.
