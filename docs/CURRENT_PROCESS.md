@@ -85,16 +85,16 @@ Run `35280281867` is consumed. Same-identity rerun and failed-job retry are forb
 → `corrected repair pair TERMINAL PASS`
 → `corrected producer/cross-host population TERMINAL PASS`
 → `minimal response-blind numerical reproducibility TERMINAL CONFIRMED_SCOPED`
-→ `minimal scientific response PREREG + DESIGN + DESIGN STATIC CRITIC PASS_SCOPED`
-→ `read-only implementation authoring AUTHORIZED`
-→ `scientific response construction/execution CLOSED`
+→ `minimal scientific response M298/call375 TERMINAL PASS + runtime Critic CLOSED`
+→ `BOSS M300 cross-survey response replication DESIGN ONLY AUTHORIZED`
+→ `next scientific execution CLOSED`
 → `full107 and downstream CLOSED`.
 
 ## Current authorization state
 
 Authorized now:
-- authoring of one **read-only minimal scientific response constructor** over the frozen M298/call375 witness arrays;
-- independent static Critic of that implementation.
+- prospective **design only** of one BOSS M300 cross-survey response-replication falsifier over existing immutable numerical witnesses;
+- independent static Critic of that future design.
 
 Not authorized:
 - minimal scientific response execution;
@@ -106,7 +106,7 @@ Not authorized:
 
 ## Exact next admissible action
 
-`AUTHOR_ONE_READ_ONLY_MINIMAL_SCIENTIFIC_RESPONSE_CONSTRUCTOR_OVER_FROZEN_M298_CALL375_WITNESSES;_STATIC_AUDIT_IMPLEMENTATION;_FREEZE_SEPARATE_ONE_SHOT_EXECUTION_AUTHORITY_BEFORE_ANY_RESPONSE_ARITHMETIC;_NO_NEW_CLASS_SOLVES;_NO_FULL107_NO_COVARIANCE_NO_WHITENING_NO_NUISANCE_NO_RELATION_NULL_NO_WM_S3_NO_GLOBAL65537`.
+`DESIGN_ONE_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION_FALSIFIER_FROM_EXISTING_IMMUTABLE_NUMERICAL_WITNESSES;_NO_RESPONSE_READ_DURING_DESIGN;_NO_NEW_CLASS_SOLVES;_NO_FULL107_NO_COVARIANCE_NO_NUISANCE_NO_PHYSICAL_INFERENCE`.
 
 Scientific effect remains `+0/+0`.
 
@@ -124,3 +124,63 @@ Frozen object: exact `M298 / call375`, all 32 immutable numerical lanes, four ex
 Static-only witness inspection confirmed the selected arrays' presence, shape `[244]`, dtype `<f8`, and exact shared target identity, but did not perform plus/minus response arithmetic.
 
 The next legal step is implementation authoring/static audit only. Response construction remains closed until a separate execution authority is frozen.
+
+
+## First terminal scientific response — closed
+
+The M298/call375 gate is no longer merely designed; it is terminally executed and independently closed.
+
+Causal history:
+- v0.1 run `35367672204`: terminal `INVALID_IMPLEMENTATION` before response arithmetic due literal-backslash GitHub token expression; no science read.
+- v0.2 run `35368119311`: terminal `PROVENANCE_FAIL` before response arithmetic due a 63-character target identity literal; no science read.
+- target identity correction blob `27af1bea4c380029741ea56083e982abbbe2fbb1`; correction Critic blob `7d6f4f9d3b0709ca89993e9a8a46651919f1ffe2`.
+- v0.3 run `35368618232`: terminal scientific PASS; consumed.
+
+v0.3 frozen implementation chain:
+- implementation blob `7e72482c536968a769b69c302fc9eb64b639bcec`;
+- workflow blob `27ebe8b99aae818337ba77e51733b05ce80f9c07`;
+- implementation static Critic blob `fdb34c9df253c8339ac7cb57c6f333d6b8e1dc35`, PASS_SCOPED;
+- execution authority blob `d3f00526acefab51e66c18552bb39aa6a19da3ad`;
+- launch head `68597fe91c2e1ba5e9de042201be497fb4d26046`.
+
+Terminal PASS evidence:
+- run `35368618232`, workflow `361520624`, job `105676991286`, run #1/attempt #1;
+- artifact `10557123574`, outer SHA256 `c3411f883abebc2cc03a4d646a36c1ad1705450070f8c72984884604450267d5`;
+- classification `PASS_SCOPED_MINIMAL_SCIENTIFIC_RESPONSE_REPRODUCIBLE_NONZERO`;
+- 7,808 mixed + 7,808 direct response atoms independently checked;
+- all atoms finite and strictly positive;
+- response range `2.988634574316862 .. 3105.5120056680607`;
+- both cross-host spreads `0.0`;
+- both native-class mean separations `1.4178931066714796e-16`;
+- mixed/direct max relative difference `0.0`;
+- no new CLASS solves.
+
+Terminal authority blob `7ea2cefde247845d4c6d70660b798dcaa79a4a72`.
+
+Independent runtime Critic blob `91fb97a73a820cf5172d7e0383752a1ee6a26143`, verdict `PASS_TERMINAL_CLOSURE`.
+
+## Current science frontier
+
+L1 infrastructure/provenance: terminally strong.
+
+L2 numerical reproducibility: terminal PASS.
+
+L3a first minimal scientific response: **terminal PASS**.
+
+L3a next counterexample-first replication: **design only authorized**.
+
+L3b statistical/model validity: closed.
+
+L4 physical dark-sector inference: closed.
+
+## Exact next admissible action
+
+Prospectively design one **BOSS M300 cross-survey response replication** gate from the already immutable numerical witnesses:
+- M300 / calls 377..440;
+- 99 shared exact BOSS targets;
+- no new CLASS solve;
+- no covariance or nuisance;
+- no full107;
+- do not inspect M300 response values before preregistration/design/static Critic.
+
+This is preferred over immediate full107 because it tests whether the DES M298 PASS survives a different survey/data block at negligible solver cost, providing a cheap potential killer before broad expansion.
