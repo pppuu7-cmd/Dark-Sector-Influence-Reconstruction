@@ -1,0 +1,141 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_TERMINAL_V0_3",
+  "status": "TERMINAL_SCIENTIFIC_GATE_DECISION",
+  "created_utc_date": "2026-09-18",
+  "effect": "+0/+0",
+  "classification": "PASS_SCOPED_MINIMAL_SCIENTIFIC_RESPONSE_REPRODUCIBLE_NONZERO",
+  "interpretation_ceiling": "ONE_PROSPECTIVELY_FROZEN_MINIMAL_BETA_RESPONSE_OBJECT_EXISTENCE_AND_CONSTRUCTION_STABILITY_ONLY",
+  "run_identity": {
+    "run_id": 35368618232,
+    "workflow_id": 361520624,
+    "run_number": 1,
+    "run_attempt": 1,
+    "head_sha": "68597fe91c2e1ba5e9de042201be497fb4d26046",
+    "workflow_conclusion": "success",
+    "job_id": 105676991286,
+    "consumed": true,
+    "rerun_authorized": false,
+    "retry_failed_jobs_authorized": false
+  },
+  "causal_chain": {
+    "v0_1_invalid_run_id": 35367672204,
+    "v0_1_terminal_git_blob_sha1": "571f92b48fdc4f5769e985a11c6dcc1c7e260cf0",
+    "v0_2_provenance_fail_run_id": 35368119311,
+    "v0_2_terminal_git_blob_sha1": "85ce3e72100c8ab61605d8be73b376a70811f40e",
+    "target_identity_correction_git_blob_sha1": "27af1bea4c380029741ea56083e982abbbe2fbb1",
+    "target_identity_correction_critic_git_blob_sha1": "7d6f4f9d3b0709ca89993e9a8a46651919f1ffe2"
+  },
+  "frozen_authorities": {
+    "numerical_runtime_critic_git_blob_sha1": "9f19f8cc643bc978d0dbbcdd58f80fdf04395e24",
+    "preregistration_git_blob_sha1": "139bb9272e4e9ed194434f50694886fc0e6ebdfe",
+    "design_authority_git_blob_sha1": "f55607c6cf0850c064c4ea1d6edf4660ddb16fba",
+    "design_static_critic_git_blob_sha1": "171791c608a65320d8eb76ef76faa93d4900fe8e",
+    "implementation_git_blob_sha1": "7e72482c536968a769b69c302fc9eb64b639bcec",
+    "implementation_static_critic_git_blob_sha1": "fdb34c9df253c8339ac7cb57c6f333d6b8e1dc35",
+    "workflow_git_blob_sha1": "27ebe8b99aae818337ba77e51733b05ce80f9c07",
+    "execution_authority_git_blob_sha1": "d3f00526acefab51e66c18552bb39aa6a19da3ad"
+  },
+  "source_evidence": {
+    "numerical_source_run_id": 35280281867,
+    "exact_lane_count": 32,
+    "exact_lane_set": "R01..R32",
+    "source_outer_digest_match_count": 32,
+    "selected_manifest_entries_verified": 128,
+    "target_identity_sha256": "1e835a495e6b742b7b992627e819e949420529ba5097164d260ca0accb0d3c0c",
+    "new_CLASS_solves": 0
+  },
+  "scientific_object": {
+    "mixed_batch_id": "M298",
+    "call_index": 375,
+    "exact_target_count": 244,
+    "h": 0.0001,
+    "formula": "abs((beta_plus - beta_minus) / (2*h))",
+    "response_kinds": [
+      "R_mixed",
+      "R_direct"
+    ],
+    "total_atoms_checked_per_response_kind": 7808,
+    "finite_positive_status": true,
+    "mixed_response_min": 2.988634574316862,
+    "mixed_response_max": 3105.5120056680607,
+    "direct_response_min": 2.988634574316862,
+    "direct_response_max": 3105.5120056680607
+  },
+  "frozen_thresholds": {
+    "technical_relative_tolerance_strict_lt": 0.00001,
+    "scientific_mixed_direct_construction_agreement_strict_lt": 0.001
+  },
+  "metrics": {
+    "mixed_cross_host_max_pairwise_rel": 0,
+    "direct_cross_host_max_pairwise_rel": 0,
+    "mixed_native_class_mean_rel_separation": 1.4178931066714796e-16,
+    "direct_native_class_mean_rel_separation": 1.4178931066714796e-16,
+    "mixed_direct_response_max_rel": 0,
+    "native_class_counts": {
+      "NATIVE_AVX512_ACTIVE": 10,
+      "NATIVE_AVX512_INACTIVE": 22
+    },
+    "order_arm_counts": {
+      "A": 16,
+      "B": 16
+    }
+  },
+  "immutable_artifact": {
+    "artifact_id": 10557123574,
+    "artifact_name": "layerb-beta-v026-r1-minimal-scientific-response-v0-3",
+    "outer_digest": "sha256:c3411f883abebc2cc03a4d646a36c1ad1705450070f8c72984884604450267d5",
+    "independent_download_sha256": "c3411f883abebc2cc03a4d646a36c1ad1705450070f8c72984884604450267d5",
+    "members": [
+      {
+        "name": "provenance.json",
+        "sha256": "aca164aa724bde4efbb20fdcc52bcecc0e1df248e4be5cafb8c72bece36f3c66"
+      },
+      {
+        "name": "response_evidence.npz",
+        "sha256": "5de9d8dedbdd2faaa5e7d4ed7e2425696540dcc927a513183e115f71f195deab"
+      },
+      {
+        "name": "result.json",
+        "sha256": "1d7c0c88cae0b2684dc100788980ba6cb63dce54bd7a418d0d018db3c16ecd1d"
+      },
+      {
+        "name": "static_contract.json",
+        "sha256": "c2ebeeb855993a94c32fa2586df9860adc5a16563c73d286e40e91b87e7504fc"
+      }
+    ]
+  },
+  "boundary_flags": {
+    "provenance_complete_before_response_arithmetic": true,
+    "scientific_response_read": true,
+    "scientific_classifier_invoked": true,
+    "covariance_read": false,
+    "whitening_read": false,
+    "nuisance_read": false,
+    "relation_null_read": false,
+    "Wm_S3_opened": false,
+    "global_65537_opened": false,
+    "full_107_row_execution": false,
+    "statistical_inference_authorized": false,
+    "physical_inference_authorized": false
+  },
+  "bounded_inference": {
+    "supported": "One prospectively frozen minimal beta response object M298/call375 exists, is finite-positive in all 244 atoms across all 32 frozen lanes, is technically reproducible across the frozen population, and agrees exactly between mixed and direct exact-target constructions under the inherited scientific construction-agreement tolerance.",
+    "not_supported": [
+      "statistical significance",
+      "dark-sector detection",
+      "nuisance robustness",
+      "covariance-aware validity",
+      "full107 validity",
+      "global cosmological consistency",
+      "physical dark-sector inference"
+    ]
+  },
+  "runtime_critic_required": true,
+  "full107_authorized": false,
+  "covariance_gate_execution_authorized": false,
+  "nuisance_gate_execution_authorized": false,
+  "downstream_statistical_inference_authorized": false,
+  "physical_inference_authorized": false,
+  "next_rule": "INDEPENDENT_RUNTIME_CRITIC_MUST_RECOMPUTE_FROM_IMMUTABLE_SOURCE_ARTIFACTS_BEFORE_DAG_ADVANCES;_THEN_CHOOSE_ONE_CHEAP_COUNTEREXAMPLE_FIRST_SUCCESSOR;_NO_AUTOMATIC_FULL107",
+  "token": "TERMINAL_PASS_SCOPED_MINIMAL_SCIENTIFIC_RESPONSE_REPRODUCIBLE_NONZERO_PLUS_0_PLUS_0"
+}
