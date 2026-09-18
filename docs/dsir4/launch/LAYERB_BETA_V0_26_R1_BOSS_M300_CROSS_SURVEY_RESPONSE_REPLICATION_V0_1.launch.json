@@ -1,0 +1,19 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION_LAUNCH_V0_1",
+  "status": "ONE_SHOT_LAUNCH_MARKER",
+  "created_utc_date": "2026-09-19",
+  "effect": "+0/+0",
+  "launch_once": true,
+  "source_run_id": 35280281867,
+  "execution_authority_git_blob_sha1": "ff09e8c55f0f7a04aa05f3e36d9e16c715f67d4a",
+  "implementation_git_blob_sha1": "55b7df57ab86c5dc2e48f860b179c1a64eb5005b",
+  "implementation_static_critic_git_blob_sha1": "53ddecce0a20fcb50041781a0a14b55f26cfcd78",
+  "workflow_git_blob_sha1": "03e99a747ca8d4e7db13fd12a23f59fdd5c02b07",
+  "authorized_run_number": 1,
+  "authorized_run_attempt": 1,
+  "new_CLASS_solves_authorized": false,
+  "full107_authorized": false,
+  "covariance_read_authorized": false,
+  "nuisance_read_authorized": false,
+  "token": "LAUNCH_EXACTLY_ONE_BOSS_M300_CROSS_SURVEY_RESPONSE_REPLICATION"
+}
