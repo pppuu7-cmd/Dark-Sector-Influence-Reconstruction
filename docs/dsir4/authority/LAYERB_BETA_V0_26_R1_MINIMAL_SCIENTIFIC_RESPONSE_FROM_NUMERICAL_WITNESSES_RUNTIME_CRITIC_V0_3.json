@@ -1,0 +1,102 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_RUNTIME_CRITIC_V0_3",
+  "status": "TERMINAL_INDEPENDENT_RUNTIME_CRITIC",
+  "created_utc_date": "2026-09-18",
+  "effect": "+0/+0",
+  "verdict": "PASS_TERMINAL_CLOSURE",
+  "classification": "MINIMAL_SCIENTIFIC_RESPONSE_RUNTIME_CONFIRMED",
+  "interpretation_ceiling": "ONE_FROZEN_MINIMAL_BETA_RESPONSE_OBJECT_EXISTENCE_AND_CONSTRUCTION_STABILITY_ONLY",
+  "reviewed_terminal_authority_git_blob_sha1": "7ea2cefde247845d4c6d70660b798dcaa79a4a72",
+  "reviewed_run": {
+    "run_id": 35368618232,
+    "workflow_id": 361520624,
+    "run_number": 1,
+    "run_attempt": 1,
+    "head_sha": "68597fe91c2e1ba5e9de042201be497fb4d26046",
+    "job_id": 105676991286
+  },
+  "reviewed_science_artifact": {
+    "artifact_id": 10557123574,
+    "outer_digest": "sha256:c3411f883abebc2cc03a4d646a36c1ad1705450070f8c72984884604450267d5",
+    "independent_download_sha256": "c3411f883abebc2cc03a4d646a36c1ad1705450070f8c72984884604450267d5",
+    "provenance_json_sha256": "aca164aa724bde4efbb20fdcc52bcecc0e1df248e4be5cafb8c72bece36f3c66",
+    "response_evidence_npz_sha256": "5de9d8dedbdd2faaa5e7d4ed7e2425696540dcc927a513183e115f71f195deab",
+    "result_json_sha256": "1d7c0c88cae0b2684dc100788980ba6cb63dce54bd7a418d0d018db3c16ecd1d",
+    "static_contract_json_sha256": "c2ebeeb855993a94c32fa2586df9860adc5a16563c73d286e40e91b87e7504fc"
+  },
+  "independent_recompute": {
+    "method": "Re-read all 32 immutable numerical lane ZIP artifacts; independently verified their frozen outer SHA256 identities against numerical runtime Critic blob 9f19f8cc..., receipt/NPZ/manifest bindings and the four selected M298/call375 arrays; only after all source provenance passed, independently constructed the symmetric beta responses and recomputed the frozen classifier.",
+    "independent_result_sha256": "a15c9eb4a54f29536112cc76b3bebb5bea9cd7f2365da96720b0f49a4830ac8d",
+    "source_outer_digest_match_count": 32,
+    "selected_manifest_entries_verified": 128,
+    "exact_lane_count": 32,
+    "exact_target_count": 244,
+    "total_atoms_checked_per_response_kind": 7808,
+    "native_class_counts": {
+      "NATIVE_AVX512_ACTIVE": 10,
+      "NATIVE_AVX512_INACTIVE": 22
+    },
+    "order_arm_counts": {
+      "A": 16,
+      "B": 16
+    },
+    "finite_positive": true,
+    "mixed_response_min": 2.988634574316862,
+    "mixed_response_max": 3105.5120056680607,
+    "direct_response_min": 2.988634574316862,
+    "direct_response_max": 3105.5120056680607,
+    "metrics": {
+      "mixed_cross_host_max_pairwise_rel": 0,
+      "direct_cross_host_max_pairwise_rel": 0,
+      "mixed_native_class_mean_rel_separation": 1.4178931066714796e-16,
+      "direct_native_class_mean_rel_separation": 1.4178931066714796e-16,
+      "mixed_direct_response_max_rel": 0
+    },
+    "independently_classified": "PASS_SCOPED_MINIMAL_SCIENTIFIC_RESPONSE_REPRODUCIBLE_NONZERO",
+    "producer_and_independent_classification_match": true,
+    "all_five_producer_metrics_exactly_match": true,
+    "response_evidence_arrays_bitwise_match_independent_recompute": true
+  },
+  "independently_checked": {
+    "exact_M298_call375_only": true,
+    "exact_four_source_arrays_only": true,
+    "exact_R01_R32_population": true,
+    "no_new_CLASS_solves": true,
+    "target_identity_correction_bound": true,
+    "provenance_complete_before_arithmetic": true,
+    "all_15616_response_atoms_finite_and_positive": true,
+    "mixed_cross_host_strict_lt_1e_5": true,
+    "direct_cross_host_strict_lt_1e_5": true,
+    "mixed_native_class_strict_lt_1e_5": true,
+    "direct_native_class_strict_lt_1e_5": true,
+    "mixed_direct_response_agreement_strict_lt_1e_3": true,
+    "covariance_read_false": true,
+    "nuisance_read_false": true,
+    "full107_false": true,
+    "statistical_inference_not_authorized": true,
+    "physical_inference_not_authorized": true
+  },
+  "counterexample_search": {
+    "zero_or_nonfinite_atom_found": false,
+    "host_dependence_found": false,
+    "native_dispatch_dependence_above_threshold_found": false,
+    "mixed_direct_construction_mismatch_found": false,
+    "source_provenance_counterexample_found": false,
+    "forbidden_information_read_found": false
+  },
+  "bounded_interpretation": {
+    "supported": "The frozen M298/call375 beta response is nonzero in the gate's finite-positive sense, exactly reproducible across the frozen lane population, and identical between the frozen mixed and direct exact-target constructions.",
+    "not_supported": [
+      "statistical significance",
+      "nuisance robustness",
+      "covariance-aware science",
+      "all 107 Layer-B rows",
+      "dark-sector detection",
+      "physical dark-sector inference"
+    ]
+  },
+  "consumed_identity_rerun_authorized": false,
+  "full107_authorized": false,
+  "next_stage_authorized": "DESIGN_ONLY_ONE_CHEAP_COUNTEREXAMPLE_FIRST_BOUNDED_SCIENCE_GATE",
+  "token": "TERMINAL_RUNTIME_CONFIRMED_MINIMAL_SCIENTIFIC_RESPONSE_PASS_PLUS_0_PLUS_0"
+}
