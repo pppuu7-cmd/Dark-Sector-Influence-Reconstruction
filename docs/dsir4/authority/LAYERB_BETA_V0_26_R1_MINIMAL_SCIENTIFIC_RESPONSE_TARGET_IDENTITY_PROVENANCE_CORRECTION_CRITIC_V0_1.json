@@ -1,0 +1,23 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_TARGET_IDENTITY_PROVENANCE_CORRECTION_CRITIC_V0_1",
+  "status": "TERMINAL_INDEPENDENT_PROVENANCE_CORRECTION_CRITIC",
+  "created_utc_date": "2026-09-18",
+  "effect": "+0/+0",
+  "verdict": "PASS_SCOPED",
+  "reviewed_correction_git_blob_sha1": "27af1bea4c380029741ea56083e982abbbe2fbb1",
+  "independently_checked": {
+    "exact_32_receipts_checked": true,
+    "exact_four_M298_call375_keys_checked_per_receipt": true,
+    "corrected_sha256_is_64_hex": true,
+    "corrected_sha256_matches_all_128_selected_manifest_entries": true,
+    "malformed_63_char_literal_does_not_match_any_selected_manifest_entry": true,
+    "response_values_not_read": true,
+    "scientific_object_unchanged": true,
+    "thresholds_unchanged": true,
+    "h_unchanged": true,
+    "no_CLASS_execution": true
+  },
+  "successor_implementation_authoring_authorized": true,
+  "successor_execution_authorized": false,
+  "token": "PASS_SCOPED_TARGET_IDENTITY_PROVENANCE_CORRECTION"
+}
