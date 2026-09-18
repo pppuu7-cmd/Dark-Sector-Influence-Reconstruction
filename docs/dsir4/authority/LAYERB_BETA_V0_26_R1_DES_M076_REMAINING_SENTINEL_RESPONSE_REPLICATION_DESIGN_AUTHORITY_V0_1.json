@@ -1,0 +1,209 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_DES_M076_REMAINING_SENTINEL_RESPONSE_REPLICATION_DESIGN_AUTHORITY_V0_1",
+  "status": "PROSPECTIVE_DESIGN_ONLY_SCOPED_AUTHORITY",
+  "created_utc_date": "2026-09-19",
+  "effect": "+0/+0",
+  "interpretation_ceiling": "REMAINING_DES_SENTINEL_RESPONSE_EXISTENCE_REPRODUCIBILITY_AND_CONSTRUCTION_STABILITY_ONLY",
+  "implementation_authorized": false,
+  "execution_authorized": false,
+  "M076_response_read": false,
+  "scientific_classifier_invoked": false,
+  "covariance_read": false,
+  "nuisance_read": false,
+  "full107_authorized": false,
+  "statistical_inference_authorized": false,
+  "physical_inference_authorized": false,
+  "terminal_parents": {
+    "numerical_runtime_critic_git_blob_sha1": "9f19f8cc643bc978d0dbbcdd58f80fdf04395e24",
+    "DES_M298_terminal_authority_git_blob_sha1": "7ea2cefde247845d4c6d70660b798dcaa79a4a72",
+    "DES_M298_runtime_critic_git_blob_sha1": "91fb97a73a820cf5172d7e0383752a1ee6a26143",
+    "BOSS_M300_terminal_authority_git_blob_sha1": "e7e94650dd75b2a148717e241a907761fdbdbcda",
+    "BOSS_M300_runtime_critic_git_blob_sha1": "5c54869af9c5bf157d2ec857ca1623b763a0d7d3",
+    "source_numerical_run_id": 35280281867
+  },
+  "preregistration": {
+    "path": "prereg/LAYERB_BETA_V0_26_R1_DES_M076_REMAINING_SENTINEL_RESPONSE_REPLICATION_V0_1.md",
+    "git_blob_sha1": "8817448b4794446a81dad3014e900c6ddf43b884",
+    "creation_commit": "1e9c32aefb783151d7ac59dd0064c86a4b440925"
+  },
+  "frozen_object": {
+    "survey": "DES",
+    "mixed_selection": "M076",
+    "direct_batch": "D50",
+    "calls": [
+      76,
+      78
+    ],
+    "call_count": 2,
+    "replicate_ids": [
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R17",
+      "R18",
+      "R19",
+      "R20",
+      "R21",
+      "R22",
+      "R23",
+      "R24",
+      "R25",
+      "R26",
+      "R27",
+      "R28",
+      "R29",
+      "R30",
+      "R31",
+      "R32"
+    ],
+    "native_class_counts": {
+      "NATIVE_AVX512_ACTIVE": 10,
+      "NATIVE_AVX512_INACTIVE": 22
+    },
+    "order_arm_counts": {
+      "A": 16,
+      "B": 16
+    },
+    "mixed_requested_node_count": 1152,
+    "direct_requested_node_count": 1146
+  },
+  "target_structure": {
+    "call076": {
+      "z_u64hex": "3fdf851eb851eb85",
+      "persisted_entries": 127,
+      "target_list_sha256": "661250b46dfc123a84fb8bfe908893780d419ebf5ba8ee51b83e24e826e26198"
+    },
+    "call078": {
+      "z_u64hex": "3fdfafb7e90ff972",
+      "persisted_entries": 128,
+      "target_list_sha256": "1969c1c6e83087e5408b19fb948d52ce9f91caf163969a66d7bd6647323aa57c"
+    },
+    "calls_disjoint": true,
+    "ordered_union_entries": 255,
+    "ordered_union_sha256": "bc86d3e98ff1e7d79bb8b3057e2a810b9dbaffd82f8c552cf781ffa52fd07df3",
+    "no_target_subsetting": true,
+    "no_deduplication": true,
+    "no_cross_call_averaging": true
+  },
+  "source_array_contract": {
+    "exact_arrays_per_lane": 8,
+    "exact_arrays_total": 256,
+    "roles": [
+      "beta_plus",
+      "beta_minus"
+    ],
+    "constructions": [
+      "mixed_target",
+      "direct_target"
+    ],
+    "direct_batch_required": "D50",
+    "dtype": "<f8",
+    "call076_shape": [
+      127
+    ],
+    "call076_byte_length": 1016,
+    "call078_shape": [
+      128
+    ],
+    "call078_byte_length": 1024
+  },
+  "response_construction": {
+    "h": 0.0001,
+    "formula": "abs((beta_plus-beta_minus)/(2*h))",
+    "call076_shape": [
+      127
+    ],
+    "call078_shape": [
+      128
+    ],
+    "frozen_metric_concatenation_order": [
+      76,
+      78
+    ],
+    "concatenated_atoms_per_lane_per_construction": 255,
+    "atoms_across_32_lanes_per_construction": 8160,
+    "combined_atoms": 16320,
+    "averaging_before_atom_validation_forbidden": true,
+    "interpolation_forbidden": true,
+    "smoothing_forbidden": true,
+    "clipping_forbidden": true,
+    "renormalization_forbidden": true
+  },
+  "provenance_contract": {
+    "all_256_selected_array_bindings_before_arithmetic": true,
+    "require_source_run_id": true,
+    "require_lane_artifact_id_name_outer_digest": true,
+    "require_receipt_identity": true,
+    "require_witness_npz_sha256": true,
+    "require_manifest_canonical_sha256": true,
+    "require_kind_selection_role_call_z": true,
+    "require_D50_for_direct": true,
+    "require_call_specific_target_hash": true,
+    "require_shape_dtype_byte_length_sha256": true
+  },
+  "frozen_thresholds": {
+    "technical_relative_tolerance_strict_lt": 0.00001,
+    "scientific_mixed_direct_construction_agreement_strict_lt": 0.001,
+    "relative_denominator_policy": "max(abs(a),abs(b),float64_tiny)"
+  },
+  "strict_pass_criteria": [
+    "all 32 lane artifacts bind",
+    "all 256 selected array bindings pass before arithmetic",
+    "all 8160 mixed atoms finite and strictly positive",
+    "all 8160 direct atoms finite and strictly positive",
+    "mixed cross-host maximum pairwise relative spread <1e-5",
+    "direct cross-host maximum pairwise relative spread <1e-5",
+    "mixed native-class mean relative separation <1e-5",
+    "direct native-class mean relative separation <1e-5",
+    "mixed/direct global atomwise maximum relative difference <1e-3"
+  ],
+  "descriptive_only": [
+    "execution-order arm separation"
+  ],
+  "explicitly_not_a_criterion": [
+    "M076-M298 amplitude equality",
+    "M076-M300 amplitude equality",
+    "statistical significance",
+    "covariance-weighted significance",
+    "nuisance robustness",
+    "full107 validity"
+  ],
+  "terminal_taxonomy": [
+    "PASS_SCOPED_DES_M076_REMAINING_SENTINEL_RESPONSE_REPLICATION",
+    "SCIENTIFIC_RESPONSE_ZERO_OR_NONFINITE",
+    "SCIENTIFIC_RESPONSE_REPRODUCIBILITY_FAIL",
+    "SCIENTIFIC_RESPONSE_CONSTRUCTION_MISMATCH",
+    "PROVENANCE_FAIL",
+    "INVALID_IMPLEMENTATION"
+  ],
+  "response_blind_structural_inspection": {
+    "frozen_plan_read": true,
+    "all_32_lane_receipts_read": true,
+    "NPZ_scientific_values_read": false,
+    "selected_manifest_entries_structurally_checked": 256,
+    "all_32_lane_receipts_LANE_PASS": true,
+    "all_selected_shapes_match": true,
+    "all_target_hashes_match": true,
+    "all_D50_bindings_match": true
+  },
+  "chronology_firewall": {
+    "independent_design_static_critic_required": true,
+    "implementation_authoring_automatic": false,
+    "execution_automatic": false
+  },
+  "next_if_design_static_critic_passes": "FREEZE_SEPARATE_IMPLEMENTATION_AUTHORING_AUTHORITY;_NO_RESPONSE_ARITHMETIC_YET",
+  "token": "FROZEN_DES_M076_REMAINING_SENTINEL_RESPONSE_DESIGN_PLUS_0_PLUS_0"
+}
