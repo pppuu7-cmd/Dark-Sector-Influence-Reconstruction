@@ -1,0 +1,164 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_DESIGN_AUTHORITY_V0_1",
+  "status": "PROSPECTIVE_DESIGN_ONLY_SCOPED_AUTHORITY",
+  "created_utc_date": "2026-09-18",
+  "effect": "+0/+0",
+  "interpretation_ceiling": "MINIMAL_SCIENTIFIC_RESPONSE_EXISTENCE_AND_CONSTRUCTION_STABILITY_ONLY",
+  "execution_authorized": false,
+  "response_construction_authorized": false,
+  "scientific_response_read": false,
+  "scientific_classifier_invoked": false,
+  "covariance_read": false,
+  "whitening_read": false,
+  "nuisance_read": false,
+  "relation_null_read": false,
+  "Wm_S3_opened": false,
+  "global_65537_opened": false,
+  "full_107_row_execution_authorized": false,
+  "downstream_science_authorized": false,
+  "terminal_numerical_parent": {
+    "runtime_critic_path": "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_RESPONSE_BLIND_MINIMAL_NUMERICAL_REPRODUCIBILITY_RUNTIME_CRITIC_V0_1.json",
+    "runtime_critic_git_blob_sha1": "9f19f8cc643bc978d0dbbcdd58f80fdf04395e24",
+    "verdict": "CONFIRMED_SCOPED",
+    "consumed_run_id": 35280281867,
+    "rerun_authorized": false
+  },
+  "preregistration": {
+    "path": "prereg/LAYERB_BETA_V0_26_R1_MINIMAL_SCIENTIFIC_RESPONSE_FROM_NUMERICAL_WITNESSES_V0_1.md",
+    "git_blob_sha1": "139bb9272e4e9ed194434f50694886fc0e6ebdfe",
+    "creation_commit": "6612993128d18fcd03b84c219880c22a64f46939"
+  },
+  "source_semantics": {
+    "semantic_parent_path": "ci/exp073ir_article3_real_layerb_common_response_v0_1.py",
+    "semantic_parent_git_blob_sha1": "6ef2516dfcae8a8ae92f5b7dbe792274138c0f6f",
+    "response_component": "abs_dDelta_m_dbeta_symmetric",
+    "formula": "abs((beta_plus - beta_minus) / (2*h))",
+    "h": 0.0001,
+    "beta_tol_perturb_integration": "1e-12",
+    "exact_target_extraction_required": true,
+    "interpolation_for_scientific_target_response_forbidden": true
+  },
+  "frozen_subset": {
+    "rationale": "Smallest call-count object among already frozen numerical sentinel selections: M298 has one call, versus two for M076 and 64 for M300. Selection was made without constructing or reading a scientific response.",
+    "replicate_ids": [
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R17",
+      "R18",
+      "R19",
+      "R20",
+      "R21",
+      "R22",
+      "R23",
+      "R24",
+      "R25",
+      "R26",
+      "R27",
+      "R28",
+      "R29",
+      "R30",
+      "R31",
+      "R32"
+    ],
+    "mixed_batch_id": "M298",
+    "call_index": 375,
+    "exact_target_count": 244,
+    "mixed_requested_node_count": 1141,
+    "direct_batch_id": "D00",
+    "direct_target_capacity": 1152,
+    "source_witness_keys": [
+      "mixed_target__M298__beta_plus__call375",
+      "mixed_target__M298__beta_minus__call375",
+      "direct_target__M298__beta_plus__call375",
+      "direct_target__M298__beta_minus__call375"
+    ],
+    "new_CLASS_constructions": 0,
+    "source_artifacts": "immutable R01..R32 lane artifacts from run 35280281867"
+  },
+  "provenance_contract": {
+    "require_exact_lane_set_R01_R32": true,
+    "require_lane_artifact_outer_digest_binding": true,
+    "require_receipt_witness_npz_sha256_binding": true,
+    "require_manifest_canonical_sha256_binding": true,
+    "require_per_array_manifest_shape_dtype_byte_length_sha256": true,
+    "required_dtype": "<f8",
+    "required_array_shape": [
+      244
+    ],
+    "response_construction_before_all_bindings_forbidden": true
+  },
+  "response_construction": {
+    "mixed": "abs((mixed_target_beta_plus - mixed_target_beta_minus)/(2*h))",
+    "direct": "abs((direct_target_beta_plus - direct_target_beta_minus)/(2*h))",
+    "operation_order_frozen": true,
+    "convert_input_to_contiguous_float64_before_arithmetic": true,
+    "clipping_forbidden": true,
+    "normalization_forbidden": true,
+    "smoothing_forbidden": true,
+    "interpolation_forbidden": true
+  },
+  "frozen_thresholds": {
+    "technical_relative_tolerance_strict_lt": 0.00001,
+    "scientific_mixed_direct_relative_tolerance_strict_lt": 0.001,
+    "scientific_threshold_is_construction_agreement_not_amplitude_significance": true,
+    "relative_denominator_policy": "max(abs(a),abs(b),float64_tiny)"
+  },
+  "strict_pass_criteria": [
+    "all 32 frozen lane artifacts and receipts bind to the exact immutable numerical evidence",
+    "each of the four preregistered raw source arrays has shape [244], dtype <f8, manifest SHA256 identity and finite values",
+    "all 244 R_mixed atoms are finite and strictly positive in every lane",
+    "all 244 R_direct atoms are finite and strictly positive in every lane",
+    "R_mixed cross-host max pairwise relative spread is <1e-5",
+    "R_direct cross-host max pairwise relative spread is <1e-5",
+    "R_mixed native-class mean relative separation is <1e-5",
+    "R_direct native-class mean relative separation is <1e-5",
+    "for every lane, mixed-vs-direct response max relative difference is <1e-3",
+    "no covariance, whitening, nuisance, relation-null, Wm_S3, global65537, row traversal or full107 data are read",
+    "no response-dependent selection or threshold mutation occurs"
+  ],
+  "terminal_taxonomy": [
+    "PASS_SCOPED_MINIMAL_SCIENTIFIC_RESPONSE_REPRODUCIBLE_NONZERO",
+    "SCIENTIFIC_RESPONSE_ZERO_OR_NONFINITE",
+    "SCIENTIFIC_RESPONSE_REPRODUCIBILITY_FAIL",
+    "SCIENTIFIC_RESPONSE_CONSTRUCTION_MISMATCH",
+    "PROVENANCE_FAIL",
+    "INVALID_IMPLEMENTATION"
+  ],
+  "nuisance_treatment": {
+    "status": "NOT_EVALUATED",
+    "rationale": "Nuisance information is outside the authorized gate and remains closed; nuisance-like classification would require reading information not authorized here."
+  },
+  "claim_ceiling": {
+    "pass_supports": "Existence of one preregistered finite-positive beta response object whose mixed/direct constructions agree at the inherited scientific relative tolerance and whose lane population is technically reproducible.",
+    "pass_does_not_support": [
+      "minimum physically meaningful amplitude",
+      "statistical significance",
+      "nuisance robustness",
+      "covariance-aware inference",
+      "full 107-row Layer-B validity",
+      "dark-sector evidence or physical inference"
+    ]
+  },
+  "chronology_firewall": {
+    "independent_static_critic_required_before_implementation": true,
+    "separate_implementation_identity_required_before_execution_authority": true,
+    "separate_execution_authority_required_before_response_construction": true,
+    "same_numerical_run_rerun_forbidden": true,
+    "response_must_not_be_constructed_during_design_or_static_critic": true
+  },
+  "next_if_static_critic_passes": "AUTHOR_MINIMAL_READ_ONLY_RESPONSE_CONSTRUCTOR_OVER_IMMUTABLE_LANE_ARTIFACTS;_FREEZE_IMPLEMENTATION_IDENTITY;_SEPARATE_EXECUTION_AUTHORITY_BEFORE_ONE_SHOT_RESPONSE_CONSTRUCTION;_NO_NEW_CLASS_SOLVES;_NO_FULL107"
+}
