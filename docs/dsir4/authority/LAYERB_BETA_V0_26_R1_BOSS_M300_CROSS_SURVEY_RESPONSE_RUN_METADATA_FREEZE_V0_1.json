@@ -1,0 +1,54 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_BOSS_M300_CROSS_SURVEY_RESPONSE_RUN_METADATA_FREEZE_V0_1",
+  "status": "POST_EXECUTION_METADATA_FREEZE_BEFORE_SCIENTIFIC_PAYLOAD_CONSUMPTION",
+  "created_utc_date": "2026-09-19",
+  "effect": "+0/+0",
+  "run": {
+    "run_id": 35404848010,
+    "workflow_id": 361750847,
+    "workflow_name": "DSIR V0.26 R1 BOSS M300 cross-survey response replication v0.1",
+    "workflow_path": ".github/workflows/dsir-v026-r1-boss-m300-cross-survey-response-replication-v0-1.yml",
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "head_sha": "5f466f238ad2b9562d98794b2de1e33764ebb418",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-09-18T23:13:37Z",
+    "updated_at": "2026-09-18T23:14:52Z",
+    "consumed": true,
+    "rerun_authorized": false,
+    "retry_failed_jobs_authorized": false
+  },
+  "job": {
+    "job_id": 105792356879,
+    "name": "One-shot frozen BOSS M300 cross-survey response replication",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "artifact": {
+    "artifact_id": 10572057201,
+    "name": "layerb-beta-v026-r1-boss-m300-cross-survey-response-v0-1",
+    "outer_digest": "sha256:de99c1954d38b83559bafa40a149938c98052af255f3f6b6f67880377cf4385a",
+    "size_in_bytes": 3093302,
+    "expired": false
+  },
+  "frozen_identities": {
+    "preregistration_git_blob_sha1": "983f039f0bcf410d629a78332c2be2b6b85a95ff",
+    "design_authority_git_blob_sha1": "8ebb5ea32b28d9ac38625bdb1c1f999663d113cb",
+    "design_static_critic_git_blob_sha1": "acf0cf8ab62f586ac9b771f29b2a2202caaf87bb",
+    "implementation_authoring_authority_git_blob_sha1": "9fd2c5faddbb98bed67a0edf8e89ef582068616a",
+    "implementation_git_blob_sha1": "55b7df57ab86c5dc2e48f860b179c1a64eb5005b",
+    "implementation_static_critic_git_blob_sha1": "53ddecce0a20fcb50041781a0a14b55f26cfcd78",
+    "workflow_git_blob_sha1": "03e99a747ca8d4e7db13fd12a23f59fdd5c02b07",
+    "execution_authority_git_blob_sha1": "ff09e8c55f0f7a04aa05f3e36d9e16c715f67d4a"
+  },
+  "scientific_payload_consumed": false,
+  "terminal_result_frozen": false,
+  "full107_authorized": false,
+  "covariance_authorized": false,
+  "nuisance_authorized": false,
+  "statistical_inference_authorized": false,
+  "physical_inference_authorized": false,
+  "token": "M300_RUN_METADATA_FROZEN_BEFORE_SCIENTIFIC_PAYLOAD_CONSUMPTION"
+}
