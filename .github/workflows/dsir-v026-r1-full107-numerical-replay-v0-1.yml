@@ -1,0 +1,333 @@
+name: DSIR V0.26 R1 frozen full107 numerical replay v0.1
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/dsir4/launch/LAYERB_BETA_V0_26_R1_FULL107_NUMERICAL_REPLAY_V0_1.launch.json
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dsir-v026-r1-full107-numerical-replay-v0-1
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  CLASS_COMMIT: ac627d54e9ce196a08878d1ba33999819925d19c
+  EXECUTOR: ci/layerb_beta_v026_r1_full107_numerical_replay_v0_1.py
+  BUILD_COMPAT: scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py
+  DM_EXPOSURE_PATCH: scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+
+jobs:
+  invariant:
+    name: Freeze full107 implementation identity and source plan
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Set up exact Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+
+      - name: Static compile and frozen implementation contract
+        run: |
+          set -euo pipefail
+          mkdir -p invariant
+          python -m py_compile "$EXECUTOR"
+          python "$EXECUTOR" --mode static-contract --out invariant/static_contract.json
+
+      - name: Download exact frozen response-blind plan
+        run: |
+          set -euo pipefail
+          gh api -H 'Accept: application/vnd.github+json' "/repos/$GITHUB_REPOSITORY/actions/artifacts/10298655751/zip" > invariant/plan.zip
+          test "$(sha256sum invariant/plan.zip | awk '{print $1}')" = '9b8bdcf03cb05bc979e8c72135acac92232864a74dc1d510b579d8efb5cbb2a7'
+          unzip -q invariant/plan.zip -d invariant/plan_unpack
+          test -f invariant/plan_unpack/plan.json
+          test "$(stat -c%s invariant/plan_unpack/plan.json)" = '3953984'
+          test "$(sha256sum invariant/plan_unpack/plan.json | awk '{print $1}')" = 'c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064'
+          mv invariant/plan_unpack/plan.json invariant/plan.json
+          rm -rf invariant/plan_unpack invariant/plan.zip
+
+      - name: Upload immutable current-run invariant
+        uses: actions/upload-artifact@v4
+        with:
+          name: full107-invariant-v0-1
+          path: invariant/
+          if-no-files-found: error
+          retention-days: 90
+
+  operand:
+    name: Operand ${{ matrix.kind }} ${{ matrix.id }}
+    needs: invariant
+    strategy:
+      fail-fast: false
+      max-parallel: 23
+      matrix:
+        include:
+          - {kind: alpha, id: reference}
+          - {kind: alpha, id: alpha_minus}
+          - {kind: beta_pure, id: pure}
+          - {kind: beta_mixed, id: 0}
+          - {kind: beta_mixed, id: 1}
+          - {kind: beta_mixed, id: 2}
+          - {kind: beta_mixed, id: 3}
+          - {kind: beta_mixed, id: 4}
+          - {kind: beta_mixed, id: 5}
+          - {kind: beta_mixed, id: 6}
+          - {kind: beta_mixed, id: 7}
+          - {kind: beta_mixed, id: 8}
+          - {kind: beta_mixed, id: 9}
+          - {kind: beta_mixed, id: 10}
+          - {kind: beta_mixed, id: 11}
+          - {kind: beta_mixed, id: 12}
+          - {kind: beta_mixed, id: 13}
+          - {kind: beta_mixed, id: 14}
+          - {kind: beta_mixed, id: 15}
+          - {kind: beta_direct, id: 0}
+          - {kind: beta_direct, id: 1}
+          - {kind: beta_direct, id: 2}
+          - {kind: beta_direct, id: 3}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Create fail-closed operand receipt
+        run: |
+          mkdir -p operand
+          printf '%s\n' '{"schema":"FULL107_OPERAND_FALLBACK_V0_1","classification":"INVALID","kind":"${{ matrix.kind }}","id":"${{ matrix.id }}"}' > operand/fallback.json
+
+      - name: Set up exact Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+
+      - name: Download frozen current-run plan
+        uses: actions/download-artifact@v4
+        with:
+          name: full107-invariant-v0-1
+          path: invariant
+
+      - name: Install exact numerical/build stack
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gfortran libgsl-dev >/dev/null
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          .venv/bin/python -m pip install 'numpy==1.26.4' 'scipy==1.17.1' 'Cython<3' six >/dev/null
+
+      - name: Build route-exact pinned CLASS exposure
+        run: |
+          set -euo pipefail
+          kind='${{ matrix.kind }}'
+          git clone -q https://github.com/kaeonikc/class_iv.git external_class
+          git -C external_class checkout -q "$CLASS_COMMIT"
+          test "$(git -C external_class rev-parse HEAD)" = "$CLASS_COMMIT"
+          KIND="$kind" .venv/bin/python - <<'PY'
+          import os
+          from pathlib import Path
+          kind=os.environ['KIND']
+          p=Path('external_class/include/perturbations.h'); s=p.read_text(); old='#define _MAX_NUMBER_OF_K_FILES_ 30'; assert s.count(old)==1
+          q=Path('external_class/include/parser.h'); t=q.read_text(); oldq='#define _ARGUMENT_LENGTH_MAX_ 1024'; assert t.count(oldq)==1
+          if kind=='alpha':
+              p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 4608',1))
+              q.write_text(t.replace(oldq,'#define _ARGUMENT_LENGTH_MAX_ 131072',1))
+          else:
+              p.write_text(s.replace(old,'#define _MAX_NUMBER_OF_K_FILES_ 1152',1))
+              q.write_text(t.replace(oldq,'#define _ARGUMENT_LENGTH_MAX_ 32768',1))
+              r=Path('external_class/source/perturbations.c'); u=r.read_text(); marker='perhaps_print_variables = perturb_print_variables;'; assert u.count(marker)==1; r.write_text(u.replace(marker,'perhaps_print_variables = NULL;',1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python "$BUILD_COMPAT" external_class
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" .venv/bin/python "$DM_EXPOSURE_PATCH" external_class
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          p=Path('external_class/python/setup.py'); s=p.read_text(); old="extra_link_args=['-lgomp','-liomp5','-lpthread','-lgsl','-lgslcblas']"; assert s.count(old)==1; p.write_text(s.replace(old,"extra_link_args=['-lgomp','-lpthread','-lgsl','-lgslcblas']",1))
+          PY
+          PATH="$GITHUB_WORKSPACE/.venv/bin:$PATH" make -C external_class -j2 all >/dev/null
+
+      - name: Produce one frozen operand lane
+        run: |
+          set -euo pipefail
+          kind='${{ matrix.kind }}'
+          ident='${{ matrix.id }}'
+          rm -f operand/fallback.json
+          case "$kind" in
+            alpha)
+              .venv/bin/python "$EXECUTOR" --mode alpha-role --role "$ident" --plan invariant/plan.json --outdir operand
+              ;;
+            beta_pure)
+              NPY_DISABLE_CPU_FEATURES='AVX512CD,AVX512F,AVX512_CLX,AVX512_CNL,AVX512_ICL,AVX512_KNL,AVX512_KNM,AVX512_SKX' .venv/bin/python "$EXECUTOR" --mode beta-pure --plan invariant/plan.json --outdir operand
+              ;;
+            beta_mixed)
+              NPY_DISABLE_CPU_FEATURES='AVX512CD,AVX512F,AVX512_CLX,AVX512_CNL,AVX512_ICL,AVX512_KNL,AVX512_KNM,AVX512_SKX' .venv/bin/python "$EXECUTOR" --mode beta-mixed-shard --shard "$ident" --plan invariant/plan.json --outdir operand
+              ;;
+            beta_direct)
+              NPY_DISABLE_CPU_FEATURES='AVX512CD,AVX512F,AVX512_CLX,AVX512_CNL,AVX512_ICL,AVX512_KNL,AVX512_KNM,AVX512_SKX' .venv/bin/python "$EXECUTOR" --mode beta-direct-shard --shard "$ident" --plan invariant/plan.json --outdir operand
+              ;;
+            *) exit 81 ;;
+          esac
+
+      - name: Upload immutable operand lane
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full107-operand-${{ matrix.kind }}-${{ matrix.id }}-v0-1
+          path: operand/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
+
+  finalizer:
+    name: Single frozen full107 finalizer
+    if: ${{ always() && needs.invariant.result == 'success' }}
+    needs: [invariant, operand]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      MANIFEST: docs/dsir4/authority/EXP073IM_C2_REAL_INPUT_MANIFEST_V0_4.json
+      WM_S3_OVERRIDE: docs/dsir4/authority/EXP073IP_C2_WM_S3_TRANSPORT_OVERRIDE_V0_2.json
+    steps:
+      - name: Checkout exact triggering main head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Set up exact Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+
+      - name: Install exact finalizer numerical stack
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip wheel 'setuptools<76' >/dev/null
+          python -m pip install 'numpy==1.26.4' 'scipy==1.17.1' astropy >/dev/null
+
+      - name: Checkout exact frozen CAMB
+        run: |
+          set -euo pipefail
+          mkdir -p external/camb
+          git -C external/camb init -q
+          git -C external/camb remote add origin https://github.com/cmbant/CAMB.git
+          git -C external/camb fetch -q --depth 1 origin fa3f097343fbbe427cc04b4f5f0041c22c6ec764
+          git -C external/camb checkout -q --detach FETCH_HEAD
+          test "$(git -C external/camb rev-parse HEAD)" = 'fa3f097343fbbe427cc04b4f5f0041c22c6ec764'
+          python -m pip install ./external/camb >/dev/null
+
+      - name: Download frozen current-run plan
+        uses: actions/download-artifact@v4
+        with:
+          name: full107-invariant-v0-1
+          path: invariant
+
+      - name: Download every full107 operand artifact
+        uses: actions/download-artifact@v4
+        with:
+          pattern: full107-operand-*
+          path: operands
+
+      - name: Download exact DES-Y1 radial payloads
+        run: |
+          set -euo pipefail
+          mkdir -p external/des_nz
+          curl --fail --location --retry 3 -o external/des_nz/source.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/redshift_bins/y1_redshift_distributions_v1.fits'
+          curl --fail --location --retry 3 -o external/des_nz/lens.fits 'https://desdr-server.ncsa.illinois.edu/despublic/y1a1_files/chains/2pt_NG_mcal_1110.fits'
+          echo 'b5d87138c35ae8bb4ecd02491972f544648398e606b3617039e6e54cb8ea943b  external/des_nz/source.fits' | sha256sum -c -
+          echo '114035179b5a8e41090751e9a6478536d185128581d37b5a510eff5722f417ca  external/des_nz/lens.fits' | sha256sum -c -
+
+      - name: Download exact inherited parent, angular and Exp073IM authorities
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/parent inputs/angular inputs/expim
+          get_artifact () {
+            local id="$1" digest="$2" dest="$3" zip
+            zip="$dest.zip"; mkdir -p "$dest"
+            gh api -H 'Accept: application/vnd.github+json' "/repos/$GITHUB_REPOSITORY/actions/artifacts/$id/zip" > "$zip"
+            local actual expected
+            actual="$(sha256sum "$zip" | awk '{print $1}')"
+            expected="$(printf '%s' "$digest" | sed 's/^sha256://')"
+            test "$actual" = "$expected" || { echo "artifact $id digest mismatch $actual != $expected"; exit 31; }
+            unzip -q "$zip" -d "$dest"
+          }
+          get_artifact 10131794281 'sha256:ac959926639d3b46ecfe114e396ce03cb20a0763ef2781db454408d8ad0759df' inputs/parent
+          while IFS=$'\t' read -r slot id digest; do get_artifact "$id" "$digest" "inputs/angular/$slot"; done < <(jq -r '.angular[] | [.slot, (.artifact_id|tostring), .artifact_digest] | @tsv' "$MANIFEST")
+          id="$(jq -r '.artifact_id' "$WM_S3_OVERRIDE")"; mkdir -p inputs/angular/Wm_S3/transport_override
+          gh api -H 'Accept: application/vnd.github+json' "/repos/$GITHUB_REPOSITORY/actions/artifacts/$id/zip" > inputs/angular/Wm_S3/transport_override.zip
+          unzip -q inputs/angular/Wm_S3/transport_override.zip -d inputs/angular/Wm_S3/transport_override
+          expected="$(jq -r '.required_each_canonical_sha256' "$WM_S3_OVERRIDE")"; nbytes="$(jq -r '.required_each_nbytes' "$WM_S3_OVERRIDE")"
+          for f in inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin; do test "$(stat -c%s "$f")" = "$nbytes"; test "$(sha256sum "$f" | awk '{print $1}')" = "$expected"; done
+          cmp -s inputs/angular/Wm_S3/transport_override/A/selected_te.bin inputs/angular/Wm_S3/transport_override/B/selected_te.bin
+          get_artifact 10130241439 'sha256:3325bab0faa821c5ca3b13b4cd64d3d58c323e56a6f3e44952be84bfbc477156' inputs/expim
+
+      - name: Download exact frozen BOSS z3 operators
+        run: |
+          set -euo pipefail
+          mkdir -p external/exp073w_boss; base='https://fbeutler.github.io/hub'
+          curl --fail --location --retry 3 -o external/exp073w_boss/W_NGC_z3.gz "$base/W_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073w_boss/W_SGC_z3.gz "$base/W_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_10_200_2000_averaged_v1.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073w_boss/M_NGC_z3.gz "$base/M_BOSS_DR12_NGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          curl --fail --location --retry 3 -o external/exp073w_boss/M_SGC_z3.gz "$base/M_BOSS_DR12_SGC_z3_V6C_1_1_1_1_1_1200_2000.matrix.gz"
+          for f in external/exp073w_boss/*.gz; do gzip -t "$f"; gzip -dc "$f" > "$(printf '%s' "$f" | sed 's/\.gz$//')"; done
+          echo 'a308dc562d1a7224cefcf91d32580877929e0daa33806517e0d2d53710236827  external/exp073w_boss/W_NGC_z3' | sha256sum -c -
+          echo '2a542a2d48f3e8c8299f58a885d5273238e4ade32c0f0de020d8b9f23afe7759  external/exp073w_boss/W_SGC_z3' | sha256sum -c -
+          echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_NGC_z3' | sha256sum -c -
+          echo '3ac30e68f79deee59963c5c52f7585e0cde495393963210a3922c1c62513a042  external/exp073w_boss/M_SGC_z3' | sha256sum -c -
+
+      - name: Execute single frozen finalizer over complete operands
+        run: |
+          set -euo pipefail
+          mkdir -p decision
+          python "$EXECUTOR" --mode finalizer             --plan invariant/plan.json             --operands-root operands             --parent-root inputs/parent             --parent-authority docs/dsir4/authority/EXP073IQ_ARTICLE3_REAL_LAYERA_SUPPORT_PASS_V0_1.json             --manifest "$MANIFEST"             --angular-root inputs/angular             --expim-root inputs/expim             --boss-root external/exp073w_boss             --source external/des_nz/source.fits             --lens external/des_nz/lens.fits             --camb-root external/camb             --expz2-script ci/exp073z2_article3_des_radial_kernel_stable_direct_v0_2.py             --exp073iq-script ci/exp073iq_article3_real_layera_support_v0_1.py             --outdir decision
+
+      - name: Upload immutable full107 decision evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full107-numerical-replay-decision-v0-1
+          path: decision/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
+
+      - name: Reflect frozen classification without redefining science
+        if: always()
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('decision/decision.json')
+          if not p.is_file(): p=Path('decision/fatal.json')
+          if not p.is_file(): raise SystemExit('missing frozen full107 decision/fatal artifact')
+          d=json.loads(p.read_text())
+          allowed={
+            'INVALID','INCONCLUSIVE','SENTINEL_UNDERPOWERED','SENTINEL_REPRODUCIBILITY_BLOCKED',
+            'SENTINEL_NODE_SET_SIDE_EFFECT_BLOCKED','SENTINEL_DIRECT_REFERENCE_BLOCKED',
+            'FULL_NODE_SET_SIDE_EFFECT_BLOCKED','FULL_DIRECT_REFERENCE_BLOCKED',
+            'FULL_ROW_REPLAY_BLOCKED','FORCED_BASELINE_EXACT_TARGET_UNION_FULL_LAYERB_NUMERICAL_REPLAY_SUPPORTED'
+          }
+          c=d.get('classification')
+          if c not in allowed: raise SystemExit(f'unfrozen classification {c!r}')
+          print(c)
+          PY
