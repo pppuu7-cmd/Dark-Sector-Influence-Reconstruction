@@ -1,0 +1,69 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_DES_M076_RUNTIME_CRITIC_RUN_METADATA_FREEZE_V0_1",
+  "status": "POST_CRITIC_EXECUTION_METADATA_FREEZE_BEFORE_CRITIC_PAYLOAD_CONSUMPTION",
+  "created_utc_date": "2026-09-19",
+  "effect": "+0/+0",
+  "run": {
+    "run_id": 35411937601,
+    "workflow_id": 361763956,
+    "workflow_name": "DSIR V0.26 R1 DES M076 independent runtime Critic v0.1",
+    "workflow_path": ".github/workflows/dsir-v026-r1-des-m076-independent-runtime-critic-v0-1.yml",
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "head_sha": "25282b2402ee97e25e36a10ecc0fc9de197c156b",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-09-19T01:12:50Z",
+    "updated_at": "2026-09-19T01:13:53Z",
+    "consumed": true,
+    "rerun_authorized": false
+  },
+  "jobs": [
+    {
+      "job_id": 105813123103,
+      "name": "Independent source-only M076 recomputation",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "job_id": 105813222500,
+      "name": "Compare frozen producer against prior independent M076 evidence",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "artifacts": [
+    {
+      "artifact_id": 10573638217,
+      "name": "layerb-beta-v026-r1-des-m076-independent-critic-recompute-v0-1",
+      "outer_digest": "sha256:4ab0ca733eba889d54f1df3a3b5d465fdd05057bd157fbc628e1367abf5b3e5d",
+      "size_in_bytes": 7695
+    },
+    {
+      "artifact_id": 10574313986,
+      "name": "layerb-beta-v026-r1-des-m076-independent-runtime-critic-v0-1",
+      "outer_digest": "sha256:6a4268d78354c2db7334eeabe67db1a0bee02a7cf6b87b7581ccb01cd760924c",
+      "size_in_bytes": 830
+    }
+  ],
+  "bound_identities": {
+    "producer_metadata_freeze_git_blob_sha1": "4d1c68b222b49e5604555622fe4a3cc7c2a5cc01",
+    "runtime_critic_protocol_git_blob_sha1": "0946784a0300d495615b54658ad1a650a3f3bdc4",
+    "runtime_critic_authoring_authority_git_blob_sha1": "791bb2f3b278ee794c6758ec0b817e26507437ab",
+    "runtime_critic_implementation_git_blob_sha1": "e03f24d1424a84fecbb34981c010de7c6a1cf1a9",
+    "runtime_critic_workflow_git_blob_sha1": "bd297ae5ebe3361888f9ef1d9bb4ea575e5e3e90",
+    "runtime_critic_static_critic_git_blob_sha1": "a5cc6c7f466660df8fd965e47b6514a56e0475bd",
+    "runtime_critic_execution_authority_git_blob_sha1": "d028970e836220fa9bdae08f3250c2609962ebf1"
+  },
+  "critic_payload_consumed": false,
+  "critic_verdict_read": false,
+  "producer_terminal_authority_created": false,
+  "full107_authorized": false,
+  "covariance_authorized": false,
+  "nuisance_authorized": false,
+  "statistical_inference_authorized": false,
+  "physical_inference_authorized": false,
+  "next_stage": "CONSUME_INDEPENDENT_RESULT_AND_CRITIC_DECISION_FROM_FROZEN_ARTIFACTS;_TERMINALIZE_M076_ONLY_IF_CRITIC_VERDICT_SUPPORTS;_THEN_REBUILD_DAG",
+  "token": "M076_CRITIC_RUN_METADATA_FROZEN_BEFORE_CRITIC_PAYLOAD_CONSUMPTION"
+}
