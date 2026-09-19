@@ -536,6 +536,41 @@ def solve_beta_model_with_common(nodes, common_nodes, beta: float, call_indices,
                 pass
 
 
+def solve_beta_common_only(common_nodes, beta: float, call_indices, plan):
+    """Pure GRID896 control: exact-read only the 897 common nodes.
+
+    The pure control is not the remedy route. Fine-call target coordinates are
+    generally absent from GRID896 and MUST NOT be exact-looked-up here.
+    """
+    from classy import Class
+    c = None
+    common = {}
+    max_mismatch = 0.0
+    kkeys = set()
+    try:
+        params = class_params(0.0, beta, common_nodes, beta_route=True)
+        payload_bytes = len(params["k_output_values"].encode("ascii")) + 1
+        if len(common_nodes) > 1152 or payload_bytes > 32768:
+            fail("INVALID", "beta_pure_payload", f"capacity exceeded nodes={len(common_nodes)} bytes={payload_bytes}")
+        c = Class()
+        c.set(params)
+        c.compute(["transfer"])
+        for call in call_indices:
+            spec = plan["fine_calls"][call]
+            z = f64(spec["z_u64hex"])
+            cv, mx, kkey = transfer_at(c, z, common_nodes)
+            common[call] = cv
+            max_mismatch = max(max_mismatch, mx)
+            kkeys.add(kkey)
+        return common, max_mismatch, kkeys
+    finally:
+        if c is not None:
+            try:
+                c.struct_cleanup()
+            except Exception:
+                pass
+
+
 def beta_pure_mode(plan_path: Path, outdir: Path):
     validate_static_chain()
     require_runtime("beta")
@@ -547,7 +582,7 @@ def beta_pure_mode(plan_path: Path, outdir: Path):
     kkeys = set()
     count = 0
     for role, beta in [("beta_plus", H), ("beta_minus", -H)]:
-        target, common_map, mx, kk = solve_beta_model_with_common(common, common, beta, list(range(569)), plan)
+        common_map, mx, kk = solve_beta_common_only(common, beta, list(range(569)), plan)
         count += 1
         max_mismatch = max(max_mismatch, mx)
         kkeys |= kk
