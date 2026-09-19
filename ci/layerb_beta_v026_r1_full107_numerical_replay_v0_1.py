@@ -773,6 +773,8 @@ def load_operand_tree(root: Path):
     seen_direct_shards = set()
     seen_alpha_roles = set()
     pure_count = 0
+    total_model_constructions = 0
+    max_requested_node_mismatch = 0.0
     for mp in sorted(root.rglob("manifest.json")):
         d = json.loads(mp.read_text(encoding="utf-8"))
         schema = d.get("schema")
@@ -784,6 +786,10 @@ def load_operand_tree(root: Path):
             if role in seen_alpha_roles:
                 fail("INVALID", "operand_manifest", f"duplicate alpha role {role}")
             seen_alpha_roles.add(role)
+            if d.get("model_constructions") != 8 or d.get("route_tolerance") != ALPHA_TOL:
+                fail("INVALID", "operand_manifest", f"alpha accounting/tolerance mismatch {role}")
+            total_model_constructions += 8
+            max_requested_node_mismatch = max(max_requested_node_mismatch, float(d.get("max_requested_node_coordinate_rel_mismatch", float("inf"))))
             chunks = []
             for f in sorted(d["files"], key=lambda x:x["chunk"]):
                 p = mp.parent / f["file"]
@@ -796,6 +802,10 @@ def load_operand_tree(root: Path):
             alpha[role] = np.concatenate(chunks, axis=1)
         elif schema == "LAYERB_BETA_V0_26_R1_FULL107_BETA_PURE_OPERAND_V0_1":
             pure_count += 1
+            if d.get("model_constructions") != 2 or d.get("route_tolerance") != BETA_TOL:
+                fail("INVALID", "operand_manifest", "pure accounting/tolerance mismatch")
+            total_model_constructions += 2
+            max_requested_node_mismatch = max(max_requested_node_mismatch, float(d.get("max_requested_node_coordinate_rel_mismatch", float("inf"))))
             p = mp.parent / "operand.npz"
             if sha256(p.read_bytes()) != d["operand_npz_sha256"]:
                 fail("INVALID", "operand_manifest", "pure operand hash mismatch")
@@ -811,6 +821,11 @@ def load_operand_tree(root: Path):
             if shard in seen_mixed_shards:
                 fail("INVALID", "operand_manifest", f"duplicate mixed shard {shard}")
             seen_mixed_shards.add(shard)
+            expected_models = 38 if shard <= 12 else 36
+            if d.get("model_constructions") != expected_models or d.get("route_tolerance") != BETA_TOL:
+                fail("INVALID", "operand_manifest", f"mixed accounting/tolerance mismatch shard {shard}")
+            total_model_constructions += expected_models
+            max_requested_node_mismatch = max(max_requested_node_mismatch, float(d.get("max_requested_node_coordinate_rel_mismatch", float("inf"))))
             p = mp.parent / "operand.npz"
             if sha256(p.read_bytes()) != d["operand_npz_sha256"]:
                 fail("INVALID", "operand_manifest", f"mixed shard hash mismatch {shard}")
@@ -827,6 +842,11 @@ def load_operand_tree(root: Path):
             if shard in seen_direct_shards:
                 fail("INVALID", "operand_manifest", f"duplicate direct shard {shard}")
             seen_direct_shards.add(shard)
+            expected_models = [30,30,30,28][shard]
+            if d.get("model_constructions") != expected_models or d.get("route_tolerance") != BETA_TOL:
+                fail("INVALID", "operand_manifest", f"direct accounting/tolerance mismatch shard {shard}")
+            total_model_constructions += expected_models
+            max_requested_node_mismatch = max(max_requested_node_mismatch, float(d.get("max_requested_node_coordinate_rel_mismatch", float("inf"))))
             p = mp.parent / "operand.npz"
             if sha256(p.read_bytes()) != d["operand_npz_sha256"]:
                 fail("INVALID", "operand_manifest", f"direct shard hash mismatch {shard}")
@@ -850,14 +870,18 @@ def load_operand_tree(root: Path):
                     fail("INVALID", "operand_population", f"missing {label} {role} call{call}")
     if alpha["reference"].shape != (569,32769) or alpha["alpha_minus"].shape != (569,32769):
         fail("INVALID", "operand_population", "alpha concatenated shape mismatch")
-    return alpha, pure, mixed_target, mixed_common, direct_target, manifests
+    if total_model_constructions != 738:
+        fail("INVALID", "operand_population", f"operand construction accounting {total_model_constructions} != 738")
+    if (not math.isfinite(max_requested_node_mismatch)) or max_requested_node_mismatch > BIND_TOL:
+        fail("INCONCLUSIVE", "requested_node_binding", f"operand requested-node mismatch {max_requested_node_mismatch}")
+    return alpha, pure, mixed_target, mixed_common, direct_target, manifests, total_model_constructions, max_requested_node_mismatch
 
 
 def finalizer_mode(plan_path: Path, operands_root: Path, semantic_args, outdir: Path):
     validate_static_chain()
     plan = validate_plan(plan_path)
     common, mixed, direct, _, _ = frozen_layout(plan)
-    alpha, pure, mixed_target, mixed_common, direct_target, operand_manifests = load_operand_tree(operands_root)
+    alpha, pure, mixed_target, mixed_common, direct_target, operand_manifests, operand_construction_count, operand_max_requested_node_mismatch = load_operand_tree(operands_root)
     probe = load_module("alpha_probe_final", ALPHA_PROBE)
     jj = load_module("jj_final", JJ_SOURCE)
     import numpy as np
@@ -866,13 +890,14 @@ def finalizer_mode(plan_path: Path, operands_root: Path, semantic_args, outdir: 
     alpha_resp = {}
     beta_resp = {}
     metrics = {
-        "max_requested_node_coordinate_rel_mismatch":0.0,
+        "max_requested_node_coordinate_rel_mismatch":operand_max_requested_node_mismatch,
         "full_exact_vs_direct_response_max_rel":0.0,
         "full_mixed_common_vs_pure_common_response_max_rel":0.0,
     }
     metric_argmax = {}
     finite_status_match = True
     all_mixed_direct_finite = True
+    all_mixed_common_pure_finite = True
     all_alpha_beta_positive = True
 
     for call, spec in enumerate(plan["fine_calls"]):
@@ -920,8 +945,14 @@ def finalizer_mode(plan_path: Path, operands_root: Path, semantic_args, outdir: 
             fail("INCONCLUSIVE", "beta_common_interpolation", f"unsupported GRID896 target call {call}")
         rb_mixed_common = np.abs((imcp-imcm)/(2.0*H))
         rb_pure_common = np.abs((ipcp-ipcm)/(2.0*H))
+        common_finite = (
+            np.all(np.isfinite(imcp)) and np.all(np.isfinite(imcm))
+            and np.all(np.isfinite(ipcp)) and np.all(np.isfinite(ipcm))
+            and np.all(np.isfinite(rb_mixed_common)) and np.all(np.isfinite(rb_pure_common))
+        )
+        all_mixed_common_pure_finite &= bool(common_finite)
         q2 = exact_rel(rb_mixed_common, rb_pure_common)
-        q2max = float(np.max(q2)) if q2.size else 0.0
+        q2max = float(np.max(q2)) if q2.size and np.all(np.isfinite(q2)) else float("inf")
         if q2max > metrics["full_mixed_common_vs_pure_common_response_max_rel"]:
             idx = int(np.argmax(q2))
             metrics["full_mixed_common_vs_pure_common_response_max_rel"] = q2max
@@ -929,7 +960,7 @@ def finalizer_mode(plan_path: Path, operands_root: Path, semantic_args, outdir: 
 
         all_alpha_beta_positive &= bool(np.all(np.isfinite(ar) & (ar>0)) and np.all(np.isfinite(br) & (br>0)))
 
-    if metrics["full_mixed_common_vs_pure_common_response_max_rel"] >= SCI_TOL:
+    if (not all_mixed_common_pure_finite) or metrics["full_mixed_common_vs_pure_common_response_max_rel"] >= SCI_TOL:
         classification = "FULL_NODE_SET_SIDE_EFFECT_BLOCKED"
     elif (not all_mixed_direct_finite) or (not finite_status_match) or metrics["full_exact_vs_direct_response_max_rel"] >= SCI_TOL:
         classification = "FULL_DIRECT_REFERENCE_BLOCKED"
@@ -1039,8 +1070,11 @@ def finalizer_mode(plan_path: Path, operands_root: Path, semantic_args, outdir: 
         and len(rows) == 107
         and layer.get("invalid_row_count") == 0
         and layer.get("retained_after_layer_b") == 107
+        and conv.get("pass") is True
+        and conv.get("finite_nonzero_status_changed") is False
         and conv.get("row_label_changed") is False
         and conv.get("boss_dense_z_disagreement") is False
+        and float(conv.get("max_relative_component_difference", float("inf"))) <= SCI_TOL
         and all_alpha_beta_positive
         and all(r.get("valid_common_response") is True for r in rows)
         and inner.get("covariance_read") is False
@@ -1063,9 +1097,11 @@ def finalizer_mode(plan_path: Path, operands_root: Path, semantic_args, outdir: 
         "retained_id_sha256":"44b57c6c910bc3612310ce415d773c8c180497528bfc5fc2927ce61da6ad40d7",
         "full_order_sha256":"bfaf582518cdbfd34b1e8392da83dac6b0885948bc31f2c29d4e48247c23af75",
         "solver_accounting":{"alpha":16,"beta_pure":2,"beta_mixed":602,"beta_direct":118,"total":738},
+        "observed_operand_model_constructions":operand_construction_count,
         "metrics":metrics,
         "metric_argmax":metric_argmax,
         "all_beta_mixed_direct_finite":all_mixed_direct_finite,
+        "all_beta_mixed_common_pure_finite":all_mixed_common_pure_finite,
         "mixed_direct_finite_nonzero_status_identical":finite_status_match,
         "all_alpha_beta_atom_responses_finite_positive":all_alpha_beta_positive,
         "semantic_parent_status":inner.get("status"),
