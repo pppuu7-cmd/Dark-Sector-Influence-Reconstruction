@@ -39,6 +39,10 @@ ADMISSION_PREREG = ROOT / "prereg/LAYERB_BETA_V0_26_R1_FULL107_IMPLEMENTATION_AD
 ADMISSION_AUTHORITY = ROOT / "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_FULL107_IMPLEMENTATION_ADMISSION_AUTHORITY_V0_1.json"
 ADMISSION_CRITIC = ROOT / "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_FULL107_IMPLEMENTATION_ADMISSION_STATIC_CRITIC_V0_1.json"
 AUTHORING_AUTHORITY = ROOT / "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_FULL107_IMPLEMENTATION_AUTHORING_AUTHORITY_V0_1.json"
+IMPLEMENTATION_CRITIC = ROOT / "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_FULL107_IMPLEMENTATION_STATIC_CRITIC_V0_2.json"
+EXECUTION_AUTHORITY = ROOT / "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_FULL107_EXECUTION_AUTHORITY_V0_1.json"
+WORKFLOW = ROOT / ".github/workflows/dsir-v026-r1-full107-numerical-replay-v0-1.yml"
+LAUNCH_MARKER = ROOT / "docs/dsir4/launch/LAYERB_BETA_V0_26_R1_FULL107_NUMERICAL_REPLAY_V0_1.launch.json"
 
 MINIMAL_EXECUTOR = ROOT / "ci/layerb_beta_v026_r1_response_blind_minimal_numerical_reproducibility_v0_1.py"
 V022_FINGERPRINT = ROOT / "ci/layerb_beta_forced_baseline_cross_host_reproducibility_v0_22.py"
@@ -251,6 +255,69 @@ def validate_static_chain():
     return c
 
 
+def validate_execution_chain():
+    """Bind one-shot execution authority and launch marker before any science mode."""
+    validate_static_chain()
+    for path, label in [
+        (IMPLEMENTATION_CRITIC, "implementation static Critic v0.2"),
+        (EXECUTION_AUTHORITY, "one-shot execution authority"),
+        (WORKFLOW, "frozen workflow"),
+        (LAUNCH_MARKER, "one-shot launch marker"),
+    ]:
+        if not path.is_file():
+            fail("INVALID", "execution_binding", f"missing {label}: {path}")
+
+    critic = json.loads(IMPLEMENTATION_CRITIC.read_text(encoding="utf-8"))
+    auth = json.loads(EXECUTION_AUTHORITY.read_text(encoding="utf-8"))
+    marker = json.loads(LAUNCH_MARKER.read_text(encoding="utf-8"))
+
+    if critic.get("verdict") != "PASS_SCOPED":
+        fail("INVALID", "execution_binding", "implementation Critic v0.2 not PASS_SCOPED")
+    if critic.get("reviewed_implementation", {}).get("git_blob_sha1") != blob_of(Path(__file__).resolve()):
+        fail("INVALID", "execution_binding", "implementation Critic does not bind current executor")
+    if critic.get("reviewed_workflow", {}).get("git_blob_sha1") != blob_of(WORKFLOW):
+        fail("INVALID", "execution_binding", "implementation Critic does not bind current workflow")
+
+    if auth.get("status") != "PROSPECTIVE_ONE_SHOT_EXECUTION_AUTHORITY":
+        fail("INVALID", "execution_binding", "execution authority status mismatch")
+    if auth.get("authorized_run_count") != 1 or auth.get("authorized_run_number") != 1 or auth.get("authorized_run_attempt") != 1:
+        fail("INVALID", "execution_binding", "one-shot run identity mismatch")
+    if auth.get("implementation_git_blob_sha1") != blob_of(Path(__file__).resolve()):
+        fail("INVALID", "execution_binding", "execution authority implementation blob mismatch")
+    if auth.get("workflow_git_blob_sha1") != blob_of(WORKFLOW):
+        fail("INVALID", "execution_binding", "execution authority workflow blob mismatch")
+    if auth.get("implementation_static_critic_git_blob_sha1") != blob_of(IMPLEMENTATION_CRITIC):
+        fail("INVALID", "execution_binding", "execution authority Critic blob mismatch")
+    if auth.get("total_CLASS_constructions") != 738:
+        fail("INVALID", "execution_binding", "execution authority 738 accounting mismatch")
+    if auth.get("launch_marker_authorized") is not True:
+        fail("INVALID", "execution_binding", "launch marker not authorized")
+    for key in ["covariance_authorized","nuisance_authorized","statistical_inference_authorized","physical_inference_authorized"]:
+        if auth.get(key) is not False:
+            fail("INVALID", "execution_binding", f"execution authority downstream leak: {key}")
+
+    if marker.get("status") != "ONE_SHOT_LAUNCH_MARKER" or marker.get("launch_once") is not True:
+        fail("INVALID", "execution_binding", "launch marker status mismatch")
+    if marker.get("execution_authority_git_blob_sha1") != blob_of(EXECUTION_AUTHORITY):
+        fail("INVALID", "execution_binding", "launch marker authority blob mismatch")
+    if marker.get("implementation_git_blob_sha1") != blob_of(Path(__file__).resolve()):
+        fail("INVALID", "execution_binding", "launch marker implementation blob mismatch")
+    if marker.get("workflow_git_blob_sha1") != blob_of(WORKFLOW):
+        fail("INVALID", "execution_binding", "launch marker workflow blob mismatch")
+    if marker.get("implementation_static_critic_git_blob_sha1") != blob_of(IMPLEMENTATION_CRITIC):
+        fail("INVALID", "execution_binding", "launch marker Critic blob mismatch")
+    if marker.get("authorized_run_number") != 1 or marker.get("authorized_run_attempt") != 1:
+        fail("INVALID", "execution_binding", "launch marker run identity mismatch")
+
+    rn = os.environ.get("GITHUB_RUN_NUMBER")
+    ra = os.environ.get("GITHUB_RUN_ATTEMPT")
+    if rn is not None and rn != "1":
+        fail("INVALID", "workflow_identity", f"run number {rn} != 1")
+    if ra is not None and ra != "1":
+        fail("INVALID", "workflow_identity", f"run attempt {ra} != 1")
+    return auth
+
+
 def validate_plan(path: Path):
     raw = path.read_bytes()
     if len(raw) != PLAN_BYTES or sha256(raw) != PLAN_SHA256:
@@ -407,7 +474,7 @@ def require_runtime(route: str):
 
 
 def alpha_role_mode(role: str, plan_path: Path, outdir: Path):
-    validate_static_chain()
+    validate_execution_chain()
     require_runtime("alpha")
     plan = validate_plan(plan_path)
     if role not in {"reference","alpha_minus"}:
@@ -597,7 +664,7 @@ def solve_beta_common_only(common_nodes, beta: float, call_indices, plan):
 
 
 def beta_pure_mode(plan_path: Path, outdir: Path):
-    validate_static_chain()
+    validate_execution_chain()
     require_runtime("beta")
     plan = validate_plan(plan_path)
     common, mixed, direct, _, _ = frozen_layout(plan)
@@ -640,7 +707,7 @@ def beta_pure_mode(plan_path: Path, outdir: Path):
 
 
 def beta_mixed_shard_mode(shard: int, plan_path: Path, outdir: Path):
-    validate_static_chain()
+    validate_execution_chain()
     require_runtime("beta")
     if shard not in range(16):
         fail("INVALID", "mixed_shard", "unfrozen shard")
@@ -706,7 +773,7 @@ def beta_mixed_shard_mode(shard: int, plan_path: Path, outdir: Path):
 
 
 def beta_direct_shard_mode(shard: int, plan_path: Path, outdir: Path):
-    validate_static_chain()
+    validate_execution_chain()
     require_runtime("beta")
     if shard not in range(4):
         fail("INVALID", "direct_shard", "unfrozen shard")
@@ -909,7 +976,7 @@ def load_operand_tree(root: Path):
 
 
 def finalizer_mode(plan_path: Path, operands_root: Path, semantic_args, outdir: Path):
-    validate_static_chain()
+    validate_execution_chain()
     plan = validate_plan(plan_path)
     common, mixed, direct, _, _ = frozen_layout(plan)
     alpha, pure, mixed_target, mixed_common, direct_target, operand_manifests, operand_construction_count, operand_max_requested_node_mismatch = load_operand_tree(operands_root)
@@ -1174,6 +1241,22 @@ def finalizer_mode(plan_path: Path, operands_root: Path, semantic_args, outdir: 
     return 0
 
 
+def execution_contract_mode(out: Path):
+    auth = validate_execution_chain()
+    write_json(out, {
+        "schema":"LAYERB_BETA_V0_26_R1_FULL107_EXECUTION_CONTRACT_V0_1",
+        "classification":"PASS_EXECUTION_CONTRACT",
+        "authorized_run_count":auth.get("authorized_run_count"),
+        "authorized_run_number":auth.get("authorized_run_number"),
+        "authorized_run_attempt":auth.get("authorized_run_attempt"),
+        "total_CLASS_constructions":auth.get("total_CLASS_constructions"),
+        "class_solver_invoked":False,
+        "scientific_response_read":False,
+        "covariance_read":False,
+    })
+    return 0
+
+
 def static_contract_mode(out: Path):
     c = validate_static_chain()
     checks = {
@@ -1208,7 +1291,7 @@ def static_contract_mode(out: Path):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--mode", required=True, choices=["static-contract","alpha-role","beta-pure","beta-mixed-shard","beta-direct-shard","finalizer"])
+    p.add_argument("--mode", required=True, choices=["static-contract","execution-contract","alpha-role","beta-pure","beta-mixed-shard","beta-direct-shard","finalizer"])
     p.add_argument("--out")
     p.add_argument("--outdir")
     p.add_argument("--plan")
@@ -1230,6 +1313,8 @@ def main():
     try:
         if a.mode == "static-contract":
             return static_contract_mode(Path(a.out))
+        if a.mode == "execution-contract":
+            return execution_contract_mode(Path(a.out))
         if not a.plan:
             fail("INVALID", "arguments", "--plan required")
         if a.mode == "alpha-role":
