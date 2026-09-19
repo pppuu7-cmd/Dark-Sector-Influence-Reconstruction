@@ -50,6 +50,8 @@ CORRECTED_PRODUCER = ROOT / "ci/layerb_beta_v026_r1_response_blind_corrected_pro
 CANONICAL_32769 = ROOT / "docs/dsir4/canonical/LAYERB_CANONICAL_FINE_32769_NODES_U64HEX_V0_1.txt"
 BASELINE = ROOT / "configs/dsir4/c2/ide0_reference_v0_1.ini"
 PRECISION = ROOT / "configs/dsir4/c2/dsir_ide_p8_v0_1.pre"
+BUILD_COMPAT = ROOT / "scripts/dsir4/exp073hb_pinned_class_iv_build_compat_v0_1.py"
+DM_EXPOSURE_PATCH = ROOT / "scripts/dsir4/exp073iu_classiv_dm_public_exposure_patch_v0_1.py"
 
 R1_PREREG_BLOB = "545e5be589e0f8029d23db2edb4e2faad116c3a0"
 R1_CONTRACT_BLOB = "b510d8e97baf1c0b7b216c0605d83cdd029254e9"
@@ -68,6 +70,8 @@ CORRECTED_PRODUCER_BLOB = "70664f447fcf2f8362abaccf964b12b8742a0b73"
 CANONICAL_32769_BLOB = "7b67706156d7d2016ecba0628210fb08f6f05616"
 BASELINE_BLOB = "cd2beb01ce6575f97f2e3203226ed6d4f048dcaa"
 PRECISION_BLOB = "fea602547cfb74e187cf9aedd5a9b0c316c626be"
+BUILD_COMPAT_BLOB = "b7fe663154519b605699c1fd622d0079a5f76772"
+DM_EXPOSURE_PATCH_BLOB = "e5afe14eccf531d3e5b9de09b19d34df431a08b9"
 
 PLAN_BYTES = 3953984
 PLAN_SHA256 = "c12bdb2a407de3f9e2c0c410719ae604d9b3516dabb76c9b1598340418ee8064"
@@ -198,6 +202,8 @@ def validate_static_chain():
         (CANONICAL_32769, CANONICAL_32769_BLOB, "canonical 32769 text"),
         (BASELINE, BASELINE_BLOB, "baseline"),
         (PRECISION, PRECISION_BLOB, "precision"),
+        (BUILD_COMPAT, BUILD_COMPAT_BLOB, "CLASS build-compat patch"),
+        (DM_EXPOSURE_PATCH, DM_EXPOSURE_PATCH_BLOB, "d_m exposure patch"),
     ]:
         require_blob(path, expected, label)
 
@@ -363,6 +369,9 @@ def runtime_fingerprint(route: str):
         "scipy_version": scipy.__version__,
         "classy_file": str(Path(classy.__file__).resolve()),
         "classy_sha256": sha256(Path(classy.__file__).read_bytes()),
+        "class_commit": CLASS_COMMIT,
+        "build_compat_git_blob_sha1": BUILD_COMPAT_BLOB,
+        "dm_exposure_patch_git_blob_sha1": DM_EXPOSURE_PATCH_BLOB,
         "route": route,
         "npy_disable_cpu_features": os.environ.get("NPY_DISABLE_CPU_FEATURES", ""),
         "omp_num_threads": os.environ.get("OMP_NUM_THREADS", ""),
