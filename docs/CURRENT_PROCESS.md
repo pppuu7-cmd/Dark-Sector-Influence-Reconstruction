@@ -358,3 +358,43 @@ Exact next:
 
 Still locked:
 `FULL107`, covariance, whitening, nuisance, relation-null, `Wm_S3`, global65537, statistical inference and physical dark-sector inference.
+
+
+## Current frontier — full107 implementation statically closed, execution still locked
+
+Terminal science before full replay:
+- numerical reproducibility = terminal PASS;
+- DES M298 = terminal PASS + runtime Critic closure;
+- BOSS M300 = terminal PASS + runtime Critic closure;
+- DES M076 = terminal PASS + runtime Critic closure.
+
+Full107 R1 admission:
+- `PASS_SCOPED_FULL107_IMPLEMENTATION_ADMISSION`;
+- independent admission static Critic = `PASS_SCOPED`.
+
+Frozen implementation:
+- executor blob `764a9a526c689877636d0bc81713834706117dea`;
+- inert workflow blob `8945ad1cc7a6bc1c4737ee2a02976ac3390f89ee`;
+- implementation static Critic blob `4b52f870d9c5cd2a12b036354586eaf0b463b74d`, verdict `PASS_SCOPED`.
+
+Frozen accounting:
+`16 alpha + 2 beta pure + 602 beta mixed + 118 beta direct = 738 CLASS constructions`.
+
+Workflow is marker-only and currently inert:
+- launch marker absent;
+- no workflow_dispatch;
+- full107 run count = 0.
+
+Current authorization:
+- implementation authoring = complete;
+- implementation static review = terminal PASS;
+- one-shot execution-authority authoring may be opened prospectively;
+- full107 execution = CLOSED;
+- launch = CLOSED;
+- result consumption = CLOSED;
+- covariance/whitening/nuisance/relation-null/downstream Wm_S3/global65537/statistical/physical inference = CLOSED.
+
+Exact next admissible action:
+`FREEZE_ONE_SEPARATE_PROSPECTIVE_FULL107_EXECUTION_AUTHORITY;_REREAD_DURABLE_STATE;_ONLY_A_LATER_EXPLICIT_STEP_MAY_CREATE_THE_SINGLE_LAUNCH_MARKER`.
+
+Do not treat static implementation PASS as permission to run 738 CLASS constructions.
