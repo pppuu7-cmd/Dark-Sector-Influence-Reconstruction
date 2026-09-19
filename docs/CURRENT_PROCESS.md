@@ -451,3 +451,8 @@ Exact next:
 `METADATA_ONLY_POLL_RUN_35414814089_TO_TERMINAL;_THEN_FREEZE_TERMINAL_RUN_JOB_ARTIFACT_METADATA_AND_DIGESTS_BEFORE_SINGLE_FINALIZER_DECISION_READ`.
 
 All downstream gates remain closed.
+
+
+### Full107 nonterminal job fan-out confirmed
+
+Metadata-only job enumeration now shows invariant `105821240498` completed success and all 23 frozen operand jobs present. Fifteen operands were in progress and eight queued at the latest read. Finalizer not yet present. No partial artifacts/values were consumed. Run `35414814089` remains NONTERMINAL; no rerun/retry/duplicate launch.
