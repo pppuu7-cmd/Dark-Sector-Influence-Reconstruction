@@ -41,6 +41,7 @@ ADMISSION_CRITIC = ROOT / "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_FULL107_IMP
 AUTHORING_AUTHORITY = ROOT / "docs/dsir4/authority/LAYERB_BETA_V0_26_R1_FULL107_IMPLEMENTATION_AUTHORING_AUTHORITY_V0_1.json"
 
 MINIMAL_EXECUTOR = ROOT / "ci/layerb_beta_v026_r1_response_blind_minimal_numerical_reproducibility_v0_1.py"
+V022_FINGERPRINT = ROOT / "ci/layerb_beta_forced_baseline_cross_host_reproducibility_v0_22.py"
 R1_AUDITOR = ROOT / "ci/layerb_beta_v026_r1_contract_audit_v0_1.py"
 JJ_SOURCE = ROOT / "ci/exp073jj_article3_layerb_common_grid_resolution_refinement_convergence_v0_1.py"
 IR_SOURCE = ROOT / "ci/exp073ir_article3_real_layerb_common_response_v0_1.py"
@@ -58,6 +59,7 @@ ADMISSION_CRITIC_BLOB = "612b8cf1b778a07aca3b9f11c84c1bf6c8402a40"
 AUTHORING_AUTHORITY_BLOB = "997697ceaa3f3260c5ac1070d36d95d51f005bcc"
 
 MINIMAL_EXECUTOR_BLOB = "ca4307962c0e92dd4bf5d74e76dd4e6db27c10d1"
+V022_FINGERPRINT_BLOB = "7921f856f468d9b73889130df39148ccca3d048d"
 R1_AUDITOR_BLOB = "9109f2e2bcc6146fa62e423e145ad09a67b70b0c"
 JJ_SOURCE_BLOB = "ee8fd0650a2a1322fab83a86bb06a219e84ca434"
 IR_SOURCE_BLOB = "6ef2516dfcae8a8ae92f5b7dbe792274138c0f6f"
@@ -187,6 +189,7 @@ def validate_static_chain():
         (ADMISSION_CRITIC, ADMISSION_CRITIC_BLOB, "full107 admission static Critic"),
         (AUTHORING_AUTHORITY, AUTHORING_AUTHORITY_BLOB, "full107 implementation authoring authority"),
         (MINIMAL_EXECUTOR, MINIMAL_EXECUTOR_BLOB, "validated minimal numerical executor"),
+        (V022_FINGERPRINT, V022_FINGERPRINT_BLOB, "validated V0.22 runtime fingerprint"),
         (R1_AUDITOR, R1_AUDITOR_BLOB, "R1 contract auditor"),
         (JJ_SOURCE, JJ_SOURCE_BLOB, "JJ common-grid source"),
         (IR_SOURCE, IR_SOURCE_BLOB, "Exp073IR semantic parent"),
@@ -354,7 +357,7 @@ def runtime_fingerprint(route: str):
     import numpy as np
     import scipy
     import classy
-    return {
+    fpdoc = {
         "python_version": platform.python_version(),
         "numpy_version": np.__version__,
         "scipy_version": scipy.__version__,
@@ -367,6 +370,13 @@ def runtime_fingerprint(route: str):
         "mkl_num_threads": os.environ.get("MKL_NUM_THREADS", ""),
         "numexpr_num_threads": os.environ.get("NUMEXPR_NUM_THREADS", ""),
     }
+    if route == "beta":
+        v022 = load_module("v022_full107_fingerprint_record", V022_FINGERPRINT)
+        base = v022.load_v021()
+        actual = v022.response_free_fingerprint(base)
+        fpdoc["forced_profile_valid"] = bool(v022.forced_profile_ok(actual))
+        fpdoc["response_free_fingerprint"] = actual
+    return fpdoc
 
 
 def require_runtime(route: str):
@@ -377,8 +387,14 @@ def require_runtime(route: str):
     for key in ["OMP_NUM_THREADS","OPENBLAS_NUM_THREADS","MKL_NUM_THREADS","NUMEXPR_NUM_THREADS"]:
         if os.environ.get(key) != "1":
             fail("INVALID", "runtime", f"{key} != 1")
-    if route == "beta" and os.environ.get("NPY_DISABLE_CPU_FEATURES") != NUMPY_DISABLE:
-        fail("INVALID", "runtime", "beta NumPy dispatch mask drift")
+    if route == "beta":
+        if os.environ.get("NPY_DISABLE_CPU_FEATURES") != NUMPY_DISABLE:
+            fail("INVALID", "runtime", "beta NumPy dispatch mask drift")
+        v022 = load_module("v022_full107_runtime", V022_FINGERPRINT)
+        base = v022.load_v021()
+        fp = v022.response_free_fingerprint(base)
+        if not v022.forced_profile_ok(fp):
+            fail("INVALID", "runtime", "beta forced NumPy dispatch profile invalid")
 
 
 def alpha_role_mode(role: str, plan_path: Path, outdir: Path):
