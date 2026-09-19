@@ -36,7 +36,7 @@ Freshly reread durable state and V0.13 historical control. Confirmed launch mark
 
 # RESULT
 
-Authoritative workflow 361796177, run 35414814089, run #1 / attempt #1, exact head 68ee1d5b95cdb3ff2e387944e07d39ec3a6b9245. Latest observation: status in_progress, conclusion null. Invariant job 105821240498 in_progress. Zero artifacts observed at that metadata read. No scientific result exists yet for consumption.
+Authoritative workflow 361796177, run 35414814089, run #1 / attempt #1, exact head 68ee1d5b95cdb3ff2e387944e07d39ec3a6b9245. Latest metadata-only observation: workflow is NONTERMINAL. Invariant job 105821240498 completed success. All 23 frozen operand jobs are present; 15 were in progress and 8 queued at the latest job enumeration. Finalizer had not appeared. No partial scientific artifact/value was read. No terminal scientific result exists yet for consumption.
 
 # CLASSIFICATION
 
@@ -52,7 +52,7 @@ Execution/provenance state only while the run is nonterminal. No statistical/mod
 
 # ARTIFACTS
 
-At latest metadata observation the run exposed zero artifacts. Partial artifact consumption is forbidden while nonterminal.
+No artifact payload was opened. Partial artifact/value consumption is forbidden while nonterminal. Latest job metadata shows the invariant passed and the 23 frozen operand lanes are actively queued/running.
 
 # COMMITS
 
