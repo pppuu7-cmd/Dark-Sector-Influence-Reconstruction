@@ -50,6 +50,7 @@ jobs:
           mkdir -p invariant
           python -m py_compile "$EXECUTOR"
           python "$EXECUTOR" --mode static-contract --out invariant/static_contract.json
+          python "$EXECUTOR" --mode execution-contract --out invariant/execution_contract.json
 
       - name: Download exact frozen response-blind plan
         run: |
