@@ -831,3 +831,53 @@ Exact next admissible action:
 `FREEZE_SEPARATE_PROSPECTIVE_ONE_SHOT_FULL107_EXECUTION_AUTHORITY_BINDING_FINAL_IMPLEMENTATION_WORKFLOW_STATIC_CRITIC_AND_ALL_FROZEN_INPUT_IDENTITIES;_DO_NOT_CREATE_LAUNCH_MARKER_IN_THE_SAME_STATIC_CLOSURE_STEP`.
 
 The implementation static PASS does not itself authorize the 738-construction run.
+
+
+### Full107 one-shot execution authority — FROZEN, NOT LAUNCHED
+
+After implementation static Critic v0.2 closure and a fresh durable-state reread, a separate one-shot execution authority was frozen:
+
+- authority commit `6a0eb241228135698fd8bfb5bf8bf3a649886cef`;
+- authority blob `e5306cb0345fb61fad784af7c488b1f7abdee120`;
+- status `PROSPECTIVE_ONE_SHOT_EXECUTION_AUTHORITY`.
+
+Bound final identities:
+- executor blob `805548f5f6be96c6c9e8dfb3a541bb8cfeab4427`;
+- workflow blob `9c5ebc85774494ece50ab19a69ec67daecd864f5`;
+- implementation static Critic v0.2 blob `fa3deb314588de7d053849480f1c4b57ee444505`, verdict `PASS_SCOPED`.
+
+Chronology repair before v0.2:
+- commit `f997634a5585617fe1e31b4323bb20281c20adde` makes every substantive science mode require exact execution authority + exact Critic v0.2 + exact workflow + one-shot marker;
+- workflow commits `e4313b532760f8ac9c27237facbaebf65a3a232b` and `2a190895bde0c5775aeed2a418c0d09f622e5185` require a fail-closed `PASS_EXECUTION_CONTRACT` before any plan/operand lane can proceed;
+- historical static Critic v0.1 remains part of history but is superseded for execution binding by v0.2.
+
+One-shot authority freezes:
+- run count = 1;
+- run number = 1;
+- run attempt = 1;
+- exact CLASS constructions = 738;
+- operand lanes = 23;
+- expected jobs = 25 including invariant and finalizer;
+- no duplicate launch;
+- no retry/rerun;
+- no partial scientific artifact consumption;
+- producer result may not be read until terminal run/job/artifact metadata are frozen.
+
+Current live state after authority freeze:
+- launch marker `docs/dsir4/launch/LAYERB_BETA_V0_26_R1_FULL107_NUMERICAL_REPLAY_V0_1.launch.json` = ABSENT;
+- full107 Actions run count = 0;
+- no full107 CLASS construction has executed;
+- no full107 scientific response has been read.
+
+Downstream locks remain:
+- covariance = CLOSED;
+- whitening = CLOSED;
+- nuisance = CLOSED;
+- relation-null = CLOSED;
+- downstream Wm_S3 = CLOSED;
+- global65537 = CLOSED;
+- statistical inference = CLOSED;
+- physical dark-sector inference = CLOSED.
+
+Exact next admissible action:
+`REREAD_DURABLE_STATE;_ONLY_A_LATER_EXPLICIT_STEP_MAY_CREATE_THE_SINGLE_FULL107_LAUNCH_MARKER_BOUND_TO_EXECUTION_AUTHORITY_E5306CB0;_DO_NOT_CREATE_OR_RUN_IT_AS_PART_OF_THIS_AUTHORITY_FREEZE`.
