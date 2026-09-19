@@ -51,6 +51,15 @@ jobs:
           python -m py_compile "$EXECUTOR"
           python "$EXECUTOR" --mode static-contract --out invariant/static_contract.json
           python "$EXECUTOR" --mode execution-contract --out invariant/execution_contract.json
+          python - <<'PY'
+          import json
+          s=json.load(open('invariant/static_contract.json'))
+          e=json.load(open('invariant/execution_contract.json'))
+          assert s['classification']=='PASS_STATIC_CONTRACT'
+          assert e['classification']=='PASS_EXECUTION_CONTRACT'
+          assert e['authorized_run_count']==1 and e['authorized_run_number']==1 and e['authorized_run_attempt']==1
+          assert e['total_CLASS_constructions']==738
+          PY
 
       - name: Download exact frozen response-blind plan
         run: |
@@ -65,6 +74,7 @@ jobs:
           rm -rf invariant/plan_unpack invariant/plan.zip
 
       - name: Upload immutable current-run invariant
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: full107-invariant-v0-1
