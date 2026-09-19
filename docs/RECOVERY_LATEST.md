@@ -742,3 +742,92 @@ Next admissible gate is a response-independent **full-replay admission audit** a
 - all downstream covariance/nuisance/statistical/physical locks.
 
 A PASS may authorize full-replay implementation authoring only. It must not itself authorize execution.
+
+
+## Full107 R1 numerical replay — IMPLEMENTATION STATIC CLOSURE
+
+All three sentinel response families are terminally closed and the frozen R1 full-replay admission review is complete.
+
+### Admission chain
+
+- admission prereg commit `7b46bb89ae50752ee24f5837209198580d5945f8`, blob `255111bb0d0304fb64a93066aea45eace2b535b0`;
+- admission authority commit `1ba2cfd3bb7ee8f713ddbc78f582c9f24128907e`, blob `57e1d3f3c5d4cbe9a4eb6504adcfe29f15c7ef98`, classification `PASS_SCOPED_FULL107_IMPLEMENTATION_ADMISSION`;
+- independent admission static Critic commit `b25c9427c6b5ebf938e22339c66902e8a461b7ad`, blob `612b8cf1b778a07aca3b9f11c84c1bf6c8402a40`, verdict `PASS_SCOPED`;
+- implementation-authoring authority commit `c9559334a571f43a43acd8649fbcc731cd9e42e3`, blob `997697ceaa3f3260c5ac1070d36d95d51f005bcc`.
+
+The admission review independently consumed the old hosted response-blind R1 audit:
+- run `34955509439`;
+- artifact `10390734361`;
+- outer SHA256 `6309cc724061d66d881157e0c7b49807a6a111d55b76b0ca091fdf6efb43e664`;
+- result SHA256 `304d14217933d5852b9e9783a127cb6486344adddf228ae70e2a455d298e483f`;
+- token `PASS_LAYERB_BETA_V0_26_R1_CONTRACT_AUDIT_PLUS_0_PLUS_0`;
+- class solver invoked = false;
+- scientific response read = false;
+- covariance read = false;
+- full replay accounting = exactly 738 constructions.
+
+### Frozen implementation
+
+Final executor:
+- path `ci/layerb_beta_v026_r1_full107_numerical_replay_v0_1.py`;
+- final git blob `764a9a526c689877636d0bc81713834706117dea`.
+
+Final inert workflow:
+- path `.github/workflows/dsir-v026-r1-full107-numerical-replay-v0-1.yml`;
+- git blob `8945ad1cc7a6bc1c4737ee2a02976ac3390f89ee`;
+- marker-only push trigger;
+- no `workflow_dispatch`;
+- current launch marker absent;
+- current full107 Actions run count = 0.
+
+Frozen execution architecture:
+- exact denominator 107 rows = 53 DES + 54 BOSS;
+- alpha: 2 roles × 8 sequential canonical-32769 chunks = 16 CLASS constructions;
+- beta pure GRID896 = 2 constructions;
+- beta mixed = 301 batches × 2 roles = 602 constructions;
+- beta direct = 59 batches × 2 roles = 118 constructions;
+- exact total = 738 CLASS constructions;
+- physical operand lanes = 23 independent matrix jobs: 2 alpha + 1 pure + 16 mixed + 4 direct;
+- shards may not classify;
+- one finalizer only.
+
+Finalizer:
+- reuses the exact frozen Exp073IR semantic parent blob `6ef2516dfcae8a8ae92f5b7dbe792274138c0f6f`;
+- replaces only `ResponseSuite` with frozen fresh-response operands;
+- requires exact 441 coarse + 569 fine call coverage;
+- requires zero invalid rows and retained-after-Layer-B = 107;
+- requires no row-label change and no BOSS GL64/GL128 disagreement;
+- requires all active alpha/beta atom responses finite and positive;
+- requires requested-node binding <= 1e-12;
+- requires full mixed/direct beta-response max relative difference strict < 1e-3;
+- requires full mixed-common/pure-common response max relative difference strict < 1e-3;
+- rechecks every operand runtime fingerprint and exact observed model-construction total 738.
+
+Prospective pre-execution implementation repairs were all response-blind and occurred before static closure:
+- `735d1f842c75ab0feefdd44eef3ef9f7c58d2076`: pure GRID896 exact-read correction;
+- `9d0a7f49b0ba61641266f6a14e52f2386b500df9`: actual forced NumPy dispatch-profile check;
+- `50b88e9ab00f8d364280a9cd0bf598aaed9847c7`: fail-closed operand accounting/common controls;
+- `f47b3764d6d2ae120abe43fd08972b2c62f64ed5`: CLASS/build-patch provenance in receipts;
+- `8beaf0f15a243833c10d563fa3e173e588b45016`: exact payload/runtime/semantic call-coverage locks.
+
+Independent implementation static Critic:
+- commit `caf7fe4dc66bae36aab1065129bafb27f2209479`;
+- blob `4b52f870d9c5cd2a12b036354586eaf0b463b74d`;
+- verdict `PASS_SCOPED`;
+- full107 CLASS constructions executed during static phase = 0;
+- full107 scientific response read = false.
+
+### Current firewall
+
+Current durable state:
+- `full107_execution_authorized=false`;
+- `full107_launch_authorized=false`;
+- `full107_scientific_result_consumption_authorized=false`;
+- launch marker absent;
+- full107 Actions runs = 0;
+- covariance/whitening/nuisance/relation-null/downstream Wm_S3/global65537/statistical inference/physical inference remain closed.
+
+Exact next admissible action:
+`FREEZE_SEPARATE_PROSPECTIVE_ONE_SHOT_FULL107_EXECUTION_AUTHORITY_BINDING_FINAL_IMPLEMENTATION_WORKFLOW_STATIC_CRITIC_AND_ALL_FROZEN_INPUT_IDENTITIES;_DO_NOT_CREATE_LAUNCH_MARKER_IN_THE_SAME_STATIC_CLOSURE_STEP`.
+
+The implementation static PASS does not itself authorize the 738-construction run.
