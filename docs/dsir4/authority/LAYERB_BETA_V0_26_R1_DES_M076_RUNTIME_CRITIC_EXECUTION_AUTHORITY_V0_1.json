@@ -1,0 +1,60 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_DES_M076_RUNTIME_CRITIC_EXECUTION_AUTHORITY_V0_1",
+  "status": "PROSPECTIVE_ONE_SHOT_RUNTIME_CRITIC_EXECUTION_AUTHORITY",
+  "created_utc_date": "2026-09-19",
+  "effect": "+0/+0",
+  "producer_run_metadata_freeze_git_blob_sha1": "4d1c68b222b49e5604555622fe4a3cc7c2a5cc01",
+  "runtime_critic_protocol_git_blob_sha1": "0946784a0300d495615b54658ad1a650a3f3bdc4",
+  "runtime_critic_authoring_authority_git_blob_sha1": "791bb2f3b278ee794c6758ec0b817e26507437ab",
+  "runtime_critic_implementation_git_blob_sha1": "e03f24d1424a84fecbb34981c010de7c6a1cf1a9",
+  "runtime_critic_workflow_git_blob_sha1": "bd297ae5ebe3361888f9ef1d9bb4ea575e5e3e90",
+  "runtime_critic_implementation_static_critic_git_blob_sha1": "a5cc6c7f466660df8fd965e47b6514a56e0475bd",
+  "producer": {
+    "run_id": 35405511563,
+    "run_number": 1,
+    "run_attempt": 1,
+    "head_sha": "7ca7092fddc3e1d263ed763bed2e7b53bd1672ab",
+    "job_id": 105794347277,
+    "artifact_id": 10573786214,
+    "artifact_name": "layerb-beta-v026-r1-des-m076-remaining-sentinel-response-v0-1",
+    "artifact_outer_sha256": "d50bd7ad3c04be3c24d3b37fe837ea1e0b9c7a34a440e88a4d771ec62ce63864",
+    "scientific_payload_read_before_critic": false
+  },
+  "source_numerical_run_id": 35280281867,
+  "authorized_run_count": 1,
+  "authorized_run_number": 1,
+  "authorized_run_attempt": 1,
+  "launch_marker_authorized": true,
+  "execution_order": [
+    "recompute source-only independent M076 result and evidence",
+    "persist/upload independent result/evidence",
+    "compare producer only after independent artifact exists",
+    "persist/upload Critic decision"
+  ],
+  "required_independence": {
+    "producer_implementation_import_forbidden": true,
+    "producer_artifact_read_in_recompute_forbidden": true,
+    "producer_classification_read_in_recompute_forbidden": true,
+    "compare_requires_prior_independent_result": true,
+    "compare_requires_metadata_freeze_blob": "4d1c68b222b49e5604555622fe4a3cc7c2a5cc01"
+  },
+  "critic_verdict_taxonomy": [
+    "PASS_TERMINAL_CLOSURE",
+    "CRITIC_PROVENANCE_FAIL",
+    "CRITIC_INDEPENDENT_CLASSIFICATION_DISAGREEMENT",
+    "CRITIC_METRIC_DISAGREEMENT",
+    "CRITIC_RESPONSE_EVIDENCE_DISAGREEMENT",
+    "CRITIC_INVALID_IMPLEMENTATION"
+  ],
+  "duplicate_launch_authorized": false,
+  "retry_failed_jobs_authorized": false,
+  "producer_rerun_authorized": false,
+  "new_CLASS_solver_execution_authorized": false,
+  "full107_authorized": false,
+  "covariance_authorized": false,
+  "nuisance_authorized": false,
+  "statistical_inference_authorized": false,
+  "physical_inference_authorized": false,
+  "post_execution_rule": "FREEZE_COMPLETE_CRITIC_RUN_JOB_ARTIFACT_METADATA;_THEN_CONSUME_CRITIC_DECISION_AND_INDEPENDENT_RESULT;_TERMINALIZE_PRODUCER_ONLY_IF_CRITIC_SUPPORTS_FROZEN_CLASSIFICATION",
+  "token": "AUTHORIZED_ONE_SHOT_INDEPENDENT_M076_RUNTIME_CRITIC_PLUS_0_PLUS_0"
+}
