@@ -1,0 +1,60 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_DES_M076_REMAINING_SENTINEL_RESPONSE_RUN_METADATA_FREEZE_V0_1",
+  "status": "POST_EXECUTION_METADATA_FREEZE_BEFORE_SCIENTIFIC_PAYLOAD_CONSUMPTION",
+  "created_utc_date": "2026-09-19",
+  "effect": "+0/+0",
+  "run": {
+    "run_id": 35405511563,
+    "workflow_id": 361754162,
+    "workflow_name": "DSIR V0.26 R1 DES M076 remaining-sentinel response replication v0.1",
+    "workflow_path": ".github/workflows/dsir-v026-r1-des-m076-remaining-sentinel-response-replication-v0-1.yml",
+    "run_number": 1,
+    "run_attempt": 1,
+    "event": "push",
+    "head_sha": "7ca7092fddc3e1d263ed763bed2e7b53bd1672ab",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-09-18T23:23:40Z",
+    "updated_at": "2026-09-19T00:42:15Z",
+    "consumed": true,
+    "rerun_authorized": false,
+    "retry_failed_jobs_authorized": false
+  },
+  "job": {
+    "job_id": 105794347277,
+    "name": "One-shot frozen DES M076 remaining-sentinel response replication",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "artifact": {
+    "artifact_id": 10573786214,
+    "name": "layerb-beta-v026-r1-des-m076-remaining-sentinel-response-v0-1",
+    "outer_digest": "sha256:d50bd7ad3c04be3c24d3b37fe837ea1e0b9c7a34a440e88a4d771ec62ce63864",
+    "size_in_bytes": 6893,
+    "expired": false,
+    "created_at": "2026-09-19T00:42:10Z"
+  },
+  "frozen_identities": {
+    "preregistration_git_blob_sha1": "8817448b4794446a81dad3014e900c6ddf43b884",
+    "design_authority_git_blob_sha1": "86046021a9463d6287d1d6854149097a9c769d47",
+    "design_static_critic_git_blob_sha1": "d1598a8c8cdc00da5942af79612d319f472f3859",
+    "implementation_authoring_authority_git_blob_sha1": "60980d26c609cf3a6591514f1216ef47407d30b2",
+    "implementation_git_blob_sha1": "363fc2103a60c533365a7797b72cf0f43351069c",
+    "implementation_static_critic_git_blob_sha1": "85bbff8295b5beaec8995bd566d1fb5a17ba8754",
+    "workflow_git_blob_sha1": "2f770d8f5ab99e759556f0cb0487b9e8c5304dda",
+    "execution_authority_git_blob_sha1": "65cc2cb75612c2fef2770af1bce606d0db5551e5",
+    "runtime_critic_protocol_git_blob_sha1": "0946784a0300d495615b54658ad1a650a3f3bdc4",
+    "runtime_critic_implementation_git_blob_sha1": "e03f24d1424a84fecbb34981c010de7c6a1cf1a9",
+    "runtime_critic_workflow_git_blob_sha1": "bd297ae5ebe3361888f9ef1d9bb4ea575e5e3e90"
+  },
+  "scientific_payload_consumed": false,
+  "producer_classification_read": false,
+  "terminal_result_frozen": false,
+  "full107_authorized": false,
+  "covariance_authorized": false,
+  "nuisance_authorized": false,
+  "statistical_inference_authorized": false,
+  "physical_inference_authorized": false,
+  "next_stage": "FREEZE_ONE_RUNTIME_CRITIC_EXECUTION_AUTHORITY_BINDING_THIS_METADATA_FREEZE_PLUS_CRITIC_STATIC_PASS;_LAUNCH_ONE_CRITIC_RUN;_NO_PRODUCER_SCIENCE_READ_BEFORE_INDEPENDENT_RECOMPUTE",
+  "token": "M076_RUN_METADATA_FROZEN_BEFORE_SCIENTIFIC_PAYLOAD_CONSUMPTION"
+}
