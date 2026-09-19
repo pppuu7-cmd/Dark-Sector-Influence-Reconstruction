@@ -663,6 +663,9 @@ def beta_mixed_shard_mode(shard: int, plan_path: Path, outdir: Path):
         rec = mixed_records[int(bid[1:])]
         if rec["batch_id"] != bid or rec["node_count"] != len(nodes):
             fail("INVALID", "mixed_shard", f"{bid} manifest mismatch")
+        audit = load_module("r1_auditor_mixed_runtime", R1_AUDITOR)
+        if audit.payload_record(bid, nodes.tolist()) != rec:
+            fail("INVALID", "mixed_shard", f"{bid} exact payload record mismatch")
         calls = calls_for_batch(b, fine=True)
         for role, beta in [("beta_plus", H), ("beta_minus", -H)]:
             tmap, cmap, mx, kk = solve_beta_model_with_common(nodes, common, beta, calls, plan)
@@ -725,6 +728,9 @@ def beta_direct_shard_mode(shard: int, plan_path: Path, outdir: Path):
         rec = direct_records[int(bid[1:])]
         if rec["batch_id"] != bid or rec["node_count"] != len(nodes):
             fail("INVALID", "direct_shard", f"{bid} manifest mismatch")
+        audit = load_module("r1_auditor_direct_runtime", R1_AUDITOR)
+        if audit.payload_record(bid, nodes.tolist()) != rec:
+            fail("INVALID", "direct_shard", f"{bid} exact payload record mismatch")
         calls = calls_for_batch(b, fine=True)
         for role, beta in [("beta_plus", H), ("beta_minus", -H)]:
             tmap, mx, kk = solve_beta_model(nodes, beta, calls, plan)
@@ -790,13 +796,29 @@ def load_operand_tree(root: Path):
         manifests.append({"path":str(mp),"sha256":sha256(mp.read_bytes()),"schema":schema})
         if d.get("classification") != "OPERAND_COMPLETE":
             fail("INVALID", "operand_manifest", f"noncomplete operand {mp}")
+        rt = d.get("runtime", {})
+        if (
+            rt.get("python_version") != "3.12.3"
+            or rt.get("numpy_version") != "1.26.4"
+            or rt.get("scipy_version") != "1.17.1"
+            or rt.get("class_commit") != CLASS_COMMIT
+            or rt.get("build_compat_git_blob_sha1") != BUILD_COMPAT_BLOB
+            or rt.get("dm_exposure_patch_git_blob_sha1") != DM_EXPOSURE_PATCH_BLOB
+            or not isinstance(rt.get("classy_sha256"), str)
+            or len(rt.get("classy_sha256")) != 64
+            or rt.get("omp_num_threads") != "1"
+            or rt.get("openblas_num_threads") != "1"
+            or rt.get("mkl_num_threads") != "1"
+            or rt.get("numexpr_num_threads") != "1"
+        ):
+            fail("INVALID", "operand_runtime", f"runtime fingerprint mismatch {mp}")
         if schema == "LAYERB_BETA_V0_26_R1_FULL107_ALPHA_ROLE_OPERAND_V0_1":
             role = d["role"]
             if role in seen_alpha_roles:
                 fail("INVALID", "operand_manifest", f"duplicate alpha role {role}")
             seen_alpha_roles.add(role)
-            if d.get("model_constructions") != 8 or d.get("route_tolerance") != ALPHA_TOL:
-                fail("INVALID", "operand_manifest", f"alpha accounting/tolerance mismatch {role}")
+            if d.get("model_constructions") != 8 or d.get("route_tolerance") != ALPHA_TOL or rt.get("route") != "alpha":
+                fail("INVALID", "operand_manifest", f"alpha accounting/tolerance/runtime mismatch {role}")
             total_model_constructions += 8
             max_requested_node_mismatch = max(max_requested_node_mismatch, float(d.get("max_requested_node_coordinate_rel_mismatch", float("inf"))))
             chunks = []
@@ -811,8 +833,8 @@ def load_operand_tree(root: Path):
             alpha[role] = np.concatenate(chunks, axis=1)
         elif schema == "LAYERB_BETA_V0_26_R1_FULL107_BETA_PURE_OPERAND_V0_1":
             pure_count += 1
-            if d.get("model_constructions") != 2 or d.get("route_tolerance") != BETA_TOL:
-                fail("INVALID", "operand_manifest", "pure accounting/tolerance mismatch")
+            if d.get("model_constructions") != 2 or d.get("route_tolerance") != BETA_TOL or rt.get("route") != "beta" or rt.get("forced_profile_valid") is not True or rt.get("npy_disable_cpu_features") != NUMPY_DISABLE:
+                fail("INVALID", "operand_manifest", "pure accounting/tolerance/runtime mismatch")
             total_model_constructions += 2
             max_requested_node_mismatch = max(max_requested_node_mismatch, float(d.get("max_requested_node_coordinate_rel_mismatch", float("inf"))))
             p = mp.parent / "operand.npz"
@@ -831,8 +853,8 @@ def load_operand_tree(root: Path):
                 fail("INVALID", "operand_manifest", f"duplicate mixed shard {shard}")
             seen_mixed_shards.add(shard)
             expected_models = 38 if shard <= 12 else 36
-            if d.get("model_constructions") != expected_models or d.get("route_tolerance") != BETA_TOL:
-                fail("INVALID", "operand_manifest", f"mixed accounting/tolerance mismatch shard {shard}")
+            if d.get("model_constructions") != expected_models or d.get("route_tolerance") != BETA_TOL or rt.get("route") != "beta" or rt.get("forced_profile_valid") is not True or rt.get("npy_disable_cpu_features") != NUMPY_DISABLE:
+                fail("INVALID", "operand_manifest", f"mixed accounting/tolerance/runtime mismatch shard {shard}")
             total_model_constructions += expected_models
             max_requested_node_mismatch = max(max_requested_node_mismatch, float(d.get("max_requested_node_coordinate_rel_mismatch", float("inf"))))
             p = mp.parent / "operand.npz"
@@ -852,8 +874,8 @@ def load_operand_tree(root: Path):
                 fail("INVALID", "operand_manifest", f"duplicate direct shard {shard}")
             seen_direct_shards.add(shard)
             expected_models = [30,30,30,28][shard]
-            if d.get("model_constructions") != expected_models or d.get("route_tolerance") != BETA_TOL:
-                fail("INVALID", "operand_manifest", f"direct accounting/tolerance mismatch shard {shard}")
+            if d.get("model_constructions") != expected_models or d.get("route_tolerance") != BETA_TOL or rt.get("route") != "beta" or rt.get("forced_profile_valid") is not True or rt.get("npy_disable_cpu_features") != NUMPY_DISABLE:
+                fail("INVALID", "operand_manifest", f"direct accounting/tolerance/runtime mismatch shard {shard}")
             total_model_constructions += expected_models
             max_requested_node_mismatch = max(max_requested_node_mismatch, float(d.get("max_requested_node_coordinate_rel_mismatch", float("inf"))))
             p = mp.parent / "operand.npz"
@@ -1072,11 +1094,16 @@ def finalizer_mode(plan_path: Path, operands_root: Path, semantic_args, outdir: 
     layer = inner.get("layer_b", {})
     conv = inner.get("convergence", {})
     rows = inner.get("rows", [])
+    request_complete = (
+        request_audit["coarse_calls_seen"] == set(range(441))
+        and request_audit["fine_calls_seen"] == set(range(569))
+    )
     row_ok = (
         inner.get("parent",{}).get("retained_count") == 107
         and inner.get("parent",{}).get("retained_id_sha256") == "44b57c6c910bc3612310ce415d773c8c180497528bfc5fc2927ce61da6ad40d7"
         and inner.get("parent",{}).get("full_order_sha256") == "bfaf582518cdbfd34b1e8392da83dac6b0885948bc31f2c29d4e48247c23af75"
         and len(rows) == 107
+        and request_complete
         and layer.get("invalid_row_count") == 0
         and layer.get("retained_after_layer_b") == 107
         and conv.get("pass") is True
@@ -1122,6 +1149,7 @@ def finalizer_mode(plan_path: Path, operands_root: Path, semantic_args, outdir: 
             "fine_calls_seen":sorted(request_audit["fine_calls_seen"]),
             "coarse_unique_call_count":len(request_audit["coarse_calls_seen"]),
             "fine_unique_call_count":len(request_audit["fine_calls_seen"]),
+            "complete_441_coarse_and_569_fine_coverage":request_complete,
             "coarse_target_scalars_served":request_audit["coarse_target_scalars_served"],
             "fine_target_scalars_served":request_audit["fine_target_scalars_served"],
         },
