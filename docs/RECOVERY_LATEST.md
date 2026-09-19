@@ -675,3 +675,70 @@ Current authoritative producer identity remains:
 
 Exact next admissible action remains:
 `POLL_RUN_35405511563_METADATA_ONLY;_IF_TERMINAL_FREEZE_RUN_JOB_ARTIFACT_METADATA_BEFORE_ANY_SCIENCE_READ;_THEN_AUTHOR_ONE_CRITIC_EXECUTION_AUTHORITY_BINDING_METADATA_FREEZE_PLUS_CRITIC_CODE_WORKFLOW_STATIC_PASS;_LAUNCH_ONE_CRITIC_RUN`.
+
+
+## DES M076 remaining-sentinel response — TERMINAL PASS
+
+The final pre-existing sentinel response family is now terminally closed.
+
+Producer:
+- run `35405511563`, run #1 / attempt #1;
+- head `7ca7092fddc3e1d263ed763bed2e7b53bd1672ab`;
+- artifact `10573786214`;
+- outer SHA256 `d50bd7ad3c04be3c24d3b37fe837ea1e0b9c7a34a440e88a4d771ec62ce63864`;
+- classification `PASS_SCOPED_DES_M076_REMAINING_SENTINEL_RESPONSE_REPLICATION`.
+
+Scientific result:
+- shape per construction `[32,255]`;
+- 8,160 mixed + 8,160 direct atoms = 16,320 total;
+- all atoms finite and strictly positive;
+- response range `2.0582797606039094 .. 5748.947332003809`;
+- mixed/direct cross-host max relative spread `0.0`;
+- mixed/direct native-class mean separation `4.527922772596039e-16`;
+- mixed/direct response max relative difference `0.0`;
+- new CLASS solves `0`.
+
+Terminal authority:
+- blob `b2d564ac8733aff4c86d059996cf6f39fb56c1dc`.
+
+Prospectively frozen independent runtime Critic:
+- run `35411937601`, run #1 / attempt #1;
+- independent source-only artifact `10573638217`, outer SHA256 `4ab0ca733eba889d54f1df3a3b5d465fdd05057bd157fbc628e1367abf5b3e5d`;
+- Critic decision artifact `10574313986`, outer SHA256 `6a4268d78354c2db7334eeabe67db1a0bee02a7cf6b87b7581ccb01cd760924c`;
+- independent response NPZ SHA256 `c41d84ed126d3ed2570309725fb4d820a376da26c1f0cf7fe373e093ea50f355`;
+- producer response NPZ SHA256 identical;
+- classification exact match;
+- metrics exact match;
+- mixed and direct response arrays bitwise identical;
+- verdict `PASS_TERMINAL_CLOSURE`;
+- runtime Critic authority blob `301c6b946083d1c276217fbb3e59f2d7c30a1b4b`.
+
+### Rebuilt sentinel state
+
+All three prospectively tested sentinel response families are now terminal:
+- DES M298/call375 = PASS + runtime Critic closed;
+- BOSS M300/calls377..440 = PASS + runtime Critic closed;
+- DES M076/calls76,78 = PASS + runtime Critic closed.
+
+The earlier terminal numerical reproducibility Critic also independently established:
+- `mixed_vs_direct_exact_target_rel = 0`;
+- `mixed_common_vs_pure_common_rel = 0`;
+- max requested-node coordinate relative mismatch `1.6568353692813133e-16 <= 1e-12`;
+- 32/32 eligible lanes with the frozen 10 active / 22 inactive native-class population.
+
+Therefore the frozen R1 full-replay sentinel prerequisites are no longer blocked by the three sentinel families.
+
+### Current next gate
+
+Do NOT launch the 738-construction full replay automatically.
+
+Next admissible gate is a response-independent **full-replay admission audit** against the frozen R1 prereg/contract:
+- prereg blob `545e5be589e0f8029d23db2edb4e2faad116c3a0`;
+- contract blob `b510d8e97baf1c0b7b216c0605d83cdd029254e9`;
+- exact 107-row denominator and hashes;
+- exact alpha/beta routes;
+- exact 738-construction accounting;
+- all terminal sentinel/numerical authorities;
+- all downstream covariance/nuisance/statistical/physical locks.
+
+A PASS may authorize full-replay implementation authoring only. It must not itself authorize execution.
