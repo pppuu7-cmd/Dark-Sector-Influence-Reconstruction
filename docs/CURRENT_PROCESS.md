@@ -431,3 +431,23 @@ Exact next:
 
 Still locked:
 covariance, whitening, nuisance, relation-null, downstream Wm_S3, global65537, statistical inference, physical inference.
+
+
+## Full107 live frontier — one-shot run launched, nonterminal
+
+The sole authorized full107 marker has been committed at head `68ee1d5b95cdb3ff2e387944e07d39ec3a6b9245`, marker blob `7139c9b5dee8b6d7594a13d156951b06c8f93a5e`.
+
+GitHub Actions bound exactly one run to that head:
+- workflow ID `361796177`;
+- run `35414814089`;
+- run #1 / attempt #1;
+- status at latest metadata read: `in_progress`;
+- invariant job `105821240498` in progress;
+- zero artifacts observed at that read.
+
+No partial science was consumed. This run is the sole production identity: no duplicate launch, rerun, retry or partial substantive inspection is authorized.
+
+Exact next:
+`METADATA_ONLY_POLL_RUN_35414814089_TO_TERMINAL;_THEN_FREEZE_TERMINAL_RUN_JOB_ARTIFACT_METADATA_AND_DIGESTS_BEFORE_SINGLE_FINALIZER_DECISION_READ`.
+
+All downstream gates remain closed.
