@@ -906,3 +906,8 @@ Exact next admissible action:
 `METADATA_ONLY_POLL_EXACT_RUN_35414814089_UNTIL_TERMINAL;_DO_NOT_READ_PARTIAL_ARTIFACTS;_AFTER_TERMINAL_FREEZE_COMPLETE_RUN_JOB_ARTIFACT_IDS_AND_DIGESTS_BEFORE_ANY_DECISION_PAYLOAD_READ`.
 
 Covariance, whitening, nuisance, relation-null, downstream Wm_S3, global65537, statistical inference and physical inference remain CLOSED.
+
+
+### Full107 launch metadata refresh — still NONTERMINAL
+
+A later metadata-only read (no artifact payload read) observed invariant job `105821240498` terminal success and all 23 operand jobs materialized. At that read, 15 operand jobs were in progress and 8 queued; finalizer had not appeared. GitHub run-level status was transiently reported `queued` despite active operand jobs. Treat the workflow as NONTERMINAL. No partial scientific values were consumed. Exact next stage remains metadata-only polling of run `35414814089` to terminal.
