@@ -881,3 +881,28 @@ Downstream locks remain:
 
 Exact next admissible action:
 `REREAD_DURABLE_STATE;_ONLY_A_LATER_EXPLICIT_STEP_MAY_CREATE_THE_SINGLE_FULL107_LAUNCH_MARKER_BOUND_TO_EXECUTION_AUTHORITY_E5306CB0;_DO_NOT_CREATE_OR_RUN_IT_AS_PART_OF_THIS_AUTHORITY_FREEZE`.
+
+
+## Full107 one-shot launched — NONTERMINAL, NO PARTIAL SCIENCE READ
+
+After the separately frozen execution authority and a fresh durable-state reread, exactly one marker-only launch was created:
+- launch commit `68ee1d5b95cdb3ff2e387944e07d39ec3a6b9245`;
+- marker blob `7139c9b5dee8b6d7594a13d156951b06c8f93a5e`;
+- workflow `361796177`;
+- authoritative run `35414814089`;
+- run #1 / attempt #1;
+- exact head `68ee1d5b95cdb3ff2e387944e07d39ec3a6b9245`;
+- exact-head run count = 1.
+
+Latest metadata-only observation in this invocation:
+- workflow status = `in_progress`, conclusion = null;
+- invariant job `105821240498` = `in_progress`;
+- artifact count observed = 0;
+- no partial operand/finalizer scientific values or artifacts were consumed.
+
+The run is now consumed as the sole authorized identity. Never create another marker, rerun, retry failed jobs, or consume partial science while nonterminal.
+
+Exact next admissible action:
+`METADATA_ONLY_POLL_EXACT_RUN_35414814089_UNTIL_TERMINAL;_DO_NOT_READ_PARTIAL_ARTIFACTS;_AFTER_TERMINAL_FREEZE_COMPLETE_RUN_JOB_ARTIFACT_IDS_AND_DIGESTS_BEFORE_ANY_DECISION_PAYLOAD_READ`.
+
+Covariance, whitening, nuisance, relation-null, downstream Wm_S3, global65537, statistical inference and physical inference remain CLOSED.
