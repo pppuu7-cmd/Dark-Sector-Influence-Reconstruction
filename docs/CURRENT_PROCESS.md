@@ -398,3 +398,36 @@ Exact next admissible action:
 `FREEZE_ONE_SEPARATE_PROSPECTIVE_FULL107_EXECUTION_AUTHORITY;_REREAD_DURABLE_STATE;_ONLY_A_LATER_EXPLICIT_STEP_MAY_CREATE_THE_SINGLE_LAUNCH_MARKER`.
 
 Do not treat static implementation PASS as permission to run 738 CLASS constructions.
+
+
+## Full107 live frontier — one-shot authority frozen, launch absent
+
+Final execution-bound identities:
+- executor `805548f5f6be96c6c9e8dfb3a541bb8cfeab4427`;
+- workflow `9c5ebc85774494ece50ab19a69ec67daecd864f5`;
+- static Critic v0.2 `fa3deb314588de7d053849480f1c4b57ee444505`, PASS_SCOPED;
+- one-shot execution authority `e5306cb0345fb61fad784af7c488b1f7abdee120`.
+
+The executor now enforces the prospective firewall internally:
+`static chain -> Critic v0.2 -> one-shot execution authority -> exact workflow -> exact marker -> run #1/attempt #1`
+before any alpha/beta science mode or finalizer can operate.
+
+Authority scope:
+- exactly 738 CLASS constructions;
+- exactly 23 operand lanes;
+- one finalizer;
+- no retry/rerun/duplicate launch;
+- no partial science consumption;
+- terminal metadata freeze required before result read.
+
+Current state:
+- launch marker ABSENT;
+- full107 Actions runs = 0;
+- CLASS executions from full107 = 0;
+- full107 classification = NOT_EVALUATED.
+
+Exact next:
+`LATER_EXPLICIT_MARKER_STEP_ONLY_AFTER_FRESH_REREAD;_DO_NOT_LAUNCH_FROM_THIS_AUTHORITY_FREEZE`.
+
+Still locked:
+covariance, whitening, nuisance, relation-null, downstream Wm_S3, global65537, statistical inference, physical inference.
