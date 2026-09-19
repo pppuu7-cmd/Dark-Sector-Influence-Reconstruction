@@ -1,0 +1,19 @@
+{
+  "schema": "LAYERB_BETA_V0_26_R1_DES_M076_RUNTIME_CRITIC_LAUNCH_V0_1",
+  "status": "ONE_SHOT_RUNTIME_CRITIC_LAUNCH_MARKER",
+  "created_utc_date": "2026-09-19",
+  "effect": "+0/+0",
+  "launch_once": true,
+  "producer_run_id": 35405511563,
+  "producer_metadata_freeze_git_blob_sha1": "4d1c68b222b49e5604555622fe4a3cc7c2a5cc01",
+  "runtime_critic_execution_authority_git_blob_sha1": "d028970e836220fa9bdae08f3250c2609962ebf1",
+  "runtime_critic_implementation_git_blob_sha1": "e03f24d1424a84fecbb34981c010de7c6a1cf1a9",
+  "runtime_critic_workflow_git_blob_sha1": "bd297ae5ebe3361888f9ef1d9bb4ea575e5e3e90",
+  "runtime_critic_static_critic_git_blob_sha1": "a5cc6c7f466660df8fd965e47b6514a56e0475bd",
+  "authorized_run_number": 1,
+  "authorized_run_attempt": 1,
+  "full107_authorized": false,
+  "covariance_authorized": false,
+  "nuisance_authorized": false,
+  "token": "LAUNCH_EXACTLY_ONE_INDEPENDENT_M076_RUNTIME_CRITIC"
+}
